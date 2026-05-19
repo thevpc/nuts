@@ -19,6 +19,6 @@ public class NWorkBalancerStoreMemory implements NWorkBalancerStore {
 
     @Override
     public void save(NWorkBalancerModel model) {
-        values.put(model.getId(), model);
+        values.put(model.id(), model);
     }
 }

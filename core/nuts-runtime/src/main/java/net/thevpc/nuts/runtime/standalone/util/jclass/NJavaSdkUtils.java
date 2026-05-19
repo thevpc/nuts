@@ -155,8 +155,8 @@ public class NJavaSdkUtils {
     private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9) {
         NClassLoaderNodeExt k = new NClassLoaderNodeExt();
         k.node = n;
-        k.id = n.getId();
-        k.path = NPath.of(n.getURL());
+        k.id = n.id();
+        k.path = NPath.of(n.url());
         if (java9) {
             k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path);
             if (k.moduleInfo != null) {
@@ -176,7 +176,7 @@ public class NJavaSdkUtils {
                     k.id.groupId().startsWith("org.openjfx");
         }
         list.add(k);
-        for (NClassLoaderNode d : n.getDependencies()) {
+        for (NClassLoaderNode d : n.dependencies()) {
             fillNodes(d, list, java9);
         }
     }
@@ -714,10 +714,10 @@ public class NJavaSdkUtils {
         if (classFileId == 0) {
             classFileId = 52;
         }
-        return NIdBuilder.of().setArtifactId("java")
+        return NIdBuilder.of().artifactId("java")
                 .setProperty("s", standard)
                 .setProperty("c", String.valueOf(classFileId))
-                .setVersion(version)
+                .version(version)
                 .build();
     }
 
@@ -759,8 +759,8 @@ public class NJavaSdkUtils {
         }
         int min = -1;
         for (NVersionInterval nVersionInterval : version.toFilter().intervals().orElse(new ArrayList<>())) {
-            String lowerBound = nVersionInterval.getLowerBound();
-            String upperBound = nVersionInterval.getLowerBound();
+            String lowerBound = nVersionInterval.lowerBound();
+            String upperBound = nVersionInterval.lowerBound();
             int m = normalizeJavaVersionAsInt0(lowerBound);
             if (m > 0) {
                 if (min < m) {
@@ -839,7 +839,7 @@ public class NJavaSdkUtils {
             List<NVersionInterval> intervalls = versionFilter.intervals().orElse(new ArrayList<>());
             for (NVersionInterval nVersionInterval : intervalls) {
                 if (nVersionInterval.isFixedValue()) {
-                    NVersion expected = NVersion.get(nVersionInterval.getLowerBound()).orNull();
+                    NVersion expected = NVersion.get(nVersionInterval.lowerBound()).orNull();
                     int expected_0 = expected.getIntAt(0).orElse(0);
                     int expected_1 = expected.getIntAt(1).orElse(0);
                     int expected_2 = expected.getIntAt(2).orElse(0);

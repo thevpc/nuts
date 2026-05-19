@@ -54,10 +54,10 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         this.workspace = workspace;
         NAssert.requireNamedNonNull(options, "repository options");
         this.repositoryRef = NRepositoryUtils.optionsToRef(options);
-        String storeLocation = options.getLocation();
+        String storeLocation = options.location();
         NRepositoryConfig config = options.toConfig();
-        String globalName = options.getName();
-        String repositoryName = options.getName();
+        String globalName = options.name();
+        String repositoryName = options.name();
 
         speed = speed == null ? NSpeedQualifier.NORMAL : speed;
 
@@ -76,9 +76,9 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         this.globalName = globalName;
         this.storeLocation = NPath.of(storeLocation).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot());
         this.speed = speed;
-        this.deployWeight = options.getDeployWeight();
+        this.deployWeight = options.deployWeight();
         this.temporary = options.isTemporary();
-        this.tags.addAll(new NRepositoryTagsListHelper().add(options.getTags()).toSet());
+        this.tags.addAll(new NRepositoryTagsListHelper().add(options.tags()).toSet());
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
         setConfig(config, false);
@@ -93,7 +93,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
     public NWorkspace getWorkspace() {
-        return repository.getWorkspace();
+        return repository.workspace();
     }
 
     public NRepositoryRef getRepositoryRef() {
@@ -165,7 +165,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         }
         if (isSupportedMirroring()) {
             for (NRepository mirror : getMirrors()) {
-                NSpeedQualifier mspeed = mirror.config().getSpeed();
+                NSpeedQualifier mspeed = mirror.config().speed();
                 if (mspeed == NSpeedQualifier.UNAVAILABLE) {
                     unavailable = true;
                 } else {
@@ -311,7 +311,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     @Override
     public void addMirror(NRepository repo) {
         repositoryRegistryHelper.addRepository(repo);
-        NSession session = repository.getWorkspace().currentSession();
+        NSession session = repository.workspace().currentSession();
         NRepositoryHelper.of(repository).events().fireOnAddRepository(
                 new DefaultNRepositoryEvent(session, repository, repo, "mirror", null, repo)
         );
@@ -336,7 +336,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         NRepositoryRef e = repositoryRegistryHelper.findRepositoryRef(repoName);
         if (e != null && e.isEnabled() != enabled) {
 //            session = CoreNutsUtils.validate(session, repository.getWorkspace());
-            e.setEnabled(enabled);
+            e.enabled(enabled);
             fireConfigurationChanged("mirror");
         }
     }
@@ -350,7 +350,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         boolean ok = false;
         if (force || (!NWorkspace.of().isReadOnly() && isConfigurationChanged())) {
             NWorkspaceUtils.of().checkReadOnly();
-            NSecurityManager.of().checkRepositoryAllowed(repository.getUuid(), NConstants.Permissions.SAVE, "save");
+            NSecurityManager.of().checkRepositoryAllowed(repository.uuid(), NConstants.Permissions.SAVE, "save");
 
             config.setConfigVersion(DefaultNWorkspace.VERSION_REPOSITORY_CONFIG);
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
@@ -366,13 +366,13 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                     _LOG()
                             .log(NMsg.ofC(
                                     "%s created repository %s at %s",
-                                    NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
+                                    NStringUtils.formatAlign(repository.name(), 20, NPositionType.FIRST), repository.name(),
                                     getStoreLocation()
                             ).withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS));
                 } else {
                     _LOG().log(NMsg.ofC(
                             "%s updated repository %s at %s",
-                            NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
+                            NStringUtils.formatAlign(repository.name(), 20, NPositionType.FIRST), repository.name(),
                             getStoreLocation()
                     ).withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS));
                 }
@@ -406,9 +406,9 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     @Override
     public void fireConfigurationChanged(String configName) {
         this.configurationChanged = true;
-        NSession session = repository.getWorkspace().currentSession();
+        NSession session = repository.workspace().currentSession();
         DefaultNRepositoryEvent evt = new DefaultNRepositoryEvent(session, null, repository, "config." + configName, null, true);
-        for (NRepositoryListener workspaceListener : repository.getRepositoryListeners()) {
+        for (NRepositoryListener workspaceListener : repository.repositoryListeners()) {
             workspaceListener.onConfigurationChanged(evt);
         }
     }
@@ -419,7 +419,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 
     @Override
     public void setEnabled(boolean enabled) {
-        repositoryRef.setEnabled(enabled);
+        repositoryRef.enabled(enabled);
     }
 
     @Override
@@ -479,8 +479,8 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             throw new NUnsupportedOperationException(NMsg.ofC("unsupported operation '%s'", "removeMirror"));
         }
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
-        NSession session = repository.getWorkspace().currentSession();
-        NSecurityManager.of().checkRepositoryAllowed(repository.getUuid(), NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
+        NSession session = repository.workspace().currentSession();
+        NSecurityManager.of().checkRepositoryAllowed(repository.uuid(), NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NRepository r = repositoryRegistryHelper.removeRepository(repositoryId);
         if (r != null) {
             NRepositoryHelper.of(repository).events().fireOnRemoveRepository(new DefaultNRepositoryEvent(session, repository, r, "mirror", r, null));
@@ -495,7 +495,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 //        return getMirror(repositoryIdOrName, false);
 //    }
     public NOptional<NRepository> getMirror(String repositoryNameOrId) {
-        NSession session = repository.getWorkspace().currentSession();
+        NSession session = repository.workspace().currentSession();
         NRepository y = repositoryRegistryHelper.findRepository(repositoryNameOrId);
         if (y != null) {
             return NOptional.of(y);
@@ -510,7 +510,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                     } else {
                         throw new NIllegalArgumentException(
                                 NMsg.ofC("ambiguous repository name %s ; found two Ids %s and %s",
-                                        repositoryNameOrId, y.getUuid(), m.getUuid()
+                                        repositoryNameOrId, y.uuid(), m.uuid()
                                 )
                         );
                     }
@@ -532,7 +532,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         if (y != null) {
             return y;
         }
-        NSession session = repository.getWorkspace().currentSession();
+        NSession session = repository.workspace().currentSession();
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NRepository mirror : getMirrors()) {
                 NRepository m = session.copy().setTransitive(true).callWith(() -> mirror.config()
@@ -543,7 +543,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                     } else {
                         throw new NIllegalArgumentException(
                                 NMsg.ofC("ambiguous repository name %s ; found two Ids %s and %s",
-                                        repositoryNameOrId, y.getUuid(), m.getUuid()
+                                        repositoryNameOrId, y.uuid(), m.uuid()
                                 )
                         );
                     }
@@ -559,7 +559,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         if (y != null) {
             return y;
         }
-        NSession session = repository.getWorkspace().currentSession();
+        NSession session = repository.workspace().currentSession();
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NRepository mirror : getMirrors()) {
                 NRepository m = session.copy().setTransitive(true).callWith(() -> mirror.config()
@@ -570,7 +570,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                     } else {
                         throw new NIllegalArgumentException(
                                 NMsg.ofC("ambiguous repository name %s ; found two Ids %s and %s",
-                                        repositoryNameOrId, y.getUuid(), m.getUuid()
+                                        repositoryNameOrId, y.uuid(), m.uuid()
                                 )
                         );
                     }
@@ -620,7 +620,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public void removeAllMirrors() {
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         for (NRepository repo : repositoryRegistryHelper.getRepositories()) {
-            removeMirror(repo.getUuid());
+            removeMirror(repo.uuid());
         }
     }
 

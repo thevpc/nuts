@@ -66,7 +66,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
         return this;
     }
 
-    public List<NDefinition> getLoadedDependencies() {
+    public List<NDefinition> loadedDependencies() {
         return new ArrayList<>(dependencies);
     }
 
@@ -74,7 +74,7 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
         List<NDefinition> ok = new ArrayList<>();
         for (NDependency dep : allDefinitions) {
             NDependency id = dep;
-            if (!NBlankable.isBlank(id.getGroupId())) {
+            if (!NBlankable.isBlank(id.groupId())) {
                 if (isLoadedDependency(id.toId())) {
                     NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("dependency already loaded %s...", id).asFineAlert());
                     continue;
@@ -82,8 +82,8 @@ public class NMutableClassLoaderImpl extends URLClassLoader implements NMutableC
                 NChronometer ch = NChronometer.of();
                 NLog.of(NMutableClassLoaderImpl.class).log(NMsg.ofC("searching dependency %s...", id).asConfig().withIntent(NMsgIntent.PROGRESS));
                 List<NDefinition> d = NSearch.of(id.toId()).latest(true)
-                        .setInlineDependencies(true)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                        .inlineDependencies(true)
+                        .dependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinitions().toList();
                 if (d.isEmpty()) {
                     throw new NIllegalArgumentException(NMsg.ofC("unable to load %s", dep));

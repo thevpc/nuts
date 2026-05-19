@@ -64,7 +64,7 @@ public class GroupNonOption extends DefaultNonOption {
 //    }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
+    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         NRepository repository=context.get(NRepository.class);
         NUserConfig securityEntityConfig=context.get(NUserConfig.class);

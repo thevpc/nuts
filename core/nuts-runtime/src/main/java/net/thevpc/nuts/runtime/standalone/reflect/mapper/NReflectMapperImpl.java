@@ -34,7 +34,7 @@ public class NReflectMapperImpl implements NReflectMapper {
         public boolean copy(Object from, Object to, NReflectMapper context) {
             NReflectType fromType = repository.getType(from.getClass());
             boolean v = false;
-            for (NReflectProperty property : fromType.getProperties()) {
+            for (NReflectProperty property : fromType.properties()) {
                 v |= doAction(path(property), property, from, to);
             }
             return v;
@@ -129,7 +129,7 @@ public class NReflectMapperImpl implements NReflectMapper {
 
     @Override
     public NOptional<NReflectMappingStrategy> getMappingStrategy(NReflectType from, NReflectType to) {
-        return mapperRepositoryDef.getMappingStrategy(from.asJavaClass().get(), to.asJavaClass().get());
+        return mapperRepositoryDef.getMappingStrategy(from.javaClass().get(), to.javaClass().get());
     }
 
     @Override
@@ -226,7 +226,7 @@ public class NReflectMapperImpl implements NReflectMapper {
             return value;
         }
         if (value == null) {
-            return toType.getDefaultValue();
+            return toType.defaultValue();
         }
         NReflectType u = getRepository().getType(value.getClass());
         if (u.equals(toType) || toType.isAssignableFrom(u)) {

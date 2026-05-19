@@ -48,26 +48,26 @@ public class DefaultSourceControlHelper {
 
         Path file = folder.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
         NDescriptor d = NDescriptorParser.of().parse(file).get();
-        String oldVersion = NStringUtils.trim(d.getId().version().value());
+        String oldVersion = NStringUtils.trim(d.id().version().value());
         if (oldVersion.endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNConstants.Versions.CHECKED_OUT_EXTENSION.length());
             String newVersion = NVersion.get(oldVersion).get().inc().value();
             NDefinition newVersionFound = null;
             try {
-                newVersionFound = NFetch.of(d.getId().builder().setVersion(newVersion).build())
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                newVersionFound = NFetch.of(d.id().builder().version(newVersion).build())
+                        .dependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition();
             } catch (NArtifactNotFoundException ex) {
                 _LOG()
-                        .log(NMsg.ofC("failed to fetch %s", d.getId().builder().setVersion(newVersion).build()).asFine(ex));
+                        .log(NMsg.ofC("failed to fetch %s", d.id().builder().version(newVersion).build()).asFine(ex));
                 //ignore
             }
             if (newVersionFound == null) {
-                d = d.builder().setId(d.getId().builder().setVersion(newVersion).build()).build();
+                d = d.builder().id(d.id().builder().version(newVersion).build()).build();
             } else {
-                d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
+                d = d.builder().id(d.id().builder().version(oldVersion + ".1").build()).build();
             }
-            NId newId = NDeploy.of().setContent(folder).setDescriptor(d).getResult().get(0);
+            NId newId = NDeploy.of().content(folder).descriptor(d).getResult().get(0);
             NDescriptorWriter.of().print(d, file);
             NIOUtils.delete(folder);
             return newId;
@@ -85,9 +85,9 @@ public class DefaultSourceControlHelper {
     public NDefinition checkout(NId id, Path folder) {
         NSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
         NDefinition nutToInstall = NFetch.of(id)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition();
-        if ("zip".equals(nutToInstall.descriptor().getPackaging())) {
+        if ("zip".equals(nutToInstall.descriptor().packaging())) {
             try {
                 ZipUtils.unzip(nutToInstall.content().map(Object::toString).get(), NPath.of(folder)
                         .toAbsolute().toString(), new UnzipOptions().setSkipRoot(false));
@@ -97,18 +97,18 @@ public class DefaultSourceControlHelper {
 
             Path file = folder.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
             NDescriptor d = NDescriptorParser.of().parse(file).get();
-            NVersion oldVersion = d.getId().version();
-            NId newId = d.getId().builder().setVersion(oldVersion + CoreNConstants.Versions.CHECKED_OUT_EXTENSION).build();
-            d = d.builder().setId(newId).build();
+            NVersion oldVersion = d.id().version();
+            NId newId = d.id().builder().version(oldVersion + CoreNConstants.Versions.CHECKED_OUT_EXTENSION).build();
+            d = d.builder().id(newId).build();
 
             NDescriptorWriter.of().print(d, file);
 
             return new DefaultNDefinitionBuilder()
-                    .setRepositoryUuid(nutToInstall.repositoryUuid())
-                    .setRepositoryName(nutToInstall.repositoryName())
-                    .setId(newId.longId())
-                    .setDescriptor(d)
-                    .setContent(NPath.of(folder).userCache(false).userTemporary(false))
+                    .repositoryUuid(nutToInstall.repositoryUuid())
+                    .repositoryName(nutToInstall.repositoryName())
+                    .id(newId.longId())
+                    .descriptor(d)
+                    .content(NPath.of(folder).userCache(false).userTemporary(false))
                     .dependency(id.toDependency())
                     .build()
             ;

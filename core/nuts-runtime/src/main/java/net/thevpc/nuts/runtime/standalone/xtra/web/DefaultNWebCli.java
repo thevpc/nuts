@@ -60,13 +60,13 @@ public class DefaultNWebCli implements NWebCli {
 
     public static NDuration getGlobalConnectionTimeout() {
         return NWorkspace.of().getBootOptions()
-                .getCustomOptionArg("---connection-timeout").flatMap(y -> NDuration.parse(y.stringValue()))
+                .customOptionArg("---connection-timeout").flatMap(y -> NDuration.parse(y.stringValue()))
                 .orElse(null);
     }
 
     public static NDuration getGlobalReadTimeout() {
         return NWorkspace.of().getBootOptions()
-                .getCustomOptionArg("---connection-read-timeout").flatMap(y -> NDuration.parse(y.stringValue()))
+                .customOptionArg("---connection-read-timeout").flatMap(y -> NDuration.parse(y.stringValue()))
                 .orElse(null);
     }
 

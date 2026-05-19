@@ -116,8 +116,9 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
         return messageToFormattedString(message).filteredText();
     }
 
+    @NGetter
     @Override
-    public NMsg getFormattedMessage() {
+    public NMsg formattedMessage() {
         return formattedMessage;
     }
 
@@ -127,11 +128,13 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      * @return the workspace of this {@code NutsException} instance (which may
      * be {@code null}).
      */
-    public NWorkspace getWorkspace() {
+    @NGetter
+    public NWorkspace workspace() {
         return session.getWorkspace();
     }
 
-    public NSession getSession() {
+    @NGetter
+    public NSession session() {
         return session;
     }
 

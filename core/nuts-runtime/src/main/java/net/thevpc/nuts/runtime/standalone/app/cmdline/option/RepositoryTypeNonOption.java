@@ -51,7 +51,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
+    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add(NConstants.RepoTypes.NUTS);
         allValid.add(NConstants.RepoTypes.MAVEN);

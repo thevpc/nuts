@@ -23,7 +23,7 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
 
     public void reload() {
         synchronized (this) {
-            String oldId=model.getId();
+            String oldId=model.id();
             NCallable<?> oldCaller = model.getCaller();
             NCallable<NCircuitBreakerCallModel> cc = () -> {
                 NCircuitBreakerCallModel m = store.load(oldId);
@@ -45,29 +45,29 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
     }
 
     @Override
-    public NCircuitBreakerCall<T> setFailureThreshold(int failureThreshold) {
-        model.setFailureThreshold(failureThreshold);
+    public NCircuitBreakerCall<T> failureThreshold(int failureThreshold) {
+        model.failureThreshold(failureThreshold);
         store.save(model);
         return this;
     }
 
     @Override
-    public NCircuitBreakerCall<T> setSuccessThreshold(int successThreshold) {
-        model.setSuccessThreshold(successThreshold);
+    public NCircuitBreakerCall<T> successThreshold(int successThreshold) {
+        model.successThreshold(successThreshold);
         store.save(model);
         return this;
     }
 
     @Override
-    public NCircuitBreakerCall<T> setSuccessRetryPeriod(IntFunction<NDuration> retryPeriod) {
-        model.setSuccessRetryPeriod(retryPeriod);
+    public NCircuitBreakerCall<T> successRetryPeriod(IntFunction<NDuration> retryPeriod) {
+        model.successRetryPeriod(retryPeriod);
         store.save(model);
         return this;
     }
 
     @Override
-    public NCircuitBreakerCall<T> setFailureRetryPeriod(IntFunction<NDuration> retryPeriod) {
-        model.setFailureRetryPeriod(retryPeriod);
+    public NCircuitBreakerCall<T> failureRetryPeriod(IntFunction<NDuration> retryPeriod) {
+        model.failureRetryPeriod(retryPeriod);
         store.save(model);
         return this;
     }
@@ -100,24 +100,24 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
 
             switch (model.getStatus()) {
                 case OPEN:
-                    long openDelay = model.getFailureRetryPeriod() != null
-                            ? model.getFailureRetryPeriod().apply(model.getFailureCount()).toMillis()
+                    long openDelay = model.failureRetryPeriod() != null
+                            ? model.failureRetryPeriod().apply(model.failureCount()).toMillis()
                             : 5000; // fallback default
 
-                    if (now - model.getOpenTimestamp() >= openDelay) {
+                    if (now - model.openTimestamp() >= openDelay) {
                         model.setStatus(Status.HALF_OPEN);
-                        model.setSuccessCount(0);
-                    } else if(useFallback && model.getLastValidResult() != null){
-                        return (T) model.getLastValidResult();
+                        model.successCount(0);
+                    } else if(useFallback && model.lastValidResult() != null){
+                        return (T) model.lastValidResult();
                     } else {
                         // optionally return last valid result instead of throwing
-                        throw new IllegalStateException("Circuit is OPEN, wait " + (openDelay - (now - model.getOpenTimestamp())) + "ms");
+                        throw new IllegalStateException("Circuit is OPEN, wait " + (openDelay - (now - model.openTimestamp())) + "ms");
                     }
                     break;
 
                 case HALF_OPEN:
-                    long successDelay = model.getSuccessRetryPeriod() != null
-                            ? model.getSuccessRetryPeriod().apply(model.getSuccessCount()).toMillis()
+                    long successDelay = model.successRetryPeriod() != null
+                            ? model.successRetryPeriod().apply(model.successCount()).toMillis()
                             : 0;
 
                     if (successDelay > 0) {
@@ -141,8 +141,8 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
                 return result;
             } catch (Exception ex) {
                 onFailure(ex);
-                if (useFallback && model.getLastValidResult() != null) {
-                    return (T) model.getLastValidResult();
+                if (useFallback && model.lastValidResult() != null) {
+                    return (T) model.lastValidResult();
                 }
                 throw ex;
             }
@@ -152,28 +152,28 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
     private void onSuccess(Object result) {
         switch (model.getStatus()) {
             case HALF_OPEN:
-                model.setSuccessCount(model.getSuccessCount() + 1);
-                if (model.getSuccessCount() >= model.getSuccessThreshold()) {
+                model.successCount(model.successCount() + 1);
+                if (model.successCount() >= model.successThreshold()) {
                     model.setStatus(Status.CLOSED);
-                    model.setFailureCount(0);
+                    model.failureCount(0);
                 }
                 break;
             case CLOSED:
-                model.setFailureCount(0); // reset on success
+                model.failureCount(0); // reset on success
                 break;
         }
-        model.setLastValidResult(result);
+        model.lastValidResult(result);
     }
 
     private void onFailure(Throwable ex) {
-        model.setThrowable(ex);
+        model.setError(ex);
         switch (model.getStatus()) {
             case HALF_OPEN:
             case CLOSED:
-                model.setFailureCount(model.getFailureCount() + 1);
-                if (model.getFailureCount() >= model.getFailureThreshold()) {
+                model.failureCount(model.failureCount() + 1);
+                if (model.failureCount() >= model.failureThreshold()) {
                     model.setStatus(Status.OPEN);
-                    model.setOpenTimestamp(System.currentTimeMillis());
+                    model.openTimestamp(System.currentTimeMillis());
                 }
                 break;
             case OPEN:

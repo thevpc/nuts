@@ -67,8 +67,8 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     public MavenFolderRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
         repoIter = new MavenRepoIter(this);
-        if("maven-local".equals(options.getName())) {
-            NLiteral enableM2 = getWorkspace().getCustomBootOption("---m2").orNull();
+        if("maven-local".equals(options.name())) {
+            NLiteral enableM2 = workspace().getCustomBootOption("---m2").orNull();
             if(enableM2!=null){
                 disableMe=!enableM2.isNull() && !enableM2.asBoolean().orElse(true);
             }
@@ -108,9 +108,9 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
 
     private NRepository getLocalMavenRepo() {
         for (NRepository nRepository : workspace.getRepositories()) {
-            if (nRepository.getRepositoryType().equals(NConstants.RepoTypes.MAVEN)
-                    && nRepository.config().getLocationPath() != null
-                    && nRepository.config().getLocationPath().toString()
+            if (nRepository.repositoryType().equals(NConstants.RepoTypes.MAVEN)
+                    && nRepository.config().locationPath() != null
+                    && nRepository.config().locationPath().toString()
                     .equals(
                             Paths.get(NPath.of("~/.m2").toAbsolute(NWorkspace.of().getWorkspaceLocation()).toString()).toString()
                     )) {
@@ -141,7 +141,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         if (wrapper == null) {
             wrapper = getWrapper();
         }
-        if (wrapper != null && wrapper.get(id, config().getLocationPath().toString())) {
+        if (wrapper != null && wrapper.get(id, config().locationPath().toString())) {
             NRepository repo = getLocalMavenRepo();
             if (repo != null) {
                 NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
@@ -176,7 +176,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                 return ".catalog";
             }
             case NConstants.QueryFaces.CONTENT_HASH: {
-                return getIdExtension(id.builder().setFaceContent().build()) + ".sha1";
+                return getIdExtension(id.builder().faceContent().build()) + ".sha1";
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
@@ -200,7 +200,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             NDescriptor nutsDescriptor = null;
             byte[] bytes = null;
             String name = null;
-            NId idDesc = id.builder().setFaceDescriptor().build();
+            NId idDesc = id.builder().faceDescriptor().build();
             try {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve");
                 name = NInputSource.of(stream).metaData().name().orElse("no-name");

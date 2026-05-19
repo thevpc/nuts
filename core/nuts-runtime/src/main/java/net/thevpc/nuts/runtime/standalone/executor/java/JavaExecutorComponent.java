@@ -108,7 +108,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             if ("java".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
-            if ("jar".equals(def.descriptor().getPackaging())) {
+            if ("jar".equals(def.descriptor().packaging())) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
         }
@@ -116,7 +116,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
     }
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
-        NSession session = executionContext.getSession();
+        NSession session = executionContext.session();
         NWorkspaceOptionsBuilder options = NWorkspace.of().getBootOptions().toWorkspaceOptions().builder();
         options.setDry(executionContext.isDry());
         options.setBot(executionContext.isBot());
@@ -166,14 +166,14 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 lc.setLogFileLevel(logFileLevel);
             }
         }
-        for (Iterator<String> iterator = executionContext.getExecutorOptions().iterator(); iterator.hasNext(); ) {
+        for (Iterator<String> iterator = executionContext.executorOptions().iterator(); iterator.hasNext(); ) {
             String a = iterator.next();
             if (a.startsWith("-Dnuts.args=")) {
-                executionContext.getWorkspaceOptions().add(a.substring("-Dnuts.args=".length()));
+                executionContext.workspaceOptions().add(a.substring("-Dnuts.args=".length()));
                 iterator.remove();
             }
         }
-        for (String a : executionContext.getWorkspaceOptions()) {
+        for (String a : executionContext.workspaceOptions()) {
             NWorkspaceOptions extraOptions = NWorkspaceOptionsBuilder.of().setCmdLine(
                     NCmdLine.parseDefault(a).get().toStringArray()
             ).build();
@@ -189,19 +189,19 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
     //@Override
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        NDefinition def = executionContext.getDefinition();
+        NDefinition def = executionContext.definition();
         Path contentFile = def.content().flatMap(NPath::toPath).orNull();
-        NSession session = executionContext.getSession();
+        NSession session = executionContext.session();
         final JavaExecutorOptions joptions = new JavaExecutorOptions(
                 def,
                 executionContext.isTemporary(),
-                executionContext.getArguments(),
-                executionContext.getExecutorOptions(),
-                NBlankable.isBlank(executionContext.getDirectory()) ?
+                executionContext.arguments(),
+                executionContext.executorOptions(),
+                NBlankable.isBlank(executionContext.directory()) ?
                         NPath.ofUserDirectory()
-                        : executionContext.getDirectory()
+                        : executionContext.directory()
         );
-        switch (executionContext.getExecutionType()) {
+        switch (executionContext.executionType()) {
             case EMBEDDED: {
                 return new EmbeddedProcessExecHelper(def, joptions, session.out(), executionContext);
             }
@@ -211,7 +211,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 HashMap<String, String> osEnv = new HashMap<>();
 
                 NVersion nutsDependencyVersion = null;
-                for (NId d : CoreNUtils.resolveNutsApiIdsFromDefinition(executionContext.getDefinition())) {
+                for (NId d : CoreNUtils.resolveNutsApiIdsFromDefinition(executionContext.definition())) {
                     nutsDependencyVersion = d.version();
                     if (nutsDependencyVersion != null) {
                         break;
@@ -262,7 +262,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
                 String bootArgumentsString = NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(ncmdLine
-                        .add(executionContext.getDefinition().id().longName())
+                        .add(executionContext.definition().id().longName())
                 );
                 if (!NBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
@@ -416,7 +416,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 List<String> cmdLine = new ArrayList<>();
                 cmdLine.add("embedded-java");
                 cmdLine.add("-cp");
-                cmdLine.add(joptions.getClassPathNodes().stream().map(NClassLoaderNode::getId).filter(NBlankable::isNonBlank)
+                cmdLine.add(joptions.getClassPathNodes().stream().map(NClassLoaderNode::id).filter(NBlankable::isNonBlank)
                         .map(Object::toString)
                         .collect(Collectors.joining(":")));
                 cmdLine.add(joptions.getMainClass());
@@ -454,7 +454,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
                 Map<String, String> newEnv = new HashMap<>(NWorkspaceExt.of().getSysEnv());
-                newEnv.putAll(executionContext.getEnv());
+                newEnv.putAll(executionContext.env());
                 newEnv.putAll(NExecutionContextUtils.defaultEnv(def));
                 ((DefaultNExecutionContext) executionContext).setEnv(newEnv);
                 th = session.copy().callWith(() -> {

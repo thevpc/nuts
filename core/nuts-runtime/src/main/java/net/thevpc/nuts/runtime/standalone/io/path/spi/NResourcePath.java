@@ -123,7 +123,7 @@ public class NResourcePath implements NPathSPI {
                 ClassLoader resultClassLoader = NSearch.of().addIds(
                                 this.ids.toArray(new NId[0])
                         ).latest(true)
-                        .setDependencyFilter(
+                        .dependencyFilter(
                                 NDependencyFilters.of()
                                         .byRunnable()
                         )

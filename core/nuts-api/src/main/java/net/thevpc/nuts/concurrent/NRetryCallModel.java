@@ -2,6 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.function.IntFunction;
 
@@ -21,7 +23,7 @@ public class NRetryCallModel implements Cloneable, NCopiable {
     /**
      * Last throwable encountered during a failed attempt, if any.
      */
-    private Throwable throwable;
+    private Throwable error;
     /**
      * Current status of the retry call. Defaults to {@link NRetryCall.Status#CREATED}.
      */
@@ -72,103 +74,125 @@ public class NRetryCallModel implements Cloneable, NCopiable {
         this.id = id;
     }
 
-    public NRetryCall.Status getStatus() {
+    @NGetter
+    public NRetryCall.Status status() {
         return status;
     }
 
-    public NRetryCallModel setStatus(NRetryCall.Status status) {
+    @NSetter
+    public NRetryCallModel status(NRetryCall.Status status) {
         this.status = status;
         return this;
     }
 
-    public NRetryCall.Handler<?> getHandler() {
+    @NGetter
+    public NRetryCall.Handler<?> handler() {
         return handler;
     }
 
-    public NRetryCallModel setHandler(NRetryCall.Handler<?> handler) {
+    @NSetter
+    public NRetryCallModel handler(NRetryCall.Handler<?> handler) {
         this.handler = handler;
         return this;
     }
 
-    public NCallable<?> getCaller() {
+    @NGetter
+    public NCallable<?> caller() {
         return caller;
     }
 
-    public NRetryCallModel setCaller(NCallable<?> caller) {
+    @NSetter
+    public NRetryCallModel caller(NCallable<?> caller) {
         this.caller = caller;
         return this;
     }
 
 
-    public Object getThrowable() {
-        return throwable;
+    @NGetter
+    public Object error() {
+        return error;
     }
 
-    public NCallable<?> getRecover() {
+    @NGetter
+    public NCallable<?> recover() {
         return recover;
     }
 
-    public NRetryCallModel setRecover(NCallable<?> recover) {
+    @NSetter
+    public NRetryCallModel recover(NCallable<?> recover) {
         this.recover = recover;
         return this;
     }
 
-    public NRetryCallModel setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    @NSetter
+    public NRetryCallModel error(Throwable throwable) {
+        this.error = throwable;
         return this;
     }
 
 
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NRetryCallModel setId(String id) {
+    @NSetter
+    public NRetryCallModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public Object getResult() {
+    @NGetter
+    public Object result() {
         return result;
     }
 
-    public NRetryCallModel setResult(Object result) {
+    @NSetter
+    public NRetryCallModel result(Object result) {
         this.result = result;
         return this;
     }
 
-    public int getFailedAttempts() {
+    @NGetter
+    public int failedAttempts() {
         return failedAttempts;
     }
 
-    public NRetryCallModel setFailedAttempts(int failedAttempts) {
+    @NSetter
+    public NRetryCallModel failedAttempts(int failedAttempts) {
         this.failedAttempts = failedAttempts;
         return this;
     }
 
-    public NDuration getExpiry() {
+    @NGetter
+    public NDuration expiry() {
         return expiry;
     }
 
-    public NRetryCallModel setExpiry(NDuration expiry) {
+    @NSetter
+    public NRetryCallModel expiry(NDuration expiry) {
         this.expiry = expiry;
         return this;
     }
 
-    public IntFunction<NDuration> getRetryPeriod() {
+    @NGetter
+    public IntFunction<NDuration> retryPeriod() {
         return retryPeriod;
     }
 
-    public NRetryCallModel setRetryPeriod(IntFunction<NDuration> retryPeriod) {
+    @NSetter
+    public NRetryCallModel retryPeriod(IntFunction<NDuration> retryPeriod) {
         this.retryPeriod = retryPeriod;
         return this;
     }
 
-    public int getMaxRetries() {
+    @NGetter
+    public int maxRetries() {
         return maxRetries;
     }
 
-    public NRetryCallModel setMaxRetries(int maxRetries) {
+    @NSetter
+    public NRetryCallModel maxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
         return this;
     }

@@ -3,6 +3,7 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NSetter;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
@@ -68,7 +69,8 @@ public interface NConcurrent extends NComponent {
      * @param cachedValueFactory the factory to set
      * @return this instance
      */
-    NConcurrent setCachedValueFactory(NCachedValueFactory cachedValueFactory);
+    @NSetter
+    NConcurrent cachedValueFactory(NCachedValueFactory cachedValueFactory);
 
     /**
      * Returns a memory-only cached value factory.
@@ -121,7 +123,8 @@ public interface NConcurrent extends NComponent {
      * @param onceValueFactory the factory to set
      * @return this instance
      */
-    NConcurrent setOnceValueFactory(NOnceValueFactory onceValueFactory);
+    @NSetter
+    NConcurrent onceValueFactory(NOnceValueFactory onceValueFactory);
 
     /**
      * Returns a memory-only once value factory.
@@ -172,7 +175,8 @@ public interface NConcurrent extends NComponent {
      * @param factory the factory to set
      * @return this instance
      */
-    NConcurrent setRateLimitValueFactory(NRateLimitValueFactory factory);
+    @NSetter
+    NConcurrent rateLimitValueFactory(NRateLimitValueFactory factory);
 
 
     /**
@@ -249,7 +253,8 @@ public interface NConcurrent extends NComponent {
     /**
      * @since 0.8.7
      */
-    NConcurrent setCircuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory);
+    @NSetter
+    NConcurrent circuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory);
 
     /**
      * @since 0.8.7
@@ -297,7 +302,8 @@ public interface NConcurrent extends NComponent {
     /**
      * @since 0.8.7
      */
-    NConcurrent setWorkBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory);
+    @NSetter
+    NConcurrent workBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory);
 
     // --------------------
     // Sleep Utilities
@@ -344,5 +350,6 @@ public interface NConcurrent extends NComponent {
 
     NBulkheadCallFactory bulkheadCallFactory();
 
-    NConcurrent setBulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory);
+    @NSetter
+    NConcurrent bulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory);
 }

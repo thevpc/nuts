@@ -33,7 +33,6 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
@@ -157,7 +156,7 @@ public class DefaultNTextManagerModel {
         if (NBlankable.isBlank(name)) {
             if (styleThemeName == null) {
                 NBootOptions bootOptions = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
-                styleThemeName = bootOptions.getTheme().orNull();
+                styleThemeName = bootOptions.theme().orNull();
             }
             name = styleThemeName;
             if (NBlankable.isBlank(name)) {

@@ -31,7 +31,7 @@ public class NDefinitionExecCompanionFilter extends AbstractDefinitionFilter {
     @Override
     public boolean acceptDefinition(NDefinition other) {
         if(companions.contains(other.id().shortName())){
-            for (NDependency dependency : other.descriptor().getDependencies()) {
+            for (NDependency dependency : other.descriptor().dependencies()) {
                 if(dependency.toId().shortName().equals(this.apiId.shortName())){
                     if(apiId==null){
                         return true;

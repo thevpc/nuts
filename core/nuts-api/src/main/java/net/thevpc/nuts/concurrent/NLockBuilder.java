@@ -28,6 +28,8 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -51,17 +53,8 @@ public interface NLockBuilder extends NComponent {
      *
      * @return lock source
      */
-    Object getSource();
-
-    NLockBuilder setResource(NPath source);
-
-    /**
-     * update source
-     *
-     * @param source source
-     * @return {@code this} instance
-     */
-    NLockBuilder setSource(Object source);
+    @NGetter
+    Object source();
 
     /**
      * lock resource represents the lock it self.
@@ -69,7 +62,20 @@ public interface NLockBuilder extends NComponent {
      *
      * @return lock resource
      */
-    Object getResource();
+    Object resource();
+
+    @NSetter
+    NLockBuilder resource(NPath source);
+
+    /**
+     * update source
+     *
+     * @param source source
+     * @return {@code this} instance
+     */
+    @NSetter
+    NLockBuilder source(Object source);
+
 
     /**
      * update resource
@@ -77,7 +83,8 @@ public interface NLockBuilder extends NComponent {
      * @param source resource
      * @return {@code this} instance
      */
-    NLockBuilder setResource(File source);
+    @NSetter
+    NLockBuilder resource(File source);
 
     /**
      * update resource
@@ -85,7 +92,8 @@ public interface NLockBuilder extends NComponent {
      * @param source resource
      * @return {@code this} instance
      */
-    NLockBuilder setResource(Path source);
+    @NSetter
+    NLockBuilder resource(Path source);
 
     /**
      * update resource
@@ -93,7 +101,8 @@ public interface NLockBuilder extends NComponent {
      * @param source resource
      * @return {@code this} instance
      */
-    NLockBuilder setResource(Object source);
+    @NSetter
+    NLockBuilder resource(Object source);
 
 
     /**

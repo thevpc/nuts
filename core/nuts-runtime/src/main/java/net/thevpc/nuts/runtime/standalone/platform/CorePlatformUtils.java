@@ -37,6 +37,7 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.platform.NOsFamily;
 
@@ -177,8 +178,8 @@ public class CorePlatformUtils {
             try {
                 osVersion.append(
                         NExec.of().system()
-                                .setCommand("uname", "-r")
-                                .sleepMillis(50)
+                                .command("uname", "-r")
+                                .sleepDuration(NDuration.ofMillis(50))
                                 .getGrabbedAllString()
                 );
             } catch (Exception e) {
@@ -329,7 +330,7 @@ public class CorePlatformUtils {
             String like = m.get("like");
             String codename = m.get("codename");
             if (!NBlankable.isBlank(distId)) {
-                return NIdBuilder.of(null, distId).setVersion(distVersion).setProperty("like", like).setProperty("codename", codename).build();
+                return NIdBuilder.of(null, distId).version(distVersion).setProperty("like", like).setProperty("codename", codename).build();
             }
         }
         return null;

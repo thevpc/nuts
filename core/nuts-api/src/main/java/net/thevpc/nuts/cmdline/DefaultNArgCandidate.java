@@ -61,7 +61,7 @@ public class DefaultNArgCandidate implements Serializable, NArgCandidate {
      * @return argument value
      */
     @Override
-    public String getValue() {
+    public String value() {
         return value;
     }
 
@@ -71,7 +71,7 @@ public class DefaultNArgCandidate implements Serializable, NArgCandidate {
      * @return human display
      */
     @Override
-    public String getDisplay() {
+    public String display() {
         return display;
     }
 

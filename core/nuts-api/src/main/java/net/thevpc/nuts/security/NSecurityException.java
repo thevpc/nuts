@@ -72,7 +72,7 @@ public class NSecurityException extends SecurityException implements NSessionAwa
     }
 
     @Override
-    public NMsg getFormattedMessage() {
+    public NMsg formattedMessage() {
         return formattedMessage;
     }
 
@@ -81,11 +81,11 @@ public class NSecurityException extends SecurityException implements NSessionAwa
      *
      * @return current workspace
      */
-    public NWorkspace getWorkspace() {
+    public NWorkspace workspace() {
         return session.getWorkspace();
     }
 
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 }

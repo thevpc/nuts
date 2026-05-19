@@ -2,6 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,11 +58,13 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
     /**
      * Returns the overall load factor of the host (0.0–1.0).
      */
-    public float getHostLoadFactor() {
+    @NGetter
+    public float hostLoadFactor() {
         return hostLoadFactor;
     }
 
-    public NWorkBalancerHostLoadMetrics setHostLoadFactor(float hostLoadFactor) {
+    @NSetter
+    public NWorkBalancerHostLoadMetrics hostLoadFactor(float hostLoadFactor) {
         this.hostLoadFactor = hostLoadFactor;
         return this;
     }
@@ -68,11 +72,13 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
     /**
      * Returns the CPU load of the host, if available.
      */
-    public float getHostCpuLoad() {
+    @NGetter
+    public float hostCpuLoad() {
         return hostCpuLoad;
     }
 
-    public NWorkBalancerHostLoadMetrics setHostCpuLoad(float hostCpuLoad) {
+    @NSetter
+    public NWorkBalancerHostLoadMetrics hostCpuLoad(float hostCpuLoad) {
         this.hostCpuLoad = hostCpuLoad;
         return this;
     }
@@ -80,11 +86,13 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
     /**
      * Returns the memory load of the host, if available.
      */
-    public float getHostMemoryLoad() {
+    @NGetter
+    public float hostMemoryLoad() {
         return hostMemoryLoad;
     }
 
-    public NWorkBalancerHostLoadMetrics setHostMemoryLoad(float hostMemoryLoad) {
+    @NSetter
+    public NWorkBalancerHostLoadMetrics hostMemoryLoad(float hostMemoryLoad) {
         this.hostMemoryLoad = hostMemoryLoad;
         return this;
     }
@@ -92,11 +100,13 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
     /**
      * Returns the measured latency of the host in milliseconds, if available.
      */
-    public long getHostLatency() {
+    @NGetter
+    public long hostLatency() {
         return hostLatency;
     }
 
-    public NWorkBalancerHostLoadMetrics setHostLatency(long hostLatency) {
+    @NSetter
+    public NWorkBalancerHostLoadMetrics hostLatency(long hostLatency) {
         this.hostLatency = hostLatency;
         return this;
     }
@@ -104,11 +114,13 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
     /**
      * Returns custom user-defined metrics.
      */
-    public Map<String, NElement> getCustomMetrics() {
+    @NGetter
+    public Map<String, NElement> customMetrics() {
         return customMetrics;
     }
 
-    public NWorkBalancerHostLoadMetrics setCustomMetrics(Map<String, NElement> customMetrics) {
+    @NSetter
+    public NWorkBalancerHostLoadMetrics customMetrics(Map<String, NElement> customMetrics) {
         this.customMetrics = customMetrics;
         return this;
     }

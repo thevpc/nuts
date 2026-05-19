@@ -167,7 +167,7 @@ public class NExceptionHandler {
             return this;
         }
         setSession(NSessionAwareExceptionBase.resolveSession(ex).orNull());
-        messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::getFormattedMessage)
+        messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::formattedMessage)
                 .orNull();
         messageString = NExceptions.getErrorMessage(ex);
         if (getOut() == null) {

@@ -26,8 +26,8 @@ public class TestSpecial_ExecURLTest {
 
 
     private void printlnNode(NDependencyTreeNode d, String s) {
-        TestUtils.println(s+d.getDependency());
-        for (NDependencyTreeNode child : d.getChildren()) {
+        TestUtils.println(s+d.dependency());
+        for (NDependencyTreeNode child : d.children()) {
             printlnNode(child,"  ");
         }
     }

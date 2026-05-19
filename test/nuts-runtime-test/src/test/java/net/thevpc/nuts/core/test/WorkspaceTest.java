@@ -136,12 +136,12 @@ public class WorkspaceTest {
                 NPath.of(new File(base, new File(wsPath).getName())),
                 NPath.of(NStoreKey.ofCache())
         );
-        NRepository localRepo = ws.getRepositories().stream().filter(x -> x.getName().equals("local")).findFirst().get();
+        NRepository localRepo = ws.getRepositories().stream().filter(x -> x.name().equals("local")).findFirst().get();
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
-                        + localRepo.getName()
-                        + "/" + localRepo.getUuid()
+                        + localRepo.name()
+                        + "/" + localRepo.uuid()
                 )),
                 localRepo.config().getStoreLocation(NStoreType.CACHE));
     }
@@ -443,11 +443,11 @@ public class WorkspaceTest {
         if (NDI_COMPANIONS > 0) {
             NId nshId = null;
             try {
-                nshId = NSearch.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
+                nshId = NSearch.of("nsh").definitionFilter(NDefinitionFilters.of().byInstalled(true))
                         .distinct(true).getResultIds()
                         .findSingleton().get();
             } catch (Exception ex) {
-                nshId = NSearch.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
+                nshId = NSearch.of("nsh").definitionFilter(NDefinitionFilters.of().byInstalled(true))
                         .distinct(true).getResultIds()
                         .findSingleton().get();
             }

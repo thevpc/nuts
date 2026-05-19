@@ -63,15 +63,15 @@ public class NDefaultClassLoaderNode implements NClassLoaderNode {
         return enabled;
     }
 
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
-    public URL getURL() {
+    public URL url() {
         return url;
     }
 
-    public List<NClassLoaderNode> getDependencies() {
+    public List<NClassLoaderNode> dependencies() {
         return dependencies;
     }
 

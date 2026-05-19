@@ -26,6 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
@@ -90,21 +91,24 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return string representation (or $ var) that can be evaluated as 'true'
      */
-    String getOptional();
+    @NGetter
+    String optional();
 
     /**
      * get scope string value (may be $ var).
      *
      * @return scope string value (may be $ var)
      */
-    String getScope();
+    @NGetter
+    String scope();
 
     /**
      * get classifier string value (may be $ var)
      *
      * @return classifier string
      */
-    String getClassifier();
+    @NGetter
+    String classifier();
 
     /**
      * convert to NutsId
@@ -118,7 +122,8 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return repository
      */
-    String getRepository();
+    @NGetter
+    String repository();
 
 
     /**
@@ -126,14 +131,16 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return artifact group id (aka groupId in maven)
      */
-    String getGroupId();
+    @NGetter
+    String groupId();
 
     /**
      * return artifact id (aka artifactId)
      *
      * @return artifact id (aka artifactId in maven)
      */
-    String getArtifactId();
+    @NGetter
+    String artifactId();
 
     /**
      * return dependency full name in the form
@@ -141,7 +148,8 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return return dependency short name
      */
-    String getShortName();
+    @NGetter
+    String shortName();
 
     /**
      * return dependency full name in the form
@@ -149,7 +157,8 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return return dependency long name
      */
-    String getLongName();
+    @NGetter
+    String longName();
 
     /**
      * return dependency full name in the form
@@ -157,25 +166,30 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return return dependency full name
      */
-    String getFullName();
+    @NGetter
+    String fullName();
 
     /**
      * return dependency version
      *
      * @return return dependency version
      */
-    NVersion getVersion();
+    @NGetter
+    NVersion version();
 
-    NEnvCondition getCondition();
+    @NGetter
+    NEnvCondition condition();
 
-    String getType();
+    @NGetter
+    String type();
 
     /**
      * dependency exclusions
      *
      * @return dependency exclusions
      */
-    List<NId> getExclusions();
+    @NGetter
+    List<NId> exclusions();
 
     /**
      * properties in the URL query form
@@ -183,7 +197,8 @@ public interface NDependency extends Serializable, NBlankable {
      * @return properties in the URL query form.
      * @since 0.5.7
      */
-    String getPropertiesQuery();
+    @NGetter
+    String propertiesQuery();
 
     /**
      * properties in the URL query form
@@ -191,6 +206,6 @@ public interface NDependency extends Serializable, NBlankable {
      * @return properties in the URL query form.
      * @since 0.5.7
      */
-    Map<String, String> getProperties();
+    Map<String, String> properties();
 
 }

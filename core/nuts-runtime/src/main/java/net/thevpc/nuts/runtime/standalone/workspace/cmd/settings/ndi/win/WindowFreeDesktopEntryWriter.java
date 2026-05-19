@@ -68,7 +68,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        String[] cmd = NCmdLine.parseDefault(root.getExec()).get().setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = NCmdLine.parseDefault(root.getExec()).get().expandSimpleOptions(false).toStringArray();
         List<String> categories = new ArrayList<>(root.getCategories());
         if (categories.isEmpty()) {
             categories.add("/");

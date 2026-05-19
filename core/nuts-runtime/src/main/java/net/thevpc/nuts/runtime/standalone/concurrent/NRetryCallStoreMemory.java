@@ -15,6 +15,6 @@ public class NRetryCallStoreMemory implements NRetryCallStore {
 
     @Override
     public void save(NRetryCallModel value) {
-        this.map.put(value.getId(), value);
+        this.map.put(value.id(), value);
     }
 }

@@ -65,13 +65,13 @@ public class DefaultNPush extends AbstractDefaultNPush {
     public NPush run() {
         NRepositoryFilter repositoryFilter = null;
         Map<NId, NDefinition> toProcess = new LinkedHashMap<>();
-        for (NId id : this.getIds()) {
+        for (NId id : this.ids()) {
             if (NStringUtils.trim(id.version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.version()));
             }
             NDefinition file = NFetch.of(id)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setTransitive(false).getResultDefinition();
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .transitive(false).getResultDefinition();
             NAssert.requireNamedNonNull(file, "content to push");
             toProcess.put(id, file);
         }
@@ -82,7 +82,7 @@ public class DefaultNPush extends AbstractDefaultNPush {
             NDefinition file = entry.getValue();
             NFetchMode fetchMode = this.isOffline() ? NFetchMode.LOCAL : NFetchMode.REMOTE;
             NWorkspaceUtils wu = NWorkspaceUtils.of();
-            if (NBlankable.isBlank(this.getRepository())) {
+            if (NBlankable.isBlank(this.repository())) {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
                 boolean ok = false;
@@ -100,7 +100,7 @@ public class DefaultNPush extends AbstractDefaultNPush {
                         try {
                             repoSPI.push().setId(id2)
                                     .setOffline(offline)
-                                    .setRepository(getRepository())
+                                    .setRepository(repository())
                                     .setArgs(args.toArray(new String[0]))
                                     .run();
                             ok = true;
@@ -115,14 +115,14 @@ public class DefaultNPush extends AbstractDefaultNPush {
                     throw new NPushException(id, NMsg.ofC(
                             "unable to push %s to repository %s : %s",
                             id == null ? "<null>" : id,
-                            this.getRepository(),
+                            this.repository(),
                             String.join("\n", errors)
                             ));
                 }
             } else {
-                NRepository repo = NWorkspace.of().getRepository(this.getRepository()).get();
+                NRepository repo = NWorkspace.of().getRepository(this.repository()).get();
                 if (!repo.config().isEnabled()) {
-                    throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
+                    throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.name()));
                 }
                 NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.descriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;

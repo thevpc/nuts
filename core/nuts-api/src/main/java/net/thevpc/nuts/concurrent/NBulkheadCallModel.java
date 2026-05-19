@@ -2,8 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
-
-import java.util.function.IntFunction;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 /**
  * Represents the configuration and runtime metadata of a bulkhead-protected call.
@@ -55,7 +55,8 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      *
      * @return bulkhead identifier
      */
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
@@ -65,7 +66,8 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      * @param id bulkhead identifier
      * @return this instance for chaining
      */
-    public NBulkheadCallModel setId(String id) {
+    @NSetter
+    public NBulkheadCallModel id(String id) {
         this.id = id;
         return this;
     }
@@ -76,7 +78,8 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      *
      * @return expiry duration
      */
-    public NDuration getPermitExpiry() {
+    @NGetter
+    public NDuration permitExpiry() {
         return permitExpiry;
     }
 
@@ -86,7 +89,8 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      * @param permitExpiry expiry duration
      * @return this instance for chaining
      */
-    public NBulkheadCallModel setPermitExpiry(NDuration permitExpiry) {
+    @NSetter
+    public NBulkheadCallModel permitExpiry(NDuration permitExpiry) {
         this.permitExpiry = permitExpiry;
         return this;
     }
@@ -96,7 +100,8 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      *
      * @return maximum concurrent calls
      */
-    public int getMaxConcurrent() {
+    @NGetter
+    public int maxConcurrent() {
         return maxConcurrent;
     }
 
@@ -106,7 +111,8 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      * @param maxConcurrent concurrency limit
      * @return this instance for chaining
      */
-    public NBulkheadCallModel setMaxConcurrent(int maxConcurrent) {
+    @NSetter
+    public NBulkheadCallModel maxConcurrent(int maxConcurrent) {
         this.maxConcurrent = maxConcurrent;
         return this;
     }
@@ -116,7 +122,8 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      *
      * @return associated callable
      */
-    public NCallable<?> getCaller() {
+    @NGetter
+    public NCallable<?> caller() {
         return caller;
     }
 
@@ -126,7 +133,8 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      * @param caller callable task
      * @return this instance for chaining
      */
-    public NBulkheadCallModel setCaller(NCallable<?> caller) {
+    @NSetter
+    public NBulkheadCallModel caller(NCallable<?> caller) {
         this.caller = caller;
         return this;
     }

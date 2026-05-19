@@ -347,16 +347,16 @@ public class DefaultNId implements NId {
             }
         }
         return NDependencyBuilder.of()
-                .setRepository(repository())
-                .setArtifactId(artifactId())
-                .setGroupId(groupId())
-                .setClassifier(classifier())
-                .setVersion(version())
-                .setScope(properties.get(NConstants.IdProperties.SCOPE))
-                .setOptional(properties.get(NConstants.IdProperties.OPTIONAL))
-                .setExclusions(a)
-                .setCondition(condition())
-                .setProperties(properties)
+                .repository(repository())
+                .artifactId(artifactId())
+                .groupId(groupId())
+                .classifier(classifier())
+                .version(version())
+                .scope(properties.get(NConstants.IdProperties.SCOPE))
+                .optional(properties.get(NConstants.IdProperties.OPTIONAL))
+                .exclusions(a)
+                .condition(condition())
+                .properties(properties)
                 .build()
                 ;
     }
@@ -395,11 +395,11 @@ public class DefaultNId implements NId {
 
     @Override
     public NId toAtLeast() {
-        return builder().setVersion(version().toAtMost()).build();
+        return builder().version(version().toAtMost()).build();
     }
 
     @Override
     public NId toAtMost() {
-        return builder().setVersion(version().toAtLeast()).build();
+        return builder().version(version().toAtLeast()).build();
     }
 }

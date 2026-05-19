@@ -247,7 +247,7 @@ public final class NReservedLangUtils {
     public static String inputString(String message, String title, Supplier<String> in, NLog bLog) {
         try {
             if (title == null) {
-                title = "Nuts Package Manager - " + Nuts.getVersion();
+                title = "Nuts Package Manager - " + Nuts.version();
             }
             String line = javax.swing.JOptionPane.showInputDialog(
                     null,

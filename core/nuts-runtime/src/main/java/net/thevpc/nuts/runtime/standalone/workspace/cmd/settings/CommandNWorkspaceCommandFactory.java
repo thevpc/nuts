@@ -26,18 +26,18 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     public void configure(NCommandFactoryConfig config) {
-        factoryId = config.getFactoryId();
+        factoryId = config.factoryId();
         factoryId = "command";
-        priority = config.getPriority();
+        priority = config.priority();
         if (priority <= 0) {
             priority = 1;
         }
-        Map<String, String> p = config.getParameters();
+        Map<String, String> p = config.parameters();
         if (p != null) {
             findCommand = validateCommand(p.get("find"));
             execCommand = validateCommand(p.get("exec"));
             String slistCommand = p.get("list");
-            listCommand = slistCommand == null ? new String[0] : NCmdLine.of(slistCommand, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray();
+            listCommand = slistCommand == null ? new String[0] : NCmdLine.of(slistCommand, NShellFamily.BASH).expandSimpleOptions(false).toStringArray();
             if (listCommand.length > 0 && !listCommand[0].contains(":")) {
                 listCommand = new String[0];
             }
@@ -58,7 +58,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         if (command == null) {
             return new String[0];
         }
-        String[] commandArr = NCmdLine.of(command, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray();
+        String[] commandArr = NCmdLine.of(command, NShellFamily.BASH).expandSimpleOptions(false).toStringArray();
         if (commandArr.length == 0) {
             return commandArr;
         }
@@ -101,10 +101,10 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             int r = exec.exitCode();
             if (r == 0) {
                 return new NCommandConfig()
-                        .setFactoryId(getFactoryId())
-                        .setOwner(NId.get(ec[0]).get())
-                        .setName(name)
-                        .setCommand(Arrays.copyOfRange(ec, 1, ec.length));
+                        .factoryId(getFactoryId())
+                        .owner(NId.get(ec[0]).get())
+                        .name(name)
+                        .command(Arrays.copyOfRange(ec, 1, ec.length));
             }
         }
         return null;
@@ -121,7 +121,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
                 for (String s : b.getGrabbedOutString().split("\n")) {
                     s = s.trim();
                     if (s.length() > 0) {
-                        c.add(new NCommandConfig().setName(s).setCommand(new String[]{NConstants.Ids.NSH, s}));
+                        c.add(new NCommandConfig().name(s).command(new String[]{NConstants.Ids.NSH, s}));
                     }
                 }
             }

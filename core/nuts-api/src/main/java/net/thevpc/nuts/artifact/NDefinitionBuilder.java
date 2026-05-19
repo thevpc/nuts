@@ -2,7 +2,9 @@ package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -14,47 +16,51 @@ public interface NDefinitionBuilder extends Serializable, Comparable<NDefinition
 
     NDefinition build();
 
-    String getRepositoryUuid();
+    @NGetter
+    String repositoryUuid();
 
-    String getRepositoryName();
+    @NGetter
+    String repositoryName();
 
-    NDefinitionBuilder setId(NId id);
+    @NSetter
+    NDefinitionBuilder id(NId id);
 
-    NId getId();
+    NId id();
 
     boolean isTemporary();
 
-    NDescriptor getDescriptor();
+    @NGetter
+    NDescriptor descriptor();
 
     NDefinitionBuilder copy();
 
-    NOptional<NPath> getContent();
+    NOptional<NPath> content();
 
-    NOptional<NDescriptor> getEffectiveDescriptor();
+    NOptional<NDescriptor> effectiveDescriptor();
 
-    NOptional<NInstallInformation> getInstallInformation();
+    NOptional<NInstallInformation> installInformation();
 
-    NOptional<NDependencies> getDependencies();
+    NOptional<NDependencies> dependencies();
 
-    NDefinitionBuilder setContent(NPath content);
+    NDefinitionBuilder content(NPath content);
 
-    NDefinitionBuilder setDescriptor(NDescriptor descriptor);
+    NDefinitionBuilder descriptor(NDescriptor descriptor);
 
-    NDefinitionBuilder setEffectiveFlags(Set<NDescriptorFlag> effectiveFlags);
+    NDefinitionBuilder effectiveFlags(Set<NDescriptorFlag> effectiveFlags);
 
-    NDefinitionBuilder setEffectiveDescriptor(NDescriptor effectiveDescriptor);
+    NDefinitionBuilder effectiveDescriptor(NDescriptor effectiveDescriptor);
 
-    NDefinitionBuilder setInstallInformation(NInstallInformation install);
+    NDefinitionBuilder installInformation(NInstallInformation install);
 
-    NDefinitionBuilder setDependencies(NDependencies dependencies);
+    NDefinitionBuilder dependencies(NDependencies dependencies);
 
-    NDefinitionBuilder setApiId(NId apiId);
+    NDefinitionBuilder apiId(NId apiId);
 
-    NId getApiId();
+    NId apiId();
 
-    NDefinitionBuilder setRepositoryUuid(String repositoryUuid);
+    NDefinitionBuilder repositoryUuid(String repositoryUuid);
 
-    NDefinitionBuilder setRepositoryName(String repositoryName);
+    NDefinitionBuilder repositoryName(String repositoryName);
 
-    NOptional<Set<NDescriptorFlag>> getEffectiveFlags();
+    NOptional<Set<NDescriptorFlag>> effectiveFlags();
 }

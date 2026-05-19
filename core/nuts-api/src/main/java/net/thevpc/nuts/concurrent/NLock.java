@@ -32,9 +32,7 @@ import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -50,23 +48,23 @@ import java.util.concurrent.locks.Lock;
  */
 public interface NLock extends Lock, NDescribable {
     static NLock of(Object source) {
-        return NLockBuilder.of().setSource(source).build();
+        return NLockBuilder.of().source(source).build();
     }
 
     static NLock ofPath(NPath source) {
-        return NLockBuilder.of().setSource(source).build();
+        return NLockBuilder.of().source(source).build();
     }
 
     static NLock ofPathCompanion(NPath source) {
-        return NLockBuilder.of().setSource(source).setResource(source.resolveSibling(source.name() + ".lock")).build();
+        return NLockBuilder.of().source(source).resource(source.resolveSibling(source.name() + ".lock")).build();
     }
 
     static NLock ofResource(Object resource) {
-        return NLockBuilder.of().setResource(resource).build();
+        return NLockBuilder.of().resource(resource).build();
     }
 
     static NLock ofId(NId id) {
-        if (NWorkspace.of().getBootOptions().getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
+        if (NWorkspace.of().getBootOptions().isolationLevel().orNull() == NIsolationLevel.MEMORY) {
             return of(id.longId());
         } else {
             return ofIdPath(id, NStoreScope.WORKSPACE);
@@ -81,11 +79,13 @@ public interface NLock extends Lock, NDescribable {
         if(NBlankable.isBlank(path)){
             path="nuts-" + NStringUtils.firstNonBlankTrimmed(id.face(), "content") + ".lock";
         }
-        return NLockBuilder.of().setSource(id.longId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
+        return NLockBuilder.of().source(id.longId()).resource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
     }
 
+    @NGetter
     boolean isLocked();
 
+    @NGetter
     boolean isHeldByCurrentThread();
 
     void runWith(Runnable runnable);

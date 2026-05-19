@@ -72,13 +72,13 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     @Override
     public void startWorkspace() {
         NWorkspace workspace = NWorkspace.of();
-        boolean initializeScripts = workspace.getBootOptions().getInitScripts().onEmpty(true).get();
-        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().onEmpty(true).get();
-        Boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
+        boolean initializeScripts = workspace.getBootOptions().initScripts().onEmpty(true).get();
+        boolean initializeLaunchers = workspace.getBootOptions().initLaunchers().onEmpty(true).get();
+        Boolean installCompanions = workspace.getBootOptions().installCompanions().orElse(false);
 
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetch.of().setId(workspace.getApiId())
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+            NId api = NFetch.of().id(workspace.getApiId())
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
                     .failFast(false).getResultId();
             if (api != null) {
                 NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();

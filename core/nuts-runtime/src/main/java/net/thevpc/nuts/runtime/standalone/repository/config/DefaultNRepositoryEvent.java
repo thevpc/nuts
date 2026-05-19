@@ -55,37 +55,37 @@ public class DefaultNRepositoryEvent implements NRepositoryEvent {
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 
     @Override
-    public NWorkspace getWorkspace() {
-        return getSession().getWorkspace();
+    public NWorkspace workspace() {
+        return session().getWorkspace();
     }
 
     @Override
-    public NRepository getParent() {
+    public NRepository parent() {
         return parent;
     }
 
     @Override
-    public NRepository getRepository() {
+    public NRepository repository() {
         return repository;
     }
 
     @Override
-    public String getPropertyName() {
+    public String propertyName() {
         return propertyName;
     }
 
     @Override
-    public Object getPropertyOldValue() {
+    public Object propertyOldValue() {
         return propertyOldValue;
     }
 
     @Override
-    public Object getPropertyValue() {
+    public Object propertyValue() {
         return propertyValue;
     }
 }

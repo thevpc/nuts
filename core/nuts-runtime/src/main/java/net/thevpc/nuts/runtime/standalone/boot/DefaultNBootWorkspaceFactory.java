@@ -61,7 +61,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             bOptions=new NBootOptionsInfo();
         }
         NBootOptions info2=new DefaultNBootOptionsBuilder(bOptions).build();
-        String workspaceLocation = info2.getWorkspace().orNull();
+        String workspaceLocation = info2.workspace().orNull();
         if(workspaceLocation!=null && workspaceLocation.matches("[a-z-]+://.*")){
             String protocol=workspaceLocation.substring(0,workspaceLocation.indexOf("://"));
             switch (protocol){
@@ -85,24 +85,24 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             NApp.of().id(workspace.getApiId());
             NLog.of(NBootWorkspaceImpl.class).log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2)).asConfig().withIntent(NMsgIntent.SUCCESS));
             NExec execCmd = NExec.of()
-                    .executionType(info2.getExecutionType().orNull())
-                    .runAs(info2.getRunAs().orNull())
+                    .executionType(info2.executionType().orNull())
+                    .runAs(info2.runAs().orNull())
                     .failFast(true);
-            List<String> executorOptions = info2.getExecutorOptions().orNull();
+            List<String> executorOptions = info2.executorOptions().orNull();
             if (executorOptions != null) {
                 execCmd.configure(true, executorOptions.toArray(new String[0]));
             }
-            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
+            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).expandSimpleOptions(false);
             while (executorOptionsCmdLine.hasNext()) {
                 execCmd.configureLast(executorOptionsCmdLine);
             }
-            if (info2.getApplicationArguments().get().isEmpty()) {
-                if (info2.getSkipWelcome().orElse(false)) {
+            if (info2.applicationArguments().get().isEmpty()) {
+                if (info2.skipWelcome().orElse(false)) {
                     return;
                 }
                 execCmd.addCommand("welcome");
             } else {
-                execCmd.addCommand(info2.getApplicationArguments().get());
+                execCmd.addCommand(info2.applicationArguments().get());
             }
             execCmd.run();
         });
@@ -110,9 +110,9 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
     }
 
     private String getRunModeString(NBootOptions options) {
-        if (options.getReset().orElse(false)) {
+        if (options.reset().orElse(false)) {
             return "reset";
-        } else if (options.getRecover().orElse(false)) {
+        } else if (options.recover().orElse(false)) {
             return "recover";
         } else {
             return "exec";

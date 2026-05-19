@@ -42,16 +42,16 @@ public class DefaultCustomCommandsModel {
 
     public void addFactory(NCommandFactoryConfig commandFactoryConfig) {
 //        session = CoreNutsUtils.validate(session, workspace);
-        if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
+        if (commandFactoryConfig == null || commandFactoryConfig.factoryId() == null || commandFactoryConfig.factoryId().isEmpty() || !commandFactoryConfig.factoryId().trim().equals(commandFactoryConfig.factoryId())) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid WorkspaceCommandFactory %s", commandFactoryConfig));
         }
         for (NWorkspaceCmdFactory factory : commandFactories) {
-            if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
+            if (commandFactoryConfig.factoryId().equals(factory.getFactoryId())) {
                 throw new NIllegalArgumentException(NMsg.ofC("factory already registered : %s", factory.getFactoryId()));
             }
         }
         NWorkspaceCmdFactory f = null;
-        if (NBlankable.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
+        if (NBlankable.isBlank(commandFactoryConfig.factoryType()) || "command".equals(commandFactoryConfig.factoryType().trim())) {
             f = new CommandNWorkspaceCommandFactory();
         }
         if (f != null) {
@@ -71,17 +71,17 @@ public class DefaultCustomCommandsModel {
         }
         NCommandFactoryConfig oldCommandFactory = null;
         for (NCommandFactoryConfig commandFactory : commandFactories) {
-            if (f == null || commandFactory.getFactoryId().equals(f.getFactoryId())) {
+            if (f == null || commandFactory.factoryId().equals(f.getFactoryId())) {
                 oldCommandFactory = commandFactory;
             }
         }
         if (oldCommandFactory == null) {
             commandFactories.add(commandFactoryConfig);
         } else if (oldCommandFactory != commandFactoryConfig) {
-            oldCommandFactory.setFactoryId(commandFactoryConfig.getFactoryId());
-            oldCommandFactory.setFactoryType(commandFactoryConfig.getFactoryType());
-            oldCommandFactory.setParameters(commandFactoryConfig.getParameters() == null ? null : new LinkedHashMap<>(commandFactoryConfig.getParameters()));
-            oldCommandFactory.setPriority(commandFactoryConfig.getPriority());
+            oldCommandFactory.factoryId(commandFactoryConfig.factoryId());
+            oldCommandFactory.factoryType(commandFactoryConfig.factoryType());
+            oldCommandFactory.parameters(commandFactoryConfig.parameters() == null ? null : new LinkedHashMap<>(commandFactoryConfig.parameters()));
+            oldCommandFactory.priority(commandFactoryConfig.priority());
         }
         NWorkspaceExt.of(workspace)
                 .getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
@@ -111,7 +111,7 @@ public class DefaultCustomCommandsModel {
         if (_commandFactories != null) {
             for (Iterator<NCommandFactoryConfig> iterator = _commandFactories.iterator(); iterator.hasNext(); ) {
                 NCommandFactoryConfig commandFactory = iterator.next();
-                if (factoryId.equals(commandFactory.getFactoryId())) {
+                if (factoryId.equals(commandFactory.factoryId())) {
                     return true;
                 }
             }
@@ -144,7 +144,7 @@ public class DefaultCustomCommandsModel {
         if (_commandFactories != null) {
             for (Iterator<NCommandFactoryConfig> iterator = _commandFactories.iterator(); iterator.hasNext(); ) {
                 NCommandFactoryConfig commandFactory = iterator.next();
-                if (factoryId.equals(commandFactory.getFactoryId())) {
+                if (factoryId.equals(commandFactory.factoryId())) {
                     removeMeConfig = commandFactory;
                     iterator.remove();
                     NWorkspaceExt.of(workspace).getConfigModel()
@@ -164,17 +164,17 @@ public class DefaultCustomCommandsModel {
 
     public boolean add(NCommandConfig command) {
         if (command == null
-                || NBlankable.isBlank(command.getName())
-                || command.getName().contains(" ") || command.getName().contains(".")
-                || command.getName().contains("/") || command.getName().contains("\\")
-                || command.getCommand() == null
-                || command.getCommand().size() == 0) {
+                || NBlankable.isBlank(command.name())
+                || command.name().contains(" ") || command.name().contains(".")
+                || command.name().contains("/") || command.name().contains("\\")
+                || command.command() == null
+                || command.command().size() == 0) {
             throw new NIllegalArgumentException(
-                    NMsg.ofC("invalid command %s", (command == null ? "<NULL>" : command.getName()))
+                    NMsg.ofC("invalid command %s", (command == null ? "<NULL>" : command.name()))
             );
         }
-        NCommandConfig oldCommand = defaultCommandFactory.findCommand(command.getName());
-        find(command.getName());
+        NCommandConfig oldCommand = defaultCommandFactory.findCommand(command.name());
+        find(command.name());
         if (oldCommand != null) {
             if (oldCommand.equals(command)) {
                 return false;
@@ -183,7 +183,7 @@ public class DefaultCustomCommandsModel {
                     .defaultValue(false)
                     .forBoolean(NMsg.ofC("override existing command %s ?",
                             NText.ofStyled(
-                                    command.getName(), NTextStyle.primary1()
+                                    command.name(), NTextStyle.primary1()
                             ))
                     ).booleanValue()) {
                 update(command);
@@ -199,7 +199,7 @@ public class DefaultCustomCommandsModel {
                 NTexts text = NTexts.of();
                 out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("install", NTextStyle.success()),
-                        text.ofStyled(command.getName(), NTextStyle.primary3())));
+                        text.ofStyled(command.name(), NTextStyle.primary3())));
             }
             return true;
         }
@@ -207,21 +207,21 @@ public class DefaultCustomCommandsModel {
 
     public boolean update(NCommandConfig command) {
         if (command == null
-                || NBlankable.isBlank(command.getName())
-                || command.getName().contains(" ") || command.getName().contains(".")
-                || command.getName().contains("/") || command.getName().contains("\\")
-                || command.getCommand() == null
-                || command.getCommand().size() == 0) {
+                || NBlankable.isBlank(command.name())
+                || command.name().contains(" ") || command.name().contains(".")
+                || command.name().contains("/") || command.name().contains("\\")
+                || command.command() == null
+                || command.command().size() == 0) {
             throw new NIllegalArgumentException(
-                    NMsg.ofC("invalid command %s", (command == null ? "<NULL>" : command.getName()))
+                    NMsg.ofC("invalid command %s", (command == null ? "<NULL>" : command.name()))
             );
         }
-        NCommandConfig oldCommand = defaultCommandFactory.findCommand(command.getName());
+        NCommandConfig oldCommand = defaultCommandFactory.findCommand(command.name());
         if (oldCommand != null) {
             if (oldCommand.equals(command)) {
                 return false;
             }
-            defaultCommandFactory.uninstallCommand(command.getName());
+            defaultCommandFactory.uninstallCommand(command.name());
             defaultCommandFactory.installCommand(command);
             NSession session = workspace.currentSession();
             if (session.isPlainTrace()) {
@@ -229,12 +229,12 @@ public class DefaultCustomCommandsModel {
                 NTexts text = NTexts.of();
                 out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("update ", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
-                        text.ofStyled(command.getName(), NTextStyle.primary3())));
+                        text.ofStyled(command.name(), NTextStyle.primary3())));
             }
             return true;
         } else {
             throw new NIllegalArgumentException(
-                    NMsg.ofC("command not found %s", command.getName())
+                    NMsg.ofC("command not found %s", command.name())
             );
         }
     }
@@ -283,12 +283,12 @@ public class DefaultCustomCommandsModel {
     public List<NCustomCmd> findAll() {
         HashMap<String, NCustomCmd> all = new HashMap<>();
         for (NCommandConfig command : defaultCommandFactory.findCommands()) {
-            all.put(command.getName(), toDefaultNWorkspaceCommand(command));
+            all.put(command.name(), toDefaultNWorkspaceCommand(command));
         }
         for (NWorkspaceCmdFactory commandFactory : commandFactories) {
             for (NCommandConfig command : commandFactory.findCommands()) {
-                if (!all.containsKey(command.getName())) {
-                    all.put(command.getName(), toDefaultNWorkspaceCommand(command));
+                if (!all.containsKey(command.name())) {
+                    all.put(command.name(), toDefaultNWorkspaceCommand(command));
                 }
             }
         }
@@ -298,16 +298,16 @@ public class DefaultCustomCommandsModel {
     public List<NCustomCmd> findByOwner(NId id) {
         HashMap<String, NCustomCmd> all = new HashMap<>();
         for (NCommandConfig command : defaultCommandFactory.findCommands(id)) {
-            all.put(command.getName(), toDefaultNWorkspaceCommand(command));
+            all.put(command.name(), toDefaultNWorkspaceCommand(command));
         }
         return new ArrayList<>(all.values());
     }
 
     private NCustomCmd toDefaultNWorkspaceCommand(NCommandConfig c) {
-        if (c.getCommand() == null || c.getCommand().isEmpty()) {
+        if (c.command() == null || c.command().isEmpty()) {
 
             _LOG()
-                    .log(NMsg.ofC("invalid command definition '%s'. Missing command . Ignored", c.getName())
+                    .log(NMsg.ofC("invalid command definition '%s'. Missing command . Ignored", c.name())
                             .withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL)
                     );
             return null;
@@ -317,13 +317,13 @@ public class DefaultCustomCommandsModel {
 //            return null;
 //        }
         return new DefaultNCustomCommand()
-                .setCommand(c.getCommand())
-                .setFactoryId(c.getFactoryId())
-                .setOwner(c.getOwner())
-                .setExecutorOptions(c.getExecutorOptions())
-                .setName(c.getName())
-                .setHelpCommand(c.getHelpCommand())
-                .setHelpText(c.getHelpText());
+                .setCommand(c.command())
+                .setFactoryId(c.factoryId())
+                .setOwner(c.owner())
+                .setExecutorOptions(c.executorOptions())
+                .setName(c.name())
+                .setHelpCommand(c.helpCommand())
+                .setHelpText(c.helpText());
     }
 
     public NCommandFactoryConfig[] getFactories() {
@@ -335,13 +335,13 @@ public class DefaultCustomCommandsModel {
 
     public NCustomCmd find(String name, NId forId, NId forOwner) {
         NCustomCmd a = find(name);
-        if (a != null && a.getCommand() != null && a.getCommand().size() > 0) {
-            NId i = NId.get(a.getCommand().get(0)).orNull();
+        if (a != null && a.command() != null && a.command().size() > 0) {
+            NId i = NId.get(a.command().get(0)).orNull();
             if (i != null
                     && (forId == null
                     || i.shortName().equals(forId.artifactId())
                     || i.shortName().equals(forId.shortName()))
-                    && (forOwner == null || a.getOwner() != null && a.getOwner().shortName().equals(forOwner.shortName()))) {
+                    && (forOwner == null || a.owner() != null && a.owner().shortName().equals(forOwner.shortName()))) {
                 return a;
             }
         }

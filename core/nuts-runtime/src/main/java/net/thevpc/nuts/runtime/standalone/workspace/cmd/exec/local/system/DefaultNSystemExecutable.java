@@ -57,28 +57,28 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return null;
     }
 
     private ProcessExecHelper resolveExecHelper() {
         Map<String, String> e2 = null;
         NExec execCommand = getExecCommand();
-        Map<String, String> env1 = execCommand.getEnv();
+        Map<String, String> env1 = execCommand.env();
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
         return ProcessExecHelper.ofArgs(null,
-                execCommand.getCommand().toArray(new String[0]), e2,
-                execCommand.getDirectory() == null ? null : execCommand.getDirectory().toPath().get(),
+                execCommand.command().toArray(new String[0]), e2,
+                execCommand.directory() == null ? null : execCommand.directory().toPath().get(),
                 showCommand, true,
-                execCommand.getSleepMillis(),
-                execCommand.getIn(),
-                execCommand.getOut(),
-                execCommand.getErr(),
-                execCommand.getRunAs(),
+                execCommand.sleepDuration(),
+                execCommand.in(),
+                execCommand.out(),
+                execCommand.err(),
+                execCommand.runAs(),
                 executorOptions.toArray(new String[0]),
-                ExtraApiUtils.asBooleanOr(execCommand.getDry(), NSession.of().isDry())
+                ExtraApiUtils.asBooleanOr(execCommand.dry(), NSession.of().isDry())
         );
     }
 
@@ -90,18 +90,18 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
 
     @Override
-    public NText getHelpText() {
+    public NText helpText() {
         switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
-                        "No help available. Try " + getName() + " /help",
+                        "No help available. Try " + name() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
                         NText.ofStyled(
-                                "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
+                                "No help available. Try 'man " + name() + "' or '" + name() + " --help'",
                                 NTextStyle.error()
                         );
             }
@@ -110,7 +110,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public String toString() {
-        return getExecCommand().getRunAs() + " " + NCmdLine.of(cmd).toString();
+        return getExecCommand().runAs() + " " + NCmdLine.of(cmd).toString();
     }
 
 }

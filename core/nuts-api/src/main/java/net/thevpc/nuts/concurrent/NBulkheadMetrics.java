@@ -2,6 +2,7 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.util.NGetter;
 
 /**
  * Immutable snapshot of runtime metrics for a bulkhead.
@@ -63,38 +64,48 @@ public class NBulkheadMetrics implements NDescribable {
     }
 
     /** @return unique identifier of the bulkhead */
-    public String getBulkheadId() { return bulkheadId; }
+    @NGetter
+    public String bulkheadId() { return bulkheadId; }
 
     /** @return maximum number of concurrent calls allowed */
-    public int getMaxConcurrent() { return maxConcurrent; }
+    @NGetter
+    public int maxConcurrent() { return maxConcurrent; }
 
     /** @return number of currently active calls */
-    public int getActiveCalls() { return activeCalls; }
+    @NGetter
+    public int activeCalls() { return activeCalls; }
 
     /** @return number of free slots available for new calls */
-    public int getAvailableSlots() { return availableSlots; }
+    @NGetter
+    public int availableSlots() { return availableSlots; }
 
     /** @return total number of successfully acquired permits */
-    public long getTotalAcquired() { return totalAcquired; }
+    @NGetter
+    public long totalAcquired() { return totalAcquired; }
 
     /** @return total number of released permits */
-    public long getTotalReleased() { return totalReleased; }
+    @NGetter
+    public long totalReleased() { return totalReleased; }
 
     /** @return total number of rejected permit requests */
-    public long getTotalRejected() { return totalRejected; }
+    @NGetter
+    public long totalRejected() { return totalRejected; }
 
     /** @return maximum observed wait time in milliseconds */
-    public long getMaxWaitTimeMillis() { return maxWaitTimeMillis; }
+    @NGetter
+    public long maxWaitTimeMillis() { return maxWaitTimeMillis; }
 
     /** @return maximum observed hold time in milliseconds */
-    public long getMaxHoldTimeMillis() { return maxHoldTimeMillis; }
+    @NGetter
+    public long maxHoldTimeMillis() { return maxHoldTimeMillis; }
 
     /**
      * Computes the ratio of rejected calls to total attempted calls.
      *
      * @return rejection rate between {@code 0.0} and {@code 1.0}
      */
-    public double getRejectionRate() {
+    @NGetter
+    public double rejectionRate() {
         long total = totalAcquired + totalRejected;
         return total == 0 ? 0.0 : (double) totalRejected / total;
     }
@@ -102,8 +113,9 @@ public class NBulkheadMetrics implements NDescribable {
     /**
      * Indicates whether the bulkhead is fully saturated (no available slots).
      *
-     * @return {@code true} if {@link #getAvailableSlots()} equals zero
+     * @return {@code true} if {@link #availableSlots()} equals zero
      */
+    @NGetter
     public boolean isFull() {
         return availableSlots == 0;
     }
@@ -123,7 +135,7 @@ public class NBulkheadMetrics implements NDescribable {
                 .set("totalAcquired", totalAcquired)
                 .set("totalReleased", totalReleased)
                 .set("totalRejected", totalRejected)
-                .set("rejectionRate", getRejectionRate())
+                .set("rejectionRate", rejectionRate())
                 .set("maxWaitTimeMillis", maxWaitTimeMillis)
                 .set("maxHoldTimeMillis", maxHoldTimeMillis)
                 .build();

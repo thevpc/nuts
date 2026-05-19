@@ -64,7 +64,7 @@ public abstract class AbstractNIndexStore implements NIndexStore {
     }
 
     @Override
-    public NIndexStore setEnabled(boolean enabled) {
+    public NIndexStore enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
@@ -77,6 +77,6 @@ public abstract class AbstractNIndexStore implements NIndexStore {
     }
 
     public NWorkspace getWorkspace(){
-        return repository==null?null:repository.getWorkspace();
+        return repository==null?null:repository.workspace();
     }
 }

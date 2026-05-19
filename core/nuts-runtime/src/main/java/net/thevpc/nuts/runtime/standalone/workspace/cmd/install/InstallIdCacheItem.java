@@ -76,7 +76,7 @@ public class InstallIdCacheItem {
         if (definition == null) {
             definition = NSearch.of(id)
                     .failFast(true)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
                     .latest(true)
                     .getResultDefinitions()
                     .findFirst().get();
@@ -97,8 +97,8 @@ public class InstallIdCacheItem {
                     .setCached(false) // disable cache
                     .callWith(()-> NSearch.of(id)
                             .failFast(true)
-                            .setRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .repositoryFilter(NRepositoryFilters.of().installedRepo().neg())
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .latest(true)
                             .getResultDefinitions()
                             .findFirst().get());
@@ -106,7 +106,7 @@ public class InstallIdCacheItem {
         }else {
             definition = NSearch.of(id)
                     .failFast(true)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
                     .latest(true)
                     .getResultDefinitions()
                     .findFirst().get();

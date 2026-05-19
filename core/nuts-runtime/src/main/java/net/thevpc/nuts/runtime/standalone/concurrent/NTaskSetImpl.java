@@ -212,7 +212,7 @@ public class NTaskSetImpl implements NTaskSet {
     @Override
     public List<Throwable> errors() {
         return this.<Object>results().stream().filter(x->x.isError())
-                .map(x->x.getError())
+                .map(x->x.error())
                 .collect(Collectors.toList());
     }
 

@@ -116,7 +116,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
         try {
             //Path script = getScriptFile(name);
             NDefinition anyIdDef = NSearch.of().addId(getAnyId()).latest(true)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
                     .distinct(true)
                     .getResultDefinitions()
                     .findSingleton().get();

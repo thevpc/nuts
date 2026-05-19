@@ -10,7 +10,7 @@ public class NDetachedEmptyOptionalException extends RuntimeException implements
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("empty") : formattedMessage;
     }
 
-    public NMsg getFormattedMessage() {
+    public NMsg formattedMessage() {
         return formattedMessage;
     }
 }

@@ -65,14 +65,14 @@ public class DefaultNInstallInfo implements NInstallInformation {
     }
 
     public DefaultNInstallInfo(NInstallInformation other) {
-        this.id = other.getId();
-        this.installStatus = other.getInstallStatus();
-        this.installFolder = other.getInstallFolder();
-        this.createdDate = other.getCreatedInstant();
-        this.lasModifiedDate = other.getLastModifiedInstant();
-        this.installUser = other.getInstallUser();
-        this.sourceRepositoryName = other.getSourceRepositoryName();
-        this.sourceRepositoryUUID = other.getSourceRepositoryUUID();
+        this.id = other.id();
+        this.installStatus = other.installStatus();
+        this.installFolder = other.installFolder();
+        this.createdDate = other.createdInstant();
+        this.lasModifiedDate = other.lastModifiedInstant();
+        this.installUser = other.installUser();
+        this.sourceRepositoryName = other.sourceRepositoryName();
+        this.sourceRepositoryUUID = other.sourceRepositoryUUID();
         this.justInstalled = other.isJustInstalled();
         this.justRequired = other.isJustRequired();
     }
@@ -89,27 +89,27 @@ public class DefaultNInstallInfo implements NInstallInformation {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
     @Override
-    public Instant getCreatedInstant() {
+    public Instant createdInstant() {
         return createdDate;
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
+    public Instant lastModifiedInstant() {
         return lasModifiedDate;
     }
 
     @Override
     public boolean isDefaultVersion() {
-        return getInstallStatus().isDefaultVersion();
+        return installStatus().isDefaultVersion();
     }
 
     @Override
-    public NPath getInstallFolder() {
+    public NPath installFolder() {
         return installFolder;
     }
 
@@ -129,11 +129,11 @@ public class DefaultNInstallInfo implements NInstallInformation {
     }
 
     @Override
-    public String getInstallUser() {
+    public String installUser() {
         return installUser;
     }
 
-    public NInstallStatus getInstallStatus() {
+    public NInstallStatus installStatus() {
         return installStatus;
     }
 
@@ -144,12 +144,12 @@ public class DefaultNInstallInfo implements NInstallInformation {
     }
 
     @Override
-    public String getSourceRepositoryName() {
+    public String sourceRepositoryName() {
         return sourceRepositoryName;
     }
 
     @Override
-    public String getSourceRepositoryUUID() {
+    public String sourceRepositoryUUID() {
         return sourceRepositoryUUID;
     }
 

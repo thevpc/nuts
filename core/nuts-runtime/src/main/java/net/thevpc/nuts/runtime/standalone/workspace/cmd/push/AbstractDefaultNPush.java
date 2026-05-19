@@ -29,7 +29,6 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NPush;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.util.NScore;
@@ -158,7 +157,7 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> args() {
         return NCollections.unmodifiableList(args);
     }
 
@@ -194,12 +193,12 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return NCollections.unmodifiableList(ids);
     }
 
     @Override
-    public List<NId> getLockedIds() {
+    public List<NId> lockedIds() {
         return NCollections.unmodifiableList(lockedIds);
     }
 
@@ -209,18 +208,18 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
     }
 
     @Override
-    public NPush setOffline(boolean offline) {
+    public NPush offline(boolean offline) {
         this.offline = offline;
         return this;
     }
 
     @Override
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
     @Override
-    public NPush setRepository(String repository) {
+    public NPush repository(String repository) {
         this.repository = repository;
         return this;
     }
@@ -257,7 +256,7 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
         switch (a.key()) {
             case "-o":
             case "--offline": {
-                return cmdLine.matcher().matchFlag((v) -> setOffline(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> offline(v.booleanValue())).anyMatch();
             }
             case "-x":
             case "--freeze": {
@@ -270,7 +269,7 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
             case "-r":
             case "-repository":
             case "--from": {
-                return cmdLine.matcher().matchEntry((v) -> setRepository(v.stringValue())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> repository(v.stringValue())).anyMatch();
             }
             case "-g":
             case "--args": {

@@ -80,13 +80,13 @@ class NDependencyTreeNodeBuild {
             effDependency = dependency;
             if (parent == null) {
                 effDependency = dependency.builder()
-                        .setVersion(def.id().version())
+                        .version(def.id().version())
                         .build();
             } else {
                 effDependency = dependency.builder()
-                        .setScope(mavenNDependencySolver.combineScopes(parent.effDependency.getScope(), dependency.getScope()))
-                        .setVersion(def.id().version())
-                        .setProperty("provided-by", parent.id.toString())
+                        .scope(mavenNDependencySolver.combineScopes(parent.effDependency.scope(), dependency.scope()))
+                        .version(def.id().version())
+                        .property("provided-by", parent.id.toString())
                         .build();
             }
 //        this.id = def != null ? def.getId() : dependency != null ? dependency.toId() : null;
@@ -119,11 +119,11 @@ class NDependencyTreeNodeBuild {
     @Override
     public String toString() {
         NDependencyBuilder d = dependency.builder();
-        d.getCondition().setArch(new ArrayList<>());
-        d.getCondition().setOs(new ArrayList<>());
-        d.getCondition().setOsDist(new ArrayList<>());
-        d.getCondition().setDesktopEnvironment(new ArrayList<>());
-        d.getCondition().setPlatform(new ArrayList<>());
+        d.condition().arch(new ArrayList<>());
+        d.condition().os(new ArrayList<>());
+        d.condition().osDist(new ArrayList<>());
+        d.condition().desktopEnvironment(new ArrayList<>());
+        d.condition().platform(new ArrayList<>());
         return "NDependencyTreeNodeBuild{" +
                 "dependency=" + d.build() +
                 (provided ? (", provided=" + provided) : "") +
@@ -133,7 +133,7 @@ class NDependencyTreeNodeBuild {
     }
 
     NId getEffectiveId() {
-        return getEffectiveDescriptor().getId();
+        return getEffectiveDescriptor().id();
     }
 
     void setPreloadedDescriptor(NDescriptor descriptor) {
@@ -169,7 +169,7 @@ class NDependencyTreeNodeBuild {
     }
 
     public void addExclusions(NDependency dependency) {
-        for (NId exclusion : dependency.getExclusions()) {
+        for (NId exclusion : dependency.exclusions()) {
             this.exclusions.add(NDependencyInfo.normalizedId(exclusion));
         }
     }

@@ -9,7 +9,6 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NPrepareCmd;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
@@ -35,19 +34,19 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
     }
 
     @Override
-    public NPrepareCmd setTargetServer(String targetServer) {
+    public NPrepareCmd targetServer(String targetServer) {
         this.targetServer = targetServer;
         return this;
     }
 
     @Override
-    public NPrepareCmd setUserName(String userName) {
+    public NPrepareCmd userName(String userName) {
         this.userName = userName;
         return this;
     }
 
     @Override
-    public NPrepareCmd setVersion(String version) {
+    public NPrepareCmd version(String version) {
         this.version = version;
         return this;
     }
@@ -58,7 +57,7 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
     }
 
     @Override
-    public NPrepareCmd setIds(List<NId> ids) {
+    public NPrepareCmd ids(List<NId> ids) {
         if (this.ids == null) {
             this.ids = new ArrayList<>();
         } else {
@@ -101,9 +100,9 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
         }
         return cmdLine.matcher()
                 .matchAll((c)->super.configureFirst(cmdLine))
-                .with("--user").matchEntry((v) ->  setUserName(v.stringValue()))
-                .with("--target-server").matchEntry((v) ->  setTargetServer(v.stringValue()))
-                .with("--version").matchEntry((v) ->  setVersion(v.stringValue()))
+                .with("--user").matchEntry((v) ->  userName(v.stringValue()))
+                .with("--target-server").matchEntry((v) ->  targetServer(v.stringValue()))
+                .with("--version").matchEntry((v) ->  version(v.stringValue()))
                 .with("--target-home").matchEntry((v) ->  setTargetHome(v.stringValue()))
                 .anyMatch();
     }

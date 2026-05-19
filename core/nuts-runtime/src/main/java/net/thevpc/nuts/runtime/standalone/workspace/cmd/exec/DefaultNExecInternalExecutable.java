@@ -24,7 +24,7 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
 
     @Override
     public int execute() {
-        if (ExtraApiUtils.asBoolean(getExecCommand().getDry())) {
+        if (ExtraApiUtils.asBoolean(getExecCommand().dry())) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }

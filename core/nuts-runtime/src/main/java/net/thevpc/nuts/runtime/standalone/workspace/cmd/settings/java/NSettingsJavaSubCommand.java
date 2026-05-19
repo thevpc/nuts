@@ -64,7 +64,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                         }
                     }
                 }
-                cmdLine.setCommandName("config java").throwUnexpectedArgument();
+                cmdLine.commandName("config java").throwUnexpectedArgument();
                 if (autoSave) {
                     workspace.saveConfig(false);
                 }
@@ -126,7 +126,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             m.addHeaderRow(NText.ofPlain("Name"), NText.ofPlain("Version"), NText.ofPlain("Path"));
             while (cmdLine.hasNext()) {
                 //if (!t.configureFirst(cmdLine)) {
-                cmdLine.setCommandName("config list java").throwUnexpectedArgument();
+                cmdLine.commandName("config list java").throwUnexpectedArgument();
                 //}
             }
             if (cmdLine.isExecMode()) {

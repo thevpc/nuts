@@ -72,7 +72,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
             if ("zip".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
-            switch (NStringUtils.trim(def.descriptor().getPackaging())) {
+            switch (NStringUtils.trim(def.descriptor().packaging())) {
                 case "zip": {
                     return NScorable.DEFAULT_SCORE + 10;
                 }
@@ -83,12 +83,12 @@ public class ZipExecutorComponent implements NExecutorComponent {
 
     //@Override
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        NDefinition def = executionContext.getDefinition();
+        NDefinition def = executionContext.definition();
         HashMap<String, String> osEnv = new HashMap<>();
-        NArtifactCall executor = def.descriptor().getExecutor();
+        NArtifactCall executor = def.descriptor().executor();
         NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.id()));
-        List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
-        args.addAll(executionContext.getArguments());
+        List<String> args = new ArrayList<>(executionContext.executorOptions());
+        args.addAll(executionContext.arguments());
         if (executor.id() != null && !executor.id().toString().equals("exec")) {
             // TODO: delegate to another executor!
             throw new NIOException(NMsg.ofC("unsupported executor %s for %s", executor.id(), def.id()));
@@ -97,8 +97,8 @@ public class ZipExecutorComponent implements NExecutorComponent {
         return NExecHelper.ofDefinition(
                 def,
                 args.toArray(new String[0]), osEnv, directory, true,
-                true, executionContext.getSleepMillis(),
-                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(), executionContext.getRunAs()
+                true, executionContext.sleepDuration(),
+                executionContext.in(), executionContext.out(), executionContext.err(), executionContext.runAs()
         );
     }
 }

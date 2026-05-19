@@ -33,6 +33,8 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.File;
 import java.io.InputStream;
@@ -58,7 +60,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param stream content
      * @return {@code this} instance
      */
-    NDeploy setContent(InputStream stream);
+    NDeploy content(InputStream stream);
 
     /**
      * set content
@@ -67,7 +69,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NDeploy setContent(NPath path);
+    NDeploy content(NPath path);
 
     /**
      * set content
@@ -76,7 +78,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NDeploy setContent(byte[] content);
+    NDeploy content(byte[] content);
 
     /**
      * set content
@@ -84,7 +86,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param file content
      * @return {@code this} instance
      */
-    NDeploy setContent(File file);
+    NDeploy content(File file);
 
     /**
      * set content
@@ -92,7 +94,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param file content
      * @return {@code this} instance
      */
-    NDeploy setContent(Path file);
+    NDeploy content(Path file);
 
     /**
      * set content
@@ -100,7 +102,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param url content
      * @return {@code this} instance
      */
-    NDeploy setContent(URL url);
+    NDeploy content(URL url);
 
     /**
      * set descriptor
@@ -108,7 +110,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param stream descriptor
      * @return {@code this} instance
      */
-    NDeploy setDescriptor(InputStream stream);
+    NDeploy descriptor(InputStream stream);
 
     /**
      * set descriptor
@@ -116,7 +118,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param path descriptor
      * @return {@code this} instance
      */
-    NDeploy setDescriptor(Path path);
+    NDeploy descriptor(Path path);
 
     /**
      * set descriptor
@@ -124,7 +126,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param path descriptor
      * @return {@code this} instance
      */
-    NDeploy setDescriptor(String path);
+    NDeploy descriptor(String path);
 
     /**
      * set descriptor
@@ -132,7 +134,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param file descriptor
      * @return {@code this} instance
      */
-    NDeploy setDescriptor(File file);
+    NDeploy descriptor(File file);
 
     /**
      * set descriptor
@@ -140,7 +142,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param url descriptor
      * @return {@code this} instance
      */
-    NDeploy setDescriptor(URL url);
+    NDeploy descriptor(URL url);
 
     /**
      * set descriptor
@@ -148,14 +150,16 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param descriptor descriptor
      * @return {@code this} instance
      */
-    NDeploy setDescriptor(NDescriptor descriptor);
+    @NSetter
+    NDeploy descriptor(NDescriptor descriptor);
 
     /**
      * return content sha1 hash
      *
      * @return content sha1 hash
      */
-    String getSha1();
+    @NGetter
+    String sha1();
 
     /**
      * set content sha1 hash
@@ -163,7 +167,8 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param sha1 hash
      * @return {@code this} instance
      */
-    NDeploy setSha1(String sha1);
+    @NSetter
+    NDeploy sha1(String sha1);
 
     /**
      * set descriptor sha1 hash
@@ -171,7 +176,8 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param descSHA1 descriptor hash
      * @return {@code this} instance
      */
-    NDeploy setDescSha1(String descSHA1);
+    @NSetter
+    NDeploy descriptorSha1(String descSHA1);
 
     /**
      * set target repository to deploy to
@@ -179,7 +185,8 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param repository target repository to deploy to
      * @return {@code this} instance
      */
-    NDeploy setRepository(String repository);
+    @NSetter
+    NDeploy repository(String repository);
 
     /**
      * set target repository to deploy to
@@ -187,6 +194,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param repository target repository to deploy to
      * @return {@code this} instance
      */
+    @NSetter
     NDeploy to(String repository);
 
     /**
@@ -194,7 +202,7 @@ public interface NDeploy extends NWorkspaceCmd {
      *
      * @return target repository to deploy to
      */
-    String getTargetRepository();
+    String targetRepository();
 
     /**
      * set target repository to deploy to
@@ -202,7 +210,8 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param repository target repository to deploy to
      * @return {@code this} instance
      */
-    NDeploy setTargetRepository(String repository);
+    @NSetter
+    NDeploy targetRepository(String repository);
 
     /**
      * set source repository to deploy from the given ids
@@ -210,6 +219,7 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param repository source repository to deploy from
      * @return {@code this} instance
      */
+    @NSetter
     NDeploy from(String repository);
 
     /**
@@ -218,14 +228,16 @@ public interface NDeploy extends NWorkspaceCmd {
      * @param repository source repository to deploy from
      * @return {@code this} instance
      */
-    NDeploy setSourceRepository(String repository);
+    @NSetter
+    NDeploy sourceRepository(String repository);
 
     /**
      * return ids to deploy from source repository
      *
      * @return return ids to deploy from source repository
      */
-    List<NId> getIds();
+    @NGetter
+    List<NId> ids();
 
     /**
      * add id to deploy from source repository
@@ -307,9 +319,12 @@ public interface NDeploy extends NWorkspaceCmd {
      *
      * @return deploy result
      */
+    // not a getter
     List<NId> getResult();
 
-    NInputSource getContent();
+    @NGetter
+    NInputSource content();
 
-    NDeploy setContent(NInputSource content);
+    @NSetter
+    NDeploy content(NInputSource content);
 }

@@ -88,7 +88,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 case "META-INF/MANIFEST.MF": {
                     try {
                         metainf.setNonNull(NDescriptorParser.of()
-                                .setDescriptorStyle(NDescriptorStyle.MANIFEST)
+                                .descriptorStyle(NDescriptorStyle.MANIFEST)
                                 .parse(inputStream).orNull());
                     } finally {
                         inputStream.close();
@@ -98,7 +98,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 case ("META-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME): {
                     try {
                         nutsjson.setNonNull(NDescriptorParser.of()
-                                .setDescriptorStyle(NDescriptorStyle.NUTS)
+                                .descriptorStyle(NDescriptorStyle.NUTS)
                                 .parse(inputStream).get());
                     } finally {
                         inputStream.close();
@@ -116,7 +116,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                     } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json")) {
                         try {
                             nutsjson.setNonNull(NDescriptorParser.of()
-                                    .setDescriptorStyle(NDescriptorStyle.NUTS)
+                                    .descriptorStyle(NDescriptorStyle.NUTS)
                                     .parse(inputStream).get());
                         } finally {
                             inputStream.close();
@@ -137,8 +137,8 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         }
         String mainClassString = null;
         if (metainf.isSet()) {
-            if (metainf.get().getExecutor() != null) {
-                List<String> args = metainf.get().getExecutor().arguments();
+            if (metainf.get().executor() != null) {
+                List<String> args = metainf.get().executor().arguments();
                 for (int i = 0; i < args.size(); i++) {
                     String arg = args.get(i);
                     if (arg.startsWith("--main-class=")) {
@@ -157,7 +157,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         if (maven.isSet()) {
             baseNutsDescriptor = maven.get();
             if (!NBlankable.isBlank(mainClassString)) {
-                return baseNutsDescriptor.builder().setExecutor(
+                return baseNutsDescriptor.builder().executor(
                         new DefaultNArtifactCallBuilder()
                                 .id(JAVA)
                                 .arguments("--main-class=", mainClassString)
@@ -172,9 +172,9 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
             d.append(parserContext.getFullStream());
             String artifactId = d.getDigest();
             baseNutsDescriptor = new DefaultNDescriptorBuilder()
-                    .setId(NIdBuilder.of("temp",artifactId).setVersion("1.0").build())
+                    .id(NIdBuilder.of("temp",artifactId).version("1.0").build())
                     .addFlag(mainClassString != null ? NDescriptorFlag.EXEC : null)
-                    .setPackaging("jar")
+                    .packaging("jar")
                     .build();
         }
         boolean alwaysSelectAllMainClasses = false;

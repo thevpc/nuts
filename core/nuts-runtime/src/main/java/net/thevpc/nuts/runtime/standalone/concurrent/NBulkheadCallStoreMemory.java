@@ -19,10 +19,10 @@ public class NBulkheadCallStoreMemory implements NBulkheadCallStore {
 
     @Override
     public void save(NBulkheadCallModel value) {
-        if (value.getId() != null) {
-            values.put(value.getId(), value);
+        if (value.id() != null) {
+            values.put(value.id(), value);
         } else {
-            values.remove(value.getId());
+            values.remove(value.id());
         }
     }
 }

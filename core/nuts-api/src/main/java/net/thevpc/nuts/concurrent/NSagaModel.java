@@ -1,6 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 
@@ -41,29 +43,35 @@ public class NSagaModel implements Serializable, Cloneable, NCopiable {
     public NSagaModel() {
     }
 
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NSagaModel setId(String id) {
+    @NSetter
+    public NSagaModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public NSagaNodeModel getNode() {
+    @NGetter
+    public NSagaNodeModel node() {
         return node;
     }
 
-    public NSagaModel setNode(NSagaNodeModel node) {
+    @NSetter
+    public NSagaModel node(NSagaNodeModel node) {
         this.node = node;
         return this;
     }
 
-    public NSagaContextModel getContext() {
+    @NGetter
+    public NSagaContextModel context() {
         return context;
     }
 
-    public NSagaModel setContext(NSagaContextModel context) {
+    @NSetter
+    public NSagaModel context(NSagaContextModel context) {
         this.context = context;
         return this;
     }

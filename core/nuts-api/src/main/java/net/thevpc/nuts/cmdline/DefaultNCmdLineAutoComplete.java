@@ -38,12 +38,12 @@ public class DefaultNCmdLineAutoComplete extends NCmdLineAutoCompleteBase {
 
 
     @Override
-    public String getLine() {
+    public String line() {
         return line;
     }
 
     @Override
-    public List<String> getWords() {
+    public List<String> words() {
         return words;
     }
 
@@ -53,7 +53,7 @@ public class DefaultNCmdLineAutoComplete extends NCmdLineAutoCompleteBase {
     }
 
     @Override
-    public int getCurrentWordIndex() {
+    public int currentWordIndex() {
         return currentWordIndex;
     }
 

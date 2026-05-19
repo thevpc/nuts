@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.text.NMsg;
@@ -33,8 +32,8 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -61,7 +60,7 @@ public class DefaultNReflectType implements NReflectType {
 
 
     private final NReflectRepository repo;
-    private final NReflectPropertyAccessStrategy propertyAccessStrategy;
+    private final Set<NReflectPropertyAccessStrategy> propertyAccessStrategies;
     private final NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy;
     private ConstrHolder constrType;
     private ConstrHolder noArgConstr;
@@ -86,16 +85,58 @@ public class DefaultNReflectType implements NReflectType {
     public DefaultNReflectType(Type javaType, NReflectRepository repo) {
         this.javaType = javaType;
         this.repo = repo;
-        Class<?> c2 = asJavaClass().orNull();
-        this.propertyAccessStrategy = c2 == null ? NReflectPropertyAccessStrategy.ALL : this.repo.getConfiguration().getAccessStrategy(c2);
+        Class<?> c2 = javaClass().orNull();
+        this.propertyAccessStrategies = resolveAccessStrategies(c2, repo);
         this.propertyDefaultValueStrategy = c2 == null ? NReflectPropertyDefaultValueStrategy.BASE : this.repo.getConfiguration().getDefaultValueStrategy(c2);
     }
 
-    public NReflectPropertyAccessStrategy getAccessStrategy() {
-        return propertyAccessStrategy;
+
+    /**
+     * Resolves the effective access strategy set for a given class by walking
+     * up the hierarchy (BFS: class first, then interfaces), closest wins.
+     * Falls back to the repository's global default if nothing is found.
+     */
+    private static Set<NReflectPropertyAccessStrategy> resolveAccessStrategies(
+            Class<?> clazz,
+            NReflectRepository repo) {
+
+        if (clazz == null) {
+            Set<NReflectPropertyAccessStrategy> a = repo.getConfiguration().getDefaultAccessStrategies(clazz);
+            if (a == null || a.isEmpty()) {
+                return NReflectPropertyAccessStrategy.all();
+            }
+        }
+
+        // BFS queue: class before interfaces at each level
+        Queue<Class<?>> queue = new ArrayDeque<>();
+        queue.add(clazz);
+
+        while (!queue.isEmpty()) {
+            Class<?> current = queue.poll();
+            NReflectConfig cfg = current.getAnnotation(NReflectConfig.class);
+            if (cfg != null && cfg.strategy().length > 0) {
+                return EnumSet.copyOf(Arrays.asList(cfg.strategy()));
+            }
+            // class first, then interfaces
+            Class<?> superClass = current.getSuperclass();
+            if (superClass != null && superClass != Object.class) {
+                queue.add(superClass);
+            }
+            Collections.addAll(queue, current.getInterfaces());
+        }
+
+        Set<NReflectPropertyAccessStrategy> a = repo.getConfiguration().getDefaultAccessStrategies(clazz);
+        if (a == null || a.isEmpty()) {
+            return NReflectPropertyAccessStrategy.all();
+        }
+        return a;
     }
 
-    public NReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
+    public Set<NReflectPropertyAccessStrategy> accessStrategies() {
+        return Collections.unmodifiableSet(propertyAccessStrategies);
+    }
+
+    public NReflectPropertyDefaultValueStrategy defaultValueStrategy() {
         return propertyDefaultValueStrategy;
     }
 
@@ -103,13 +144,13 @@ public class DefaultNReflectType implements NReflectType {
      * @return direct declared properties
      */
     @Override
-    public List<NReflectProperty> getDeclaredProperties() {
+    public List<NReflectProperty> declaredProperties() {
         build();
         return propertiesDeclaredList;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return javaType.getTypeName();
     }
 
@@ -117,7 +158,7 @@ public class DefaultNReflectType implements NReflectType {
      * @return all (including inherited) declared properties
      */
     @Override
-    public List<NReflectProperty> getProperties() {
+    public List<NReflectProperty> properties() {
         build();
         return propertiesAllList;
     }
@@ -125,7 +166,7 @@ public class DefaultNReflectType implements NReflectType {
     @Override
     public NOptional<NReflectProperty> getProperty(String name) {
         build();
-        return NOptional.ofNamed(propertiesAllMap.get(name), "property " + getName() + "::" + name);
+        return NOptional.ofNamed(propertiesAllMap.get(name), "property " + name() + "::" + name);
     }
 
     @Override
@@ -141,7 +182,7 @@ public class DefaultNReflectType implements NReflectType {
     private Supplier<Object> resolveNoArgsConstr() {
         if (noArgConstr == null) {
             Supplier<Object> instanceSupplier = null;
-            Class<?> jc = asJavaClass().orNull();
+            Class<?> jc = javaClass().orNull();
             if (jc != null) {
                 if (!jc.isInterface()) {
                     int m = jc.getModifiers();
@@ -167,7 +208,7 @@ public class DefaultNReflectType implements NReflectType {
         return noArgConstr.supplier;
     }
 
-    public NOptional<Class<?>> asJavaClass() {
+    public NOptional<Class<?>> javaClass() {
         Class c2;
         if (javaType instanceof Class<?>) {
             return NOptional.of((Class) javaType);
@@ -264,7 +305,7 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NReflectType getRawType() {
+    public NReflectType rawType() {
         if (javaType instanceof ParameterizedType) {
             return repo.getType(((ParameterizedType) javaType).getRawType());
         }
@@ -280,7 +321,7 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NReflectType getSuperType() {
+    public NReflectType superType() {
         if (javaType instanceof Class<?>) {
             Type superclass = ((Class<?>) javaType).getGenericSuperclass();
             return superclass == null ? null : repo.getType(superclass);
@@ -293,16 +334,16 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NReflectType[] getInterfaces() {
+    public List<NReflectType> interfaces() {
         if (javaType instanceof Class<?>) {
             Type[] all = ((Class<?>) javaType).getGenericInterfaces();
-            return Arrays.stream(all).map(x -> repo.getType(x)).toArray(NReflectType[]::new);
+            return Arrays.stream(all).map(x -> repo.getType(x)).collect(Collectors.toList());
         }
 //        if (javaType instanceof ParameterizedType) {
 //            Type rt = ((ParameterizedType) javaType).getRawType();
 //            return repo.getType(rt).replaceVars(x -> getActualTypeArgument(x).orElse(x));
 //        }
-        return new NReflectType[0];
+        return Collections.emptyList();
     }
 
     private synchronized Object _cleanInstance() {
@@ -333,27 +374,27 @@ public class DefaultNReflectType implements NReflectType {
             Set<String> ambiguousWrites = new HashSet<>();
             int hierarchyIndex = 0;
 
-            fillProperties(hierarchyIndex, javaType, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategy, propertyDefaultValueStrategy);
+            fillProperties(hierarchyIndex, javaType, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategies, propertyDefaultValueStrategy);
             allProperties.putAll(declaredProperties);
 
             fillMethods(hierarchyIndex, javaType, declaredMethods);
             allMethods.putAll(declaredMethods);
 
-            NReflectType parent = getSuperType();
+            NReflectType parent = superType();
             while (parent != null) {
                 hierarchyIndex++;
-                for (NReflectProperty property : parent.getProperties()) {
+                for (NReflectProperty property : parent.properties()) {
                     if (!allProperties.containsKey(property.getName())) {
                         allProperties.put(property.getName(), new IndexedItem<>(hierarchyIndex, property));
                     }
                 }
-                for (NReflectMethod m : parent.getDeclaredMethods()) {
+                for (NReflectMethod m : parent.declaredMethods()) {
                     String sig = normalizeSig(m.getName(), m.getSignature());
                     if (!allMethods.containsKey(sig)) {
                         allMethods.put(sig, new IndexedItem<>(hierarchyIndex, m));
                     }
                 }
-                parent = parent.getSuperType();
+                parent = parent.superType();
             }
 
 
@@ -371,7 +412,7 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public List<NReflectMethod> getMethods() {
+    public List<NReflectMethod> methods() {
         build();
         return Collections.unmodifiableList(methodsAllList);
     }
@@ -422,12 +463,12 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public List<NReflectMethod> getDeclaredMethods() {
+    public List<NReflectMethod> declaredMethods() {
         return Collections.unmodifiableList(methodsDeclaredList);
     }
 
     private void fillMethods(int hierarchyIndex, Type javaType, LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods) {
-        Method[] declaredMethods2 = _getMethods(javaType);
+        Method[] declaredMethods2 = NReflectPropertyFiller._getMethods(javaType);
         for (Method m : declaredMethods2) {
             DefaultNReflectMethod rm = new DefaultNReflectMethod(m, this);
             declaredMethods.put(normalizeSig(m.getName(), rm.getSignature()), new IndexedItem<>(hierarchyIndex, rm));
@@ -455,305 +496,27 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     private void fillProperties(int hierarchyIndex, Type clazz, LinkedHashMap<String, IndexedItem<NReflectProperty>> declaredProperties, Supplier<Object> cleanInstance, Set<String> ambiguousWrites,
-                                NReflectPropertyAccessStrategy propertyAccessStrategy,
+                                Set<NReflectPropertyAccessStrategy> propertyAccessStrategy,
                                 NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy
     ) {
-        boolean useBean = propertyAccessStrategy == NReflectPropertyAccessStrategy.BEAN
-                || propertyAccessStrategy == NReflectPropertyAccessStrategy.ALL;
-        boolean useFluent = propertyAccessStrategy == NReflectPropertyAccessStrategy.FLUENT
-                || propertyAccessStrategy == NReflectPropertyAccessStrategy.ALL;
-        boolean useField = propertyAccessStrategy == NReflectPropertyAccessStrategy.FIELD
-                || propertyAccessStrategy == NReflectPropertyAccessStrategy.ALL;
-
-        if (useBean || useFluent) {
-            Method[] declaredMethods = _getMethods(clazz);
-            // --- BEAN: getX() / setX() / isX() ---
-            LinkedHashMap<String, Method> methodGetters = new LinkedHashMap<>();
-            LinkedHashMap<String, List<Method>> methodSetters = new LinkedHashMap<>();
-
-            if (useBean) {
-                for (Method m : declaredMethods) {
-                    if (!m.isSynthetic() && !Modifier.isAbstract(m.getModifiers()) && !Modifier.isStatic(m.getModifiers())) {
-                        String name = m.getName();
-                        Matcher matcher = GETTER_SETTER.matcher(name);
-                        if (matcher.find()) {
-                            char[] n2c = matcher.group("suffix").toCharArray();
-                            n2c[0] = Character.toLowerCase(n2c[0]);
-                            String n2 = new String(n2c);
-                            switch (matcher.group("prefix")) {
-                                case "get": {
-                                    if (m.getParameterCount() == 0 && !m.getReturnType().equals(Void.TYPE)) {
-                                        if (!name.equals("getClass")) {
-                                            methodGetters.put(n2, m);
-                                        }
-                                    }
-                                    break;
-                                }
-                                case "is": {
-                                    if (m.getParameterCount() == 0
-                                            && (m.getReturnType().equals(Boolean.TYPE)
-                                            || m.getReturnType().equals(Boolean.class))) {
-                                        methodGetters.put(n2, m);
-                                    }
-                                    break;
-                                }
-                                case "set": {
-                                    if (m.getParameterCount() == 1) {
-                                        List<Method> li = methodSetters.get(n2);
-                                        if (li == null) {
-                                            li = new ArrayList<>();
-                                            methodSetters.put(n2, li);
-                                        }
-                                        li.add(m);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                for (Map.Entry<String, Method> entry : methodGetters.entrySet()) {
-                    String propName = entry.getKey();
-                    if (!declaredProperties.containsKey(propName)) {
-                        Method readMethod = entry.getValue();
-                        Method writeMethod = null;
-                        Field writeField = null;
-                        List<Method> possibleSetters = methodSetters.get(propName);
-                        if (possibleSetters != null) {
-                            for (Method possibleSetter : possibleSetters) {
-                                Class ps = possibleSetter.getParameterTypes()[0];
-                                if (ps.equals(readMethod.getReturnType())) {
-                                    writeMethod = possibleSetter;
-                                    methodSetters.remove(propName);
-                                    break;
-                                }
-                            }
-                        }
-                        if (writeMethod == null && useField) {
-                            Field[] declaredFields = _getFields(clazz);
-                            for (Field f : declaredFields) {
-                                if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
-                                    if (!declaredProperties.containsKey(f.getName())) {
-                                        if (!Modifier.isStatic(f.getModifiers())
-                                                && !Modifier.isFinal(f.getModifiers())
-                                                && f.getType().equals(readMethod.getReturnType())) {
-                                            writeField = f;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (writeMethod != null) {
-                            IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
-                                    new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance, this, propertyDefaultValueStrategy)
-                            );
-                            declaredProperties.put(propName, v);
-                        } else if (writeField != null) {
-                            IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
-                                    new MethodReflectProperty2(propName, readMethod, writeField, cleanInstance, this, propertyDefaultValueStrategy)
-                            );
-                            declaredProperties.put(propName, v);
-                        } else {
-
-                            boolean accept = true;
-
-                            if (clazz instanceof Class) {
-                                Class<?> decClazz = (Class<?>) clazz;
-                                if (getterNameHeuristicFilters.isAcceptGetterMethod(readMethod.getName(), decClazz)) {
-
-                                }
-                                Class[] ignoredInterfaces = {NBlankable.class};
-                                List<Class> ret = CorePlatformUtils.resolveInterfacesDeclaringNoArgMethod(readMethod.getName(), decClazz);
-                                for (Class a : ignoredInterfaces) {
-                                    if (ret.contains(a)) {
-                                        accept = false;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (accept) {
-                                IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
-                                        new MethodReflectProperty1(propName, readMethod, null, cleanInstance, this, propertyDefaultValueStrategy)
-                                );
-                                declaredProperties.put(propName, v);
-                            }
-                        }
-                    }
-                }
-
-                for (Map.Entry<String, List<Method>> entry2 : methodSetters.entrySet()) {
-                    String propName = entry2.getKey();
-                    if (entry2.getValue().size() == 1) {
-                        Method writeMethod = entry2.getValue().get(0);
-                        if (!declaredProperties.containsKey(propName)) {
-                            Field readField = null;
-                            Field[] _fields = _getFields(clazz);
-                            try {
-                                readField = Arrays.stream(_fields).filter(x -> x.getName().equals(propName)).findAny().orElse(null);
-                            } catch (Exception ex) {
-                                //
-                            }
-                            if (readField != null && !Modifier.isStatic(readField.getModifiers()) && readField.getType().equals(writeMethod.getParameterTypes()[0])) {
-                                IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
-                                        new MethodReflectProperty3(propName, readField, writeMethod, cleanInstance, this, propertyDefaultValueStrategy)
-                                );
-                                declaredProperties.put(propName, v);
-                            }
-                        }
-                    } else if (entry2.getValue().size() > 0) {
-                        ambiguousWrites.add(propName);
-                    }
-                }
-            }
-
-            // --- FLUENT: id() / id(value) ---
-            if (useFluent) {
-                LinkedHashMap<String, Method> fluentGetters = new LinkedHashMap<>();
-                LinkedHashMap<String, Method> fluentSetters = new LinkedHashMap<>();
-
-                if (clazz != Object.class) {
-                    for (Method m : declaredMethods) {
-                        if (m.isSynthetic() || Modifier.isAbstract(m.getModifiers()) || Modifier.isStatic(m.getModifiers())) {
-                            continue;
-                        }
-                        String name = m.getName();
-                        if (GETTER_SETTER.matcher(name).find()) continue; // already covered by bean
-                        if (declaredProperties.containsKey(name)) continue;
-                        boolean noargs = m.getParameterCount() == 0;
-                        boolean forceInclude = m.getAnnotation(NInclude.class) != null;
-                        boolean forceExclude = m.getAnnotation(NExclude.class) != null;
-                        if (forceExclude) {
-                            forceInclude = false;
-                        }
-                        if (noargs) {
-                            if (
-                                    !m.getReturnType().equals(Void.TYPE)
-                                //returning this type is equivalent to
-                                //but what about tree nodes that return parent or child???
-
-                            ) {
-                                if (forceExclude) {
-                                    continue;
-                                }
-                                if (!forceInclude) {
-                                    String[] aa = NNameFormat.parse(name);
-                                    if (!getterNameHeuristicFilters.accept(name, aa, m.getReturnType(), m.getDeclaringClass())) {
-                                        continue;
-                                    }
-                                    if (aa.length == 2) {
-                                        String a1 = aa[0];
-                                        String a2 = aa[1];
-                                        // ignore intValue, longValue, ...
-                                        if (a2.equalsIgnoreCase("Value")) continue;
-                                    }
-                                }
-                                fluentGetters.put(name, m);
-                            }
-                        } else if (m.getParameterCount() == 1) {
-                            fluentSetters.put(name, m);
-                        }
-                    }
-                    // Setter alone is rejected — a getter must exist for the same name
-                    for (Map.Entry<String, Method> entry : fluentGetters.entrySet()) {
-                        String propName = entry.getKey();
-                        if (declaredProperties.containsKey(propName)) continue;
-
-                        Method readMethod = entry.getValue();
-                        Method writeMethod = fluentSetters.get(propName);
-
-                        // Type mismatch → treat as read-only
-                        if (writeMethod != null && !writeMethod.getParameterTypes()[0].equals(readMethod.getReturnType())) {
-                            writeMethod = null;
-                        }
-
-                        IndexedItem<NReflectProperty> v = new IndexedItem<>(hierarchyIndex,
-                                new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance, this, propertyDefaultValueStrategy)
-                        );
-                        declaredProperties.put(propName, v);
-                    }
-                }
-            }
-        }
-
-        // --- FIELD ---
-        if (useField) {
-            Field[] declaredFields = _getFields(clazz);
-            for (Field f : declaredFields) {
-                if (!declaredProperties.containsKey(f.getName())) {
-                    if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
-                        FieldReflectProperty p = new FieldReflectProperty(f, cleanInstance, this, propertyDefaultValueStrategy);
-                        declaredProperties.put(p.getName(), new IndexedItem<>(hierarchyIndex, p));
-                    }
-                }
-            }
-        }
+        new NReflectPropertyFiller().fillProperties(hierarchyIndex, clazz, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategy, propertyDefaultValueStrategy, this);
     }
 
-    private static Field[] _getFields(Type clazz) {
-        Field[] declaredFields = new Field[0];
-        if (clazz instanceof Class) {
-            declaredFields = ((Class) clazz).getDeclaredFields();
-        } else if (clazz instanceof ParameterizedType) {
-            Class c2 = NReflectUtils.getRawClass(clazz).orNull();
-            if (c2 != null) {
-                return c2.getDeclaredFields();
-            }
-            throw new IllegalArgumentException("TODO");
-        } else {
-            throw new IllegalArgumentException("TODO");
-        }
-        return declaredFields;
-    }
+//    private static Map<TypeVariable<?>, Type> getActualClassArguments0(Type type) {
+//        Map<TypeVariable<?>, Type> m = new HashMap<>();
+//        if (type instanceof ParameterizedType) {
+//            Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+//            Type rawType = ((ParameterizedType) type).getRawType();
+//            if (rawType instanceof Class) {
+//                TypeVariable<? extends Class<?>>[] typeParameters = ((Class<?>) rawType).getTypeParameters();
+//                for (int i = 0; i < typeParameters.length; i++) {
+//                    m.put(typeParameters[i], actualTypeArguments[i]);
+//                }
+//            }
+//        }
+//        return m;
+//    }
 
-    private static Method[] _getMethods(Type clazz) {
-        Method[] declaredMethods = new Method[0];
-        if (clazz instanceof Class) {
-            declaredMethods = ((Class) clazz).getDeclaredMethods();
-        } else if (clazz instanceof ParameterizedType) {
-            Class c2 = NReflectUtils.getRawClass(clazz).orNull();
-            if (c2 != null) {
-                return c2.getDeclaredMethods();
-            }
-            throw new IllegalArgumentException("TODO");
-        } else {
-            throw new IllegalArgumentException("TODO");
-        }
-        return declaredMethods;
-    }
-
-    private static Map<TypeVariable<?>, Type> getActualClassArguments0(Type type) {
-        Map<TypeVariable<?>, Type> m = new HashMap<>();
-        if (type instanceof ParameterizedType) {
-            Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
-            Type rawType = ((ParameterizedType) type).getRawType();
-            if (rawType instanceof Class) {
-                TypeVariable<? extends Class<?>>[] typeParameters = ((Class<?>) rawType).getTypeParameters();
-                for (int i = 0; i < typeParameters.length; i++) {
-                    m.put(typeParameters[i], actualTypeArguments[i]);
-                }
-            }
-        }
-        return m;
-    }
-
-
-    private static class IndexedItem<T> {
-        int index;
-        T item;
-
-        public IndexedItem(int index, T item) {
-            this.index = index;
-            this.item = item;
-        }
-
-        @Override
-        public String toString() {
-            return "IndexedItem[" + index + "]{" +
-                    item +
-                    '}';
-        }
-    }
 
     @Override
     public boolean isParametrizedType() {
@@ -766,42 +529,42 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NReflectType[] getTypeParameters() {
+    public List<NReflectType> typeParameters() {
         if (javaType instanceof Class) {
             return Arrays.stream(((Class) javaType).getTypeParameters()).map(x -> repo.getType(x))
-                    .toArray(NReflectType[]::new);
+                    .collect(Collectors.toList());
         }
         if (javaType instanceof ParameterizedType) {
-            return repo.getType(((ParameterizedType) javaType).getRawType()).getTypeParameters();
+            return repo.getType(((ParameterizedType) javaType).getRawType()).typeParameters();
         }
-        return new NReflectType[0];
+        return Collections.emptyList();
     }
 
     @Override
     public NOptional<NReflectType> getActualTypeArgument(NReflectType type) {
-        NReflectType[] typeParameters = getTypeParameters();
-        NReflectType[] r = getActualTypeArguments();
-        if (r.length == 0) {
+        List<NReflectType> typeParameters = typeParameters();
+        List<NReflectType> r = actualTypeArguments();
+        if (r.isEmpty()) {
             return NOptional.ofNamedEmpty(NMsg.ofC("actual type argument %s", type).toString());
         }
-        for (int i = 0; i < typeParameters.length; i++) {
-            NReflectType typeParameter = typeParameters[i];
+        for (int i = 0; i < typeParameters.size(); i++) {
+            NReflectType typeParameter = typeParameters.get(i);
             if (typeParameter.equals(type)) {
-                return NOptional.ofNamed(r[i], NMsg.ofC("actual type argument %s", type).toString());
+                return NOptional.ofNamed(r.get(i), NMsg.ofC("actual type argument %s", type).toString());
             }
         }
         return NOptional.ofNamedEmpty(NMsg.ofC("actual type argument %s", type).toString());
     }
 
     @Override
-    public NReflectType[] getActualTypeArguments() {
+    public List<NReflectType> actualTypeArguments() {
         if (isParametrizedType()) {
             return Arrays.stream(
                             ((ParameterizedType) javaType).getActualTypeArguments()
                     ).map(x -> repo.getType(x))
-                    .toArray(NReflectType[]::new);
+                    .collect(Collectors.toList());
         }
-        return new NReflectType[0];
+        return Collections.emptyList();
     }
     //
 //
@@ -975,8 +738,8 @@ public class DefaultNReflectType implements NReflectType {
             return this;
         }
         if (javaType instanceof ParameterizedType) {
-            NReflectType[] actualTypeArguments = NArrays.copyOf(getActualTypeArguments());
-            NReflectType[] typeParameters = NArrays.copyOf(getTypeParameters());
+            NReflectType[] actualTypeArguments = actualTypeArguments().toArray(new NReflectType[0]);
+            NReflectType[] typeParameters = typeParameters().toArray(new NReflectType[0]);
             boolean someUpdates = false;
             for (int i = 0; i < actualTypeArguments.length; i++) {
                 NReflectType r = typeParameters[i];
@@ -1005,7 +768,7 @@ public class DefaultNReflectType implements NReflectType {
             return this;
         }
         if (javaType instanceof GenericArrayType) {
-            NReflectType a = getComponentType();
+            NReflectType a = componentType();
             NReflectType b = a.replaceVars(mapper);
             if (a != b && b != null) {
                 return b.toArray();
@@ -1030,7 +793,7 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NOptional<NReflectType> getBoxedType() {
+    public NOptional<NReflectType> boxedType() {
         if (javaType instanceof Class) {
             Class c = (Class) javaType;
             if (!c.isPrimitive()) {
@@ -1048,7 +811,7 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public Object getDefaultValue() {
+    public Object defaultValue() {
         if (javaType instanceof Class) {
             Class c = (Class) javaType;
             if (c.isPrimitive()) {
@@ -1059,7 +822,7 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NOptional<NReflectType> getPrimitiveType() {
+    public NOptional<NReflectType> primitiveType() {
         if (javaType instanceof Class) {
             Class c = (Class) javaType;
             if (c.isPrimitive()) {
@@ -1097,7 +860,7 @@ public class DefaultNReflectType implements NReflectType {
         return repo.getType(new SimpleGenericArrayType(javaType));
     }
 
-    public NReflectType getComponentType() {
+    public NReflectType componentType() {
         if (javaType instanceof GenericArrayType) {
             return repo.getType(((GenericArrayType) javaType).getGenericComponentType());
         }
@@ -1121,7 +884,7 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NReflectRepository getRepository() {
+    public NReflectRepository repository() {
         return repo;
     }
 
@@ -1130,7 +893,7 @@ public class DefaultNReflectType implements NReflectType {
         return String.valueOf(javaType);
     }
 
-    public Type getJavaType() {
+    public Type javaType() {
         return javaType;
     }
 }

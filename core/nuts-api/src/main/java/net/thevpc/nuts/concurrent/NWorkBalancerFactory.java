@@ -91,7 +91,7 @@ public interface NWorkBalancerFactory {
      *
      * @return the {@link NWorkBalancerStore} instance
      */
-    NWorkBalancerStore getStore();
+    NWorkBalancerStore store();
 
     /**
      * Returns a new {@link NWorkBalancerFactory} with the given {@link NWorkBalancerStrategy} registered under the specified name.

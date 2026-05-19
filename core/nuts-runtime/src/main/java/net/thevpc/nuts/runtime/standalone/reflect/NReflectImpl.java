@@ -85,7 +85,7 @@ public class NReflectImpl implements NReflect {
 
     @Override
     public boolean isImmutableType(NReflectType type) {
-        Type t = type.getJavaType();
+        Type t = type.javaType();
         if (t != null) {
             return isImmutableType(t);
         }

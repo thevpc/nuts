@@ -52,7 +52,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         if (file.exists()) {
             NCommandConfig c = NElementReader.ofJson().read(file, NCommandConfig.class);
             if (c != null) {
-                c.setName(name);
+                c.name(name);
                 return c;
             }
         }
@@ -83,13 +83,13 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     public void installCommand(NCommandConfig command) {
-        NPath path = getCommandsFolder().resolve(command.getName() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
+        NPath path = getCommandsFolder().resolve(command.name() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         NElementWriter.ofJson().setNtf(false).write(command,path);
         NWorkspaceExt.of().getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
     }
 
     public List<NCommandConfig> findCommands(NId id) {
-        return findCommands(value -> CoreFilterUtils.matchesSimpleNameStaticVersion(value.getOwner(), id));
+        return findCommands(value -> CoreFilterUtils.matchesSimpleNameStaticVersion(value.owner(), id));
     }
 
     public List<NCommandConfig> findCommands(Predicate<NCommandConfig> filter) {
@@ -110,7 +110,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
                     //
                 }
                 if (c != null) {
-                    c.setName(fileName.substring(0, fileName.length() - NConstants.Files.NUTS_COMMAND_FILE_EXTENSION.length()));
+                    c.name(fileName.substring(0, fileName.length() - NConstants.Files.NUTS_COMMAND_FILE_EXTENSION.length()));
                     if (filter == null || filter.test(c)) {
                         all.add(c);
                     }

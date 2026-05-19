@@ -33,7 +33,7 @@ public class NElementMapperNArtifactCall implements NElementMapper<NArtifactCall
         String[] arguments = (String[]) context.toObject(object.get("arguments").orNull(), String[].class);
         Type mapType = NReflectRepository.of().getParametrizedType(
                 Map.class, null, new Type[]{String.class, String.class}
-        ).getJavaType();
+        ).javaType();
         String scriptName = context.toObject(object.get("scriptName").orNull(), String.class);
         String scriptContent = context.toObject(object.get("scriptContent").orNull(), String.class);
 

@@ -49,17 +49,17 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
             javaVersion = "java#17";
         }
         return NDescriptorBuilder.of()
-                .setId(id.longId())
-                .setIcons(
+                .id(id.longId())
+                .icons(
                         "https://upload.wikimedia.org/wikipedia/commons/9/98/Apache_NetBeans_Logo.svg",
                         "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Apache_NetBeans_Logo.svg/416px-Apache_NetBeans_Logo.svg.png"
                 )
-                .setPackaging("zip")
-                .setCondition(
+                .packaging("zip")
+                .condition(
                         NEnvConditionBuilder.of()
-                                .setPlatform(Arrays.asList(javaVersion))
+                                .platform(Arrays.asList(javaVersion))
                 )
-                .setInstaller(NArtifactCallBuilder.of()
+                .installer(NArtifactCallBuilder.of()
                         .id(NId.of(NConstants.Ids.NSH))
                         .arguments(
                                 "-c", "unzip",
@@ -70,7 +70,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                         )
                         .build()
                 )
-                .setExecutor(NArtifactCallBuilder.of()
+                .executor(NArtifactCallBuilder.of()
                         .id(NId.of("exec"))
                         .arguments(
                                 NEnv.of().getOsFamily().isWindow()
@@ -79,7 +79,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                         )
                         .build()
                 )
-                .setDescription("Apache Netbeans Official Zip Bundle")
+                .description("Apache Netbeans Official Zip Bundle")
                 .setProperty("dynamic-descriptor", "true")
                 .build();
     }
@@ -99,7 +99,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                     String version = p.name();
                     NPath b = NPath.of("https://archive.apache.org/dist/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
                     if (b.exists()) {
-                        return idBuilder.setVersion(version).build();
+                        return idBuilder.version(version).build();
                     }
                     return null;
                 }).nonNull();
@@ -110,7 +110,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                     String version = p.name();
                     NPath b = NPath.of("https://downloads.apache.org/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
                     if (b.exists()) {
-                        return idBuilder.setVersion(version).build();
+                        return idBuilder.version(version).build();
                     }
                     return null;
                 }).nonNull();
@@ -123,7 +123,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
             return null;
         }
         String r = getUrl(id.version());
-        NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().setFaceContent().build(), repository));
+        NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().faceContent().build(), repository));
         NCp.of().from(NPath.of(r)).to(localPath)
                 .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
         return localPath;

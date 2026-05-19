@@ -45,7 +45,7 @@ public class NutsSpringBootConfiguration {
         NutsSpringBeanContainer u = new NutsSpringBeanContainer(sac);
         workspace.runWith(() -> {
             NScopedStack<NBeanContainer> nBeanContainerNScopedValue = NReflect.of().scopedBeanContainerStack();
-            nBeanContainerNScopedValue.setDefaultSupplier(() -> u);
+            nBeanContainerNScopedValue.defaultSupplier(() -> u);
         });
         return u;
     }

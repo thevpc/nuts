@@ -320,7 +320,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         String verString = nid.version().toString();
                         if (verString.equalsIgnoreCase("current")
                                 || verString.equalsIgnoreCase("curr")) {
-                            id = nid.builder().setVersion(session.getWorkspace().getApiId().version()).build().toString();
+                            id = nid.builder().version(session.getWorkspace().getApiId().version()).build().toString();
                         }
                     }
 
@@ -735,10 +735,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             return getPreferredIconPath(rt);
         }
         NDefinition appDef = NSearch.of(appId)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .latest(true).distinct(true).getResultDefinitions()
                 .findSingleton().get();
-        String descAppIcon = resolveBestIcon(appDef.id(),appDef.descriptor().getIcons());
+        String descAppIcon = resolveBestIcon(appDef.id(),appDef.descriptor().icons());
         if (descAppIcon == null) {
             if (isNutsBootId(appDef.id())
                     || appDef.id().groupId().equals("net.thevpc.nuts")
@@ -812,7 +812,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public PathInfo[] createShortcut(NDesktopIntegrationItem nDesktopIntegrationItem, NdiScriptOptions options) {
         String apiVersion = options.getNutsApiVersion().toString();
         NAssert.requireNamedNonBlank(apiVersion, "nuts-api version to link to");
-        NId apiId = NWorkspace.of().getApiId().builder().setVersion(apiVersion).build();
+        NId apiId = NWorkspace.of().getApiId().builder().version(apiVersion).build();
         NDefinition apiDefinition = NSearch.of().addId(apiId).failFast(true).latest(true)
                 .distinct(true)
                 .getResultDefinitions()
@@ -855,13 +855,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, execCmd, cwd);
         sl.setStartNotify(true);
         sl.setIcon(iconPath);
-        sl.setGenericName(apiDefinition.descriptor().getGenericName());
-        sl.setComment(appDef.descriptor().getDescription());
+        sl.setGenericName(apiDefinition.descriptor().genericName());
+        sl.setComment(appDef.descriptor().description());
         sl.setTerminal(options.getLauncher().isOpenTerminal());
         if (options.getLauncher().getMenuCategory() != null) {
             sl.addCategory(options.getLauncher().getMenuCategory());
         } else {
-            sl.setCategories(appDef.descriptor().getCategories());
+            sl.setCategories(appDef.descriptor().categories());
         }
         String preferredPath = getShortcutPath(options).toString();
         return createShortcut(nDesktopIntegrationItem, appId, preferredPath, sl);
@@ -921,8 +921,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         .setIcon(resolveIcon(null, options.resolveNutsApiId()))
                         .setStartNotify(true)
                         .addCategory("/Utility/Nuts")
-                        .setGenericName(options.resolveNutsApiDef().descriptor().getGenericName())
-                        .setComment(options.resolveNutsApiDef().descriptor().getDescription())
+                        .setGenericName(options.resolveNutsApiDef().descriptor().genericName())
+                        .setComment(options.resolveNutsApiDef().descriptor().description())
                         .setTerminal(true)
         );
     }

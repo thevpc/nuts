@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.platform;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdBuilder;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -11,7 +10,6 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
-import java.util.function.Function;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 public class NEnvAsCmd extends NEnvBase {
@@ -257,7 +255,7 @@ public class NEnvAsCmd extends NEnvBase {
                     String id = m.get("ID");
                     if (!NBlankable.isBlank(id)) {
                         NIdBuilder b = NIdBuilder.of(null, id);
-                        b.setVersion(m.get("VERSION_ID"));
+                        b.version(m.get("VERSION_ID"));
                         b.setProperty("name", m.get("NAME"));
                         b.setProperty("like", m.get("ID_LIKE"));
                         b.setProperty("codename", m.get("VERSION_CODENAME"));

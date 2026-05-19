@@ -56,7 +56,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
         NDefinition def = ctx.getCriteria(NDefinition.class);
         if (def != null) {
             if (def.descriptor() != null) {
-                if ("zip".equals(def.descriptor().getPackaging())) {
+                if ("zip".equals(def.descriptor().packaging())) {
                     return NScorable.DEFAULT_SCORE;
                 }
             }
@@ -66,9 +66,9 @@ public class ZipInstallerComponent implements NInstallerComponent {
 
     @Override
     public void install(NExecutionContext executionContext) {
-        NDefinition nutsDefinition = executionContext.getDefinition();
+        NDefinition nutsDefinition = executionContext.definition();
         NPath installFolder = NPath.of(NStoreKey.ofBin(nutsDefinition.id()));
-        NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
+        NCmdLine cmd = NCmdLine.of(executionContext.arguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {
             if (!cmd.matcher().with("--unzip-skip-root").matchFlag((v) -> {
@@ -87,11 +87,11 @@ public class ZipInstallerComponent implements NInstallerComponent {
             throw new NIOException(ex);
         }
         //nutsDefinition.setInstallInformation(NWorkspaceExt.of().getInstalledRepository().getInstallInformation(nutsDefinition.getId()));
-        if (!executionContext.getExecutorOptions().isEmpty()) {
+        if (!executionContext.executorOptions().isEmpty()) {
             NExec.of()
-                    .addCommand(executionContext.getExecutorOptions())
-                    .addExecutorOptions(executionContext.getExecutorOptions())
-                    .setEnv(executionContext.getEnv())
+                    .addCommand(executionContext.executorOptions())
+                    .addExecutorOptions(executionContext.executorOptions())
+                    .env(executionContext.env())
                     .directory(installFolder)
                     .exitCode();
         }

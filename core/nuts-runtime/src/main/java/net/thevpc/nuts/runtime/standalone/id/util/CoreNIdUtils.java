@@ -106,7 +106,7 @@ public class CoreNIdUtils {
 
     public static NId createContentFaceId(NId id, NDescriptor desc) {
         Map<String, String> q = id.properties();
-        q.put(NConstants.IdProperties.PACKAGING, NStringUtils.trim(desc.getPackaging()));
+        q.put(NConstants.IdProperties.PACKAGING, NStringUtils.trim(desc.packaging()));
         q.put(NConstants.IdProperties.FACE, NConstants.QueryFaces.CONTENT);
         return id.builder().setProperties(q).build();
     }
@@ -151,17 +151,17 @@ public class CoreNIdUtils {
             }
         }
         NId foundRT = NSearch.of()
-                .setFetchStrategy(NFetchStrategy.OFFLINE)
+                .fetchStrategy(NFetchStrategy.OFFLINE)
                 .addId(NId.getRuntime("").get())
                 .latest(true)
-                .setTargetApiVersion(NVersion.get(apiVersion).get())
+                .targetApiVersion(NVersion.get(apiVersion).get())
                 .getResultIds().
                 findFirst().orNull();
         NSession session = workspace.currentSession();
         if (foundRT == null && session.getFetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
             foundRT = NSearch.of().addId(NId.getRuntime("").get())
                     .latest(true)
-                    .setTargetApiVersion(NVersion.get(apiVersion).get())
+                    .targetApiVersion(NVersion.get(apiVersion).get())
                     .getResultIds().
                     findFirst().orNull();
         }
@@ -171,15 +171,15 @@ public class CoreNIdUtils {
 
 
     public static String getNutsApiVersion(NExecutionContext executionContext) {
-        NDescriptor descriptor = executionContext.getDefinition().descriptor();
+        NDescriptor descriptor = executionContext.definition().descriptor();
         if (descriptor.isNutsApplication()) {
-            for (NDependency dependency : descriptor.getDependencies()) {
+            for (NDependency dependency : descriptor.dependencies()) {
                 if (dependency.toId().shortName().equals(NConstants.Ids.NUTS_API)) {
                     return dependency.toId().version().value();
                 }
             }
         }
-        for (NDependency dependency : executionContext.getDefinition().dependencies().get()) {
+        for (NDependency dependency : executionContext.definition().dependencies().get()) {
             if (dependency.toId().shortName().equals(NConstants.Ids.NUTS_API)) {
                 return dependency.toId().version().value();
             }

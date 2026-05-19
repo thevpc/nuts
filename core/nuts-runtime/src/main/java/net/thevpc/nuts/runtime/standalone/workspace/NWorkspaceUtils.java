@@ -86,7 +86,7 @@ public class NWorkspaceUtils {
         NReflectRepository o = (NReflectRepository) (workspace.getProperties().get(NReflectRepository.class.getName()));
         if (o == null) {
             o = new DefaultNReflectRepository(NReflectConfigurationBuilder.of()
-                    .setPropertyAccessStrategy(NReflectPropertyAccessStrategy.ALL)
+                    .setPropertyAccessStrategy(c->NReflectPropertyAccessStrategy.all())
                     .setPropertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy.PROTOTYPE)
                     .build());
             workspace.setProperty(NReflectRepository.class.getName(), o);
@@ -100,8 +100,8 @@ public class NWorkspaceUtils {
         if ("java".equalsIgnoreCase(type)) {
             return NJavaSdkUtils.of().createJdkId(version);
         } else {
-            return NIdBuilder.of().setArtifactId(type)
-                    .setVersion(version)
+            return NIdBuilder.of().artifactId(type)
+                    .version(version)
                     .build();
         }
     }
@@ -176,14 +176,14 @@ public class NWorkspaceUtils {
                     try {
                         d = NRepositoryHelper.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive());
                     } catch (Exception ex) {
-                        _LOG().log(NMsg.ofJ("unable to resolve support deploy level for : {0}", repository.getName()).asFinestFail(ex));
+                        _LOG().log(NMsg.ofJ("unable to resolve support deploy level for : {0}", repository.name()).asFinestFail(ex));
                     }
                 }
                 NSpeedQualifier t = NSpeedQualifier.NORMAL;
                 try {
                     t = NRepositoryHelper.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive());
                 } catch (Exception ex) {
-                    _LOG().log(NMsg.ofJ("unable to resolve support speed level for : {0}", repository.getName()).asFineFail(ex));
+                    _LOG().log(NMsg.ofJ("unable to resolve support speed level for : {0}", repository.name()).asFineFail(ex));
                 }
                 if (t != NSpeedQualifier.UNAVAILABLE) {
                     repos2.add(new RepoAndLevel(repository, d, t, postComp));
@@ -304,7 +304,7 @@ public class NWorkspaceUtils {
                             .setId(session.getWorkspace().getApiId())
                             .setCreateScript(true)
                             .setSwitchWorkspace(
-                                    NWorkspace.of().getBootOptions().getSwitchWorkspace().orNull()
+                                    NWorkspace.of().getBootOptions().switchWorkspace().orNull()
                             )
                             .setCreateDesktopLauncher(includeGraphicalLaunchers ? NSupportMode.PREFERRED : NSupportMode.NEVER)
                             .setCreateMenuLauncher(includeGraphicalLaunchers ? NSupportMode.SUPPORTED : NSupportMode.NEVER)
@@ -337,7 +337,7 @@ public class NWorkspaceUtils {
             );
         }
         try {
-            NInstall.of().companions()
+            NInstall.of().companions(true)
                     .run();
         } catch (Exception ex) {
             _LOG()
@@ -350,7 +350,7 @@ public class NWorkspaceUtils {
                         ex,
                         text.ofBuilder().appendJoined(text.ofPlain(", "),
                                 NWorkspace.of().getRepositories().stream().map(x
-                                        -> text.ofBuilder().append(x.getName(), NTextStyle.primary3())
+                                        -> text.ofBuilder().append(x.name(), NTextStyle.primary3())
                                 ).collect(Collectors.toList())
                         )
                 ));
@@ -400,50 +400,50 @@ public class NWorkspaceUtils {
 
         public void fireOnInstall(NInstallEvent event) {
             u._LOG()
-                    .log(NMsg.ofJ("installed {0}", event.getDefinition().id())
+                    .log(NMsg.ofJ("installed {0}", event.definition().id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
                     );
-            for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
+            for (NInstallListener listener : event.workspace().getInstallListeners()) {
                 listener.onInstall(event);
             }
-            for (NInstallListener listener : event.getSession().getListeners(NInstallListener.class)) {
+            for (NInstallListener listener : event.session().getListeners(NInstallListener.class)) {
                 listener.onInstall(event);
             }
         }
 
         public void fireOnRequire(NInstallEvent event) {
             u._LOG()
-                    .log(NMsg.ofJ("required {0}", event.getDefinition().id())
+                    .log(NMsg.ofJ("required {0}", event.definition().id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
                     );
-            for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
+            for (NInstallListener listener : event.workspace().getInstallListeners()) {
                 listener.onRequire(event);
             }
-            for (NInstallListener listener : event.getSession().getListeners(NInstallListener.class)) {
+            for (NInstallListener listener : event.session().getListeners(NInstallListener.class)) {
                 listener.onRequire(event);
             }
         }
 
         public void fireOnUpdate(NUpdateEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
-                if (event.getOldValue() == null) {
+                if (event.oldValue() == null) {
                     u._LOG()
-                            .log(NMsg.ofJ("updated {0}", event.getNewValue().id())
+                            .log(NMsg.ofJ("updated {0}", event.newValue().id())
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.UPDATE)
                             );
                 } else {
                     u._LOG()
                             .log(NMsg.ofJ("updated {0} (old is {1})",
-                                    event.getOldValue().id().longId(),
-                                    event.getNewValue().id().longId())
+                                    event.oldValue().id().longId(),
+                                    event.newValue().id().longId())
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.UPDATE)
                             );
                 }
             }
-            for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
+            for (NInstallListener listener : event.workspace().getInstallListeners()) {
                 listener.onUpdate(event);
             }
-            for (NInstallListener listener : event.getSession().getListeners(NInstallListener.class)) {
+            for (NInstallListener listener : event.session().getListeners(NInstallListener.class)) {
                 listener.onUpdate(event);
             }
         }
@@ -451,14 +451,14 @@ public class NWorkspaceUtils {
         public void fireOnUninstall(NInstallEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 u._LOG()
-                        .log(NMsg.ofJ("uninstalled {0}", event.getDefinition().id())
+                        .log(NMsg.ofJ("uninstalled {0}", event.definition().id())
                                 .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
                         );
             }
-            for (NInstallListener listener : event.getWorkspace().getInstallListeners()) {
+            for (NInstallListener listener : event.workspace().getInstallListeners()) {
                 listener.onUninstall(event);
             }
-            for (NInstallListener listener : event.getSession().getListeners(NInstallListener.class)) {
+            for (NInstallListener listener : event.session().getListeners(NInstallListener.class)) {
                 listener.onUninstall(event);
             }
         }
@@ -466,7 +466,7 @@ public class NWorkspaceUtils {
         public void fireOnAddRepository(NWorkspaceEvent event) {
             if (u._LOG().isLoggable(Level.CONFIG)) {
                 u._LOG()
-                        .log(NMsg.ofJ("loaded repo ##{0}##", event.getRepository().getName())
+                        .log(NMsg.ofJ("loaded repo ##{0}##", event.getRepository().name())
                                 .withLevel(Level.CONFIG).withIntent(NMsgIntent.ADD)
                         );
             }
@@ -474,7 +474,7 @@ public class NWorkspaceUtils {
             for (NWorkspaceListener listener : event.getWorkspace().getWorkspaceListeners()) {
                 listener.onAddRepository(event);
             }
-            for (NWorkspaceListener listener : event.getSession().getListeners(NWorkspaceListener.class)) {
+            for (NWorkspaceListener listener : event.session().getListeners(NWorkspaceListener.class)) {
                 listener.onAddRepository(event);
             }
         }
@@ -482,14 +482,14 @@ public class NWorkspaceUtils {
         public void fireOnRemoveRepository(NWorkspaceEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 u._LOG()
-                        .log(NMsg.ofJ("unloaded repo ##{0}##", event.getRepository().getName())
+                        .log(NMsg.ofJ("unloaded repo ##{0}##", event.getRepository().name())
                                 .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
                         );
             }
             for (NWorkspaceListener listener : event.getWorkspace().getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);
             }
-            for (NWorkspaceListener listener : event.getSession().getListeners(NWorkspaceListener.class)) {
+            for (NWorkspaceListener listener : event.session().getListeners(NWorkspaceListener.class)) {
                 listener.onRemoveRepository(event);
             }
         }

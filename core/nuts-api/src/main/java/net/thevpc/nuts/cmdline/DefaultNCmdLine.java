@@ -96,11 +96,11 @@ public class DefaultNCmdLine implements NCmdLine {
         setArguments(args);
     }
 
-    public NShellFamily getShellFamily() {
+    public NShellFamily shellFamily() {
         return shellFamily;
     }
 
-    public NCmdLine setShellFamily(NShellFamily shellFamily) {
+    public NCmdLine shellFamily(NShellFamily shellFamily) {
         this.shellFamily = shellFamily;
         return this;
     }
@@ -129,11 +129,11 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLineConfigurable getConfigurable() {
+    public NCmdLineConfigurable configurable() {
         return configurable;
     }
 
-    public NCmdLine setConfigurable(NCmdLineConfigurable configurable) {
+    public NCmdLine configurable(NCmdLineConfigurable configurable) {
         this.configurable = configurable;
         return this;
     }
@@ -144,19 +144,19 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLine setExpandArgumentsFile(boolean expandArgumentsFile) {
+    public NCmdLine expandArgumentsFile(boolean expandArgumentsFile) {
         this.expandArgumentsFile = expandArgumentsFile;
         return this;
     }
 
     //End Constructors
     @Override
-    public NCmdLineAutoComplete getAutoComplete() {
+    public NCmdLineAutoComplete autoComplete() {
         return autoComplete;
     }
 
     @Override
-    public NCmdLine setAutoComplete(NCmdLineAutoComplete autoComplete) {
+    public NCmdLine autoComplete(NCmdLineAutoComplete autoComplete) {
         this.autoComplete = autoComplete;
         return this;
     }
@@ -168,7 +168,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public String[] getSpecialSimpleOptions() {
+    public String[] specialSimpleOptions() {
         return specialSimpleOptions.toArray(new String[0]);
     }
 
@@ -210,7 +210,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public int getWordIndex() {
+    public int wordIndex() {
         return wordIndex;
     }
 
@@ -225,12 +225,12 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public String getCommandName() {
+    public String commandName() {
         return commandName;
     }
 
     @Override
-    public NCmdLine setCommandName(String commandName) {
+    public NCmdLine commandName(String commandName) {
         this.commandName = commandName;
         return this;
     }
@@ -241,7 +241,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLine setExpandSimpleOptions(boolean expand) {
+    public NCmdLine expandSimpleOptions(boolean expand) {
         this.expandSimpleOptions = expand;
         return this;
     }
@@ -580,7 +580,7 @@ public class DefaultNCmdLine implements NCmdLine {
             }
         } else {
             if (isAutoCompleteMode()) {
-                NArgCandidate[] candidates = resolveRecommendations(expectedValue, names, autoComplete.getCurrentWordIndex());
+                NArgCandidate[] candidates = resolveRecommendations(expectedValue, names, autoComplete.currentWordIndex());
                 for (NArgCandidate c : candidates) {
                     autoComplete.addCandidate(c);
                 }
@@ -655,8 +655,8 @@ public class DefaultNCmdLine implements NCmdLine {
 
     private <T> NOptional<T> emptyOptionalCformat(String str, Object... args) {
         List<Object> a = new ArrayList<>();
-        if (!NBlankable.isBlank(getCommandName())) {
-            a.add(getCommandName());
+        if (!NBlankable.isBlank(commandName())) {
+            a.add(commandName());
             a.addAll(Arrays.asList(args));
             return NOptional.ofEmpty(() -> NMsg.ofC("%s : " + str, a.toArray()));
         } else {
@@ -667,8 +667,8 @@ public class DefaultNCmdLine implements NCmdLine {
 
     private <T> NOptional<T> errorOptionalCformat(String str, Object... args) {
         return NOptional.ofError(() -> {
-            if (!NBlankable.isBlank(getCommandName())) {
-                return NMsg.ofC("%s : %s ", getCommandName(), NMsg.ofC(str, args));
+            if (!NBlankable.isBlank(commandName())) {
+                return NMsg.ofC("%s : %s ", commandName(), NMsg.ofC(str, args));
             }
             return NMsg.ofC(str, args);
         });
@@ -948,7 +948,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 if (skipToNext) {
                     continue;
                 }
-                if (getWordIndex() + nameSeqArray.length - 1 == autoCompleteCurrentWordIndex) {
+                if (wordIndex() + nameSeqArray.length - 1 == autoCompleteCurrentWordIndex) {
                     String name = nameSeqArray[nameSeqArray.length - 1];
                     NArg p = get(nameSeqArray.length - 1).orNull();
                     if (p != null) {
@@ -994,9 +994,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public NOptional<NArg> next(NArgName name, boolean forceNonOption) {
         if (hasNext() && (!forceNonOption || !isNextOption())) {
             if (isAutoComplete()) {
-                List<NArgCandidate> values = name == null ? null : name.getCandidates(getAutoComplete());
+                List<NArgCandidate> values = name == null ? null : name.resolveCandidates(autoComplete());
                 if (values == null || values.isEmpty()) {
-                    autoComplete.addCandidate(new DefaultNArgCandidate(name == null ? "<value>" : name.getName()));
+                    autoComplete.addCandidate(new DefaultNArgCandidate(name == null ? "<value>" : name.name()));
                 } else {
                     for (NArgCandidate value : values) {
                         autoComplete.addCandidate(value);
@@ -1012,9 +1012,9 @@ public class DefaultNCmdLine implements NCmdLine {
         } else {
             if (autoComplete != null) {
                 if (isAutoComplete()) {
-                    List<NArgCandidate> values = name == null ? null : name.getCandidates(getAutoComplete());
+                    List<NArgCandidate> values = name == null ? null : name.resolveCandidates(autoComplete());
                     if (values == null || values.isEmpty()) {
-                        autoComplete.addCandidate(new DefaultNArgCandidate(name == null ? "<value>" : name.getName()));
+                        autoComplete.addCandidate(new DefaultNArgCandidate(name == null ? "<value>" : name.name()));
                     } else {
                         for (NArgCandidate value : values) {
                             autoComplete.addCandidate(value);
@@ -1026,7 +1026,7 @@ public class DefaultNCmdLine implements NCmdLine {
             if (hasNext() && (!forceNonOption || !isNextOption())) {
                 return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().image())));
             }
-            return emptyOptionalCformat("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name.getName())));
+            return emptyOptionalCformat("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name.name())));
         }
         //ignored
     }
@@ -1079,9 +1079,9 @@ public class DefaultNCmdLine implements NCmdLine {
             List<String> parsed = new ArrayList<>();
             for (String line : new NStringBuilder(fileContent).lines().toList()) {
                 if (!NBlankable.isBlank(line) && !line.trim().startsWith("#")) {
-                    NCmdLine subCmd = NCmdLines.of().setShellFamily(s).parseCmdLine(line).get();
-                    subCmd.setExpandArgumentsFile(false);
-                    subCmd.setExpandArgumentsFile(false);
+                    NCmdLine subCmd = NCmdLines.of().shellFamily(s).parseCmdLine(line).get();
+                    subCmd.expandArgumentsFile(false);
+                    subCmd.expandArgumentsFile(false);
                     parsed.addAll(subCmd.toStringList());
                 }
             }
@@ -1172,16 +1172,16 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     private boolean isAutoComplete() {
-        return autoComplete != null && getWordIndex() == autoComplete.getCurrentWordIndex();
+        return autoComplete != null && wordIndex() == autoComplete.currentWordIndex();
     }
 
     public NCmdLine copy() {
         DefaultNCmdLine c = new DefaultNCmdLine();
         c.setArguments(toStringArray());
         c.autoComplete = autoComplete;
-        c.setShellFamily(shellFamily);
-        c.setExpandArgumentsFile(expandArgumentsFile);
-        c.setExpandSimpleOptions(expandSimpleOptions);
+        c.shellFamily(shellFamily);
+        c.expandArgumentsFile(expandArgumentsFile);
+        c.expandSimpleOptions(expandSimpleOptions);
         c.eq = this.eq;
         c.specialSimpleOptions = new HashSet<>(specialSimpleOptions);
         c.commandName = this.commandName;
@@ -1405,7 +1405,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public void run(NCmdLineRunner processor) {
-        NCmdLineConfigurable configurable = getConfigurable();
+        NCmdLineConfigurable configurable = configurable();
         NCmdLine cmd = this;
         NArg a;
         processor.init(cmd);
@@ -1451,7 +1451,7 @@ public class DefaultNCmdLine implements NCmdLine {
         if (this.isExecMode()) {
             //do the good staff here
             processor.run(cmd);
-        } else if (this.getAutoComplete() != null) {
+        } else if (this.autoComplete() != null) {
             processor.autoComplete(this);
         }
     }

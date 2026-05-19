@@ -66,7 +66,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return this.nutToRun.id();
     }
 

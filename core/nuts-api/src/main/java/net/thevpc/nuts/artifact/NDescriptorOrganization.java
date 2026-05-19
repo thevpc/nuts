@@ -1,17 +1,24 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.util.Map;
 
 public interface NDescriptorOrganization {
-    String getName();
+    @NGetter
+    String name();
 
-    String getUrl();
+    @NGetter
+    String url();
 
-    String getComments();
+    @NGetter
+    String comments();
 
-    String getId();
+    @NGetter
+    String id();
 
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
 
     NDescriptorOrganization readOnly();
 

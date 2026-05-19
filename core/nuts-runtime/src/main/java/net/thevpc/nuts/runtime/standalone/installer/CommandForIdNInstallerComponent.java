@@ -75,26 +75,26 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
     public void runMode(NExecutionContext executionContext, String mode) {
         NWorkspaceUtils.of().checkReadOnly();
         if (runnerId == null) {
-            NDefinition definition = executionContext.getDefinition();
+            NDefinition definition = executionContext.definition();
             NDescriptor descriptor = definition.descriptor();
             if (descriptor.isNutsApplication()) {
                 DefaultNDefinitionBuilder2 def2 = new DefaultNDefinitionBuilder2(definition)
                         .setInstallInformation(
                                 ()->new DefaultNInstallInfo(definition.installInformation().get())
                                         .setInstallStatus(
-                                                definition.installInformation().get().getInstallStatus().withInstalled(true)
+                                                definition.installInformation().get().installStatus().withInstalled(true)
                                         )
                         );
                 NExec cmd = NExec.of()
-                        .setCommandDefinition(def2.build())
+                        .commandDefinition(def2.build())
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }else if (mode.equals("uninstall")) {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
-                cmd.addCommand(executionContext.getArguments())
-                        .executionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
+                cmd.addCommand(executionContext.arguments())
+                        .executionType(NWorkspace.of().getBootOptions().executionType().orNull())
                         .failFast(true)
                         .run();
             }
@@ -103,23 +103,23 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             NDescriptor descriptor = definition.descriptor();
             if (descriptor.isNutsApplication()) {
                 NDefinitionBuilder def2 = definition.builder()
-                        .setInstallInformation(
+                        .installInformation(
                                 new DefaultNInstallInfo(definition.installInformation().get())
                                         .setInstallStatus(
-                                                definition.installInformation().get().getInstallStatus().withInstalled(true)
+                                                definition.installInformation().get().installStatus().withInstalled(true)
                                         )
                         );
                 List<String> eargs = new ArrayList<>();
-                for (String a : executionContext.getExecutorOptions()) {
+                for (String a : executionContext.executorOptions()) {
                     eargs.add(evalString(a, mode, executionContext));
                 }
-                eargs.addAll(executionContext.getArguments());
+                eargs.addAll(executionContext.arguments());
                 NExec.of()
-                        .setCommandDefinition(def2.build())
+                        .commandDefinition(def2.build())
                         .addCommand(eargs)
-                        .executionType(NWorkspace.of().getBootOptions().getExecutionType().orNull())
+                        .executionType(NWorkspace.of().getBootOptions().executionType().orNull())
                         .executionType(
-                                NConstants.Ids.NSH.equals(def2.getId().shortName()) ?
+                                NConstants.Ids.NSH.equals(def2.id().shortName()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN
                         )
                         .failFast(true)

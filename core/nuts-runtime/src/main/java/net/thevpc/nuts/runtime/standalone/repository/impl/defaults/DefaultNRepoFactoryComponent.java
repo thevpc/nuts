@@ -36,7 +36,6 @@ import net.thevpc.nuts.platform.NPlatformHome;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NHttpSrvRepository;
-import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
 
@@ -55,11 +54,11 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
 
     public DefaultNRepoFactoryComponent() {
         templates.add(new NRepositorySpec()
-                .setDeployWeight(100)
-                .setName("system")
-                .setFailSafe(true)
-                .setOrder(NRepositorySpec.ORDER_SYSTEM_LOCAL)
-                .setSourceLocation(NRepositoryLocation.of("nuts@"
+                .deployWeight(100)
+                .name("system")
+                .failSafe(true)
+                .order(NRepositorySpec.ORDER_SYSTEM_LOCAL)
+                .sourceLocation(NRepositoryLocation.of("nuts@"
                         + NPath.of(
                                 NPlatformHome.SYSTEM.getWorkspaceLocation(
                                         NStoreType.LIB, NWorkspace.of().getStoredConfig().getHomeLocations(),
@@ -67,38 +66,38 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
                         .resolve(NConstants.Folders.ID)
                         .toString())
                 ));
-        templates.add(new NRepositorySpec().setName("vpc-public-maven")
-                .setFailSafe(false)
-                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
-                .setSourceLocation(NRepositoryLocation.of("maven@dotfilefs+https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"))
-                .setAliases( "maven-thevpc-git"));
-        templates.add(new NRepositorySpec().setName("nuts-public")
-                .setFailSafe(false)
-                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
-                .setSourceLocation(NRepositoryLocation.of("nuts@dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-public/master"))
-                .setAliases( "vpc-public-nuts", "nuts-thevpc-git"));
-        templates.add(new NRepositorySpec().setName("nuts-preview")
-                .setFailSafe(false)
-                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
-                .setSourceLocation(NRepositoryLocation.of("nuts@dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-preview/master"))
-                .setTags(NConstants.RepoTags.PREVIEW)
-                .setAliases( "preview"));
-        templates.add(new NRepositorySpec().setName("thevpc")
-                .setFailSafe(false)
-                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
-                .setSourceLocation(NRepositoryLocation.of("maven@htmlfs+https://maven.thevpc.net"))
-                .setTags(NConstants.RepoTags.PREVIEW)
-                .setAliases( "dev"));
-        templates.add(new NRepositorySpec().setName("thevpc-goodies")
-                .setFailSafe(false)
-                .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
-                .setSourceLocation(NRepositoryLocation.of("maven@htmlfs+https://maven-goodies.thevpc.net"))
-                .setAliases( "thevpc-goodies", "goodies"));
+        templates.add(new NRepositorySpec().name("vpc-public-maven")
+                .failSafe(false)
+                .order(NRepositorySpec.ORDER_USER_REMOTE)
+                .sourceLocation(NRepositoryLocation.of("maven@dotfilefs+https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"))
+                .aliases( "maven-thevpc-git"));
+        templates.add(new NRepositorySpec().name("nuts-public")
+                .failSafe(false)
+                .order(NRepositorySpec.ORDER_USER_REMOTE)
+                .sourceLocation(NRepositoryLocation.of("nuts@dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-public/master"))
+                .aliases( "vpc-public-nuts", "nuts-thevpc-git"));
+        templates.add(new NRepositorySpec().name("nuts-preview")
+                .failSafe(false)
+                .order(NRepositorySpec.ORDER_USER_REMOTE)
+                .sourceLocation(NRepositoryLocation.of("nuts@dotfilefs+https://raw.githubusercontent.com/thevpc/nuts-preview/master"))
+                .tags(NConstants.RepoTags.PREVIEW)
+                .aliases( "preview"));
+        templates.add(new NRepositorySpec().name("thevpc")
+                .failSafe(false)
+                .order(NRepositorySpec.ORDER_USER_REMOTE)
+                .sourceLocation(NRepositoryLocation.of("maven@htmlfs+https://maven.thevpc.net"))
+                .tags(NConstants.RepoTags.PREVIEW)
+                .aliases( "dev"));
+        templates.add(new NRepositorySpec().name("thevpc-goodies")
+                .failSafe(false)
+                .order(NRepositorySpec.ORDER_USER_REMOTE)
+                .sourceLocation(NRepositoryLocation.of("maven@htmlfs+https://maven-goodies.thevpc.net"))
+                .aliases( "thevpc-goodies", "goodies"));
         templates.add(new NRepositorySpec()
-                .setName(NConstants.Names.DEFAULT_REPOSITORY_NAME)
-                .setDeployWeight(10)
-                .setFailSafe(false)
-                .setSourceLocation(NRepositoryLocation.of("nuts@" + NConstants.Names.DEFAULT_REPOSITORY_NAME))
+                .name(NConstants.Names.DEFAULT_REPOSITORY_NAME)
+                .deployWeight(10)
+                .failSafe(false)
+                .sourceLocation(NRepositoryLocation.of("nuts@" + NConstants.Names.DEFAULT_REPOSITORY_NAME))
         );
     }
 
@@ -135,12 +134,12 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         List<NRepositorySpec> all=new ArrayList<>();
         NSession session= NSession.of();
         if (!NWorkspace.of().isSystemWorkspace()) {
-            all.add(new NRepositorySpec().setName("system"));
+            all.add(new NRepositorySpec().name("system"));
         }
-        all.add(new NRepositorySpec().setName("nuts-public"));
+        all.add(new NRepositorySpec().name("nuts-public"));
         if(session.isPreviewRepo()){
-            all.add(new NRepositorySpec().setName("preview"));
-            all.add(new NRepositorySpec().setName("dev"));
+            all.add(new NRepositorySpec().name("preview"));
+            all.add(new NRepositorySpec().name("dev"));
         }
         return all;
     }
@@ -154,12 +153,12 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
             return null;
         }
         if (NConstants.RepoTypes.NUTS.equals(type)) {
-            if (NBlankable.isBlank(options.getSourceLocation()) ||
-                    NPath.of(options.getSourceLocation().getPath()).isLocal()
+            if (NBlankable.isBlank(options.sourceLocation()) ||
+                    NPath.of(options.sourceLocation().getPath()).isLocal()
             ) {
                 return new NFolderRepository(options, parentRepository);
-            } else if (NPath.of(options.getSourceLocation().getPath()).isURL()) {
-                Map<String, String> e = options.getEnv();
+            } else if (NPath.of(options.sourceLocation().getPath()).isURL()) {
+                Map<String, String> e = options.env();
                 if (e != null) {
                     if (NLiteral.of(e.get("nuts-api-server")).asBoolean().orElse(false)) {
                         return (new NHttpSrvRepository(options, parentRepository));

@@ -28,7 +28,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
 
     @Override
     public int execute() {
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         NSession session = NSession.of();
         if (dry) {
             dryExecute();

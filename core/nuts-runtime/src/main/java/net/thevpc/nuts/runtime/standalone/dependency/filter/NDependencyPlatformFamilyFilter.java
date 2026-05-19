@@ -47,7 +47,7 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        List<String> current = dependency.getCondition().getPlatform();
+        List<String> current = dependency.condition().platform();
         boolean empty = true;
         if (current != null) {
             for (String e : current) {

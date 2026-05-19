@@ -33,7 +33,7 @@ public interface NSagaCallable<T> extends NCallable<T>, NCopiable {
      *
      * @return the result of this saga
      */
-    T getResult();
+    T result();
 
     /**
      * Retrieves a variable stored in the saga context by its key.

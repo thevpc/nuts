@@ -43,7 +43,7 @@ public interface NSessionAwareExceptionBase extends NExceptionBase, NSessionProv
     }
 
     static NOptional<NSession> resolveSession(Throwable th) {
-        return resolveSessionAwareExceptionBase(th).map(NSessionAwareExceptionBase::getSession).orElseGetOptionalFrom(()->NSession.get());
+        return resolveSessionAwareExceptionBase(th).map(NSessionAwareExceptionBase::session).orElseGetOptionalFrom(()->NSession.get());
     }
 
     /**
@@ -51,5 +51,5 @@ public interface NSessionAwareExceptionBase extends NExceptionBase, NSessionProv
      *
      * @return current workspace
      */
-    NWorkspace getWorkspace();
+    NWorkspace workspace();
 }

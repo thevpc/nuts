@@ -10,7 +10,7 @@ public interface NConnectionStringAware {
      * @return the target host connection string
      * @since 0.8.9
      */
-    NConnectionString getConnectionString();
+    NConnectionString connectionString();
 
     /**
      * Updates the target host connection string.

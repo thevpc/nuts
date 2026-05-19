@@ -127,8 +127,8 @@ public class CommonRootsByIdHelper {
 
     private static Set<NId> resolveRootId(String groupId, String artifactId, String version) {
         return new HashSet<>(Collections.singletonList(NIdBuilder.of()
-                .setGroupId(groupId)
-                .setArtifactId(artifactId)
+                .groupId(groupId)
+                .artifactId(artifactId)
                 .build()));
     }
 

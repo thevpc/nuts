@@ -210,7 +210,7 @@ public class WindowsPsCsvParser {
 
     private void setCommand(DefaultNPsInfoBuilder v, String line) {
         v.setCmdLine(line);
-        NCmdLines nCmdLines = NCmdLines.of().setShellFamily(NShellFamily.WIN_CMD).setLenient(true);
+        NCmdLines nCmdLines = NCmdLines.of().shellFamily(NShellFamily.WIN_CMD).lenient(true);
         try {
             v.setCmdLineArgs(nCmdLines.parseCmdLine(line).map(NCmdLine::toStringArray).orElse(null));
         } catch (Exception ex) {

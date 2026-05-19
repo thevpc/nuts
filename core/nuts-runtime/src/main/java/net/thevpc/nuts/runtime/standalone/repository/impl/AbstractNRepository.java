@@ -81,7 +81,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public Set<String> getTags() {
+    public Set<String> tags() {
         return configModel.getTags();
     }
 
@@ -125,27 +125,27 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public String getRepositoryType() {
-        return config().getType();
+    public String repositoryType() {
+        return config().type();
     }
 
     @Override
-    public String getUuid() {
+    public String uuid() {
         return configModel==null?null:configModel.getUuid();
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return configModel==null?null:configModel.getName();
     }
 
     @Override
-    public NWorkspace getWorkspace() {
+    public NWorkspace workspace() {
         return workspace;
     }
 
     @Override
-    public NRepository getParentRepository() {
+    public NRepository parentRepository() {
         return parentRepository;
     }
 
@@ -169,12 +169,12 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public List<NRepositoryListener> getRepositoryListeners() {
+    public List<NRepositoryListener> repositoryListeners() {
         return repositoryListeners;
     }
 
     @Override
-    public Map<String, Object> getUserProperties() {
+    public Map<String, Object> userProperties() {
         return userProperties;
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
+    public List<NObservableMapListener<String, Object>> userPropertyListeners() {
         return userProperties.getMapListeners();
     }
 
@@ -199,7 +199,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
         return this.enabled && this.config().isEnabled();
     }
 
-    public NRepository setEnabled(boolean enabled) {
+    public NRepository enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
@@ -208,7 +208,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     public String toString() {
         NRepositoryConfigManagerExt cc = NRepositoryConfigManagerExt.of(config());
         NRepositoryConfigManager c = config();
-        String name = getName();
+        String name = name();
         String storePath = null;
         NRepositoryLocation loc = cc.getModel().getLocation();
         String impl = getClass().getSimpleName();

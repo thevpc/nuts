@@ -89,7 +89,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return null;
     }
 
@@ -101,7 +101,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
         cc.system();
         List<String> ss = new ArrayList<>(Arrays.asList(effectiveOpenExecutable));
         ss.addAll(Arrays.asList(cmd));
-        cc.setCommand(ss);
+        cc.command(ss);
         return cc;
     }
 
@@ -111,13 +111,13 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
     }
 
     @Override
-    public NText getHelpText() {
+    public NText helpText() {
         switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
-                return NText.ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
+                return NText.ofStyled("No help available. Try " + name() + " /help", NTextStyle.error());
             }
             default: {
-                return NText.ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'", NTextStyle.error());
+                return NText.ofStyled("No help available. Try 'man " + name() + "' or '" + name() + " --help'", NTextStyle.error());
             }
         }
     }

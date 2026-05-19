@@ -141,7 +141,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     public NFormatAndValue<Object, NContentTypeWriter> getBase(Object aValue) {
         NSession session = NSession.of();
         NFormatAndValue<Object, NContentTypeWriter> base = createObjectFormat(aValue);
-        base.getFormat().configure(true, NWorkspace.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+        base.getFormat().configure(true, NWorkspace.of().getBootOptions().outputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
         base.getFormat().configure(true, session.getOutputFormatOptions().toArray(new String[0]));
         return base;
     }

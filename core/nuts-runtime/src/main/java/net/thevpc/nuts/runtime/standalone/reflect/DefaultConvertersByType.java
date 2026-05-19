@@ -13,19 +13,19 @@ public class DefaultConvertersByType implements NReflectConverter {
     @Override
     public Object convert(Object value, String path, NReflectType fromType, NReflectType toType, NReflectMapper context) {
         if (value == null) {
-            return toType.getDefaultValue();
+            return toType.defaultValue();
         }
-        fromType = fromType.getBoxedType().get();
-        toType = toType.getBoxedType().get();
+        fromType = fromType.boxedType().get();
+        toType = toType.boxedType().get();
 
 
-        Type tojType = toType.getJavaType();
+        Type tojType = toType.javaType();
         if (
-                toType.getName().equals(fromType.getName())
+                toType.name().equals(fromType.name())
                 || toType.isAssignableFrom(fromType)
         ) {
             // immutable / value objects
-            switch (fromType.getName()) {
+            switch (fromType.name()) {
                 case "java.lang.Boolean":
                 case "java.lang.Byte":
                 case "java.lang.Character":
@@ -41,16 +41,16 @@ public class DefaultConvertersByType implements NReflectConverter {
 
         //fall through
 
-        if (toType.getName().equals("java.lang.String")) {
+        if (toType.name().equals("java.lang.String")) {
             return String.valueOf(value);
-        }else if (fromType.getName().equals("java.lang.String")) {
+        }else if (fromType.name().equals("java.lang.String")) {
             if (tojType instanceof NEnum) {
                 return NEnum.parse((Class<? extends NEnum>) tojType, (String) value).get();
             }
             if (tojType instanceof Enum) {
                 return Enum.valueOf((Class<? extends Enum>) tojType, (String) value);
             }
-            switch (toType.getName()) {
+            switch (toType.name()) {
                 case "java.lang.Boolean":return Boolean.parseBoolean((String) value);
                 case "java.lang.Character":return ((String) value).charAt(0);
                 case "java.lang.Byte":return Byte.parseByte((String) value);
@@ -64,7 +64,7 @@ public class DefaultConvertersByType implements NReflectConverter {
             if (tojType instanceof Enum) {
                 return ((Class<? extends Enum>) tojType).getEnumConstants()[((Number) value).intValue()];
             }else if (tojType instanceof Class && Number.class.isAssignableFrom((Class<?>) tojType)) {
-                switch (toType.getName()) {
+                switch (toType.name()) {
                     case "java.lang.Byte":return ((Number) value).byteValue();
                     case "java.lang.Short":return ((Number) value).shortValue();
                     case "java.lang.Integer":return ((Number) value).intValue();
@@ -76,7 +76,7 @@ public class DefaultConvertersByType implements NReflectConverter {
         } else if (fromType.isArrayType()) {
             if (toType.isArrayType()) {
                 int len = Array.getLength(value);
-                Object newArr = Array.newInstance((Class<?>) toType.getJavaType(), len);
+                Object newArr = Array.newInstance((Class<?>) toType.javaType(), len);
                 for (int i = 0; i < len; i++) {
                     Array.set(newArr, i, Array.get(value, i));
                 }
@@ -99,11 +99,11 @@ public class DefaultConvertersByType implements NReflectConverter {
                     return li;
                 }
             }
-        } else if (fromType.getJavaType() instanceof Class && java.util.Collection.class.isAssignableFrom((Class<?>) fromType.getJavaType())) {
+        } else if (fromType.javaType() instanceof Class && java.util.Collection.class.isAssignableFrom((Class<?>) fromType.javaType())) {
             if (toType.isArrayType()) {
                 Collection coll = (Collection) value;
                 int len = coll.size();
-                Object newArr = Array.newInstance((Class<?>) toType.getJavaType(), len);
+                Object newArr = Array.newInstance((Class<?>) toType.javaType(), len);
                 int i=0;
                 for (Object o : coll) {
                     Array.set(newArr, i++, o);

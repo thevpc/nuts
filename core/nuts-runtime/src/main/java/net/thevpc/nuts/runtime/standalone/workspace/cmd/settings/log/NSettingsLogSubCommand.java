@@ -77,7 +77,7 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
                     throw new NIllegalArgumentException(NMsg.ofPlain("invalid loglevel"));
                 }
             }
-            cmdLine.setCommandName("config log").throwUnexpectedArgument();
+            cmdLine.commandName("config log").throwUnexpectedArgument();
             return true;
         } else if (cmdLine.next("get log level","log level").isPresent()) {
             if (cmdLine.isExecMode()) {

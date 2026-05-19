@@ -2,6 +2,7 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.function.IntFunction;
 
@@ -65,7 +66,7 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
      * {@link NCircuitBreakerCall#callOrElse(NCallable)}.
      * </p>
      */
-    private Throwable throwable;
+    private Throwable error;
 
     /** Current state of the circuit breaker. Defaults to OPEN. */
     private NCircuitBreakerCall.Status status = NCircuitBreakerCall.Status.OPEN;
@@ -100,6 +101,11 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
     public NCircuitBreakerCallModel() {
     }
 
+    public NCircuitBreakerCallModel(String id) {
+        this.id = id;
+    }
+
+    @NGetter
     public NCircuitBreakerCall.Status getStatus() {
         return status;
     }
@@ -110,6 +116,7 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
     }
 
 
+    @NGetter
     public NCallable<?> getCaller() {
         return caller;
     }
@@ -119,99 +126,106 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
         return this;
     }
 
-    public NCircuitBreakerCallModel(String id) {
-        this.id = id;
+
+    @NGetter
+    public Object getError() {
+        return error;
     }
 
-    public Object getThrowable() {
-        return throwable;
-    }
 
 
-
-    public NCircuitBreakerCallModel setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    public NCircuitBreakerCallModel setError(Throwable error) {
+        this.error = error;
         return this;
     }
 
 
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NCircuitBreakerCallModel setId(String id) {
+    public NCircuitBreakerCallModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public int getFailureThreshold() {
+    @NGetter
+    public int failureThreshold() {
         return failureThreshold;
     }
 
-    public NCircuitBreakerCallModel setFailureThreshold(int failureThreshold) {
+    public NCircuitBreakerCallModel failureThreshold(int failureThreshold) {
         this.failureThreshold = failureThreshold;
         return this;
     }
 
-    public int getSuccessThreshold() {
+    @NGetter
+    public int successThreshold() {
         return successThreshold;
     }
 
-    public NCircuitBreakerCallModel setSuccessThreshold(int successThreshold) {
+    public NCircuitBreakerCallModel successThreshold(int successThreshold) {
         this.successThreshold = successThreshold;
         return this;
     }
 
-    public int getFailureCount() {
+    @NGetter
+    public int failureCount() {
         return failureCount;
     }
 
-    public NCircuitBreakerCallModel setFailureCount(int failureCount) {
+    public NCircuitBreakerCallModel failureCount(int failureCount) {
         this.failureCount = failureCount;
         return this;
     }
 
-    public int getSuccessCount() {
+    public int successCount() {
         return successCount;
     }
 
-    public NCircuitBreakerCallModel setSuccessCount(int successCount) {
+    @NGetter
+    public NCircuitBreakerCallModel successCount(int successCount) {
         this.successCount = successCount;
         return this;
     }
 
-    public long getOpenTimestamp() {
+    public long openTimestamp() {
         return openTimestamp;
     }
 
-    public NCircuitBreakerCallModel setOpenTimestamp(long openTimestamp) {
+    @NGetter
+    public NCircuitBreakerCallModel openTimestamp(long openTimestamp) {
         this.openTimestamp = openTimestamp;
         return this;
     }
 
-    public IntFunction<NDuration> getSuccessRetryPeriod() {
+    public IntFunction<NDuration> successRetryPeriod() {
         return successRetryPeriod;
     }
 
-    public NCircuitBreakerCallModel setSuccessRetryPeriod(IntFunction<NDuration> successRetryPeriod) {
+    @NGetter
+    public NCircuitBreakerCallModel successRetryPeriod(IntFunction<NDuration> successRetryPeriod) {
         this.successRetryPeriod = successRetryPeriod;
         return this;
     }
 
-    public IntFunction<NDuration> getFailureRetryPeriod() {
+    public IntFunction<NDuration> failureRetryPeriod() {
         return failureRetryPeriod;
     }
 
-    public NCircuitBreakerCallModel setFailureRetryPeriod(IntFunction<NDuration> failureRetryPeriod) {
+    @NGetter
+    public NCircuitBreakerCallModel failureRetryPeriod(IntFunction<NDuration> failureRetryPeriod) {
         this.failureRetryPeriod = failureRetryPeriod;
         return this;
     }
 
-    public Object getLastValidResult() {
+    public Object lastValidResult() {
         return lastValidResult;
     }
 
-    public NCircuitBreakerCallModel setLastValidResult(Object lastValidResult) {
+    @NGetter
+    public NCircuitBreakerCallModel lastValidResult(Object lastValidResult) {
         this.lastValidResult = lastValidResult;
         return this;
     }

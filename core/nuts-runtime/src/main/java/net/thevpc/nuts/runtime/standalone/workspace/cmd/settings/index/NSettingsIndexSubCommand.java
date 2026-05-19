@@ -32,7 +32,7 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
                 repos.add(cmdLine.next().get().image());
             }
             updateStatistics(repos.toArray(new String[0]));
-            cmdLine.setCommandName(name).throwUnexpectedArgument();
+            cmdLine.commandName(name).throwUnexpectedArgument();
             return true;
         } else {
             return false;

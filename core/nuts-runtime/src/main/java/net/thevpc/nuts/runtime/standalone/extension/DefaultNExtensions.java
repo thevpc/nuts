@@ -195,11 +195,11 @@ public class DefaultNExtensions implements NExtensions {
         URL pomXml = classLoader.getResource("META-INF/maven/" + id.groupId() + "/" + id.artifactId() + "/pom.xml");
         if (pomXml != null) {
             NDescriptor e = NDescriptorParser.of()
-                    .setDescriptorStyle(NDescriptorStyle.MAVEN)
+                    .descriptorStyle(NDescriptorStyle.MAVEN)
                     .parse(pomXml).orNull();
             if (e != null) {
-                if (e.getId() != null) {
-                    NVersion v = e.getId().version();
+                if (e.id() != null) {
+                    NVersion v = e.id().version();
                     if (v != null) {
                         NVersion v2 = id.version();
                         if (v2 != null && !v2.isBlank()) {
@@ -215,11 +215,11 @@ public class DefaultNExtensions implements NExtensions {
                 + id.shortId().mavenFolder() + "/nuts.json");
         if (nuts != null) {
             NDescriptor e = NDescriptorParser.of()
-                    .setDescriptorStyle(NDescriptorStyle.NUTS)
+                    .descriptorStyle(NDescriptorStyle.NUTS)
                     .parse(nuts).orNull();
             if (e != null) {
-                if (e.getId() != null) {
-                    NVersion v = e.getId().version();
+                if (e.id() != null) {
+                    NVersion v = e.id().version();
                     if (v != null) {
                         NVersion v2 = id.version();
                         if (v2 != null && !v2.isBlank()) {

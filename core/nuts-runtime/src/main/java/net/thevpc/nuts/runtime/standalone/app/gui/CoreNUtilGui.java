@@ -56,7 +56,7 @@ public final class CoreNUtilGui {
         try {
             NTexts text = NTexts.of();
             if (title == null) {
-                title = NMsg.ofC("Nuts Package Manager - %s", Nuts.getVersion());
+                title = NMsg.ofC("Nuts Package Manager - %s", Nuts.version());
             }
             String line = javax.swing.JOptionPane.showInputDialog(
                     null,
@@ -77,7 +77,7 @@ public final class CoreNUtilGui {
 
     public static GuiResult inputPassword(NMsg message, NMsg title, boolean rememberMe) {
         if (title == null) {
-            title = NMsg.ofC("Nuts Package Manager - %s", Nuts.getVersion());
+            title = NMsg.ofC("Nuts Package Manager - %s", Nuts.version());
         }
         if (message == null) {
             message = NMsg.ofPlain("");
@@ -112,7 +112,7 @@ public final class CoreNUtilGui {
 
     public static void showMessage(NMsg message, NMsg title) {
         if (title == null) {
-            title = NMsg.ofC("Nuts Package Manager - %s", Nuts.getVersion());
+            title = NMsg.ofC("Nuts Package Manager - %s", Nuts.version());
         }
         NTexts text = NTexts.of();
         String messageString = text.of(message == null ? "" : message).filteredText();

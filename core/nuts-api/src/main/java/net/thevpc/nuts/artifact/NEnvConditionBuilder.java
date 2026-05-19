@@ -4,6 +4,8 @@ package net.thevpc.nuts.artifact;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -13,17 +15,23 @@ public interface NEnvConditionBuilder extends NComponent, NBlankable {
         return NExtensions.of(NEnvConditionBuilder.class);
     }
 
-    NEnvConditionBuilder setArch(List<String> arch);
+    @NSetter
+    NEnvConditionBuilder arch(List<String> arch);
 
-    NEnvConditionBuilder setOs(List<String> os);
+    @NSetter
+    NEnvConditionBuilder os(List<String> os);
 
-    NEnvConditionBuilder setOsDist(List<String> osDist);
+    @NSetter
+    NEnvConditionBuilder osDist(List<String> osDist);
 
-    NEnvConditionBuilder setPlatform(List<String> platform);
+    @NSetter
+    NEnvConditionBuilder platform(List<String> platform);
 
-    NEnvConditionBuilder setDesktopEnvironment(List<String> desktopEnvironment);
+    @NSetter
+    NEnvConditionBuilder desktopEnvironment(List<String> desktopEnvironment);
 
-    NEnvConditionBuilder setProfile(List<String> profiles);
+    @NSetter
+    NEnvConditionBuilder profile(List<String> profiles);
 
     NEnvConditionBuilder copyFrom(NEnvCondition other);
 
@@ -74,28 +82,32 @@ public interface NEnvConditionBuilder extends NComponent, NBlankable {
      *
      * @return supported supported profiles
      */
-    List<String> getProfiles();
+    @NGetter
+    List<String> profiles();
 
     /**
      * supported arch list. if empty, all arch are supported (for example for java, all arch are supported).
      *
      * @return supported arch list
      */
-    List<String> getArch();
+    @NGetter
+    List<String> arch();
 
     /**
      * supported operating systems. if empty, all oses are supported (for example for java, all arch are supported).
      *
      * @return supported oses
      */
-    List<String> getOs();
+    @NGetter
+    List<String> os();
 
     /**
      * supported operating system distributions (mostly for linux systems). if empty, all distributions are supported.
      *
      * @return supported operating system distributions
      */
-    List<String> getOsDist();
+    @NGetter
+    List<String> osDist();
 
     /**
      * supported platforms (java, dotnet, ...). if empty platform is not relevant.
@@ -103,7 +115,8 @@ public interface NEnvConditionBuilder extends NComponent, NBlankable {
      *
      * @return supported platforms
      */
-    List<String> getPlatform();
+    @NGetter
+    List<String> platform();
 
     /**
      * supported desktop environments (gnome, kde, none, ...). if empty desktop environment is not relevant.
@@ -111,7 +124,8 @@ public interface NEnvConditionBuilder extends NComponent, NBlankable {
      *
      * @return supported platforms
      */
-    List<String> getDesktopEnvironment();
+    @NGetter
+    List<String> desktopEnvironment();
 
     /**
      * return env properties
@@ -119,7 +133,8 @@ public interface NEnvConditionBuilder extends NComponent, NBlankable {
      * @return env properties
      * @since 0.8.4
      */
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
 
     Map<String, String> toMap();
 

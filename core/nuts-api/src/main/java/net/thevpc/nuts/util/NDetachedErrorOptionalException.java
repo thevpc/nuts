@@ -10,7 +10,7 @@ public class NDetachedErrorOptionalException extends RuntimeException implements
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("error") : formattedMessage;
     }
 
-    public NMsg getFormattedMessage() {
+    public NMsg formattedMessage() {
         return formattedMessage;
     }
 }

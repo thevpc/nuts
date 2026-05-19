@@ -55,7 +55,7 @@ public class ReflectTest {
         NReflectRepository typesRepository = NWorkspaceUtils.of().getReflectRepository();
         {
             NReflectType type = typesRepository.getParametrizedType(C.class, null, new Type[]{String.class, String.class, String.class});
-            List<NReflectProperty> declaredProperties = type.getDeclaredProperties();
+            List<NReflectProperty> declaredProperties = type.declaredProperties();
             NStringBuilder s = new NStringBuilder();
             for (NReflectProperty declaredProperty : declaredProperties) {
                 s.println(declaredProperty);
@@ -69,7 +69,7 @@ public class ReflectTest {
 
         {
             NReflectType type = typesRepository.getParametrizedType(D.class, null, new Type[]{Double.class, Integer.class});
-            List<NReflectProperty> declaredProperties = type.getDeclaredProperties();
+            List<NReflectProperty> declaredProperties = type.declaredProperties();
             NStringBuilder s = new NStringBuilder();
             for (NReflectProperty declaredProperty : declaredProperties) {
                 s.println(declaredProperty);

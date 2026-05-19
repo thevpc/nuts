@@ -9,8 +9,8 @@ import net.thevpc.nuts.util.NOptional;
  * Default load balancing strategies provided by {@link NWorkBalancer}.
  * <p>
  * These strategies define how workers are selected for executing a job.
- * They can be used directly via {@link NWorkBalancerBuilder#setStrategy(String)}
- * or {@link NWorkBalancerBuilder#setStrategy(NWorkBalancerDefaultStrategy)}.
+ * They can be used directly via {@link NWorkBalancerBuilder#strategy(String)}
+ * or {@link NWorkBalancerBuilder#strategy(NWorkBalancerDefaultStrategy)}.
  *
  * <ul>
  *     <li>{@link #ROUND_ROBIN} – Jobs are distributed sequentially across workers in a circular manner.

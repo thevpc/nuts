@@ -40,7 +40,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     private static void deleteRepoCache(NRepository repository, boolean force) {
         NPath s = repository.config().getStoreLocation(NStoreType.CACHE);
         if (s != null) {
-            NSession session = repository.getWorkspace().currentSession();
+            NSession session = repository.workspace().currentSession();
             if (s.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s folder %s ...",
                         NText.ofStyledPrimary1("cache")
@@ -54,7 +54,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             }
         }
         if (repository.config().isSupportedMirroring()) {
-            for (NRepository mirror : repository.config().getMirrors()) {
+            for (NRepository mirror : repository.config().mirrors()) {
                 deleteRepoCache(mirror, force);
             }
         }
@@ -64,7 +64,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         for (NStoreType value : NStoreType.values()) {
             String cmdName = "delete " + value.id();
-            cmdLine.setCommandName("settings " + cmdName);
+            cmdLine.commandName("settings " + cmdName);
             if (cmdLine.next(cmdName).isPresent()) {
                 boolean force = false;
                 Set<NStoreType> locationsToDelete = new HashSet<>();
@@ -124,7 +124,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
                         factory.ofStyled(storeType.id(), NTextStyle.primary1()),
-                        factory.ofStyled(repository.getName(), NTextStyle.primary1()),
+                        factory.ofStyled(repository.name(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
@@ -135,7 +135,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             }
         }
         if (repository.config().isSupportedMirroring()) {
-            for (NRepository subRepository : repository.config().getMirrors()) {
+            for (NRepository subRepository : repository.config().mirrors()) {
                 deleteRepoCache(subRepository, force);
             }
         }

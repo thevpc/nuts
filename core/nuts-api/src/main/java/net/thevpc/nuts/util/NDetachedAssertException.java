@@ -14,7 +14,7 @@ public class NDetachedAssertException extends IllegalArgumentException implement
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("assert failed") : formattedMessage;
     }
 
-    public NMsg getFormattedMessage() {
+    public NMsg formattedMessage() {
         return formattedMessage;
     }
 }

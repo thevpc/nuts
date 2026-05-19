@@ -56,8 +56,8 @@ public class IdTest {
         Assertions.assertEquals("cobertura",s.artifactId());
         Assertions.assertEquals("coberturaVersion",s.version().toString());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.properties().get("exclusions"));
-        Assertions.assertEquals(null,s.condition().getProperties().get("a"));
-        Assertions.assertEquals("c",s.condition().getProperties().get("b"));
+        Assertions.assertEquals(null,s.condition().properties().get("a"));
+        Assertions.assertEquals("c",s.condition().properties().get("b"));
         TestUtils.println(s);
     }
 
@@ -68,8 +68,8 @@ public class IdTest {
         Assertions.assertEquals("net.sourceforge.cobertura",s.groupId());
         Assertions.assertEquals("cobertura",s.artifactId());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.properties().get("exclusions"));
-        Assertions.assertEquals(null,s.condition().getProperties().get("a"));
-        Assertions.assertEquals("c",s.condition().getProperties().get("b"));
+        Assertions.assertEquals(null,s.condition().properties().get("a"));
+        Assertions.assertEquals("c",s.condition().properties().get("b"));
         TestUtils.println(s);
     }
 

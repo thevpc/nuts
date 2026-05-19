@@ -61,9 +61,9 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
     public void initializeWorkspace() {
         NRepositorySpec[] br = NRepositoryUtils.resolve(NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList(),
                 new NRepositorySpec[]{
-                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName("maven-local")),
-                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName("maven-central")),
-                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)),
+                        new NRepositorySpec().sourceLocation(NRepositoryLocation.ofName("maven-local")),
+                        new NRepositorySpec().sourceLocation(NRepositoryLocation.ofName("maven-central")),
+                        new NRepositorySpec().sourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)),
                 }
         );
         for (NRepositorySpec s : br) {
@@ -101,9 +101,9 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         NWorkspace workspace = NWorkspace.of();
-        boolean initializeScripts = workspace.getBootOptions().getInitScripts().onEmpty(true).get();
-        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().onEmpty(true).get();
-        Boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
+        boolean initializeScripts = workspace.getBootOptions().initScripts().onEmpty(true).get();
+        boolean initializeLaunchers = workspace.getBootOptions().initLaunchers().onEmpty(true).get();
+        Boolean installCompanions = workspace.getBootOptions().installCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of().installAllJVM();
@@ -113,8 +113,8 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 //        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
             NId api = NFetch.of()
-                    .setId(workspace.getApiId()).failFast(false)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .id(workspace.getApiId()).failFast(false)
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
                     .getResultId();
             if (api != null) {
                 NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();

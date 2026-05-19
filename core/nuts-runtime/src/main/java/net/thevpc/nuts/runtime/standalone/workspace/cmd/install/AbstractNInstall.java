@@ -31,7 +31,6 @@ import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInstall;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.util.NScore;
@@ -134,22 +133,27 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public NInstall setId(NId id) {
+    public NInstall id(NId id) {
         return clearIds().addId(id);
     }
 
     @Override
-    public NInstall setId(String id) {
+    public NInstall id(String id) {
         return clearIds().addId(id);
     }
 
     @Override
-    public NInstall setIds(NId... ids) {
+    public NInstall ids(NId... ids) {
         return clearIds().addIds(ids);
     }
 
     @Override
-    public NInstall setIds(String... ids) {
+    public NInstall ids(List<NId> ids) {
+        return clearArgs().ids(ids==null?null:ids.toArray(new NId[0]));
+    }
+
+    @Override
+    public NInstall ids(String... ids) {
         return clearIds().addIds(ids);
     }
 
@@ -173,8 +177,10 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
 
     @Override
     public NInstall addIds(NId... ids) {
-        for (NId id : ids) {
-            addId(id);
+        if(ids!=null){
+            for (NId id : ids) {
+                addId(id);
+            }
         }
         return this;
     }
@@ -208,7 +214,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> args() {
         return NCollections.unmodifiableList(args);
     }
 
@@ -265,7 +271,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public NInstall setCompanions(boolean value) {
+    public NInstall companions(boolean value) {
         this.companionsInstallFlags = value ? currentInstallFlags.copy() : null;
         return this;
     }
@@ -276,7 +282,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public NInstall setInstalled(boolean value) {
+    public NInstall installed(boolean value) {
         this.installedInstallFlags = value ? currentInstallFlags.copy() : null;
         return this;
     }
@@ -287,30 +293,11 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public NInstall setDefaultVersion(boolean defaultVersion) {
+    public NInstall defaultVersion(boolean defaultVersion) {
         this.defaultVersion = defaultVersion;
         return this;
     }
 
-    @Override
-    public NInstall defaultVersion(boolean defaultVersion) {
-        return setDefaultVersion(defaultVersion);
-    }
-
-    @Override
-    public NInstall defaultVersion() {
-        return defaultVersion(true);
-    }
-
-    @Override
-    public NInstall companions(boolean value) {
-        return setCompanions(value);
-    }
-
-    @Override
-    public NInstall companions() {
-        return companions(true);
-    }
 
 //    @Override
 //    public NInstallCmd setStrategy(NInstallStrategy value) {
@@ -336,11 +323,11 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
         switch (aa.key()) {
             case "-c":
             case "--companions": {
-                return cmdLine.matcher().matchFlag((v) -> this.setCompanions(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.companions(v.booleanValue())).anyMatch();
             }
             case "-i":
             case "--installed": {
-                return cmdLine.matcher().matchFlag((v) -> this.setInstalled(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.installed(v.booleanValue())).anyMatch();
             }
 //            case "-s":
 //            case "--strategy": {

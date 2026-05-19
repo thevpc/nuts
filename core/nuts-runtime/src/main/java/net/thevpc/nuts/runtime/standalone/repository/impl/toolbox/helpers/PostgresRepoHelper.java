@@ -66,9 +66,9 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
             }
             if (found) {
                 return NDescriptorBuilder.of()
-                        .setId(id.longId())
-                        .setPackaging("tar.gz")
-                        .setDescription("Postgresql Official Tar Gz Source")
+                        .id(id.longId())
+                        .packaging("tar.gz")
+                        .description("Postgresql Official Tar Gz Source")
                         .setProperty("dynamic-descriptor", "true")
                         .build();
             }
@@ -104,7 +104,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
                 .collect(Collectors.toList());
         List<NId> ids = new ArrayList<>();
         for (String s : versions) {
-            NId id0 = idBuilder.setVersion(NVersion.of(s)).build();
+            NId id0 = idBuilder.version(NVersion.of(s)).build();
             final NDefinition dd = NDefinitionFactory.of().byId(id0,repository);
             if (safeFilter.acceptDefinition(dd)) {
                 ids.add(id0);

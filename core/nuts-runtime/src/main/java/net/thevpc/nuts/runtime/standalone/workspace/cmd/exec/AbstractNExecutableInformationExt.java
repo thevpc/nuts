@@ -43,29 +43,29 @@ public abstract class AbstractNExecutableInformationExt implements NExecutableIn
     }
 
     @Override
-    public String getValue() {
+    public String value() {
         return value;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NExecutableType getType() {
+    public NExecutableType type() {
         return type;
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return toString();
     }
 
     @Override
-    public NText getHelpText() {
+    public NText helpText() {
         return NText.ofStyled(
-                "No help available. Try '" + getName() + " --help'",
+                "No help available. Try '" + name() + " --help'",
                 NTextStyle.error()
         );
     }

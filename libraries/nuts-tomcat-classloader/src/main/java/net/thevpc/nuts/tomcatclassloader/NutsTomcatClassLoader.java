@@ -114,7 +114,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
                     resolveWorkspace().runWith(()->{
-                        nutsClassLoader = NSearch.of().addIds(pathList).setInlineDependencies(true).getResultClassLoader();
+                        nutsClassLoader = NSearch.of().addIds(pathList).inlineDependencies(true).getResultClassLoader();
                     });
                 } catch (Exception ex) {
                     ex.printStackTrace();

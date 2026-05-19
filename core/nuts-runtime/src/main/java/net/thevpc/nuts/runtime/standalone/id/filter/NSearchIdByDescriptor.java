@@ -44,12 +44,12 @@ public class NSearchIdByDescriptor implements NSearchId {
 
 
     @Override
-    public NId getId() {
-        return desc.getId();
+    public NId id() {
+        return desc.id();
     }
 
     @Override
-    public NDescriptor getDescriptor() {
+    public NDescriptor descriptor() {
         return desc;
     }
 

@@ -51,7 +51,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
             instance = onNewInstance.newInstance(context);
         }
         if (instance == null) {
-            Type rtype = type.getJavaType();
+            Type rtype = type.javaType();
             if (rtype instanceof Class) {
                 Class cType = (Class) rtype;
                 if (cType.isInterface()) {
@@ -66,13 +66,13 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 instance = (T) type.newInstance();
             }
         }
-        NReflectType effectiveType=type.getRepository().getType(instance.getClass());
+        NReflectType effectiveType=type.repository().getType(instance.getClass());
         //now that we have the instance lets compute
         Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> allFields = new HashMap<>();
         Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> argFields = new HashMap<>();
         Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> bodyFields = new HashMap<>();
 
-        for (NReflectProperty property : effectiveType.getProperties()) {
+        for (NReflectProperty property : effectiveType.properties()) {
             if (!allFields.containsKey(property.getName())) {
                 NElementDeserializerBuilderNElementDeserializerFieldImpl<T> o = (NElementDeserializerBuilderNElementDeserializerFieldImpl<T>) builder.preConfiguredFields.get(property.getName());
                 if(o!=null){
@@ -86,7 +86,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 }
                 f.uniformName = uniformName(f.name);
                 f.field = null;
-                for (NReflectProperty field : effectiveType.getProperties()) {
+                for (NReflectProperty field : effectiveType.properties()) {
                     String u = uniformName(field.getName());
                     if (u.equals(f.uniformName)) {
                         f.field = field;
@@ -179,10 +179,10 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 if(tField.typeOverride!=null) {
                     jt = (Class<?>) NReflectUtils.getRawClass(tField.typeOverride).orNull();
                     if(jt==null){
-                        jt = (Class<?>) tField.field.getPropertyType().getJavaType();
+                        jt = (Class<?>) tField.field.getPropertyType().javaType();
                     }
                 }else{
-                    jt = (Class<?>) tField.field.getPropertyType().getJavaType();
+                    jt = (Class<?>) tField.field.getPropertyType().javaType();
                 }
                 if((jt.isArray() || Collection.class.isAssignableFrom(jt)) && !value.isAnyArray()) {
                     tField.field.write(instance, context.toObject(value.wrapIntoArray(), jt));

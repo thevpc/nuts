@@ -29,6 +29,8 @@ import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.*;
+
 /**
  * Strategy controlling how properties are discovered and accessed during reflection.
  * When multiple strategies apply, they are applied in the following priority order:
@@ -44,7 +46,7 @@ public enum NReflectPropertyAccessStrategy implements NEnum {
     /**
      * Discovers properties via JavaBean conventions: {@code getX()}/{@code isX()} as getters
      * and {@code setX(value)} as setters. A getter alone yields a read-only property.
-     * When combined with {@link #FIELD} (i.e. {@link #ALL}), a bean getter with no matching
+     * When combined with {@link #FIELD} , a bean getter with no matching
      * setter may fall back to a field of the same name and type for write access.
      */
     BEAN,
@@ -77,13 +79,9 @@ public enum NReflectPropertyAccessStrategy implements NEnum {
      * {@code from}, or {@code is} (unless identified as a standard JavaBean boolean getter).</li>
      * </ul>
      */
-    FLUENT,
+    FLUENT;
 
-    /**
-     * Applies all strategies: {@link #BEAN}, {@link #FLUENT}, and {@link #FIELD}.
-     * A later one never overrides a property discovered by an earlier strategy.
-     */
-    ALL;
+
     private final String id;
 
     NReflectPropertyAccessStrategy() {
@@ -98,6 +96,15 @@ public enum NReflectPropertyAccessStrategy implements NEnum {
      */
     public static NOptional<NReflectPropertyAccessStrategy> parse(String value) {
         return NEnumUtils.parseEnum(value, NReflectPropertyAccessStrategy.class);
+    }
+
+    /** Canonical priority order for property resolution. */
+    public static final List<NReflectPropertyAccessStrategy> PRIORITY_ORDER =
+            Collections.unmodifiableList(Arrays.asList(BEAN, FLUENT, FIELD));
+
+    /** Full set — replaces what ALL used to mean. */
+    public static Set<NReflectPropertyAccessStrategy> all() {
+        return EnumSet.allOf(NReflectPropertyAccessStrategy.class);
     }
 
     /**

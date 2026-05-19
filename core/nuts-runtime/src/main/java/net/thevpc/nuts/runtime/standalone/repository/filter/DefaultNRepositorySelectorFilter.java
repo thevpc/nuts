@@ -25,10 +25,10 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
             li=li.merge(NRepositoryUtils.createRepositorySelectorList(exactRepo).get());
         }
         NRepositorySpec[] input = NWorkspace.of().getRepositories().stream()
-                .map(x -> x.config().getLocation().setName(x.getName()))
-                .map(x->new NRepositorySpec().setSourceLocation(x))
+                .map(x -> x.config().location().setName(x.name()))
+                .map(x->new NRepositorySpec().sourceLocation(x))
                 .toArray(NRepositorySpec[]::new);
-        String[] names = Arrays.stream(NRepositoryUtils.resolve(li,input)).map(NRepositorySpec::getName).toArray(String[]::new);
+        String[] names = Arrays.stream(NRepositoryUtils.resolve(li,input)).map(NRepositorySpec::name).toArray(String[]::new);
         for (String repo : names) {
             if (!NBlankable.isBlank(repo)) {
                 if(repo.indexOf('*')>0) {
@@ -47,12 +47,12 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
             return true;
         }
-        if(exactRepos.contains(repository.getUuid())
-                || exactRepos.contains(repository.getName())){
+        if(exactRepos.contains(repository.uuid())
+                || exactRepos.contains(repository.name())){
             return true;
         }
         for (Pattern wildcardRepo : wildcardRepos) {
-            if(wildcardRepo.matcher(repository.getName()).matches()){
+            if(wildcardRepo.matcher(repository.name()).matches()){
                 return true;
             }
         }

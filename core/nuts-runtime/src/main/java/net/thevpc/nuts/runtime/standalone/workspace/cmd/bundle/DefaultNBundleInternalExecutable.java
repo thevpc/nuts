@@ -234,7 +234,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
             fullPath = id
                     //descriptor is not classifier aware
-                    .builder().setClassifier(null).build()
+                    .builder().classifier(null).build()
                     .getMavenPath(NConstants.Files.DESCRIPTOR_FILE_EXTENSION_SIMPLE);
             cp.from(NDescriptorWriter.of().formatPlain(d.descriptor()).getBytes())
                     .to(bundleFolder.resolve(fullPath))
@@ -253,8 +253,8 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             for (NId executableAppId : resultingIds.executableAppIds) {
                 NDefinition d = resultingIds.classPath.get(executableAppId);
                 int minJava = 8;
-                boolean gui = d.descriptor().getFlags().contains(NDescriptorFlag.GUI);
-                for (String s : d.descriptor().getCondition().getPlatform()) {
+                boolean gui = d.descriptor().flags().contains(NDescriptorFlag.GUI);
+                for (String s : d.descriptor().condition().platform()) {
                     NId id = NId.get(s).orNull();
                     if (NJavaSdkUtils.isJava(id)) {
                         minJava = NJavaSdkUtils.normalizeJavaVersionAsInt(id.version());

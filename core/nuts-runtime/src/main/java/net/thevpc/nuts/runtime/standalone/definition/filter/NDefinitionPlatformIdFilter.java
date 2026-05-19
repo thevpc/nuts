@@ -32,7 +32,7 @@ public class NDefinitionPlatformIdFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<String> current = NStream.ofIterable(def.descriptor().getCondition().getPlatform()).nonBlank().toList();
+        List<String> current = NStream.ofIterable(def.descriptor().condition().platform()).nonBlank().toList();
         if(current.isEmpty() || accepted.isEmpty()){
             return true;
         }

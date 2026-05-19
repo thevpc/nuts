@@ -185,12 +185,12 @@ public class DefaultNInstall extends AbstractNInstall {
             list.emptyCommand = false;
             for (NId sid : NExtensions.of().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
-                    List<NId> allIds = NSearch.of().addId(sid).latest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
+                    List<NId> allIds = NSearch.of().addId(sid).latest(true).targetApiVersion(ws.getApiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
                         throw new NArtifactNotFoundException(sid.longId());
                     }
                     for (NId id0 : allIds) {
-                        list.addAsInstalled(id0.builder().setRepository(null).build(), companionsInstallFlags);
+                        list.addAsInstalled(id0.builder().repository(null).build(), companionsInstallFlags);
                     }
                 }
             }
@@ -201,14 +201,14 @@ public class DefaultNInstall extends AbstractNInstall {
             list.emptyCommand = false;
             InstallFlags v = installedInstallFlags.copy();
             v.force = true;
-            for (NId resultId : NSearch.of().setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)).getResultIds()) {
+            for (NId resultId : NSearch.of().definitionFilter(NDefinitionFilters.of().byInstalled(true)).getResultIds()) {
                 list.addAsInstalled(resultId, v);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
             NInstalledRepository ir = dws.getInstalledRepository();
             for (NInstallInformation y : NIteratorUtils.toList(ir.searchInstallInformation())) {
-                if (y != null && y.getInstallStatus().isInstalled() && y.getId() != null) {
-                    list.addAsInstalled(y.getId(), v);
+                if (y != null && y.installStatus().isInstalled() && y.id() != null) {
+                    list.addAsInstalled(y.id(), v);
                 }
             }
         }
@@ -221,7 +221,7 @@ public class DefaultNInstall extends AbstractNInstall {
         return this;
     }
 
-    public RuntimeException getFailedIdReason(NId id) {
+    public RuntimeException getResultFailedIdReason(NId id) {
         tryRunIgnoreFail();
         for (int i = 0; i < failed.length; i++) {
             NId nId = failed[i];
@@ -233,20 +233,20 @@ public class DefaultNInstall extends AbstractNInstall {
     }
 
     @Override
-    public NStream<NDefinition> getSuccessfulResultStream() {
+    public NStream<NDefinition> getResultSuccessfulStream() {
         return NStreamBase.ofCollection(
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
-                getSuccessfulResultList()
+                getResultSuccessfulList()
         ).withDescription(NDescribables.ofDesc("InstallResult"));
     }
 
     @Override
-    public List<NDefinition> getSuccessfulResultList() {
+    public List<NDefinition> getResultSuccessfulList() {
         tryRunIgnoreFail();
         return Arrays.asList(result);
     }
 
-    public List<NId> getFailedResultList() {
+    public List<NId> getResultFaileList() {
         tryRunIgnoreFail();
         return Arrays.asList(failed);
     }

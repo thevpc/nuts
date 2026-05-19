@@ -25,37 +25,37 @@ class WorkBalancerRunningJob<T> implements NWorkBalancerRunningJob {
     }
 
     @Override
-    public String getJobId() {
+    public String jobId() {
         return jobId;
     }
 
-    public String getJobName() {
+    public String jobName() {
         return jobName;
     }
 
     @Override
-    public Instant getStartTime() {
+    public Instant startTime() {
         return Instant.ofEpochMilli(startNano / 1_000_000);
     }
 
     @Override
-    public long getStartTimeNano() {
+    public long startTimeNano() {
         return startNano;
     }
 
     @Override
-    public long getEndTimeNano() {
+    public long endTimeNano() {
         return endNano;
     }
 
     @Override
-    public NDuration getDuration() {
+    public NDuration duration() {
         long now = (endNano > 0 ? endNano : System.nanoTime()) - startNano;
         return NDuration.ofNanos(now);
     }
 
     @Override
-    public String getWorkerName() {
+    public String workerName() {
         return workerName;
     }
 
@@ -73,7 +73,7 @@ class WorkBalancerRunningJob<T> implements NWorkBalancerRunningJob {
         return endNano == 0;
     }
 
-    public Throwable getThrowable() {
+    public Throwable error() {
         return throwable;
     }
 }

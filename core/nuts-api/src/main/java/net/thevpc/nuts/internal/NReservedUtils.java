@@ -209,13 +209,13 @@ public final class NReservedUtils {
     }
 
     public static String getHome(NStoreType storeFolder, NBootOptions bOptions) {
-        return (bOptions.getSystem().orElse(false) ?
-                NPlatformHome.ofSystem(bOptions.getStoreLayout().orNull()) :
-                NPlatformHome.of(bOptions.getStoreLayout().orNull()))
+        return (bOptions.system().orElse(false) ?
+                NPlatformHome.ofSystem(bOptions.storeLayout().orNull()) :
+                NPlatformHome.of(bOptions.storeLayout().orNull()))
                 .getWorkspaceLocation(
                         storeFolder,
-                        bOptions.getHomeLocations().orNull(),
-                        bOptions.getName().orNull()
+                        bOptions.homeLocations().orNull(),
+                        bOptions.name().orNull()
                 );
     }
 
@@ -263,8 +263,8 @@ public final class NReservedUtils {
     }
 
     public static boolean isAcceptCondition(NEnvCondition cond) {
-        List<String> oss = NReservedLangUtils.uniqueNonBlankList(cond.getOs());
-        List<String> archs = NReservedLangUtils.uniqueNonBlankList(cond.getArch());
+        List<String> oss = NReservedLangUtils.uniqueNonBlankList(cond.os());
+        List<String> archs = NReservedLangUtils.uniqueNonBlankList(cond.arch());
         if (!oss.isEmpty()) {
             NOsFamily eos = NOsFamily.getCurrent();
             boolean osOk = false;
@@ -313,7 +313,7 @@ public final class NReservedUtils {
     }
 
     public static boolean acceptVersion(NVersionInterval one, NVersion other) {
-        NVersion a = NVersion.of(one.getLowerBound());
+        NVersion a = NVersion.of(one.lowerBound());
         if (a.isBlank()) {
             //ok
         } else {
@@ -328,7 +328,7 @@ public final class NReservedUtils {
                 }
             }
         }
-        a = NVersion.of(one.getUpperBound());
+        a = NVersion.of(one.upperBound());
         if (a.isBlank()) {
             //ok
         } else {
@@ -629,44 +629,44 @@ public final class NReservedUtils {
     public static Map<String, String> toMap(NEnvCondition condition) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s;
-        if (condition.getArch() != null) {
-            s = condition.getArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.arch() != null) {
+            s = condition.arch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.ARCH, s);
             }
         }
-        if (condition.getOs() != null) {
-            s = condition.getOs().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.os() != null) {
+            s = condition.os().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.OS, s);
             }
         }
-        if (condition.getOsDist() != null) {
-            s = condition.getOsDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.osDist() != null) {
+            s = condition.osDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.OS_DIST, s);
             }
         }
-        if (condition.getPlatform() != null) {
-            s = formatStringIdList(condition.getPlatform());
+        if (condition.platform() != null) {
+            s = formatStringIdList(condition.platform());
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.PLATFORM, s);
             }
         }
-        if (condition.getDesktopEnvironment() != null) {
-            s = condition.getDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.desktopEnvironment() != null) {
+            s = condition.desktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.DESKTOP, s);
             }
         }
-        if (condition.getProfiles() != null) {
-            s = condition.getProfiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.profiles() != null) {
+            s = condition.profiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.PROFILE, s);
             }
         }
-        if (condition.getProperties() != null) {
-            Map<String, String> properties = condition.getProperties();
+        if (condition.properties() != null) {
+            Map<String, String> properties = condition.properties();
             if (!properties.isEmpty()) {
                 m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringMapFormat.DEFAULT.format(properties));
             }

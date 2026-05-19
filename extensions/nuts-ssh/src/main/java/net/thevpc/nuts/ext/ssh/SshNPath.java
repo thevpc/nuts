@@ -251,7 +251,7 @@ class SshNPath implements NPathSPI {
                 } catch (Exception e) {
                     return NPathType.NOT_FOUND;
                 }
-            }).setExpiry(NDuration.ofSeconds(60));
+            }).expiry(NDuration.ofSeconds(60));
         }
         return cachedType.get();
     }

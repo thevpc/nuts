@@ -51,7 +51,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     session.configureLast(cmdLine);
                 } else {
                     server = cmdLine.nextNonOption(NArgName.of("ServerAddress")).flatMap(NArg::asString).get();
-                    cmdLine.setCommandName("settings connect").throwUnexpectedArgument();
+                    cmdLine.commandName("settings connect").throwUnexpectedArgument();
                 }
             }
             if (!cmdLine.isExecMode()) {

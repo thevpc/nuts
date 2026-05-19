@@ -65,7 +65,7 @@ public class URLPath implements NPathSPI {
         if (o == null) {
             o = NCachedValue.of(
                     () -> loadCacheInfo(url)
-            ).setExpiry(NDuration.ofMillis(5000));
+            ).expiry(NDuration.ofMillis(5000));
             cacheManager.put(url, o);
         }
         return o;

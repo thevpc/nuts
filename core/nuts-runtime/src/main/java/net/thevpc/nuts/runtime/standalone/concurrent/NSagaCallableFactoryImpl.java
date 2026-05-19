@@ -13,7 +13,7 @@ public class NSagaCallableFactoryImpl implements NSagaCallableFactory {
     }
 
     @Override
-    public NSagaStore getStore() {
+    public NSagaStore store() {
         return store;
     }
 

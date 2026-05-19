@@ -70,7 +70,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             remoteId = getRemoteId();
         } catch (Exception ex) {
             LOG()
-                    .log(NMsg.ofJ("unable to initialize Repository NutsId for repository {0}", options.getLocation()).withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL));
+                    .log(NMsg.ofJ("unable to initialize Repository NutsId for repository {0}", options.location()).withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL));
         }
     }
 
@@ -79,7 +79,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     public String getUrl(String path) {
-        return config().getLocationPath().resolve(path).toString();
+        return config().locationPath().resolve(path).toString();
     }
 
     public NId getRemoteId() {
@@ -88,7 +88,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                 remoteId = NId.get(httpGetString(getUrl("/version"))).get();
             } catch (Exception ex) {
                 LOG()
-                        .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().getLocation())
+                        .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().location())
                                 .withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL)
                         );
             }
@@ -107,7 +107,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         NDescriptorWriter.of().print(desc, new OutputStreamWriter(descStream));
         NWebCli nWebCli = NWebCli.of();
         nWebCli.POST()
-                .uri(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
+                .uri(CoreIOUtils.buildUrl(config().locationPath().toString(), "/deploy?" + resolveAuthURLPart()))
                 .addPart("descriptor-hash", NDigest.of().sha1().source(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content))
                 .addPart("force", NDigestUtils.evalSHA1Hex(content))
@@ -119,7 +119,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     @Override
     public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = workspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
@@ -141,7 +141,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     @Override
     public NIterator<NId> searchVersionsCore(NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = workspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
@@ -168,7 +168,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
-        NSession session = getWorkspace().currentSession();
+        NSession session = workspace().currentSession();
 
         session.getTerminal().printProgress(NMsg.ofC("search into %s ", Arrays.toString(basePaths)));
         boolean transitive = session.isTransitive();
@@ -223,11 +223,11 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     @Override
     public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = workspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
-        NPath localPath = NIdLocationUtils.fetch(id, descriptor.getLocations(), this);
+        NPath localPath = NIdLocationUtils.fetch(id, descriptor.locations(), this);
         if (localPath != null) {
             return localPath;
         }
@@ -274,7 +274,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     private Creds resolveEncryptedAuth() {
         String login = NSecurityManager.of().getCurrentUsername();
-        NRepositoryAccess security = NSecurityManager.of().findRepositoryAccess(getUuid(), login).get();
+        NRepositoryAccess security = NSecurityManager.of().findRepositoryAccess(uuid(), login).get();
         String newLogin = "";
         NSecureToken credentials = null;
         if (security == null) {
@@ -372,7 +372,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         @Override
         public NId next() {
             NId nutsId = NId.get(line).get();
-            return nutsId.builder().setRepository(getName()).build();
+            return nutsId.builder().repository(name()).build();
         }
     }
 

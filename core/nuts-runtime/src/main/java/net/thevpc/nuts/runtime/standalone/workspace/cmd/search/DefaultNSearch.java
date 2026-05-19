@@ -67,11 +67,11 @@ public class DefaultNSearch extends AbstractNSearch {
     @Override
     public NFetch toFetch() {
         NFetch t = new DefaultNFetch().copyFromDefaultNQueryBaseOptions(this);
-        t.setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment());
+        t.ignoreCurrentEnvironment(isIgnoreCurrentEnvironment());
         //update RepositoryFilter with effective one that takes into consideration
         // id filters and status filters
         DefaultNSearchInfo bs = new DefaultNSearchInfoBuilder(this).build();
-        t.setRepositoryFilter(bs.getRepositoryFilter());
+        t.repositoryFilter(bs.getRepositoryFilter());
         return t;
     }
 
@@ -94,7 +94,7 @@ public class DefaultNSearch extends AbstractNSearch {
             for (DefaultNSearchInfo.RegularId rid : regularIds) {
                 List<NIterator<? extends NId>> resultForEachAlternative = new ArrayList<>();
                 for (NId nutsId1 : rid.expandedIds) {
-                    if (NDependencyScope.parse(nutsId1.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
+                    if (NDependencyScope.parse(nutsId1.toDependency().scope()).orNull() == NDependencyScope.SYSTEM) {
                         // TODO, fix me
                         //just ignore or should we still support it?
                     } else {
@@ -103,10 +103,10 @@ public class DefaultNSearch extends AbstractNSearch {
                         boolean releaseVersion = false;
                         if (nutsIdNonLatest.version().isLatest()) {
                             latestVersion = true;
-                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
+                            nutsIdNonLatest = nutsIdNonLatest.builder().version("").build();
                         } else if (nutsIdNonLatest.version().isRelease()) {
                             releaseVersion = true;
-                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
+                            nutsIdNonLatest = nutsIdNonLatest.builder().version("").build();
                         }
                         NDefinitionFilters dd = NDefinitionFilters.of();
                         NDefinitionFilter filter = (
@@ -136,7 +136,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                     .named(
                                                             NElement.ofObjectBuilder()
                                                                     .set("description", "searchVersions")
-                                                                    .set("repository", repoAndMode.getRepository().getName())
+                                                                    .set("repository", repoAndMode.getRepository().name())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
                                                                     .set("filter", NDescribables.describeResolveOrSimplify(filter))
                                                                     .build()
@@ -154,7 +154,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                     .named(
                                                             NElement.ofObjectBuilder()
                                                                     .set("description", "search")
-                                                                    .set("repository", repoAndMode.getRepository().getName())
+                                                                    .set("repository", repoAndMode.getRepository().name())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
                                                                     .set("filter", NDescribables.describeResolveOrSimplify(restrictedFilter))
                                                                     .build()
@@ -194,7 +194,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                 .getResult(),
                                         NDescribables.ofDesc(NElement.ofObjectBuilder()
                                                 .set("description", "searchRepository")
-                                                .set("repository", repoAndMode.getRepository().getName())
+                                                .set("repository", repoAndMode.getRepository().name())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())
                                                 .set("filter", NDescribables.describeResolveOrSimplify(filter))
                                                 .build())
@@ -219,7 +219,7 @@ public class DefaultNSearch extends AbstractNSearch {
                     .flatMap(
                             NFunction.of(
                                             (NId x) -> {
-                                                NDefinition de = toFetch().setId(x)
+                                                NDefinition de = toFetch().id(x)
                                                         .getResultDefinition();
                                                 if(de==null){
                                                     return null;

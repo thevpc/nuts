@@ -28,7 +28,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         if (cmdLine.next("list imports","list import","import list", "li").isPresent()) {
-            cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
+            cmdLine.commandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (NWorkspace.of().getAllImports())) {
                     NOut.println(NMsg.ofPlain(imp));
@@ -36,7 +36,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
             }
             return true;
         } else if (cmdLine.next("clear imports", "ci").isPresent()) {
-            cmdLine.setCommandName("config clear imports").throwUnexpectedArgument();
+            cmdLine.commandName("config clear imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
                 NWorkspace.of().clearImports();
                 NWorkspace.of().saveConfig();

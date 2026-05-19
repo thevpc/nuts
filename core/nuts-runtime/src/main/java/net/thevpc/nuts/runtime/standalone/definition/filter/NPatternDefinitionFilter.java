@@ -110,8 +110,8 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
             NEnvCondition otherCondition = null;
             try {
                 otherCondition = NFetch.of(other)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                        .getResultDescriptor().getCondition();
+                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .getResultDescriptor().condition();
             } catch (Exception ex) {
                 //ignore any error
             }

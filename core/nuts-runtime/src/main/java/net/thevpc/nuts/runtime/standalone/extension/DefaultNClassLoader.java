@@ -49,7 +49,7 @@ public class DefaultNClassLoader extends URLClassLoader {
     }
 
     public NClassLoaderNode search(NClassLoaderNode node, boolean deep) {
-        NId ii = node.getId();
+        NId ii = node.id();
         String sn = ii.shortName();
         NClassLoaderNode o = nodes.get(sn);
         if (o != null) {
@@ -69,7 +69,7 @@ public class DefaultNClassLoader extends URLClassLoader {
     }
 
     public boolean add(NClassLoaderNode node) {
-        NId ii = node.getId();
+        NId ii = node.id();
         String sn = ii==null?null:ii.shortName();
         if (!nodes.containsKey(sn)) {
             nodes.put(sn, node);
@@ -79,20 +79,20 @@ public class DefaultNClassLoader extends URLClassLoader {
     }
 
     protected boolean add(NClassLoaderNode node, boolean deep) {
-        NId ii = node.getId();
+        NId ii = node.id();
         String sn = ii==null?null:ii.shortName();
         if (!effective.containsKey(sn)) {
             effective.put(sn, node);
-            super.addURL(node.getURL());
+            super.addURL(node.url());
             if (deep) {
-                for (NClassLoaderNode dependency : node.getDependencies()) {
+                for (NClassLoaderNode dependency : node.dependencies()) {
                     add(dependency, true);
                 }
             }
             return true;
         } else {
             if (deep) {
-                for (NClassLoaderNode dependency : node.getDependencies()) {
+                for (NClassLoaderNode dependency : node.dependencies()) {
                     add(dependency, true);
                 }
             }

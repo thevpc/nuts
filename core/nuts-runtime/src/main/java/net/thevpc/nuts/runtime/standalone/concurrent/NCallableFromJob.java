@@ -24,10 +24,10 @@ class NCallableFromJob<T> implements NCallable<T> {
         long startNano = System.nanoTime();
         selectedWorker.totalJobsCount.incrementAndGet();
         selectedWorker.activeJobsCount.incrementAndGet();
-        WorkBalancerRunningJob<T> runningJob = new WorkBalancerRunningJob<>(job, jobId, jobName, selectedWorker.worker.getName(), startNano);
+        WorkBalancerRunningJob<T> runningJob = new WorkBalancerRunningJob<>(job, jobId, jobName, selectedWorker.worker.name(), startNano);
         nWorkBalancer.runningJobs.add(runningJob);
         selectedWorker.runningJobs.add(runningJob);
-        nWorkBalancer.strategy.onStartCall(new NWorkBalancerStrategyEvent(jobId, jobName, selectedWorker.worker.getName(), startNano, 0, null));
+        nWorkBalancer.strategy.onStartCall(new NWorkBalancerStrategyEvent(jobId, jobName, selectedWorker.worker.name(), startNano, 0, null));
         RuntimeException throwable = null;
         try {
             T result = (T) job.call(new NWorkBalancerJobContextImpl(jobId, jobName, new NWorkBalancerWorkerImpl(selectedWorker.worker),selectedWorker.getWorkerIndex(), nWorkBalancer.model));
@@ -47,7 +47,7 @@ class NCallableFromJob<T> implements NCallable<T> {
             }
             selectedWorker.completedJobsTotalDurationNano.addAndGet(endNano - startNano);
             selectedWorker.activeJobsCount.decrementAndGet();
-            nWorkBalancer.strategy.onEndCall(new NWorkBalancerStrategyEvent(jobId, jobName, selectedWorker.worker.getName(), startNano, endNano, throwable));
+            nWorkBalancer.strategy.onEndCall(new NWorkBalancerStrategyEvent(jobId, jobName, selectedWorker.worker.name(), startNano, endNano, throwable));
         }
     }
 }

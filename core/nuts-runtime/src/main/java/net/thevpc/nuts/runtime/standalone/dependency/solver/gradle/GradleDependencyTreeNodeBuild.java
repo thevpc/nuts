@@ -76,13 +76,13 @@ class GradleDependencyTreeNodeBuild {
             effDependency = dependency;
             if (parent == null) {
                 effDependency = dependency.builder()
-                        .setVersion(def.id().version())
+                        .version(def.id().version())
                         .build();
             } else {
                 effDependency = dependency.builder()
-                        .setScope(gradleSolver.combineScopes(parent.effDependency.getScope(), dependency.getScope()))
-                        .setVersion(def.id().version())
-                        .setProperty("provided-by", parent.id.toString())
+                        .scope(gradleSolver.combineScopes(parent.effDependency.scope(), dependency.scope()))
+                        .version(def.id().version())
+                        .property("provided-by", parent.id.toString())
                         .build();
             }
             this.key = new NDependencyInfo(this.dependency, this.depth, this.optional, this.provided);
@@ -114,11 +114,11 @@ class GradleDependencyTreeNodeBuild {
     @Override
     public String toString() {
         NDependencyBuilder d = dependency.builder();
-        d.getCondition().setArch(new ArrayList<>());
-        d.getCondition().setOs(new ArrayList<>());
-        d.getCondition().setOsDist(new ArrayList<>());
-        d.getCondition().setDesktopEnvironment(new ArrayList<>());
-        d.getCondition().setPlatform(new ArrayList<>());
+        d.condition().arch(new ArrayList<>());
+        d.condition().os(new ArrayList<>());
+        d.condition().osDist(new ArrayList<>());
+        d.condition().desktopEnvironment(new ArrayList<>());
+        d.condition().platform(new ArrayList<>());
         return "GradleDependencyTreeNodeBuild{" +
                 "dependency=" + d.build() +
                 (provided ? (", provided=" + provided) : "") +
@@ -128,7 +128,7 @@ class GradleDependencyTreeNodeBuild {
     }
 
     NId getEffectiveId() {
-        return getEffectiveDescriptor().getId();
+        return getEffectiveDescriptor().id();
     }
 
     void setPreloadedDescriptor(NDescriptor descriptor) {
@@ -164,7 +164,7 @@ class GradleDependencyTreeNodeBuild {
     }
 
     public void addExclusions(NDependency dependency) {
-        for (NId exclusion : dependency.getExclusions()) {
+        for (NId exclusion : dependency.exclusions()) {
             this.exclusions.add(NDependencyInfo.normalizedId(exclusion));
         }
     }

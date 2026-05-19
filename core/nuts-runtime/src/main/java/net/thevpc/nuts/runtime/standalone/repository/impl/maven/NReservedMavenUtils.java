@@ -505,7 +505,7 @@ public final class NReservedMavenUtils {
         boolean found = false;
         NVersion bestVersion = null;
         String bestPath = null;
-        NFetchStrategy fetchStrategy = options.getFetchStrategy().orElse(NFetchStrategy.ANYWHERE);
+        NFetchStrategy fetchStrategy = options.fetchStrategy().orElse(NFetchStrategy.ANYWHERE);
         boolean offline = fetchStrategy != NFetchStrategy.REMOTE;
         boolean online = fetchStrategy != NFetchStrategy.OFFLINE;
         if (!repoUrl.contains("://")) {

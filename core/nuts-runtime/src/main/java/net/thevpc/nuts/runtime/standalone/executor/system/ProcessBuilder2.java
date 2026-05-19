@@ -37,6 +37,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
@@ -54,7 +55,7 @@ public class ProcessBuilder2 {
     private Map<String, String> env;
     private File directory;
     private boolean failFast;
-    private long sleepMillis = 1000;
+    private NDuration sleepDuration = NDuration.ofSeconds(1);
 
     private final NExecInput2 in = new NExecInput2(NExecInput.ofInherit());
     private final NExecOutput2 out = new NExecOutput2(NExecOutput.ofInherit());
@@ -122,12 +123,12 @@ public class ProcessBuilder2 {
         return -1;
     }
 
-    public long getSleepMillis() {
-        return sleepMillis;
+    public NDuration getSleepDuration() {
+        return sleepDuration;
     }
 
-    public ProcessBuilder2 setSleepMillis(long sleepMillis) {
-        this.sleepMillis = sleepMillis;
+    public ProcessBuilder2 setSleepDuration(NDuration sleepDuration) {
+        this.sleepDuration = sleepDuration;
         return this;
     }
 
@@ -319,7 +320,7 @@ public class ProcessBuilder2 {
             case PATH: {
                 NPath path = out.base.path();
                 Path file = path.toPath().get();
-                Set<NPathOption> options = Arrays.stream(out.base.options()).filter(Objects::nonNull).collect(Collectors.toSet());
+                Set<NPathOption> options = out.base.options().stream().filter(Objects::nonNull).collect(Collectors.toSet());
                 if (file == null) {
                     base.redirectOutput(ProcessBuilder.Redirect.PIPE);
                     out.tempStream = out.base.path().getOutputStream(options.toArray(new NPathOption[0]));
@@ -369,7 +370,7 @@ public class ProcessBuilder2 {
             case PATH: {
                 NPath path = err.base.path();
                 Path file = path.toPath().get();
-                Set<NPathOption> options = Arrays.stream(err.base.options()).filter(Objects::nonNull).collect(Collectors.toSet());
+                Set<NPathOption> options = err.base.options().stream().filter(Objects::nonNull).collect(Collectors.toSet());
                 if (file == null) {
                     base.redirectError(ProcessBuilder.Redirect.PIPE);
                     err.tempStream = err.base.path().getOutputStream(options.toArray(new NPathOption[0]));
@@ -555,8 +556,11 @@ public class ProcessBuilder2 {
                 if (allFinished) {
                     break;
                 }
-                if (sleepMillis > 0) {
-                    NWorkspaceProfilerImpl.sleep(sleepMillis, "ProcessBuilder2::waitFor");
+                if (sleepDuration !=null) {
+                    long millis = sleepDuration.toMillis();
+                    if(millis>0) {
+                        NWorkspaceProfilerImpl.sleep(millis, "ProcessBuilder2::waitFor");
+                    }
                 }
             }
         }
@@ -759,7 +763,7 @@ public class ProcessBuilder2 {
 
         switch (out.base.type()) {
             case PATH: {
-                if (Arrays.stream(out.base.options()).anyMatch(x -> x == NPathOption.APPEND)) {
+                if (out.base.options().stream().anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(" >> ");
                 } else {
                     sb.append(" > ");
@@ -774,7 +778,7 @@ public class ProcessBuilder2 {
                 sb.append(" 2>&1");
                 break;
             case PATH:
-                if (Arrays.stream(err.base.options()).anyMatch(x -> x == NPathOption.APPEND)) {
+                if (err.base.options().stream().anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(" 2>> ");
                 } else {
                     sb.append(" 2> ");
@@ -866,7 +870,7 @@ public class ProcessBuilder2 {
         switch (out.base.type()) {
             case PATH: {
                 sb.append(" ");
-                if (Arrays.stream(out.base.options()).anyMatch(x -> x == NPathOption.APPEND)) {
+                if (out.base.options().stream().anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(">>", NTextStyle.separator());
                 } else {
                     sb.append(">", NTextStyle.separator());
@@ -880,7 +884,7 @@ public class ProcessBuilder2 {
         switch (err.base.type()) {
             case PATH: {
                 sb.append(" ");
-                if (Arrays.stream(out.base.options()).anyMatch(x -> x == NPathOption.APPEND)) {
+                if (out.base.options().stream().anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(">>", NTextStyle.separator());
                 } else {
                     sb.append(">", NTextStyle.separator());
@@ -927,7 +931,7 @@ public class ProcessBuilder2 {
                 + ", env=" + env
                 + ", directory=" + directory
                 + ", failFast=" + failFast
-                + ", sleepMillis=" + sleepMillis
+                + ", sleepMillis=" + sleepDuration
                 + ", in=" + in
                 + ", out=" + out
                 + ", err=" + err

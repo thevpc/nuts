@@ -101,7 +101,7 @@ public class MavenSolrSearchCommand {
                     index++;
                 }
                 NPath query = NPath.of(q2.toString());
-                SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("solr repo %s",repo.getName()));
+                SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("solr repo %s",repo.name()));
                 NIteratorBuilder<NId> it = NIteratorBuilder.ofSupplier(new Supplier<Iterator<NId>>() {
                     @Override
                     public Iterator<NId> get() {
@@ -135,7 +135,7 @@ public class MavenSolrSearchCommand {
                                         String a = d.getStringValue("a").orElse("");
                                         String v = d.getStringValue("v").orElse("");
                                         index++;
-                                        return NIdBuilder.of(g, a).setVersion(v).build();
+                                        return NIdBuilder.of(g, a).version(v).build();
                                     }
                                 }
                                 return null;

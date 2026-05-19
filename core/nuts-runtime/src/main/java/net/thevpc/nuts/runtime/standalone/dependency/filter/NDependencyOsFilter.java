@@ -51,7 +51,7 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        List<String> current = dependency.getCondition().getOs();
+        List<String> current = dependency.condition().os();
         boolean empty = true;
         if (current != null) {
             for (String e : current) {

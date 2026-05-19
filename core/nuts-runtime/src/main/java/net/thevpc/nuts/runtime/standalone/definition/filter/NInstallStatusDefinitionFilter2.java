@@ -100,7 +100,7 @@ public class NInstallStatusDefinitionFilter2 extends AbstractDefinitionFilter {
         NInstalledRepository installedRepository = NWorkspaceExt.of().getInstalledRepository();
         //will always load install information
         NInstallInformation n = installedRepository.getInstallInformation(definition.id());
-        NInstallStatus status = n.getInstallStatus();
+        NInstallStatus status = n.installStatus();
         if (status == null) {
             return false;
         }

@@ -28,7 +28,9 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -126,7 +128,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
             return DefaultNCmdLine.parseDefaultList(line)
                     .map(args -> new DefaultNCmdLine(args, NShellFamily.BASH));
         }
-        return NCmdLines.of().setShellFamily(NShellFamily.BASH).parseCmdLine(line);
+        return NCmdLines.of().shellFamily(NShellFamily.BASH).parseCmdLine(line);
     }
 
     static NOptional<NCmdLine> parse(String line) {
@@ -141,7 +143,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
             return parseDefault(line);
         }
         return NCmdLines.of()
-                .setShellFamily(shellFamily)
+                .shellFamily(shellFamily)
                 .parseCmdLine(line);
     }
 
@@ -184,20 +186,24 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     NCmdLine setUnsafe(boolean safe);
 
-    NCmdLineConfigurable getConfigurable();
+    @NGetter
+    NCmdLineConfigurable configurable();
 
-    NCmdLine setConfigurable(NCmdLineConfigurable configurable);
+    @NSetter
+    NCmdLine configurable(NCmdLineConfigurable configurable);
 
     boolean isExpandArgumentsFile();
 
-    NCmdLine setExpandArgumentsFile(boolean expandArgumentsFile);
+    @NSetter
+    NCmdLine expandArgumentsFile(boolean expandArgumentsFile);
 
     /**
      * autocomplete instance
      *
      * @return autocomplete instance
      */
-    NCmdLineAutoComplete getAutoComplete();
+    @NGetter
+    NCmdLineAutoComplete autoComplete();
 
     /**
      * set autocomplete instance
@@ -205,7 +211,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param autoComplete autocomplete instance
      * @return {@code this} instance
      */
-    NCmdLine setAutoComplete(NCmdLineAutoComplete autoComplete);
+    @NSetter
+    NCmdLine autoComplete(NCmdLineAutoComplete autoComplete);
 
     /**
      * unregister {@code options} as simple (with simple '-') option. This
@@ -222,7 +229,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      *
      * @return list of registered simple options
      */
-    String[] getSpecialSimpleOptions();
+    @NGetter
+    String[] specialSimpleOptions();
 
     /**
      * register {@code options} as simple (with simple '-') option. This method
@@ -249,7 +257,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      *
      * @return current word index
      */
-    int getWordIndex();
+    @NGetter
+    int wordIndex();
 
     /**
      * true if auto complete instance is not registered (is null)
@@ -269,7 +278,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return command name that will be used as an extra info in thrown
      * exceptions
      */
-    String getCommandName();
+    @NGetter
+    String commandName();
 
     /**
      * set command name that will be used as an extra info in thrown exceptions
@@ -277,7 +287,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param commandName commandName
      * @return {@code this} instance
      */
-    NCmdLine setCommandName(String commandName);
+    @NSetter
+    NCmdLine commandName(String commandName);
 
     /**
      * true if simple option expansion is enabled
@@ -292,7 +303,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param expand expand
      * @return {@code this} instance
      */
-    NCmdLine setExpandSimpleOptions(boolean expand);
+    @NSetter
+    NCmdLine expandSimpleOptions(boolean expand);
 
     /**
      * throw exception if command line is not empty
@@ -661,9 +673,11 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     NCmdLine copy();
 
-    NShellFamily getShellFamily();
+    @NGetter
+    NShellFamily shellFamily();
 
-    NCmdLine setShellFamily(NShellFamily shellFamily);
+    @NSetter
+    NCmdLine shellFamily(NShellFamily shellFamily);
 
     interface Matcher {
         Matcher matchAll(NCmdLineProcessor processor);

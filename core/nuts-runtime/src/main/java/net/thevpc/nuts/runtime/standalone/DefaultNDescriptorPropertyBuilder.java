@@ -63,40 +63,40 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
         copyFrom(other);
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public NLiteral getValue() {
+    public NLiteral value() {
         return value;
     }
 
     @Override
-    public NDescriptorPropertyBuilder setCondition(NEnvCondition condition) {
+    public NDescriptorPropertyBuilder condition(NEnvCondition condition) {
         this.condition.clear();
         this.condition.copyFrom(condition);
         return this;
     }
 
     @Override
-    public NDescriptorPropertyBuilder setCondition(NEnvConditionBuilder condition) {
+    public NDescriptorPropertyBuilder condition(NEnvConditionBuilder condition) {
         this.condition.clear();
         this.condition.copyFrom(condition);
         return this;
     }
 
-    public NEnvConditionBuilder getCondition() {
+    public NEnvConditionBuilder condition() {
         return condition;
     }
 
     @Override
-    public NDescriptorPropertyBuilder setName(String name) {
+    public NDescriptorPropertyBuilder name(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public NDescriptorPropertyBuilder setValue(String value) {
+    public NDescriptorPropertyBuilder value(String value) {
         this.value = NLiteral.of(value);
         return this;
     }
@@ -104,13 +104,13 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
     @Override
     public NDescriptorPropertyBuilder copyFrom(NDescriptorProperty value) {
         if (value == null) {
-            this.setName(null);
-            this.setValue(null);
-            this.setCondition((NEnvCondition) null);
+            this.name(null);
+            this.value(null);
+            this.condition((NEnvCondition) null);
         } else {
-            this.setName(value.getName());
-            this.setValue(value.getValue().asString().orNull());
-            this.setCondition(value.getCondition());
+            this.name(value.name());
+            this.value(value.value().asString().orNull());
+            this.condition(value.condition());
         }
         return this;
     }
@@ -118,26 +118,26 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
     @Override
     public NDescriptorPropertyBuilder copyFrom(NDescriptorPropertyBuilder value) {
         if (value == null) {
-            this.setName(null);
-            this.setValue(null);
-            this.setCondition((NEnvCondition) null);
+            this.name(null);
+            this.value(null);
+            this.condition((NEnvCondition) null);
         } else {
-            this.setName(value.getName());
-            this.setValue(value.getValue().asString().orNull());
-            this.setCondition(value.getCondition());
+            this.name(value.name());
+            this.value(value.value().asString().orNull());
+            this.condition(value.condition());
         }
         return this;
     }
 
     public NDescriptorPropertyBuilder copyFrom(NBootDescriptorProperty value) {
         if (value == null) {
-            this.setName(null);
-            this.setValue(null);
-            this.setCondition((NEnvCondition) null);
+            this.name(null);
+            this.value(null);
+            this.condition((NEnvCondition) null);
         } else {
-            this.setName(value.getName());
-            this.setValue(value.getValue());
-            this.setCondition(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().copyFrom(value.getCondition()).build());
+            this.name(value.getName());
+            this.value(value.getValue());
+            this.condition(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().copyFrom(value.getCondition()).build());
         }
         return this;
     }
@@ -159,7 +159,7 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
 
     @Override
     public NDescriptorProperty build() {
-        return new DefaultNDescriptorProperty(getName(), getValue(), getCondition().build());
+        return new DefaultNDescriptorProperty(name(), value(), condition().build());
     }
 
     @Override

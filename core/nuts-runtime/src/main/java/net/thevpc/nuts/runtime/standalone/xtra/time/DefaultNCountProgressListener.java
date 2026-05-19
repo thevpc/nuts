@@ -44,21 +44,21 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
     public boolean onProgress(NProgressEvent event) {
         switch (event.getState()){
             case START:{
-                this.out = event.getSession().getTerminal().err();
-                if (event.getSession().isPlainOut()) {
+                this.out = event.session().getTerminal().err();
+                if (event.session().isPlainOut()) {
                     onProgress0(event, false);
                 }
                 break;
             }
             case COMPLETE:{
-                if (event.getSession().isPlainOut()) {
+                if (event.session().isPlainOut()) {
                     onProgress0(event, true);
 //            out.println();
                 }
                 break;
             }
             case PROGRESS:{
-                if (event.getSession().isPlainOut()) {
+                if (event.session().isPlainOut()) {
                     return onProgress0(event, false);
                 }
                 break;

@@ -50,28 +50,28 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     }
 
     @Override
-    public NArtifactCall getInstaller() {
-        return getBase().getInstaller();
+    public NArtifactCall installer() {
+        return getBase().installer();
     }
 
     @Override
-    public List<NDescriptorProperty> getProperties() {
-        return getBase().getProperties();
+    public List<NDescriptorProperty> properties() {
+        return getBase().properties();
     }
 
     @Override
-    public List<NId> getParents() {
-        return getBase().getParents();
+    public List<NId> parents() {
+        return getBase().parents();
     }
 
     @Override
-    public String getName() {
-        return getBase().getName();
+    public String name() {
+        return getBase().name();
     }
 
     @Override
-    public String getDescription() {
-        return getBase().getDescription();
+    public String description() {
+        return getBase().description();
     }
 
     @Override
@@ -90,8 +90,8 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     }
 
     @Override
-    public NArtifactCall getExecutor() {
-        return getBase().getExecutor();
+    public NArtifactCall executor() {
+        return getBase().executor();
     }
 
     //    @Override
@@ -99,53 +99,53 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
 //        return getBase().getExt();
 //    }
     @Override
-    public String getPackaging() {
-        return getBase().getPackaging();
+    public String packaging() {
+        return getBase().packaging();
     }
 
     @Override
-    public NId getId() {
-        return getBase().getId();
+    public NId id() {
+        return getBase().id();
     }
 
     @Override
-    public List<NDependency> getDependencies() {
-        return getBase().getDependencies();
+    public List<NDependency> dependencies() {
+        return getBase().dependencies();
     }
 
     @Override
-    public List<NDependency> getStandardDependencies() {
-        return getBase().getStandardDependencies();
+    public List<NDependency> standardDependencies() {
+        return getBase().standardDependencies();
     }
 
     @Override
-    public NEnvCondition getCondition() {
-        return getBase().getCondition();
+    public NEnvCondition condition() {
+        return getBase().condition();
     }
 
     @Override
-    public List<NIdLocation> getLocations() {
-        return getBase().getLocations();
+    public List<NIdLocation> locations() {
+        return getBase().locations();
     }
 
     @Override
-    public List<String> getIcons() {
-        return getBase().getIcons();
+    public List<String> icons() {
+        return getBase().icons();
     }
 
     @Override
-    public String getGenericName() {
-        return getBase().getGenericName();
+    public String genericName() {
+        return getBase().genericName();
     }
 
     @Override
-    public List<String> getCategories() {
-        return getBase().getCategories();
+    public List<String> categories() {
+        return getBase().categories();
     }
 
     @Override
-    public String getSolver() {
-        return getBase().getSolver();
+    public String solver() {
+        return getBase().solver();
     }
 
     @Override
@@ -159,8 +159,8 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     }
 
     @Override
-    public NIdType getIdType() {
-        return getBase().getIdType();
+    public NIdType idType() {
+        return getBase().idType();
     }
 
     @Override
@@ -169,33 +169,33 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     }
 
     @Override
-    public Set<NDescriptorFlag> getFlags() {
-        return getBase().getFlags();
+    public Set<NDescriptorFlag> flags() {
+        return getBase().flags();
     }
 
     @Override
-    public List<NDescriptorContributor> getContributors() {
-        return getBase().getContributors();
+    public List<NDescriptorContributor> contributors() {
+        return getBase().contributors();
     }
 
     @Override
-    public List<NDescriptorContributor> getDevelopers() {
-        return getBase().getDevelopers();
+    public List<NDescriptorContributor> developers() {
+        return getBase().developers();
     }
 
     @Override
-    public List<NDescriptorLicense> getLicenses() {
-        return getBase().getLicenses();
+    public List<NDescriptorLicense> licenses() {
+        return getBase().licenses();
     }
 
     @Override
-    public List<NDescriptorMailingList> getMailingLists() {
-        return getBase().getMailingLists();
+    public List<NDescriptorMailingList> mailingLists() {
+        return getBase().mailingLists();
     }
 
     @Override
-    public NDescriptorOrganization getOrganization() {
-        return getBase().getOrganization();
+    public NDescriptorOrganization organization() {
+        return getBase().organization();
     }
 
     @Override

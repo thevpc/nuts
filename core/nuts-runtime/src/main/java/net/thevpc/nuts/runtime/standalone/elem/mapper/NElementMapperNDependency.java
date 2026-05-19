@@ -7,18 +7,15 @@ import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.text.NDependencyWriter;
 import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.text.NText;
-
-import java.lang.reflect.Type;
 
 public class NElementMapperNDependency implements NElementMapper<NDependency> {
 
     @Override
     public Object toSimple(NElementSerializerContext<NDependency> context) {
         NDependency o = context.instance();
-        if (o.getExclusions().isEmpty()) {
+        if (o.exclusions().isEmpty()) {
             //use compact form
             if (context.isNtf()) {
                 return NDependencyWriter.of().setNtf(true).format(o);

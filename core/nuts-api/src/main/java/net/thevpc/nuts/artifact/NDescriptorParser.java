@@ -29,7 +29,9 @@ package net.thevpc.nuts.artifact;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.File;
 import java.io.InputStream;
@@ -49,15 +51,15 @@ public interface NDescriptorParser extends NComponent {
     }
 
     static NDescriptorParser ofMaven() {
-        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.MAVEN);
+        return NExtensions.of(NDescriptorParser.class).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
     static NDescriptorParser ofManifest() {
-        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.MANIFEST);
+        return NExtensions.of(NDescriptorParser.class).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
     static NDescriptorParser ofNuts() {
-        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.NUTS);
+        return NExtensions.of(NDescriptorParser.class).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
     /**
@@ -116,9 +118,11 @@ public interface NDescriptorParser extends NComponent {
      */
     NOptional<NDescriptor> parse(String descriptorString);
 
-    NDescriptorStyle getDescriptorStyle();
+    @NGetter
+    NDescriptorStyle descriptorStyle();
 
-    NDescriptorParser setDescriptorStyle(NDescriptorStyle descriptorStyle);
+    @NSetter
+    NDescriptorParser descriptorStyle(NDescriptorStyle descriptorStyle);
 
 
 }

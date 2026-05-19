@@ -652,7 +652,7 @@ public class StyledParserStep extends ParserStep {
     }
 
     private void logErr(String s) {
-        if(NDebugString.of(NWorkspace.of().getBootOptions().getDebug().orNull()).isEnabled()) {
+        if(NDebugString.of(NWorkspace.of().getBootOptions().debug().orNull()).isEnabled()) {
             NErr.println(s);
         }
     }

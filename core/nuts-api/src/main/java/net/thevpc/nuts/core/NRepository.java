@@ -23,7 +23,9 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -42,35 +44,40 @@ public interface NRepository {
      *
      * @return repository type
      */
-    String getRepositoryType();
+    @NGetter
+    String repositoryType();
 
     /**
      * return repository unique identifier
      *
      * @return repository unique identifier
      */
-    String getUuid();
+    @NGetter
+    String uuid();
 
     /**
      * return repository name. equivalent to config().name()
      *
      * @return repository name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * return parent workspace
      *
      * @return parent workspace
      */
-    NWorkspace getWorkspace();
+    @NGetter
+    NWorkspace workspace();
 
     /**
      * return parent repository or null
      *
      * @return parent repository or null
      */
-    NRepository getParentRepository();
+    @NGetter
+    NRepository parentRepository();
 
     /**
      * return repository configuration manager
@@ -100,19 +107,23 @@ public interface NRepository {
      *
      * @return Repository Listeners
      */
-    List<NRepositoryListener> getRepositoryListeners();
+    @NGetter
+    List<NRepositoryListener> repositoryListeners();
 
     /**
      * return mutable instance of user properties
      *
      * @return mutable instance of user properties
      */
-    Map<String, Object> getUserProperties();
+    @NGetter
+    Map<String, Object> userProperties();
 
     boolean containsTag(String tag);
 
-    Set<String> getTags();
+    @NGetter
+    Set<String> tags();
 
+    @NGetter
     boolean isPreview();
 
     NRepository addTag(String tag);
@@ -140,7 +151,8 @@ public interface NRepository {
      *
      * @return array of registered user properties listeners
      */
-    List<NObservableMapListener<String, Object>> getUserPropertyListeners();
+    @NGetter
+    List<NObservableMapListener<String, Object>> userPropertyListeners();
 
     /**
      * available if local and the folder exists or remote and could ping the
@@ -148,6 +160,7 @@ public interface NRepository {
      *
      * @return true if config is enabled and runtime is enabled
      */
+    @NGetter
     boolean isAccessible();
 
     /**
@@ -165,6 +178,7 @@ public interface NRepository {
      *
      * @return true if config is enabled and runtime is enabled
      */
+    @NGetter
     boolean isSupportedDeploy();
 
     /**
@@ -181,6 +195,7 @@ public interface NRepository {
      *
      * @return true if config is enabled and runtime is enabled
      */
+    @NGetter
     boolean isEnabled();
 
     /**
@@ -189,11 +204,15 @@ public interface NRepository {
      * @param enabled runtime enabled value
      * @return {@code this} instance
      */
-    NRepository setEnabled(boolean enabled);
+    @NSetter
+    NRepository enabled(boolean enabled);
 
+    @NGetter
     boolean isRemote();
 
-    String getBootConnectionString();
+    @NGetter
+    String bootConnectionString();
 
+    @NGetter
     boolean isTemporary();
 }

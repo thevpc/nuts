@@ -40,5 +40,6 @@ public interface NVersionFilters extends NTypedFilters<NVersionFilter> {
     NOptional<NVersionFilter> byValue(String version);
 
     NOptional<NVersionFilter> byValue(String version, NVersionComparator comparator);
+
     NVersionFilter parse(String expression, NVersionComparator versionComparator);
 }

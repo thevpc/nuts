@@ -32,6 +32,7 @@ import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -192,8 +193,10 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return true if this id is a long name
      */
+    @NGetter
     boolean isLongId();
 
+    @NGetter
     boolean isShortId();
 
     /**
@@ -235,6 +238,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return artifact repository (usually repository name or id)
      */
+    @NGetter
     String repository();
 
     /**
@@ -242,6 +246,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return artifact group which identifies uniquely projects and group of projects.
      */
+    @NGetter
     String groupId();
 
     /**
@@ -251,6 +256,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return string representation of this id
      */
+    @NGetter
     String fullName();
 
     /**
@@ -260,6 +266,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return group id, artifact id and version only Id instance
      */
+    @NGetter
     String longName();
 
     /**
@@ -270,6 +277,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return group id and artifact id
      */
+    @NGetter
     String shortName();
 
     /**
@@ -278,8 +286,10 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return group and name only Id instance
      */
+    @NGetter
     NId shortId();
 
+    @NGetter
     NId getSharedId();
 
     /**
@@ -288,6 +298,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return group, name and version only Id instance
      */
+    @NGetter
     NId longId();
 
     /**
@@ -295,6 +306,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return return name part of this id
      */
+    @NGetter
     String artifactId();
 
     /**
@@ -302,6 +314,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return tag used to distinguish between different artifacts that were built from the same source code
      */
+    @NGetter
     String classifier();
 
     /**
@@ -309,6 +322,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return packaging
      */
+    @NGetter
     String packaging();
 
     /**
@@ -316,6 +330,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return artifact version (never null)
      */
+    @NGetter
     NVersion version();
 
     /**
@@ -361,6 +376,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      *
      * @return maven path
      */
+    @NGetter
     String mavenFolder();
 
     String getMavenFileName(String extension);

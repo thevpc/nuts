@@ -25,13 +25,13 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     public NId validate(NId id, NDescriptor descriptor, NPath pathname, NPath rootPath, NDefinitionFilter filter, NRepository repository) {
         SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("NIdPathIterator"));
         if (descriptor != null) {
-            if (!CoreNUtils.isEffectiveId(descriptor.getId())) {
+            if (!CoreNUtils.isEffectiveId(descriptor.id())) {
                 NDescriptor effectiveDescriptor = null;
                 try {
                     effectiveDescriptor = NWorkspace.of().resolveEffectiveDescriptor(descriptor);
                 } catch (Exception ex) {
                     NLog.of(NIdPathIteratorBase.class).log(
-                            NMsg.ofC("error resolving effective descriptor for %s in url %s : %s", descriptor.getId(),
+                            NMsg.ofC("error resolving effective descriptor for %s in url %s : %s", descriptor.id(),
                                     pathname,
                                     ex)
                                     .asFineFail(ex)
@@ -42,7 +42,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
                 }
             }
             if ((safeFilter.acceptDefinition(NDefinitionHelper.ofDescriptorOnly(descriptor)))) {
-                NId nutsId = descriptor.getId().builder().setRepository(repository.getName()).build();
+                NId nutsId = descriptor.id().builder().repository(repository.name()).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                 return nutsId;
             }

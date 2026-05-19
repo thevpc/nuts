@@ -34,7 +34,7 @@ public class NRepositoryHelper {
     }
 
     public static NRepositoryHelper of(NRepository repo) {
-        Map<String, Object> up = repo.getUserProperties();
+        Map<String, Object> up = repo.userProperties();
         NRepositoryHelper wp = (NRepositoryHelper) up.get(NRepositoryHelper.class.getName());
         if (wp == null) {
             wp = new NRepositoryHelper(repo);
@@ -50,14 +50,14 @@ public class NRepositoryHelper {
         NRepositoryExt xrepo = NRepositoryExt.of(repository);
         List<NSpeedQualifier> speeds = new ArrayList<>();
         if (xrepo.acceptAction(id, supportedAction, mode)) {
-            NSpeedQualifier r = repository.config().getSpeed();
+            NSpeedQualifier r = repository.config().speed();
             if (r != NSpeedQualifier.UNAVAILABLE) {
                 speeds.add(r);
             }
         }
         if (transitive) {
             for (NRepository remote : repository.config()
-                    .getMirrors()) {
+                    .mirrors()) {
                 NSpeedQualifier r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive);
                 if (r != NSpeedQualifier.UNAVAILABLE) {
                     speeds.add(r);
@@ -77,14 +77,14 @@ public class NRepositoryHelper {
         NRepositoryExt xrepo = NRepositoryExt.of(repository);
         int result = 0;
         if (xrepo.acceptAction(id, supportedAction, mode)) {
-            int r = repository.config().getDeployWeight();
+            int r = repository.config().deployWeight();
             if (r > 0 && r > result) {
                 result = r;
             }
         }
         if (transitive) {
             for (NRepository remote : repository.config()
-                    .getMirrors()) {
+                    .mirrors()) {
                 int r = getSupportDeployLevel(remote, supportedAction, id, mode, transitive);
                 if (r > 0 && r > result) {
                     result = r;
@@ -111,31 +111,31 @@ public class NRepositoryHelper {
         }
 
         public void fireOnUndeploy(NContentEvent evt) {
-            for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.repositoryListeners()) {
                 listener.onUndeploy(evt);
             }
-            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
         }
 
         public void fireOnDeploy(NContentEvent event) {
-            for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.repositoryListeners()) {
                 listener.onDeploy(event);
             }
-            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
                 listener.onDeploy(event);
             }
         }
 
         public void fireOnPush(NContentEvent event) {
-            for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.repositoryListeners()) {
                 listener.onPush(event);
             }
-            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
                 listener.onPush(event);
             }
-            for (NRepositoryListener listener : event.getSession().getListeners(NRepositoryListener.class)) {
+            for (NRepositoryListener listener : event.session().getListeners(NRepositoryListener.class)) {
                 listener.onPush(event);
             }
         }
@@ -143,18 +143,18 @@ public class NRepositoryHelper {
         public void fireOnAddRepository(NRepositoryEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 u._LOG()
-                        .log(NMsg.ofJ("{0} add    repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
-                                .getRepository().getName())
+                        .log(NMsg.ofJ("{0} add    repo {1}", NStringUtils.formatAlign(u.repo.name(), 20, NPositionType.FIRST), event
+                                .repository().name())
                                 .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
                         );
             }
-            for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.repositoryListeners()) {
                 listener.onAddRepository(event);
             }
-            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
-            for (NRepositoryListener listener : event.getSession().getListeners(NRepositoryListener.class)) {
+            for (NRepositoryListener listener : event.session().getListeners(NRepositoryListener.class)) {
                 listener.onAddRepository(event);
             }
         }
@@ -162,24 +162,24 @@ public class NRepositoryHelper {
         public void fireOnRemoveRepository(NRepositoryEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 u._LOG().log(
-                        NMsg.ofJ("{0} remove repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
-                                .getRepository().getName())
+                        NMsg.ofJ("{0} remove repo {1}", NStringUtils.formatAlign(u.repo.name(), 20, NPositionType.FIRST), event
+                                .repository().name())
                                 .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
                 );
             }
-            for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.repositoryListeners()) {
 //            if (event == null) {
 //                event = new DefaultNRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
 //            }
                 listener.onRemoveRepository(event);
             }
-            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
 //            if (event == null) {
 //                event = new DefaultNRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
 //            }
                 listener.onRemoveRepository(event);
             }
-            for (NRepositoryListener listener : event.getSession().getListeners(NRepositoryListener.class)) {
+            for (NRepositoryListener listener : event.session().getListeners(NRepositoryListener.class)) {
                 listener.onRemoveRepository(event);
             }
         }

@@ -50,7 +50,7 @@ public interface NArgName extends Serializable {
      *
      * @return argument name
      */
-    String getName();
+    String name();
 
     /**
      * argument candidate values
@@ -58,5 +58,5 @@ public interface NArgName extends Serializable {
      * @param context autocomplete
      * @return candidates list
      */
-    List<NArgCandidate> getCandidates(NCmdLineAutoComplete context);
+    List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context);
 }

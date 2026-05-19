@@ -22,7 +22,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     public AbstractScriptBuilder(NShellFamily shellFamily, String type, NId anyId) {
         this.shellFamily = shellFamily;
-        this.anyId = anyId.builder().setRepository(null).build();//remove repo!
+        this.anyId = anyId.builder().repository(null).build();//remove repo!
         this.type = type;
     }
 
@@ -67,7 +67,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
     public PathInfo build() {
         //Path script = getScriptFile(name);
         NDefinition anyIdDef = NSearch.of(anyId).latest(true).distinct(true)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinitions().findSingleton().get();
         NId anyId = anyIdDef.id();
         String path = NameBuilder.id(anyId,

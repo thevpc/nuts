@@ -35,7 +35,7 @@ public class NDefinitionFlagsIdFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        Set<NDescriptorFlag> available = other.descriptor().getFlags();
+        Set<NDescriptorFlag> available = other.descriptor().flags();
         if (effectiveFlag) {
             for (NDescriptorFlag flag : this.flags) {
                 if (!available.contains(flag)) {

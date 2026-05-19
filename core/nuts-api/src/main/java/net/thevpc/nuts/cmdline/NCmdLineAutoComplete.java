@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.util.List;
 
 /**
@@ -44,28 +46,32 @@ public interface NCmdLineAutoComplete  {
      *
      * @return line
      */
-    String getLine();
+    @NGetter
+    String line();
 
     /**
      * command line arguments
      *
      * @return words
      */
-    List<String> getWords();
+    @NGetter
+    List<String> words();
 
     /**
      * current candidates
      *
      * @return current candidates
      */
-    List<NArgCandidate> getCandidates();
+    @NGetter
+    List<NArgCandidate> candidates();
 
     /**
      * candidates index
      *
      * @return candidates index
      */
-    int getCurrentWordIndex();
+    @NGetter
+    int currentWordIndex();
 
     /**
      * add candidate

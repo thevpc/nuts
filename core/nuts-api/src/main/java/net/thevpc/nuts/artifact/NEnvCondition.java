@@ -26,6 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.List;
 import java.util.Map;
@@ -43,28 +44,32 @@ public interface NEnvCondition extends NBlankable {
      *
      * @return supported supported profiles
      */
-    List<String> getProfiles();
+    @NGetter
+    List<String> profiles();
 
     /**
      * supported arch list. if empty, all arch are supported (for example for java, all arch are supported).
      *
      * @return supported arch list
      */
-    List<String> getArch();
+    @NGetter
+    List<String> arch();
 
     /**
      * supported operating systems. if empty, all oses are supported (for example for java, all arch are supported).
      *
      * @return supported oses
      */
-    List<String> getOs();
+    @NGetter
+    List<String> os();
 
     /**
      * supported operating system distributions (mostly for linux systems). if empty, all distributions are supported.
      *
      * @return supported operating system distributions
      */
-    List<String> getOsDist();
+    @NGetter
+    List<String> osDist();
 
     /**
      * supported platforms (java, dotnet, ...). if empty platform is not relevant.
@@ -72,7 +77,8 @@ public interface NEnvCondition extends NBlankable {
      *
      * @return supported platforms
      */
-    List<String> getPlatform();
+    @NGetter
+    List<String> platform();
 
     /**
      * supported desktop environments (gnome, kde, none, ...). if empty desktop environment is not relevant.
@@ -80,7 +86,8 @@ public interface NEnvCondition extends NBlankable {
      *
      * @return supported platforms
      */
-    List<String> getDesktopEnvironment();
+    @NGetter
+    List<String> desktopEnvironment();
 
     /**
      * create builder from this instance
@@ -94,7 +101,8 @@ public interface NEnvCondition extends NBlankable {
      * @since 0.8.4
      * @return env properties
      */
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
 
     Map<String, String> toMap();
 }

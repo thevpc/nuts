@@ -72,7 +72,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return null;
     }
 
@@ -100,7 +100,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
             public int exec() {
                 NExec execCommand = getExecCommand();
                 try(DefaultNExecTargetCommandContext d=new DefaultNExecTargetCommandContext(
-                        execCommand.getConnectionString(),
+                        execCommand.connectionString(),
                         cmd,
                         in,
                         out,
@@ -122,18 +122,18 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
 
     @Override
-    public NText getHelpText() {
+    public NText helpText() {
         switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
-                        "No help available. Try " + getName() + " /help",
+                        "No help available. Try " + name() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
                         NText.ofStyled(
-                                "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
+                                "No help available. Try 'man " + name() + "' or '" + name() + " --help'",
                                 NTextStyle.error()
                         );
             }
@@ -142,7 +142,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
     @Override
     public String toString() {
-        return getExecCommand().getRunAs() + " " + NCmdLine.of(cmd).toString();
+        return getExecCommand().runAs() + " " + NCmdLine.of(cmd).toString();
     }
 
 }

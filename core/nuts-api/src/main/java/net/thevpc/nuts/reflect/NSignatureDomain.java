@@ -1,5 +1,7 @@
 package net.thevpc.nuts.reflect;
 
+import java.util.List;
+
 public interface NSignatureDomain<T> {
     boolean isArray(T type);
 
@@ -14,9 +16,9 @@ public interface NSignatureDomain<T> {
 
     boolean isInterface(T any);
 
-    T[] getInterfaces(T any);
+    List<T> getInterfaces(T any);
 
-    T getSuperType(T any) ;
+    T getSuperType(T any);
 
 
     T toBoxedType(T a);
@@ -28,7 +30,7 @@ public interface NSignatureDomain<T> {
      * positive for compatible (higher = further away),
      * -1 or Integer.MAX_VALUE for no match.
      */
-    default int getDistance(T expected, T actual){
+    default int getDistance(T expected, T actual) {
         return -1;
     }
 }

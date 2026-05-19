@@ -33,6 +33,8 @@ import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Collection;
 import java.util.List;
@@ -61,7 +63,8 @@ public interface NUpdate extends NWorkspaceCmd {
 
     NUpdate clearIds();
 
-    List<NId> getIds();
+    @NGetter
+    List<NId> ids();
 
     NUpdate addLockedId(NId id);
 
@@ -73,7 +76,8 @@ public interface NUpdate extends NWorkspaceCmd {
 
     NUpdate clearLockedIds();
 
-    List<NId> getLockedIds();
+    @NGetter
+    List<NId> lockedIds();
 
     NUpdate addArg(String arg);
 
@@ -83,7 +87,8 @@ public interface NUpdate extends NWorkspaceCmd {
 
     NUpdate clearArgs();
 
-    List<String> getArgs();
+    @NGetter
+    List<String> args();
 
     /**
      * if true enable installing new artifacts when an update is request for
@@ -91,9 +96,11 @@ public interface NUpdate extends NWorkspaceCmd {
      *
      * @return true if enable install
      */
+    @NGetter
     boolean isEnableInstall();
 
-    NUpdate setEnableInstall(boolean enableInstall);
+    @NSetter
+    NUpdate enableInstall(boolean enableInstall);
 
     /**
      * return true when include optional dependencies
@@ -108,6 +115,7 @@ public interface NUpdate extends NWorkspaceCmd {
      * @param includeOptional include optional
      * @return {@code this} instance
      */
+    @NSetter
     NUpdate setOptional(boolean includeOptional);
 
     /**
@@ -115,7 +123,8 @@ public interface NUpdate extends NWorkspaceCmd {
      *
      * @return target api version required for updating other artifacts
      */
-    NVersion getApiVersion();
+    @NGetter
+    NVersion apiVersion();
 
     /**
      * set target api version required for updating other artifacts
@@ -123,7 +132,8 @@ public interface NUpdate extends NWorkspaceCmd {
      * @param value target api version
      * @return {@code this} instance
      */
-    NUpdate setApiVersion(NVersion value);
+    @NSetter
+    NUpdate apiVersion(NVersion value);
 
     /**
      * @return null if no updates
@@ -157,15 +167,17 @@ public interface NUpdate extends NWorkspaceCmd {
      *
      * @return {@code this} instance
      */
-    NUpdate setAll();
+    NUpdate all();
 
     boolean isApi();
 
-    NUpdate setApi(boolean enable);
+    @NSetter
+    NUpdate api(boolean enable);
 
     boolean isExtensions();
 
-    NUpdate setExtensions(boolean enable);
+    @NSetter
+    NUpdate extensions(boolean enable);
 
     boolean isCompanions();
 
@@ -175,15 +187,18 @@ public interface NUpdate extends NWorkspaceCmd {
      * @param updateCompanions updateCompanions
      * @return {@code this} instance
      */
-    NUpdate setCompanions(boolean updateCompanions);
+    @NSetter
+    NUpdate companions(boolean updateCompanions);
 
     boolean isRuntime();
 
-    NUpdate setRuntime(boolean enable);
+    @NSetter
+    NUpdate runtime(boolean enable);
 
     boolean isInstalled();
 
-    NUpdate setInstalled(boolean enable);
+    @NSetter
+    NUpdate installed(boolean enable);
 
     NUpdate addScope(NDependencyScope scope);
 
@@ -219,7 +234,7 @@ public interface NUpdate extends NWorkspaceCmd {
      * @return update repository filter
      * @since 0.8.4
      */
-    NRepositoryFilter getRepositoryFilter();
+    NRepositoryFilter repositoryFilter();
 
     /**
      * set update repository filter
@@ -227,5 +242,6 @@ public interface NUpdate extends NWorkspaceCmd {
      * @return {@code this} instance
      * @since 0.8.4
      */
-    NUpdate setRepositoryFilter(NRepositoryFilter repositoryFilter);
+    @NSetter
+    NUpdate repositoryFilter(NRepositoryFilter repositoryFilter);
 }

@@ -66,10 +66,10 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
     @Override
     public int exec(NExecutionContext executionContext) {
         if(executionContext.isDry()){
-            NDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+            NDefinition nutMainFile = executionContext.definition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
             Path javaFile = nutMainFile.content().flatMap(NPath::toPath).orNull();
             String folder = "__temp_folder";
-            NPrintStream out = executionContext.getSession().out();
+            NPrintStream out = executionContext.session().out();
             out.println(NText.ofStyledPrimary4("compile"));
             out.println(
                     NCmdLine.of(
@@ -82,12 +82,12 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     )
             );
             JavaExecutorComponent cc = new JavaExecutorComponent();
-            NDefinitionBuilder d = executionContext.getDefinition().builder();
-            d.setContent(
+            NDefinitionBuilder d = executionContext.definition().builder();
+            d.content(
                     NPath.of(folder).userCache(false).userTemporary(true)
             );
             String fileName = javaFile.getFileName().toString();
-            List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
+            List<String> z = new ArrayList<>(executionContext.executorOptions());
             z.addAll(Arrays.asList("--main-class",
                     new File(fileName.substring(fileName.length() - ".java".length())).getName(),
                     "--class-path",
@@ -102,10 +102,10 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     .build();
             return cc.exec(executionContext2);
         }else {
-            NDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+            NDefinition nutMainFile = executionContext.definition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
             Path javaFile = nutMainFile.content().flatMap(NPath::toPath).orNull();
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            NSession session = executionContext.getSession();
+            NSession session = executionContext.session();
             Path folder = NPath
                     .ofTempFolder("jj").toPath().get();
             int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
@@ -113,10 +113,10 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                 throw new NExecutionException(NMsg.ofPlain("compilation failed"), res);
             }
             JavaExecutorComponent cc = new JavaExecutorComponent();
-            NDefinitionBuilder d = executionContext.getDefinition().builder();
-            d.setContent(NPath.of(folder).userCache(false).userTemporary(true));
+            NDefinitionBuilder d = executionContext.definition().builder();
+            d.content(NPath.of(folder).userCache(false).userTemporary(true));
             String fileName = javaFile.getFileName().toString();
-            List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
+            List<String> z = new ArrayList<>(executionContext.executorOptions());
             z.addAll(Arrays.asList("--main-class",
                     new File(fileName.substring(fileName.length() - ".java".length())).getName(),
                     "--class-path",
@@ -137,7 +137,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
     public static int getScore(NScorableContext context) {
         NDefinition def = context.getCriteria(NDefinition.class);
         if (def != null) {
-            if ("java".equals(def.descriptor().getPackaging())) {
+            if ("java".equals(def.descriptor().packaging())) {
                 return NScorable.DEFAULT_SCORE + 1;
             }
         }

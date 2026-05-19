@@ -27,6 +27,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.List;
 
@@ -44,8 +45,10 @@ public interface NUpdateResult {
      *
      * @return package id
      */
-    NId getId();
+    @NGetter
+    NId id();
 
+    @NGetter
     boolean isInstalled();
 
     /**
@@ -53,20 +56,23 @@ public interface NUpdateResult {
      *
      * @return installed/local definition or null
      */
-    NDefinition getInstalled();
+    @NGetter
+    NDefinition installed();
 
     /**
      * return available definition or null
      *
      * @return available definition or null
      */
-    NDefinition getAvailable();
+    @NGetter
+    NDefinition available();
 
     /**
      * return true if the update was forced
      *
      * @return true if the update was forced
      */
+    @NGetter
     boolean isUpdateForced();
 
     /**
@@ -74,6 +80,7 @@ public interface NUpdateResult {
      *
      * @return true if the update was applied
      */
+    @NGetter
     boolean isUpdateApplied();
 
     /**
@@ -82,6 +89,7 @@ public interface NUpdateResult {
      *
      * @return true if any update is available
      */
+    @NGetter
     boolean isUpdatable();
 
     /**
@@ -90,6 +98,7 @@ public interface NUpdateResult {
      * @return true if artifact has newer available version
      * @since 0.5.7
      */
+    @NGetter
     boolean isUpdateVersionAvailable();
 
     /**
@@ -99,6 +108,7 @@ public interface NUpdateResult {
      * @return artifact should have its status updated.
      * @since 0.5.7
      */
+    @NGetter
     boolean isUpdateStatusAvailable();
 
     /**
@@ -106,6 +116,7 @@ public interface NUpdateResult {
      *
      * @return update dependencies
      */
-    List<NId> getDependencies();
+    @NGetter
+    List<NId> dependencies();
 
 }

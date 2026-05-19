@@ -30,6 +30,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 
@@ -43,13 +44,17 @@ public interface NPrepareCmd extends NWorkspaceCmd {
         return NExtensions.of(NPrepareCmd.class);
     }
 
-    NPrepareCmd setTargetServer(String remoteServer);
+    @NSetter
+    NPrepareCmd targetServer(String remoteServer);
 
-    NPrepareCmd setUserName(String remoteUser);
+    @NSetter
+    NPrepareCmd userName(String remoteUser);
 
-    NPrepareCmd setVersion(String version);
+    @NSetter
+    NPrepareCmd version(String version);
 
-    NPrepareCmd setIds(List<NId> id);
+    @NSetter
+    NPrepareCmd ids(List<NId> id);
 
     NPrepareCmd addIds(List<NId> id);
     

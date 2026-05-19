@@ -52,10 +52,10 @@ public class NFetchModeNotSupportedException extends NException {
      * @param cause     cause
      */
     public NFetchModeNotSupportedException(NRepository repo, NFetchMode fetchMode, String id, NMsg message, Exception cause) {
-        super(message == null ? NMsg.ofC("unsupported fetch mode %s in repo %s", fetchMode,repo.getName()) : message, cause);
+        super(message == null ? NMsg.ofC("unsupported fetch mode %s in repo %s", fetchMode,repo.name()) : message, cause);
         this.id = id;
-        this.repositoryName = repo == null ? null : repo.getName();
-        this.repositoryUuid = repo == null ? null : repo.getUuid();
+        this.repositoryName = repo == null ? null : repo.name();
+        this.repositoryUuid = repo == null ? null : repo.uuid();
         this.fetchMode = fetchMode;
     }
 
@@ -68,10 +68,10 @@ public class NFetchModeNotSupportedException extends NException {
      * @param message   message
      */
     public NFetchModeNotSupportedException(NRepository repo, NFetchMode fetchMode, String id, NMsg message) {
-        super(message == null ? NMsg.ofC("unsupported fetch mode %s in repo %s", fetchMode,repo.getName()) : message);
+        super(message == null ? NMsg.ofC("unsupported fetch mode %s in repo %s", fetchMode,repo.name()) : message);
         this.id = id;
-        this.repositoryName = repo == null ? null : repo.getName();
-        this.repositoryUuid = repo == null ? null : repo.getUuid();
+        this.repositoryName = repo == null ? null : repo.name();
+        this.repositoryUuid = repo == null ? null : repo.uuid();
         this.fetchMode = fetchMode;
     }
 

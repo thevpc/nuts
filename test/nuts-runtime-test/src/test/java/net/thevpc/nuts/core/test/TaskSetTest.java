@@ -27,7 +27,7 @@ public class TaskSetTest {
                 .call("verif3",() -> verify3())
                 .<Boolean>firstMatch(x -> {
                     if (x.isSuccess()) {
-                        boolean b = (Boolean) x.getResult();
+                        boolean b = (Boolean) x.result();
                         if (!b) {
                             // return with first check that fails!
                             return true;
@@ -35,7 +35,7 @@ public class TaskSetTest {
                     } else {
                         // this task could not be called
                         // we will throw the exception
-                        throw NExceptions.ofUncheckedException(x.getError());
+                        throw NExceptions.ofUncheckedException(x.error());
                     }
                     return false;
                 }, true);
@@ -44,7 +44,7 @@ public class TaskSetTest {
         if(allOk){
             NOut.println("All ok "+ch);
         }else{
-            NOut.println("some rejections id="+firstError.get().getTaskId()+" : "+firstError.get().getError()+" :: " +ch);
+            NOut.println("some rejections id="+firstError.get().taskId()+" : "+firstError.get().error()+" :: " +ch);
         }
         ch.start();
     }

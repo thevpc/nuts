@@ -2,6 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.concurrent.Future;
 import java.util.function.IntFunction;
@@ -55,7 +57,8 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param maxRetries maximum retries
      * @return this instance
      */
-    NRetryCall<T> setMaxRetries(int maxRetries);
+    @NSetter
+    NRetryCall<T> maxRetries(int maxRetries);
 
     /**
      * Sets a dynamic retry period function based on attempt index.
@@ -63,7 +66,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param retryPeriod function mapping attempt index to duration
      * @return this instance
      */
-    NRetryCall<T> setRetryPeriod(IntFunction<NDuration> retryPeriod);
+    NRetryCall<T> retryPeriod(IntFunction<NDuration> retryPeriod);
 
     /**
      * Sets a multiplied retry period based on a base period and a multiplier factor.
@@ -72,7 +75,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param multiplier factor to multiply base duration for each retry
      * @return this instance
      */
-    NRetryCall<T> setMultipliedRetryPeriod(NDuration basePeriod, double multiplier);
+    NRetryCall<T> multipliedRetryPeriod(NDuration basePeriod, double multiplier);
 
     /**
      * Sets an exponential retry period.
@@ -81,7 +84,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param multiplier exponential growth factor
      * @return this instance
      */
-    NRetryCall<T> setExponentialRetryPeriod(NDuration basePeriod, double multiplier);
+    NRetryCall<T> exponentialRetryPeriod(NDuration basePeriod, double multiplier);
 
     /**
      * Sets a fixed retry period for all attempts.
@@ -89,7 +92,8 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param period fixed duration
      * @return this instance
      */
-    NRetryCall<T> setRetryPeriod(NDuration period);
+    @NSetter
+    NRetryCall<T> retryPeriod(NDuration period);
 
     /**
      * Sets a sequence of retry periods for consecutive attempts.
@@ -97,7 +101,8 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param periods array of durations
      * @return this instance
      */
-    NRetryCall<T> setRetryPeriods(NDuration... periods);
+    @NSetter
+    NRetryCall<T> retryPeriods(NDuration... periods);
 
     /**
      * Adds a recovery callable to execute if all retry attempts fail.
@@ -105,7 +110,8 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param recover recovery callable
      * @return this instance
      */
-    NRetryCall<T> setRecover(NCallable<T> recover);
+    @NSetter
+    NRetryCall<T> recover(NCallable<T> recover);
 
     /**
      * Sets a custom handler to process the result after completion.
@@ -113,7 +119,8 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param handler result handler
      * @return this instance
      */
-    NRetryCall<T> setHandler(Handler<T> handler);
+    @NSetter
+    NRetryCall<T> handler(Handler<T> handler);
 
     /**
      * Executes the call, blocking until a result is obtained.
@@ -166,6 +173,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
          *
          * @return the call ID
          */
+        @NGetter
         String id();
 
         /**
@@ -180,6 +188,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
          *
          * @return true if valid
          */
+        @NGetter
         boolean isValid();
 
         /**
@@ -187,6 +196,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
          *
          * @return true if error occurred
          */
+        @NGetter
         boolean isError();
 
         /**

@@ -24,7 +24,7 @@ public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
 
     @Override
     public boolean acceptRepository(NRepository repository) {
-        return exactRepos.contains(repository.getUuid());
+        return exactRepos.contains(repository.uuid());
     }
 
     @Override

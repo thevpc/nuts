@@ -28,7 +28,7 @@ public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutabl
     @Override
     public int execute() {
         NSession session = NSession.of();
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;

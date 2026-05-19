@@ -216,7 +216,7 @@ public final class CoreStringUtils {
                 msg = NMsg.ofPlain(ex.getMessage());
             }
         } else if (ex instanceof NAnyFormattedExceptionBase) {
-            msg = ((NAnyFormattedExceptionBase) ex).getFormattedMessage();
+            msg = ((NAnyFormattedExceptionBase) ex).formattedMessage();
         } else {
             String msg2 = ex.toString();
             if (msg2.startsWith(ex.getClass().getName() + ":")) {

@@ -84,9 +84,9 @@ public class DefaultNIORPI implements NIORPI {
             return null;
         }
         NBootOptions woptions = NWorkspace.of().getBootOptions();
-        NTerminalMode expectedMode0 = woptions.getTerminalMode().orElse(NTerminalMode.DEFAULT);
+        NTerminalMode expectedMode0 = woptions.terminalMode().orElse(NTerminalMode.DEFAULT);
         if (expectedMode0 == NTerminalMode.DEFAULT) {
-            if (woptions.getBot().orElse(false)) {
+            if (woptions.bot().orElse(false)) {
                 expectedMode0 = NTerminalMode.FILTERED;
             } else {
                 expectedMode0 = NTerminalMode.FORMATTED;
@@ -569,7 +569,7 @@ public class DefaultNIORPI implements NIORPI {
         if (repositoryId == null) {
             return NPath.of(NStoreKey.ofTemp());
         } else {
-            return NPath.of(NStoreKey.ofTemp().repo(repositoryId.getUuid()));
+            return NPath.of(NStoreKey.ofTemp().repo(repositoryId.uuid()));
         }
     }
 

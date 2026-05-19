@@ -48,18 +48,18 @@ public class RepositoryNonOption extends DefaultNonOption {
 
 
     @Override
-    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
+    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         NRepository repository=context.get(NRepository.class);
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
-                for (NRepository repo : repository.config().getMirrors()) {
-                    all.add(new DefaultNArgCandidate(repo.getName()));
+                for (NRepository repo : repository.config().mirrors()) {
+                    all.add(new DefaultNArgCandidate(repo.name()));
                 }
             }
         }else{
             for (NRepository repo : NWorkspace.of().getRepositories()) {
-                all.add(new DefaultNArgCandidate(repo.getName()));
+                all.add(new DefaultNArgCandidate(repo.name()));
             }
 
         }

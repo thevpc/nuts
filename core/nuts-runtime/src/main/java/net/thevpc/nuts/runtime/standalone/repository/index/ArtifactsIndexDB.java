@@ -40,7 +40,7 @@ public class ArtifactsIndexDB {
         return new NanoDBTableDefinition<NId>(
                 name, NId.class, db.getSerializers().of(NId.class, false),
                 new NanoDBDefaultIndexDefinition<>("id", String.class, false, x -> x.longId()
-                        .builder().setRepository(x.repository()).build().toString()
+                        .builder().repository(x.repository()).build().toString()
                 ),
                 new NanoDBDefaultIndexDefinition<>("groupId", String.class, false, NId::groupId),
                 new NanoDBDefaultIndexDefinition<>("artifactId", String.class, false, NId::artifactId),
@@ -72,7 +72,7 @@ public class ArtifactsIndexDB {
     public boolean contains(NId id) {
         return table.findByIndex("id",
                 id.longId()
-                        .builder().setRepository(id.repository())
+                        .builder().repository(id.repository())
                         .build().toDependency()
         ).findAny().orNull() != null;
     }

@@ -64,17 +64,17 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
         if (!acceptedFetchNoCache(fetchMode)) {
             return NIterator.ofEmpty();
         }
-        NSession session = getWorkspace().currentSession();
+        NSession session = workspace().currentSession();
         String groupId = id.groupId();
         String artifactId = id.artifactId();
-        NPath metadataURL = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
+        NPath metadataURL = config().locationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
         return NIteratorBuilder.ofSupplier(
                 () -> {
                     List<NId> ret = new ArrayList<>();
                     InputStream metadataStream = null;
                     session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, NCoreLogUtils.forProgress(metadataURL)));
-                    SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("repo %s",getName()));
+                    SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("repo %s", name()));
                     try {
                         try {
                             metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", NMsg.ofC("retrieve %s",id.longId()));
@@ -84,13 +84,13 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                         MavenMetadata info = MavenUtils.of().parseMavenMetaData(metadataStream);
                         if (info != null) {
                             for (String version : info.getVersions()) {
-                                final NId nutsId = id.builder().setVersion(version).build();
+                                final NId nutsId = id.builder().version(version).build();
 
                                 if (!safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(nutsId,MavenRemoteXmlRepository.this, "MavenRemoteXmlRepository"))) {
                                     continue;
                                 }
                                 ret.add(
-                                        NIdBuilder.of(groupId,artifactId).setVersion(version).build()
+                                        NIdBuilder.of(groupId,artifactId).version(version).build()
                                 );
                             }
                         }

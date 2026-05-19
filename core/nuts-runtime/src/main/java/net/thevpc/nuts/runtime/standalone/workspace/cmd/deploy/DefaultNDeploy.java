@@ -84,7 +84,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     }
                 }
                 if (c.getDescriptor() != null) {
-                    if ("zip".equals(c.getDescriptor().getPackaging())) {
+                    if ("zip".equals(c.getDescriptor().packaging())) {
                         Path zipFilePath = Paths.get(NPath.of(c.getBaseFile().toString() + ".zip").toAbsolute().toString());
                         ZipUtils.zip(c.getBaseFile().toString(), new ZipOptions(), zipFilePath.toString());
                         c.setContentStreamOrPath(NPath.of(zipFilePath));
@@ -115,14 +115,14 @@ public class DefaultNDeploy extends AbstractNDeploy {
     @Override
     public NDeploy run() {
         NSession session= NSession.of();
-        if (getContent() != null || getDescriptor() != null || getSha1() != null || getDescSha1() != null) {
+        if (content() != null || getDescriptor() != null || sha1() != null || getDescSha1() != null) {
             runDeployFile();
         }
         if (!ids.isEmpty()) {
             for (NId nutsId : NSearch.of()
-                    .addIds(ids.toArray(new NId[0])).latest(true).setRepositoryFilter(NRepositoryFilters.of().bySelector(fromRepository)).getResultIds()) {
+                    .addIds(ids.toArray(new NId[0])).latest(true).repositoryFilter(NRepositoryFilters.of().bySelector(fromRepository)).getResultIds()) {
                 NDefinition fetched = NFetch.of(nutsId)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                        .dependencyFilter(NDependencyFilters.of().byRunnable())
                         .getResultDefinition();
                 if (fetched.content().isPresent()) {
                     runDeployFile(fetched.content().get(), fetched.descriptor(), null);
@@ -152,7 +152,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
     }
 
     private NDeploy runDeployFile() {
-        return runDeployFile(getContent(), getDescriptor(), getDescSha1());
+        return runDeployFile(content(), getDescriptor(), getDescSha1());
     }
 
     private NDeploy runDeployFile(NInputSource content, Object descriptor0, String descSHA1) {
@@ -172,13 +172,13 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 NAssert.requireNamedNonBlank(characterizedFile.getDescriptor(), "descriptor");
                 descriptor = characterizedFile.getDescriptor();
             }
-            String name = NWorkspace.of().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
+            String name = NWorkspace.of().getDefaultIdFilename(descriptor.id().builder().faceDescriptor().build());
             tempFile = NPath.ofTempFile(name).toPath().get();
             NCp.of().from(contentSource.inputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
             contentFile2 = tempFile;
 
             Path contentFile0 = contentFile2;
-            String repository = this.getTargetRepository();
+            String repository = this.targetRepository();
 
             wu.checkReadOnly();
             Path contentFile = contentFile0;
@@ -202,7 +202,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                         }
                     }
                     if (descriptor != null) {
-                        if ("zip".equals(descriptor.getPackaging())) {
+                        if ("zip".equals(descriptor.packaging())) {
                             Path zipFilePath = Paths.get(NPath.of(contentFile.toString() + ".zip")
                                     .toAbsolute().toString());
                             try {
@@ -226,27 +226,27 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     throw new NArtifactNotFoundException(null, NMsg.ofC("artifact not found at %s", contentFile));
                 }
                 //remove workspace
-                descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
-                if (NStringUtils.trim(descriptor.getId().version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                    throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", descriptor.getId().version()));
+                descriptor = descriptor.builder().id(descriptor.id().builder().repository(null).build()).build();
+                if (NStringUtils.trim(descriptor.id().version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", descriptor.id().version()));
                 }
 
                 NId effId = dws.resolveEffectiveId(descriptor);
-                CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(), false);
+                CorePlatformUtils.checkAcceptCondition(descriptor.condition(), false);
                 if (NBlankable.isBlank(repository)) {
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
                     for (NRepository repo : wu.filterRepositoriesDeploy(effId, null)
                             .stream()
-                            .filter(x -> x.config().getDeployWeight() > 0)
-                            .sorted(Comparator.comparingInt(x -> x.config().getDeployWeight()))
+                            .filter(x -> x.config().deployWeight() > 0)
+                            .sorted(Comparator.comparingInt(x -> x.config().deployWeight()))
                             .collect(Collectors.toList())) {
-                        int deployOrder = repo.config().getDeployWeight();
+                        int deployOrder = repo.config().deployWeight();
                         NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                         repoSPI.deploy()
                                 //.setFetchMode(NutsFetchMode.LOCAL)
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor)
                                 .run();
-                        addResult(effId, repo.getName(), NText.of(content));
+                        addResult(effId, repo.name(), NText.of(content));
                         return this;
                     }
                 } else {
@@ -261,7 +261,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                             .setContent(contentFile)
                             .setDescriptor(descriptor)
                             .run();
-                    addResult(effId, repo.getName(), NText.of(content));
+                    addResult(effId, repo.name(), NText.of(content));
                     return this;
                 }
                 throw new NNoSuchElementException(NMsg.ofC("repository %s",repository));

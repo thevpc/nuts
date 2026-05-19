@@ -72,7 +72,7 @@ public class NExecutionContextUtils {
     public static StringPlaceHolderParser.PlaceHolderProvider<NExecutionContext> EXECUTION_CONTEXT_PLACEHOLDER = new StringPlaceHolderParser.PlaceHolderProvider<NExecutionContext>() {
         @Override
         public String get(String key, NExecutionContext executionContext) {
-            return DEFINITION_PLACEHOLDER.get(key, executionContext.getDefinition());
+            return DEFINITION_PLACEHOLDER.get(key, executionContext.definition());
         }
     };
 

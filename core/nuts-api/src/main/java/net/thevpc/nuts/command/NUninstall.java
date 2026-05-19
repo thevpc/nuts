@@ -30,6 +30,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,9 +60,12 @@ public interface NUninstall extends NWorkspaceCmd {
 
     NUninstall clearIds();
 
-    List<NId> getIds();
+    @NGetter
+    List<NId> ids();
 
     NUninstall addArg(String arg);
+
+    NUninstall args(List<String> args);
 
     NUninstall addArgs(Collection<String> args);
 
@@ -68,11 +73,13 @@ public interface NUninstall extends NWorkspaceCmd {
 
     NUninstall clearArgs();
 
-    List<String> getArgs();
+    @NGetter
+    List<String> args();
 
     boolean isErase();
 
-    NUninstall setErase(boolean erase);
+    @NSetter
+    NUninstall erase(boolean erase);
 
 
     /**

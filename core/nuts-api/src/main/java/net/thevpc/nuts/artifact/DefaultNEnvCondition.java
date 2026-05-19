@@ -47,13 +47,13 @@ public class DefaultNEnvCondition implements NEnvCondition {
 
     public DefaultNEnvCondition(NEnvCondition d) {
         this(
-                d.getArch(),
-                d.getOs(),
-                d.getOsDist(),
-                d.getPlatform(),
-                d.getDesktopEnvironment(),
-                d.getProfiles(),
-                d.getProperties()
+                d.arch(),
+                d.os(),
+                d.osDist(),
+                d.platform(),
+                d.desktopEnvironment(),
+                d.profiles(),
+                d.properties()
         );
     }
 
@@ -75,7 +75,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
         this.properties = properties == null ? new HashMap<>() : new HashMap<>(properties);
     }
 
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return Collections.unmodifiableMap(properties);
     }
 
@@ -118,32 +118,32 @@ public class DefaultNEnvCondition implements NEnvCondition {
     }
 
     @Override
-    public List<String> getProfiles() {
+    public List<String> profiles() {
         return profiles;
     }
 
     @Override
-    public List<String> getArch() {
+    public List<String> arch() {
         return arch;
     }
 
     @Override
-    public List<String> getOs() {
+    public List<String> os() {
         return os;
     }
 
     @Override
-    public List<String> getOsDist() {
+    public List<String> osDist() {
         return osDist;
     }
 
     @Override
-    public List<String> getPlatform() {
+    public List<String> platform() {
         return platform;
     }
 
     @Override
-    public List<String> getDesktopEnvironment() {
+    public List<String> desktopEnvironment() {
         return desktopEnvironment;
     }
 

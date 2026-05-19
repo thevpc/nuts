@@ -141,11 +141,11 @@ public class CoreFilterUtils {
         if (NBlankable.isBlank(packaging)) {
             return true;
         }
-        if (NBlankable.isBlank(desc.getPackaging())) {
+        if (NBlankable.isBlank(desc.packaging())) {
             return true;
         }
         NId _v = NId.get(packaging).orNull();
-        NId _v2 = NId.get(desc.getPackaging()).orNull();
+        NId _v2 = NId.get(desc.packaging()).orNull();
         if (_v == null || _v2 == null) {
             return _v == _v2;
         }
@@ -158,10 +158,10 @@ public class CoreFilterUtils {
     }
 
     public static boolean acceptDependency(NDependency dep) {
-        if (CoreFilterUtils.acceptCondition(dep.getCondition(), false)) {
+        if (CoreFilterUtils.acceptCondition(dep.condition(), false)) {
             // fast reject jfx dependencies with different environment defined by classifier!
-            if (dep.getGroupId().equals("org.openjfx") && dep.getArtifactId().startsWith("javafx")) {
-                String c = NStringUtils.trim(dep.getClassifier());
+            if (dep.groupId().equals("org.openjfx") && dep.artifactId().startsWith("javafx")) {
+                String c = NStringUtils.trim(dep.classifier());
                 if (c.length() > 0) {
                     String[] a = c.split("-");
                     if (a.length > 0) {
@@ -210,23 +210,23 @@ public class CoreFilterUtils {
         if (cond2 == null || cond2.isBlank()) {
             return true;
         }
-        if (!matchAny(cond2.getArch(), s -> matchesArch(s, envCond.getArch()))) {
+        if (!matchAny(cond2.arch(), s -> matchesArch(s, envCond.arch()))) {
             return false;
         }
-        if (!matchAny(cond2.getOs(), s -> matchesOs(s, envCond.getOs()))) {
+        if (!matchAny(cond2.os(), s -> matchesOs(s, envCond.os()))) {
             return false;
         }
-        if (!matchAny(cond2.getOsDist(), s -> matchesOsDist(s, envCond.getOsDist()))) {
+        if (!matchAny(cond2.osDist(), s -> matchesOsDist(s, envCond.osDist()))) {
             return false;
         }
-        if (!matchAny(cond2.getPlatform(), s -> matchesOsDist(s, envCond.getPlatform()))) {
+        if (!matchAny(cond2.platform(), s -> matchesOsDist(s, envCond.platform()))) {
             return false;
         }
-        if (!matchAny(cond2.getDesktopEnvironment(), s -> matchesOsDist(s, envCond.getDesktopEnvironment()))) {
+        if (!matchAny(cond2.desktopEnvironment(), s -> matchesOsDist(s, envCond.desktopEnvironment()))) {
             return false;
         }
         if (!matchesProperties(
-                envCond.getProperties(), cond2.getProperties()
+                envCond.properties(), cond2.properties()
         )) {
             return false;
         }
@@ -240,33 +240,33 @@ public class CoreFilterUtils {
         NEnv env = NEnv.of();
         if (!matchesArch(
                 env.getArchFamily().id(),
-                envCond.getArch()
+                envCond.arch()
         )) {
             return false;
         }
         if (!matchesOs(
                 env.getOsFamily().id(),
-                envCond.getOs()
+                envCond.os()
         )) {
             return false;
         }
         if (!matchesOsDist(
                 env.getOsDist().toString(),
-                envCond.getOsDist()
+                envCond.osDist()
         )) {
             return false;
         }
         if (currentVMOnLy) {
             if (!matchesPlatform(
                     env.getJava().toString(),
-                    envCond.getPlatform()
+                    envCond.platform()
             )) {
                 return false;
             }
         } else {
             if (!matchesPlatform(
                     NExecutionEngines.of().findExecutionEngines().toList(),
-                    envCond.getPlatform()
+                    envCond.platform()
             )) {
                 return false;
             }
@@ -274,12 +274,12 @@ public class CoreFilterUtils {
 
         if (!matchesDesktopEnvironment(
                 env.getDesktopEnvironments(),
-                envCond.getDesktopEnvironment()
+                envCond.desktopEnvironment()
         )) {
             return false;
         }
         if (!matchesProperties(
-                envCond.getProperties()
+                envCond.properties()
         )) {
             return false;
         }
@@ -349,7 +349,7 @@ public class CoreFilterUtils {
                 NId idCond = NId.get(cond).get();
                 NArchFamily w = NArchFamily.parse(idCond.artifactId()).orNull();
                 if (w != null) {
-                    idCond = idCond.builder().setArtifactId(w.id()).build();
+                    idCond = idCond.builder().artifactId(w.id()).build();
                 }
                 if (idCond.equalsShortId(currentId)) {
                     if (idCond.version().toFilter().acceptVersion(currentId.version())) {
@@ -376,7 +376,7 @@ public class CoreFilterUtils {
                 NId condId = NId.get(cond).get();
                 NOsFamily w = NOsFamily.parse(condId.artifactId()).orNull();
                 if (w != null) {
-                    condId = condId.builder().setArtifactId(w.id()).build();
+                    condId = condId.builder().artifactId(w.id()).build();
                 }
                 return condId.toAtLeast().toFilter().acceptId(currentId);
             }
@@ -452,7 +452,7 @@ public class CoreFilterUtils {
                 NId condId = NId.get(cond).get();
                 NExecutionEngineFamily w = NExecutionEngineFamily.parse(condId.artifactId()).orNull();
                 if (w != null) {
-                    condId = condId.builder().setArtifactId(w.id()).build();
+                    condId = condId.builder().artifactId(w.id()).build();
                 }
                 return condId.toAtLeast().toFilter().acceptId(currentId);
             }
@@ -484,7 +484,7 @@ public class CoreFilterUtils {
                 NId condId = NId.get(cond).get();
                 NDesktopEnvironmentFamily w = NDesktopEnvironmentFamily.parse(condId.artifactId()).orNull();
                 if (w != null) {
-                    condId = condId.builder().setArtifactId(w.id()).build();
+                    condId = condId.builder().artifactId(w.id()).build();
                 }
                 return condId.toAtLeast().toFilter().acceptId(currentId);
             }
@@ -496,19 +496,19 @@ public class CoreFilterUtils {
 
     public static boolean matchesEnv(String arch, String os, String dist, String platform, String de, NEnvCondition
             desc) {
-        if (!matchesArch(arch, desc.getArch())) {
+        if (!matchesArch(arch, desc.arch())) {
             return false;
         }
-        if (!matchesOs(os, desc.getOs())) {
+        if (!matchesOs(os, desc.os())) {
             return false;
         }
-        if (!matchesOsDist(dist, desc.getOsDist())) {
+        if (!matchesOsDist(dist, desc.osDist())) {
             return false;
         }
-        if (!matchesPlatform(platform, desc.getPlatform())) {
+        if (!matchesPlatform(platform, desc.platform())) {
             return false;
         }
-        if (!matchesDesktopEnvironment(de, desc.getDesktopEnvironment())) {
+        if (!matchesDesktopEnvironment(de, desc.desktopEnvironment())) {
             return false;
         }
         return true;
@@ -546,37 +546,37 @@ public class CoreFilterUtils {
             return false;
         }
         String c0 = NStringUtils.trim(classifier);
-        String c1 = NStringUtils.trim(location.getClassifier());
+        String c1 = NStringUtils.trim(location.classifier());
         return c0.equals(c1);
     }
 
     public static Map<String, String> toMap(NEnvCondition condition) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
-        String s = condition.getArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        String s = condition.arch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.ARCH, s);
         }
-        s = condition.getOs().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.os().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.OS, s);
         }
-        s = condition.getOsDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.osDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.OS_DIST, s);
         }
-        s = String.join(",", condition.getPlatform());
+        s = String.join(",", condition.platform());
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.PLATFORM, s);
         }
-        s = condition.getDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.desktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.DESKTOP, s);
         }
-        s = condition.getProfiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.profiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.PROFILE, s);
         }
-        Map<String, String> properties = condition.getProperties();
+        Map<String, String> properties = condition.properties();
         if (!properties.isEmpty()) {
             m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringMapFormat.COMMA_FORMAT.format(properties));
         }

@@ -59,7 +59,7 @@ public class NDependencyUtils {
         if (d.isOptional()) {
             return false;
         }
-        if (NDependencyScope.parse(d.getScope()).orElse(NDependencyScope.API) == NDependencyScope.SYSTEM) {
+        if (NDependencyScope.parse(d.scope()).orElse(NDependencyScope.API) == NDependencyScope.SYSTEM) {
             //NutsEnvCondition c = d.getDependency().getCondition();
             //if(c!=null && c.getProfiles().length>0) {
             //Should add some log!
@@ -74,11 +74,11 @@ public class NDependencyUtils {
     }
 
     public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NDependency copyFrom) {
-        String _optional = copyFrom.getOptional();
-        String _scope = copyFrom.getScope();
+        String _optional = copyFrom.optional();
+        String _scope = copyFrom.scope();
         return NIteratorBuilder.of(id).map(NFunction.of(
                         (NId x) -> x.toDependency().builder()
-                                .setOptional(_optional).setScope(_scope).build())
+                                .optional(_optional).scope(_scope).build())
                 .withDescription(NDescribables.ofDesc("IdToDependency"))
         ).build();
     }

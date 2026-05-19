@@ -47,7 +47,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         boolean showTrace = NApiUtilsRPI.resolveShowStackTrace(bbo);
         int errorCode = NExceptions.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
-                .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();
+                .map(NSessionAwareExceptionBase::formattedMessage).orNull();
         String m = throwable.getMessage();
         if (m == null || m.length() < 5) {
             m = throwable.toString();

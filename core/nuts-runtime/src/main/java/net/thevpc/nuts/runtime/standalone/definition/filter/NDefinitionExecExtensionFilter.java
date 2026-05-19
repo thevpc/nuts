@@ -21,10 +21,10 @@ public class NDefinitionExecExtensionFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        if(other.descriptor().getIdType()!= NIdType.EXTENSION){
+        if(other.descriptor().idType()!= NIdType.EXTENSION){
             return false;
         }
-        for (NDependency dependency : other.descriptor().getDependencies()) {
+        for (NDependency dependency : other.descriptor().dependencies()) {
             if(dependency.toId().shortName().equals(this.apiId.shortName())){
                 if(apiId==null){
                     return true;

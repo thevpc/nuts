@@ -24,7 +24,7 @@ public class DefaultNCheckUpdatesInternalExecutable extends DefaultInternalNExec
 
     @Override
     public int execute() {
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;

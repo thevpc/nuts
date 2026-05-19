@@ -28,7 +28,9 @@ import net.thevpc.nuts.reflect.NReflectConfiguration;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -36,21 +38,29 @@ import java.util.function.Function;
  */
 public class DefaultNReflectConfiguration implements NReflectConfiguration {
 
-    private Function<Class, NReflectPropertyAccessStrategy> propertyAccessStrategy;
+    private Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy;
     private Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
 
-    public DefaultNReflectConfiguration(Function<Class, NReflectPropertyAccessStrategy> propertyAccessStrategy, Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
+    public DefaultNReflectConfiguration(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy, Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy;
         this.propertyDefaultValueStrategy = propertyDefaultValueStrategy;
     }
 
     @Override
-    public NReflectPropertyAccessStrategy getAccessStrategy(Class clz) {
+    public Set<NReflectPropertyAccessStrategy> getDefaultAccessStrategies(Class clz) {
         if (clz == null || propertyAccessStrategy == null) {
-            return NReflectPropertyAccessStrategy.ALL;
+            return NReflectPropertyAccessStrategy.all();
         }
-        NReflectPropertyAccessStrategy v = propertyAccessStrategy.apply(clz);
-        return v != null ? v : NReflectPropertyAccessStrategy.ALL;
+        Set<NReflectPropertyAccessStrategy> v = propertyAccessStrategy.apply(clz);
+        if(v==null){
+            v=NReflectPropertyAccessStrategy.all();
+        }else{
+            v=v.stream().filter(x->x!=null).collect(Collectors.toSet());
+            if(v.isEmpty()){
+                v=NReflectPropertyAccessStrategy.all();
+            }
+        }
+        return v;
     }
 
     @Override

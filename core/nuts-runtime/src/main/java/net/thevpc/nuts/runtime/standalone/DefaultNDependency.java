@@ -136,19 +136,19 @@ public class DefaultNDependency implements NDependency {
 
     @Override
     public boolean isOptional() {
-        final String o = getOptional();
+        final String o = optional();
         return o != null && Boolean.parseBoolean(o);
     }
 
     @Override
-    public String getOptional() {
+    public String optional() {
         return optional;
     }
 
     @Override
     public boolean isAnyProvided() {
         if (!NBlankable.isBlank(scope)) {
-            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            NDependencyScopePattern u = NDependencyScopePattern.parse(scope()).orElse(null);
             if(u!=null){
                 switch (u) {
                     case PROVIDED:
@@ -164,7 +164,7 @@ public class DefaultNDependency implements NDependency {
     @Override
     public boolean isAnyRuntime() {
         if (!NBlankable.isBlank(scope)) {
-            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            NDependencyScopePattern u = NDependencyScopePattern.parse(scope()).orElse(null);
             if(u!=null){
                 switch (u) {
                     case RUNTIME:
@@ -179,7 +179,7 @@ public class DefaultNDependency implements NDependency {
     @Override
     public boolean isProvided() {
         if (!NBlankable.isBlank(scope)) {
-            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            NDependencyScopePattern u = NDependencyScopePattern.parse(scope()).orElse(null);
             if(u!=null){
                 switch (u) {
                     case PROVIDED:
@@ -193,7 +193,7 @@ public class DefaultNDependency implements NDependency {
     @Override
     public boolean isRuntime() {
         if (!NBlankable.isBlank(scope)) {
-            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            NDependencyScopePattern u = NDependencyScopePattern.parse(scope()).orElse(null);
             if(u!=null){
                 switch (u) {
                     case RUNTIME:
@@ -207,7 +207,7 @@ public class DefaultNDependency implements NDependency {
     @Override
     public boolean isAnyTest() {
         if (!NBlankable.isBlank(scope)) {
-            NDependencyScopePattern u = NDependencyScopePattern.parse(getScope()).orElse(null);
+            NDependencyScopePattern u = NDependencyScopePattern.parse(scope()).orElse(null);
             if(u!=null){
                 switch (u) {
                     case TEST:
@@ -226,19 +226,19 @@ public class DefaultNDependency implements NDependency {
     }
 
     @Override
-    public String getScope() {
+    public String scope() {
         return scope;
     }
 
     @Override
-    public String getClassifier() {
+    public String classifier() {
         return classifier;
     }
 
     @Override
     public NId toId() {
         Map<String, String> m = new LinkedHashMap<>();
-        Map<String, String> pp = getProperties();
+        Map<String, String> pp = properties();
         m.putAll(pp);
         if (!NReservedUtils.isDependencyDefaultScope(scope)) {
             m.put(NConstants.IdProperties.SCOPE, scope);
@@ -256,73 +256,73 @@ public class DefaultNDependency implements NDependency {
             m.put(NConstants.IdProperties.EXCLUSIONS, NReservedUtils.toDependencyExclusionListString(exclusions));
         }
         NId ii = NIdBuilder.of()
-                .setGroupId(getGroupId())
-                .setArtifactId(getArtifactId())
-                .setClassifier(getClassifier())
-                .setVersion(getVersion())
-                .setCondition(getCondition())
+                .groupId(groupId())
+                .artifactId(artifactId())
+                .classifier(classifier())
+                .version(version())
+                .condition(condition())
                 .setProperties(m).build();
         return ii;
     }
 
     @Override
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
     @Override
-    public String getGroupId() {
+    public String groupId() {
         return groupId;
     }
 
     @Override
-    public String getArtifactId() {
+    public String artifactId() {
         return artifactId;
     }
 
     @Override
-    public String getShortName() {
+    public String shortName() {
         return NReservedUtils.getIdShortName(groupId,artifactId, classifier);
     }
 
     @Override
-    public String getLongName() {
+    public String longName() {
         return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
 
 
     @Override
-    public String getFullName() {
+    public String fullName() {
         return toString();
     }
 
     @Override
-    public NVersion getVersion() {
+    public NVersion version() {
         return version;
     }
 
     @Override
-    public NEnvCondition getCondition() {
+    public NEnvCondition condition() {
         return condition;
     }
 
     @Override
-    public String getType() {
+    public String type() {
         return type;
     }
 
     @Override
-    public List<NId> getExclusions() {
+    public List<NId> exclusions() {
         return exclusions;
     }
 
     @Override
-    public String getPropertiesQuery() {
+    public String propertiesQuery() {
         return properties;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return NStringMapFormat.DEFAULT.parse(properties).get();
     }
 

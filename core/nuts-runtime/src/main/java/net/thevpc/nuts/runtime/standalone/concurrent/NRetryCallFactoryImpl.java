@@ -4,7 +4,6 @@ import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.concurrent.NRetryCall;
 import net.thevpc.nuts.concurrent.NRetryCallFactory;
 import net.thevpc.nuts.concurrent.NRetryCallStore;
-import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.concurrent.NCallable;
 
@@ -18,7 +17,7 @@ public class NRetryCallFactoryImpl implements NRetryCallFactory {
         this.store = store;
     }
 
-    public NRetryCallStore getStore() {
+    public NRetryCallStore store() {
         return store;
     }
 
@@ -38,7 +37,7 @@ public class NRetryCallFactoryImpl implements NRetryCallFactory {
             id = UUID.randomUUID().toString();
         }
         return new NRetryCallImpl<>(id, callable,
-                store == null ? NConcurrent.of().memoryRetryCallFactory().getStore() : store);
+                store == null ? NConcurrent.of().memoryRetryCallFactory().store() : store);
     }
 
 

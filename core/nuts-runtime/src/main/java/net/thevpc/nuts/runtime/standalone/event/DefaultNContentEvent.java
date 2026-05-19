@@ -56,12 +56,12 @@ public class DefaultNContentEvent implements NContentEvent {
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 
     @Override
-    public NPath getLocation() {
+    public NPath location() {
         return location;
     }
 
@@ -71,12 +71,12 @@ public class DefaultNContentEvent implements NContentEvent {
     }
 
     @Override
-    public NWorkspace getWorkspace() {
-        return getSession().getWorkspace();
+    public NWorkspace workspace() {
+        return session().getWorkspace();
     }
 
     @Override
-    public NRepository getRepository() {
+    public NRepository repository() {
         return repository;
     }
 }

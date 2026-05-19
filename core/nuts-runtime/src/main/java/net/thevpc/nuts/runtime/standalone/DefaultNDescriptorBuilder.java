@@ -92,89 +92,89 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
     @Override
-    public NDescriptorBuilder setId(NId id) {
+    public NDescriptorBuilder id(NId id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public NDescriptorBuilder setId(String id) {
+    public NDescriptorBuilder id(String id) {
         this.id = NId.get(id).get();
         return this;
     }
 
     @Override
-    public List<NId> getParents() {
+    public List<NId> parents() {
         return parents;
     }
 
-    public NDescriptorBuilder setParents(List<NId> parents) {
+    public NDescriptorBuilder parents(List<NId> parents) {
         this.parents = NReservedLangUtils.uniqueNonBlankList(parents);
         return this;
     }
 
     @Override
-    public String getPackaging() {
+    public String packaging() {
         return packaging;
     }
 
     @Override
-    public NDescriptorBuilder setPackaging(String packaging) {
+    public NDescriptorBuilder packaging(String packaging) {
         this.packaging = NStringUtils.trim(packaging);
         return this;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NDescriptorBuilder setName(String name) {
+    public NDescriptorBuilder name(String name) {
         this.name = NStringUtils.trim(name);
         return this;
     }
 
     @Override
-    public String getSolver() {
+    public String solver() {
         return solver;
     }
 
     @Override
-    public NDescriptorBuilder setSolver(String solver) {
+    public NDescriptorBuilder solver(String solver) {
         this.solver = solver;
         return this;
     }
 
     @Override
-    public String getGenericName() {
+    public String genericName() {
         return genericName;
     }
 
     @Override
-    public NDescriptorBuilder setGenericName(String name) {
+    public NDescriptorBuilder genericName(String name) {
         this.genericName = name;
         return this;
     }
 
     @Override
-    public List<String> getIcons() {
+    public List<String> icons() {
         return icons;
     }
 
     @Override
-    public NDescriptorBuilder setIcons(List<String> icons) {
-        this.setIcons(icons == null ? null : icons.toArray(new String[0]));
+    public NDescriptorBuilder icons(List<String> icons) {
+        this.icons(icons == null ? null : icons.toArray(new String[0]));
         return this;
     }
 
     @Override
-    public NDescriptorBuilder setIcons(String... icons) {
+    public NDescriptorBuilder icons(String... icons) {
         this.icons = new ArrayList<>();
         if (icons != null) {
             for (String icon : icons) {
@@ -187,7 +187,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NDescriptorBuilder setLocations(NIdLocation... locations) {
+    public NDescriptorBuilder locations(NIdLocation... locations) {
         this.locations = new ArrayList<>();
         if (locations != null) {
             for (NIdLocation location : locations) {
@@ -201,18 +201,18 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public List<String> getCategories() {
+    public List<String> categories() {
         return categories;
     }
 
     @Override
-    public NDescriptorBuilder setCategories(List<String> categories) {
-        this.setCategories(categories == null ? null : categories.toArray(new String[0]));
+    public NDescriptorBuilder categories(List<String> categories) {
+        this.categories(categories == null ? null : categories.toArray(new String[0]));
         return this;
     }
 
     @Override
-    public NDescriptorBuilder setCategories(String... categories) {
+    public NDescriptorBuilder categories(String... categories) {
         this.categories = new ArrayList<>();
         if (categories != null) {
             for (String cat : categories) {
@@ -225,90 +225,90 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NEnvConditionBuilder getCondition() {
+    public NEnvConditionBuilder condition() {
         return condition;
     }
 
     @Override
-    public NDescriptorBuilder setCondition(NEnvCondition condition) {
+    public NDescriptorBuilder condition(NEnvCondition condition) {
         this.condition.copyFrom(condition);
         return this;
     }
 
     @Override
-    public NDescriptorBuilder setCondition(NEnvConditionBuilder condition) {
+    public NDescriptorBuilder condition(NEnvConditionBuilder condition) {
         this.condition.copyFrom(condition);
         return this;
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return description;
     }
 
     @Override
-    public NDescriptorBuilder setDescription(String description) {
+    public NDescriptorBuilder description(String description) {
         this.description = NStringUtils.trim(description);
         return this;
     }
 
     @Override
-    public List<NIdLocation> getLocations() {
+    public List<NIdLocation> locations() {
         return locations;
     }
 
     @Override
-    public NDescriptorBuilder setLocations(List<NIdLocation> locations) {
-        setLocations(locations == null ? null : locations.toArray(new NIdLocation[0]));
+    public NDescriptorBuilder locations(List<NIdLocation> locations) {
+        locations(locations == null ? null : locations.toArray(new NIdLocation[0]));
         return this;
     }
 
     @Override
-    public List<NDependency> getStandardDependencies() {
+    public List<NDependency> standardDependencies() {
         return standardDependencies;
     }
 
     @Override
-    public NDescriptorBuilder setStandardDependencies(List<NDependency> dependencies) {
+    public NDescriptorBuilder standardDependencies(List<NDependency> dependencies) {
         this.standardDependencies = NReservedLangUtils.uniqueNonBlankList(dependencies);
         return this;
     }
 
     @Override
-    public List<NDependency> getDependencies() {
+    public List<NDependency> dependencies() {
         return dependencies;
     }
 
     @Override
-    public NDescriptorBuilder setDependencies(List<NDependency> dependencies) {
+    public NDescriptorBuilder dependencies(List<NDependency> dependencies) {
         this.dependencies = NReservedLangUtils.uniqueNonBlankList(dependencies);
         return this;
     }
 
     @Override
-    public NArtifactCall getExecutor() {
+    public NArtifactCall executor() {
         return executor;
     }
 
     @Override
-    public NDescriptorBuilder setExecutor(NArtifactCall executor) {
+    public NDescriptorBuilder executor(NArtifactCall executor) {
         this.executor = executor;
         return this;
     }
 
     @Override
-    public NArtifactCall getInstaller() {
+    public NArtifactCall installer() {
         return installer;
     }
 
     @Override
-    public NDescriptorBuilder setInstaller(NArtifactCall installer) {
+    public NDescriptorBuilder installer(NArtifactCall installer) {
         this.installer = installer;
         return this;
     }
 
     @Override
-    public List<NDescriptorProperty> getProperties() {
+    public List<NDescriptorProperty> properties() {
         return properties;
     }
 
@@ -337,8 +337,8 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     @Override
     public NDescriptorBuilder setProperty(String name, String value) {
         NDescriptorProperty pp = new DefaultNDescriptorPropertyBuilder()
-                .setName(name)
-                .setValue(value)
+                .name(name)
+                .value(value)
                 .build();
         _rebuildPropertiesBuilder();
         if (value == null) {
@@ -353,25 +353,25 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     @Override
     public NDescriptorBuilder copyFrom(NDescriptorBuilder other) {
         if (other != null) {
-            setId(other.getId());
-            setIdType(other.getIdType());
-            setPackaging(other.getPackaging());
-            setParents(other.getParents());
-            setDescription(other.getDescription());
-            setName(other.getName());
-            setExecutor(other.getExecutor());
-            setInstaller(other.getInstaller());
+            id(other.id());
+            idType(other.idType());
+            packaging(other.packaging());
+            parents(other.parents());
+            description(other.description());
+            name(other.name());
+            executor(other.executor());
+            installer(other.installer());
 //            setExt(other.getExt());
-            setCondition(other.getCondition());
-            setLocations(other.getLocations());
-            setDependencies(other.getDependencies());
-            setStandardDependencies(other.getStandardDependencies());
-            setProperties(other.getProperties());
-            setIcons(new ArrayList<>(other.getIcons()));
-            setCategories(other.getCategories());
-            setGenericName(other.getGenericName());
-            setSolver(other.getSolver());
-            setFlags(other.getFlags());
+            condition(other.condition());
+            locations(other.locations());
+            dependencies(other.dependencies());
+            standardDependencies(other.standardDependencies());
+            setProperties(other.properties());
+            icons(new ArrayList<>(other.icons()));
+            categories(other.categories());
+            genericName(other.genericName());
+            solver(other.solver());
+            flags(other.flags());
         } else {
             clear();
         }
@@ -381,25 +381,25 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     //    @Override
     public NDescriptorBuilder copyFrom(NBootDescriptor other) {
         if (other != null) {
-            setId(other.getId() == null ? null : NId.get(other.getId().toString()).get());
-            setPackaging(other.getPackaging());
-            setParents(other.getParents() == null ? null : other.getParents().stream().map(x -> NId.get(x.toString()).get()).collect(Collectors.toList()));
-            setDescription(other.getDescription());
-            setName(other.getName());
-            setCondition(other.getCondition() == null ? null : new DefaultNEnvConditionBuilder().copyFrom(other.getCondition()).build());
-            setDependencies(other.getDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
-            setStandardDependencies(other.getStandardDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
+            id(other.getId() == null ? null : NId.get(other.getId().toString()).get());
+            packaging(other.getPackaging());
+            parents(other.getParents() == null ? null : other.getParents().stream().map(x -> NId.get(x.toString()).get()).collect(Collectors.toList()));
+            description(other.getDescription());
+            name(other.getName());
+            condition(other.getCondition() == null ? null : new DefaultNEnvConditionBuilder().copyFrom(other.getCondition()).build());
+            dependencies(other.getDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
+            standardDependencies(other.getStandardDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
             setProperties(other.getProperties() == null ? null : other.getProperties().stream().map(x -> new DefaultNDescriptorPropertyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
 
-            setIdType(null);
-            setExecutor(null);
-            setInstaller(null);
-            setLocations();
-            setIcons();
-            setCategories();
-            setGenericName(null);
-            setSolver(null);
-            setFlags();
+            idType(null);
+            executor(null);
+            installer(null);
+            this.locations();
+            this.icons();
+            this.categories();
+            genericName(null);
+            solver(null);
+            this.flags();
         } else {
             clear();
         }
@@ -409,29 +409,29 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     @Override
     public NDescriptorBuilder copyFrom(NDescriptor other) {
         if (other != null) {
-            setId(other.getId());
-            setIdType(other.getIdType());
-            setPackaging(other.getPackaging());
-            setParents(other.getParents());
-            setDescription(other.getDescription());
-            setName(other.getName());
-            setExecutor(other.getExecutor());
-            setInstaller(other.getInstaller());
-            setCondition(other.getCondition());
-            setLocations(other.getLocations());
-            setDependencies(other.getDependencies());
-            setStandardDependencies(other.getStandardDependencies());
-            setProperties(other.getProperties());
-            setIcons(other.getIcons());
-            setGenericName(other.getGenericName());
-            setCategories(other.getCategories());
-            setSolver(other.getSolver());
-            setFlags(other.getFlags());
-            setOrganization(other.getOrganization());
-            setContributors(other.getContributors());
-            setDevelopers(other.getDevelopers());
-            setLicenses(other.getLicenses());
-            setMailingLists(other.getMailingLists());
+            id(other.id());
+            idType(other.idType());
+            packaging(other.packaging());
+            parents(other.parents());
+            description(other.description());
+            name(other.name());
+            executor(other.executor());
+            installer(other.installer());
+            condition(other.condition());
+            locations(other.locations());
+            dependencies(other.dependencies());
+            standardDependencies(other.standardDependencies());
+            setProperties(other.properties());
+            icons(other.icons());
+            genericName(other.genericName());
+            categories(other.categories());
+            solver(other.solver());
+            flags(other.flags());
+            organization(other.organization());
+            contributors(other.contributors());
+            developers(other.developers());
+            licenses(other.licenses());
+            mailingLists(other.mailingLists());
         } else {
             clear();
         }
@@ -440,29 +440,29 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder clear() {
-        setId((NId) null);
-        setIdType(null);
-        setPackaging(null);
-        setParents(null);
-        setDescription(null);
-        setFlags(new LinkedHashSet<>());
-        setName(null);
-        setExecutor(null);
-        setInstaller(null);
-        setCondition((NEnvCondition) null);
-        setLocations();
-        setDependencies(null);
-        setStandardDependencies(null);
+        id((NId) null);
+        idType(null);
+        packaging(null);
+        parents(null);
+        description(null);
+        flags(new LinkedHashSet<>());
+        name(null);
+        executor(null);
+        installer(null);
+        condition((NEnvCondition) null);
+        this.locations();
+        dependencies(null);
+        standardDependencies(null);
         setProperties(null);
-        setIcons();
-        setCategories();
-        setGenericName(null);
-        setSolver(null);
-        setOrganization(null);
-        setContributors(null);
-        setLicenses(null);
-        setDevelopers(null);
-        setMailingLists(null);
+        this.icons();
+        this.categories();
+        genericName(null);
+        solver(null);
+        organization(null);
+        contributors(null);
+        licenses(null);
+        developers(null);
+        mailingLists(null);
         return this;
     }
 
@@ -548,7 +548,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
         DefaultNProperties p = new DefaultNProperties();
         boolean someUpdate = false;
-        for (NDescriptorProperty entry : getProperties()) {
+        for (NDescriptorProperty entry : properties()) {
             if (filter == null || filter.test(entry)) {
                 NDescriptorProperty v = converter.apply(entry);
                 if (v != null) {
@@ -573,7 +573,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             return this;
         }
         ArrayList<NDependency> dependenciesList = new ArrayList<>();
-        for (NDependency d : getDependencies()) {
+        for (NDependency d : dependencies()) {
             if (filter == null || filter.test(d)) {
                 d = converter.apply(d);
                 if (d != null) {
@@ -605,49 +605,49 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     @Override
     public NDescriptor build() {
         LinkedHashSet<NDescriptorFlag> flags = new LinkedHashSet<>();
-        NIdType idType = getIdType();
-        for (NDescriptorProperty property : getProperties()) {
-            if (NBlankable.isBlank(property.getCondition())) {
-                switch (property.getName()) {
+        NIdType idType = idType();
+        for (NDescriptorProperty property : properties()) {
+            if (NBlankable.isBlank(property.condition())) {
+                switch (property.name()) {
                     case "nuts.application": {
-                        if (property.getValue().asBoolean().orElse(false)) {
+                        if (property.value().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.NUTS_APP);
                             flags.add(NDescriptorFlag.EXEC);
                         }
                         break;
                     }
                     case "nuts.executable": {
-                        if (property.getValue().asBoolean().orElse(false)) {
+                        if (property.value().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.EXEC);
                         }
                         break;
                     }
                     case "nuts.term": {
-                        if (property.getValue().asBoolean().orElse(false)) {
+                        if (property.value().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.TERM);
                         }
                         break;
                     }
                     case "nuts.gui": {
-                        if (property.getValue().asBoolean().orElse(false)) {
+                        if (property.value().asBoolean().orElse(false)) {
                             flags.add(NDescriptorFlag.GUI);
                         }
                         break;
                     }
                     case "nuts.extension": {
-                        if (property.getValue().asBoolean().orElse(false)) {
+                        if (property.value().asBoolean().orElse(false)) {
                             idType = NIdType.EXTENSION;
                         }
                         break;
                     }
                     case "nuts.runtime": {
-                        if (property.getValue().asBoolean().orElse(false)) {
+                        if (property.value().asBoolean().orElse(false)) {
                             idType = NIdType.RUNTIME;
                         }
                         break;
                     }
                     case "nuts.companion": {
-                        if (property.getValue().asBoolean().orElse(false)) {
+                        if (property.value().asBoolean().orElse(false)) {
                             idType = NIdType.COMPANION;
                         }
                         break;
@@ -656,7 +656,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             }
         }
 
-        NId id1 = getId();
+        NId id1 = id();
         if (!NBlankable.isBlank(id1)) {
             if (Objects.equals(id1.shortName(), NConstants.Ids.NUTS_API)) {
                 idType = NIdType.API;
@@ -678,21 +678,21 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             }
         }
         return new DefaultNDescriptor(
-                id1, idType, getParents(), getPackaging(),
-                getExecutor(), getInstaller(),
-                getName(), getDescription(), getCondition().build(),
-                getDependencies(), getStandardDependencies(),
-                getLocations(), getProperties(),
+                id1, idType, parents(), packaging(),
+                executor(), installer(),
+                name(), description(), condition().build(),
+                dependencies(), standardDependencies(),
+                locations(), properties(),
                 genericName,
                 categories,
                 icons,
                 flags,
-                getSolver(),
-                getContributors(),
-                getDevelopers(),
-                getLicenses(),
-                getMailingLists(),
-                getOrganization()
+                solver(),
+                contributors(),
+                developers(),
+                licenses(),
+                mailingLists(),
+                organization()
         );
     }
 
@@ -701,16 +701,16 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         return new DefaultNDescriptorBuilder().copyFrom(this);
     }
 
-    public Set<NDescriptorFlag> getFlags() {
+    public Set<NDescriptorFlag> flags() {
         return flags;
     }
 
-    public NDescriptorBuilder setFlags(Set<NDescriptorFlag> flags) {
+    public NDescriptorBuilder flags(Set<NDescriptorFlag> flags) {
         this.flags = flags == null ? new LinkedHashSet<>() : new LinkedHashSet<>(flags);
         return this;
     }
 
-    public NDescriptorBuilder setFlags(NDescriptorFlag... flags) {
+    public NDescriptorBuilder flags(NDescriptorFlag... flags) {
         Set<NDescriptorFlag> nv = new LinkedHashSet<>();
         if (flags != null) {
             for (NDescriptorFlag v : flags) {
@@ -766,20 +766,20 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NOptional<NDescriptorProperty> getProperty(String name) {
-        return NOptional.ofNamed(Arrays.stream(_propertiesBuilder.toArray()).filter(x -> x.getName().equals(name)).findFirst()
+        return NOptional.ofNamed(Arrays.stream(_propertiesBuilder.toArray()).filter(x -> x.name().equals(name)).findFirst()
                 .orElse(null), "property " + name);
     }
 
     @Override
     public NOptional<NLiteral> getPropertyValue(String name) {
-        return getProperty(name).map(NDescriptorProperty::getValue);
+        return getProperty(name).map(NDescriptorProperty::value);
     }
 
-    public NIdType getIdType() {
+    public NIdType idType() {
         return idType;
     }
 
-    public NDescriptorBuilder setIdType(NIdType idType) {
+    public NDescriptorBuilder idType(NIdType idType) {
         this.idType = idType == null ? NIdType.REGULAR : idType;
         return this;
     }
@@ -839,75 +839,75 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public boolean isExecutable() {
-        return getFlags().contains(NDescriptorFlag.EXEC);
+        return flags().contains(NDescriptorFlag.EXEC);
     }
 
     @Override
     public boolean isNutsApplication() {
-        return getFlags().contains(NDescriptorFlag.NUTS_APP);
+        return flags().contains(NDescriptorFlag.NUTS_APP);
     }
 
     @Override
     public boolean isPlatformApplication() {
-        return getFlags().contains(NDescriptorFlag.PLATFORM_APP);
+        return flags().contains(NDescriptorFlag.PLATFORM_APP);
     }
 
     @Override
-    public List<NDescriptorContributor> getContributors() {
+    public List<NDescriptorContributor> contributors() {
         return contributors;
     }
 
     @Override
-    public NDescriptorBuilder setContributors(List<NDescriptorContributor> contributors) {
+    public NDescriptorBuilder contributors(List<NDescriptorContributor> contributors) {
         this.contributors = NReservedLangUtils.uniqueList(contributors);
         return this;
     }
 
     @Override
-    public NDescriptorBuilder setDevelopers(List<NDescriptorContributor> developers) {
+    public NDescriptorBuilder developers(List<NDescriptorContributor> developers) {
         this.developers = NReservedLangUtils.uniqueList(developers);
         return this;
     }
 
     @Override
-    public List<NDescriptorLicense> getLicenses() {
+    public List<NDescriptorLicense> licenses() {
         return licenses;
     }
 
     @Override
-    public NDescriptorBuilder setLicenses(List<NDescriptorLicense> licenses) {
+    public NDescriptorBuilder licenses(List<NDescriptorLicense> licenses) {
         this.licenses = NReservedLangUtils.uniqueList(licenses);
         return this;
     }
 
     @Override
-    public List<NDescriptorMailingList> getMailingLists() {
+    public List<NDescriptorMailingList> mailingLists() {
         return mailingLists;
     }
 
     @Override
-    public NDescriptorBuilder setMailingLists(List<NDescriptorMailingList> mailingLists) {
+    public NDescriptorBuilder mailingLists(List<NDescriptorMailingList> mailingLists) {
         this.mailingLists = NReservedLangUtils.uniqueList(mailingLists);
         return this;
     }
 
     @Override
-    public NDescriptorOrganization getOrganization() {
+    public NDescriptorOrganization organization() {
         return organization;
     }
 
     @Override
-    public NDescriptorBuilder setOrganization(NDescriptorOrganization organization) {
+    public NDescriptorBuilder organization(NDescriptorOrganization organization) {
         this.organization = organization;
         return this;
     }
 
     @Override
-    public List<NDescriptorContributor> getDevelopers() {
+    public List<NDescriptorContributor> developers() {
         return developers;
     }
 
     public boolean isNoContent() {
-        return "pom".equals(getPackaging());
+        return "pom".equals(packaging());
     }
 }

@@ -6,6 +6,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 
@@ -87,7 +88,7 @@ public class CoreAnsiTermHelper {
                         .system()
                         .addCommand(cmd)
                         .failFast(true)
-                        .sleepMillis(500)
+                        .sleepDuration(NDuration.ofMillis(500))
                         .getGrabbedOutOnlyString()
                         .trim()
                 ;

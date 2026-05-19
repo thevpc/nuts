@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface NMutableClassLoader {
     ClassLoader asClassLoader();
-    List<NDefinition> getLoadedDependencies();
+    List<NDefinition> loadedDependencies();
     NDefinition[] loadDependencies(NDependency... dependencies);
     boolean isLoadedDependency(NId id);
 }

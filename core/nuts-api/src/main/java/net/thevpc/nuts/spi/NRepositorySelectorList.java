@@ -63,7 +63,7 @@ public class NRepositorySelectorList {
     public boolean acceptExisting(NRepositorySpec location) {
         boolean includeOthers = true;
         for (NRepositorySelector s : selectors) {
-            if (s.matches(location.getSourceLocation())) {
+            if (s.matches(location.sourceLocation())) {
                 switch (s.getOp()) {
                     case EXACT:
                     case INCLUDE:

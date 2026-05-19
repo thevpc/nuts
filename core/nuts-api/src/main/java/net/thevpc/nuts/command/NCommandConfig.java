@@ -29,6 +29,8 @@ package net.thevpc.nuts.command;
 import net.thevpc.nuts.core.NConfigItem;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.internal.NReservedLangUtils;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -84,7 +86,8 @@ public class NCommandConfig extends NConfigItem {
      *
      * @return alias definition
      */
-    public NId getOwner() {
+    @NGetter
+    public NId owner() {
         return owner;
     }
 
@@ -94,7 +97,8 @@ public class NCommandConfig extends NConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandConfig setOwner(NId value) {
+    @NSetter
+    public NCommandConfig owner(NId value) {
         this.owner = value;
         return this;
     }
@@ -104,7 +108,8 @@ public class NCommandConfig extends NConfigItem {
      *
      * @return alias factory id
      */
-    public String getFactoryId() {
+    @NGetter
+    public String factoryId() {
         return factoryId;
     }
 
@@ -114,7 +119,8 @@ public class NCommandConfig extends NConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandConfig setFactoryId(String value) {
+    @NSetter
+    public NCommandConfig factoryId(String value) {
         this.factoryId = value;
         return this;
     }
@@ -124,7 +130,8 @@ public class NCommandConfig extends NConfigItem {
      *
      * @return alias command arguments
      */
-    public List<String> getCommand() {
+    @NGetter
+    public List<String> command() {
         return command;
     }
 
@@ -134,11 +141,13 @@ public class NCommandConfig extends NConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandConfig setCommand(String... value) {
+    public NCommandConfig command(String... value) {
         this.command = NReservedLangUtils.nonNullList(Arrays.asList(value));
         return this;
     }
-    public NCommandConfig setCommand(List<String> value) {
+
+    @NSetter
+    public NCommandConfig command(List<String> value) {
         this.command = NReservedLangUtils.nonNullList(value);
         return this;
     }
@@ -148,7 +157,8 @@ public class NCommandConfig extends NConfigItem {
      *
      * @return alias name
      */
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
@@ -158,7 +168,8 @@ public class NCommandConfig extends NConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandConfig setName(String value) {
+    @NSetter
+    public NCommandConfig name(String value) {
         this.name = value;
         return this;
     }
@@ -168,7 +179,8 @@ public class NCommandConfig extends NConfigItem {
      *
      * @return alias command execution options
      */
-    public List<String> getExecutorOptions() {
+    @NGetter
+    public List<String> executorOptions() {
         return executorOptions;
     }
 
@@ -178,7 +190,8 @@ public class NCommandConfig extends NConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandConfig setExecutorOptions(List<String> value) {
+    @NSetter
+    public NCommandConfig executorOptions(List<String> value) {
         this.executorOptions = value;
         return this;
     }
@@ -188,7 +201,8 @@ public class NCommandConfig extends NConfigItem {
      *
      * @return alias help command (command to display help)
      */
-    public List<String> getHelpCommand() {
+    @NGetter
+    public List<String> helpCommand() {
         return helpCommand;
     }
 
@@ -198,11 +212,13 @@ public class NCommandConfig extends NConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandConfig setHelpCommand(String... value) {
+    public NCommandConfig helpCommand(String... value) {
         this.helpCommand = NReservedLangUtils.nonNullList(Arrays.asList(value));
         return this;
     }
-    public NCommandConfig setHelpCommand(List<String> value) {
+
+    @NSetter
+    public NCommandConfig helpCommand(List<String> value) {
         this.helpCommand = NReservedLangUtils.nonNullList(value);
         return this;
     }
@@ -212,7 +228,8 @@ public class NCommandConfig extends NConfigItem {
      *
      * @return alias help text (meaningful if helpCommand is not defined)
      */
-    public String getHelpText() {
+    @NGetter
+    public String helpText() {
         return helpText;
     }
 
@@ -222,14 +239,15 @@ public class NCommandConfig extends NConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandConfig setHelpText(String value) {
+    @NSetter
+    public NCommandConfig helpText(String value) {
         this.helpText = value;
         return this;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(owner, name, factoryId, helpText,command,executorOptions,helpCommand);
+        int result = Objects.hash(owner, name, factoryId, helpText, command, executorOptions, helpCommand);
         return result;
     }
 

@@ -32,7 +32,7 @@ public class NDefinitionOsIdFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<String> current = NStream.ofIterable(def.descriptor().getCondition().getOs()).nonBlank().toList();
+        List<String> current = NStream.ofIterable(def.descriptor().condition().os()).nonBlank().toList();
         if(current.isEmpty() || accepted.isEmpty()){
             return true;
         }

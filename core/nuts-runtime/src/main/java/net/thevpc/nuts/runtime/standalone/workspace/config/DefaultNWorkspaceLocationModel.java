@@ -311,7 +311,7 @@ public class DefaultNWorkspaceLocationModel {
                 return ".catalog";
             }
             case NConstants.QueryFaces.CONTENT_HASH: {
-                return getDefaultIdExtension(id.builder().setFaceContent().build()) + ".sha1";
+                return getDefaultIdExtension(id.builder().faceContent().build()) + ".sha1";
             }
             case NConstants.QueryFaces.CONTENT: {
                 return getDefaultIdContentExtension(q.get(NConstants.IdProperties.PACKAGING));

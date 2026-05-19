@@ -41,7 +41,7 @@ public class DefaultNPs implements NPs {
     }
 
     @Override
-    public NConnectionString getConnectionString() {
+    public NConnectionString connectionString() {
         return connectionString;
     }
 

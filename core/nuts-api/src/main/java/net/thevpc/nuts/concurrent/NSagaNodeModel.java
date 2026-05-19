@@ -1,6 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,56 +54,66 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
     public NSagaNodeModel() {
     }
 
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NSagaNodeModel setId(String id) {
+    public NSagaNodeModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NSagaNodeModel setName(String name) {
+    public NSagaNodeModel name(String name) {
         this.name = name;
         return this;
     }
 
-    public NSagaNodeType getType() {
+    @NGetter
+    public NSagaNodeType type() {
         return type;
     }
 
-    public NSagaNodeModel setType(NSagaNodeType type) {
+    @NSetter
+    public NSagaNodeModel type(NSagaNodeType type) {
         this.type = type;
         return this;
     }
 
-    public NSagaStep getStepCall() {
+    @NGetter
+    public NSagaStep stepCall() {
         return stepCall;
     }
 
-    public NSagaNodeModel setStepCall(NSagaStep stepCall) {
+    @NSetter
+    public NSagaNodeModel stepCall(NSagaStep stepCall) {
         this.stepCall = stepCall;
         return this;
     }
 
-    public NSagaCondition getStepCondition() {
+    @NGetter
+    public NSagaCondition stepCondition() {
         return stepCondition;
     }
 
-    public NSagaNodeModel setStepCondition(NSagaCondition stepCondition) {
+    @NSetter
+    public NSagaNodeModel stepCondition(NSagaCondition stepCondition) {
         this.stepCondition = stepCondition;
         return this;
     }
 
-    public List<NSagaNodeModel> getChildren() {
+    @NGetter
+    public List<NSagaNodeModel> children() {
         return children;
     }
 
-    public NSagaNodeModel setChildren(List<NSagaNodeModel> children) {
+    @NSetter
+    public NSagaNodeModel children(List<NSagaNodeModel> children) {
         this.children = children;
         return this;
     }
@@ -111,38 +123,46 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
         return this;
     }
 
-    public List<NSagaNodeModel> getElseIfBranches() {
+    @NGetter
+    public List<NSagaNodeModel> elseIfBranches() {
         return elseIfBranches;
     }
 
-    public NSagaNodeModel setElseIfBranches(List<NSagaNodeModel> elseIfBranches) {
+    @NSetter
+    public NSagaNodeModel elseIfBranches(List<NSagaNodeModel> elseIfBranches) {
         this.elseIfBranches = elseIfBranches;
         return this;
     }
 
-    public List<NSagaNodeModel> getOtherwiseBranch() {
+    @NGetter
+    public List<NSagaNodeModel> otherwiseBranch() {
         return otherwiseBranch;
     }
 
-    public NSagaNodeModel setOtherwiseBranch(List<NSagaNodeModel> otherwiseBranch) {
+    @NSetter
+    public NSagaNodeModel otherwiseBranch(List<NSagaNodeModel> otherwiseBranch) {
         this.otherwiseBranch = otherwiseBranch;
         return this;
     }
 
-    public NSagaNodeStatus getStatus() {
+    @NGetter
+    public NSagaNodeStatus status() {
         return status;
     }
 
-    public NSagaNodeModel setStatus(NSagaNodeStatus status) {
+    @NSetter
+    public NSagaNodeModel status(NSagaNodeStatus status) {
         this.status = status;
         return this;
     }
 
-    public NCompensationStrategy getCompensationStrategy() {
+    @NGetter
+    public NCompensationStrategy compensationStrategy() {
         return compensationStrategy;
     }
 
-    public NSagaNodeModel setCompensationStrategy(NCompensationStrategy compensationStrategy) {
+    @NSetter
+    public NSagaNodeModel compensationStrategy(NCompensationStrategy compensationStrategy) {
         this.compensationStrategy = compensationStrategy;
         return this;
     }

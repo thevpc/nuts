@@ -86,17 +86,17 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "nuts.runtime.version":
                 return str(NWorkspace.of().getRuntimeId().version());
             case "nuts.workspace-boot.version":
-                return str(Nuts.getVersion());
+                return str(Nuts.version());
             case "nuts.workspace-boot.id":
-                return str(NId.getApi(Nuts.getVersion()).orNull());
+                return str(NId.getApi(Nuts.version()).orNull());
             case "nuts.workspace-runtime.version": {
-                String rt = NWorkspace.of().getBootOptions().getRuntimeId().map(this::str).orNull();
+                String rt = NWorkspace.of().getBootOptions().runtimeId().map(this::str).orNull();
                 return rt == null ? str(NWorkspace.of().getRuntimeId().version()) : rt.contains("#")
                         ? rt.substring(rt.indexOf("#") + 1)
                         : rt;
             }
             case "nuts.workspace-runtime.id": {
-                String rt = NWorkspace.of().getBootOptions().getRuntimeId().map(this::str).orNull();
+                String rt = NWorkspace.of().getBootOptions().runtimeId().map(this::str).orNull();
                 return rt == null ? str(NWorkspace.of().getRuntimeId().version()) : rt.contains("#")
                         ? rt
                         : (NConstants.Ids.NUTS_RUNTIME + "#" + rt);

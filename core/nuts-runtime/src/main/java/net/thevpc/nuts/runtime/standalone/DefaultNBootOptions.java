@@ -576,111 +576,111 @@ public class DefaultNBootOptions implements NBootOptions {
 
 
     @Override
-    public NOptional<Boolean> getPreviewRepo() {
+    public NOptional<Boolean> previewRepo() {
         return NOptional.ofNamed(previewRepo, "previewRepo");
     }
 
-    public NOptional<Boolean> getSharedInstance() {
+    public NOptional<Boolean> sharedInstance() {
         return NOptional.ofNamed(sharedInstance, "sharedInstance");
     }
 
     @Override
-    public NOptional<NSupportMode> getDesktopLauncher() {
+    public NOptional<NSupportMode> desktopLauncher() {
         return NOptional.ofNamed(desktopLauncher, "desktopLauncher");
     }
 
     @Override
-    public NOptional<NSupportMode> getMenuLauncher() {
+    public NOptional<NSupportMode> menuLauncher() {
         return NOptional.ofNamed(menuLauncher, "menuLauncher");
     }
 
     @Override
-    public NOptional<NSupportMode> getUserLauncher() {
+    public NOptional<NSupportMode> userLauncher() {
         return NOptional.ofNamed(userLauncher, "userLauncher");
     }
 
     @Override
-    public NOptional<NIsolationLevel> getIsolationLevel() {
+    public NOptional<NIsolationLevel> isolationLevel() {
         return NOptional.ofNamed(isolationLevel, "isolationLevel");
     }
 
     @Override
-    public NOptional<Boolean> getInitLaunchers() {
+    public NOptional<Boolean> initLaunchers() {
         return NOptional.ofNamed(initLaunchers, "initLaunchers");
     }
 
     @Override
-    public NOptional<Boolean> getInitScripts() {
+    public NOptional<Boolean> initScripts() {
         return NOptional.ofNamed(initScripts, "initScripts");
     }
 
     @Override
-    public NOptional<Boolean> getInitPlatforms() {
+    public NOptional<Boolean> initPlatforms() {
         return NOptional.ofNamed(initPlatforms, "initPlatforms");
     }
 
     @Override
-    public NOptional<Boolean> getInitJava() {
+    public NOptional<Boolean> initJava() {
         return NOptional.ofNamed(initJava, "initJava");
     }
 
     @Override
-    public NOptional<NVersion> getApiVersion() {
+    public NOptional<NVersion> apiVersion() {
         return NOptional.ofNamed(apiVersion, "apiVersion");
     }
 
     @Override
-    public NOptional<List<String>> getApplicationArguments() {
+    public NOptional<List<String>> applicationArguments() {
         return NOptional.ofNamed(applicationArguments, "applicationArguments");
     }
 
     @Override
-    public NOptional<String> getArchetype() {
+    public NOptional<String> archetype() {
         return NOptional.ofNamed(archetype, "archetype");
     }
 
     @Override
-    public NOptional<Supplier<ClassLoader>> getClassLoaderSupplier() {
+    public NOptional<Supplier<ClassLoader>> classLoaderSupplier() {
         return NOptional.ofNamed(classLoaderSupplier, "classLoaderSupplier");
     }
 
     @Override
-    public NOptional<NConfirmationMode> getConfirm() {
+    public NOptional<NConfirmationMode> confirm() {
         return NOptional.ofNamed(confirm, "confirm");
     }
 
     @Override
-    public NOptional<Boolean> getDry() {
+    public NOptional<Boolean> dry() {
         return NOptional.ofNamed(dry, "dry");
     }
 
     @Override
-    public NOptional<Boolean> getShowStacktrace() {
+    public NOptional<Boolean> showStacktrace() {
         return NOptional.ofNamed(showStacktrace, "showStacktrace");
     }
 
     @Override
-    public NOptional<Instant> getCreationTime() {
+    public NOptional<Instant> creationTime() {
         return NOptional.ofNamed(creationTime, "creationTime");
     }
 
     @Override
-    public NOptional<List<String>> getExcludedExtensions() {
+    public NOptional<List<String>> excludedExtensions() {
         return NOptional.ofNamed(excludedExtensions, "excludedExtensions");
     }
 
     @Override
-    public NOptional<NExecutionType> getExecutionType() {
+    public NOptional<NExecutionType> executionType() {
         return NOptional.ofNamed(executionType, "executionType");
     }
 
     @Override
-    public NOptional<NRunAs> getRunAs() {
+    public NOptional<NRunAs> runAs() {
         return NOptional.ofNamed(runAs, "runAs");
     }
 
     @Override
-    public NOptional<List<String>> getExecutorOptions() {
+    public NOptional<List<String>> executorOptions() {
         return NOptional.ofNamed(executorOptions, "executorOptions");
     }
 
@@ -690,57 +690,57 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<Map<NHomeLocation, String>> getHomeLocations() {
+    public NOptional<Map<NHomeLocation, String>> homeLocations() {
         return NOptional.ofNamed(homeLocations, "homeLocations");
     }
 
     @Override
-    public NOptional<String> getJavaCommand() {
+    public NOptional<String> javaCommand() {
         return NOptional.ofNamed(javaCommand, "javaCommand");
     }
 
     @Override
-    public NOptional<String> getJavaOptions() {
+    public NOptional<String> javaOptions() {
         return NOptional.ofNamed(javaOptions, "javaOptions");
     }
 
     @Override
-    public NOptional<NLogConfig> getLogConfig() {
+    public NOptional<NLogConfig> logConfig() {
         return NOptional.ofNamed(logConfig, "logConfig");
     }
 
     @Override
-    public NOptional<String> getName() {
+    public NOptional<String> name() {
         return NOptional.ofNamed(name, "name");
     }
 
     @Override
-    public NOptional<NOpenMode> getOpenMode() {
+    public NOptional<NOpenMode> openMode() {
         return NOptional.ofNamed(openMode, "openMode");
     }
 
     @Override
-    public NOptional<NContentType> getOutputFormat() {
+    public NOptional<NContentType> outputFormat() {
         return NOptional.ofNamed(outputFormat, "outputFormat");
     }
 
     @Override
-    public NOptional<List<String>> getOutputFormatOptions() {
+    public NOptional<List<String>> outputFormatOptions() {
         return NOptional.ofNamed(outputFormatOptions, "outputFormatOptions");
     }
 
     @Override
-    public NOptional<char[]> getCredential() {
+    public NOptional<char[]> credential() {
         return NOptional.ofNamed(credentials == null ? null : Arrays.copyOf(credentials, credentials.length), "credentials");
     }
 
     @Override
-    public NOptional<NStoreStrategy> getRepositoryStoreStrategy() {
+    public NOptional<NStoreStrategy> repositoryStoreStrategy() {
         return NOptional.ofNamed(repositoryStoreStrategy, "repositoryStoreStrategy");
     }
 
     @Override
-    public NOptional<NId> getRuntimeId() {
+    public NOptional<NId> runtimeId() {
         return NOptional.ofNamed(runtimeId, "runtimeId");
     }
 
@@ -750,225 +750,225 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<NOsFamily> getStoreLayout() {
+    public NOptional<NOsFamily> storeLayout() {
         return NOptional.ofNamed(storeLayout, "storeLayout");
     }
 
     @Override
-    public NOptional<NStoreStrategy> getStoreStrategy() {
+    public NOptional<NStoreStrategy> storeStrategy() {
         return NOptional.ofNamed(storeStrategy, "storeStrategy");
     }
 
     @Override
-    public NOptional<Map<NStoreType, String>> getStoreLocations() {
+    public NOptional<Map<NStoreType, String>> storeLocations() {
         return NOptional.ofNamed(storeLocations, "storeLocations");
     }
 
     @Override
-    public NOptional<NTerminalMode> getTerminalMode() {
+    public NOptional<NTerminalMode> terminalMode() {
         return NOptional.ofNamed(terminalMode, "terminalMode");
     }
 
     @Override
-    public NOptional<List<String>> getRepositories() {
+    public NOptional<List<String>> repositories() {
         return NOptional.ofNamed(repositories, "repositories");
     }
 
     @Override
-    public NOptional<String> getUserName() {
+    public NOptional<String> userName() {
         return NOptional.ofNamed(userName, "userName");
     }
 
     @Override
-    public NOptional<String> getWorkspace() {
+    public NOptional<String> workspace() {
         return NOptional.ofNamed(workspace, "workspace");
     }
 
     @Override
-    public NOptional<String> getDebug() {
+    public NOptional<String> debug() {
         return NOptional.ofNamed(debug, "debug");
     }
 
     @Override
-    public NOptional<Boolean> getSystem() {
+    public NOptional<Boolean> system() {
         return NOptional.ofNamed(system, "system");
     }
 
     @Override
-    public NOptional<Boolean> getGui() {
+    public NOptional<Boolean> gui() {
         return NOptional.ofNamed(gui, "gui");
     }
 
     @Override
-    public NOptional<Boolean> getInherited() {
+    public NOptional<Boolean> inherited() {
         return NOptional.ofNamed(inherited, "inherited");
     }
 
     @Override
-    public NOptional<Boolean> getReadOnly() {
+    public NOptional<Boolean> readOnly() {
         return NOptional.ofNamed(readOnly, "readOnly");
     }
 
     @Override
-    public NOptional<Boolean> getRecover() {
+    public NOptional<Boolean> recover() {
         return NOptional.ofNamed(recover, "recover");
     }
 
     @Override
-    public NOptional<Boolean> getReset() {
+    public NOptional<Boolean> reset() {
         return NOptional.ofNamed(reset, "reset");
     }
 
-    public NOptional<Boolean> getResetHard() {
+    public NOptional<Boolean> resetHard() {
         return NOptional.ofNamed(resetHard, "resetHard");
     }
 
     @Override
-    public NOptional<Boolean> getCommandVersion() {
+    public NOptional<Boolean> commandVersion() {
         return NOptional.ofNamed(commandVersion, "commandVersion");
     }
 
     @Override
-    public NOptional<Boolean> getCommandHelp() {
+    public NOptional<Boolean> commandHelp() {
         return NOptional.ofNamed(commandHelp, "commandHelp");
     }
 
     @Override
-    public NOptional<Boolean> getInstallCompanions() {
+    public NOptional<Boolean> installCompanions() {
         return NOptional.ofNamed(installCompanions, "installCompanions");
     }
 
     @Override
-    public NOptional<Boolean> getSkipWelcome() {
+    public NOptional<Boolean> skipWelcome() {
         return NOptional.ofNamed(skipWelcome, "skipWelcome");
     }
 
     @Override
-    public NOptional<String> getOutLinePrefix() {
+    public NOptional<String> outLinePrefix() {
         return NOptional.ofNamed(outLinePrefix, "outLinePrefix");
     }
 
     @Override
-    public NOptional<String> getErrLinePrefix() {
+    public NOptional<String> errLinePrefix() {
         return NOptional.ofNamed(errLinePrefix, "errLinePrefix");
     }
 
     @Override
-    public NOptional<Boolean> getSkipBoot() {
+    public NOptional<Boolean> skipBoot() {
         return NOptional.ofNamed(skipBoot, "skipBoot");
     }
 
     @Override
-    public NOptional<Boolean> getTrace() {
+    public NOptional<Boolean> trace() {
         return NOptional.ofNamed(trace, "trace");
     }
 
-    public NOptional<String> getProgressOptions() {
+    public NOptional<String> progressOptions() {
         return NOptional.ofNamed(progressOptions, "progressOptions");
     }
 
     @Override
-    public NOptional<Boolean> getCached() {
+    public NOptional<Boolean> cached() {
         return NOptional.ofNamed(cached, "cached");
     }
 
     @Override
-    public NOptional<Boolean> getIndexed() {
+    public NOptional<Boolean> indexed() {
         return NOptional.ofNamed(indexed, "indexed");
     }
 
     @Override
-    public NOptional<Boolean> getTransitive() {
+    public NOptional<Boolean> transitive() {
         return NOptional.ofNamed(transitive, "transitive");
     }
 
     @Override
-    public NOptional<Boolean> getBot() {
+    public NOptional<Boolean> bot() {
         return NOptional.ofNamed(bot, "bot");
     }
 
     @Override
-    public NOptional<NFetchStrategy> getFetchStrategy() {
+    public NOptional<NFetchStrategy> fetchStrategy() {
         return NOptional.ofNamed(fetchStrategy, "fetchStrategy");
     }
 
     @Override
-    public NOptional<InputStream> getStdin() {
+    public NOptional<InputStream> stdin() {
         return NOptional.ofNamed(stdin, "stdin");
     }
 
     @Override
-    public NOptional<PrintStream> getStdout() {
+    public NOptional<PrintStream> stdout() {
         return NOptional.ofNamed(stdout, "stdout");
     }
 
     @Override
-    public NOptional<PrintStream> getStderr() {
+    public NOptional<PrintStream> stderr() {
         return NOptional.ofNamed(stderr, "stderr");
     }
 
     @Override
-    public NOptional<ExecutorService> getExecutorService() {
+    public NOptional<ExecutorService> executorService() {
         return NOptional.ofNamed(executorService, "executorService");
     }
 
     @Override
-    public NOptional<Instant> getExpireTime() {
+    public NOptional<Instant> expireTime() {
         return NOptional.ofNamed(expireTime, "expireTime");
     }
 
     @Override
-    public NOptional<Boolean> getSkipErrors() {
+    public NOptional<Boolean> skipErrors() {
         return NOptional.ofNamed(skipErrors, "skipErrors");
     }
 
     @Override
-    public NOptional<Boolean> getSwitchWorkspace() {
+    public NOptional<Boolean> switchWorkspace() {
         return NOptional.ofNamed(switchWorkspace, "switchWorkspace");
     }
 
     @Override
-    public NOptional<List<NMsg>> getErrors() {
+    public NOptional<List<NMsg>> errors() {
         return NOptional.ofNamed(errors, "errors");
     }
 
     @Override
-    public NOptional<List<String>> getCustomOptions() {
+    public NOptional<List<String>> customOptions() {
         return NOptional.ofNamed(customOptions, "customOptions");
     }
 
     @Override
-    public NOptional<List<NArg>> getCustomOptionArgs() {
+    public NOptional<List<NArg>> customOptionArgs() {
         return NOptional.ofNamed(customOptions == null ? null : customOptions.stream().map(x -> NArg.of(x)).collect(Collectors.toList()), "customOptions");
     }
 
     @Override
-    public NOptional<NArg> getCustomOptionArg(String key) {
-        return NOptional.ofNamedOptional(getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
+    public NOptional<NArg> customOptionArg(String key) {
+        return NOptional.ofNamedOptional(customOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
                 .filter(x -> Objects.equals(x.getStringKey().orNull(), key))
                 .findFirst(), key);
     }
 
     @Override
-    public NOptional<String> getCustomOption(String key) {
-        return NOptional.ofNamedOptional(getCustomOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
+    public NOptional<String> customOption(String key) {
+        return NOptional.ofNamedOptional(customOptions().orElse(new ArrayList<>()).stream().map(x -> NArg.of(x))
                 .filter(x -> Objects.equals(x.getStringKey().orNull(), key))
                         .map(x->x.image())
                 .findFirst(), key);
     }
 
     @Override
-    public NOptional<String> getLocale() {
+    public NOptional<String> locale() {
         return NOptional.ofNamed(locale, "locale");
     }
 
     @Override
-    public NOptional<String> getTheme() {
+    public NOptional<String> theme() {
         return NOptional.ofNamed(theme, "theme");
     }
 
     @Override
-    public NOptional<String> getDependencySolver() {
+    public NOptional<String> dependencySolver() {
         return NOptional.ofNamed(dependencySolver, "dependencySolver");
     }
 
@@ -978,7 +978,7 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NBootOptions readOnly() {
+    public NBootOptions toReadOnly() {
         return this;
     }
 
@@ -998,52 +998,52 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<List<String>> getBootRepositories() {
+    public NOptional<List<String>> bootRepositories() {
         return NOptional.ofNamed(bootRepositories, "bootRepositories");
     }
 
     @Override
-    public NOptional<NClassLoaderNode> getRuntimeBootDependencyNode() {
+    public NOptional<NClassLoaderNode> runtimeBootDependencyNode() {
         return NOptional.ofNamed(runtimeBootDependencyNode, "runtimeBootDependencyNode");
     }
 
     @Override
-    public NOptional<List<NBootDescriptor>> getExtensionBootDescriptors() {
+    public NOptional<List<NBootDescriptor>> extensionBootDescriptors() {
         return NOptional.ofNamed(extensionBootDescriptors, "extensionBootDescriptors");
     }
 
     @Override
-    public NOptional<List<NClassLoaderNode>> getExtensionBootDependencyNodes() {
+    public NOptional<List<NClassLoaderNode>> extensionBootDependencyNodes() {
         return NOptional.ofNamed(extensionBootDependencyNodes, "extensionBootDependencyNodes");
     }
 
     @Override
-    public NOptional<NBootWorkspaceFactory> getBootWorkspaceFactory() {
+    public NOptional<NBootWorkspaceFactory> bootWorkspaceFactory() {
         return NOptional.ofNamed(bootWorkspaceFactory, "bootWorkspaceFactory");
     }
 
     @Override
-    public NOptional<List<URL>> getClassWorldURLs() {
+    public NOptional<List<URL>> classWorldURLs() {
         return NOptional.ofNamed(classWorldURLs, "classWorldURLs");
     }
 
     @Override
-    public NOptional<ClassLoader> getClassWorldLoader() {
+    public NOptional<ClassLoader> classWorldLoader() {
         return NOptional.ofNamed(classWorldLoader, "classWorldLoader");
     }
 
     @Override
-    public NOptional<String> getUuid() {
+    public NOptional<String> uuid() {
         return NOptional.ofNamed(uuid, "uuid");
     }
 
     @Override
-    public NOptional<Set<String>> getExtensionsSet() {
+    public NOptional<Set<String>> extensionsSet() {
         return NOptional.ofNamed(extensionsSet, "extensionsSet");
     }
 
     @Override
-    public NOptional<NBootDescriptor> getRuntimeBootDescriptor() {
+    public NOptional<NBootDescriptor> runtimeBootDescriptor() {
         return NOptional.ofNamed(runtimeBootDescriptor, "runtimeBootDescriptor");
     }
 
@@ -1051,25 +1051,25 @@ public class DefaultNBootOptions implements NBootOptions {
 
     public NBootOptionsInfo toBootOptions() {
         NBootOptionsInfo r = new NBootOptionsInfo();
-        r.setApiVersion(this.getApiVersion().map(Object::toString).orNull());
-        r.setRuntimeId(this.getRuntimeId().map(Object::toString).orNull());
-        r.setJavaCommand(this.getJavaCommand().orNull());
-        r.setJavaOptions(this.getJavaOptions().orNull());
-        r.setWorkspace(this.getWorkspace().orNull());
-        r.setName(this.getName().orNull());
-        r.setInstallCompanions(this.getInstallCompanions().orNull());
-        r.setSkipWelcome(this.getSkipWelcome().orNull());
-        r.setSkipBoot(this.getSkipBoot().orNull());
-        r.setSystem(this.getSystem().orNull());
-        r.setGui(this.getGui().orNull());
-        r.setUserName(this.getUserName().orNull());
-        r.setCredential(this.getCredential().orNull());
-        r.setTerminalMode(this.getTerminalMode().map(NTerminalMode::id).orNull());
-        r.setReadOnly(this.getReadOnly().orNull());
-        r.setTrace(this.getTrace().orNull());
-        r.setProgressOptions(this.getProgressOptions().orNull());
+        r.setApiVersion(this.apiVersion().map(Object::toString).orNull());
+        r.setRuntimeId(this.runtimeId().map(Object::toString).orNull());
+        r.setJavaCommand(this.javaCommand().orNull());
+        r.setJavaOptions(this.javaOptions().orNull());
+        r.setWorkspace(this.workspace().orNull());
+        r.setName(this.name().orNull());
+        r.setInstallCompanions(this.installCompanions().orNull());
+        r.setSkipWelcome(this.skipWelcome().orNull());
+        r.setSkipBoot(this.skipBoot().orNull());
+        r.setSystem(this.system().orNull());
+        r.setGui(this.gui().orNull());
+        r.setUserName(this.userName().orNull());
+        r.setCredential(this.credential().orNull());
+        r.setTerminalMode(this.terminalMode().map(NTerminalMode::id).orNull());
+        r.setReadOnly(this.readOnly().orNull());
+        r.setTrace(this.trace().orNull());
+        r.setProgressOptions(this.progressOptions().orNull());
         {
-            NLogConfig c = this.getLogConfig().orNull();
+            NLogConfig c = this.logConfig().orNull();
             NBootLogConfig v = null;
             if (c != null) {
                 v = new NBootLogConfig();
@@ -1083,29 +1083,29 @@ public class DefaultNBootOptions implements NBootOptions {
             }
             r.setLogConfig(v);
         }
-        r.setConfirm(this.getConfirm().map(NConfirmationMode::id).orNull());
-        r.setConfirm(this.getConfirm().map(NConfirmationMode::id).orNull());
-        r.setOutputFormat(this.getOutputFormat().map(NContentType::id).orNull());
-        r.setOutputFormatOptions(this.getOutputFormatOptions().orNull());
-        r.setOpenMode(this.getOpenMode().map(NOpenMode::id).orNull());
-        r.setCreationTime(this.getCreationTime().orNull());
-        r.setDry(this.getDry().orNull());
-        r.setShowStacktrace(this.getShowStacktrace().orNull());
-        r.setClassLoaderSupplier(this.getClassLoaderSupplier().orNull());
-        r.setExecutorOptions(this.getExecutorOptions().orNull());
-        r.setRecover(this.getRecover().orNull());
-        r.setReset(this.getReset().orNull());
-        r.setResetHard(this.getResetHard().orNull());
-        r.setCommandVersion(this.getCommandVersion().orNull());
-        r.setCommandHelp(this.getCommandHelp().orNull());
-        r.setDebug(this.getDebug().orNull());
-        r.setInherited(this.getInherited().orNull());
-        r.setExecutionType(this.getExecutionType().map(NExecutionType::id).orNull());
-        r.setRunAs(this.getRunAs().map(NRunAs::toString).orNull());
-        r.setArchetype(this.getArchetype().orNull());
-        r.setStoreStrategy(this.getStoreStrategy().map(NStoreStrategy::id).orNull());
+        r.setConfirm(this.confirm().map(NConfirmationMode::id).orNull());
+        r.setConfirm(this.confirm().map(NConfirmationMode::id).orNull());
+        r.setOutputFormat(this.outputFormat().map(NContentType::id).orNull());
+        r.setOutputFormatOptions(this.outputFormatOptions().orNull());
+        r.setOpenMode(this.openMode().map(NOpenMode::id).orNull());
+        r.setCreationTime(this.creationTime().orNull());
+        r.setDry(this.dry().orNull());
+        r.setShowStacktrace(this.showStacktrace().orNull());
+        r.setClassLoaderSupplier(this.classLoaderSupplier().orNull());
+        r.setExecutorOptions(this.executorOptions().orNull());
+        r.setRecover(this.recover().orNull());
+        r.setReset(this.reset().orNull());
+        r.setResetHard(this.resetHard().orNull());
+        r.setCommandVersion(this.commandVersion().orNull());
+        r.setCommandHelp(this.commandHelp().orNull());
+        r.setDebug(this.debug().orNull());
+        r.setInherited(this.inherited().orNull());
+        r.setExecutionType(this.executionType().map(NExecutionType::id).orNull());
+        r.setRunAs(this.runAs().map(NRunAs::toString).orNull());
+        r.setArchetype(this.archetype().orNull());
+        r.setStoreStrategy(this.storeStrategy().map(NStoreStrategy::id).orNull());
         {
-            Map<NHomeLocation, String> c = this.getHomeLocations().orNull();
+            Map<NHomeLocation, String> c = this.homeLocations().orNull();
             Map<NBootHomeLocation, String> v = null;
             if (c != null) {
                 v = new HashMap<>();
@@ -1119,7 +1119,7 @@ public class DefaultNBootOptions implements NBootOptions {
             r.setHomeLocations(v);
         }
         {
-            Map<NStoreType, String> c = this.getStoreLocations().orNull();
+            Map<NStoreType, String> c = this.storeLocations().orNull();
             Map<String, String> v = null;
             if (c != null) {
                 v = new HashMap<>();
@@ -1129,53 +1129,53 @@ public class DefaultNBootOptions implements NBootOptions {
             }
             r.setStoreLocations(v);
         }
-        r.setStoreLayout(this.getStoreLayout().map(Enum::toString).orNull());
-        r.setStoreStrategy(this.getStoreStrategy().map(Enum::toString).orNull());
-        r.setRepositoryStoreStrategy(this.getRepositoryStoreStrategy().map(Enum::toString).orNull());
-        r.setFetchStrategy(this.getFetchStrategy().map(Enum::toString).orNull());
-        r.setCached(this.getCached().orNull());
-        r.setIndexed(this.getIndexed().orNull());
-        r.setTransitive(this.getTransitive().orNull());
-        r.setBot(this.getBot().orNull());
-        r.setStdin(this.getStdin().orNull());
-        r.setStdout(this.getStdout().orNull());
-        r.setStderr(this.getStderr().orNull());
-        r.setExecutorService(this.getExecutorService().orNull());
+        r.setStoreLayout(this.storeLayout().map(Enum::toString).orNull());
+        r.setStoreStrategy(this.storeStrategy().map(Enum::toString).orNull());
+        r.setRepositoryStoreStrategy(this.repositoryStoreStrategy().map(Enum::toString).orNull());
+        r.setFetchStrategy(this.fetchStrategy().map(Enum::toString).orNull());
+        r.setCached(this.cached().orNull());
+        r.setIndexed(this.indexed().orNull());
+        r.setTransitive(this.transitive().orNull());
+        r.setBot(this.bot().orNull());
+        r.setStdin(this.stdin().orNull());
+        r.setStdout(this.stdout().orNull());
+        r.setStderr(this.stderr().orNull());
+        r.setExecutorService(this.executorService().orNull());
 //        r.setBootRepositories(this.getBootRepositories());
 
-        r.setExcludedExtensions(this.getExcludedExtensions().orNull());
+        r.setExcludedExtensions(this.excludedExtensions().orNull());
 //        r.setExcludedRepositories(this.getExcludedRepositories() == null ? null : Arrays.copyOf(this.getExcludedRepositories(), this.getExcludedRepositories().length));
-        r.setRepositories(this.getRepositories().orNull());
-        r.setApplicationArguments(this.getApplicationArguments().orNull());
-        r.setCustomOptions(this.getCustomOptions().orNull());
-        r.setExpireTime(this.getExpireTime().orNull());
-        r.setErrors(this.getErrors().isNotPresent() ? new ArrayList<>() : this.getErrors().get().stream().map(NMsg::toString).collect(Collectors.toList()));
-        r.setSkipErrors(this.getSkipErrors().orNull());
-        r.setSwitchWorkspace(this.getSwitchWorkspace().orNull());
-        r.setLocale(this.getLocale().orNull());
-        r.setTheme(this.getTheme().orNull());
-        r.setDependencySolver(this.getDependencySolver().orNull());
-        r.setIsolationLevel(this.getIsolationLevel().map(NIsolationLevel::id).orNull());
-        r.setInitLaunchers(this.getInitLaunchers().orNull());
-        r.setInitJava(this.getInitJava().orNull());
-        r.setInitScripts(this.getInitScripts().orNull());
-        r.setInitPlatforms(this.getInitPlatforms().orNull());
-        r.setDesktopLauncher(this.getDesktopLauncher().map(NSupportMode::id).orNull());
-        r.setMenuLauncher(this.getMenuLauncher().map(NSupportMode::id).orNull());
-        r.setUserLauncher(this.getUserLauncher().map(NSupportMode::id).orNull());
-        r.setSharedInstance(this.getSharedInstance().orNull());
-        r.setPreviewRepo(this.getPreviewRepo().orNull());
+        r.setRepositories(this.repositories().orNull());
+        r.setApplicationArguments(this.applicationArguments().orNull());
+        r.setCustomOptions(this.customOptions().orNull());
+        r.setExpireTime(this.expireTime().orNull());
+        r.setErrors(this.errors().isNotPresent() ? new ArrayList<>() : this.errors().get().stream().map(NMsg::toString).collect(Collectors.toList()));
+        r.setSkipErrors(this.skipErrors().orNull());
+        r.setSwitchWorkspace(this.switchWorkspace().orNull());
+        r.setLocale(this.locale().orNull());
+        r.setTheme(this.theme().orNull());
+        r.setDependencySolver(this.dependencySolver().orNull());
+        r.setIsolationLevel(this.isolationLevel().map(NIsolationLevel::id).orNull());
+        r.setInitLaunchers(this.initLaunchers().orNull());
+        r.setInitJava(this.initJava().orNull());
+        r.setInitScripts(this.initScripts().orNull());
+        r.setInitPlatforms(this.initPlatforms().orNull());
+        r.setDesktopLauncher(this.desktopLauncher().map(NSupportMode::id).orNull());
+        r.setMenuLauncher(this.menuLauncher().map(NSupportMode::id).orNull());
+        r.setUserLauncher(this.userLauncher().map(NSupportMode::id).orNull());
+        r.setSharedInstance(this.sharedInstance().orNull());
+        r.setPreviewRepo(this.previewRepo().orNull());
 
-        r.setBootRepositories(this.getBootRepositories().orNull());
-        r.setRuntimeBootDependencyNode(convertNode(this.getRuntimeBootDependencyNode().orNull()));
-        r.setExtensionBootDescriptors(this.getExtensionBootDescriptors().orNull());
-        r.setExtensionBootDependencyNodes(convertNodes(this.getExtensionBootDependencyNodes().orNull()));
-        r.setBootWorkspaceFactory(this.getBootWorkspaceFactory().orNull());
-        r.setClassWorldURLs(this.getClassWorldURLs().orNull());
-        r.setClassWorldLoader(this.getClassWorldLoader().orNull());
-        r.setUuid(this.getUuid().orNull());
-        r.setExtensionsSet(this.getExtensionsSet().orNull());
-        r.setRuntimeBootDescriptor(this.getRuntimeBootDescriptor().orNull());
+        r.setBootRepositories(this.bootRepositories().orNull());
+        r.setRuntimeBootDependencyNode(convertNode(this.runtimeBootDependencyNode().orNull()));
+        r.setExtensionBootDescriptors(this.extensionBootDescriptors().orNull());
+        r.setExtensionBootDependencyNodes(convertNodes(this.extensionBootDependencyNodes().orNull()));
+        r.setBootWorkspaceFactory(this.bootWorkspaceFactory().orNull());
+        r.setClassWorldURLs(this.classWorldURLs().orNull());
+        r.setClassWorldLoader(this.classWorldLoader().orNull());
+        r.setUuid(this.uuid().orNull());
+        r.setExtensionsSet(this.extensionsSet().orNull());
+        r.setRuntimeBootDescriptor(this.runtimeBootDescriptor().orNull());
 
         return r;
     }
@@ -1188,11 +1188,11 @@ public class DefaultNBootOptions implements NBootOptions {
         if (n == null) {
             return null;
         }
-        List<NClassLoaderNode> dependencies = n.getDependencies();
+        List<NClassLoaderNode> dependencies = n.dependencies();
         List<NBootClassLoaderNode> children = convertNodes(dependencies);
         return new NBootClassLoaderNode(
-                n.getId() == null ? null : n.getId().toString(),
-                n.getURL(),
+                n.id() == null ? null : n.id().toString(),
+                n.url(),
                 n.isEnabled(),
                 n.isIncludedInClasspath(),
                 children == null ? null : children.toArray(new NBootClassLoaderNode[0])
@@ -1202,80 +1202,80 @@ public class DefaultNBootOptions implements NBootOptions {
     @Override
     public NWorkspaceOptions toWorkspaceOptions() {
         NWorkspaceOptionsBuilder b = NWorkspaceOptionsBuilder.of();
-        b.setApiVersion(this.getApiVersion().orNull());
-        b.setRuntimeId(this.getRuntimeId().orNull());
-        b.setJavaCommand(this.getJavaCommand().orNull());
-        b.setJavaOptions(this.getJavaOptions().orNull());
-        b.setWorkspace(this.getWorkspace().orNull());
-        b.setName(this.getName().orNull());
-        b.setInstallCompanions(this.getInstallCompanions().orNull());
-        b.setSkipWelcome(this.getSkipWelcome().orNull());
-        b.setSkipBoot(this.getSkipBoot().orNull());
-        b.setSystem(this.getSystem().orNull());
-        b.setGui(this.getGui().orNull());
-        b.setUserName(this.getUserName().orNull());
-        b.setCredential(this.getCredential().orNull());
-        b.setTerminalMode(this.getTerminalMode().orNull());
-        b.setReadOnly(this.getReadOnly().orNull());
-        b.setTrace(this.getTrace().orNull());
-        b.setProgressOptions(this.getProgressOptions().orNull());
-        b.setLogConfig(this.getLogConfig().orNull());
-        b.setConfirm(this.getConfirm().orNull());
-        b.setConfirm(this.getConfirm().orNull());
-        b.setOutputFormat(this.getOutputFormat().orNull());
-        b.setOutputFormatOptions(this.getOutputFormatOptions().orNull());
-        b.setOpenMode(this.getOpenMode().orNull());
-        b.setCreationTime(this.getCreationTime().orNull());
-        b.setDry(this.getDry().orNull());
-        b.setShowStacktrace(this.getShowStacktrace().orNull());
-        b.setClassLoaderSupplier(this.getClassLoaderSupplier().orNull());
-        b.setExecutorOptions(this.getExecutorOptions().orNull());
-        b.setRecover(this.getRecover().orNull());
-        b.setReset(this.getReset().orNull());
-        b.setResetHard(this.getResetHard().orNull());
-        b.setCommandVersion(this.getCommandVersion().orNull());
-        b.setCommandHelp(this.getCommandHelp().orNull());
-        b.setDebug(this.getDebug().orNull());
-        b.setInherited(this.getInherited().orNull());
-        b.setExecutionType(this.getExecutionType().orNull());
-        b.setRunAs(this.getRunAs().orNull());
-        b.setArchetype(this.getArchetype().orNull());
-        b.setStoreStrategy(this.getStoreStrategy().orNull());
-        b.setHomeLocations(this.getHomeLocations().orNull());
-        b.setStoreLocations(this.getStoreLocations().orNull());
-        b.setStoreLayout(this.getStoreLayout().orNull());
-        b.setStoreStrategy(this.getStoreStrategy().orNull());
-        b.setRepositoryStoreStrategy(this.getRepositoryStoreStrategy().orNull());
-        b.setFetchStrategy(this.getFetchStrategy().orNull());
-        b.setCached(this.getCached().orNull());
-        b.setIndexed(this.getIndexed().orNull());
-        b.setTransitive(this.getTransitive().orNull());
-        b.setBot(this.getBot().orNull());
-        b.setStdin(this.getStdin().orNull());
-        b.setStdout(this.getStdout().orNull());
-        b.setStderr(this.getStderr().orNull());
-        b.setExecutorService(this.getExecutorService().orNull());
-        b.setExcludedExtensions(this.getExcludedExtensions().orNull());
-        b.setRepositories(this.getRepositories().orNull());
-        b.setApplicationArguments(this.getApplicationArguments().orNull());
-        b.setCustomOptions(this.getCustomOptions().orNull());
-        b.setExpireTime(this.getExpireTime().orNull());
-        b.setErrors(this.getErrors().orNull());
-        b.setSkipErrors(this.getSkipErrors().orNull());
-        b.setSwitchWorkspace(this.getSwitchWorkspace().orNull());
-        b.setLocale(this.getLocale().orNull());
-        b.setTheme(this.getTheme().orNull());
-        b.setDependencySolver(this.getDependencySolver().orNull());
-        b.setIsolationLevel(this.getIsolationLevel().orNull());
-        b.setInitLaunchers(this.getInitLaunchers().orNull());
-        b.setInitJava(this.getInitJava().orNull());
-        b.setInitScripts(this.getInitScripts().orNull());
-        b.setInitPlatforms(this.getInitPlatforms().orNull());
-        b.setDesktopLauncher(this.getDesktopLauncher().orNull());
-        b.setMenuLauncher(this.getMenuLauncher().orNull());
-        b.setUserLauncher(this.getUserLauncher().orNull());
-        b.setSharedInstance(this.getSharedInstance().orNull());
-        b.setPreviewRepo(this.getPreviewRepo().orNull());
+        b.setApiVersion(this.apiVersion().orNull());
+        b.setRuntimeId(this.runtimeId().orNull());
+        b.setJavaCommand(this.javaCommand().orNull());
+        b.setJavaOptions(this.javaOptions().orNull());
+        b.setWorkspace(this.workspace().orNull());
+        b.setName(this.name().orNull());
+        b.setInstallCompanions(this.installCompanions().orNull());
+        b.setSkipWelcome(this.skipWelcome().orNull());
+        b.setSkipBoot(this.skipBoot().orNull());
+        b.setSystem(this.system().orNull());
+        b.setGui(this.gui().orNull());
+        b.setUserName(this.userName().orNull());
+        b.setCredential(this.credential().orNull());
+        b.setTerminalMode(this.terminalMode().orNull());
+        b.setReadOnly(this.readOnly().orNull());
+        b.setTrace(this.trace().orNull());
+        b.setProgressOptions(this.progressOptions().orNull());
+        b.setLogConfig(this.logConfig().orNull());
+        b.setConfirm(this.confirm().orNull());
+        b.setConfirm(this.confirm().orNull());
+        b.setOutputFormat(this.outputFormat().orNull());
+        b.setOutputFormatOptions(this.outputFormatOptions().orNull());
+        b.setOpenMode(this.openMode().orNull());
+        b.setCreationTime(this.creationTime().orNull());
+        b.setDry(this.dry().orNull());
+        b.setShowStacktrace(this.showStacktrace().orNull());
+        b.setClassLoaderSupplier(this.classLoaderSupplier().orNull());
+        b.setExecutorOptions(this.executorOptions().orNull());
+        b.setRecover(this.recover().orNull());
+        b.setReset(this.reset().orNull());
+        b.setResetHard(this.resetHard().orNull());
+        b.setCommandVersion(this.commandVersion().orNull());
+        b.setCommandHelp(this.commandHelp().orNull());
+        b.setDebug(this.debug().orNull());
+        b.setInherited(this.inherited().orNull());
+        b.setExecutionType(this.executionType().orNull());
+        b.setRunAs(this.runAs().orNull());
+        b.setArchetype(this.archetype().orNull());
+        b.setStoreStrategy(this.storeStrategy().orNull());
+        b.setHomeLocations(this.homeLocations().orNull());
+        b.setStoreLocations(this.storeLocations().orNull());
+        b.setStoreLayout(this.storeLayout().orNull());
+        b.setStoreStrategy(this.storeStrategy().orNull());
+        b.setRepositoryStoreStrategy(this.repositoryStoreStrategy().orNull());
+        b.setFetchStrategy(this.fetchStrategy().orNull());
+        b.setCached(this.cached().orNull());
+        b.setIndexed(this.indexed().orNull());
+        b.setTransitive(this.transitive().orNull());
+        b.setBot(this.bot().orNull());
+        b.setStdin(this.stdin().orNull());
+        b.setStdout(this.stdout().orNull());
+        b.setStderr(this.stderr().orNull());
+        b.setExecutorService(this.executorService().orNull());
+        b.setExcludedExtensions(this.excludedExtensions().orNull());
+        b.setRepositories(this.repositories().orNull());
+        b.setApplicationArguments(this.applicationArguments().orNull());
+        b.setCustomOptions(this.customOptions().orNull());
+        b.setExpireTime(this.expireTime().orNull());
+        b.setErrors(this.errors().orNull());
+        b.setSkipErrors(this.skipErrors().orNull());
+        b.setSwitchWorkspace(this.switchWorkspace().orNull());
+        b.setLocale(this.locale().orNull());
+        b.setTheme(this.theme().orNull());
+        b.setDependencySolver(this.dependencySolver().orNull());
+        b.setIsolationLevel(this.isolationLevel().orNull());
+        b.setInitLaunchers(this.initLaunchers().orNull());
+        b.setInitJava(this.initJava().orNull());
+        b.setInitScripts(this.initScripts().orNull());
+        b.setInitPlatforms(this.initPlatforms().orNull());
+        b.setDesktopLauncher(this.desktopLauncher().orNull());
+        b.setMenuLauncher(this.menuLauncher().orNull());
+        b.setUserLauncher(this.userLauncher().orNull());
+        b.setSharedInstance(this.sharedInstance().orNull());
+        b.setPreviewRepo(this.previewRepo().orNull());
         return b.build();
     }
 

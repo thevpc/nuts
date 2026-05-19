@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.util.NGetter;
+
 /**
  * Event representing the execution lifecycle of a single job in a {@link NWorkBalancer}.
  * <p>
@@ -33,7 +35,7 @@ public class NWorkBalancerStrategyEvent implements java.io.Serializable {
     private final long endTimeNanos;
 
     /** Non-null if an error occurred during job execution */
-    private final Throwable throwable;
+    private final Throwable error;
 
     /**
      * Constructs a new strategy event.
@@ -43,44 +45,50 @@ public class NWorkBalancerStrategyEvent implements java.io.Serializable {
      * @param workerName selected worker name, may be null on start
      * @param startTimeNanos start time in nanoseconds
      * @param endTimeNanos end time in nanoseconds, 0 if not ended
-     * @param throwable the thrown exception, or null if none occurred
+     * @param error the thrown exception, or null if none occurred
      */
-    public NWorkBalancerStrategyEvent(String jobId, String jobName, String workerName, long startTimeNanos, long endTimeNanos, Throwable throwable) {
+    public NWorkBalancerStrategyEvent(String jobId, String jobName, String workerName, long startTimeNanos, long endTimeNanos, Throwable error) {
         this.jobId = jobId;
         this.jobName = jobName;
         this.workerName = workerName;
         this.startTimeNanos = startTimeNanos;
         this.endTimeNanos = endTimeNanos;
-        this.throwable = throwable;
+        this.error = error;
     }
 
     /** Returns the job name */
-    public String getJobName() {
+    @NGetter
+    public String jobName() {
         return jobName;
     }
 
     /** Returns the job unique ID */
-    public String getJobId() {
+    @NGetter
+    public String jobId() {
         return jobId;
     }
 
     /** Returns the selected worker name, may be null for start events */
-    public String getWorkerName() {
+    @NGetter
+    public String workerName() {
         return workerName;
     }
 
     /** Returns the job start time in nanoseconds */
-    public long getStartTimeNanos() {
+    @NGetter
+    public long startTimeNanos() {
         return startTimeNanos;
     }
 
     /** Returns the job end time in nanoseconds, 0 if not finished */
-    public long getEndTimeNanos() {
+    @NGetter
+    public long endTimeNanos() {
         return endTimeNanos;
     }
 
     /** Returns the error thrown during execution, or null if none */
-    public Throwable getThrowable() {
-        return throwable;
+    @NGetter
+    public Throwable error() {
+        return error;
     }
 }

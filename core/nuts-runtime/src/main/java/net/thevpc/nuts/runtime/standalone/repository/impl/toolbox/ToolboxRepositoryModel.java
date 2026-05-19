@@ -110,7 +110,7 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
 
     public static String getIdLocalFile(NId id, NRepository repository) {
         NWorkspace workspace = NWorkspace.of();
-        return repository.config().getStoreLocation()
+        return repository.config().storeLocation()
                 .resolve(workspace.getDefaultIdBasedir(id))
                 .resolve(workspace.getDefaultIdFilename(id))
                 .toString();

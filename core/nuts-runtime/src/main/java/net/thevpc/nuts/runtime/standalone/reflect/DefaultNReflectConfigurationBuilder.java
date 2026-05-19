@@ -31,6 +31,7 @@ import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -40,11 +41,11 @@ import java.util.function.Function;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNReflectConfigurationBuilder implements NReflectConfigurationBuilder {
 
-    private Function<Class, NReflectPropertyAccessStrategy> propertyAccessStrategy;
+    private Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy;
     private Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
 
     @Override
-    public Function<Class, NReflectPropertyAccessStrategy> getPropertyAccessStrategy() {
+    public Function<Class, Set<NReflectPropertyAccessStrategy>> getPropertyAccessStrategy() {
         return propertyAccessStrategy;
     }
 
@@ -55,13 +56,13 @@ public class DefaultNReflectConfigurationBuilder implements NReflectConfiguratio
     }
 
     @Override
-    public NReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, NReflectPropertyAccessStrategy> propertyAccessStrategy) {
+    public NReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy;
         return this;
     }
 
     @Override
-    public NReflectConfigurationBuilder setPropertyAccessStrategy(NReflectPropertyAccessStrategy propertyAccessStrategy) {
+    public NReflectConfigurationBuilder setPropertyAccessStrategy(Set<NReflectPropertyAccessStrategy> propertyAccessStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy == null ? null : x -> propertyAccessStrategy;
         return this;
     }

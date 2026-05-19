@@ -41,7 +41,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         if (cmdLine.next("list aliases","list alias","aliases list").isPresent()) {
-            cmdLine.setCommandName("settings list aliases");
+            cmdLine.commandName("settings list aliases");
             List<String> toList = new ArrayList<>();
             NSession session = NSession.of();
             while (cmdLine.hasNext()) {
@@ -63,11 +63,11 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                                 }
                                 for (String s : toList) {
                                     if (s.contains("*")) {
-                                        if (Pattern.compile(s.replace("*", ".*")).matcher(nutsWorkspaceCommandAlias.getName()).matches()) {
+                                        if (Pattern.compile(s.replace("*", ".*")).matcher(nutsWorkspaceCommandAlias.name()).matches()) {
                                             return true;
                                         }
                                     } else {
-                                        if (s.equals(nutsWorkspaceCommandAlias.getName())) {
+                                        if (s.equals(nutsWorkspaceCommandAlias.name())) {
                                             return true;
                                         }
                                     }
@@ -75,13 +75,13 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                                 return false;
                             }
                         })
-                        .sorted((x, y) -> x.getName().compareTo(y.getName()))
+                        .sorted((x, y) -> x.name().compareTo(y.name()))
                         .collect(Collectors.toList());
                 if (NOut.isPlain()) {
                     NPropertiesWriter.of().println(r.stream().collect(
                             Collectors.toMap(
-                                    NCustomCmd::getName,
-                                    x -> NCmdLine.of(x.getCommand()).toString(),
+                                    NCustomCmd::name,
+                                    x -> NCmdLine.of(x.command()).toString(),
                                     (x, y) -> {
                                         throw new NIllegalArgumentException(NMsg.ofC("duplicate %s", x));
                                     },
@@ -137,11 +137,11 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     NWorkspace.of()
                             .addCommand(
                                     new NCommandConfig()
-                                            .setCommand(NCmdLine.of(value.command, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray())
-                                            .setName(value.name)
-                                            .setExecutorOptions(
+                                            .command(NCmdLine.of(value.command, NShellFamily.BASH).expandSimpleOptions(false).toStringArray())
+                                            .name(value.name)
+                                            .executorOptions(
                                                     NCmdLine.of(value.executionOptions, NShellFamily.BASH)
-                                                            .setExpandSimpleOptions(false).toStringList())
+                                                            .expandSimpleOptions(false).toStringList())
                             );
                 }
                 NWorkspace.of().saveConfig();
@@ -151,7 +151,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         return false;
     }
     private String[] splitCmdAndExecArgs(String aliasValue){
-        NCmdLine cmdLine2 = NCmdLine.of(aliasValue, NShellFamily.BASH).setExpandSimpleOptions(false);
+        NCmdLine cmdLine2 = NCmdLine.of(aliasValue, NShellFamily.BASH).expandSimpleOptions(false);
         List<String> executionOptions = new ArrayList<>();
         while (cmdLine2.hasNext()) {
             NArg r = cmdLine2.peek().get();
@@ -185,11 +185,11 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         }
 
         public AliasInfo(NCustomCmd a) {
-            name = a.getName();
-            command = NCmdLine.of(a.getCommand()).toString();
-            executionOptions = NCmdLine.of(a.getExecutorOptions()).toString();
-            factoryId = a.getFactoryId();
-            owner = a.getOwner();
+            name = a.name();
+            command = NCmdLine.of(a.command()).toString();
+            executionOptions = NCmdLine.of(a.executorOptions()).toString();
+            factoryId = a.factoryId();
+            owner = a.owner();
         }
 
         public String getName() {

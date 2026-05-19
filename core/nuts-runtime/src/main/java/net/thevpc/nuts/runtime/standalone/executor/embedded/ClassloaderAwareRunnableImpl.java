@@ -39,7 +39,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
     @Override
     public Object runWithContext() {
         NWorkspaceExt ows = NWorkspaceExt.of();
-        Map<String, String> newEnv = ows.getModel().appendEnv(executionContext.getEnv());
+        Map<String, String> newEnv = ows.getModel().appendEnv(executionContext.env());
         NAppImpl newApp = new NAppImpl();
         NWorkspaceExtNewContext wsc = new NWorkspaceExtNewContext(ows, newEnv, newApp);
         return wsc.callWith(() -> {

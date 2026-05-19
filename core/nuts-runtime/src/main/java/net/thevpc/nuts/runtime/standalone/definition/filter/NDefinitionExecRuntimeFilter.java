@@ -32,7 +32,7 @@ public class NDefinitionExecRuntimeFilter extends AbstractDefinitionFilter {
             if(apiId==null){
                 return true;
             }
-            for (NDependency dependency : other.descriptor().getDependencies()) {
+            for (NDependency dependency : other.descriptor().dependencies()) {
                 if (dependency.toId().shortName().equals(this.apiId.shortName())) {
                     if (apiId.version().equals(dependency.toId().version())) {
                         return true;
@@ -45,7 +45,7 @@ public class NDefinitionExecRuntimeFilter extends AbstractDefinitionFilter {
             if (!other.descriptor().getPropertyValue("nuts-runtime").flatMap(NLiteral::asBoolean).orElse(false)) {
                 return false;
             }
-            for (NDependency dependency : other.descriptor().getDependencies()) {
+            for (NDependency dependency : other.descriptor().dependencies()) {
                 if (dependency.toId().shortName().equals(this.apiId.shortName())) {
                     if (apiId == null) {
                         return true;

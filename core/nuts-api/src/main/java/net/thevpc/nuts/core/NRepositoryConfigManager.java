@@ -27,8 +27,10 @@ package net.thevpc.nuts.core;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -46,51 +48,66 @@ public interface NRepositoryConfigManager{
      *
      * @return repository global (workspace independent) name
      */
-    String getGlobalName();
+    @NGetter
+    String globalName();
 
-    NRepositoryRef getRepositoryRef();
+    @NGetter
+    NRepositoryRef repositoryRef();
 
-    String getType();
+    @NGetter
+    String type();
 
-    String getGroups();
+    @NGetter
+    String groups();
 
-    NSpeedQualifier getSpeed();
+    @NGetter
+    NSpeedQualifier speed();
 
     boolean isTemporary();
 
     boolean isPreview();
 
-    Set<String> getTags();
+    @NGetter
+    Set<String> tags();
 
-    NRepositoryConfigManager setTemporary(boolean enabled);
+    @NSetter
+    NRepositoryConfigManager temporary(boolean enabled);
 
     boolean isIndexSubscribed();
 
 
-    NRepositoryLocation getLocation();
+    @NGetter
+    NRepositoryLocation location();
 
-    NPath getLocationPath();
+    @NGetter
+    NPath locationPath();
 
     /**
      * return repository configured location as string
      *
      * @return repository location path
      */
-    NPath getStoreLocation();
+    @NGetter
+    NPath storeLocation();
 
     NPath getStoreLocation(NStoreType folderType);
 
+    @NGetter
     boolean isIndexEnabled();
 
-    NRepositoryConfigManager setIndexEnabled(boolean enabled);
+    @NSetter
+    NRepositoryConfigManager indexEnabled(boolean enabled);
 
     NRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled);
 
-    int getDeployWeight();
+    @NGetter
+    int deployWeight();
 
+    @NGetter
     boolean isEnabled();
 
-    NRepositoryConfigManager setEnabled(boolean enabled);
+    @NSetter
+    NRepositoryConfigManager enabled(boolean enabled);
 
     NRepositoryConfigManager subscribeIndex();
 
@@ -102,7 +119,8 @@ public interface NRepositoryConfigManager{
 
     NRepository findMirrorByName(String repositoryNameOrId);
 
-    List<NRepository> getMirrors();
+    @NGetter
+    List<NRepository> mirrors();
 
     /**
      * search for (or throw error) a repository with the given repository name
@@ -127,13 +145,15 @@ public interface NRepositoryConfigManager{
      */
     NRepositoryConfigManager removeMirror(String repositoryId);
 
-    NStoreStrategy getStoreStrategy();
+    @NGetter
+    NStoreStrategy storeStrategy();
 
     Map<String, String> getConfigMap(boolean inherit);
 
     NOptional<NLiteral> getConfigProperty(String key, boolean inherit);
 
-    Map<String, String> getConfigMap();
+    @NGetter
+    Map<String, String> configMap();
 
     NOptional<NLiteral> getConfigProperty(String property);
 

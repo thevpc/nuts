@@ -548,7 +548,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 || version.equals(id().get().version().value())) {
             return getFolder(storeType);
         }
-        NId newId = id().get().builder().setVersion(version).build();
+        NId newId = id().get().builder().version(version).build();
         if (this.storeLocationResolver != null) {
             NPath r = this.storeLocationResolver.getStoreLocation(newId, storeType);
             if (r != null) {
@@ -629,8 +629,8 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             return null;
         }
         return NCmdLine.of(appArguments)
-                .setCommandName(appId.artifactId())
-                .setAutoComplete(autoComplete())
+                .commandName(appId.artifactId())
+                .autoComplete(autoComplete())
                 ;
     }
 
@@ -765,28 +765,28 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         }
 
         @Override
-        public String getLine() {
-            return NCmdLine.of(getWords()).toString();
+        public String line() {
+            return NCmdLine.of(words()).toString();
         }
 
         @Override
-        public List<String> getWords() {
+        public List<String> words() {
             return words;
         }
 
         @Override
-        public int getCurrentWordIndex() {
+        public int currentWordIndex() {
             return wordIndex;
         }
 
         @Override
         protected NArgCandidate addCandidatesImpl(NArgCandidate value) {
             NArgCandidate c = super.addCandidatesImpl(value);
-            String v = value.getValue();
+            String v = value.value();
             if (v == null) {
                 throw new NExecutionException(NMsg.ofPlain("candidate cannot be null"), NExecutionException.ERROR_2);
             }
-            String d = value.getDisplay();
+            String d = value.display();
             if (Objects.equals(v, d) || d == null) {
                 NOut.println(NMsg.ofC("%s", NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v)));
             } else {

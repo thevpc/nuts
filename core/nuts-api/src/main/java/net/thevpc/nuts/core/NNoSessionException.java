@@ -81,7 +81,7 @@ public class NNoSessionException extends RuntimeException implements NExceptionB
         this.message = message;
     }
 
-    public NMsg getFormattedMessage() {
+    public NMsg formattedMessage() {
         return message;
     }
 }

@@ -70,13 +70,13 @@ public class NRateLimitValueBuilderImpl implements NRateLimitValueBuilder {
                         x.getMax(), x.getDuration()==null?0:x.getDuration().toMillis(), 0, x.getStartDate()==null?0:x.getStartDate().toEpochMilli(),
                         new byte[0])).toArray(NRateLimitRuleModel[]::new)
         );
-        NRateLimitValueModel old = factory.load(newModel.getId());
+        NRateLimitValueModel old = factory.load(newModel.id());
         if (old == null) {
             factory.save(newModel);
             return new NRateLimitValueImpl(newModel, factory);
         } else {
             List<NRateLimitRuleModel> okkay = new ArrayList<>();
-            for (NCollectionDiffChange<NRateLimitRuleModel> d : NCollectionDiff.diffList(Arrays.asList(old.getRules()), Arrays.asList(newModel.getRules()), m -> m.getId())) {
+            for (NCollectionDiffChange<NRateLimitRuleModel> d : NCollectionDiff.diffList(Arrays.asList(old.rules()), Arrays.asList(newModel.rules()), m -> m.id())) {
                 switch (d.getMode()) {
                     case ADDED: {
                         okkay.add(d.getNewValue());
@@ -87,12 +87,12 @@ public class NRateLimitValueBuilderImpl implements NRateLimitValueBuilder {
                     }
                     case CHANGED: {
                         okkay.add(new NRateLimitRuleModel(
-                                d.getNewValue().getId(),
-                                d.getNewValue().getStrategy(),
-                                d.getNewValue().getCapacity(),
-                                d.getNewValue().getDuration(),
-                                Math.min(d.getOldValue().getAvailable(), d.getNewValue().getCapacity()),
-                                d.getOldValue().getLastRefill(),
+                                d.getNewValue().id(),
+                                d.getNewValue().strategy(),
+                                d.getNewValue().capacity(),
+                                d.getNewValue().duration(),
+                                Math.min(d.getOldValue().available(), d.getNewValue().capacity()),
+                                d.getOldValue().lastRefill(),
                                 d.getOldValue().getConfig()
                         ));
                         break;
@@ -102,7 +102,7 @@ public class NRateLimitValueBuilderImpl implements NRateLimitValueBuilder {
                     }
                 }
             }
-            newModel = new NRateLimitValueModel(newModel.getId(), old.getLastAccess(), okkay.toArray(new NRateLimitRuleModel[0]));
+            newModel = new NRateLimitValueModel(newModel.id(), old.lastAccess(), okkay.toArray(new NRateLimitRuleModel[0]));
             factory.save(newModel);
             return new NRateLimitValueImpl(newModel, factory);
         }

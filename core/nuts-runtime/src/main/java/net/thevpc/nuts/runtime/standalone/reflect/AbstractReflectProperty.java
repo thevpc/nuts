@@ -53,7 +53,7 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
         this.name = name;
         this.cleanInstance = cleanInstance;
         this.declaringType = declaringType;
-        NReflectType nReflectType = declaringType.getRepository().getType(propertyType)
+        NReflectType nReflectType = declaringType.repository().getType(propertyType)
                 .replaceVars(t -> declaringType.getActualTypeArgument(t).orElse(t));
         this.defaultValueStrategy = defaultValueStrategy;
         this.propertyType = nReflectType;
@@ -64,7 +64,7 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
             synchronized (this){
                 if(!cleanInstanceValueLoaded) {
                     if (cleanInstance == null) {
-                        this.cleanInstanceValue = NReflectUtils.getJavaDefaultValue(propertyType.getJavaType());
+                        this.cleanInstanceValue = NReflectUtils.getJavaDefaultValue(propertyType.javaType());
                     } else {
                         if (isRead()) {
                             try {

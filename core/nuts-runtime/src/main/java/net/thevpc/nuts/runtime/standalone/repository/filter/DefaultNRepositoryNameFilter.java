@@ -37,12 +37,12 @@ public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
             return true;
         }
-        if(exactRepos.contains(repository.getUuid())
-                || exactRepos.contains(repository.getName())){
+        if(exactRepos.contains(repository.uuid())
+                || exactRepos.contains(repository.name())){
             return true;
         }
         for (Pattern wildcardRepo : wildcardRepos) {
-            if(wildcardRepo.matcher(repository.getName()).matches()){
+            if(wildcardRepo.matcher(repository.name()).matches()){
                 return true;
             }
         }

@@ -23,7 +23,7 @@ class NRepoIter extends NIdPathIteratorBase {
 
     @Override
     public NWorkspace getWorkspace() {
-        return r.getWorkspace();
+        return r.workspace();
     }
 
     @Override
@@ -47,7 +47,7 @@ class NRepoIter extends NIdPathIteratorBase {
         if (fn.endsWith(".pom")) {
             return MavenUtils.of().parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);
         }else{
-            return NDescriptorParser.of().setDescriptorStyle(NDescriptorStyle.NUTS).parse(in).get();
+            return NDescriptorParser.of().descriptorStyle(NDescriptorStyle.NUTS).parse(in).get();
         }
     }
 
@@ -75,9 +75,9 @@ class NRepoIter extends NIdPathIteratorBase {
                             }
                             return validate(
                                     NIdBuilder.of()
-                                            .setGroupId(gn.toString())
-                                            .setArtifactId(an)
-                                            .setVersion(vn)
+                                            .groupId(gn.toString())
+                                            .artifactId(an)
+                                            .version(vn)
                                             .build(),
                                     null, pomFile, rootPath, filter, repository);
                         }
@@ -105,9 +105,9 @@ class NRepoIter extends NIdPathIteratorBase {
                             }
                             return validate(
                                     NIdBuilder.of()
-                                            .setGroupId(gn.toString())
-                                            .setArtifactId(an)
-                                            .setVersion(vn)
+                                            .groupId(gn.toString())
+                                            .artifactId(an)
+                                            .version(vn)
                                             .build(),
                                     null, pomFile, rootPath, filter, repository);
                         }

@@ -63,7 +63,7 @@ public class DefaultNLogModel {
 
     public void init(NBootOptions effOptions, NBootOptions userOptions) {
         this.logFolder = Paths.get(effOptions.getStoreType(NStoreType.LOG).get());
-        NLogConfig lc = userOptions.getLogConfig().orNull();
+        NLogConfig lc = userOptions.logConfig().orNull();
         if (lc != null) {
             if (lc.getLogFileLevel() != null) {
                 logConfig.setLogFileLevel(lc.getLogFileLevel());

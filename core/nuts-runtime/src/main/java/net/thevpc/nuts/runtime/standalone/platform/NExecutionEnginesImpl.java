@@ -23,7 +23,7 @@ public class NExecutionEnginesImpl implements NExecutionEngines {
         return NWorkspaceExt.of().getModel().sdkModel;
     }
 
-    public NConnectionString getConnectionString() {
+    public NConnectionString connectionString() {
         return connectionString;
     }
 

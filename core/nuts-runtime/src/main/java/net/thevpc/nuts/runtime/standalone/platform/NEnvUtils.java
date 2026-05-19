@@ -42,7 +42,7 @@ public class NEnvUtils {
             ).toArray(new String[0]);
             String sd = _XDG_SESSION_DESKTOP.toLowerCase();
             for (int i = 0; i < supportedSessions.length; i++) {
-                NIdBuilder nb = NIdBuilder.of().setArtifactId(supportedSessions[i]);
+                NIdBuilder nb = NIdBuilder.of().artifactId(supportedSessions[i]);
                 if ("kde".equals(sd)) {
                     String _KDE_FULL_SESSION = env.getEnv("KDE_FULL_SESSION").orNull();
                     String _KDE_SESSION_VERSION = env.getEnv("KDE_SESSION_VERSION").orNull();
@@ -71,25 +71,25 @@ public class NEnvUtils {
     public static Set<NId> getDesktopEnvironments0(NEnv env) {
         if (!env.isGraphicalDesktopEnvironment()) {
             return Collections.singleton(
-                    NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.HEADLESS.id()).build());
+                    NIdBuilder.of().artifactId(NDesktopEnvironmentFamily.HEADLESS.id()).build());
         }
         switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
-                return Collections.singleton(NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
+                return Collections.singleton(NIdBuilder.of().artifactId(NDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
             }
             case MACOS: {
-                return Collections.singleton(NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.MACOS_AQUA.id()).build());
+                return Collections.singleton(NIdBuilder.of().artifactId(NDesktopEnvironmentFamily.MACOS_AQUA.id()).build());
             }
             case UNIX:
             case LINUX: {
                 NId[] all = getDesktopEnvironmentsXDGOrEmpty(env);
                 if (all.length == 0) {
-                    return Collections.singleton(NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.UNKNOWN.id()).build());
+                    return Collections.singleton(NIdBuilder.of().artifactId(NDesktopEnvironmentFamily.UNKNOWN.id()).build());
                 }
                 return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(all)));
             }
             default: {
-                return Collections.singleton(NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.UNKNOWN.id()).build());
+                return Collections.singleton(NIdBuilder.of().artifactId(NDesktopEnvironmentFamily.UNKNOWN.id()).build());
             }
         }
     }
@@ -152,21 +152,21 @@ public class NEnvUtils {
 
         switch (item) {
             case DESKTOP: {
-                NSupportMode a = NWorkspace.of().getBootOptions().getDesktopLauncher().orNull();
+                NSupportMode a = NWorkspace.of().getBootOptions().desktopLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
                 break;
             }
             case MENU: {
-                NSupportMode a = NWorkspace.of().getBootOptions().getMenuLauncher().orNull();
+                NSupportMode a = NWorkspace.of().getBootOptions().menuLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
                 break;
             }
             case USER: {
-                NSupportMode a = NWorkspace.of().getBootOptions().getUserLauncher().orNull();
+                NSupportMode a = NWorkspace.of().getBootOptions().userLauncher().orNull();
                 if (a != null) {
                     return a;
                 }

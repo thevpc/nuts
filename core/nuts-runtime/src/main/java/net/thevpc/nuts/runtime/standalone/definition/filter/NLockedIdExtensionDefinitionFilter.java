@@ -42,7 +42,7 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
         if (!acceptId(other.id())) {
             return false;
         }
-        for (NDependency dependency : other.descriptor().getDependencies()) {
+        for (NDependency dependency : other.descriptor().dependencies()) {
             if (!acceptId(dependency.toId())) {
                 return false;
             }

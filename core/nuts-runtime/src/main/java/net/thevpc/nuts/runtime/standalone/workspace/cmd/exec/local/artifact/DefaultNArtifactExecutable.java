@@ -65,7 +65,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         this.execCommand = execCommand;
 
         List<String> executorOptionsList = new ArrayList<>();
-        NArtifactCall exc = def.descriptor().getExecutor();
+        NArtifactCall exc = def.descriptor().executor();
         if (exc != null) {
 
         }
@@ -86,7 +86,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return def.id();
     }
 
@@ -94,24 +94,24 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
     public int execute() {
         NSession session = NSession.of();
         if (session.isDry()) {
-            if (autoInstall && !def.installInformation().get().getInstallStatus().isInstalled()) {
+            if (autoInstall && !def.installInformation().get().installStatus().isInstalled()) {
                 NSecurityManager.of().checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
                 NPrintStream out = session.out();
                 out.println(NMsg.ofC("[dry] ==install== %s", def.id().longName()));
             }
             execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast,
-                    false, execCommand.getIn(), execCommand.getOut(), execCommand.getErr(), executionType, runAs);
+                    false, execCommand.in(), execCommand.out(), execCommand.err(), executionType, runAs);
             return NExecutionException.SUCCESS;
         }
-        NInstallStatus installStatus = def.installInformation().get().getInstallStatus();
+        NInstallStatus installStatus = def.installInformation().get().installStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
                 NInstall ii = NInstall.of(def.id());
                 ii.getResultList();
                 NInstallStatus st = NFetch.of(def.id())
-                        .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                        .getResultDefinition().installInformation().get().getInstallStatus();
+                        .repositoryFilter(NRepositoryFilters.of().installedRepo())
+                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .getResultDefinition().installInformation().get().installStatus();
                 if (!st.isInstalled()) {
                     throw new NUnexpectedException(NMsg.ofC("auto installation of %s failed", def.id()));
                 }
@@ -154,15 +154,15 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
 //            }
 //        }
         return execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false,
-                execCommand.getIn()
-                , execCommand.getOut()
-                , execCommand.getErr()
+                execCommand.in()
+                , execCommand.out()
+                , execCommand.err()
                 , executionType, runAs);
     }
 
     @Override
     public String toString() {
-        return "nuts " + getId().toString() + " " + NCmdLine.of(appArgs).toString();
+        return "nuts " + id().toString() + " " + NCmdLine.of(appArgs).toString();
     }
 
 }

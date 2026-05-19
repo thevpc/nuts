@@ -73,12 +73,12 @@ public final class JavaExecutorOptions {
 //            if (!CoreNutsUtils.isEffectiveId(id)) {
 //                throw new NutsException(session, NMsg.ofC("id should be effective : %s", id));
 //            }
-            id = descriptor.getId();
+            id = descriptor.id();
         } else {
             descriptor = def.effectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.descriptor(),
                     new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(false)));
             if (!CoreNUtils.isEffectiveId(id)) {
-                id = descriptor.getId();
+                id = descriptor.id();
             }
         }
         Path path = def.content().flatMap(NPath::toPath).orNull();
@@ -87,7 +87,7 @@ public final class JavaExecutorOptions {
 //        List<String> classPath0 = new ArrayList<>();
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
         //will accept all -- and - based options!
-        NCmdLine cmdLine = NCmdLine.of(getExecArgs()).setExpandSimpleOptions(false);
+        NCmdLine cmdLine = NCmdLine.of(getExecArgs()).expandSimpleOptions(false);
         NArg a;
         List<NClassLoaderNode> currentCP = new ArrayList<>();
         List<NArg> extraMayBeJvmOptions = new ArrayList<>();
@@ -227,7 +227,7 @@ public final class JavaExecutorOptions {
             NDependencyFilter defFilter = dependencyFilters.byScope(NDependencyScopePattern.RUN)
                     .and(dependencyFilters.byOptional(false));
             if (tempId) {
-                for (NDependency dependency : descriptor.getDependencies()) {
+                for (NDependency dependency : descriptor.dependencies()) {
                     if (defFilter.acceptDependency(dependency, null)) {
                         se.addId(dependency.toId());
                     }
@@ -235,14 +235,14 @@ public final class JavaExecutorOptions {
             } else {
                 se.addId(id);
             }
-            if (se.getIds().size() > 0) {
+            if (se.ids().size() > 0) {
                 nDefinitions.addAll(
                         se
-                                .setTransitive(true)
+                                .transitive(true)
                                 .distinct(true)
                                 .latest(true)
-                                .setInlineDependencies(true)
-                                .setDependencyFilter(dependencyFilters.byRunnable())
+                                .inlineDependencies(true)
+                                .dependencyFilter(dependencyFilters.byRunnable())
                                 .getResultDefinitions().toList()
                 );
             }
@@ -258,7 +258,7 @@ public final class JavaExecutorOptions {
                     if (NOut.isPlain()) {
                         session.getTerminal().err().println(NMsg.ofC("ignored class-path=%s. running jar!", currentCP
                                 .stream()
-                                .map(x -> x.getURL().toString()).collect(Collectors.joining(","))
+                                .map(x -> x.url().toString()).collect(Collectors.joining(","))
                         ));
                     }
                 }
@@ -346,7 +346,7 @@ public final class JavaExecutorOptions {
                             // give precedence to classifiers
                             String c1 = b1.classifier();
                             String c2 = b2.classifier();
-                            if (b1.builder().setClassifier(null).build().shortName().equals(b2.builder().setClassifier(null).build().shortName())) {
+                            if (b1.builder().classifier(null).build().shortName().equals(b2.builder().classifier(null).build().shortName())) {
                                 if (NBlankable.isBlank(c1)) {
                                     return 1;
                                 }
@@ -445,7 +445,7 @@ public final class JavaExecutorOptions {
             cacheFile.mkParentDirs();
             try (BufferedWriter bw = cacheFile.getBufferedWriter(NPathOption.CREATE, NPathOption.TRUNCATE_EXISTING)) {
                 for (NClassLoaderNode node : classPathNodes) {
-                    bw.write((node.getId() == null ? "" : node.getId().toString()) + "|" + node.getURL().toString());
+                    bw.write((node.id() == null ? "" : node.id().toString()) + "|" + node.url().toString());
                     bw.newLine();
                 }
             }
@@ -647,7 +647,7 @@ public final class JavaExecutorOptions {
             }
         }
         if (explicitJavaVersion == null) {
-            explicitJavaVersion = def.descriptor().getCondition().getPlatform().stream().map(x -> NId.get(x).get())
+            explicitJavaVersion = def.descriptor().condition().platform().stream().map(x -> NId.get(x).get())
                     .filter(x -> x.shortName().equals("java"))
                     .map(NId::version)
                     .min(Comparator.naturalOrder())
@@ -674,7 +674,7 @@ public final class JavaExecutorOptions {
 
         // extra options
         List<NArg> extraMayBeJvmOptions = new ArrayList<>();
-        NCmdLine cmdLine = NCmdLine.of(getExecArgs()).setExpandSimpleOptions(false);
+        NCmdLine cmdLine = NCmdLine.of(getExecArgs()).expandSimpleOptions(false);
         while (cmdLine.hasNext()) {
             NArg a = cmdLine.peek().get();
             if (a.isOption()) {
@@ -815,13 +815,13 @@ public final class JavaExecutorOptions {
 
 
     public void fillNidStrings(NClassLoaderNode n, List<String> list) {
-        if (NBlankable.isBlank(n.getId())) {
-            URL f = n.getURL();
+        if (NBlankable.isBlank(n.id())) {
+            URL f = n.url();
             list.add(NPath.of(f).toPath().get().toString());
         } else {
-            list.add(n.getId().toString());
+            list.add(n.id().toString());
         }
-        for (NClassLoaderNode d : n.getDependencies()) {
+        for (NClassLoaderNode d : n.dependencies()) {
             fillNidStrings(d, list);
         }
     }
@@ -889,16 +889,16 @@ public final class JavaExecutorOptions {
                 List<NExecutionEntry> classes = NExecutionEntry.parse(NPath.of(path));
                 NExecutionEntry[] primary = classes.stream().filter(NExecutionEntry::isDefaultEntry).toArray(NExecutionEntry[]::new);
                 if (primary.length > 0) {
-                    mainClass = Arrays.stream(primary).map(NExecutionEntry::getName)
+                    mainClass = Arrays.stream(primary).map(NExecutionEntry::name)
                             .collect(Collectors.joining(":"));
                 } else if (classes.size() > 0) {
-                    mainClass = classes.stream().map(NExecutionEntry::getName)
+                    mainClass = classes.stream().map(NExecutionEntry::name)
                             .collect(Collectors.joining(":"));
                 }
             }
         } else if (!mainClass.contains(".")) {
             List<NExecutionEntry> classes = NExecutionEntry.parse(NPath.of(path));
-            List<String> possibleClasses = classes.stream().map(NExecutionEntry::getName)
+            List<String> possibleClasses = classes.stream().map(NExecutionEntry::name)
                     .collect(Collectors.toList());
             String r = resolveMainClass(mainClass, possibleClasses);
             if (r != null) {

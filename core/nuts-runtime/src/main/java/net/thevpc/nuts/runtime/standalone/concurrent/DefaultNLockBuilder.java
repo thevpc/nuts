@@ -23,8 +23,8 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
 
     @Override
     public NLock build() {
-        Object s = getSource();
-        Object lr = getResource();
+        Object s = source();
+        Object lr = resource();
         Path lrPath = null;
         if (lr == null) {
             if (s == null) {

@@ -28,11 +28,11 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
     private void _updateModel() {
         workBalancerWorkerLoadMap.clear();
         workBalancerWorkerModelMap.clear();
-        if (model.getWorkers() != null) {
+        if (model.workers() != null) {
             int workerIndex = 0;
-            for (NWorkBalancerWorkerModel w : model.getWorkers()) {
-                workBalancerWorkerModelMap.put(w.getName(), w);
-                workBalancerWorkerLoadMap.put(w.getName(), new NWorkBalancerWorkerLoadImpl(w, workerIndex));
+            for (NWorkBalancerWorkerModel w : model.workers()) {
+                workBalancerWorkerModelMap.put(w.name(), w);
+                workBalancerWorkerLoadMap.put(w.name(), new NWorkBalancerWorkerLoadImpl(w, workerIndex));
                 workerIndex++;
             }
         }
@@ -50,24 +50,24 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
     }
 
     @Override
-    public List<NWorkBalancerRunningJob> getRunningJobs() {
+    public List<NWorkBalancerRunningJob> runningJobs() {
         return Collections.unmodifiableList(new ArrayList<>(runningJobs));
     }
 
     @Override
-    public boolean hasRunningJobs() {
+    public boolean isRunning() {
         return !runningJobs.isEmpty();
     }
 
     @Override
-    public int getRunningJobsCount() {
+    public int runningJobsCount() {
         return runningJobs.size();
     }
 
     @Override
-    public List<NWorkBalancerWorker> getWorkers() {
-        if (model.getWorkers() == null) return Collections.emptyList();
-        return model.getWorkers().stream().map(NWorkBalancerWorkerImpl::new).collect(Collectors.toList());
+    public List<NWorkBalancerWorker> workers() {
+        if (model.workers() == null) return Collections.emptyList();
+        return model.workers().stream().map(NWorkBalancerWorkerImpl::new).collect(Collectors.toList());
     }
 
     @Override
@@ -77,26 +77,26 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
     }
 
     @Override
-    public Map<String, NWorkBalancerWorkerLoad> getWorkerLoads() {
-        if (model.getWorkers() == null) return Collections.emptyMap();
+    public Map<String, NWorkBalancerWorkerLoad> workerLoads() {
+        if (model.workers() == null) return Collections.emptyMap();
         Map<String, NWorkBalancerWorkerLoad> map = new HashMap<>();
-        for (NWorkBalancerWorkerModel w : model.getWorkers()) {
-            getWorkerLoad(w.getName()).ifPresent(l -> map.put(w.getName(), l));
+        for (NWorkBalancerWorkerModel w : model.workers()) {
+            getWorkerLoad(w.name()).ifPresent(l -> map.put(w.name(), l));
         }
         return map;
     }
 
     @Override
     public NOptional<NElement> getOption(String name) {
-        if (model.getOptions() != null && model.getOptions().containsKey(name)) {
-            return NOptional.of(model.getOptions().get(name));
+        if (model.options() != null && model.options().containsKey(name)) {
+            return NOptional.of(model.options().get(name));
         }
         return NOptional.ofEmpty();
     }
 
     @Override
-    public Map<String, NElement> getOptions() {
-        return model.getOptions() != null ? Collections.unmodifiableMap(model.getOptions()) : Collections.emptyMap();
+    public Map<String, NElement> options() {
+        return model.options() != null ? Collections.unmodifiableMap(model.options()) : Collections.emptyMap();
     }
 
 

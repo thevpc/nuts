@@ -46,7 +46,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     protected Boolean dry = null;
     protected boolean failFast;
     protected Boolean bot;
-    private long sleepMillis = 1000;
+    private NDuration sleepMillis = NDuration.ofSeconds(1);
     private int maxLines = -1;
     private int maxBytes = -1;
     private NConnectionString connectionString;
@@ -80,7 +80,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public Boolean getBot() {
+    public Boolean bot() {
         return bot;
     }
 
@@ -91,24 +91,24 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public List<String> getCommand() {
+    public List<String> command() {
         return NCollections.unmodifiableList(command);
     }
 
     @Override
-    public NExec setCommand(String... command) {
+    public NExec command(String... command) {
         this.command = null;
         return addCommand(command);
     }
 
     @Override
-    public NExec setCommand(Collection<String> command) {
+    public NExec command(Collection<String> command) {
         this.command = null;
         return addCommand(command);
     }
 
     @Override
-    public NExec setCommandDefinition(NDefinition definition) {
+    public NExec commandDefinition(NDefinition definition) {
         this.commandDefinition = definition;
         if (this.commandDefinition != null) {
 //            this.commandDefinition.getContent().get();
@@ -119,7 +119,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         return this;
     }
 
-    public NDefinition getCommandDefinition() {
+    public NDefinition commandDefinition() {
         return commandDefinition;
     }
 
@@ -134,15 +134,6 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         return this;
     }
 
-    @Override
-    public NExec command(NPath path) {
-        return addCommand(path);
-    }
-
-    @Override
-    public NExec command(String... command) {
-        return addCommand(command);
-    }
 
     @Override
     public NExec addCommand(String... command) {
@@ -175,11 +166,6 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec command(Collection<String> command) {
-        return addCommand(command);
-    }
-
-    @Override
     public NExec clearCommand() {
         this.command = null;
         return this;
@@ -207,7 +193,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec setExecutorOptions(Collection<String> executorOptions) {
+    public NExec executorOptions(Collection<String> executorOptions) {
         this.executorOptions = new ArrayList<>();
         if (executorOptions != null) {
             for (String executorOption : executorOptions) {
@@ -234,7 +220,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public List<String> getWorkspaceOptions() {
+    public List<String> workspaceOptions() {
         return NCollections.unmodifiableList(workspaceOptions);
     }
 
@@ -264,12 +250,12 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         return env;
     }
 
     @Override
-    public NExec setEnv(Map<String, String> env) {
+    public NExec env(Map<String, String> env) {
         clearEnv();
         addEnv(env);
         return this;
@@ -307,7 +293,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NPath getDirectory() {
+    public NPath directory() {
         return directory;
     }
 
@@ -318,7 +304,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExecInput getIn() {
+    public NExecInput in() {
         return in;
     }
 
@@ -338,7 +324,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExecOutput getOut() {
+    public NExecOutput out() {
         return out;
     }
 
@@ -402,17 +388,17 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             }
             run();
         }
-        if (getOut() == null) {
+        if (out() == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("no buffer was configured; should call grabOut"));
         }
-        if (getOut().resultSource().isNotPresent()) {
-            if (getOut().type() == NRedirectType.GRAB_FILE || getOut().type() == NRedirectType.GRAB_STREAM) {
-                if (getResultException().isPresent()) {
-                    throw getResultException().get();
+        if (out().resultSource().isNotPresent()) {
+            if (out().type() == NRedirectType.GRAB_FILE || out().type() == NRedirectType.GRAB_STREAM) {
+                if (resultException().isPresent()) {
+                    throw resultException().get();
                 }
             }
         }
-        return getOut().resultBytes();
+        return out().resultBytes();
     }
 
     @Override
@@ -423,20 +409,20 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             }
             run();
         }
-        if (getErr() == null) {
+        if (err() == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("no buffer was configured; should call grabErr"));
         }
-        if (getErr().type() == NRedirectType.REDIRECT) {
+        if (err().type() == NRedirectType.REDIRECT) {
             return getGrabbedOutBytes();
         }
-        if (getErr().resultSource().isNotPresent()) {
-            if (getErr().type() == NRedirectType.GRAB_FILE || getErr().type() == NRedirectType.GRAB_STREAM) {
-                if (getResultException().isPresent()) {
-                    throw getResultException().get();
+        if (err().resultSource().isNotPresent()) {
+            if (err().type() == NRedirectType.GRAB_FILE || err().type() == NRedirectType.GRAB_STREAM) {
+                if (resultException().isPresent()) {
+                    throw resultException().get();
                 }
             }
         }
-        return getErr().resultBytes();
+        return err().resultBytes();
     }
 
     @Override
@@ -445,7 +431,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExecOutput getErr() {
+    public NExecOutput err() {
         return err;
     }
 
@@ -460,7 +446,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExecutionType getExecutionType() {
+    public NExecutionType executionType() {
         return executionType;
     }
 
@@ -491,7 +477,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NRunAs getRunAs() {
+    public NRunAs runAs() {
         return runAs;
     }
 
@@ -516,7 +502,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         return this;
     }
 
-    public Boolean getDry() {
+    public Boolean dry() {
         return dry;
     }
 
@@ -531,19 +517,19 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             return this;
         }
         super.copyFromWorkspaceCommandBase((NWorkspaceCmdBase) other);
-        addCommand(other.getCommand());
-        addEnv(other.getEnv());
-        addExecutorOptions(other.getExecutorOptions());
-        directory(other.getDirectory());
-        in(other.getIn());
-        out(other.getOut());
-        err(other.getErr());
+        addCommand(other.command());
+        addEnv(other.env());
+        addExecutorOptions(other.executorOptions());
+        directory(other.directory());
+        in(other.in());
+        out(other.out());
+        err(other.err());
         failFast(other.isFailFast());
-        executionType(other.getExecutionType());
-        runAs(other.getRunAs());
-        connectionString(other.getConnectionString());
-        dry(other.getDry());
-        bot(other.getBot());
+        executionType(other.executionType());
+        runAs(other.runAs());
+        connectionString(other.connectionString());
+        dry(other.dry());
+        bot(other.bot());
         rawCommand(other.isRawCommand());
         return this;
     }
@@ -570,45 +556,45 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public List<String> getExecutorOptions() {
+    public List<String> executorOptions() {
         return NCollections.unmodifiableList(executorOptions);
     }
 
     @Override
-    public NOptional<NExecutionException> getResultException() {
+    public NOptional<NExecutionException> resultException() {
         if (!executed) {
             run();
         }
         return NOptional.ofNamed(resultException, "result-exception");
     }
 
-    public long getSleepMillis() {
+    public NDuration sleepDuration() {
         return sleepMillis;
     }
 
-    public NExec sleepMillis(long sleepMillis) {
+    public NExec sleepDuration(NDuration sleepMillis) {
         this.sleepMillis = sleepMillis;
         return this;
     }
 
     protected String getExtraErrorMessage() {
-        if (getErr().type() == NRedirectType.REDIRECT) {
-            if (getOut().type() == NRedirectType.GRAB_FILE
-                    || getOut().type() == NRedirectType.GRAB_STREAM) {
-                if (getOut() != null && getOut().resultSource().isPresent()) {
+        if (err().type() == NRedirectType.REDIRECT) {
+            if (out().type() == NRedirectType.GRAB_FILE
+                    || out().type() == NRedirectType.GRAB_STREAM) {
+                if (out() != null && out().resultSource().isPresent()) {
                     return getGrabbedOutString();
                 }
             }
         } else {
-            if (getErr().type() == NRedirectType.GRAB_FILE
-                    || getErr().type() == NRedirectType.GRAB_STREAM) {
-                if (getErr() != null && getErr().resultSource().isPresent()) {
+            if (err().type() == NRedirectType.GRAB_FILE
+                    || err().type() == NRedirectType.GRAB_STREAM) {
+                if (err() != null && err().resultSource().isPresent()) {
                     return getGrabbedErrString();
                 }
             }
-            if (getOut().type() == NRedirectType.GRAB_FILE
-                    || getOut().type() == NRedirectType.GRAB_STREAM) {
-                if (getOut() != null && getOut().resultSource().isPresent()) {
+            if (out().type() == NRedirectType.GRAB_FILE
+                    || out().type() == NRedirectType.GRAB_STREAM) {
+                if (out() != null && out().resultSource().isPresent()) {
                     return getGrabbedOutString();
                 }
             }
@@ -766,7 +752,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
                 sb.append(NStringUtils.formatStringLiteral(k)).append("=").append(NStringUtils.formatStringLiteral(v));
             }
         }
-        NDefinition d = getCommandDefinition();
+        NDefinition d = commandDefinition();
         if (d != null) {
             if (sb.length() > 0) {
                 sb.append(" ");
@@ -789,14 +775,14 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             }
             sb.append(NStringUtils.formatStringLiteral(s));
         }
-        switch (getOut().type()) {
+        switch (out().type()) {
             case PATH: {
-                if (Arrays.stream(getOut().options()).anyMatch(x -> x == NPathOption.APPEND)) {
+                if (out().options().stream().anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(" >> ");
                 } else {
                     sb.append(" > ");
                 }
-                sb.append(getOut().path());
+                sb.append(out().path());
                 break;
             }
             case NULL: {
@@ -804,14 +790,14 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
                 break;
             }
         }
-        switch (getErr().type()) {
+        switch (err().type()) {
             case PATH: {
-                if (Arrays.stream(getOut().options()).anyMatch(x -> x == NPathOption.APPEND)) {
+                if (out().options().stream().anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(" 2>> ");
                 } else {
                     sb.append(" 2> ");
                 }
-                sb.append(getOut().path());
+                sb.append(out().path());
                 break;
             }
             case REDIRECT: {
@@ -823,10 +809,10 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
                 break;
             }
         }
-        switch (getIn().type()) {
+        switch (in().type()) {
             case PATH: {
                 sb.append(" < ");
-                sb.append(getOut().path());
+                sb.append(out().path());
                 break;
             }
             case NULL: {
@@ -841,7 +827,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         return getCommandString();
     }
 
-    public NConnectionString getConnectionString() {
+    public NConnectionString connectionString() {
         return connectionString;
     }
 

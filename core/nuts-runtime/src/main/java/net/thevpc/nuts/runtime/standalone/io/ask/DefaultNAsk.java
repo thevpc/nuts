@@ -332,13 +332,13 @@ public class DefaultNAsk<T> implements NAsk<T> {
         NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().version());
         if (NApp.of().id().orNull() != null) {
             try {
-                NDefinition def = NSearch.of().setId(NApp.of().id().get())
+                NDefinition def = NSearch.of().id(NApp.of().id().get())
                         .latest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {
-                    String n = def.effectiveDescriptor().get().getName();
+                    String n = def.effectiveDescriptor().get().name();
                     if (!NBlankable.isBlank(n)) {
-                        title = NMsg.ofC("%s - %s", n, def.effectiveDescriptor().get().getId().version());
+                        title = NMsg.ofC("%s - %s", n, def.effectiveDescriptor().get().id().version());
                     }
                 }
             } catch (Exception ex) {

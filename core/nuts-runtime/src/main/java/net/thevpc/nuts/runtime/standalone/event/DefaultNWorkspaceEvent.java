@@ -53,7 +53,7 @@ public class DefaultNWorkspaceEvent implements NWorkspaceEvent {
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
     
@@ -74,7 +74,7 @@ public class DefaultNWorkspaceEvent implements NWorkspaceEvent {
 
     @Override
     public NWorkspace getWorkspace() {
-        return getSession().getWorkspace();
+        return session().getWorkspace();
     }
 
     @Override

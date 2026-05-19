@@ -59,7 +59,7 @@ class ResultingIds {
                 return this;
             }
             NDefinition imdef = NFetch.of(id)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false, true))
+                    .dependencyFilter(NDependencyFilters.of().byRunnable(false, true))
                     .getResultDefinition();
             if (!classPath.containsKey(imdef.id().longId())) {
                 NId resultId = imdef.id();
@@ -70,11 +70,11 @@ class ResultingIds {
                 }
                 classPath.put(resultId.longId(), imdef);
             }
-            for (NId parent : imdef.descriptor().getParents()) {
+            for (NId parent : imdef.descriptor().parents()) {
                 add(parent);
             }
-            for (NDependency standardDependency : imdef.effectiveDescriptor().get().getStandardDependencies()) {
-                if (NDependencyScope.parse(standardDependency.getScope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
+            for (NDependency standardDependency : imdef.effectiveDescriptor().get().standardDependencies()) {
+                if (NDependencyScope.parse(standardDependency.scope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
                     addBomId(standardDependency.toId());
                 }
             }
@@ -90,9 +90,9 @@ class ResultingIds {
             List<NDefinition> list = NSearch.of(id)
                     .latest(true)
                     .distinct(true)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false, true))
-                    .setInlineDependencies(true)
-                    .setIgnoreCurrentEnvironment(true)
+                    .dependencyFilter(NDependencyFilters.of().byRunnable(false, true))
+                    .inlineDependencies(true)
+                    .ignoreCurrentEnvironment(true)
                     .getResultDefinitions().toList();
             if (list.isEmpty()) {
                 throw new NArtifactNotFoundException(id.longId());
@@ -107,11 +107,11 @@ class ResultingIds {
                     }
                     classPath.put(resultId.longId(), def);
                 }
-                for (NId parent : def.descriptor().getParents()) {
+                for (NId parent : def.descriptor().parents()) {
                     add(parent);
                 }
-                for (NDependency standardDependency : def.effectiveDescriptor().get().getStandardDependencies()) {
-                    if (NDependencyScope.parse(standardDependency.getScope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
+                for (NDependency standardDependency : def.effectiveDescriptor().get().standardDependencies()) {
+                    if (NDependencyScope.parse(standardDependency.scope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
                         addBomId(standardDependency.toId());
                     }
                 }
@@ -166,7 +166,7 @@ class ResultingIds {
                     if (resultIdDef.id().longName().equals(session.getWorkspace().getAppId().longName())) {
                         add(session.getWorkspace().getRuntimeId());
                     } else {
-                        add(session.getWorkspace().getRuntimeId().builder().setVersion(resultIdDef.id().version() + ".0").build());
+                        add(session.getWorkspace().getRuntimeId().builder().version(resultIdDef.id().version() + ".0").build());
                     }
                     break;
                 }
@@ -186,7 +186,7 @@ class ResultingIds {
                             //do nothing
                         } else {
                             NId appId = NWorkspace.of().getAppId();
-                            add(appId.builder().setVersion(resultIdDef.id().version()).build());
+                            add(appId.builder().version(resultIdDef.id().version()).build());
                         }
                     }
                     break;

@@ -160,9 +160,9 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
             }
             if (comment.toString().trim().isEmpty()) {
                 return new DefaultNDescriptorBuilder()
-                        .setId(NId.get("temp:nsh#1.0").get())
-                        .setPackaging("nsh")
-                        .setExecutor(
+                        .id(NId.get("temp:nsh#1.0").get())
+                        .packaging("nsh")
+                        .executor(
                                 NArtifactCallBuilder.of()
                                         .id(NId.of(NConstants.Ids.NSH))
                                         .build()

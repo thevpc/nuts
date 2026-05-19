@@ -1,22 +1,32 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.util.Map;
 
 public interface NDescriptorLicense {
 
-    String getName();
+    @NGetter
+    String name();
 
-    String getDate();
+    @NGetter
+    String date();
 
-    String getUrl();
+    @NGetter
+    String url();
 
-    String getDistribution();
+    @NGetter
+    String distribution();
 
-    String getComments();
+    @NGetter
+    String comments();
 
-    String getId();
+    @NGetter
+    String id();
 
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
+
     NDescriptorLicense readOnly();
 
     NDescriptorLicenseBuilder builder();

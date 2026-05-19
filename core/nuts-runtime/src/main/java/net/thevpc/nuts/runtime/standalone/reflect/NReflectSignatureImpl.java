@@ -4,6 +4,8 @@ import net.thevpc.nuts.reflect.NReflectSignature;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.reflect.NSignatureDomain;
 
+import java.util.List;
+
 public class NReflectSignatureImpl extends NSignatureBase<NReflectType, NReflectSignature> implements NReflectSignature {
 
     public static final NSignatureDomain<NReflectType> DOMAIN = new NSignatureDomain<NReflectType>() {
@@ -14,12 +16,12 @@ public class NReflectSignatureImpl extends NSignatureBase<NReflectType, NReflect
 
         @Override
         public NReflectType getComponentType(NReflectType type) {
-            return type.getComponentType();
+            return type.componentType();
         }
 
         @Override
         public String toSignatureString(NReflectType type) {
-            return type.getName();
+            return type.name();
         }
 
         @Override
@@ -28,12 +30,12 @@ public class NReflectSignatureImpl extends NSignatureBase<NReflectType, NReflect
         }
 
         public NReflectType toBoxedType(NReflectType a) {
-            return a.getBoxedType().orElse(a);
+            return a.boxedType().orElse(a);
         }
 
         @Override
         public NReflectType toPrimitiveType(NReflectType a) {
-            return a.getPrimitiveType().orNull();
+            return a.primitiveType().orNull();
         }
 
 
@@ -48,13 +50,13 @@ public class NReflectSignatureImpl extends NSignatureBase<NReflectType, NReflect
         }
 
         @Override
-        public NReflectType[] getInterfaces(NReflectType type) {
-            return type.getInterfaces();
+        public List<NReflectType> getInterfaces(NReflectType type) {
+            return type.interfaces();
         }
 
         @Override
         public NReflectType getSuperType(NReflectType type) {
-            return type.getSuperType();
+            return type.superType();
         }
     };
 

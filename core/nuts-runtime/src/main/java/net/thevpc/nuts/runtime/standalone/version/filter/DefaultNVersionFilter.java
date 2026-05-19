@@ -135,7 +135,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
         for (NVersionInterval interval : intervals) {
             NVersionInterval _interval = CoreFilterUtils.simplify(interval);
             if (_interval != null) {
-                if (_interval.getLowerBound() == null && _interval.getUpperBound() == null) {
+                if (_interval.lowerBound() == null && _interval.upperBound() == null) {
                     return null;
                 }
                 if (!_interval.equals(interval)) {

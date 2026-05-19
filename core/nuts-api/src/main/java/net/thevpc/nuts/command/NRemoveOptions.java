@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.command;
 
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.Objects;
 
 /**
@@ -37,11 +40,13 @@ public class NRemoveOptions {
 
     private boolean erase = false;
 
+    @NGetter
     public boolean isErase() {
         return erase;
     }
 
-    public NRemoveOptions setErase(boolean erase) {
+    @NSetter
+    public NRemoveOptions erase(boolean erase) {
         this.erase = erase;
         return this;
     }

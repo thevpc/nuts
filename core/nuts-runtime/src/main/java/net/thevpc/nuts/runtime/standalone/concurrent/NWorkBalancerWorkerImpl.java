@@ -18,33 +18,33 @@ public class NWorkBalancerWorkerImpl implements NWorkBalancerWorker {
     }
 
     @Override
-    public String getName() {
-        return selectedWorker.getName();
+    public String name() {
+        return selectedWorker.name();
     }
 
     @Override
-    public NWorkBalancerHostLoadMetricProvider getHostLoadMetricsProvider() {
-        return selectedWorker.getHostLoadMetricsProvider();
+    public NWorkBalancerHostLoadMetricProvider hostLoadMetricsProvider() {
+        return selectedWorker.hostLoadMetricsProvider();
     }
 
     @Override
-    public Map<String, NElement> getOptions() {
-        if (selectedWorker.getOptions() == null) {
+    public Map<String, NElement> options() {
+        if (selectedWorker.options() == null) {
             return new HashMap<>();
         }
-        return Collections.unmodifiableMap(selectedWorker.getOptions());
+        return Collections.unmodifiableMap(selectedWorker.options());
     }
 
     @Override
-    public float getWeight() {
-        return selectedWorker.getWeight();
+    public float weight() {
+        return selectedWorker.weight();
     }
 
     @Override
     public NOptional<NElement> getOption(String name) {
-        if (selectedWorker.getOptions() == null) {
+        if (selectedWorker.options() == null) {
             return NOptional.ofNamedEmpty(name);
         }
-        return NOptional.ofNamed(selectedWorker.getOptions().get(name), name);
+        return NOptional.ofNamed(selectedWorker.options().get(name), name);
     }
 }

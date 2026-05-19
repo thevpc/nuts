@@ -18,9 +18,9 @@ public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition definition) {
-        for (NDependency dependency : definition.descriptor().getDependencies()) {
-            if (dependency.getShortName().equals(NConstants.Ids.NUTS_BOOT)) {
-                if (bootVersion.toFilter().acceptVersion(dependency.getVersion())) {
+        for (NDependency dependency : definition.descriptor().dependencies()) {
+            if (dependency.shortName().equals(NConstants.Ids.NUTS_BOOT)) {
+                if (bootVersion.toFilter().acceptVersion(dependency.version())) {
                     return true;
                 } else {
                     return false;
@@ -29,12 +29,12 @@ public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
         }
         // check now all transitive
         List<NDependency> allDeps = NFetch.of(definition.id())
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition().dependencies().get()
                 .transitive().toList();
         for (NDependency dependency : allDeps) {
-            if (dependency.getShortName().equals(NConstants.Ids.NUTS_BOOT)) {
-                if (bootVersion.toFilter().acceptVersion(dependency.getVersion())) {
+            if (dependency.shortName().equals(NConstants.Ids.NUTS_BOOT)) {
+                if (bootVersion.toFilter().acceptVersion(dependency.version())) {
                     return true;
                 } else {
                     return false;

@@ -35,7 +35,7 @@ public class NDependencyPlatformIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        List<String> current = NStream.ofIterable(dependency.getCondition().getPlatform()).nonBlank().toList();
+        List<String> current = NStream.ofIterable(dependency.condition().platform()).nonBlank().toList();
         if(current.size()==0 || accepted.isEmpty()){
             return true;
         }

@@ -17,7 +17,7 @@ public class DefaultNDescriptorLicense implements NDescriptorLicense {
     private final Map<String, String> properties;
 
     public DefaultNDescriptorLicense(NDescriptorLicense other) {
-        this(other.getId(), other.getName(), other.getUrl(), other.getDistribution(), other.getComments(), other.getDate(), other.getProperties());
+        this(other.id(), other.name(), other.url(), other.distribution(), other.comments(), other.date(), other.properties());
     }
 
     public DefaultNDescriptorLicense(String id, String name, String url, String distribution, String comments, String date, Map<String, String> properties) {
@@ -31,41 +31,41 @@ public class DefaultNDescriptorLicense implements NDescriptorLicense {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
 
     @Override
-    public String getUrl() {
+    public String url() {
         return url;
     }
 
 
     @Override
-    public String getDistribution() {
+    public String distribution() {
         return distribution;
     }
 
 
     @Override
-    public String getComments() {
+    public String comments() {
         return comments;
     }
 
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
     @Override
-    public String getDate() {
+    public String date() {
         return date;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 

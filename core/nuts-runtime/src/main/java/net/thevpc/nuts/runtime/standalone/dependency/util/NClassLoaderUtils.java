@@ -81,8 +81,8 @@ public final class NClassLoaderUtils {
         NId id = d.toId();
         try {
             cc = NSearch.of(id)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setRepositoryFilter(repositoryFilter)
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .repositoryFilter(repositoryFilter)
                     .latest(true)
                     .getResultDefinitions()
                     .map(x->x.content().orNull())
@@ -114,14 +114,14 @@ public final class NClassLoaderUtils {
     private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter) {
         NPath cc = null;
         if (!isOptional) {
-            if (!NDependencyUtils.isRequiredDependency(d.getDependency())) {
+            if (!NDependencyUtils.isRequiredDependency(d.dependency())) {
                 isOptional = true;
             }
         }
         try {
-            cc = NFetch.of(d.getDependency().toId())
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setRepositoryFilter(repositoryFilter)
+            cc = NFetch.of(d.dependency().toId())
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .repositoryFilter(repositoryFilter)
                     .getResultContent();
         } catch (NArtifactNotFoundException ex) {
             //
@@ -131,7 +131,7 @@ public final class NClassLoaderUtils {
             if (url != null) {
                 List<NClassLoaderNode> aa = new ArrayList<>();
                 if (withChildren) {
-                    for (NDependencyTreeNode child : d.getChildren()) {
+                    for (NDependencyTreeNode child : d.children()) {
                         NClassLoaderNode q = toClassLoaderNodeWithOptional(child, isOptional, true, repositoryFilter);
                         if (q != null) {
                             aa.add(q);
@@ -139,7 +139,7 @@ public final class NClassLoaderUtils {
                     }
                 }
                 return new NDefaultClassLoaderNode(
-                        d.getDependency().toId(), url, true, true,
+                        d.dependency().toId(), url, true, true,
                         aa.toArray(new NClassLoaderNode[0])
                 );
             }
@@ -147,7 +147,7 @@ public final class NClassLoaderUtils {
         if (isOptional) {
             return null;
         }
-        throw new NArtifactNotFoundException(d.getDependency().toId().longId());
+        throw new NArtifactNotFoundException(d.dependency().toId().longId());
     }
 
     public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {

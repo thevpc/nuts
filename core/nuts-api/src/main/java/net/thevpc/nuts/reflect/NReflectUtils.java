@@ -779,8 +779,8 @@ public class NReflectUtils {
                     if (s != null) {
                         queue.add(s);
                     }
-                    NTypeName[] ii = domain.getInterfaces(i);
-                    Collections.addAll(queue, ii);
+                    List<NTypeName> ii = (List) domain.getInterfaces(i);
+                    queue.addAll(ii);
                 }
             }
         }

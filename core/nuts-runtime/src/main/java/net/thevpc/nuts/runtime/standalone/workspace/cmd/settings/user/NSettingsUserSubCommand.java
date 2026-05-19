@@ -69,7 +69,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 try {
                     if (cmdLine.isExecMode()) {
                         NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().findRepositoryAccess(
-                                        user, repository.getUuid()).get()
+                                        user, repository.uuid()).get()
                                 .toSpec()
                                 .setRemoteUserName(mappedUser)
                                 .setRemoteCredential(remotePassword)
@@ -143,7 +143,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                             }
                             oldPassword = NSecureString.ofSecure(cmdLine.nextNonOption(NArgName.of("OldPassword")).get().image().toCharArray());
                         } else {
-                            cmdLine.setCommandName("config password").throwUnexpectedArgument();
+                            cmdLine.commandName("config password").throwUnexpectedArgument();
                         }
                     } while (cmdLine.hasNext());
                     if (cmdLine.isExecMode()) {
@@ -151,7 +151,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                         if (repository == null) {
                             admin = NSecurityManager.of().isAllowed(NConstants.Permissions.ADMIN);
                         } else {
-                            admin = NSecurityManager.of().isRepositoryAllowed(repository.getUuid(), NConstants.Permissions.ADMIN);
+                            admin = NSecurityManager.of().isRepositoryAllowed(repository.uuid(), NConstants.Permissions.ADMIN);
                         }
 
                         if (oldPassword == null && !admin) {
@@ -254,7 +254,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 String a = cmdLine.nextNonOption(NArgName.of("Right")).get().image();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        NSecurityManager.of().addRepositoryPermissions(user, repository.getUuid(), a);
+                                        NSecurityManager.of().addRepositoryPermissions(user, repository.uuid(), a);
                                     } else {
                                         NSecurityManager.of().updateUser(
                                                 NSecurityManager.of().findUser(user)
@@ -269,7 +269,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 String a = cmdLine.nextNonOption(NArgName.of("Right")).get().image();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        NSecurityManager.of().removeRepositoryPermissions(user, repository.getUuid(), a);
+                                        NSecurityManager.of().removeRepositoryPermissions(user, repository.uuid(), a);
                                     } else {
                                         NSecurityManager.of().updateUser(
                                                 NSecurityManager.of().findUser(user).get()
@@ -290,7 +290,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                         if (cmdLine.isExecMode()) {
                                             if (repository != null) {
                                                 NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().findRepositoryAccess(
-                                                                user, repository.getUuid()).get()
+                                                                user, repository.uuid()).get()
                                                         .toSpec()
                                                         .setRemoteUserName(a)
                                                         .setRemoteCredential(ss)
@@ -330,7 +330,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             default:
-                                cmdLine.setCommandName("config edit user").throwUnexpectedArgument();
+                                cmdLine.commandName("config edit user").throwUnexpectedArgument();
                                 break;
                         }
                     }

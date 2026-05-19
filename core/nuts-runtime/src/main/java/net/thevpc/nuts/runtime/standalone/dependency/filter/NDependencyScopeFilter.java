@@ -50,7 +50,7 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        return scopes.isEmpty() || scopes.contains(NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API));
+        return scopes.isEmpty() || scopes.contains(NDependencyScope.parse(dependency.scope()).orElse(NDependencyScope.API));
     }
 
     @Override

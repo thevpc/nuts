@@ -40,15 +40,15 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
         switch (event.getState()) {
             case START: {
                 bar = CProgressBar.of();
-                this.out = event.getSession().getTerminal().err();
+                this.out = event.session().getTerminal().err();
                 this.logger= NLog.of(TraceNProgressListener.class);
-                if (event.getSession().isPlainOut()) {
+                if (event.session().isPlainOut()) {
                     onProgress0(event, false);
                 }
                 return true;
             }
             case COMPLETE: {
-                if (event.getSession().isPlainOut()) {
+                if (event.session().isPlainOut()) {
                     boolean b = onProgress0(event, true);
                     out.resetLine();
                     return b;
@@ -57,7 +57,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
                 return false;
             }
             default: {
-                if (event.getSession().isPlainOut()) {
+                if (event.session().isPlainOut()) {
                     return onProgress0(event, false);
                 }
                 return false;
@@ -68,7 +68,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
     public boolean onProgress0(NProgressEvent event, boolean end) {
         if (!optionsProcessed) {
             optionsProcessed = true;
-            options = event.getSession().callWith(()->ProgressOptions.of());
+            options = event.session().callWith(()->ProgressOptions.of());
         }
         double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
         if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {

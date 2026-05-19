@@ -1,29 +1,41 @@
 package net.thevpc.nuts.artifact;
 
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.util.List;
 import java.util.Map;
 
 public interface NDescriptorContributor {
-    String getId();
+    @NGetter
+    String id();
 
-    String getName();
+    @NGetter
+    String name();
 
-    String getUrl();
+    @NGetter
+    String url();
 
-    String getEmail();
+    @NGetter
+    String email();
 
-    List<String> getRoles();
+    @NGetter
+    List<String> roles();
 
-    String getTimezone();
+    @NGetter
+    String timezone();
 
-    List<String> getIcons();
+    @NGetter
+    List<String> icons();
 
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
 
-    String getComments();
+    @NGetter
+    String comments();
 
-    NDescriptorOrganization getOrganization();
+    @NGetter
+    NDescriptorOrganization organization();
 
     NDescriptorContributor readOnly();
 

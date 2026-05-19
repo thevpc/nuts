@@ -48,7 +48,7 @@ public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        List<String> current = dependency.getCondition().getArch();
+        List<String> current = dependency.condition().arch();
         boolean empty = true;
         if (current != null) {
             for (String e : current) {

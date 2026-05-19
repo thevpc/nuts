@@ -140,7 +140,7 @@ public class DefaultNWorkspaceExtensionModel {
         if (version == null) {
             version = workspace.getApiVersion().toString();
         }
-        NId id = workspace.getApiId().builder().setVersion(version).build();
+        NId id = workspace.getApiId().builder().version(version).build();
         return findExtensions(id, "extensions");
     }
 
@@ -258,20 +258,20 @@ public class DefaultNWorkspaceExtensionModel {
         );
 
         // discover runtime path
-        if (!bOptions.getRuntimeBootDependencyNode().isBlank()) {
+        if (!bOptions.runtimeBootDependencyNode().isBlank()) {
             objectFactory.discoverTypes(
-                    bOptions.getRuntimeBootDependencyNode().get().getId(),
-                    bOptions.getRuntimeBootDependencyNode().get().getURL(),
+                    bOptions.runtimeBootDependencyNode().get().id(),
+                    bOptions.runtimeBootDependencyNode().get().url(),
                     bootClassLoader
             );
         }
 
         // discover extensions path
-        for (NClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
-            if (idurl.getId() != null) {
+        for (NClassLoaderNode idurl : bOptions.extensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
+            if (idurl.id() != null) {
                 objectFactory.discoverTypes(
-                        idurl.getId(),
-                        idurl.getURL(),
+                        idurl.id(),
+                        idurl.url(),
                         bootClassLoader
                 );
             }
@@ -327,7 +327,7 @@ public class DefaultNWorkspaceExtensionModel {
 //    }
     public Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader) {
         URL url = NFetch.of(id)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader);
     }
@@ -449,7 +449,7 @@ public class DefaultNWorkspaceExtensionModel {
         boolean someUpdates = false;
         for (NId extension : extensions) {
             if (extension != null) {
-                extension = extension.builder().setVersion("").build();
+                extension = extension.builder().version("").build();
                 if (loadedExtensionIds.contains(extension)) {
                     //
                 } else if (unloadedExtensions.contains(extension)) {
@@ -459,14 +459,14 @@ public class DefaultNWorkspaceExtensionModel {
                 } else {
                     //load extension
                     NDefinition def = NSearch.of()
-                            .addId(extension).setTargetApiVersion(workspace.getApiVersion())
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .addId(extension).targetApiVersion(workspace.getApiVersion())
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .latest(true)
                             .getResultDefinitions().findFirst().orNull();
                     if (def == null || def.content().isNotPresent()) {
                         throw new NIllegalArgumentException(NMsg.ofC("extension not found: %s", extension));
                     }
-                    if (def.descriptor().getIdType() != NIdType.EXTENSION) {
+                    if (def.descriptor().idType() != NIdType.EXTENSION) {
                         throw new NIllegalArgumentException(NMsg.ofC("not an extension: %s", extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
@@ -495,8 +495,8 @@ public class DefaultNWorkspaceExtensionModel {
     private void updateLoadedExtensionURLs() {
         loadedExtensionURLs.clear();
         for (NDefinition def : NSearch.of().addIds(loadedExtensionIds.toArray(new NId[0]))
-                .setTargetApiVersion(workspace.getApiVersion())
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .targetApiVersion(workspace.getApiVersion())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .latest(true)
                 .getResultDefinitions().toList()) {
             loadedExtensionURLs.add(def.content().flatMap(NPath::toURL).orNull());
@@ -572,7 +572,7 @@ public class DefaultNWorkspaceExtensionModel {
             NDefinition nDefinitions = NSearch.of()
                     .copyFrom(options)
                     .addId(id)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilters.of().byRunnable())
                     //
                     .latest(true)
                     .getResultDefinitions().findFirst().get();
@@ -582,7 +582,7 @@ public class DefaultNWorkspaceExtensionModel {
             ec.id = ecId.toString();
             ec.path = nDefinitions.content().map(x -> x.toString()).orNull();
             node = NClassLoaderUtils.definitionToClassLoaderNode(nDefinitions, null);
-            ec.dependencies = node.getDependencies().stream().map(x -> toExtensionCacheNode(x))
+            ec.dependencies = node.dependencies().stream().map(x -> toExtensionCacheNode(x))
                     .filter(Objects::nonNull)
                     .toArray(ExtensionCacheNode[]::new);
             NElementWriter.ofJson().write(ec, cacheFile);
@@ -635,9 +635,9 @@ public class DefaultNWorkspaceExtensionModel {
 
     private ExtensionCacheNode toExtensionCacheNode(NClassLoaderNode x) {
         return new ExtensionCacheNode(
-                x.getId().longName(),
-                x.getURL() == null ? null : x.getURL().toString(),
-                x.getDependencies().stream().map(y -> toExtensionCacheNode(y)).toArray(ExtensionCacheNode[]::new)
+                x.id().longName(),
+                x.url() == null ? null : x.url().toString(),
+                x.dependencies().stream().map(y -> toExtensionCacheNode(y)).toArray(ExtensionCacheNode[]::new)
         );
     }
 

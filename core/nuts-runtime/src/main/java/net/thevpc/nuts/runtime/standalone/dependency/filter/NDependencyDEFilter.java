@@ -48,7 +48,7 @@ public class NDependencyDEFilter extends AbstractDependencyFilter {
         if (accepted.isEmpty()) {
             return true;
         }
-        List<String> current = dependency.getCondition().getDesktopEnvironment();
+        List<String> current = dependency.condition().desktopEnvironment();
         if (current != null) {
             List<NDesktopEnvironmentFamily> currentFamilies = current.stream().map(e -> {
                 if (!e.isEmpty()) {

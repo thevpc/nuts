@@ -81,7 +81,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
 
 //        String linkName = null;
 //        boolean env = false;
-        cmdLine.setCommandName("settings add launcher");
+        cmdLine.commandName("settings add launcher");
         NSession session=NSession.of();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
@@ -200,7 +200,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.matcher().matchTrueFlag((v) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId resultId : NSearch.of()
-                                .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true)
+                                .definitionFilter(NDefinitionFilters.of().byInstalled(true)
                         ).getResultIds()) {
                             d.idsToInstall.add(resultId.longName());
                             d.missingAnyArgument = false;

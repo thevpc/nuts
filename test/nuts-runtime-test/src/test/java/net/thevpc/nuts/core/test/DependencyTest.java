@@ -54,11 +54,11 @@ public class DependencyTest {
     @Test
     public void test2() {
         DefaultNDependencyBuilder b=new DefaultNDependencyBuilder();
-        b.setId(NId.get("a:b").get());
+        b.id(NId.get("a:b").get());
         DefaultNEnvConditionBuilder cond = new DefaultNEnvConditionBuilder();
-        cond.setProfile(new ArrayList<>(Arrays.asList("felix")));
+        cond.profile(new ArrayList<>(Arrays.asList("felix")));
         cond.setProperties(NMaps.of("a","b"));
-        b.setCondition(cond);
+        b.condition(cond);
         System.out.println(b);
     }
 

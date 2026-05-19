@@ -142,7 +142,7 @@ public interface NCmdLineConfigurable {
      * @return {@code this} instance
      */
     static <T> T configure(NCmdLineConfigurable c, boolean skipUnsupported, String[] args, String commandName) {
-        c.configure(skipUnsupported, NCmdLine.of(args).setCommandName(commandName));
+        c.configure(skipUnsupported, NCmdLine.of(args).commandName(commandName));
         return (T) c;
     }
 }

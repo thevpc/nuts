@@ -87,7 +87,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
 
     @Override
     public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode) {
-        String groups = config().getGroups();
+        String groups = config().groups();
         if (NBlankable.isBlank(groups)) {
             return true;
         }
@@ -97,7 +97,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     @Override
     public String toString() {
         NRepositoryConfigManagerExt c = NRepositoryConfigManagerExt.of(config());
-        String name = getName();
+        String name = name();
         String storePath = null;
         NRepositoryConfigModel model = c.getModel();
         NRepositoryLocation loc = model==null?null:model.getLocation();
@@ -144,7 +144,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     protected void traceMessage(NFetchMode fetchMode, Level lvl, NId id, NMsgIntent tracePhase, String title, long startTime, NMsg extraMessage) {
-        NLogUtils.traceMessage(NLog.of(AbstractNRepositoryBase.class), lvl, getName(), fetchMode, id, tracePhase, title, startTime, extraMessage);
+        NLogUtils.traceMessage(NLog.of(AbstractNRepositoryBase.class), lvl, name(), fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 
     @Override
@@ -191,7 +191,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     public NPath getIdRemotePath(NId id) {
-        return config().getLocationPath().resolve(getIdRelativePath(id));
+        return config().locationPath().resolve(getIdRelativePath(id));
     }
 
     protected NPath getIdRelativePath(NId id) {

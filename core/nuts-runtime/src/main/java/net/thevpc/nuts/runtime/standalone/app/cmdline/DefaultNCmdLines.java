@@ -29,16 +29,16 @@ public class DefaultNCmdLines implements NCmdLines {
     }
 
     @Override
-    public NCmdLines setLenient(boolean lenient) {
+    public NCmdLines lenient(boolean lenient) {
         this.lenient = lenient;
         return this;
     }
 
-    public NShellFamily getShellFamily() {
+    public NShellFamily shellFamily() {
         return family;
     }
 
-    public NCmdLines setShellFamily(NShellFamily family) {
+    public NCmdLines shellFamily(NShellFamily family) {
         this.family = family == null ? NShellFamily.getCurrent() : family;
         return this;
     }
@@ -58,7 +58,7 @@ public class DefaultNCmdLines implements NCmdLines {
     }
 
     private String[] parseCmdLineArr(String line) {
-        NShellFamily f = getShellFamily();
+        NShellFamily f = shellFamily();
         if (f == null) {
             f = NEnv.of().getShellFamily();
         }

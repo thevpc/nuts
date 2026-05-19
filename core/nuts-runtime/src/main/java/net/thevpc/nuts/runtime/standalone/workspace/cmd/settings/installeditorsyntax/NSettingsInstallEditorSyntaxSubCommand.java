@@ -66,12 +66,12 @@ public class NSettingsInstallEditorSyntaxSubCommand extends AbstractNSettingsSub
                         }
                     }
                     NSysEditorSupportCmd.of()
-                            .setSource(NPath.of("https://github.com/thevpc/nuts/raw/refs/heads/master/documentation/integration/" + mode + "-support"))
-                            .setLanguageId(mode)
-                            .setLanguageName(title)
-                            .setLanguageVersion("1.0.0")
-                            .setFileExtension(mode)
-                            .setFileName("*." + mode)
+                            .source(NPath.of("https://github.com/thevpc/nuts/raw/refs/heads/master/documentation/integration/" + mode + "-support"))
+                            .languageId(mode)
+                            .languageName(title)
+                            .languageVersion("1.0.0")
+                            .fileExtension(mode)
+                            .fileName("*." + mode)
                             .addEditorFamilies(editors.toArray(new NSysEditorFamily[0]))
                             .run();
                 }

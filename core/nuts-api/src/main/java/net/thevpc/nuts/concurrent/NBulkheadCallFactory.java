@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.util.NGetter;
+
 /**
  * Factory interface for creating and configuring {@link NBulkheadCall} instances.
  * <p>
@@ -89,7 +91,8 @@ public interface NBulkheadCallFactory {
      *
      * @return the configured store
      */
-    NBulkheadCallStore getStore();
+    @NGetter
+    NBulkheadCallStore store();
 
 
     /**
@@ -97,5 +100,6 @@ public interface NBulkheadCallFactory {
      *
      * @return the configured backend
      */
-    NBulkheadCallBackend getBackend();
+    @NGetter
+    NBulkheadCallBackend backend();
 }

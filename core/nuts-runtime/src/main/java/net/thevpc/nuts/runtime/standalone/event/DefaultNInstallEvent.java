@@ -56,17 +56,17 @@ public class DefaultNInstallEvent implements NInstallEvent {
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 
     @Override
-    public NWorkspace getWorkspace() {
-        return getSession().getWorkspace();
+    public NWorkspace workspace() {
+        return session().getWorkspace();
     }
 
     @Override
-    public NDefinition getDefinition() {
+    public NDefinition definition() {
         return definition;
     }
 

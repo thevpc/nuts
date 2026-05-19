@@ -19,6 +19,6 @@ class NRateLimitValueStoreMemory implements NRateLimitValueStore {
 
     @Override
     public void save(NRateLimitValueModel model) {
-        values.put(model.getId(), model);
+        values.put(model.id(), model);
     }
 }

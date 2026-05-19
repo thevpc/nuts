@@ -67,62 +67,62 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
         copyFrom(other);
     }
 
-    public List<String> getArch() {
+    public List<String> arch() {
         return arch;
     }
 
     @Override
-    public NEnvConditionBuilder setArch(List<String> arch) {
+    public NEnvConditionBuilder arch(List<String> arch) {
         this.arch = NReservedLangUtils.uniqueNonBlankList(arch);
         return this;
     }
 
-    public List<String> getOs() {
+    public List<String> os() {
         return os;
     }
 
     @Override
-    public NEnvConditionBuilder setOs(List<String> os) {
+    public NEnvConditionBuilder os(List<String> os) {
         this.os = NReservedLangUtils.uniqueNonBlankList(os);
         return this;
     }
 
-    public List<String> getOsDist() {
+    public List<String> osDist() {
         return osDist;
     }
 
     @Override
-    public NEnvConditionBuilder setOsDist(List<String> osDist) {
+    public NEnvConditionBuilder osDist(List<String> osDist) {
         this.osDist = NReservedLangUtils.uniqueNonBlankList(osDist);
         return this;
     }
 
-    public List<String> getPlatform() {
+    public List<String> platform() {
         return platform;
     }
 
     @Override
-    public NEnvConditionBuilder setPlatform(List<String> platform) {
+    public NEnvConditionBuilder platform(List<String> platform) {
         this.platform = NReservedLangUtils.uniqueNonBlankList(platform);
         return this;
     }
 
-    public List<String> getDesktopEnvironment() {
+    public List<String> desktopEnvironment() {
         return desktopEnvironment;
     }
 
     @Override
-    public NEnvConditionBuilder setDesktopEnvironment(List<String> desktopEnvironment) {
+    public NEnvConditionBuilder desktopEnvironment(List<String> desktopEnvironment) {
         this.desktopEnvironment = NReservedLangUtils.uniqueNonBlankList(desktopEnvironment);
         return this;
     }
 
-    public List<String> getProfiles() {
+    public List<String> profiles() {
         return profiles;
     }
 
     @Override
-    public NEnvConditionBuilder setProfile(List<String> profiles) {
+    public NEnvConditionBuilder profile(List<String> profiles) {
         this.profiles = profiles;
         return this;
     }
@@ -130,13 +130,13 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     @Override
     public NEnvConditionBuilder copyFrom(NEnvCondition other) {
         if (other != null) {
-            setArch(mergeLists(getArch(), other.getArch()));
-            setOs(mergeLists(getOs(), other.getOs()));
-            setOsDist(mergeLists(getOsDist(), other.getOsDist()));
-            setPlatform(mergeLists(getPlatform(), other.getPlatform()));
-            setDesktopEnvironment(mergeLists(getDesktopEnvironment(), other.getDesktopEnvironment()));
-            setProfile(mergeLists(getProfiles(), other.getProfiles()));
-            setProperties(mergeMaps(getProperties(), other.getProperties()));
+            arch(mergeLists(arch(), other.arch()));
+            os(mergeLists(os(), other.os()));
+            osDist(mergeLists(osDist(), other.osDist()));
+            platform(mergeLists(platform(), other.platform()));
+            desktopEnvironment(mergeLists(desktopEnvironment(), other.desktopEnvironment()));
+            profile(mergeLists(profiles(), other.profiles()));
+            setProperties(mergeMaps(properties(), other.properties()));
         }
         return this;
     }
@@ -144,26 +144,26 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     @Override
     public NEnvConditionBuilder copyFrom(NEnvConditionBuilder other) {
         if (other != null) {
-            setArch(mergeLists(getArch(), other.getArch()));
-            setOs(mergeLists(getOs(), other.getOs()));
-            setOsDist(mergeLists(getOsDist(), other.getOsDist()));
-            setPlatform(mergeLists(getPlatform(), other.getPlatform()));
-            setDesktopEnvironment(mergeLists(getDesktopEnvironment(), other.getDesktopEnvironment()));
-            setProfile(mergeLists(getProfiles(), other.getProfiles()));
-            setProperties(mergeMaps(getProperties(), other.getProperties()));
+            arch(mergeLists(arch(), other.arch()));
+            os(mergeLists(os(), other.os()));
+            osDist(mergeLists(osDist(), other.osDist()));
+            platform(mergeLists(platform(), other.platform()));
+            desktopEnvironment(mergeLists(desktopEnvironment(), other.desktopEnvironment()));
+            profile(mergeLists(profiles(), other.profiles()));
+            setProperties(mergeMaps(properties(), other.properties()));
         }
         return this;
     }
 
     public NEnvConditionBuilder copyFrom(NBootEnvCondition other) {
         if (other != null) {
-            setArch(mergeLists(getArch(), other.getArch()));
-            setOs(mergeLists(getOs(), other.getOs()));
-            setOsDist(mergeLists(getOsDist(), other.getOsDist()));
-            setPlatform(mergeLists(getPlatform(), other.getPlatform()));
-            setDesktopEnvironment(mergeLists(getDesktopEnvironment(), other.getDesktopEnvironment()));
-            setProfile(mergeLists(getProfiles(), other.getProfiles()));
-            setProperties(mergeMaps(getProperties(), other.getProperties()));
+            arch(mergeLists(arch(), other.getArch()));
+            os(mergeLists(os(), other.getOs()));
+            osDist(mergeLists(osDist(), other.getOsDist()));
+            platform(mergeLists(platform(), other.getPlatform()));
+            desktopEnvironment(mergeLists(desktopEnvironment(), other.getDesktopEnvironment()));
+            profile(mergeLists(profiles(), other.getProfiles()));
+            setProperties(mergeMaps(properties(), other.getProperties()));
         }
         return this;
     }
@@ -193,12 +193,12 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder clear() {
-        setArch(new ArrayList<>());
-        setOs(new ArrayList<>());
-        setOsDist(new ArrayList<>());
-        setPlatform(new ArrayList<>());
-        setDesktopEnvironment(new ArrayList<>());
-        setProfile(new ArrayList<>());
+        arch(new ArrayList<>());
+        os(new ArrayList<>());
+        osDist(new ArrayList<>());
+        platform(new ArrayList<>());
+        desktopEnvironment(new ArrayList<>());
+        profile(new ArrayList<>());
         setProperties(new LinkedHashMap<>());
         return this;
     }
@@ -211,9 +211,9 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     @Override
     public NEnvCondition build() {
         return new DefaultNEnvCondition(
-                getArch(), getOs(), getOsDist(), getPlatform(),
-                getDesktopEnvironment(),
-                getProfiles(),
+                arch(), os(), osDist(), platform(),
+                desktopEnvironment(),
+                profiles(),
                 properties
         );
     }
@@ -247,7 +247,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
@@ -366,13 +366,13 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
             List<String> c_profiles = new ArrayList<>(this.profiles); //defaults to empty;
             Map<String, String> c_properties = new HashMap<>(this.properties);
 
-            List<String> o_arch = new ArrayList<>(other.getArch()); //defaults to empty
-            List<String> o_os = new ArrayList<>(other.getOs()); //defaults to empty;
-            List<String> o_osDist = new ArrayList<>(other.getOsDist()); //defaults to empty;
-            List<String> o_platform = new ArrayList<>(other.getPlatform()); //defaults to empty;
-            List<String> o_desktopEnvironment = new ArrayList<>(other.getDesktopEnvironment()); //defaults to empty;
-            List<String> o_profiles = new ArrayList<>(other.getProfiles()); //defaults to empty;
-            Map<String, String> o_properties = new HashMap<>(other.getProperties());
+            List<String> o_arch = new ArrayList<>(other.arch()); //defaults to empty
+            List<String> o_os = new ArrayList<>(other.os()); //defaults to empty;
+            List<String> o_osDist = new ArrayList<>(other.osDist()); //defaults to empty;
+            List<String> o_platform = new ArrayList<>(other.platform()); //defaults to empty;
+            List<String> o_desktopEnvironment = new ArrayList<>(other.desktopEnvironment()); //defaults to empty;
+            List<String> o_profiles = new ArrayList<>(other.profiles()); //defaults to empty;
+            Map<String, String> o_properties = new HashMap<>(other.properties());
 
             this.arch.clear();
             this.arch.addAll(intersectIds("arch", c_arch, o_arch));

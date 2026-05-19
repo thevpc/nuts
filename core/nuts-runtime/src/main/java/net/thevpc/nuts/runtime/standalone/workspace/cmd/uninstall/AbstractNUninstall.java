@@ -95,7 +95,7 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> args() {
         return NCollections.unmodifiableList(args);
     }
 
@@ -116,6 +116,23 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
     }
 
     @Override
+    public NUninstall args(List<String> args) {
+        if (this.args == null) {
+            this.args = new ArrayList<>();
+        } else {
+            this.args.clear();
+        }
+        if (args != null) {
+            for (String arg : args) {
+                if (arg != null) {
+                    this.args.add(arg);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NUninstall addArgs(Collection<String> args) {
         if (this.args == null) {
             this.args = new ArrayList<>();
@@ -131,7 +148,7 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return NCollections.unmodifiableList(ids);
     }
 
@@ -141,7 +158,7 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
     }
 
     @Override
-    public NUninstall setErase(boolean erase) {
+    public NUninstall erase(boolean erase) {
         this.erase = erase;
         return this;
     }
@@ -155,7 +172,7 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
         switch (aa.key()) {
             case "-e":
             case "--erase": {
-                cmdLine.matcher().matchFlag((v) -> this.setErase(v.booleanValue())).anyMatch();
+                cmdLine.matcher().matchFlag((v) -> this.erase(v.booleanValue())).anyMatch();
                 return true;
             }
             case "-g":

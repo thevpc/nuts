@@ -105,10 +105,10 @@ public class MavenRepositoryFolderHelper {
     public Iterator<NId> searchVersions(NId id, final NDefinitionFilter filter, boolean deep) {
         String singleVersion = id.version().asSingleValue().orNull();
         if (singleVersion != null) {
-            NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
+            NId id1 = id.builder().version(singleVersion).faceDescriptor().build();
             NPath localFile = getIdLocalFile(id1);
             if (localFile != null && localFile.isRegularFile()) {
-                return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
+                return Collections.singletonList(id.builder().repository(repo == null ? null : repo.name()).build()).iterator();
             }
             return null;
         }
@@ -121,7 +121,7 @@ public class MavenRepositoryFolderHelper {
         return new NIdPathIterator(repo, rootPath.normalize(), folder, filter, new NIdPathIteratorBase() {
             @Override
             public NWorkspace getWorkspace() {
-                return repo.getWorkspace();
+                return repo.workspace();
             }
 
             @Override
@@ -152,7 +152,7 @@ public class MavenRepositoryFolderHelper {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory).withDescription(NDescribables.ofDesc("isDirectory"))
                     .toArray(NPath[]::new);
             for (NPath versionFolder : versionFolders) {
-                NId id2 = id.builder().setVersion(versionFolder.name()).build();
+                NId id2 = id.builder().version(versionFolder.name()).build();
                 if (bestId == null || id2.version().compareTo(bestId.version()) > 0) {
                     bestId = id2;
                 }

@@ -27,6 +27,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NGetter;
 
 import java.time.Instant;
 
@@ -43,22 +44,26 @@ public interface NInstallInformation {
      *
      * @return installation date
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * installation date
      *
      * @return installation date
      */
-    Instant getCreatedInstant();
+    @NGetter
+    Instant createdInstant();
 
-    Instant getLastModifiedInstant();
+    @NGetter
+    Instant lastModifiedInstant();
 
     /**
      * true when the installed artifact is default version
      *
      * @return true when the installed artifact is default version
      */
+    @NGetter
     boolean isDefaultVersion();
 
     /**
@@ -66,11 +71,14 @@ public interface NInstallInformation {
      *
      * @return installation formation path
      */
-    NPath getInstallFolder();
+    @NGetter
+    NPath installFolder();
 
 
+    @NGetter
     boolean isWasInstalled();
 
+    @NGetter
     boolean isWasRequired();
 
     /**
@@ -78,31 +86,40 @@ public interface NInstallInformation {
      *
      * @return the user responsible of the installation
      */
-    String getInstallUser();
+    @NGetter
+    String installUser();
 
     /**
      * return install status
      *
      * @return install status
      */
-    NInstallStatus getInstallStatus();
+    @NGetter
+    NInstallStatus installStatus();
 
     /**
      * return true if installed primary or dependency
      *
      * @return true if installed primary or dependency
      */
+    @NGetter
     boolean isInstalledOrRequired();
 
-    String getSourceRepositoryName();
+    @NGetter
+    String sourceRepositoryName();
 
-    String getSourceRepositoryUUID();
+    @NGetter
+    String sourceRepositoryUUID();
 
+    @NGetter
     boolean isJustReInstalled();
 
+    @NGetter
     boolean isJustInstalled();
 
+    @NGetter
     boolean isJustReRequired();
 
+    @NGetter
     boolean isJustRequired();
 }

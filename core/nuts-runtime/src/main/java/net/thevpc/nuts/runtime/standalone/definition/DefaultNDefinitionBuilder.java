@@ -89,18 +89,18 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
 
     public DefaultNDefinitionBuilder(DefaultNDefinitionBuilder other) {
         if (other != null) {
-            this.descriptor = other.getDescriptor();
-            this.id = other.getId();
-            this.repositoryUuid = other.getRepositoryUuid();
-            this.repositoryName = other.getRepositoryName();
+            this.descriptor = other.descriptor();
+            this.id = other.id();
+            this.repositoryUuid = other.repositoryUuid();
+            this.repositoryName = other.repositoryName();
 
-            this.content = other.getContent().orNull();
-            this.installInformation = other.getInstallInformation().orNull();
-            this.effectiveDescriptor = other.getEffectiveDescriptor().orNull();
-            this.dependencies = other.getDependencies().orNull();
-            this.apiId = other.getApiId();
+            this.content = other.content().orNull();
+            this.installInformation = other.installInformation().orNull();
+            this.effectiveDescriptor = other.effectiveDescriptor().orNull();
+            this.dependencies = other.dependencies().orNull();
+            this.apiId = other.apiId();
             this.dependency = other.getDependency();
-            this.effectiveFlags = other.getEffectiveFlags().orNull();
+            this.effectiveFlags = other.effectiveFlags().orNull();
         }
     }
 
@@ -123,23 +123,23 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
     }
 
     @Override
-    public String getRepositoryUuid() {
+    public String repositoryUuid() {
         return repositoryUuid;
     }
 
     @Override
-    public String getRepositoryName() {
+    public String repositoryName() {
         return repositoryName;
     }
 
     @Override
-    public NDefinitionBuilder setId(NId id) {
+    public NDefinitionBuilder id(NId id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
@@ -149,7 +149,7 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
     }
 
     @Override
-    public NDescriptor getDescriptor() {
+    public NDescriptor descriptor() {
         return descriptor;
     }
 
@@ -167,33 +167,33 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
     }
 
     @Override
-    public NOptional<NPath> getContent() {
-        return NOptional.of(content, () -> NMsg.ofC("content not found for id %s", getId()));
+    public NOptional<NPath> content() {
+        return NOptional.of(content, () -> NMsg.ofC("content not found for id %s", id()));
     }
 
     @Override
-    public NOptional<NDescriptor> getEffectiveDescriptor() {
-        return NOptional.of(effectiveDescriptor, () -> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.", getId()));
+    public NOptional<NDescriptor> effectiveDescriptor() {
+        return NOptional.of(effectiveDescriptor, () -> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.", id()));
     }
 
     @Override
-    public NOptional<NInstallInformation> getInstallInformation() {
-        return NOptional.of(installInformation, () -> NMsg.ofC("unable to get install information for id %s.", getId()));
+    public NOptional<NInstallInformation> installInformation() {
+        return NOptional.of(installInformation, () -> NMsg.ofC("unable to get install information for id %s.", id()));
     }
 
     @Override
-    public NOptional<NDependencies> getDependencies() {
-        return NOptional.of(dependencies, () -> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.", getId()));
+    public NOptional<NDependencies> dependencies() {
+        return NOptional.of(dependencies, () -> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.", id()));
     }
 
     @Override
-    public NDefinitionBuilder setContent(NPath content) {
+    public NDefinitionBuilder content(NPath content) {
         this.content = content;
         return this;
     }
 
     @Override
-    public NDefinitionBuilder setDescriptor(NDescriptor descriptor) {
+    public NDefinitionBuilder descriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
         return this;
     }
@@ -205,8 +205,8 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
         if (!(n2 instanceof NDefinitionBuilder)) {
             return -1;
         }
-        NId o1 = getId();
-        NId o2 = n2.getId();
+        NId o1 = id();
+        NId o2 = n2.id();
         if (o1 == null || o2 == null) {
             if (o1 == o2) {
                 return 0;
@@ -238,61 +238,61 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
             return false;
         }
         final NDefinitionBuilder other = (NDefinitionBuilder) obj;
-        if (!Objects.equals(this.id, other.getId())) {
+        if (!Objects.equals(this.id, other.id())) {
             return false;
         }
         return true;
     }
 
     @Override
-    public NDefinitionBuilder setEffectiveDescriptor(NDescriptor effectiveDescriptor) {
+    public NDefinitionBuilder effectiveDescriptor(NDescriptor effectiveDescriptor) {
         this.effectiveDescriptor = effectiveDescriptor;
         return this;
     }
 
     @Override
-    public NDefinitionBuilder setInstallInformation(NInstallInformation install) {
+    public NDefinitionBuilder installInformation(NInstallInformation install) {
         this.installInformation = install;
         return this;
     }
 
     @Override
-    public NDefinitionBuilder setDependencies(NDependencies dependencies) {
+    public NDefinitionBuilder dependencies(NDependencies dependencies) {
         this.dependencies = dependencies;
         return this;
     }
 
     @Override
-    public NDefinitionBuilder setApiId(NId apiId) {
+    public NDefinitionBuilder apiId(NId apiId) {
         this.apiId = apiId;
         return this;
     }
 
     @Override
-    public NId getApiId() {
+    public NId apiId() {
         return apiId;
     }
 
     @Override
-    public NDefinitionBuilder setRepositoryUuid(String repositoryUuid) {
+    public NDefinitionBuilder repositoryUuid(String repositoryUuid) {
         this.repositoryUuid = repositoryUuid;
         return this;
     }
 
     @Override
-    public NDefinitionBuilder setRepositoryName(String repositoryName) {
+    public NDefinitionBuilder repositoryName(String repositoryName) {
         this.repositoryName = repositoryName;
         return this;
     }
 
     @Override
-    public NDefinitionBuilder setEffectiveFlags(Set<NDescriptorFlag> effectiveFlags) {
+    public NDefinitionBuilder effectiveFlags(Set<NDescriptorFlag> effectiveFlags) {
         this.effectiveFlags = effectiveFlags;
         return this;
     }
 
     @Override
-    public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
-        return NOptional.of(effectiveFlags, () -> NMsg.ofC("unable to get effectiveFlags for id %s.", getId()));
+    public NOptional<Set<NDescriptorFlag>> effectiveFlags() {
+        return NOptional.of(effectiveFlags, () -> NMsg.ofC("unable to get effectiveFlags for id %s.", id()));
     }
 }

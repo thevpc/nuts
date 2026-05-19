@@ -24,10 +24,12 @@
  */
 package net.thevpc.nuts.reflect;
 
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -36,31 +38,43 @@ import java.util.function.Function;
  */
 public interface NReflectType {
 
-    NReflectRepository getRepository();
+    @NGetter
+    NReflectRepository repository();
 
-    NReflectPropertyAccessStrategy getAccessStrategy();
+    @NGetter
+    Set<NReflectPropertyAccessStrategy> accessStrategies();
 
-    NReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
+    @NGetter
+    NReflectPropertyDefaultValueStrategy defaultValueStrategy();
 
-    List<NReflectProperty> getDeclaredProperties();
+    @NGetter
+    List<NReflectProperty> declaredProperties();
 
-    String getName();
+    @NGetter
+    String name();
 
-    Type getJavaType();
+    @NGetter
+    Type javaType();
+
+    NOptional<Class<?>> javaClass();
 
     boolean isInterface();
-    NReflectType getSuperType();
-    NReflectType[] getInterfaces();
+
+    @NGetter
+    NReflectType superType();
+
+    @NGetter
+    List<NReflectType> interfaces();
 
     boolean isParametrizedType();
 
     boolean isTypeVariable();
 
-    NReflectType[] getTypeParameters();
+    List<NReflectType> typeParameters();
 
     NOptional<NReflectType> getActualTypeArgument(NReflectType type);
 
-    NReflectType[] getActualTypeArguments();
+    List<NReflectType> actualTypeArguments();
 
     NReflectType replaceVars(Function<NReflectType, NReflectType> mapper);
 
@@ -69,7 +83,7 @@ public interface NReflectType {
      *
      * @return
      */
-    List<NReflectMethod> getMethods();
+    List<NReflectMethod> methods();
 
     NOptional<NReflectMethod> getMethod(String name, NReflectSignature signature);
 
@@ -82,9 +96,9 @@ public interface NReflectType {
      *
      * @return
      */
-    List<NReflectMethod> getDeclaredMethods();
+    List<NReflectMethod> declaredMethods();
 
-    List<NReflectProperty> getProperties();
+    List<NReflectProperty> properties();
 
     NOptional<NReflectProperty> getProperty(String name);
 
@@ -96,25 +110,24 @@ public interface NReflectType {
 
     boolean hasSpecialConstructor();
 
-    NReflectType getRawType();
+    NReflectType rawType();
 
     Object newInstance();
 
     boolean isArrayType();
 
-    NReflectType getComponentType();
+    NReflectType componentType();
 
     NReflectType toArray();
 
     boolean isPrimitive();
 
-    NOptional<NReflectType> getBoxedType();
+    NOptional<NReflectType> boxedType();
 
-    NOptional<NReflectType> getPrimitiveType();
+    NOptional<NReflectType> primitiveType();
 
-    Object getDefaultValue();
+    Object defaultValue();
 
     boolean isDefaultValue(Object value);
 
-    NOptional<Class<?>> asJavaClass();
 }

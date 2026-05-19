@@ -171,7 +171,7 @@ public class NSignatureMapImpl<S extends NSignature<T, ?>, T, V> implements NSig
                 ValueWithDistance<V> vd = find((S) sig.set(sc, i), distance + 2);
                 bestResolver.add(vd);
             }
-            T[] superInterfaces = domain.getInterfaces(c);
+            List<T> superInterfaces = domain.getInterfaces(c);
             for (T si : superInterfaces) {
                 ValueWithDistance<V> vd = find((S) sig.set(si, i), distance + 2);
                 bestResolver.add(vd);

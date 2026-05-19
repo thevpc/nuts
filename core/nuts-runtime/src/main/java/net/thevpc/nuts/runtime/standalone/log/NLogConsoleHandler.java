@@ -4,7 +4,6 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.core.NSession;
@@ -45,7 +44,7 @@ public class NLogConsoleHandler implements NLogSPI {
             return false;
         }
         NSession session = NSession.of();
-        NLogConfig logConfig = NWorkspace.of().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
+        NLogConfig logConfig = NWorkspace.of().getBootOptions().logConfig().orElseGet(NLogConfig::new);
         Level sessionLogLevel = session.getLogTermLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

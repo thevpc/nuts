@@ -377,7 +377,7 @@ public abstract class NSignatureBase<T, A extends NSignature<T,?>> implements NS
             }
 
             // Add Interfaces (Weight: +10 per level to deprioritize generic interfaces)
-            T[] interfaces = d.getInterfaces(current.type);
+            List<T> interfaces = d.getInterfaces(current.type);
             if (interfaces != null) {
                 for (T itf : interfaces) {
                     if (itf != null && visited.add(itf)) {

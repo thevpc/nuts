@@ -2,6 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -41,7 +43,8 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
      *
      * @return weight value
      */
-    public float getWeight() {
+    @NGetter
+    public float weight() {
         return weight;
     }
 
@@ -51,7 +54,8 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
      * @param weight the weight value
      * @return this model for chaining
      */
-    public NWorkBalancerWorkerModel setWeight(float weight) {
+    @NSetter
+    public NWorkBalancerWorkerModel weight(float weight) {
         this.weight = weight;
         return this;
     }
@@ -62,7 +66,8 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
      *
      * @return worker name
      */
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
@@ -73,7 +78,8 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
      * @param name the worker name
      * @return this model for chaining
      */
-    public NWorkBalancerWorkerModel setName(String name) {
+    @NSetter
+    public NWorkBalancerWorkerModel name(String name) {
         this.name = name;
         return this;
     }
@@ -83,7 +89,8 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
      *
      * @return the metrics provider
      */
-    public NWorkBalancerHostLoadMetricProvider getHostLoadMetricsProvider() {
+    @NGetter
+    public NWorkBalancerHostLoadMetricProvider hostLoadMetricsProvider() {
         return hostLoadMetricsProvider;
     }
 
@@ -93,7 +100,8 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
      * @param hostLoadMetricsProvider the metrics provider
      * @return this model for chaining
      */
-    public NWorkBalancerWorkerModel setHostLoadMetricsProvider(NWorkBalancerHostLoadMetricProvider hostLoadMetricsProvider) {
+    @NSetter
+    public NWorkBalancerWorkerModel hostLoadMetricsProvider(NWorkBalancerHostLoadMetricProvider hostLoadMetricsProvider) {
         this.hostLoadMetricsProvider = hostLoadMetricsProvider;
         return this;
     }
@@ -104,7 +112,8 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
      *
      * @return options map (may be null)
      */
-    public Map<String, NElement> getOptions() {
+    @NGetter
+    public Map<String, NElement> options() {
         return options;
     }
 
@@ -114,7 +123,8 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
      * @param options options map
      * @return this model for chaining
      */
-    public NWorkBalancerWorkerModel setOptions(Map<String, NElement> options) {
+    @NSetter
+    public NWorkBalancerWorkerModel options(Map<String, NElement> options) {
         this.options = options;
         return this;
     }

@@ -5,6 +5,8 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NOsServiceType;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Map;
 
@@ -13,37 +15,54 @@ public interface NInstallSvcCmd extends NCmdLineConfigurable, NComponent{
         return NExtensions.of(NInstallSvcCmd.class);
     }
 
-    String[] getStartCommand();
+    @NGetter
+    String[] startCommand();
 
-    NInstallSvcCmd setStartCommand(String[] startCommand);
+    @NSetter
+    NInstallSvcCmd startCommand(String[] startCommand);
 
-    String[] getStopCommand();
+    @NGetter
+    String[] stopCommand();
 
-    NInstallSvcCmd setStopCommand(String[] stopCommand);
+    @NSetter
+    NInstallSvcCmd stopCommand(String[] stopCommand);
 
-    String[] getStatusCommand();
+    @NGetter
+    String[] statusCommand();
 
-    NInstallSvcCmd setStatusCommand(String[] statusCommand);
+    @NSetter
+    NInstallSvcCmd statusCommand(String[] statusCommand);
 
+    @NGetter
     boolean uninstall();
 
+    @NGetter
     boolean install();
 
-    Map<String, String> getEnv();
+    @NGetter
+    Map<String, String> env();
 
-    NInstallSvcCmd setEnv(Map<String, String> env);
+    @NSetter
+    NInstallSvcCmd env(Map<String, String> env);
 
-    NInstallSvcCmd setServiceName(String serviceName);
+    @NSetter
+    NInstallSvcCmd serviceName(String serviceName);
 
-    NInstallSvcCmd setControlCommand(String[] controlCommand);
+    @NSetter
+    NInstallSvcCmd controlCommand(String[] controlCommand);
 
-    NInstallSvcCmd setServiceType(NOsServiceType nOsServiceType);
+    @NSetter
+    NInstallSvcCmd serviceType(NOsServiceType nOsServiceType);
 
-    NInstallSvcCmd setRootDirectory(NPath rootDirectory);
+    @NSetter
+    NInstallSvcCmd rootDirectory(NPath rootDirectory);
 
-    NPath getWorkingDirectory();
+    @NGetter
+    NPath workingDirectory();
 
-    NInstallSvcCmd setWorkingDirectory(NPath dir);
+    @NSetter
+    NInstallSvcCmd workingDirectory(NPath dir);
 
-    NOsServiceType getSystemServiceType();
+    @NGetter
+    NOsServiceType systemServiceType();
 }

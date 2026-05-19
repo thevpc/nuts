@@ -1,5 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -27,7 +30,7 @@ import java.util.*;
  *
  * @since 0.8.7
  */
-public class NSagaContextModel implements Serializable , Cloneable{
+public class NSagaContextModel implements Serializable, Cloneable {
     private Deque<String> stackStepId = new ArrayDeque<>(); // IDs of nodes whose children are being iterated
     private Deque<String> stackStepGroup = new ArrayDeque<>(); // IDs of nodes whose children are being iterated
     private Deque<Integer> stackStepIndex = new ArrayDeque<>(); // index of next child to execute
@@ -39,7 +42,7 @@ public class NSagaContextModel implements Serializable , Cloneable{
     // optional: timestamps
     private long startTime;
     private long endTime;
-    private Throwable firstFailStepThrowable;
+    private Throwable firstFailStepError;
     private String firstFailStepId;
     private String firstFailStepName;
 
@@ -48,101 +51,123 @@ public class NSagaContextModel implements Serializable , Cloneable{
     public NSagaContextModel() {
     }
 
-    public String getFirstFailStepId() {
+    @NGetter
+    public String firstFailStepId() {
         return firstFailStepId;
     }
 
-    public String getFirstFailStepName() {
+    @NGetter
+    public String firstFailStepName() {
         return firstFailStepName;
     }
 
-    public NSagaContextModel setFirstFailStepName(String firstFailStepName) {
+    @NSetter
+    public NSagaContextModel firstFailStepName(String firstFailStepName) {
         this.firstFailStepName = firstFailStepName;
         return this;
     }
 
-    public NSagaContextModel setFirstFailStepId(String firstFailStepId) {
+    @NSetter
+    public NSagaContextModel firstFailStepId(String firstFailStepId) {
         this.firstFailStepId = firstFailStepId;
         return this;
     }
 
-    public Throwable getFirstFailStepThrowable() {
-        return firstFailStepThrowable;
+    @NGetter
+    public Throwable firstFailStepError() {
+        return firstFailStepError;
     }
 
-    public NSagaContextModel setFirstFailStepThrowable(Throwable firstFailStepThrowable) {
-        this.firstFailStepThrowable = firstFailStepThrowable;
+    @NSetter
+    public NSagaContextModel firstFailStepError(Throwable firstFailStepThrowable) {
+        this.firstFailStepError = firstFailStepThrowable;
         return this;
     }
 
-    public Object getLastResult() {
+    @NGetter
+    public Object lastResult() {
         return lastResult;
     }
 
-    public NSagaContextModel setLastResult(Object lastResult) {
+    @NSetter
+    public NSagaContextModel lastResult(Object lastResult) {
         this.lastResult = lastResult;
         return this;
     }
 
-    public Deque<String> getStackStepId() {
+    @NGetter
+    public Deque<String> stackStepId() {
         return stackStepId;
     }
 
-    public NSagaContextModel setStackStepId(Deque<String> stackStepId) {
+    @NSetter
+    public NSagaContextModel stackStepId(Deque<String> stackStepId) {
         this.stackStepId = stackStepId;
         return this;
     }
 
-    public Deque<String> getStackStepGroup() {
+    @NGetter
+    public Deque<String> stackStepGroup() {
         return stackStepGroup;
     }
 
-    public NSagaContextModel setStackStepGroup(Deque<String> stackStepGroup) {
+    @NSetter
+    public NSagaContextModel stackStepGroup(Deque<String> stackStepGroup) {
         this.stackStepGroup = stackStepGroup;
         return this;
     }
 
-    public Deque<Integer> getStackStepIndex() {
+    @NGetter
+    public Deque<Integer> stackStepIndex() {
         return stackStepIndex;
     }
 
-    public NSagaContextModel setStackStepIndex(Deque<Integer> stackStepIndex) {
+    @NSetter
+    public NSagaContextModel stackStepIndex(Deque<Integer> stackStepIndex) {
         this.stackStepIndex = stackStepIndex;
         return this;
     }
 
-    public NSagaStatus getStatus() {
+    @NGetter
+    public NSagaStatus status() {
         return status;
     }
 
-    public NSagaContextModel setStatus(NSagaStatus status) {
+    @NSetter
+    public NSagaContextModel status(NSagaStatus status) {
         this.status = status;
         return this;
     }
 
-    public long getStartTime() {
+    @NGetter
+    public long startTime() {
         return startTime;
     }
 
-    public NSagaContextModel setStartTime(long startTime) {
+    @NSetter
+    public NSagaContextModel startTime(long startTime) {
         this.startTime = startTime;
         return this;
     }
 
-    public long getEndTime() {
+    @NGetter
+    public long endTime() {
         return endTime;
     }
 
-    public NSagaContextModel setEndTime(long endTime) {
+    @NSetter
+    public NSagaContextModel endTime(long endTime) {
         this.endTime = endTime;
         return this;
     }
 
-    public Map<String, Object> getValues() {
+    @NGetter
+    public Map<String, Object> values() {
         return values;
     }
 
-    public NSagaContextModel setValues(Map<String, Object> values) {
+    @NSetter
+    public NSagaContextModel values(Map<String, Object> values) {
         this.values = values;
         return this;
     }
@@ -156,11 +181,13 @@ public class NSagaContextModel implements Serializable , Cloneable{
         return this.values.get(key);
     }
 
-    public Deque<String> getStepsToCompensate() {
+    @NGetter
+    public Deque<String> stepsToCompensate() {
         return stepsToCompensate;
     }
 
-    public NSagaContextModel setStepsToCompensate(Deque<String> stepsToCompensate) {
+    @NSetter
+    public NSagaContextModel stepsToCompensate(Deque<String> stepsToCompensate) {
         this.stepsToCompensate = stepsToCompensate;
         return this;
     }
@@ -173,11 +200,11 @@ public class NSagaContextModel implements Serializable , Cloneable{
         copy.stackStepId.addAll(this.stackStepId);
         copy.stackStepGroup.addAll(this.stackStepGroup);
         copy.stackStepIndex.addAll(this.stackStepIndex);
-        copy.status=status;
-        copy.startTime=startTime;
-        copy.endTime=endTime;
-        copy.firstFailStepThrowable = firstFailStepThrowable;
-        copy.lastResult=lastResult;
+        copy.status = status;
+        copy.startTime = startTime;
+        copy.endTime = endTime;
+        copy.firstFailStepError = firstFailStepError;
+        copy.lastResult = lastResult;
         return copy;
     }
 
@@ -194,7 +221,7 @@ public class NSagaContextModel implements Serializable , Cloneable{
                 ", endTime=" + endTime +
                 ", firstFailStepId=" + firstFailStepId +
                 ", firstFailStepName=" + firstFailStepName +
-                ", firstFailStepThrowable=" + firstFailStepThrowable +
+                ", firstFailStepThrowable=" + firstFailStepError +
                 ", lastResult=" + lastResult +
                 '}';
     }

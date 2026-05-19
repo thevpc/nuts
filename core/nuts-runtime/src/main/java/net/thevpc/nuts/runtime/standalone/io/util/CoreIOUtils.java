@@ -168,10 +168,10 @@ public class CoreIOUtils {
     }
 
     public static String resolveRepositoryPath(NRepositorySpec options, Path rootFolder) {
-        String loc = options.getLocation();
-        String goodName = options.getName();
+        String loc = options.location();
+        String goodName = options.name();
         if (NBlankable.isBlank(goodName)) {
-            goodName = options.getName();
+            goodName = options.name();
         }
         if (NBlankable.isBlank(goodName)) {
             if (options.isTemporary()) {

@@ -37,16 +37,16 @@ public class NDeleteFileHelper {
         if (lastBootOptions == null) {
             return 0;
         }
-        NConfirmationMode confirm = o.getConfirm().orElse(NConfirmationMode.ASK);
+        NConfirmationMode confirm = o.confirm().orElse(NConfirmationMode.ASK);
         if (confirm == NConfirmationMode.ASK
-                && o.getOutputFormat().orElse(NContentType.PLAIN) != NContentType.PLAIN) {
+                && o.outputFormat().orElse(NContentType.PLAIN) != NContentType.PLAIN) {
             throw new NExecutionException(
                     NMsg.ofPlain("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), NExecutionException.ERROR_255);
         }
         bLog.log(NMsg.ofC("delete workspace location(s) at : %s",
-                lastBootOptions.getWorkspace().orNull()
+                lastBootOptions.workspace().orNull()
         ).asFinestAlert());
         boolean force = false;
         switch (confirm) {
@@ -65,7 +65,7 @@ public class NDeleteFileHelper {
         }
         List<Path> folders = new ArrayList<>();
         if (includeRoot) {
-            folders.add(Paths.get(lastBootOptions.getWorkspace().get()));
+            folders.add(Paths.get(lastBootOptions.workspace().get()));
         }
         for (Object ovalue : locations) {
             if (ovalue != null) {
@@ -85,8 +85,8 @@ public class NDeleteFileHelper {
             }
         }
         NBootOptionsBuilder optionsCopy = o.builder();
-        if (optionsCopy.getBot().orElse(false) || !NReservedLangUtils.isGraphicalDesktopEnvironment()) {
-            optionsCopy.setGui(false);
+        if (optionsCopy.bot().orElse(false) || !NReservedLangUtils.isGraphicalDesktopEnvironment()) {
+            optionsCopy.gui(false);
         }
         return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, bLog, optionsCopy.build(), readline);
     }
@@ -108,7 +108,7 @@ public class NDeleteFileHelper {
                         headerWritten = true;
                         if (!force && !refForceAll.isForce()) {
                             if (header != null) {
-                                if (!bOptions.getBot().orElse(false)) {
+                                if (!bOptions.bot().orElse(false)) {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
@@ -138,20 +138,20 @@ public class NDeleteFileHelper {
                                             "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
                                     )).value();
                 } else {
-                    if (bOptions.getBot().orElse(false)) {
-                        if (bOptions.getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES) {
+                    if (bOptions.bot().orElse(false)) {
+                        if (bOptions.confirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES) {
                             line = "y";
                         } else {
                             throw new NIllegalArgumentException(NMsg.ofPlain("failed to delete files in --bot mode without auto confirmation"));
                         }
                     } else {
-                        if (bOptions.getGui().orElse(false)) {
+                        if (bOptions.gui().orElse(false)) {
                             line = NReservedLangUtils.inputString(
                                     NMsg.ofC("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
                                     null, readline, bLog
                             );
                         } else {
-                            NConfirmationMode cc = bOptions.getConfirm().orElse(NConfirmationMode.ASK);
+                            NConfirmationMode cc = bOptions.confirm().orElse(NConfirmationMode.ASK);
                             switch (cc) {
                                 case YES: {
                                     line = "y";

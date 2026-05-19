@@ -92,7 +92,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 return ".nuts.catalog";
             }
             case NConstants.QueryFaces.CONTENT_HASH: {
-                return getIdExtension(id.builder().setFaceContent().build()) + ".sha1";
+                return getIdExtension(id.builder().faceContent().build()) + ".sha1";
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
@@ -112,7 +112,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
         NArtifactNotFoundException nutsPathEx = null;
         try {
             InputStream stream = null;
-            NId idDesc = id.builder().setFaceDescriptor().build();
+            NId idDesc = id.builder().faceDescriptor().build();
             try {
                 NDescriptor nutsDescriptor = null;
                 byte[] bytes = null;
@@ -122,7 +122,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                     bytes = NIOUtils.loadByteArray(stream, true);
                     name = NInputSource.of(stream).metaData().name().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of()
-                            .setDescriptorStyle(NDescriptorStyle.NUTS)
+                            .descriptorStyle(NDescriptorStyle.NUTS)
                             .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json")).get();
                 } finally {
                     if (stream != null) {
@@ -138,7 +138,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         new NArtifactNotFoundException.NIdInvalidDependency[0],
                         new NArtifactNotFoundException.NIdInvalidLocation[]{
                                 new NArtifactNotFoundException.NIdInvalidLocation(
-                                        getName(),
+                                        name(),
                                         getIdRemotePath(idDesc).toString(),
                                         ex.getMessage()
                                 )
@@ -153,7 +153,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
             //now try pom file (maven!)
             InputStream stream = null;
             NPath pomURL =
-                    config().getLocationPath().resolve(
+                    config().locationPath().resolve(
                             getIdBasedir(id).resolve(
                                     getIdFilename(id, ".pom")
                             )
@@ -167,7 +167,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                     bytes = NIOUtils.loadByteArray(stream, true);
                     name = NInputSource.of(stream).metaData().name().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of()
-                            .setDescriptorStyle(NDescriptorStyle.NUTS)
+                            .descriptorStyle(NDescriptorStyle.NUTS)
                             .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")).get();
 
                 } finally {
@@ -184,10 +184,10 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         new NArtifactNotFoundException.NIdInvalidDependency[0],
                         new NArtifactNotFoundException.NIdInvalidLocation[]{
                                 new NArtifactNotFoundException.NIdInvalidLocation(
-                                        getName(), nutsPath.toString(), nutsPathEx.getMessage()
+                                        name(), nutsPath.toString(), nutsPathEx.getMessage()
                                 ),
                                 new NArtifactNotFoundException.NIdInvalidLocation(
-                                        getName(), pomURL.toString(), ex.getMessage()
+                                        name(), pomURL.toString(), ex.getMessage()
                                 )
                         },
                         ex);
@@ -206,7 +206,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 new NArtifactNotFoundException.NIdInvalidDependency[0],
                 new NArtifactNotFoundException.NIdInvalidLocation[]{
                         new NArtifactNotFoundException.NIdInvalidLocation(
-                                getName(), nutsPath.toString(), nutsPathEx.getMessage()
+                                name(), nutsPath.toString(), nutsPathEx.getMessage()
                         )
                 },
                 cause);

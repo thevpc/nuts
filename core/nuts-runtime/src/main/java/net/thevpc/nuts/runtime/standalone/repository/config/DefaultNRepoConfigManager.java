@@ -27,26 +27,26 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
 
 
     @Override
-    public String getGlobalName() {
+    public String globalName() {
         return getModel().getGlobalName();
     }
 
-    public NRepositoryRef getRepositoryRef() {
+    public NRepositoryRef repositoryRef() {
         return getModel().getRepositoryRef();
     }
 
     @Override
-    public String getType() {
+    public String type() {
         return getModel().getType();
     }
 
     @Override
-    public String getGroups() {
+    public String groups() {
         return getModel().getGroups();
     }
 
     @Override
-    public NSpeedQualifier getSpeed() {
+    public NSpeedQualifier speed() {
         return getModel().getSpeed();
     }
 
@@ -56,7 +56,7 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NRepositoryConfigManager setTemporary(boolean enabled) {
+    public NRepositoryConfigManager temporary(boolean enabled) {
         getModel().setTemporary(enabled);
         return this;
     }
@@ -67,17 +67,17 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NRepositoryLocation getLocation() {
+    public NRepositoryLocation location() {
         return getModel().getLocation();
     }
 
     @Override
-    public NPath getLocationPath() {
+    public NPath locationPath() {
         return getModel().getLocationPath();
     }
 
     @Override
-    public NPath getStoreLocation() {
+    public NPath storeLocation() {
         return getModel().getStoreLocation();
     }
 
@@ -97,12 +97,12 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public Set<String> getTags() {
+    public Set<String> tags() {
         return getModel().getTags();
     }
 
     @Override
-    public NRepositoryConfigManager setIndexEnabled(boolean enabled) {
+    public NRepositoryConfigManager indexEnabled(boolean enabled) {
         getModel().setIndexEnabled(enabled);
         return this;
     }
@@ -114,7 +114,7 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public int getDeployWeight() {
+    public int deployWeight() {
         return getModel().getDeployWeight();
     }
 
@@ -124,7 +124,7 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NRepositoryConfigManager setEnabled(boolean enabled) {
+    public NRepositoryConfigManager enabled(boolean enabled) {
         getModel().setEnabled(enabled);
         return this;
     }
@@ -157,7 +157,7 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public List<NRepository> getMirrors() {
+    public List<NRepository> mirrors() {
         return getModel().getMirrors();
     }
 
@@ -178,7 +178,7 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NStoreStrategy getStoreStrategy() {
+    public NStoreStrategy storeStrategy() {
         return getModel().getStoreStrategy();
     }
 
@@ -198,7 +198,7 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public Map<String, String> getConfigMap() {
+    public Map<String, String> configMap() {
         return model.toMap();
     }
 

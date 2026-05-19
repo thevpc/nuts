@@ -81,7 +81,7 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         writer.writeAttribute("Manifest-Version", "1.0");
 
         // Standard JAR manifest attributes
-        NId id = desc.getId();
+        NId id = desc.id();
         if (id != null) {
             if (id.version() != null && !id.version().isBlank()) {
                 writer.writeAttribute("Implementation-Version", id.version().value());
@@ -100,7 +100,7 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         }
 
         // Implementation-Vendor-Title from name
-        String name = NStringUtils.trimToNull(desc.getName());
+        String name = NStringUtils.trimToNull(desc.name());
         if (name != null) {
             writer.writeAttribute("Implementation-Vendor-Title", name);
         }
@@ -120,55 +120,55 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
             writer.writeAttribute("Nuts-Name", name);
         }
 
-        String description = NStringUtils.trimToNull(desc.getDescription());
+        String description = NStringUtils.trimToNull(desc.description());
         if (description != null) {
             writer.writeAttribute("Nuts-Description", description);
         }
 
-        String genericName = NStringUtils.trimToNull(desc.getGenericName());
+        String genericName = NStringUtils.trimToNull(desc.genericName());
         if (genericName != null) {
             writer.writeAttribute("Nuts-Generic-Name", genericName);
         }
 
-        String packaging = NStringUtils.trimToNull(desc.getPackaging());
+        String packaging = NStringUtils.trimToNull(desc.packaging());
         if (packaging != null) {
             writer.writeAttribute("Nuts-Packaging", packaging);
         }
 
         // Flags
-        if (desc.getFlags() != null && !desc.getFlags().isEmpty()) {
-            String flags = desc.getFlags().stream()
+        if (desc.flags() != null && !desc.flags().isEmpty()) {
+            String flags = desc.flags().stream()
                 .map(Object::toString)
                 .collect(java.util.stream.Collectors.joining(" "));
             writer.writeAttribute("Nuts-Flags", flags);
         }
 
         // Categories
-        if (desc.getCategories() != null && !desc.getCategories().isEmpty()) {
-            String categories = String.join(" ", desc.getCategories());
+        if (desc.categories() != null && !desc.categories().isEmpty()) {
+            String categories = String.join(" ", desc.categories());
             writer.writeAttribute("Nuts-Categories", categories);
         }
 
         // Icons
-        if (desc.getIcons() != null && !desc.getIcons().isEmpty()) {
-            String icons = String.join(" ", desc.getIcons());
+        if (desc.icons() != null && !desc.icons().isEmpty()) {
+            String icons = String.join(" ", desc.icons());
             writer.writeAttribute("Nuts-Icons", icons);
         }
 
         // Dependencies (semicolon-separated)
-        if (desc.getDependencies() != null && !desc.getDependencies().isEmpty()) {
-            String dependencies = desc.getDependencies().stream()
+        if (desc.dependencies() != null && !desc.dependencies().isEmpty()) {
+            String dependencies = desc.dependencies().stream()
                 .map(Object::toString)
                 .collect(java.util.stream.Collectors.joining(";"));
             writer.writeAttribute("Nuts-Dependencies", dependencies);
         }
 
         // Properties
-        if (desc.getProperties() != null) {
-            for (net.thevpc.nuts.artifact.NDescriptorProperty prop : desc.getProperties()) {
-                String propName = NStringUtils.trimToNull(prop.getName());
+        if (desc.properties() != null) {
+            for (net.thevpc.nuts.artifact.NDescriptorProperty prop : desc.properties()) {
+                String propName = NStringUtils.trimToNull(prop.name());
                 if (propName != null) {
-                    String value = prop.getValue() != null ? prop.getValue().asString().orElse("") : "";
+                    String value = prop.value() != null ? prop.value().asString().orElse("") : "";
                     writer.writeAttribute("Nuts-Property-" + propName, value);
                 }
             }
@@ -179,11 +179,11 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
     }
 
     private String extractMainClass(NDescriptor desc) {
-        if (desc.getExecutor() == null) {
+        if (desc.executor() == null) {
             return null;
         }
 
-        net.thevpc.nuts.artifact.NArtifactCall executor = desc.getExecutor();
+        net.thevpc.nuts.artifact.NArtifactCall executor = desc.executor();
         if (executor.arguments() == null || executor.arguments().isEmpty()) {
             return null;
         }

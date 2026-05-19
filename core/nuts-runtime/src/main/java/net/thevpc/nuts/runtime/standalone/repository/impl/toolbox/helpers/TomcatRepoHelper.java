@@ -95,13 +95,13 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
             }
 
             return NDescriptorBuilder.of()
-                    .setId(id.longId())
-                    .setPackaging("zip")
-                    .setIcons(
+                    .id(id.longId())
+                    .packaging("zip")
+                    .icons(
                             "https://upload.wikimedia.org/wikipedia/commons/f/fe/Apache_Tomcat_logo.svg",
                             "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Apache_Tomcat_logo.svg/595px-Apache_Tomcat_logo.svg.png"
                     )
-                    .setInstaller(NArtifactCallBuilder.of()
+                    .installer(NArtifactCallBuilder.of()
                             .id(NId.of(NConstants.Ids.NSH))
                             .arguments("$nutsIdInstallScriptPath")
                             .scriptName("install-catalina.nsh")
@@ -112,7 +112,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                             )
                             .build()
                     )
-                    .setExecutor(NArtifactCallBuilder.of()
+                    .executor(NArtifactCallBuilder.of()
                             .id(NId.of("exec"))
                             .arguments(
                                     NEnv.of().getOsFamily().isWindow()
@@ -121,11 +121,11 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                             )
                             .build()
                     )
-                    .setCondition(
+                    .condition(
                             NEnvConditionBuilder.of()
-                                    .setPlatform(Arrays.asList("java" + javaVersion))
+                                    .platform(Arrays.asList("java" + javaVersion))
                     )
-                    .setDescription("Apache Tomcat Official Zip Bundle")
+                    .description("Apache Tomcat Official Zip Bundle")
                     .setProperty("dynamic-descriptor", "true")
                     .build();
         }
@@ -188,7 +188,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                                 String s3 = x5.name();
                                                                                 String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
                                                                                 NVersion v = NVersion.get(v0).get();
-                                                                                NId id2 = idBuilder.setVersion(v).build();
+                                                                                NId id2 = idBuilder.version(v).build();
                                                                                 if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2, repository, "TomcatRepoHelper 1"))) {
                                                                                     return id2;
                                                                                 }
@@ -196,7 +196,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                                                             }).<NId>withDescription(NDescribables.ofDesc("toZip")))
                                                                     .<NId>nonNull();
                                                         } else {
-                                                            NId id2 = idBuilder.setVersion(version).build();
+                                                            NId id2 = idBuilder.version(version).build();
                                                             if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2, repository, "TomcatRepoHelper 2"))) {
                                                                 return NStream.ofSingleton(id2);
                                                             }
@@ -214,7 +214,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
             return null;
         }
         String r = getUrl(id.version(), ".zip");
-        NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().setFaceContent().build(), repository));
+        NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().faceContent().build(), repository));
         NCp.of().from(NPath.of(r)).to(localPath)
                 .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
         return localPath;

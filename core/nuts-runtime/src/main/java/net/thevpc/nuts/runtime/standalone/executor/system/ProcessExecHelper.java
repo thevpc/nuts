@@ -28,6 +28,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -63,7 +64,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     public static ProcessExecHelper ofArgs(NDefinition definition, String[] args, Map<String, String> env, Path directory,
-                                           boolean showCommand, boolean failFast, long sleep,
+                                           boolean showCommand, boolean failFast, NDuration sleep,
                                            NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs, String[] executorOptions,
                                            boolean dry) {
@@ -72,7 +73,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         pb.setCommand(newCommands)
                 .setEnv(env)
                 .setDirectory(directory == null ? null : directory.toFile())
-                .setSleepMillis(sleep)
+                .setSleepDuration(sleep)
                 .failFast(failFast);
         pb.setIn(CoreIOUtils.validateIn(in));
         pb.setOut(CoreIOUtils.validateOut(out));
@@ -98,7 +99,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     public static ProcessExecHelper ofDefinition(NDefinition nutMainFile,
-                                                 String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast, long sleep,
+                                                 String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast, NDuration sleep,
                                                  NExecInput in, NExecOutput out, NExecOutput err,
                                                  NRunAs runAs,
                                                  String[] executorOptions,
@@ -108,11 +109,11 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         NWorkspace workspace = session.getWorkspace();
         NId id = nutMainFile.id();
         Path installerFile = nutMainFile.content().flatMap(NPath::toPath).orNull();
-        NPath storeFolder = nutMainFile.installInformation().get().getInstallFolder();
+        NPath storeFolder = nutMainFile.installInformation().get().installFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
         NPath nutsJarFile = NFetch.ofNutsApi()
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.normalize().toString());
@@ -168,7 +169,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 ) {
                     NDefinition nDefinition;
                     nDefinition = NFetch.ofNutsApp()
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition();
                     if (nDefinition.content().isPresent()) {
                         return ("<::expand::> " + apply("java") + " -jar " + nDefinition.content());
@@ -191,7 +192,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         for (String arg : args) {
             String s = NStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NCmdLine.of(s, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray());
+                Collections.addAll(args2, NCmdLine.of(s, NShellFamily.BASH).expandSimpleOptions(false).toStringArray());
             } else {
                 args2.add(s);
             }

@@ -51,17 +51,17 @@ public class ToolboxRepositoryFactoryComponent implements
     @Override
     public List<NRepositorySpec> getTemplateRepositoryDefinitions() {
         return Collections.singletonList(
-                new NRepositorySpec().setName(ToolboxRepositoryModel.REPOSITORY_TYPE)
-                        .setFailSafe(false)
-                        .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
-                        .setSourceLocation(NRepositoryLocation.of("toolbox@toolbox"))
+                new NRepositorySpec().name(ToolboxRepositoryModel.REPOSITORY_TYPE)
+                        .failSafe(false)
+                        .order(NRepositorySpec.ORDER_USER_REMOTE)
+                        .sourceLocation(NRepositoryLocation.of("toolbox@toolbox"))
         );
     }
 
     @Override
     public List<NRepositorySpec> getDefaultRepositoryDefinitions() {
         return Collections.singletonList(
-                new NRepositorySpec().setName(ToolboxRepositoryModel.REPOSITORY_TYPE)
+                new NRepositorySpec().name(ToolboxRepositoryModel.REPOSITORY_TYPE)
         );
     }
 

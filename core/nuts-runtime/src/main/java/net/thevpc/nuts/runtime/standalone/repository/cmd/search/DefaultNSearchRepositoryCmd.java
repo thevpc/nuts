@@ -45,21 +45,21 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
 
     @Override
     public NSearchRepositoryCmd run() {
-        NSession session = getRepo().getWorkspace().currentSession();
+        NSession session = getRepo().workspace().currentSession();
         NRunnable startRunnable = NRunnable.of(
                 () -> {
-                    NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.FETCH_DESC, "search");
+                    NSecurityManager.of().checkRepositoryAllowed(getRepo().uuid(), NConstants.Permissions.FETCH_DESC, "search");
                     NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
                     xrepo.checkAllowedFetch(null);
                     _LOG()
-                            .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
+                            .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST))
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.START));
                 }
         ).withDescription(NDescribables.ofDesc("CheckAuthorizations"));
         NRunnable endRunnable =
                 NRunnable.of(
                         () -> _LOG()
-                                .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
+                                .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST))
                                         .withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS))
                         ).withDescription(NDescribables.ofDesc("Log"));
         try {
@@ -74,7 +74,7 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
                     //just ignore
                 } catch (NException ex) {
                     _LOG()
-                            .log(NMsg.ofJ("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex)
+                            .log(NMsg.ofJ("error search operation using Indexer for {0} : {1}", getRepo().name(), ex)
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
                 }
                 if (o != null) {
@@ -90,12 +90,12 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
                     .build();
         } catch (NArtifactNotFoundException | SecurityException ex) {
             _LOG()
-                    .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
+                    .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST))
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
             throw ex;
         } catch (RuntimeException ex) {
             _LOG()
-                    .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
+                    .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST))
                             .withLevel(Level.SEVERE).withIntent(NMsgIntent.FAIL));
             throw ex;
         }

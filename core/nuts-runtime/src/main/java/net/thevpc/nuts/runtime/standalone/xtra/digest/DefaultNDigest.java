@@ -368,7 +368,7 @@ public class DefaultNDigest implements NDigest {
 
         @Override
         public NContentMetadata metaData() {
-            NId id = source.getId();
+            NId id = source.id();
             NText str;
             if (id != null) {
                 str = NObjectWriter.of(id).format(id);

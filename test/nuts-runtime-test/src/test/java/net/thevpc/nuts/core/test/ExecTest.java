@@ -43,7 +43,7 @@ public class ExecTest {
     public void execURL() {
         TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
-                .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
+                .id("net.thevpc.hl:hadra-build-tool#0.1.0")
 //                .setRepositoryFilter("maven-central")
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
@@ -88,8 +88,8 @@ public class ExecTest {
     }
 
     private void printlnNode(NDependencyTreeNode d, String s) {
-        TestUtils.println(s + d.getDependency());
-        for (NDependencyTreeNode child : d.getChildren()) {
+        TestUtils.println(s + d.dependency());
+        for (NDependencyTreeNode child : d.children()) {
             printlnNode(child, "  ");
         }
     }

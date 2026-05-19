@@ -211,7 +211,7 @@ public class DefaultNDefinitionBuilder2 {
             return false;
         }
         final NDefinitionBuilder other = (NDefinitionBuilder) obj;
-        if (!Objects.equals(this.id, other.getId())) {
+        if (!Objects.equals(this.id, other.id())) {
             return false;
         }
         return true;

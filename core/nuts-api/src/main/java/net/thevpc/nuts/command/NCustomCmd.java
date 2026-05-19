@@ -28,6 +28,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.List;
 
@@ -38,19 +39,25 @@ import java.util.List;
  */
 public interface NCustomCmd {
 
-    String getFactoryId();
+    @NGetter
+    String factoryId();
 
-    NId getOwner();
+    @NGetter
+    NId owner();
 
-    String getName();
+    @NGetter
+    String name();
 
     int exec(String[] args, NCmdExecOptions options) throws NExecutionException;
 
-    NText getHelpText() throws NExecutionException;
+    @NGetter
+    NText helpText() throws NExecutionException;
 
-    List<String> getCommand();
+    @NGetter
+    List<String> command();
 
-    List<String> getExecutorOptions();
+    @NGetter
+    List<String> executorOptions();
 
     NCommandConfig toCommandConfig();
 }

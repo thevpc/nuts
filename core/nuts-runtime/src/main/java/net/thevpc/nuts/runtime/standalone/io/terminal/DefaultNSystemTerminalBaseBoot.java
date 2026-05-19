@@ -37,15 +37,15 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         super();
         NBootOptions bo = bootModel.getBootUserOptions();
         NWorkspaceTerminalOptions bootStdFd = new NWorkspaceTerminalOptions(
-                new NonClosableInputStream(bo.getStdin().orElse(System.in)),
-                new NonClosablePrintStream(bo.getStdout().orElse(System.out)),
-                new NonClosablePrintStream(bo.getStderr().orElse(System.err)),
+                new NonClosableInputStream(bo.stdin().orElse(System.in)),
+                new NonClosablePrintStream(bo.stdout().orElse(System.out)),
+                new NonClosablePrintStream(bo.stderr().orElse(System.err)),
                 bootModel.getBootTerminal().getFlags().toArray(new String[0])
         );
-        NTerminalMode terminalMode = bootModel.getBootUserOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
+        NTerminalMode terminalMode = bootModel.getBootUserOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
         boolean bootStdFdAnsi = bootStdFd.getFlags().contains("ansi");
         if (terminalMode == NTerminalMode.DEFAULT) {
-            if (bootModel.getBootUserOptions().getBot().orElse(false)) {
+            if (bootModel.getBootUserOptions().bot().orElse(false)) {
                 terminalMode = NTerminalMode.FILTERED;
             } else {
                 if (bootStdFdAnsi) {

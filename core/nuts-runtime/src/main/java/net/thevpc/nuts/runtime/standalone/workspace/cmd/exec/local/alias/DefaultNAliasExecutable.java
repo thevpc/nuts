@@ -25,8 +25,8 @@ public class DefaultNAliasExecutable extends AbstractNExecutableInformationExt {
    String[] args;
 
     public DefaultNAliasExecutable(NCustomCmd command, NCmdExecOptions o, String[] args, NExec execCommand) {
-        super(command.getName(),
-                NCmdLine.of(command.getCommand()).toString(),
+        super(command.name(),
+                NCmdLine.of(command.command()).toString(),
                 NExecutableType.ALIAS,execCommand);
         this.command = command;
         this.o = o;
@@ -34,8 +34,8 @@ public class DefaultNAliasExecutable extends AbstractNExecutableInformationExt {
     }
 
     @Override
-    public NId getId() {
-        return command.getOwner();
+    public NId id() {
+        return command.owner();
     }
 
     @Override
@@ -45,17 +45,17 @@ public class DefaultNAliasExecutable extends AbstractNExecutableInformationExt {
 
 
     @Override
-    public NText getHelpText() {
-        NText t = command.getHelpText();
+    public NText helpText() {
+        NText t = command.helpText();
         if (t != null) {
             return t;
         }
-        return NText.ofStyled("No help available. Try '" + getName() + " --help'", NTextStyle.error());
+        return NText.ofStyled("No help available. Try '" + name() + " --help'", NTextStyle.error());
     }
 
     @Override
     public String toString() {
-        return "alias " + command.getName() + " @ " + command.getOwner();
+        return "alias " + command.name() + " @ " + command.owner();
     }
 
 }

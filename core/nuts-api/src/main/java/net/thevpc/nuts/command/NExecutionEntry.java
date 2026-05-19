@@ -103,7 +103,7 @@ public interface NExecutionEntry extends Comparable<NExecutionEntry> {
      *
      * @return the fully qualified class name
      */
-    String getName();
+    String name();
 
     /**
      * Returns {@code true} if this class is registered as the default main

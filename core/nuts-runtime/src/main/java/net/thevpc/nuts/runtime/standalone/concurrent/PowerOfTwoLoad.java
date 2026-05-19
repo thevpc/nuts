@@ -37,11 +37,11 @@ class PowerOfTwoLoad implements NWorkBalancerStrategy {
 
         // Choose the one with lower effective load, break tie with round-robin
         if (Double.compare(load1, load2) < 0) {
-            return w1.getName();
+            return w1.name();
         } else if (Double.compare(load2, load1) < 0) {
-            return w2.getName();
+            return w2.name();
         } else {
-            return rrCounter.getAndIncrement() % 2 == 0 ? w1.getName() : w2.getName();
+            return rrCounter.getAndIncrement() % 2 == 0 ? w1.name() : w2.name();
         }
     }
 
@@ -51,8 +51,8 @@ class PowerOfTwoLoad implements NWorkBalancerStrategy {
         do {
             w = workers.get(random.nextInt(workers.size()));
             tries++;
-        } while (w.getWeight() <= 0 && tries < 10);
-        if (w.getWeight() <= 0) {
+        } while (w.weight() <= 0 && tries < 10);
+        if (w.weight() <= 0) {
             // fallback: pick any even if weight <= 0
             w = workers.get(random.nextInt(workers.size()));
         }
@@ -61,14 +61,14 @@ class PowerOfTwoLoad implements NWorkBalancerStrategy {
 
     private double resolveEffectiveLoad(NWorkBalancerWorker worker, NWorkBalancerStrategyContext context) {
         double loadValue = 0.0;
-        NWorkBalancerWorkerLoad load = context.getWorkerLoad(worker.getName()).orNull();
+        NWorkBalancerWorkerLoad load = context.getWorkerLoad(worker.name()).orNull();
         if (load != null) {
-            float hostLoad = load.hostLoadMetrics().get().getHostLoadFactor();
+            float hostLoad = load.hostLoadMetrics().get().hostLoadFactor();
             if (!Float.isNaN(hostLoad)) {
                 loadValue = hostLoad;
             }
         }
-        float weight = worker.getWeight() > 0 ? worker.getWeight() : 1.0f;
+        float weight = worker.weight() > 0 ? worker.weight() : 1.0f;
         return loadValue / weight;
     }
 }

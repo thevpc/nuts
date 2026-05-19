@@ -33,7 +33,7 @@ public class NSessionUtils {
                         session = session.copy();
                     }
                     session.getTerminal().out(NPrintStream.of(out.path().getOutputStream(
-                            out.options()
+                            out.options().toArray(new NPathOption[0])
                     )));
                     break;
                 }
@@ -91,7 +91,7 @@ public class NSessionUtils {
                         session = session.copy();
                     }
                     session.getTerminal().err(NPrintStream.of(err.path().getOutputStream(
-                            err.options()
+                            err.options().toArray(new NPathOption[0])
                     )));
                     break;
                 }
@@ -151,7 +151,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().in(in.path().getInputStream(in.options()));
+                    session.getTerminal().in(in.path().getInputStream(in.options().toArray(new NPathOption[0])));
                     break;
                 }
                 case STREAM: {

@@ -33,8 +33,8 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
     public NOptional<NRepository> getChild(String repositoryNameOrId) {
         for (NRepository repoItem : repoItems) {
             if (
-                    Objects.equals(repoItem.getName(), repositoryNameOrId)
-                            || Objects.equals(repoItem.getUuid(), repositoryNameOrId)
+                    Objects.equals(repoItem.name(), repositoryNameOrId)
+                            || Objects.equals(repoItem.uuid(), repositoryNameOrId)
             ) {
                 return NOptional.of(repoItem);
             }

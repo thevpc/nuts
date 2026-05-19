@@ -63,7 +63,7 @@ public interface NProgressEvent extends NSessionProvider {
      *
      * @return Nuts Session
      */
-    NSession getSession();
+    NSession session();
 
     /**
      * error or null

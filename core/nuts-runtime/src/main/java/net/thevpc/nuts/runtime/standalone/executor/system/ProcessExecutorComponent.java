@@ -60,10 +60,10 @@ public class ProcessExecutorComponent implements NExecutorComponent {
     }
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        NDefinition nutMainFile = executionContext.getDefinition();
-        NPath storeFolder = nutMainFile.installInformation().get().getInstallFolder();
-        List<String> execArgs = executionContext.getExecutorOptions();
-        List<String> appArgs = executionContext.getArguments();
+        NDefinition nutMainFile = executionContext.definition();
+        NPath storeFolder = nutMainFile.installInformation().get().installFolder();
+        List<String> execArgs = executionContext.executorOptions();
+        List<String> appArgs = executionContext.arguments();
 
         List<String> app = new ArrayList<>(appArgs);
         if (app.isEmpty()) {
@@ -97,11 +97,11 @@ public class ProcessExecutorComponent implements NExecutorComponent {
         return ProcessExecHelper.ofDefinition(nutMainFile,
                 app.toArray(new String[0]), osEnv, directory,
                 showCommand, true,
-                executionContext.getSleepMillis(),
-                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(),
-                executionContext.getRunAs(),
-                executionContext.getExecutorOptions().toArray(new String[0]),
-                executionContext.isDry(), executionContext.getSession()
+                executionContext.sleepDuration(),
+                executionContext.in(), executionContext.out(), executionContext.err(),
+                executionContext.runAs(),
+                executionContext.executorOptions().toArray(new String[0]),
+                executionContext.isDry(), executionContext.session()
         );
     }
 }

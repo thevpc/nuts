@@ -88,7 +88,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return def.id();
     }
 
@@ -104,7 +104,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     private int runOnce(String[] cmd) {
         try (DefaultNExecTargetCommandContext d = new DefaultNExecTargetCommandContext(
-                getExecCommand().getConnectionString(),
+                getExecCommand().connectionString(),
                 cmd,
                 in,
                 out,
@@ -125,18 +125,18 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
 
     @Override
-    public NText getHelpText() {
+    public NText helpText() {
         switch (NEnv.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
-                        "No help available. Try " + getName() + " /help",
+                        "No help available. Try " + name() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
                         NText.ofStyled(
-                                "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
+                                "No help available. Try 'man " + name() + "' or '" + name() + " --help'",
                                 NTextStyle.error()
                         );
             }
@@ -145,7 +145,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     @Override
     public String toString() {
-        return getExecCommand().getRunAs() + " " + NCmdLine.of(ecmd);
+        return getExecCommand().runAs() + " " + NCmdLine.of(ecmd);
     }
 
 }

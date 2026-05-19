@@ -83,8 +83,8 @@ public class DefaultNBootModel implements NBootModel {
         this.workspace = workspace;
         this.LOG = LOG;
         this.workspaceModel = workspaceModel;
-        this.bOptions = bOption0.readOnly();
-        this.effOptions = bOption0.readOnly();
+        this.bOptions = bOption0.toReadOnly();
+        this.effOptions = bOption0.toReadOnly();
         this.bootSession = new DefaultNSession(workspace, null)
                 .copyFrom(effOptions);
     }
@@ -93,8 +93,8 @@ public class DefaultNBootModel implements NBootModel {
         this.initializing = true;
         NativeImageHelper.prepare();
         this.bootTerminal = detectAnsiTerminalSupport(effOptions, true, ((DefaultNWorkspace) workspace).getModel().LOG);
-        workspaceModel.uuid = effOptions.getUuid().orNull();
-        String wsp = effOptions.getWorkspace().orNull();
+        workspaceModel.uuid = effOptions.uuid().orNull();
+        String wsp = effOptions.workspace().orNull();
         try {
             workspaceModel.name = NBlankable.isBlank(wsp) ? null : Paths.get(wsp).getFileName().toString();
         }catch (Exception e){
@@ -121,18 +121,18 @@ public class DefaultNBootModel implements NBootModel {
         InputStream stdIn = System.in;
         PrintStream stdOut = System.out;
         PrintStream stdErr = System.err;
-        if (bOption.getStdin().isPresent() && bOption.getStdin().get() != System.in) {
-            stdIn = bOption.getStdin().orNull();
+        if (bOption.stdin().isPresent() && bOption.stdin().get() != System.in) {
+            stdIn = bOption.stdin().orNull();
             flags.add("customIn");
             customIn = true;
         }
-        if (bOption.getStdout().isPresent() && bOption.getStdout().get() != System.out) {
-            stdOut = bOption.getStdout().orNull();
+        if (bOption.stdout().isPresent() && bOption.stdout().get() != System.out) {
+            stdOut = bOption.stdout().orNull();
             flags.add("customOut");
             customOut = true;
         }
-        if (bOption.getStderr().isPresent() && bOption.getStderr().get() != System.err) {
-            stdErr = bOption.getStderr().orNull();
+        if (bOption.stderr().isPresent() && bOption.stderr().get() != System.err) {
+            stdErr = bOption.stderr().orNull();
             flags.add("customErr");
             customErr = true;
         }
@@ -163,8 +163,8 @@ public class DefaultNBootModel implements NBootModel {
         if(noColor){
             denyAnsi = true;
         }
-        if (bOption.getTerminalMode().isPresent()) {
-            switch (bOption.getTerminalMode().get()) {
+        if (bOption.terminalMode().isPresent()) {
+            switch (bOption.terminalMode().get()) {
                 case FORMATTED:
                 case ANSI: {
                     acceptAnsi = true;
@@ -379,7 +379,7 @@ public class DefaultNBootModel implements NBootModel {
     public Map<String, NLiteral> getCustomBootOptions() {
         if (customBootOptions == null) {
             customBootOptions = new LinkedHashMap<>();
-            List<String> properties = bOptions.getCustomOptions().orNull();
+            List<String> properties = bOptions.customOptions().orNull();
             if (properties != null) {
                 for (String property : properties) {
                     if (property != null) {

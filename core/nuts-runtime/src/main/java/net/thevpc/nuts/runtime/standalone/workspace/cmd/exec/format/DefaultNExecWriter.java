@@ -114,11 +114,11 @@ public class DefaultNExecWriter extends DefaultObjectWriterBase<NExecWriter> imp
     public void print(Object aValue, NPrintStream out) {
         StringBuilder sb = new StringBuilder();
         NExec ec = (NExec) aValue;
-        NExecOutput _out = ec.getOut();
-        NExecOutput err = ec.getErr();
-        NExecInput in = ec.getIn();
-        Map<String, String> env = ec.getEnv();
-        List<String> command = ec.getCommand();
+        NExecOutput _out = ec.out();
+        NExecOutput err = ec.err();
+        NExecInput in = ec.in();
+        Map<String, String> env = ec.env();
+        List<String> command = ec.command();
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();

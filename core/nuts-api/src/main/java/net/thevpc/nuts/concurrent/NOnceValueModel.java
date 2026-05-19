@@ -1,6 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.function.Supplier;
 
@@ -25,7 +27,7 @@ public class NOnceValueModel implements Cloneable, NCopiable {
     /**
      * Throwable associated with a failed computation of the value.
      */
-    private Throwable throwable;
+    private Throwable error;
 
     /**
      * True if the value is in an error state, false if valid, null if unknown.
@@ -60,38 +62,45 @@ public class NOnceValueModel implements Cloneable, NCopiable {
         return this;
     }
 
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NOnceValueModel setId(String id) {
+    public NOnceValueModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public Object getValue() {
+    @NGetter
+    public Object value() {
         return value;
     }
 
-    public NOnceValueModel setValue(Object value) {
+    @NSetter
+    public NOnceValueModel value(Object value) {
         this.value = value;
         return this;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
+    @NGetter
+    public Throwable error() {
+        return error;
     }
 
-    public NOnceValueModel setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    @NSetter
+    public NOnceValueModel error(Throwable throwable) {
+        this.error = throwable;
         return this;
     }
 
-    public Boolean getErrorState() {
+    @NGetter
+    public Boolean errorState() {
         return errorState;
     }
 
-    public NOnceValueModel setErrorState(Boolean errorState) {
+    @NSetter
+    public NOnceValueModel errorState(Boolean errorState) {
         this.errorState = errorState;
         return this;
     }

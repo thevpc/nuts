@@ -281,7 +281,7 @@ public class NCoreIOUtils {
     }
 
     public static String getStoreLocationPath(NBootOptions bOptions, NStoreType value) {
-        Map<NStoreType, String> storeLocations = bOptions.getStoreLocations().orNull();
+        Map<NStoreType, String> storeLocations = bOptions.storeLocations().orNull();
         if (storeLocations != null) {
             return storeLocations.get(value);
         }

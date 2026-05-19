@@ -3,6 +3,7 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.util.NGetter;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -55,7 +56,8 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
      *
      * @return identifier string
      */
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
@@ -65,7 +67,8 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
      *
      * @return last access in milliseconds
      */
-    public long getLastAccess() {
+    @NGetter
+    public long lastAccess() {
         return lastAccess;
     }
 
@@ -74,7 +77,8 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
      *
      * @return array of {@link NRateLimitRuleModel}
      */
-    public NRateLimitRuleModel[] getRules() {
+    @NGetter
+    public NRateLimitRuleModel[] rules() {
         return rules;
     }
 

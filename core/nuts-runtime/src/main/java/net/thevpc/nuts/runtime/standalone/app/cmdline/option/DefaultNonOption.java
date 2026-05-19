@@ -48,14 +48,14 @@ public class DefaultNonOption implements NArgName {
 
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
+    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> list = new ArrayList<>();
-        list.add(new DefaultNArgCandidate("<" + getName() + ">"));
+        list.add(new DefaultNArgCandidate("<" + name() + ">"));
         return list;
     }
 

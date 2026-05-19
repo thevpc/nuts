@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.Objects;
 
 /**
@@ -47,11 +50,11 @@ public class NRepositoryRef extends NConfigItem implements Cloneable {
     }
 
     public NRepositoryRef(NRepositoryRef other) {
-        this.name = other.getName();
-        this.location = other.getLocation();
+        this.name = other.name();
+        this.location = other.location();
         this.enabled = other.isEnabled();
         this.failSafe = other.isEnabled();
-        this.deployWeight = other.getDeployWeight();
+        this.deployWeight = other.deployWeight();
     }
 
     public NRepositoryRef(String name, String location, int deployPriority, boolean enabled) {
@@ -61,38 +64,46 @@ public class NRepositoryRef extends NConfigItem implements Cloneable {
         this.enabled = enabled;
     }
 
+    @NGetter
     public boolean isEnabled() {
         return enabled;
     }
 
-    public NRepositoryRef setEnabled(boolean enabled) {
+    @NSetter
+    public NRepositoryRef enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
-    public String getLocation() {
+    @NGetter
+    public String location() {
         return location;
     }
 
-    public NRepositoryRef setLocation(String location) {
+    @NSetter
+    public NRepositoryRef location(String location) {
         this.location = location;
         return this;
     }
 
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NRepositoryRef setName(String name) {
+    @NSetter
+    public NRepositoryRef name(String name) {
         this.name = name;
         return this;
     }
 
+    @NGetter
     public boolean isFailSafe() {
         return failSafe;
     }
 
-    public NRepositoryRef setFailSafe(boolean failSafe) {
+    @NSetter
+    public NRepositoryRef failSafe(boolean failSafe) {
         this.failSafe = failSafe;
         return this;
     }
@@ -110,11 +121,13 @@ public class NRepositoryRef extends NConfigItem implements Cloneable {
         }
     }
 
-    public int getDeployWeight() {
+    @NGetter
+    public int deployWeight() {
         return deployWeight;
     }
 
-    public NRepositoryRef setDeployWeight(int deployPriority) {
+    @NSetter
+    public NRepositoryRef deployWeight(int deployPriority) {
         this.deployWeight = deployPriority;
         return this;
     }

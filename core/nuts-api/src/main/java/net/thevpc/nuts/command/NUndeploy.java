@@ -29,6 +29,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 
@@ -42,23 +44,31 @@ public interface NUndeploy extends NWorkspaceCmd {
         return NExtensions.of(NUndeploy.class);
     }
 
-    String getRepository();
+    @NGetter
+    String repository();
 
-    NUndeploy setRepository(String repository);
+    @NSetter
+    NUndeploy repository(String repository);
 
-    List<NId> getIds();
+    @NGetter
+    List<NId> ids();
+    @NSetter
+    NUndeploy ids(List<NId> value);
 
     NUndeploy addId(NId id);
 
     NUndeploy addId(String id);
 
+    @NGetter
     boolean isOffline();
 
-    NUndeploy setOffline(boolean offline);
+    @NSetter
+    NUndeploy offline(boolean offline);
 
     NUndeploy addIds(String... values);
 
     NUndeploy addIds(NId... value);
+    NUndeploy addIds(List<NId> value);
 
     NUndeploy clearIds();
 

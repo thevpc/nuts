@@ -17,9 +17,9 @@ public class NRateLimitSlidingWindowRule implements NRateLimitRule {
     private Deque<Long> timestamps; // record of last consumption timestamps (ms)
 
     public NRateLimitSlidingWindowRule(NRateLimitRuleModel model) {
-        this.id = model.getId();
-        this.capacity = model.getCapacity();
-        this.duration = model.getDuration() == 0 ? null : Duration.ofMillis(model.getDuration());
+        this.id = model.id();
+        this.capacity = model.capacity();
+        this.duration = model.duration() == 0 ? null : Duration.ofMillis(model.duration());
         this.timestamps = deserialize(model.getConfig());
         // Optional: restore timestamps from model if you save them
     }

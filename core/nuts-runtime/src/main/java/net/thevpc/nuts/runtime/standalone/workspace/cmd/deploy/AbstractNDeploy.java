@@ -66,72 +66,72 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
     }
 
     @Override
-    public NDeploy setContent(InputStream stream) {
+    public NDeploy content(InputStream stream) {
         content = stream == null ? null : NInputSource.of(stream);
         return this;
     }
 
     @Override
-    public NDeploy setContent(NPath path) {
+    public NDeploy content(NPath path) {
         content = path;
         return this;
     }
 
     @Override
-    public NDeploy setContent(byte[] content) {
+    public NDeploy content(byte[] content) {
         this.content = content == null ? null : NInputSource.of(content);
         return this;
     }
 
     @Override
-    public NDeploy setContent(File file) {
+    public NDeploy content(File file) {
         content = file == null ? null : NPath.of(file);
         invalidateResult();
         return this;
     }
 
     @Override
-    public NDeploy setContent(Path file) {
+    public NDeploy content(Path file) {
         content = file == null ? null : NPath.of(file);
         invalidateResult();
         return this;
     }
 
     @Override
-    public NDeploy setDescriptor(InputStream stream) {
+    public NDeploy descriptor(InputStream stream) {
         descriptor = stream;
         invalidateResult();
         return this;
     }
 
     @Override
-    public NDeploy setDescriptor(String path) {
+    public NDeploy descriptor(String path) {
         descriptor = path;
         invalidateResult();
         return this;
     }
 
     @Override
-    public NDeploy setDescriptor(File file) {
+    public NDeploy descriptor(File file) {
         descriptor = file;
         invalidateResult();
         return this;
     }
 
     @Override
-    public NDeploy setDescriptor(URL url) {
+    public NDeploy descriptor(URL url) {
         descriptor = url;
         invalidateResult();
         return this;
     }
 
     @Override
-    public String getSha1() {
+    public String sha1() {
         return sha1;
     }
 
     @Override
-    public NDeploy setSha1(String sha1) {
+    public NDeploy sha1(String sha1) {
         this.sha1 = sha1;
         invalidateResult();
         return this;
@@ -142,24 +142,24 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
     }
 
     @Override
-    public NDeploy setDescSha1(String descSha1) {
+    public NDeploy descriptorSha1(String descSha1) {
         this.descSha1 = descSha1;
         invalidateResult();
         return this;
     }
 
-    public NInputSource getContent() {
+    public NInputSource content() {
         return content;
     }
 
     @Override
-    public NDeploy setContent(NInputSource content) {
+    public NDeploy content(NInputSource content) {
         this.content = content;
         return this;
     }
 
     @Override
-    public NDeploy setContent(URL url) {
+    public NDeploy content(URL url) {
         content = url == null ? null : NPath.of(url);
         invalidateResult();
         return this;
@@ -170,29 +170,29 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
     }
 
     @Override
-    public NDeploy setDescriptor(NDescriptor descriptor) {
+    public NDeploy descriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
         invalidateResult();
         return this;
     }
 
     @Override
-    public String getTargetRepository() {
+    public String targetRepository() {
         return toRepository;
     }
 
     @Override
     public NDeploy to(String repository) {
-        return setTargetRepository(repository);
+        return targetRepository(repository);
     }
 
     @Override
-    public NDeploy setRepository(String repository) {
-        return setTargetRepository(repository);
+    public NDeploy repository(String repository) {
+        return targetRepository(repository);
     }
 
     @Override
-    public NDeploy setTargetRepository(String repository) {
+    public NDeploy targetRepository(String repository) {
         this.toRepository = repository;
         invalidateResult();
         return this;
@@ -200,18 +200,18 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
 
     @Override
     public NDeploy from(String repository) {
-        return setSourceRepository(repository);
+        return sourceRepository(repository);
     }
 
     @Override
-    public NDeploy setSourceRepository(String repository) {
+    public NDeploy sourceRepository(String repository) {
         this.fromRepository = repository;
         invalidateResult();
         return this;
     }
 
     @Override
-    public NDeploy setDescriptor(Path path) {
+    public NDeploy descriptor(Path path) {
         this.descriptor = path;
         invalidateResult();
         return this;
@@ -304,7 +304,7 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return this.ids;
     }
 
@@ -317,7 +317,7 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
         switch (a.key()) {
             case "-d":
             case "--desc": {
-                return cmdLine.matcher().matchEntry((v) -> setDescriptor(v.stringValue())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> descriptor(v.stringValue())).anyMatch();
             }
             case "-s":
             case "--source":
@@ -330,16 +330,16 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
                 return cmdLine.matcher().matchEntry((v) -> to(v.stringValue())).anyMatch();
             }
             case "--desc-sha1": {
-                return cmdLine.matcher().matchEntry((v) -> setDescSha1(v.stringValue())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> descriptorSha1(v.stringValue())).anyMatch();
             }
             case "--desc-sha1-file": {
-                return cmdLine.matcher().matchEntry((v) -> this.setDescSha1(NPath.of(v.stringValue()).readString())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.descriptorSha1(NPath.of(v.stringValue()).readString())).anyMatch();
             }
             case "--sha1": {
-                return cmdLine.matcher().matchEntry((v) -> this.setSha1(v.stringValue())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.sha1(v.stringValue())).anyMatch();
             }
             case "--sha1-file": {
-                return cmdLine.matcher().matchEntry((v) -> this.setSha1(NPath.of(v.stringValue()).readString())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.sha1(NPath.of(v.stringValue()).readString())).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {
@@ -351,7 +351,7 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
                     cmdLine.skip();
                     String idOrPath = a.asString().get();
                     if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
-                        setContent(NPath.of(idOrPath));
+                        content(NPath.of(idOrPath));
                     } else {
                         addId(idOrPath);
                     }

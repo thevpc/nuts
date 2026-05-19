@@ -105,7 +105,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                     }
                     if (w != null) {
                         out.println(NMsg.ofC("%s :", arg));
-                        out.println(w.getHelpText());
+                        out.println(w.helpText());
                         out.flush();
                     } else {
                         session.getTerminal().err().println(NMsg.ofC("%s : not found", arg));

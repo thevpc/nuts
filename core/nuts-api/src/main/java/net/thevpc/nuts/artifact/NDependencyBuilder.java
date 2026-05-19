@@ -28,6 +28,8 @@ package net.thevpc.nuts.artifact;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -45,7 +47,7 @@ import java.util.Map;
 public interface NDependencyBuilder extends NComponent, Serializable, NBlankable {
 
     static NDependencyBuilder of(String groupId, String artifactId) {
-        return of().setGroupId(groupId).setArtifactId(artifactId);
+        return of().groupId(groupId).artifactId(artifactId);
     }
 
     static NDependencyBuilder of() {
@@ -58,7 +60,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param id new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setId(NId id);
+    @NSetter
+    NDependencyBuilder id(NId id);
 
     /**
      * reset this instance with value
@@ -66,7 +69,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setDependency(NDependencyBuilder value);
+    NDependencyBuilder dependency(NDependencyBuilder value);
 
     /**
      * reset this instance with value
@@ -90,7 +93,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setDependency(NDependency value);
+    @NSetter
+    NDependencyBuilder dependency(NDependency value);
 
     /**
      * reset this instance
@@ -105,7 +109,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param type new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setType(String type);
+    @NSetter
+    NDependencyBuilder type(String type);
 
     /**
      * set optional value
@@ -113,7 +118,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param optional new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setOptional(String optional);
+    NDependencyBuilder optional(String optional);
 
     /**
      * set scope value
@@ -121,7 +126,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param scope new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setScope(NDependencyScope scope);
+    @NSetter
+    NDependencyBuilder scope(NDependencyScope scope);
 
     /**
      * set scope value
@@ -129,7 +135,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param scope new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setScope(String scope);
+    NDependencyBuilder scope(String scope);
 
     /**
      * set repository value
@@ -137,7 +143,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param repository new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setRepository(String repository);
+    @NSetter
+    NDependencyBuilder repository(String repository);
 
     /**
      * set group value
@@ -145,7 +152,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param groupId new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setGroupId(String groupId);
+    @NSetter
+    NDependencyBuilder groupId(String groupId);
 
     /**
      * set name value
@@ -153,7 +161,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param artifactId new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setArtifactId(String artifactId);
+    @NSetter
+    NDependencyBuilder artifactId(String artifactId);
 
     /**
      * set classifier value
@@ -161,7 +170,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param classifier new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setClassifier(String classifier);
+    @NSetter
+    NDependencyBuilder classifier(String classifier);
 
     /**
      * set version value
@@ -169,7 +179,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param version new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setVersion(NVersion version);
+    @NSetter
+    NDependencyBuilder version(NVersion version);
 
     /**
      * set version value
@@ -177,7 +188,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param version new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setVersion(String version);
+    NDependencyBuilder version(String version);
 
     /**
      * set exclusions value
@@ -185,7 +196,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param exclusions new value
      * @return {@code this} instance
      */
-    NDependencyBuilder setExclusions(List<NId> exclusions);
+    NDependencyBuilder exclusions(List<NId> exclusions);
 
     /**
      * build new instance of NutsDependencies
@@ -194,11 +205,11 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      */
     NDependency build();
 
-    NDependencyBuilder setProperty(String property, String value);
+    NDependencyBuilder property(String property, String value);
 
-    NDependencyBuilder setPropertiesQuery(String propertiesQuery);
+    NDependencyBuilder propertiesQuery(String propertiesQuery);
 
-    NDependencyBuilder setProperties(Map<String, String> queryMap);
+    NDependencyBuilder properties(Map<String, String> queryMap);
 
     NDependencyBuilder addPropertiesQuery(String propertiesQuery);
 
@@ -210,9 +221,9 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @param condition condition
      * @return {@code this} instance
      */
-    NDependencyBuilder setCondition(NEnvCondition condition);
+    NDependencyBuilder condition(NEnvCondition condition);
 
-    NDependencyBuilder setCondition(NEnvConditionBuilder condition);
+    NDependencyBuilder condition(NEnvConditionBuilder condition);
 
     NDependencyBuilder removeCondition();
 
@@ -232,21 +243,23 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      *
      * @return string representation (or $ var) that can be evaluated as 'true'
      */
-    String getOptional();
+    @NGetter
+    String optional();
 
     /**
      * get scope string value (may be $ var).
      *
      * @return scope string value (may be $ var)
      */
-    String getScope();
+    String scope();
 
     /**
      * get classifier string value (may be $ var)
      *
      * @return classifier string
      */
-    String getClassifier();
+    @NGetter
+    String classifier();
 
     /**
      * convert to NutsId
@@ -260,7 +273,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      *
      * @return repository
      */
-    String getRepository();
+    @NGetter
+    String repository();
 
 
     /**
@@ -268,14 +282,16 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      *
      * @return artifact group id (aka groupId in maven)
      */
-    String getGroupId();
+    @NGetter
+    String groupId();
 
     /**
      * return artifact id (aka artifactId)
      *
      * @return artifact id (aka artifactId in maven)
      */
-    String getArtifactId();
+    @NGetter
+    String artifactId();
 
     /**
      * return dependency full name in the form
@@ -283,7 +299,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      *
      * @return return dependency short name
      */
-    String getShortName();
+    @NGetter
+    String shortName();
 
     /**
      * return dependency full name in the form
@@ -291,7 +308,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      *
      * @return return dependency long name
      */
-    String getLongName();
+    @NGetter
+    String longName();
 
     /**
      * return dependency full name in the form
@@ -299,25 +317,30 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      *
      * @return return dependency full name
      */
-    String getFullName();
+    @NGetter
+    String fullName();
 
     /**
      * return dependency version
      *
      * @return return dependency version
      */
-    NVersion getVersion();
+    @NGetter
+    NVersion version();
 
-    NEnvConditionBuilder getCondition();
+    @NGetter
+    NEnvConditionBuilder condition();
 
-    String getType();
+    @NGetter
+    String type();
 
     /**
      * dependency exclusions
      *
      * @return dependency exclusions
      */
-    List<NId> getExclusions();
+    @NGetter
+    List<NId> exclusions();
 
     /**
      * properties in the URL query form
@@ -325,7 +348,8 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @return properties in the URL query form.
      * @since 0.5.7
      */
-    String getPropertiesQuery();
+    @NGetter
+    String propertiesQuery();
 
     /**
      * properties in the URL query form
@@ -333,6 +357,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @return properties in the URL query form.
      * @since 0.5.7
      */
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
 
 }

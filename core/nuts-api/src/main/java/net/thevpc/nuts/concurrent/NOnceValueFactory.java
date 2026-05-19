@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.util.function.Supplier;
 
 /**
@@ -51,7 +53,8 @@ public interface NOnceValueFactory {
      *
      * @return the once value store
      */
-    NOnceValueStore getStore();
+    @NGetter
+    NOnceValueStore store();
 
     /**
      * Creates a new {@link NOnceValue} with the given supplier.

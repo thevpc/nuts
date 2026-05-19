@@ -37,13 +37,13 @@ public class MvnClient {
                 status = Status.DIRTY;
                 try {
                     NDefinition ff = NSearch.of()
-                            .setFetchStrategy(NFetchStrategy.ONLINE)
+                            .fetchStrategy(NFetchStrategy.ONLINE)
                             .addId(NET_VPC_APP_NUTS_MVN)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setInlineDependencies(true).latest(true).getResultDefinitions().findFirst().get();
-                    for (NId nutsId : NSearch.of().addId(ff.id()).setInlineDependencies(true).getResultIds()) {
-                        NFetch.of(nutsId).setFetchStrategy(NFetchStrategy.ONLINE)
-                                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .inlineDependencies(true).latest(true).getResultDefinitions().findFirst().get();
+                    for (NId nutsId : NSearch.of().addId(ff.id()).inlineDependencies(true).getResultIds()) {
+                        NFetch.of(nutsId).fetchStrategy(NFetchStrategy.ONLINE)
+                                .dependencyFilter(NDependencyFilters.of().byRunnable())
                                 .getResultDefinition();
                     }
                     status = Status.SUCCESS;

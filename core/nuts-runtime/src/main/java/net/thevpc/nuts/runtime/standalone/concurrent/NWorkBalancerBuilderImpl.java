@@ -5,7 +5,6 @@ import net.thevpc.nuts.util.NIllegalStateException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NNames;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -26,28 +25,28 @@ public class NWorkBalancerBuilderImpl<T> implements NWorkBalancerBuilder<T> {
     @Override
     public WorkerBuilder<T> addWorker(String workerName) {
         String validWorkerName = NStringUtils.trimToNull(workerName);
-        NAssert.requireFalse(workers.stream().filter(x -> Objects.equals(x.getName(), validWorkerName)).findFirst().isPresent(), () -> NMsg.ofC("duplicate worker name : %s", validWorkerName));
+        NAssert.requireFalse(workers.stream().filter(x -> Objects.equals(x.name(), validWorkerName)).findFirst().isPresent(), () -> NMsg.ofC("duplicate worker name : %s", validWorkerName));
         NWorkBalancerWorkerModel worker = new NWorkBalancerWorkerModel()
-                .setName(validWorkerName)
-                .setWeight(1);
+                .name(validWorkerName)
+                .weight(1);
         workers.add(worker);
         return new WorkerBuilderImpl<>(this, worker);
     }
 
     @Override
     public NWorkBalancerBuilder<T> remove(String workerName) {
-        workers.removeIf(w -> workerName.equals(w.getName()));
+        workers.removeIf(w -> workerName.equals(w.name()));
         return this;
     }
 
     @Override
-    public NWorkBalancerBuilder<T> setStrategy(String strategy) {
+    public NWorkBalancerBuilder<T> strategy(String strategy) {
         this.strategy = strategy;
         return this;
     }
 
     @Override
-    public NWorkBalancerBuilder<T> setStrategy(NWorkBalancerDefaultStrategy strategy) {
+    public NWorkBalancerBuilder<T> strategy(NWorkBalancerDefaultStrategy strategy) {
         this.strategy = strategy == null ? null : strategy.id();
         return this;
     }
@@ -64,10 +63,10 @@ public class NWorkBalancerBuilderImpl<T> implements NWorkBalancerBuilder<T> {
             throw new NIllegalStateException(NMsg.ofC("No workers defined"));
         }
         NWorkBalancerModel model = new NWorkBalancerModel();
-        model.setId(id);
-        model.setWorkers(new ArrayList<>(workers).stream().map(x -> x.copy()).collect(Collectors.toList()));
+        model.id(id);
+        model.workers(new ArrayList<>(workers).stream().map(x -> x.copy()).collect(Collectors.toList()));
         model.setStrategy(strategy);
-        model.setOptions(new HashMap<>(options));
+        model.options(new HashMap<>(options));
         return new NWorkBalancerImpl<>(model, factory);
     }
 
@@ -83,22 +82,22 @@ public class NWorkBalancerBuilderImpl<T> implements NWorkBalancerBuilder<T> {
 
         @Override
         public WorkerBuilder<T> withWeight(float weight) {
-            worker.setWeight(weight);
+            worker.weight(weight);
             return this;
         }
 
         @Override
         public WorkerBuilder<T> withOption(String optionName, NElement optionValue) {
-            if (worker.getOptions() == null) {
-                worker.setOptions(new HashMap<>());
+            if (worker.options() == null) {
+                worker.options(new HashMap<>());
             }
-            worker.getOptions().put(optionName, optionValue);
+            worker.options().put(optionName, optionValue);
             return this;
         }
 
         @Override
         public WorkerBuilder<T> withHostLoadMetricsProvider(NWorkBalancerHostLoadMetricProvider hostLoadMetricsProvider) {
-            worker.setHostLoadMetricsProvider(hostLoadMetricsProvider);
+            worker.hostLoadMetricsProvider(hostLoadMetricsProvider);
             return this;
         }
 

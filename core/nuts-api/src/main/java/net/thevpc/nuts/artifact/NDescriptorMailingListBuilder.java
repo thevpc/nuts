@@ -1,26 +1,37 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.List;
 import java.util.Map;
 
 public interface NDescriptorMailingListBuilder extends NDescriptorMailingList {
-    NDescriptorMailingListBuilder setId(String id);
+    @NSetter
+    NDescriptorMailingListBuilder id(String id);
 
-    NDescriptorMailingListBuilder setName(String name);
+    @NSetter
+    NDescriptorMailingListBuilder name(String name);
 
-    NDescriptorMailingListBuilder setSubscribe(String subscribe);
+    @NSetter
+    NDescriptorMailingListBuilder subscribe(String subscribe);
 
-    NDescriptorMailingListBuilder setUnsubscribe(String unsubscribe);
+    @NSetter
+    NDescriptorMailingListBuilder unsubscribe(String unsubscribe);
 
-    NDescriptorMailingListBuilder setPost(String post);
+    @NSetter
+    NDescriptorMailingListBuilder post(String post);
 
-    NDescriptorMailingListBuilder setArchive(String archive);
+    @NSetter
+    NDescriptorMailingListBuilder archive(String archive);
 
-    NDescriptorMailingListBuilder setOtherArchives(List<String> otherArchives);
+    @NSetter
+    NDescriptorMailingListBuilder otherArchives(List<String> otherArchives);
 
-    NDescriptorMailingListBuilder setProperties(Map<String, String> properties);
+    @NSetter
+    NDescriptorMailingListBuilder properties(Map<String, String> properties);
 
-    NDescriptorMailingListBuilder setComments(String comments);
+    @NSetter
+    NDescriptorMailingListBuilder comments(String comments);
 
     NDescriptorMailingList build();
 

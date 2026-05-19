@@ -43,12 +43,12 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
     }
 
     public static RepoInfo repoInfo(NRepository x, boolean tree) {
-        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocationPath(),
+        return new RepoInfo(x.name(), x.config().type(), x.config().locationPath(),
                 x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
-                (tree ? x.config().getMirrors().stream().map(e -> repoInfo(e, tree)).toArray(RepoInfo[]::new) : null),
+                (tree ? x.config().mirrors().stream().map(e -> repoInfo(e, tree)).toArray(RepoInfo[]::new) : null),
                 x.config().isTemporary(),
                 x.config().isPreview(),
-                x.config().getTags().toArray(new String[0])
+                x.config().tags().toArray(new String[0])
         );
     }
 
@@ -122,9 +122,9 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 NRepository editedRepo = workspace.getRepository(repoId).get();
                 NRepository repo = editedRepo.config().addMirror(
                         new NRepositorySpec()
-                                .setName(repositoryName)
-                        .setLocation(repositoryName)
-                                .setSourceLocation(NRepositoryLocation.of(location))
+                                .name(repositoryName)
+                        .location(repositoryName)
+                                .sourceLocation(NRepositoryLocation.of(location))
                 );
                 workspace.saveConfig();
 
@@ -136,16 +136,16 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
 
             } else if (cmdLine.next("enable", "br").isPresent()) {
                 NRepository editedRepo = workspace.getRepository(repoId).get();
-                editedRepo.config().setEnabled(true);
+                editedRepo.config().enabled(true);
                 workspace.saveConfig();
 
             } else if (cmdLine.next("disable", "dr").isPresent()) {
                 NRepository editedRepo = workspace.getRepository(repoId).get();
-                editedRepo.config().setEnabled(true);
+                editedRepo.config().enabled(true);
                 workspace.saveConfig();
             } else if (cmdLine.next("list repos", "repo list", "list repo", "lr").isPresent()) {
                 NRepository editedRepo = workspace.getRepository(repoId).get();
-                List<NRepository> linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors() : Collections.emptyList();
+                List<NRepository> linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().mirrors() : Collections.emptyList();
                 out.println(NMsg.ofC("%s sub repositories.", linkRepositories.size()));
 
                 NMutableTableModel m = NMutableTableModel.of();
@@ -153,14 +153,14 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 ;
                 while (cmdLine.hasNext()) {
                     if (!NSession.of().configureFirst(cmdLine)) {
-                        cmdLine.setCommandName("config edit repo").throwUnexpectedArgument();
+                        cmdLine.commandName("config edit repo").throwUnexpectedArgument();
                     }
                 }
                 for (NRepository repository : linkRepositories) {
                     m.addRow(
-                            NText.ofStyledPrimary4(repository.getName()), repository.config().isEnabled() ? repository.isEnabled() ? NText.ofStyled("ENABLED", NTextStyle.success()) : NText.ofStyled("<RT-DISABLED>", NTextStyle.error()) : NText.ofStyled("<DISABLED>", NTextStyle.error()),
-                            NText.of(repository.getRepositoryType()),
-                            NText.of(repository.config().getLocation()));
+                            NText.ofStyledPrimary4(repository.name()), repository.config().isEnabled() ? repository.isEnabled() ? NText.ofStyled("ENABLED", NTextStyle.success()) : NText.ofStyled("<RT-DISABLED>", NTextStyle.error()) : NText.ofStyled("<DISABLED>", NTextStyle.error()),
+                            NText.of(repository.repositoryType()),
+                            NText.of(repository.config().location()));
                 }
                 out.print(NTextArt.of().getTableRenderer()
                         .get().render(m));
@@ -183,7 +183,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
     }
 
     private void doListRepo(NCmdLine cmdLine, NPrintStream out) {
-        cmdLine.setCommandName("config list repos");
+        cmdLine.commandName("config list repos");
         NRef<String> parent = NRef.ofNull(String.class);
         NRef<Boolean> longFormat = NRef.ofFalse();
         NSession session = NSession.of();
@@ -219,7 +219,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.isExecMode()) {
             NWorkspace workspace = NWorkspace.of();
             List<NRepository> r = parent.isNull() ? workspace.getRepositories() : workspace.getRepository(parent.get())
-                    .get().config().getMirrors();
+                    .get().config().mirrors();
             RepoInfo[] array = r.stream().map(x -> repoInfo(x, session.getOutputFormat().orDefault() != NContentType.TABLE && session.getOutputFormat().orDefault() != NContentType.PLAIN)).toArray(RepoInfo[]::new);
             NContentType cf = NSession.of().getOutputFormat().orElse(NContentType.PLAIN);
             if (longFormat.get()) {
@@ -336,7 +336,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                             d.location = cmdLine.next().flatMap(NArg::asString).get();
                             DefaultNRepositoryDB db = NWorkspaceExt.of().getRepositoryModel().getDB();
                             NRepositorySpec ro = db.getDefinitionByName(d.location).orNull();
-                            String loc2 = ro == null ? null : ro.getSourceLocation().getFullLocation();
+                            String loc2 = ro == null ? null : ro.sourceLocation().getFullLocation();
                             if (loc2 != null) {
                                 d.repositoryName = d.location;
                                 d.location = loc2;
@@ -356,21 +356,21 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.isExecMode()) {
             NRepository repo = null;
             NRepositorySpec o = new NRepositorySpec()
-                    .setName(d.repositoryName)
-                    .setLocation(d.repositoryName)
-                    .setSourceLocation(d.location == null ? null : NRepositoryLocation.of(d.location))
-                    .setEnv(d.env);
+                    .name(d.repositoryName)
+                    .location(d.repositoryName)
+                    .sourceLocation(d.location == null ? null : NRepositoryLocation.of(d.location))
+                    .env(d.env);
             if (d.parent == null) {
                 repo = NWorkspace.of().addRepository(o);
             } else {
                 NRepository p = NWorkspace.of().getRepository(d.parent).get();
                 repo = p.config().addMirror(o);
             }
-            out.println(NMsg.ofC("repository %s added successfully", repo.getName()));
+            out.println(NMsg.ofC("repository %s added successfully", repo.name()));
             NWorkspace.of().saveConfig();
 
         }
-        cmdLine.setCommandName("config add repo").throwUnexpectedArgument();
+        cmdLine.commandName("config add repo").throwUnexpectedArgument();
     }
 
     private void enableRepo(NCmdLine cmdLine, Boolean autoSave, NSession session, boolean enableRepo) {
@@ -403,7 +403,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.isExecMode()) {
             NWorkspace workspace = NWorkspace.of();
             NRepository editedRepo = workspace.getRepository(repositoryName.get()).get();
-            editedRepo.config().setEnabled(enableRepo);
+            editedRepo.config().enabled(enableRepo);
             workspace.saveConfig();
         }
     }

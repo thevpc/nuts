@@ -35,11 +35,11 @@ public class DefaultNUndeploy extends AbstractNUndeploy {
         }
         for (NId id : ids) {
             NDefinition p = NSearch.of()
-                    .setFetchStrategy(isOffline() ? NFetchStrategy.OFFLINE : NFetchStrategy.ONLINE)
+                    .fetchStrategy(isOffline() ? NFetchStrategy.OFFLINE : NFetchStrategy.ONLINE)
                     .addIds(id)
-                    .addRepositoryFilter(NRepositoryFilters.of().byName(getRepository()))
+                    .addRepositoryFilter(NRepositoryFilters.of().byName(repository()))
                     //skip 'installed' repository
-                    .setRepositoryFilter(
+                    .repositoryFilter(
                             NRepositoryFilters.of().installedRepo().neg()
                     )
                     .distinct(true)

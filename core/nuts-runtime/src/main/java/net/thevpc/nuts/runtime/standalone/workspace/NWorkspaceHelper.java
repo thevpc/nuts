@@ -62,7 +62,7 @@ public class NWorkspaceHelper {
         if (parent.config().isSupportedMirroring()) {
             List<NRepository> subrepos = new ArrayList<>();
             boolean ok = false;
-            for (NRepository repository : parent.config().getMirrors()) {
+            for (NRepository repository : parent.config().mirrors()) {
                 if (repository.isEnabled()) {
                     if (repositoryFilter == null || repositoryFilter.acceptRepository(repository)) {
                         repos.add(repository);
@@ -89,24 +89,24 @@ public class NWorkspaceHelper {
                     .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
             );
             NExec execCmd = NExec.of()
-                    .executionType(info2.getExecutionType().orNull())
-                    .runAs(info2.getRunAs().orNull())
+                    .executionType(info2.executionType().orNull())
+                    .runAs(info2.runAs().orNull())
                     .failFast(true);
-            List<String> executorOptions = info2.getExecutorOptions().orNull();
+            List<String> executorOptions = info2.executorOptions().orNull();
             if (executorOptions != null) {
                 execCmd.configure(true, executorOptions.toArray(new String[0]));
             }
-            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
+            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).expandSimpleOptions(false);
             while (executorOptionsCmdLine.hasNext()) {
                 execCmd.configureLast(executorOptionsCmdLine);
             }
-            if (info2.getApplicationArguments().get().isEmpty()) {
-                if (info2.getSkipWelcome().orElse(false)) {
+            if (info2.applicationArguments().get().isEmpty()) {
+                if (info2.skipWelcome().orElse(false)) {
                     return;
                 }
                 execCmd.addCommand("welcome");
             } else {
-                execCmd.addCommand(info2.getApplicationArguments().get());
+                execCmd.addCommand(info2.applicationArguments().get());
             }
             execCmd.run();
         });
@@ -115,7 +115,7 @@ public class NWorkspaceHelper {
     public static void runApplication(NWorkspace workspace,NApplicationHandleMode handleMode) {
         NApplicationHandleMode.runHandled(() ->
                 workspace.runWith(() -> {
-                    boolean inherited = NWorkspace.of().getBootOptions().getInherited().orElse(false);
+                    boolean inherited = NWorkspace.of().getBootOptions().inherited().orElse(false);
                     NApp nApp = NApp.of();
                     // Resolve the application class name (explicit or fallback)
                     String appClassName = nApp.sourceType() == null ? null : nApp.sourceType().getName();
@@ -167,9 +167,9 @@ public class NWorkspaceHelper {
     }
 
     protected static String getRunModeString(NBootOptions options) {
-        if (options.getReset().orElse(false)) {
+        if (options.reset().orElse(false)) {
             return "reset";
-        } else if (options.getRecover().orElse(false)) {
+        } else if (options.recover().orElse(false)) {
             return "recover";
         } else {
             return "exec";

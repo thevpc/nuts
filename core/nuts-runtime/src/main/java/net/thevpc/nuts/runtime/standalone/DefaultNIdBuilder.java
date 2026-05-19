@@ -70,7 +70,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
         this.artifactId = NStringUtils.trimToNull(artifactId);
         this.classifier = NStringUtils.trimToNull(classifier);
         this.version = version == null ? NVersion.BLANK : version;
-        setCondition(condition);
+        condition(condition);
         setProperties(properties);
     }
 
@@ -79,12 +79,12 @@ public class DefaultNIdBuilder implements NIdBuilder {
         if (id == null) {
             clear();
         } else {
-            setCondition(id.condition());
-            setGroupId(id.groupId());
-            setArtifactId(id.artifactId());
-            setVersion(id.version());
-            setClassifier(id.classifier());
-            setCondition(id.condition());
+            condition(id.condition());
+            groupId(id.groupId());
+            artifactId(id.artifactId());
+            version(id.version());
+            classifier(id.classifier());
+            condition(id.condition());
             setPropertiesQuery(id.propertiesQuery());
         }
         return this;
@@ -92,9 +92,9 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public NIdBuilder clear() {
-        setGroupId(null);
-        setArtifactId(null);
-        setVersion((NVersion) null);
+        groupId(null);
+        artifactId(null);
+        version((NVersion) null);
         setPropertiesQuery("");
         return this;
     }
@@ -104,46 +104,46 @@ public class DefaultNIdBuilder implements NIdBuilder {
         if (id == null) {
             clear();
         } else {
-            setGroupId(id.getGroupId());
-            setArtifactId(id.getArtifactId());
-            setVersion(id.getVersion());
-            setPropertiesQuery(id.getPropertiesQuery());
+            groupId(id.groupId());
+            artifactId(id.artifactId());
+            version(id.version());
+            setPropertiesQuery(id.propertiesQuery());
         }
         return this;
     }
 
     @Override
-    public NIdBuilder setGroupId(String value) {
+    public NIdBuilder groupId(String value) {
         this.groupId = NStringUtils.trimToNull(value);
         return this;
     }
 
     @Override
-    public NIdBuilder setRepository(String value) {
+    public NIdBuilder repository(String value) {
         return setProperty(NConstants.IdProperties.REPO, NStringUtils.trimToNull(value));
     }
 
     @Override
-    public NIdBuilder setVersion(NVersion value) {
+    public NIdBuilder version(NVersion value) {
         this.version = value == null ? NVersion.BLANK : value;
         return this;
     }
 
     @Override
-    public NIdBuilder setVersion(String value) {
+    public NIdBuilder version(String value) {
         this.version = NVersion.get(value).get();
         return this;
     }
 
     @Override
-    public DefaultNIdBuilder setArtifactId(String value) {
+    public DefaultNIdBuilder artifactId(String value) {
         this.artifactId = NStringUtils.trimToNull(value);
         return this;
     }
 
     @Override
-    public String getFace() {
-        String s = getProperties().get(NConstants.IdProperties.FACE);
+    public String face() {
+        String s = properties().get(NConstants.IdProperties.FACE);
         return NStringUtils.trimToNull(s);
     }
 
@@ -155,8 +155,8 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
 
     @Override
-    public String getPackaging() {
-        String s = getProperties().get(NConstants.IdProperties.PACKAGING);
+    public String packaging() {
+        String s = properties().get(NConstants.IdProperties.PACKAGING);
         return NStringUtils.trimToNull(s);
     }
 
@@ -167,12 +167,12 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NIdBuilder setFaceContent() {
+    public NIdBuilder faceContent() {
         return setFace(NConstants.QueryFaces.CONTENT);
     }
 
     @Override
-    public NIdBuilder setFaceDescriptor() {
+    public NIdBuilder faceDescriptor() {
         return setFace(NConstants.QueryFaces.DESCRIPTOR);
     }
 
@@ -183,23 +183,23 @@ public class DefaultNIdBuilder implements NIdBuilder {
     /// /                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
 //    }
     @Override
-    public String getClassifier() {
+    public String classifier() {
         return classifier;
     }
 
     @Override
-    public NIdBuilder setClassifier(String value) {
+    public NIdBuilder classifier(String value) {
         this.classifier = NStringUtils.trimToNull(value);
         return this;
     }
 
     @Override
-    public NIdBuilder setPackaging(String value) {
+    public NIdBuilder packaging(String value) {
         return setProperty(NConstants.IdProperties.PACKAGING, NStringUtils.trimToNull(value));
     }
 
     @Override
-    public NIdBuilder setCondition(NEnvCondition c) {
+    public NIdBuilder condition(NEnvCondition c) {
         if (c == null) {
             setProperty(NConstants.IdProperties.OS, null);
             setProperty(NConstants.IdProperties.OS_DIST, null);
@@ -209,29 +209,29 @@ public class DefaultNIdBuilder implements NIdBuilder {
             setProperty(NConstants.IdProperties.PROFILE, null);
             condition.setProperties(null);
         } else {
-            setProperty(NConstants.IdProperties.OS, NReservedLangUtils.joinAndTrimToNull(c.getOs()));
-            setProperty(NConstants.IdProperties.OS_DIST, NReservedLangUtils.joinAndTrimToNull(c.getOsDist()));
-            setProperty(NConstants.IdProperties.ARCH, NReservedLangUtils.joinAndTrimToNull(c.getArch()));
-            setProperty(NConstants.IdProperties.PLATFORM, NReservedUtils.formatStringIdList(c.getPlatform()));
-            setProperty(NConstants.IdProperties.DESKTOP, NReservedLangUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
-            setProperty(NConstants.IdProperties.PROFILE, NReservedLangUtils.joinAndTrimToNull(c.getProfiles()));
-            condition.setProperties(c.getProperties());
+            setProperty(NConstants.IdProperties.OS, NReservedLangUtils.joinAndTrimToNull(c.os()));
+            setProperty(NConstants.IdProperties.OS_DIST, NReservedLangUtils.joinAndTrimToNull(c.osDist()));
+            setProperty(NConstants.IdProperties.ARCH, NReservedLangUtils.joinAndTrimToNull(c.arch()));
+            setProperty(NConstants.IdProperties.PLATFORM, NReservedUtils.formatStringIdList(c.platform()));
+            setProperty(NConstants.IdProperties.DESKTOP, NReservedLangUtils.joinAndTrimToNull(c.desktopEnvironment()));
+            setProperty(NConstants.IdProperties.PROFILE, NReservedLangUtils.joinAndTrimToNull(c.profiles()));
+            condition.setProperties(c.properties());
 
         }
         return this;
     }
 
     @Override
-    public NEnvConditionBuilder getCondition() {
+    public NEnvConditionBuilder condition() {
         return condition;
     }
 
     @Override
-    public NIdBuilder setCondition(NEnvConditionBuilder c) {
+    public NIdBuilder condition(NEnvConditionBuilder c) {
         if (c == null) {
-            return setCondition((NEnvCondition) null);
+            return condition((NEnvCondition) null);
         } else {
-            return setCondition(c.build());
+            return condition(c.build());
         }
     }
 
@@ -240,27 +240,27 @@ public class DefaultNIdBuilder implements NIdBuilder {
     public NIdBuilder setProperty(String property, String value) {
         switch (property) {
             case NConstants.IdProperties.OS: {
-                condition.setOs(NStringUtils.parsePropertyIdList(value).get());
+                condition.os(NStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NConstants.IdProperties.OS_DIST: {
-                condition.setOsDist(NStringUtils.parsePropertyIdList(value).get());
+                condition.osDist(NStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NConstants.IdProperties.ARCH: {
-                condition.setArch(NStringUtils.parsePropertyIdList(value).get());
+                condition.arch(NStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NConstants.IdProperties.PLATFORM: {
-                condition.setPlatform(NStringUtils.parsePropertyIdList(value).get());
+                condition.platform(NStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NConstants.IdProperties.DESKTOP: {
-                condition.setDesktopEnvironment(NStringUtils.parsePropertyIdList(value).get());
+                condition.desktopEnvironment(NStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NConstants.IdProperties.PROFILE: {
-                condition.setProfile(NStringUtils.parsePropertyIdList(value).get());
+                condition.profile(NStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NConstants.IdProperties.CONDITIONAL_PROPERTIES: {
@@ -268,11 +268,11 @@ public class DefaultNIdBuilder implements NIdBuilder {
                 break;
             }
             case NConstants.IdProperties.CLASSIFIER: {
-                setClassifier(value);
+                classifier(value);
                 break;
             }
             case NConstants.IdProperties.VERSION: {
-                setVersion(value);
+                version(value);
                 break;
             }
             default: {
@@ -308,48 +308,48 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public String getPropertiesQuery() {
-        return NStringMapFormat.DEFAULT.format(getProperties());
+    public String propertiesQuery() {
+        return NStringMapFormat.DEFAULT.format(properties());
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
     @Override
-    public String getRepository() {
-        return NStringUtils.trimToNull(getProperties().get(NConstants.IdProperties.REPO));
+    public String repository() {
+        return NStringUtils.trimToNull(properties().get(NConstants.IdProperties.REPO));
     }
 
     @Override
-    public String getGroupId() {
+    public String groupId() {
         return groupId;
     }
 
     @Override
-    public String getFullName() {
+    public String fullName() {
         return build().fullName();
     }
 
     @Override
-    public String getShortName() {
+    public String shortName() {
         return NReservedUtils.getIdShortName(groupId,artifactId, classifier);
     }
 
     @Override
-    public String getLongName() {
+    public String longName() {
         return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
 
 
     @Override
-    public String getArtifactId() {
+    public String artifactId() {
         return artifactId;
     }
 
     @Override
-    public NVersion getVersion() {
+    public NVersion version() {
         return version;
     }
 
@@ -421,7 +421,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
                 && NStringUtils.trim(groupId).equals(NStringUtils.trim(other.groupId()))
                 && Objects.equals((version == null || version.isBlank()) ? null : version,
                 (other.version() == null || other.version().isBlank()) ? null : other.version())
-                && Objects.equals(getClassifier(), other.classifier())
+                && Objects.equals(classifier(), other.classifier())
                 ;
     }
 
@@ -437,12 +437,12 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NId getShortId() {
+    public NId shortId() {
         return build().shortId();
     }
 
     @Override
-    public NId getLongId() {
+    public NId longId() {
         return build().longId();
     }
 

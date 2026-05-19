@@ -61,12 +61,12 @@ public class DefaultNDependencyTreeNode implements NDependencyTreeNode {
     }
 
     @Override
-    public NDependency getDependency() {
+    public NDependency dependency() {
         return dependency;
     }
 
     @Override
-    public List<NDependencyTreeNode> getChildren() {
+    public List<NDependencyTreeNode> children() {
         return children;
     }
 

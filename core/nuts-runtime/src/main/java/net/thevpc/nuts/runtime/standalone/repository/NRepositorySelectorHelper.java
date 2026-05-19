@@ -24,13 +24,13 @@ public class NRepositorySelectorHelper {
             throw new IllegalArgumentException("unexpected");
         }
         NRepositorySpec found = all[0];
-        String name= found.getName();
+        String name= found.name();
         if ((name == null || name.isEmpty()) && requireName) {
             NAssert.requireNamedNonBlank(name, "repository name (<name>=<url>)");
         }
-        found.setTags(
+        found.tags(
                 new NRepositoryTagsListHelper()
-                        .add(found.getTags())
+                        .add(found.tags())
                         .add(tags).toArray()
         );
         return found;
@@ -46,7 +46,7 @@ public class NRepositorySelectorHelper {
         if (!db.findAllNamesByName(loc.getName()).isEmpty()) {
             defaultName = loc.getName();
         } else {
-            String nn = db.getDefinitionByPath(loc.getPath()).map(x -> x.getName()).orNull();
+            String nn = db.getDefinitionByPath(loc.getPath()).map(x -> x.name()).orNull();
             if (nn != null) {
                 defaultName = nn;
             }
@@ -55,17 +55,17 @@ public class NRepositorySelectorHelper {
             NRepositorySpec u = db.getDefinitionByName(defaultName).orNull();
             if (u != null
                     && (loc.getPath().isEmpty()
-                    || Objects.equals(loc.getPath(), u.getSourceLocation().getPath())
-                    || Objects.equals(loc.getFullLocation(), u.getSourceLocation().getFullLocation()))) {
+                    || Objects.equals(loc.getPath(), u.sourceLocation().getPath())
+                    || Objects.equals(loc.getFullLocation(), u.sourceLocation().getFullLocation()))) {
                 //this is acceptable!
-                if (!u.getName().equals(loc.getName())) {
-                    u.setName(loc.getName());
+                if (!u.name().equals(loc.getName())) {
+                    u.name(loc.getName());
                 }
             }
             if (u != null) {
-                u.setTags(
+                u.tags(
                         new NRepositoryTagsListHelper()
-                                .add(u.getTags())
+                                .add(u.tags())
                                 .add(tags).toArray()
                 );
                 return u;
@@ -105,13 +105,13 @@ public class NRepositorySelectorHelper {
                         : nPath.toAbsolute().toString();
         loc = loc.setPath(sloc);
 
-        return new NRepositorySpec().setName(name)
-                .setFailSafe(false).setCreate(true)
-                .setOrder((!NBlankable.isBlank(url) && NPath.of(url).isLocal())
+        return new NRepositorySpec().name(name)
+                .failSafe(false).create(true)
+                .order((!NBlankable.isBlank(url) && NPath.of(url).isLocal())
                         ? NRepositorySpec.ORDER_USER_LOCAL
                         : NRepositorySpec.ORDER_USER_REMOTE
                 )
-                .setSourceLocation(loc);
+                .sourceLocation(loc);
     }
 
     public static NRepositorySpec createDefaultRepositoryOptions(String nameOrURL) {

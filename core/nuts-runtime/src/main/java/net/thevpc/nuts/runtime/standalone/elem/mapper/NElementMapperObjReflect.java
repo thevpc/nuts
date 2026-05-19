@@ -26,7 +26,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     public Object toSimple(NElementSerializerContext<Object> context) {
         NReflectType m = context.getTypesRepository().getType(context.instanceType());
         Map<String, Object> obj = new LinkedHashMap<>();
-        for (NReflectProperty property : m.getProperties()) {
+        for (NReflectProperty property : m.properties()) {
             final Object v = property.read(context.instance());
             if (!property.isDefaultValue(v)) {
                 obj.put(property.getName(), context.toSimple(v, null));
@@ -39,7 +39,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     public NElement toElement(NElementSerializerContext<Object> context) {
         NReflectType m = context.getTypesRepository().getType(context.instanceType());
         NObjectElementBuilder obj = NElement.ofObjectBuilder();
-        for (NReflectProperty property : m.getProperties()) {
+        for (NReflectProperty property : m.properties()) {
             final Object v = property.read(context.instance());
             if (!property.isDefaultValue(v)) {
                 obj.set(property.getName(), context.toElement(v));
@@ -156,11 +156,11 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         Object instance = m.newInstance();
         NObjectElement eobj = element.asObject().get();
 //        NElements prv = NElements;
-        for (NReflectProperty property : m.getProperties()) {
+        for (NReflectProperty property : m.properties()) {
             if (property.isWrite()) {
                 NElement v = eobj.get(property.getName()).orNull();
                 if (v != null) {
-                    property.write(instance, context.toObject(v, property.getPropertyType().getJavaType()));
+                    property.write(instance, context.toObject(v, property.getPropertyType().javaType()));
                 }
             }
         }

@@ -29,7 +29,7 @@ public class DefaultNDescriptorContributorBuilder implements NDescriptorContribu
     }
 
     public DefaultNDescriptorContributorBuilder(NDescriptorContributor other) {
-        this(other.getId(), other.getName(), other.getUrl(), other.getEmail(), other.getRoles(), other.getTimezone(), other.getIcons(), other.getOrganization(), other.getProperties(), other.getComments());
+        this(other.id(), other.name(), other.url(), other.email(), other.roles(), other.timezone(), other.icons(), other.organization(), other.properties(), other.comments());
     }
 
     public DefaultNDescriptorContributorBuilder(String id, String name, String url, String email, List<String> roles, String timezone, List<String> icons, NDescriptorOrganization organization, Map<String, String> properties, String comments) {
@@ -46,111 +46,111 @@ public class DefaultNDescriptorContributorBuilder implements NDescriptorContribu
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
     @Override
-    public NDescriptorContributorBuilder setId(String id) {
+    public NDescriptorContributorBuilder id(String id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NDescriptorContributorBuilder setName(String name) {
+    public NDescriptorContributorBuilder name(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public String getUrl() {
+    public String url() {
         return url;
     }
 
     @Override
-    public NDescriptorContributorBuilder setUrl(String url) {
+    public NDescriptorContributorBuilder url(String url) {
         this.url = url;
         return this;
     }
 
     @Override
-    public String getEmail() {
+    public String email() {
         return email;
     }
 
     @Override
-    public NDescriptorContributorBuilder setEmail(String email) {
+    public NDescriptorContributorBuilder email(String email) {
         this.email = email;
         return this;
     }
 
     @Override
-    public List<String> getRoles() {
+    public List<String> roles() {
         return roles;
     }
 
     @Override
-    public NDescriptorContributorBuilder setRoles(List<String> roles) {
+    public NDescriptorContributorBuilder roles(List<String> roles) {
         this.roles = roles;
         return this;
     }
 
     @Override
-    public String getTimezone() {
+    public String timezone() {
         return timezone;
     }
 
     @Override
-    public NDescriptorContributorBuilder setTimezone(String timezone) {
+    public NDescriptorContributorBuilder timezone(String timezone) {
         this.timezone = timezone;
         return this;
     }
 
     @Override
-    public List<String> getIcons() {
+    public List<String> icons() {
         return icons;
     }
 
     @Override
-    public NDescriptorContributorBuilder setIcons(List<String> icons) {
+    public NDescriptorContributorBuilder icons(List<String> icons) {
         this.icons = icons;
         return this;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
     @Override
-    public NDescriptorContributorBuilder setProperties(Map<String, String> properties) {
+    public NDescriptorContributorBuilder properties(Map<String, String> properties) {
         this.properties = properties;
         return this;
     }
 
     @Override
-    public String getComments() {
+    public String comments() {
         return comments;
     }
 
     @Override
-    public NDescriptorContributorBuilder setComments(String comments) {
+    public NDescriptorContributorBuilder comments(String comments) {
         this.comments = comments;
         return this;
     }
 
     @Override
-    public NDescriptorOrganization getOrganization() {
+    public NDescriptorOrganization organization() {
         return organization;
     }
 
     @Override
-    public NDescriptorContributorBuilder setOrganization(NDescriptorOrganization organization) {
+    public NDescriptorContributorBuilder organization(NDescriptorOrganization organization) {
         this.organization = organization;
         return this;
     }

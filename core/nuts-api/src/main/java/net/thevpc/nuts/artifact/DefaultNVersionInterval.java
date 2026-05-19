@@ -87,12 +87,12 @@ public class DefaultNVersionInterval implements NVersionInterval, Serializable {
     }
 
     @Override
-    public String getLowerBound() {
+    public String lowerBound() {
         return lowerBound;
     }
 
     @Override
-    public String getUpperBound() {
+    public String upperBound() {
         return upperBound;
     }
 

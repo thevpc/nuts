@@ -25,6 +25,7 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.util.NGetter;
 
 import java.net.URL;
 import java.util.List;
@@ -41,9 +42,12 @@ public interface NClassLoaderNode {
 
     boolean isEnabled();
 
-    NId getId();
+    @NGetter
+    NId id();
 
-    URL getURL();
+    @NGetter
+    URL url();
 
-    List<NClassLoaderNode> getDependencies();
+    @NGetter
+    List<NClassLoaderNode> dependencies();
 }

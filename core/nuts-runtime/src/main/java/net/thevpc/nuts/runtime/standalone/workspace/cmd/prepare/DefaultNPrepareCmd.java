@@ -45,7 +45,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         NId apiId = workspace.getApiId();
 
         if (NBlankable.isBlank(version)) {
-            apiId = apiId.builder().setVersion(version).build();
+            apiId = apiId.builder().version(version).build();
         }
         NPath javaPath = remoteJavaCommand(apiId.version());
         if (javaPath == null) {
@@ -54,12 +54,12 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
         deps.add(workspace.getRuntimeId());
-        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).setTargetApiVersion(apiId.version()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilters.of().byRunnable()).basePackage(true)
 //                .setDependencies(true)
                 .getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
-                deps.addAll(NSearch.of().addId(id).latest(true).setTargetApiVersion(apiId.version()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+                deps.addAll(NSearch.of().addId(id).latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilters.of().byRunnable()).basePackage(true)
 //                        .setDependencies(true)
                         .getResultIds().toList());
             }
@@ -72,7 +72,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private void pushId(NId pid, NVersion apiIdVersion) {
-        NDefinition def = NSearch.of().addId(pid).latest(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
+        NDefinition def = NSearch.of().addId(pid).latest(true).targetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
         NPath apiJar = def.content().get();
         if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.apiId()))) {
             if (!isLocalhost()) {

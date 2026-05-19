@@ -29,19 +29,19 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
     }
 
     @Override
-    public NFetch setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
+    public NFetch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
         this.ignoreCurrentEnvironment = ignoreCurrentEnvironment;
         return this;
     }
 
     @Override
-    public NFetch setId(String id) {
+    public NFetch id(String id) {
         NId nid = NId.get(id).get();
-        return setId(nid);
+        return id(nid);
     }
 
     @Override
-    public NFetch setId(NId id) {
+    public NFetch id(NId id) {
         if (id == null) {
             throw new NParseException(NMsg.ofNtf("invalid Id format to fetch : null"));
         }
@@ -56,7 +56,7 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
         super.copyFromDefaultNQueryBaseOptions((DefaultNQueryBaseOptions) other);
         if (other != null) {
             NFetch o = other;
-            this.id = o.getId();
+            this.id = o.id();
             this.ignoreCurrentEnvironment = o.isIgnoreCurrentEnvironment();
 //            this.installedOrNot = o.getInstalled();
         }
@@ -83,9 +83,9 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
             case "--not-installed": {
                 cmdLine.skip();
                 if (enabled) {
-                    setRepositoryFilter(
+                    repositoryFilter(
                             NRepositoryFilters.of().installedRepo().neg()
-                                    .and(this.getRepositoryFilter())
+                                    .and(this.repositoryFilter())
                     );
                 }
                 return true;
@@ -94,9 +94,9 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
             case "--installed": {
                 cmdLine.skip();
                 if (enabled) {
-                    setRepositoryFilter(
+                    repositoryFilter(
                             NRepositoryFilters.of().installedRepo()
-                                    .and(this.getRepositoryFilter())
+                                    .and(this.repositoryFilter())
                     );
                 }
                 return true;
@@ -118,9 +118,9 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
                 + ", inlineDependencies=" + isInlineDependencies()
 //                + ", dependencies=" + isDependencies()
 //                + ", effective=" + isEffective()
-                + ", repos=" + getRepositoryFilter()
+                + ", repos=" + repositoryFilter()
                 + ", displayOptions=" + getDisplayOptions()
-                + ", id=" + getId()
+                + ", id=" + id()
                 + '}';
     }
 }

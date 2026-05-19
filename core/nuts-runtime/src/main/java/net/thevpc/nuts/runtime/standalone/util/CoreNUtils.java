@@ -297,10 +297,10 @@ public class CoreNUtils {
                 props.putAll(parentFaceMap);
             }
             if (modified) {
-                return NIdBuilder.of().setRepository(repository)
-                        .setGroupId(group)
-                        .setArtifactId(name)
-                        .setVersion(version)
+                return NIdBuilder.of().repository(repository)
+                        .groupId(group)
+                        .artifactId(name)
+                        .version(version)
                         .setProperties(props).build();
             }
         }
@@ -334,10 +334,10 @@ public class CoreNUtils {
         }
         if (def.installInformation().isPresent()) {
             NInstallInformation nInstallInformation = def.installInformation().get();
-            if (nInstallInformation.getInstallFolder() != null) {
-                x.put("install-folder", nInstallInformation.getInstallFolder());
+            if (nInstallInformation.installFolder() != null) {
+                x.put("install-folder", nInstallInformation.installFolder());
             }
-            x.put("install-status", nInstallInformation.getInstallStatus().toString());
+            x.put("install-status", nInstallInformation.installStatus().toString());
             x.put("was-installed", nInstallInformation.isWasInstalled());
             x.put("was-required", nInstallInformation.isWasRequired());
         }
@@ -558,8 +558,8 @@ public class CoreNUtils {
                     return NIdType.RUNTIME;
                 } else {
                     for (NClassLoaderNode n : NWorkspace.of().getBootExtensionClassLoaderNodes()) {
-                        if (n.getId() != null) {
-                            if (n.getId().equalsShortId(depId)) {
+                        if (n.id() != null) {
+                            if (n.id().equalsShortId(depId)) {
                                 return NIdType.EXTENSION;
                             }
                         }
@@ -572,7 +572,7 @@ public class CoreNUtils {
 
     public static List<NId> resolveNutsApiIdsFromId(NId id) {
         List<NDependency> deps = NFetch.of(id)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition()
                 .dependencies().get().transitive().toList();
         return resolveNutsApiIdsFromDependencyList(deps);

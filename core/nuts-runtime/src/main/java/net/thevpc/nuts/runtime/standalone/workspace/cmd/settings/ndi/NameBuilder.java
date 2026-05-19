@@ -131,7 +131,7 @@ public class NameBuilder {
                         break;
                     }
                     case 'N': {
-                        String str = descriptor.getName();
+                        String str = descriptor.name();
                         if (str == null) {
                             str = "";
                         }
@@ -149,7 +149,7 @@ public class NameBuilder {
                         break;
                     }
                     case 'a': {
-                        h.appendValid(CoreStringUtils.joinAndTrimToNull(id.condition().getArch()));
+                        h.appendValid(CoreStringUtils.joinAndTrimToNull(id.condition().arch()));
                         break;
                     }
                     case 's': {

@@ -33,6 +33,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCollections;
 
 import java.util.*;
@@ -52,7 +53,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     private String commandName;
     private boolean failFast;
     private boolean temporary;
-    private long sleepMillis = 1000;
+    private NDuration sleepDuration = NDuration.ofSeconds(1);
     private NExecutionType executionType;
     private NRunAs runAs = NRunAs.currentUser();
     private NExecInput in;
@@ -70,7 +71,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
                                            boolean temporary,
                                            NExecutionType executionType,
                                            String commandName,
-                                           long sleepMillis,
+                                           NDuration sleepDuration,
                                            NExecInput in,
                                            NExecOutput out,
                                            NExecOutput err,
@@ -81,7 +82,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.definition = definition;
         this.arguments = NCollections.nonNullList(arguments);
         this.executorOptions = NCollections.nonNullList(executorArgs);
-        this.sleepMillis = sleepMillis;
+        this.sleepDuration = sleepDuration;
         this.cwd = cwd;
         if (env == null) {
             env = new LinkedHashMap<>();
@@ -90,7 +91,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.failFast = failFast;
         this.temporary = temporary;
         this.executionType = executionType;
-        this.executorDescriptor = definition.descriptor().getExecutor();
+        this.executorDescriptor = definition.descriptor().executor();
         this.in = in;
         this.out = out;
         this.err = err;
@@ -99,20 +100,20 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     public DefaultNExecutionContextBuilder(NExecutionContext other) {
-        this.commandName = other.getCommandName();
-        this.definition = other.getDefinition();
-        this.arguments = NCollections.nonNullList(other.getArguments());
-        this.executorOptions.addAll(NCollections.nonNullList(other.getExecutorOptions()));
-        this.cwd = other.getDirectory();
-        this.env = other.getEnv();
+        this.commandName = other.commandName();
+        this.definition = other.definition();
+        this.arguments = NCollections.nonNullList(other.arguments());
+        this.executorOptions.addAll(NCollections.nonNullList(other.executorOptions()));
+        this.cwd = other.directory();
+        this.env = other.env();
         this.failFast = other.isFailFast();
         this.temporary = other.isTemporary();
-        this.executionType = other.getExecutionType();
-        this.executorDescriptor = other.getExecutorDescriptor();
-        this.sleepMillis = other.getSleepMillis();
-        this.in = other.getIn();
-        this.out = other.getOut();
-        this.err = other.getErr();
+        this.executionType = other.executionType();
+        this.executorDescriptor = other.executorDescriptor();
+        this.sleepDuration = other.sleepDuration();
+        this.in = other.in();
+        this.out = other.out();
+        this.err = other.err();
         this.dry = other.isDry();
         this.bot = other.isBot();
     }
@@ -140,8 +141,8 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         return commandName;
     }
 
-    public long getSleepMillis() {
-        return sleepMillis;
+    public NDuration getSleepDuration() {
+        return sleepDuration;
     }
 
     @Override
@@ -199,8 +200,8 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         return this;
     }
 
-    public NExecutionContextBuilder setSleepMillis(long sleepMillis) {
-        this.sleepMillis = sleepMillis;
+    public NExecutionContextBuilder setSleepDuration(NDuration sleepMillis) {
+        this.sleepDuration = sleepMillis;
         return this;
     }
 
@@ -311,28 +312,28 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         return new DefaultNExecutionContext(
                 definition, arguments, executorOptions, workspaceOptions, env, cwd,
                 failFast, temporary, executionType,
-                commandName, sleepMillis, in, out, err,dry,bot
+                commandName, sleepDuration, in, out, err,dry,bot
         ).setSession(NSession.of());
     }
 
     public NExecutionContextBuilder copyFrom(NExecutionContext other) {
-        this.commandName = other.getCommandName();
-        this.definition = other.getDefinition();
-        this.arguments = other.getArguments();
+        this.commandName = other.commandName();
+        this.definition = other.definition();
+        this.arguments = other.arguments();
         this.executorOptions.clear();
-        this.executorOptions.addAll(other.getExecutorOptions());
+        this.executorOptions.addAll(other.executorOptions());
         this.workspaceOptions.clear();
-        this.workspaceOptions.addAll(other.getWorkspaceOptions());
-        this.cwd = other.getDirectory();
-        this.env = other.getEnv();
+        this.workspaceOptions.addAll(other.workspaceOptions());
+        this.cwd = other.directory();
+        this.env = other.env();
         this.failFast = other.isFailFast();
         this.temporary = other.isTemporary();
-        this.executionType = other.getExecutionType();
-        this.executorDescriptor = other.getExecutorDescriptor();
-        this.sleepMillis = other.getSleepMillis();
-        this.in = other.getIn();
-        this.out = other.getOut();
-        this.err = other.getErr();
+        this.executionType = other.executionType();
+        this.executorDescriptor = other.executorDescriptor();
+        this.sleepDuration = other.sleepDuration();
+        this.in = other.in();
+        this.out = other.out();
+        this.err = other.err();
         this.dry = other.isDry();
         return this;
     }

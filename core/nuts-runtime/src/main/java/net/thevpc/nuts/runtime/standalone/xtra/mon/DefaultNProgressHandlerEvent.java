@@ -36,7 +36,7 @@ public class DefaultNProgressHandlerEvent implements NProgressHandlerEvent {
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 

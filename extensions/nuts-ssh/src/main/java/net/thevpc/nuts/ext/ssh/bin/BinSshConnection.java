@@ -138,7 +138,7 @@ public class BinSshConnection extends SshConnectionBase {
 
                 batchFile.delete();
 
-                return exec.getOut().result().inputStream();
+                return exec.out().result().inputStream();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -161,7 +161,7 @@ public class BinSshConnection extends SshConnectionBase {
                     .failFast(true)
                     .run();
 
-            return exec.getOut().result().inputStream();
+            return exec.out().result().inputStream();
         }
     }
 

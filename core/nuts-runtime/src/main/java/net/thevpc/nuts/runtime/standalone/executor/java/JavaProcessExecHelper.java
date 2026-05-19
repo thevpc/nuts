@@ -40,7 +40,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
     @Override
     public int exec() {
         if (executionContext.isDry()) {
-            NPrintStream out = executionContext.getSession().out();
+            NPrintStream out = executionContext.session().out();
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
                 NText xarg = xargs.get(i);
@@ -56,13 +56,13 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
             return ProcessExecHelper.ofDefinition(def,
                     args.toArray(new String[0]), osEnv, directory,
                     joptions.isShowCommand(), true,
-                    executionContext.getSleepMillis(),
-                    executionContext.getIn(),
-                    executionContext.getOut(),
-                    executionContext.getErr(),
-                    executionContext.getRunAs(),
-                    executionContext.getExecutorOptions().toArray(new String[0]),
-                    executionContext.isDry(), executionContext.getSession()
+                    executionContext.sleepDuration(),
+                    executionContext.in(),
+                    executionContext.out(),
+                    executionContext.err(),
+                    executionContext.runAs(),
+                    executionContext.executorOptions().toArray(new String[0]),
+                    executionContext.isDry(), executionContext.session()
             ).exec();
         }
         return preExec().exec();
@@ -70,7 +70,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     private ProcessExecHelper preExec() {
         if (joptions.isShowCommand() || CoreNUtils.isShowCommand()) {
-            NPrintStream out = executionContext.getSession().out();
+            NPrintStream out = executionContext.session().out();
             out.println(NMsg.ofC("%s ", NText.ofStyled("nuts-exec", NTextStyle.primary1())));
             for (int i = 0; i < xargs.size(); i++) {
                 NText xarg = xargs.get(i);
@@ -83,13 +83,13 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 args.toArray(new String[0]), osEnv, directory,
                 joptions.isShowCommand(),
                 true,
-                executionContext.getSleepMillis(),
-                executionContext.getIn(),
-                executionContext.getOut(),
-                executionContext.getErr(),
-                executionContext.getRunAs(),
-                executionContext.getExecutorOptions().toArray(new String[0]),
-                executionContext.isDry(), executionContext.getSession()
+                executionContext.sleepDuration(),
+                executionContext.in(),
+                executionContext.out(),
+                executionContext.err(),
+                executionContext.runAs(),
+                executionContext.executorOptions().toArray(new String[0]),
+                executionContext.isDry(), executionContext.session()
         );
     }
 

@@ -923,7 +923,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                     }
                     throw new NIllegalArgumentException(NMsg.ofC("property not found %s", instance + "." + b));
                 } else {
-                    List<NReflectMethod> methodsByName = t.getMethods().stream().filter(x -> x.getName().equals(n)).collect(Collectors.toList());
+                    List<NReflectMethod> methodsByName = t.methods().stream().filter(x -> x.getName().equals(n)).collect(Collectors.toList());
                     List<NReflectMethod> found1 = methodsByName.stream().filter(x ->
                             x.getSignature().size() == w.getArguments().size()
                                     || (x.getSignature().isVarArgs() && x.getSignature().size() > w.getArguments().size())

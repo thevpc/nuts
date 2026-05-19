@@ -89,7 +89,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     public NElement describe() {
         return NElement.ofObjectBuilder()
                 .name("ScanPath")
-                .set("repository", repository == null ? null : repository.getName())
+                .set("repository", repository == null ? null : repository.name())
                 .set("filter", NDescribables.describeResolveOrSimplify(filter))
                 .add(basePath == null ? null : NElement.ofPair("path", NElements.of().toElement(basePath)))
                 .set("root", NElements.of().toElement(rootFolder))
@@ -103,20 +103,20 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         last = null;
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.remove();
-            NSession session = repository.getWorkspace().currentSession();
+            NSession session = repository.workspace().currentSession();
             if (file.folder) {
-                session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s (for %s) in %s", repository.getName(), kind, "search folder", filter, NCoreLogUtils.forProgress(file.path)));
+                session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s (for %s) in %s", repository.name(), kind, "search folder", filter, NCoreLogUtils.forProgress(file.path)));
                 visitedFoldersCount++;
                 NPath[] children = new NPath[0];
                 try {
                     children = file.path.stream().toArray(NPath[]::new);
                 } catch (NIOException ex) {
                     //just log without stack trace!
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.name(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
                     NLog.of(NIdPathIterator.class)//.error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()).asFine());
                 } catch (Exception ex) {
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.name(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
                     NLog.of(NIdPathIterator.class)
                             .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()).asFineFail(ex));
                 }

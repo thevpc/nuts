@@ -43,15 +43,15 @@ public class NCmdLineHistoryEntryImpl implements NCmdLineHistoryEntry {
         this.time = time;
     }
 
-    public int getIndex() {
+    public int index() {
         return index;
     }
 
-    public String getLine() {
+    public String line() {
         return line;
     }
 
-    public Instant getTime() {
+    public Instant time() {
         return time;
     }
     

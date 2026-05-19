@@ -48,83 +48,83 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         return this;
     }
 
-    public NPath getSource() {
+    public NPath source() {
         return source;
     }
 
-    public NSysEditorSupportCmd setSource(NPath source) {
+    public NSysEditorSupportCmd source(NPath source) {
         this.source = source;
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setLanguageId(String value) {
+    public NSysEditorSupportCmd languageId(String value) {
         forcedInfo.setLanguageId(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultLanguageId(String value) {
+    public NSysEditorSupportCmd defaultLanguageId(String value) {
         defaultInfo.setLanguageId(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setLanguageName(String value) {
+    public NSysEditorSupportCmd languageName(String value) {
         forcedInfo.setLanguageName(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultLanguageName(String value) {
+    public NSysEditorSupportCmd defaultLanguageName(String value) {
         defaultInfo.setLanguageName(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setLanguageGroupId(String value) {
+    public NSysEditorSupportCmd languageGroupId(String value) {
         forcedInfo.setLanguageGroupId(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultLanguageGroupId(String value) {
+    public NSysEditorSupportCmd defaultLanguageGroupId(String value) {
         defaultInfo.setLanguageGroupId(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setLanguageVersion(String value) {
+    public NSysEditorSupportCmd languageVersion(String value) {
         forcedInfo.setLanguageVersion(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultLanguageVersion(String value) {
+    public NSysEditorSupportCmd defaultLanguageVersion(String value) {
         defaultInfo.setLanguageVersion(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setFileExtension(String value) {
+    public NSysEditorSupportCmd fileExtension(String value) {
         forcedInfo.setFileExtension(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultFileExtension(String value) {
+    public NSysEditorSupportCmd defaultFileExtension(String value) {
         defaultInfo.setFileExtension(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setFileName(String value) {
+    public NSysEditorSupportCmd fileName(String value) {
         forcedInfo.setFileName(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultFileName(String value) {
+    public NSysEditorSupportCmd defaultFileName(String value) {
         defaultInfo.setFileName(value);
         return this;
     }
@@ -138,7 +138,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     }
 
     @Override
-    public Set<NSysEditorFamily> getEditorFamilies() {
+    public Set<NSysEditorFamily> editorFamilies() {
         return new LinkedHashSet<>(editorKinds);
     }
 

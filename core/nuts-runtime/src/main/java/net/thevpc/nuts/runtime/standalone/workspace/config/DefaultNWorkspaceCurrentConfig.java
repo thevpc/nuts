@@ -125,7 +125,7 @@ public final class DefaultNWorkspaceCurrentConfig {
             effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NStoreType.values()[i]));
         }
         if (apiId == null) {
-            apiId = NId.getApi(Nuts.getVersion()).get();
+            apiId = NId.getApi(Nuts.version()).get();
         }
         if (storeLayout == null) {
             storeLayout = NEnv.of().getOsFamily();
@@ -158,8 +158,8 @@ public final class DefaultNWorkspaceCurrentConfig {
         }
         if (c.getDependencies() != null) {
             this.runtimeBootDescriptor = new DefaultNDescriptorBuilder()
-                    .setId(NId.get(this.bootRuntime.toString()).get())
-                    .setDependencies(
+                    .id(NId.get(this.bootRuntime.toString()).get())
+                    .dependencies(
                             StringTokenizerUtils.splitSemiColon(c.getDependencies()).stream()
                                     .map(x -> NDependency.get(x).get()).collect(Collectors.toList())
                     ).build()

@@ -1,7 +1,9 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NSetter;
 
 public interface NDescriptorPropertyBuilder extends NBlankable {
     /**
@@ -9,29 +11,35 @@ public interface NDescriptorPropertyBuilder extends NBlankable {
      *
      * @return property name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * property value
      *
      * @return property value
      */
-    NLiteral getValue();
+    @NGetter
+    NLiteral value();
 
     /**
      * property condition
      *
      * @return property condition
      */
-    NEnvConditionBuilder getCondition();
+    @NGetter
+    NEnvConditionBuilder condition();
 
-    NDescriptorPropertyBuilder setCondition(NEnvCondition condition);
+    @NSetter
+    NDescriptorPropertyBuilder condition(NEnvCondition condition);
 
-    NDescriptorPropertyBuilder setCondition(NEnvConditionBuilder condition);
+    NDescriptorPropertyBuilder condition(NEnvConditionBuilder condition);
 
-    NDescriptorPropertyBuilder setName(String name);
+    @NSetter
+    NDescriptorPropertyBuilder name(String name);
 
-    NDescriptorPropertyBuilder setValue(String value);
+    @NSetter
+    NDescriptorPropertyBuilder value(String value);
 
     NDescriptorPropertyBuilder copyFrom(NDescriptorProperty value);
 

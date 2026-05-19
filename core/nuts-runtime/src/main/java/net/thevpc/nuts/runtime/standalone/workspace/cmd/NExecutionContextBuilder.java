@@ -34,6 +34,7 @@ import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.spi.NInstallerComponent;
+import net.thevpc.nuts.time.NDuration;
 
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ public interface NExecutionContextBuilder {
      */
     String getCommandName();
 
-    long getSleepMillis();
+    NDuration getSleepDuration();
 
     /**
      * executor options
@@ -126,7 +127,7 @@ public interface NExecutionContextBuilder {
 
     NExecutionContextBuilder setDefinition(NDefinition definition);
 
-    NExecutionContextBuilder setSleepMillis(long sleepMillis);
+    NExecutionContextBuilder setSleepDuration(NDuration sleepMillis);
 
     NExecutionContextBuilder setEnv(Map<String, String> env);
 

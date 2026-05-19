@@ -52,7 +52,7 @@ public class NDefinitionFilterOs extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition descriptor) {
-        return CoreFilterUtils.matchesOs(os, descriptor.descriptor().getCondition().getOs());
+        return CoreFilterUtils.matchesOs(os, descriptor.descriptor().condition().os());
     }
 
     /**

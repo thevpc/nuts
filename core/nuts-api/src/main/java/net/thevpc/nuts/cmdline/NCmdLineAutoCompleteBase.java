@@ -55,7 +55,7 @@ public abstract class NCmdLineAutoCompleteBase implements NCmdLineAutoComplete {
      * @return possible candidates
      */
     @Override
-    public List<NArgCandidate> getCandidates() {
+    public List<NArgCandidate> candidates() {
         return new ArrayList<>(candidates.values());
     }
 
@@ -66,7 +66,7 @@ public abstract class NCmdLineAutoCompleteBase implements NCmdLineAutoComplete {
      */
     @Override
     public void addCandidate(NArgCandidate value) {
-        if (value != null && !value.getValue().trim().isEmpty()) {
+        if (value != null && !value.value().trim().isEmpty()) {
             addCandidatesImpl(value);
         }
     }
@@ -78,7 +78,7 @@ public abstract class NCmdLineAutoCompleteBase implements NCmdLineAutoComplete {
      * @return {@code this} instance
      */
     protected NArgCandidate addCandidatesImpl(NArgCandidate value) {
-        return candidates.put(value.getValue(), value);
+        return candidates.put(value.value(), value);
     }
 
 }

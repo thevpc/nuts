@@ -51,7 +51,7 @@ public class NMetaInfIdResolver {
             if (url != null) {
                 try (InputStream is = url.getInputStream()) {
                     NDescriptor d = NDescriptorParser.of().parse(is).get();
-                    NId id = d.getId();
+                    NId id = d.id();
                     if (id != null && id.version() != null && !id.version().isBlank()) {
                         all.add(id);
                     }

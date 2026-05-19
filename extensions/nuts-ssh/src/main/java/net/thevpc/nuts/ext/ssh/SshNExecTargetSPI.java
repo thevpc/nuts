@@ -25,8 +25,8 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
     private CmdStr resolveNutsExecutableCommand(NExecTargetCommandContext context) {
         NSession session = NSession.of();
         NExec execCommand = context.getExecCommand();
-        NDefinition def = execCommand.getCommandDefinition();
-        NExecutionType executionType = execCommand.getExecutionType();
+        NDefinition def = execCommand.commandDefinition();
+        NExecutionType executionType = execCommand.executionType();
         if (executionType == null) {
             executionType = NExecutionType.SPAWN;
         }
@@ -62,8 +62,8 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                 wOptions.setOutputFormat(session.getOutputFormat().orDefault());
                 wOptions.setOutputFormatOptions(session.getOutputFormatOptions());
 
-                String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
-                RemoteConnectionStringInfo k = RemoteConnectionStringInfo.of(execCommand.getConnectionString());
+                String[] executorOptions = execCommand.executorOptions().toArray(new String[0]);
+                RemoteConnectionStringInfo k = RemoteConnectionStringInfo.of(execCommand.connectionString());
                 wOptions.setWorkspace(k.getWorkspaceName(this));
                 cmd.add(k.getJavaCommand(this));
                 cmd.add("-jar");
@@ -127,10 +127,10 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                     cmd.add(def.id().toString());
                 }
                 //wil not call context.getCommand() because we already added def!
-                cmd.addAll(execCommand.getCommand());
+                cmd.addAll(execCommand.command());
 
                 return new CmdStr(
-                        k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.getRunAs(), executorOptions, this),
+                        k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.runAs(), executorOptions, this),
                         false
                 );
             }
@@ -158,7 +158,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
         NAssert.requireNamedNonBlank(z, "target");
         NLog log = NLog.of(SshNExecTargetSPI.class);
         log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
-        NExecutionType executionType = context.getExecCommand().getExecutionType();
+        NExecutionType executionType = context.getExecCommand().executionType();
         if (executionType == null) {
             executionType = NExecutionType.SPAWN;
         }

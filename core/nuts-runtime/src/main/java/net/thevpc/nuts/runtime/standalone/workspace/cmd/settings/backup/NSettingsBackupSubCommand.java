@@ -43,7 +43,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         NSession session= NSession.of();
         if (cmdLine.next("backup").isPresent()) {
-            cmdLine.setCommandName("settings backup");
+            cmdLine.commandName("settings backup");
             String file = null;
             NArg a;
             while (cmdLine.hasNext()) {
@@ -84,7 +84,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             }
             return true;
         } else if (cmdLine.next("restore").isPresent()) {
-            cmdLine.setCommandName("settings restore");
+            cmdLine.commandName("settings restore");
             String file = null;
             String ws = null;
             NArg a;

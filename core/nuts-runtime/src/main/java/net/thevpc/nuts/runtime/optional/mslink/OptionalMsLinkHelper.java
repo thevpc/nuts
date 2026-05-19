@@ -58,7 +58,7 @@ public class OptionalMsLinkHelper {
             //
         }
         byte[] oldContent=CoreIOUtils.loadFileContentLenient(outputFile);
-        String[] cmd = NCmdLine.parseDefault(command).get().setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = NCmdLine.parseDefault(command).get().expandSimpleOptions(false).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
                 .setCMDArgs(NCmdLine.of(

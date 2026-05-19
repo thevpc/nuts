@@ -50,22 +50,22 @@ public class DefaultNUpdateEvent implements NUpdateEvent {
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 
     @Override
-    public NWorkspace getWorkspace() {
-        return getSession().getWorkspace();
+    public NWorkspace workspace() {
+        return session().getWorkspace();
     }
 
     @Override
-    public NDefinition getNewValue() {
+    public NDefinition newValue() {
         return definition;
     }
 
     @Override
-    public NDefinition getOldValue() {
+    public NDefinition oldValue() {
         return oldDefinition;
     }
 

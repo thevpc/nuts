@@ -42,7 +42,7 @@ public class DefaultNReflectMethod implements NReflectMethod {
     public NReflectParameter[] getParameters() {
         if (cachedParams == null) {
             cachedParams = Arrays.stream(method.getParameters()).map(x -> {
-                return new DefaultNReflectParameter(x, declaringType.getRepository());
+                return new DefaultNReflectParameter(x, declaringType.repository());
             }).toArray(NReflectParameter[]::new);
         }
         return cachedParams;

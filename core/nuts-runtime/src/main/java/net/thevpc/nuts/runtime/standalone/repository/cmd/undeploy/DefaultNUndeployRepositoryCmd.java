@@ -42,8 +42,8 @@ public class DefaultNUndeployRepositoryCmd extends AbstractNUndeployRepositoryCm
 
     @Override
     public NUndeployRepositoryCmd run() {
-        NSession session = getRepo().getWorkspace().currentSession();
-        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.UNDEPLOY, "undeploy");
+        NSession session = getRepo().workspace().currentSession();
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().uuid(), NConstants.Permissions.UNDEPLOY, "undeploy");
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
             xrepo.undeployImpl(this);
@@ -52,18 +52,18 @@ public class DefaultNUndeployRepositoryCmd extends AbstractNUndeployRepositoryCm
                     xrepo.getIndexStore().invalidate(this.getId());
                 } catch (NException ex) {
                     _LOG().log(
-                            NMsg.ofC("error invalidating Indexer for %s : %s", getRepo().getName(), ex)
+                            NMsg.ofC("error invalidating Indexer for %s : %s", getRepo().name(), ex)
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL)
                     );
                 }
             }
             _LOG()
-                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId())
+                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.getId())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS)
                     );
         } catch (RuntimeException ex) {
             _LOG()
-                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId())
+                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.getId())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL)
                     );
         }

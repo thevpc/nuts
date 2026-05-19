@@ -96,7 +96,7 @@ public class NIdFormatHelper {
     }
 
     public NIdFormatHelper(NDependencyTreeNode id, NWorkspace workspace) {
-        this(null, null, null, id.getDependency(), workspace);
+        this(null, null, null, id.dependency(), workspace);
     }
 
     public NIdFormatHelper(NId id, NWorkspace workspace) {
@@ -120,7 +120,7 @@ public class NIdFormatHelper {
             if (def != null) {
                 id = def.id();
             } else if (desc != null) {
-                id = desc.getId();
+                id = desc.id();
             } else if (dep != null) {
                 id = dep.toId();
             }
@@ -248,13 +248,13 @@ public class NIdFormatHelper {
             }
             while (!stack.isEmpty()) {
                 NRepository r = stack.pop();
-                int n = r.getName().length();
+                int n = r.name().length();
                 if (n > z) {
                     z = n;
                 }
                 if (r.config().isSupportedMirroring()) {
                     for (NRepository repository : r.config()
-                            .getMirrors()) {
+                            .mirrors()) {
                         stack.push(repository);
                     }
                 }
@@ -348,56 +348,56 @@ public class NIdFormatHelper {
                 return text.ofStyled("missing-file-name", NTextStyle.error());
             }
             case ARCH: {
-                if (desc != null  && desc.getCondition().getArch().size()>0) {
-                    return keywordArr1(desc.getCondition().getArch());
+                if (desc != null  && desc.condition().arch().size()>0) {
+                    return keywordArr1(desc.condition().arch());
                 }
                 return text.ofStyled("missing-arch", NTextStyle.error());
             }
             case NAME: {
                 if (desc != null) {
-                    return stringValue(desc.getName());
+                    return stringValue(desc.name());
                 }
                 return text.ofStyled("missing-name", NTextStyle.error());
             }
             case OS: {
-                if (desc != null  && desc.getCondition().getOs().size()>0) {
-                    return keywordArr2(desc.getCondition().getOs());
+                if (desc != null  && desc.condition().os().size()>0) {
+                    return keywordArr2(desc.condition().os());
                 }
                 return text.ofStyled("missing-os", NTextStyle.error());
             }
             case OSDIST: {
-                if (desc != null && desc.getCondition().getOsDist().size()>0) {
-                    return keywordArr2(desc.getCondition().getOsDist());
+                if (desc != null && desc.condition().osDist().size()>0) {
+                    return keywordArr2(desc.condition().osDist());
                 }
                 return text.ofStyled("missing-osdist", NTextStyle.error());
             }
             case PACKAGING: {
                 if (desc != null) {
-                    return text.ofStyled(stringValue(desc.getPackaging()), NTextStyle.primary3());
+                    return text.ofStyled(stringValue(desc.packaging()), NTextStyle.primary3());
                 }
                 return text.ofStyled("missing-packaging", NTextStyle.error());
             }
             case PLATFORM: {
-                if (desc != null && desc.getCondition().getPlatform().size()>0) {
-                    return keywordArr1(desc.getCondition().getPlatform());
+                if (desc != null && desc.condition().platform().size()>0) {
+                    return keywordArr1(desc.condition().platform());
                 }
                 return text.ofStyled("missing-platform", NTextStyle.error());
             }
             case PROFILE: {
-                if (desc != null && desc.getCondition().getProfiles().size()>0) {
-                    return keywordArr1(desc.getCondition().getProfiles());
+                if (desc != null && desc.condition().profiles().size()>0) {
+                    return keywordArr1(desc.condition().profiles());
                 }
                 return text.ofStyled("no-profile", NTextStyle.error());
             }
             case DESKTOP_ENVIRONMENT: {
-                if (desc != null && desc.getCondition().getDesktopEnvironment().size()>0) {
-                    return keywordArr1(desc.getCondition().getDesktopEnvironment());
+                if (desc != null && desc.condition().desktopEnvironment().size()>0) {
+                    return keywordArr1(desc.condition().desktopEnvironment());
                 }
                 return text.ofStyled("missing-desktop-environment", NTextStyle.error());
             }
             case INSTALL_DATE: {
                 if (def != null && def.installInformation().isPresent()) {
-                    return stringValue(def.installInformation().get().getCreatedInstant());
+                    return stringValue(def.installInformation().get().createdInstant());
                 }
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
@@ -411,7 +411,7 @@ public class NIdFormatHelper {
                         NRepository r = workspace
                                 .findRepositoryById(def.repositoryUuid()).orNull();
                         if (r != null) {
-                            rname = r.getName();
+                            rname = r.name();
                         }
                     }
                 }
@@ -432,14 +432,14 @@ public class NIdFormatHelper {
                     NRepository r = workspace
                             .findRepositoryByName(p).orNull();
                     if (r != null) {
-                        ruuid = r.getUuid();
+                        ruuid = r.uuid();
                     }
                 }
                 return stringValue(ruuid);
             }
             case INSTALL_USER: {
                 if (def != null && def.installInformation().isPresent()) {
-                    return stringValue(def.installInformation().get().getInstallUser());
+                    return stringValue(def.installInformation().get().installUser());
                 }
                 return text.ofStyled("nobody", NTextStyle.error());
             }
@@ -491,9 +491,9 @@ public class NIdFormatHelper {
                     for (NExecutionEntry entry : NExecutionEntry.parse(def.content().get())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
-                            results.add(text.ofPlain(entry.getName()));
+                            results.add(text.ofPlain(entry.name()));
                         } else {
-                            results.add(text.ofPlain(entry.getName()));
+                            results.add(text.ofPlain(entry.name()));
                         }
                     }
                     if (results.size() == 1) {
@@ -508,20 +508,20 @@ public class NIdFormatHelper {
             }
             case INSTALL_FOLDER: {
                 if (def != null && def.installInformation().isPresent()) {
-                    return stringValue(def.installInformation().get().getInstallFolder());
+                    return stringValue(def.installInformation().get().installFolder());
                 }
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
             case LONG_STATUS: {
                 List<NText> all = new ArrayList<>();
-                if (def != null && def.descriptor().getIdType() != null) {
-                    switch (def.descriptor().getIdType()) {
+                if (def != null && def.descriptor().idType() != null) {
+                    switch (def.descriptor().idType()) {
                         case REGULAR: {
-                            all.add(text.ofPlain(def.descriptor().getIdType().id()));
+                            all.add(text.ofPlain(def.descriptor().idType().id()));
                             break;
                         }
                         default: {
-                            all.add(text.ofStyled(def.descriptor().getIdType().id(), NTextStyle.primary1()));
+                            all.add(text.ofStyled(def.descriptor().idType().id(), NTextStyle.primary1()));
                             break;
                         }
                     }
@@ -534,7 +534,7 @@ public class NIdFormatHelper {
                     all.add(text.ofStyled("library", NTextStyle.primary4()));
                 }
                 if (dep != null) {
-                    NDependencyScope ss = CoreEnumUtils.parseEnumString(dep.getScope(), NDependencyScope.class, true);
+                    NDependencyScope ss = CoreEnumUtils.parseEnumString(dep.scope(), NDependencyScope.class, true);
                     if (dep.isOptional()) {
                         all.add(text.ofStyled("optional", NTextStyle.primary5()));
                     }
@@ -560,8 +560,8 @@ public class NIdFormatHelper {
             NInstalledRepository rr = NWorkspaceExt.of().getInstalledRepository();
             this.installStatus = rr.getInstallStatus(id);
             NInstallInformation iif = rr.getInstallInformation(id);
-            this.dte = iif == null ? null : iif.getCreatedInstant();
-            this.usr = iif == null ? null : iif.getInstallUser();
+            this.dte = iif == null ? null : iif.createdInstant();
+            this.usr = iif == null ? null : iif.installUser();
 //            Boolean updatable = null;
             this.executable = null;
             this.executableApp = null;
@@ -573,8 +573,8 @@ public class NIdFormatHelper {
             try {
                 if (this.installStatus.isNonDeployed() || def == null) {
                     this.defFetched = NFetch.of(id)
-                            .setFetchStrategy(NFetchStrategy.OFFLINE)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .fetchStrategy(NFetchStrategy.OFFLINE)
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition();
                     this.fetched = true;
                 } else {
@@ -602,7 +602,7 @@ public class NIdFormatHelper {
                     : this.fetched ? 'f' : 'r';
 //            this.status_obs=(this.installStatus.isInstalled()?'O':'U');
             if (def != null) {
-                switch (def.descriptor().getIdType()) {
+                switch (def.descriptor().idType()) {
                     case API: {
                         this.status_e = 'a';
                         break;
@@ -633,7 +633,7 @@ public class NIdFormatHelper {
             this.status_s = '-';
             this.status_o = '-';
             if (dep != null) {
-                NDependencyScope ss = CoreEnumUtils.parseEnumString(dep.getScope(), NDependencyScope.class, true);
+                NDependencyScope ss = CoreEnumUtils.parseEnumString(dep.scope(), NDependencyScope.class, true);
                 if (ss != null) {
                     switch (ss) {
                         case API: {

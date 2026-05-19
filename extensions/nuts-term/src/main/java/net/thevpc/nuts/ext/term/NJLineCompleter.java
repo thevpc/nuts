@@ -25,7 +25,7 @@ class NJLineCompleter implements Completer {
 
             NCmdLine cmdLine = NCmdLine.of(line.words());
             if (line.words().size() > 0) {
-                cmdLine.setCommandName(line.words().get(0));
+                cmdLine.commandName(line.words().get(0));
             }
             List<NArgCandidate> nArgCandidates = autoCompleteResolver.resolveCandidates(cmdLine, new NCmdLineAutoCompleteResolver.Pos(
                     line.wordIndex(),
@@ -35,9 +35,9 @@ class NJLineCompleter implements Completer {
             if (nArgCandidates != null) {
                 for (NArgCandidate cmdCandidate : nArgCandidates) {
                     if (cmdCandidate != null) {
-                        String value = cmdCandidate.getValue();
+                        String value = cmdCandidate.value();
                         if (value != null && value.length() > 0) {
-                            String display = cmdCandidate.getDisplay();
+                            String display = cmdCandidate.display();
                             if (display == null || display.length() == 0) {
                                 display = value;
                             }

@@ -2,6 +2,9 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 /**
  * Internal data model representing the persisted state of a cached value.
  * <p>
@@ -44,7 +47,7 @@ public class NCachedValueModel implements Cloneable, NCopiable {
     private Object value;
 
     /** The last thrown exception during value computation, if any. */
-    private Throwable throwable;
+    private Throwable error;
 
     /** Indicates whether the cache entry has been explicitly invalidated. */
     private boolean invalidated;
@@ -83,110 +86,134 @@ public class NCachedValueModel implements Cloneable, NCopiable {
     }
 
     // ---- Getters / Setters ----
+    @NGetter
     public boolean isInvalidated() {
         return invalidated;
     }
 
-    public NCachedValueModel setInvalidated(boolean invalidated) {
+    @NSetter
+    public NCachedValueModel invalidated(boolean invalidated) {
         this.invalidated = invalidated;
         return this;
     }
 
-    public Object getThrowable() {
-        return throwable;
+    @NGetter
+    public Object error() {
+        return error;
     }
 
-    public NCachedValueModel setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    @NSetter
+    public NCachedValueModel error(Throwable throwable) {
+        this.error = throwable;
         return this;
     }
 
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NCachedValueModel setId(String id) {
+    @NSetter
+    public NCachedValueModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public Object getValue() {
+    @NGetter
+    public Object value() {
         return value;
     }
 
-    public NCachedValueModel setValue(Object value) {
+    @NSetter
+    public NCachedValueModel value(Object value) {
         this.value = value;
         return this;
     }
 
-    public Boolean getErrorState() {
+    @NGetter
+    public Boolean errorState() {
         return errorState;
     }
 
-    public NCachedValueModel setErrorState(Boolean errorState) {
+    @NSetter
+    public NCachedValueModel errorState(Boolean errorState) {
         this.errorState = errorState;
         return this;
     }
 
-    public Object getLastValidValue() {
+    @NGetter
+    public Object lastValidValue() {
         return lastValidValue;
     }
 
-    public NCachedValueModel setLastValidValue(Object lastValidValue) {
+    @NSetter
+    public NCachedValueModel lastValidValue(Object lastValidValue) {
         this.lastValidValue = lastValidValue;
         return this;
     }
 
-    public long getLastEvalTimestamp() {
+    @NGetter
+    public long lastEvalTimestamp() {
         return lastEvalTimestamp;
     }
 
-    public NCachedValueModel setLastEvalTimestamp(long lastEvalTimestamp) {
+    @NSetter
+    public NCachedValueModel lastEvalTimestamp(long lastEvalTimestamp) {
         this.lastEvalTimestamp = lastEvalTimestamp;
         return this;
     }
 
-    public int getFailedAttempts() {
+    @NGetter
+    public int failedAttempts() {
         return failedAttempts;
     }
 
-    public NCachedValueModel setFailedAttempts(int failedAttempts) {
+    @NSetter
+    public NCachedValueModel failedAttempts(int failedAttempts) {
         this.failedAttempts = failedAttempts;
         return this;
     }
 
-    public NDuration getExpiry() {
+    @NGetter
+    public NDuration expiry() {
         return expiry;
     }
 
-    public NCachedValueModel setExpiry(NDuration expiry) {
+    @NSetter
+    public NCachedValueModel expiry(NDuration expiry) {
         this.expiry = expiry;
         return this;
     }
 
-    public NDuration getRetryPeriod() {
+    @NGetter
+    public NDuration retryPeriod() {
         return retryPeriod;
     }
 
-    public NCachedValueModel setRetryPeriod(NDuration retryPeriod) {
+    @NSetter
+    public NCachedValueModel retryPeriod(NDuration retryPeriod) {
         this.retryPeriod = retryPeriod;
         return this;
     }
 
-    public int getMaxRetries() {
+    @NGetter
+    public int maxRetries() {
         return maxRetries;
     }
 
-    public NCachedValueModel setMaxRetries(int maxRetries) {
+    @NSetter
+    public NCachedValueModel maxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
         return this;
     }
 
+    @NGetter
     public boolean isRetainLastOnFailure() {
         return retainLastOnFailure;
     }
 
-    public NCachedValueModel setRetainLastOnFailure(boolean retainLastOnFailure) {
+    @NSetter
+    public NCachedValueModel retainLastOnFailure(boolean retainLastOnFailure) {
         this.retainLastOnFailure = retainLastOnFailure;
         return this;
     }

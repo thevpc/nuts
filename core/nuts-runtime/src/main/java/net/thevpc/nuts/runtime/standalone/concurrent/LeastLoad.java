@@ -31,13 +31,13 @@ class LeastLoad implements NWorkBalancerStrategy {
         List<NWorkBalancerWorker> bestWorkers = new ArrayList<>();
 
         for (NWorkBalancerWorker w : workers) {
-            float weight = w.getWeight();
+            float weight = w.weight();
             if (weight <= 0) {
                 // weight <= 0 means excluded from balancing
                 continue;
             }
 
-            double load = resolveWorkerLoad(w.getName(), context);
+            double load = resolveWorkerLoad(w.name(), context);
             double effectiveLoad = load / weight;
 
             if (effectiveLoad < bestLoad) {
@@ -55,13 +55,13 @@ class LeastLoad implements NWorkBalancerStrategy {
 
         // Break ties deterministically with round robin among best
         int idx = Math.floorMod(rrCounter.getAndIncrement(), bestWorkers.size());
-        return bestWorkers.get(idx).getName();
+        return bestWorkers.get(idx).name();
     }
 
     private double resolveWorkerLoad(String workerId, NWorkBalancerStrategyContext context) {
         NWorkBalancerWorkerLoad load = context.getWorkerLoad(workerId).orNull();
         if (load != null) {
-            float hostLoad = load.hostLoadMetrics().get().getHostLoadFactor();
+            float hostLoad = load.hostLoadMetrics().get().hostLoadFactor();
             if (!Float.isNaN(hostLoad)) {
                 return hostLoad;
             }

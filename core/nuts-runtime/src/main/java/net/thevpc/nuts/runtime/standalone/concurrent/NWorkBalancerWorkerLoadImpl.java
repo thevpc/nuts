@@ -1,15 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.*;
-import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NOptional;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 class NWorkBalancerWorkerLoadImpl implements NWorkBalancerWorkerLoad {
@@ -34,7 +30,7 @@ class NWorkBalancerWorkerLoadImpl implements NWorkBalancerWorkerLoad {
         this.workerIndex = workerIndex;
         this.loadMetricsNCachedValue = NCachedValue.of(
                 () -> {
-                    NWorkBalancerHostLoadMetricProvider p = worker.getHostLoadMetricsProvider();
+                    NWorkBalancerHostLoadMetricProvider p = worker.hostLoadMetricsProvider();
                     if (p != null) {
                         NWorkBalancerHostLoadMetrics z = p.resolveDefaultMetrics();
                         if (z != null) {
@@ -82,8 +78,8 @@ class NWorkBalancerWorkerLoadImpl implements NWorkBalancerWorkerLoad {
         long total = 0;
         synchronized (runningJobs) {
             for (NWorkBalancerRunningJob job : runningJobs) {
-                long start = job.getStartTimeNano();
-                long end = job.isRunning() ? now : job.getEndTimeNano();
+                long start = job.startTimeNano();
+                long end = job.isRunning() ? now : job.endTimeNano();
                 total += (end - start);
             }
         }
@@ -100,7 +96,7 @@ class NWorkBalancerWorkerLoadImpl implements NWorkBalancerWorkerLoad {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
 
-        sb.append("worker:").append(worker.getName() != null ? worker.getName() : "\"null\"");
+        sb.append("worker:").append(worker.name() != null ? worker.name() : "\"null\"");
 
         long aCount = activeJobsCount.get();
         if (aCount > 0) sb.append(",activeJobsCount:").append(aCount);
@@ -133,10 +129,10 @@ class NWorkBalancerWorkerLoadImpl implements NWorkBalancerWorkerLoad {
                 boolean first = true;
                 for (NWorkBalancerRunningJob job : runningJobs) {
                     if (!first) sb.append(",");
-                    sb.append("{jobId:").append(job.getJobId())
-                            .append(",jobName:").append(job.getJobName())
-                            .append(",workerName:").append(job.getWorkerName())
-                            .append(",duration:").append(job.getDuration())
+                    sb.append("{jobId:").append(job.jobId())
+                            .append(",jobName:").append(job.jobName())
+                            .append(",workerName:").append(job.workerName())
+                            .append(",duration:").append(job.duration())
                             .append(",running:").append(job.isRunning())
                             .append("}");
                     first = false;

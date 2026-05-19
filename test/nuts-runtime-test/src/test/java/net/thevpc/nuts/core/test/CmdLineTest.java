@@ -221,7 +221,7 @@ public class CmdLineTest {
     public void testArgument11() {
         String line0="start -Djava.util.logging.config.file=/home/me/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Dnuts-config-name=default -Djdk.tls.ephemeralDHKeySize=2048 -Djava.protocol.handler.pkgs=org.apache.catalina.webresources -Dorg.apache.catalina.security.SecurityListener.UMASK=0027 -Dignore.endorsed.dirs= -Dcatalina.base=/home/me/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default -Dcatalina.home=/home/me/.local/share/nuts/apps/default-workspace/id/org/apache/catalina/apache-tomcat/10.0.0-M1/apache-tomcat-10.0.0-M1 -Djava.io.tmpdir=/home/me/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default/temp";
         String line="-Dcatalina.base=/home/me/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default -Dcatalina.home=/home/me/.local/share/nuts/apps/default-workspace/id/org/apache/catalina/apache-tomcat/10.0.0-M1/apache-tomcat-10.0.0-M1 -Djava.io.tmpdir=/home/me/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default/temp ";
-        NCmdLine cmdline = NCmdLine.parseDefault(line).get().setExpandSimpleOptions(false);
+        NCmdLine cmdline = NCmdLine.parseDefault(line).get().expandSimpleOptions(false);
         NArg a=null;
         int x=0;
         while(cmdline.hasNext()){
@@ -247,7 +247,7 @@ public class CmdLineTest {
 
     @Test
     public void testArgument13(){
-        NCmdLine c=new DefaultNCmdLine(new String[]{"-1=15"}, NShellFamily.BASH).setExpandSimpleOptions(true);
+        NCmdLine c=new DefaultNCmdLine(new String[]{"-1=15"}, NShellFamily.BASH).expandSimpleOptions(true);
         NArg a = c.next().get();
         Assertions.assertEquals("-1",a.getStringKey().get());
     }

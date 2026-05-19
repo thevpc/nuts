@@ -44,7 +44,7 @@ public class PackagingNonOption extends DefaultNonOption {
 
 
     @Override
-    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
+    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         all.add(new DefaultNArgCandidate("jar"));
         all.add(new DefaultNArgCandidate("war"));

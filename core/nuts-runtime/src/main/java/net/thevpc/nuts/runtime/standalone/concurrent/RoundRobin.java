@@ -31,26 +31,26 @@ class RoundRobin implements NWorkBalancerStrategy {
         // compute total weight
         float totalWeight = 0f;
         for (NWorkBalancerWorker w : workers) {
-            totalWeight += Math.max(0, w.getWeight()); // negative = 0
+            totalWeight += Math.max(0, w.weight()); // negative = 0
         }
 
         // fallback: all weights 0 -> default round robin
         if (totalWeight <= 0) {
             int index = Math.floorMod(counter.getAndIncrement(), workers.size());
-            return workers.get(index).getName();
+            return workers.get(index).name();
         }
 
         // select worker based on weighted position
         float position = counter.getAndIncrement() % totalWeight;
         float cumulative = 0f;
         for (NWorkBalancerWorker w : workers) {
-            cumulative += Math.max(0, w.getWeight());
+            cumulative += Math.max(0, w.weight());
             if (position < cumulative) {
-                return w.getName();
+                return w.name();
             }
         }
 
         // should never reach here
-        return workers.get(workers.size() - 1).getName();
+        return workers.get(workers.size() - 1).name();
     }
 }

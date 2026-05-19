@@ -122,15 +122,15 @@ public final class Nuts {
      *
      * @return current nuts version
      */
-    public static NVersion getVersion() {
+    public static NVersion version() {
         return version;
     }
 
-    public static NVersion getBootVersion() {
+    public static NVersion bootVersion() {
         return bootVersion;
     }
 
-    public static NId getApiId() {
+    public static NId apiId() {
         return id;
     }
 

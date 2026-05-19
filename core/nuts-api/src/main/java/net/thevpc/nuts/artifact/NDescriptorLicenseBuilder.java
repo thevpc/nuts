@@ -1,19 +1,27 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.Map;
 
 public interface NDescriptorLicenseBuilder extends NDescriptorLicense {
-    NDescriptorLicenseBuilder setName(String name);
+    @NSetter
+    NDescriptorLicenseBuilder name(String name);
 
-    NDescriptorLicenseBuilder setUrl(String url);
+    @NSetter
+    NDescriptorLicenseBuilder url(String url);
 
-    NDescriptorLicenseBuilder setDistribution(String distribution);
+    @NSetter
+    NDescriptorLicenseBuilder distribution(String distribution);
 
-    NDescriptorLicenseBuilder setComments(String comments);
+    @NSetter
+    NDescriptorLicenseBuilder comments(String comments);
 
-    NDescriptorLicenseBuilder setId(String id);
+    @NSetter
+    NDescriptorLicenseBuilder id(String id);
 
-    NDescriptorLicenseBuilder setProperties(Map<String, String> properties);
+    @NSetter
+    NDescriptorLicenseBuilder properties(Map<String, String> properties);
 
     NDescriptorLicenseBuilder copy();
 

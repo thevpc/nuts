@@ -64,7 +64,7 @@ public class NIOException extends NException {
         super(
                 cause == null ? null
                         : (cause instanceof NExceptionBase) ?
-                        ((NExceptionBase) cause).getFormattedMessage()
+                        ((NExceptionBase) cause).formattedMessage()
                         : NMsg.ofPlain(cause.getMessage() == null ? "error" : cause.getMessage()),
                 cause);
     }

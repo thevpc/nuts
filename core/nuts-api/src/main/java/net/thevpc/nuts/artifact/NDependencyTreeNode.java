@@ -43,7 +43,7 @@ public interface NDependencyTreeNode extends Serializable {
      *
      * @return node dependency
      */
-    NDependency getDependency();
+    NDependency dependency();
 
     boolean isOptional();
 
@@ -54,7 +54,7 @@ public interface NDependencyTreeNode extends Serializable {
      *
      * @return node children
      */
-    List<NDependencyTreeNode> getChildren();
+    List<NDependencyTreeNode> children();
 
     /**
      * true if the node is partial filled (not all children are considered)

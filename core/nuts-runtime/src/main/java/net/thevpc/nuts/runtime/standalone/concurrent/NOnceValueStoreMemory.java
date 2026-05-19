@@ -16,10 +16,10 @@ class NOnceValueStoreMemory implements NOnceValueStore {
 
     @Override
     public void save(NOnceValueModel value) {
-        if (value.getValue() != null) {
-            values.put(value.getId(), value);
+        if (value.value() != null) {
+            values.put(value.id(), value);
         } else {
-            values.remove(value.getId());
+            values.remove(value.id());
         }
     }
 

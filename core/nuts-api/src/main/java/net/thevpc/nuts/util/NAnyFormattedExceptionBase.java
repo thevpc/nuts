@@ -39,7 +39,7 @@ import net.thevpc.nuts.text.NMsg;
 public interface NAnyFormattedExceptionBase extends NAnyExceptionBase {
 
 
-    NMsg getFormattedMessage();
+    NMsg formattedMessage();
 
 
     String getMessage();

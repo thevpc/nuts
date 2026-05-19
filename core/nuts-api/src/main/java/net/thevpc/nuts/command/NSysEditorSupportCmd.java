@@ -4,6 +4,8 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Set;
 
@@ -104,7 +106,8 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      *
      * @return an immutable set of editor families, never null
      */
-    Set<NSysEditorFamily> getEditorFamilies();
+    @NGetter
+    Set<NSysEditorFamily> editorFamilies();
 
     /**
      * Adds a single editor family to the installation target list.
@@ -161,7 +164,8 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      *
      * @return the source path, or null if not set
      */
-    NPath getSource();
+    @NGetter
+    NPath source();
 
     /**
      * Sets the source path containing editor-specific syntax definition files.
@@ -175,24 +179,24 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      * @return this instance for method chaining
      * @throws NullPointerException if source is null
      */
-    NSysEditorSupportCmd setSource(NPath source);
+    NSysEditorSupportCmd source(NPath source);
 
     /**
      * Sets the unique identifier for the language.
      * <p>
      * This is typically a lowercase, hyphenated identifier (e.g., "tson", "ntexup").
      * This value takes precedence over any languageId defined in sys-editor-support.tson
-     * or set via {@link #setDefaultLanguageId(String)}.
+     * or set via {@link #defaultLanguageId(String)}.
      * </p>
      *
      * @param value the language identifier, must not be null or empty
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setLanguageId(String value);
+    NSysEditorSupportCmd languageId(String value);
 
     /**
      * Sets the default language identifier to use if not defined in sys-editor-support.tson
-     * and not explicitly set via {@link #setLanguageId(String)}.
+     * and not explicitly set via {@link #languageId(String)}.
      * <p>
      * This provides a fallback value and will not override values from the configuration file.
      * </p>
@@ -200,24 +204,26 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      * @param value the default language identifier
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setDefaultLanguageId(String value);
+    @NSetter
+    NSysEditorSupportCmd defaultLanguageId(String value);
 
     /**
      * Sets the human-readable display name for the language.
      * <p>
      * This is the name shown in editor UI elements (e.g., "TSON", "NTexUp").
      * This value takes precedence over any languageName defined in sys-editor-support.tson
-     * or set via {@link #setDefaultLanguageName(String)}.
+     * or set via {@link #defaultLanguageName(String)}.
      * </p>
      *
      * @param value the language display name, must not be null or empty
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setLanguageName(String value);
+    @NSetter
+    NSysEditorSupportCmd languageName(String value);
 
     /**
      * Sets the default language display name to use if not defined in sys-editor-support.tson
-     * and not explicitly set via {@link #setLanguageName(String)}.
+     * and not explicitly set via {@link #languageName(String)}.
      * <p>
      * This provides a fallback value and will not override values from the configuration file.
      * </p>
@@ -225,24 +231,26 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      * @param value the default language display name
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setDefaultLanguageName(String value);
+    @NSetter
+    NSysEditorSupportCmd defaultLanguageName(String value);
 
     /**
      * Sets the group identifier for the language, typically used for packaging.
      * <p>
      * This follows Maven-style group ID conventions (e.g., "net.thevpc.nuts").
      * This value takes precedence over any languageGroupId defined in sys-editor-support.tson
-     * or set via {@link #setDefaultLanguageGroupId(String)}.
+     * or set via {@link #defaultLanguageGroupId(String)}.
      * </p>
      *
      * @param value the language group identifier
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setLanguageGroupId(String value);
+    @NSetter
+    NSysEditorSupportCmd languageGroupId(String value);
 
     /**
      * Sets the default group identifier to use if not defined in sys-editor-support.tson
-     * and not explicitly set via {@link #setLanguageGroupId(String)}.
+     * and not explicitly set via {@link #languageGroupId(String)}.
      * <p>
      * This provides a fallback value and will not override values from the configuration file.
      * </p>
@@ -250,24 +258,26 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      * @param value the default language group identifier
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setDefaultLanguageGroupId(String value);
+    @NSetter
+    NSysEditorSupportCmd defaultLanguageGroupId(String value);
 
     /**
      * Sets the version string for the language syntax definition.
      * <p>
      * This is used in some editor configurations (e.g., VSCode extensions).
      * This value takes precedence over any languageVersion defined in sys-editor-support.tson
-     * or set via {@link #setDefaultLanguageVersion(String)}.
+     * or set via {@link #defaultLanguageVersion(String)}.
      * </p>
      *
      * @param value the language version (e.g., "1.0.0")
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setLanguageVersion(String value);
+    @NSetter
+    NSysEditorSupportCmd languageVersion(String value);
 
     /**
      * Sets the default version string to use if not defined in sys-editor-support.tson
-     * and not explicitly set via {@link #setLanguageVersion(String)}.
+     * and not explicitly set via {@link #languageVersion(String)}.
      * <p>
      * This provides a fallback value and will not override values from the configuration file.
      * </p>
@@ -275,25 +285,27 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      * @param value the default language version
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setDefaultLanguageVersion(String value);
+    @NSetter
+    NSysEditorSupportCmd defaultLanguageVersion(String value);
 
     /**
      * Sets the primary file extension for files in this language.
      * <p>
      * Should include the leading dot (e.g., ".tson", ".ntx"). This can be used alongside
-     * {@link #setFileName(String)} as both patterns can be active simultaneously.
+     * {@link #fileName(String)} as both patterns can be active simultaneously.
      * This value takes precedence over any fileExtension defined in sys-editor-support.tson
-     * or set via {@link #setDefaultFileExtension(String)}.
+     * or set via {@link #defaultFileExtension(String)}.
      * </p>
      *
      * @param value the file extension including the dot, must not be null or empty
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setFileExtension(String value);
+    @NSetter
+    NSysEditorSupportCmd fileExtension(String value);
 
     /**
      * Sets the default file extension to use if not defined in sys-editor-support.tson
-     * and not explicitly set via {@link #setFileExtension(String)}.
+     * and not explicitly set via {@link #fileExtension(String)}.
      * <p>
      * This provides a fallback value and will not override values from the configuration file.
      * </p>
@@ -301,25 +313,27 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      * @param value the default file extension including the dot
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setDefaultFileExtension(String value);
+    @NSetter
+    NSysEditorSupportCmd defaultFileExtension(String value);
 
     /**
      * Sets a specific file name pattern for this language (e.g., "Makefile", "*.ntx", ".bashrc").
      * <p>
      * This is used when the language applies to specific file name patterns. Can be used
-     * alongside {@link #setFileExtension(String)} as both patterns can be active simultaneously.
+     * alongside {@link #fileExtension(String)} as both patterns can be active simultaneously.
      * This value takes precedence over any fileName defined in sys-editor-support.tson
-     * or set via {@link #setDefaultFileName(String)}.
+     * or set via {@link #defaultFileName(String)}.
      * </p>
      *
      * @param value the file name pattern
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setFileName(String value);
+    @NSetter
+    NSysEditorSupportCmd fileName(String value);
 
     /**
      * Sets the default file name pattern to use if not defined in sys-editor-support.tson
-     * and not explicitly set via {@link #setFileName(String)}.
+     * and not explicitly set via {@link #fileName(String)}.
      * <p>
      * This provides a fallback value and will not override values from the configuration file.
      * </p>
@@ -327,7 +341,8 @@ public interface NSysEditorSupportCmd extends NCmdLineConfigurable, NComponent {
      * @param value the default file name pattern
      * @return this instance for method chaining
      */
-    NSysEditorSupportCmd setDefaultFileName(String value);
+    @NSetter
+    NSysEditorSupportCmd defaultFileName(String value);
 
     /**
      * Executes the syntax installation command.

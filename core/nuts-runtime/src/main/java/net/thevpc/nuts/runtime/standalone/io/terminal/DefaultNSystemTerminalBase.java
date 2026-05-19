@@ -46,21 +46,21 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
 
     public DefaultNSystemTerminalBase() {
         NBootOptions options = NWorkspace.of().getBootOptions();
-        NTerminalMode terminalMode = options.getTerminalMode().orElse(NTerminalMode.DEFAULT);
+        NTerminalMode terminalMode = options.terminalMode().orElse(NTerminalMode.DEFAULT);
         NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of().getModel().bootModel.getBootTerminal();
         if (terminalMode == NTerminalMode.DEFAULT) {
-            if (options.getBot().orElse(false) || !bootStdFd.getFlags().contains("ansi")) {
+            if (options.bot().orElse(false) || !bootStdFd.getFlags().contains("ansi")) {
                 terminalMode = NTerminalMode.FILTERED;
             } else {
                 terminalMode = NTerminalMode.FORMATTED;
             }
         }
         if (bootStdFd.getFlags().contains("tty")) {
-            termCursor = NCachedValue.of(() -> CoreAnsiTermHelper.evalCursor()).setExpiry(EXPIRY_30S);
-            termSize = NCachedValue.of(() -> CoreAnsiTermHelper.evalSize()).setExpiry(EXPIRY_30S);
+            termCursor = NCachedValue.of(() -> CoreAnsiTermHelper.evalCursor()).expiry(EXPIRY_30S);
+            termSize = NCachedValue.of(() -> CoreAnsiTermHelper.evalSize()).expiry(EXPIRY_30S);
         } else {
-            termCursor = NCachedValue.of(() -> (Cursor) null).setExpiry(EXPIRY_30S);
-            termSize = NCachedValue.of(() -> (Size) null).setExpiry(EXPIRY_30S);
+            termCursor = NCachedValue.of(() -> (Cursor) null).expiry(EXPIRY_30S);
+            termSize = NCachedValue.of(() -> (Size) null).expiry(EXPIRY_30S);
         }
         this.out = new NPrintStreamSystem(new NonClosablePrintStream(bootStdFd.getOut()), null, null, bootStdFd.getFlags().contains("ansi"),
                 this).setTerminalMode(terminalMode);

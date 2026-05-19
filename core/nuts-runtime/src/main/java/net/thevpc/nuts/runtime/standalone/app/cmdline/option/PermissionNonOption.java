@@ -54,7 +54,7 @@ public class PermissionNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
+    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         for (String r : NConstants.Permissions.ALL) {
             all.add(new DefaultNArgCandidate(r));
@@ -65,11 +65,11 @@ public class PermissionNonOption extends DefaultNonOption {
         while (i.hasNext()) {
             NArgCandidate right = i.next();
             if (existing) {
-                if (!rights.contains(right.getValue())) {
+                if (!rights.contains(right.value())) {
                     i.remove();
                 }
             } else {
-                if (rights.contains(right.getValue())) {
+                if (rights.contains(right.value())) {
                     i.remove();
                 }
             }

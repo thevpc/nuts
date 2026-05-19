@@ -78,7 +78,7 @@ public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWor
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        configure(skipUnsupported, NCmdLine.of(args).setCommandName(getCommandName()));
+        configure(skipUnsupported, NCmdLine.of(args).commandName(getCommandName()));
         return (T) this;
     }
 

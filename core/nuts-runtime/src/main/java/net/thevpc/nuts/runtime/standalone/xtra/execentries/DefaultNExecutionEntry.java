@@ -55,7 +55,7 @@ public class DefaultNExecutionEntry implements NExecutionEntry {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -78,7 +78,7 @@ public class DefaultNExecutionEntry implements NExecutionEntry {
         if (o == null) {
             return 1;
         }
-        int x = name.compareTo(o.getName());
+        int x = name.compareTo(o.name());
         if (x != 0) {
             return x;
         }
@@ -120,7 +120,7 @@ public class DefaultNExecutionEntry implements NExecutionEntry {
         if (this.app != other.isApp()) {
             return false;
         }
-        if (!Objects.equals(this.name, other.getName())) {
+        if (!Objects.equals(this.name, other.name())) {
             return false;
         }
         return true;

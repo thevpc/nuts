@@ -38,7 +38,7 @@ public class NLogRecord extends LogRecord implements NSessionProvider {
         return verb;
     }
 
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 

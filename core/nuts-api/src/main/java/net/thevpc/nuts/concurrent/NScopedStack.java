@@ -1,5 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +14,7 @@ import java.util.function.Supplier;
  * <p>
  * Each thread maintains its own stack of values. The "current value" for the thread
  * is the value at the top of the stack. Previous values in the stack are preserved
- * and can be accessed if needed using {@link #peek(int)} or {@link #getStackSnapshot()}.
+ * and can be accessed if needed using {@link #peek(int)} or {@link #stackSnapshot()}.
  * <p>
  * This class is useful for hierarchical or nested contexts where:
  * <ul>
@@ -68,7 +71,8 @@ public class NScopedStack<T> {
      * @param defaultSupplier the new default supplier
      * @return this {@code NScopedStack} instance for method chaining
      */
-    public NScopedStack<T> setDefaultSupplier(Supplier<T> defaultSupplier) {
+    @NSetter
+    public NScopedStack<T> defaultSupplier(Supplier<T> defaultSupplier) {
         this.defaultSupplier = defaultSupplier;
         return this;
     }
@@ -193,6 +197,7 @@ public class NScopedStack<T> {
      *
      * @return {@code true} if the stack is empty or has not been initialized; {@code false} otherwise
      */
+    @NGetter
     public boolean isEmpty() {
         Stack<T> s = holder.get();
         return s == null || s.isEmpty();
@@ -204,6 +209,7 @@ public class NScopedStack<T> {
      *
      * @return the number of values in the stack, or {@code 0} if empty or uninitialized
      */
+    @NGetter
     public int depth() {
         Stack<T> s = holder.get();
         return s == null ? 0 : s.size();
@@ -216,7 +222,8 @@ public class NScopedStack<T> {
      *
      * @return a list containing the current stack values, empty if the stack is empty or uninitialized
      */
-    public List<T> getStackSnapshot() {
+    @NGetter
+    public List<T> stackSnapshot() {
         Stack<T> s = holder.get();
         return s == null ? Collections.emptyList() : new ArrayList<>(s);
     }

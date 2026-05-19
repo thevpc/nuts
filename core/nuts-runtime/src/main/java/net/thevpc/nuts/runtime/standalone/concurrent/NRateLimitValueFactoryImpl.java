@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.*;
-import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -34,12 +33,12 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
     }
 
     @Override
-    public NRateLimitValueStore getStore() {
+    public NRateLimitValueStore store() {
         return store;
     }
 
     public NRateLimitRule createRule(NRateLimitRuleModel model) {
-        String strategyId = model.getId();
+        String strategyId = model.id();
         NRateLimitStrategy d = strategies.get(strategyId);
         if (d != null) {
             NRateLimitRule s = d.fromModel(model);

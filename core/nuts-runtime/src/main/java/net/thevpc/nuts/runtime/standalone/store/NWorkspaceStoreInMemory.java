@@ -136,7 +136,7 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
 
     @Override
     public boolean saveRepoConfig(NRepository repository, NRepositoryConfig config) {
-        NRepositoryConfig old = repoConfigMap.put(repository.config().getStoreLocation().toString(), config.copy());
+        NRepositoryConfig old = repoConfigMap.put(repository.config().storeLocation().toString(), config.copy());
         return old == null;
     }
 

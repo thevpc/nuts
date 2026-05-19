@@ -44,7 +44,7 @@ public class UserNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
+    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         NRepository repository = context.get(NRepository.class);
         for (NUser nutsSecurityEntityConfig : NSecurityManager.of()

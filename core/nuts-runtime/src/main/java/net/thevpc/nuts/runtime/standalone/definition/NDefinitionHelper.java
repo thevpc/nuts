@@ -39,7 +39,7 @@ public class NDefinitionHelper {
     }
 
     public static NDefinition ofDescriptorOnly(NDescriptor descriptor) {
-        return new DefinitionForIdAndDescriptor(descriptor.getId(), descriptor);
+        return new DefinitionForIdAndDescriptor(descriptor.id(), descriptor);
     }
 
     private static class DefinitionForIdAndDescriptor extends NDefinitionDelegate {
@@ -73,7 +73,7 @@ public class NDefinitionHelper {
 
         @Override
         public NOptional<Set<NDescriptorFlag>> effectiveFlags() {
-            return effectiveDescriptor().map(x -> x.getFlags());
+            return effectiveDescriptor().map(x -> x.flags());
         }
     }
 
@@ -149,7 +149,7 @@ public class NDefinitionHelper {
                 try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
                     definition = NFetch.of(id)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition();
                 } catch (Exception ex) {
                     //suppose we cannot retrieve descriptor

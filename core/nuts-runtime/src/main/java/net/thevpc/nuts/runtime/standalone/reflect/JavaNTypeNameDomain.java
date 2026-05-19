@@ -6,6 +6,8 @@ import net.thevpc.nuts.reflect.NTypeNamePlatformDomain;
 import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 class JavaNTypeNameDomain implements NTypeNamePlatformDomain {
     @Override
@@ -88,11 +90,11 @@ class JavaNTypeNameDomain implements NTypeNamePlatformDomain {
 
 
     @Override
-    public NTypeName[] getInterfaces(NTypeName any) {
+    public List<NTypeName> getInterfaces(NTypeName any) {
         Class[] interfaces = getTypeClass(any).getInterfaces();
-        NTypeName[] typeReferences = new NTypeName[interfaces.length];
+        List<NTypeName> typeReferences = new ArrayList<>(interfaces.length);
         for (int i = 0; i < interfaces.length; i++) {
-            typeReferences[i] = NTypeName.of(interfaces[i]);//TODO params?
+            typeReferences.add(NTypeName.of(interfaces[i]));
         }
         return typeReferences;
     }

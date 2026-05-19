@@ -99,7 +99,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public String getBootConnectionString() {
+    public String bootConnectionString() {
         return null;
     }
 
@@ -163,7 +163,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         if (ii == null) {
             return NInstallStatus.NONE;
         }
-        return ii.getInstallStatus();
+        return ii.installStatus();
     }
 
     @Override
@@ -180,8 +180,8 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 ii.setId(id);
                 ii.setInstalled(forId == null);
                 if (r != null) {
-                    ii.setSourceRepoName(r.getName());
-                    ii.setSourceRepoUUID(r.getUuid());
+                    ii.setSourceRepoName(r.name());
+                    ii.setSourceRepoUUID(r.uuid());
                 }
                 saveCreate(ii);
             } else {
@@ -189,8 +189,8 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 ii.setId(id);
                 ii.setInstalled(forId == null);
                 if (r != null) {
-                    ii.setSourceRepoName(r.getName());
-                    ii.setSourceRepoUUID(r.getUuid());
+                    ii.setSourceRepoName(r.name());
+                    ii.setSourceRepoUUID(r.uuid());
                 }
                 saveUpdate(ii, ii0);
             }
@@ -227,8 +227,8 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             throw new NNotInstalledException(id);
         }
         try {
-            String pck = def.descriptor().getPackaging();
-            undeploy().setId(id.builder().setPackaging(NBlankable.isBlank(pck) ? "jar" : pck).build())
+            String pck = def.descriptor().packaging();
+            undeploy().setId(id.builder().packaging(NBlankable.isBlank(pck) ? "jar" : pck).build())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .run();
             _wstore().deleteInstallInfoConfig(id);
@@ -242,7 +242,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 if (!nutsIds.isEmpty()) {
                     setDefaultVersion(nutsIds.get(0));
                 } else {
-                    setDefaultVersion(id.builder().setVersion("").build());
+                    setDefaultVersion(id.builder().version("").build());
                 }
             }
             succeeded = true;
@@ -267,7 +267,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                             scope = NDependencyScope.API;
                         }
                         //remove repository requiredId id!
-                        requiredId = requiredId.builder().setRepository(null).build();
+                        requiredId = requiredId.builder().repository(null).build();
 
 
                         InstallInfoConfig fi = _wstore().loadInstallInfoConfig(requiredId);
@@ -347,9 +347,9 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
             return NIdBuilder.of()
-                    .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
-                    .setArtifactId(split.get(split.size() - 3))
-                    .setVersion(split.get(split.size() - 2)).build();
+                    .groupId(String.join(".", split.subList(0, split.size() - 3)))
+                    .artifactId(split.get(split.size() - 3))
+                    .version(split.get(split.size() - 2)).build();
 
         }
         return null;
@@ -585,7 +585,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 try {
                     NDescriptor rep = deployments.deploy(this, NConfirmationMode.YES);
                     this.setDescriptor(rep);
-                    this.setId(rep.getId());
+                    this.setId(rep.id());
                     updateInstallInformation(getId(), null, true, null, null);
                     succeeded = true;
                 } finally {
@@ -626,7 +626,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             @Override
             public NPushRepositoryCmd run() {
                 throw new NIllegalArgumentException(
-                        NMsg.ofC("unsupported push() for %s repository", getName())
+                        NMsg.ofC("unsupported push() for %s repository", name())
                 );
             }
         };
@@ -686,7 +686,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("<installed>"));
                 result = NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
                         .map(NFunction.of(vv -> {
-                            NId newId = getId().builder().setVersion(vv).build();
+                            NId newId = getId().builder().version(vv).build();
                             if (filter0.acceptVersion(vv) && (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(newId, repo, "DefaultNInstalledRepository")))) {
                                 return newId;
                             }

@@ -59,27 +59,27 @@ public class DefaultNDeployRepositoryCmd extends AbstractNDeployRepositoryCmd {
 
     @Override
     public NDeployRepositoryCmd run() {
-        NSession session = repo.getWorkspace().currentSession();
-        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.DEPLOY, "deploy");
+        NSession session = repo.workspace().currentSession();
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().uuid(), NConstants.Permissions.DEPLOY, "deploy");
         checkParameters();
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(repo);
             NDescriptor rep = xrepo.deployImpl(this);
             this.setDescriptor(rep);
-            this.setId(rep.getId());
+            this.setId(rep.id());
             if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
                     xrepo.getIndexStore().revalidate(this.getId());
                 } catch (NException ex) {
                     _LOG()
-                            .log(NMsg.ofJ("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
+                            .log(NMsg.ofJ("error revalidating Indexer for {0} : {1}", getRepo().name(), ex).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
                 }
             }
             _LOG()
-                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
+                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.getId()).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
         } catch (RuntimeException ex) {
             _LOG()
-                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId())
+                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.getId())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
             throw ex;
         }

@@ -32,6 +32,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NIterator;
 
 import java.util.Iterator;
@@ -52,20 +53,25 @@ public interface NRepositoryModel extends NComponent {
     int CACHE = CACHE_READ | CACHE_WRITE;
 
 
+    @NGetter
     String getName();
 
+    @NGetter
     default NStoreStrategy getStoreStrategy() {
         return null;
     }
 
+    @NGetter
     default String getUuid() {
         return null;
     }
 
+    @NGetter
     default int getMode() {
         return MIRRORING | LIB | CACHE;
     }
 
+    @NGetter
     default NSpeedQualifier getSpeed() {
         return NSpeedQualifier.NORMAL;
     }
@@ -118,7 +124,8 @@ public interface NRepositoryModel extends NComponent {
         return true;
     }
 
-    default boolean isRemote() {
+    @NGetter
+    default boolean remote() {
         return true;
     }
 }

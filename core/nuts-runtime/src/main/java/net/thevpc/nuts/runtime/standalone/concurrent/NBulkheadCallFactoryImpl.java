@@ -39,12 +39,12 @@ public class NBulkheadCallFactoryImpl implements NBulkheadCallFactory {
     }
 
     @Override
-    public NBulkheadCallBackend getBackend() {
+    public NBulkheadCallBackend backend() {
         return backend;
     }
 
     @Override
-    public NBulkheadCallStore getStore() {
+    public NBulkheadCallStore store() {
         return store;
     }
 

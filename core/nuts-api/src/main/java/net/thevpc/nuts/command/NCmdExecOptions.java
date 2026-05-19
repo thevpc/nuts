@@ -27,6 +27,8 @@
 package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -73,7 +75,8 @@ public class NCmdExecOptions implements Serializable {
      *
      * @return execution options
      */
-    public List<String> getExecutorOptions() {
+    @NGetter
+    public List<String> executorOptions() {
         return executorOptions;
     }
 
@@ -83,7 +86,8 @@ public class NCmdExecOptions implements Serializable {
      * @param executorOptions new value
      * @return {@code this} instance
      */
-    public NCmdExecOptions setExecutorOptions(List<String> executorOptions) {
+    @NSetter
+    public NCmdExecOptions executorOptions(List<String> executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }
@@ -93,7 +97,8 @@ public class NCmdExecOptions implements Serializable {
      *
      * @return execution environment variables
      */
-    public Map<String, String> getEnv() {
+    @NGetter
+    public Map<String, String> env() {
         return env;
     }
 
@@ -103,6 +108,7 @@ public class NCmdExecOptions implements Serializable {
      * @param env new value
      * @return {@code this} instance
      */
+    @NSetter
     public NCmdExecOptions setEnv(Map<String, String> env) {
         this.env = env;
         return this;
@@ -113,7 +119,8 @@ public class NCmdExecOptions implements Serializable {
      *
      * @return execution directory
      */
-    public NPath getDirectory() {
+    @NGetter
+    public NPath directory() {
         return directory;
     }
 
@@ -123,7 +130,8 @@ public class NCmdExecOptions implements Serializable {
      * @param directory new value
      * @return {@code this} instance
      */
-    public NCmdExecOptions setDirectory(NPath directory) {
+    @NSetter
+    public NCmdExecOptions directory(NPath directory) {
         this.directory = directory;
         return this;
     }
@@ -143,6 +151,7 @@ public class NCmdExecOptions implements Serializable {
      * @param failFast new value
      * @return {@code this} instance
      */
+    @NSetter
     public NCmdExecOptions failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
@@ -153,7 +162,8 @@ public class NCmdExecOptions implements Serializable {
      *
      * @return execution type
      */
-    public NExecutionType getExecutionType() {
+    @NGetter
+    public NExecutionType executionType() {
         return executionType;
     }
 
@@ -163,7 +173,8 @@ public class NCmdExecOptions implements Serializable {
      * @param executionType new value
      * @return {@code this} instance
      */
-    public NCmdExecOptions setExecutionType(NExecutionType executionType) {
+    @NSetter
+    public NCmdExecOptions executionType(NExecutionType executionType) {
         this.executionType = executionType;
         return this;
     }

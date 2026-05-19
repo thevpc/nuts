@@ -27,7 +27,7 @@ package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NImmutable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
@@ -60,14 +60,16 @@ public interface NDescriptor extends Serializable, NBlankable{
      *
      * @return artifact id
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * descriptor parent list (maybe empty)
      *
      * @return descriptor parent list (maybe empty)
      */
-    List<NId> getParents();
+    @NGetter
+    List<NId> parents();
 
     /**
      * true if the artifact is executable and is considered an application. if not It's a library.
@@ -91,7 +93,8 @@ public interface NDescriptor extends Serializable, NBlankable{
      * @return descriptor flags
      * @since 0.8.3
      */
-    Set<NDescriptorFlag> getFlags();
+    @NGetter
+    Set<NDescriptorFlag> flags();
 
 
     /**
@@ -99,14 +102,16 @@ public interface NDescriptor extends Serializable, NBlankable{
      *
      * @return id type
      */
-    NIdType getIdType();
+    @NGetter
+    NIdType idType();
 
     /**
      * return descriptor packaging (used to resolve file extension)
      *
      * @return return descriptor packaging (used to resolve file extension)
      */
-    String getPackaging();
+    @NGetter
+    String packaging();
 
     /**
      * This is typically the case for pom projects
@@ -120,35 +125,39 @@ public interface NDescriptor extends Serializable, NBlankable{
      *
      * @return dependency resolution solver
      */
-    String getSolver();
+    String solver();
 
     /**
      * Descriptor Condition
      *
      * @return Descriptor Condition
      */
-    NEnvCondition getCondition();
+    @NGetter
+    NEnvCondition condition();
 
     /**
      * user-friendly name, a short description for the artifact
      *
      * @return user friendly name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * url (external or classpath url) to the application Icon
      *
      * @return url (external or classpath url) to the application Icon
      */
-    List<String> getIcons();
+    @NGetter
+    List<String> icons();
 
     /**
      * Generic Artifact Name (like 'Text Editor', 'Image Processing Application', etc)
      *
      * @return Generic Artifact Name
      */
-    String getGenericName();
+    @NGetter
+    String genericName();
 
     /**
      * category path of the artifact (slash separated).
@@ -156,14 +165,15 @@ public interface NDescriptor extends Serializable, NBlankable{
      *
      * @return category path of the artifact
      */
-    List<String> getCategories();
+    @NGetter
+    List<String> categories();
 
     /**
      * long description for the artifact
      *
      * @return long description for the artifact
      */
-    String getDescription();
+    String description();
 
     /**
      * list of available mirror locations from which nuts can download artifact content.
@@ -171,7 +181,8 @@ public interface NDescriptor extends Serializable, NBlankable{
      *
      * @return list of available mirror locations
      */
-    List<NIdLocation> getLocations();
+    @NGetter
+    List<NIdLocation> locations();
 
 
     /**
@@ -182,35 +193,40 @@ public interface NDescriptor extends Serializable, NBlankable{
      *
      * @return "standard" dependencies
      */
-    List<NDependency> getStandardDependencies();
+    @NGetter
+    List<NDependency> standardDependencies();
 
     /**
      * list of immediate (non-inherited and non-transitive dependencies
      *
      * @return list of immediate (non-inherited and non-transitive dependencies
      */
-    List<NDependency> getDependencies();
+    @NGetter
+    List<NDependency> dependencies();
 
     /**
      * descriptor of artifact responsible for running this artifact
      *
      * @return descriptor of artifact responsible for running this artifact
      */
-    NArtifactCall getExecutor();
+    @NGetter
+    NArtifactCall executor();
 
     /**
      * descriptor of artifact responsible for installing this artifact
      *
      * @return descriptor of artifact responsible for installing this artifact
      */
-    NArtifactCall getInstaller();
+    @NGetter
+    NArtifactCall installer();
 
     /**
      * custom properties that can be used as placeholders (int ${name} form) in other fields.
      *
      * @return custom properties that can be used as placeholders (int ${name} form) in other fields.
      */
-    List<NDescriptorProperty> getProperties();
+    @NGetter
+    List<NDescriptorProperty> properties();
 
     /**
      * custom property
@@ -241,30 +257,35 @@ public interface NDescriptor extends Serializable, NBlankable{
      * @return contributors
      * @since 0.8.4
      */
-    List<NDescriptorContributor> getContributors();
+    @NGetter
+    List<NDescriptorContributor> contributors();
 
     /**
      * @return developers
      * @since 0.8.4
      */
-    List<NDescriptorContributor> getDevelopers();
+    @NGetter
+    List<NDescriptorContributor> developers();
 
     /**
      * @return licenses
      * @since 0.8.4
      */
-    List<NDescriptorLicense> getLicenses();
+    @NGetter
+    List<NDescriptorLicense> licenses();
 
     /**
      * @return mailing lists
      * @since 0.8.4
      */
-    List<NDescriptorMailingList> getMailingLists();
+    @NGetter
+    List<NDescriptorMailingList> mailingLists();
 
     /**
      * @return organization
      * @since 0.8.4
      */
-    NDescriptorOrganization getOrganization();
+    @NGetter
+    NDescriptorOrganization organization();
 
 }

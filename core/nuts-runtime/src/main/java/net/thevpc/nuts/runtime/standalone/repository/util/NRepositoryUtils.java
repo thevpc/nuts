@@ -25,21 +25,21 @@ import java.util.regex.Pattern;
 public class NRepositoryUtils {
     public static NRepositoryRef optionsToRef(NRepositorySpec options) {
         return new NRepositoryRef()
-                .setEnabled(options.isEnabled())
-                .setFailSafe(options.isFailSafe())
-                .setName(options.getName())
-                .setLocation(options.getLocation())
-                .setDeployWeight(options.getDeployWeight());
+                .enabled(options.isEnabled())
+                .failSafe(options.isFailSafe())
+                .name(options.name())
+                .location(options.location())
+                .deployWeight(options.deployWeight());
     }
 
     public static NRepositorySpec refToOptions(NRepositoryRef ref) {
         return new NRepositorySpec()
-                .setEnabled(ref.isEnabled())
-                .setFailSafe(ref.isFailSafe())
-                .setName(ref.getName())
-                .setLocation(ref.getLocation())
-                .setDeployWeight(ref.getDeployWeight())
-                .setTemporary(false);
+                .enabled(ref.isEnabled())
+                .failSafe(ref.isFailSafe())
+                .name(ref.name())
+                .location(ref.location())
+                .deployWeight(ref.deployWeight())
+                .temporary(false);
     }
 
     public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog) {
@@ -116,7 +116,7 @@ public class NRepositoryUtils {
 
     public static String getRepoType(NRepositorySpec conf) {
         if (conf != null) {
-            NRepositoryLocation loc = conf.getSourceLocation();
+            NRepositoryLocation loc = conf.sourceLocation();
             if (loc != null) {
                 loc = validateLocation(loc, null);
                 if (!NBlankable.isBlank(loc.getLocationType())) {
@@ -243,7 +243,7 @@ public class NRepositoryUtils {
             if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
                 name = locationString;
                 NRepositorySpec ro = db.getDefinitionByName(name).orNull();
-                String u = ro==null?null:ro.getSourceLocation().getFullLocation();
+                String u = ro==null?null:ro.sourceLocation().getFullLocation();
                 if (u == null) {
                     url = name;
                 } else {
@@ -252,7 +252,7 @@ public class NRepositoryUtils {
             } else {
                 url = locationString;
                 NRepositorySpec ro = db.getDefinitionByPath(name).orNull();
-                String n = ro==null?null:ro.getName();
+                String n = ro==null?null:ro.name();
                 if (n == null) {
                     name = null;
                 } else {
@@ -273,8 +273,8 @@ public class NRepositoryUtils {
         if (available != null) {
             for (NRepositorySpec entry : available) {
                 if(entry!=null) {
-                    String k = entry.getName();
-                    NRepositoryLocation sl = entry.getSourceLocation();
+                    String k = entry.name();
+                    NRepositoryLocation sl = entry.sourceLocation();
                     String k2 = sl ==null?null: sl.getName();
                     if(NBlankable.isBlank(k) && !NBlankable.isBlank(k2)){
                         k=k2;
@@ -282,7 +282,7 @@ public class NRepositoryUtils {
                     String v = sl ==null?null: sl.getFullLocation();
                     if (NBlankable.isBlank(v) && !NBlankable.isBlank(k)) {
                         NRepositorySpec ro = db.getDefinitionByName(k).orNull();
-                        String u = (ro==null ||ro.getSourceLocation()==null)?null:ro.getSourceLocation().getFullLocation();
+                        String u = (ro==null ||ro.sourceLocation()==null)?null:ro.sourceLocation().getFullLocation();
                         if (u != null) {
                             v = u;
                         } else {
@@ -290,13 +290,13 @@ public class NRepositoryUtils {
                         }
                     } else if (!NBlankable.isBlank(v) && NBlankable.isBlank(k)) {
                         NRepositorySpec ro = db.getDefinitionByPath(k).orNull();
-                        String n = ro==null?null:ro.getName();
+                        String n = ro==null?null:ro.name();
                         if (n != null) {
                             k = n;
                         }
                     }
                     current.add(
-                            entry.copy().setName(k).setSourceLocation(NRepositoryLocation.of(k, v))
+                            entry.copy().name(k).sourceLocation(NRepositoryLocation.of(k, v))
                             );
                 }
             }
@@ -343,14 +343,14 @@ public class NRepositoryUtils {
             if (!isVisitedFlag(allNames, visited)) {
                 visited.addAll(allNames);
                 result.add(new NRepositorySpec()
-                        .setName(r.getName())
-                        .setSourceLocation(NRepositoryLocation.of(r.getName(), r.getUrl()))
+                        .name(r.getName())
+                        .sourceLocation(NRepositoryLocation.of(r.getName(), r.getUrl()))
                 );
             }
         }
         for (NRepositorySpec e : current.toArray()) {
             if (list.acceptExisting(e)) {
-                Set<String> allNames = db.findAllNamesByName(e.getName());
+                Set<String> allNames = db.findAllNamesByName(e.name());
                 if (!isVisitedFlag(allNames, visited)) {
                     visited.addAll(allNames);
                     result.add(e);
@@ -376,7 +376,7 @@ public class NRepositoryUtils {
         if (!NBlankable.isBlank(r.getName())) {
             return db.findAllNamesByName(r.getName());
         }else{
-            String name = db.getDefinitionByPath(r.getUrl()).map(x->x.getName()).orNull();
+            String name = db.getDefinitionByPath(r.getUrl()).map(x->x.name()).orNull();
             return db.findAllNamesByName(name);
         }
     }

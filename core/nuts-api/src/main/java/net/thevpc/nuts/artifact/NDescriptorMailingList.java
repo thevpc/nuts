@@ -1,26 +1,37 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.util.List;
 import java.util.Map;
 
 public interface NDescriptorMailingList {
-    String getId();
+    @NGetter
+    String id();
 
-    String getName();
+    @NGetter
+    String name();
 
-    String getSubscribe();
+    @NGetter
+    String subscribe();
 
-    String getUnsubscribe();
+    @NGetter
+    String unsubscribe();
 
-    String getPost();
+    @NGetter
+    String post();
 
-    String getArchive();
+    @NGetter
+    String archive();
 
-    List<String> getOtherArchives();
+    @NGetter
+    List<String> otherArchives();
 
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
 
-    String getComments();
+    @NGetter
+    String comments();
 
     NDescriptorMailingList readOnly();
 

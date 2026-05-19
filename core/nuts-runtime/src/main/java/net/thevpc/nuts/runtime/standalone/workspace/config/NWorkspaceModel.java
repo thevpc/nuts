@@ -104,7 +104,7 @@ public class NWorkspaceModel {
         this.userProperties = new NDefaultObservableMap<>();
         this.logModel = new DefaultNLogModel(workspace);
         this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), logModel, false);
-        if (initialBootOptions.getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
+        if (initialBootOptions.isolationLevel().orNull() == NIsolationLevel.MEMORY) {
             this.store = new NWorkspaceStoreInMemory();
         } else {
             this.store = new NWorkspaceStoreOnDisk();
@@ -121,14 +121,14 @@ public class NWorkspaceModel {
     }
 
     public void init() {
-        askedApiVersion = initialBootOptions.getApiVersion().orNull();
-        askedRuntimeId = initialBootOptions.getRuntimeId().orNull();
+        askedApiVersion = initialBootOptions.apiVersion().orNull();
+        askedRuntimeId = initialBootOptions.runtimeId().orNull();
         if (askedRuntimeId == null) {
             askedRuntimeId = NId.getRuntime("").get();
         }
         ((DefaultNWorkspace)NWorkspace.of()).env = rootEnv();
         this.textModel = new DefaultNTextManagerModel(workspace);
-        this.apiId = NId.getApi(Nuts.getVersion()).get();
+        this.apiId = NId.getApi(Nuts.version()).get();
         this.runtimeId = NId.get(
                 askedRuntimeId.groupId(),
                 askedRuntimeId.artifactId(),
@@ -255,7 +255,7 @@ public class NWorkspaceModel {
         public <T> NOptional<T> get(NBeanRef ref) {
             List<NBeanContainer> all;
             synchronized (scopedBeanContainerStack) {
-                all = scopedBeanContainerStack.getStackSnapshot();
+                all = scopedBeanContainerStack.stackSnapshot();
             }
             NOptional<T> firstError = null;
             for (int i = all.size() - 1; i >= 0; i--) {

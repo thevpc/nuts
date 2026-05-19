@@ -15,11 +15,11 @@ public class SettingsRepoUtils {
         out.print(prefix);
         NTexts factory = NTexts.of();
         if (enabled) {
-            out.print(factory.ofStyled(repository.getName() + disabledString, NTextStyle.primary2()));
+            out.print(factory.ofStyled(repository.name() + disabledString, NTextStyle.primary2()));
         } else {
-            out.print("```error " + repository.getName() + disabledString + "```");
+            out.print("```error " + repository.name() + disabledString + "```");
         }
-        out.print(" : " + repository.getRepositoryType() + " " + repository.config().getLocation());
+        out.print(" : " + repository.repositoryType() + " " + repository.config().location());
         out.println();
 
     }
@@ -28,7 +28,7 @@ public class SettingsRepoUtils {
         showRepo(session, repository, prefix);
         String prefix1 = prefix + "  ";
         if (repository.config().isSupportedMirroring()) {
-            for (NRepository c : repository.config().getMirrors()) {
+            for (NRepository c : repository.config().mirrors()) {
                 showRepoTree(session, c, prefix1);
             }
         }

@@ -33,17 +33,17 @@ public class DefaultNCustomCommand implements NCustomCmd {
     }
 
     @Override
-    public String getFactoryId() {
+    public String factoryId() {
         return factoryId;
     }
 
     @Override
-    public NId getOwner() {
+    public NId owner() {
         return owner;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -56,38 +56,38 @@ public class DefaultNCustomCommand implements NCustomCmd {
     public int exec(String[] args, NCmdExecOptions options) {
         NSession session = NSession.of();
         if (session.isDry()) {
-            List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
-            executorOptions.addAll(this.getExecutorOptions());
-            List<String> r = new ArrayList<>(this.getCommand());
+            List<String> executorOptions = new ArrayList<>(options.executorOptions());
+            executorOptions.addAll(this.executorOptions());
+            List<String> r = new ArrayList<>(this.command());
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
             return NExec.of()
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
-                    .directory(options.getDirectory())
+                    .directory(options.directory())
                     .failFast(true)
-                    .setEnv(options.getEnv())
-                    .executionType(options.getExecutionType())
+                    .env(options.env())
+                    .executionType(options.executionType())
                     .run()
                     .exitCode();
 
             //load all needed dependencies!
 //        return ((DefaultNWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
         } else {
-            List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
-            executorOptions.addAll(this.getExecutorOptions());
-            List<String> r = new ArrayList<>(this.getCommand());
+            List<String> executorOptions = new ArrayList<>(options.executorOptions());
+            executorOptions.addAll(this.executorOptions());
+            List<String> r = new ArrayList<>(this.command());
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
             return NExec.of()
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
-                    .directory(options.getDirectory())
+                    .directory(options.directory())
                     .failFast(true)
-                    .setEnv(options.getEnv())
-                    .executionType(options.getExecutionType())
+                    .env(options.env())
+                    .executionType(options.executionType())
                     .run()
                     .exitCode();
 
@@ -98,7 +98,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
 
 
     @Override
-    public NText getHelpText() throws NExecutionException {
+    public NText helpText() throws NExecutionException {
         if (!NBlankable.isBlank(helpText)) {
             return NText.ofPlain(helpText);
         }
@@ -112,15 +112,15 @@ public class DefaultNCustomCommand implements NCustomCmd {
                                 .getGrabbedAllString()
                 );
             } catch (Exception ex) {
-                _LOG().log(NMsg.ofC("failed to retrieve help for %s", getName()).asFine(ex));
-                return NText.ofStyled("failed to retrieve help for " + getName(), NTextStyle.error());
+                _LOG().log(NMsg.ofC("failed to retrieve help for %s", name()).asFine(ex));
+                return NText.ofStyled("failed to retrieve help for " + name(), NTextStyle.error());
             }
         }
         return null;
     }
 
     @Override
-    public List<String> getCommand() {
+    public List<String> command() {
         return NCollections.unmodifiableList(command);
     }
 
@@ -135,7 +135,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
     }
 
     @Override
-    public List<String> getExecutorOptions() {
+    public List<String> executorOptions() {
         return NCollections.unmodifiableList(executorOptions);
     }
 
@@ -152,13 +152,13 @@ public class DefaultNCustomCommand implements NCustomCmd {
     @Override
     public NCommandConfig toCommandConfig() {
         return new NCommandConfig()
-                .setCommand(getCommand())
-                .setFactoryId(getFactoryId())
-                .setOwner(getOwner())
-                .setExecutorOptions(getExecutorOptions())
-                .setName(getName())
-                .setHelpCommand(helpCommand)
-                .setHelpText(helpText);
+                .command(command())
+                .factoryId(factoryId())
+                .owner(owner())
+                .executorOptions(executorOptions())
+                .name(name())
+                .helpCommand(helpCommand)
+                .helpText(helpText);
     }
 
     public DefaultNCustomCommand setOwner(NId owner) {

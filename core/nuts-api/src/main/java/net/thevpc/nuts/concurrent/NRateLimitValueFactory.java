@@ -63,7 +63,7 @@ public interface NRateLimitValueFactory {
      *
      * @return the store instance, may be {@code null} if none configured
      */
-    NRateLimitValueStore getStore();
+    NRateLimitValueStore store();
 
     /**
      * Defines a custom rate-limit strategy with the given name.

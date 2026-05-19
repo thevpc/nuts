@@ -9,7 +9,6 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NInfoCmd;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
@@ -28,9 +27,9 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
     @Override
     public int execute() {
         NSession session = NSession.of();
-        session = NSessionUtils.configureCopyOfSession(session, getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
+        session = NSessionUtils.configureCopyOfSession(session, getExecCommand().in(), getExecCommand().out(),getExecCommand().err());
         return session.callWith(()->{
-            boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+            boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
             if(dry){
                 dryExecute();
                 return NExecutionException.SUCCESS;

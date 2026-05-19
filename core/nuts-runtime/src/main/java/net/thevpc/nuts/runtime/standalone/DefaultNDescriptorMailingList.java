@@ -17,8 +17,8 @@ public class DefaultNDescriptorMailingList implements NDescriptorMailingList {
     private final String comments;
 
     public DefaultNDescriptorMailingList(NDescriptorMailingList other) {
-        this(other.getId(), other.getName(), other.getSubscribe(), other.getUnsubscribe(), other.getPost(), other.getArchive(),
-                other.getOtherArchives(), other.getProperties(), other.getComments()
+        this(other.id(), other.name(), other.subscribe(), other.unsubscribe(), other.post(), other.archive(),
+                other.otherArchives(), other.properties(), other.comments()
         );
     }
 
@@ -35,48 +35,48 @@ public class DefaultNDescriptorMailingList implements NDescriptorMailingList {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public String getSubscribe() {
+    public String subscribe() {
         return subscribe;
     }
 
     @Override
-    public String getUnsubscribe() {
+    public String unsubscribe() {
         return unsubscribe;
     }
 
     @Override
-    public String getPost() {
+    public String post() {
         return post;
     }
 
     @Override
-    public String getArchive() {
+    public String archive() {
         return archive;
     }
 
     @Override
-    public List<String> getOtherArchives() {
+    public List<String> otherArchives() {
         return otherArchives;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
     @Override
-    public String getComments() {
+    public String comments() {
         return comments;
     }
 

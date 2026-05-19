@@ -30,17 +30,17 @@ public class ManifestFormatterTest {
     public void testManifestFormatter() {
         // Create a sample descriptor
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("com.example", "my-app").setVersion("1.0.0").build())
-                .setName("My Application")
-                .setDescription("This is a test application for MANIFEST.MF formatting")
-                .setGenericName("Application")
-                .setPackaging("jar")
+                .id(NIdBuilder.of("com.example", "my-app").version("1.0.0").build())
+                .name("My Application")
+                .description("This is a test application for MANIFEST.MF formatting")
+                .genericName("Application")
+                .packaging("jar")
                 .addFlag(NDescriptorFlag.EXEC)
                 .addDependency(NDependency.get("org.example:lib1#1.0").get())
                 .addDependency(NDependency.get("org.example:lib2#2.0").get())
-                .setCategories("Development", "Tools")
-                .setIcons("classpath:/icons/app.png")
-                .setExecutor(
+                .categories("Development", "Tools")
+                .icons("classpath:/icons/app.png")
+                .executor(
                         new DefaultNArtifactCallBuilder()
                                 .id(NId.get("java").get())
                                 .arguments(new String[]{"--main-class=", "com.example.Main"})
@@ -82,7 +82,7 @@ public class ManifestFormatterTest {
     public void testManifestFormatterMinimal() {
         // Create a minimal descriptor
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "minimal").setVersion("1.0").build())
+                .id(NIdBuilder.of("org.test", "minimal").version("1.0").build())
                 .build();
 
         // Format as MANIFEST.MF
@@ -113,8 +113,8 @@ public class ManifestFormatterTest {
         String longDescription = "This is a very long description that should be wrapped at 72 characters per line in the MANIFEST.MF file according to the JAR file specification which requires proper line wrapping.";
 
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "longdesc").setVersion("1.0").build())
-                .setDescription(longDescription)
+                .id(NIdBuilder.of("org.test", "longdesc").version("1.0").build())
+                .description(longDescription)
                 .build();
 
         // Format as MANIFEST.MF
@@ -149,17 +149,17 @@ public class ManifestFormatterTest {
     public void testRoundTrip() {
         // Create a comprehensive descriptor
         NDescriptor original = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("com.roundtrip", "test-app").setVersion("2.0.0").build())
-                .setName("Round Trip Test")
-                .setDescription("Testing round-trip conversion")
-                .setGenericName("Test Application")
-                .setPackaging("jar")
+                .id(NIdBuilder.of("com.roundtrip", "test-app").version("2.0.0").build())
+                .name("Round Trip Test")
+                .description("Testing round-trip conversion")
+                .genericName("Test Application")
+                .packaging("jar")
                 .addFlag(NDescriptorFlag.EXEC)
                 .addDependency(NDependency.get("org.test:dep1#1.0").get())
                 .addDependency(NDependency.get("org.test:dep2#2.0").get())
-                .setCategories("Testing", "Development")
-                .setIcons("classpath:/test.png")
-                .setExecutor(
+                .categories("Testing", "Development")
+                .icons("classpath:/test.png")
+                .executor(
                         new DefaultNArtifactCallBuilder()
                                 .id(NId.get("java").get())
                                 .arguments(new String[]{"--main-class=", "com.roundtrip.TestMain"})
@@ -183,43 +183,43 @@ public class ManifestFormatterTest {
 
         // Parse it back
         NDescriptorParser parser = NDescriptorParser.of()
-                .setDescriptorStyle(NDescriptorStyle.MANIFEST);
+                .descriptorStyle(NDescriptorStyle.MANIFEST);
 
         NDescriptor parsed = parser.parse(manifestContent).get();
 
         // Verify key fields match
         TestUtils.println("Comparing original and parsed descriptors:");
 
-        Assertions.assertEquals(original.getId(), parsed.getId(), "ID mismatch");
-        TestUtils.println("ID matches: " + parsed.getId());
+        Assertions.assertEquals(original.id(), parsed.id(), "ID mismatch");
+        TestUtils.println("ID matches: " + parsed.id());
 
-        Assertions.assertEquals(original.getName(), parsed.getName(), "Name mismatch");
-        TestUtils.println("Name matches: " + parsed.getName());
+        Assertions.assertEquals(original.name(), parsed.name(), "Name mismatch");
+        TestUtils.println("Name matches: " + parsed.name());
 
-        Assertions.assertEquals(original.getDescription(), parsed.getDescription(), "Description mismatch");
+        Assertions.assertEquals(original.description(), parsed.description(), "Description mismatch");
         TestUtils.println("Description matches");
 
-        Assertions.assertEquals(original.getGenericName(), parsed.getGenericName(), "Generic name mismatch");
+        Assertions.assertEquals(original.genericName(), parsed.genericName(), "Generic name mismatch");
         TestUtils.println("Generic name matches");
 
-        Assertions.assertEquals(original.getPackaging(), parsed.getPackaging(), "Packaging mismatch");
+        Assertions.assertEquals(original.packaging(), parsed.packaging(), "Packaging mismatch");
         TestUtils.println("Packaging matches");
 
-        Assertions.assertEquals(original.getDependencies().size(), parsed.getDependencies().size(), "Dependencies count mismatch");
-        TestUtils.println("Dependencies count matches: " + parsed.getDependencies().size());
+        Assertions.assertEquals(original.dependencies().size(), parsed.dependencies().size(), "Dependencies count mismatch");
+        TestUtils.println("Dependencies count matches: " + parsed.dependencies().size());
 
-        Assertions.assertEquals(original.getCategories().size(), parsed.getCategories().size(), "Categories count mismatch");
-        TestUtils.println("Categories count matches: " + parsed.getCategories().size());
+        Assertions.assertEquals(original.categories().size(), parsed.categories().size(), "Categories count mismatch");
+        TestUtils.println("Categories count matches: " + parsed.categories().size());
 
-        Assertions.assertEquals(original.getIcons().size(), parsed.getIcons().size(), "Icons count mismatch");
-        TestUtils.println("Icons count matches: " + parsed.getIcons().size());
+        Assertions.assertEquals(original.icons().size(), parsed.icons().size(), "Icons count mismatch");
+        TestUtils.println("Icons count matches: " + parsed.icons().size());
 
         // Verify Main-Class was preserved
-        Assertions.assertNotNull(parsed.getExecutor(), "Executor missing in parsed descriptor");
-        Assertions.assertNotNull(parsed.getExecutor().arguments(), "Executor arguments missing in parsed descriptor");
+        Assertions.assertNotNull(parsed.executor(), "Executor missing in parsed descriptor");
+        Assertions.assertNotNull(parsed.executor().arguments(), "Executor arguments missing in parsed descriptor");
 
         boolean foundMainClass = false;
-        java.util.List<String> args = parsed.getExecutor().arguments();
+        java.util.List<String> args = parsed.executor().arguments();
         for (int i = 0; i < args.size() - 1; i++) {
             if ("--main-class=".equals(args.get(i))) {
                 String mainClass = args.get(i + 1);
@@ -238,10 +238,10 @@ public class ManifestFormatterTest {
     public void testEmptyAndNullValues() {
         // Create descriptor with minimal/null fields
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "empty-test").setVersion("1.0").build())
-                .setName("")  // Empty name
-                .setDescription(null)  // Null description
-                .setGenericName(null)
+                .id(NIdBuilder.of("org.test", "empty-test").version("1.0").build())
+                .name("")  // Empty name
+                .description(null)  // Null description
+                .genericName(null)
                 .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -276,9 +276,9 @@ public class ManifestFormatterTest {
         String specialName = "App with \"quotes\" and <brackets>";
 
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "special-chars").setVersion("1.0").build())
-                .setName(specialName)
-                .setDescription(specialDesc)
+                .id(NIdBuilder.of("org.test", "special-chars").version("1.0").build())
+                .name(specialName)
+                .description(specialDesc)
                 .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -306,7 +306,7 @@ public class ManifestFormatterTest {
     public void testVeryLongDependenciesList() {
         // Create descriptor with many dependencies
         NDescriptorBuilder builder = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "many-deps").setVersion("1.0").build());
+                .id(NIdBuilder.of("org.test", "many-deps").version("1.0").build());
 
         // Add 20 dependencies
         for (int i = 1; i <= 20; i++) {
@@ -362,8 +362,8 @@ public class ManifestFormatterTest {
         }
 
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "long-value").setVersion("1.0").build())
-                .setDescription(longDesc.toString())
+                .id(NIdBuilder.of("org.test", "long-value").version("1.0").build())
+                .description(longDesc.toString())
                 .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -403,8 +403,8 @@ public class ManifestFormatterTest {
     public void testNoVersionInId() {
         // Create descriptor without version
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "no-version").build())
-                .setName("No Version App")
+                .id(NIdBuilder.of("org.test", "no-version").build())
+                .name("No Version App")
                 .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -433,7 +433,7 @@ public class ManifestFormatterTest {
     public void testMultipleProperties() {
         // Create descriptor with multiple custom properties
         NDescriptorBuilder builder = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "props").setVersion("1.0").build());
+                .id(NIdBuilder.of("org.test", "props").version("1.0").build());
 
         // Add custom properties
         builder.addProperty(createProperty("author", "thevpc"));
@@ -470,7 +470,7 @@ public class ManifestFormatterTest {
     public void testMultipleFlags() {
         // Create descriptor with multiple flags
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "flags").setVersion("1.0").build())
+                .id(NIdBuilder.of("org.test", "flags").version("1.0").build())
                 .addFlag(NDescriptorFlag.EXEC)
                 .addFlag(NDescriptorFlag.GUI)
                 .addFlag(NDescriptorFlag.NUTS_APP)
@@ -503,8 +503,8 @@ public class ManifestFormatterTest {
     public void testMainClassInExecutorVariants() {
         // Test concatenated form: --main-class=ClassName
         NDescriptor descriptor1 = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "mainclass1").setVersion("1.0").build())
-                .setExecutor(
+                .id(NIdBuilder.of("org.test", "mainclass1").version("1.0").build())
+                .executor(
                     new DefaultNArtifactCallBuilder()
                         .id(NId.get("java").get())
                         .arguments(new String[]{"--main-class=com.example.ConcatenatedMain"})
@@ -545,10 +545,10 @@ public class ManifestFormatterTest {
         }
 
         NDescriptor descriptor = new DefaultNDescriptorBuilder()
-                .setId(NIdBuilder.of("org.test", "utf8-test").setVersion("1.0").build())
-                .setName(descWith3ByteChars)
-                .setDescription(longMultiByte.toString())
-                .setGenericName(descWithEmoji)
+                .id(NIdBuilder.of("org.test", "utf8-test").version("1.0").build())
+                .name(descWith3ByteChars)
+                .description(longMultiByte.toString())
+                .genericName(descWithEmoji)
                 .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -600,25 +600,25 @@ public class ManifestFormatterTest {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return name;
         }
 
         @Override
-        public net.thevpc.nuts.util.NLiteral getValue() {
+        public net.thevpc.nuts.util.NLiteral value() {
             return net.thevpc.nuts.util.NLiteral.of(value);
         }
 
         @Override
-        public NEnvCondition getCondition() {
+        public NEnvCondition condition() {
             return null;
         }
 
         @Override
         public NDescriptorPropertyBuilder builder() {
             return new net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder()
-                .setName(name)
-                .setValue(value);
+                .name(name)
+                .value(value);
         }
 
         @Override

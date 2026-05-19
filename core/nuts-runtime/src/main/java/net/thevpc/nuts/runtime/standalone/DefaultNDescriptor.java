@@ -72,29 +72,29 @@ public class DefaultNDescriptor implements NDescriptor {
 
     public DefaultNDescriptor(NDescriptor d) {
         this(
-                d.getId(),
-                d.getIdType(),
-                d.getParents(),
-                d.getPackaging(),
-                d.getExecutor(),
-                d.getInstaller(),
-                d.getName(),
-                d.getDescription(),
-                d.getCondition(),
-                d.getDependencies(),
-                d.getStandardDependencies(),
-                d.getLocations(),
-                d.getProperties(),
-                d.getGenericName(),
-                d.getCategories(),
-                d.getIcons(),
-                d.getFlags(),
-                d.getSolver(),
-                d.getContributors(),
-                d.getDevelopers(),
-                d.getLicenses(),
-                d.getMailingLists(),
-                d.getOrganization()
+                d.id(),
+                d.idType(),
+                d.parents(),
+                d.packaging(),
+                d.executor(),
+                d.installer(),
+                d.name(),
+                d.description(),
+                d.condition(),
+                d.dependencies(),
+                d.standardDependencies(),
+                d.locations(),
+                d.properties(),
+                d.genericName(),
+                d.categories(),
+                d.icons(),
+                d.flags(),
+                d.solver(),
+                d.contributors(),
+                d.developers(),
+                d.licenses(),
+                d.mailingLists(),
+                d.organization()
         );
     }
 
@@ -146,7 +146,7 @@ public class DefaultNDescriptor implements NDescriptor {
     }
 
     @Override
-    public NIdType getIdType() {
+    public NIdType idType() {
         return idType;
     }
 
@@ -272,32 +272,32 @@ public class DefaultNDescriptor implements NDescriptor {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
     @Override
-    public List<NId> getParents() {
+    public List<NId> parents() {
         return parents;
     }
 
     @Override
     public boolean isExecutable() {
-        return getFlags().contains(NDescriptorFlag.EXEC);
+        return flags().contains(NDescriptorFlag.EXEC);
     }
 
     @Override
     public boolean isNutsApplication() {
-        return getFlags().contains(NDescriptorFlag.NUTS_APP);
+        return flags().contains(NDescriptorFlag.NUTS_APP);
     }
 
     @Override
     public boolean isPlatformApplication() {
-        return getFlags().contains(NDescriptorFlag.PLATFORM_APP);
+        return flags().contains(NDescriptorFlag.PLATFORM_APP);
     }
 
     @Override
-    public Set<NDescriptorFlag> getFlags() {
+    public Set<NDescriptorFlag> flags() {
         return flags;
     }
 
@@ -306,76 +306,76 @@ public class DefaultNDescriptor implements NDescriptor {
 //        return ext;
 //    }
     @Override
-    public String getPackaging() {
+    public String packaging() {
         return packaging;
     }
 
     public boolean isNoContent() {
-        return "pom".equals(getPackaging());
+        return "pom".equals(packaging());
     }
 
     @Override
-    public String getSolver() {
+    public String solver() {
         return solver;
     }
 
     @Override
-    public NEnvCondition getCondition() {
+    public NEnvCondition condition() {
         return condition;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public List<String> getIcons() {
+    public List<String> icons() {
         return icons;
     }
 
     @Override
-    public String getGenericName() {
+    public String genericName() {
         return genericName;
     }
 
     @Override
-    public List<String> getCategories() {
+    public List<String> categories() {
         return categories;
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return description;
     }
 
     @Override
-    public List<NIdLocation> getLocations() {
+    public List<NIdLocation> locations() {
         return locations;
     }
 
     @Override
-    public List<NDependency> getStandardDependencies() {
+    public List<NDependency> standardDependencies() {
         return standardDependencies;
     }
 
     @Override
-    public List<NDependency> getDependencies() {
+    public List<NDependency> dependencies() {
         return dependencies;
     }
 
     @Override
-    public NArtifactCall getExecutor() {
+    public NArtifactCall executor() {
         return executor;
     }
 
     @Override
-    public NArtifactCall getInstaller() {
+    public NArtifactCall installer() {
         return installer;
     }
 
     @Override
-    public List<NDescriptorProperty> getProperties() {
+    public List<NDescriptorProperty> properties() {
         return properties;
     }
 
@@ -385,7 +385,7 @@ public class DefaultNDescriptor implements NDescriptor {
             return NOptional.ofNamedEmpty("property " + name);
         }
         return NOptional.ofNamed(
-                properties.stream().filter(x -> x.getName().equals(name)).findFirst()
+                properties.stream().filter(x -> x.name().equals(name)).findFirst()
                         .orElse(null),
                 "property " + name
         );
@@ -393,7 +393,7 @@ public class DefaultNDescriptor implements NDescriptor {
 
     @Override
     public NOptional<NLiteral> getPropertyValue(String name) {
-        return getProperty(name).map(NDescriptorProperty::getValue);
+        return getProperty(name).map(NDescriptorProperty::value);
     }
 
     @Override
@@ -472,27 +472,27 @@ public class DefaultNDescriptor implements NDescriptor {
     }
 
     @Override
-    public List<NDescriptorContributor> getContributors() {
+    public List<NDescriptorContributor> contributors() {
         return contributors;
     }
 
     @Override
-    public List<NDescriptorContributor> getDevelopers() {
+    public List<NDescriptorContributor> developers() {
         return developers;
     }
 
     @Override
-    public List<NDescriptorLicense> getLicenses() {
+    public List<NDescriptorLicense> licenses() {
         return licenses;
     }
 
     @Override
-    public List<NDescriptorMailingList> getMailingLists() {
+    public List<NDescriptorMailingList> mailingLists() {
         return mailingLists;
     }
 
     @Override
-    public NDescriptorOrganization getOrganization() {
+    public NDescriptorOrganization organization() {
         return organization;
     }
 }

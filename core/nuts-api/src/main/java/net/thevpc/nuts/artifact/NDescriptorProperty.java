@@ -27,7 +27,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NImmutable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NLiteral;
 
 /**
@@ -43,21 +43,24 @@ public interface NDescriptorProperty extends NBlankable{
      *
      * @return property name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * property value
      *
      * @return property value
      */
-    NLiteral getValue();
+    @NGetter
+    NLiteral value();
 
     /**
      * property condition
      *
      * @return property condition
      */
-    NEnvCondition getCondition();
+    @NGetter
+    NEnvCondition condition();
 
     /**
      * creates a populated builder from this instance

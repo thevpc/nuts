@@ -190,14 +190,14 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     @Override
     public NDefinitionFilter byExtension(NVersion targetApiVersion) {
         return new NDefinitionExecExtensionFilter(
-                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build()
+                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().version(targetApiVersion).build()
         );
     }
 
     @Override
     public NDefinitionFilter byRuntime(NVersion targetApiVersion) {
         return new NDefinitionExecRuntimeFilter(
-                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
+                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().version(targetApiVersion).build(),
                 false
         );
     }
@@ -205,7 +205,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     @Override
     public NDefinitionFilter byCompanion(NVersion targetApiVersion) {
         return new NDefinitionExecCompanionFilter(
-                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
+                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().version(targetApiVersion).build(),
                 NExtensions.of().getCompanionIds().stream().map(NId::shortName).toArray(String[]::new)
         );
     }

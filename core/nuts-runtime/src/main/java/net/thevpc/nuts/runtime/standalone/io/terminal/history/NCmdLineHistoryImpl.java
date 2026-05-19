@@ -105,8 +105,8 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
     public void save(OutputStream outs) {
         try (PrintStream out = new PrintStream(outs)) {
             for (NCmdLineHistoryEntry entry : entries) {
-                out.println("#at:" + entry.getTime().toString());
-                out.println(entry.getLine().replace("\n", "\\n").replace("\r", "\\r"));
+                out.println("#at:" + entry.time().toString());
+                out.println(entry.line().replace("\n", "\\n").replace("\r", "\\r"));
             }
         }
     }

@@ -17,7 +17,7 @@ public class DefaultNDescriptorOrganizationBuilder implements NDescriptorOrganiz
     }
 
     public DefaultNDescriptorOrganizationBuilder(NDescriptorOrganization other) {
-        this(other.getId(), other.getName(), other.getUrl(), other.getComments(), other.getProperties());
+        this(other.id(), other.name(), other.url(), other.comments(), other.properties());
     }
 
     public DefaultNDescriptorOrganizationBuilder(String id, String name, String url, String comments, Map<String, String> properties) {
@@ -29,56 +29,56 @@ public class DefaultNDescriptorOrganizationBuilder implements NDescriptorOrganiz
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NDescriptorOrganizationBuilder setName(String name) {
+    public NDescriptorOrganizationBuilder name(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public String getUrl() {
+    public String url() {
         return url;
     }
 
     @Override
-    public NDescriptorOrganizationBuilder setUrl(String url) {
+    public NDescriptorOrganizationBuilder url(String url) {
         this.url = url;
         return this;
     }
 
     @Override
-    public String getComments() {
+    public String comments() {
         return comments;
     }
 
     @Override
-    public NDescriptorOrganizationBuilder setComments(String comments) {
+    public NDescriptorOrganizationBuilder comments(String comments) {
         this.comments = comments;
         return this;
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
     @Override
-    public NDescriptorOrganizationBuilder setId(String id) {
+    public NDescriptorOrganizationBuilder id(String id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
     @Override
-    public NDescriptorOrganizationBuilder setProperties(Map<String, String> properties) {
+    public NDescriptorOrganizationBuilder properties(Map<String, String> properties) {
         this.properties = properties;
         return this;
     }

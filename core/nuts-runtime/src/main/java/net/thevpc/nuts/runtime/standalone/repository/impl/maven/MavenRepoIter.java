@@ -33,7 +33,7 @@ class MavenRepoIter extends NIdPathIteratorBase {
     }
     @Override
     public NWorkspace getWorkspace() {
-        return r.getWorkspace();
+        return r.workspace();
     }
     @Override
     public boolean isDescFile(NPath pathname) {
@@ -71,7 +71,7 @@ class MavenRepoIter extends NIdPathIteratorBase {
                             }
                             return validate(
                                     NIdBuilder.of(gn.toString(),an)
-                                            .setVersion(vn)
+                                            .version(vn)
                                             .build(),
                                     null, pomFile, rootPath, filter, repository);
                         }

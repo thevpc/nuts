@@ -57,7 +57,7 @@ public class WarExecutorComponent implements NExecutorComponent {
     public static int getScore(NScorableContext context) {
         NDefinition def = context.getCriteria(NDefinition.class);
         if (def != null) {
-            if ("war".equals(NStringUtils.trim(def.descriptor().getPackaging()))) {
+            if ("war".equals(NStringUtils.trim(def.descriptor().packaging()))) {
                 return NScorable.DEFAULT_SCORE + 1;
             }
         }
@@ -73,8 +73,8 @@ public class WarExecutorComponent implements NExecutorComponent {
         return new AbstractSyncIProcessExecHelper() {
             public int exec() {
                 throw new NIOException(NMsg.ofC("unsupported yet execution of %s with packaging %s",
-                        executionContext.getDefinition().id(),
-                        executionContext.getDefinition().descriptor().getPackaging()
+                        executionContext.definition().id(),
+                        executionContext.definition().descriptor().packaging()
                 ));
             }
         };

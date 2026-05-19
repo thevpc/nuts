@@ -46,22 +46,22 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return null;
     }
 
     protected void showDefaultHelp() {
-        NOut.println(getHelpText());
+        NOut.println(helpText());
     }
 
 
     @Override
-    public NText getHelpText() {
+    public NText helpText() {
         NTexts txt = NTexts.of();
         NPath path = NPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader());
         NText n = txt.parser().parse(path);
         if (n == null) {
-            return super.getHelpText();
+            return super.helpText();
         }
         return txt.transform(n,
                 new NTextTransformConfig()
@@ -84,7 +84,7 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
                     text.ofBuilder()
                             .append("internal", NTextStyle.pale())
                             .append(" ")
-                            .append(getName(), NTextStyle.primary5())
+                            .append(name(), NTextStyle.primary5())
                             .append(" ")
                             .append(NCmdLine.of(args))
             ));
@@ -94,7 +94,7 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
                             text.ofBuilder()
                                     .append("internal", NTextStyle.pale())
                                     .append(" ")
-                                    .append(getName(), NTextStyle.primary5())
+                                    .append(name(), NTextStyle.primary5())
                                     .append(" ")
                                     .append(NCmdLine.of(args))
                     )
@@ -104,7 +104,7 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
 
     @Override
     public String toString() {
-        return getName() + " " + NCmdLine.of(args).toString();
+        return name() + " " + NCmdLine.of(args).toString();
     }
 
 }

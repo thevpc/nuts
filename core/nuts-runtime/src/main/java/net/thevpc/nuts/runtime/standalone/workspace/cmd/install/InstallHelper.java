@@ -149,10 +149,10 @@ public class InstallHelper {
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> NIdWriter.of().setOmitImportedGroupId(true).format(x.longId()).toString())
+                        .map(x -> NIdWriter.of().omitImportedGroupId(true).format(x.longId()).toString())
                         .collect(Collectors.joining(", ")));
                 sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> NIdWriter.of().setOmitImportedGroupId(true).format(x.longId()).toString())
+                        .map(x -> NIdWriter.of().omitImportedGroupId(true).format(x.longId()).toString())
                         .collect(Collectors.joining(", ")));
             }
             throw new NInstallException(null, NMsg.ofNtf(sb.toString().trim()), null);
@@ -374,14 +374,14 @@ public class InstallHelper {
                             def.id().longId()
                     ));
                 } else if (info.flags.require) {
-                    reinstall = def.installInformation().get().getInstallStatus().isRequired();
+                    reinstall = def.installInformation().get().installStatus().isRequired();
                     if (reinstall) {
                         //NOut.println("re-requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
                     } else {
                         //session.out().println("requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
                     }
                 } else {
-                    reinstall = def.installInformation().get().getInstallStatus().isInstalled();
+                    reinstall = def.installInformation().get().installStatus().isInstalled();
                     if (reinstall) {
                         session.out().println(NMsg.ofC(
                                 "%s %s ...",
@@ -398,7 +398,7 @@ public class InstallHelper {
             }
             if (reinstall) {
                 if (!info.flags.require) {
-                    if (def.installInformation().get().getInstallStatus().isInstalled()) {
+                    if (def.installInformation().get().installStatus().isInstalled()) {
                         info.cacheItem.revalidate(false);
                         uninstallImpl(info, resolveInstaller, true, false, false);
                     }
@@ -412,7 +412,7 @@ public class InstallHelper {
                         .setDefinition(def).setArguments(args.toArray(new String[0])).failFast(true).temporary(false)
                         .setRunAs(NRunAs.currentUser())// install or update always uses current user
                         ;
-                NArtifactCall installer = def.descriptor().getInstaller();
+                NArtifactCall installer = def.descriptor().installer();
                 if (installer != null) {
                     String scriptName = installer.scriptName();
                     String scriptContent = installer.scriptContent();
@@ -443,31 +443,31 @@ public class InstallHelper {
                 }
                 NExecutionContext executionContext = cc.build();
                 if (updateMode || info.flags.install) {
-                    newNInstallInformation = installedRepository.deploy(executionContext.getDefinition());
-                    newNInstallInformation = installedRepository.install(executionContext.getDefinition());
+                    newNInstallInformation = installedRepository.deploy(executionContext.definition());
+                    newNInstallInformation = installedRepository.install(executionContext.definition());
                     if (info.flags.require){
-                        newNInstallInformation = installedRepository.require(executionContext.getDefinition(),  info.requiredForIds.toArray(new NId[0]), null);
+                        newNInstallInformation = installedRepository.require(executionContext.definition(),  info.requiredForIds.toArray(new NId[0]), null);
                     }
                 } else if (info.flags.require) {
-                    newNInstallInformation = installedRepository.deploy(executionContext.getDefinition());
-                    newNInstallInformation = installedRepository.require(executionContext.getDefinition(),  info.requiredForIds.toArray(new NId[0]), null);
+                    newNInstallInformation = installedRepository.deploy(executionContext.definition());
+                    newNInstallInformation = installedRepository.require(executionContext.definition(),  info.requiredForIds.toArray(new NId[0]), null);
                 } else if (info.flags.deployOnly) {
-                    newNInstallInformation = installedRepository.deploy(executionContext.getDefinition());
-                    newNInstallInformation = installedRepository.deploy(executionContext.getDefinition());
+                    newNInstallInformation = installedRepository.deploy(executionContext.definition());
+                    newNInstallInformation = installedRepository.deploy(executionContext.definition());
                 }
                 if (info.flags.switchVersion) {
                     installedRepository.setDefaultVersion(def.id());
                 }
 
                 //now should reload definition from install repo
-                NFetch fetch2 = NFetch.of(executionContext.getDefinition().id())
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                        .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
+                NFetch fetch2 = NFetch.of(executionContext.definition().id())
+                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .repositoryFilter(NRepositoryFilters.of().installedRepo())
                         .failFast(true);
                 if (def.dependencies().isPresent()
                         && def.dependencies().get().filter() != null
                 ) {
-                    fetch2.setDependencyFilter(def.dependencies().get().filter());
+                    fetch2.dependencyFilter(def.dependencies().get().filter());
                 }
                 //update definition in the execution context
                 NDefinition defOnInstallRepo = fetch2.getResultDefinition();
@@ -515,10 +515,10 @@ public class InstallHelper {
                                 out.println(NMsg.ofC("```error error: failed to install``` %s: %s.", def.id(), ex));
                             }
                             try {
-                                installedRepository.uninstall(executionContext.getDefinition());
+                                installedRepository.uninstall(executionContext.definition());
                             } catch (Exception ex2) {
                                 ws.getModel().LOG
-                                        .log(NMsg.ofC("failed to uninstall  %s", executionContext.getDefinition().id()).asFine(ex));
+                                        .log(NMsg.ofC("failed to uninstall  %s", executionContext.definition().id()).asFine(ex));
                                 //ignore if we could not uninstall
                             }
                             updateError = new NExecutionException(NMsg.ofC("unable to install %s", def.id()), ex);
@@ -532,7 +532,7 @@ public class InstallHelper {
                         NExecutionException.ERROR_2);
             }
 
-            switch (def.descriptor().getIdType()) {
+            switch (def.descriptor().idType()) {
                 case API: {
                     ws.getModel().configModel.prepareBootClassPathConf(NIdType.API, def.id(),
                             null
@@ -542,7 +542,7 @@ public class InstallHelper {
                 case RUNTIME:
                 case EXTENSION: {
                     ws.getModel().configModel.prepareBootClassPathConf(
-                            def.descriptor().getIdType(),
+                            def.descriptor().idType(),
                             def.id(),
                             null
                             , null, true, true);
@@ -556,7 +556,7 @@ public class InstallHelper {
             } else if (info.flags.require) {
                 wu.events().fireOnRequire(new DefaultNInstallEvent(def, session, info.forIds.toArray(new NId[0]), reinstall));
             }
-            if (def.descriptor().getIdType() == NIdType.EXTENSION) {
+            if (def.descriptor().idType() == NIdType.EXTENSION) {
                 NExtensionListHelper h = new NExtensionListHelper(
                         session.getWorkspace().getApiId(),
                         ws.getConfigModel().getStoredConfigBoot().getExtensions())
@@ -564,7 +564,7 @@ public class InstallHelper {
                 NDependencies nDependencies = null;
                 if (!def.dependencies().isPresent()) {
                     nDependencies = NFetch.of(def.id())
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition().dependencies().get();
                 } else {
                     nDependencies = def.dependencies().get();
@@ -700,25 +700,25 @@ public class InstallHelper {
         NDefinition def = info.cacheItem.getDefinition();
         NDefinition oldDef = null;
         if (updateMode) {
-            switch (def.descriptor().getIdType()) {
+            switch (def.descriptor().idType()) {
                 case API: {
-                    oldDef = NFetch.of(NId.getApi(Nuts.getVersion()).get())
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setFetchStrategy(NFetchStrategy.ONLINE)
+                    oldDef = NFetch.of(NId.getApi(Nuts.version()).get())
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .fetchStrategy(NFetchStrategy.ONLINE)
                             .failFast(false).getResultDefinition();
                     break;
                 }
                 case RUNTIME: {
                     oldDef = NFetch.of(ws.getRuntimeId())
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setFetchStrategy(NFetchStrategy.ONLINE)
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .fetchStrategy(NFetchStrategy.ONLINE)
                             .failFast(false).getResultDefinition();
                     break;
                 }
                 default: {
                     oldDef = NSearch.of().addId(def.id().shortId())
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true))
+                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .definitionFilter(NDefinitionFilters.of().byDeployed(true))
                             .failFast(false).getResultDefinitions()
                             .findFirst().orNull();
                     break;
@@ -830,7 +830,7 @@ public class InstallHelper {
             }
         }
 
-        if (definition.descriptor().getIdType() == NIdType.EXTENSION) {
+        if (definition.descriptor().idType() == NIdType.EXTENSION) {
             NExtensionListHelper h = new NExtensionListHelper(
                     ws.getApiId(),
                     ws.getConfigModel().getStoredConfigBoot().getExtensions())

@@ -128,7 +128,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         if (a != null) {
             cmdList.add(0, a.toString());
             String outStr = NExec.of()
-                    .setCommand(cmdList)
+                    .command(cmdList)
                     .addCommand()
                     .system()
                     .getGrabbedAllString().trim();

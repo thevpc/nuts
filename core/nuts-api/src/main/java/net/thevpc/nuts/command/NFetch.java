@@ -36,7 +36,9 @@ import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.time.Instant;
 
@@ -55,23 +57,23 @@ public interface NFetch extends NWorkspaceCmd {
     }
 
     static NFetch of(NId id) {
-        return of().setId(id);
+        return of().id(id);
     }
 
     static NFetch of(String id) {
-        return of().setId(id);
+        return of().id(id);
     }
 
     static NFetch ofNutsApi() {
-        return of().setId(NWorkspace.of().getApiId());
+        return of().id(NWorkspace.of().getApiId());
     }
 
     static NFetch ofNutsApp() {
-        return of().setId(NWorkspace.of().getAppId());
+        return of().id(NWorkspace.of().getAppId());
     }
 
     static NFetch ofNutsRuntime() {
-        return of().setId(NWorkspace.of().getRuntimeId());
+        return of().id(NWorkspace.of().getRuntimeId());
     }
 
     ////////////////////////////////////////////////////////
@@ -79,13 +81,13 @@ public interface NFetch extends NWorkspaceCmd {
 
     /// /////////////////////////////////////////////////////
 
-    NOptional<NFetchStrategy> getFetchStrategy();
+    NOptional<NFetchStrategy> fetchStrategy();
 
-    NOptional<Boolean> getTransitive();
+    NOptional<Boolean> transitive();
 
-    NFetch setFetchStrategy(NFetchStrategy fetchStrategy);
+    NFetch fetchStrategy(NFetchStrategy fetchStrategy);
 
-    NFetch setTransitive(Boolean transitive);
+    NFetch transitive(Boolean transitive);
 
     /**
      * return expired date/time or zero if not set. Expire time is used to
@@ -94,7 +96,8 @@ public interface NFetch extends NWorkspaceCmd {
      * @return expired date/time or zero
      * @since 0.8.0
      */
-    NOptional<Instant> getExpireTime();
+    @NGetter
+    NOptional<Instant> expireTime();
 
     /**
      * set expire instant. Expire time is used to expire any cached file that
@@ -104,13 +107,15 @@ public interface NFetch extends NWorkspaceCmd {
      * @return {@code this} instance
      * @since 0.8.0
      */
-    NFetch setExpireTime(Instant value);
+    @NSetter
+    NFetch expireTime(Instant value);
 
     /**
      * when true, NArtifactNotFoundException instances are ignored
      *
      * @return true if armed FailFast mode
      */
+    @NGetter
     boolean isFailFast();
 
     /**
@@ -118,7 +123,8 @@ public interface NFetch extends NWorkspaceCmd {
      *
      * @return id to fetch
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * set id to fetch.
@@ -126,7 +132,7 @@ public interface NFetch extends NWorkspaceCmd {
      * @param id id to fetch
      * @return {@code this} instance
      */
-    NFetch setId(String id);
+    NFetch id(String id);
 
     /**
      * set id to fetch.
@@ -134,7 +140,8 @@ public interface NFetch extends NWorkspaceCmd {
      * @param id id to fetch
      * @return {@code this} instance
      */
-    NFetch setId(NId id);
+    @NSetter
+    NFetch id(NId id);
 
 //    NutsFetch copyFrom(NutsFetch other);
     ////////////////////////////////////////////////////////
@@ -226,51 +233,14 @@ public interface NFetch extends NWorkspaceCmd {
     ///////////////////////
     // SHARED
     ///////////////////////
-    ////////////////////////////////////////////////////////
-    // Setters
-    ////////////////////////////////////////////////////////
-
-
-    ////////////////////////////////////////////////////////
-    // Getters
-    ////////////////////////////////////////////////////////
-
-//    /**
-//     * effective filter
-//     *
-//     * @return effective filter
-//     */
-//    boolean isEffective();
-//
-//    /**
-//     * enable/disable effective descriptor evaluation
-//     *
-//     * @param enable if true evaluation is enabled.
-//     * @return {@code this} instance
-//     */
-//    NFetchCmd setEffective(boolean enable);
-
-//    /**
-//     * if true dependencies list is retrieved
-//     *
-//     * @return dependencies list retrieval status
-//     */
-//    boolean isDependencies();
-//
-//    /**
-//     * enable/disable dependencies list retrieval
-//     *
-//     * @param enable if true retrieval is enabled.
-//     * @return {@code this} instance
-//     */
-//    NFetchCmd setDependencies(boolean enable);
 
     /**
      * return repository filter
      *
      * @return repository filter
      */
-    NRepositoryFilter getRepositoryFilter();
+    @NGetter
+    NRepositoryFilter repositoryFilter();
 
     /**
      * define repository filter.
@@ -278,7 +248,8 @@ public interface NFetch extends NWorkspaceCmd {
      * @param filter repository filter
      * @return {@code this} instance
      */
-    NFetch setRepositoryFilter(NRepositoryFilter filter);
+    @NSetter
+    NFetch repositoryFilter(NRepositoryFilter filter);
 
     NFetch addRepositoryFilter(NRepositoryFilter filter);
 
@@ -308,7 +279,8 @@ public interface NFetch extends NWorkspaceCmd {
      *
      * @return dependency filter
      */
-    NDependencyFilter getDependencyFilter();
+    @NGetter
+    NDependencyFilter dependencyFilter();
 
     /**
      * define dependency filter.
@@ -316,7 +288,8 @@ public interface NFetch extends NWorkspaceCmd {
      * @param filter dependency filter
      * @return {@code this} instance
      */
-    NFetch setDependencyFilter(NDependencyFilter filter);
+    @NSetter
+    NFetch dependencyFilter(NDependencyFilter filter);
 
     NFetch addDependencyFilter(NDependencyFilter filter);
 
@@ -326,12 +299,15 @@ public interface NFetch extends NWorkspaceCmd {
      * @param filter dependency filter
      * @return {@code this} instance
      */
-    NFetch setDependencyFilter(String filter);
+    NFetch dependencyFilter(String filter);
 
+    @NSetter
     NFetch failFast(boolean failFast);
 
+    @NGetter
     boolean isIgnoreCurrentEnvironment();
 
-    NFetch setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
+    @NGetter
+    NFetch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 
 }

@@ -20,10 +20,10 @@ public class DefaultNProperties {
 
     public DefaultNProperties remove(NDescriptorProperty p) {
         if (p != null) {
-            String n = p.getName();
+            String n = p.name();
             Map<NEnvCondition, NDescriptorProperty> m = properties.get(n);
             if (m != null) {
-                NEnvCondition c = p.getCondition();
+                NEnvCondition c = p.condition();
                 if (c != null && c.isBlank()) {
                     c = null;
                 }
@@ -83,13 +83,13 @@ public class DefaultNProperties {
 
     public DefaultNProperties add(NDescriptorProperty p) {
         if (p != null) {
-            String n = p.getName();
+            String n = p.name();
             Map<NEnvCondition, NDescriptorProperty> m = properties.get(n);
             if (m == null) {
                 m = new LinkedHashMap<>();
                 properties.put(n, m);
             }
-            NEnvCondition c = p.getCondition();
+            NEnvCondition c = p.condition();
             if (c != null && c.isBlank()) {
                 c = null;
             }

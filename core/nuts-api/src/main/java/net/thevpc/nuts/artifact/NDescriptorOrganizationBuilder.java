@@ -1,17 +1,24 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.Map;
 
 public interface NDescriptorOrganizationBuilder extends NDescriptorOrganization {
-    NDescriptorOrganizationBuilder setName(String name);
+    @NSetter
+    NDescriptorOrganizationBuilder name(String name);
 
-    NDescriptorOrganizationBuilder setUrl(String url);
+    @NSetter
+    NDescriptorOrganizationBuilder url(String url);
 
-    NDescriptorOrganizationBuilder setComments(String comments);
+    @NSetter
+    NDescriptorOrganizationBuilder comments(String comments);
 
-    NDescriptorOrganizationBuilder setId(String id);
+    @NSetter
+    NDescriptorOrganizationBuilder id(String id);
 
-    NDescriptorOrganizationBuilder setProperties(Map<String, String> properties);
+    @NSetter
+    NDescriptorOrganizationBuilder properties(Map<String, String> properties);
 
     NDescriptorOrganization build();
 

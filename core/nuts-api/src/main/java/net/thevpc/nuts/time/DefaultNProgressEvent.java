@@ -80,7 +80,7 @@ public class DefaultNProgressEvent implements NProgressEvent {
         return state;
     }
 
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 

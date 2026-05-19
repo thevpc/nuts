@@ -293,7 +293,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
         NWorkspaceExt wse = NWorkspaceExt.of();
         List<NRepositoryAccess> all = new ArrayList<>();
         for (NRepository repository : wse.getRepositoryModel().getRepositories()) {
-            all.addAll(findRepositoryAccessByRepository(repository.getUuid()));
+            all.addAll(findRepositoryAccessByRepository(repository.uuid()));
         }
         return all;
     }
@@ -302,7 +302,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
     public List<NRepositoryAccess> findRepositoryAccessByRepository(String repository) {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
-        return findUsers().stream().flatMap(x -> findRepositoryAccess(x.getUsername(), repository1.getName()).stream().stream()).collect(Collectors.toList());
+        return findUsers().stream().flatMap(x -> findRepositoryAccess(x.getUsername(), repository1.name()).stream().stream()).collect(Collectors.toList());
     }
 
     @Override
@@ -310,7 +310,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NUser user1 = securityModel().findUser(user).get();
         return Arrays.asList(wse.getRepositoryModel().getRepositories()).stream()
-                .flatMap(x -> findRepositoryAccess(user1.getUsername(), x.getUuid()).stream().stream()).collect(Collectors.toList());
+                .flatMap(x -> findRepositoryAccess(user1.getUsername(), x.uuid()).stream().stream()).collect(Collectors.toList());
     }
 
     @Override
@@ -357,8 +357,8 @@ public class DefaultNSecurityManager implements NSecurityManager {
                     NRepositoryAccessConfig r = getRepositoryUserConfig(user, repository);
                     return NOptional.of(new DefaultNRepositoryAccess(
                             r.getUserName(),
-                            repository1.get().getUuid(),
-                            repository1.get().getName(),
+                            repository1.get().uuid(),
+                            repository1.get().name(),
                             r.getRemoteUserName(),
                             NBlankable.isBlank(r.getRemoteCredential()) ? null : NSecureToken.parse(r.getRemoteCredential()),
                             r.getRemoteAuthType(),
@@ -380,11 +380,11 @@ public class DefaultNSecurityManager implements NSecurityManager {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NUser user1 = securityModel().findUser(user).get();
         NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
-        NOptional<NRepositoryAccessConfig> r = wse.getConfigModel().getRepositoryUser(repository1.getUuid(), user1.getUsername());
+        NOptional<NRepositoryAccessConfig> r = wse.getConfigModel().getRepositoryUser(repository1.uuid(), user1.getUsername());
         if (!r.isPresent()) {
             NRepositoryAccessConfig ru = new NRepositoryAccessConfig();
             ru.setUserName(user1.getUsername());
-            ru.setRepository(repository1.getUuid());
+            ru.setRepository(repository1.uuid());
             consumer.accept(ru);
             wse.getConfigModel().addRepositoryUser(ru);
         } else {

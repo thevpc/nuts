@@ -50,7 +50,7 @@ public class DefaultNSearchInfoBuilder {
 
     public DefaultNSearchInfo build() {
         LinkedHashSet<String> someIds = new LinkedHashSet<>();
-        for (NId id : defaultNSearchCmd.getIds()) {
+        for (NId id : defaultNSearchCmd.ids()) {
             someIds.add(id.toString());
         }
         if (defaultNSearchCmd.isCompanion()) {
@@ -79,7 +79,7 @@ public class DefaultNSearchInfoBuilder {
             }
         }
         regularIds.addAll(
-                Arrays.stream(NDefinitionFilterUtils.asPatternDefinitionFilterOrList(defaultNSearchCmd.getDefinitionFilter()))
+                Arrays.stream(NDefinitionFilterUtils.asPatternDefinitionFilterOrList(defaultNSearchCmd.definitionFilter()))
                         .filter(x -> !x.isWildcard())
                         .map(x->new DefaultNSearchInfo.RegularId(
                                 x.getId(),
@@ -88,10 +88,10 @@ public class DefaultNSearchInfoBuilder {
         );
 
         NDefinitionFilters d = NDefinitionFilters.of();
-        NDefinitionFilter _defFilter = d.always().and(defaultNSearchCmd.getDefinitionFilter());
+        NDefinitionFilter _defFilter = d.always().and(defaultNSearchCmd.definitionFilter());
 
-        if (defaultNSearchCmd.getExecType() != null) {
-            switch (defaultNSearchCmd.getExecType()) {
+        if (defaultNSearchCmd.execType() != null) {
+            switch (defaultNSearchCmd.execType()) {
                 case LIB: {
                     _defFilter = _defFilter.and(d.byFlag(NDescriptorFlag.EXEC).neg());
                     break;
@@ -109,27 +109,27 @@ public class DefaultNSearchInfoBuilder {
                     break;
                 }
                 case EXTENSION: {
-                    _defFilter = _defFilter.and(d.byExtension(defaultNSearchCmd.getTargetApiVersion()));
+                    _defFilter = _defFilter.and(d.byExtension(defaultNSearchCmd.targetApiVersion()));
                     break;
                 }
                 case RUNTIME: {
-                    _defFilter = _defFilter.and(d.byRuntime(defaultNSearchCmd.getTargetApiVersion()));
+                    _defFilter = _defFilter.and(d.byRuntime(defaultNSearchCmd.targetApiVersion()));
                     break;
                 }
                 case COMPANION: {
-                    _defFilter = _defFilter.and(d.byCompanion(defaultNSearchCmd.getTargetApiVersion()));
+                    _defFilter = _defFilter.and(d.byCompanion(defaultNSearchCmd.targetApiVersion()));
                     break;
                 }
             }
         } else {
-            if (defaultNSearchCmd.getTargetApiVersion() != null) {
-                _defFilter = _defFilter.and(d.byApiVersion(defaultNSearchCmd.getTargetApiVersion()));
+            if (defaultNSearchCmd.targetApiVersion() != null) {
+                _defFilter = _defFilter.and(d.byApiVersion(defaultNSearchCmd.targetApiVersion()));
             }
         }
         return new DefaultNSearchInfo(
                 regularIds.toArray(new DefaultNSearchInfo.RegularId[0]),
                 NRepositoryFilters.of().always()
-                        .and(defaultNSearchCmd.getRepositoryFilter())
+                        .and(defaultNSearchCmd.repositoryFilter())
                         .and(NDefinitionFilterUtils.toRepositoryFilter(_defFilter)),
                 _defFilter
         );
@@ -141,7 +141,7 @@ public class DefaultNSearchInfoBuilder {
         Set<NId> nutsId2 = new LinkedHashSet<>();
         if (NBlankable.isBlank(nutsId.groupId())) {
             if (nutsId.artifactId().equals("nuts")) {
-                nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
+                nutsId2.add(nutsId.builder().groupId("net.thevpc.nuts").build());
             } else {
                 //check if It's already installed
                 List<NId> installedIds = Collections.emptyList();
@@ -149,7 +149,7 @@ public class DefaultNSearchInfoBuilder {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of()
                             .toRepositorySPI(NWorkspaceExt.of().getInstalledRepository());
                     NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NDefinitionFilters.of().byName(
-                            nutsId.builder().setGroupId("").build().toString()
+                            nutsId.builder().groupId("").build().toString()
                     )).getResult();
                     installedIds = NIteratorUtils.toList(it);
                 }
@@ -157,12 +157,12 @@ public class DefaultNSearchInfoBuilder {
                     nutsId2.addAll(installedIds);
                 } else {
                     for (String aImport : NWorkspace.of().getAllImports()) {
-                        nutsId2.add(nutsId.builder().setGroupId(aImport + "." + nutsId.artifactId()).build());
-                        nutsId2.add(nutsId.builder().setGroupId(aImport).build());
+                        nutsId2.add(nutsId.builder().groupId(aImport + "." + nutsId.artifactId()).build());
+                        nutsId2.add(nutsId.builder().groupId(aImport).build());
                     }
                 }
             }
-            nutsId2.add(nutsId.builder().setGroupId("").build());
+            nutsId2.add(nutsId.builder().groupId("").build());
         } else {
             nutsId2.add(nutsId);
         }

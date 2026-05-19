@@ -32,7 +32,7 @@ public class FindTest {
     public void find1() throws Exception {
         List<NId> def = NSearch.of().addId("nuts").latest(true).failFast(false)
 //                .repository("maven-local")
-                .setDefinitionFilter(NDefinitionFilters.of().byDeployed(true).and(NDefinitionFilters.of().byDefaultVersion(true)))
+                .definitionFilter(NDefinitionFilters.of().byDeployed(true).and(NDefinitionFilters.of().byDefaultVersion(true)))
                 .getResultIds().toList();
 
         TestUtils.println(def);
@@ -78,14 +78,14 @@ public class FindTest {
 
     @Test
     public void find6() throws Exception {
-        NDefinition def = NSearch.of().setFetchStrategy(NFetchStrategy.ONLINE).addId(
+        NDefinition def = NSearch.of().fetchStrategy(NFetchStrategy.ONLINE).addId(
                         "net.thevpc.common:thevpc-common-io#1.3.12"
 //                "netbeans-launcher#1.1.0"
                 )
-                .setDependencyFilter(
+                .dependencyFilter(
                         NDependencyFilters.of().byOptional(false)
                 )
-                .setInlineDependencies(true).failFast(true)
+                .inlineDependencies(true).failFast(true)
                 .latest(true).getResultDefinitions().findFirst().get();
         TestUtils.println(def);
     }
@@ -93,7 +93,7 @@ public class FindTest {
     @Test
     public void find7() throws Exception {
         NStream<NId> resultIds = NSearch.of().addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
-                .latest(true).setInlineDependencies(true).getResultIds();
+                .latest(true).inlineDependencies(true).getResultIds();
         TestUtils.println(resultIds.toList());
     }
 

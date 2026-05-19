@@ -1,29 +1,41 @@
 package net.thevpc.nuts.artifact;
 
 
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.List;
 import java.util.Map;
 
 public interface NDescriptorContributorBuilder extends NDescriptorContributor {
-    NDescriptorContributorBuilder setId(String id);
+    @NSetter
+    NDescriptorContributorBuilder id(String id);
 
-    NDescriptorContributorBuilder setName(String name);
+    @NSetter
+    NDescriptorContributorBuilder name(String name);
 
-    NDescriptorContributorBuilder setUrl(String url);
+    @NSetter
+    NDescriptorContributorBuilder url(String url);
 
-    NDescriptorContributorBuilder setEmail(String email);
+    @NSetter
+    NDescriptorContributorBuilder email(String email);
 
-    NDescriptorContributorBuilder setRoles(List<String> roles);
+    @NSetter
+    NDescriptorContributorBuilder roles(List<String> roles);
 
-    NDescriptorContributorBuilder setTimezone(String timezone);
+    @NSetter
+    NDescriptorContributorBuilder timezone(String timezone);
 
-    NDescriptorContributorBuilder setIcons(List<String> icons);
+    @NSetter
+    NDescriptorContributorBuilder icons(List<String> icons);
 
-    NDescriptorContributorBuilder setProperties(Map<String, String> properties);
+    @NSetter
+    NDescriptorContributorBuilder properties(Map<String, String> properties);
 
-    NDescriptorContributorBuilder setComments(String comments);
+    @NSetter
+    NDescriptorContributorBuilder comments(String comments);
 
-    NDescriptorContributorBuilder setOrganization(NDescriptorOrganization organization);
+    @NSetter
+    NDescriptorContributorBuilder organization(NDescriptorOrganization organization);
 
     NDescriptorContributor build();
 

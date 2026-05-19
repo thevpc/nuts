@@ -37,7 +37,7 @@ public class SearchTest {
     public void find1() {
         TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
-                .setId("org.eclipse.jetty.orbit:javax.mail.glassfish#1.4.1.v201005082020")
+                .id("org.eclipse.jetty.orbit:javax.mail.glassfish#1.4.1.v201005082020")
 //                .setRepositoryFilter("maven-central")
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
@@ -53,7 +53,7 @@ public class SearchTest {
     public void find2() {
         TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
-                .setId("org.eclipse.jetty:jetty-home#9.4.44.v20210927\n")
+                .id("org.eclipse.jetty:jetty-home#9.4.44.v20210927\n")
 //                .setInlineDependencies(true)
 //                .setRepositoryFilter("maven-central")
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
@@ -73,7 +73,7 @@ public class SearchTest {
     public void find3() {
         TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
-                .setId("net.thevpc.nuts:nuts-ssh")
+                .id("net.thevpc.nuts:nuts-ssh")
 //                .setInlineDependencies(true)
 //                .setRepositoryFilter("maven-central")
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))

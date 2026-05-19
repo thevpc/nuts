@@ -30,7 +30,7 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
     }
 
     @Override
-    public String getBootConnectionString() {
+    public String bootConnectionString() {
         return null;
     }
 
@@ -81,6 +81,6 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
 
     @Override
     public boolean isRemote() {
-        return base.isRemote();
+        return base.remote();
     }
 }

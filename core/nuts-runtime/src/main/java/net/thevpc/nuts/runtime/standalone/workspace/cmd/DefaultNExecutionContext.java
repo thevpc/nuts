@@ -33,6 +33,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCollections;
 
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
     private String commandName;
     private boolean failFast;
     private boolean temporary;
-    private long sleepMillis;
+    private NDuration sleepDuration;
     private NExecutionType executionType;
     private NRunAs runAs;
     private NExecInput in;
@@ -71,7 +72,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
                                     boolean temporary,
                                     NExecutionType executionType,
                                     String commandName,
-                                    long sleepMillis,
+                                    NDuration sleepDuration,
                                     NExecInput in,
                                     NExecOutput out,
                                     NExecOutput err,
@@ -83,7 +84,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.arguments = NCollections.unmodifiableList(arguments);
         this.executorOptions = NCollections.unmodifiableList(executorArgs);
         this.workspaceOptions = NCollections.unmodifiableList(workspaceOptions);
-        this.sleepMillis = sleepMillis;
+        this.sleepDuration = sleepDuration;
         this.cwd = cwd;
         if (env == null) {
             env = new LinkedHashMap<>();
@@ -92,7 +93,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.failFast = failFast;
         this.temporary = temporary;
         this.executionType = executionType;
-        this.executorDescriptor = definition.descriptor().getExecutor();
+        this.executorDescriptor = definition.descriptor().executor();
         this.in = in;
         this.out = out;
         this.err = err;
@@ -101,22 +102,22 @@ public class DefaultNExecutionContext implements NExecutionContext {
     }
 
     public DefaultNExecutionContext(NExecutionContext other) {
-        this.commandName = other.getCommandName();
-        this.definition = other.getDefinition();
-        this.arguments = other.getArguments();
-        this.session = other.getSession();
-        this.executorOptions = other.getExecutorOptions();
-        this.workspaceOptions = other.getWorkspaceOptions();
-        this.cwd = other.getDirectory();
-        this.env = other.getEnv();
+        this.commandName = other.commandName();
+        this.definition = other.definition();
+        this.arguments = other.arguments();
+        this.session = other.session();
+        this.executorOptions = other.executorOptions();
+        this.workspaceOptions = other.workspaceOptions();
+        this.cwd = other.directory();
+        this.env = other.env();
         this.failFast = other.isFailFast();
         this.temporary = other.isTemporary();
-        this.executionType = other.getExecutionType();
-        this.executorDescriptor = other.getExecutorDescriptor();
-        this.sleepMillis = other.getSleepMillis();
-        this.in = other.getIn();
-        this.out = other.getOut();
-        this.err = other.getErr();
+        this.executionType = other.executionType();
+        this.executorDescriptor = other.executorDescriptor();
+        this.sleepDuration = other.sleepDuration();
+        this.in = other.in();
+        this.out = other.out();
+        this.err = other.err();
         this.dry = other.isDry();
         this.bot = other.isBot();
     }
@@ -125,7 +126,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         return dry;
     }
 
-    public NExecutionContext setDry(boolean dry) {
+    public NExecutionContext dry(boolean dry) {
         this.dry = dry;
         return this;
     }
@@ -135,80 +136,80 @@ public class DefaultNExecutionContext implements NExecutionContext {
         return bot;
     }
 
-    public NExecInput getIn() {
+    public NExecInput in() {
         return in;
     }
 
-    public DefaultNExecutionContext setIn(NExecInput in) {
+    public DefaultNExecutionContext in(NExecInput in) {
         this.in = in;
         return this;
     }
 
-    public NExecOutput getOut() {
+    public NExecOutput out() {
         return out;
     }
 
-    public DefaultNExecutionContext setOut(NExecOutput out) {
+    public DefaultNExecutionContext out(NExecOutput out) {
         this.out = out;
         return this;
     }
 
-    public NExecOutput getErr() {
+    public NExecOutput err() {
         return err;
     }
 
-    public DefaultNExecutionContext setErr(NExecOutput err) {
+    public DefaultNExecutionContext err(NExecOutput err) {
         this.err = err;
         return this;
     }
 
 
-    public long getSleepMillis() {
-        return sleepMillis;
+    public NDuration sleepDuration() {
+        return sleepDuration;
     }
 
     @Override
-    public String getCommandName() {
+    public String commandName() {
         return commandName;
     }
 
     @Override
-    public List<String> getExecutorOptions() {
+    public List<String> executorOptions() {
         return executorOptions;
     }
 
     @Override
-    public List<String> getWorkspaceOptions() {
+    public List<String> workspaceOptions() {
         return workspaceOptions;
     }
 
     @Override
-    public NDefinition getDefinition() {
+    public NDefinition definition() {
         return definition;
     }
 
     @Override
-    public List<String> getArguments() {
+    public List<String> arguments() {
         return arguments;
     }
 
     @Override
-    public NArtifactCall getExecutorDescriptor() {
+    public NArtifactCall executorDescriptor() {
         return executorDescriptor;
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 
     @Override
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         return env;
     }
 
     @Override
-    public NPath getDirectory() {
+    public NPath directory() {
         return cwd;
     }
 
@@ -222,7 +223,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
     }
 
     @Override
-    public NExecutionType getExecutionType() {
+    public NExecutionType executionType() {
         return executionType;
     }
 
@@ -282,7 +283,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
     }
 
     @Override
-    public NRunAs getRunAs() {
+    public NRunAs runAs() {
         return runAs;
     }
 

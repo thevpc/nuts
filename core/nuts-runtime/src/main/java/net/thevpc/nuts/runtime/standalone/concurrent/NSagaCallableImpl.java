@@ -16,12 +16,12 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
     private NSagaContext fcontext = new NSagaContext() {
         @Override
         public <V> V getVar(String name) {
-            return (V) model.getContext().get(name);
+            return (V) model.context().get(name);
         }
 
         @Override
         public NSagaContext setVar(String name, Object value) {
-            model.getContext().put(name, value);
+            model.context().put(name, value);
             _store();
             return this;
         }
@@ -36,42 +36,42 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
 
     private void _prepareModel() {
         Set<String> visitedIds = new HashSet<>();
-        if (model.getContext().getStatus() == null) {
-            model.getContext().setStatus(NSagaStatus.PENDING);
+        if (model.context().status() == null) {
+            model.context().status(NSagaStatus.PENDING);
         }
-        model.setId(validateId(model.getId(), visitedIds));
-        model.setContext(_prepareNode(model.getContext()));
-        model.setNode(_prepareNode(model.getNode(), visitedIds));
-        if (model.getContext().getStepsToCompensate() == null) {
-            model.getContext().setStepsToCompensate(new ArrayDeque<>());
+        model.id(validateId(model.id(), visitedIds));
+        model.context(_prepareNode(model.context()));
+        model.node(_prepareNode(model.node(), visitedIds));
+        if (model.context().stepsToCompensate() == null) {
+            model.context().stepsToCompensate(new ArrayDeque<>());
         }
-        for (String s : model.getContext().getStepsToCompensate()) {
+        for (String s : model.context().stepsToCompensate()) {
             if (!visitedIds.contains(s)) {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid id : %s", s));
             }
         }
-        for (String s : model.getContext().getStackStepId()) {
+        for (String s : model.context().stackStepId()) {
             if (!visitedIds.contains(s)) {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid id : %s", s));
             }
         }
-        if (model.getContext().getStackStepIndex() == null) {
-            model.getContext().setStackStepIndex(new ArrayDeque<>());
+        if (model.context().stackStepIndex() == null) {
+            model.context().stackStepIndex(new ArrayDeque<>());
         }
-        if (model.getContext().getStackStepGroup() == null) {
-            model.getContext().setStackStepGroup(new ArrayDeque<>());
+        if (model.context().stackStepGroup() == null) {
+            model.context().stackStepGroup(new ArrayDeque<>());
         }
-        if (model.getContext().getStackStepId() == null) {
-            model.getContext().setStackStepId(new ArrayDeque<>());
+        if (model.context().stackStepId() == null) {
+            model.context().stackStepId(new ArrayDeque<>());
         }
-        if (model.getContext().getStackStepIndex().size() != model.getContext().getStackStepGroup().size()) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid stack at : %s", model.getId()));
+        if (model.context().stackStepIndex().size() != model.context().stackStepGroup().size()) {
+            throw new NIllegalArgumentException(NMsg.ofC("invalid stack at : %s", model.id()));
         }
-        if (model.getContext().getStackStepId().size() != model.getContext().getStackStepGroup().size()) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid stack at : %s", model.getId()));
+        if (model.context().stackStepId().size() != model.context().stackStepGroup().size()) {
+            throw new NIllegalArgumentException(NMsg.ofC("invalid stack at : %s", model.id()));
         }
-        if (model.getContext().getStackStepId().isEmpty()) {
-            if (model.getContext().getStatus() == NSagaStatus.PENDING) {
+        if (model.context().stackStepId().isEmpty()) {
+            if (model.context().status() == NSagaStatus.PENDING) {
 //                if (id == null) {
 //                    return null;
 //                }
@@ -139,34 +139,34 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
         if (m == null) {
             return null;
         }
-        NAssert.requireNamedNonNull(m.getType(), "type");
-        if (NBlankable.isBlank(m.getId())) {
-            m.setId(UUID.randomUUID().toString());
+        NAssert.requireNamedNonNull(m.type(), "type");
+        if (NBlankable.isBlank(m.id())) {
+            m.id(UUID.randomUUID().toString());
         }
-        m.setId(validateId(m.getId(), visitedIds));
-        if (m.getCompensationStrategy() == null) {
-            m.setCompensationStrategy(NCompensationStrategy.ABORT);
+        m.id(validateId(m.id(), visitedIds));
+        if (m.compensationStrategy() == null) {
+            m.compensationStrategy(NCompensationStrategy.ABORT);
         }
-        if (m.getStatus() == null) {
-            m.setStatus(NSagaNodeStatus.PENDING);
+        if (m.status() == null) {
+            m.status(NSagaNodeStatus.PENDING);
         }
-        switch (m.getType()) {
+        switch (m.type()) {
             case STEP: {
-                NAssert.requireNamedNonNull(m.getStepCall(), "call");
-                m.setChildren(null);
-                m.setStepCondition(null);
-                m.setElseIfBranches(null);
-                m.setOtherwiseBranch(null);
+                NAssert.requireNamedNonNull(m.stepCall(), "call");
+                m.children(null);
+                m.stepCondition(null);
+                m.elseIfBranches(null);
+                m.otherwiseBranch(null);
                 break;
             }
             case IF: {
-                m.setStepCall(null);
+                m.stepCall(null);
                 break;
             }
             case WHILE: {
-                m.setStepCall(null);
-                m.setElseIfBranches(null);
-                m.setOtherwiseBranch(null);
+                m.stepCall(null);
+                m.elseIfBranches(null);
+                m.otherwiseBranch(null);
                 break;
             }
         }
@@ -194,34 +194,34 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
 
     @Override
     public NSagaCallable<T> reset() {
-        NSagaContextModel c = model.getContext();
+        NSagaContextModel c = model.context();
         _resetContext(c);
         _store();
         return this;
     }
 
     private void _resetContext(NSagaContextModel c) {
-        c.setLastResult(null);
-        c.setStartTime(0);
-        c.setEndTime(0);
-        c.getStackStepId().clear();
-        c.getStackStepIndex().clear();
-        c.getStackStepGroup().clear();
-        c.getValues().clear();
-        c.getStepsToCompensate().clear();   // <--- important
-        c.setStatus(NSagaStatus.PENDING);
+        c.lastResult(null);
+        c.startTime(0);
+        c.endTime(0);
+        c.stackStepId().clear();
+        c.stackStepIndex().clear();
+        c.stackStepGroup().clear();
+        c.values().clear();
+        c.stepsToCompensate().clear();   // <--- important
+        c.status(NSagaStatus.PENDING);
     }
 
     @Override
     public NSagaCallable<T> newInstance() {
         NSagaCallableImpl<T> copy = (NSagaCallableImpl<T>) copy();
-        copy._resetContext(copy.model.getContext());
+        copy._resetContext(copy.model.context());
         return copy;
     }
 
     @Override
     public NSagaStatus status() {
-        NSagaStatus s = model.getContext().getStatus();
+        NSagaStatus s = model.context().status();
         return s == null ? NSagaStatus.PENDING : s;
     }
 
@@ -232,7 +232,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                 break;
             }
         }
-        return getResult();
+        return result();
     }
 
     @Override
@@ -259,40 +259,40 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
     }
 
     private StackItem _pop() {
-        NSagaContextModel ctx = model.getContext();
-        if (!ctx.getStackStepId().isEmpty()) {
-            String parentId = ctx.getStackStepId().pop();
-            int childIndex = ctx.getStackStepIndex().pop();
-            String childGroup = ctx.getStackStepGroup().pop();
+        NSagaContextModel ctx = model.context();
+        if (!ctx.stackStepId().isEmpty()) {
+            String parentId = ctx.stackStepId().pop();
+            int childIndex = ctx.stackStepIndex().pop();
+            String childGroup = ctx.stackStepGroup().pop();
             return new StackItem(parentId, childGroup, childIndex);
         }
         return null;
     }
 
     private void _peekUpdateIndex(int index) {
-        NSagaContextModel ctx = model.getContext();
-        if (!ctx.getStackStepId().isEmpty()) {
-            ctx.getStackStepIndex().pop();
-            ctx.getStackStepIndex().push(index);
+        NSagaContextModel ctx = model.context();
+        if (!ctx.stackStepId().isEmpty()) {
+            ctx.stackStepIndex().pop();
+            ctx.stackStepIndex().push(index);
         }
     }
 
     private StackItem _peek() {
-        NSagaContextModel ctx = model.getContext();
-        if (!ctx.getStackStepId().isEmpty()) {
-            String parentId = ctx.getStackStepId().peek();
-            int childIndex = ctx.getStackStepIndex().peek();
-            String childGroup = ctx.getStackStepGroup().peek();
+        NSagaContextModel ctx = model.context();
+        if (!ctx.stackStepId().isEmpty()) {
+            String parentId = ctx.stackStepId().peek();
+            int childIndex = ctx.stackStepIndex().peek();
+            String childGroup = ctx.stackStepGroup().peek();
             return new StackItem(parentId, childGroup, childIndex);
         }
         return null;
     }
 
     private void _push(StackItem item) {
-        NSagaContextModel ctx = model.getContext();
-        ctx.getStackStepId().push(item.id);
-        ctx.getStackStepIndex().push(item.index);
-        ctx.getStackStepGroup().push(item.group);
+        NSagaContextModel ctx = model.context();
+        ctx.stackStepId().push(item.id);
+        ctx.stackStepIndex().push(item.index);
+        ctx.stackStepGroup().push(item.group);
     }
 
 
@@ -303,7 +303,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                 _push(new StackItem(nodeId, group, idx + 1));
             }
             // Push the next child with index 0
-            _push(new StackItem(list.get(idx).getId(), group, 0));
+            _push(new StackItem(list.get(idx).id(), group, 0));
             return true;
         }
         return false;
@@ -311,12 +311,12 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
 
     public boolean runStep() {
         NBooleanRef requireStore = NBooleanRef.of(false);
-        if(model.getContext().getStartTime()==0) {
-            model.getContext().setStartTime(System.currentTimeMillis());
+        if(model.context().startTime()==0) {
+            model.context().startTime(System.currentTimeMillis());
             _store();
         }
-        NSagaContextModel ctx = model.getContext();
-        NSagaStatus status = ctx.getStatus();
+        NSagaContextModel ctx = model.context();
+        NSagaStatus status = ctx.status();
         try {
             // If saga is in a compensation-related state, go to compensation handler
             switch (status) {
@@ -325,8 +325,8 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                 case FAILED:
                     return runCompensationStep(ctx, requireStore);
                 case SUCCESS: {
-                    if(model.getContext().getEndTime()==0) {
-                        model.getContext().setEndTime(System.currentTimeMillis());
+                    if(model.context().endTime()==0) {
+                        model.context().endTime(System.currentTimeMillis());
                         requireStore.set();
                         _store(requireStore);
                     }
@@ -336,11 +336,11 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
             }
             StackItem frame = _pop();
             if (frame == null) {
-                if (model.getNode() != null) {
-                    frame = new StackItem(model.getNode().getId(), null, 0);
+                if (model.node() != null) {
+                    frame = new StackItem(model.node().id(), null, 0);
                 } else {
-                    if(model.getContext().getEndTime()==0) {
-                        model.getContext().setEndTime(System.currentTimeMillis());
+                    if(model.context().endTime()==0) {
+                        model.context().endTime(System.currentTimeMillis());
                         requireStore.set();
                         _store(requireStore);
                     }
@@ -354,7 +354,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                 preVisit(frame, node, requireStore);
                 //runStep_children(node.getId(), node.getChildren(), frame.index, "children");
             } else {
-                if (runStep_children(node.getId(), node.getChildren(), frame.index, "children")) {
+                if (runStep_children(node.id(), node.children(), frame.index, "children")) {
 
                 } else {
                     postVisit(frame, node, requireStore);
@@ -397,26 +397,26 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
 
 
     private boolean postVisit(StackItem stackItem, NSagaNodeModel current, NBooleanRef requireStore) {
-        switch (current.getType()) {
+        switch (current.type()) {
             case WHILE:
             case SUITE: {
-                current.setStatus(mergeStatus(current.getChildren().stream().map(x -> x.getStatus()).collect(Collectors.toSet())));
+                current.status(mergeStatus(current.children().stream().map(x -> x.status()).collect(Collectors.toSet())));
                 _store(requireStore);
                 return true;
             }
             case IF:{
                 Set<NSagaNodeStatus> all=new TreeSet<>();
-                if(current.getChildren()!=null) {
-                    all.addAll(current.getChildren().stream().map(x -> x.getStatus()).collect(Collectors.toSet()));
+                if(current.children()!=null) {
+                    all.addAll(current.children().stream().map(x -> x.status()).collect(Collectors.toSet()));
                 }
-                if(current.getElseIfBranches()!=null) {
-                    all.addAll(current.getElseIfBranches().stream().map(x -> x.getStatus()).collect(Collectors.toSet()));
+                if(current.elseIfBranches()!=null) {
+                    all.addAll(current.elseIfBranches().stream().map(x -> x.status()).collect(Collectors.toSet()));
                 }
-                if(current.getOtherwiseBranch()!=null) {
-                    all.addAll(current.getOtherwiseBranch().stream().map(x -> x.getStatus()).collect(Collectors.toSet()));
+                if(current.otherwiseBranch()!=null) {
+                    all.addAll(current.otherwiseBranch().stream().map(x -> x.status()).collect(Collectors.toSet()));
                 }
                 all.remove(NSagaNodeStatus.PENDING);
-                current.setStatus(mergeStatus(current.getChildren().stream().map(x -> x.getStatus()).collect(Collectors.toSet())));
+                current.status(mergeStatus(current.children().stream().map(x -> x.status()).collect(Collectors.toSet())));
                 _store(requireStore);
                 return true;
             }
@@ -425,19 +425,19 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
     }
 
     private boolean preVisit(StackItem stackItem, NSagaNodeModel current, NBooleanRef requireStore) {
-        NSagaContextModel ctx = model.getContext();
-        switch (current.getType()) {
+        NSagaContextModel ctx = model.context();
+        switch (current.type()) {
             case SUITE: {
-                if (!runStep_children(current.getId(), current.getChildren(), stackItem.index, "children")) {
+                if (!runStep_children(current.id(), current.children(), stackItem.index, "children")) {
                     postVisit(stackItem, current, requireStore);
                 }
                 return true;
             }
             case IF: {
-                NSagaCondition mainCond = current.getStepCondition();
+                NSagaCondition mainCond = current.stepCondition();
                 try {
                     if (mainCond != null && mainCond.test(fcontext)) {
-                        if(!runStep_children(stackItem.id, current.getChildren(), stackItem.index, "children")){
+                        if(!runStep_children(stackItem.id, current.children(), stackItem.index, "children")){
                             postVisit(stackItem, current, requireStore);
                         }
                         return true;
@@ -446,32 +446,32 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                     throw new RuntimeException("Error evaluating IF condition for node " + stackItem.id, ex);
                 }
 
-                if (current.getElseIfBranches() != null) {
-                    for (NSagaNodeModel elseIfWrapper : current.getElseIfBranches()) {
-                        NSagaCondition elseCond = elseIfWrapper.getStepCondition();
+                if (current.elseIfBranches() != null) {
+                    for (NSagaNodeModel elseIfWrapper : current.elseIfBranches()) {
+                        NSagaCondition elseCond = elseIfWrapper.stepCondition();
                         try {
                             if (elseCond != null && elseCond.test(fcontext)) {
                                 // elseIf wrapper's children are the branch
-                                if(!runStep_children(stackItem.id, elseIfWrapper.getChildren(), stackItem.index, "elseIf")){
+                                if(!runStep_children(stackItem.id, elseIfWrapper.children(), stackItem.index, "elseIf")){
                                     postVisit(stackItem, current, requireStore);
                                 }
                                 return true;
                             }
                         } catch (RuntimeException ex) {
-                            throw new RuntimeException("Error evaluating ELSE-IF condition for node " + elseIfWrapper.getId(), ex);
+                            throw new RuntimeException("Error evaluating ELSE-IF condition for node " + elseIfWrapper.id(), ex);
                         }
                     }
                 }
-                if(!runStep_children(stackItem.id, current.getOtherwiseBranch(), stackItem.index, "else")){
+                if(!runStep_children(stackItem.id, current.otherwiseBranch(), stackItem.index, "else")){
                     postVisit(stackItem, current, requireStore);
                 }
                 return true;
             }
             case WHILE:
-                NSagaCondition mainCond = current.getStepCondition();
+                NSagaCondition mainCond = current.stepCondition();
                 try {
                     if (mainCond != null && mainCond.test(fcontext)) {
-                        runStep_children(stackItem.id, current.getChildren(), stackItem.index, "children");
+                        runStep_children(stackItem.id, current.children(), stackItem.index, "children");
                         //repeat self!
                         _push(new StackItem(stackItem.id, null, 0));
                         return true;
@@ -482,29 +482,29 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                 }
             default: {
                 try {
-                    current.setStatus(NSagaNodeStatus.RUNNING);
+                    current.status(NSagaNodeStatus.RUNNING);
                     _store(requireStore);
-                    Object result = current.getStepCall().call(fcontext);
-                    model.getContext().setLastResult(result);
+                    Object result = current.stepCall().call(fcontext);
+                    model.context().lastResult(result);
                     // mark node as executed if you have such state
                     // Leaf execution. Add to compensation list before executing.
-                    if (current.getType() != NSagaNodeType.UNDO) {
-                        ctx.getStepsToCompensate().add(current.getId());
+                    if (current.type() != NSagaNodeType.UNDO) {
+                        ctx.stepsToCompensate().add(current.id());
                         // optionally set status on node: EXECUTING -> EXECUTED
                     }
-                    current.setStatus(NSagaNodeStatus.FINISHED);
+                    current.status(NSagaNodeStatus.FINISHED);
                     _store(requireStore);
                     postVisit(stackItem, current, requireStore);
                     // persist the fact that we advanced and recorded last result
                 } catch (Exception ex) {
-                    if(ctx.getFirstFailStepThrowable()==null){
-                        ctx.setFirstFailStepThrowable(ex);
-                        ctx.setFirstFailStepId(current.getId());
-                        ctx.setFirstFailStepName(current.getName());
+                    if(ctx.firstFailStepError()==null){
+                        ctx.firstFailStepError(ex);
+                        ctx.firstFailStepId(current.id());
+                        ctx.firstFailStepName(current.name());
                     }
                     // Forward step failed -> set status to FAILED and record throwable.
-                    current.setStatus(NSagaNodeStatus.FAILED);
-                    ctx.setStatus(NSagaStatus.FAILED);
+                    current.status(NSagaNodeStatus.FAILED);
+                    ctx.status(NSagaStatus.FAILED);
                     _store(requireStore);
 
                     // Immediately start compensation now (don't rethrow)
@@ -519,13 +519,13 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
     }
 
     private boolean runCompensationStep(NSagaContextModel context, NBooleanRef requireStore) {
-        if (context.getStepsToCompensate().isEmpty()) {
+        if (context.stepsToCompensate().isEmpty()) {
             // nothing to compensate: finalize state
-            context.setStatus(NSagaStatus.ROLLED_BACK);
+            context.status(NSagaStatus.ROLLED_BACK);
             // optionally set end time
             requireStore.set();
-            if(model.getContext().getEndTime()==0) {
-                model.getContext().setEndTime(System.currentTimeMillis());
+            if(model.context().endTime()==0) {
+                model.context().endTime(System.currentTimeMillis());
                 requireStore.set();
             }
             return false;
@@ -534,7 +534,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
         String last = null;
         NSagaNodeModel m0 = null;
         try {
-            last = context.getStepsToCompensate().removeLast();
+            last = context.stepsToCompensate().removeLast();
             if(last!=null){
                 requireStore.set();
                 m0 = findById(last);
@@ -544,50 +544,50 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                 return true;
             }
 
-            switch (m0.getStatus()) {
+            switch (m0.status()) {
                 case COMPENSATION_FAILED:
                 case COMPENSATION_IGNORED:
                     // already known state: skip
                     break;
                 default:
-                    m0.setStatus(NSagaNodeStatus.COMPENSATING);
+                    m0.status(NSagaNodeStatus.COMPENSATING);
                     _store();
                     // call undo (must be idempotent)
-                    m0.getStepCall().undo(fcontext);
-                    m0.setStatus(NSagaNodeStatus.COMPENSATED);
+                    m0.stepCall().undo(fcontext);
+                    m0.status(NSagaNodeStatus.COMPENSATED);
                     _store();
                     break;
             }
 
             // if we've consumed all compensation steps, finish rollback
-            if (context.getStepsToCompensate().isEmpty()) {
-                context.setStatus(NSagaStatus.ROLLED_BACK);
+            if (context.stepsToCompensate().isEmpty()) {
+                context.status(NSagaStatus.ROLLED_BACK);
                 requireStore.set();
-                if(model.getContext().getEndTime()==0) {
-                    model.getContext().setEndTime(System.currentTimeMillis());
+                if(model.context().endTime()==0) {
+                    model.context().endTime(System.currentTimeMillis());
                     requireStore.set();
                 }
                 return false; // done
             } else {
                 // still more to do
-                if (context.getStatus() != NSagaStatus.PARTIAL_ROLLBACK) {
-                    context.setStatus(NSagaStatus.ROLLED_BACK);
+                if (context.status() != NSagaStatus.PARTIAL_ROLLBACK) {
+                    context.status(NSagaStatus.ROLLED_BACK);
                     requireStore.set();
                 }
                 return true;
             }
         } catch (Exception e) {
             // Compensation for this node failed
-            context.setFirstFailStepThrowable(e);
+            context.firstFailStepError(e);
             boolean doAbort = false;
             if (m0 != null) {
-                m0.setStatus(NSagaNodeStatus.COMPENSATION_FAILED);
-                switch (m0.getCompensationStrategy()) {
+                m0.status(NSagaNodeStatus.COMPENSATION_FAILED);
+                switch (m0.compensationStrategy()) {
                     case ABORT:
                         doAbort = true;
-                        for (String s : context.getStepsToCompensate()) {
+                        for (String s : context.stepsToCompensate()) {
                             NSagaNodeModel n = findById(s);
-                            if (n != null) n.setStatus(NSagaNodeStatus.COMPENSATION_IGNORED);
+                            if (n != null) n.status(NSagaNodeStatus.COMPENSATION_IGNORED);
                         }
                         break;
                     case IGNORE:
@@ -599,16 +599,16 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
 
             // If abort policy, rethrow to allow caller to deal with the catastrophic failure
             if (doAbort) {
-                context.setStatus(NSagaStatus.FAILED);
+                context.status(NSagaStatus.FAILED);
                 requireStore.set();
                 throw NExceptions.ofUncheckedException(e);
             } else {
                 // If we continue after a failed compensation, decide the saga status:
-                if (context.getStepsToCompensate().isEmpty()) {
-                    context.setStatus(NSagaStatus.FAILED);
+                if (context.stepsToCompensate().isEmpty()) {
+                    context.status(NSagaStatus.FAILED);
                 } else {
                     // some compensated, some failed -> partial
-                    context.setStatus(NSagaStatus.PARTIAL_ROLLBACK);
+                    context.status(NSagaStatus.PARTIAL_ROLLBACK);
                 }
                 requireStore.set();
                 // continue processing next compensation step on next call
@@ -621,27 +621,27 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
 
 
     public NSagaNodeModel findById(String id) {
-        return findByIdRecursive(model.getNode(), id);
+        return findByIdRecursive(model.node(), id);
     }
 
     private NSagaNodeModel findByIdRecursive(NSagaNodeModel node, String id) {
-        if (id.equals(node.getId())) {
+        if (id.equals(node.id())) {
             return node;
         }
-        if (node.getChildren() != null) {
-            for (NSagaNodeModel child : node.getChildren()) {
+        if (node.children() != null) {
+            for (NSagaNodeModel child : node.children()) {
                 NSagaNodeModel found = findByIdRecursive(child, id);
                 if (found != null) return found;
             }
         }
-        if (node.getOtherwiseBranch() != null) {
-            for (NSagaNodeModel child : node.getOtherwiseBranch()) {
+        if (node.otherwiseBranch() != null) {
+            for (NSagaNodeModel child : node.otherwiseBranch()) {
                 NSagaNodeModel found = findByIdRecursive(child, id);
                 if (found != null) return found;
             }
         }
-        if (node.getElseIfBranches() != null) {
-            for (NSagaNodeModel child : node.getElseIfBranches()) {
+        if (node.elseIfBranches() != null) {
+            for (NSagaNodeModel child : node.elseIfBranches()) {
                 NSagaNodeModel found = findByIdRecursive(child, id);
                 if (found != null) return found;
             }
@@ -660,18 +660,18 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
 
     @Override
     public <V> V getVar(String key) {
-        return (V) model.getContext().getValues().get(key);
+        return (V) model.context().values().get(key);
     }
 
     @Override
     public NSagaCallable<T> setVar(String key, Object value) {
-        model.getContext().getValues().put(key, value);
+        model.context().values().put(key, value);
         _store();
         return this;
     }
 
     @Override
-    public T getResult() {
-        return (T) model.getContext().getLastResult();
+    public T result() {
+        return (T) model.context().lastResult();
     }
 }

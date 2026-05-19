@@ -15,7 +15,7 @@ public class NDetachedCmdLineException extends IllegalArgumentException implemen
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("assert failed") : formattedMessage;
     }
 
-    public NMsg getFormattedMessage() {
+    public NMsg formattedMessage() {
         return formattedMessage;
     }
 }

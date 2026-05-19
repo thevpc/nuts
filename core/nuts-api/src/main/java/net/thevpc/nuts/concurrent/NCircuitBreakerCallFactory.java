@@ -1,6 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
 
+import net.thevpc.nuts.util.NGetter;
+
 /**
  * Factory interface for creating {@link NCircuitBreakerCall} instances.
  * <p>
@@ -41,7 +43,8 @@ public interface NCircuitBreakerCallFactory {
      *
      * @return the circuit-breaker call store
      */
-    NCircuitBreakerCallStore getStore();
+    @NGetter
+    NCircuitBreakerCallStore store();
 
 
     /**

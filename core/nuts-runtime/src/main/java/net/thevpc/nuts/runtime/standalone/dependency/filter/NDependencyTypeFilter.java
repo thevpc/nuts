@@ -20,7 +20,7 @@ public class NDependencyTypeFilter extends AbstractDependencyFilter {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        String curr = NDependencyUtils.normalizeDependencyType(dependency.getType());
+        String curr = NDependencyUtils.normalizeDependencyType(dependency.type());
         String toCheck = NDependencyUtils.normalizeDependencyType(type);
         return Objects.equals(curr, toCheck);
     }

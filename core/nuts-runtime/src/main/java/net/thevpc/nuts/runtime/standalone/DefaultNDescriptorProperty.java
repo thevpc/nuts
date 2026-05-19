@@ -26,26 +26,26 @@ public class DefaultNDescriptorProperty implements NDescriptorProperty {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NLiteral getValue() {
+    public NLiteral value() {
         return value;
     }
 
     @Override
-    public NEnvCondition getCondition() {
+    public NEnvCondition condition() {
         return condition;
     }
 
     @Override
     public NDescriptorPropertyBuilder builder() {
         return new DefaultNDescriptorPropertyBuilder()
-                .setName(getName())
-                .setValue(getValue().asString().orNull())
-                .setCondition(getCondition());
+                .name(name())
+                .value(value().asString().orNull())
+                .condition(condition());
     }
 
     @Override

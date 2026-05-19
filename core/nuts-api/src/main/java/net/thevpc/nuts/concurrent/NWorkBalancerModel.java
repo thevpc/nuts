@@ -2,6 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -61,6 +63,7 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
     public NWorkBalancerModel() {
     }
 
+    @NGetter
     public String getStrategy() {
         return strategy;
     }
@@ -70,38 +73,46 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
         return this;
     }
 
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NWorkBalancerModel setId(String id) {
+    @NGetter
+    public NWorkBalancerModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public Map<String, NElement> getOptions() {
+    @NGetter
+    public Map<String, NElement> options() {
         return options;
     }
 
-    public NWorkBalancerModel setOptions(Map<String, NElement> options) {
+    @NSetter
+    public NWorkBalancerModel options(Map<String, NElement> options) {
         this.options = options;
         return this;
     }
 
-    public List<NWorkBalancerWorkerModel> getWorkers() {
+    @NGetter
+    public List<NWorkBalancerWorkerModel> workers() {
         return workers;
     }
 
-    public NWorkBalancerModel setWorkers(List<NWorkBalancerWorkerModel> workers) {
+    @NSetter
+    public NWorkBalancerModel workers(List<NWorkBalancerWorkerModel> workers) {
         this.workers = workers;
         return this;
     }
 
-    public NWorkBalancerModelContext getContext() {
+    @NGetter
+    public NWorkBalancerModelContext context() {
         return context;
     }
 
-    public NWorkBalancerModel setContext(NWorkBalancerModelContext context) {
+    @NSetter
+    public NWorkBalancerModel context(NWorkBalancerModelContext context) {
         this.context = context;
         return this;
     }

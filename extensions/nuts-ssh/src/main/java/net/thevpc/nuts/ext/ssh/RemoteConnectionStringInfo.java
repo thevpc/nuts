@@ -76,7 +76,7 @@ public class RemoteConnectionStringInfo {
 
     public boolean copyId(NId id, NPath remoteRepo, NRef<NPath> remoteJar) {
         NDefinition def = NFetch.of(id)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultDefinition();
         NPath apiLocalPath = def.content().get();
         NPath remoteJarPath = remoteRepo.resolve(id.getMavenPath("jar"));

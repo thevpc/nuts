@@ -125,7 +125,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 
             @Override
             public NMsg toMsg() {
-                return NMsg.ofC("%s", node.getDependency().builder().removeCondition().setExclusions(null).build());
+                return NMsg.ofC("%s", node.dependency().builder().removeCondition().exclusions(null).build());
             }
 
 
@@ -135,7 +135,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                 if (node == null) {
                     return run.transitiveNodes().toList().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
                 }
-                return node.getChildren().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
+                return node.children().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
             }
         }
 
@@ -184,9 +184,9 @@ public class MavenNDependencySolver implements NDependencySolver {
     private NSearch search(NDependency dep) {
         return NSearch.of()
                 .addIds(dep.toId())
-                .setDependencyFilter(getDependencyFilter())
-                .setRepositoryFilter(getRepositoryFilter())
-                .setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment())
+                .dependencyFilter(getDependencyFilter())
+                .repositoryFilter(getRepositoryFilter())
+                .ignoreCurrentEnvironment(isIgnoreCurrentEnvironment())
                 .latest(true)
                 ;
     }

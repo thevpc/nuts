@@ -15,6 +15,6 @@ public class NCircuitBreakerCallStoreMemory implements NCircuitBreakerCallStore 
 
     @Override
     public void save(NCircuitBreakerCallModel value) {
-        this.map.put(value.getId(), value);
+        this.map.put(value.id(), value);
     }
 }

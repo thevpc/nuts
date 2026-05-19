@@ -36,7 +36,7 @@ class NJLineHistory implements History {
         NCmdLineHistory h = getNutsCommandHistory();
         if (h.size() > 0) {
             NCmdLineHistoryEntry last = h.getEntry(h.size() - 1);
-            if(last!=null && last.getLine().equals(line)){
+            if(last!=null && last.line().equals(line)){
                 //remove duplicates by default!
                 return;
             }
@@ -111,11 +111,11 @@ class NJLineHistory implements History {
     public String get(int index) {
         NCmdLineHistory h = getNutsCommandHistory();
         if (index < h.size()) {
-            return h.getEntry(index).getLine();
+            return h.getEntry(index).line();
         } else {
             if (h.size() > 0) {
                 index = h.size() - 1;
-                return h.getEntry(index).getLine();
+                return h.getEntry(index).line();
             }
             return "";
         }
@@ -136,7 +136,7 @@ class NJLineHistory implements History {
                 if (h instanceof Entry) {
                     return (Entry) h;
                 } else {
-                    return new NJLineCmdLineHistoryEntry(h.getIndex(), h.getTime(), h.getLine());
+                    return new NJLineCmdLineHistoryEntry(h.index(), h.time(), h.line());
                 }
             }
 

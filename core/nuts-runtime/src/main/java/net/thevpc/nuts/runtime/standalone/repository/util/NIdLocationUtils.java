@@ -19,7 +19,7 @@ public class NIdLocationUtils {
         for (NIdLocation location : locations) {
             if (CoreFilterUtils.acceptClassifier(location, id.classifier())) {
                 try {
-                    NPath locationPath = NPath.of(location.getUrl());
+                    NPath locationPath = NPath.of(location.url());
                     if(locationPath.isLocal()){
                         return locationPath;
                     }else{
@@ -29,7 +29,7 @@ public class NIdLocationUtils {
                     }
                 } catch (Exception ex) {
                     NLog.of(NIdLocationUtils.class)
-                            .log(NMsg.ofC("unable to download location for id %s in location %s : %s", id, location.getUrl(), ex).asError(ex));
+                            .log(NMsg.ofC("unable to download location for id %s in location %s : %s", id, location.url(), ex).asError(ex));
                 }
             }
         }

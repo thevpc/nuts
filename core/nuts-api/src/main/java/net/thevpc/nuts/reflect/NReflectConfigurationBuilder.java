@@ -27,6 +27,7 @@ package net.thevpc.nuts.reflect;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -42,13 +43,13 @@ public interface NReflectConfigurationBuilder extends NComponent {
 
     NReflectConfiguration build();
 
-    Function<Class, NReflectPropertyAccessStrategy> getPropertyAccessStrategy();
+    Function<Class, Set<NReflectPropertyAccessStrategy>> getPropertyAccessStrategy();
 
     Function<Class, NReflectPropertyDefaultValueStrategy> getPropertyDefaultValueStrategy();
 
-    NReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, NReflectPropertyAccessStrategy> propertyAccessStrategy);
+    NReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy);
 
-    NReflectConfigurationBuilder setPropertyAccessStrategy(NReflectPropertyAccessStrategy propertyAccessStrategy);
+    NReflectConfigurationBuilder setPropertyAccessStrategy(Set<NReflectPropertyAccessStrategy> propertyAccessStrategy);
 
     NReflectConfigurationBuilder setPropertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy);
     

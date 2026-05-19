@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -44,14 +45,14 @@ public interface NWorkBalancer<T> {
      *
      * @return a list of running jobs
      */
-    List<NWorkBalancerRunningJob> getRunningJobs();
+    List<NWorkBalancerRunningJob> runningJobs();
 
     /**
      * Checks whether any jobs are currently active for this call.
      *
      * @return {@code true} if at least one job is running, {@code false} otherwise
      */
-    boolean hasRunningJobs();
+    boolean isRunning();
 
     /**
      * Returns the number of currently active jobs for this call.
@@ -61,7 +62,8 @@ public interface NWorkBalancer<T> {
      *
      * @return the number of active jobs
      */
-    int getRunningJobsCount();
+    @NGetter
+    int runningJobsCount();
 
     /**
      * Returns the list of workers currently registered in this balancer.
@@ -70,7 +72,8 @@ public interface NWorkBalancer<T> {
      *
      * @return list of workers
      */
-    List<NWorkBalancerWorker> getWorkers();
+    @NGetter
+    List<NWorkBalancerWorker> workers();
 
     /**
      * Returns the load metrics and counters for a specific worker.
@@ -90,7 +93,8 @@ public interface NWorkBalancer<T> {
      *
      * @return a map of worker names to worker loads
      */
-    Map<String, NWorkBalancerWorkerLoad> getWorkerLoads();
+    @NGetter
+    Map<String, NWorkBalancerWorkerLoad> workerLoads();
 
     /**
      * Creates a {@link NCallable} wrapping the given {@link NWorkBalancerJob}.
@@ -129,5 +133,6 @@ public interface NWorkBalancer<T> {
      *
      * @return map of option names to values
      */
-    Map<String, NElement> getOptions();
+    @NGetter
+    Map<String, NElement> options();
 }

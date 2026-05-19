@@ -33,6 +33,9 @@ import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.spi.NInstallerComponent;
+import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -62,7 +65,8 @@ import java.util.Map;
 public interface NExecutionContext extends NSessionProvider {
 
     /** Returns the name of the command being executed. */
-    String getCommandName();
+    @NGetter
+    String commandName();
 
     /**
      * Returns the duration in milliseconds to wait after the command completes.
@@ -72,10 +76,12 @@ public interface NExecutionContext extends NSessionProvider {
      *
      * @return post-execution wait duration in milliseconds
      */
-    long getSleepMillis();
+    @NGetter
+    NDuration sleepDuration();
 
     /** Returns the executor options to be passed to the underlying executor. */
-    List<String> getExecutorOptions();
+    @NGetter
+    List<String> executorOptions();
 
 
     /**
@@ -83,45 +89,55 @@ public interface NExecutionContext extends NSessionProvider {
      * These options may configure subprocess behavior, workspace paths,
      * or other environment-specific settings.
      */
-    List<String> getWorkspaceOptions();
+    @NGetter
+    List<String> workspaceOptions();
 
     /**
      * command definition if any
      *
      * @return command definition if any
      */
-    NDefinition getDefinition();
+    @NGetter
+    NDefinition definition();
 
     /**
      * command arguments
      *
      * @return command arguments
      */
-    List<String> getArguments();
+    @NGetter
+    List<String> arguments();
 
     /** Returns the executor descriptor providing metadata about the executor artifact. */
-    NArtifactCall getExecutorDescriptor();
+    @NGetter
+    NArtifactCall executorDescriptor();
 
     /** Returns the environment variables for this execution. */
-    Map<String, String> getEnv();
+    @NGetter
+    Map<String, String> env();
 
     /** Returns the working directory where the command will execute. */
-    NPath getDirectory();
+    @NGetter
+    NPath directory();
 
     /** Returns {@code true} if execution should fail immediately on non-zero exit code. */
+    @NGetter
     boolean isFailFast();
 
     /**
      * Returns {@code true} if the execution is temporary and should not be
      * registered with the workspace.
      */
+    @NGetter
     boolean isTemporary();
 
     /** Returns the type of execution (system, embedded, spawn, etc). */
-    NExecutionType getExecutionType();
+    @NGetter
+    NExecutionType executionType();
 
     /** Returns the user context under which the command will run. */
-    NRunAs getRunAs();
+    @NGetter
+    NRunAs runAs();
 
     /**
      * Returns whether the command is in "dry-run" mode.
@@ -129,6 +145,7 @@ public interface NExecutionContext extends NSessionProvider {
      *
      * @return {@code true} if dry-run is enabled, {@code false} otherwise
      */
+    @NGetter
     boolean isDry();
 
     /**
@@ -138,6 +155,7 @@ public interface NExecutionContext extends NSessionProvider {
      *
      * @return {@code true} if bot mode is enabled, {@code false} otherwise
      */
+    @NGetter
     boolean isBot();
 
     /**
@@ -148,23 +166,30 @@ public interface NExecutionContext extends NSessionProvider {
      * @param dry {@code true} to enable dry-run mode, {@code false} otherwise
      * @return this instance for fluent API usage
      */
-    NExecutionContext setDry(boolean dry);
+    @NSetter
+    NExecutionContext dry(boolean dry);
 
     /** Returns the input configuration for the command execution. */
-    NExecInput getIn();
+    @NGetter
+    NExecInput in();
 
     /** Sets the input configuration for the command execution. */
-    NExecutionContext setIn(NExecInput in);
+    @NSetter
+    NExecutionContext in(NExecInput in);
 
     /** Returns the standard output configuration. */
-    NExecOutput getOut();
+    @NGetter
+    NExecOutput out();
 
     /** Sets the standard output configuration. */
-    NExecutionContext setOut(NExecOutput out);
+    @NSetter
+    NExecutionContext out(NExecOutput out);
 
     /** Returns the standard error configuration. */
-    NExecOutput getErr();
+    @NGetter
+    NExecOutput err();
 
     /** Sets the standard error configuration. */
-    NExecutionContext setErr(NExecOutput err);
+    @NSetter
+    NExecutionContext err(NExecOutput err);
 }

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 /**
@@ -86,18 +87,21 @@ public interface NBulkheadCallBackend  {
          *
          * @return the bulkhead ID
          */
-        String getBulkheadId();
+        @NGetter
+        String bulkheadId();
         /**
          * Returns the unique identifier of this permit.
          *
          * @return the permit ID
          */
-        String getPermitId();
+        @NGetter
+        String permitId();
         /**
          * Returns the timestamp (milliseconds since epoch) when this permit was acquired.
          *
          * @return the acquisition timestamp
          */
-        long getAcquiredAt();
+        @NGetter
+        long acquiredAt();
     }
 }

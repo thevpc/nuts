@@ -1,7 +1,7 @@
 package net.thevpc.nuts.cmdline;
 
 public interface NArgCandidate {
-    String getValue();
+    String value();
 
-    String getDisplay();
+    String display();
 }

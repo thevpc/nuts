@@ -160,7 +160,7 @@ public class JavaJarUtils {
                 });
             } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json") || path.equals("META-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME)) {
                 NDescriptor descriptor = NDescriptorParser.of().parse(inputStream).get();
-                NArtifactCall executor = descriptor.getExecutor();
+                NArtifactCall executor = descriptor.executor();
                 if (executor != null) {
                     List<String> arguments = executor.arguments();
                     for (int i = 0; i < arguments.size(); i++) {
@@ -179,7 +179,7 @@ public class JavaJarUtils {
                 }
                 NDescriptorProperty mc = descriptor.getProperty("nuts.mainClass").orNull();
                 if (mc != null) {
-                    String s = NStringUtils.trim(mc.getValue().asString().get());
+                    String s = NStringUtils.trim(mc.value().asString().get());
                     if (!s.isEmpty()) {
                         s = resolveMainClassString(s, descriptor);
                         classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -191,7 +191,7 @@ public class JavaJarUtils {
 
         Map<String, NExecutionEntry> found = new LinkedHashMap<>();
         for (NExecutionEntry entry : classes) {
-            String cn = entry.getName();
+            String cn = entry.name();
             NExecutionEntry a = found.get(cn);
             if (a == null) {
                 found.put(cn, entry);
@@ -219,7 +219,7 @@ public class JavaJarUtils {
                 if (x != 0) {
                     return x;
                 }
-                return o1.getName().compareTo(o2.getName());
+                return o1.name().compareTo(o2.name());
             }
         });
         return ee;
@@ -252,15 +252,15 @@ public class JavaJarUtils {
             if (ne != null) {
                 switch (ne.getNodeName()) {
                     case "groupId": {
-                        ib.setGroupId(NStringUtils.trim(ne.getTextContent()));
+                        ib.groupId(NStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                     case "artifactId": {
-                        ib.setArtifactId(NStringUtils.trim(ne.getTextContent()));
+                        ib.artifactId(NStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                     case "version": {
-                        ib.setVersion(NStringUtils.trim(ne.getTextContent()));
+                        ib.version(NStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                 }

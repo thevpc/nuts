@@ -60,7 +60,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
         }
         NDefinition def = context.getCriteria(NDefinition.class);
         if (def != null) {
-            switch (NStringUtils.trim(def.descriptor().getPackaging())){
+            switch (NStringUtils.trim(def.descriptor().packaging())){
                 case "jar":
                 case "war":
                 case "zip":
@@ -86,8 +86,8 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
             @Override
             public int exec() {
                 throw new NIOException(NMsg.ofC("unsupported execution of %s with packaging %s",
-                        executionContext.getDefinition().id(),
-                        executionContext.getDefinition().descriptor().getPackaging()
+                        executionContext.definition().id(),
+                        executionContext.definition().descriptor().packaging()
                 ));
             }
         };

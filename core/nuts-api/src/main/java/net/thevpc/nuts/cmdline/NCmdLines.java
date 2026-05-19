@@ -29,7 +29,9 @@ package net.thevpc.nuts.cmdline;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 /**
  * @author thevpc
@@ -77,7 +79,8 @@ public interface NCmdLines extends NComponent {
      * @return command line family
      * @since 0.8.1
      */
-    NShellFamily getShellFamily();
+    @NGetter
+    NShellFamily shellFamily();
 
     /**
      * change command line family
@@ -85,9 +88,11 @@ public interface NCmdLines extends NComponent {
      * @param family family
      * @return {@code this} instance
      */
-    NCmdLines setShellFamily(NShellFamily family);
+    @NSetter
+    NCmdLines shellFamily(NShellFamily family);
 
-    NCmdLines setLenient(boolean lenient);
+    @NSetter
+    NCmdLines lenient(boolean lenient);
 
     boolean isLenient();
 }

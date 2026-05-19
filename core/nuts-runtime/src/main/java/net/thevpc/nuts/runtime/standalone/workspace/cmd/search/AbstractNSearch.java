@@ -86,7 +86,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
+    public NSearch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
         this.ignoreCurrentEnvironment = ignoreCurrentEnvironment;
         return this;
     }
@@ -138,6 +138,18 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
+    public NSearch addIds(List<NId> value) {
+        if (value != null) {
+            for (NId s : value) {
+                if (s != null) {
+                    ids.add(s);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NSearch removeId(String id) {
         ids.remove(NId.get(id).get());
         return this;
@@ -157,7 +169,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setRuntime(boolean enable) {
+    public NSearch runtime(boolean enable) {
         this.execType = enable ? SearchExecType.RUNTIME : null;
         return this;
     }
@@ -168,7 +180,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setCompanion(boolean enable) {
+    public NSearch companion(boolean enable) {
         this.execType = enable ? SearchExecType.COMPANION : null;
         return this;
     }
@@ -179,18 +191,18 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setExtension(boolean enable) {
+    public NSearch extension(boolean enable) {
         this.execType = enable ? SearchExecType.EXTENSION : null;
         return this;
     }
 
     @Override
-    public boolean isExec() {
+    public boolean isExecutable() {
         return SearchExecType.EXEC == execType;
     }
 
     @Override
-    public NSearch setExec(boolean enable) {
+    public NSearch executable(boolean enable) {
         this.execType = enable ? SearchExecType.EXEC : null;
         return this;
     }
@@ -201,7 +213,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setNutsApplication(boolean enable) {
+    public NSearch nutsApplication(boolean enable) {
         this.execType = enable ? SearchExecType.NUTS_APPLICATION : null;
         return this;
     }
@@ -212,7 +224,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setPlatformApplication(boolean enable) {
+    public NSearch platformApplication(boolean enable) {
         this.execType = enable ? SearchExecType.PLATFORM_APPLICATION : null;
         return this;
     }
@@ -242,14 +254,14 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         if (other != null) {
             NSearch o = other;
             this.ignoreCurrentEnvironment = o.isIgnoreCurrentEnvironment();
-            this.comparator = o.getComparator();
-            this.definitionFilter = o.getDefinitionFilter();
+            this.comparator = o.comparator();
+            this.definitionFilter = o.definitionFilter();
             this.latest = o.isLatest();
             this.distinct = (o.isDistinct());
             this.includeBasePackage = o.isBasePackage();
             this.sorted = o.isSorted();
             this.ids.clear();
-            this.ids.addAll(o.getIds());
+            this.ids.addAll(o.ids());
         }
         return this;
     }
@@ -261,19 +273,26 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return this.ids;
     }
 
     @Override
-    public NSearch setIds(String... ids) {
+    public NSearch ids(String... ids) {
         clearIds();
         addIds(ids);
         return this;
     }
 
     @Override
-    public NSearch setIds(NId... ids) {
+    public NSearch ids(NId... ids) {
+        clearIds();
+        addIds(ids);
+        return this;
+    }
+
+    @Override
+    public NSearch ids(List<NId> ids) {
         clearIds();
         addIds(ids);
         return this;
@@ -285,18 +304,18 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setSorted(boolean sort) {
+    public NSearch sorted(boolean sort) {
         this.sorted = sort;
         return this;
     }
 
     @Override
-    public NDefinitionFilter getDefinitionFilter() {
+    public NDefinitionFilter definitionFilter() {
         return definitionFilter;
     }
 
     @Override
-    public NSearch setDefinitionFilter(NDefinitionFilter filter) {
+    public NSearch definitionFilter(NDefinitionFilter filter) {
         this.definitionFilter = filter;
         return this;
     }
@@ -314,7 +333,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NComparator getComparator() {
+    public NComparator comparator() {
         return comparator;
     }
 
@@ -331,12 +350,12 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
 
 
     @Override
-    public NVersion getTargetApiVersion() {
+    public NVersion targetApiVersion() {
         return targetApiVersion;
     }
 
     @Override
-    public NSearch setTargetApiVersion(NVersion targetApiVersion) {
+    public NSearch targetApiVersion(NVersion targetApiVersion) {
         this.targetApiVersion = targetApiVersion;
         return this;
     }
@@ -347,7 +366,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public NSearch setBasePackage(boolean includeBasePackage) {
+    public NSearch basePackage(boolean includeBasePackage) {
         this.includeBasePackage = includeBasePackage;
         return this;
     }
@@ -418,7 +437,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         DefaultNClassLoader cl = ((DefaultNExtensions) NExtensions.of())
                 .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent);
         for (NDefinition def : nDefinitions) {
-            cl.add(NClassLoaderUtils.definitionToClassLoaderNode(def, getRepositoryFilter()));
+            cl.add(NClassLoaderUtils.definitionToClassLoaderNode(def, repositoryFilter()));
         }
         return cl;
     }
@@ -466,21 +485,21 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<Instant> getResultInstallDates() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::getCreatedInstant).orNull()).withDescription(NDescribables.ofDesc("getCreatedInstant")))
+                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::createdInstant).orNull()).withDescription(NDescribables.ofDesc("getCreatedInstant")))
                 .notNull());
     }
 
     @Override
     public NStream<String> getResultInstallUsers() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::getInstallUser).orNull()).withDescription(NDescribables.ofDesc("getInstallUser")))
+                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::installUser).orNull()).withDescription(NDescribables.ofDesc("getInstallUser")))
                 .notBlank());
     }
 
     @Override
     public NStream<NPath> getResultInstallFolders() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::getInstallFolder).orNull())
+                .map(NFunction.of((NDefinition x) -> x.installInformation().map(NInstallInformation::installFolder).orNull())
                         .withDescription(NDescribables.ofDesc("getInstallFolder"))
                 )
                 .notNull());
@@ -511,7 +530,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultNames() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getName()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().name()))
                         .withDescription(NDescribables.ofDesc("getDescriptorName"))
                 )
                 .notBlank());
@@ -520,7 +539,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultOs() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getOs()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().condition().os()))
                         .withDescription(NDescribables.ofDesc("getOs")))
                 .notBlank()
                 .distinct()
@@ -541,7 +560,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultOsDist() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getOsDist()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().condition().osDist()))
                         .withDescription(NDescribables.ofDesc("getOsDist"))
                 )
                 .notBlank()
@@ -552,7 +571,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultPackaging() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getPackaging()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().packaging()))
                         .withDescription(NDescribables.ofDesc("getPackaging"))
                 )
                 .notBlank()
@@ -563,7 +582,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultPlatform() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getPlatform()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().condition().platform()))
                         .withDescription(NDescribables.ofDesc("getPlatform"))
                 )
                 .notBlank()
@@ -574,7 +593,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultProfile() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getProfiles()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().condition().profiles()))
                         .withDescription(NDescribables.ofDesc("getProfile"))
                 )
                 .notBlank()
@@ -585,7 +604,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultDesktopEnvironment() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getDesktopEnvironment()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().condition().desktopEnvironment()))
                         .withDescription(NDescribables.ofDesc("getDesktopEnvironment"))
                 )
                 .notBlank()
@@ -596,27 +615,28 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NStream<String> getResultArch() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase())
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().getCondition().getArch()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.descriptor().condition().arch()))
                         .withDescription(NDescribables.ofDesc("getArch"))
                 )
                 .notBlank());
     }
 
     @Override
-    public NSearch setId(String id) {
+    public NSearch id(String id) {
         clearIds();
         addId(id);
         return this;
     }
 
     @Override
-    public NSearch setId(NId id) {
+    public NSearch id(NId id) {
         clearIds();
         addId(id);
         return this;
     }
 
-    public SearchExecType getExecType() {
+    @NGetter
+    public SearchExecType execType() {
         return execType;
     }
 
@@ -629,7 +649,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         boolean enabled = a.isUncommented();
         switch (a.key()) {
             case "--inline-dependencies": {
-                return cmdLine.matcher().matchFlag((v) -> this.setInlineDependencies(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.inlineDependencies(v.booleanValue())).anyMatch();
             }
             case "--describe": {
                 return cmdLine.matcher().matchFlag((v) -> this.describe = v.booleanValue()).anyMatch();
@@ -640,7 +660,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                 return cmdLine.matcher().matchFlag((v) -> this.latest(v.booleanValue())).anyMatch();
             }
             case "--repo": {
-                return cmdLine.matcher().matchEntry((v) -> this.setRepositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v.stringValue(), ";,|", true, true).toArray(new String[0])))).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.repositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v.stringValue(), ";,|", true, true).toArray(new String[0])))).anyMatch();
             }
             case "--distinct": {
                 return cmdLine.matcher().matchFlag((v) -> this.distinct(v.booleanValue())).anyMatch();
@@ -654,7 +674,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             }
             case "-s":
             case "--sort": {
-                return cmdLine.matcher().matchFlag((v) -> this.setSorted(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.sorted(v.booleanValue())).anyMatch();
             }
             case "--base": {
                 return cmdLine.matcher().matchFlag((v) -> this.includeBasePackage = v.booleanValue()).anyMatch();
@@ -665,54 +685,54 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             }
             case "--app":
             case "--apps": {
-                return cmdLine.matcher().matchFlag((v) -> this.setExec(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.executable(v.booleanValue())).anyMatch();
             }
             case "--companion":
             case "--companions": {
-                return cmdLine.matcher().matchFlag((v) -> this.setCompanion(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.companion(v.booleanValue())).anyMatch();
             }
             case "--extension":
             case "--extensions": {
-                return cmdLine.matcher().matchFlag((v) -> this.setExtension(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.extension(v.booleanValue())).anyMatch();
             }
             case "--runtime": {
-                return cmdLine.matcher().matchFlag((v) -> this.setRuntime(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.runtime(v.booleanValue())).anyMatch();
             }
             case "--api-version": {
-                return cmdLine.matcher().matchEntry((v) -> this.setTargetApiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> this.targetApiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                return cmdLine.matcher().matchFlag((v) -> this.setNutsApplication(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.nutsApplication(v.booleanValue())).anyMatch();
             }
             case "--arch": {
                 return cmdLine.matcher().matchEntry((v) -> this.addDefinitionFilter(
-                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byArch(v.stringValue()))
+                        NDefinitionFilters.of().nonnull(this.definitionFilter()).and(NDefinitionFilters.of().byArch(v.stringValue()))
                 )).anyMatch();
             }
             case "--packaging": {
                 return cmdLine.matcher().matchEntry((v) -> this.addDefinitionFilter(
-                        NDefinitionFilters.of().nonnull(this.getDefinitionFilter()).and(NDefinitionFilters.of().byPackaging(v.stringValue()))
+                        NDefinitionFilters.of().nonnull(this.definitionFilter()).and(NDefinitionFilters.of().byPackaging(v.stringValue()))
                 )).anyMatch();
             }
             case "--id": {
                 return cmdLine.matcher().matchEntry((v) -> this.addId(v.stringValue())).anyMatch();
             }
             case "--locked-id": {
-                return cmdLine.matcher().matchEntry((v) -> setDefinitionFilter(NDefinitionFilterUtils.addLockedIds(getDefinitionFilter(), NId.of(v.stringValue())))).anyMatch();
+                return cmdLine.matcher().matchEntry((v) -> definitionFilter(NDefinitionFilterUtils.addLockedIds(definitionFilter(), NId.of(v.stringValue())))).anyMatch();
             }
             case "--deployed": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDeployed(a.booleanValue()).and(getDefinitionFilter()))).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDeployed(a.booleanValue()).and(definitionFilter()))).anyMatch();
             }
             case "-i":
             case "--installed": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byInstalled(a.booleanValue()).and(getDefinitionFilter()))).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byInstalled(a.booleanValue()).and(definitionFilter()))).anyMatch();
             }
             case "--required": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byRequired(a.booleanValue()).and(getDefinitionFilter()))).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byRequired(a.booleanValue()).and(definitionFilter()))).anyMatch();
             }
             case "--obsolete": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byObsolete(a.booleanValue()).and(getDefinitionFilter()))).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byObsolete(a.booleanValue()).and(definitionFilter()))).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {
@@ -738,28 +758,28 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
 //                + ", dependencies=" + isDependencies()
 //                + ", effective=" + isEffective()
                 + ", displayOptions=" + getDisplayOptions()
-                + ", comparator=" + getComparator()
-                + ", dependencyFilter=" + getDependencyFilter()
-                + ", descriptorFilter=" + getDefinitionFilter()
-                + ", repositoryFilter=" + getRepositoryFilter()
+                + ", comparator=" + comparator()
+                + ", dependencyFilter=" + dependencyFilter()
+                + ", descriptorFilter=" + definitionFilter()
+                + ", repositoryFilter=" + repositoryFilter()
                 + ", latest=" + isLatest()
                 + ", distinct=" + isDistinct()
                 + ", includeMain=" + isBasePackage()
                 + ", sorted=" + isSorted()
-                + ", ids=" + getIds()
-                + ", execType='" + getExecType() + '\''
-                + ", targetApiVersion='" + getTargetApiVersion() + '\''
+                + ", ids=" + ids()
+                + ", execType='" + execType() + '\''
+                + ", targetApiVersion='" + targetApiVersion() + '\''
                 + '}';
     }
 
     private Object dependenciesToElement(NDependencyTreeNode d) {
         NId id
                 = //                getSearchSession().getWorkspace().text().parse(d.getDependency().formatter().setSession(getSearchSession()).setNtf(false).format())
-                d.getDependency().toId();
+                d.dependency().toId();
         if (d.isPartial()) {
             id = id.builder().setProperty("partial", "true").build();
         }
-        List<Object> li = d.getChildren().stream().map(x -> dependenciesToElement(x)).collect(Collectors.toList());
+        List<Object> li = d.children().stream().map(x -> dependenciesToElement(x)).collect(Collectors.toList());
         if (li.isEmpty()) {
             return id;
         }
@@ -1037,7 +1057,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         NDependency dep = next.toDependency();
         NDefinition d = null;
         try {
-            d = fetch.setId(next).getResultDefinition();
+            d = fetch.id(next).getResultDefinition();
         } catch (NArtifactNotFoundException e) {
             if (dep.isOptional()) {
                 return null;
@@ -1058,8 +1078,8 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                 db.setDescriptor(
                         () -> {
                             NDescriptor oldDesc = db.getDescriptor().get();
-                            NDescriptor newdesc = oldDesc.builder().setCondition(
-                                    oldDesc.getCondition().builder().and(condition).build()
+                            NDescriptor newdesc = oldDesc.builder().condition(
+                                    oldDesc.condition().builder().and(condition).build()
                             ).build();
                             return newdesc;
                         }
@@ -1068,8 +1088,8 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                 db.setEffectiveDescriptor(
                         () -> {
                             NDescriptor oldDesc = db.getEffectiveDescriptor().get();
-                            NDescriptor newdesc = oldDesc.builder().setCondition(
-                                    oldDesc.getCondition().builder().and(condition).build()
+                            NDescriptor newdesc = oldDesc.builder().condition(
+                                    oldDesc.condition().builder().and(condition).build()
                             ).build();
                             return newdesc;
                         }

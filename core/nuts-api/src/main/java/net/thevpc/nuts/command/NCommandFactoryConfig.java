@@ -27,6 +27,8 @@
 package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -67,7 +69,8 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
      *
      * @return Factory id (unique identifier in the workspace)
      */
-    public String getFactoryId() {
+    @NGetter
+    public String factoryId() {
         return factoryId;
     }
 
@@ -77,7 +80,7 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandFactoryConfig setFactoryId(String value) {
+    public NCommandFactoryConfig factoryId(String value) {
         this.factoryId = value;
         return this;
     }
@@ -87,7 +90,8 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
      *
      * @return Factory Type
      */
-    public String getFactoryType() {
+    @NGetter
+    public String factoryType() {
         return factoryType;
     }
 
@@ -97,7 +101,8 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandFactoryConfig setFactoryType(String value) {
+    @NSetter
+    public NCommandFactoryConfig factoryType(String value) {
         this.factoryType = value;
         return this;
     }
@@ -107,7 +112,7 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
      *
      * @return factory parameters
      */
-    public Map<String, String> getParameters() {
+    public Map<String, String> parameters() {
         return parameters;
     }
 
@@ -117,7 +122,8 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandFactoryConfig setParameters(Map<String, String> value) {
+    @NSetter
+    public NCommandFactoryConfig parameters(Map<String, String> value) {
         this.parameters = value;
         return this;
     }
@@ -127,7 +133,8 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
      *
      * @return priority (the higher the better)
      */
-    public int getPriority() {
+    @NGetter
+    public int priority() {
         return priority;
     }
 
@@ -137,7 +144,8 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NCommandFactoryConfig setPriority(int value) {
+    @NSetter
+    public NCommandFactoryConfig priority(int value) {
         this.priority = value;
         return this;
     }

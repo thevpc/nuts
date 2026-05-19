@@ -43,7 +43,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     public DefaultInstallSvcCommand() {
     }
 
-    public DefaultInstallSvcCommand setServiceType(NOsServiceType serviceType) {
+    public DefaultInstallSvcCommand serviceType(NOsServiceType serviceType) {
         this.serviceType = serviceType;
         return this;
     }
@@ -57,7 +57,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return serviceName;
     }
 
-    public NInstallSvcCmd setServiceName(String serviceName) {
+    public NInstallSvcCmd serviceName(String serviceName) {
         this.serviceName = serviceName;
         return this;
     }
@@ -66,17 +66,17 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return root;
     }
 
-    public NInstallSvcCmd setRootDirectory(NPath root) {
+    public NInstallSvcCmd rootDirectory(NPath root) {
         this.root = root;
         return this;
     }
 
     @Override
-    public NPath getWorkingDirectory() {
+    public NPath workingDirectory() {
         return workingDirectory;
     }
 
-    public NInstallSvcCmd setWorkingDirectory(NPath workingDirectory) {
+    public NInstallSvcCmd workingDirectory(NPath workingDirectory) {
         this.workingDirectory = workingDirectory;
         return this;
     }
@@ -90,63 +90,63 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return this;
     }
 
-    public NInstallSvcCmd setControlCommand(String[] startCommand) {
+    public NInstallSvcCmd controlCommand(String[] startCommand) {
         List<String> base0 = new ArrayList<>(Arrays.asList(startCommand));
 
         List<String> base = new ArrayList<>(base0);
         base.add("start");
-        setStartCommand(base.toArray(new String[0]));
+        startCommand(base.toArray(new String[0]));
 
         base = new ArrayList<>(base0);
         base.add("stop");
-        setStopCommand(base.toArray(new String[0]));
+        stopCommand(base.toArray(new String[0]));
 
         base = new ArrayList<>(base0);
         base.add("status");
-        setStatusCommand(base.toArray(new String[0]));
+        statusCommand(base.toArray(new String[0]));
 
         return this;
     }
 
     @Override
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         return env;
     }
 
-    public NInstallSvcCmd setEnv(Map<String, String> env) {
+    public NInstallSvcCmd env(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
     @Override
-    public String[] getStartCommand() {
+    public String[] startCommand() {
         return startCommand;
     }
 
     @Override
-    public DefaultInstallSvcCommand setStartCommand(String[] startCommand) {
+    public DefaultInstallSvcCommand startCommand(String[] startCommand) {
         this.startCommand = startCommand;
         return this;
     }
 
     @Override
-    public String[] getStopCommand() {
+    public String[] stopCommand() {
         return stopCommand;
     }
 
     @Override
-    public DefaultInstallSvcCommand setStopCommand(String[] stopCommand) {
+    public DefaultInstallSvcCommand stopCommand(String[] stopCommand) {
         this.stopCommand = stopCommand;
         return this;
     }
 
     @Override
-    public String[] getStatusCommand() {
+    public String[] statusCommand() {
         return statusCommand;
     }
 
     @Override
-    public DefaultInstallSvcCommand setStatusCommand(String[] statusCommand) {
+    public DefaultInstallSvcCommand statusCommand(String[] statusCommand) {
         this.statusCommand = statusCommand;
         return this;
     }
@@ -398,11 +398,11 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         if (serviceType != null) {
             return serviceType;
         }
-        return getSystemServiceType();
+        return systemServiceType();
     }
 
     @Override
-    public NOsServiceType getSystemServiceType() {
+    public NOsServiceType systemServiceType() {
         if (systemServiceType == null) {
             logVerbose(NMsg.ofC("Checking if systemctl is available..."));
             try {

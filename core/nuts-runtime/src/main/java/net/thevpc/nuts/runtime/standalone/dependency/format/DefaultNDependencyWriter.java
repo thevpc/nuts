@@ -8,7 +8,6 @@ import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NIdBuilder;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NDependencyWriter;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
@@ -108,7 +107,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     @Override
     public NText format(Object aValue) {
         NIdBuilder id = ((NDependency) aValue).toId().builder();
-        Map<String, String> q = id.getProperties();
+        Map<String, String> q = id.properties();
         for (Map.Entry<String, String> e : q.entrySet()) {
             switch (e.getKey()) {
                 case NConstants.IdProperties.SCOPE:
@@ -129,11 +128,11 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
             id1.setOmitProperty(omitQueryProperty, true);
         }
         return id1
-                .setHighlightImportedGroupId(isHighlightImportedGroup())
-                .setOmitOtherProperties(false)
-                .setOmitGroupId(isOmitGroupId())
-                .setOmitImportedGroupId(isOmitImportedGroupId())
-                .setOmitRepository(isOmitRepository())
+                .highlightImportedGroupId(isHighlightImportedGroup())
+                .omitOtherProperties(false)
+                .omitGroupId(isOmitGroupId())
+                .omitImportedGroupId(isOmitImportedGroupId())
+                .omitRepository(isOmitRepository())
                 .setNtf(isNtf())
                 .format(id.build());
     }

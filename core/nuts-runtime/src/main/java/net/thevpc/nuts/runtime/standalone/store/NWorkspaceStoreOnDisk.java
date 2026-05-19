@@ -59,7 +59,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         if (cacheb == null) {
             cacheb = new NanoDBOnDisk(
                     NPath.of(NStoreKey.ofCache(
-                            NWorkspace.of().getApiId().builder().setVersion("SHARED").build()
+                            NWorkspace.of().getApiId().builder().version("SHARED").build()
                             )
                     ).resolve("cachedb").toFile().get()
             );
@@ -73,7 +73,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         if (db == null) {
             db = new NanoDBOnDisk(
                     NPath.of(NStoreKey.ofVar(
-                            NWorkspace.of().getApiId().builder().setVersion("SHARED").build()
+                            NWorkspace.of().getApiId().builder().version("SHARED").build()
                     )).resolve("vardb").toFile().get()
             );
             db.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer());
@@ -145,7 +145,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             if (version == null) {
                 version = NVersion.get((String) a_config0.get("createApiVersion")).onBlankEmpty().orNull();
                 if (version == null) {
-                    version = Nuts.getVersion();
+                    version = Nuts.version();
                 }
             }
             return NVersionCompat.of(version).parseConfig(bytes);
@@ -211,12 +211,12 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public boolean saveRepoConfig(NRepository repository, NRepositoryConfig config) {
-        NPath file = repository.config().getStoreLocation().resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
+        NPath file = repository.config().storeLocation().resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
         boolean created = false;
         if (!file.exists()) {
             created = true;
         }
-        repository.config().getStoreLocation().mkdirs();
+        repository.config().storeLocation().mkdirs();
         NElementWriter.ofJson().write(config, file);
         return created;
     }
@@ -240,7 +240,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 }
                 conf = NElementReader.ofJson().read(file, NRepositoryConfig.class);
             } catch (RuntimeException ex) {
-                if (workspace.getBootOptions().getRecover().orElse(false)) {
+                if (workspace.getBootOptions().recover().orElse(false)) {
                     onLoadRepositoryError(file, name, null, ex);
                 } else {
                     throw ex;
@@ -300,7 +300,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     public Iterator<NVersion> searchInstalledVersions(NId id) {
 //        NWorkspace workspace = NWorkspace.of();
         NPath installFolder
-                = NPath.of(NStoreKey.ofConf(id.builder().setVersion("ANY").build())).parent();
+                = NPath.of(NStoreKey.ofConf(id.builder().version("ANY").build())).parent();
         if (installFolder.isDirectory()) {
             final NVersionFilter filter0 = id.version().toFilter();
             return NIteratorBuilder.of(installFolder.stream().iterator())
@@ -426,9 +426,9 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
             return NIdBuilder.of()
-                    .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
-                    .setArtifactId(split.get(split.size() - 3))
-                    .setVersion(split.get(split.size() - 2)).build();
+                    .groupId(String.join(".", split.subList(0, split.size() - 3)))
+                    .artifactId(split.get(split.size() - 3))
+                    .version(split.get(split.size() - 2)).build();
 
         }
         return null;
@@ -436,7 +436,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public String loadInstalledDefaultVersion(NId id) {
-        NPath pp = NPath.of(NStoreKey.ofConf(id.builder().setVersion("ANY").build()))
+        NPath pp = NPath.of(NStoreKey.ofConf(id.builder().version("ANY").build()))
                 .resolveSibling("default-version");
         String defaultVersion = "";
         if (pp.isRegularFile()) {
@@ -452,7 +452,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     @Override
     public void saveInstalledDefaultVersion(NId id) {
         String version = id.version().value();
-        NPath pp = NPath.of(NStoreKey.ofConf(id.builder().setVersion("ANY").build()))
+        NPath pp = NPath.of(NStoreKey.ofConf(id.builder().version("ANY").build()))
                 .resolveSibling("default-version");
         if (NBlankable.isBlank(version)) {
             if (pp.isRegularFile()) {

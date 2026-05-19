@@ -94,7 +94,7 @@ public interface NRepositories extends NComponent {
 
     NRepositories removeRepository(String locationOrRepositoryId);
 
-    List<NRepository> getRepositories();
+    List<NRepository> repositories();
 
     ///////////////
     NRepositories removeAllRepositories();

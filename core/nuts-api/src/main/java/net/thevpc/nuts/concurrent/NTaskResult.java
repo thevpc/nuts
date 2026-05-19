@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NGetter;
 
 /**
  * Represents the result of a task execution, which can either be a successful result
@@ -36,7 +37,8 @@ public class NTaskResult<T> {
      *
      * @return the task ID
      */
-    public String getTaskId() {
+    @NGetter
+    public String taskId() {
         return taskId;
     }
 
@@ -69,6 +71,7 @@ public class NTaskResult<T> {
      *
      * @return {@code true} if the task succeeded; {@code false} otherwise
      */
+    @NGetter
     public boolean isSuccess() {
         return exception == null;
     }
@@ -78,6 +81,7 @@ public class NTaskResult<T> {
      *
      * @return {@code true} if the task failed; {@code false} otherwise
      */
+    @NGetter
     public boolean isError() {
         return exception != null;
     }
@@ -91,7 +95,8 @@ public class NTaskResult<T> {
      * @return the result of the task
      * @throws RuntimeException if the task failed
      */
-    public T getResult() {
+    @NGetter
+    public T result() {
         if (isError()) {
             throw NExceptions.ofUncheckedException(exception);
         }
@@ -103,7 +108,8 @@ public class NTaskResult<T> {
      *
      * @return the exception if the task failed; {@code null} if the task succeeded
      */
-    public Throwable getError() {
+    @NGetter
+    public Throwable error() {
         return exception;
     }
 }

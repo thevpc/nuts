@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Map;
@@ -33,25 +34,30 @@ public interface NWorkBalancerJobContext {
      *
      * @return unique job ID
      */
-    String getJobId();
+    @NGetter
+    String jobId();
 
     /**
      * Returns the human-readable name of the job.
      *
      * @return job name
      */
-    String getJobName();
+    @NGetter
+    String jobName();
 
     /**
      * Returns the name of the worker assigned to execute this job.
      *
      * @return worker name
      */
-    String getWorkerName();
+    @NGetter
+    String workerName();
 
-    int getWorkerIndex();
+    @NGetter
+    int workerIndex();
 
-    int getWorkersCount();
+    @NGetter
+    int workersCount();
 
     /**
      * Returns the {@link NWorkBalancerWorker} instance assigned
@@ -59,7 +65,8 @@ public interface NWorkBalancerJobContext {
      *
      * @return assigned worker
      */
-    NWorkBalancerWorker getWorker();
+    @NGetter
+    NWorkBalancerWorker worker();
 
     /**
      * Returns all options available for this job, including global
@@ -67,7 +74,8 @@ public interface NWorkBalancerJobContext {
      *
      * @return map of option names to values
      */
-    Map<String, NElement> getOptions();
+    @NGetter
+    Map<String, NElement> options();
 
     /**
      * Returns the value of a specific option by name, if present.

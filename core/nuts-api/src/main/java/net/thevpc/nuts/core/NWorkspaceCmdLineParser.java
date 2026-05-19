@@ -1554,8 +1554,8 @@ public final class NWorkspaceCmdLineParser {
      */
     public static void parseNutsArguments(String[] bootArguments, NWorkspaceOptionsBuilder options) {
         NCmdLine cmdLine = NCmdLine.of(bootArguments)
-                .setCommandName("nuts")
-                .setExpandSimpleOptions(true)
+                .commandName("nuts")
+                .expandSimpleOptions(true)
                 .registerSpecialSimpleOption("-version");
         while (cmdLine.hasNext()) {
             if (nextNutsArgument(cmdLine, options).isNotPresent()) {
