@@ -49,13 +49,13 @@ public class DefaultNDigestName implements NDigestName {
         } else if (source instanceof NPath) {
             return getDigestNameString(source.toString());
         } else if (source instanceof NWorkspace) {
-            NPath location = ((NWorkspace) source).getLocation();
+            NPath location = ((NWorkspace) source).location();
             if(location==null){
                 return getDigestNameString("default");
             }
             return getDigestNameString(location.toString());
         } else if (source instanceof NSession) {
-            NPath location = ((NSession) source).getWorkspace().getLocation();
+            NPath location = ((NSession) source).workspace().location();
             if(location==null){
                 return getDigestNameString("default");
             }

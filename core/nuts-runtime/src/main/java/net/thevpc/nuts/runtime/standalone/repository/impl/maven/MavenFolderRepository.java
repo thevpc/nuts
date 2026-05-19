@@ -107,12 +107,12 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     private NRepository getLocalMavenRepo() {
-        for (NRepository nRepository : workspace.getRepositories()) {
+        for (NRepository nRepository : workspace.repositories()) {
             if (nRepository.repositoryType().equals(NConstants.RepoTypes.MAVEN)
                     && nRepository.config().locationPath() != null
                     && nRepository.config().locationPath().toString()
                     .equals(
-                            Paths.get(NPath.of("~/.m2").toAbsolute(NWorkspace.of().getWorkspaceLocation()).toString()).toString()
+                            Paths.get(NPath.of("~/.m2").toAbsolute(NWorkspace.of().workspaceLocation()).toString()).toString()
                     )) {
                 return nRepository;
             }

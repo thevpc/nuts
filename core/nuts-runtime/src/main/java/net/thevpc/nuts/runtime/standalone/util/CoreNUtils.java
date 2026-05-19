@@ -553,11 +553,11 @@ public class CoreNUtils {
                 return NIdType.RUNTIME;
             }
             default: {
-                String rt = NWorkspace.of().getRuntimeId().shortName();
+                String rt = NWorkspace.of().runtimeId().shortName();
                 if (rt.equals(depId.shortName())) {
                     return NIdType.RUNTIME;
                 } else {
-                    for (NClassLoaderNode n : NWorkspace.of().getBootExtensionClassLoaderNodes()) {
+                    for (NClassLoaderNode n : NWorkspace.of().bootExtensionClassLoaderNodes()) {
                         if (n.id() != null) {
                             if (n.id().equalsShortId(depId)) {
                                 return NIdType.EXTENSION;

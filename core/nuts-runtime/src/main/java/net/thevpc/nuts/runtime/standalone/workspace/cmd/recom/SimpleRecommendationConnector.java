@@ -30,7 +30,7 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             NWebRequest post = cli.POST(ri.server + url)
                     .contentType("application/json; charset=UTF-8")
                     .setHeader("Accept", "*/*");
-            String loc = NSession.of().getLocale().orDefault();
+            String loc = NSession.of().locale().orDefault();
             if (loc == null) {
                 loc = Locale.getDefault().toString();
             }

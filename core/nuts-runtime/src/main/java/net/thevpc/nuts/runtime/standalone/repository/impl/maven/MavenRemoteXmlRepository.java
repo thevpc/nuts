@@ -73,7 +73,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                 () -> {
                     List<NId> ret = new ArrayList<>();
                     InputStream metadataStream = null;
-                    session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, NCoreLogUtils.forProgress(metadataURL)));
+                    session.terminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, NCoreLogUtils.forProgress(metadataURL)));
                     SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("repo %s", name()));
                     try {
                         try {

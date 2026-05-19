@@ -114,7 +114,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.repositoryListeners()) {
                 listener.onUndeploy(evt);
             }
-            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().repositoryListeners()) {
                 listener.onUndeploy(evt);
             }
         }
@@ -123,7 +123,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.repositoryListeners()) {
                 listener.onDeploy(event);
             }
-            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().repositoryListeners()) {
                 listener.onDeploy(event);
             }
         }
@@ -132,7 +132,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.repositoryListeners()) {
                 listener.onPush(event);
             }
-            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().repositoryListeners()) {
                 listener.onPush(event);
             }
             for (NRepositoryListener listener : event.session().getListeners(NRepositoryListener.class)) {
@@ -151,7 +151,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.repositoryListeners()) {
                 listener.onAddRepository(event);
             }
-            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().repositoryListeners()) {
                 listener.onAddRepository(event);
             }
             for (NRepositoryListener listener : event.session().getListeners(NRepositoryListener.class)) {
@@ -173,7 +173,7 @@ public class NRepositoryHelper {
 //            }
                 listener.onRemoveRepository(event);
             }
-            for (NRepositoryListener listener : u.repo.workspace().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.workspace().repositoryListeners()) {
 //            if (event == null) {
 //                event = new DefaultNRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
 //            }

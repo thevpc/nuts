@@ -50,9 +50,9 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 //        this.session=ws.createSession();
         displayOptions = new NFetchDisplayOptions();
         NSession s = NSession.of();
-        this.fetchStrategy=s.getFetchStrategy().orNull();
-        this.transitive=s.getTransitive().orNull();
-        this.expireTime=s.getExpireTime().orNull();
+        this.fetchStrategy=s.fetchStrategy().orNull();
+        this.transitive=s.transitive().orNull();
+        this.expireTime=s.expireTime().orNull();
     }
 
     //@Override
@@ -75,15 +75,15 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     }
 
     public NOptional<Instant> expireTime() {
-        return NOptional.ofNamed(expireTime,"expireTime").orElseGetOptionalFrom(()-> NSession.of().getExpireTime());
+        return NOptional.ofNamed(expireTime,"expireTime").orElseGetOptionalFrom(()-> NSession.of().expireTime());
     }
 
     public NOptional<NFetchStrategy> fetchStrategy() {
-        return NOptional.ofNamed(fetchStrategy,"fetchStrategy").orElseGetOptionalFrom(()-> NSession.of().getFetchStrategy());
+        return NOptional.ofNamed(fetchStrategy,"fetchStrategy").orElseGetOptionalFrom(()-> NSession.of().fetchStrategy());
     }
 
     public NOptional<Boolean> transitive() {
-        return NOptional.ofNamed(transitive,"transitive").orElseGetOptionalFrom(()-> NSession.of().getTransitive());
+        return NOptional.ofNamed(transitive,"transitive").orElseGetOptionalFrom(()-> NSession.of().transitive());
     }
 
     public T fetchStrategy(NFetchStrategy fetchStrategy) {

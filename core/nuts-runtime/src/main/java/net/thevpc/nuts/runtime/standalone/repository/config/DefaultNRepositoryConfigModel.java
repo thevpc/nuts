@@ -206,7 +206,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public NPath getLocationPath() {
         String s = NStringUtils.trimToNull(config.getLocation().getPath());
         if (s != null) {
-            return NPath.of(s).toAbsolute(NWorkspace.of().getWorkspaceLocation());
+            return NPath.of(s).toAbsolute(NWorkspace.of().workspaceLocation());
         }
         return null;
     }
@@ -270,7 +270,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         }
         if (this.config.getStoreStrategy() == null) {
             fireChange = true;
-            this.config.setStoreStrategy(NWorkspace.of().getRepositoryStoreStrategy());
+            this.config.setStoreStrategy(NWorkspace.of().repositoryStoreStrategy());
         }
         if (config.getLocation() != null && !NBlankable.isBlank(config.getLocation().getLocationType())) {
             // do not waste time on constructor to connect to internet and check repo type....
@@ -502,7 +502,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         }
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NRepository mirror : getMirrors()) {
-                NRepository m = session.copy().setTransitive(true).callWith(() -> mirror.config()
+                NRepository m = session.copy().transitive(true).callWith(() -> mirror.config()
                         .getMirror(repositoryNameOrId)).orNull();
                 if (m != null) {
                     if (y == null) {
@@ -535,7 +535,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         NSession session = repository.workspace().currentSession();
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NRepository mirror : getMirrors()) {
-                NRepository m = session.copy().setTransitive(true).callWith(() -> mirror.config()
+                NRepository m = session.copy().transitive(true).callWith(() -> mirror.config()
                         .findMirrorById(repositoryNameOrId));
                 if (m != null) {
                     if (y == null) {
@@ -562,7 +562,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         NSession session = repository.workspace().currentSession();
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NRepository mirror : getMirrors()) {
-                NRepository m = session.copy().setTransitive(true).callWith(() -> mirror.config()
+                NRepository m = session.copy().transitive(true).callWith(() -> mirror.config()
                         .findMirrorByName(repositoryNameOrId));
                 if (m != null) {
                     if (y == null) {
@@ -680,7 +680,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         NRepositoryConfig config = model.getConfig();
         Map<String, String> p = new LinkedHashMap<>();
         if (inherit) {
-            p.putAll(NWorkspace.of().getConfigMap());
+            p.putAll(NWorkspace.of().configMap());
         }
         if (config.getEnv() != null) {
             p.putAll(config.getEnv());

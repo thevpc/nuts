@@ -55,7 +55,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         Object oldRepos = s.map.get("repos");
         if (oldRepos instanceof String) {
             Map<String, Object> repositories = new LinkedHashMap<>();
-            for (NRepository repository : NWorkspace.of().getRepositories()) {
+            for (NRepository repository : NWorkspace.of().repositories()) {
                 repositories.put(repository.name(), buildRepoRepoMap(repository, true, null));
             }
             return repositories;
@@ -188,8 +188,8 @@ public class DefaultNInfoCmd implements NInfoCmd {
             }
         }
         session = session.copy();
-        if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
-            session.setOutputFormat(NContentType.PROPS);
+        if (session.outputFormat().orDefault() == NContentType.PLAIN) {
+            session.outputFormat(NContentType.PROPS);
         }
         Object fresult = result;
         session.runWith(() -> {
@@ -332,16 +332,16 @@ public class DefaultNInfoCmd implements NInfoCmd {
 
     private Map<String, Supplier<Object>> buildMapSupplier() {
         Map<String, Supplier<Object>> props = new LinkedHashMap<>();
-        props.put("name", () -> stringValue(NWorkspace.of().getName()));
-        props.put("nuts-api-version", () -> NWorkspace.of().getApiVersion());
-        props.put("nuts-api-id", () -> NWorkspace.of().getApiId());
-        props.put("nuts-runtime-id", () -> NWorkspace.of().getRuntimeId());
+        props.put("name", () -> stringValue(NWorkspace.of().name()));
+        props.put("nuts-api-version", () -> NWorkspace.of().apiVersion());
+        props.put("nuts-api-id", () -> NWorkspace.of().apiId());
+        props.put("nuts-runtime-id", () -> NWorkspace.of().runtimeId());
         props.put("nuts-app-id", () -> NApp.of().id().orNull());
 
         props.put("nuts-runtime-classpath",
                 () -> {
                     NTexts txt = NTexts.of();
-                    List<URL> cl = NWorkspace.of().getBootClassWorldURLs();
+                    List<URL> cl = NWorkspace.of().bootClassWorldURLs();
                     List<NPath> runtimeClassPath = new ArrayList<>();
                     if (cl != null) {
                         for (URL url : cl) {
@@ -359,54 +359,54 @@ public class DefaultNInfoCmd implements NInfoCmd {
                     return txt.ofBuilder().appendJoined(";", runtimeClassPath);
                 }
         );
-        props.put("nuts-workspace-id", () -> NText.ofStyledPath(stringValue(NWorkspace.of().getUuid())));
-        props.put("nuts-store-layout", () -> NWorkspace.of().getStoreLayout());
-        props.put("nuts-store-strategy", () -> NWorkspace.of().getStoreStrategy());
-        props.put("nuts-repo-store-strategy", () -> NWorkspace.of().getRepositoryStoreStrategy());
-        props.put("nuts-global", () -> NWorkspace.of().getBootOptions().system().orNull());
-        props.put("nuts-workspace", () -> NWorkspace.of().getWorkspaceLocation());
+        props.put("nuts-workspace-id", () -> NText.ofStyledPath(stringValue(NWorkspace.of().uuid())));
+        props.put("nuts-store-layout", () -> NWorkspace.of().storeLayout());
+        props.put("nuts-store-strategy", () -> NWorkspace.of().storeStrategy());
+        props.put("nuts-repo-store-strategy", () -> NWorkspace.of().repositoryStoreStrategy());
+        props.put("nuts-global", () -> NWorkspace.of().bootOptions().system().orNull());
+        props.put("nuts-workspace", () -> NWorkspace.of().workspaceLocation());
         for (NStoreType storeType : NStoreType.values()) {
             props.put("nuts-workspace-" + storeType.id(), () -> NPath.of(NStoreKey.of(storeType)));
         }
-        props.put("nuts-open-mode", () -> NWorkspace.of().getBootOptions().openMode().orNull());
-        props.put("nuts-isolation-level", () -> NWorkspace.of().getBootOptions().isolationLevel().orNull());
+        props.put("nuts-open-mode", () -> NWorkspace.of().bootOptions().openMode().orNull());
+        props.put("nuts-isolation-level", () -> NWorkspace.of().bootOptions().isolationLevel().orNull());
         props.put("nuts-secure", () -> (NSecurityManager.of().isSecureMode()));
-        props.put("nuts-gui", () -> NWorkspace.of().getBootOptions().gui().orNull());
-        props.put("nuts-inherited", () -> NWorkspace.of().getBootOptions().inherited().orNull());
-        props.put("nuts-recover", () -> NWorkspace.of().getBootOptions().recover().orNull());
-        props.put("nuts-reset", () -> NWorkspace.of().getBootOptions().reset().orNull());
-        props.put("nuts-read-only", () -> NWorkspace.of().getBootOptions().readOnly().orNull());
-        props.put("nuts-debug", () -> NDebugString.of(NWorkspace.of().getBootOptions().debug().orNull()));
-        props.put("nuts-bot", () -> NWorkspace.of().getBootOptions().bot().orNull());
-        props.put("nuts-trace", () -> NWorkspace.of().getBootOptions().trace().orNull());
-        props.put("nuts-indexed", () -> NWorkspace.of().getBootOptions().indexed().orNull());
-        props.put("nuts-transitive", () -> NWorkspace.of().getBootOptions().transitive().orNull());
-        props.put("nuts-fetch-strategy", () -> NWorkspace.of().getBootOptions().fetchStrategy().orNull());
-        props.put("nuts-execution-type", () -> NWorkspace.of().getBootOptions().executionType().orNull());
-        props.put("nuts-dry", () -> NWorkspace.of().getBootOptions().dry().orNull());
-        props.put("nuts-output-format", () -> NWorkspace.of().getBootOptions().outputFormat().orNull());
-        props.put("nuts-confirm", () -> NWorkspace.of().getBootOptions().confirm().orNull());
-        props.put("nuts-dependency-solver", () -> NWorkspace.of().getBootOptions().dependencySolver().orNull());
-        props.put("nuts-progress-options", () -> NWorkspace.of().getBootOptions().progressOptions().orNull());
+        props.put("nuts-gui", () -> NWorkspace.of().bootOptions().gui().orNull());
+        props.put("nuts-inherited", () -> NWorkspace.of().bootOptions().inherited().orNull());
+        props.put("nuts-recover", () -> NWorkspace.of().bootOptions().recover().orNull());
+        props.put("nuts-reset", () -> NWorkspace.of().bootOptions().reset().orNull());
+        props.put("nuts-read-only", () -> NWorkspace.of().bootOptions().readOnly().orNull());
+        props.put("nuts-debug", () -> NDebugString.of(NWorkspace.of().bootOptions().debug().orNull()));
+        props.put("nuts-bot", () -> NWorkspace.of().bootOptions().bot().orNull());
+        props.put("nuts-trace", () -> NWorkspace.of().bootOptions().trace().orNull());
+        props.put("nuts-indexed", () -> NWorkspace.of().bootOptions().indexed().orNull());
+        props.put("nuts-transitive", () -> NWorkspace.of().bootOptions().transitive().orNull());
+        props.put("nuts-fetch-strategy", () -> NWorkspace.of().bootOptions().fetchStrategy().orNull());
+        props.put("nuts-execution-type", () -> NWorkspace.of().bootOptions().executionType().orNull());
+        props.put("nuts-dry", () -> NWorkspace.of().bootOptions().dry().orNull());
+        props.put("nuts-output-format", () -> NWorkspace.of().bootOptions().outputFormat().orNull());
+        props.put("nuts-confirm", () -> NWorkspace.of().bootOptions().confirm().orNull());
+        props.put("nuts-dependency-solver", () -> NWorkspace.of().bootOptions().dependencySolver().orNull());
+        props.put("nuts-progress-options", () -> NWorkspace.of().bootOptions().progressOptions().orNull());
         props.put("nuts-progress", () -> NSession.of().isProgress());
-        props.put("nuts-terminal-mode", () -> NWorkspace.of().getBootOptions().terminalMode().orNull());
-        props.put("nuts-cached", () -> NWorkspace.of().getBootOptions().cached().orNull());
-        props.put("nuts-install-companions", () -> NWorkspace.of().getBootOptions().installCompanions().orNull());
-        props.put("nuts-skip-welcome", () -> NWorkspace.of().getBootOptions().skipWelcome().orNull());
-        props.put("nuts-skip-boot", () -> NWorkspace.of().getBootOptions().skipBoot().orNull());
-        props.put("nuts-init-platforms", () -> NWorkspace.of().getBootOptions().initPlatforms().orNull());
-        props.put("nuts-init-java", () -> NWorkspace.of().getBootOptions().initJava().orNull());
-        props.put("nuts-init-launchers", () -> NWorkspace.of().getBootOptions().initLaunchers().orNull());
-        props.put("nuts-init-scripts", () -> NWorkspace.of().getBootOptions().initScripts().orNull());
-        props.put("nuts-desktop-launcher", () -> NWorkspace.of().getBootOptions().desktopLauncher().orNull());
-        props.put("nuts-menu-launcher", () -> NWorkspace.of().getBootOptions().menuLauncher().orNull());
-        props.put("nuts-user-launcher", () -> NWorkspace.of().getBootOptions().userLauncher().orNull());
-        props.put("nuts-locale", () -> NWorkspace.of().getBootOptions().locale().orNull());
-        props.put("nuts-theme", () -> NWorkspace.of().getBootOptions().theme().orNull());
-        props.put("nuts-username", () -> NWorkspace.of().getBootOptions().userName().orNull());
+        props.put("nuts-terminal-mode", () -> NWorkspace.of().bootOptions().terminalMode().orNull());
+        props.put("nuts-cached", () -> NWorkspace.of().bootOptions().cached().orNull());
+        props.put("nuts-install-companions", () -> NWorkspace.of().bootOptions().installCompanions().orNull());
+        props.put("nuts-skip-welcome", () -> NWorkspace.of().bootOptions().skipWelcome().orNull());
+        props.put("nuts-skip-boot", () -> NWorkspace.of().bootOptions().skipBoot().orNull());
+        props.put("nuts-init-platforms", () -> NWorkspace.of().bootOptions().initPlatforms().orNull());
+        props.put("nuts-init-java", () -> NWorkspace.of().bootOptions().initJava().orNull());
+        props.put("nuts-init-launchers", () -> NWorkspace.of().bootOptions().initLaunchers().orNull());
+        props.put("nuts-init-scripts", () -> NWorkspace.of().bootOptions().initScripts().orNull());
+        props.put("nuts-desktop-launcher", () -> NWorkspace.of().bootOptions().desktopLauncher().orNull());
+        props.put("nuts-menu-launcher", () -> NWorkspace.of().bootOptions().menuLauncher().orNull());
+        props.put("nuts-user-launcher", () -> NWorkspace.of().bootOptions().userLauncher().orNull());
+        props.put("nuts-locale", () -> NWorkspace.of().bootOptions().locale().orNull());
+        props.put("nuts-theme", () -> NWorkspace.of().bootOptions().theme().orNull());
+        props.put("nuts-username", () -> NWorkspace.of().bootOptions().userName().orNull());
         props.put("nuts-solver",
                 () -> {
-                    String ds = NDependencySolverUtils.resolveSolverName(NWorkspace.of().getBootOptions().dependencySolver().orNull());
+                    String ds = NDependencySolverUtils.resolveSolverName(NWorkspace.of().bootOptions().dependencySolver().orNull());
                     List<String> allDs = NDependencySolver.getSolverNames();
                     return NText.ofStyled(
                             ds,
@@ -417,7 +417,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         );
         props.put("nuts-solver-list",
                 () -> {
-                    String ds = NDependencySolverUtils.resolveSolverName(NWorkspace.of().getBootOptions().dependencySolver().orNull());
+                    String ds = NDependencySolverUtils.resolveSolverName(NWorkspace.of().bootOptions().dependencySolver().orNull());
                     List<String> allDs = NDependencySolver.getSolverNames();
                     NTexts txt = NTexts.of();
                     return txt.ofBuilder().appendJoined(";",
@@ -427,8 +427,8 @@ public class DefaultNInfoCmd implements NInfoCmd {
                     );
                 }
         );
-        props.put("sys-terminal-flags", () -> NWorkspace.of().getBootTerminal().getFlags());
-        props.put("sys-terminal-mode", () -> NWorkspace.of().getBootOptions().terminalMode().orElse(NTerminalMode.DEFAULT));
+        props.put("sys-terminal-flags", () -> NWorkspace.of().bootTerminal().getFlags());
+        props.put("sys-terminal-mode", () -> NWorkspace.of().bootOptions().terminalMode().orElse(NTerminalMode.DEFAULT));
         props.put("java-version", () -> NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", () -> NEnv.of().getJava());
         props.put("java-home", () -> NPath.of(System.getProperty("java.home")));
@@ -466,17 +466,17 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("user-home", () -> NPath.ofUserHome());
         props.put("user-dir", () -> NPath.ofUserDirectory());
         props.put("command-line-long",
-                () -> NWorkspace.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false))
+                () -> NWorkspace.of().bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false))
         );
-        props.put("command-line-short", () -> NWorkspace.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
-        props.put("inherited", () -> NWorkspace.of().getBootOptions().inherited().orElse(false));
+        props.put("command-line-short", () -> NWorkspace.of().bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
+        props.put("inherited", () -> NWorkspace.of().bootOptions().inherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", () -> NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
         props.put("inherited-nuts-args", () -> NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)));
-        props.put("creation-started", () -> NWorkspace.of().getCreationStartTime());
-        props.put("creation-finished", () -> NWorkspace.of().getCreationFinishTime());
-        props.put("creation-within", () -> NWorkspace.of().getCreationDuration().normalize());
-        props.put("repositories-count", () -> (NWorkspace.of().getRepositories().size()));
+        props.put("creation-started", () -> NWorkspace.of().creationStartTime());
+        props.put("creation-finished", () -> NWorkspace.of().creationFinishTime());
+        props.put("creation-within", () -> NWorkspace.of().creationDuration().normalize());
+        props.put("repositories-count", () -> (NWorkspace.of().repositories().size()));
         if(includeSysProps){
             System.getProperties().forEach((k,v)->{
                 if(!props.containsKey(k)){
@@ -536,16 +536,16 @@ public class DefaultNInfoCmd implements NInfoCmd {
         NSession session = NSession.of();
         NWorkspace workspace = NWorkspace.of();
         NEnv environment = NEnv.of();
-        NBootOptions options = workspace.getBootOptions();
+        NBootOptions options = workspace.bootOptions();
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
-        props.put("name", stringValue(session.getWorkspace().getName()));
-        props.put("nuts-api-version", session.getWorkspace().getApiVersion());
+        props.put("name", stringValue(session.workspace().name()));
+        props.put("nuts-api-version", session.workspace().apiVersion());
 //        NutsIdFormat idFormat = ws.id().formatter();
-        props.put("nuts-api-id", session.getWorkspace().getApiId());
-        props.put("nuts-runtime-id", session.getWorkspace().getRuntimeId());
+        props.put("nuts-api-id", session.workspace().apiId());
+        props.put("nuts-runtime-id", session.workspace().runtimeId());
         props.put("nuts-app-id", NApp.of().id().orNull());
-        List<URL> cl = workspace.getBootClassWorldURLs();
+        List<URL> cl = workspace.bootClassWorldURLs();
         List<NPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
             for (URL url : cl) {
@@ -565,12 +565,12 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("nuts-runtime-classpath",
                 txt.ofBuilder().appendJoined(";", runtimeClassPath)
         );
-        props.put("nuts-workspace-id", txt.ofStyled(stringValue(session.getWorkspace().getUuid()), NTextStyle.path()));
-        props.put("nuts-store-layout", workspace.getStoreLayout());
-        props.put("nuts-store-strategy", workspace.getStoreStrategy());
-        props.put("nuts-repo-store-strategy", workspace.getRepositoryStoreStrategy());
+        props.put("nuts-workspace-id", txt.ofStyled(stringValue(session.workspace().uuid()), NTextStyle.path()));
+        props.put("nuts-store-layout", workspace.storeLayout());
+        props.put("nuts-store-strategy", workspace.storeStrategy());
+        props.put("nuts-repo-store-strategy", workspace.repositoryStoreStrategy());
         props.put("nuts-global", options.system().orNull());
-        props.put("nuts-workspace", workspace.getWorkspaceLocation());
+        props.put("nuts-workspace", workspace.workspaceLocation());
         for (NStoreType storeType : NStoreType.values()) {
             props.put("nuts-workspace-" + storeType.id(), NPath.of(NStoreKey.of(storeType)));
         }
@@ -636,9 +636,9 @@ public class DefaultNInfoCmd implements NInfoCmd {
                 )
 
         );
-        NWorkspaceTerminalOptions b = workspace.getBootTerminal();
+        NWorkspaceTerminalOptions b = workspace.bootTerminal();
         props.put("sys-terminal-flags", b.getFlags());
-        NTerminalMode terminalMode = workspace.getBootOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
+        NTerminalMode terminalMode = workspace.bootOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
         props.put("sys-terminal-mode", terminalMode);
         props.put("java-version", NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", environment.getJava());
@@ -680,17 +680,17 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("user-home", NPath.ofUserHome());
         props.put("user-dir", NPath.ofUserDirectory());
         props.put("command-line-long",
-                workspace.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false))
+                workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false))
         );
-        props.put("command-line-short", workspace.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
-        props.put("inherited", workspace.getBootOptions().inherited().orElse(false));
+        props.put("command-line-short", workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
+        props.put("inherited", workspace.bootOptions().inherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
         props.put("inherited-nuts-args", NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)));
-        props.put("creation-started", workspace.getCreationStartTime());
-        props.put("creation-finished", workspace.getCreationFinishTime());
-        props.put("creation-within", workspace.getCreationDuration().normalize());
-        props.put("repositories-count", (workspace.getRepositories().size()));
+        props.put("creation-started", workspace.creationStartTime());
+        props.put("creation-finished", workspace.creationFinishTime());
+        props.put("creation-within", workspace.creationDuration().normalize());
+        props.put("repositories-count", (workspace.repositories().size()));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
         }
@@ -712,7 +712,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         if (deep) {
             Map<String, Object> repositories = new LinkedHashMap<>();
             props.put("repos", repositories);
-            for (NRepository repository : workspace.getRepositories()) {
+            for (NRepository repository : workspace.repositories()) {
                 repositories.put(repository.name(), buildRepoRepoMap(repository, deep, prefix));
             }
         }

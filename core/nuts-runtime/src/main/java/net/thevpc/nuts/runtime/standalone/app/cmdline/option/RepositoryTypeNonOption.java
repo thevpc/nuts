@@ -55,7 +55,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add(NConstants.RepoTypes.NUTS);
         allValid.add(NConstants.RepoTypes.MAVEN);
-        for (NRepositorySpec repo : NWorkspace.of().getDefaultRepositories()) {
+        for (NRepositorySpec repo : NWorkspace.of().defaultRepositories()) {
             String t = NRepositoryUtils.getRepoType(repo);
             if(!NBlankable.isBlank(t)){
                 allValid.add(t.trim());

@@ -72,7 +72,7 @@ public class DefaultNContentEvent implements NContentEvent {
 
     @Override
     public NWorkspace workspace() {
-        return session().getWorkspace();
+        return session().workspace();
     }
 
     @Override

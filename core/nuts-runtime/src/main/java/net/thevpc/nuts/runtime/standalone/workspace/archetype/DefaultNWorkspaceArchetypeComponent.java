@@ -84,7 +84,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     @Override
     public void initializeWorkspace() {
         NWorkspace workspace = NWorkspace.of();
-        List<NRepositorySpec> defaults =new ArrayList<>(workspace.getDefaultRepositories());
+        List<NRepositorySpec> defaults =new ArrayList<>(workspace.defaultRepositories());
         NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.of().isPreviewRepo());
         NWorkspaceExt.of().getModel().configModel.invalidateStoreModelMain();
         defaults.add(new NRepositorySpec().sourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)));
@@ -116,16 +116,16 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     @Override
     public void startWorkspace() {
         NWorkspace workspace = NWorkspace.of();
-        NIsolationLevel nIsolationLevel = workspace.getBootOptions().isolationLevel().orNull();
+        NIsolationLevel nIsolationLevel = workspace.bootOptions().isolationLevel().orNull();
         if (nIsolationLevel == NIsolationLevel.MEMORY) {
             return;
         }
         boolean isolated = nIsolationLevel != null && nIsolationLevel.ordinal() >= NIsolationLevel.CONFINED.ordinal();
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
-        boolean initializeScripts = workspace.getBootOptions().initScripts().orElse(!isolated);
-        boolean initializeLaunchers = workspace.getBootOptions().initLaunchers().orElse(!isolated);
-        boolean installCompanions = workspace.getBootOptions().installCompanions().orElse(false);
+        boolean initializeScripts = workspace.bootOptions().initScripts().orElse(!isolated);
+        boolean initializeLaunchers = workspace.bootOptions().initLaunchers().orElse(!isolated);
+        boolean installCompanions = workspace.bootOptions().installCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of().installAllJVM();
@@ -135,7 +135,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        }
 
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetch.of().id(workspace.getApiId())
+            NId api = NFetch.of().id(workspace.apiId())
                     .dependencyFilter(NDependencyFilters.of().byRunnable())
                     .failFast(false).getResultId();
             if (api != null) {

@@ -175,7 +175,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
             if (!isOmitGroupId()) {
                 if (!NBlankable.isBlank(id.groupId())) {
                     boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.groupId());
-                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.groupId());
+                    boolean importedGroup = NWorkspace.of().allImports().contains(id.groupId());
                     if (!(importedGroup && isOmitImportedGroupId())) {
                         if (importedGroup || importedGroup2) {
                             sb.append(id.groupId(), NTextStyle.pale());
@@ -191,7 +191,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
             if (!isOmitGroupId()) {
                 if (!NBlankable.isBlank(id.groupId())) {
                     boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.groupId());
-                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.groupId());
+                    boolean importedGroup = NWorkspace.of().allImports().contains(id.groupId());
                     if (!(importedGroup && isOmitImportedGroupId())) {
                         if (importedGroup || importedGroup2) {
                             sb.append(id.groupId(), NTextStyle.pale());

@@ -79,7 +79,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             NText n = txt.parser().parse(NPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf",
                     this.getClass().getClassLoader()
             ));
-            session.getTerminal().out().print(
+            session.terminal().out().print(
                     n == null ? NText.ofStyled(("no help found for " + name), NTextStyle.error()) : n
             );
         }
@@ -108,7 +108,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                         out.println(w.helpText());
                         out.flush();
                     } else {
-                        session.getTerminal().err().println(NMsg.ofC("%s : not found", arg));
+                        session.terminal().err().println(NMsg.ofC("%s : not found", arg));
                     }
                 } finally {
                     if (w != null) {

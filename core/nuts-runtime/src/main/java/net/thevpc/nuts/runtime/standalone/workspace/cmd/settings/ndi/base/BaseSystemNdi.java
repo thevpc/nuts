@@ -288,7 +288,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public PathInfo[] addScript(NdiScriptOptions options, String[] all) {
         List<String> idsToInstall = Arrays.asList(all);
         NSession session = NSession.of();
-        Path workspaceLocation = NWorkspace.of().getWorkspaceLocation().toPath().get();
+        Path workspaceLocation = NWorkspace.of().workspaceLocation().toPath().get();
         List<PathInfo> result = new ArrayList<>();
         Boolean systemWideConfig = options.getLauncher().getSwitchWorkspace();
         if (!idsToInstall.isEmpty()) {
@@ -320,7 +320,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         String verString = nid.version().toString();
                         if (verString.equalsIgnoreCase("current")
                                 || verString.equalsIgnoreCase("curr")) {
-                            id = nid.builder().version(session.getWorkspace().getApiId().version()).build().toString();
+                            id = nid.builder().version(session.workspace().apiId().version()).build().toString();
                         }
                     }
 
@@ -730,7 +730,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             //apiId does not define any icon, will load icon from the runtime
             NId rt = CoreNIdUtils.findRuntimeForApi(appId.version().value());
             if (rt == null) {
-                rt = NWorkspace.of().getRuntimeId();
+                rt = NWorkspace.of().runtimeId();
             }
             return getPreferredIconPath(rt);
         }
@@ -745,7 +745,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     || appDef.id().groupId().startsWith("net.thevpc.nuts.")
             ) {
                 //get default icon
-                NId rid = NWorkspace.of().getRuntimeId();
+                NId rid = NWorkspace.of().runtimeId();
                 descAppIcon =
                         resolveBestIcon(rid,
                                 Arrays.asList(
@@ -756,7 +756,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         );
             } else if (appDef.id().groupId().startsWith("net.thevpc.nuts")) {
                 //get default icon
-                NId rid = NWorkspace.of().getRuntimeId();
+                NId rid = NWorkspace.of().runtimeId();
                 descAppIcon =
                         resolveBestIcon(rid,
                                 Arrays.asList(
@@ -812,7 +812,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public PathInfo[] createShortcut(NDesktopIntegrationItem nDesktopIntegrationItem, NdiScriptOptions options) {
         String apiVersion = options.getNutsApiVersion().toString();
         NAssert.requireNamedNonBlank(apiVersion, "nuts-api version to link to");
-        NId apiId = NWorkspace.of().getApiId().builder().version(apiVersion).build();
+        NId apiId = NWorkspace.of().apiId().builder().version(apiVersion).build();
         NDefinition apiDefinition = NSearch.of().addId(apiId).failFast(true).latest(true)
                 .distinct(true)
                 .getResultDefinitions()

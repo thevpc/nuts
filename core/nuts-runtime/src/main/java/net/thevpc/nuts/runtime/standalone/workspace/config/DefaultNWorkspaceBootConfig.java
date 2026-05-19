@@ -70,72 +70,72 @@ public class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
     }
 
     @Override
-    public String getEffectiveWorkspaceName() {
+    public String effectiveWorkspaceName() {
         return effectiveWorkspaceName;
     }
 
     @Override
-    public String getBootPath() {
+    public String bootPath() {
         return bootPath;
     }
 
 
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public String getWorkspace() {
+    public String workspace() {
         return workspace;
     }
 
     @Override
-    public String getEffectiveWorkspace() {
+    public String effectiveWorkspace() {
         return effectiveWorkspace;
     }
 
     @Override
-    public List<Extension> getExtensions() {
+    public List<Extension> extensions() {
         return extensions;
     }
 
     @Override
-    public List<String> getBootRepositories() {
+    public List<String> bootRepositories() {
         return bootRepositories;
     }
 
     @Override
-    public Map<NStoreType, String> getStoreLocations() {
+    public Map<NStoreType, String> storeLocations() {
         return Collections.unmodifiableMap(storeLocations);
     }
 
     @Override
-    public Map<NHomeLocation, String> getHomeLocations() {
+    public Map<NHomeLocation, String> homeLocations() {
         return Collections.unmodifiableMap(homeLocations);
     }
 
 
     @Override
-    public NStoreStrategy getStoreStrategy() {
+    public NStoreStrategy storeStrategy() {
         return storeStrategy;
     }
 
 
     @Override
-    public NOsFamily getStoreLayout() {
+    public NOsFamily storeLayout() {
         return storeLayout;
     }
 
 
     @Override
-    public NStoreStrategy getRepositoryStoreStrategy() {
+    public NStoreStrategy repositoryStoreStrategy() {
         return repositoryStoreStrategy;
     }
 
     @Override
-    public String getUuid() {
+    public String uuid() {
         return uuid;
     }
 
@@ -192,9 +192,9 @@ public class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
 
     @Override
     public String getHomeLocation(NStoreType storeType) {
-        return NPlatformHome.of(getStoreLayout(), isSystem()).getWorkspaceLocation(
-                storeType, getHomeLocations(),
-                getName()
+        return NPlatformHome.of(storeLayout(), isSystem()).getWorkspaceLocation(
+                storeType, homeLocations(),
+                name()
         );
     }
 

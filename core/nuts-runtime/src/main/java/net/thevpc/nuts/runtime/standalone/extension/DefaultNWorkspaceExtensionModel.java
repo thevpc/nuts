@@ -132,15 +132,15 @@ public class DefaultNWorkspaceExtensionModel {
 
     //    @Override
     public List<NExtensionInformation> findWorkspaceExtensions() {
-        return findWorkspaceExtensions(workspace.getApiVersion().toString());
+        return findWorkspaceExtensions(workspace.apiVersion().toString());
     }
 
     //  @Override
     public List<NExtensionInformation> findWorkspaceExtensions(String version) {
         if (version == null) {
-            version = workspace.getApiVersion().toString();
+            version = workspace.apiVersion().toString();
         }
-        NId id = workspace.getApiId().builder().version(version).build();
+        NId id = workspace.apiId().builder().version(version).build();
         return findExtensions(id, "extensions");
     }
 
@@ -459,7 +459,7 @@ public class DefaultNWorkspaceExtensionModel {
                 } else {
                     //load extension
                     NDefinition def = NSearch.of()
-                            .addId(extension).targetApiVersion(workspace.getApiVersion())
+                            .addId(extension).targetApiVersion(workspace.apiVersion())
                             .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .latest(true)
                             .getResultDefinitions().findFirst().orNull();
@@ -495,7 +495,7 @@ public class DefaultNWorkspaceExtensionModel {
     private void updateLoadedExtensionURLs() {
         loadedExtensionURLs.clear();
         for (NDefinition def : NSearch.of().addIds(loadedExtensionIds.toArray(new NId[0]))
-                .targetApiVersion(workspace.getApiVersion())
+                .targetApiVersion(workspace.apiVersion())
                 .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .latest(true)
                 .getResultDefinitions().toList()) {
@@ -556,7 +556,7 @@ public class DefaultNWorkspaceExtensionModel {
         _LOG().log(NMsg.ofC("installing extension %s", id)
                 .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
         );
-        NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().getRuntimeId())).resolve("extensions-" + id.getMavenFileName("cache"));
+        NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().runtimeId())).resolve("extensions-" + id.getMavenFileName("cache"));
         ExtensionCacheNode ec = null;
         NClassLoaderNode node = null;
         if (cacheFile.isRegularFile()) {
@@ -609,8 +609,8 @@ public class DefaultNWorkspaceExtensionModel {
                 .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
         );
         NTerminalSpec spec = new NDefaultTerminalSpec();
-        if (session.getTerminal() != null) {
-            spec.setProperty("ignoreClass", session.getTerminal().getClass());
+        if (session.terminal() != null) {
+            spec.setProperty("ignoreClass", session.terminal().getClass());
         }
         NTerminal newTerminal = createTerminal(spec);
         if (newTerminal != null) {
@@ -618,7 +618,7 @@ public class DefaultNWorkspaceExtensionModel {
                     .log(NMsg.ofC("extension %s changed Terminal configuration. Reloading Session Terminal", id)
                             .withLevel(Level.FINE).withIntent(NMsgIntent.UPDATE)
                     );
-            session.setTerminal(newTerminal);
+            session.terminal(newTerminal);
         }
         for (Class<?> discoveredType : discoveredTypes) {
             if (NExtensionLifeCycle.class.isAssignableFrom(discoveredType)) {
@@ -771,7 +771,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     protected URL expandURL(String url) {
         return NPath.of(url)
-                .toAbsolute(NWorkspace.of().getWorkspaceLocation())
+                .toAbsolute(NWorkspace.of().workspaceLocation())
                 .toURL().get();
     }
 

@@ -155,10 +155,10 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                         }
 
                         if (oldPassword == null && !admin) {
-                            oldPassword = NSecureString.ofSecure(session.getTerminal().readPassword(NMsg.ofPlain("Old Password:")));
+                            oldPassword = NSecureString.ofSecure(session.terminal().readPassword(NMsg.ofPlain("Old Password:")));
                         }
                         if (password == null) {
-                            password = NSecureString.ofSecure(session.getTerminal().readPassword(NMsg.ofPlain("Password:")));
+                            password = NSecureString.ofSecure(session.terminal().readPassword(NMsg.ofPlain("Password:")));
                         }
                         NSecurityManager.of().updateUser(
                                 NSecurityManager.of().findUser(user)
@@ -356,7 +356,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     NSecureString credentials = null;
                     try {
                         if (!NSecurityManager.of().isAdmin()) {
-                            credentials = NSecureString.ofSecure(session.getTerminal().readPassword(NMsg.ofPlain("Enter password : ")));
+                            credentials = NSecureString.ofSecure(session.terminal().readPassword(NMsg.ofPlain("Enter password : ")));
                         }
                         if (NSecurityManager.of().setSecureMode(false, credentials)) {
                             out.println("<<unsecure box activated.Anonymous has all rights.>>");
@@ -375,7 +375,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 NSecureString credentials = null;
                 try {
                     if (!NSecurityManager.of().isAdmin()) {
-                        credentials = NSecureString.ofSecure(session.getTerminal().readPassword(NMsg.ofPlain("Enter password : ")));
+                        credentials = NSecureString.ofSecure(session.terminal().readPassword(NMsg.ofPlain("Enter password : ")));
                     }
                     NRepository repository = null;
                     if (editedRepo != null) {

@@ -185,7 +185,7 @@ public class DefaultNInstall extends AbstractNInstall {
             list.emptyCommand = false;
             for (NId sid : NExtensions.of().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
-                    List<NId> allIds = NSearch.of().addId(sid).latest(true).targetApiVersion(ws.getApiVersion()).getResultIds().toList();
+                    List<NId> allIds = NSearch.of().addId(sid).latest(true).targetApiVersion(ws.apiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
                         throw new NArtifactNotFoundException(sid.longId());
                     }

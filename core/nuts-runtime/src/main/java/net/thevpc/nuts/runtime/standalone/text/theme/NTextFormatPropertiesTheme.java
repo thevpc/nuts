@@ -56,7 +56,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     throw new NIOException(e);
                 }
             } else {
-                NPath themeFile = NPath.of(NStoreKey.ofShared(NWorkspace.of().getRuntimeId()).conf()).resolve("themes").resolve(name);
+                NPath themeFile = NPath.of(NStoreKey.ofShared(NWorkspace.of().runtimeId()).conf()).resolve("themes").resolve(name);
                 if (themeFile.isRegularFile()) {
                     try (InputStream inStream = themeFile.inputStream()) {
                         props.load(inStream);

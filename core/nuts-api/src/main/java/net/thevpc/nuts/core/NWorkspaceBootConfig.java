@@ -30,6 +30,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.List;
 import java.util.Map;
@@ -39,34 +40,49 @@ import java.util.Map;
  * @app.category Config
  */
 public interface NWorkspaceBootConfig {
+    @NGetter
     boolean isImmediateLocation();
 
-    String getEffectiveWorkspaceName();
+    @NGetter
+    String effectiveWorkspaceName();
 
-    String getBootPath();
+    @NGetter
+    String bootPath();
 
-    String getEffectiveWorkspace();
+    @NGetter
+    String effectiveWorkspace();
 
-    String getName();
+    @NGetter
+    String name();
 
-    String getWorkspace();
+    @NGetter
+    String workspace();
 
-    List<Extension> getExtensions();
+    @NGetter
+    List<Extension> extensions();
 
-    List<String> getBootRepositories();
+    @NGetter
+    List<String> bootRepositories();
 
-    Map<NStoreType, String> getStoreLocations();
+    @NGetter
+    Map<NStoreType, String> storeLocations();
 
-    Map<NHomeLocation, String> getHomeLocations();
+    @NGetter
+    Map<NHomeLocation, String> homeLocations();
 
-    NStoreStrategy getStoreStrategy();
+    @NGetter
+    NStoreStrategy storeStrategy();
 
-    NOsFamily getStoreLayout();
+    @NGetter
+    NOsFamily storeLayout();
 
-    NStoreStrategy getRepositoryStoreStrategy();
+    @NGetter
+    NStoreStrategy repositoryStoreStrategy();
 
-    String getUuid();
+    @NGetter
+    String uuid();
 
+    @NGetter
     boolean isSystem();
 
     String getStoreLocation(NId id, NStoreType folderType);
@@ -81,7 +97,8 @@ public interface NWorkspaceBootConfig {
      * @app.category Config
      */
     interface Extension {
-        NId getId();
+        @NGetter
+        NId id();
 
         boolean isEnabled();
     }

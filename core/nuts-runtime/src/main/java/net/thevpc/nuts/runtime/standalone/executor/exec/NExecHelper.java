@@ -87,7 +87,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                            NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs
     ) throws NExecutionException {
-        Path wsLocation = NWorkspace.of().getWorkspaceLocation().toPath().get();
+        Path wsLocation = NWorkspace.of().workspaceLocation().toPath().get();
         Path pdirectory = null;
         if (NBlankable.isBlank(directory)) {
             pdirectory = wsLocation;

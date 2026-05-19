@@ -792,7 +792,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         NDisplayProperty[] a = getDisplayOptions().getDisplayProperties();
         NStream r = null;
         if (/*isDependencies() && */!isInlineDependencies()) {
-            NContentType of = getSearchSession().getOutputFormat().orDefault();
+            NContentType of = getSearchSession().outputFormat().orDefault();
             if (of == null) {
                 of = NContentType.TREE;
             }
@@ -1043,11 +1043,11 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     private void displayDryQueryPlan(NIterator it) {
         NElement n = toQueryPlan(it);
         NSession session = NSession.of();
-        NContentType f = session.getOutputFormat().orDefault();
+        NContentType f = session.outputFormat().orDefault();
         if (f == NContentType.PLAIN) {
             f = NContentType.TREE;
         }
-        NSession session2 = session.copy().setOutputFormat(f);
+        NSession session2 = session.copy().outputFormat(f);
         session2.out().println(n);
     }
 

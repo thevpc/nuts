@@ -47,7 +47,7 @@ public class NExceptionHandler {
         if (session != null) {
             return session.callWith(() -> {
                 NWorkspaceOptions bo = null;
-                bo = session.getWorkspace().getBootOptions().toWorkspaceOptions();
+                bo = session.workspace().bootOptions().toWorkspaceOptions();
                 return new NExceptionHandler()
                         .setEx(ex)
                         .setShowMessage(true)
@@ -234,7 +234,7 @@ public class NExceptionHandler {
         if (showMessage) {
             if (sessionOut != null) {
                 session.runWith(()->{
-                    if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
+                    if (session.outputFormat().orDefault() == NContentType.PLAIN) {
                         if (messageFormatted != null) {
                             sessionOut.println(messageFormatted);
                         } else {

@@ -41,13 +41,13 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
             case SPAWN: {
                 NWorkspaceOptionsBuilder wOptions = NWorkspaceOptionsBuilder.of();
                 wOptions.setBot(session.isBot());
-                wOptions.setConfirm(session.getConfirm().orDefault());
+                wOptions.setConfirm(session.confirm().orDefault());
                 wOptions.setDry(session.isDry());
-                wOptions.setShowStacktrace(session.getShowStacktrace().orDefault());
-                wOptions.setExpireTime(session.getExpireTime().orNull());
+                wOptions.setShowStacktrace(session.showStacktrace().orDefault());
+                wOptions.setExpireTime(session.expireTime().orNull());
                 wOptions.setGui(session.isGui());
-                wOptions.setLocale(session.getLocale().orDefault());
-                wOptions.setTerminalMode(session.getTerminal().out().terminalMode());
+                wOptions.setLocale(session.locale().orDefault());
+                wOptions.setTerminalMode(session.terminal().out().terminalMode());
                 wOptions.setTrace(session.isTrace());
                 wOptions.setTransitive(session.isTransitive());
                 // will be processed "in amont"
@@ -55,12 +55,12 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                 //if(getExecCommand().getRunAs()!=null) {
                 //    wOptions.setRunAs(getExecCommand().getRunAs());
                 //}
-                wOptions.setFetchStrategy(session.getFetchStrategy().orDefault());
-                wOptions.setExecutionType(session.getExecutionType().orDefault());
+                wOptions.setFetchStrategy(session.fetchStrategy().orDefault());
+                wOptions.setExecutionType(session.executionType().orDefault());
                 wOptions.setExecutionType(executionType);
-                wOptions.setOutLinePrefix(session.getOutLinePrefix());
-                wOptions.setOutputFormat(session.getOutputFormat().orDefault());
-                wOptions.setOutputFormatOptions(session.getOutputFormatOptions());
+                wOptions.setOutLinePrefix(session.outLinePrefix());
+                wOptions.setOutputFormat(session.outputFormat().orDefault());
+                wOptions.setOutputFormatOptions(session.outputFormatOptions());
 
                 String[] executorOptions = execCommand.executorOptions().toArray(new String[0]);
                 RemoteConnectionStringInfo k = RemoteConnectionStringInfo.of(execCommand.connectionString());
@@ -77,8 +77,8 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
                         NId id = d.toId();
                         //just ignore nuts base deps!
                         if (
-                                !id.equalsLongId(session.getWorkspace().getApiId())
-                                        && !id.equalsLongId(session.getWorkspace().getRuntimeId())
+                                !id.equalsLongId(session.workspace().apiId())
+                                        && !id.equalsLongId(session.workspace().runtimeId())
                         ) {
                             k.copyId(id, k.getStoreLocationCacheRepoSSH(this), null);
                             dependenciesCount++;

@@ -141,8 +141,8 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     public NFormatAndValue<Object, NContentTypeWriter> getBase(Object aValue) {
         NSession session = NSession.of();
         NFormatAndValue<Object, NContentTypeWriter> base = createObjectFormat(aValue);
-        base.getFormat().configure(true, NWorkspace.of().getBootOptions().outputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
-        base.getFormat().configure(true, session.getOutputFormatOptions().toArray(new String[0]));
+        base.getFormat().configure(true, NWorkspace.of().bootOptions().outputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+        base.getFormat().configure(true, session.outputFormatOptions().toArray(new String[0]));
         return base;
     }
 
@@ -180,7 +180,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
                 break;
             }
         }
-        NContentType nContentType = NUtils.firstNonNull(getOutputFormat(), session.getOutputFormat().orDefault(), NContentType.PLAIN);
+        NContentType nContentType = NUtils.firstNonNull(getOutputFormat(), session.outputFormat().orDefault(), NContentType.PLAIN);
         switch (nContentType) {
             //structured formats!
             case XML:

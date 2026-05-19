@@ -37,7 +37,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
     public int processThrowable(String[] args, Throwable throwable) {
         NSession session = NSession.of();
         NWorkspaceOptionsBuilder bo = null;
-        bo = NWorkspace.of().getBootOptions().toWorkspaceOptions().builder();
+        bo = NWorkspace.of().bootOptions().toWorkspaceOptions().builder();
         if (!NEnv.of().isGraphicalDesktopEnvironment()) {
             bo.setGui(false);
         }
@@ -67,7 +67,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
             );
         }
         if (fout != null) {
-            if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
+            if (session.outputFormat().orDefault() == NContentType.PLAIN) {
                 if (fm != null) {
                     fout.println(fm);
                 } else {

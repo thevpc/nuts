@@ -88,11 +88,13 @@ public class NRunAs {
         return NOptional.ofNamedEmpty("NRunAs "+runAs);
     }
 
-    public NRunAsMode getMode() {
+    @NGetter
+    public NRunAsMode mode() {
         return mode;
     }
 
-    public String getUser() {
+    @NGetter
+    public String user() {
         return user;
     }
 

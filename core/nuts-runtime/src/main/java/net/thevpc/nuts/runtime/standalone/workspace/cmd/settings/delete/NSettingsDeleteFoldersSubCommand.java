@@ -102,7 +102,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
                         factory.ofStyled(storeType.id(), NTextStyle.primary1()),
-                        factory.ofStyled(NWorkspace.of().getName(), NTextStyle.primary1()),
+                        factory.ofStyled(NWorkspace.of().name(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
@@ -112,7 +112,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                 }
             }
         }
-        for (NRepository repository : NWorkspace.of().getRepositories()) {
+        for (NRepository repository : NWorkspace.of().repositories()) {
             deleteRepoFolder(repository, storeType, force);
         }
     }
@@ -148,7 +148,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             if (sstoreLocation.exists()) {
                 sstoreLocation.delete();
             }
-            for (NRepository repository : NWorkspace.of().getRepositories()) {
+            for (NRepository repository : NWorkspace.of().repositories()) {
                 deleteRepoCache(repository, force);
             }
         }

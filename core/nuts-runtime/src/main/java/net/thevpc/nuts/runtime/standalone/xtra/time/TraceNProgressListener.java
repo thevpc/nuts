@@ -40,7 +40,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
         switch (event.getState()) {
             case START: {
                 bar = CProgressBar.of();
-                this.out = event.session().getTerminal().err();
+                this.out = event.session().terminal().err();
                 this.logger= NLog.of(TraceNProgressListener.class);
                 if (event.session().isPlainOut()) {
                     onProgress0(event, false);

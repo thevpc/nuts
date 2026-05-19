@@ -393,7 +393,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         if (ii.isInstalled()) {
             defaultVersion = isDefaultVersion(ii.getId());
         }
-        Instant expireTime = session.getExpireTime().orNull();
+        Instant expireTime = session.expireTime().orNull();
         if (expireTime != null && (ii.isInstalled() || ii.isRequired() || ii.isDeployed())) {
             Instant lastModifiedDate = ii.getLastModificationDate();
             if (lastModifiedDate == null) {
@@ -553,7 +553,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public void printJson(NId id, String name, InstallInfoConfig value) {
-        value.setConfigVersion(workspace.getApiVersion());
+        value.setConfigVersion(workspace.apiVersion());
         NElementWriter.ofJson().write(value, getPath(id, name));
     }
 

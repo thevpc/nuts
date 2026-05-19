@@ -24,7 +24,7 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
         for (String exactRepo : exactRepos) {
             li=li.merge(NRepositoryUtils.createRepositorySelectorList(exactRepo).get());
         }
-        NRepositorySpec[] input = NWorkspace.of().getRepositories().stream()
+        NRepositorySpec[] input = NWorkspace.of().repositories().stream()
                 .map(x -> x.config().location().setName(x.name()))
                 .map(x->new NRepositorySpec().sourceLocation(x))
                 .toArray(NRepositorySpec[]::new);

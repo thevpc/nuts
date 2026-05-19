@@ -56,7 +56,7 @@ public class DefaultNUpdateEvent implements NUpdateEvent {
 
     @Override
     public NWorkspace workspace() {
-        return session().getWorkspace();
+        return session().workspace();
     }
 
     @Override

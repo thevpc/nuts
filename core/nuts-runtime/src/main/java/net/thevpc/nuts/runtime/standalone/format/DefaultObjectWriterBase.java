@@ -66,13 +66,13 @@ public abstract class DefaultObjectWriterBase<T extends NObjectWriter> extends D
     @Override
     public void print(Object aValue) {
         NSession session=NSession.of();
-        print(aValue, session.getTerminal());
+        print(aValue, session.terminal());
     }
 
     @Override
     public void println(Object aValue) {
         NSession session=NSession.of();
-        println(aValue, session.getTerminal());
+        println(aValue, session.terminal());
     }
 
     @Override
@@ -131,7 +131,7 @@ public abstract class DefaultObjectWriterBase<T extends NObjectWriter> extends D
     @Override
     public void print(Object aValue, NTerminal terminal) {
         NSession session=NSession.of();
-        print(aValue, terminal == null ? session.getTerminal().out() : terminal.out());
+        print(aValue, terminal == null ? session.terminal().out() : terminal.out());
     }
 
     @Override
@@ -186,7 +186,7 @@ public abstract class DefaultObjectWriterBase<T extends NObjectWriter> extends D
     @Override
     public void println(Object aValue, NTerminal terminal) {
         NSession session= NSession.of();
-        println(aValue, terminal == null ? session.getTerminal().out() : terminal.out());
+        println(aValue, terminal == null ? session.terminal().out() : terminal.out());
     }
 
     @Override

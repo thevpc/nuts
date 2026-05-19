@@ -62,7 +62,7 @@ public class DefaultNRepositoryModel {
         NSession session = workspace.currentSession();
         if (session.isTransitive()) {
             for (NRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NRepository m = session.copy().setTransitive(true).callWith(() -> child.config()
+                final NRepository m = session.copy().transitive(true).callWith(() -> child.config()
                         .findMirrorById(repositoryId));
                 if (m != null) {
                     if (y == null) {
@@ -87,7 +87,7 @@ public class DefaultNRepositoryModel {
         NSession session = workspace.currentSession();
         if (session.isTransitive()) {
             for (NRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NRepository m = session.copy().setTransitive(true).callWith(() -> child.config()
+                final NRepository m = session.copy().transitive(true).callWith(() -> child.config()
                         .findMirrorByName(repositoryName));
                 if (m != null) {
                     if (y == null) {
@@ -117,7 +117,7 @@ public class DefaultNRepositoryModel {
         NSession session = workspace.currentSession();
         if (session.isTransitive()) {
             for (NRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NRepository m = session.copy().setTransitive(true).callWith(() -> child.config()
+                final NRepository m = session.copy().transitive(true).callWith(() -> child.config()
                         .getMirror(repositoryIdOrName).orNull()
                 );
                 if (m != null) {
@@ -264,9 +264,9 @@ public class DefaultNRepositoryModel {
                     NRepositorySpec cp = options.copy();
                     cp.sourceLocation(options.sourceLocation().copy().setName(options.name()));
                     options.enabled(
-                            NWorkspace.of().getBootOptions().repositories() == null
+                            NWorkspace.of().bootOptions().repositories() == null
                                     || NRepositoryUtils.createRepositorySelectorList(
-                                    NWorkspace.of().getBootOptions().repositories().orNull()
+                                    NWorkspace.of().bootOptions().repositories().orNull()
                             ).get().acceptExisting(cp));
                 }
             } else {
@@ -274,9 +274,9 @@ public class DefaultNRepositoryModel {
                     NRepositorySpec cp = options.copy();
                     cp.sourceLocation(options.sourceLocation().copy().setName(options.name()));
                     options.enabled(
-                            NWorkspace.of().getBootOptions().repositories() == null
+                            NWorkspace.of().bootOptions().repositories() == null
                                     || NRepositoryUtils.createRepositorySelectorList(
-                                    NWorkspace.of().getBootOptions().repositories().orNull()
+                                    NWorkspace.of().bootOptions().repositories().orNull()
                             ).get().acceptExisting(cp));
                 }
                 options.location(CoreIOUtils.resolveRepositoryPath(options, rootFolder));

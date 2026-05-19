@@ -299,7 +299,7 @@ public class NOut {
      * @since 0.8.6
      */
     public static void printProgress(float progress, NMsg message) {
-        NSession.of().getTerminal().printProgress(progress, message);
+        NSession.of().terminal().printProgress(progress, message);
     }
 
     /**
@@ -309,7 +309,7 @@ public class NOut {
      * @since 0.8.6
      */
     public static void printProgress(NMsg message) {
-        NSession.of().getTerminal().printProgress(message);
+        NSession.of().terminal().printProgress(message);
     }
 
     public static boolean isPlain() {

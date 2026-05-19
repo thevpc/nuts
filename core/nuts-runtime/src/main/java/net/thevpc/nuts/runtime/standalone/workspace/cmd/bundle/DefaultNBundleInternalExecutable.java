@@ -78,7 +78,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         }
         NTrace.println(NMsg.ofC("nuts %s v%s",
                 NMsg.ofStyledPrimary1("bundle builder"),
-                NWorkspace.of().getRuntimeId().version()));
+                NWorkspace.of().runtimeId().version()));
         BOptions boptions = new BOptions();
         NCmdLine cmdLine = NCmdLine.of(args);
         new BOptionsParser().parseBOptions(boptions, cmdLine);
@@ -377,7 +377,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             String dotBatOrNothing = osFamily == NOsFamily.WINDOWS ? ".bat" : "";
             out
                     .printlnComment("-------------------------------------")
-                    .printlnComment(" Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().version())
+                    .printlnComment(" Nuts Bundle Launcher Script " + NWorkspace.of().runtimeId().version())
                     .printlnComment(" This bundle was created for " + mainIdStr.shortName())
                     .printlnComment(" (c) 2025 thevpc")
                     .printlnComment("-------------------------------------")

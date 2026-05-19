@@ -42,7 +42,7 @@ public class NLogFileHandler implements NLogSPI {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
         if (folder == null || NBlankable.isBlank(folder)) {
-            folder = logFolder + "/" + NConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + NWorkspace.of().getApiVersion();
+            folder = logFolder + "/" + NConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + NWorkspace.of().apiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {
@@ -102,8 +102,8 @@ public class NLogFileHandler implements NLogSPI {
             return false;
         }
         NSession session = NSession.of();
-        NLogConfig logConfig = NWorkspace.of().getBootOptions().logConfig().orElseGet(NLogConfig::new);
-        Level sessionLogLevel = session.getLogFileLevel();
+        NLogConfig logConfig = NWorkspace.of().bootOptions().logConfig().orElseGet(NLogConfig::new);
+        Level sessionLogLevel = session.logFileLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {
                 sessionLogLevel = logConfig.getLogFileLevel();

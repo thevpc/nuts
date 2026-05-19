@@ -174,7 +174,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
             return false;
         }
         NVersion apiVersion = options.getApiVersion().orNull();
-        switch (value.getMode()) {
+        switch (value.mode()) {
             case CURRENT_USER: {
                 if (isApiVersionOrAfter(V081)) {
                     if (!config.isOmitDefaults()) {
@@ -201,12 +201,12 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
             }
             case USER: {
                 if (isApiVersionOrAfter(V081)) {
-                    arguments.add("--run-as=" + value.getUser());
+                    arguments.add("--run-as=" + value.user());
                 }
                 return true;
             }
             default: {
-                throw new UnsupportedOperationException("unsupported " + value.getMode());
+                throw new UnsupportedOperationException("unsupported " + value.mode());
             }
         }
     }

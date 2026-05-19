@@ -223,8 +223,8 @@ public class CoreIOUtils {
 
     public static NPrintStream resolveOut() {
         NSession session = NSession.of();
-        return (session.getTerminal() == null) ? NPrintStream.NULL
-                : session.getTerminal().out();
+        return (session.terminal() == null) ? NPrintStream.NULL
+                : session.terminal().out();
     }
 
     //
@@ -342,7 +342,7 @@ public class CoreIOUtils {
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound) {
         NWorkspace workspace = NWorkspace.of();
-        final NPath cacheBasePath = NPath.of(NStoreKey.ofCache(workspace.getRuntimeId()));
+        final NPath cacheBasePath = NPath.of(NStoreKey.ofCache(workspace.runtimeId()));
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
@@ -502,8 +502,8 @@ public class CoreIOUtils {
 
     public static boolean isObsoleteInstant(Instant instant) {
         NSession session = NSession.of();
-        if (session.getExpireTime().isPresent()) {
-            return instant == null || instant.isBefore(session.getExpireTime().orNull());
+        if (session.expireTime().isPresent()) {
+            return instant == null || instant.isBefore(session.expireTime().orNull());
         }
         return false;
     }

@@ -28,6 +28,8 @@ package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 
@@ -45,17 +47,22 @@ public interface NWorkspaceList extends NComponent {
         return NExtensions.of(NWorkspaceList.class);
     }
 
-    List<NWorkspaceLocation> getWorkspaces();
+    @NGetter
+    List<NWorkspaceLocation> workspaces();
 
     NWorkspaceLocation getWorkspaceLocation(String uuid);
 
-    NWorkspaceListConfig getConfig();
+    @NGetter
+    NWorkspaceListConfig config();
 
-    String getName();
+    @NGetter
+    String name();
 
-    NWorkspaceList setName(String name);
+    @NSetter
+    NWorkspaceList name(String name);
 
-    NWorkspaceList setConfig(NWorkspaceListConfig config);
+    @NSetter
+    NWorkspaceList config(NWorkspaceListConfig config);
 
     NWorkspace addWorkspace(String path);
 

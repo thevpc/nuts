@@ -59,13 +59,13 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     public static NDuration getGlobalConnectionTimeout() {
-        return NWorkspace.of().getBootOptions()
+        return NWorkspace.of().bootOptions()
                 .customOptionArg("---connection-timeout").flatMap(y -> NDuration.parse(y.stringValue()))
                 .orElse(null);
     }
 
     public static NDuration getGlobalReadTimeout() {
-        return NWorkspace.of().getBootOptions()
+        return NWorkspace.of().bootOptions()
                 .customOptionArg("---connection-read-timeout").flatMap(y -> NDuration.parse(y.stringValue()))
                 .orElse(null);
     }
@@ -78,7 +78,7 @@ public class DefaultNWebCli implements NWebCli {
     private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
     public DefaultNWebCli() {
-        headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().getRuntimeId().version(), DefaultNWebHeaders.Mode.ALWAYS);
+        headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().runtimeId().version(), DefaultNWebHeaders.Mode.ALWAYS);
     }
 
     public static InputStream prepareGlobalOpenStream(URL url) throws IOException {

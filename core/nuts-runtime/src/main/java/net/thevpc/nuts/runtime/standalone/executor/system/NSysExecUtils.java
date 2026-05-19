@@ -179,7 +179,7 @@ public class NSysExecUtils {
             };
         }
         //optimize mode
-        switch (runAsMode.getMode()) {
+        switch (runAsMode.mode()) {
             case ROOT: {
                 if (rootUserName.equals(currentUserName)) {
                     runAsMode = NRunAs.currentUser();
@@ -187,12 +187,12 @@ public class NSysExecUtils {
                 break;
             }
             case USER: {
-                String s = runAsMode.getUser();
+                String s = runAsMode.user();
                 s = s.trim();
                 if (currentUserName.equals(s)) {
                     runAsMode = NRunAs.currentUser();
                 }
-                if (!s.equals(runAsMode.getUser())) {
+                if (!s.equals(runAsMode.user())) {
                     runAsMode = NRunAs.user(s);
                 }
                 break;
@@ -201,13 +201,13 @@ public class NSysExecUtils {
         NRunAs finalRunAsMode = runAsMode;
         Function<String,String[]> cm= s -> {
             switch (s){
-                case "user":return new String[]{finalRunAsMode.getMode() == NRunAsMode.USER ? finalRunAsMode.getUser() : rootUserName};
+                case "user":return new String[]{finalRunAsMode.mode() == NRunAsMode.USER ? finalRunAsMode.user() : rootUserName};
                 case "command":return command.toArray(new String[0]);
                 case "rootUser":return new String[]{rootUserName};
             }
             return null;
         };
-        switch (runAsMode.getMode()) {
+        switch (runAsMode.mode()) {
             case CURRENT_USER: {
                 List<String> cc = new ArrayList<>();
                 cc.addAll(command);
@@ -232,7 +232,7 @@ public class NSysExecUtils {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", finalRunAsMode.getMode() == NRunAsMode.USER ? finalRunAsMode.getUser() : rootUserName));
+                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", finalRunAsMode.mode() == NRunAsMode.USER ? finalRunAsMode.user() : rootUserName));
                     }
                 }
                 return cc;

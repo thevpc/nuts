@@ -77,7 +77,7 @@ public class MavenUtils {
     }
 
     public static MavenUtils of() {
-        MavenUtils wp = (MavenUtils) NWorkspace.of().getProperties().get(MavenUtils.class.getName());
+        MavenUtils wp = (MavenUtils) NWorkspace.of().properties().get(MavenUtils.class.getName());
         if (wp == null) {
             wp = new MavenUtils();
             NWorkspace.of().setProperty(MavenUtils.class.getName(), wp);
@@ -86,7 +86,7 @@ public class MavenUtils {
     }
 
     public static NPomIdResolver createPomIdResolver() {
-        NPomIdResolver wp = (NPomIdResolver) NWorkspace.of().getProperties().get(NPomIdResolver.class.getName());
+        NPomIdResolver wp = (NPomIdResolver) NWorkspace.of().properties().get(NPomIdResolver.class.getName());
         if (wp == null) {
             wp = new NPomIdResolver();
             NWorkspace.of().setProperty(NPomIdResolver.class.getName(), wp);
@@ -510,7 +510,7 @@ public class MavenUtils {
     public NDescriptor parsePomXmlAndResolveParents(NPath path, NFetchMode fetchMode, NRepository repository) {
         try {
             NSession session = NSession.of();
-            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(path)));
+            session.terminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(path)));
             try (InputStream is = path.inputStream()) {
                 NDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
                 if (nutsDescriptor.id().artifactId() == null) {

@@ -30,28 +30,28 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
 
     public DefaultNWorkspaceList() {
         NWorkspace ws = NWorkspace.of();
-        setName(null);
+        name(null);
         NPath file = getConfigFile();
         if (file.exists()) {
             this.config = NElementReader.ofJson().read(file, NWorkspaceListConfig.class);
             for (NWorkspaceLocation var : this.config.getWorkspaces()) {
-                this.workspaces.put(var.getUuid(), var);
+                this.workspaces.put(var.uuid(), var);
             }
         } else {
             this.config = new NWorkspaceListConfig()
-                    .setUuid(UUID.randomUUID().toString())
-                    .setName("default-config");
-            this.workspaces.put(ws.getUuid(),
+                    .uuid(UUID.randomUUID().toString())
+                    .name("default-config");
+            this.workspaces.put(ws.uuid(),
                     new NWorkspaceLocation()
-                            .setUuid(ws.getUuid())
-                            .setName(NConstants.Names.DEFAULT_WORKSPACE_NAME)
-                            .setLocation(NWorkspace.of().getWorkspaceLocation().toString())
+                            .uuid(ws.uuid())
+                            .name(NConstants.Names.DEFAULT_WORKSPACE_NAME)
+                            .location(NWorkspace.of().workspaceLocation().toString())
             );
             this.save();
         }
     }
 
-    public DefaultNWorkspaceList setName(String name) {
+    public DefaultNWorkspaceList name(String name) {
         if (NBlankable.isBlank(name)) {
             name = "default";
         }
@@ -59,7 +59,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         return this;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -69,7 +69,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     }
 
     @Override
-    public List<NWorkspaceLocation> getWorkspaces() {
+    public List<NWorkspaceLocation> workspaces() {
         return new ArrayList<>(workspaces.values());
     }
 
@@ -79,12 +79,12 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     }
 
     @Override
-    public NWorkspaceListConfig getConfig() {
+    public NWorkspaceListConfig config() {
         return config;
     }
 
     @Override
-    public DefaultNWorkspaceList setConfig(NWorkspaceListConfig config) {
+    public DefaultNWorkspaceList config(NWorkspaceListConfig config) {
         this.config = config;
         return this;
     }
@@ -94,10 +94,10 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         NWorkspace ss = this.createWorkspace(path);
         NWorkspace workspace = NWorkspace.of();
         NWorkspaceLocation workspaceLocation = new NWorkspaceLocation()
-                .setUuid(ss.getUuid())
-                .setName(workspace.getWorkspaceLocation().name())
-                .setLocation(workspace.getWorkspaceLocation().toString());
-        workspaces.put(ss.getUuid(), workspaceLocation);
+                .uuid(ss.uuid())
+                .name(workspace.workspaceLocation().name())
+                .location(workspace.workspaceLocation().toString());
+        workspaces.put(ss.uuid(), workspaceLocation);
         this.save();
         return ss;
     }

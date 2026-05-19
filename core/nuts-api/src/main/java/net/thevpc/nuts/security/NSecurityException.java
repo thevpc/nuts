@@ -82,7 +82,7 @@ public class NSecurityException extends SecurityException implements NSessionAwa
      * @return current workspace
      */
     public NWorkspace workspace() {
-        return session.getWorkspace();
+        return session.workspace();
     }
 
     public NSession session() {

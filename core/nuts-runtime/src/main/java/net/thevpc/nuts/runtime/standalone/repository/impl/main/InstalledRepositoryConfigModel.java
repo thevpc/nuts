@@ -123,7 +123,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
 
     @Override
     public NStoreStrategy getStoreStrategy() {
-        return NWorkspace.of().getRepositoryStoreStrategy();
+        return NWorkspace.of().repositoryStoreStrategy();
     }
 
     @Override
@@ -233,7 +233,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     @Override
     public Map<String, String> toMap(boolean inherit) {
         if (inherit) {
-            return NWorkspace.of().getConfigMap();
+            return NWorkspace.of().configMap();
         }
         return new HashMap<>();
     }

@@ -168,7 +168,7 @@ public class NRepositoryMirroringHelper {
         NId id = cmd.getId();
         String repository = cmd.getRepository();
         NSession session = getWorkspace().currentSession();
-        NSession nonTransitiveSession = session.copy().setTransitive(false);
+        NSession nonTransitiveSession = session.copy().transitive(false);
 
         NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchDescriptor().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchContent().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());

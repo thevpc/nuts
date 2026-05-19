@@ -87,7 +87,7 @@ public class DefaultNSearch extends AbstractNSearch {
         NSession session = NSession.of();
         NRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         DefaultNSearchInfo.RegularId[] regularIds = search.getRegularIds();
-        NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
+        NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.fetchStrategy().orDefault());
         Set<NRepository> consideredRepos = new HashSet<>();
         NWorkspaceUtils wu = NWorkspaceUtils.of();
         if (regularIds.length > 0) {

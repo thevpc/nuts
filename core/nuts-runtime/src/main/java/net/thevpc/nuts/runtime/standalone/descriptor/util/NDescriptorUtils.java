@@ -55,7 +55,7 @@ public class NDescriptorUtils {
         NVersion version = id == null ? null : id.version();
         if (groupId == null || artifactId == null || NBlankable.isBlank(version)) {
             NSession session = NSession.of();
-            switch (session.getConfirm().orDefault()) {
+            switch (session.confirm().orDefault()) {
                 case ASK:
                 case ERROR: {
                     if (groupId == null) {

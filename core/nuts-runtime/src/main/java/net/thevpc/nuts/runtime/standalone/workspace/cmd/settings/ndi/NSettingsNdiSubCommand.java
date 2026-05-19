@@ -198,7 +198,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "-i":
                 case "--installed": {
                     cmdLine.matcher().matchTrueFlag((v) -> {
-                        session.setConfirm(NConfirmationMode.YES);
+                        session.confirm(NConfirmationMode.YES);
                         for (NId resultId : NSearch.of()
                                 .definitionFilter(NDefinitionFilters.of().byInstalled(true)
                         ).getResultIds()) {
@@ -211,7 +211,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "-c":
                 case "--companions": {
                     cmdLine.matcher().matchTrueFlag((v) -> {
-                        session.setConfirm(NConfirmationMode.YES);
+                        session.confirm(NConfirmationMode.YES);
                         for (NId companion : NExtensions.of().getCompanionIds()) {
                             d.idsToInstall.add(NSearch.of().addId(companion).latest(true).getResultIds().findFirst().get().longName());
                             d.missingAnyArgument = false;
@@ -316,7 +316,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         }
         if (cmdLine.isExecMode()) {
             if (forceAll) {
-                session.setConfirm(NConfirmationMode.YES);
+                session.confirm(NConfirmationMode.YES);
             }
             SystemNdi ndi = createNdi();
             if (ndi == null) {

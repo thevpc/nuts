@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,25 +57,29 @@ public class NWorkspaceListConfig implements Serializable {
     }
 
     public NWorkspaceListConfig(NWorkspaceListConfig other) {
-        this.uuid = other.getUuid();
-        this.name = other.getName();
+        this.uuid = other.uuid();
+        this.name = other.name();
         this.workspaces = other.getWorkspaces() == null ? null : new ArrayList<>(other.getWorkspaces());
     }
 
-    public String getUuid() {
+    @NGetter
+    public String uuid() {
         return uuid;
     }
 
-    public NWorkspaceListConfig setUuid(String uuid) {
+    @NSetter
+    public NWorkspaceListConfig uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }
 
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NWorkspaceListConfig setName(String name) {
+    @NSetter
+    public NWorkspaceListConfig name(String name) {
         this.name = name;
         return this;
     }

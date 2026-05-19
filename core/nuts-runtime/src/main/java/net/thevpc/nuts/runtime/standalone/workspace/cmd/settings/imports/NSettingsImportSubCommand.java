@@ -30,7 +30,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("list imports","list import","import list", "li").isPresent()) {
             cmdLine.commandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
-                for (String imp : (NWorkspace.of().getAllImports())) {
+                for (String imp : (NWorkspace.of().allImports())) {
                     NOut.println(NMsg.ofPlain(imp));
                 }
             }

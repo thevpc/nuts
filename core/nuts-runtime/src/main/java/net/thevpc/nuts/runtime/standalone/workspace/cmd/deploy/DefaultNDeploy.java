@@ -131,7 +131,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
         }
         NAssert.requireNamedNonBlank(result, "package to deploy");
         if (session.isTrace()) {
-            switch (session.getOutputFormat().orDefault()) {
+            switch (session.outputFormat().orDefault()) {
                 case PLAIN: {
                     for (Result nid : result) {
                         NOut.println(NMsg.ofC(

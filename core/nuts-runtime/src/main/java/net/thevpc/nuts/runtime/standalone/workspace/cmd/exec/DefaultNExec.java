@@ -143,7 +143,7 @@ public class DefaultNExec extends AbstractNExec {
         NExecutionType executionType = this.executionType();
         NRunAs runAs = this.runAs();
         if (executionType == null) {
-            executionType = session.getExecutionType().orDefault();
+            executionType = session.executionType().orDefault();
         }
         if (executionType == null) {
             executionType = NExecutionType.SPAWN;
@@ -335,7 +335,7 @@ public class DefaultNExec extends AbstractNExec {
         //resolve internal commands!
         NExecutionType executionType = executionType();
         if (executionType == null) {
-            executionType = session.getExecutionType().orDefault();
+            executionType = session.executionType().orDefault();
         }
         if (executionType == null) {
             executionType = NExecutionType.SPAWN;
@@ -680,7 +680,7 @@ public class DefaultNExec extends AbstractNExec {
                         .failFast(false)
                         .latest(true)
                         .getResultIds().findFirst().orElse(null);
-                if (ff == null && NSession.of().getFetchStrategy().orElse(NFetchStrategy.ONLINE) != NFetchStrategy.OFFLINE) {
+                if (ff == null && NSession.of().fetchStrategy().orElse(NFetchStrategy.ONLINE) != NFetchStrategy.OFFLINE) {
                     if (traceSession.isPlainTrace()) {
                         traceSession.out().println(NMsg.ofC("%s is %s, will search for it online. Type %s to stop...",
                                 nid,

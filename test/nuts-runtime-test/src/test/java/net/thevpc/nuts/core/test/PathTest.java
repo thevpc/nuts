@@ -78,7 +78,7 @@ public class PathTest {
         }
         NOut.println("----------------------------IdStore");
         for (NStoreType value : NStoreType.values()) {
-            NOut.println(NMsg.ofC("NPath.of(NStoreKey.of(NWorkspace.of().getApiId()).type(%s))) => %s", value, NPath.of(NStoreKey.of(NWorkspace.of().getApiId()).type(value))));
+            NOut.println(NMsg.ofC("NPath.of(NStoreKey.of(NWorkspace.of().getApiId()).type(%s))) => %s", value, NPath.of(NStoreKey.of(NWorkspace.of().apiId()).type(value))));
         }
     }
 

@@ -53,7 +53,7 @@ public class WorkspaceTest {
         Assertions.assertEquals(
                 NPath.of(new File(wsPath, "cache")),
                 NPath.of(NStoreKey.ofCache()));
-        Assertions.assertEquals(0, NWorkspace.of().getRepositories().size());
+        Assertions.assertEquals(0, NWorkspace.of().repositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        NRepositories.of().getRepositories()[0].getName() +
 //                        "/" + NRepositories.of().getRepositories()[0].getUuid()).getPath(),
@@ -136,7 +136,7 @@ public class WorkspaceTest {
                 NPath.of(new File(base, new File(wsPath).getName())),
                 NPath.of(NStoreKey.ofCache())
         );
-        NRepository localRepo = ws.getRepositories().stream().filter(x -> x.name().equals("local")).findFirst().get();
+        NRepository localRepo = ws.repositories().stream().filter(x -> x.name().equals("local")).findFirst().get();
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
@@ -455,7 +455,7 @@ public class WorkspaceTest {
         }
         NPath c = NPath.of(NStoreKey.ofConf());
         TestUtils.println(c);
-        File base = NWorkspace.of().getLocation().toFile().get();
+        File base = NWorkspace.of().location().toFile().get();
         TestUtils.println(new File(base, "config").getPath());
         for (NStoreType value : NStoreType.values()) {
             NOut.println(NMsg.ofC("%s %s", value, NPath.of(NStoreKey.of(value))));

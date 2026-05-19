@@ -69,7 +69,7 @@ public class DefaultNUpdateStats extends AbstractNUpdateStats {
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
                 new MavenRepositoryFolderHelper(null, NPath.of(repositoryPath)).reindexFolder();
                 if (session.isPlainTrace()) {
-                    session.getTerminal().out().println(NMsg.ofC("[%s] updated maven index %s", NWorkspace.of().getWorkspaceLocation(), repositoryPath));
+                    session.terminal().out().println(NMsg.ofC("[%s] updated maven index %s", NWorkspace.of().workspaceLocation(), repositoryPath));
                 }
             } else {
                 File[] nutsRepoRootFiles = repositoryPath.toFile().listFiles(x
@@ -81,17 +81,17 @@ public class DefaultNUpdateStats extends AbstractNUpdateStats {
                     throw new NIllegalArgumentException(NMsg.ofPlain("unsupported repository folder"));
                 }
                 if (session.isPlainTrace()) {
-                    NOut.println(NMsg.ofC("[%s] updated stats %s", NWorkspace.of().getWorkspaceLocation(), repositoryPath));
+                    NOut.println(NMsg.ofC("[%s] updated stats %s", NWorkspace.of().workspaceLocation(), repositoryPath));
                 }
             }
         }
         if (!processed) {
             if (session.isPlainTrace()) {
-                NOut.println(NMsg.ofC("%s updating workspace stats", NWorkspace.of().getWorkspaceLocation()));
+                NOut.println(NMsg.ofC("%s updating workspace stats", NWorkspace.of().workspaceLocation()));
             }
-            for (NRepository repo : NWorkspace.of().getRepositories()) {
+            for (NRepository repo : NWorkspace.of().repositories()) {
                 if (session.isPlainTrace()) {
-                    NOut.println(NMsg.ofC("%s updating stats %s", NWorkspace.of().getWorkspaceLocation(), repo));
+                    NOut.println(NMsg.ofC("%s updating stats %s", NWorkspace.of().workspaceLocation(), repo));
                 }
                 NWorkspaceUtils.of().toRepositorySPI(repo).updateStatistics()
                         //                        .setFetchMode(NutsFetchMode.LOCAL)

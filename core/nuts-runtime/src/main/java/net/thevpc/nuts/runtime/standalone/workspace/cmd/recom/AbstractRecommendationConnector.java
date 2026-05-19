@@ -59,10 +59,10 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         }
         RequestAgent agent = ri.q.getAgent();
         if (agent.getApiVersion() == null) {
-            agent.setApiVersion(workspace.getApiVersion().toString());
+            agent.setApiVersion(workspace.apiVersion().toString());
         }
         if (agent.getRuntimeId() == null) {
-            agent.setRuntimeId(workspace.getRuntimeId().toString());
+            agent.setRuntimeId(workspace.runtimeId().toString());
         }
         NEnv environment = NEnv.of();
         if (agent.getArch() == null) {
@@ -87,7 +87,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             agent.setUserDigest(getLocalUserUUID());
         }
         if (agent.getUserLocale() == null) {
-            String loc = session.getLocale().orDefault();
+            String loc = session.locale().orDefault();
             if (loc == null) {
                 loc = Locale.getDefault().toString();
             }

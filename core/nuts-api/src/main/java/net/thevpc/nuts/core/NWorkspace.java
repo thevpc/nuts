@@ -95,29 +95,29 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      *
      * @return uuid
      */
-    String getUuid();
+    String uuid();
 
     /**
      * Workspace name
      *
      * @return name
      */
-    String getName();
+    String name();
 
-    String getDigestName();
+    String digestName();
 
-    NVersion getApiVersion();
+    NVersion apiVersion();
 
-    NVersion getBootVersion();
+    NVersion bootVersion();
 
-    NId getApiId();
+    NId apiId();
 
-    NId getAppId();
+    NId appId();
 
-    NId getRuntimeId();
+    NId runtimeId();
 
 
-    NPath getLocation();
+    NPath location();
 
     /// ////////////////// create new session
     NSession createSession();
@@ -135,19 +135,19 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NWorkspace addRepositoryListener(NRepositoryListener listener);
 
-    List<NRepositoryListener> getRepositoryListeners();
+    List<NRepositoryListener> repositoryListeners();
 
     NWorkspace removeWorkspaceListener(NWorkspaceListener listener);
 
     NWorkspace addWorkspaceListener(NWorkspaceListener listener);
 
-    List<NWorkspaceListener> getWorkspaceListeners();
+    List<NWorkspaceListener> workspaceListeners();
 
     NWorkspace removeInstallListener(NInstallListener listener);
 
     NWorkspace addInstallListener(NInstallListener listener);
 
-    List<NInstallListener> getInstallListeners();
+    List<NInstallListener> installListeners();
 
     /// ///////////////////////////////
 
@@ -204,7 +204,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NWorkspace removeRepository(String locationOrRepositoryId);
 
-    List<NRepository> getRepositories();
+    List<NRepository> repositories();
 
     NWorkspace removeAllRepositories();
 
@@ -214,7 +214,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NWorkspace removePropertyListener(NObservableMapListener<String, Object> listener);
 
-    List<NObservableMapListener<String, Object>> getPropertyListeners();
+    List<NObservableMapListener<String, Object>> propertyListeners();
 
 
     /**
@@ -227,7 +227,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      * @return a map of property names to values
      * @since 0.8.1
      */
-    Map<String, Object> getProperties();
+    Map<String, Object> properties();
 
     /**
      * Retrieves the raw value of a property by name from the workspace.
@@ -297,39 +297,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     <T> T getOrComputeProperty(String property, Supplier<T> supplier);
 
 
-//    String getHostName();
-
-    String getPid();
-
-//    NOsFamily getOsFamily();
-//
-//    Set<NShellFamily> getShellFamilies();
-//
-//    NShellFamily getShellFamily();
-//
-//    NId getDesktopEnvironment();
-//
-//    Set<NId> getDesktopEnvironments();
-//
-//    NDesktopEnvironmentFamily getDesktopEnvironmentFamily();
-//
-//    Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
-//
-//    NId getJava();
-//
-//    NId getOs();
-//
-//    NId getOsDist();
-//
-//    NId getArch();
-//
-//    NArchFamily getArchFamily();
-//
-//    boolean isGraphicalDesktopEnvironment();
-//
-//    NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target);
-//
-//    Path getDesktopPath();
+    String pid();
 
     void addLauncher(NLauncherOptions launcher);
 
@@ -345,15 +313,15 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NPath getHomeLocation(NStoreType folderType);
 
-    NStoreStrategy getStoreStrategy();
+    NStoreStrategy storeStrategy();
 
-    NWorkspace setStoreStrategy(NStoreStrategy strategy);
+    NWorkspace storeStrategy(NStoreStrategy strategy);
 
-    NStoreStrategy getRepositoryStoreStrategy();
+    NStoreStrategy repositoryStoreStrategy();
 
-    NOsFamily getStoreLayout();
+    NOsFamily storeLayout();
 
-    NWorkspace setStoreLayout(NOsFamily storeLayout);
+    NWorkspace storeLayout(NOsFamily storeLayout);
 
     /**
      * all home locations key/value map where keys are in the form "location"
@@ -361,7 +329,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      *
      * @return home locations mapping
      */
-    Map<NStoreType, String> getStoreLocations();
+    Map<NStoreType, String> storeLocations();
 
     String getDefaultIdFilename(NId id);
 
@@ -377,11 +345,11 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      *
      * @return home locations mapping
      */
-    Map<NHomeLocation, String> getHomeLocations();
+    Map<NHomeLocation, String> homeLocations();
 
     NPath getHomeLocation(NHomeLocation location);
 
-    NPath getWorkspaceLocation();
+    NPath workspaceLocation();
 
     NWorkspace setStoreLocation(NStoreType folderType, String location);
 
@@ -397,13 +365,13 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NWorkspace updateImports(String[] imports);
 
-    Set<String> getAllImports();
+    Set<String> allImports();
 
     boolean isImportedGroupId(String groupId);
 
     /// /////////////////
 
-    NWorkspaceStoredConfig getStoredConfig();
+    NWorkspaceStoredConfig storedConfig();
 
     boolean isReadOnly();
 
@@ -422,22 +390,22 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     boolean isSupportedRepositoryType(String repositoryType);
 
-    List<NRepositorySpec> getDefaultRepositories();
+    List<NRepositorySpec> defaultRepositories();
 
-    Set<String> getAvailableArchetypes();
+    Set<String> availableArchetypes();
 
     NPath resolveRepositoryPath(String repositoryLocation);
 
-    NIndexStoreFactory getIndexStoreClientFactory();
+    NIndexStoreFactory indexStoreClientFactory();
 
-    String getJavaCommand();
+    String javaCommand();
 
-    String getJavaOptions();
+    String javaOptions();
 
     boolean isSystemWorkspace();
 
 
-    Map<String, String> getConfigMap();
+    Map<String, String> configMap();
 
     NOptional<NLiteral> getConfigProperty(String property);
 
@@ -455,7 +423,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      *
      * @return registered command factories
      */
-    List<NCommandFactoryConfig> getCommandFactories();
+    List<NCommandFactoryConfig> commandFactories();
 
     /**
      * register a new commandFactory. If it already exists, a NutsIllegalArgumentException is thrown
@@ -572,25 +540,25 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NOptional<NLiteral> getCustomBootOption(String... names);
 
-    NBootOptions getBootOptions();
+    NBootOptions bootOptions();
 
-    ClassLoader getBootClassLoader();
+    ClassLoader bootClassLoader();
 
-    List<URL> getBootClassWorldURLs();
+    List<URL> bootClassWorldURLs();
 
-    List<String> getBootRepositories();
+    List<String> bootRepositories();
 
-    Instant getCreationStartTime();
+    Instant creationStartTime();
 
-    Instant getCreationFinishTime();
+    Instant creationFinishTime();
 
-    NDuration getCreationDuration();
+    NDuration creationDuration();
 
-    NClassLoaderNode getBootRuntimeClassLoaderNode();
+    NClassLoaderNode bootRuntimeClassLoaderNode();
 
-    List<NClassLoaderNode> getBootExtensionClassLoaderNodes();
+    List<NClassLoaderNode> bootExtensionClassLoaderNodes();
 
-    NWorkspaceTerminalOptions getBootTerminal();
+    NWorkspaceTerminalOptions bootTerminal();
 
     void runApplication(NApplicationHandleMode handleMode);
 }

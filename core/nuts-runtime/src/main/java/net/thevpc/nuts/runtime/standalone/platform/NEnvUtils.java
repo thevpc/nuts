@@ -152,21 +152,21 @@ public class NEnvUtils {
 
         switch (item) {
             case DESKTOP: {
-                NSupportMode a = NWorkspace.of().getBootOptions().desktopLauncher().orNull();
+                NSupportMode a = NWorkspace.of().bootOptions().desktopLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
                 break;
             }
             case MENU: {
-                NSupportMode a = NWorkspace.of().getBootOptions().menuLauncher().orNull();
+                NSupportMode a = NWorkspace.of().bootOptions().menuLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
                 break;
             }
             case USER: {
-                NSupportMode a = NWorkspace.of().getBootOptions().userLauncher().orNull();
+                NSupportMode a = NWorkspace.of().bootOptions().userLauncher().orNull();
                 if (a != null) {
                     return a;
                 }

@@ -109,7 +109,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
     @Override
     public NDescriptor deployImpl(NDeployRepositoryCmd command) {
-        return lib.deploy(command, workspace().currentSession().getConfirm().orDefault());
+        return lib.deploy(command, workspace().currentSession().confirm().orDefault());
     }
 
     @Override

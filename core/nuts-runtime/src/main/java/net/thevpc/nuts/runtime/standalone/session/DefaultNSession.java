@@ -103,7 +103,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 
     public DefaultNSession(NWorkspace workspace) {
         this.workspace = workspace;
-        copyFrom(NWorkspace.of().getBootOptions().toWorkspaceOptions());
+        copyFrom(NWorkspace.of().bootOptions().toWorkspaceOptions());
     }
 
     public DefaultNSession(NWorkspace workspace, NWorkspaceOptions options) {
@@ -190,31 +190,31 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                         String t = a.getStringValue().orElse("");
                         int i = NStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
                         if (i > 0) {
-                            this.setOutputFormat(NContentType.valueOf(t.substring(0, i).toUpperCase()));
+                            this.outputFormat(NContentType.valueOf(t.substring(0, i).toUpperCase()));
                             this.addOutputFormatOptions(t.substring(i + 1).toUpperCase());
                         } else {
-                            this.setOutputFormat(NContentType.valueOf(t.toUpperCase()));
+                            this.outputFormat(NContentType.valueOf(t.toUpperCase()));
                         }
                     }
                     break;
                 case "--tson":
                     a = cmdLine.next().get();
                     if (active) {
-                        this.setOutputFormat(NContentType.TSON);
+                        this.outputFormat(NContentType.TSON);
                         this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     break;
                 case "--yaml":
                     a = cmdLine.next().get();
                     if (active) {
-                        this.setOutputFormat(NContentType.YAML);
+                        this.outputFormat(NContentType.YAML);
                         this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     break;
                 case "--json": {
                     a = cmdLine.next().get();
                     if (active) {
-                        this.setOutputFormat(NContentType.JSON);
+                        this.outputFormat(NContentType.JSON);
                         this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     return true;
@@ -222,7 +222,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--props": {
                     a = cmdLine.next().get();
                     if (active) {
-                        this.setOutputFormat(NContentType.PROPS);
+                        this.outputFormat(NContentType.PROPS);
                         this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     return true;
@@ -230,7 +230,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--plain": {
                     a = cmdLine.next().get();
                     if (active) {
-                        this.setOutputFormat(NContentType.PLAIN);
+                        this.outputFormat(NContentType.PLAIN);
                         this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     return true;
@@ -238,7 +238,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--table": {
                     a = cmdLine.next().get();
                     if (active) {
-                        this.setOutputFormat(NContentType.TABLE);
+                        this.outputFormat(NContentType.TABLE);
                         this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     return true;
@@ -246,7 +246,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--tree": {
                     a = cmdLine.next().get();
                     if (active) {
-                        this.setOutputFormat(NContentType.TREE);
+                        this.outputFormat(NContentType.TREE);
                         this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     return true;
@@ -254,7 +254,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--xml": {
                     a = cmdLine.next().get();
                     if (active) {
-                        this.setOutputFormat(NContentType.XML);
+                        this.outputFormat(NContentType.XML);
                         this.addOutputFormatOptions(a.getStringValue().orNull());
                     }
                     return true;
@@ -270,14 +270,14 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "-y":
                 case "--yes": {
                     if (active) {
-                        this.setConfirm(NConfirmationMode.YES);
+                        this.confirm(NConfirmationMode.YES);
                     }
                     cmdLine.skip();
                     return true;
                 }
                 case "--ask": {
                     if (active) {
-                        this.setConfirm(NConfirmationMode.ASK);
+                        this.confirm(NConfirmationMode.ASK);
                     }
                     cmdLine.skip();
                     return true;
@@ -285,14 +285,14 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "-n":
                 case "--no": {
                     if (active) {
-                        this.setConfirm(NConfirmationMode.NO);
+                        this.confirm(NConfirmationMode.NO);
                     }
                     cmdLine.skip();
                     return true;
                 }
                 case "--error": {
                     if (active) {
-                        this.setConfirm(NConfirmationMode.ERROR);
+                        this.confirm(NConfirmationMode.ERROR);
                     }
                     cmdLine.skip();
                     return true;
@@ -300,7 +300,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--trace": {
                     NArg v = cmdLine.nextFlag().get();
                     if (active) {
-                        this.setTrace(v.getBooleanValue().get());
+                        this.trace(v.getBooleanValue().get());
                     }
                     return true;
                 }
@@ -308,7 +308,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     a = cmdLine.nextEntry().get();
                     if (active) {
                         String s = a.getStringValue().get();
-                        this.setDependencySolver(s);
+                        this.dependencySolver(s);
                     }
                     break;
                 }
@@ -322,11 +322,11 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                             } else {
                                 s = "false," + s;
                             }
-                            setProgressOptions(s);
+                            progressOptions(s);
                         } else {
-                            setProgressOptions(s);
+                            progressOptions(s);
                         }
-                        this.setProgressOptions(s);
+                        this.progressOptions(s);
                     }
                     return true;
                 }
@@ -334,15 +334,15 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     a = cmdLine.next().get();
                     if (active) {
                         if (a.getStringValue().isBlank()) {
-                            this.setDebug(String.valueOf(a.isEnabled()));
+                            this.debug(String.valueOf(a.isEnabled()));
                         } else {
                             if (a.isNegated()) {
-                                this.setDebug(
+                                this.debug(
                                         String.valueOf(!NLiteral.of(a.getStringValue().get()).asBoolean()
                                                 .onEmpty(true).orElse(false)
                                         ));
                             } else {
-                                this.setDebug(a.getStringValue().get());
+                                this.debug(a.getStringValue().get());
                             }
                         }
                     }
@@ -352,7 +352,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--fetch": {
                     a = cmdLine.nextEntry().get();
                     if (active) {
-                        this.setFetchStrategy(a.getStringValue().flatMap(NFetchStrategy::parse).get());
+                        this.fetchStrategy(a.getStringValue().flatMap(NFetchStrategy::parse).get());
                     }
                     return true;
                 }
@@ -360,7 +360,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--anywhere": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        this.setFetchStrategy(NFetchStrategy.ANYWHERE);
+                        this.fetchStrategy(NFetchStrategy.ANYWHERE);
                     }
                     return true;
                 }
@@ -368,21 +368,21 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--offline": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        this.setFetchStrategy(NFetchStrategy.OFFLINE);
+                        this.fetchStrategy(NFetchStrategy.OFFLINE);
                     }
                     return true;
                 }
                 case "--online": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        this.setFetchStrategy(NFetchStrategy.ONLINE);
+                        this.fetchStrategy(NFetchStrategy.ONLINE);
                     }
                     return true;
                 }
                 case "--remote": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        this.setFetchStrategy(NFetchStrategy.REMOTE);
+                        this.fetchStrategy(NFetchStrategy.REMOTE);
                     }
                     return true;
                 }
@@ -405,8 +405,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                                 v = NTerminalMode.INHERITED;
                             }
                         }
-                        getTerminal().out(getTerminal().out().setTerminalMode(v));
-                        getTerminal().err(getTerminal().err().setTerminalMode(v));
+                        terminal().out(terminal().out().setTerminalMode(v));
+                        terminal().err(terminal().err().setTerminalMode(v));
                     }
                     return true;
                 }
@@ -414,10 +414,10 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--bot": {
                     a = cmdLine.nextFlag().get();
                     if (active) {
-                        setBot(a.getBooleanValue().get());
+                        bot(a.getBooleanValue().get());
                         if (isBot()) {
-                            getTerminal().out(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
-                            getTerminal().err(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
+                            terminal().out(terminal().out().setTerminalMode(NTerminalMode.FILTERED));
+                            terminal().err(terminal().err().setTerminalMode(NTerminalMode.FILTERED));
                             //setProgressOptions("none");
                             //setConfirm(NConfirmationMode.ERROR);
                             //setTrace(false);
@@ -430,7 +430,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--preview-repo": {
                     a = cmdLine.nextFlag().get();
                     if (active) {
-                        setPreviewRepo(a.getBooleanValue().get());
+                        previewRepo(a.getBooleanValue().get());
                     }
                     return true;
                 }
@@ -438,29 +438,29 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "-D": {
                     a = cmdLine.nextFlag().get();
                     if (active) {
-                        setDry(a.getBooleanValue().get());
+                        dry(a.getBooleanValue().get());
                     }
                     return true;
                 }
                 case "--out-line-prefix": {
                     a = cmdLine.nextEntry().get();
                     if (active) {
-                        this.setOutLinePrefix(a.getStringValue().get());
+                        this.outLinePrefix(a.getStringValue().get());
                     }
                     return true;
                 }
                 case "--err-line-prefix": {
                     a = cmdLine.nextEntry().get();
                     if (active) {
-                        this.setErrLinePrefix(a.getStringValue().get());
+                        this.errLinePrefix(a.getStringValue().get());
                     }
                     return true;
                 }
                 case "--line-prefix": {
                     a = cmdLine.nextEntry().get();
                     if (active) {
-                        this.setOutLinePrefix(a.getStringValue().get());
-                        this.setErrLinePrefix(a.getStringValue().get());
+                        this.outLinePrefix(a.getStringValue().get());
+                        this.errLinePrefix(a.getStringValue().get());
                     }
                     return true;
                 }
@@ -468,7 +468,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "-b": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        setExecutionType(NExecutionType.EMBEDDED);
+                        executionType(NExecutionType.EMBEDDED);
                     }
                     //ignore
                     return true;
@@ -476,7 +476,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--gui": {
                     a = cmdLine.nextFlag().get();
                     if (active) {
-                        setGui(a.getBooleanValue().get());
+                        gui(a.getBooleanValue().get());
                     }
                     //ignore
                     return true;
@@ -486,42 +486,42 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "-x": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        setExecutionType(NExecutionType.SPAWN);
+                        executionType(NExecutionType.SPAWN);
                     }
                     return true;
                 }
                 case "--system": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        setExecutionType(NExecutionType.SYSTEM);
+                        executionType(NExecutionType.SYSTEM);
                     }
                     return true;
                 }
                 case "--current-user": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        setRunAs(NRunAs.currentUser());
+                        runAs(NRunAs.currentUser());
                     }
                     return true;
                 }
                 case "--as-root": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        setRunAs(NRunAs.root());
+                        runAs(NRunAs.root());
                     }
                     return true;
                 }
                 case "--sudo": {
                     a = cmdLine.nextFlag().get();
                     if (active && a.getBooleanValue().get()) {
-                        setRunAs(NRunAs.sudo());
+                        runAs(NRunAs.sudo());
                     }
                     return true;
                 }
                 case "--as-user": {
                     a = cmdLine.nextEntry().get();
                     if (active) {
-                        setRunAs(NRunAs.user(a.getStringValue().get()));
+                        runAs(NRunAs.user(a.getStringValue().get()));
                     }
                     return true;
                 }
@@ -618,7 +618,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 
     @Override
     public NOptional<Boolean> getTrace() {
-        return NOptional.ofNamed(trace, "trace").withDefault(() -> NWorkspace.of().getBootOptions().trace().orElse(true));
+        return NOptional.ofNamed(trace, "trace").withDefault(() -> NWorkspace.of().bootOptions().trace().orElse(true));
     }
 
     @Override
@@ -640,11 +640,11 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 
     @Override
     public NSession trace() {
-        return setTrace(true);
+        return trace(true);
     }
 
     @Override
-    public NSession setTrace(Boolean trace) {
+    public NSession trace(Boolean trace) {
         this.trace = trace;
         return this;
     }
@@ -653,7 +653,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     public boolean isPlainTrace() {
         return isTrace()
                 && !isIterableOut()
-                && getOutputFormat().orDefault() == NContentType.PLAIN;
+                && outputFormat().orDefault() == NContentType.PLAIN;
     }
 
     @Override
@@ -666,7 +666,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     public boolean isStructuredTrace() {
         return isTrace()
                 && !isIterableOut()
-                && (isBot() || getOutputFormat().orDefault() != NContentType.PLAIN);
+                && (isBot() || outputFormat().orDefault() != NContentType.PLAIN);
     }
 
     @Override
@@ -675,7 +675,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession setIterableOut(boolean iterableOut) {
+    public NSession iterableOut(boolean iterableOut) {
         this.iterableOut = iterableOut;
         return this;
     }
@@ -683,100 +683,95 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public boolean isStructuredOut() {
         return !isIterableOut()
-                && (isBot() || getOutputFormat().orDefault() != NContentType.PLAIN);
+                && (isBot() || outputFormat().orDefault() != NContentType.PLAIN);
     }
 
     @Override
-    public NArrayElementBuilder getElemOut() {
+    public NArrayElementBuilder elemOut() {
         return eout;
     }
 
     @Override
-    public NSession setElemOut(NArrayElementBuilder eout) {
+    public NSession elemOut(NArrayElementBuilder eout) {
         this.eout = eout;
         return this;
     }
 
     @Override
     public boolean isPlainOut() {
-        return !isBot() && getOutputFormat().orDefault() == NContentType.PLAIN;
+        return !isBot() && outputFormat().orDefault() == NContentType.PLAIN;
     }
 
     @Override
-    public NOptional<Boolean> getBot() {
+    public NOptional<Boolean> bot() {
         return NOptional.ofNamed(bot, "bot").withDefault(
-                () -> NWorkspace.of().getBootOptions().bot().orElse(false)
+                () -> NWorkspace.of().bootOptions().bot().orElse(false)
         );
     }
 
     @Override
-    public NOptional<Boolean> getPreviewRepo() {
+    public NOptional<Boolean> previewRepo() {
         return NOptional.ofNamed(previewRepo, "previewRepo").withDefault(
-                () -> NWorkspace.of().getBootOptions().previewRepo()
+                () -> NWorkspace.of().bootOptions().previewRepo()
                         .orElse(NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().isEnablePreviewRepositories())
         );
     }
 
     public boolean isPreviewRepo() {
-        return getPreviewRepo().orDefault();
+        return previewRepo().orDefault();
     }
 
     public boolean isBot() {
-        return getBot().orDefault();
+        return bot().orDefault();
     }
 
     @Override
-    public NSession setBot(Boolean bot) {
+    public NSession bot(Boolean bot) {
         this.bot = bot;
         return this;
     }
 
     @Override
-    public NSession setPreviewRepo(Boolean bot) {
+    public NSession previewRepo(Boolean bot) {
         this.previewRepo = bot;
         return this;
     }
 
     @Override
-    public NSession bot() {
-        return setBot(true);
-    }
-
-    @Override
     public NSession yes() {
-        return setConfirm(NConfirmationMode.YES);
+        return confirm(NConfirmationMode.YES);
     }
 
     @Override
     public NSession no() {
-        return setConfirm(NConfirmationMode.NO);
+        return confirm(NConfirmationMode.NO);
     }
 
     @Override
     public NSession ask() {
-        return setConfirm(NConfirmationMode.ASK);
+        return confirm(NConfirmationMode.ASK);
     }
 
     @Override
     public boolean isYes() {
-        return getConfirm().orDefault() == NConfirmationMode.YES;
+        return confirm().orDefault() == NConfirmationMode.YES;
     }
 
     @Override
     public boolean isNo() {
-        return getConfirm().orDefault() == NConfirmationMode.NO;
+        return confirm().orDefault() == NConfirmationMode.NO;
     }
 
     @Override
     public boolean isAsk() {
-        return getConfirm().orDefault() == NConfirmationMode.ASK;
+        return confirm().orDefault() == NConfirmationMode.ASK;
     }
 
     @Override
-    public NOptional<NContentType> getOutputFormat() {
+    public NOptional<NContentType> outputFormat() {
         return NOptional.ofNamed(outputFormat, "outputFormat")
                 .withDefault(() -> {
-                    NContentType o = NWorkspace.of().getBootOptions().outputFormat().orNull();
+                    NContentType o = NWorkspace.of().bootOptions().outputFormat().orNull();
                     if (o != null) {
                         return o;
                     }
@@ -785,7 +780,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession setOutputFormat(NContentType outputFormat) {
+    public NSession outputFormat(NContentType outputFormat) {
         if (outputFormat == null) {
             outputFormat = NContentType.PLAIN;
         }
@@ -795,32 +790,32 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 
     @Override
     public NSession json() {
-        return setOutputFormat(NContentType.JSON);
+        return outputFormat(NContentType.JSON);
     }
 
     @Override
     public NSession plain() {
-        return setOutputFormat(NContentType.PLAIN);
+        return outputFormat(NContentType.PLAIN);
     }
 
     @Override
     public NSession props() {
-        return setOutputFormat(NContentType.PROPS);
+        return outputFormat(NContentType.PROPS);
     }
 
     @Override
     public NSession tree() {
-        return setOutputFormat(NContentType.TREE);
+        return outputFormat(NContentType.TREE);
     }
 
     @Override
     public NSession table() {
-        return setOutputFormat(NContentType.TABLE);
+        return outputFormat(NContentType.TABLE);
     }
 
     @Override
     public NSession xml() {
-        return setOutputFormat(NContentType.XML);
+        return outputFormat(NContentType.XML);
     }
 
     @Override
@@ -845,7 +840,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
             cloned.listeners = null;
             if (listeners != null) {
-                for (NListener listener : getListeners()) {
+                for (NListener listener : listeners()) {
                     cloned.addListener(listener);
                 }
             }
@@ -858,8 +853,8 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public NSession copyFrom(NSession other) {
         //boolean withDefaults = false;
-        this.terminal = other.getTerminal() == null ? null : NTerminal.of(terminal);
-        this.terminal = other.getTerminal();
+        this.terminal = other.terminal() == null ? null : NTerminal.of(terminal);
+        this.terminal = other.terminal();
         for (Map.Entry<String,NPropertiesHolder.NScopedPropertyValue> ee : ((DefaultNSession) other).properties.entrySet()) {
             NPropertiesHolder.NScopedPropertyValue v = ee.getValue();
             switch (v.getScope()) {
@@ -877,30 +872,30 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             this.listeners.clear();
         }
         this.listeners.clear();
-        for (NListener listener : other.getListeners()) {
+        for (NListener listener : other.listeners()) {
             addListener(listener);
         }
         this.trace = other.getTrace().orNull();
-        this.confirm = other.getConfirm().orNull();
-        this.dry = other.getDry().orNull();
-        this.gui = other.getGui().orNull();
-        this.bot = other.getBot().orNull();
-        this.errLinePrefix = other.getErrLinePrefix();
-        this.outLinePrefix = other.getOutLinePrefix();
-        this.fetchStrategy = other.getFetchStrategy().orDefault();
-        this.cached = other.getCached().orNull();
-        this.indexed = other.getIndexed().orNull();
-        this.transitive = other.getTransitive().orNull();
+        this.confirm = other.confirm().orNull();
+        this.dry = other.dry().orNull();
+        this.gui = other.gui().orNull();
+        this.bot = other.bot().orNull();
+        this.errLinePrefix = other.errLinePrefix();
+        this.outLinePrefix = other.outLinePrefix();
+        this.fetchStrategy = other.fetchStrategy().orDefault();
+        this.cached = other.cached().orNull();
+        this.indexed = other.indexed().orNull();
+        this.transitive = other.transitive().orNull();
 
-        this.outputFormat = other.getOutputFormat().orNull();
+        this.outputFormat = other.outputFormat().orNull();
         this.iterableOut = other.isIterableOut();
         this.outputFormatOptions.clear();
-        this.outputFormatOptions.addAll(other.getOutputFormatOptions());
-        this.progressOptions = other.getProgressOptions();
-        this.logTermLevel = other.getLogTermLevel();
-        this.logFileLevel = other.getLogFileLevel();
+        this.outputFormatOptions.addAll(other.outputFormatOptions());
+        this.progressOptions = other.progressOptions();
+        this.logTermLevel = other.logTermLevel();
+        this.logFileLevel = other.logFileLevel();
         this.eout = other.eout();
-        this.dependencySolver = other.getDependencySolver();
+        this.dependencySolver = other.dependencySolver();
         return this;
     }
 
@@ -959,10 +954,10 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 
 
     @Override
-    public NOptional<NFetchStrategy> getFetchStrategy() {
+    public NOptional<NFetchStrategy> fetchStrategy() {
         return NOptional.ofNamed(fetchStrategy, "fetchStrategy")
                 .withDefault(() -> {
-                    NFetchStrategy wfetchStrategy = NWorkspace.of().getBootOptions().fetchStrategy().orNull();
+                    NFetchStrategy wfetchStrategy = NWorkspace.of().bootOptions().fetchStrategy().orNull();
                     if (wfetchStrategy != null) {
                         return wfetchStrategy;
                     }
@@ -972,7 +967,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession setFetchStrategy(NFetchStrategy mode) {
+    public NSession fetchStrategy(NFetchStrategy mode) {
         this.fetchStrategy = mode;
         return this;
     }
@@ -1031,7 +1026,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public List<NListener> getListeners() {
+    public List<NListener> listeners() {
         if (listeners == null) {
             return Collections.emptyList();
         }
@@ -1105,10 +1100,10 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
 //    }
 
     @Override
-    public NOptional<NConfirmationMode> getConfirm() {
+    public NOptional<NConfirmationMode> confirm() {
         return NOptional.ofNamed(confirm, "confirm")
                 .withDefault(() -> {
-                    NConfirmationMode cm = NWorkspace.of().getBootOptions().confirm().orNull();
+                    NConfirmationMode cm = NWorkspace.of().bootOptions().confirm().orNull();
                     if (isBot()) {
                         if (cm == null) {
                             return NConfirmationMode.ERROR;
@@ -1125,7 +1120,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession setConfirm(NConfirmationMode confirm) {
+    public NSession confirm(NConfirmationMode confirm) {
         this.confirm = confirm;
         return this;
     }
@@ -1143,18 +1138,18 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public List<String> getOutputFormatOptions() {
+    public List<String> outputFormatOptions() {
         return outputFormatOptions;
     }
 
     @Override
-    public NSession setOutputFormatOptions(String... options) {
+    public NSession outputFormatOptions(String... options) {
         outputFormatOptions.clear();
         return addOutputFormatOptions(options);
     }
 
     @Override
-    public NSession setOutputFormatOptions(List<String> options) {
+    public NSession outputFormatOptions(List<String> options) {
         outputFormatOptions.clear();
         return addOutputFormatOptions(options.toArray(new String[0]));
     }
@@ -1175,20 +1170,20 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NIterableFormat getIterableOutput() {
+    public NIterableFormat iterableOutput() {
         if (!iterableOut) {
             return null;
         }
-        return NElementWriter.of().setContentType(getOutputFormat().orDefault()).iter(out());
+        return NElementWriter.of().setContentType(outputFormat().orDefault()).iter(out());
     }
 
     @Override
-    public NTerminal getTerminal() {
+    public NTerminal terminal() {
         return terminal;
     }
 
     @Override
-    public NSession setTerminal(NTerminal terminal) {
+    public NSession terminal(NTerminal terminal) {
         this.terminal = terminal;
         if (terminal != null) {
             AbstractNTerminal a = (AbstractNTerminal) terminal;
@@ -1202,76 +1197,76 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NWorkspace getWorkspace() {
+    public NWorkspace workspace() {
         return workspace;
     }
 
 
     @Override
-    public NOptional<Boolean> getTransitive() {
+    public NOptional<Boolean> transitive() {
         return NOptional.ofNamed(transitive, "transitive")
-                .withDefault(() -> NWorkspace.of().getBootOptions().transitive().orElse(true));
+                .withDefault(() -> NWorkspace.of().bootOptions().transitive().orElse(true));
     }
 
     @Override
     public boolean isTransitive() {
-        return getTransitive().orDefault();
+        return transitive().orDefault();
     }
 
     @Override
-    public NSession setTransitive(Boolean value) {
+    public NSession transitive(Boolean value) {
         this.transitive = value;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getCached() {
+    public NOptional<Boolean> cached() {
         return NOptional.ofNamed(cached, "cached")
-                .withDefault(() -> NWorkspace.of().getBootOptions().cached().orElse(true));
+                .withDefault(() -> NWorkspace.of().bootOptions().cached().orElse(true));
     }
 
     @Override
     public boolean isCached() {
-        return getCached().orDefault();
+        return cached().orDefault();
     }
 
     @Override
-    public NSession setCached(Boolean value) {
+    public NSession cached(Boolean value) {
         this.cached = value;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getIndexed() {
+    public NOptional<Boolean> indexed() {
         return NOptional.ofNamed(indexed, "indexed")
-                .withDefault(() -> NWorkspace.of().getBootOptions().indexed().orElse(false))
+                .withDefault(() -> NWorkspace.of().bootOptions().indexed().orElse(false))
                 ;
     }
 
     @Override
     public boolean isIndexed() {
-        return getIndexed().orDefault();
+        return indexed().orDefault();
     }
 
     @Override
-    public NSession setIndexed(Boolean value) {
+    public NSession indexed(Boolean value) {
         this.indexed = value;
         return this;
     }
 
     @Override
-    public NOptional<Instant> getExpireTime() {
+    public NOptional<Instant> expireTime() {
         return NOptional.ofNamed(expireTime, "expireTime");
     }
 
     @Override
-    public NSession setExpireTime(Instant expireTime) {
+    public NSession expireTime(Instant expireTime) {
         this.expireTime = expireTime;
         return this;
     }
 
     @Override
-    public String getProgressOptions() {
+    public String progressOptions() {
         return progressOptions;
     }
 
@@ -1290,13 +1285,13 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession setProgressOptions(String progressOptions) {
+    public NSession progressOptions(String progressOptions) {
         this.progressOptions = progressOptions;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getGui() {
+    public NOptional<Boolean> gui() {
         return NOptional.ofNamed(gui, "gui")
                 .withDefault(() -> {
                     if (isBot()) {
@@ -1305,74 +1300,74 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     if (gui != null) {
                         return gui;
                     }
-                    return NWorkspace.of().getBootOptions().gui().orElse(false);
+                    return NWorkspace.of().bootOptions().gui().orElse(false);
                 });
     }
 
     @Override
     public boolean isGui() {
-        return getGui().orDefault();
+        return gui().orDefault();
     }
 
     @Override
-    public NSession setGui(Boolean gui) {
+    public NSession gui(Boolean gui) {
         this.gui = gui;
         return this;
     }
 
     @Override
-    public String getErrLinePrefix() {
+    public String errLinePrefix() {
         return errLinePrefix;
     }
 
     @Override
-    public NSession setErrLinePrefix(String errLinePrefix) {
+    public NSession errLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
     }
 
     @Override
-    public String getOutLinePrefix() {
+    public String outLinePrefix() {
         return outLinePrefix;
     }
 
     @Override
-    public NSession setOutLinePrefix(String outLinePrefix) {
+    public NSession outLinePrefix(String outLinePrefix) {
         this.outLinePrefix = outLinePrefix;
         return this;
     }
 
     @Override
-    public NOptional<Boolean> getDry() {
-        return NOptional.ofNamed(dry, "dry").withDefault(() -> NWorkspace.of().getBootOptions().dry().orElse(false));
+    public NOptional<Boolean> dry() {
+        return NOptional.ofNamed(dry, "dry").withDefault(() -> NWorkspace.of().bootOptions().dry().orElse(false));
     }
 
     @Override
-    public NOptional<Boolean> getShowStacktrace() {
+    public NOptional<Boolean> showStacktrace() {
         return NOptional.ofNamed(showStacktrace, "showStacktrace")
-                .withDefault(() -> NWorkspace.of().getBootOptions().showStacktrace().orElse(false));
+                .withDefault(() -> NWorkspace.of().bootOptions().showStacktrace().orElse(false));
     }
 
 
     @Override
     public boolean isDry() {
-        return getDry().orDefault();
+        return dry().orDefault();
     }
 
     @Override
-    public NSession setDry(Boolean dry) {
+    public NSession dry(Boolean dry) {
         this.dry = dry;
         return this;
     }
 
     @Override
-    public NSession setShowStacktrace(Boolean showStacktrace) {
+    public NSession showStacktrace(Boolean showStacktrace) {
         this.showStacktrace = showStacktrace;
         return this;
     }
 
     @Override
-    public Level getLogTermLevel() {
+    public Level logTermLevel() {
         return logTermLevel;
     }
 
@@ -1386,79 +1381,79 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     public NSession configure(NWorkspaceOptions options) {
         if (options != null) {
             if (options.getCached().isPresent()) {
-                this.setCached(options.getCached().orNull());
+                this.cached(options.getCached().orNull());
             }
             if (options.getConfirm().isPresent()) {
-                this.setConfirm(options.getConfirm().orNull());
+                this.confirm(options.getConfirm().orNull());
             }
             if (options.getDry().isPresent()) {
-                this.setDry(options.getDry().orNull());
+                this.dry(options.getDry().orNull());
             }
             if (options.getOutputFormat().isPresent()) {
-                this.setOutputFormat(options.getOutputFormat().orNull());
+                this.outputFormat(options.getOutputFormat().orNull());
             }
             if (options.getOutputFormatOptions().isPresent()) {
-                this.setOutputFormatOptions(options.getOutputFormatOptions().orElseGet(Collections::emptyList));
+                this.outputFormatOptions(options.getOutputFormatOptions().orElseGet(Collections::emptyList));
             }
             if (options.getErrLinePrefix().isPresent()) {
-                this.setErrLinePrefix(options.getErrLinePrefix().orNull());
+                this.errLinePrefix(options.getErrLinePrefix().orNull());
             }
             if (options.getFetchStrategy().isPresent()) {
-                this.setFetchStrategy(options.getFetchStrategy().orNull());
+                this.fetchStrategy(options.getFetchStrategy().orNull());
             }
             if (options.getExpireTime().isPresent()) {
-                this.setExpireTime(options.getExpireTime().orNull());
+                this.expireTime(options.getExpireTime().orNull());
             }
             if (options.getGui().isPresent()) {
-                this.setGui(options.getGui().orNull());
+                this.gui(options.getGui().orNull());
             }
             if (options.getProgressOptions().isPresent()) {
-                this.setProgressOptions(options.getProgressOptions().orNull());
+                this.progressOptions(options.getProgressOptions().orNull());
             }
             if (options.getIndexed().isPresent()) {
-                this.setIndexed(options.getIndexed().orElse(true));
+                this.indexed(options.getIndexed().orElse(true));
             }
             if (options.getTrace().isPresent()) {
-                this.setTrace(options.getTrace().orElse(true));
+                this.trace(options.getTrace().orElse(true));
             }
             if (options.getBot().isPresent()) {
                 boolean wasBot = isBot();
                 boolean becomesBot = options.getBot().orElse(false);
-                this.setBot(becomesBot);
+                this.bot(becomesBot);
                 if (/*!wasBot && */becomesBot) {
-                    if (getTerminal().out().terminalMode() != NTerminalMode.FILTERED) {
-                        getTerminal().out(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
+                    if (terminal().out().terminalMode() != NTerminalMode.FILTERED) {
+                        terminal().out(terminal().out().setTerminalMode(NTerminalMode.FILTERED));
                     }
-                    if (getTerminal().err().terminalMode() != NTerminalMode.FILTERED) {
-                        getTerminal().err(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
+                    if (terminal().err().terminalMode() != NTerminalMode.FILTERED) {
+                        terminal().err(terminal().err().setTerminalMode(NTerminalMode.FILTERED));
                     }
                 }
             }
             if (options.getTransitive().isPresent()) {
-                this.setTransitive(options.getTransitive().orNull());
+                this.transitive(options.getTransitive().orNull());
             }
             if (options.getTerminalMode().isPresent() && NTerminalMode.DEFAULT != options.getTerminalMode().orNull()) {
-                getTerminal().out(
-                        getTerminal().out().setTerminalMode(options.getTerminalMode().orNull())
+                terminal().out(
+                        terminal().out().setTerminalMode(options.getTerminalMode().orNull())
                 );
             }
             if (options.getExecutionType().isPresent()) {
-                setExecutionType(options.getExecutionType().orNull());
+                executionType(options.getExecutionType().orNull());
             }
             if (options.getDependencySolver().isPresent()) {
-                setDependencySolver(options.getDependencySolver().orNull());
+                dependencySolver(options.getDependencySolver().orNull());
             }
         }
         return this;
     }
 
     @Override
-    public Level getLogFileLevel() {
+    public Level logFileLevel() {
         return logFileLevel;
     }
 
     @Override
-    public NSession setLogFileLevel(Level logFileLevel) {
+    public NSession logFileLevel(Level logFileLevel) {
         this.logFileLevel = logFileLevel;
         return this;
     }
@@ -1483,62 +1478,62 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NOptional<NExecutionType> getExecutionType() {
+    public NOptional<NExecutionType> executionType() {
         return NOptional.ofNamed(executionType, "executionType")
-                .withDefault(() -> NWorkspace.of().getBootOptions().executionType().orElse(NExecutionType.SPAWN))
+                .withDefault(() -> NWorkspace.of().bootOptions().executionType().orElse(NExecutionType.SPAWN))
                 ;
     }
 
     @Override
     public NSession embedded() {
-        return setExecutionType(NExecutionType.EMBEDDED);
+        return executionType(NExecutionType.EMBEDDED);
     }
 
     @Override
     public NSession system() {
-        return setExecutionType(NExecutionType.SYSTEM);
+        return executionType(NExecutionType.SYSTEM);
     }
 
     @Override
     public NSession spawn() {
-        return setExecutionType(NExecutionType.SPAWN);
+        return executionType(NExecutionType.SPAWN);
     }
 
     @Override
-    public NSession setExecutionType(NExecutionType executionType) {
+    public NSession executionType(NExecutionType executionType) {
         this.executionType = executionType;
         return this;
     }
 
     @Override
-    public NOptional<String> getDebug() {
+    public NOptional<String> debug() {
         return NOptional.ofNamed(debug, "debug")
-                .withDefault(() -> NWorkspace.of().getBootOptions().debug().orNull()
+                .withDefault(() -> NWorkspace.of().bootOptions().debug().orNull()
                 );
     }
 
     @Override
-    public NSession setDebug(String debug) {
+    public NSession debug(String debug) {
         this.debug = debug;
         return this;
     }
 
     @Override
-    public NOptional<String> getLocale() {
+    public NOptional<String> locale() {
         return NOptional.ofNamed(locale, "locale")
-                .withDefault(() -> NWorkspace.of().getBootOptions().locale().orNull());
+                .withDefault(() -> NWorkspace.of().bootOptions().locale().orNull());
     }
 
     @Override
-    public NSession setLocale(String locale) {
+    public NSession locale(String locale) {
         this.locale = locale;
         return this;
     }
 
-    public NOptional<NRunAs> getRunAs() {
+    public NOptional<NRunAs> runAs() {
         return NOptional.ofNamed(runAs, "runAs")
                 .withDefault(() -> {
-                    NRunAs r = NWorkspace.of().getBootOptions().runAs().orNull();
+                    NRunAs r = NWorkspace.of().bootOptions().runAs().orNull();
                     if (r != null) {
                         return r;
                     }
@@ -1546,31 +1541,31 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 });
     }
 
-    public NSession setRunAs(NRunAs runAs) {
+    public NSession runAs(NRunAs runAs) {
         this.runAs = runAs;
         return this;
     }
 
     @Override
     public NSession sudo() {
-        return setRunAs(NRunAs.SUDO);
+        return runAs(NRunAs.SUDO);
     }
 
     @Override
     public NSession root() {
-        return setRunAs(NRunAs.ROOT);
+        return runAs(NRunAs.ROOT);
     }
 
     @Override
     public NSession currentUser() {
-        return setRunAs(NRunAs.CURRENT_USER);
+        return runAs(NRunAs.CURRENT_USER);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("NSession(");
-        NWorkspace ws = getWorkspace();
-        sb.append(ws == null ? "null" : ws.getLocation());
+        NWorkspace ws = workspace();
+        sb.append(ws == null ? "null" : ws.location());
         if (properties.size() > 0) {
             sb.append(", properties=").append(properties);
         }
@@ -1579,12 +1574,12 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public String getDependencySolver() {
+    public String dependencySolver() {
         return dependencySolver;
     }
 
     @Override
-    public NSession setDependencySolver(String dependencySolver) {
+    public NSession dependencySolver(String dependencySolver) {
         this.dependencySolver = dependencySolver;
         return this;
     }
@@ -1654,7 +1649,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getKey().asString().get();
-                    this.setLogFileLevel(
+                    this.logFileLevel(
                             NLogUtils.parseLogLevel(id.substring("--log-file-".length())).onEmpty(null).get());
                 }
                 break;
@@ -1684,7 +1679,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 cmdLine.skip();
                 if (enabled && a.getValue().asBoolean().orElse(true)) {
                     this.setLogTermLevel(Level.FINEST);
-                    this.setLogFileLevel(Level.FINEST);
+                    this.logFileLevel(Level.FINEST);
                 }
                 break;
             }
@@ -1703,7 +1698,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     String id = a.getKey().asString().get();
                     Level lvl = NLogUtils.parseLogLevel(id.substring("--log-".length())).onEmpty(null).get();
                     this.setLogTermLevel(lvl);
-                    this.setLogFileLevel(lvl);
+                    this.logFileLevel(lvl);
                 }
                 break;
             }
@@ -1773,12 +1768,12 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     @Override
     public NOptional<Object> getProperty(String property) {
         return getPropertiesHolder().getOptional(property)
-                .withDefault(() -> getWorkspace().getProperty(property).orDefault())
+                .withDefault(() -> workspace().getProperty(property).orDefault())
                 ;
     }
 
     @Override
-    public Map<String, Object> getProperties() {
+    public Map<String, Object> properties() {
         return getPropertiesHolder().toMap();
     }
 

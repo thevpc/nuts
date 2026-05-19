@@ -61,7 +61,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
                 .sourceLocation(NRepositoryLocation.of("nuts@"
                         + NPath.of(
                                 NPlatformHome.SYSTEM.getWorkspaceLocation(
-                                        NStoreType.LIB, NWorkspace.of().getStoredConfig().getHomeLocations(),
+                                        NStoreType.LIB, NWorkspace.of().storedConfig().getHomeLocations(),
                                         NConstants.Names.DEFAULT_WORKSPACE_NAME))
                         .resolve(NConstants.Folders.ID)
                         .toString())

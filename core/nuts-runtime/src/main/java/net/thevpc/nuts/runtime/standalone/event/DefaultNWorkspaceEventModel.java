@@ -39,17 +39,17 @@ public class DefaultNWorkspaceEventModel {
 
     
     public void addUserPropertyListener(NObservableMapListener<String, Object> listener) {
-        ((NObservableMap<String, Object>) NWorkspace.of().getProperties()).addMapListener(listener);
+        ((NObservableMap<String, Object>) NWorkspace.of().properties()).addMapListener(listener);
     }
 
     
     public void removeUserPropertyListener(NObservableMapListener<String, Object> listener) {
-        ((NObservableMap<String, Object>) NWorkspace.of().getProperties()).removeMapListener(listener);
+        ((NObservableMap<String, Object>) NWorkspace.of().properties()).removeMapListener(listener);
     }
 
     
     public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
-        return ((NObservableMap<String, Object>) NWorkspace.of().getProperties()).getMapListeners();
+        return ((NObservableMap<String, Object>) NWorkspace.of().properties()).getMapListeners();
     }
 
     

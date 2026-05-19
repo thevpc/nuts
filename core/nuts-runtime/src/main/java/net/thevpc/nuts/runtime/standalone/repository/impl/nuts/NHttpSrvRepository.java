@@ -124,7 +124,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         boolean transitive = session.isTransitive();
-        session.getTerminal().printProgress(NMsg.ofC("loading descriptor for %s", id.longId()));
+        session.terminal().printProgress(NMsg.ofC("loading descriptor for %s", id.longId()));
         try (InputStream stream = NPath.of(getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).inputStream()) {
             NDescriptor descriptor = NDescriptorParser.of().parse(stream).get();
             if (descriptor != null) {
@@ -148,7 +148,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
-            session.getTerminal().printProgress(NMsg.ofC("search version for %s", id.longId()));
+            session.terminal().printProgress(NMsg.ofC("search version for %s", id.longId()));
             ret = NPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).inputStream();
         } catch (UncheckedIOException | NIOException e) {
             return NIterator.ofEmpty();
@@ -170,7 +170,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         }
         NSession session = workspace().currentSession();
 
-        session.getTerminal().printProgress(NMsg.ofC("search into %s ", Arrays.toString(basePaths)));
+        session.terminal().printProgress(NMsg.ofC("search into %s ", Arrays.toString(basePaths)));
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         Creds ulp = resolveEncryptedAuth();

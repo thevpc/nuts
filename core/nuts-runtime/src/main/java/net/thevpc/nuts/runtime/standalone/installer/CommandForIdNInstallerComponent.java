@@ -94,7 +94,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.arguments())
-                        .executionType(NWorkspace.of().getBootOptions().executionType().orNull())
+                        .executionType(NWorkspace.of().bootOptions().executionType().orNull())
                         .failFast(true)
                         .run();
             }
@@ -117,7 +117,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 NExec.of()
                         .commandDefinition(def2.build())
                         .addCommand(eargs)
-                        .executionType(NWorkspace.of().getBootOptions().executionType().orNull())
+                        .executionType(NWorkspace.of().bootOptions().executionType().orNull())
                         .executionType(
                                 NConstants.Ids.NSH.equals(def2.id().shortName()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN

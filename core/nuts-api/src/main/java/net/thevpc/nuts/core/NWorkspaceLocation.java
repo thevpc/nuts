@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 import java.io.Serializable;
 
 /**
@@ -50,10 +53,10 @@ public class NWorkspaceLocation implements Serializable {
 
     public NWorkspaceLocation(NWorkspaceLocation other) {
         this.name = other.uuid;
-        this.name = other.getName();
-        this.location = other.getLocation();
+        this.name = other.name();
+        this.location = other.location();
         this.enabled = other.isEnabled();
-        this.uuid = other.getUuid();
+        this.uuid = other.uuid();
     }
 
     public NWorkspaceLocation(String uuid, String name, String location) {
@@ -62,38 +65,46 @@ public class NWorkspaceLocation implements Serializable {
         this.location = location;
     }
 
+    @NGetter
     public boolean isEnabled() {
         return enabled;
     }
 
-    public NWorkspaceLocation setEnabled(boolean enabled) {
+    @NSetter
+    public NWorkspaceLocation enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NWorkspaceLocation setName(String name) {
+    @NSetter
+    public NWorkspaceLocation name(String name) {
         this.name = name;
         return this;
     }
 
-    public String getLocation() {
+    @NGetter
+    public String location() {
         return location;
     }
 
-    public NWorkspaceLocation setLocation(String location) {
+    @NSetter
+    public NWorkspaceLocation location(String location) {
         this.location = location;
         return this;
     }
 
-    public String getUuid() {
+    @NGetter
+    public String uuid() {
         return uuid;
     }
 
-    public NWorkspaceLocation setUuid(String uuid) {
+    @NSetter
+    public NWorkspaceLocation uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }

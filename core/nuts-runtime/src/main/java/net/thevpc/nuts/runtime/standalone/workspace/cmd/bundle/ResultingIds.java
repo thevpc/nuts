@@ -163,29 +163,29 @@ class ResultingIds {
         if (findNutsRuntimeId() == null) {
             for (NDefinition resultIdDef : new ArrayList<>(classPath.values())) {
                 if (resultIdDef.id().shortName().equals(NConstants.Ids.NUTS_API)) {
-                    if (resultIdDef.id().longName().equals(session.getWorkspace().getAppId().longName())) {
-                        add(session.getWorkspace().getRuntimeId());
+                    if (resultIdDef.id().longName().equals(session.workspace().appId().longName())) {
+                        add(session.workspace().runtimeId());
                     } else {
-                        add(session.getWorkspace().getRuntimeId().builder().version(resultIdDef.id().version() + ".0").build());
+                        add(session.workspace().runtimeId().builder().version(resultIdDef.id().version() + ".0").build());
                     }
                     break;
                 }
             }
         }
         if (findNutsRuntimeId() == null) {
-            add(session.getWorkspace().getRuntimeId());
+            add(session.workspace().runtimeId());
         }
         if (findNutsAppId() == null) {
             for (NDefinition resultIdDef : new ArrayList<>(classPath.values())) {
                 if (resultIdDef.id().shortName().equals(NConstants.Ids.NUTS_API)) {
-                    if (resultIdDef.id().longName().equals(session.getWorkspace().getAppId().longName())) {
-                        add(session.getWorkspace().getAppId());
+                    if (resultIdDef.id().longName().equals(session.workspace().appId().longName())) {
+                        add(session.workspace().appId());
                     } else {
                         NVersion v = resultIdDef.id().version();
                         if (v.compareTo("0.8.5") < 0) {
                             //do nothing
                         } else {
-                            NId appId = NWorkspace.of().getAppId();
+                            NId appId = NWorkspace.of().appId();
                             add(appId.builder().version(resultIdDef.id().version()).build());
                         }
                     }
@@ -194,7 +194,7 @@ class ResultingIds {
             }
         }
         if (findNutsRuntimeId() == null) {
-            add(session.getWorkspace().getAppId());
+            add(session.workspace().appId());
         }
     }
 }

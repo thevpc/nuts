@@ -80,7 +80,7 @@ public class SearchTest {
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
                 ;
         NWorkspace ws = NWorkspace.of();
-        List<NRepository> repositories = ws.getRepositories();
+        List<NRepository> repositories = ws.repositories();
         for (NRepository repository : repositories) {
             TestUtils.println(repository);
         }

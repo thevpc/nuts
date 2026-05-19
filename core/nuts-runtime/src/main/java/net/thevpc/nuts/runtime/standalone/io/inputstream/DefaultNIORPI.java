@@ -60,7 +60,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public <T> NAsk<T> createQuestion() {
-        return createQuestion(NSession.of().getTerminal());
+        return createQuestion(NSession.of().terminal());
     }
 
     @Override
@@ -83,7 +83,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out == null) {
             return null;
         }
-        NBootOptions woptions = NWorkspace.of().getBootOptions();
+        NBootOptions woptions = NWorkspace.of().bootOptions();
         NTerminalMode expectedMode0 = woptions.terminalMode().orElse(NTerminalMode.DEFAULT);
         if (expectedMode0 == NTerminalMode.DEFAULT) {
             if (woptions.bot().orElse(false)) {
@@ -581,7 +581,7 @@ public class DefaultNIORPI implements NIORPI {
         if (rootFolder == null) {
             rootFolder = NPath.of(NStoreKey.ofTemp());
         }
-        NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().getRuntimeId());
+        NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().runtimeId());
         if (appId != null) {
             rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(appId));
         }

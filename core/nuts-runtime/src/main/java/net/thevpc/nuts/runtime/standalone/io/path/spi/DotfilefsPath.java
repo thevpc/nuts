@@ -192,10 +192,10 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         NSession session = NSession.of();
         NVersion versionString = NVersion.get("0.5.5").get();
         try (InputStream foldersFileStream = NInputStreamMonitor.of().source(NPath.of(dotFilesUrl)).create()) {
-            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
+            session.terminal().printProgress(NMsg.ofC("%-8s %s", "browse", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
             dotFilesContent=NIOUtils.loadString(foldersFileStream, false);
         } catch (IOException | NIOException | UncheckedIOException e) {
-            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "not found", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
+            session.terminal().printProgress(NMsg.ofC("%-8s %s", "not found", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
             // not found
         }
         if (dotFilesContent != null) {

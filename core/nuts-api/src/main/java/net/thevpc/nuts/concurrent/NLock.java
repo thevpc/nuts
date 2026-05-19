@@ -64,7 +64,7 @@ public interface NLock extends Lock, NDescribable {
     }
 
     static NLock ofId(NId id) {
-        if (NWorkspace.of().getBootOptions().isolationLevel().orNull() == NIsolationLevel.MEMORY) {
+        if (NWorkspace.of().bootOptions().isolationLevel().orNull() == NIsolationLevel.MEMORY) {
             return of(id.longId());
         } else {
             return ofIdPath(id, NStoreScope.WORKSPACE);

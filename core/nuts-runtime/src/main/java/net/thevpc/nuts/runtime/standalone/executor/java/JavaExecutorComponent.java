@@ -117,27 +117,27 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
         NSession session = executionContext.session();
-        NWorkspaceOptionsBuilder options = NWorkspace.of().getBootOptions().toWorkspaceOptions().builder();
+        NWorkspaceOptionsBuilder options = NWorkspace.of().bootOptions().toWorkspaceOptions().builder();
         options.setDry(executionContext.isDry());
         options.setBot(executionContext.isBot());
 
         //copy session parameters to the newly created workspace
-        options.setShowStacktrace(session.getShowStacktrace().orDefault());
+        options.setShowStacktrace(session.showStacktrace().orDefault());
         options.setGui(session.isGui());
-        options.setOutLinePrefix(session.getOutLinePrefix());
-        options.setErrLinePrefix(session.getErrLinePrefix());
-        options.setDebug(session.getDebug().orDefault());
+        options.setOutLinePrefix(session.outLinePrefix());
+        options.setErrLinePrefix(session.errLinePrefix());
+        options.setDebug(session.debug().orDefault());
         options.setTrace(session.isTrace());
         options.setPreviewRepo(session.isPreviewRepo());
         options.setCached(session.isCached());
         options.setIndexed(session.isIndexed());
-        options.setConfirm(session.getConfirm().orDefault());
+        options.setConfirm(session.confirm().orDefault());
         options.setTransitive(session.isTransitive());
-        options.setOutputFormat(session.getOutputFormat().orDefault());
+        options.setOutputFormat(session.outputFormat().orDefault());
         switch (options.getTerminalMode().orElse(NTerminalMode.DEFAULT)) {
             //retain filtered
             case DEFAULT:
-                options.setTerminalMode(session.getTerminal().out().terminalMode());
+                options.setTerminalMode(session.terminal().out().terminalMode());
                 //retain filtered
             case FILTERED:
                 break;
@@ -145,13 +145,13 @@ public class JavaExecutorComponent implements NExecutorComponent {
             case INHERITED:
                 break;
             default:
-                options.setTerminalMode(session.getTerminal().out().terminalMode());
+                options.setTerminalMode(session.terminal().out().terminalMode());
                 break;
         }
-        options.setExpireTime(session.getExpireTime().orNull());
+        options.setExpireTime(session.expireTime().orNull());
 
-        Level logTermLevel = session.getLogTermLevel();
-        Level logFileLevel = session.getLogFileLevel();
+        Level logTermLevel = session.logTermLevel();
+        Level logFileLevel = session.logFileLevel();
         if (logTermLevel != null || logFileLevel != null) {
             NLogConfig lc = options.getLogConfig().orNull();
             if (lc == null) {
@@ -258,7 +258,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 }
                 List<String> extraStartWithAppArgs = new ArrayList<>();
 
-                if (def.id().equalsShortId(session.getWorkspace().getApiId())) {
+                if (def.id().equalsShortId(session.workspace().apiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
                 String bootArgumentsString = NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(ncmdLine
@@ -311,7 +311,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
-                NDebugString jdb = NDebugString.of(session.getDebug().orDefault());
+                NDebugString jdb = NDebugString.of(session.debug().orDefault());
                 if (jdb.isEnabled()) {
                     int port = jdb.getPort();
                     if (port <= 0) {

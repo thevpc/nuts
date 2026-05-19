@@ -214,7 +214,7 @@ public final class JavaExecutorOptions {
                 }
             }
         }
-        boolean cached = NSession.of().isCached() && NSession.of().getFetchStrategy().orNull() != NFetchStrategy.REMOTE;
+        boolean cached = NSession.of().isCached() && NSession.of().fetchStrategy().orNull() != NFetchStrategy.REMOTE;
         NPath cacheFile = null;
         if (cached) {
             cacheFile = loadCachedClassPath(id, currentCP, classPathNodes);
@@ -251,12 +251,12 @@ public final class JavaExecutorOptions {
                 NSession session = NSession.of();
                 if (this.mainClass != null) {
                     if (NOut.isPlain()) {
-                        session.getTerminal().err().println((NMsg.ofC("ignored main-class=%s. running jar!", getMainClass())));
+                        session.terminal().err().println((NMsg.ofC("ignored main-class=%s. running jar!", getMainClass())));
                     }
                 }
                 if (!currentCP.isEmpty()) {
                     if (NOut.isPlain()) {
-                        session.getTerminal().err().println(NMsg.ofC("ignored class-path=%s. running jar!", currentCP
+                        session.terminal().err().println(NMsg.ofC("ignored class-path=%s. running jar!", currentCP
                                 .stream()
                                 .map(x -> x.url().toString()).collect(Collectors.joining(","))
                         ));
@@ -465,7 +465,7 @@ public final class JavaExecutorOptions {
         dh.append(j9_modulePath.stream().sorted().collect(Collectors.joining(":")).getBytes());
         dh.append(j9_upgradeModulePath.stream().sorted().collect(Collectors.joining(":")).getBytes());
         String cacheKey = dh.getDigest();
-        NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().getApiId())).resolve("classpaths").resolve(cacheKey);
+        NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().apiId())).resolve("classpaths").resolve(cacheKey);
         if (cacheFile != null && cacheFile.exists()) {
             try (BufferedReader br = cacheFile.getBufferedReader()) {
                 String line;

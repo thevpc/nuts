@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.time;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.util.LinkedHashMap;
@@ -16,7 +14,7 @@ public class ProgressOptions {
         return NSession.of().getOrComputeProperty(ProgressOptions.class, () -> {
             ProgressOptions o = new ProgressOptions();
             boolean enabledVisited = false;
-            Map<String, String> m = NStringMapFormat.COMMA_FORMAT.parse(NSession.of().getProgressOptions()).get();
+            Map<String, String> m = NStringMapFormat.COMMA_FORMAT.parse(NSession.of().progressOptions()).get();
             for (Map.Entry<String, String> e : m.entrySet()) {
                 String k = e.getKey();
                 String v = e.getValue();
@@ -36,7 +34,7 @@ public class ProgressOptions {
                     o.put(k, NLiteral.of(v));
                 }
             }
-            for (Map.Entry<String, String> e : NWorkspace.of().getConfigMap().entrySet()) {
+            for (Map.Entry<String, String> e : NWorkspace.of().configMap().entrySet()) {
                 if (e.getKey().startsWith("progress.")) {
                     String k = e.getKey().substring("progress.".length());
                     if (o.get(k).isNotPresent()) {

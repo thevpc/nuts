@@ -36,7 +36,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
 
         if (old != base) {
             NWorkspaceEvent event = null;
-            for (NWorkspaceListener workspaceListener : NWorkspace.of().getWorkspaceListeners()) {
+            for (NWorkspaceListener workspaceListener : NWorkspace.of().workspaceListeners()) {
                 if (event == null) {
                     event = new DefaultNWorkspaceEvent(session, null, "systemTerminal", null, this);
                 }

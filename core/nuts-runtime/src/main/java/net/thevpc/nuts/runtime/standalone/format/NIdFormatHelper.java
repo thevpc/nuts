@@ -156,7 +156,7 @@ public class NIdFormatHelper {
     }
 
     private static FormatHelper getFormatHelper(NWorkspace workspace) {
-        FormatHelper h = (FormatHelper) NWorkspace.of().getProperties().get(FormatHelper.class.getName());
+        FormatHelper h = (FormatHelper) NWorkspace.of().properties().get(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
@@ -243,7 +243,7 @@ public class NIdFormatHelper {
             int z = 0;
             Stack<NRepository> stack = new Stack<>();
             for (NRepository repository : workspace
-                    .getRepositories()) {
+                    .repositories()) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {

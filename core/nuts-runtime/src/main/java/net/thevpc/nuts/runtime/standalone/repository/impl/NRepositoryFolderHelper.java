@@ -574,7 +574,7 @@ public class NRepositoryFolderHelper {
                         }
                     }
                     try (PrintStream p = new PrintStream(new File(folder, CoreNConstants.Files.DOT_FILES))) {
-                        p.println("#version=" + NWorkspace.of().getApiVersion());
+                        p.println("#version=" + NWorkspace.of().apiVersion());
                         for (String file : folders) {
                             p.println(file + "/");
                         }

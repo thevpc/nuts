@@ -61,7 +61,7 @@ public class DefaultNRepositoryEvent implements NRepositoryEvent {
 
     @Override
     public NWorkspace workspace() {
-        return session().getWorkspace();
+        return session().workspace();
     }
 
     @Override

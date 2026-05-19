@@ -40,7 +40,7 @@ import java.io.InputStream;
  */
 public interface NTerminal {
     static NTerminal of() {
-        return NSession.of().getTerminal();
+        return NSession.of().terminal();
     }
 
     static NTerminal ofSystem() {

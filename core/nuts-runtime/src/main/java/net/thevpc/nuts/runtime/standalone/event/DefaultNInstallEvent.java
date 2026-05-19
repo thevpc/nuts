@@ -62,7 +62,7 @@ public class DefaultNInstallEvent implements NInstallEvent {
 
     @Override
     public NWorkspace workspace() {
-        return session().getWorkspace();
+        return session().workspace();
     }
 
     @Override

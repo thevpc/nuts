@@ -24,29 +24,17 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.boot.NBootWorkspaceImpl;
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NInstallListener;
-import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceListener;
-import net.thevpc.nuts.log.NLog;
 
-import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.internal.NScopedWorkspace;
-import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
-import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.concurrent.NCallable;
-import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/6/17.
@@ -70,7 +58,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     @Override
     public String toString() {
         return "NutsWorkspace{"
-                + getName()
+                + name()
                 + '}';
     }
 
@@ -115,7 +103,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     }
 
     @Override
-    public List<NRepositoryListener> getRepositoryListeners() {
+    public List<NRepositoryListener> repositoryListeners() {
         return eventsModel().getRepositoryListeners();
     }
 
@@ -132,7 +120,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     }
 
     @Override
-    public List<NObservableMapListener<String, Object>> getPropertyListeners() {
+    public List<NObservableMapListener<String, Object>> propertyListeners() {
         return eventsModel().getUserPropertyListeners();
     }
 
@@ -149,7 +137,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     }
 
     @Override
-    public List<NWorkspaceListener> getWorkspaceListeners() {
+    public List<NWorkspaceListener> workspaceListeners() {
         return eventsModel().getWorkspaceListeners();
     }
 
@@ -166,7 +154,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     }
 
     @Override
-    public List<NInstallListener> getInstallListeners() {
+    public List<NInstallListener> installListeners() {
         return eventsModel().getInstallListeners();
     }
 

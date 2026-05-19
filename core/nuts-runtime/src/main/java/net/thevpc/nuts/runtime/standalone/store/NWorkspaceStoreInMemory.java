@@ -89,7 +89,7 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     }
 
     public NWorkspaceConfigBoot loadWorkspaceConfigBoot(NPath workspacePath) {
-        if (Objects.equals(workspacePath, NWorkspace.of().getLocation())) {
+        if (Objects.equals(workspacePath, NWorkspace.of().location())) {
             return storedConfigBoot;
         }
         return null;
@@ -98,9 +98,9 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     @Override
     public NWorkspaceConfigApi loadConfigApi(NId apiId) {
         if (apiId == null) {
-            apiId = NWorkspace.of().getApiId();
+            apiId = NWorkspace.of().apiId();
         }
-        if (apiId.equals(NWorkspace.of().getApiId())) {
+        if (apiId.equals(NWorkspace.of().apiId())) {
             return storedConfigApi;
         }
         return storedConfigApiByVersion.get(apiId.version());
@@ -114,9 +114,9 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     @Override
     public NWorkspaceConfigSecurity loadConfigSecurity(NId apiId) {
         if (apiId == null) {
-            apiId = NWorkspace.of().getApiId();
+            apiId = NWorkspace.of().apiId();
         }
-        if (apiId.equals(NWorkspace.of().getApiId())) {
+        if (apiId.equals(NWorkspace.of().apiId())) {
             return storedConfigSecurity;
         }
         return storedConfigSecurityByVersion.get(apiId.version());
@@ -125,9 +125,9 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     @Override
     public NWorkspaceConfigMain loadConfigMain(NId apiId) {
         if (apiId == null) {
-            apiId = NWorkspace.of().getApiId();
+            apiId = NWorkspace.of().apiId();
         }
-        if (apiId.equals(NWorkspace.of().getApiId())) {
+        if (apiId.equals(NWorkspace.of().apiId())) {
             return storedConfigMain;
         }
         return storedConfigMainByVersion.get(apiId.version());

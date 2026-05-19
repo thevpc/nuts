@@ -57,7 +57,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
-                all.add(NWorkspace.of().getWorkspaceLocation().toPath().get()
+                all.add(NWorkspace.of().workspaceLocation().toPath().get()
                         .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME).toString()
                 );
                 for (NStoreType storeType : NStoreType.values()) {
@@ -67,11 +67,11 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
                 if (file == null || file.isEmpty()) {
-                    file = session.getWorkspace().getName() + ".zip";
+                    file = session.workspace().name() + ".zip";
                 } else if (file.endsWith("/") || file.endsWith("\\")) {
-                    file += session.getWorkspace().getName() + ".zip";
+                    file += session.workspace().name() + ".zip";
                 } else if (Files.isDirectory(Paths.get(file))) {
-                    file += File.separator + session.getWorkspace().getName() + ".zip";
+                    file += File.separator + session.workspace().name() + ".zip";
                 }
                 if (Paths.get(file).getFileName().toString().indexOf('.') < 0) {
                     file += ".zip";
@@ -100,11 +100,11 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             if (file == null || file.isEmpty()) {
-                file = session.getWorkspace().getName() + ".zip";
+                file = session.workspace().name() + ".zip";
             } else if (file.endsWith("/") || file.endsWith("\\")) {
-                file += session.getWorkspace().getName() + ".zip";
+                file += session.workspace().name() + ".zip";
             } else if (Files.isDirectory(Paths.get(file))) {
-                file += File.separator + session.getWorkspace().getName() + ".zip";
+                file += File.separator + session.workspace().name() + ".zip";
             }
             if (Paths.get(file).getFileName().toString().indexOf('.') < 0 && !Files.exists(Paths.get(file))) {
                 file += ".zip";
@@ -141,7 +141,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 if (ws == null || ws.isEmpty()) {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
-                String platformHomeFolder = NPlatformHome.of(null, NWorkspace.of().getStoredConfig().isSystem()).getWorkspaceLocation(ws);
+                String platformHomeFolder = NPlatformHome.of(null, NWorkspace.of().storedConfig().isSystem()).getWorkspaceLocation(ws);
                 NUncompress.of()
                         .from(NPath.of(file))
                         .to(NPath.of(platformHomeFolder))

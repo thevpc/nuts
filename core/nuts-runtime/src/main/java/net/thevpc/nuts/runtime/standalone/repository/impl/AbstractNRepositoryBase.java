@@ -81,7 +81,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         this.options = options.copy();
         this.parentRepository = parent;
         this.configModel = new DefaultNRepositoryConfigModel(this, options, workspace,speed, supportedMirroring, repositoryType);
-        this.nIndexStore = NWorkspace.of().getIndexStoreClientFactory().createIndexStore(this);
+        this.nIndexStore = NWorkspace.of().indexStoreClientFactory().createIndexStore(this);
 //        setEnabled(options.isEnabled(), initSession);
     }
 

@@ -70,7 +70,7 @@ public final class CoreNUtilGui {
             //exception may occur if the sdk is built in headless mode
             NSession session = NSession.of();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
-            String line = session.getTerminal().readLine(NMsg.ofPlain(message.toString()));
+            String line = session.terminal().readLine(NMsg.ofPlain(message.toString()));
             return new GuiResult(line, rememberMe && false);
         }
     }
@@ -104,7 +104,7 @@ public final class CoreNUtilGui {
             NSession session = NSession.of();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
             return new GuiResult(
-                    session.getTerminal().readLine(NMsg.ofPlain(message.toString())),
+                    session.terminal().readLine(NMsg.ofPlain(message.toString())),
                     rememberMe && false
             );
         }

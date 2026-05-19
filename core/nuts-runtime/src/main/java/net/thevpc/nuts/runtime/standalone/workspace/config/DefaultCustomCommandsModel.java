@@ -46,8 +46,8 @@ public class DefaultCustomCommandsModel {
             throw new NIllegalArgumentException(NMsg.ofC("invalid WorkspaceCommandFactory %s", commandFactoryConfig));
         }
         for (NWorkspaceCmdFactory factory : commandFactories) {
-            if (commandFactoryConfig.factoryId().equals(factory.getFactoryId())) {
-                throw new NIllegalArgumentException(NMsg.ofC("factory already registered : %s", factory.getFactoryId()));
+            if (commandFactoryConfig.factoryId().equals(factory.factoryId())) {
+                throw new NIllegalArgumentException(NMsg.ofC("factory already registered : %s", factory.factoryId()));
             }
         }
         NWorkspaceCmdFactory f = null;
@@ -61,7 +61,7 @@ public class DefaultCustomCommandsModel {
         Collections.sort(commandFactories, new Comparator<NWorkspaceCmdFactory>() {
             @Override
             public int compare(NWorkspaceCmdFactory o1, NWorkspaceCmdFactory o2) {
-                return Integer.compare(o2.getPriority(), o1.getPriority());
+                return Integer.compare(o2.priority(), o1.priority());
             }
         });
         List<NCommandFactoryConfig> commandFactories = getStoreModelMain().getCommandFactories();
@@ -71,7 +71,7 @@ public class DefaultCustomCommandsModel {
         }
         NCommandFactoryConfig oldCommandFactory = null;
         for (NCommandFactoryConfig commandFactory : commandFactories) {
-            if (f == null || commandFactory.factoryId().equals(f.getFactoryId())) {
+            if (f == null || commandFactory.factoryId().equals(f.factoryId())) {
                 oldCommandFactory = commandFactory;
             }
         }
@@ -103,7 +103,7 @@ public class DefaultCustomCommandsModel {
         NCommandFactoryConfig removeMeConfig = null;
         for (Iterator<NWorkspaceCmdFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
             NWorkspaceCmdFactory factory = iterator.next();
-            if (factoryId.equals(factory.getFactoryId())) {
+            if (factoryId.equals(factory.factoryId())) {
                 return true;
             }
         }
@@ -131,7 +131,7 @@ public class DefaultCustomCommandsModel {
         NCommandFactoryConfig removeMeConfig = null;
         for (Iterator<NWorkspaceCmdFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
             NWorkspaceCmdFactory factory = iterator.next();
-            if (factoryId.equals(factory.getFactoryId())) {
+            if (factoryId.equals(factory.factoryId())) {
                 removeMe = factory;
                 iterator.remove();
                 NWorkspaceExt.of(workspace)
@@ -195,7 +195,7 @@ public class DefaultCustomCommandsModel {
             defaultCommandFactory.installCommand(command);
             NSession session = workspace.currentSession();
             if (session.isPlainTrace()) {
-                NPrintStream out = session.getTerminal().out();
+                NPrintStream out = session.terminal().out();
                 NTexts text = NTexts.of();
                 out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("install", NTextStyle.success()),
@@ -225,7 +225,7 @@ public class DefaultCustomCommandsModel {
             defaultCommandFactory.installCommand(command);
             NSession session = workspace.currentSession();
             if (session.isPlainTrace()) {
-                NPrintStream out = session.getTerminal().out();
+                NPrintStream out = session.terminal().out();
                 NTexts text = NTexts.of();
                 out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("update ", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
@@ -255,7 +255,7 @@ public class DefaultCustomCommandsModel {
         defaultCommandFactory.uninstallCommand(name);
         NSession session = workspace.currentSession();
         if (session.isPlainTrace()) {
-            NPrintStream out = session.getTerminal().out();
+            NPrintStream out = session.terminal().out();
             out.println(NMsg.ofC("%s command %s", "uninstall", NText.ofStyled(name, NTextStyle.primary3())));
         }
     }

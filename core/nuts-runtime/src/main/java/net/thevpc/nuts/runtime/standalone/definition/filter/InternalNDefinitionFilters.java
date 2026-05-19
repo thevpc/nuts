@@ -213,7 +213,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     @Override
     public NDefinitionFilter byApiVersion(NVersion apiVersion) {
         if (apiVersion == null) {
-            apiVersion = NWorkspace.of().getApiVersion();
+            apiVersion = NWorkspace.of().apiVersion();
         }
         return new NutsAPIDefinitionFilter(
                 apiVersion
@@ -223,7 +223,7 @@ public class InternalNDefinitionFilters extends InternalNTypedFilters<NDefinitio
     @Override
     public NDefinitionFilter byBootVersion(NVersion bootVersion) {
         if (bootVersion == null) {
-            bootVersion = NWorkspace.of().getBootVersion();
+            bootVersion = NWorkspace.of().bootVersion();
         }
         return new NutsBootNDefinitionFilter(
                 bootVersion

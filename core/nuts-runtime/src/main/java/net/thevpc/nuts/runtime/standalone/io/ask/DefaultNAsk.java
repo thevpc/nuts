@@ -69,7 +69,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
             }
         }
         if (!traceConfirmation && isBooleanType()) {
-            switch (session.getConfirm().orDefault()) {
+            switch (session.confirm().orDefault()) {
                 case YES: {
                     return (T) Boolean.TRUE;
                 }
@@ -172,7 +172,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
             }
 
             out.flush();
-            switch (session.getConfirm().orDefault()) {
+            switch (session.confirm().orDefault()) {
                 case ERROR: {
                     out.flush();
                     out.println(" : cancel");
@@ -180,7 +180,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                 }
             }
             if (isBooleanType()) {
-                switch (session.getConfirm().orDefault()) {
+                switch (session.confirm().orDefault()) {
                     case YES: {
                         out.flush();
                         out.println(" : yes");
@@ -329,7 +329,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private CoreNUtilGui.GuiResult showGuiInput(String str, boolean pwd, boolean rememberMe) {
         NSession session = NSession.of();
         String ft = NText.of(str).filteredText();
-        NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().version());
+        NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.workspace().apiId().version());
         if (NApp.of().id().orNull() != null) {
             try {
                 NDefinition def = NSearch.of().id(NApp.of().id().get())

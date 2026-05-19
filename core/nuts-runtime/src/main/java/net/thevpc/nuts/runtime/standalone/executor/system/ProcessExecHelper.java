@@ -106,7 +106,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  boolean dry, NSession session
     ) throws NExecutionException {
         boolean jdk=false;
-        NWorkspace workspace = session.getWorkspace();
+        NWorkspace workspace = session.workspace();
         NId id = nutMainFile.id();
         Path installerFile = nutMainFile.content().flatMap(NPath::toPath).orNull();
         NPath storeFolder = nutMainFile.installInformation().get().installFolder();
@@ -128,7 +128,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", NWorkspace.of().getWorkspaceLocation().toString());
+        map.put("nuts.workspace", NWorkspace.of().workspaceLocation().toString());
         if (installerFile != null) {
             map.put("nuts.installer", installerFile.toString());
         }
@@ -199,7 +199,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         args = args2.toArray(new String[0]);
 
-        Path wsLocation = NWorkspace.of().getWorkspaceLocation().toPath().get();
+        Path wsLocation = NWorkspace.of().workspaceLocation().toPath().get();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
             NPath.of(path).addPermissions(NPathPermission.CAN_EXECUTE);

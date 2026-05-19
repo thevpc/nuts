@@ -28,6 +28,7 @@ package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.command.NCommandConfig;
 import net.thevpc.nuts.command.NCommandFactoryConfig;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.List;
 
@@ -40,9 +41,11 @@ public interface NWorkspaceCmdFactory {
 
     void configure(NCommandFactoryConfig config);
 
-    int getPriority();
+    @NGetter
+    int priority();
 
-    String getFactoryId();
+    @NGetter
+    String factoryId();
 
     NCommandConfig findCommand(String name);
 

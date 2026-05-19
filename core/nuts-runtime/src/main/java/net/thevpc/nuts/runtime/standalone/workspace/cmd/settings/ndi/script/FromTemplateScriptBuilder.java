@@ -141,7 +141,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
 //                                        }
 //                                        appId=getSession().getWorkspace().getRuntimeId();
 //                                        return appId.getLongName();
-                                        return NWorkspace.of().getRuntimeId().longName();
+                                        return NWorkspace.of().runtimeId().longName();
                                     }
                                     case "SCRIPT_NUTS":
                                         return sndi.getNutsStart(options).path().toString();
@@ -164,9 +164,9 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_API_ID":
                                         return options.resolveNutsApiId().toString();
                                     case "NUTS_VERSION":
-                                        return NWorkspace.of().getApiVersion().toString();
+                                        return NWorkspace.of().apiVersion().toString();
                                     case "NUTS_WORKSPACE":
-                                        return NWorkspace.of().getWorkspaceLocation().toString();
+                                        return NWorkspace.of().workspaceLocation().toString();
                                     case "NUTS_WORKSPACE_BIN":
                                         return str(NPath.of(NStoreKey.ofBin()));
                                     case "NUTS_WORKSPACE_CONF":

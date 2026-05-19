@@ -102,7 +102,7 @@ public class DefaultNBootModel implements NBootModel {
         }
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNSystemTerminalBaseBoot(this));
         this.systemTerminal = new NSystemTerminalRef(NutsSystemTerminal_of_NutsSystemTerminalBase(sys));
-        this.bootSession.setTerminal(new DefaultNTerminalFromSystem(this.systemTerminal));
+        this.bootSession.terminal(new DefaultNTerminalFromSystem(this.systemTerminal));
         this.nullOut = NullNPrintStream.INSTANCE;
         this.nullOutputStream = NullOutputStream.INSTANCE;
     }
@@ -258,8 +258,8 @@ public class DefaultNBootModel implements NBootModel {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NId extId = NId.get("net.thevpc.nuts:nuts-term#" + workspace.getApiVersion()).get();
-            if (!NExtensions.of().isExcludedExtension(extId.toString(), NWorkspace.of().getBootOptions().toWorkspaceOptions())) {
+            NId extId = NId.get("net.thevpc.nuts:nuts-term#" + workspace.apiVersion()).get();
+            if (!NExtensions.of().isExcludedExtension(extId.toString(), NWorkspace.of().bootOptions().toWorkspaceOptions())) {
                 NExtensions extensions = NExtensions.of();
                 extensions.loadExtension(extId);
                 NSystemTerminal systemTerminal = createSystemTerminal(

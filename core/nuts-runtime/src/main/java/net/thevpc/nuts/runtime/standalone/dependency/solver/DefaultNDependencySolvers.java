@@ -17,7 +17,7 @@ public class DefaultNDependencySolvers implements NDependencySolvers {
     @Override
     public NDependencySolver createSolver() {
         NSession session = NSession.of();
-        return createSolver(session.getDependencySolver());
+        return createSolver(session.dependencySolver());
     }
 
     @Override

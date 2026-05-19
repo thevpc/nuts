@@ -44,8 +44,8 @@ public class NLogConsoleHandler implements NLogSPI {
             return false;
         }
         NSession session = NSession.of();
-        NLogConfig logConfig = NWorkspace.of().getBootOptions().logConfig().orElseGet(NLogConfig::new);
-        Level sessionLogLevel = session.getLogTermLevel();
+        NLogConfig logConfig = NWorkspace.of().bootOptions().logConfig().orElseGet(NLogConfig::new);
+        Level sessionLogLevel = session.logTermLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {
                 sessionLogLevel = logConfig.getLogTermLevel();

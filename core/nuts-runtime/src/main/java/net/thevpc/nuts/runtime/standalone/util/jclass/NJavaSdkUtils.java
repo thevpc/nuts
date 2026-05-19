@@ -321,7 +321,7 @@ public class NJavaSdkUtils {
                 }
             }
         }
-        boolean searchRemoteInstallations = ifNotFoundSearchRemotely && NSession.of().getFetchStrategy().orElse(NFetchStrategy.ONLINE).accept(NFetchMode.REMOTE) && NIn.ask().forBoolean(
+        boolean searchRemoteInstallations = ifNotFoundSearchRemotely && NSession.of().fetchStrategy().orElse(NFetchStrategy.ONLINE).accept(NFetchMode.REMOTE) && NIn.ask().forBoolean(
                         NMsg.ofC("No Java %s found. will download one and install it. Would you want me to?", javaVersion)
                 ).defaultValue(true)
                 .booleanValue();
@@ -537,7 +537,7 @@ public class NJavaSdkUtils {
                                     NWorkspace workspace = NWorkspace.of();
                                     synchronized (workspace) {
                                         NTexts factory = NTexts.of();
-                                        workspace.currentSession().getTerminal().printProgress(
+                                        workspace.currentSession().terminal().printProgress(
                                                 NMsg.ofC("detected java %s %s at %s", r.getProduct(),
                                                         factory.ofStyled(r.getVersion(), NTextStyle.version()),
                                                         NCoreLogUtils.forProgressPathString(r.getPath()))
@@ -561,7 +561,7 @@ public class NJavaSdkUtils {
                 }
             }
             //just reset the line!
-            NSession.of().getTerminal().printProgress(NMsg.ofPlain(""));
+            NSession.of().terminal().printProgress(NMsg.ofPlain(""));
             return locs.toArray(new NExecutionEngineLocation[0]);
         });
     }
@@ -736,7 +736,7 @@ public class NJavaSdkUtils {
         }
         String bestJavaPath = nutsPlatformLocation.getPath();
         //if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
-        NPath file = NPath.of(bestJavaPath).toAbsolute(NWorkspace.of().getWorkspaceLocation());
+        NPath file = NPath.of(bestJavaPath).toAbsolute(NWorkspace.of().workspaceLocation());
         //if (file.isDirectory() && file.resolve("bin").isDirectory()) {
         boolean winOs = NEnv.of().getOsFamily() == NOsFamily.WINDOWS;
         if (winOs) {

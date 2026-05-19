@@ -749,7 +749,7 @@ public class DefaultNCp implements NCp {
             m = NMsg.ofPlain("copy");
         }
         if (options.contains(NPathOption.LOG)) {
-            session.getTerminal().printProgress(NMsg.ofC("%-14s %s to %s", m, loggedSrc, loggedTarget));
+            session.terminal().printProgress(NMsg.ofC("%-14s %s to %s", m, loggedSrc, loggedTarget));
         }
         if (options.contains(NPathOption.LOG)
                 || options.contains(NPathOption.TRACE)

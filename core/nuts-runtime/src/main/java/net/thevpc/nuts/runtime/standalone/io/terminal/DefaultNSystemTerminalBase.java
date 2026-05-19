@@ -45,7 +45,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     protected boolean lastWasProgress=false;
 
     public DefaultNSystemTerminalBase() {
-        NBootOptions options = NWorkspace.of().getBootOptions();
+        NBootOptions options = NWorkspace.of().bootOptions();
         NTerminalMode terminalMode = options.terminalMode().orElse(NTerminalMode.DEFAULT);
         NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of().getModel().bootModel.getBootTerminal();
         if (terminalMode == NTerminalMode.DEFAULT) {

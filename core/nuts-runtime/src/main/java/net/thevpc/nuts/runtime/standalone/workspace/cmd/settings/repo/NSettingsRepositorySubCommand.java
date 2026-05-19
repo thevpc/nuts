@@ -218,10 +218,10 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         }
         if (cmdLine.isExecMode()) {
             NWorkspace workspace = NWorkspace.of();
-            List<NRepository> r = parent.isNull() ? workspace.getRepositories() : workspace.getRepository(parent.get())
+            List<NRepository> r = parent.isNull() ? workspace.repositories() : workspace.getRepository(parent.get())
                     .get().config().mirrors();
-            RepoInfo[] array = r.stream().map(x -> repoInfo(x, session.getOutputFormat().orDefault() != NContentType.TABLE && session.getOutputFormat().orDefault() != NContentType.PLAIN)).toArray(RepoInfo[]::new);
-            NContentType cf = NSession.of().getOutputFormat().orElse(NContentType.PLAIN);
+            RepoInfo[] array = r.stream().map(x -> repoInfo(x, session.outputFormat().orDefault() != NContentType.TABLE && session.outputFormat().orDefault() != NContentType.PLAIN)).toArray(RepoInfo[]::new);
+            NContentType cf = NSession.of().outputFormat().orElse(NContentType.PLAIN);
             if (longFormat.get()) {
                 if (cf == NContentType.PLAIN) {
                     for (RepoInfo repoInfo : array) {

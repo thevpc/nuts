@@ -29,7 +29,7 @@ public abstract class AbstractNMsgFormatHelper {
         smsg = (String) msg;
         nText = txt.of(smsg);
         session = NSession.of();
-        String sLocale = session.getLocale().orDefault();
+        String sLocale = session.locale().orDefault();
         locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
         params = m.getParams();
         if (params == null) {

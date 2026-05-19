@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.util.NGetter;
+
 /**
  * @author thevpc
  * @app.category Events
@@ -33,13 +35,18 @@ package net.thevpc.nuts.core;
  */
 public interface NWorkspaceEvent extends NSessionProvider {
 
-    NWorkspace getWorkspace();
+    @NGetter
+    NWorkspace workspace();
 
-    NRepository getRepository();
+    @NGetter
+    NRepository repository();
 
-    String getPropertyName();
+    @NGetter
+    String propertyName();
 
-    Object getPropertyOldValue();
+    @NGetter
+    Object propertyOldValue();
 
-    Object getPropertyValue();
+    @NGetter
+    Object propertyValue();
 }

@@ -37,8 +37,8 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
             model = NMutableTableModel.of();
             NSession session = NSession.of();
 
-            if (session.getOutputFormatOptions() != null) {
-                for (String outputFormatOption : session.getOutputFormatOptions()) {
+            if (session.outputFormatOptions() != null) {
+                for (String outputFormatOption : session.outputFormatOptions()) {
                     if (outputFormatOption != null) {
                         //table.configure(true, NCmdLine.of(outputFormatOption, NShellFamily.BASH).setExpandSimpleOptions(false));
                     }

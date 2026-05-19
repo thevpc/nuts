@@ -141,7 +141,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         Map<String, NUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NUpdateResult> regularUpdates = new HashMap<>();
         NUpdateResult apiUpdate = null;
-        NVersion bootVersion0 = NWorkspace.of().getApiVersion();
+        NVersion bootVersion0 = NWorkspace.of().apiVersion();
         NVersion bootVersion = bootVersion0;
         if (!(this.apiVersion() == null || this.apiVersion().isBlank())) {
             bootVersion = this.apiVersion();
@@ -159,7 +159,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         NUpdateResult runtimeUpdate = null;
         if (this.isRuntime()) {
             if (dws.requiresRuntimeExtension()) {
-                runtimeUpdate = checkCoreUpdate(NId.get(NWorkspace.of().getRuntimeId().shortName()).get(),
+                runtimeUpdate = checkCoreUpdate(NId.get(NWorkspace.of().runtimeId().shortName()).get(),
                         apiUpdate != null && apiUpdate.available() != null && apiUpdate.available().id() != null ? apiUpdate.available().id().version()
                                 : bootVersion, Type.RUNTIME, now);
                 if (runtimeUpdate.isUpdatable()) {
@@ -229,7 +229,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 if (id.shortName().equals(NConstants.Ids.NUTS_API)) {
                     continue;
                 }
-                if (id.shortName().equals(NWorkspace.of().getRuntimeId().shortName())) {
+                if (id.shortName().equals(NWorkspace.of().runtimeId().shortName())) {
                     continue;
                 }
                 if (ext.contains(id.shortId())) {
@@ -274,7 +274,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
             if (id.shortName().equals(NConstants.Ids.NUTS_API)) {
                 continue;
             }
-            if (id.shortName().equals(NWorkspace.of().getRuntimeId().shortName())) {
+            if (id.shortName().equals(NWorkspace.of().runtimeId().shortName())) {
                 continue;
             }
             if (extensions.contains(id.shortName())) {
@@ -542,7 +542,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
 
     private void applyResult(NWorkspaceUpdateResult result) {
         NSession session = NSession.of();
-        NWorkspace ws = session.getWorkspace();
+        NWorkspace ws = session.workspace();
         applyFixes();
         NUpdateResult apiUpdate = result.getApi();
         NUpdateResult runtimeUpdate = result.getRuntime();
@@ -574,8 +574,8 @@ public class DefaultNUpdate extends AbstractNUpdate {
         boolean runtimeUpdateAvailable = runtimeUpdate != null && runtimeUpdate.available() != null && !runtimeUpdate.isUpdateApplied();
         boolean apiUpdateApplicable = apiUpdateAvailable && !apiUpdate.isUpdateApplied();
         boolean runtimeUpdateApplicable = runtimeUpdateAvailable && !runtimeUpdate.isUpdateApplied();
-        NId finalApiId = apiUpdateAvailable ? apiUpdate.available().id() : ws.getApiId();
-        NId finalRuntimeId = runtimeUpdateApplicable ? runtimeUpdate.available().id() : ws.getRuntimeId();
+        NId finalApiId = apiUpdateAvailable ? apiUpdate.available().id() : ws.apiId();
+        NId finalRuntimeId = runtimeUpdateApplicable ? runtimeUpdate.available().id() : ws.runtimeId();
         if (apiUpdateApplicable || runtimeUpdateApplicable) {
             //wcfg.getModel().prepareBootApi(finalApiId, finalRuntimeId, true, validWorkspaceSession);
         }
@@ -685,7 +685,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
     public NUpdateResult checkCoreUpdate(NId id, NVersion bootApiVersion, Type type, Instant now) {
         //disable trace so that search do not write to stream
         NSession session = NSession.of();
-        NWorkspace ws = session.getWorkspace();
+        NWorkspace ws = session.workspace();
         NId oldId = null;
         NDefinition oldFile = null;
         NDefinition newFile = null;
@@ -694,8 +694,8 @@ public class DefaultNUpdate extends AbstractNUpdate {
 //        NSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
         switch (type) {
             case API: {
-                oldId = NWorkspace.of().getStoredConfig().getApiId();
-                NId confId = NWorkspace.of().getStoredConfig().getApiId();
+                oldId = NWorkspace.of().storedConfig().getApiId();
+                NId confId = NWorkspace.of().storedConfig().getApiId();
                 if (confId != null) {
                     oldId = confId;
                 }
@@ -705,7 +705,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 }
                 try {
                     NId finalOldId = oldId;
-                    oldFile = session.copy().setFetchStrategy(NFetchStrategy.ONLINE).callWith(() -> NFetch.of(finalOldId)
+                    oldFile = session.copy().fetchStrategy(NFetchStrategy.ONLINE).callWith(() -> NFetch.of(finalOldId)
                             .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .getResultDefinition());
                 } catch (NArtifactNotFoundException ex) {
@@ -719,7 +719,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                             .findFirst().orNull();
                     NId finalNewId1 = newId;
                     newFile = newId == null ? null :
-                            session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
+                            session.copy().fetchStrategy(NFetchStrategy.ONLINE)
                                     .callWith(() ->
                                             latestOnlineDependencies().failFast(false)
                                                     .id(finalNewId1).getResultDefinition()
@@ -731,15 +731,15 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 break;
             }
             case RUNTIME: {
-                oldId = ws.getRuntimeId();
-                NId confId = NWorkspace.of().getStoredConfig().getRuntimeId();
+                oldId = ws.runtimeId();
+                NId confId = NWorkspace.of().storedConfig().getRuntimeId();
                 if (confId != null) {
                     oldId = confId;
                 }
                 if (oldId != null) {
                     try {
                         NId finalOldId1 = oldId;
-                        oldFile = session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
+                        oldFile = session.copy().fetchStrategy(NFetchStrategy.ONLINE)
                                 .callWith(() -> NFetch.of().id(finalOldId1)
                                         .dependencyFilter(NDependencyFilters.of().byRunnable())
                                         .getResultDefinition());
@@ -762,7 +762,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                     NId finalNewId = newId;
                     newFile = newId == null ? null :
 
-                            session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
+                            session.copy().fetchStrategy(NFetchStrategy.ONLINE)
                                     .callWith(() -> latestOnlineDependencies().id(finalNewId)
                                             .failFast(false)
                                             .getResultDefinition()

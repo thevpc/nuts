@@ -123,7 +123,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             //                                                "maven.solrsearch.enable","true"
             list.add(
                     (NIterator) NIteratorBuilder.ofRunnable(
-                            () -> session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", name(), "browse",
+                            () -> session.terminal().printProgress(NMsg.ofC("%-14s %-8s %s", name(), "browse",
                                             NCoreLogUtils.forProgress((basePath == null ? repoRoot : repoRoot.resolve(basePath)))
                             )),
                             "Log"
@@ -258,11 +258,11 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                     () -> {
                         List<NId> ret = new ArrayList<>();
                         if (metadataURL.isRegularFile()) {
-                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", name(), "found", id.longId(), NCoreLogUtils.forProgress(NCoreLogUtils.forProgress(metadataURL))));
+                            session.terminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", name(), "found", id.longId(), NCoreLogUtils.forProgress(NCoreLogUtils.forProgress(metadataURL))));
                             // ok found!!
                             ret.add(id);
                         } else {
-                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", name(), "missing", id.longId(), NCoreLogUtils.forProgress(NCoreLogUtils.forProgress(metadataURL))));
+                            session.terminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", name(), "missing", id.longId(), NCoreLogUtils.forProgress(NCoreLogUtils.forProgress(metadataURL))));
                         }
                         return ret.iterator();
                     }
@@ -347,7 +347,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     public InputStream openStream(NId id, NPath path, Object source, String typeName, NMsg action) {
         NSession session = workspace().currentSession();
-        session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", name(), action, NNameFormat.LOWER_KEBAB_CASE.format(typeName), NCoreLogUtils.forProgress(path)));
+        session.terminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", name(), action, NNameFormat.LOWER_KEBAB_CASE.format(typeName), NCoreLogUtils.forProgress(path)));
         return NInputStreamMonitor.of().source(path).origin(source).sourceTypeName(typeName).create();
     }
 

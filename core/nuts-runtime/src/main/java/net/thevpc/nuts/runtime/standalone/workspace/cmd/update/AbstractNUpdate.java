@@ -241,7 +241,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
             return true;
         }
         for (NId id : ids) {
-            if (id.shortName().equals(NWorkspace.of().getRuntimeId().shortName())) {
+            if (id.shortName().equals(NWorkspace.of().runtimeId().shortName())) {
                 return true;
             }
 

@@ -72,7 +72,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigRuntime parseRuntimeConfig() {
-        NPath path = NPath.of(NStoreKey.ofConf(NWorkspace.of().getRuntimeId()))
+        NPath path = NPath.of(NStoreKey.ofConf(NWorkspace.of().runtimeId()))
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigRuntime c = bytes==null?null: NElementReader.ofJson().read(bytes, NWorkspaceConfigRuntime.class);

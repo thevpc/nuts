@@ -156,7 +156,7 @@ public class DefaultNSearchInfoBuilder {
                 if (!installedIds.isEmpty()) {
                     nutsId2.addAll(installedIds);
                 } else {
-                    for (String aImport : NWorkspace.of().getAllImports()) {
+                    for (String aImport : NWorkspace.of().allImports()) {
                         nutsId2.add(nutsId.builder().groupId(aImport + "." + nutsId.artifactId()).build());
                         nutsId2.add(nutsId.builder().groupId(aImport).build());
                     }

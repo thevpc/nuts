@@ -57,7 +57,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
             }
             if (url != null) {
                 NSession session = NSession.of();
-                session.getTerminal().printProgress(NMsg.ofC("peek %s", url));
+                session.terminal().printProgress(NMsg.ofC("peek %s", url));
                 try (InputStream inputStream = url.openStream()) {
                     found = true;
                 } catch (Exception ex) {

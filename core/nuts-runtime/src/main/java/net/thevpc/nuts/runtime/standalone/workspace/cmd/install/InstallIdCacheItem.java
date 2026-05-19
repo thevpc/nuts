@@ -94,7 +94,7 @@ public class InstallIdCacheItem {
     public void revalidate(boolean force) {
         if(force){
             definition =NSession.of().copy()
-                    .setCached(false) // disable cache
+                    .cached(false) // disable cache
                     .callWith(()-> NSearch.of(id)
                             .failFast(true)
                             .repositoryFilter(NRepositoryFilters.of().installedRepo().neg())

@@ -60,7 +60,7 @@ public class NWorkspaceUtils {
     }
 
     public static NSession bindSession(NWorkspace ws, NSession session) {
-        if (ws != null && session != null && !Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
+        if (ws != null && session != null && !Objects.equals(session.workspace().uuid(), ws.uuid())) {
             return ws.createSession().copyFrom(session);
         }
         return session;
@@ -68,7 +68,7 @@ public class NWorkspaceUtils {
 
     public static boolean isUserDefaultWorkspace() {
         String defaultWorkspaceLocation = NPlatformHome.USER.getWorkspaceLocation(null);
-        NPath location = NWorkspace.of().getLocation();
+        NPath location = NWorkspace.of().location();
         return location!=null&& defaultWorkspaceLocation.equals(location.toString());
     }
 
@@ -83,7 +83,7 @@ public class NWorkspaceUtils {
     public NReflectRepository getReflectRepository() {
         //do not call env.getProperty(...). It will end up with a stack overflow
         NWorkspace workspace = NWorkspace.of();
-        NReflectRepository o = (NReflectRepository) (workspace.getProperties().get(NReflectRepository.class.getName()));
+        NReflectRepository o = (NReflectRepository) (workspace.properties().get(NReflectRepository.class.getName()));
         if (o == null) {
             o = new DefaultNReflectRepository(NReflectConfigurationBuilder.of()
                     .setPropertyAccessStrategy(c->NReflectPropertyAccessStrategy.all())
@@ -108,7 +108,7 @@ public class NWorkspaceUtils {
 
     public void checkReadOnly() {
         if (NWorkspace.of().isReadOnly()) {
-            throw new NReadOnlyException(NWorkspace.of().getWorkspaceLocation().toString());
+            throw new NReadOnlyException(NWorkspace.of().workspaceLocation().toString());
         }
     }
 
@@ -165,7 +165,7 @@ public class NWorkspaceUtils {
         //        List<Integer> reposLevels = new ArrayList<>();
 
         NSession session = NSession.of();
-        for (NRepository repository : NWorkspace.of().getRepositories()) {
+        for (NRepository repository : NWorkspace.of().repositories()) {
             /*repository.isAvailable()*/
             if (repository.isEnabled()
                     && (fmode == NRepositorySupportedAction.SEARCH || repository.isSupportedDeploy())
@@ -301,10 +301,10 @@ public class NWorkspaceUtils {
         try {
             NWorkspace.of().addLauncher(
                     new NLauncherOptions()
-                            .setId(session.getWorkspace().getApiId())
+                            .setId(session.workspace().apiId())
                             .setCreateScript(true)
                             .setSwitchWorkspace(
-                                    NWorkspace.of().getBootOptions().switchWorkspace().orNull()
+                                    NWorkspace.of().bootOptions().switchWorkspace().orNull()
                             )
                             .setCreateDesktopLauncher(includeGraphicalLaunchers ? NSupportMode.PREFERRED : NSupportMode.NEVER)
                             .setCreateMenuLauncher(includeGraphicalLaunchers ? NSupportMode.SUPPORTED : NSupportMode.NEVER)
@@ -349,7 +349,7 @@ public class NWorkspaceUtils {
                         NMsg.ofStyledError("unable to install companion tools"),
                         ex,
                         text.ofBuilder().appendJoined(text.ofPlain(", "),
-                                NWorkspace.of().getRepositories().stream().map(x
+                                NWorkspace.of().repositories().stream().map(x
                                         -> text.ofBuilder().append(x.name(), NTextStyle.primary3())
                                 ).collect(Collectors.toList())
                         )
@@ -403,7 +403,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("installed {0}", event.definition().id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
                     );
-            for (NInstallListener listener : event.workspace().getInstallListeners()) {
+            for (NInstallListener listener : event.workspace().installListeners()) {
                 listener.onInstall(event);
             }
             for (NInstallListener listener : event.session().getListeners(NInstallListener.class)) {
@@ -416,7 +416,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("required {0}", event.definition().id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.ADD)
                     );
-            for (NInstallListener listener : event.workspace().getInstallListeners()) {
+            for (NInstallListener listener : event.workspace().installListeners()) {
                 listener.onRequire(event);
             }
             for (NInstallListener listener : event.session().getListeners(NInstallListener.class)) {
@@ -440,7 +440,7 @@ public class NWorkspaceUtils {
                             );
                 }
             }
-            for (NInstallListener listener : event.workspace().getInstallListeners()) {
+            for (NInstallListener listener : event.workspace().installListeners()) {
                 listener.onUpdate(event);
             }
             for (NInstallListener listener : event.session().getListeners(NInstallListener.class)) {
@@ -455,7 +455,7 @@ public class NWorkspaceUtils {
                                 .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
                         );
             }
-            for (NInstallListener listener : event.workspace().getInstallListeners()) {
+            for (NInstallListener listener : event.workspace().installListeners()) {
                 listener.onUninstall(event);
             }
             for (NInstallListener listener : event.session().getListeners(NInstallListener.class)) {
@@ -466,12 +466,12 @@ public class NWorkspaceUtils {
         public void fireOnAddRepository(NWorkspaceEvent event) {
             if (u._LOG().isLoggable(Level.CONFIG)) {
                 u._LOG()
-                        .log(NMsg.ofJ("loaded repo ##{0}##", event.getRepository().name())
+                        .log(NMsg.ofJ("loaded repo ##{0}##", event.repository().name())
                                 .withLevel(Level.CONFIG).withIntent(NMsgIntent.ADD)
                         );
             }
 
-            for (NWorkspaceListener listener : event.getWorkspace().getWorkspaceListeners()) {
+            for (NWorkspaceListener listener : event.workspace().workspaceListeners()) {
                 listener.onAddRepository(event);
             }
             for (NWorkspaceListener listener : event.session().getListeners(NWorkspaceListener.class)) {
@@ -482,11 +482,11 @@ public class NWorkspaceUtils {
         public void fireOnRemoveRepository(NWorkspaceEvent event) {
             if (u._LOG().isLoggable(Level.FINEST)) {
                 u._LOG()
-                        .log(NMsg.ofJ("unloaded repo ##{0}##", event.getRepository().name())
+                        .log(NMsg.ofJ("unloaded repo ##{0}##", event.repository().name())
                                 .withLevel(Level.FINEST).withIntent(NMsgIntent.REMOVE)
                         );
             }
-            for (NWorkspaceListener listener : event.getWorkspace().getWorkspaceListeners()) {
+            for (NWorkspaceListener listener : event.workspace().workspaceListeners()) {
                 listener.onRemoveRepository(event);
             }
             for (NWorkspaceListener listener : event.session().getListeners(NWorkspaceListener.class)) {

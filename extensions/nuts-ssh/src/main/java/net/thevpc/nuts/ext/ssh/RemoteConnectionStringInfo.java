@@ -152,8 +152,8 @@ public class RemoteConnectionStringInfo {
             LOG().log(NMsg.ofC("[%s] resolve remote jar", connectionString).asFiner().withIntent(NMsgIntent.START));
             NRef<NPath> remoteApiJar = NRef.ofNull();
             NWorkspace workspace = NWorkspace.of();
-            copyId(workspace.getApiId(), getStoreLocationLibRepo(commExec), remoteApiJar);
-            copyId(workspace.getRuntimeId(), getStoreLocationLibRepo(commExec), null);
+            copyId(workspace.apiId(), getStoreLocationLibRepo(commExec), remoteApiJar);
+            copyId(workspace.runtimeId(), getStoreLocationLibRepo(commExec), null);
             nutsJar = remoteApiJar.get().location();
         }
         return nutsJar;
@@ -281,7 +281,7 @@ public class RemoteConnectionStringInfo {
             storeLocationCacheRepo = NPath.of(targetConnection.copy()
                     .setPath(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
-            NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().getApiId());
+            NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().apiId());
             storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.mavenFolder()).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {

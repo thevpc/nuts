@@ -57,7 +57,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         }
         NSession session = NSession.of();
         if (url != null) {
-            session.getTerminal().printProgress(NMsg.ofC("peek %s", NCoreLogUtils.forProgressUrl(url)));
+            session.terminal().printProgress(NMsg.ofC("peek %s", NCoreLogUtils.forProgressUrl(url)));
             try (InputStream inputStream = DefaultNWebCli.prepareGlobalOpenStream(url)) {
                 //ws.io().copy().from(r).getByteArrayResult();
                 found = true;

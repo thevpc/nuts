@@ -195,7 +195,7 @@ public class DefaultNFetch extends AbstractNFetch {
             throw new NArtifactNotFoundException(id.longId());
         }
         NWorkspaceExt dws = NWorkspaceExt.of();
-        NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
+        NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.fetchStrategy().orDefault());
         NRepositoryFilter repositoryFilter = this.repositoryFilter();
         if (!NBlankable.isBlank(id.repository())) {
             NRepositoryFilter repositoryFilter2 = NRepositoryFilters.of().byName(id.repository());
@@ -522,7 +522,7 @@ public class DefaultNFetch extends AbstractNFetch {
                         NRepositorySPI installedRepositorySPI = wu.toRepositorySPI(installedRepository);
 
                         NPath finalFetchedPath = fetchedPath;
-                        NSession.of().copy().setConfirm(NConfirmationMode.YES).runWith(() -> {
+                        NSession.of().copy().confirm(NConfirmationMode.YES).runWith(() -> {
                             installedRepositorySPI.deploy()
                                     .setId(foundDefinitionBuilder.getId().get())
                                     .setDescriptor(foundDefinitionBuilder.getDescriptor().get())

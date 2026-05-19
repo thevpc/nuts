@@ -169,7 +169,7 @@ public class InstallHelper {
 
         NSession session = NSession.of();
         if (!nonIgnored.isEmpty()) {
-            if (session.isPlainTrace() || (!list.emptyCommand && session.getConfirm().orDefault() == NConfirmationMode.ASK)) {
+            if (session.isPlainTrace() || (!list.emptyCommand && session.confirm().orDefault() == NConfirmationMode.ASK)) {
                 printList(mout, "new", "installed", list_new_installed);
                 printList(mout, "new", "required", list_new_required);
                 printList(mout, "required", "re-required", list_required_rerequired);
@@ -194,7 +194,7 @@ public class InstallHelper {
             }
         } else if (!installed_ignored.isEmpty()) {
             //all packages are already installed, ask if we need to re-install!
-            if (session.isPlainTrace() || (!list.emptyCommand && session.getConfirm().orDefault() == NConfirmationMode.ASK)) {
+            if (session.isPlainTrace() || (!list.emptyCommand && session.confirm().orDefault() == NConfirmationMode.ASK)) {
                 printList(mout, "installed", "re-reinstalled", installed_ignored);
             }
             mout.println("should we proceed?");
@@ -558,7 +558,7 @@ public class InstallHelper {
             }
             if (def.descriptor().idType() == NIdType.EXTENSION) {
                 NExtensionListHelper h = new NExtensionListHelper(
-                        session.getWorkspace().getApiId(),
+                        session.workspace().apiId(),
                         ws.getConfigModel().getStoredConfigBoot().getExtensions())
                         .save();
                 NDependencies nDependencies = null;
@@ -709,7 +709,7 @@ public class InstallHelper {
                     break;
                 }
                 case RUNTIME: {
-                    oldDef = NFetch.of(ws.getRuntimeId())
+                    oldDef = NFetch.of(ws.runtimeId())
                             .dependencyFilter(NDependencyFilters.of().byRunnable())
                             .fetchStrategy(NFetchStrategy.ONLINE)
                             .failFast(false).getResultDefinition();
@@ -832,7 +832,7 @@ public class InstallHelper {
 
         if (definition.descriptor().idType() == NIdType.EXTENSION) {
             NExtensionListHelper h = new NExtensionListHelper(
-                    ws.getApiId(),
+                    ws.apiId(),
                     ws.getConfigModel().getStoredConfigBoot().getExtensions())
                     .save();
             h.remove(id);

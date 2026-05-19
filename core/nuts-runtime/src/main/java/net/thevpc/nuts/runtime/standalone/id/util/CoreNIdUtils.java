@@ -122,8 +122,8 @@ public class CoreNIdUtils {
     public static NId apiId(String apiVersion) {
         NAssert.requireNamedNonBlank(apiVersion, "version");
         NWorkspace workspace = NWorkspace.of();
-        if (apiVersion.equals(workspace.getApiVersion().toString())) {
-            return workspace.getApiId();
+        if (apiVersion.equals(workspace.apiVersion().toString())) {
+            return workspace.apiId();
         }
         return NId.getApi(apiVersion).get();
     }
@@ -131,8 +131,8 @@ public class CoreNIdUtils {
     public static NId runtimeId(String runtimeVersion) {
         NAssert.requireNamedNonBlank(runtimeVersion, "runtimeVersion");
         NWorkspace workspace = NWorkspace.of();
-        if (runtimeVersion.equals(workspace.getApiVersion().toString())) {
-            return workspace.getApiId();
+        if (runtimeVersion.equals(workspace.apiVersion().toString())) {
+            return workspace.apiId();
         }
         return NId.getRuntime(runtimeVersion).get();
     }
@@ -140,8 +140,8 @@ public class CoreNIdUtils {
     public static NId findRuntimeForApi(String apiVersion) {
         NAssert.requireNamedNonBlank(apiVersion, "apiVersion");
         NWorkspace workspace = NWorkspace.of();
-        if (apiVersion.equals(workspace.getApiVersion().toString())) {
-            return workspace.getRuntimeId();
+        if (apiVersion.equals(workspace.apiVersion().toString())) {
+            return workspace.runtimeId();
         }
         NPath apiBoot = NPath.of(NStoreKey.ofConf(apiId(apiVersion))).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
@@ -158,7 +158,7 @@ public class CoreNIdUtils {
                 .getResultIds().
                 findFirst().orNull();
         NSession session = workspace.currentSession();
-        if (foundRT == null && session.getFetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
+        if (foundRT == null && session.fetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
             foundRT = NSearch.of().addId(NId.getRuntime("").get())
                     .latest(true)
                     .targetApiVersion(NVersion.get(apiVersion).get())

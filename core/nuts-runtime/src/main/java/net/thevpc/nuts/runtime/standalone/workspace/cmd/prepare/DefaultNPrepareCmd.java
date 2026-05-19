@@ -37,12 +37,12 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         String version = getVersion();
         getValidUser();
         NWorkspace workspace = NWorkspace.of();
-        String currentVersion = workspace.getApiVersion().toString();
+        String currentVersion = workspace.apiVersion().toString();
         if (version == null) {
             version = currentVersion;
         }
         mkdirs(remoteHomeFile("bin"));
-        NId apiId = workspace.getApiId();
+        NId apiId = workspace.apiId();
 
         if (NBlankable.isBlank(version)) {
             apiId = apiId.builder().version(version).build();
@@ -53,7 +53,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         }
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
-        deps.add(workspace.getRuntimeId());
+        deps.add(workspace.runtimeId());
         deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilters.of().byRunnable()).basePackage(true)
 //                .setDependencies(true)
                 .getResultIds().toList());
@@ -99,7 +99,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
 
     private NPath remoteNutsCommand() {
         if (version == null) {
-            version = NWorkspace.of().getApiVersion().toString();
+            version = NWorkspace.of().apiVersion().toString();
         }
         NPath e = remoteHomeFile("bin/nuts-" + version);
         if (runRemoteAsStringNoFail("ls " + e)) {

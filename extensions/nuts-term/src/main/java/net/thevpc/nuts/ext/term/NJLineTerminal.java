@@ -45,7 +45,6 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.*;
 import java.util.function.IntConsumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.jline.reader.impl.LineReaderImpl;
@@ -259,7 +258,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 //                .parse(parse)
                 .build();
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
-        reader.setVariable(LineReader.HISTORY_FILE, NWorkspace.of().getWorkspaceLocation().resolve("history").normalize().toPath().get());
+        reader.setVariable(LineReader.HISTORY_FILE, NWorkspace.of().workspaceLocation().resolve("history").normalize().toPath().get());
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, this));
         }

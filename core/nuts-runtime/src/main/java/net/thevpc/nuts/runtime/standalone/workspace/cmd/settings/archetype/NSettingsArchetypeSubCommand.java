@@ -27,7 +27,7 @@ public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         if (cmdLine.next("list archetypes","list archetype","archetype list", "la").isPresent()) {
             if (cmdLine.isExecMode()) {
-                NOut.println(NWorkspace.of().getAvailableArchetypes());
+                NOut.println(NWorkspace.of().availableArchetypes());
             }
             return true;
         }

@@ -52,7 +52,7 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NTerminal nTerminal(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).getTerminal();
+        return nutsSession(applicationArguments).terminal();
     }
 
     @Bean
@@ -69,7 +69,7 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NTerminal nutsTerminal(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).getTerminal();
+        return nutsSession(applicationArguments).terminal();
     }
 
     @Bean

@@ -37,12 +37,12 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     @Override
-    public int getPriority() {
+    public int priority() {
         return Integer.MAX_VALUE;
     }
 
     @Override
-    public String getFactoryId() {
+    public String factoryId() {
         return "default";
     }
 
@@ -65,7 +65,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     public NPath getStoreLocation() {
-        return NPath.of(NStoreKey.ofBin(NWorkspace.of().getApiId()));
+        return NPath.of(NStoreKey.ofBin(NWorkspace.of().apiId()));
     }
 
     private NPath getCommandsFolder() {

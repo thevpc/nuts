@@ -58,7 +58,7 @@ public class DefaultNWorkspaceSecurityModel {
 
     public DefaultNWorkspaceSecurityModel(final DefaultNWorkspace ws) {
         this.workspace = ws;
-        this.agentMapper = new WrapperNAuthenticationAgent(ws, () -> s -> NWorkspace.of().getConfigMap().get(s), (x) -> getAuthenticationAgent(x));
+        this.agentMapper = new WrapperNAuthenticationAgent(ws, () -> s -> NWorkspace.of().configMap().get(s), (x) -> getAuthenticationAgent(x));
         workspace.addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 

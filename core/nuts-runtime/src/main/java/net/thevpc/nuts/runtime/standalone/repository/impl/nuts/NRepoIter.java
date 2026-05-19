@@ -42,7 +42,7 @@ class NRepoIter extends NIdPathIteratorBase {
     @Override
     public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL)  {
         NSession session=getWorkspace().currentSession();
-        session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(pathname)));
+        session.terminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(pathname)));
         String fn = pathname.name();
         if (fn.endsWith(".pom")) {
             return MavenUtils.of().parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);

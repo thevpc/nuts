@@ -68,7 +68,7 @@ public class DefaultNWorkspaceExtension implements NWorkspaceExtension {
         return events;
     }
 
-    public NId getId() {
+    public NId id() {
         return wiredId;
     }
 
@@ -76,7 +76,7 @@ public class DefaultNWorkspaceExtension implements NWorkspaceExtension {
         return classLoader;
     }
 
-    public NId getConfigId() {
+    public NId configId() {
         return id;
     }
 

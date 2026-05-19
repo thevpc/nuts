@@ -83,7 +83,7 @@ public class NWorkspaceHelper {
     public static void runBootCommand(NWorkspace workspace) {
         workspace.runWith(() -> {
             NBootOptions info2 = new DefaultNBootOptionsBuilder(((NWorkspaceExt)workspace).getCallerBootOptionsInfo()).build();
-            NApp.of().id(workspace.getApiId());
+            NApp.of().id(workspace.apiId());
             NLog LOG = NLog.of(NBootWorkspaceImpl.class);
             LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
                     .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
@@ -115,7 +115,7 @@ public class NWorkspaceHelper {
     public static void runApplication(NWorkspace workspace,NApplicationHandleMode handleMode) {
         NApplicationHandleMode.runHandled(() ->
                 workspace.runWith(() -> {
-                    boolean inherited = NWorkspace.of().getBootOptions().inherited().orElse(false);
+                    boolean inherited = NWorkspace.of().bootOptions().inherited().orElse(false);
                     NApp nApp = NApp.of();
                     // Resolve the application class name (explicit or fallback)
                     String appClassName = nApp.sourceType() == null ? null : nApp.sourceType().getName();

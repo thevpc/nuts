@@ -80,12 +80,12 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     @Override
-    public int getPriority() {
+    public int priority() {
         return priority;
     }
 
     @Override
-    public String getFactoryId() {
+    public String factoryId() {
         return factoryId;
     }
 
@@ -101,7 +101,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             int r = exec.exitCode();
             if (r == 0) {
                 return new NCommandConfig()
-                        .factoryId(getFactoryId())
+                        .factoryId(factoryId())
                         .owner(NId.get(ec[0]).get())
                         .name(name)
                         .command(Arrays.copyOfRange(ec, 1, ec.length));

@@ -130,7 +130,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      */
     @NGetter
     public NWorkspace workspace() {
-        return session.getWorkspace();
+        return session.workspace();
     }
 
     @NGetter
