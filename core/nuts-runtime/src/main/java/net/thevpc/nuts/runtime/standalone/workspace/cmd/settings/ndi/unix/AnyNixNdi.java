@@ -4,6 +4,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
@@ -27,7 +28,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NEnv.of().shellFamilies());
+        Set<NShellFamily> all = new LinkedHashSet<>(NEnv.of().shellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
         return all.toArray(new NShellFamily[0]);
     }
@@ -56,23 +57,30 @@ public class AnyNixNdi extends BaseSystemNdi {
         NSession session = NSession.of();
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
-                NOut.println(NMsg.ofC("%s scripts to point to current workspace : ",
-                        session.isYes() ?
-                                factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
-                                factory.ofStyled("force updating", NTextStyle.warn())
-                ));
-                List<String> sortedNames = Arrays.stream(updatedPaths).map(x->x.getPath().name()).sorted().collect(Collectors.toList());
-                int maxPerLine = 5; // adjust for readability
-                for (int i = 0; i < sortedNames.size(); i += maxPerLine) {
-                    List<String> sublist = sortedNames.subList(i, Math.min(i + maxPerLine, sortedNames.size()));
-                    NOut.print("\t");
-                    NOut.println(
-                            factory.ofBuilder()
-                                    .appendJoined(", ", sublist.stream()
-                                            .map(name -> factory.ofStyled(name, NTextStyle.path()))
-                                            .collect(Collectors.toList()))
-                    );
-                }
+//                NOut.println(NMsg.ofC("%s scripts to point to current workspace : ",
+//                        session.isYes() ?
+//                                factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
+//                                factory.ofStyled("force updating", NTextStyle.warn())
+//                ));
+//                List<String> sortedNames = Arrays.stream(updatedPaths).map(x->x.getPath().name()).sorted().collect(Collectors.toList());
+//                int maxPerLine = 5; // adjust for readability
+//                for (int i = 0; i < sortedNames.size(); i += maxPerLine) {
+//                    List<String> sublist = sortedNames.subList(i, Math.min(i + maxPerLine, sortedNames.size()));
+//                    NOut.print("\t");
+//                    NOut.println(
+//                            factory.ofBuilder()
+//                                    .appendJoined(", ", sublist.stream()
+//                                            .map(name -> factory.ofStyled(name, NTextStyle.path()))
+//                                            .collect(Collectors.toList()))
+//                    );
+//                }
+                NLog.of(AnyNixNdi.class)
+                        .log(NMsg.ofC("%s scripts to point to current workspace : %s",
+                                session.isYes() ?
+                                        factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
+                                        factory.ofStyled("force updating", NTextStyle.warn()),
+                                Arrays.stream(updatedPaths).map(x -> x.getPath().name()).sorted().collect(Collectors.toList())
+                        ).asConfig());
             }
             final String sysRcName = NShellHelper.of(NEnv.of().shellFamily()).getSysRcName();
             NIn.ask()
@@ -88,9 +96,9 @@ public class AnyNixNdi extends BaseSystemNdi {
                     .sparser(new NAskParser<Boolean>() {
                         @Override
                         public Boolean parse(NAskParseContext<Boolean> context) {
-                            Object response=context.response();
-                            NAsk<Boolean> question=context.question();
-                            Boolean defaultValue=question.defaultValue();
+                            Object response = context.response();
+                            NAsk<Boolean> question = context.question();
+                            Boolean defaultValue = question.defaultValue();
                             if (response instanceof Boolean) {
                                 return (Boolean) response;
                             }
@@ -137,17 +145,15 @@ public class AnyNixNdi extends BaseSystemNdi {
 
 
     public String getTemplateName(String name, NShellFamily shellFamily) {
-        switch (shellFamily){
+        switch (shellFamily) {
             case SH:
             case BASH:
             case CSH:
             case ZSH:
-            case KSH:
-            {
+            case KSH: {
                 return "template-" + name + ".sh";
             }
-            case FISH:
-            {
+            case FISH: {
                 return "template-" + name + ".fish";
             }
         }
@@ -187,13 +193,12 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     public NdiScriptInfo getNutsTerm(NdiScriptOptions options, NShellFamily shellFamily) {
-        switch (shellFamily){
+        switch (shellFamily) {
             case SH:
             case BASH:
             case ZSH:
             case CSH:
-            case KSH:
-            {
+            case KSH: {
                 return new NdiScriptInfo() {
                     @Override
                     public NPath path() {
@@ -208,8 +213,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                     }
                 };
             }
-            case FISH:
-            {
+            case FISH: {
                 return new NdiScriptInfo() {
                     @Override
                     public NPath path() {
@@ -267,6 +271,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         }
         return null;
     }
+
     public NdiScriptInfo getIncludeNutsTermInit(NdiScriptOptions options, NShellFamily shellFamily) {
         switch (shellFamily) {
             case FISH: {
