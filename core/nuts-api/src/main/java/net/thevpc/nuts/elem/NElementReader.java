@@ -37,15 +37,15 @@ public interface NElementReader extends NComponent {
 
     boolean isNtf();
 
-    NElementReader setNtf(boolean ntf);
+    NElementReader ntf(boolean ntf);
 
     boolean isLogProgress();
 
-    NElementReader setLogProgress(boolean logProgress);
+    NElementReader logProgress(boolean logProgress);
 
     boolean isTraceProgress();
 
-    NElementReader setTraceProgress(boolean traceProgress);
+    NElementReader traceProgress(boolean traceProgress);
 
     /**
      * return parse content type
@@ -53,7 +53,7 @@ public interface NElementReader extends NComponent {
      * @return content type
      * @since 0.8.1
      */
-    NContentType getContentType();
+    NContentType contentType();
 
     /**
      * set the parse content type. defaults to JSON. Non structured content
@@ -63,7 +63,7 @@ public interface NElementReader extends NComponent {
      * @return {@code this} instance
      * @since 0.8.1
      */
-    NElementReader setContentType(NContentType contentType);
+    NElementReader contentType(NContentType contentType);
 
     NElementReader json();
 
@@ -240,7 +240,7 @@ public interface NElementReader extends NComponent {
 
     NElement readWithSource(Reader reader, Object source);
 
-    NProgressFactory getProgressFactory();
+    NProgressFactory progressFactory();
 
-    NElementReader setProgressFactory(NProgressFactory progressFactory);
+    NElementReader progressFactory(NProgressFactory progressFactory);
 }

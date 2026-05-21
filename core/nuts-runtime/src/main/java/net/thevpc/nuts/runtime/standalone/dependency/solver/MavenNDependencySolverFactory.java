@@ -18,7 +18,7 @@ public class MavenNDependencySolverFactory implements NDependencySolverFactory {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "maven";
     }
 }

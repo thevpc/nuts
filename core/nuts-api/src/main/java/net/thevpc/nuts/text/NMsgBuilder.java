@@ -105,7 +105,7 @@ public class NMsgBuilder {
                 level = Level.FINEST;
             } else {
                 msgOk = m;
-                level = msgOk.getLevel();
+                level = msgOk.level();
             }
         }
         if (msgOk == null) {
@@ -123,7 +123,7 @@ public class NMsgBuilder {
             newMsg = newMsg.withIntent(intent);
         }
         newMsg = newMsg.withLevel(level);
-        if (this.intent == null && newMsg.getIntent() == null) {
+        if (this.intent == null && newMsg.intent() == null) {
             switch (this.level.intValue()) {
                 case 1000: {
                     newMsg = newMsg.withIntent(NMsgIntent.FAIL);

@@ -20,7 +20,7 @@ public class NRateLimitSlidingWindowRule implements NRateLimitRule {
         this.id = model.id();
         this.capacity = model.capacity();
         this.duration = model.duration() == 0 ? null : Duration.ofMillis(model.duration());
-        this.timestamps = deserialize(model.getConfig());
+        this.timestamps = deserialize(model.config());
         // Optional: restore timestamps from model if you save them
     }
 

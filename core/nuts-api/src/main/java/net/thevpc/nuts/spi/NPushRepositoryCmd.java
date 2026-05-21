@@ -43,7 +43,7 @@ public interface NPushRepositoryCmd extends NRepositoryCmd {
      *
      * @return id to push
      */
-    NId getId();
+    NId id();
 
     /**
      * set id to push.
@@ -51,7 +51,7 @@ public interface NPushRepositoryCmd extends NRepositoryCmd {
      * @param id id to push
      * @return {@code this} instance
      */
-    NPushRepositoryCmd setId(NId id);
+    NPushRepositoryCmd id(NId id);
 
     /**
      * run this command and return {@code this} instance
@@ -66,7 +66,7 @@ public interface NPushRepositoryCmd extends NRepositoryCmd {
      *
      * @return all arguments to pass to the push command
      */
-    List<String> getArgs();
+    List<String> args();
 
     /**
      * args args to push
@@ -74,8 +74,8 @@ public interface NPushRepositoryCmd extends NRepositoryCmd {
      * @param args args to push
      * @return {@code this} instance
      */
-    NPushRepositoryCmd setArgs(String[] args);
-    NPushRepositoryCmd setArgs(List<String> args);
+    NPushRepositoryCmd args(String[] args);
+    NPushRepositoryCmd args(List<String> args);
 
     /**
      * true if offline mode is activated
@@ -90,14 +90,14 @@ public interface NPushRepositoryCmd extends NRepositoryCmd {
      * @param offline enable offline mode
      * @return {@code this} instance
      */
-    NPushRepositoryCmd setOffline(boolean offline);
+    NPushRepositoryCmd offline(boolean offline);
 
     /**
      * repository to push from
      *
      * @return repository to push from
      */
-    String getRepository();
+    String repository();
 
     /**
      * repository to push from
@@ -105,5 +105,5 @@ public interface NPushRepositoryCmd extends NRepositoryCmd {
      * @param repository repository to push from
      * @return {@code this} instance
      */
-    NPushRepositoryCmd setRepository(String repository);
+    NPushRepositoryCmd repository(String repository);
 }

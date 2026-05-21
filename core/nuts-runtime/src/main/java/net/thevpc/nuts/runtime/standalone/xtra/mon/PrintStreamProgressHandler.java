@@ -30,9 +30,9 @@ public class PrintStreamProgressHandler implements NProgressHandler {
 
     @Override
     public void onEvent(NProgressHandlerEvent event) {
-        NMsg message = event.getModel().getMessage();
-        NMsg msg = JLogProgressHandler.formatMessage(messageFormat, event.getModel());
-        Level level = (message == null || message.getLevel() == null) ? Level.INFO : message.getLevel();
+        NMsg message = event.model().message();
+        NMsg msg = JLogProgressHandler.formatMessage(messageFormat, event.model());
+        Level level = (message == null || message.level() == null) ? Level.INFO : message.level();
         printStream.print(level + " ");
         printStream.println(msg);
     }

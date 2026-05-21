@@ -37,9 +37,9 @@ import net.thevpc.nuts.util.NIterator;
  */
 public interface NSearchRepositoryCmd extends NRepositoryCmd {
 
-    NDefinitionFilter getFilter();
+    NDefinitionFilter filter();
 
-    NSearchRepositoryCmd setFilter(NDefinitionFilter filter);
+    NSearchRepositoryCmd filter(NDefinitionFilter filter);
 
     /**
      * this method should return immediately after initializing a valid iterator to be
@@ -55,7 +55,7 @@ public interface NSearchRepositoryCmd extends NRepositoryCmd {
      *
      * @return {@code this} instance
      */
-    NFetchMode getFetchMode();
+    NFetchMode fetchMode();
 
     /**
      * fetchMode
@@ -63,7 +63,7 @@ public interface NSearchRepositoryCmd extends NRepositoryCmd {
      * @param fetchMode fetchMode
      * @return {@code this} instance
      */
-    NSearchRepositoryCmd setFetchMode(NFetchMode fetchMode);
+    NSearchRepositoryCmd fetchMode(NFetchMode fetchMode);
 
     /**
      * this method should return immediately and returns valid iterator.

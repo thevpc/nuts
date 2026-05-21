@@ -17,7 +17,7 @@ public class GradleFirstNDependencySolverFactory implements NDependencySolverFac
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "gradle-first";
     }
 }

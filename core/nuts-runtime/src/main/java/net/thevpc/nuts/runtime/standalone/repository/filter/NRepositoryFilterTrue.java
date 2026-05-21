@@ -76,7 +76,7 @@ public class NRepositoryFilterTrue extends AbstractRepositoryFilter{
     }
 
     @Override
-    public NFilterOp getFilterOp() {
+    public NFilterOp filterOp() {
         return NFilterOp.TRUE;
     }
 }

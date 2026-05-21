@@ -639,11 +639,6 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession trace() {
-        return trace(true);
-    }
-
-    @Override
     public NSession trace(Boolean trace) {
         this.trace = trace;
         return this;
@@ -1174,7 +1169,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         if (!iterableOut) {
             return null;
         }
-        return NElementWriter.of().setContentType(outputFormat().orDefault()).iter(out());
+        return NElementWriter.of().contentType(outputFormat().orDefault()).iter(out());
     }
 
     @Override
@@ -1677,7 +1672,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             case "--verbose":
             {
                 cmdLine.skip();
-                if (enabled && a.getValue().asBoolean().orElse(true)) {
+                if (enabled && a.toLiteral().asBoolean().orElse(true)) {
                     this.setLogTermLevel(Level.FINEST);
                     this.logFileLevel(Level.FINEST);
                 }

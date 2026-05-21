@@ -52,7 +52,7 @@ public class ElementTest {
         NElement e = NElementReader.ofTson().read(str);
         TestUtils.println(e);
 
-        String json0 = NElementWriter.ofTson().setFormatter(NElementFormatter.ofCompact()).formatPlain(e);
+        String json0 = NElementWriter.ofTson().formatter(NElementFormatter.ofCompact()).formatPlain(e);
         TestUtils.println(json0);
     }
 
@@ -61,7 +61,7 @@ public class ElementTest {
         String str = "{path:\"path1\" color:\"red\"}";
         NElement e = NElementReader.ofTson().read(str);
         String json1 = NElementWriter.ofTson()
-                .setFormatter(
+                .formatter(
                         NElementFormatter
                                 .ofPretty().builder()
                                 .setComplexityThreshold(40)
@@ -77,7 +77,7 @@ public class ElementTest {
         String str = "{path:\"path1\" color1:\"red1\" color2:\"red2\" color3:\"red3\" color4:\"red4\" color5:\"red5\" color6:\"red6\" color7:\"red7\"}";
         NElement e = NElementReader.ofTson().read(str);
         String json1 = NElementWriter.ofTson()
-                .setFormatter(
+                .formatter(
                         NElementFormatter
                                 .ofPretty().builder()
                                 .setComplexityThreshold(40)
@@ -86,7 +86,7 @@ public class ElementTest {
                 )
                 .formatPlain(e);
         TestUtils.println("\njson1\n" + json1);
-        String json2 = NElementWriter.ofTson().setFormatter(
+        String json2 = NElementWriter.ofTson().formatter(
                 NElementFormatter
                         .ofPretty().builder()
                         .setComplexityThreshold(20)
@@ -100,7 +100,7 @@ public class ElementTest {
     public void test04() {
         String str = "{path:\"path1\" {color1:\"red1\"}}";
         NElement e = NElementReader.ofTson().read(str);
-        String json1 = NElementWriter.ofTson().setFormatter(
+        String json1 = NElementWriter.ofTson().formatter(
                 NElementFormatter
                         .ofPretty().builder()
                         .setComplexityThreshold(4)
@@ -161,7 +161,7 @@ public class ElementTest {
         NElement p = memExample();
 //        NObjectObjectWriter ss = NObjectObjectWriter.of().setNtf(false);
         TestUtils.println(p);
-        String json = NElementWriter.ofTson().setFormatter(
+        String json = NElementWriter.ofTson().formatter(
                 NElementFormatter
                         .ofPretty().builder()
                         .setComplexityThreshold(10)
@@ -224,7 +224,7 @@ public class ElementTest {
     private void testSelectorHelper(NElement p, String path, String expected) {
         TestUtils.println("CHECKING : '" + path + "'");
         List<NElement> filtered1 = p.filter(path);
-        String sresult = NElementWriter.ofTson().setFormatter(NElementFormatter.ofStable()).formatPlain(filtered1);
+        String sresult = NElementWriter.ofTson().formatter(NElementFormatter.ofStable()).formatPlain(filtered1);
         TestUtils.println("EXPECTED  : " + expected);
         TestUtils.println("FOUND     : " + sresult);
         Assertions.assertEquals(expected, sresult);

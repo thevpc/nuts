@@ -32,7 +32,6 @@ import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NSetter;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -290,7 +289,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     NId shortId();
 
     @NGetter
-    NId getSharedId();
+    NId sharedId();
 
     /**
      * return a new instance of NutsId defining only group, name, version and classifier if available,

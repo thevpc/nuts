@@ -11,7 +11,7 @@ public class NScopedWorkspace {
     public static NWorkspace defaultSharedWorkspaceInstance;
     public static InheritableThreadLocal<NWorkspace> threadSharedWorkspaceInstanceScopes =new InheritableThreadLocal<>();
 
-    public static NWorkspace getSharedWorkspaceInstance() {
+    public static NWorkspace sharedWorkspaceInstance() {
         NWorkspace workspace = threadSharedWorkspaceInstanceScopes.get();
         if(workspace!=null){
             return workspace;

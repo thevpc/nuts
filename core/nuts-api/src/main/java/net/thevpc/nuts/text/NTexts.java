@@ -29,7 +29,9 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -103,11 +105,14 @@ public interface NTexts extends NComponent {
 
     NOptional<NTextFormatTheme> getTheme(String name);
 
-    NTextFormatTheme getTheme();
+    @NGetter
+    NTextFormatTheme theme();
 
-    NTexts setTheme(NTextFormatTheme theme);
+    @NSetter
+    NTexts theme(NTextFormatTheme theme);
 
-    NTexts setTheme(String themeName);
+    @NSetter
+    NTexts theme(String themeName);
 
     NCodeHighlighter getCodeHighlighter(String kind);
 

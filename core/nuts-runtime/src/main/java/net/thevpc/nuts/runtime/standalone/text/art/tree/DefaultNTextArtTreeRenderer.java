@@ -49,7 +49,7 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     }
 
     @Override
-    public DefaultNTextArtTreeRenderer setInfinite(boolean infinite) {
+    public DefaultNTextArtTreeRenderer infinite(boolean infinite) {
         this.infinite = infinite;
         return this;
     }
@@ -58,7 +58,7 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
         return formatter;
     }
 
-    public DefaultNTextArtTreeRenderer setNodeFormat(NTreeNodeFormat formatter) {
+    public DefaultNTextArtTreeRenderer nodeFormat(NTreeNodeFormat formatter) {
         if (formatter == null) {
             formatter = TO_STRING_FORMATTER;
         }
@@ -67,12 +67,12 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     }
 
     @Override
-    public NTreeLinkFormat getLinkFormat() {
+    public NTreeLinkFormat linkFormat() {
         return linkFormatter;
     }
 
     @Override
-    public DefaultNTextArtTreeRenderer setLinkFormat(NTreeLinkFormat linkFormatter) {
+    public DefaultNTextArtTreeRenderer linkFormat(NTreeLinkFormat linkFormatter) {
         if (linkFormatter == null) {
             linkFormatter = defaultLinkFormatter;
         }
@@ -96,7 +96,7 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     }
 
     @Override
-    public NTextArtTreeRenderer setOmitRoot(boolean hideRoot) {
+    public NTextArtTreeRenderer omitRoot(boolean hideRoot) {
         this.omitRoot = hideRoot;
         return this;
     }

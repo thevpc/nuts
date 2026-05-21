@@ -9,28 +9,28 @@ public abstract class NSystemTerminalBaseImpl implements NSystemTerminalBase {
 
     public abstract boolean isLastWasProgress() ;
 
-    public abstract void setLastWasProgress(boolean lastWasProgress) ;
+    public abstract void lastWasProgress(boolean lastWasProgress) ;
 
     @Override
     public NSystemTerminalBase resetLine() {
-        run(NTerminalCmd.CLEAR_LINE, getOut());
-        run(NTerminalCmd.MOVE_LINE_START, getOut());
+        run(NTerminalCmd.CLEAR_LINE, out());
+        run(NTerminalCmd.MOVE_LINE_START, out());
         return this;
     }
 
     @Override
     public NSystemTerminalBase clearScreen() {
-        run(NTerminalCmd.CLEAR_SCREEN, getOut());
+        run(NTerminalCmd.CLEAR_SCREEN, out());
         return this;
     }
 
     @Override
-    public Cursor getTerminalCursor() {
-        return (Cursor) run(NTerminalCmd.GET_CURSOR, getOut());
+    public Cursor terminalCursor() {
+        return (Cursor) run(NTerminalCmd.GET_CURSOR, out());
     }
 
     @Override
-    public Size getTerminalSize() {
-        return (Size) run(NTerminalCmd.GET_SIZE, getOut());
+    public Size terminalSize() {
+        return (Size) run(NTerminalCmd.GET_SIZE, out());
     }
 }

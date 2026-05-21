@@ -23,13 +23,13 @@ public abstract class NIdFilterDelegate extends AbstractIdFilter {
     }
 
     @Override
-    public NFilterOp getFilterOp() {
-        return baseNIdFilter().getFilterOp();
+    public NFilterOp filterOp() {
+        return baseNIdFilter().filterOp();
     }
 
     @Override
-    public Class<? extends NFilter> getFilterType() {
-        return baseNIdFilter().getFilterType();
+    public Class<? extends NFilter> filterType() {
+        return baseNIdFilter().filterType();
     }
 
     @Override
@@ -48,8 +48,8 @@ public abstract class NIdFilterDelegate extends AbstractIdFilter {
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
-        return baseNIdFilter().getSubFilters();
+    public List<NFilter> subFilters() {
+        return baseNIdFilter().subFilters();
     }
 
     @Override

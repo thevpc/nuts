@@ -56,7 +56,7 @@ abstract class AbstractNColor implements NColor {
 
 
     static NColor _reg2(String canonicalName, NColor color) {
-        String name = color.getName();
+        String name = color.name();
         NAssert.requireNamedNonBlank(name, "color name");
         name = normalizeName(name);
         canonicalName = normalizeName(canonicalName);
@@ -81,7 +81,7 @@ abstract class AbstractNColor implements NColor {
     static NColor pickColor(int hashCode) {
         int a = Math.abs(hashCode);
         NColor c = _ALL_CANONICAL.get(a % _ALL_CANONICAL.size());
-        List<NColor> li = _ALL_BY_CANONICAL_NAME.get(normalizeName(c.getName()));
+        List<NColor> li = _ALL_BY_CANONICAL_NAME.get(normalizeName(c.name()));
         return li.get(a % li.size());
     }
 
@@ -115,7 +115,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     public static String toHtmlHex(NColor cl) {
-        return String.format("#%02X%02X%02X", cl.getRed(), cl.getGreen(), cl.getBlue());
+        return String.format("#%02X%02X%02X", cl.red(), cl.green(), cl.blue());
     }
 
     public static NColor ansiToColor(int index) {
@@ -239,20 +239,20 @@ abstract class AbstractNColor implements NColor {
         return new AbstractNColor.NColor64Named(color, name);
     }
 
-    public int getRed() {
-        return this.getRGB() >> 16 & 255;
+    public int red() {
+        return this.rgb() >> 16 & 255;
     }
 
-    public int getGreen() {
-        return this.getRGB() >> 8 & 255;
+    public int green() {
+        return this.rgb() >> 8 & 255;
     }
 
-    public int getBlue() {
-        return this.getRGB() >> 0 & 255;
+    public int blue() {
+        return this.rgb() >> 0 & 255;
     }
 
-    public int getAlpha() {
-        return this.getRGB() >> 24 & 255;
+    public int alpha() {
+        return this.rgb() >> 24 & 255;
     }
 
     static class NColor4 extends AbstractNColor {
@@ -271,7 +271,7 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_16.get(0);
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_4;
         }
 
@@ -285,21 +285,21 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getRGB() {
-            return toColor32().getRGB();
+        public int rgb() {
+            return toColor32().rgb();
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
-        public String getName() {
+        public String name() {
             return null;
         }
     }
@@ -322,7 +322,7 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_16.get(0).withName(name);
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_4;
         }
 
@@ -339,21 +339,21 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getRGB() {
-            return toColor32().getRGB();
+        public int rgb() {
+            return toColor32().rgb();
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
-        public String getName() {
+        public String name() {
             return name;
         }
     }
@@ -374,7 +374,7 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_256.get(0);
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_8;
         }
 
@@ -388,21 +388,21 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getRGB() {
-            return toColor32().getRGB();
+        public int rgb() {
+            return toColor32().rgb();
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
-        public String getName() {
+        public String name() {
             return null;
         }
     }
@@ -425,7 +425,7 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_256.get(0).withName(name);
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_8;
         }
 
@@ -442,21 +442,21 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getRGB() {
-            return toColor32().getRGB();
+        public int rgb() {
+            return toColor32().rgb();
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
-        public String getName() {
+        public String name() {
             return name;
         }
     }
@@ -470,11 +470,11 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor toColor32() {
-            return NColor.of32(getRGB());
+            return NColor.of32(rgb());
         }
 
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_16;
         }
 
@@ -488,17 +488,17 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
         @Override
-        public int getRGB() {
+        public int rgb() {
             int rgb565 = color & 0xFFFF;
 
             int r5 = (rgb565 >> 11) & 0x1F;
@@ -513,7 +513,7 @@ abstract class AbstractNColor implements NColor {
             return argb32;
         }
 
-        public String getName() {
+        public String name() {
             return null;
         }
     }
@@ -527,12 +527,12 @@ abstract class AbstractNColor implements NColor {
             this.name = name;
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_16;
         }
 
         @Override
-        public int getRGB() {
+        public int rgb() {
             int rgb565 = color & 0xFFFF;
 
             int r5 = (rgb565 >> 11) & 0x1F;
@@ -549,7 +549,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor toColor32() {
-            return NColor.of32(getRGB(), name);
+            return NColor.of32(rgb(), name);
         }
 
         @Override
@@ -565,16 +565,16 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
-        public String getName() {
+        public String name() {
             return name;
         }
     }
@@ -589,16 +589,16 @@ abstract class AbstractNColor implements NColor {
         @Override
         public NColor toColor32() {
             //just ignore alpha
-            return NColor.of32(getRGB());
+            return NColor.of32(rgb());
         }
 
         @Override
-        public int getRGB() {
+        public int rgb() {
             // We take the 24-bit color and OR it with 255 shifted to the Alpha position
             return (255 << 24) | (color & 0xFFFFFF);
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_24;
         }
 
@@ -612,17 +612,17 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
 
-        public String getName() {
+        public String name() {
             return null;
         }
     }
@@ -639,16 +639,16 @@ abstract class AbstractNColor implements NColor {
         @Override
         public NColor toColor32() {
             //just ignore alpha
-            return NColor.of32(getRGB(), name);
+            return NColor.of32(rgb(), name);
         }
 
         @Override
-        public int getRGB() {
+        public int rgb() {
             // We take the 24-bit color and OR it with 255 shifted to the Alpha position
             return (255 << 24) | (color & 0xFFFFFF);
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_24;
         }
 
@@ -665,16 +665,16 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
-        public String getName() {
+        public String name() {
             return name;
         }
     }
@@ -694,7 +694,7 @@ abstract class AbstractNColor implements NColor {
             this.color = (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255);
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_32;
         }
 
@@ -713,21 +713,21 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getRGB() {
+        public int rgb() {
             return color;
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
-        public String getName() {
+        public String name() {
             return null;
         }
     }
@@ -751,7 +751,7 @@ abstract class AbstractNColor implements NColor {
             this.name = name;
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_32;
         }
 
@@ -773,21 +773,21 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getRGB() {
+        public int rgb() {
             return color;
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
-        public String getName() {
+        public String name() {
             return name;
         }
     }
@@ -799,7 +799,7 @@ abstract class AbstractNColor implements NColor {
             this.color = color;
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_64;
         }
 
@@ -813,17 +813,17 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
         @Override
-        public int getRGB() {
+        public int rgb() {
             return
                     ((int) (color >> 56) & 0xFF) << 24 |
                             ((int) (color >> 40) & 0xFF) << 16 |
@@ -833,10 +833,10 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor toColor32() {
-            return NColor.of32(getRGB());
+            return NColor.of32(rgb());
         }
 
-        public String getName() {
+        public String name() {
             return null;
         }
     }
@@ -850,7 +850,7 @@ abstract class AbstractNColor implements NColor {
             this.name = name;
         }
 
-        public NColorBits getBits() {
+        public NColorBits bits() {
             return NColorBits.BITS_64;
         }
 
@@ -867,17 +867,17 @@ abstract class AbstractNColor implements NColor {
         }
 
         @Override
-        public int getIntColor() {
+        public int intColor() {
             return (int) color;
         }
 
         @Override
-        public long getLongColor() {
+        public long longColor() {
             return (long) color;
         }
 
         @Override
-        public int getRGB() {
+        public int rgb() {
             return
                     ((int) (color >> 56) & 0xFF) << 24 |
                             ((int) (color >> 40) & 0xFF) << 16 |
@@ -887,10 +887,10 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor toColor32() {
-            return NColor.of32(getRGB(), name);
+            return NColor.of32(rgb(), name);
         }
 
-        public String getName() {
+        public String name() {
             return name;
         }
     }

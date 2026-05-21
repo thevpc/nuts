@@ -28,16 +28,16 @@ public class FreqProgressHandler implements NProgressHandler {
     @Override
     public void onEvent(NProgressHandlerEvent event) {
 
-        switch (event.getEventType()) {
+        switch (event.eventType()) {
             case PROGRESS: {
-                double progress = event.getModel().getProgress();
+                double progress = event.model().progress();
                 long newd = System.currentTimeMillis();
                 if (newd > lastProgressTime + freq
                         || progress == 0
                         || progress == 1
                         || Double.isNaN(progress)
                 ) {
-                    getDelegate().setProgress(progress);
+                    getDelegate().progress(progress);
                     lastProgressTime = newd;
                 }
                 break;
@@ -46,7 +46,7 @@ public class FreqProgressHandler implements NProgressHandler {
                 long newd = System.currentTimeMillis();
                 if (//message.getLevel().intValue() >= level.intValue() ||
                         newd > lastMessageTime + freq) {
-                    getDelegate().setMessage(event.getModel().getMessage());
+                    getDelegate().message(event.model().message());
                     lastMessageTime = newd;
                 }
                 break;

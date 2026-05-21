@@ -324,13 +324,13 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
         data.text = NTexts.of();
         try {
-            data.text.getTheme();
+            data.text.theme();
         } catch (Exception ex) {
             wsModel.LOG
                     .log(NMsg.ofJ("unable to load theme {0}. Reset to default!", data.effectiveBootOptions.theme())
                             .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
                     );
-            data.text.setTheme("");//set default!
+            data.text.theme("");//set default!
         }
 
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
@@ -634,9 +634,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NPath p = NPath.of("classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf", getClass().getClassLoader());
             NText n = data.text.parser().parse(p);
             n = data.text.transform(n, new NTextTransformConfig()
-                    .setCurrentDir(p.parent())
-                    .setImportClassLoader(getClass().getClassLoader())
-                    .setProcessAll(true)
+                    .currentDir(p.parent())
+                    .importClassLoader(getClass().getClassLoader())
+                    .processAll(true)
             );
             out.println(n == null ? "no help found" : n);
             NIsolationLevel il = wsModel.bootModel.getBootUserOptions().isolationLevel().orElse(NIsolationLevel.USER);
@@ -673,7 +673,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             switch (il) {
                 case USER: {
                     out.println(
-                            NTextArt.of().getTableRenderer()
+                            NTextArt.of().tableRenderer()
                                     .get()
                                     .render(
                                             NTableModel.of()
@@ -688,7 +688,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     break;
                 }
                 case SYSTEM: {
-                    out.println(NTextArt.of().getTableRenderer()
+                    out.println(NTextArt.of().tableRenderer()
                             .get().render(
                                     NTableModel.of()
                                             .addCell(
@@ -701,7 +701,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     break;
                 }
                 case CONFINED: {
-                    out.println(NTextArt.of().getTableRenderer()
+                    out.println(NTextArt.of().tableRenderer()
                             .get().render(
                                     NTableModel.of()
                                             .addCell(
@@ -712,7 +712,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     break;
                 }
                 case SANDBOX: {
-                    out.println(NTextArt.of().getTableRenderer()
+                    out.println(NTextArt.of().tableRenderer()
                             .get().render(
                                     NTableModel.of()
                                             .addCell(
@@ -723,7 +723,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     break;
                 }
                 case MEMORY: {
-                    out.println(NTextArt.of().getTableRenderer()
+                    out.println(NTextArt.of().tableRenderer()
                             .get().render(
                                     NTableModel.of()
                                             .addCell(
@@ -1064,11 +1064,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NWorkspaceArchetypeComponent archetypeInstance = null;
         TreeSet<String> validValues = new TreeSet<>();
         for (NWorkspaceArchetypeComponent ac : wsModel.extensions.createAllSupported(NWorkspaceArchetypeComponent.class, archetype)) {
-            if (archetype.equals(ac.getName())) {
+            if (archetype.equals(ac.name())) {
                 archetypeInstance = ac;
                 break;
             }
-            validValues.add(ac.getName());
+            validValues.add(ac.name());
         }
         if (archetypeInstance == null) {
             //get the default implementation
@@ -1079,11 +1079,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
         //has all rights (by default)
         //no right nor group is needed for admin user
-        if (!NSecurityManager.of().findUser(NConstants.Users.ADMIN).isEmpty()) {
+        if (!NSecurityManager.of().getUser(NConstants.Users.ADMIN).isEmpty()) {
             try (NSecureString s = NSecureString.ofSecure("admin".toCharArray())) {
                 NSecurityManager.of().addUser(
                         NUserSpec.of(NConstants.Users.ADMIN)
-                                .setCredential(s)
+                                .credential(s)
                 );
             }
         }
@@ -1172,12 +1172,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             );
                 }
                 adminSecurity = new NUserConfig();
-                adminSecurity.setUserName(NConstants.Users.ADMIN);
+                adminSecurity.userName(NConstants.Users.ADMIN);
                 try (NSecureString s = NSecureString.ofSecure("admin".toCharArray())) {
-                    adminSecurity.setCredential(NSecurityManager.of().addOneWayCredential(s).toString());
+                    adminSecurity.credential(NSecurityManager.of().addOneWayCredential(s).toString());
                 }
                 getConfigModel().addOrUpdateUser(adminSecurity);
-            } else if (NBlankable.isBlank(adminSecurity.getCredential())) {
+            } else if (NBlankable.isBlank(adminSecurity.credential())) {
                 if (wsModel.LOG.isLoggable(Level.CONFIG)) {
                     wsModel.LOG
                             .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN)
@@ -1186,7 +1186,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
                 adminSecurity = adminSecurity.copy();
                 try (NSecureString s = NSecureString.ofSecure(WEAK_ADMIN_PASSWORD.toCharArray())) {
-                    adminSecurity.setCredential(NSecurityManager.of().addOneWayCredential(s).toString());
+                    adminSecurity.credential(NSecurityManager.of().addOneWayCredential(s).toString());
                 }
                 getConfigModel().addOrUpdateUser(adminSecurity);
             }
@@ -1215,9 +1215,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NTexts txt = NTexts.of();
             NPath p = NPath.of("classpath:/net/thevpc/nuts/runtime/nuts-welcome.ntf", getClass().getClassLoader());
             NText n = txt.parser().parse(p);
-            n = txt.transform(n, new NTextTransformConfig().setProcessAll(true)
-                    .setImportClassLoader(getClass().getClassLoader())
-                    .setCurrentDir(p.parent()));
+            n = txt.transform(n, new NTextTransformConfig().processAll(true)
+                    .importClassLoader(getClass().getClassLoader())
+                    .currentDir(p.parent()));
             return (n == null ? txt.ofStyled("no welcome found!", NTextStyle.error()) : n);
         });
     }
@@ -1230,8 +1230,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NPath path = NPath.of("classpath:/net/thevpc/nuts/runtime/nuts-help.ntf", getClass().getClassLoader());
             NText n = txt.parser().parse(path);
             n = txt.transform(n, new NTextTransformConfig()
-                    .setProcessAll(true)
-                    .setRootLevel(1));
+                    .processAll(true)
+                    .rootLevel(1));
             return (n == null ? txt.ofStyled("no help found", NTextStyle.error()) : n);
         });
     }
@@ -1245,10 +1245,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 NTexts txt = NTexts.of();
                 NText n = txt.parser().parse(urlPath);
                 n = txt.transform(n, new NTextTransformConfig()
-                        .setProcessAll(true)
-                        .setImportClassLoader(clazz == null ? null : clazz.getClassLoader())
-                        .setCurrentDir(urlPath.parent())
-                        .setRootLevel(1));
+                        .processAll(true)
+                        .importClassLoader(clazz == null ? null : clazz.getClassLoader())
+                        .currentDir(urlPath.parent())
+                        .rootLevel(1));
                 if (n == null) {
                     return txt.ofStyled(
                             NMsg.ofC(
@@ -1524,7 +1524,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .to(bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
                                 .resolve(this.getDefaultIdFilename(id2.builder().faceContent().packaging("jar").build()))
                         ).run();
-                NDescriptorWriter.of().setNtf(false)
+                NDescriptorWriter.of().ntf(false)
                         .print(NFetch.of(id2).dependencyFilter(dependencyRunFilter).getResultDescriptor(), bootstrapFolder.resolve(this.getDefaultIdBasedir(id2))
                                 .resolve(this.getDefaultIdFilename(id2.builder().faceDescriptor().build())));
 

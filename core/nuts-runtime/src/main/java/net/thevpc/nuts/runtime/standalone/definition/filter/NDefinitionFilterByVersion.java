@@ -54,7 +54,7 @@ public class NDefinitionFilterByVersion extends AbstractDefinitionFilter {
 
     @Override
     public NDefinitionFilter simplify() {
-        switch (versionFilter.getFilterOp()) {
+        switch (versionFilter.filterOp()) {
             case TRUE:
                 return NDefinitionFilters.of().always();
             case FALSE:

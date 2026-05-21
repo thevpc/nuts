@@ -90,29 +90,29 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NReflectType getDeclaringType() {
+    public NReflectType declaringType() {
         return declaringType;
     }
 
     @Override
-    public NReflectType getPropertyType() {
+    public NReflectType propertyType() {
         return propertyType;
     }
 
     @Override
-    public NReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
+    public NReflectPropertyDefaultValueStrategy defaultValueStrategy() {
         return defaultValueStrategy;
     }
 
     @Override
     public boolean isDefaultValue(Object value, NReflectPropertyDefaultValueStrategy strategy) {
         if (strategy == null) {
-            strategy = getDefaultValueStrategy();
+            strategy = defaultValueStrategy();
         }
         switch (strategy) {
             case NONE: {
@@ -163,7 +163,7 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
                 }
             }
             case BASE: {
-                return getPropertyType().isDefaultValue(value);
+                return propertyType().isDefaultValue(value);
             }
         }
         return Objects.equals(_cleanInstanceValue(), value);

@@ -44,10 +44,10 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
     }
 
     public NNamedCredentialConfig(NNamedCredentialConfig other) {
-        this.user = other.getUser();
-        this.credential = other.getCredential();
-        this.name = other.getName();
-        this.resource = other.getResource();
+        this.user = other.user();
+        this.credential = other.credential();
+        this.name = other.name();
+        this.resource = other.resource();
     }
 
     public NNamedCredentialConfig(String name, String resource, String user, String credential) {
@@ -71,36 +71,36 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
         }
     }
 
-    public String getUser() {
+    public String user() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void user(String user) {
         this.user = user;
     }
 
-    public String getCredential() {
+    public String credential() {
         return credential;
     }
 
-    public void setCredential(String credential) {
+    public void credential(String credential) {
         this.credential = credential;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public NNamedCredentialConfig setName(String name) {
+    public NNamedCredentialConfig name(String name) {
         this.name = name;
         return this;
     }
 
-    public String getResource() {
+    public String resource() {
         return resource;
     }
 
-    public NNamedCredentialConfig setResource(String resource) {
+    public NNamedCredentialConfig resource(String resource) {
         this.resource = resource;
         return this;
     }
@@ -108,7 +108,7 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
 
     @Override
     public String toString() {
-        return "NutsUserConfig{" +
+        return "NNamedCredentialConfig{" +
                 "user='" + user + '\'' +
                 ", credentials='" + credential + '\'' +
                 '}';

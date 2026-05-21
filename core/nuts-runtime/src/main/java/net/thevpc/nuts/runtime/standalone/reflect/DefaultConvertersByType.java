@@ -60,7 +60,7 @@ public class DefaultConvertersByType implements NReflectConverter {
                 case "java.lang.Float":return Float.parseFloat((String) value);
                 case "java.lang.Double":return Double.parseDouble((String) value);
             }
-        } else if (context.getRepository().getType(Number.class).isAssignableFrom(fromType)) {
+        } else if (context.repository().getType(Number.class).isAssignableFrom(fromType)) {
             if (tojType instanceof Enum) {
                 return ((Class<? extends Enum>) tojType).getEnumConstants()[((Number) value).intValue()];
             }else if (tojType instanceof Class && Number.class.isAssignableFrom((Class<?>) tojType)) {
@@ -91,7 +91,7 @@ public class DefaultConvertersByType implements NReflectConverter {
                     } else if (cTojType.equals(java.util.Set.class)) {
                         cTojType = java.util.HashSet.class;
                     }
-                    Collection li = (Collection) context.getRepository().getType(cTojType).newInstance();
+                    Collection li = (Collection) context.repository().getType(cTojType).newInstance();
                     int len = Array.getLength(value);
                     for (int i = 0; i < len; i++) {
                         li.add(Array.get(value, i));
@@ -119,7 +119,7 @@ public class DefaultConvertersByType implements NReflectConverter {
                     } else if (cTojType.equals(java.util.Set.class)) {
                         cTojType = java.util.HashSet.class;
                     }
-                    Collection li = (Collection) context.getRepository().getType(cTojType).newInstance();
+                    Collection li = (Collection) context.repository().getType(cTojType).newInstance();
                     Collection coll = (Collection) value;
                     li.addAll(coll);
                     return li;

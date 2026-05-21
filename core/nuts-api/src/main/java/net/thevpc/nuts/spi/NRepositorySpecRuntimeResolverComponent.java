@@ -38,6 +38,6 @@ import java.util.List;
  */
 public interface NRepositorySpecRuntimeResolverComponent extends NComponent {
 
-    List<NRepositorySpec> getRuntimeRepositoryDefinitions();
+    List<NRepositorySpec> runtimeRepositoryDefinitions();
 
 }

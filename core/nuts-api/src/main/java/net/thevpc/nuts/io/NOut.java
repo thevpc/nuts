@@ -251,7 +251,7 @@ public class NOut {
         return out().print(csq, start, end);
     }
 
-    public static NTerminalMode getTerminalMode() {
+    public static NTerminalMode terminalMode() {
         return out().terminalMode();
     }
 
@@ -259,7 +259,7 @@ public class NOut {
         return out().isAutoFlash();
     }
 
-    public static NPrintStream setTerminalMode(NTerminalMode other) {
+    public static NPrintStream terminalMode(NTerminalMode other) {
         return out().terminalMode(other);
     }
 

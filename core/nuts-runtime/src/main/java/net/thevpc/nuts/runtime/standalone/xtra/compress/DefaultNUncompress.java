@@ -143,7 +143,7 @@ public class DefaultNUncompress implements NUncompress {
     }
 
     @Override
-    public NOutputTarget getTarget() {
+    public NOutputTarget target() {
         return target;
     }
 
@@ -364,7 +364,7 @@ public class DefaultNUncompress implements NUncompress {
     }
 
     @Override
-    public Set<NPathOption> getOptions() {
+    public Set<NPathOption> options() {
         return new LinkedHashSet<>(options);
     }
 

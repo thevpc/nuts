@@ -58,7 +58,7 @@ public class NUncompressGzip implements NUncompressPackaging {
         } catch (IOException ex) {
             _LOG()
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", source,
-                            uncompress.getTarget(), ex).asConfig().withIntent(NMsgIntent.FAIL));
+                            uncompress.target(), ex).asConfig().withIntent(NMsgIntent.FAIL));
             throw new NIOException(ex);
         }
     }
@@ -69,7 +69,7 @@ public class NUncompressGzip implements NUncompressPackaging {
 
     @Override
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {
-        NOutputTarget target = uncompress.getTarget();
+        NOutputTarget target = uncompress.target();
         try {
             NPath _target = asValidTargetPath(target);
             if (_target == null) {
@@ -134,7 +134,7 @@ public class NUncompressGzip implements NUncompressPackaging {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NUncompress c = context.getCriteria(NUncompress.class);
+        NUncompress c = context.criteria(NUncompress.class);
         String z = NStringUtils.trim(c.packaging()).toLowerCase();
         if (
                 z.equals("gzip")

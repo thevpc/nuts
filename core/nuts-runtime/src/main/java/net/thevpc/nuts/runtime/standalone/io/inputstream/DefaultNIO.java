@@ -225,7 +225,7 @@ public class DefaultNIO implements NIO {
                 .createAllSupported(NContentTypeResolver.class, path);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeContentType(path)))
-                .getBest().orNull();
+                .best().orNull();
         if (best == null) {
             return null;
         }
@@ -272,7 +272,7 @@ public class DefaultNIO implements NIO {
                 .createAllSupported(NContentTypeResolver.class, bytes);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeContentType(bytes)))
-                .getBest().orNull();
+                .best().orNull();
         if (best == null) {
             return null;
         }
@@ -300,7 +300,7 @@ public class DefaultNIO implements NIO {
                 .createAllSupported(NCharsetResolver.class, path);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeCharset(path)))
-                .getBest().orNull();
+                .best().orNull();
         if (best == null) {
             return null;
         }
@@ -319,7 +319,7 @@ public class DefaultNIO implements NIO {
                 .createAllSupported(NCharsetResolver.class, bytes);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeCharset(bytes)))
-                .getBest().orNull();
+                .best().orNull();
         if (best == null) {
             return null;
         }

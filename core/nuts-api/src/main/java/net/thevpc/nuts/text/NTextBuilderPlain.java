@@ -24,7 +24,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public Iterator<NText> iterator() {
-        return Collections.unmodifiableList(getChildren()).iterator();
+        return Collections.unmodifiableList(children()).iterator();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NTextStyleGenerator getStyleGenerator() {
+    public NTextStyleGenerator styleGenerator() {
         return new NTextStyleGenerator() {
             private boolean includePlain = false;
 
@@ -68,7 +68,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludePlain(boolean includePlain) {
+            public NTextStyleGenerator includePlain(boolean includePlain) {
                 this.includePlain = includePlain;
                 return this;
             }
@@ -79,7 +79,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeBold(boolean includeBold) {
+            public NTextStyleGenerator includeBold(boolean includeBold) {
                 return this;
             }
 
@@ -89,7 +89,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeBlink(boolean includeBlink) {
+            public NTextStyleGenerator includeBlink(boolean includeBlink) {
                 return this;
             }
 
@@ -99,7 +99,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeReversed(boolean includeReversed) {
+            public NTextStyleGenerator includeReversed(boolean includeReversed) {
                 return this;
             }
 
@@ -109,7 +109,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeItalic(boolean includeItalic) {
+            public NTextStyleGenerator includeItalic(boolean includeItalic) {
                 return this;
             }
 
@@ -119,7 +119,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeUnderlined(boolean includeUnderlined) {
+            public NTextStyleGenerator includeUnderlined(boolean includeUnderlined) {
                 return this;
             }
 
@@ -129,7 +129,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeStriked(boolean includeStriked) {
+            public NTextStyleGenerator includeStriked(boolean includeStriked) {
                 return this;
             }
 
@@ -139,7 +139,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeForeground(boolean includeForeground) {
+            public NTextStyleGenerator includeForeground(boolean includeForeground) {
                 return this;
             }
 
@@ -149,7 +149,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeBackground(boolean includeBackground) {
+            public NTextStyleGenerator includeBackground(boolean includeBackground) {
                 return this;
             }
 
@@ -169,17 +169,17 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setUseThemeColors() {
+            public NTextStyleGenerator useThemeColors() {
                 return this;
             }
 
             @Override
-            public NTextStyleGenerator setUsePaletteColors() {
+            public NTextStyleGenerator usePaletteColors() {
                 return this;
             }
 
             @Override
-            public NTextStyleGenerator setUseTrueColors() {
+            public NTextStyleGenerator useTrueColors() {
                 return this;
             }
         };
@@ -211,7 +211,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder setStyleGenerator(NTextStyleGenerator styleGenerator) {
+    public NTextBuilder styleGenerator(NTextStyleGenerator styleGenerator) {
         return this;
     }
 
@@ -338,7 +338,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public List<NText> getChildren() {
+    public List<NText> children() {
         return Collections.singletonList(build());
     }
 
@@ -621,7 +621,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
 
         @Override
-        public String getValue() {
+        public String value() {
             return str;
         }
 
@@ -725,17 +725,17 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public List<NText> split(Pattern regex, boolean returnSeparator) {
-            Matcher m = regex.matcher(getValue());
+            Matcher m = regex.matcher(value());
             List<NText> all = new ArrayList<>();
             int last = 0;
             while (m.find()) {
-                all.add(new ImmutableNTextPlain(getValue().substring(last, m.start()))); // before separator
+                all.add(new ImmutableNTextPlain(value().substring(last, m.start()))); // before separator
                 if (returnSeparator) {
                     all.add(new ImmutableNTextPlain(m.group())); // the separator itself (\n or \r\n)
                 }
                 last = m.end();
             }
-            all.add(new ImmutableNTextPlain(getValue().substring(last))); // remainder, even if empty
+            all.add(new ImmutableNTextPlain(value().substring(last))); // remainder, even if empty
             return all;
         }
 

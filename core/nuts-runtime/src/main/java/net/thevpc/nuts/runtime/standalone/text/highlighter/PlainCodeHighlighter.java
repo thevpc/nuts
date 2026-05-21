@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
@@ -15,7 +14,7 @@ public class PlainCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "plain";
     }
 
@@ -31,7 +30,7 @@ public class PlainCodeHighlighter implements NCodeHighlighter {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if(s==null){
             return NScorable.DEFAULT_SCORE;
         }

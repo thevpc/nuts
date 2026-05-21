@@ -17,24 +17,24 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
         this.beanContainer = beanContainer;
         this.store = store;
         this.model = new NCircuitBreakerCallModel(id);
-        this.model.setCaller(callable);
+        this.model.caller(callable);
         reload();
     }
 
     public void reload() {
         synchronized (this) {
             String oldId=model.id();
-            NCallable<?> oldCaller = model.getCaller();
+            NCallable<?> oldCaller = model.caller();
             NCallable<NCircuitBreakerCallModel> cc = () -> {
                 NCircuitBreakerCallModel m = store.load(oldId);
                 if (m == null) {
                     NAssert.requireNamedNonNull(oldCaller,"caller");
                     m = new NCircuitBreakerCallModel(oldId);
-                    m.setCaller(oldCaller);
+                    m.caller(oldCaller);
                     store.save(m);
                 }else{
                     if(oldCaller!=null) {
-                        m.setCaller(oldCaller);
+                        m.caller(oldCaller);
                         store.save(m);
                     }
                 }
@@ -98,14 +98,14 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
         synchronized (this) {
             long now = System.currentTimeMillis();
 
-            switch (model.getStatus()) {
+            switch (model.status()) {
                 case OPEN:
                     long openDelay = model.failureRetryPeriod() != null
                             ? model.failureRetryPeriod().apply(model.failureCount()).toMillis()
                             : 5000; // fallback default
 
                     if (now - model.openTimestamp() >= openDelay) {
-                        model.setStatus(Status.HALF_OPEN);
+                        model.status(Status.HALF_OPEN);
                         model.successCount(0);
                     } else if(useFallback && model.lastValidResult() != null){
                         return (T) model.lastValidResult();
@@ -136,7 +136,7 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
             }
 
             try {
-                T result = (T) model.getCaller().call();
+                T result = (T) model.caller().call();
                 onSuccess(result);
                 return result;
             } catch (Exception ex) {
@@ -150,11 +150,11 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
     }
 
     private void onSuccess(Object result) {
-        switch (model.getStatus()) {
+        switch (model.status()) {
             case HALF_OPEN:
                 model.successCount(model.successCount() + 1);
                 if (model.successCount() >= model.successThreshold()) {
-                    model.setStatus(Status.CLOSED);
+                    model.status(Status.CLOSED);
                     model.failureCount(0);
                 }
                 break;
@@ -166,13 +166,13 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
     }
 
     private void onFailure(Throwable ex) {
-        model.setError(ex);
-        switch (model.getStatus()) {
+        model.error(ex);
+        switch (model.status()) {
             case HALF_OPEN:
             case CLOSED:
                 model.failureCount(model.failureCount() + 1);
                 if (model.failureCount() >= model.failureThreshold()) {
-                    model.setStatus(Status.OPEN);
+                    model.status(Status.OPEN);
                     model.openTimestamp(System.currentTimeMillis());
                 }
                 break;

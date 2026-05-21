@@ -228,14 +228,14 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         }
         try {
             String pck = def.descriptor().packaging();
-            undeploy().setId(id.builder().packaging(NBlankable.isBlank(pck) ? "jar" : pck).build())
+            undeploy().id(id.builder().packaging(NBlankable.isBlank(pck) ? "jar" : pck).build())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .run();
             _wstore().deleteInstallInfoConfig(id);
             String v = getDefaultVersion(id);
             if (v != null && v.equals(id.version().value())) {
-                Iterator<NId> versions = searchVersions().setId(id).setFilter(NDefinitionFilters.of().byInstalled(true)) //search only in installed, ignore deployed!
-                        .setFetchMode(NFetchMode.LOCAL)
+                Iterator<NId> versions = searchVersions().id(id).filter(NDefinitionFilters.of().byInstalled(true)) //search only in installed, ignore deployed!
+                        .fetchMode(NFetchMode.LOCAL)
                         .getResult();
                 List<NId> nutsIds = NCollections.list(versions == null ? Collections.emptyIterator() : versions);
                 nutsIds.sort(null);
@@ -306,7 +306,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public void unrequire(NId requiredId, NId requestorId, NDependencyScope scope) {
         Instant now = Instant.now();
-        String user = NSecurityManager.of().getCurrentUsername();
+        String user = NSecurityManager.of().currentUsername();
         boolean succeeded = false;
         try {
             if (scope == null) {
@@ -419,10 +419,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public NInstallInformation deploy(NDefinition def) {
         this.deploy()
-                .setId(def.id())
-                .setContent(def.content().orNull())
+                .id(def.id())
+                .content(def.content().orNull())
                 //.setFetchMode(NutsFetchMode.LOCAL)
-                .setDescriptor(def.descriptor())
+                .descriptor(def.descriptor())
                 .run();
         return getInstallInformation(def.id());
     }
@@ -469,7 +469,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 }
 
                 ii = new InstallInfoConfig();
-                ii.setConfigVersion(DefaultNWorkspace.VERSION_INSTALL_INFO_CONFIG);
+                ii.configVersion(DefaultNWorkspace.VERSION_INSTALL_INFO_CONFIG);
                 ii.setId(id);
                 ii.setDeployed(_deploy);
                 ii.setInstalled(_install);
@@ -516,20 +516,20 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     private void saveCreate(InstallInfoConfig ii) {
         Instant now = Instant.now();
-        String user = NSecurityManager.of().getCurrentUsername();
+        String user = NSecurityManager.of().currentUsername();
         if (ii.getCreationUser() == null) {
             ii.setCreationUser(user);
         }
         if (ii.getCreationDate() == null) {
             ii.setCreationDate(now);
         }
-        ii.setConfigVersion(DefaultNWorkspace.VERSION_INSTALL_INFO_CONFIG);
+        ii.configVersion(DefaultNWorkspace.VERSION_INSTALL_INFO_CONFIG);
         _wstore().saveInstallInfoConfig(ii);
     }
 
     private void saveUpdate(InstallInfoConfig ii, InstallInfoConfig ii0) {
         Instant now = Instant.now();
-        String user = NSecurityManager.of().getCurrentUsername();
+        String user = NSecurityManager.of().currentUsername();
         if (ii.getCreationUser() == null) {
             ii.setCreationUser(user);
         }
@@ -539,7 +539,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         if (!ii.equals(ii0)) {
             ii.setLastModificationDate(now);
             ii.setLastModificationUser(user);
-            ii.setConfigVersion(DefaultNWorkspace.VERSION_INSTALL_INFO_CONFIG);
+            ii.configVersion(DefaultNWorkspace.VERSION_INSTALL_INFO_CONFIG);
             _wstore().saveInstallInfoConfig(ii);
         }
     }
@@ -553,7 +553,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public void printJson(NId id, String name, InstallInfoConfig value) {
-        value.setConfigVersion(workspace.apiVersion());
+        value.configVersion(workspace.apiVersion());
         NElementWriter.ofJson().write(value, getPath(id, name));
     }
 
@@ -584,12 +584,12 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 boolean succeeded = false;
                 try {
                     NDescriptor rep = deployments.deploy(this, NConfirmationMode.YES);
-                    this.setDescriptor(rep);
-                    this.setId(rep.id());
-                    updateInstallInformation(getId(), null, true, null, null);
+                    this.descriptor(rep);
+                    this.id(rep.id());
+                    updateInstallInformation(id(), null, true, null, null);
                     succeeded = true;
                 } finally {
-                    addLog(NInstallLogAction.DEPLOY, getId(), null, null, succeeded);
+                    addLog(NInstallLogAction.DEPLOY, id(), null, null, succeeded);
                 }
                 return this;
             }
@@ -605,10 +605,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 boolean succeeded = false;
                 try {
                     deployments.undeploy(this);
-                    updateInstallInformation(getId(), null, false, null, null);
+                    updateInstallInformation(id(), null, false, null, null);
                     succeeded = true;
                 } finally {
-                    addLog(NInstallLogAction.UNDEPLOY, getId(), null, null, succeeded);
+                    addLog(NInstallLogAction.UNDEPLOY, id(), null, null, succeeded);
                 }
                 return this;
             }
@@ -637,7 +637,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNFetchDescriptorRepositoryCmd(this) {
             @Override
             public NFetchDescriptorRepositoryCmd run() {
-                result = deployments.fetchDescriptorImpl(getId());
+                result = deployments.fetchDescriptorImpl(id());
                 return this;
             }
         };
@@ -648,7 +648,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNFetchContentRepositoryCmd(this) {
             @Override
             public NFetchContentRepositoryCmd run() {
-                result = deployments.fetchContentImpl(getId());
+                result = deployments.fetchContentImpl(id());
                 return this;
             }
         };
@@ -663,7 +663,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 NIterator<NId> idIter = NIteratorBuilder.of(installIter)
                         .map(NFunction.of(InstallInfoConfig::getId).withDescription(NDescribables.ofDesc("NutsInstallInformation->Id")))
                         .build();
-                NDefinitionFilter ff = getFilter();
+                NDefinitionFilter ff = filter();
                 if (ff != null) {
                     idIter = NIteratorBuilder.of(idIter).filter(NDefinitionFilterUtils.toIdPredicate(ff)).build();
                 }
@@ -682,11 +682,11 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNSearchVersionsRepositoryCmd(this) {
             @Override
             public NSearchVersionsRepositoryCmd run() {
-                final NVersionFilter filter0 = getId().version().toFilter();
+                final NVersionFilter filter0 = id().version().toFilter();
                 SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("<installed>"));
-                result = NStream.ofIterator(_wstore().searchInstalledVersions(getId()))
+                result = NStream.ofIterator(_wstore().searchInstalledVersions(id()))
                         .map(NFunction.of(vv -> {
-                            NId newId = getId().builder().version(vv).build();
+                            NId newId = id().builder().version(vv).build();
                             if (filter0.acceptVersion(vv) && (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(newId, repo, "DefaultNInstalledRepository")))) {
                                 return newId;
                             }
@@ -725,7 +725,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         InstallLogItemTable.of(workspace)
                 .add(new NInstallLogRecord(
                         Instant.now(),
-                        NSecurityManager.of().getCurrentUsername(),
+                        NSecurityManager.of().currentUsername(),
                         action,
                         id, requestor, message, succeeded
                 ));

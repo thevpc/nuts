@@ -162,7 +162,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                             NText.of(repository.repositoryType()),
                             NText.of(repository.config().location()));
                 }
-                out.print(NTextArt.of().getTableRenderer()
+                out.print(NTextArt.of().tableRenderer()
                         .get().render(m));
             } else if (cmdLine.next("-h", "-?", "--help").isPresent()) {
                 out.println(NMsg.ofC("edit repository %s add repo ...", repoId));
@@ -320,7 +320,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.matcher().matchEntry((v) -> {
                         NArg vv = NArg.of(v.stringValue());
                         d.env.put(vv.getKey() == null ? null : vv.key(),
-                                vv.getValue() == null ? null : vv.getStringValue().get());
+                                vv.toLiteral() == null ? null : vv.getStringValue().get());
                     }).anyMatch();
                     break;
                 }
@@ -336,7 +336,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                             d.location = cmdLine.next().flatMap(NArg::asString).get();
                             DefaultNRepositoryDB db = NWorkspaceExt.of().getRepositoryModel().getDB();
                             NRepositorySpec ro = db.getDefinitionByName(d.location).orNull();
-                            String loc2 = ro == null ? null : ro.sourceLocation().getFullLocation();
+                            String loc2 = ro == null ? null : ro.sourceLocation().fullLocation();
                             if (loc2 != null) {
                                 d.repositoryName = d.location;
                                 d.location = loc2;

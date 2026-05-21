@@ -18,7 +18,7 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public List<NWorkBalancerWorker> getWorkers() {
+    public List<NWorkBalancerWorker> workers() {
         if (model.workers() == null) return Collections.emptyList();
         return model.workers().stream().map(NWorkBalancerWorkerImpl::new).collect(Collectors.toList());
     }
@@ -29,7 +29,7 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public Map<String, NWorkBalancerWorkerLoad> getWorkerLoads() {
+    public Map<String, NWorkBalancerWorkerLoad> workerLoads() {
         return workBalancer.workerLoads();
     }
 
@@ -39,7 +39,7 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public Map<String, NElement> getOptions() {
+    public Map<String, NElement> options() {
         return workBalancer.options();
     }
 
@@ -51,7 +51,7 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public NOptional<NElement> getVar(String name) {
+    public NOptional<NElement> getSharedVar(String name) {
         if (model.context() != null && model.context().variables() != null) {
             Map<String, NElement> globalVars = model.context().variables().getOrDefault("", Collections.emptyMap());
             return NOptional.ofNullable(globalVars.get(name));
@@ -66,7 +66,7 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public NWorkBalancerStrategyContext setVar(String name, NElement value) {
+    public NWorkBalancerStrategyContext setSharedVar(String name, NElement value) {
         model.context().variables().computeIfAbsent("", k -> new HashMap<>()).put(name, value);
         return this;
     }

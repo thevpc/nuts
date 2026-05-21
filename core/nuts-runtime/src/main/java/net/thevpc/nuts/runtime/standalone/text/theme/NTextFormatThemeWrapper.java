@@ -16,8 +16,8 @@ public class NTextFormatThemeWrapper implements NTextFormatTheme {
         this.other = other;
     }
 
-    public String getName() {
-        return other.getName();
+    public String name() {
+        return other.name();
     }
 
     @Override
@@ -35,10 +35,10 @@ public class NTextFormatThemeWrapper implements NTextFormatTheme {
         if (style == null) {
             return NTextStyles.PLAIN;
         }
-        if(style.getType().isBasic(basicTrueStyles)) {
+        if(style.type().isBasic(basicTrueStyles)) {
             return NTextStyles.of(style);
         }
-        if(style.getType().isBasic(basicTrueStyles)) {
+        if(style.type().isBasic(basicTrueStyles)) {
             return NTextStyles.of(style);
         }
         NTextStyles t = other.toBasicStyles(style, basicTrueStyles);
@@ -48,13 +48,13 @@ public class NTextFormatThemeWrapper implements NTextFormatTheme {
         List<NTextStyle> rr = new ArrayList<>();
         if(basicTrueStyles){
             for (NTextStyle s : t) {
-                if (s.getType().trueBasic()) {
+                if (s.type().trueBasic()) {
                     rr.add(s);
                 }
             }
         }else{
             for (NTextStyle s : t) {
-                if (s.getType().basic()) {
+                if (s.type().basic()) {
                     rr.add(s);
                 }
             }

@@ -171,7 +171,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
         BigDecimal b = this.imag;
         BigDecimal c = z2.realValue();
         BigDecimal d = z2.imagValue();
-        mc= NNumberUtils.getContextMathContext(mc);
+        mc= NNumberUtils.contextMathContext(mc);
         BigDecimal p1 = a.multiply(c, mc);
         BigDecimal p2 = b.multiply(d, mc);
         BigDecimal p3 = (a.add(b, mc)).multiply(c.add(d, mc), mc);
@@ -183,7 +183,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     }
 
     public NBigComplex divideBigComplex(NBigComplex other, MathContext mc) {
-        mc= NNumberUtils.getContextMathContext(mc);
+        mc= NNumberUtils.contextMathContext(mc);
         BigDecimal c = other.realValue();
         BigDecimal d = other.imagValue();
         BigDecimal denominator = c.multiply(c, mc).add(d.multiply(d, mc), mc);
@@ -200,7 +200,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     }
 
     public NBigComplex invBigComplex(MathContext mc) {
-        mc= NNumberUtils.getContextMathContext(mc);
+        mc= NNumberUtils.contextMathContext(mc);
         BigDecimal denominator = this.real.multiply(this.real, mc).add(this.imag.multiply(this.imag, mc), mc);
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {
             throw new ArithmeticException("Inverse of zero complex number is undefined.");

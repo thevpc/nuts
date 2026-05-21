@@ -19,97 +19,97 @@ public class RepoListParserTest {
     @Test
     public void test01() {
         NRepositoryLocation r = NRepositoryLocation.of("maven-local=maven@/home/me/.m2/repository");
-        Assertions.assertEquals(r.getName(), "maven-local");
-        Assertions.assertEquals(r.getLocationType(), "maven");
-        Assertions.assertEquals(r.getPath(), "/home/me/.m2/repository");
+        Assertions.assertEquals(r.name(), "maven-local");
+        Assertions.assertEquals(r.locationType(), "maven");
+        Assertions.assertEquals(r.path(), "/home/me/.m2/repository");
     }
 
     @Test
     public void test02() {
         NRepositoryLocation r = NRepositoryLocation.of("maven@/home/me/.m2/repository");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), "maven");
-        Assertions.assertEquals(r.getPath(), "/home/me/.m2/repository");
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), "maven");
+        Assertions.assertEquals(r.path(), "/home/me/.m2/repository");
     }
 
     @Test
     public void test03() {
         NRepositoryLocation r = NRepositoryLocation.of("/home/me/.m2/repository");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), "/home/me/.m2/repository");
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), "/home/me/.m2/repository");
     }
 
     @Test
     public void test04() {
         NRepositoryLocation r = NRepositoryLocation.of("repository");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), "repository");
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), "repository");
     }
 
     @Test
     public void test05() {
         NRepositoryLocation r = NRepositoryLocation.of("repository=");
-        Assertions.assertEquals(r.getName(), "repository");
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), null);
+        Assertions.assertEquals(r.name(), "repository");
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), null);
     }
 
     @Test
     public void test06() {
         NRepositoryLocation r = NRepositoryLocation.of("maven@");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), "maven");
-        Assertions.assertEquals(r.getPath(), null);
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), "maven");
+        Assertions.assertEquals(r.path(), null);
     }
 
     @Test
     public void test07() {
         NRepositoryLocation r = NRepositoryLocation.of("");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), null);
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), null);
     }
 
     @Test
     public void test08() {
         NRepositoryLocation r = NRepositoryLocation.of(null);
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), null);
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), null);
     }
 
     @Test
     public void test09() {
         NRepositoryLocation r = NRepositoryLocation.of("@");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), null);
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), null);
     }
 
     @Test
     public void test10() {
         NRepositoryLocation r = NRepositoryLocation.of("=");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), null);
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), null);
     }
 
     @Test
     public void test11() {
         NRepositoryLocation r = NRepositoryLocation.of("=@");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), null);
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), null);
     }
 
     @Test
     public void test12() {
         NRepositoryLocation r = NRepositoryLocation.of("@=");
-        Assertions.assertEquals(r.getName(), null);
-        Assertions.assertEquals(r.getLocationType(), null);
-        Assertions.assertEquals(r.getPath(), "=");
+        Assertions.assertEquals(r.name(), null);
+        Assertions.assertEquals(r.locationType(), null);
+        Assertions.assertEquals(r.path(), "=");
     }
 
     @Test

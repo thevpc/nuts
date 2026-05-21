@@ -24,13 +24,13 @@ public class FishCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "fish";
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if(s==null){
             return NScorable.DEFAULT_SCORE;
         }
@@ -39,7 +39,7 @@ public class FishCodeHighlighter implements NCodeHighlighter {
                 return NScorable.DEFAULT_SCORE;
             }
             case "system": {
-                switch (NShellFamily.getCurrent()) {
+                switch (NShellFamily.current()) {
                     case FISH: {
                         return NScorable.DEFAULT_SCORE;
                     }
@@ -152,7 +152,7 @@ public class FishCodeHighlighter implements NCodeHighlighter {
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).type() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getValue())) {
+        if (ret.get(0).type() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).value())) {
             ret.set(0, txt.ofStyled(ret.get(0), NTextStyle.option()));
         }
         return ret.toArray(new NText[0]);
@@ -263,7 +263,7 @@ public class FishCodeHighlighter implements NCodeHighlighter {
 
     private static TokenType resolveTokenType(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            String text = ((DefaultNTextPlain) n).getValue();
+            String text = ((DefaultNTextPlain) n).value();
             if (text.length() > 0) {
                 char c = text.charAt(0);
                 switch (c) {
@@ -297,7 +297,7 @@ public class FishCodeHighlighter implements NCodeHighlighter {
 
     private static boolean isWhites(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            if (Character.isWhitespace(((DefaultNTextPlain) n).getValue().charAt(0))) {
+            if (Character.isWhitespace(((DefaultNTextPlain) n).value().charAt(0))) {
                 return true;
             }
         }

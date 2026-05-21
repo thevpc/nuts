@@ -52,91 +52,91 @@ public interface NElementWriter extends NContentTypeWriter {
     }
 
     static NElementWriter ofPlainJson() {
-        return of().setNtf(false).json();
+        return of().ntf(false).json();
     }
 
     static NElementWriter ofJson() {
-        return of().setNtf(false).json();
+        return of().ntf(false).json();
     }
 
     static NElementWriter ofPlainProps() {
-        return of().setNtf(false).setContentType(NContentType.PROPS);
+        return of().ntf(false).contentType(NContentType.PROPS);
     }
 
     static NElementWriter ofProps() {
-        return of().setNtf(false).setContentType(NContentType.PROPS);
+        return of().ntf(false).contentType(NContentType.PROPS);
     }
 
     static NElementWriter ofPlainXml() {
-        return of().setNtf(false).setContentType(NContentType.XML);
+        return of().ntf(false).contentType(NContentType.XML);
     }
 
     static NElementWriter ofXml() {
-        return of().setNtf(false).setContentType(NContentType.XML);
+        return of().ntf(false).contentType(NContentType.XML);
     }
 
     static NElementWriter ofPlainTree() {
-        return of().setNtf(false).setContentType(NContentType.TREE);
+        return of().ntf(false).contentType(NContentType.TREE);
     }
 
     static NElementWriter ofTree() {
-        return of().setNtf(false).setContentType(NContentType.TREE);
+        return of().ntf(false).contentType(NContentType.TREE);
     }
 
     static NElementWriter ofPlain() {
-        return of().setNtf(false).setContentType(NContentType.PLAIN);
+        return of().ntf(false).contentType(NContentType.PLAIN);
     }
 
     static NElementWriter ofPlainTson() {
-        return of().setNtf(false).setContentType(NContentType.TSON);
+        return of().ntf(false).contentType(NContentType.TSON);
     }
 
     static NElementWriter ofTson() {
-        return of().setNtf(false).setContentType(NContentType.TSON);
+        return of().ntf(false).contentType(NContentType.TSON);
     }
 
     static NElementWriter ofPlainYaml() {
-        return of().setNtf(false).setContentType(NContentType.YAML);
+        return of().ntf(false).contentType(NContentType.YAML);
     }
 
     static NElementWriter ofYaml() {
-        return of().setNtf(false).setContentType(NContentType.YAML);
+        return of().ntf(false).contentType(NContentType.YAML);
     }
 
     static NElementWriter ofPlainTable() {
-        return of().setNtf(false).setContentType(NContentType.TABLE);
+        return of().ntf(false).contentType(NContentType.TABLE);
     }
 
     static NElementWriter ofTable() {
-        return of().setNtf(false).setContentType(NContentType.TABLE);
+        return of().ntf(false).contentType(NContentType.TABLE);
     }
 
     static NElementWriter ofNtfJson() {
-        return of().setNtf(true).json();
+        return of().ntf(true).json();
     }
 
     static NElementWriter ofNtfProps() {
-        return of().setNtf(true).setContentType(NContentType.PROPS);
+        return of().ntf(true).contentType(NContentType.PROPS);
     }
 
     static NElementWriter ofNtfXml() {
-        return of().setNtf(true).setContentType(NContentType.XML);
+        return of().ntf(true).contentType(NContentType.XML);
     }
 
     static NElementWriter ofNtfTree() {
-        return of().setNtf(true).setContentType(NContentType.TREE);
+        return of().ntf(true).contentType(NContentType.TREE);
     }
 
     static NElementWriter ofNtfTson() {
-        return of().setNtf(true).setContentType(NContentType.TSON);
+        return of().ntf(true).contentType(NContentType.TSON);
     }
 
     static NElementWriter ofNtfYaml() {
-        return of().setNtf(true).setContentType(NContentType.YAML);
+        return of().ntf(true).contentType(NContentType.YAML);
     }
 
     static NElementWriter ofNtfTable() {
-        return of().setNtf(true).setContentType(NContentType.TABLE);
+        return of().ntf(true).contentType(NContentType.TABLE);
     }
 
     /**
@@ -145,7 +145,7 @@ public interface NElementWriter extends NContentTypeWriter {
      * @return content type
      * @since 0.8.1
      */
-    NContentType getContentType();
+    NContentType contentType();
 
     /**
      * set the parse content type. defaults to JSON. Non structured content
@@ -155,7 +155,7 @@ public interface NElementWriter extends NContentTypeWriter {
      * @return {@code this} instance
      * @since 0.8.1
      */
-    NElementWriter setContentType(NContentType contentType);
+    NElementWriter contentType(NContentType contentType);
 
     NElementWriter json();
 
@@ -179,13 +179,13 @@ public interface NElementWriter extends NContentTypeWriter {
     NElementWriter configure(boolean skipUnsupported, String... args);
 
     @Override
-    NElementWriter setNtf(boolean ntf);
+    NElementWriter ntf(boolean ntf);
 
-    NElementFormatter getFormatter();
+    NElementFormatter formatter();
 
-    NElementWriter setFormatter(NElementFormatter formatter);
+    NElementWriter formatter(NElementFormatter formatter);
 
-    NElementWriter setCompact(boolean compact);
+    NElementWriter compact(boolean compact);
 
     NIterableFormat iter(NPrintStream out);
 
@@ -197,19 +197,19 @@ public interface NElementWriter extends NContentTypeWriter {
 
     NElementWriter setTraceProgress(boolean traceProgress);
 
-    NProgressFactory getProgressFactory();
+    NProgressFactory progressFactory();
 
-    NElementWriter setProgressFactory(NProgressFactory progressFactory);
+    NElementWriter progressFactory(NProgressFactory progressFactory);
 
     NElementMapperStore mapperStore();
 
     NElementWriter doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
-    NObjectWriter setFormatterCompact();
+    NObjectWriter formatterCompact();
 
-    NObjectWriter setFormatterPretty();
+    NObjectWriter formatterPretty();
 
-    NObjectWriter setFormatterVerbatim();
+    NObjectWriter formatterVerbatim();
 
-    NObjectWriter setFormatter(NElementFormatterStyle style);
+    NObjectWriter formatter(NElementFormatterStyle style);
 }

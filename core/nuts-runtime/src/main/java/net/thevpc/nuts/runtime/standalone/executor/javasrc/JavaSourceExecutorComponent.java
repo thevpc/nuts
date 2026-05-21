@@ -59,7 +59,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
     public static NId ID=NId.get("net.thevpc.nuts.exec:exec-java-src").get();
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
@@ -135,7 +135,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NDefinition def = context.getCriteria(NDefinition.class);
+        NDefinition def = context.criteria(NDefinition.class);
         if (def != null) {
             if ("java".equals(def.descriptor().packaging())) {
                 return NScorable.DEFAULT_SCORE + 1;

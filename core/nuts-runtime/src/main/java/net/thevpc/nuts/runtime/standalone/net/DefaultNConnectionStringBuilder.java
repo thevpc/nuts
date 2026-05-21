@@ -333,7 +333,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     }
 
     @Override
-    public String getQueryString() {
+    public String queryString() {
         return serializeQueryMap(queryMap);
     }
 

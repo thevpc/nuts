@@ -225,8 +225,8 @@ public class DefaultNFilterModel {
         if (others != null) {
             for (NFilter other : others) {
                 if (other != null) {
-                    if (other.getFilterOp() == NFilterOp.OR) {
-                        ok.addAll(other.getSubFilters());
+                    if (other.filterOp() == NFilterOp.OR) {
+                        ok.addAll(other.subFilters());
                     } else {
                         ok.addAll(Arrays.asList(other));
                     }
@@ -241,8 +241,8 @@ public class DefaultNFilterModel {
         if (others != null) {
             for (NFilter other : others) {
                 if (other != null) {
-                    if (other.getFilterOp() == NFilterOp.AND) {
-                        ok.addAll(other.getSubFilters());
+                    if (other.filterOp() == NFilterOp.AND) {
+                        ok.addAll(other.subFilters());
                     } else {
                         ok.addAll(Arrays.asList(other));
                     }
@@ -257,8 +257,8 @@ public class DefaultNFilterModel {
         if (others != null) {
             for (NFilter other : others) {
                 if (other != null) {
-                    if (other.getFilterOp() == NFilterOp.NOT) {
-                        ok.addAll(other.getSubFilters());
+                    if (other.filterOp() == NFilterOp.NOT) {
+                        ok.addAll(other.subFilters());
                     } else {
                         ok.addAll(Arrays.asList(other));
                     }

@@ -87,7 +87,7 @@ public enum NShellFamily implements NEnum {
     }
 
     private static NShellFamily _resolveCurrent() {
-        switch (NOsFamily.getCurrent()) {
+        switch (NOsFamily.current()) {
             case WINDOWS: {
                 return WIN_CMD;
             }
@@ -148,7 +148,7 @@ public enum NShellFamily implements NEnum {
     }
 
 
-    public static NShellFamily getCurrent() {
+    public static NShellFamily current() {
         return _curr;
     }
 

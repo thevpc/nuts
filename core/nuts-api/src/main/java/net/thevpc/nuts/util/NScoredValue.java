@@ -23,14 +23,14 @@ public interface NScoredValue<T> {
      *
      * @return api interface
      */
-    Class<T> getApiType();
+    Class<T> apiType();
 
     /**
      * when unsupported, may return null
      *
      * @return implementation class
      */
-    Class<? extends T> getImplType();
+    Class<? extends T> implType();
 
     /**
      * Returns the score computed for the scorable instance.

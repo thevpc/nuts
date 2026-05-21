@@ -60,7 +60,7 @@ public class NMemoryFormat {
         if (iec != null) {
             memorySize = memorySize.withIEC(iec);
         }
-        boolean iiec = memorySize.isIEC();
+        boolean iiec = memorySize.iec();
         int uordinal = unit.ordinal();
         long unitValue = memorySize.get(unit);
         NMemoryUnit[] chronoValues = NMemoryUnit.values();
@@ -75,8 +75,8 @@ public class NMemoryFormat {
                 return;
             }
         }
-        if (uordinal > memorySize.getLargestUnit().ordinal()
-                || uordinal < memorySize.getSmallestUnit().ordinal()
+        if (uordinal > memorySize.largestUnit().ordinal()
+                || uordinal < memorySize.smallestUnit().ordinal()
         ) {
             return;
         }
@@ -91,7 +91,7 @@ public class NMemoryFormat {
     }
 
     private boolean accept(NMemoryUnit c, NMemorySize memorySize) {
-        if (c.ordinal() < memorySize.getSmallestUnit().ordinal()) {
+        if (c.ordinal() < memorySize.smallestUnit().ordinal()) {
             return false;
         }
         return memorySize.get(c) != 0;
@@ -160,11 +160,11 @@ public class NMemoryFormat {
         return fixed;
     }
 
-    public Boolean getIEC() {
+    public Boolean iec() {
         return iec;
     }
 
-    public NMemoryFormat setIEC(Boolean iec) {
+    public NMemoryFormat iec(Boolean iec) {
         if (Objects.equals(this.iec, iec)) {
             if (frozen) {
                 throw new IllegalArgumentException("This instance is immutable and cannot be updated");
@@ -174,7 +174,7 @@ public class NMemoryFormat {
         return this;
     }
 
-    public NMemoryFormat setFixed(Boolean fixed) {
+    public NMemoryFormat fixed(Boolean fixed) {
         if (this.fixed != fixed) {
             if (frozen) {
                 throw new IllegalArgumentException("This instance is immutable and cannot be updated");

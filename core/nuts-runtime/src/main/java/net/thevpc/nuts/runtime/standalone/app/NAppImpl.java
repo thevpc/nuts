@@ -322,7 +322,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         String m = stackTraceElement.getMethodName();
         if (m != null && stackTraceElement.getClassName() != null && !stackTraceElement.getClassName().isEmpty()) {
             NTypeLoader type = NTypeLoader.of(stackTraceElement.getClassName());
-            Class<?> c = type.getType().orNull();
+            Class<?> c = type.type().orNull();
             if (c != null) {
                 if (Modifier.isAbstract(c.getModifiers())) {
                     return null;
@@ -343,7 +343,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
 
     private boolean isAssignableFromAny(Class<?> c, NTypeLoader... loaders) {
         for (NTypeLoader loader : loaders) {
-            if (loader.getType().filter(x -> x.isAssignableFrom(c)).isPresent()) {
+            if (loader.type().filter(x -> x.isAssignableFrom(c)).isPresent()) {
                 return true;
             }
         }
@@ -466,9 +466,9 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         if (h != null) {
             try {
                 h = NTexts.of().transform(h, new NTextTransformConfig()
-                        .setProcessTitleNumbers(true)
-                        .setNormalize(true)
-                        .setFlatten(true)
+                        .processTitleNumbers(true)
+                        .normalize(true)
+                        .flatten(true)
                 );
             } catch (Exception ex) {
                 //
@@ -482,9 +482,9 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     public void printHelp() {
         NText h = NWorkspaceExt.of().resolveDefaultHelp(sourceType());
         h = NTexts.of().transform(h, new NTextTransformConfig()
-                .setProcessTitleNumbers(true)
-                .setNormalize(true)
-                .setFlatten(true)
+                .processTitleNumbers(true)
+                .normalize(true)
+                .flatten(true)
         );
         if (h == null) {
             NOut.println(NMsg.ofC("Help is %s.", NMsg.ofStyledError("missing")));
@@ -637,7 +637,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     @Override
     public void runCmdLine(NCmdLineRunner commandLineRunner) {
         cmdLine()
-                .setSource(this)
+                .source(this)
                 .run(commandLineRunner);
     }
 

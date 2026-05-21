@@ -76,7 +76,7 @@ public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
         try {
             return format(aValue).filteredText();
         } finally {
-            setNtf(ntf);
+            ntf(ntf);
         }
     }
 
@@ -364,5 +364,5 @@ public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
      */
     boolean isNtf();
 
-    NObjectWriter setNtf(boolean ntf);
+    NObjectWriter ntf(boolean ntf);
 }

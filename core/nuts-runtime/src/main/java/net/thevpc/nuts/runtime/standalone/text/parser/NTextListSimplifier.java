@@ -66,11 +66,11 @@ public class NTextListSimplifier {
     public NTextListSimplifier add(NText a) {
         if (a != null) {
             if (inlineLists && a instanceof NTextList) {
-                for (NText child : ((NTextList) a).getChildren()) {
+                for (NText child : ((NTextList) a).children()) {
                     add(child.simplify());
                 }
             } else if (inlineBuilders && a instanceof NTextBuilder) {
-                for (NText child : ((NTextBuilder) a).getChildren()) {
+                for (NText child : ((NTextBuilder) a).children()) {
                     add(child.simplify());
                 }
             } else {
@@ -80,12 +80,12 @@ public class NTextListSimplifier {
                 }
                 if (a instanceof NTextPlain) {
                     NTextPlain aa = (NTextPlain) a;
-                    if (!((NTextPlain) a).getValue().isEmpty()) {
+                    if (!((NTextPlain) a).value().isEmpty()) {
                         if (mergePlain && last instanceof NTextPlain) {
                             values.remove(values.size() - 1);
                             values.add(new DefaultNTextPlain(
-                                    ((NTextPlain) last).getValue() +
-                                            aa.getValue())
+                                    ((NTextPlain) last).value() +
+                                            aa.value())
                             );
                         } else {
                             values.add(a);
@@ -93,11 +93,11 @@ public class NTextListSimplifier {
                     }
                 } else if (a instanceof NTextStyled) {
                     NTextStyled aa = (NTextStyled) a;
-                    NTextStyles aas = aa.getStyles();
-                    if (mergeStyled && last instanceof NTextStyled && Objects.equals(aa.getStyles(), ((NTextStyled) last).getStyles())) {
+                    NTextStyles aas = aa.styles();
+                    if (mergeStyled && last instanceof NTextStyled && Objects.equals(aa.styles(), ((NTextStyled) last).styles())) {
                         values.remove(values.size() - 1);
-                        NText s = NText.ofList(((NTextStyled) last).getChild(), aa.getChild()).simplify();
-                        if (s instanceof NTextPlain && ((NTextPlain) s).getValue().isEmpty()) {
+                        NText s = NText.ofList(((NTextStyled) last).child(), aa.child()).simplify();
+                        if (s instanceof NTextPlain && ((NTextPlain) s).value().isEmpty()) {
                             //just ignore
                         } else {
                             values.add(new DefaultNTextStyled(s, aas));

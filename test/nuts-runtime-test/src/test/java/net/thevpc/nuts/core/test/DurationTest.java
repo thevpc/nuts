@@ -21,8 +21,8 @@ public class DurationTest {
     public void test01() {
         long[] time=new long[ChronoUnit.values().length];
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("0ns",s);
@@ -32,8 +32,8 @@ public class DurationTest {
     public void test02() {
         long[] time=new long[ChronoUnit.values().length];
         NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("0s",s);
@@ -45,8 +45,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MICROS.ordinal()]=17;
         NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString();
         System.out.println(s);
         Assertions.assertEquals("0s",s);
@@ -58,8 +58,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MILLIS.ordinal()]=17;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.MILLIS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("17ms 16ns",s);
@@ -71,8 +71,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=999;
         time[ChronoUnit.MILLIS.ordinal()]=999;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.MILLIS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("999ms 999ns",s);
@@ -89,8 +89,8 @@ public class DurationTest {
         time[ChronoUnit.MINUTES.ordinal()]=5;
         time[ChronoUnit.HOURS.ordinal()]=6;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.HOURS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.HOURS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("6h 5mn 4s 3ms 2us 1ns",s);
@@ -112,8 +112,8 @@ public class DurationTest {
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("10y 9m 8w 7d 6h 5mn 4s 3ms 2us 1ns",s);
@@ -133,8 +133,8 @@ public class DurationTest {
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.MICROS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.MICROS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("10y 9m 8w 6h 5mn 3ms 2us",s);
@@ -146,8 +146,8 @@ public class DurationTest {
     public void test101() {
         long[] time=new long[ChronoUnit.values().length];
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals("  0ns",s);
@@ -157,8 +157,8 @@ public class DurationTest {
     public void test102() {
         long[] time=new long[ChronoUnit.values().length];
         NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals(" 0s",s);
@@ -170,8 +170,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MICROS.ordinal()]=17;
         NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals(" 0s",s);
@@ -183,8 +183,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MILLIS.ordinal()]=17;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.MILLIS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals(" 17ms   0us  16ns",s);
@@ -196,8 +196,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=999;
         time[ChronoUnit.MILLIS.ordinal()]=999;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.MILLIS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals("999ms   0us 999ns",s);
@@ -214,8 +214,8 @@ public class DurationTest {
         time[ChronoUnit.MINUTES.ordinal()]=5;
         time[ChronoUnit.HOURS.ordinal()]=6;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.HOURS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.HOURS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals(" 6h  5mn  4s   3ms   2us   1ns",s);
@@ -237,8 +237,8 @@ public class DurationTest {
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  8w  7d  6h  5mn  4s   3ms   2us   1ns",s);
@@ -258,8 +258,8 @@ public class DurationTest {
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.MICROS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.MICROS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  8w  0d  6h  5mn  0s   3ms   2us",s);
@@ -272,8 +272,8 @@ public class DurationTest {
     public void test201() {
         long[] time=new long[ChronoUnit.values().length];
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("000s",s);
@@ -283,8 +283,8 @@ public class DurationTest {
     public void test202() {
         long[] time=new long[ChronoUnit.values().length];
         NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("00s",s);
@@ -296,8 +296,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MICROS.ordinal()]=17;
         NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("00s",s);
@@ -309,8 +309,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MILLIS.ordinal()]=17;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.MILLIS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("00.017000016s",s);
@@ -322,8 +322,8 @@ public class DurationTest {
         time[ChronoUnit.NANOS.ordinal()]=999;
         time[ChronoUnit.MILLIS.ordinal()]=999;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.MILLIS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("00.999000999s",s);
@@ -340,8 +340,8 @@ public class DurationTest {
         time[ChronoUnit.MINUTES.ordinal()]=5;
         time[ChronoUnit.HOURS.ordinal()]=6;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.HOURS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.HOURS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("06:05:04.003002001",s);
@@ -363,8 +363,8 @@ public class DurationTest {
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  8w  7d 06:05:04.003002001",s);
@@ -384,8 +384,8 @@ public class DurationTest {
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
         NDuration t = NDuration.of(time);
-        Assertions.assertEquals(ChronoUnit.MICROS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.MICROS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  8w  0d 06:05:00.003002",s);
@@ -405,8 +405,8 @@ public class DurationTest {
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
         NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.NANOS);
-        Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
-        Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
+        Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
+        Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  3w  0d 06:05:00.003002000",s);

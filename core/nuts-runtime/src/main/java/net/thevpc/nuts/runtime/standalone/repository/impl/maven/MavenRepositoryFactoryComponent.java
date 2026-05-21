@@ -117,14 +117,14 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
     }
 
     @Override
-    public List<NRepositorySpec> getDefaultRepositoryDefinitions() {
+    public List<NRepositorySpec> defaultRepositoryDefinitions() {
         return Collections.singletonList(
                 new NRepositorySpec().name("maven")
         );
     }
 
     @Override
-    public List<NRepositorySpec> getTemplateRepositoryDefinitions() {
+    public List<NRepositorySpec> templateRepositoryDefinitions() {
         return Collections.unmodifiableList(templates.stream().map(x->x.copy()).collect(Collectors.toList()));
     }
 
@@ -139,7 +139,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
         if (NBlankable.isBlank(type)) {
             return null;
         }
-        NPath p = NPath.of(options.sourceLocation().getPath());
+        NPath p = NPath.of(options.sourceLocation().path());
         String pr = NStringUtils.trim(p.protocol());
         switch (pr) {
             //non traversable!
@@ -164,7 +164,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
                         repositoryLayout = o.getStringValue("repositoryLayout").orNull();
                     }
                     if (!NBlankable.isBlank(repositoryLayout)) {
-                        options.sourceLocation(options.sourceLocation().setPath(NStringUtils.trim(repositoryLayout) + "+" + options.sourceLocation().getPath()));
+                        options.sourceLocation(options.sourceLocation().path(NStringUtils.trim(repositoryLayout) + "+" + options.sourceLocation().path()));
                     }
                     return new MavenFolderRepository(options, parentRepository);
                 } else {
@@ -178,7 +178,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
     @NScore
     public static int getScore(NScorableContext criteria) {
         if (criteria != null) {
-            NRepositoryFactoryContext context = criteria.getCriteria(NRepositoryFactoryContext.class);
+            NRepositoryFactoryContext context = criteria.criteria(NRepositoryFactoryContext.class);
             if (context != null) {
                 String type = context.repositoryType();
                 if (NBlankable.isBlank(type)) {

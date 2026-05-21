@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class SshNExecTargetSPI implements NExecTargetSPI {
     private CmdStr resolveNutsExecutableCommand(NExecTargetCommandContext context) {
         NSession session = NSession.of();
-        NExec execCommand = context.getExecCommand();
+        NExec execCommand = context.execCommand();
         NDefinition def = execCommand.commandDefinition();
         NExecutionType executionType = execCommand.executionType();
         if (executionType == null) {
@@ -136,7 +136,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
             }
             case SYSTEM: {
                 //effective command including def which should be null!
-                return new CmdStr(context.getCommand(), context.isRawCommand() && context.getCommand().length == 1);
+                return new CmdStr(context.command(), context.isRawCommand() && context.command().length == 1);
             }
             default: {
                 throw new NUnsupportedEnumException(executionType);
@@ -152,13 +152,13 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
 
     @Override
     public int exec(NExecTargetCommandContext context) {
-        NConnectionString target = context.getConnectionString();
+        NConnectionString target = context.connectionString();
         NAssert.requireNamedNonBlank(target, "target");
         NConnectionStringBuilder z = target.builder();
         NAssert.requireNamedNonBlank(z, "target");
         NLog log = NLog.of(SshNExecTargetSPI.class);
-        log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
-        NExecutionType executionType = context.getExecCommand().executionType();
+        log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.command())).asFiner().withIntent(NMsgIntent.START));
+        NExecutionType executionType = context.execCommand().executionType();
         if (executionType == null) {
             executionType = NExecutionType.SPAWN;
         }
@@ -174,7 +174,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
             }
         } else {
             try (SshConnection c = SshConnectionPool.of().acquire(target)) {
-                CmdStr command = new CmdStr(context.getCommand(), context.isRawCommand() && context.getCommand().length == 1);
+                CmdStr command = new CmdStr(context.command(), context.isRawCommand() && context.command().length == 1);
                 if (command.rawCommand) {
                     return c.execStringCommand(command.command[0], new IOBindings(context.in(), context.out(), context.err()));
                 } else {
@@ -195,21 +195,21 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
     }
 
     public int exec0(NExecTargetCommandContext context) {
-        NConnectionString target = context.getConnectionString();
+        NConnectionString target = context.connectionString();
         NAssert.requireNamedNonBlank(target, "target");
         NConnectionStringBuilder z = target.builder();
         NAssert.requireNamedNonBlank(z, "target");
         NLog log = NLog.of(SshNExecTargetSPI.class);
-        log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())).asFiner().withIntent(NMsgIntent.START));
+        log.log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.command())).asFiner().withIntent(NMsgIntent.START));
         try (SshConnection c = SshConnectionPool.of().acquire(target)) {
-            String[] command = context.getCommand();
+            String[] command = context.command();
             return c.execArrayCommand(command, new IOBindings(context.in(), context.out(), context.err()));
         }
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        Object c = context.getCriteria();
+        Object c = context.criteria();
         if (c instanceof String) {
             NConnectionStringBuilder z = NConnectionStringBuilder.get((String) c).orNull();
             if (z != null && isSupportedProtocol(z.protocol())) {

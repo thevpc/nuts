@@ -42,29 +42,29 @@ public class DefaultCell implements NTableCell {
     }
 
     @Override
-    public int getColspan() {
+    public int colspan() {
         return colspan;
     }
 
     @Override
-    public DefaultCell setColspan(int colspan) {
+    public DefaultCell colspan(int colspan) {
         this.colspan = colspan <= 0 ? 1 : colspan;
         return this;
     }
 
     @Override
-    public int getRowspan() {
+    public int rowspan() {
         return rowspan;
     }
 
     @Override
-    public DefaultCell setRowspan(int rowspan) {
+    public DefaultCell rowspan(int rowspan) {
         this.rowspan = rowspan <= 0 ? 1 : rowspan;
         return this;
     }
 
     @Override
-    public int getX() {
+    public int x() {
         return x;
     }
 
@@ -72,7 +72,7 @@ public class DefaultCell implements NTableCell {
 //            this.x = x;
 //        }
     @Override
-    public int getY() {
+    public int y() {
         return y;
     }
 
@@ -80,12 +80,12 @@ public class DefaultCell implements NTableCell {
 //            this.y = y;
 //        }
     @Override
-    public NText getContent() {
+    public NText content() {
         return content;
     }
 
     @Override
-    public DefaultCell setContent(NText content) {
+    public DefaultCell content(NText content) {
         this.content = content;
         return this;
     }

@@ -17,7 +17,7 @@ import net.thevpc.nuts.util.NOptional;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNCmdLines implements NCmdLines {
 
-    private NShellFamily family = NShellFamily.getCurrent();
+    private NShellFamily family = NShellFamily.current();
     private boolean lenient;
 
     public DefaultNCmdLines() {
@@ -39,7 +39,7 @@ public class DefaultNCmdLines implements NCmdLines {
     }
 
     public NCmdLines shellFamily(NShellFamily family) {
-        this.family = family == null ? NShellFamily.getCurrent() : family;
+        this.family = family == null ? NShellFamily.current() : family;
         return this;
     }
 
@@ -63,7 +63,7 @@ public class DefaultNCmdLines implements NCmdLines {
             f = NEnv.of().shellFamily();
         }
         if (f == null) {
-            f = NShellFamily.getCurrent();
+            f = NShellFamily.current();
         }
         return NShellHelper.of(f).parseCmdLineArr(line, lenient);
     }

@@ -9,11 +9,11 @@ public class NFormatAndValue<V,F extends NObjectWriter> {
         this.format = format;
     }
 
-    public V getValue() {
+    public V value() {
         return value;
     }
 
-    public F getFormat() {
+    public F format() {
         return format;
     }
 }

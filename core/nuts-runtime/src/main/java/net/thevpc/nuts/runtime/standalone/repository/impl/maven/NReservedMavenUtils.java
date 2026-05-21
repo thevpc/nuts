@@ -498,10 +498,10 @@ public final class NReservedMavenUtils {
     static VersionAndPath resolveLatestMavenId(NId zId, String path, Predicate<NVersion> filter,
                                                NLog bLog, NRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsBuilder options) {
         NDescriptorStyle descType = NDescriptorStyle.MAVEN;
-        if (NConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
+        if (NConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.locationType())) {
             descType = NDescriptorStyle.NUTS;
         }
-        String repoUrl = repoUrl2.getPath();
+        String repoUrl = repoUrl2.path();
         boolean found = false;
         NVersion bestVersion = null;
         String bestPath = null;

@@ -63,11 +63,11 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
 
     @Override
     public NDescriptor parse(NDescriptorContentParserContext parserContext) {
-        if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
+        if (!POSSIBLE_EXT.contains(parserContext.fileExtension())) {
             return null;
         }
         try {
-            return readNutDescriptorFromBashScriptFile(parserContext.getFullStream());
+            return readNutDescriptorFromBashScriptFile(parserContext.fullStream());
         } catch (IOException e) {
             return null;
         }
@@ -75,9 +75,9 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
 
     @NScore
     public static int getScore(NScorableContext criteria) {
-        NDescriptorContentParserContext ctr=criteria.getCriteria(NDescriptorContentParserContext.class);
+        NDescriptorContentParserContext ctr=criteria.criteria(NDescriptorContentParserContext.class);
         if(ctr!=null) {
-            String e = NStringUtils.trim(ctr.getFileExtension());
+            String e = NStringUtils.trim(ctr.fileExtension());
             switch (e) {
                 case "":
                 case "sh":

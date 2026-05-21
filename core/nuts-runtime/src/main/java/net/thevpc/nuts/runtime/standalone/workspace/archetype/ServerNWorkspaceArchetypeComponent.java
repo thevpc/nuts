@@ -53,7 +53,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "server";
     }
 
@@ -74,7 +74,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
         try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
             NSecurityManager.of().addUser(
                     NUserSpec.of("guest")
-                            .setCredential(ss)
+                            .credential(ss)
                             .addPermissions(
                                     NConstants.Permissions.FETCH_DESC,
                                     NConstants.Permissions.FETCH_CONTENT,
@@ -85,7 +85,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
         try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
             NSecurityManager.of().addUser(
                     NUserSpec.of("contributor")
-                            .setCredential(ss)
+                            .credential(ss)
                             .addPermissions(
                                     NConstants.Permissions.FETCH_DESC,
                                     NConstants.Permissions.FETCH_CONTENT,

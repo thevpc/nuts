@@ -31,7 +31,7 @@ public class NUncompressZip implements NUncompressPackaging {
     }
 
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {
-        NOutputTarget target = uncompress.getTarget();
+        NOutputTarget target = uncompress.target();
         try {
             NPath _target = asValidTargetPath(target);
             if (_target == null) {
@@ -178,7 +178,7 @@ public class NUncompressZip implements NUncompressPackaging {
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        NUncompress c = context.getCriteria(NUncompress.class);
+        NUncompress c = context.criteria(NUncompress.class);
         String z = NStringUtils.trim(c.packaging()).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")

@@ -71,13 +71,13 @@ public abstract class AbstractNFetchDescriptorRepositoryCmd extends NRepositoryC
 //    }
 
     @Override
-    public NFetchDescriptorRepositoryCmd setId(NId id) {
+    public NFetchDescriptorRepositoryCmd id(NId id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 

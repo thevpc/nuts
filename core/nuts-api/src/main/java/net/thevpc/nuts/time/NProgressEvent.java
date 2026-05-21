@@ -70,21 +70,21 @@ public interface NProgressEvent extends NSessionProvider {
      *
      * @return error or null
      */
-    Throwable getError();
+    Throwable error();
 
     /**
      * progress max value or -1 if intermediate
      *
      * @return progress max value
      */
-    long getMaxValue();
+    long maxValue();
 
     /**
      * progress current value
      *
      * @return progress current value
      */
-    long getCurrentCount();
+    long currentCount();
 
     /**
      * progress value from the last mark point.
@@ -92,32 +92,32 @@ public interface NProgressEvent extends NSessionProvider {
      *
      * @return progress value from the last mark point.
      */
-    long getPartialCount();
+    long partialCount();
 
     /**
      * progress source object
      *
      * @return progress source object
      */
-    Object getSource();
+    Object source();
 
     /**
      * event message
      *
      * @return event message
      */
-    NMsg getMessage();
+    NMsg message();
 
     /**
      * progress percentage ([0..1])
      *
      * @return progress percentage ([0..1])
      */
-    double getProgress();
+    double progress();
 
-    NDuration getDuration();
+    NDuration duration();
 
-    NDuration getPartialDuration();
+    NDuration partialDuration();
 
     /**
      * when true, max value is unknown, and the progress is indeterminate
@@ -126,6 +126,6 @@ public interface NProgressEvent extends NSessionProvider {
      */
     boolean isIndeterminate();
 
-    NProgressEventType getState();
+    NProgressEventType state();
 
 }

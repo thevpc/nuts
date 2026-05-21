@@ -137,7 +137,7 @@ public class NAppBuilder {
         return this;
     }
 
-    public Object getInstance() {
+    public Object instance() {
         return instance;
     }
 
@@ -175,7 +175,7 @@ public class NAppBuilder {
         return this;
     }
 
-    public String[] getNutsArgs() {
+    public String[] nutsArgs() {
         return nutsArgs;
     }
 
@@ -232,7 +232,7 @@ public class NAppBuilder {
                 NClock now = NClock.now();
                 NWorkspace ws = NWorkspace.get().orNull();
                 if (ws == null) {
-                    ws = Nuts.openWorkspace(NBootArguments.of(this.getNutsArgs()).setAppArgs(args));
+                    ws = Nuts.openWorkspace(NBootArguments.of(this.nutsArgs()).setAppArgs(args));
                 }
                 ws.runWith(() -> {
                     NApp a = NApp.of();

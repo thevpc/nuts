@@ -34,7 +34,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         NPath file = getConfigFile();
         if (file.exists()) {
             this.config = NElementReader.ofJson().read(file, NWorkspaceListConfig.class);
-            for (NWorkspaceLocation var : this.config.getWorkspaces()) {
+            for (NWorkspaceLocation var : this.config.workspaces()) {
                 this.workspaces.put(var.uuid(), var);
             }
         } else {
@@ -113,7 +113,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
 
     @Override
     public void save() {
-        this.config.setWorkspaces(this.workspaces.isEmpty()
+        this.config.workspaces(this.workspaces.isEmpty()
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
         NPath file = getConfigFile();

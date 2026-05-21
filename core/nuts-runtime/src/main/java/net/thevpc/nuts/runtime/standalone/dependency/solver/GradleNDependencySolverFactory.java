@@ -18,7 +18,7 @@ public class GradleNDependencySolverFactory implements NDependencySolverFactory 
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "gradle";
     }
 }

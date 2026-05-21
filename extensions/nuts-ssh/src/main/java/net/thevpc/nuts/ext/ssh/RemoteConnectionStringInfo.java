@@ -84,7 +84,7 @@ public class RemoteConnectionStringInfo {
             remoteJar.set(remoteJarPath);
         }
         if (copy(apiLocalPath, remoteJarPath)) {
-            NDescriptorWriter.of().setNtf(false).print(
+            NDescriptorWriter.of().ntf(false).print(
                     def.descriptor(), remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
             );
             return true;
@@ -252,7 +252,7 @@ public class RemoteConnectionStringInfo {
             try {
                 workspaceJson = null;
                 NPath rpath = NPath.of(targetConnection.copy()
-                        .path(pHome.getHome() + "/ws/" + workspaceName + "/" + NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
+                        .path(pHome.home() + "/ws/" + workspaceName + "/" + NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
                     workspaceJson = NElementReader.ofJson()
@@ -357,12 +357,12 @@ public class RemoteConnectionStringInfo {
         }
 
         @Override
-        public NConnectionString getConnectionString() {
+        public NConnectionString connectionString() {
             return target;
         }
 
         @Override
-        public String[] getCommand() {
+        public String[] command() {
             return cmd;
         }
 
@@ -382,7 +382,7 @@ public class RemoteConnectionStringInfo {
         }
 
         @Override
-        public NExec getExecCommand() {
+        public NExec execCommand() {
             return ec;
         }
 

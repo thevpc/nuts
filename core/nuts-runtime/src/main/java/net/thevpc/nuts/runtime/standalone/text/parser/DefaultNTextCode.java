@@ -34,9 +34,7 @@ import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/23/17.
@@ -79,12 +77,12 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         return NTextType.CODE;
     }
 
-    public String getValue() {
+    public String value() {
         return text;
     }
 
     @Override
-    public String getQualifier() {
+    public String qualifier() {
         return getKind();
     }
 
@@ -96,7 +94,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         DefaultNTextCode that = (DefaultNTextCode) o;
         return
                 Objects.equals(text, that.text)
-                        && Objects.equals(getQualifier(), that.getQualifier())
+                        && Objects.equals(qualifier(), that.qualifier())
                 ;
     }
 
@@ -137,8 +135,8 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     @Override
     public NText substring(int start, int end) {
         return new DefaultNTextCode(
-                this.getStart(), getKind(), getSeparator(), getEnd(),
-                getValue().substring(start, end)
+                this.getStart(), getKind(), separator(), getEnd(),
+                value().substring(start, end)
         );
     }
 
@@ -148,7 +146,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         if(Objects.equals(text, c)){
             return this;
         }
-        return new DefaultNTextCode(getStart(),getKind(),getSeparator(),getEnd(), c);
+        return new DefaultNTextCode(getStart(),getKind(), separator(),getEnd(), c);
     }
 
     @Override
@@ -157,7 +155,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         if(Objects.equals(text, c)){
             return this;
         }
-        return new DefaultNTextCode(getStart(),getKind(),getSeparator(),getEnd(), c);
+        return new DefaultNTextCode(getStart(),getKind(), separator(),getEnd(), c);
     }
 
     @Override
@@ -166,7 +164,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         if(Objects.equals(text, c)){
             return this;
         }
-        return new DefaultNTextCode(getStart(),getKind(),getSeparator(),getEnd(), c);
+        return new DefaultNTextCode(getStart(),getKind(), separator(),getEnd(), c);
     }
 
 

@@ -26,7 +26,7 @@ public class DefaultNDependencySolvers implements NDependencySolvers {
     }
 
     @Override
-    public List<String> getSolverNames() {
+    public List<String> solverNames() {
         return NWorkspaceExt.of().getDependencySolverNames();
     }
 

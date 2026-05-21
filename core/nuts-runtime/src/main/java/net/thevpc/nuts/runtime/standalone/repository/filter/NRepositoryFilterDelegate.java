@@ -16,18 +16,18 @@ public abstract class NRepositoryFilterDelegate extends AbstractRepositoryFilter
     public abstract NRepositoryFilter baseRepositoryFilter();
 
     @Override
-    public NFilterOp getFilterOp() {
-        return baseRepositoryFilter().getFilterOp();
+    public NFilterOp filterOp() {
+        return baseRepositoryFilter().filterOp();
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
-        return baseRepositoryFilter().getSubFilters();
+    public List<NFilter> subFilters() {
+        return baseRepositoryFilter().subFilters();
     }
 
     @Override
-    public Class<? extends NFilter> getFilterType() {
-        return baseRepositoryFilter().getFilterType();
+    public Class<? extends NFilter> filterType() {
+        return baseRepositoryFilter().filterType();
     }
 
     @Override

@@ -51,7 +51,7 @@ public class NStringMapImpl<V> implements NStringMap<V> {
         return map.size();
     }
 
-    public char getSeparator() {
+    public char separator() {
         return separator;
     }
 

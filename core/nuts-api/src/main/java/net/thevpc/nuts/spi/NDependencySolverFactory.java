@@ -35,5 +35,5 @@ public interface NDependencySolverFactory extends NComponent {
 
     NDependencySolver create();
 
-    String getName();
+    String name();
 }

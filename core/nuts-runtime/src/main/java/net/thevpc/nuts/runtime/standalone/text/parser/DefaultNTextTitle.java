@@ -32,7 +32,6 @@ import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,11 +67,11 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
         return start;
     }
 
-    public NText getChild() {
+    public NText child() {
         return child;
     }
 
-    public int getLevel() {
+    public int level() {
         return level;
     }
 
@@ -146,26 +145,26 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
 
     private NText prerender() {
         NTextBuilder sb = new DefaultNTextBuilder();
-        sb.append(new DefaultNTextStyled(getChild(), NTextStyles.of(NTextStyle.primary(level))));
+        sb.append(new DefaultNTextStyled(child(), NTextStyles.of(NTextStyle.primary(level))));
         sb.append("\n");
         return sb.build();
     }
 
     @Override
     public NText trimLeft() {
-        NText c = getChild().trimLeft();
+        NText c = child().trimLeft();
         return new DefaultNTextTitle(start, level, c);
     }
 
     @Override
     public NText trimRight() {
-        NText c = getChild().trimRight();
+        NText c = child().trimRight();
         return new DefaultNTextTitle(start, level, c);
     }
 
     @Override
     public NText trim() {
-        NText c = getChild().trim();
+        NText c = child().trim();
         return new DefaultNTextTitle(start, level, c);
     }
 

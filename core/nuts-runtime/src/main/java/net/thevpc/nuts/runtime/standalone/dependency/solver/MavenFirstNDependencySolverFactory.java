@@ -17,7 +17,7 @@ public class MavenFirstNDependencySolverFactory implements NDependencySolverFact
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "maven-first";
     }
 }

@@ -149,7 +149,7 @@ public class NExceptions {
     }
 
     public static NOptional<Integer> resolveExitCode(Throwable th) {
-        return resolveWithExitCodeExceptionBase(th).map(NExceptionWithExitCodeBase::getExitCode);
+        return resolveWithExitCodeExceptionBase(th).map(NExceptionWithExitCodeBase::exitCode);
     }
 
     public static String getErrorMessage(Throwable ex) {

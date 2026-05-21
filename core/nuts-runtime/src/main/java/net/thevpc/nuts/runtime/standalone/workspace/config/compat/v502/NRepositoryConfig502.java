@@ -380,20 +380,20 @@ public class NRepositoryConfig502 implements Serializable {
 
     public NRepositoryConfig toRepositoryConfig() {
         NRepositoryConfig c = new NRepositoryConfig();
-        c.setConfigVersion(CONFIG_VERSION_502);
-        c.setAuthenticationAgent(authenticationAgent);
-        c.setEnv(env);
-        c.setGroups(groups);
-        c.setIndexEnabled(indexEnabled);
-        c.setMirrors(mirrors);
-        c.setName(name);
-        c.setStoreStrategy(storeLocationStrategy);
+        c.configVersion(CONFIG_VERSION_502);
+        c.authenticationAgent(authenticationAgent);
+        c.env(env);
+        c.groups(groups);
+        c.indexEnabled(indexEnabled);
+        c.mirrors(mirrors);
+        c.name(name);
+        c.storeStrategy(storeLocationStrategy);
         NRepositoryLocation loc = NRepositoryLocation.of(location);
         if(!NBlankable.isBlank(type)){
-            loc=loc.setLocationType(type);
+            loc=loc.locationType(type);
         }
-        c.setLocation(NRepositoryLocation.of(loc.toString()));
-        c.setStoreLocations(
+        c.location(NRepositoryLocation.of(loc.toString()));
+        c.storeLocations(
                 new NStoreLocationsMap(null)
                         .set(NStoreType.BIN, programsStoreLocation)
                         .set(NStoreType.CONF, configStoreLocation)

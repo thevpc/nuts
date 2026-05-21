@@ -49,7 +49,7 @@ public class DefaultNWorkspaceEventModel {
 
     
     public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
-        return ((NObservableMap<String, Object>) NWorkspace.of().properties()).getMapListeners();
+        return ((NObservableMap<String, Object>) NWorkspace.of().properties()).mapListeners();
     }
 
     

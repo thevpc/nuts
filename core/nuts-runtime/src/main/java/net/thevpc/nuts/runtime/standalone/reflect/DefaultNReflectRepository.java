@@ -52,13 +52,13 @@ public class DefaultNReflectRepository implements NReflectRepository {
     }
 
     @Override
-    public DefaultNReflectRepository setConfiguration(NReflectConfiguration configuration) {
+    public DefaultNReflectRepository configuration(NReflectConfiguration configuration) {
         this.configuration = configuration;
         return this;
     }
 
     @Override
-    public NReflectConfiguration getConfiguration() {
+    public NReflectConfiguration configuration() {
         return configuration;
     }
 

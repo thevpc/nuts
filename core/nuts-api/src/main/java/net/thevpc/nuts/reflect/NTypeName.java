@@ -37,7 +37,7 @@ public final class NTypeName<T> implements Serializable {
     }
 
 
-    public NTypeName<T> getComponentType() {
+    public NTypeName<T> componentType() {
         if (arr == 0) {
             return this;
         }
@@ -52,11 +52,11 @@ public final class NTypeName<T> implements Serializable {
         return typeName;
     }
 
-    public int getParametersCount() {
+    public int parametersCount() {
         return parameters.length;
     }
 
-    public NTypeName[] getParameters() {
+    public NTypeName[] parameters() {
         return Arrays.copyOf(parameters, parameters.length);
     }
 

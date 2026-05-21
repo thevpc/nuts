@@ -3,6 +3,7 @@ package net.thevpc.nuts.reflect;
 import net.thevpc.nuts.util.NEqualizer;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.lang.reflect.Type;
 
@@ -12,7 +13,7 @@ public interface NReflectMapper {
     }
 
     static NReflectMapper of(NReflectRepository repository) {
-        return NReflect.of().createMapper().setRepository(repository);
+        return NReflect.of().createMapper().repository(repository);
     }
 
     Object mapToType(Object value, NReflectType toType);
@@ -34,20 +35,25 @@ public interface NReflectMapper {
 
     NOptional<NReflectMappingStrategy> getMappingStrategy(NReflectType from, NReflectType to);
 
-    NEqualizer<Object> getEqualizer();
+    NEqualizer<Object> equalizer();
 
-    NReflectMapper setEqualizer(NEqualizer<Object> eq);
+    @NSetter
+    NReflectMapper equalizer(NEqualizer<Object> eq);
 
-    NAssignmentPolicy getAssignmentPolicy();
+    NAssignmentPolicy assignmentPolicy();
 
-    NReflectMapper setAssignmentPolicy(NAssignmentPolicy mapStrategy);
+    @NSetter
+    NReflectMapper assignmentPolicy(NAssignmentPolicy mapStrategy);
 
-    NReflectRepository getRepository();
+    NReflectRepository repository();
 
-    NReflectMapper setRepository(NReflectRepository repository);
+    @NSetter
+    NReflectMapper repository(NReflectRepository repository);
 
-    NReflectMapper setPropertyConverter(String property, NReflectConverter converter);
+    @NSetter
+    NReflectMapper propertyConverter(String property, NReflectConverter converter);
 
-    NReflectMapper setTypeConverter(NReflectType fromType, NReflectType toType, NReflectConverter converter);
+    @NSetter
+    NReflectMapper typeConverter(NReflectType fromType, NReflectType toType, NReflectConverter converter);
 
 }

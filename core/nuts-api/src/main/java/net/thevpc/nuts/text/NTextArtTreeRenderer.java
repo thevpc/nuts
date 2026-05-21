@@ -28,7 +28,7 @@ package net.thevpc.nuts.text;
  */
 public interface NTextArtTreeRenderer extends NTextArtRenderer {
     static NTextArtTreeRenderer of() {
-        return NTextArt.of().getTreeRenderer().get();
+        return NTextArt.of().treeRenderer().get();
     }
 
     static NTextArtTreeRenderer of(String name) {
@@ -37,7 +37,7 @@ public interface NTextArtTreeRenderer extends NTextArtRenderer {
 
     boolean isInfinite();
 
-    NTextArtTreeRenderer setInfinite(boolean infinite);
+    NTextArtTreeRenderer infinite(boolean infinite);
 
     /**
      * update node format
@@ -45,15 +45,15 @@ public interface NTextArtTreeRenderer extends NTextArtRenderer {
      * @param nodeFormat new node format
      * @return {@code this} instance
      */
-    NTextArtTreeRenderer setNodeFormat(NTreeNodeFormat nodeFormat);
+    NTextArtTreeRenderer nodeFormat(NTreeNodeFormat nodeFormat);
 
-    NTreeLinkFormat getLinkFormat();
+    NTreeLinkFormat linkFormat();
 
-    NTextArtTreeRenderer setLinkFormat(NTreeLinkFormat linkFormatter);
+    NTextArtTreeRenderer linkFormat(NTreeLinkFormat linkFormatter);
 
     boolean isOmitRoot();
 
-    NTextArtTreeRenderer setOmitRoot(boolean hideRoot);
+    NTextArtTreeRenderer omitRoot(boolean hideRoot);
 
     NText render(NTreeNode text);
 }

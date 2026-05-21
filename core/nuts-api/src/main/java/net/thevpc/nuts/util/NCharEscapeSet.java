@@ -107,8 +107,8 @@ public final class NCharEscapeSet {
             return Arrays.binarySearch(chars, c) >= 0;
         }
 
-        public When        getWhen()   { return when; }
-        public NCharEscape getEscape() { return escape; }
+        public When when()   { return when; }
+        public NCharEscape escape() { return escape; }
 
         // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -208,11 +208,11 @@ public final class NCharEscapeSet {
         for (int i = 0; i < entries.length; i++) {
             Entry e = entries[i];
             // Skip UNQUOTED_ONLY entries when we are inside quotes
-            if (e.getWhen() == When.UNQUOTED_ONLY && quoted) {
+            if (e.when() == When.UNQUOTED_ONLY && quoted) {
                 continue;
             }
             if (e.contains(c)) {
-                return e.getEscape().escape(c, format);
+                return e.escape().escape(c, format);
             }
         }
         return null;
@@ -226,7 +226,7 @@ public final class NCharEscapeSet {
     public boolean triggers(char c, boolean quoted) {
         for (int i = 0; i < entries.length; i++) {
             Entry e = entries[i];
-            if (e.getWhen() == When.UNQUOTED_ONLY && quoted) continue;
+            if (e.when() == When.UNQUOTED_ONLY && quoted) continue;
             if (e.contains(c)) return true;
         }
         return false;

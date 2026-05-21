@@ -35,39 +35,39 @@ public interface NTextStyleGenerator {
 
     boolean isIncludePlain();
 
-    NTextStyleGenerator setIncludePlain(boolean includePlain);
+    NTextStyleGenerator includePlain(boolean includePlain);
 
     boolean isIncludeBold();
 
-    NTextStyleGenerator setIncludeBold(boolean includeBold);
+    NTextStyleGenerator includeBold(boolean includeBold);
 
     boolean isIncludeBlink();
 
-    NTextStyleGenerator setIncludeBlink(boolean includeBlink);
+    NTextStyleGenerator includeBlink(boolean includeBlink);
 
     boolean isIncludeReversed();
 
-    NTextStyleGenerator setIncludeReversed(boolean includeReversed);
+    NTextStyleGenerator includeReversed(boolean includeReversed);
 
     boolean isIncludeItalic();
 
-    NTextStyleGenerator setIncludeItalic(boolean includeItalic);
+    NTextStyleGenerator includeItalic(boolean includeItalic);
 
     boolean isIncludeUnderlined();
 
-    NTextStyleGenerator setIncludeUnderlined(boolean includeUnderlined);
+    NTextStyleGenerator includeUnderlined(boolean includeUnderlined);
 
     boolean isIncludeStriked();
 
-    NTextStyleGenerator setIncludeStriked(boolean includeStriked);
+    NTextStyleGenerator includeStriked(boolean includeStriked);
 
     boolean isIncludeForeground();
 
-    NTextStyleGenerator setIncludeForeground(boolean includeForeground);
+    NTextStyleGenerator includeForeground(boolean includeForeground);
 
     boolean isIncludeBackground();
 
-    NTextStyleGenerator setIncludeBackground(boolean includeBackground);
+    NTextStyleGenerator includeBackground(boolean includeBackground);
 
     boolean isUseThemeColors();
 
@@ -75,9 +75,9 @@ public interface NTextStyleGenerator {
 
     boolean isUseTrueColors();
 
-    NTextStyleGenerator setUseThemeColors();
+    NTextStyleGenerator useThemeColors();
 
-    NTextStyleGenerator setUsePaletteColors();
+    NTextStyleGenerator usePaletteColors();
 
-    NTextStyleGenerator setUseTrueColors();
+    NTextStyleGenerator useTrueColors();
 }

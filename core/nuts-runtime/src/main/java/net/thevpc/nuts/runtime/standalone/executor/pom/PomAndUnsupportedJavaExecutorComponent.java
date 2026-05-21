@@ -49,7 +49,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
     public static NId ID=NId.get("net.thevpc.nuts.exec:java-unsupported").get();
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
@@ -58,7 +58,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
         if(true){
             return NScorable.UNSUPPORTED_SCORE;
         }
-        NDefinition def = context.getCriteria(NDefinition.class);
+        NDefinition def = context.criteria(NDefinition.class);
         if (def != null) {
             switch (NStringUtils.trim(def.descriptor().packaging())){
                 case "jar":

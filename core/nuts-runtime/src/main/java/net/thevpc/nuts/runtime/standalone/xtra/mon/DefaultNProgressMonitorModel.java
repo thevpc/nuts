@@ -83,7 +83,7 @@ public class DefaultNProgressMonitorModel implements NProgressMonitorModel {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
@@ -93,7 +93,7 @@ public class DefaultNProgressMonitorModel implements NProgressMonitorModel {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -103,7 +103,7 @@ public class DefaultNProgressMonitorModel implements NProgressMonitorModel {
     }
 
     @Override
-    public NMsg getDescription() {
+    public NMsg description() {
         return description;
     }
 
@@ -113,7 +113,7 @@ public class DefaultNProgressMonitorModel implements NProgressMonitorModel {
     }
 
     @Override
-    public NMsg getMessage() {
+    public NMsg message() {
         return message;
     }
 
@@ -141,7 +141,7 @@ public class DefaultNProgressMonitorModel implements NProgressMonitorModel {
     }
 
     @Override
-    public double getProgress() {
+    public double progress() {
         return progress;
     }
 

@@ -54,7 +54,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
         try {
             List<NIterator<? extends NId>> resultList = new ArrayList<>();
             SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("DefaultNSearchVersionsRepositoryCmd"));
-            if(getFetchMode()== NFetchMode.REMOTE) {
+            if(fetchMode()== NFetchMode.REMOTE) {
                 if (session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled()) {
                     NIterator<NId> d = null;
                     try {
@@ -74,7 +74,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
                     }
                 }
             }
-            NIterator<NId> rr = xrepo.searchVersionsImpl(id, getFilter(), getFetchMode());
+            NIterator<NId> rr = xrepo.searchVersionsImpl(id, getFilter(), fetchMode());
             if (rr != null) {
                 resultList.add(rr);
             }
@@ -83,7 +83,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
         } catch (RuntimeException ex) {
             _LOG()
                     .log(NMsg.ofC("[%s] %s %s %s",
-                            NStringUtils.formatAlign(getFetchMode().toString(), 7, NPositionType.FIRST),
+                            NStringUtils.formatAlign(fetchMode().toString(), 7, NPositionType.FIRST),
                             NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST),
                             NStringUtils.formatAlign("Fetch versions for", 24, NPositionType.FIRST),
                             id)

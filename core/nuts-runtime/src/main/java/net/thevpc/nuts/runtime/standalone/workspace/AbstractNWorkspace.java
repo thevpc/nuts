@@ -81,7 +81,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
 
     @Override
     public boolean isSharedInstance() {
-        return NScopedWorkspace.getSharedWorkspaceInstance() == this;
+        return NScopedWorkspace.sharedWorkspaceInstance() == this;
     }
 
     /// //////////////////////////////

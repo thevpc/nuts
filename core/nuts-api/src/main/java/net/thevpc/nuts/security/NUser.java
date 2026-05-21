@@ -42,7 +42,7 @@ public interface NUser {
      *
      * @return return user name
      */
-    String getUsername();
+    String username();
 
     /**
      * true if the use has some credentials
@@ -56,21 +56,21 @@ public interface NUser {
      *
      * @return user allowed permissions
      */
-    List<String> getPermissions();
+    List<String> permissions();
 
     /**
      * user inherited allowed permissions
      *
      * @return user inherited allowed permissions
      */
-    List<String> getInheritedPermissions();
+    List<String> inheritedPermissions();
 
     /**
      * user groups
      *
      * @return user groups
      */
-    List<String> getGroups();
+    List<String> groups();
 
     NUserSpec toSpec();
 }

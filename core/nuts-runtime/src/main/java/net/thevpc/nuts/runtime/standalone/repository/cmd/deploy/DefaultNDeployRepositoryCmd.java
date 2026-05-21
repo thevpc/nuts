@@ -65,21 +65,21 @@ public class DefaultNDeployRepositoryCmd extends AbstractNDeployRepositoryCmd {
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(repo);
             NDescriptor rep = xrepo.deployImpl(this);
-            this.setDescriptor(rep);
-            this.setId(rep.id());
+            this.descriptor(rep);
+            this.id(rep.id());
             if (session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled()) {
                 try {
-                    xrepo.indexStore().revalidate(this.getId());
+                    xrepo.indexStore().revalidate(this.id());
                 } catch (NException ex) {
                     _LOG()
                             .log(NMsg.ofJ("error revalidating Indexer for {0} : {1}", getRepo().name(), ex).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
                 }
             }
             _LOG()
-                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.getId()).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
+                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.id()).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
         } catch (RuntimeException ex) {
             _LOG()
-                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.getId())
+                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
             throw ex;
         }

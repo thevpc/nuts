@@ -31,19 +31,19 @@ class NStringBox {
         this.rows = rows;
     }
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 
-    public int getLen() {
+    public int length() {
         return len;
     }
 
-    public int getCols() {
+    public int columns() {
         return cols;
     }
 
-    public int getRows() {
+    public int rows() {
         return rows;
     }
 }

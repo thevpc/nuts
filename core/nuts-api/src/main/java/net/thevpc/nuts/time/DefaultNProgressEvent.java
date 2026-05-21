@@ -76,7 +76,7 @@ public class DefaultNProgressEvent implements NProgressEvent {
     }
 
     @Override
-    public NProgressEventType getState() {
+    public NProgressEventType state() {
         return state;
     }
 
@@ -84,42 +84,42 @@ public class DefaultNProgressEvent implements NProgressEvent {
         return session;
     }
 
-    public Throwable getError() {
+    public Throwable error() {
         return exception;
     }
 
-    public long getMaxValue() {
+    public long maxValue() {
         return length;
     }
 
-    public Object getSource() {
+    public Object source() {
         return source;
     }
 
-    public NMsg getMessage() {
+    public NMsg message() {
         return message;
     }
 
-    public long getCurrentCount() {
+    public long currentCount() {
         return globalCount;
     }
 
     @Override
-    public NDuration getDuration() {
+    public NDuration duration() {
         return globalDuration;
     }
 
     @Override
-    public NDuration getPartialDuration() {
+    public NDuration partialDuration() {
         return partialDuration;
     }
 
-    public long getPartialCount() {
+    public long partialCount() {
         return partialCount;
     }
 
     @Override
-    public double getProgress() {
+    public double progress() {
         return progress;
     }
 

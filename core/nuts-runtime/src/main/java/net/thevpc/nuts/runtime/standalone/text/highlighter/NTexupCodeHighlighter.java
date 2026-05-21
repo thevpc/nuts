@@ -33,9 +33,9 @@ public class NTexupCodeHighlighter extends TsonCodeHighlighter {
 
     static {
         for (NColor c : NColor.ALL) {
-            values.add(c.getName());
-            values.add(NNameFormat.VAR_NAME.format(c.getName()));
-            values.add(NNameFormat.SNAKE_CASE.format(c.getName()));
+            values.add(c.name());
+            values.add(NNameFormat.VAR_NAME.format(c.name()));
+            values.add(NNameFormat.SNAKE_CASE.format(c.name()));
         }
     }
 
@@ -45,13 +45,13 @@ public class NTexupCodeHighlighter extends TsonCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "ntexup";
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if (s == null) {
             return NScorable.DEFAULT_SCORE;
         }

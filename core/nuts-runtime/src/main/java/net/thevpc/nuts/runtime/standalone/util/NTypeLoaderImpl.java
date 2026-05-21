@@ -47,7 +47,7 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
         return loadedType != null;
     }
 
-    public NOptional<Class<?>> getType() {
+    public NOptional<Class<?>> type() {
         if (loadedType != null) {
             return NOptional.of(loadedType);
         }
@@ -67,7 +67,7 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
 
     @Override
     public NOptional<Method> getDeclaredMethod(String name, Class<?>... parameterTypes) {
-        return getType().map(c -> {
+        return type().map(c -> {
             try {
                 return c.getDeclaredMethod(name, parameterTypes);
             }catch (Exception ex){
@@ -82,7 +82,7 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
 
     @Override
     public NOptional<Field> getDeclaredField(String name) {
-        return getType().map(c -> {
+        return type().map(c -> {
             try {
                 return c.getDeclaredField(name);
             }catch (Exception ex){
@@ -93,13 +93,13 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
         }).withMessage(()->NMsg.ofC("missing method find %s.%s : %s", className, name).asFineAlert());
     }
 
-    public String getClassName() {
+    public String className() {
         return className;
     }
 
     @Override
     public NOptional<Object> newInstance() {
-        return getType().map(x->{
+        return type().map(x->{
             Constructor<?> c =null;
             try {
                 c = x.getDeclaredConstructor();

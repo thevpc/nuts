@@ -40,12 +40,12 @@ public class DefaultNPushRepositoryCmd extends AbstractNPushRepositoryCmd {
         try {
             NRepositoryExt.of(getRepo()).pushImpl(this);
             _LOG()
-                    .log(NMsg.ofC("%s push %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), getId()).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
+                    .log(NMsg.ofC("%s push %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), id()).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS));
         } catch (RuntimeException ex) {
 
             if (_LOG().isLoggable(Level.FINEST)) {
                 _LOG()
-                        .log(NMsg.ofC("%s push %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), getId()).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
+                        .log(NMsg.ofC("%s push %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), id()).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
             }
         }
         return this;

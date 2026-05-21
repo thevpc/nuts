@@ -164,7 +164,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
 
     @Override
     public NPrintStream run(NTerminalCmd command) {
-        switch (command.getName()) {
+        switch (command.name()) {
             case NTerminalCmd.Ids.GET_SIZE: {
                 break;
             }

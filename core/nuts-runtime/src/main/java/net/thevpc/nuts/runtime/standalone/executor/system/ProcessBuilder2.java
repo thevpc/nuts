@@ -753,7 +753,7 @@ public class ProcessBuilder2 {
         }
         StringBuilder sb = new StringBuilder()
                 .append(
-                        NShellHelper.of(NShellFamily.getCurrent())
+                        NShellHelper.of(NShellFamily.current())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
                                         new NCmdLineShellOptions()
                                                 .setExpectEnv(true)
@@ -860,7 +860,7 @@ public class ProcessBuilder2 {
         NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBlank().builder()
                 .append(txt.ofCode("system",
-                        NShellHelper.of(NShellFamily.getCurrent())
+                        NShellHelper.of(NShellFamily.current())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
                                         new NCmdLineShellOptions()
                                                 .setFormatStrategy(NCmdLineFormatStrategy.SUPPORT_QUOTES)

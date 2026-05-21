@@ -101,7 +101,7 @@ public class NLogUtils {
                 //
             }
         }
-        Level level = msg.getLevel();
+        Level level = msg.level();
         if (level == null) {
             level = Level.INFO;
         }

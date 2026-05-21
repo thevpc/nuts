@@ -22,8 +22,8 @@ public class TsonBuildTest {
                 .addAffix(NElement.ofLineComment("world"), NAffixAnchor.START)
                 .build();
         TestUtils.println(elem.toString());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(elem));
-        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(elem));
+        String s = NElementWriter.ofTson().formatterCompact().formatPlain(elem);
         NElement e = NElementReader.ofTson().read(s);
         Assertions.assertEquals(elem, e);
     }
@@ -35,8 +35,8 @@ public class TsonBuildTest {
                 , NElement.ofString("world", NElementType.LINE_STRING)
         );
         TestUtils.println(elem.toString());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(elem));
-        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(elem));
+        String s = NElementWriter.ofTson().formatterCompact().formatPlain(elem);
         NElement e = NElementReader.ofTson().read(s);
         TestUtils.println(e.toString());
         Assertions.assertEquals(elem.toString(), e.toString());
@@ -48,8 +48,8 @@ public class TsonBuildTest {
     public void test003() {
         NElement elem = NElement.ofString("hello", NElementType.LINE_STRING);
         TestUtils.println(elem.toString());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(elem));
-        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(elem);
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(elem));
+        String s = NElementWriter.ofTson().formatterCompact().formatPlain(elem);
         NElement e = NElementReader.ofTson().read(s);
         e.equals(elem);
         Assertions.assertEquals(elem, e);
@@ -67,7 +67,7 @@ public class TsonBuildTest {
         );
         NElement elem = builder.build();
         TestUtils.println(elem.toString());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(elem));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(elem));
         String s = elem.toString();
         NElement e = NElementReader.ofTson().read(s);
         e.equals(elem);

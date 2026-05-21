@@ -43,7 +43,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
+            Object cri = context.criteria();
             if(!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }

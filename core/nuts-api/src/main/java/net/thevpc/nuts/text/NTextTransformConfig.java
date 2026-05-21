@@ -97,11 +97,11 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
      */
     private ClassLoader importClassLoader;
 
-    public String getThemeName() {
+    public String themeName() {
         return themeName;
     }
 
-    public NTextTransformConfig setThemeName(String themeName) {
+    public NTextTransformConfig themeName(String themeName) {
         this.themeName = themeName;
         return this;
     }
@@ -110,7 +110,7 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
         return basicTrueStyles;
     }
 
-    public NTextTransformConfig setBasicTrueStyles(boolean basicTrueStyles) {
+    public NTextTransformConfig basicTrueStyles(boolean basicTrueStyles) {
         this.basicTrueStyles = basicTrueStyles;
         return this;
     }
@@ -119,7 +119,7 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
         return applyTheme;
     }
 
-    public NTextTransformConfig setApplyTheme(boolean applyTheme) {
+    public NTextTransformConfig applyTheme(boolean applyTheme) {
         this.applyTheme = applyTheme;
         return this;
     }
@@ -128,16 +128,16 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
         return processTitleNumbers;
     }
 
-    public NTextTransformConfig setProcessTitleNumbers(boolean processTitleNumbers) {
+    public NTextTransformConfig processTitleNumbers(boolean processTitleNumbers) {
         this.processTitleNumbers = processTitleNumbers;
         return this;
     }
 
-    public NTitleSequence getTitleNumberSequence() {
+    public NTitleSequence titleNumberSequence() {
         return titleNumberSequence;
     }
 
-    public NTextTransformConfig setTitleNumberSequence(NTitleSequence titleNumberSequence) {
+    public NTextTransformConfig titleNumberSequence(NTitleSequence titleNumberSequence) {
         this.titleNumberSequence = titleNumberSequence;
         return this;
     }
@@ -146,7 +146,7 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
         return filtered;
     }
 
-    public NTextTransformConfig setFiltered(boolean filtered) {
+    public NTextTransformConfig filtered(boolean filtered) {
         this.filtered = filtered;
         return this;
     }
@@ -168,13 +168,13 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
         return processIncludes;
     }
 
-    public NTextTransformConfig setProcessIncludes(boolean processIncludes) {
+    public NTextTransformConfig processIncludes(boolean processIncludes) {
         this.processIncludes = processIncludes;
         return this;
     }
 
 
-    public Function<String, String> getVarProvider() {
+    public Function<String, String> varProvider() {
         return varProvider;
     }
 
@@ -182,37 +182,37 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
         return processVars;
     }
 
-    public NTextTransformConfig setProcessVars(boolean processVars) {
+    public NTextTransformConfig processVars(boolean processVars) {
         this.processVars = processVars;
         return this;
     }
 
-    public NTextTransformConfig setVarProvider(Function<String, String> varProvider) {
+    public NTextTransformConfig varProvider(Function<String, String> varProvider) {
         this.varProvider = varProvider;
         return this;
     }
 
-    public String getAnchor() {
+    public String anchor() {
         return anchor;
     }
 
-    public NTextTransformConfig setAnchor(String anchor) {
+    public NTextTransformConfig anchor(String anchor) {
         this.anchor = anchor;
         return this;
     }
 
-    public NTextTransformConfig setProcessAll(boolean enable) {
-        setProcessTitleNumbers(enable);
-        setProcessVars(enable);
-        setProcessIncludes(enable);
+    public NTextTransformConfig processAll(boolean enable) {
+        processTitleNumbers(enable);
+        processVars(enable);
+        processIncludes(enable);
         return this;
     }
 
-    public Integer getRootLevel() {
+    public Integer rootLevel() {
         return rootLevel;
     }
 
-    public NTextTransformConfig setRootLevel(Integer rootLevel) {
+    public NTextTransformConfig rootLevel(Integer rootLevel) {
         this.rootLevel = rootLevel;
         return this;
     }
@@ -234,11 +234,11 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
     }
 
 
-    public NPath getCurrentDir() {
+    public NPath currentDir() {
         return currentDir;
     }
 
-    public NTextTransformConfig setCurrentDir(NPath currentDir) {
+    public NTextTransformConfig currentDir(NPath currentDir) {
         this.currentDir = currentDir;
         return this;
     }
@@ -248,7 +248,7 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
         return flatten;
     }
 
-    public NTextTransformConfig setFlatten(boolean flatten) {
+    public NTextTransformConfig flatten(boolean flatten) {
         this.flatten = flatten;
         return this;
     }
@@ -257,16 +257,16 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
         return normalize;
     }
 
-    public NTextTransformConfig setNormalize(boolean normalize) {
+    public NTextTransformConfig normalize(boolean normalize) {
         this.normalize = normalize;
         return this;
     }
 
-    public ClassLoader getImportClassLoader() {
+    public ClassLoader importClassLoader() {
         return importClassLoader;
     }
 
-    public NTextTransformConfig setImportClassLoader(ClassLoader importClassLoader) {
+    public NTextTransformConfig importClassLoader(ClassLoader importClassLoader) {
         this.importClassLoader = importClassLoader;
         return this;
     }

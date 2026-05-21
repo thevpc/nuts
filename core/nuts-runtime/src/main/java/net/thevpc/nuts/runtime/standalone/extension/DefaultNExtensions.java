@@ -234,7 +234,7 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public List<NId> getLoadedExtensions() {
+    public List<NId> loadedExtensions() {
         return wsModel.extensionModel.getLoadedExtensions();
     }
 

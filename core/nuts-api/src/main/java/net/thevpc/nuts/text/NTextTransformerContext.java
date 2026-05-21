@@ -1,15 +1,15 @@
 package net.thevpc.nuts.text;
 
 public interface NTextTransformerContext {
-    NTextTransformConfig getConfig();
+    NTextTransformConfig config();
 
-    NTitleSequence getTitleSequence();
+    NTitleSequence titleSequence();
 
-    NTextTransformerContext setTitleSequence(NTitleSequence sequence);
+    NTextTransformerContext titleSequence(NTitleSequence sequence);
 
-    NTextTransformer getDefaultTransformer();
+    NTextTransformer defaultTransformer();
 
-    NTextTransformerContext setDefaultTransformer(NTextTransformer transformer);
+    NTextTransformerContext defaultTransformer(NTextTransformer transformer);
 
     NTextTransformerContext copy();
 }

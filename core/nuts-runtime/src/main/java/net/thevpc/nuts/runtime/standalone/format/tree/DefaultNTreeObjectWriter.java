@@ -29,7 +29,7 @@ public class DefaultNTreeObjectWriter extends DefaultObjectWriterBase<NTreeObjec
     public DefaultNTreeObjectWriter(NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
         super("tree");
         renderer.setFormatter(formatter);
-        renderer.setLinkFormat(linkFormatter);
+        renderer.linkFormat(linkFormatter);
     }
 
     private XNodeFormatter xNodeFormatter = new XNodeFormatter() {
@@ -98,21 +98,21 @@ public class DefaultNTreeObjectWriter extends DefaultObjectWriterBase<NTreeObjec
                 return cmdLine.matcher().matchEntry((v) -> {
                     switch (NStringUtils.trim(v.stringValue())) {
                         case "simple": {
-                            renderer.setLinkFormat(DefaultNTextArtTreeRenderer.LINK_ASCII_FORMATTER);
+                            renderer.linkFormat(DefaultNTextArtTreeRenderer.LINK_ASCII_FORMATTER);
                             break;
                         }
                         case "none": {
-                            renderer.setLinkFormat(DefaultNTextArtTreeRenderer.LINK_SPACE_FORMATTER);
+                            renderer.linkFormat(DefaultNTextArtTreeRenderer.LINK_SPACE_FORMATTER);
                             break;
                         }
                     }
                 }).anyMatch();
             }
             case "--omit-root": {
-                return cmdLine.matcher().matchFlag((v) -> renderer.setOmitRoot(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> renderer.omitRoot(v.booleanValue())).anyMatch();
             }
             case "--infinite": {
-                return cmdLine.matcher().matchFlag((v) -> renderer.setInfinite((v.booleanValue()))).anyMatch();
+                return cmdLine.matcher().matchFlag((v) -> renderer.infinite((v.booleanValue()))).anyMatch();
             }
             case DefaultNPropertiesObjectWriter.OPTION_MULTILINE_PROPERTY: {
                 NArg i = cmdLine.nextEntry().get();

@@ -223,7 +223,7 @@ public class NApiUtilsRPI {
         if(NWorkspace.get().isPresent()) {
             NLog.of(NApiUtilsRPI.class.getName()).log(m);
         }else {
-            Logger.getLogger(NApiUtilsRPI.class.getName()).log(m.getLevel(), new Throwable(m.toString()), m::toString);
+            Logger.getLogger(NApiUtilsRPI.class.getName()).log(m.level(), new Throwable(m.toString()), m::toString);
         }
     }
 

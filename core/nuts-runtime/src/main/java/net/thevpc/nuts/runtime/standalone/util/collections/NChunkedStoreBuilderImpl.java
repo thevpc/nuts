@@ -15,47 +15,47 @@ public class NChunkedStoreBuilderImpl<T> implements NChunkedStoreBuilder<T> {
     private int numberLayout;
 
     public static <T> NChunkedStoreBuilder<T> of(NPath folder, NChunkedStoreFactory<T> factory) {
-        return new NChunkedStoreBuilderImpl<T>().setFolder(folder).setFactory(factory);
+        return new NChunkedStoreBuilderImpl<T>().folder(folder).factory(factory);
     }
 
-    public int getMetadataBufferSize() {
+    public int metadataBufferSize() {
         return metadataBufferSize;
     }
 
-    public NChunkedStoreBuilder<T> setMetadataBufferSize(int metadataBufferSize) {
+    public NChunkedStoreBuilder<T> metadataBufferSize(int metadataBufferSize) {
         this.metadataBufferSize = metadataBufferSize;
         return this;
     }
 
     @Override
-    public NPath getFolder() {
+    public NPath folder() {
         return folder;
     }
 
     @Override
-    public NChunkedStoreBuilder<T> setFolder(NPath folder) {
+    public NChunkedStoreBuilder<T> folder(NPath folder) {
         this.folder = folder;
         return this;
     }
 
     @Override
-    public NChunkedStoreFactory<T> getFactory() {
+    public NChunkedStoreFactory<T> factory() {
         return factory;
     }
 
     @Override
-    public NChunkedStoreBuilder<T> setFactory(NChunkedStoreFactory<T> factory) {
+    public NChunkedStoreBuilder<T> factory(NChunkedStoreFactory<T> factory) {
         this.factory = factory;
         return this;
     }
 
     @Override
-    public int getChunkSize() {
+    public int chunkSize() {
         return chunkSize;
     }
 
     @Override
-    public NChunkedStoreBuilder<T> setChunkSize(int chunkSize) {
+    public NChunkedStoreBuilder<T> chunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
         return this;
     }
@@ -66,29 +66,29 @@ public class NChunkedStoreBuilderImpl<T> implements NChunkedStoreBuilder<T> {
     }
 
     @Override
-    public NChunkedStoreBuilder<T> setAppend(boolean append) {
+    public NChunkedStoreBuilder<T> append(boolean append) {
         this.append = append;
         return this;
     }
 
     @Override
-    public int getDataBufferSize() {
+    public int dataBufferSize() {
         return dataBufferSize;
     }
 
     @Override
-    public NChunkedStoreBuilder<T> setBufferSize(int bufferSize) {
+    public NChunkedStoreBuilder<T> bufferSize(int bufferSize) {
         this.dataBufferSize = bufferSize;
         return this;
     }
 
     @Override
-    public int getNumberLayout() {
+    public int numberLayout() {
         return numberLayout;
     }
 
     @Override
-    public NChunkedStoreBuilder<T> setNumberLayout(int numberLayout) {
+    public NChunkedStoreBuilder<T> numberLayout(int numberLayout) {
         this.numberLayout = numberLayout;
         return this;
     }

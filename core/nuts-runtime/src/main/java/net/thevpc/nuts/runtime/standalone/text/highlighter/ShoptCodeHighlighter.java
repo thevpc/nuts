@@ -1,23 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NStringUtils;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class ShoptCodeHighlighter extends ShCodeHighlighter {
 
@@ -30,10 +17,10 @@ public class ShoptCodeHighlighter extends ShCodeHighlighter {
         if (context == null) {
             return "shopt";
         }
-        if (!(context.getCriteria() instanceof String)) {
+        if (!(context.criteria() instanceof String)) {
             return "shopt";
         }
-        return resolveKind((String) context.getCriteria());
+        return resolveKind((String) context.criteria());
     }
 
     private static String resolveKind(String kind) {
@@ -53,13 +40,13 @@ public class ShoptCodeHighlighter extends ShCodeHighlighter {
             }
             case "systemopt":
             case "sysopt": {
-                switch (NShellFamily.getCurrent()) {
+                switch (NShellFamily.current()) {
                     case SH:
                     case BASH:
                     case CSH:
                     case ZSH:
                     case KSH: {
-                        return NShellFamily.getCurrent().id() + "opt";
+                        return NShellFamily.current().id() + "opt";
                     }
                 }
                 return "shopt";
@@ -69,13 +56,13 @@ public class ShoptCodeHighlighter extends ShCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "shopt";
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if (s == null) {
             return NScorable.DEFAULT_SCORE;
         }
@@ -90,7 +77,7 @@ public class ShoptCodeHighlighter extends ShCodeHighlighter {
             }
             case "systemopt":
             case "systopt": {
-                switch (NShellFamily.getCurrent()) {
+                switch (NShellFamily.current()) {
                     case SH:
                     case BASH:
                     case CSH:

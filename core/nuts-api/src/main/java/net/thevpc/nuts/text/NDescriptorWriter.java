@@ -39,11 +39,11 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NDescriptorWriter extends NObjectWriter, NComponent {
     static NDescriptorWriter ofNtf() {
-        return of().setNtf(true);
+        return of().ntf(true);
     }
 
     static NDescriptorWriter ofPlain() {
-        return of().setNtf(false);
+        return of().ntf(false);
     }
 
     static NDescriptorWriter of() {
@@ -51,32 +51,32 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
     }
 
     static NDescriptorWriter ofNtfMaven() {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MAVEN);
+        return of().ntf(true).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
     static NDescriptorWriter ofMaven() {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MAVEN);
+        return of().ntf(false).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
     static NDescriptorWriter ofNtfNuts() {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.NUTS);
+        return of().ntf(true).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
     static NDescriptorWriter ofNuts() {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.NUTS);
+        return of().ntf(false).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
     static NDescriptorWriter ofNtfManifest() {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MANIFEST);
+        return of().ntf(true).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
     static NDescriptorWriter ofManifest() {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MANIFEST);
+        return of().ntf(false).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
-    NDescriptorStyle getDescriptorStyle();
+    NDescriptorStyle descriptorStyle();
 
-    NDescriptorWriter setDescriptorStyle(NDescriptorStyle descriptorStyle);
+    NDescriptorWriter descriptorStyle(NDescriptorStyle descriptorStyle);
 
     /**
      * true if compact flag is armed.
@@ -85,15 +85,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return true if compact flag is armed
      */
     boolean isCompact();
-
-    /**
-     * value compact flag.
-     * When true, formatted Descriptor will compact JSON result.
-     *
-     * @param compact compact value
-     * @return {@code this} instance
-     */
-    NDescriptorWriter setCompact(boolean compact);
 
     /**
      * value compact flag.
@@ -125,5 +116,5 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
     @Override
     NDescriptorWriter configure(boolean skipUnsupported, String... args);
 
-    NDescriptorWriter setNtf(boolean ntf);
+    NDescriptorWriter ntf(boolean ntf);
 }

@@ -49,7 +49,7 @@ public class DefaultNUndeployRepositoryCmd extends AbstractNUndeployRepositoryCm
             xrepo.undeployImpl(this);
             if (session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled()) {
                 try {
-                    xrepo.indexStore().invalidate(this.getId());
+                    xrepo.indexStore().invalidate(this.id());
                 } catch (NException ex) {
                     _LOG().log(
                             NMsg.ofC("error invalidating Indexer for %s : %s", getRepo().name(), ex)
@@ -58,12 +58,12 @@ public class DefaultNUndeployRepositoryCmd extends AbstractNUndeployRepositoryCm
                 }
             }
             _LOG()
-                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.getId())
+                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS)
                     );
         } catch (RuntimeException ex) {
             _LOG()
-                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.getId())
+                    .log(NMsg.ofC("%s undeploy %s", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST), this.id())
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL)
                     );
         }

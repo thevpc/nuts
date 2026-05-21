@@ -34,12 +34,12 @@ public class DefaultNReflectMethod implements NReflectMethod {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return method.getName();
     }
 
     @Override
-    public NReflectParameter[] getParameters() {
+    public NReflectParameter[] parameters() {
         if (cachedParams == null) {
             cachedParams = Arrays.stream(method.getParameters()).map(x -> {
                 return new DefaultNReflectParameter(x, declaringType.repository());
@@ -60,21 +60,21 @@ public class DefaultNReflectMethod implements NReflectMethod {
     }
 
     @Override
-    public NReflectType getDeclaringType() {
+    public NReflectType declaringType() {
         return declaringType;
     }
 
     @Override
     public boolean isVarArgs() {
-        return getSignature().isVarArgs();
+        return signature().isVarArgs();
     }
 
     @Override
-    public NReflectSignature getSignature() {
+    public NReflectSignature signature() {
         if(signature==null){
             Parameter[] mp = method.getParameters();
             boolean varargs=(mp.length>0 && mp[mp.length-1].isVarArgs());
-            NReflectType[] p = Arrays.stream(getParameters()).map(x->x.getParameterType()).toArray(NReflectType[]::new);
+            NReflectType[] p = Arrays.stream(parameters()).map(x->x.parameterType()).toArray(NReflectType[]::new);
             signature=varargs? NReflectSignatureImpl.ofVarArgs(p) : NReflectSignatureImpl.of(p);
         }
         return signature;

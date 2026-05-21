@@ -25,13 +25,13 @@ public abstract class AbstractNMsgFormatHelper {
     public AbstractNMsgFormatHelper(NMsg m, NTexts txt) {
         this.m = m;
         this.txt = txt;
-        Object msg = m.getMessage();
+        Object msg = m.message();
         smsg = (String) msg;
         nText = txt.of(smsg);
         session = NSession.of();
         String sLocale = session.locale().orDefault();
         locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
-        params = m.getParams();
+        params = m.params();
         if (params == null) {
             params = new Object[0];
         }
@@ -39,11 +39,11 @@ public abstract class AbstractNMsgFormatHelper {
 
     public Object resolvePlaceholder(Object any) {
         if(any instanceof NMsg) {
-            return ((NMsg) any).withPlaceholders(m.getPlaceholders());
+            return ((NMsg) any).withPlaceholders(m.placeholders());
         }
         if(any instanceof NMsg.Placeholder) {
-            String n = ((NMsg.Placeholder) any).getName();
-            Function<String, ?> h = m.getPlaceholders();
+            String n = ((NMsg.Placeholder) any).name();
+            Function<String, ?> h = m.placeholders();
             if(h!=null) {
                 Object v = h.apply(n);
                 if(v!=null){
@@ -71,46 +71,46 @@ public abstract class AbstractNMsgFormatHelper {
     private NText convertCurrent(NText t) {
         switch (t.type()) {
             case PLAIN: {
-                String ss = ((NTextPlain) t).getValue();
+                String ss = ((NTextPlain) t).value();
                 return formatPlain(ss);
             }
             case CODE: {
                 NTextCode c = (NTextCode) t;
-                return txt.ofCode(convertPlain(c.getValue()), c.getQualifier(), c.getSeparator());
+                return txt.ofCode(convertPlain(c.value()), c.qualifier(), c.separator());
             }
             case LINK: {
                 NTextLink c = (NTextLink) t;
-                return txt.ofLink(convertPlain(c.getValue()), c.getSeparator());
+                return txt.ofLink(convertPlain(c.value()), c.separator());
             }
             case ANCHOR: {
                 NTextAnchor c = (NTextAnchor) t;
-                return txt.ofAnchor(convertPlain(c.getValue()), c.getSeparator());
+                return txt.ofAnchor(convertPlain(c.value()), c.separator());
             }
             case INCLUDE: {
                 NTextInclude c = (NTextInclude) t;
-                return txt.ofInclude(convertPlain(c.getText()), c.getSeparator());
+                return txt.ofInclude(convertPlain(c.text()), c.separator());
             }
             case TITLE: {
                 NTextTitle c = (NTextTitle) t;
-                return txt.ofTitle(convertCurrent(c.getChild()), c.getLevel());
+                return txt.ofTitle(convertCurrent(c.child()), c.level());
             }
             case COMMAND: {
                 NTextCmd c = (NTextCmd) t;
-                NTerminalCmd tc = c.getCommand();
+                NTerminalCmd tc = c.terminalCommand();
                 List<String> newArgs = new ArrayList<>();
-                for (String arg : tc.getArgs()) {
+                for (String arg : tc.args()) {
                     newArgs.add(convertPlain(arg));
                 }
-                return txt.ofCommand(NTerminalCmd.of(tc.getName(), newArgs.toArray(new String[0])));
+                return txt.ofCommand(NTerminalCmd.of(tc.name(), newArgs.toArray(new String[0])));
             }
             case STYLED: {
                 NTextStyled c = (NTextStyled) t;
-                return txt.ofStyled(convertCurrent(c.getChild()), c.getStyles());
+                return txt.ofStyled(convertCurrent(c.child()), c.styles());
             }
             case LIST: {
                 NTextList c = (NTextList) t;
                 List<NText> rr = new ArrayList<>();
-                for (NText child : c.getChildren()) {
+                for (NText child : c.children()) {
                     rr.add(convertCurrent(child));
                 }
                 return txt.ofList(rr);

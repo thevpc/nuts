@@ -28,15 +28,15 @@ public class NClock {
         return NDuration.ofNanos(nanos - o.nanos);
     }
 
-    public Instant getInstant() {
+    public Instant instant() {
         return Instant.ofEpochMilli(timeMillis);
     }
 
-    public long getTimeMillis() {
+    public long timeMillis() {
         return timeMillis;
     }
 
-    public long getTimeNanos() {
+    public long timeNanos() {
         return nanos;
     }
 

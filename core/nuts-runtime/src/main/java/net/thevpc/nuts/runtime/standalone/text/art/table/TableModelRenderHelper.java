@@ -75,8 +75,8 @@ class TableModelRenderHelper {
 
     private void rebuild(NTableModel model) {
         List<TableRow> rows1 = new ArrayList<>();
-        int columnsCount = model.getColumnsCount();
-        int rowsCount = model.getRowsCount();
+        int columnsCount = model.columnsCount();
+        int rowsCount = model.rowsCount();
         for (int rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
             TableRow r = new TableRow();
             r.index = rowIndex;
@@ -177,7 +177,7 @@ class TableModelRenderHelper {
                 cell.y = r0;
 //                NAssert.requireTrue(cell.y == r, cell.y +"(cell.y) == "+r+"(r)");
                 NTableCellFormat formatter = getTableCellFormat(cell);
-                NText cvalue = cell.getContent();
+                NText cvalue = cell.content();
                 cell.vAlign = formatter.getVerticalAlign(r0, c0, cvalue);
                 cell.hAlign = formatter.getHorizontalAlign(r0, c0, cvalue);
                 cell.setRenderedContent(new NTextRegionImpl(

@@ -20,8 +20,8 @@ public class FormatOutputStreamSupport {
     public FormatOutputStreamSupport(NPrintStream rawOutput, NSystemTerminalBase term, boolean filtered) {
         this.parser = AbstractNTextNodeParserDefaults.createDefault();
         this.nodeWriter = new NTextNodeWriterRenderer(rawOutput, term)
-                .setWriteConfiguration(writeConfiguration.setFiltered(false));
-        this.writeConfiguration.setFiltered(filtered);
+                .setWriteConfiguration(writeConfiguration.filtered(false));
+        this.writeConfiguration.filtered(filtered);
     }
 
     public NTextParser getParser() {
@@ -39,7 +39,7 @@ public class FormatOutputStreamSupport {
 
     public FormatOutputStreamSupport setFormatEnabled(boolean formatEnabled) {
         this.formatEnabled = formatEnabled;
-        writeConfiguration.setFiltered(!formatEnabled);
+        writeConfiguration.filtered(!formatEnabled);
         return this;
     }
 

@@ -143,7 +143,7 @@ public class NArtifactNotFoundException extends NException {
     protected static String dependenciesToString(String prefix, NIdInvalidDependency d) {
         StringBuilder sb = new StringBuilder();
         sb.append(prefix).append(d.id);
-        for (NIdInvalidDependency d2 : d.getCause()) {
+        for (NIdInvalidDependency d2 : d.cause()) {
             sb.append("\n").append(dependenciesToString(prefix + "  ", d2));
         }
         return sb.toString();
@@ -155,20 +155,20 @@ public class NArtifactNotFoundException extends NException {
      * @return artifact id
      */
     public NIdInvalidDependency toInvalidDependency() {
-        return new NIdInvalidDependency(getId(),
-                getMissingDependencies()
+        return new NIdInvalidDependency(id(),
+                missingDependencies()
         );
     }
 
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
-    public Set<NIdInvalidDependency> getMissingDependencies() {
+    public Set<NIdInvalidDependency> missingDependencies() {
         return missingDependencies;
     }
 
-    public Set<NIdInvalidLocation> getLocations() {
+    public Set<NIdInvalidLocation> locations() {
         return locations;
     }
 
@@ -184,11 +184,11 @@ public class NArtifactNotFoundException extends NException {
             this.cause = cause == null ? Collections.emptySet() : cause;
         }
 
-        public NId getId() {
+        public NId id() {
             return id;
         }
 
-        public Set<NIdInvalidDependency> getCause() {
+        public Set<NIdInvalidDependency> cause() {
             return cause;
         }
 
@@ -221,15 +221,15 @@ public class NArtifactNotFoundException extends NException {
             this.message = message;
         }
 
-        public String getRepository() {
+        public String repository() {
             return repository;
         }
 
-        public String getUrl() {
+        public String url() {
             return url;
         }
 
-        public String getMessage() {
+        public String message() {
             return message;
         }
 

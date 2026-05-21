@@ -14,11 +14,11 @@ public class NCollectionDiff<T> implements Iterable<NCollectionDiffChange<T>> {
         this.newItems = newItems;
     }
 
-    public Collection<T> getOldItems() {
+    public Collection<T> oldItems() {
         return oldItems;
     }
 
-    public Collection<T> getNewItems() {
+    public Collection<T> newItems() {
         return newItems;
     }
 
@@ -27,7 +27,7 @@ public class NCollectionDiff<T> implements Iterable<NCollectionDiffChange<T>> {
     }
 
     public boolean anyAdd() {
-        return changes.stream().anyMatch(x -> x.getMode() == NDiffMode.ADDED);
+        return changes.stream().anyMatch(x -> x.mode() == NDiffMode.ADDED);
     }
 
     @Override
@@ -36,27 +36,27 @@ public class NCollectionDiff<T> implements Iterable<NCollectionDiffChange<T>> {
     }
 
     public boolean anyRemove() {
-        return changes.stream().anyMatch(x -> x.getMode() == NDiffMode.REMOVED);
+        return changes.stream().anyMatch(x -> x.mode() == NDiffMode.REMOVED);
     }
 
     public boolean anyChange() {
-        return changes.stream().anyMatch(x -> x.getMode() != NDiffMode.UNCHANGED);
+        return changes.stream().anyMatch(x -> x.mode() != NDiffMode.UNCHANGED);
     }
 
-    public List<T> getAdded() {
-        return changes.stream().filter(x -> x.getMode() == NDiffMode.ADDED).map(x -> x.getNewValue()).collect(Collectors.toList());
+    public List<T> added() {
+        return changes.stream().filter(x -> x.mode() == NDiffMode.ADDED).map(x -> x.newValue()).collect(Collectors.toList());
     }
 
-    public List<T> getRemoved() {
-        return changes.stream().filter(x -> x.getMode() == NDiffMode.REMOVED).map(x -> x.getOldValue()).collect(Collectors.toList());
+    public List<T> removed() {
+        return changes.stream().filter(x -> x.mode() == NDiffMode.REMOVED).map(x -> x.oldValue()).collect(Collectors.toList());
     }
 
-    public List<NCollectionDiffChange<T>> getChanged() {
-        return changes.stream().filter(x -> x.getMode() == NDiffMode.CHANGED).collect(Collectors.toList());
+    public List<NCollectionDiffChange<T>> changed() {
+        return changes.stream().filter(x -> x.mode() == NDiffMode.CHANGED).collect(Collectors.toList());
     }
 
-    public List<NCollectionDiffChange<T>> getUnchanged() {
-        return changes.stream().filter(x -> x.getMode() == NDiffMode.UNCHANGED).collect(Collectors.toList());
+    public List<NCollectionDiffChange<T>> unchanged() {
+        return changes.stream().filter(x -> x.mode() == NDiffMode.UNCHANGED).collect(Collectors.toList());
     }
 
     private static class MappedCollection<A,B> extends AbstractCollection<B>{
@@ -112,11 +112,11 @@ public class NCollectionDiff<T> implements Iterable<NCollectionDiffChange<T>> {
     }
 
     public static <T, K> NCollectionDiff<T> diffList(Collection<T> oldItems, Collection<T> newItems, Function<T, K> id) {
-        return new NCollectionDiffBuilder<T, K>().setOldItems(oldItems).setNewItems(newItems).setIdResolver(id).diff();
+        return new NCollectionDiffBuilder<T, K>().oldItems(oldItems).newItems(newItems).idResolver(id).diff();
     }
 
     public static <T, K> NCollectionDiffBuilder<T, K> of(Collection<T> oldItems, Collection<T> newItems) {
-        return new NCollectionDiffBuilder<T, K>().setOldItems(oldItems).setNewItems(newItems);
+        return new NCollectionDiffBuilder<T, K>().oldItems(oldItems).newItems(newItems);
     }
 
 
@@ -125,14 +125,14 @@ public class NCollectionDiff<T> implements Iterable<NCollectionDiffChange<T>> {
     }
 
     public void apply(NCollectionDiffApplier<T> a) {
-        for (T e : getRemoved()) {
+        for (T e : removed()) {
             a.remove(e, this);
         }
-        for (T e : getAdded()) {
+        for (T e : added()) {
             a.add(e, this);
         }
-        for (NCollectionDiffChange<T> e : getChanged()) {
-            a.update(e.getNewValue(), e.getOldValue(), this);
+        for (NCollectionDiffChange<T> e : changed()) {
+            a.update(e.newValue(), e.oldValue(), this);
         }
 
     }

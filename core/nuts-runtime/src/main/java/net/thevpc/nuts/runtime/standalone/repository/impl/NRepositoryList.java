@@ -86,9 +86,9 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
         for (NRepository repoItem : repoItems) {
             all.add(
                     ((NRepositorySPI) repoItem).searchVersions()
-                            .setId(id)
-                            .setFilter(idFilter)
-                            .setFetchMode(fetchMode)
+                            .id(id)
+                            .filter(idFilter)
+                            .fetchMode(fetchMode)
                             .getResult()
             );
         }
@@ -101,9 +101,9 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
         for (NRepository repoItem : repoItems) {
             try {
                 NPath result = ((NRepositorySPI) repoItem).fetchContent()
-                        .setId(id)
-                        .setDescriptor(descriptor)
-                        .setFetchMode(fetchMode)
+                        .id(id)
+                        .descriptor(descriptor)
+                        .fetchMode(fetchMode)
                         .getResult();
                 if (result != null) {
                     return result;
@@ -121,8 +121,8 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
         for (NRepository repoItem : repoItems) {
             list.add(
                     ((NRepositorySPI) repoItem).search()
-                            .setFilter(filter)
-                            .setFetchMode(fetchMode)
+                            .filter(filter)
+                            .fetchMode(fetchMode)
                             .getResult()
             );
         }
@@ -140,8 +140,8 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
         for (NRepository repoItem : repoItems) {
             try {
                 NDescriptor result = ((NRepositorySPI) repoItem).fetchDescriptor()
-                        .setId(id)
-                        .setFetchMode(fetchMode)
+                        .id(id)
+                        .fetchMode(fetchMode)
                         .getResult();
                 if (result != null) {
                     return result;

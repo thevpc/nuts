@@ -35,7 +35,7 @@ import net.thevpc.nuts.text.NTexts;
  */
 public interface NCodeHighlighter extends NComponent {
 
-    String getId();
+    String id();
 
     NText stringToText(String text, NTexts txt);
 

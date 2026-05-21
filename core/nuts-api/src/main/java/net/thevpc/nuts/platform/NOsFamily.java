@@ -176,7 +176,7 @@ public enum NOsFamily implements NEnum {
         return false;
     }
 
-    public static NOsFamily getCurrent() {
+    public static NOsFamily current() {
         return _curr;
     }
 

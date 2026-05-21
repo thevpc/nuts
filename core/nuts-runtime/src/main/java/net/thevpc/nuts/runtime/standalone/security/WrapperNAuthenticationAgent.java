@@ -29,7 +29,7 @@ public class WrapperNAuthenticationAgent {
         if (name == null) {
             return getCachedAuthenticationAgent("");
         }
-        return getCachedAuthenticationAgent(name.getAgentId());
+        return getCachedAuthenticationAgent(name.agentId());
     }
 
     public NAuthenticationAgent getCachedAuthenticationAgent(String name) {
@@ -38,8 +38,8 @@ public class WrapperNAuthenticationAgent {
         if (a == null) {
             a = provider.create(name);
             cache.put(name, a);
-            if (!a.getId().equals(name)) {
-                cache.put(a.getId(), a);
+            if (!a.id().equals(name)) {
+                cache.put(a.id(), a);
             }
         }
         return a;
@@ -72,7 +72,7 @@ public class WrapperNAuthenticationAgent {
     }
 
     public NSecureToken updateSecret(NSecureToken old, NSecureString credentials, String agent) {
-        if (NBlankable.isBlank(agent) || Objects.equals(old.getAgentId(), agent)) {
+        if (NBlankable.isBlank(agent) || Objects.equals(old.agentId(), agent)) {
             return getCachedAuthenticationAgent(old).updateSecret(old, credentials, envProvider.get());
         } else {
             NAuthenticationAgent na = getCachedAuthenticationAgent(agent);
@@ -86,7 +86,7 @@ public class WrapperNAuthenticationAgent {
     }
 
     public NSecureToken updateOneWay(NSecureToken old, NSecureString credentials, String agent) {
-        if (NBlankable.isBlank(agent) || Objects.equals(old.getAgentId(), agent)) {
+        if (NBlankable.isBlank(agent) || Objects.equals(old.agentId(), agent)) {
             return getCachedAuthenticationAgent(old).updateOneWay(old, credentials, envProvider.get());
         } else {
             NAuthenticationAgent na = getCachedAuthenticationAgent(agent);

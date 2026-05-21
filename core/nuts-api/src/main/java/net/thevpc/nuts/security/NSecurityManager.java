@@ -49,7 +49,7 @@ public interface NSecurityManager extends NComponent {
      *
      * @return current user
      */
-    String getCurrentUsername();
+    String currentUsername();
 
     /**
      * current user stack.
@@ -57,7 +57,7 @@ public interface NSecurityManager extends NComponent {
      *
      * @return current user stack
      */
-    String[] getCurrentLoginStack();
+    List<String> currentLoginStack();
 
     /**
      * impersonate user and log as a distinct user with the given credentials.
@@ -80,7 +80,7 @@ public interface NSecurityManager extends NComponent {
      *
      * @return all registered users
      */
-    List<NUser> findUsers();
+    List<NUser> users();
 
 
     /**
@@ -89,19 +89,19 @@ public interface NSecurityManager extends NComponent {
      * @param username user name
      * @return user effective information
      */
-    NOptional<NUser> findUser(String username);
+    NOptional<NUser> getUser(String username);
 
     NSecurityManager addUser(NUserSpec query);
 
     NSecurityManager updateUser(NUserSpec query);
 
-    NOptional<NRepositoryAccess> findRepositoryAccess(String user, String repository);
+    NOptional<NRepositoryAccess> getRepositoryAccess(String user, String repository);
 
-    List<NRepositoryAccess> findRepositoryAccess();
+    List<NRepositoryAccess> repositoryAccessList();
 
-    List<NRepositoryAccess> findRepositoryAccessByRepository(String repository);
+    List<NRepositoryAccess> getRepositoryAccessListByRepository(String repository);
 
-    List<NRepositoryAccess> findRepositoryAccessByUser(String user);
+    List<NRepositoryAccess> getRepositoryAccessListByUser(String user);
 
     NSecurityManager updateRepositoryAccess(NRepositoryAccessSpec repositoryAccess);
 
@@ -152,16 +152,7 @@ public interface NSecurityManager extends NComponent {
      * @param authenticationAgentId authentication agent id
      * @return {@code this} instance
      */
-    NSecurityManager setAuthenticationAgent(String authenticationAgentId);
-
-    /**
-     * get authentication agent with id {@code authenticationAgentId}.
-     * if is blank, return default authentication agent
-     *
-     * @param authenticationAgentId agent id
-     * @return authentication agent
-     */
-    NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId);
+    NSecurityManager authenticationAgent(String authenticationAgentId);
 
     /**
      * return true if workspace is running secure mode
@@ -204,13 +195,13 @@ public interface NSecurityManager extends NComponent {
 
     NSecurityManager removeNamedCredential(String name);
 
-    List<NNamedCredential> findNamedCredentials();
+    List<NNamedCredential> namedCredentials();
 
-    List<NNamedCredential> findNamedCredentials(String user);
+    List<NNamedCredential> getNamedCredentials(String user);
 
-    NOptional<NNamedCredential> findNamedCredential(String name, String user);
+    NOptional<NNamedCredential> getNamedCredential(String name, String user);
 
-    NOptional<NNamedCredential> findNamedCredential(String name);
+    NOptional<NNamedCredential> getNamedCredential(String name);
 
     NNamedCredentialBuilder createNamedCredentialBuilder();
 

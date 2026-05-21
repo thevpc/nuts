@@ -15,8 +15,8 @@ public class NElementFactoryContextAdapter implements NElementFactoryContext {
     }
 
     @Override
-    public Predicate<Type> getSimpleTypesFilter() {
-        return base.getSimpleTypesFilter();
+    public Predicate<Type> simpleTypesFilter() {
+        return base.simpleTypesFilter();
     }
 
     @Override
@@ -40,8 +40,8 @@ public class NElementFactoryContextAdapter implements NElementFactoryContext {
     }
 
     @Override
-    public Map<String, Object> getProperties() {
-        return base.getProperties();
+    public Map<String, Object> properties() {
+        return base.properties();
     }
 
     @Override
@@ -95,8 +95,8 @@ public class NElementFactoryContextAdapter implements NElementFactoryContext {
     }
 
     @Override
-    public NReflectRepository getTypesRepository() {
-        return base.getTypesRepository();
+    public NReflectRepository typesRepository() {
+        return base.typesRepository();
     }
 
 //    @Override

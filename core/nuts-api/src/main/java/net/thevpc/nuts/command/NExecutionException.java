@@ -104,7 +104,7 @@ public class NExecutionException extends NException implements NExceptionWithExi
      *
      * @return artifact exit code
      */
-    public int getExitCode() {
+    public int exitCode() {
         return exitCode;
     }
 

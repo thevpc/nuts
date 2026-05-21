@@ -53,9 +53,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
             try (NSecureString ss = NSecureString.ofSecure(cmdLine.nextNonOption(NArgName.of("Password")).get().image().toCharArray())) {
                 if (cmdLine.isExecMode()) {
                     NSecurityManager.of().updateUser(
-                            NSecurityManager.of().findUser(user)
+                            NSecurityManager.of().getUser(user)
                                     .get().toSpec()
-                                    .setCredential(ss)
+                                    .credential(ss)
                     );
                 }
             }
@@ -68,11 +68,11 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 }
                 try {
                     if (cmdLine.isExecMode()) {
-                        NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().findRepositoryAccess(
+                        NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().getRepositoryAccess(
                                         user, repository.uuid()).get()
                                 .toSpec()
-                                .setRemoteUserName(mappedUser)
-                                .setRemoteCredential(remotePassword)
+                                .remoteUserName(mappedUser)
+                                .remoteCredential(remotePassword)
                         );
                     }
                 } finally {
@@ -103,12 +103,12 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 }
                 if (cmdLine.isExecMode()) {
                     List<NUser> security;
-                    security = NSecurityManager.of().findUsers();
+                    security = NSecurityManager.of().users();
                     for (NUser u : security) {
-                        out.println(NMsg.ofC("User: %s", u.getUsername()));
+                        out.println(NMsg.ofC("User: %s", u.username()));
                         out.println(NMsg.ofC("   Password   : %s", (u.hasCredentials() ? "Set" : "None")));
-                        out.println(NMsg.ofC("   Groups     : %s", (u.getGroups().size() == 0 ? "None" : u.getGroups())));
-                        out.println(NMsg.ofC("   Rights     : %s", (u.getPermissions().size() == 0 ? "None" : u.getPermissions())));
+                        out.println(NMsg.ofC("   Groups     : %s", (u.groups().size() == 0 ? "None" : u.groups())));
+                        out.println(NMsg.ofC("   Rights     : %s", (u.permissions().size() == 0 ? "None" : u.permissions())));
                     }
                 }
                 return true;
@@ -161,10 +161,10 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                             password = NSecureString.ofSecure(session.terminal().readPassword(NMsg.ofPlain("Password:")));
                         }
                         NSecurityManager.of().updateUser(
-                                NSecurityManager.of().findUser(user)
+                                NSecurityManager.of().getUser(user)
                                         .get().toSpec()
-                                        .setCredential(password)
-                                        .setOldCredential(oldPassword)
+                                        .credential(password)
+                                        .oldCredential(oldPassword)
                         );
 
                         NWorkspace.of().saveConfig();
@@ -194,7 +194,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 String user = cmdLine.nextNonOption(NArgName.of("Username")).get().image();
                 if (cmdLine.isExecMode()) {
                     NUser u = null;
-                    u = NSecurityManager.of().findUser(user).orNull();
+                    u = NSecurityManager.of().getUser(user).orNull();
                     if (u == null) {
                         throw new NElementNotFoundException(NMsg.ofC("no such user %s", user));
                     }
@@ -232,7 +232,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 String a = cmdLine.nextNonOption(NArgName.of("Group")).get().image();
                                 if (cmdLine.isExecMode()) {
                                     NSecurityManager.of().updateUser(
-                                            NSecurityManager.of().findUser(user)
+                                            NSecurityManager.of().getUser(user)
                                                     .get().toSpec()
                                                     .addGroups(a)
                                     );
@@ -243,7 +243,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 String a = cmdLine.nextNonOption(NArgName.of("Group")).get().image();
                                 if (cmdLine.isExecMode()) {
                                     NSecurityManager.of().updateUser(
-                                            NSecurityManager.of().findUser(user)
+                                            NSecurityManager.of().getUser(user)
                                                     .get().toSpec()
                                                     .removeGroups(a)
                                     );
@@ -257,7 +257,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                         NSecurityManager.of().addRepositoryPermissions(user, repository.uuid(), a);
                                     } else {
                                         NSecurityManager.of().updateUser(
-                                                NSecurityManager.of().findUser(user)
+                                                NSecurityManager.of().getUser(user)
                                                         .get().toSpec()
                                                         .addPermissions(a)
                                         );
@@ -272,7 +272,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                         NSecurityManager.of().removeRepositoryPermissions(user, repository.uuid(), a);
                                     } else {
                                         NSecurityManager.of().updateUser(
-                                                NSecurityManager.of().findUser(user).get()
+                                                NSecurityManager.of().getUser(user).get()
                                                         .toSpec()
                                                         .removePermissions(a)
                                         );
@@ -289,11 +289,11 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                         ss = NSecureString.ofSecure(cmdLine.nextNonOption(NArgName.of("RemotePassword")).get().image().toCharArray());
                                         if (cmdLine.isExecMode()) {
                                             if (repository != null) {
-                                                NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().findRepositoryAccess(
+                                                NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().getRepositoryAccess(
                                                                 user, repository.uuid()).get()
                                                         .toSpec()
-                                                        .setRemoteUserName(a)
-                                                        .setRemoteCredential(ss)
+                                                        .remoteUserName(a)
+                                                        .remoteCredential(ss)
                                                 );
                                             }
                                         }
@@ -314,9 +314,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                     old = NSecureString.ofSecure((cmdLine.nextNonOption(NArgName.of("password", "OldPassword")).get().image()).toCharArray());
                                     if (cmdLine.isExecMode()) {
                                         NSecurityManager.of().updateUser(
-                                                NSecurityManager.of().findUser(user)
+                                                NSecurityManager.of().getUser(user)
                                                         .get().toSpec()
-                                                        .setOldCredential(old)
+                                                        .oldCredential(old)
                                         );
                                     }
                                 }finally {

@@ -118,7 +118,7 @@ public class WorkspaceTest {
                 "--install-companions=false")
                 .share();
         String base = "";
-        switch (NOsFamily.getCurrent()) {
+        switch (NOsFamily.current()) {
             case WINDOWS: {
                 base = new File(System.getProperty("user.home"), "AppData\\Local\\nuts\\cache\\ws").getPath();
                 break;

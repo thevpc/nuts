@@ -79,7 +79,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
                 String targetServer = getTargetServer();
                 NExec.of().addCommand("scp")
                         .addCommand(apiJar.toString()).addCommand(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.apiId()))
-                        .failFast(true).getGrabbedAllString();
+                        .failFast(true).grabbedAll();
             } else {
                 NPath to = NPath.of(remoteIdMavenJar(def.apiId()));
                 to.parent().mkdirs();
@@ -157,7 +157,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
             String targetServer = getTargetServer();
             e.addCommand("ssh", remoteUser + "@" + targetServer);
         }
-        return e.addCommand(cmd).failFast(true).getGrabbedAllString();
+        return e.addCommand(cmd).failFast(true).grabbedAll();
     }
 
 }

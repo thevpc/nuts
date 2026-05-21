@@ -244,7 +244,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                         NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                         repoSPI.deploy()
                                 //.setFetchMode(NutsFetchMode.LOCAL)
-                                .setId(effId).setContent(contentFile).setDescriptor(descriptor)
+                                .id(effId).content(contentFile).descriptor(descriptor)
                                 .run();
                         addResult(effId, repo.name(), NText.of(content));
                         return this;
@@ -257,9 +257,9 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
                     NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                     repoSPI.deploy()
-                            .setId(effId)
-                            .setContent(contentFile)
-                            .setDescriptor(descriptor)
+                            .id(effId)
+                            .content(contentFile)
+                            .descriptor(descriptor)
                             .run();
                     addResult(effId, repo.name(), NText.of(content));
                     return this;

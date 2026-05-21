@@ -24,8 +24,8 @@ public class NLogProgressMonitor implements NProgressHandler {
 
     @Override
     public void onEvent(NProgressHandlerEvent event) {
-        NMsg message = event.getModel().getMessage();
-        logger.log(message.withLevel(message.getLevel() == null ? Level.INFO : message.getLevel()));
+        NMsg message = event.model().message();
+        logger.log(message.withLevel(message.level() == null ? Level.INFO : message.level()));
     }
 
 }

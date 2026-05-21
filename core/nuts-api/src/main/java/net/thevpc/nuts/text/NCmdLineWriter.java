@@ -41,7 +41,7 @@ import net.thevpc.nuts.platform.NShellFamily;
 public interface NCmdLineWriter extends NObjectWriter {
 
     static NCmdLineWriter ofPlain() {
-        return of().setNtf(false);
+        return of().ntf(false);
     }
 
     static NCmdLineWriter of(NCmdLine value) {
@@ -58,7 +58,7 @@ public interface NCmdLineWriter extends NObjectWriter {
      * @return command line family
      * @since 0.8.1
      */
-    NShellFamily getShellFamily();
+    NShellFamily shellFamily();
 
     /**
      * change command line family
@@ -66,7 +66,7 @@ public interface NCmdLineWriter extends NObjectWriter {
      * @param family family
      * @return {@code this} instance
      */
-    NCmdLineWriter setShellFamily(NShellFamily family);
+    NCmdLineWriter shellFamily(NShellFamily family);
 
 
     /**
@@ -83,9 +83,9 @@ public interface NCmdLineWriter extends NObjectWriter {
 
     boolean isNtf();
 
-    NCmdLineWriter setNtf(boolean ntf);
+    NCmdLineWriter ntf(boolean ntf);
 
-    NCmdLineFormatStrategy getFormatStrategy();
+    NCmdLineFormatStrategy formatStrategy();
 
-    void setFormatStrategy(NCmdLineFormatStrategy formatStrategy);
+    void formatStrategy(NCmdLineFormatStrategy formatStrategy);
 }

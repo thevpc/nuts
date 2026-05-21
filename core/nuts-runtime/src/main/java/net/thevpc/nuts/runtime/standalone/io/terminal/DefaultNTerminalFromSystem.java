@@ -116,7 +116,7 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
             return this.in;
         }
         if (parent != null) {
-            return parent.getIn();
+            return parent.in();
         }
         return null;
     }
@@ -132,7 +132,7 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
         if (out == null) {
             NSystemTerminalBase p = getParent();
             if (p != null) {
-                NPrintStream o = p.getOut();
+                NPrintStream o = p.out();
                 if (o != null) {
                     return o;
                 }
@@ -151,7 +151,7 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
         if (err == null) {
             NSystemTerminalBase p = getParent();
             if (p != null) {
-                NPrintStream o = p.getErr();
+                NPrintStream o = p.err();
                 if (o != null) {
                     return o;
                 }

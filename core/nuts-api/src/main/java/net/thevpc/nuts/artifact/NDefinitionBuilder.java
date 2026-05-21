@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 public interface NDefinitionBuilder extends Serializable, Comparable<NDefinitionBuilder> {
-    NDependency getDependency();
+    NDependency dependency();
 
     NDefinitionBuilder dependency(NDependency dependency);
 

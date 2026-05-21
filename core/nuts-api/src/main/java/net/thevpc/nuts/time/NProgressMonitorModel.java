@@ -13,13 +13,13 @@ public interface NProgressMonitorModel {
 
     boolean isBlocked();
 
-    String getId();
+    String id();
 
-    String getName();
+    String name();
 
-    NMsg getDescription();
+    NMsg description();
 
-    NMsg getMessage();
+    NMsg message();
 
-    double getProgress();
+    double progress();
 }

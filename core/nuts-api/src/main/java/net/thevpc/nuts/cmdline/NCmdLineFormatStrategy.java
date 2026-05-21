@@ -52,7 +52,7 @@ public enum NCmdLineFormatStrategy implements NEnum {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
-    public static NCmdLineFormatStrategy getCurrent() {
+    public static NCmdLineFormatStrategy current() {
         return SUPPORT_QUOTES;
     }
 

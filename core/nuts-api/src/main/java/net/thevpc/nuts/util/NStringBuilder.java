@@ -314,11 +314,11 @@ public class NStringBuilder implements CharSequence, NBlankable {
         return data.charAt(wiseIndex(index));
     }
 
-    public char getFirst() {
+    public char first() {
         return data.charAt(0);
     }
 
-    public char getLast() {
+    public char last() {
         return data.charAt(data.length());
     }
 
@@ -588,6 +588,10 @@ public class NStringBuilder implements CharSequence, NBlankable {
         }
     }
 
+    /**
+     * remain getBytes() (not byte()) to stay compatible with java StringBuilder
+     * @return
+     */
     public byte[] getBytes() {
         return data.toString().getBytes();
     }

@@ -72,7 +72,7 @@ public class NParseEnumException extends NException {
      *
      * @return invalid value
      */
-    public String getInvalidValue() {
+    public String invalidValue() {
         return invalidValue;
     }
 
@@ -81,7 +81,7 @@ public class NParseEnumException extends NException {
      *
      * @return enum type
      */
-    public Class getEnumType() {
+    public Class enumType() {
         return enumType;
     }
 }

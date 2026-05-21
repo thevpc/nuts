@@ -30,11 +30,11 @@ package net.thevpc.nuts.reflect;
  */
 public interface NReflectProperty {
 
-    String getName();
+    String name();
     
-    NReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
+    NReflectPropertyDefaultValueStrategy defaultValueStrategy();
 
-    NReflectType getPropertyType();
+    NReflectType propertyType();
     
     boolean isRead();
 
@@ -67,6 +67,6 @@ public interface NReflectProperty {
 
     void write(Object instance, Object value);
 
-    NReflectType getDeclaringType();
+    NReflectType declaringType();
 
 }

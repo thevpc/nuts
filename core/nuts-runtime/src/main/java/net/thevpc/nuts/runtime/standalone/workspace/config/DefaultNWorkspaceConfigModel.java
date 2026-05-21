@@ -205,11 +205,11 @@ public class DefaultNWorkspaceConfigModel {
         NSecurityManager.of().checkAllowed(NConstants.Permissions.SAVE, "save");
         if (force || storeModelBootChanged) {
 
-            storeModelBoot.setConfigVersion(DefaultNWorkspace.VERSION_WS_CONFIG_BOOT);
+            storeModelBoot.configVersion(DefaultNWorkspace.VERSION_WS_CONFIG_BOOT);
             if (storeModelBoot.getExtensions() != null) {
                 for (NWorkspaceConfigBoot.ExtensionConfig extension : storeModelBoot.getExtensions()) {
                     //inherited
-                    extension.setConfigVersion(null);
+                    extension.configVersion(null);
                 }
             }
             workspace.store().saveWorkspaceConfigBoot(storeModelBoot);
@@ -221,11 +221,11 @@ public class DefaultNWorkspaceConfigModel {
             storeModelSecurity.setUsers(configUsers.isEmpty() ? null : configUsers.values().toArray(new NUserConfig[0]));
             storeModelSecurity.setRepositories(configRepoUsers.isEmpty() ? null : configRepoUsers.toArray(new NRepositoryAccessConfig[0]));
 
-            storeModelSecurity.setConfigVersion(current().getApiVersion());
+            storeModelSecurity.configVersion(current().getApiVersion());
             if (storeModelSecurity.getUsers() != null) {
                 for (NUserConfig extension : storeModelSecurity.getUsers()) {
                     //inherited
-                    extension.setConfigVersion(null);
+                    extension.configVersion(null);
                 }
             }
             workspace.store().saveConfigSecurity(storeModelSecurity);
@@ -242,23 +242,23 @@ public class DefaultNWorkspaceConfigModel {
                             .map(x -> x.config().repositoryRef()).collect(Collectors.toList())
             );
 
-            storeModelMain.setConfigVersion(current().getApiVersion());
+            storeModelMain.configVersion(current().getApiVersion());
             if (storeModelMain.getCommandFactories() != null) {
                 for (NCommandFactoryConfig item : storeModelMain.getCommandFactories()) {
                     //inherited
-                    item.setConfigVersion(null);
+                    item.configVersion(null);
                 }
             }
             if (storeModelMain.getRepositories() != null) {
                 for (NRepositoryRef item : storeModelMain.getRepositories()) {
                     //inherited
-                    item.setConfigVersion(null);
+                    item.configVersion(null);
                 }
             }
             if (storeModelMain.getPlatforms() != null) {
                 for (NExecutionEngineLocation item : storeModelMain.getPlatforms()) {
                     //inherited
-                    item.setConfigVersion(null);
+                    item.configVersion(null);
                 }
             }
             workspace.store().saveConfigMain(storeModelMain);
@@ -267,11 +267,11 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         if (force || storeModelApiChanged) {
-            storeModelApi.setConfigVersion(current().getApiVersion());
+            storeModelApi.configVersion(current().getApiVersion());
             if (storeModelSecurity.getUsers() != null) {
                 for (NUserConfig item : storeModelSecurity.getUsers()) {
                     //inherited
-                    item.setConfigVersion(null);
+                    item.configVersion(null);
                 }
             }
             workspace.store().saveConfigApi(storeModelApi);
@@ -279,7 +279,7 @@ public class DefaultNWorkspaceConfigModel {
             ok = true;
         }
         if (force || storeModelRuntimeChanged) {
-            storeModelRuntime.setConfigVersion(current().getApiVersion());
+            storeModelRuntime.configVersion(current().getApiVersion());
             workspace.store().saveConfigRuntime(storeModelRuntime);
             storeModelRuntimeChanged = false;
             ok = true;
@@ -333,7 +333,7 @@ public class DefaultNWorkspaceConfigModel {
             repositoryType = NConstants.RepoTypes.NUTS;
         }
         return NExtensions.of().createAllSupported(NRepositoryFactoryComponent.class,
-                new NRepositoryConfig().setLocation(
+                new NRepositoryConfig().location(
                         NRepositoryLocation.of(repositoryType + "@")
                 )).size() > 0;
     }
@@ -342,7 +342,7 @@ public class DefaultNWorkspaceConfigModel {
         List<NRepositorySpec> all = new ArrayList<>();
         for (NRepositorySpecRuntimeResolverComponent provider : NExtensions.of()
                 .createAll(NRepositorySpecRuntimeResolverComponent.class)) {
-            for (NRepositorySpec d : provider.getRuntimeRepositoryDefinitions()) {
+            for (NRepositorySpec d : provider.runtimeRepositoryDefinitions()) {
                 all.add(d);
             }
         }
@@ -354,7 +354,7 @@ public class DefaultNWorkspaceConfigModel {
         List<NRepositorySpec> all = new ArrayList<>();
         for (NRepositorySpecTemplateResolverComponent provider : NExtensions.of()
                 .createAll(NRepositorySpecTemplateResolverComponent.class)) {
-            for (NRepositorySpec d : provider.getTemplateRepositoryDefinitions()) {
+            for (NRepositorySpec d : provider.templateRepositoryDefinitions()) {
                 all.add(d.copy());
             }
         }
@@ -366,7 +366,7 @@ public class DefaultNWorkspaceConfigModel {
         List<NRepositorySpec> all = new ArrayList<>();
         for (NRepositorySpecDefaultResolverComponent provider : NExtensions.of()
                 .createAll(NRepositorySpecDefaultResolverComponent.class)) {
-            for (NRepositorySpec d : provider.getDefaultRepositoryDefinitions()) {
+            for (NRepositorySpec d : provider.defaultRepositoryDefinitions()) {
                 all.add(d);
             }
         }
@@ -379,7 +379,7 @@ public class DefaultNWorkspaceConfigModel {
         set.add("default");
         for (NWorkspaceArchetypeComponent extension : NExtensions.of()
                 .createAllSupported(NWorkspaceArchetypeComponent.class, null)) {
-            set.add(extension.getName());
+            set.add(extension.name());
         }
         return set;
     }
@@ -718,7 +718,7 @@ public class DefaultNWorkspaceConfigModel {
         NPath runtimeVersionSpecificLocation = NPath.of(NStoreKey.ofConf())
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(extensionId));
         NPath afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
-        cc.setConfigVersion(current().getApiVersion());
+        cc.configVersion(current().getApiVersion());
         NElementWriter.ofJson().write(cc, afile);
     }
 
@@ -744,7 +744,7 @@ public class DefaultNWorkspaceConfigModel {
         NWorkspaceConfigApi estoreModelApi = new NWorkspaceConfigApi();
         estoreModelApi.setApiVersion(apiId.version());
         estoreModelApi.setRuntimeId(runtimeId);
-        estoreModelApi.setConfigVersion(current().getApiVersion());
+        estoreModelApi.configVersion(current().getApiVersion());
         NPath apiVersionSpecificLocation = NPath.of(NStoreKey.ofConf(apiId));
         NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         NElementWriter.ofJson().write(estoreModelApi, afile);
@@ -758,7 +758,7 @@ public class DefaultNWorkspaceConfigModel {
         NPath runtimeVersionSpecificLocation = NPath.of(NStoreKey.ofConf())
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(runtimeId));
         afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
-        storeModelRuntime.setConfigVersion(current().getApiVersion());
+        storeModelRuntime.configVersion(current().getApiVersion());
         NElementWriter.ofJson().write(storeModelRuntime, afile);
 
     }
@@ -843,8 +843,8 @@ public class DefaultNWorkspaceConfigModel {
         }
         Optional<NRepositoryAccessConfig> o = configRepoUsers.stream().filter(
                 x ->
-                        Objects.equals(x.getUserName(), user)
-                                && Objects.equals(x.getRepository(), crepository.uuid())
+                        Objects.equals(x.userName(), user)
+                                && Objects.equals(x.repository(), crepository.uuid())
         ).findFirst().map(NRepositoryAccessConfig::copy);
         return NOptional.ofNamedOptional(o, repository + "/" + user);
     }
@@ -854,8 +854,8 @@ public class DefaultNWorkspaceConfigModel {
         if (crepository == null) {
             return false;
         }
-        if (configRepoUsers.removeIf(x -> Objects.equals(x.getUserName(), user)
-                && Objects.equals(x.getRepository(), crepository.uuid()))) {
+        if (configRepoUsers.removeIf(x -> Objects.equals(x.userName(), user)
+                && Objects.equals(x.repository(), crepository.uuid()))) {
             fireConfigurationChanged("repository-user", ConfigEventType.SECURITY);
             return true;
         }
@@ -863,12 +863,12 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public void addNamedCredentials(NNamedCredential credential) {
-        NAssert.requireNamedNonNull(configUsers.get(credential.getUserName()), "user " + credential.getUserName());
-        workspace.getModel().securityModel.requiredAdminOrUser(credential.getUserName());
+        NAssert.requireNamedNonNull(configUsers.get(credential.userName()), "user " + credential.userName());
+        workspace.getModel().securityModel.requiredAdminOrUser(credential.userName());
         for (int i = 0; i < configNamedCredentials.size(); i++) {
             NNamedCredential x = configNamedCredentials.get(i);
-            if (Objects.equals(x.getName(), credential.getName())
-                    && Objects.equals(x.getUserName(), credential.getUserName())) {
+            if (Objects.equals(x.name(), credential.name())
+                    && Objects.equals(x.userName(), credential.userName())) {
                 if (!credential.equals(x)) {
                     configNamedCredentials.set(i, credential);
                     fireConfigurationChanged("named-credential", ConfigEventType.SECURITY);
@@ -888,10 +888,10 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public void removeNamedCredentials(String name, String user) {
-        String finalUser = resolveAsValidUserConfig(user).get().getUserName();
+        String finalUser = resolveAsValidUserConfig(user).get().userName();
         workspace.getModel().securityModel.requiredAdminOrUser(finalUser);
-        if (configNamedCredentials.removeIf(x -> Objects.equals(x.getName(), name)
-                && Objects.equals(x.getUserName(), finalUser))) {
+        if (configNamedCredentials.removeIf(x -> Objects.equals(x.name(), name)
+                && Objects.equals(x.userName(), finalUser))) {
             fireConfigurationChanged("named-credential", ConfigEventType.SECURITY);
         }
     }
@@ -910,8 +910,8 @@ public class DefaultNWorkspaceConfigModel {
         workspace.getModel().securityModel.requiredAdminOrUser(user);
         String finalUser = user;
         return NOptional.ofNamedOptional(configNamedCredentials.stream().filter(x ->
-                Objects.equals(x.getUserName(), finalUser)
-                        && Objects.equals(x.getName(), name)
+                Objects.equals(x.userName(), finalUser)
+                        && Objects.equals(x.name(), name)
         ).findFirst(), "named credential " + user + "/" + name);
 
     }
@@ -922,24 +922,24 @@ public class DefaultNWorkspaceConfigModel {
         }
         workspace.getModel().securityModel.requiredAdminOrUser(user);
         String finalUser = user;
-        return configNamedCredentials.stream().filter(x -> Objects.equals(x.getUserName(), finalUser)).collect(Collectors.toList());
+        return configNamedCredentials.stream().filter(x -> Objects.equals(x.userName(), finalUser)).collect(Collectors.toList());
     }
 
     public List<NNamedCredential> findNamedCredentials() {
         String u = workspace.getModel().securityModel.getCurrentUsername();
-        return configNamedCredentials.stream().filter(x -> Objects.equals(x.getUserName(), u)).collect(Collectors.toList());
+        return configNamedCredentials.stream().filter(x -> Objects.equals(x.userName(), u)).collect(Collectors.toList());
     }
 
     public void addRepositoryUser(NRepositoryAccessConfig config) {
         if (config != null) {
-            NAssert.requireNamedNonNull(getUser(config.getUserName()), "user " + config.getUserName());
-            NRepository repository = workspace.getRepositoryModel().getRepository(config.getRepository()).get();
+            NAssert.requireNamedNonNull(getUser(config.userName()), "user " + config.userName());
+            NRepository repository = workspace.getRepositoryModel().getRepository(config.repository()).get();
             NRepositoryAccessConfig cconfig = config.copy();
-            cconfig.setRepository(repository.uuid());
+            cconfig.repository(repository.uuid());
             if (configRepoUsers.stream().anyMatch(
                     x ->
-                            x.getUserName().equals(cconfig.getUserName())
-                                    && x.getRepository().equals(cconfig.getRepository())
+                            x.userName().equals(cconfig.userName())
+                                    && x.repository().equals(cconfig.repository())
             )) {
                 return;
             }
@@ -950,7 +950,7 @@ public class DefaultNWorkspaceConfigModel {
 
     public void addOrUpdateUser(NUserConfig config) {
         if (config != null) {
-            configUsers.put(config.getUserName(), config);
+            configUsers.put(config.userName(), config);
             fireConfigurationChanged("user", ConfigEventType.SECURITY);
         }
     }
@@ -1037,7 +1037,7 @@ public class DefaultNWorkspaceConfigModel {
         if (dependencySolvers == null) {
             dependencySolvers = new LinkedHashMap<>();
             for (NDependencySolverFactory nutsDependencySolver : NExtensions.of().createAllSupported(NDependencySolverFactory.class, null)) {
-                dependencySolvers.put(nutsDependencySolver.getName(), nutsDependencySolver);
+                dependencySolvers.put(nutsDependencySolver.name(), nutsDependencySolver);
             }
         }
         return dependencySolvers;
@@ -1051,7 +1051,7 @@ public class DefaultNWorkspaceConfigModel {
         // the first element is always the default one,
         // the rest is lexicographically sorter
         return Arrays.stream(getDependencySolvers())
-                .map(NDependencySolverFactory::getName)
+                .map(NDependencySolverFactory::name)
                 .sorted(new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
@@ -1086,7 +1086,7 @@ public class DefaultNWorkspaceConfigModel {
         } else {
             List<NAuthenticationAgent> agents = NExtensions.of().createAllSupported(NAuthenticationAgent.class, authenticationAgent);
             for (NAuthenticationAgent agent : agents) {
-                if (agent.getId().equals(authenticationAgent)) {
+                if (agent.id().equals(authenticationAgent)) {
                     supported = agent;
                 }
             }
@@ -1099,7 +1099,7 @@ public class DefaultNWorkspaceConfigModel {
 
     public void setUsers(NUserConfig[] users) {
         for (NUserConfig u : getUsers()) {
-            removeUser(u.getUserName());
+            removeUser(u.userName());
         }
         for (NUserConfig conf : users) {
             addOrUpdateUser(conf);
@@ -1144,7 +1144,7 @@ public class DefaultNWorkspaceConfigModel {
         configUsers.clear();
         if (this.storeModelSecurity.getUsers() != null) {
             for (NUserConfig s : this.storeModelSecurity.getUsers()) {
-                configUsers.put(s.getUserName(), s);
+                configUsers.put(s.userName(), s);
             }
         }
         storeModelSecurityChanged = true;
@@ -1238,7 +1238,7 @@ public class DefaultNWorkspaceConfigModel {
             NPath jarPath = null;
             NPath pomPath = null;
             for (NRepositorySpec nutsRepositoryLocation : resolveBootRepositoriesBootSelectionArray()) {
-                NPath base = NPath.of(nutsRepositoryLocation.sourceLocation().getPath());
+                NPath base = NPath.of(nutsRepositoryLocation.sourceLocation().path());
                 if (base.isLocal() && base.isDirectory()) {
                     NPath a = base.resolve(contentPath + ".jar");
                     NPath b = base.resolve(contentPath + ".pom");
@@ -1589,7 +1589,7 @@ public class DefaultNWorkspaceConfigModel {
                                     return v;
                                 })
                 )
-                .getBest().orNull();
+                .best().orNull();
         NPathSPI s = z == null ? null : z.call();
         if (s != null) {
             if (s instanceof NPath) {

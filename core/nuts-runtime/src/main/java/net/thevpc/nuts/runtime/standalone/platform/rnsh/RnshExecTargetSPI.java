@@ -12,12 +12,12 @@ public class RnshExecTargetSPI implements NExecTargetSPI {
 
     @Override
     public int exec(NExecTargetCommandContext context) {
-        return  RnshPool.of().get(context.getConnectionString()).exec(context.getCommand(), context.isRawCommand(), context.in(), context.out(), context.err());
+        return  RnshPool.of().get(context.connectionString()).exec(context.command(), context.isRawCommand(), context.in(), context.out(), context.err());
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        Object c = context.getCriteria();
+        Object c = context.criteria();
 
         if (c instanceof String) {
             NConnectionStringBuilder z = DefaultNConnectionStringBuilder.of((String) c).orNull();

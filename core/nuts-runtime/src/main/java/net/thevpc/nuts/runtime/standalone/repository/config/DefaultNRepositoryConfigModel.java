@@ -139,16 +139,16 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public void setEnv(String property, String value) {
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         if (NBlankable.isBlank(value)) {
-            if (config.getEnv() != null) {
-                config.getEnv().remove(property);
+            if (config.env() != null) {
+                config.env().remove(property);
                 fireConfigurationChanged("env");
             }
         } else {
-            if (config.getEnv() == null) {
-                config.setEnv(new LinkedHashMap<>());
+            if (config.env() == null) {
+                config.env(new LinkedHashMap<>());
             }
-            if (!value.equals(config.getEnv().get(property))) {
-                config.getEnv().put(property, value);
+            if (!value.equals(config.env().get(property))) {
+                config.env().put(property, value);
                 fireConfigurationChanged("env");
             }
         }
@@ -189,22 +189,22 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 
     @Override
     public String getGroups() {
-        return config.getGroups();
+        return config.groups();
     }
 
     @Override
     public NRepositoryLocation getLocation() {
-        NRepositoryLocation loc = config.getLocation();
+        NRepositoryLocation loc = config.location();
         if (loc == null) {
             loc = NRepositoryLocation.of(null);
         }
-        String name = config.getName();
-        return loc.setName(name);
+        String name = config.name();
+        return loc.name(name);
     }
 
     @Override
     public NPath getLocationPath() {
-        String s = NStringUtils.trimToNull(config.getLocation().getPath());
+        String s = NStringUtils.trimToNull(config.location().path());
         if (s != null) {
             return NPath.of(s).toAbsolute(NWorkspace.of().workspaceLocation());
         }
@@ -218,7 +218,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 
     @Override
     public NStoreStrategy getStoreStrategy() {
-        NStoreStrategy strategy = config.getStoreStrategy();
+        NStoreStrategy strategy = config.storeStrategy();
         if (strategy == null) {
             strategy = NStoreStrategy.values()[0];
         }
@@ -227,7 +227,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 
     @Override
     public NPath getStoreLocation(NStoreType storeType) {
-        NStoreLocationsMap hlm = new NStoreLocationsMap(config.getStoreLocations());
+        NStoreLocationsMap hlm = new NStoreLocationsMap(config.storeLocations());
         String n = hlm.get(storeType);
         if (temporary) {
             if (NBlankable.isBlank(n)) {
@@ -258,42 +258,42 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
     public String getUuid() {
-        return config.getUuid();
+        return config.uuid();
     }
 
     public void setConfig(NRepositoryConfig newConfig, boolean fireChange) {
         NAssert.requireNamedNonBlank(newConfig, "repository config");
         this.config = newConfig;
-        if (this.config.getUuid() == null) {
+        if (this.config.uuid() == null) {
             fireChange = true;
-            this.config.setUuid(UUID.randomUUID().toString());
+            this.config.uuid(UUID.randomUUID().toString());
         }
-        if (this.config.getStoreStrategy() == null) {
+        if (this.config.storeStrategy() == null) {
             fireChange = true;
-            this.config.setStoreStrategy(NWorkspace.of().repositoryStoreStrategy());
+            this.config.storeStrategy(NWorkspace.of().repositoryStoreStrategy());
         }
-        if (config.getLocation() != null && !NBlankable.isBlank(config.getLocation().getLocationType())) {
+        if (config.location() != null && !NBlankable.isBlank(config.location().locationType())) {
             // do not waste time on constructor to connect to internet and check repo type....
             //if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
-            if (!Objects.equals(config.getLocation().getLocationType(), repositoryType)) {
+            if (!Objects.equals(config.location().locationType(), repositoryType)) {
                 throw new NIllegalArgumentException(
                         NMsg.ofC("invalid Repository Type : expected %s, found %s", repositoryType, NRepositoryUtils.getRepoType(config))
                 );
             }
         }
         tags.clear();
-        if (this.config.getTags() != null) {
-            for (String tag : this.config.getTags()) {
+        if (this.config.tags() != null) {
+            for (String tag : this.config.tags()) {
                 if (!NBlankable.isBlank(tag)) {
                     tags.add(NStringUtils.trim(tag));
                 }
             }
         }
 
-        this.globalName = newConfig.getName();
+        this.globalName = newConfig.name();
         removeAllMirrors();
-        if (config.getMirrors() != null) {
-            for (NRepositoryRef ref : config.getMirrors()) {
+        if (config.mirrors() != null) {
+            for (NRepositoryRef ref : config.mirrors()) {
                 NRepository r = NWorkspaceExt.of()
                         .getRepositoryModel()
                         .createRepository(
@@ -321,7 +321,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     @Override
     public void setIndexEnabled(boolean enabled) {
         if (enabled != config.isIndexEnabled()) {
-            config.setIndexEnabled(enabled);
+            config.indexEnabled(enabled);
             fireConfigurationChanged("index-enabled");
         }
     }
@@ -352,12 +352,12 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             NWorkspaceUtils.of().checkReadOnly();
             NSecurityManager.of().checkRepositoryAllowed(repository.uuid(), NConstants.Permissions.SAVE, "save");
 
-            config.setConfigVersion(DefaultNWorkspace.VERSION_REPOSITORY_CONFIG);
-            if (config.getEnv() != null && config.getEnv().isEmpty()) {
-                config.setEnv(null);
+            config.configVersion(DefaultNWorkspace.VERSION_REPOSITORY_CONFIG);
+            if (config.env() != null && config.env().isEmpty()) {
+                config.env(null);
             }
-            config.setTags(tags.toArray(new String[0]));
-            config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
+            config.tags(tags.toArray(new String[0]));
+            config.mirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             boolean created = ((NWorkspaceExt) workspace).store().saveRepoConfig(repository, config);
 
             configurationChanged = false;
@@ -663,8 +663,8 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         NRepositoryConfigModel model = ((DefaultNRepoConfigManager) repository.config()).getModel();
         NRepositoryConfig config = model.getConfig();
         String t = null;
-        if (config.getEnv() != null) {
-            t = config.getEnv().get(key);
+        if (config.env() != null) {
+            t = config.env().get(key);
         }
         if (!NBlankable.isBlank(t)) {
             return NOptional.of(NLiteral.of(t));
@@ -682,8 +682,8 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         if (inherit) {
             p.putAll(NWorkspace.of().configMap());
         }
-        if (config.getEnv() != null) {
-            p.putAll(config.getEnv());
+        if (config.env() != null) {
+            p.putAll(config.env());
         }
         return p;
     }
@@ -693,16 +693,16 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         NRepositoryConfig config = getConfig();
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         if (NBlankable.isBlank(value)) {
-            if (config.getEnv() != null) {
-                config.getEnv().remove(property);
+            if (config.env() != null) {
+                config.env().remove(property);
                 fireConfigurationChanged("env");
             }
         } else {
-            if (config.getEnv() == null) {
-                config.setEnv(new LinkedHashMap<>());
+            if (config.env() == null) {
+                config.env(new LinkedHashMap<>());
             }
-            if (!value.equals(config.getEnv().get(property))) {
-                config.getEnv().put(property, value);
+            if (!value.equals(config.env().get(property))) {
+                config.env().put(property, value);
                 fireConfigurationChanged("env");
             }
         }

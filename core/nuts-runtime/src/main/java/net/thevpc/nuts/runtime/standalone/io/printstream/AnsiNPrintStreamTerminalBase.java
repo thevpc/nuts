@@ -32,7 +32,7 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
         return lastWasProgress;
     }
 
-    public void setLastWasProgress(boolean lastWasProgress) {
+    public void lastWasProgress(boolean lastWasProgress) {
         this.lastWasProgress = lastWasProgress;
     }
 
@@ -47,49 +47,49 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public InputStream getIn() {
+    public InputStream in() {
         return null;
     }
 
     @Override
-    public NPrintStream getOut() {
+    public NPrintStream out() {
         return out;
     }
 
     @Override
-    public NPrintStream getErr() {
+    public NPrintStream err() {
         return null;
     }
 
     @Override
-    public NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
         this.commandAutoCompleteResolver = autoCompleteResolver;
         return this;
     }
 
     @Override
-    public NCmdLineHistory getCommandHistory() {
+    public NCmdLineHistory commandHistory() {
         return history;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
+    public NSystemTerminalBase commandHistory(NCmdLineHistory history) {
         this.history = history;
         return this;
     }
 
     @Override
-    public NTerminalFormatter getCommandHighlighter() {
+    public NTerminalFormatter commandHighlighter() {
         return commandHighlighter;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHighlighter(NTerminalFormatter commandHighlighter) {
+    public NSystemTerminalBase commandHighlighter(NTerminalFormatter commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
         return this;
     }
 
-    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
+    public NCmdLineAutoCompleteResolver autoCompleteResolver() {
         return commandAutoCompleteResolver;
     }
 
@@ -105,7 +105,7 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+    public void styles(NTextStyles styles, NPrintStream printStream) {
         String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();

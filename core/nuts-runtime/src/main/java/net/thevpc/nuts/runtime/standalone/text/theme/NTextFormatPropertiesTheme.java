@@ -71,7 +71,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         String themeName = props.getProperty("theme-name");
         if (NBlankable.isBlank(themeName)) {
             themeName = UUID.randomUUID().toString();
@@ -151,7 +151,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
         if (style == null) {
             return NTextStyles.PLAIN;
         }
-        if(style.getType().isBasic(basicTrueStyles)) {
+        if(style.type().isBasic(basicTrueStyles)) {
             return NTextStyles.of(style);
         }
         return toBasicStyles(style, basicTrueStyles, 20);
@@ -161,30 +161,30 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
         if (style == null) {
             return NTextStyles.PLAIN;
         }
-        if(style.getType().isBasic(basicTrueStyles)) {
+        if(style.type().isBasic(basicTrueStyles)) {
             return NTextStyles.of(style);
         }
         if (maxLoop <= 0) {
             throw new NIllegalArgumentException(
-                    NMsg.ofC("invalid ntf theme for %s(%s). infinite loop", style.getType(), style.getVariant()));
+                    NMsg.ofC("invalid ntf theme for %s(%s). infinite loop", style.type(), style.variant()));
         }
-        String s = getProp(style.getType(), style.getVariant());
+        String s = getProp(style.type(), style.variant());
         if (s == null) {
-            switch (style.getType()){
+            switch (style.type()){
                 case FORE_COLOR:{
                     //basicTrue is true!!
-                    return NTextStyles.of(NTextStyle.foregroundTrueColor(DefaultNTextFormatTheme.foregroundSimpleToTrueColor(style.getVariant())));
+                    return NTextStyles.of(NTextStyle.foregroundTrueColor(DefaultNTextFormatTheme.foregroundSimpleToTrueColor(style.variant())));
                 }
                 case BACK_COLOR:{
                     //basicTrue is true!!
-                    return NTextStyles.of(NTextStyle.foregroundTrueColor(DefaultNTextFormatTheme.backgroundSimpleToTrueColor(style.getVariant())));
+                    return NTextStyles.of(NTextStyle.foregroundTrueColor(DefaultNTextFormatTheme.backgroundSimpleToTrueColor(style.variant())));
                 }
             }
             return NTextStyles.PLAIN;
         }
         NTextStyles ret = NTextStyles.PLAIN;
         for (String v : s.split(",")) {
-            NTextStyles ss = toBasicStyles(v, basicTrueStyles, style.getVariant(), maxLoop - 1);
+            NTextStyles ss = toBasicStyles(v, basicTrueStyles, style.variant(), maxLoop - 1);
             ret = ret.append(ss);
         }
         return ret;
@@ -229,7 +229,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             case FORE_COLOR: {
                 NColor c = getVarValAsColor(n);
                 if(c!=null){
-                    return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
+                    return NTextStyles.of(NTextStyle.of(st, c.rgb()));
                 }
                 Integer ii = NLiteral.of(n).asInt().orNull();
                 if (ii == null) {
@@ -242,7 +242,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             case BACK_COLOR: {
                 NColor c = getVarValAsColor(n);
                 if(c!=null){
-                    return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
+                    return NTextStyles.of(NTextStyle.of(st, c.rgb()));
                 }
                 Integer ii = NLiteral.of(n).asInt().orNull();
                 if (ii == null) {
@@ -256,7 +256,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             case BACK_TRUE_COLOR: {
                 NColor c = getVarValAsColor(n);
                 if(c!=null){
-                    return NTextStyles.of(NTextStyle.of(st, c.getRGB()));
+                    return NTextStyles.of(NTextStyle.of(st, c.rgb()));
                 }
                 Integer ii = NLiteral.of(n).asInt().orNull();
                 if (ii == null) {

@@ -50,7 +50,7 @@ public class FormatAsTreeTest {
         );
         ByteArrayPrintStream bos = new ByteArrayPrintStream();
         NObjectObjectWriter.of()
-                .setOutputFormat(NContentType.TREE)
+                .outputFormat(NContentType.TREE)
                 .println(m, bos);
 
         TestUtils.println("\n"+bos);
@@ -91,7 +91,7 @@ public class FormatAsTreeTest {
     );
         ByteArrayPrintStream bos = new ByteArrayPrintStream();
         NObjectObjectWriter.of()
-                .setOutputFormat(NContentType.TREE)
+                .outputFormat(NContentType.TREE)
                 .println(m, bos);
 
         TestUtils.println("\n"+bos);
@@ -108,7 +108,7 @@ public class FormatAsTreeTest {
         );
         ByteArrayPrintStream bos = new ByteArrayPrintStream();
         NObjectObjectWriter.of()
-                .setOutputFormat(NContentType.TREE)
+                .outputFormat(NContentType.TREE)
                 .println(m, bos);
         TestUtils.println("\n"+bos);
     }

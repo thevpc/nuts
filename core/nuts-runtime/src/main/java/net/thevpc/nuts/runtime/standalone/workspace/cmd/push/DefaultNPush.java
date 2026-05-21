@@ -90,7 +90,7 @@ public class DefaultNPush extends AbstractDefaultNPush {
                     NDescriptor descr = null;
                     NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                     try {
-                        descr = repoSPI.fetchDescriptor().setFetchMode(fetchMode).setId(file.id()).getResult();
+                        descr = repoSPI.fetchDescriptor().fetchMode(fetchMode).id(file.id()).getResult();
                     } catch (Exception e) {
                         errors.add(CoreStringUtils.exceptionToString(e));
                         //
@@ -98,10 +98,10 @@ public class DefaultNPush extends AbstractDefaultNPush {
                     if (descr != null && repo.config().isSupportedMirroring()) {
                         NId id2 = CoreNIdUtils.createContentFaceId(dws.resolveEffectiveId(descr), descr);
                         try {
-                            repoSPI.push().setId(id2)
-                                    .setOffline(offline)
-                                    .setRepository(repository())
-                                    .setArgs(args.toArray(new String[0]))
+                            repoSPI.push().id(id2)
+                                    .offline(offline)
+                                    .repository(repository())
+                                    .args(args.toArray(new String[0]))
                                     .run();
                             ok = true;
                             break;
@@ -128,9 +128,9 @@ public class DefaultNPush extends AbstractDefaultNPush {
                         ;
                 NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                 repoSPI.deploy()
-                        .setId(effId)
-                        .setContent(file.content().orNull())
-                        .setDescriptor(file.descriptor())
+                        .id(effId)
+                        .content(file.content().orNull())
+                        .descriptor(file.descriptor())
                         //                        .setFetchMode(fetchMode)
                         //                        .setOffline(this.isOffline())
                         //                        .setTransitive(true)

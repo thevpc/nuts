@@ -45,7 +45,7 @@ public class DefaultNReflectConfigurationBuilder implements NReflectConfiguratio
     private Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
 
     @Override
-    public Function<Class, Set<NReflectPropertyAccessStrategy>> getPropertyAccessStrategy() {
+    public Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy() {
         return propertyAccessStrategy;
     }
 
@@ -56,13 +56,13 @@ public class DefaultNReflectConfigurationBuilder implements NReflectConfiguratio
     }
 
     @Override
-    public NReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy) {
+    public NReflectConfigurationBuilder propertyAccessStrategy(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy;
         return this;
     }
 
     @Override
-    public NReflectConfigurationBuilder setPropertyAccessStrategy(Set<NReflectPropertyAccessStrategy> propertyAccessStrategy) {
+    public NReflectConfigurationBuilder propertyAccessStrategy(Set<NReflectPropertyAccessStrategy> propertyAccessStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy == null ? null : x -> propertyAccessStrategy;
         return this;
     }
@@ -74,18 +74,18 @@ public class DefaultNReflectConfigurationBuilder implements NReflectConfiguratio
     }
 
     @Override
-    public Function<Class, NReflectPropertyDefaultValueStrategy> getPropertyDefaultValueStrategy() {
+    public Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy() {
         return propertyDefaultValueStrategy;
     }
 
     @Override
-    public NReflectConfigurationBuilder setPropertyDefaultValueStrategy(Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
+    public NReflectConfigurationBuilder propertyDefaultValueStrategy(Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
         this.propertyDefaultValueStrategy = propertyDefaultValueStrategy;
         return this;
     }
 
     @Override
-    public NReflectConfigurationBuilder setPropertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy) {
+    public NReflectConfigurationBuilder propertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy) {
         this.propertyDefaultValueStrategy = propertyDefaultValueStrategy == null ? null : x -> propertyDefaultValueStrategy;
         return this;
     }

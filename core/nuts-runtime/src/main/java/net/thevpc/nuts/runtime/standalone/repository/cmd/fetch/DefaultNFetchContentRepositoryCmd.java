@@ -65,8 +65,8 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
         NDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
             NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
-            descriptor0 = repoSPI.fetchDescriptor().setId(id)
-                    .setFetchMode(getFetchMode())
+            descriptor0 = repoSPI.fetchDescriptor().id(id)
+                    .fetchMode(fetchMode())
                     .getResult();
         }
         id = id.builder().faceContent().build();
@@ -75,15 +75,15 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
         xrepo.checkAllowedFetch(id);
         long startTime = System.currentTimeMillis();
         try {
-            NPath f = xrepo.fetchContentImpl(id, descriptor0, getFetchMode());
+            NPath f = xrepo.fetchContentImpl(id, descriptor0, fetchMode());
             if (f == null) {
                 throw new NArtifactNotFoundException(id.longId());
             }
-            NLogUtils.traceMessage(_LOG(), Level.FINER, repo.name(), getFetchMode(), id.longId(), NMsgIntent.SUCCESS, "fetch content", startTime, null);
+            NLogUtils.traceMessage(_LOG(), Level.FINER, repo.name(), fetchMode(), id.longId(), NMsgIntent.SUCCESS, "fetch content", startTime, null);
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNUtils.isUnsupportedFetchModeException(ex)) {
-                NLogUtils.traceMessage(_LOG(), Level.FINEST, repo.name(), getFetchMode(), id.longId(), NMsgIntent.FAIL, "fetch content", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NLogUtils.traceMessage(_LOG(), Level.FINEST, repo.name(), fetchMode(), id.longId(), NMsgIntent.FAIL, "fetch content", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }
@@ -91,13 +91,13 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
     }
 
     @Override
-    public NFetchContentRepositoryCmd setId(NId id) {
+    public NFetchContentRepositoryCmd id(NId id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 

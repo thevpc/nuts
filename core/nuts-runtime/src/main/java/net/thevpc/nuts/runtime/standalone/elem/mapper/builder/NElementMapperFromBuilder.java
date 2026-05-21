@@ -73,12 +73,12 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
         Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> bodyFields = new HashMap<>();
 
         for (NReflectProperty property : effectiveType.properties()) {
-            if (!allFields.containsKey(property.getName())) {
-                NElementDeserializerBuilderNElementDeserializerFieldImpl<T> o = (NElementDeserializerBuilderNElementDeserializerFieldImpl<T>) builder.preConfiguredFields.get(property.getName());
+            if (!allFields.containsKey(property.name())) {
+                NElementDeserializerBuilderNElementDeserializerFieldImpl<T> o = (NElementDeserializerBuilderNElementDeserializerFieldImpl<T>) builder.preConfiguredFields.get(property.name());
                 if(o!=null){
                     o=o.copy();
                 }else{
-                    o=new NElementDeserializerBuilderNElementDeserializerFieldImpl<>(property.getName(),builder);
+                    o=new NElementDeserializerBuilderNElementDeserializerFieldImpl<>(property.name(),builder);
                 }
                 NElementDeserializerBuilderNElementDeserializerFieldImpl<T> f = o;
                 if(o.isIgnored()){
@@ -87,7 +87,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 f.uniformName = uniformName(f.name);
                 f.field = null;
                 for (NReflectProperty field : effectiveType.properties()) {
-                    String u = uniformName(field.getName());
+                    String u = uniformName(field.name());
                     if (u.equals(f.uniformName)) {
                         f.field = field;
                         break;
@@ -95,8 +95,8 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 }
                 f.wrapCollections=builder.wrapCollections;
                 f.containerIsCollection=builder.containerIsCollection;
-                f.arg= paramFieldFieldFilter == null || paramFieldFieldFilter.test(property.getName());
-                f.body= bodyFieldNameFilter == null || bodyFieldNameFilter.test(property.getName());
+                f.arg= paramFieldFieldFilter == null || paramFieldFieldFilter.test(property.name());
+                f.body= bodyFieldNameFilter == null || bodyFieldNameFilter.test(property.name());
                 boolean body = f.body || (!f.arg && !f.body);
                 boolean arg = f.arg || (!f.arg && !f.body);
                 if (body) {
@@ -115,7 +115,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                         }
                     }
                 }
-                allFields.put(property.getName(), f);
+                allFields.put(property.name(), f);
                 if(f.aliases!=null){
                     for (String alias : f.aliases) {
                         allFields.put(uniformName(alias), f);
@@ -179,10 +179,10 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 if(tField.typeOverride!=null) {
                     jt = (Class<?>) NReflectUtils.getRawClass(tField.typeOverride).orNull();
                     if(jt==null){
-                        jt = (Class<?>) tField.field.getPropertyType().javaType();
+                        jt = (Class<?>) tField.field.propertyType().javaType();
                     }
                 }else{
-                    jt = (Class<?>) tField.field.getPropertyType().javaType();
+                    jt = (Class<?>) tField.field.propertyType().javaType();
                 }
                 if((jt.isArray() || Collection.class.isAssignableFrom(jt)) && !value.isAnyArray()) {
                     tField.field.write(instance, context.toObject(value.wrapIntoArray(), jt));

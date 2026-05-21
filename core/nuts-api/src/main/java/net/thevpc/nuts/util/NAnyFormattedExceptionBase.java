@@ -39,9 +39,16 @@ import net.thevpc.nuts.text.NMsg;
 public interface NAnyFormattedExceptionBase extends NAnyExceptionBase {
 
 
+    /**
+     * formatted text
+     * @return formatted text
+     */
     NMsg formattedMessage();
 
-
+    /**
+     * should be inherited in the instance from the actual Exception
+     * @return message as String
+     */
     String getMessage();
 
 }

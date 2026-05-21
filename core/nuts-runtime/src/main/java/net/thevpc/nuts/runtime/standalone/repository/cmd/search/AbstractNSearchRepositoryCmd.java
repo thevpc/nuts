@@ -44,13 +44,13 @@ public abstract class AbstractNSearchRepositoryCmd extends NRepositoryCmdBase<NS
     }
 
     @Override
-    public NSearchRepositoryCmd setFilter(NDefinitionFilter filter) {
+    public NSearchRepositoryCmd filter(NDefinitionFilter filter) {
         this.filter = filter;
         return this;
     }
 
     @Override
-    public NDefinitionFilter getFilter() {
+    public NDefinitionFilter filter() {
         return filter;
     }
 

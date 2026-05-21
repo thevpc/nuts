@@ -85,13 +85,13 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (b != null) {
             switch (b.type()) {
                 case LIST: {
-                    for (NText child : ((NTextList) b).getChildren()) {
+                    for (NText child : ((NTextList) b).children()) {
                         printNormalized(child);
                     }
                     break;
                 }
                 case BUILDER: {
-                    for (NText child : ((NTextBuilder) b).getChildren()) {
+                    for (NText child : ((NTextBuilder) b).children()) {
                         printNormalized(child);
                     }
                     break;
@@ -105,7 +105,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
                         printParsed(b);
                     } else {
                         NTextStyled s = (NTextStyled) b;
-                        printNormalized(s.getChild());
+                        printNormalized(s.child());
                     }
                     break;
                 }
@@ -139,8 +139,8 @@ public abstract class NPrintStreamBase implements NPrintStream {
         NText t = b;
         NText transformed = txt().transform(t,
                 new NTextTransformConfig()
-                        .setNormalize(true)
-                        .setFlatten(true)
+                        .normalize(true)
+                        .flatten(true)
         );
         printNormalized(transformed);
         return this;

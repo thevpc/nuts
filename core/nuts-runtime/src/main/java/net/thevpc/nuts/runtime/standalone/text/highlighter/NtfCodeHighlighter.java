@@ -13,13 +13,13 @@ public class NtfCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "ntf";
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if(s==null){
             return NScorable.DEFAULT_SCORE;
         }

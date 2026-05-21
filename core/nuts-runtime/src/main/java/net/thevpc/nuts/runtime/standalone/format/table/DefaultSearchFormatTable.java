@@ -86,7 +86,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void complete(long count) {
-        getWriter().println(NTextArt.of().getTableRenderer().get().render(getTableModel()));
+        getWriter().println(NTextArt.of().tableRenderer().get().render(getTableModel()));
     }
 
 }

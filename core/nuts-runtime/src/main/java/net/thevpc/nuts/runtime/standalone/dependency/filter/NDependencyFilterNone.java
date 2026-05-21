@@ -66,7 +66,7 @@ public class NDependencyFilterNone extends AbstractDependencyFilter{
         return true;
     }
 
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
     }
 }

@@ -17,7 +17,7 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "json";
     }
 
@@ -28,7 +28,7 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if(s==null){
             return NScorable.DEFAULT_SCORE;
         }
@@ -105,7 +105,7 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
                         NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).getValue();
+                                String txt2 = ((NTextPlain) d[0]).value();
                                 switch (txt2) {
                                     case "true":
                                     case "false": {

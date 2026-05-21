@@ -63,7 +63,7 @@ public class NLogConsoleHandler implements NLogSPI {
 
     @Override
     public synchronized void log(NMsg message) {
-        if (!isLoggable(message.getLevel())) {
+        if (!isLoggable(message.level())) {
             return;
         }
         if (suspendTerminalMode) {
@@ -101,24 +101,24 @@ public class NLogConsoleHandler implements NLogSPI {
             err= NTerminal.ofSystem().err();
         }
         if(err ==null){
-            NDuration duration = rec.msg.getDuration();
-            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
+            NDuration duration = rec.msg.duration();
+            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.level(), rec.msg.intent(), rec.msg,
                     duration==null || duration.isZero() ? ""
                             : NMsg.ofC(" (duration: %s)", duration)
             ));
-            if (rec.msg.getThrowable() != null) {
-                NErr.println(NStringUtils.stacktrace(rec.msg.getThrowable()));
+            if (rec.msg.throwable() != null) {
+                NErr.println(NStringUtils.stacktrace(rec.msg.throwable()));
             }
             return;
         }
         synchronized (err) {
-            NDuration duration = rec.msg.getDuration();
-            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
+            NDuration duration = rec.msg.duration();
+            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.level(), rec.msg.intent(), rec.msg,
                     duration==null || duration.isZero() ? ""
                             : NMsg.ofC(" (duration: %s)", duration)
             ));
-            if (rec.msg.getThrowable() != null) {
-                NErr.println(NStringUtils.stacktrace(rec.msg.getThrowable()));
+            if (rec.msg.throwable() != null) {
+                NErr.println(NStringUtils.stacktrace(rec.msg.throwable()));
             }
         }
     }

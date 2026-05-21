@@ -148,11 +148,11 @@ public final class NTerminalCmd {
         return new NTerminalCmd(name, args == null ? null : Arrays.asList(args));
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public List<String> getArgs() {
+    public List<String> args() {
         return args;
     }
 

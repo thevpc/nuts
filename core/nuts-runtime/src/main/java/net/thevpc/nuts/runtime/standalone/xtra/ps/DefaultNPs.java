@@ -199,7 +199,7 @@ public class DefaultNPs implements NPs {
                         .grabErr()
                         .failFast(isFailFast())
                         .grabOut();
-                String grabbedOutString = u.getGrabbedOutString();
+                String grabbedOutString = u.grabbedOut();
                 return new LinuxPsParser().parse(new StringReader(grabbedOutString));
             }
             case UNIX:
@@ -211,7 +211,7 @@ public class DefaultNPs implements NPs {
                         .grabErr()
                         .failFast(isFailFast())
                         .grabOut();
-                return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
+                return new UnixPsParser().parse(new StringReader(u.grabbedOut()));
             }
             case WINDOWS: {
                 final int IMPL_WmiObject_Win32_Process_Csv = 1;
@@ -271,7 +271,7 @@ public class DefaultNPs implements NPs {
                     .failFast(isFailFast());
             b.exitCode();
             if (b.exitCode() == 0) {
-                String out = b.getGrabbedOutString();
+                String out = b.grabbedOut();
                 String[] split = out.split("\n");
                 return Arrays.asList(split).iterator();
             }

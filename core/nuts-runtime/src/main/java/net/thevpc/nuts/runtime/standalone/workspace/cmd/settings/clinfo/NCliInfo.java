@@ -87,6 +87,6 @@ public class NCliInfo {
     }
 
     private static Path getConfigFile() {
-        return Paths.get(NPlatformHome.USER.getHome()).resolve(".nuts-user-config");
+        return Paths.get(NPlatformHome.USER.home()).resolve(".nuts-user-config");
     }
 }

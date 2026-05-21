@@ -36,10 +36,6 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 /**
  * Created by vpc on 5/23/17.
@@ -65,7 +61,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     }
 
     @Override
-    public String getValue() {
+    public String value() {
         return text;
     }
 
@@ -126,7 +122,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
 
     @Override
     public NText substring(int start, int end) {
-        return new DefaultNTextPlain(getValue().substring(start, end));
+        return new DefaultNTextPlain(value().substring(start, end));
     }
 
     @Override

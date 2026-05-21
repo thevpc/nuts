@@ -10,11 +10,11 @@ public class NStringKeyValue {
         this.value = value;
     }
 
-    public String getKey() {
+    public String key() {
         return key;
     }
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 

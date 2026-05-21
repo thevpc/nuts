@@ -7,7 +7,7 @@ public interface NStringLiteralFormat {
     NStringLiteralFormat JAVA_STRING = NStringLiteralFormatBuilder.ofJava(NElementType.DOUBLE_QUOTED_STRING).build();
     NStringLiteralFormat JAVA_NAME = text -> NElementUtils.isElementName(text) ? text : JAVA_STRING.format(text);
     NStringLiteralFormat JAVA_STRING_UNBOUND = NStringLiteralFormatBuilder.ofJava(NElementType.DOUBLE_QUOTED_STRING)
-            .setSkipBoundaries(true).build();
+            .skipBoundaries(true).build();
     NStringLiteralFormat JAVA_CHAR = NStringLiteralFormatBuilder.ofJava(NElementType.SINGLE_QUOTED_STRING).build();
     NStringLiteralFormat SH_DOUBLE = NStringLiteralFormatBuilder.ofShell(NElementType.DOUBLE_QUOTED_STRING).build();
     NStringLiteralFormat SH_SINGLE = NStringLiteralFormatBuilder.ofShell(NElementType.SINGLE_QUOTED_STRING).build();

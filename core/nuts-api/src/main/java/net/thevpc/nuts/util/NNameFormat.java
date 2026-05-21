@@ -69,15 +69,15 @@ public class NNameFormat {
         return true;
     }
 
-    public NWordFormat getLeading() {
+    public NWordFormat leading() {
         return leading;
     }
 
-    public NWordFormat getNext() {
+    public NWordFormat next() {
         return next;
     }
 
-    public String getSep() {
+    public String step() {
         return sep;
     }
 

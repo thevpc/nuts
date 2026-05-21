@@ -4,6 +4,8 @@ import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.List;
+
 /**
  * @author Taha Ben Salah (taha.bensalah@gmail.com)
  * %creationtime 15 mai 2007 01:34:27
@@ -72,31 +74,31 @@ public interface NProgressMonitor {
 
     void reset();
 
-    String getId();
+    String id();
 
-    String getName();
+    String name();
 
-    NMsg getDescription();
+    NMsg description();
 
     NProgressMonitor addListener(NProgressListener listener);
 
     NProgressMonitor removeListener(NProgressListener listener);
 
-    NProgressListener[] getListeners();
+    List<NProgressListener> listeners();
 
-    NDuration getDuration();
+    NDuration duration();
 
-    NClock getStartClock();
+    NClock startClock();
 
-    NProgressMonitor setMessage(NMsg message);
+    NProgressMonitor message(NMsg message);
 
-    NMsg getMessage();
+    NMsg message();
 
     boolean isIndeterminate();
 
-    double getProgress();
+    double progress();
 
-    NProgressMonitor setProgress(double progress);
+    NProgressMonitor progress(double progress);
 
     /**
      * [0..1]
@@ -104,27 +106,27 @@ public interface NProgressMonitor {
      * @param progress
      * @param message
      */
-    NProgressMonitor setProgress(double progress, NMsg message);
+    NProgressMonitor progress(double progress, NMsg message);
 
-    NProgressMonitor setIndeterminate();
+    NProgressMonitor indeterminate();
 
-    NProgressMonitor setIndeterminate(NMsg message);
+    NProgressMonitor indeterminate(NMsg message);
 
-    NProgressMonitor setProgress(long i, long max);
+    NProgressMonitor progress(long i, long max);
 
-    NProgressMonitor setProgress(long i, long max, NMsg message);
+    NProgressMonitor progress(long i, long max, NMsg message);
 
-    NProgressMonitor setProgress(long i, long maxi, long j, long maxj);
+    NProgressMonitor progress(long i, long maxi, long j, long maxj);
 
-    NProgressMonitor setProgress(long i, long maxi, long j, long maxj, NMsg message);
+    NProgressMonitor progress(long i, long maxi, long j, long maxj, NMsg message);
 
     NProgressMonitor inc();
 
     NProgressMonitor inc(NMsg message);
 
-    NDuration getEstimatedTotalDuration();
+    NDuration estimatedTotalDuration();
 
-    NDuration getEstimatedRemainingDuration();
+    NDuration estimatedRemainingDuration();
 
     NProgressMonitor translate(long index, long max);
 

@@ -20,7 +20,7 @@ public interface NExprContext {
 
     NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args);
 
-    List<NExprOperator> getOperators();
+    List<NExprOperator> operators();
 
 
     NOptional<NExprVar> getVar(String varName);

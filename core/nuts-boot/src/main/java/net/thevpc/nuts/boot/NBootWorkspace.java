@@ -31,7 +31,7 @@ public interface NBootWorkspace {
     static int exitOnError(Throwable th) {
         if (th != null) {
             NExceptionWithExitCodeBase ec = NBootUtils.findThrowable(th, NExceptionWithExitCodeBase.class, null);
-            int c = ec == null ? 254 : ec.getExitCode();
+            int c = ec == null ? 254 : ec.exitCode();
             if (c != 0) {
                 System.exit(c);
             }

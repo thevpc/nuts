@@ -201,7 +201,7 @@ public class NCompressZip implements NCompressPackaging {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NCompress c = context.getCriteria(NCompress.class);
+        NCompress c = context.criteria(NCompress.class);
         String z = NStringUtils.trim(c.packaging()).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")

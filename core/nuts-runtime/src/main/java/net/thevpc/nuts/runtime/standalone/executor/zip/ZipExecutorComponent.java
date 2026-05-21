@@ -51,7 +51,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
@@ -62,7 +62,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
 
     @NScore
     public static int getScore(NScorableContext ctx) {
-        NDefinition def = ctx.getCriteria(NDefinition.class);
+        NDefinition def = ctx.criteria(NDefinition.class);
         if (def != null) {
             String shortName = def.id().shortName();
             //for executors

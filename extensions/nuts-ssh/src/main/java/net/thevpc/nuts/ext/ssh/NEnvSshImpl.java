@@ -15,7 +15,7 @@ public class NEnvSshImpl implements NEnv {
     private NEnv defEnv;
 
     public NEnvSshImpl(NScorableContext context) {
-        init(context.getCriteria());
+        init(context.criteria());
     }
 
     public NEnvSshImpl(NConnectionString connectionString) {
@@ -29,7 +29,7 @@ public class NEnvSshImpl implements NEnv {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        Object c = context.getCriteria();
+        Object c = context.criteria();
         if (c instanceof NConnectionString) {
             NConnectionString z = (NConnectionString) c;
             if (isSupportedProtocol(z.protocol())) {

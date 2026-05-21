@@ -35,23 +35,23 @@ public abstract class AbstractNUndeployRepositoryCmd extends NRepositoryCmdBase<
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
     @Override
-    public NUndeployRepositoryCmd setId(NId id) {
+    public NUndeployRepositoryCmd id(NId id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
     @Override
-    public NUndeployRepositoryCmd setRepository(String repository) {
+    public NUndeployRepositoryCmd repository(String repository) {
         this.repository = repository;
         return this;
     }
@@ -62,7 +62,7 @@ public abstract class AbstractNUndeployRepositoryCmd extends NRepositoryCmdBase<
 //    }
 
     @Override
-    public NUndeployRepositoryCmd setOffline(boolean offline) {
+    public NUndeployRepositoryCmd offline(boolean offline) {
         this.offline = offline;
         return this;
     }
@@ -73,7 +73,7 @@ public abstract class AbstractNUndeployRepositoryCmd extends NRepositoryCmdBase<
     }
 
     @Override
-    public NUndeployRepositoryCmd setTransitive(boolean transitive) {
+    public NUndeployRepositoryCmd transitive(boolean transitive) {
         this.transitive = transitive;
         return this;
     }

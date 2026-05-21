@@ -22,7 +22,7 @@ public final class NLogScopeImpl implements NLogScope {
     public static final NLogScope BLANK = new NLogScopeImpl(null, null, Collections.emptyMap(), null);
 
     @Override
-    public Map<String, Supplier<?>> getPlaceholders() {
+    public Map<String, Supplier<?>> placeholders() {
         return new LinkedHashMap<>(properties);
     }
 
@@ -167,10 +167,10 @@ public final class NLogScopeImpl implements NLogScope {
         if (other.log() != null) {
             newLog = other.log();
         }
-        NMsgSupplier<NMsg> prefix2 = mergeBoundaries(messagePrefix, other.getMessagePrefix());
-        NMsgSupplier<NMsg> suffix2 = mergeBoundaries(messageSuffix, other.getMessageSuffix());
+        NMsgSupplier<NMsg> prefix2 = mergeBoundaries(messagePrefix, other.messagePrefix());
+        NMsgSupplier<NMsg> suffix2 = mergeBoundaries(messageSuffix, other.messageSuffix());
         Map<String, Supplier<?>> properties2 = new LinkedHashMap<>(this.properties);
-        for (Map.Entry<String, Supplier<?>> e : other.getPlaceholders().entrySet()) {
+        for (Map.Entry<String, Supplier<?>> e : other.placeholders().entrySet()) {
             if (e.getValue() != null) {
                 properties2.put(e.getKey(), e.getValue());
             } else {
@@ -201,12 +201,12 @@ public final class NLogScopeImpl implements NLogScope {
     }
 
     @Override
-    public NMsgSupplier<NMsg> getMessagePrefix() {
+    public NMsgSupplier<NMsg> messagePrefix() {
         return messagePrefix;
     }
 
     @Override
-    public NMsgSupplier<NMsg> getMessageSuffix() {
+    public NMsgSupplier<NMsg> messageSuffix() {
         return messageSuffix;
     }
 

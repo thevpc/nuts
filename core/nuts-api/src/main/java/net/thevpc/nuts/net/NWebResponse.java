@@ -16,9 +16,9 @@ public interface NWebResponse {
 
     NMsg statusMessage();
 
-    List<String> getHeaders(String name);
+    List<String> headers(String name);
 
-    NOptional<String> getHeader(String name);
+    NOptional<String> header(String name);
 
     Map<String, List<String>> headers();
 
@@ -30,9 +30,9 @@ public interface NWebResponse {
 
     <T> List<T> contentArrayAsJson();
 
-    <T> T getContentAsJson(Class<T> clz);
+    <T> T contentAsJson(Class<T> clz);
 
-    <T> T getContentAs(Class<T> clz, NContentType type);
+    <T> T contentAs(Class<T> clz, NContentType type);
 
     Map<?, ?> contentAsJsonMap();
 

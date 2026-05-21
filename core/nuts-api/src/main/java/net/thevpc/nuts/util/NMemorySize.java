@@ -564,19 +564,19 @@ public class NMemorySize implements Serializable{
     public long getAs(NMemoryUnit unit) {
         switch (unit) {
             case ZETA_BYTE:
-                return getAsZetaBytes();
+                return asZetaBytes();
             case PETA_BYTE:
-                return getAsPetaBytes();
+                return asPetaBytes();
             case TERA_BYTE:
-                return getAsTeraBytes();
+                return asTeraBytes();
             case MEGA_BYTE:
-                return getAsMegaBytes();
+                return asMegaBytes();
             case KILO_BYTE:
-                return getAsKiloBytes();
+                return assKiloBytes();
             case BYTE:
-                return getAsBytes();
+                return asBytes();
             case BIT:
-                return getAsBits();
+                return asBits();
         }
         return 0;
     }
@@ -593,80 +593,80 @@ public class NMemorySize implements Serializable{
         return values[unit.ordinal()];
     }
 
-    public long getBits() {
+    public long bits() {
         return get(NMemoryUnit.BIT);
     }
 
-    public long getBytes() {
+    public long bytes() {
         return get(NMemoryUnit.BYTE);
     }
 
-    public long getKiloBytes() {
+    public long kiloBytes() {
         return get(NMemoryUnit.KILO_BYTE);
     }
 
-    public long getMegaBytes() {
+    public long megaBytes() {
         return get(NMemoryUnit.MEGA_BYTE);
     }
 
-    public long getTeraBytes() {
+    public long teraBytes() {
         return get(NMemoryUnit.TERA_BYTE);
     }
 
-    public long getPetaBytes() {
+    public long petaBytes() {
         return get(NMemoryUnit.PETA_BYTE);
     }
 
-    public long getZetaBytes() {
+    public long zetaBytes() {
         return get(NMemoryUnit.ZETA_BYTE);
     }
 
-    public NMemoryUnit getLargestUnit() {
+    public NMemoryUnit largestUnit() {
         return largestUnit;
     }
 
-    public NMemoryUnit getSmallestUnit() {
+    public NMemoryUnit smallestUnit() {
         return smallestUnit;
     }
 
-    public long getAsZetaBytes() {
+    public long asZetaBytes() {
         return bytes / (KB * KB * KB * KB * KB);
     }
 
-    public long getAsPetaBytes() {
+    public long asPetaBytes() {
         return bytes / (KB * KB * KB * KB);
     }
 
-    public long getAsTeraBytes() {
+    public long asTeraBytes() {
         return bytes / (KB * KB * KB);
     }
 
-    public long getAsMegaBytes() {
+    public long asMegaBytes() {
         return bytes / (KB * KB);
     }
 
-    public long getAsKiloBytes() {
+    public long assKiloBytes() {
         return bytes / KB;
     }
 
-    public long getAsBytes() {
+    public long asBytes() {
         return bytes;
     }
 
-    public long getAsBits() {
+    public long asBits() {
         return bytes * 8 + bits;
     }
 
-    public long getMemoryBytes() {
+    public long memoryBytes() {
         return bytes;
     }
 
-    public int getMemoryBits() {
+    public int memoryBits() {
         return bits;
     }
 
 
-    public boolean isIEC() {
+    public boolean iec() {
         return iec;
     }
 
@@ -678,7 +678,7 @@ public class NMemorySize implements Serializable{
     }
 
     public NMemorySize withSmallestUnit(NMemoryUnit smallestUnit) {
-        if (smallestUnit == getSmallestUnit()) {
+        if (smallestUnit == smallestUnit()) {
             return this;
         }
         NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
@@ -699,7 +699,7 @@ public class NMemorySize implements Serializable{
         return withSmallestUnit(NMemoryUnit.BIT);
     }
     public NMemorySize withLargestUnit(NMemoryUnit largestUnit) {
-        if (largestUnit == getLargestUnit()) {
+        if (largestUnit == largestUnit()) {
             return this;
         }
         NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
@@ -711,12 +711,12 @@ public class NMemorySize implements Serializable{
 
     public NMemorySize withUnits(NMemoryUnit smallestUnit, NMemoryUnit largestUnit) {
         if(smallestUnit==null){
-            smallestUnit=getSmallestUnit();
+            smallestUnit= smallestUnit();
         }
         if(largestUnit==null){
-            largestUnit=getLargestUnit();
+            largestUnit= largestUnit();
         }
-        if (smallestUnit == getSmallestUnit() && largestUnit == getLargestUnit()) {
+        if (smallestUnit == smallestUnit() && largestUnit == largestUnit()) {
             return this;
         }
         NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
@@ -761,8 +761,8 @@ public class NMemorySize implements Serializable{
             a[i] += b[i];
         }
         return of(a,
-                smallestUnit.compareTo(other.getSmallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
-                largestUnit.compareTo(other.getSmallestUnit()) > 0 ? largestUnit : other.smallestUnit
+                smallestUnit.compareTo(other.smallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
+                largestUnit.compareTo(other.smallestUnit()) > 0 ? largestUnit : other.smallestUnit
                 , iec
         );
     }
@@ -789,8 +789,8 @@ public class NMemorySize implements Serializable{
             a[i] -= b[i];
         }
         return of(a,
-                smallestUnit.compareTo(other.getSmallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
-                largestUnit.compareTo(other.getSmallestUnit()) > 0 ? largestUnit : other.smallestUnit
+                smallestUnit.compareTo(other.smallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
+                largestUnit.compareTo(other.smallestUnit()) > 0 ? largestUnit : other.smallestUnit
                 , iec
         );
     }
@@ -933,11 +933,11 @@ public class NMemorySize implements Serializable{
     }
 
     public NMemorySize reduceToLargestUnit() {
-        return withSmallestUnit(getLargestUnit());
+        return withSmallestUnit(largestUnit());
     }
 
     public NMemorySize reduceToSmallestUnit() {
-        return withSmallestUnit(getSmallestUnit());
+        return withSmallestUnit(smallestUnit());
     }
 
     public NMemorySize reduceToUnit(NMemoryUnit unit) {

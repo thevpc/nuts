@@ -37,7 +37,7 @@ public interface NTextList extends NNormalizedText, Iterable<NText> {
 
     NText get(int index);
 
-    List<NText> getChildren();
+    List<NText> children();
 
     NText simplify();
 }

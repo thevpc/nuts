@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  *
  * <p>
  * Multiple calls to any {@code from*} method will <b>add</b> candidates to the query
- * rather than replacing previous ones. When {@link #getBest()} or {@link #getBestResult()}
+ * rather than replacing previous ones. When {@link #best()} or {@link #bestResult()}
  * is called, all accumulated candidates are evaluated according to their score.
  * </p>
  *
@@ -160,19 +160,19 @@ public interface NScorableQuery<T extends NScorable> {
      *
      * @return list of valid scorable instances
      */
-    List<T> getAll();
+    List<T> all();
 
     /**
      * Returns the best scorable instance according to its score and the provided context.
      *
      * @return an {@link NOptional} wrapping the best instance, or empty if none are valid
      */
-    NOptional<T> getBest();
+    NOptional<T> best();
 
     /**
      * Returns the best scorable instance along with its score and the context used to evaluate it.
      *
      * @return an {@link NOptional} wrapping the {@link NScoredValue} for the best instance, or empty if none are valid
      */
-    NOptional<NScoredValue<T>> getBestResult();
+    NOptional<NScoredValue<T>> bestResult();
 }

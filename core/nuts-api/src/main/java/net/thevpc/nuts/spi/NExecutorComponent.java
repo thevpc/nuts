@@ -44,7 +44,7 @@ public interface NExecutorComponent extends NComponent {
      *
      * @return artifact id
      */
-    NId getId();
+    NId id();
 
     /**
      * execute the artifact

@@ -23,15 +23,15 @@ public class NMsgCode implements NDTO{
         this.params = params;
     }
 
-    public String getMessage() {
+    public String message() {
         return message;
     }
 
-    public String getCode() {
+    public String code() {
         return code;
     }
 
-    public String[] getParams() {
+    public String[] params() {
         return params;
     }
 }

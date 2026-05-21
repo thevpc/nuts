@@ -74,8 +74,8 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
         int charSize;
 
         public boolean isComplex(NElementFormatOptions options) {
-            return score >= options.getComplexityThreshold()
-                    || charSize >= options.getColumnLimit();
+            return score >= options.complexityThreshold()
+                    || charSize >= options.columnLimit();
         }
     }
 
@@ -105,7 +105,7 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
             // Clear old affixes if necessary, or just set them cleanly:
 
             // 1. After { or [
-            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.POST_4);
+            builder.addNewLineAffix(options.newLineMode(), NAffixAnchor.POST_4);
             builder.addSpaceAffix(indent + unit, NAffixAnchor.POST_4);
 
             // 2. Separators: The comma goes in SEP_1, the NewLine in SEP_2
@@ -114,11 +114,11 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
 
             builder.addSpaceAffix(" ", NAffixAnchor.SEP_2);
             builder.addSeparatorAffix(",", NAffixAnchor.SEP_2);
-            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.SEP_2);
+            builder.addNewLineAffix(options.newLineMode(), NAffixAnchor.SEP_2);
             builder.addSpaceAffix(indent + unit, NAffixAnchor.SEP_2);
 
             // 3. Before } or ]
-            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.PRE_5);
+            builder.addNewLineAffix(options.newLineMode(), NAffixAnchor.PRE_5);
             builder.addSpaceAffix(indent, NAffixAnchor.PRE_5);
         } else {
             // Simple mode: One-liner with single spaces
@@ -143,7 +143,7 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
             // Clear old affixes if necessary, or just set them cleanly:
 
             // 1. After { or [
-            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.POST_2);
+            builder.addNewLineAffix(options.newLineMode(), NAffixAnchor.POST_2);
             builder.addSpaceAffix(indent + unit, NAffixAnchor.POST_2);
 
             // 2. Separators: The comma goes in SEP_1, the NewLine in SEP_2
@@ -151,7 +151,7 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
             builder.addSpaceAffix(" ", NAffixAnchor.SEP_1); // Optional trailing space after comma
 
             // 3. Before } or ]
-            builder.addNewLineAffix(options.getNewLineMode(), NAffixAnchor.PRE_3);
+            builder.addNewLineAffix(options.newLineMode(), NAffixAnchor.PRE_3);
             builder.addSpaceAffix(indent, NAffixAnchor.PRE_3);
         } else {
             // Simple mode: One-liner with single spaces

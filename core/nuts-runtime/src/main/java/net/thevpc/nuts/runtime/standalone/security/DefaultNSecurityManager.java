@@ -92,12 +92,12 @@ public class DefaultNSecurityManager implements NSecurityManager {
     }
 
     @Override
-    public NOptional<NUser> findUser(String username) {
+    public NOptional<NUser> getUser(String username) {
         return securityModel().findUser(username);
     }
 
     @Override
-    public List<NUser> findUsers() {
+    public List<NUser> users() {
         return securityModel().findUsers();
     }
 
@@ -123,23 +123,17 @@ public class DefaultNSecurityManager implements NSecurityManager {
     }
 
     @Override
-    public String[] getCurrentLoginStack() {
+    public List<String> currentLoginStack() {
         return securityModel().getCurrentLoginStack();
     }
 
     @Override
-    public String getCurrentUsername() {
+    public String currentUsername() {
         return securityModel().getCurrentUsername();
     }
 
-
     @Override
-    public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId) {
-        return securityModel().getAuthenticationAgent(authenticationAgentId);
-    }
-
-    @Override
-    public NSecurityManager setAuthenticationAgent(String authenticationAgentId) {
+    public NSecurityManager authenticationAgent(String authenticationAgentId) {
         securityModel().setAuthenticationAgent(authenticationAgentId);
         return this;
     }
@@ -223,22 +217,22 @@ public class DefaultNSecurityManager implements NSecurityManager {
     }
 
     @Override
-    public NOptional<NNamedCredential> findNamedCredential(String name, String user) {
+    public NOptional<NNamedCredential> getNamedCredential(String name, String user) {
         return configModel().findNamedCredential(name, user);
     }
 
     @Override
-    public NOptional<NNamedCredential> findNamedCredential(String name) {
-        return findNamedCredential(name, null);
+    public NOptional<NNamedCredential> getNamedCredential(String name) {
+        return getNamedCredential(name, null);
     }
 
     @Override
-    public List<NNamedCredential> findNamedCredentials() {
-        return findNamedCredentials(null);
+    public List<NNamedCredential> namedCredentials() {
+        return getNamedCredentials(null);
     }
 
     @Override
-    public List<NNamedCredential> findNamedCredentials(String user) {
+    public List<NNamedCredential> getNamedCredentials(String user) {
         return configModel().findNamedCredentials(user);
     }
 
@@ -246,7 +240,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
     public NSecurityManager addRepositoryPermissions(String user, String repository, String... permissions) {
         return withRepositoryUser(user, repository, u -> {
             Set<String> all = new HashSet<>();
-            List<String> gg = u.getPermissions();
+            List<String> gg = u.permissions();
             if (gg != null) {
                 for (String g : gg) {
                     if (!NBlankable.isBlank(g)) {
@@ -261,7 +255,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
                     }
                 }
             }
-            u.setPermissions(new ArrayList<>(all));
+            u.permissions(new ArrayList<>(all));
         });
     }
 
@@ -269,7 +263,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
     public NSecurityManager removeRepositoryPermissions(String user, String repository, String... permissions) {
         return withRepositoryUser(user, repository, u -> {
             Set<String> all = new HashSet<>();
-            List<String> gg = u.getPermissions();
+            List<String> gg = u.permissions();
             if (gg != null) {
                 for (String g : gg) {
                     if (!NBlankable.isBlank(g)) {
@@ -284,48 +278,48 @@ public class DefaultNSecurityManager implements NSecurityManager {
                     }
                 }
             }
-            u.setPermissions(new ArrayList<>(all));
+            u.permissions(new ArrayList<>(all));
         });
     }
 
     @Override
-    public List<NRepositoryAccess> findRepositoryAccess() {
+    public List<NRepositoryAccess> repositoryAccessList() {
         NWorkspaceExt wse = NWorkspaceExt.of();
         List<NRepositoryAccess> all = new ArrayList<>();
         for (NRepository repository : wse.getRepositoryModel().getRepositories()) {
-            all.addAll(findRepositoryAccessByRepository(repository.uuid()));
+            all.addAll(getRepositoryAccessListByRepository(repository.uuid()));
         }
         return all;
     }
 
     @Override
-    public List<NRepositoryAccess> findRepositoryAccessByRepository(String repository) {
+    public List<NRepositoryAccess> getRepositoryAccessListByRepository(String repository) {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
-        return findUsers().stream().flatMap(x -> findRepositoryAccess(x.getUsername(), repository1.name()).stream().stream()).collect(Collectors.toList());
+        return users().stream().flatMap(x -> getRepositoryAccess(x.username(), repository1.name()).stream().stream()).collect(Collectors.toList());
     }
 
     @Override
-    public List<NRepositoryAccess> findRepositoryAccessByUser(String user) {
+    public List<NRepositoryAccess> getRepositoryAccessListByUser(String user) {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NUser user1 = securityModel().findUser(user).get();
         return Arrays.asList(wse.getRepositoryModel().getRepositories()).stream()
-                .flatMap(x -> findRepositoryAccess(user1.getUsername(), x.uuid()).stream().stream()).collect(Collectors.toList());
+                .flatMap(x -> getRepositoryAccess(user1.username(), x.uuid()).stream().stream()).collect(Collectors.toList());
     }
 
     @Override
     public NSecurityManager updateRepositoryAccess(NRepositoryAccessSpec repositoryAccess) {
-        withRepositoryUser(repositoryAccess.getUserName(), repositoryAccess.getRepository(), c -> {
-            if (repositoryAccess.getPermissions() != null) {
-                c.setPermissions(repositoryAccess.getPermissions());
+        withRepositoryUser(repositoryAccess.userName(), repositoryAccess.repository(), c -> {
+            if (repositoryAccess.permissions() != null) {
+                c.permissions(repositoryAccess.permissions());
             }
-            if (repositoryAccess.getRemoteUserName() != null) {
-                c.setRemoteUserName(NStringUtils.trimToNull(repositoryAccess.getRemoteUserName()));
+            if (repositoryAccess.remoteUserName() != null) {
+                c.remoteUserName(NStringUtils.trimToNull(repositoryAccess.remoteUserName()));
             }
-            if (repositoryAccess.getRemoteAuthType() != null) {
-                c.setRemoteAuthType(NStringUtils.trimToNull(repositoryAccess.getRemoteAuthType()));
+            if (repositoryAccess.remoteAuthType() != null) {
+                c.remoteAuthType(NStringUtils.trimToNull(repositoryAccess.remoteAuthType()));
             }
-            c.setRemoteCredential(repositoryAccess.getRemoteCredential() == null ? null : repositoryAccess.getRemoteCredential().toString());
+            c.remoteCredential(repositoryAccess.remoteCredential() == null ? null : repositoryAccess.remoteCredential().toString());
         });
         return this;
     }
@@ -333,10 +327,10 @@ public class DefaultNSecurityManager implements NSecurityManager {
     private NSecurityManager withUser(String user, Consumer<NUserConfig> consumer) {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NUser user1 = securityModel().findUser(user).get();
-        NUserConfig r = wse.getConfigModel().getUser(user1.getUsername());
+        NUserConfig r = wse.getConfigModel().getUser(user1.username());
         if (r == null) {
             NUserConfig ru = new NUserConfig();
-            ru.setUserName(user1.getUsername());
+            ru.userName(user1.username());
             consumer.accept(ru);
             wse.getConfigModel().addOrUpdateUser(ru);
         } else {
@@ -346,23 +340,23 @@ public class DefaultNSecurityManager implements NSecurityManager {
         return this;
     }
 
-    public NOptional<NRepositoryAccess> findRepositoryAccess(String user, String repository) {
+    public NOptional<NRepositoryAccess> getRepositoryAccess(String user, String repository) {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NOptional<NUserConfig> userConfigNOptional = wse.getConfigModel().resolveAsValidUserConfig(user);
         if (userConfigNOptional.isPresent()) {
-            String finalUser = userConfigNOptional.get().getUserName();
+            String finalUser = userConfigNOptional.get().userName();
             if (wse.getModel().securityModel.isAdminOrUser(finalUser)) {
                 NOptional<NRepository> repository1 = wse.getRepositoryModel().getRepository(repository);
                 if (repository1.isPresent()) {
                     NRepositoryAccessConfig r = getRepositoryUserConfig(user, repository);
                     return NOptional.of(new DefaultNRepositoryAccess(
-                            r.getUserName(),
+                            r.userName(),
                             repository1.get().uuid(),
                             repository1.get().name(),
-                            r.getRemoteUserName(),
-                            NBlankable.isBlank(r.getRemoteCredential()) ? null : NSecureToken.parse(r.getRemoteCredential()),
-                            r.getRemoteAuthType(),
-                            r.getPermissions()
+                            r.remoteUserName(),
+                            NBlankable.isBlank(r.remoteCredential()) ? null : NSecureToken.parse(r.remoteCredential()),
+                            r.remoteAuthType(),
+                            r.permissions()
                     ));
                 }
             }
@@ -380,11 +374,11 @@ public class DefaultNSecurityManager implements NSecurityManager {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NUser user1 = securityModel().findUser(user).get();
         NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
-        NOptional<NRepositoryAccessConfig> r = wse.getConfigModel().getRepositoryUser(repository1.uuid(), user1.getUsername());
+        NOptional<NRepositoryAccessConfig> r = wse.getConfigModel().getRepositoryUser(repository1.uuid(), user1.username());
         if (!r.isPresent()) {
             NRepositoryAccessConfig ru = new NRepositoryAccessConfig();
-            ru.setUserName(user1.getUsername());
-            ru.setRepository(repository1.uuid());
+            ru.userName(user1.username());
+            ru.repository(repository1.uuid());
             consumer.accept(ru);
             wse.getConfigModel().addRepositoryUser(ru);
         } else {
@@ -397,21 +391,21 @@ public class DefaultNSecurityManager implements NSecurityManager {
     @Override
     public NSecurityManager addUser(NUserSpec query) {
         NAssert.requireNamedNonNull(query, "add user query");
-        NAssert.requireNamedNonNull(query.getUserName(), "add user query");
-        if (!query.getUserName().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUserName()));
+        NAssert.requireNamedNonNull(query.userName(), "add user query");
+        if (!query.userName().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
+            throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.userName()));
         }
         DefaultNWorkspaceConfigModel c = NWorkspaceExt.of().getConfigModel();
-        NUserConfig u = c.getUser(query.getUserName());
+        NUserConfig u = c.getUser(query.userName());
         if (u != null) {
-            throw new NSecurityException(NMsg.ofC("user already exists : %s", query.getUserName()));
+            throw new NSecurityException(NMsg.ofC("user already exists : %s", query.userName()));
         }
-        NSecureString credential = query.getCredential();
+        NSecureString credential = query.credential();
         NSecureToken owCredential = null;
         if (credential != null) {
             owCredential = addOneWayCredential(credential);
         }
-        NUserConfig uc = new NUserConfig(query.getUserName(), owCredential == null ? null : owCredential.toString(), query.getGroups(), query.getPermissions());
+        NUserConfig uc = new NUserConfig(query.userName(), owCredential == null ? null : owCredential.toString(), query.groups(), query.permissions());
         c.addOrUpdateUser(uc);
         return this;
     }
@@ -419,19 +413,19 @@ public class DefaultNSecurityManager implements NSecurityManager {
     @Override
     public NSecurityManager updateUser(NUserSpec query) {
         NAssert.requireNamedNonNull(query, "query user query");
-        NAssert.requireNamedNonNull(query.getUserName(), "add user query");
-        if (!query.getUserName().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.getUserName()));
+        NAssert.requireNamedNonNull(query.userName(), "add user query");
+        if (!query.userName().matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
+            throw new NIllegalArgumentException(NMsg.ofC("invalid username %s", query.userName()));
         }
         DefaultNWorkspaceConfigModel c = NWorkspaceExt.of().getConfigModel();
-        NUserConfig u = c.getUser(query.getUserName());
+        NUserConfig u = c.getUser(query.userName());
         if (u == null) {
-            throw new NSecurityException(NMsg.ofC("user not found : %s", query.getUserName()));
+            throw new NSecurityException(NMsg.ofC("user not found : %s", query.userName()));
         }
         u = u.copy();
-        NSecureString credential = query.getCredential();
+        NSecureString credential = query.credential();
         if (credential != null) {
-            String oldOwString = u.getCredential();
+            String oldOwString = u.credential();
             NSecureToken oldOw=NBlankable.isBlank(oldOwString)?null:NSecureToken.parse(oldOwString);
             NSecureToken owCredential;
             if(oldOw!=null) {
@@ -439,13 +433,13 @@ public class DefaultNSecurityManager implements NSecurityManager {
             }else{
                 owCredential = addOneWayCredential(credential);
             }
-            u.setCredential(owCredential.toString());
+            u.credential(owCredential.toString());
         }
-        if (query.getGroups() != null) {
-            u.setGroups(query.getGroups());
+        if (query.groups() != null) {
+            u.groups(query.groups());
         }
-        if (query.getPermissions() != null) {
-            u.setPermissions(query.getPermissions());
+        if (query.permissions() != null) {
+            u.permissions(query.permissions());
         }
         c.addOrUpdateUser(u);
         return this;

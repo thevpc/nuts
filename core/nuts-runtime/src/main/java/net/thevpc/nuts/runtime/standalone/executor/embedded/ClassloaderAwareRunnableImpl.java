@@ -97,7 +97,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
                         NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
                         System.setProperty("nuts.boot.args",
-                                NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(bootOptions
+                                NCmdLineWriter.of().shellFamily(NShellFamily.SH).formatPlain(bootOptions
                                         .toCmdLine(new NWorkspaceOptionsConfig().compact(true))
                                         .add(id.longName()))
                         );

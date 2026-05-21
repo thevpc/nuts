@@ -77,9 +77,9 @@ public class NRateLimitValueBuilderImpl implements NRateLimitValueBuilder {
         } else {
             List<NRateLimitRuleModel> okkay = new ArrayList<>();
             for (NCollectionDiffChange<NRateLimitRuleModel> d : NCollectionDiff.diffList(Arrays.asList(old.rules()), Arrays.asList(newModel.rules()), m -> m.id())) {
-                switch (d.getMode()) {
+                switch (d.mode()) {
                     case ADDED: {
-                        okkay.add(d.getNewValue());
+                        okkay.add(d.newValue());
                         break;
                     }
                     case REMOVED: {
@@ -87,18 +87,18 @@ public class NRateLimitValueBuilderImpl implements NRateLimitValueBuilder {
                     }
                     case CHANGED: {
                         okkay.add(new NRateLimitRuleModel(
-                                d.getNewValue().id(),
-                                d.getNewValue().strategy(),
-                                d.getNewValue().capacity(),
-                                d.getNewValue().duration(),
-                                Math.min(d.getOldValue().available(), d.getNewValue().capacity()),
-                                d.getOldValue().lastRefill(),
-                                d.getOldValue().getConfig()
+                                d.newValue().id(),
+                                d.newValue().strategy(),
+                                d.newValue().capacity(),
+                                d.newValue().duration(),
+                                Math.min(d.oldValue().available(), d.newValue().capacity()),
+                                d.oldValue().lastRefill(),
+                                d.oldValue().config()
                         ));
                         break;
                     }
                     case UNCHANGED: {
-                        okkay.add(d.getOldValue());
+                        okkay.add(d.oldValue());
                     }
                 }
             }

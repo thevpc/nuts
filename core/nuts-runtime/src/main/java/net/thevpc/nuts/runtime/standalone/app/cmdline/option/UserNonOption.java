@@ -48,8 +48,8 @@ public class UserNonOption extends DefaultNonOption {
         List<NArgCandidate> all = new ArrayList<>();
         NRepository repository = context.get(NRepository.class);
         for (NUser nutsSecurityEntityConfig : NSecurityManager.of()
-                .findUsers()) {
-            all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUsername()));
+                .users()) {
+            all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.username()));
         }
         return all;
     }

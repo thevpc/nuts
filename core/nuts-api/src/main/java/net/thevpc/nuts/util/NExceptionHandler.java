@@ -23,7 +23,7 @@ import net.thevpc.nuts.internal.NReservedLangUtils;
 import java.util.logging.Level;
 
 public class NExceptionHandler {
-    private Throwable ex;
+    private Throwable throwable;
     private int code;
     private NLog out;
     private boolean stacktrace;
@@ -49,11 +49,11 @@ public class NExceptionHandler {
                 NWorkspaceOptions bo = null;
                 bo = session.workspace().bootOptions().toWorkspaceOptions();
                 return new NExceptionHandler()
-                        .setEx(ex)
-                        .setShowMessage(true)
-                        .setOut(out)
-                        .setStacktrace(NApiUtilsRPI.resolveShowStackTrace(bo))
-                        .setGui(NApiUtilsRPI.resolveGui(bo))
+                        .throwable(ex)
+                        .showMessage(true)
+                        .out(out)
+                        .stacktrace(NApiUtilsRPI.resolveShowStackTrace(bo))
+                        .gui(NApiUtilsRPI.resolveGui(bo))
                         .build();
             });
         } else {
@@ -66,20 +66,20 @@ public class NExceptionHandler {
                 NBootOptionsInfo options = new NBootOptionsInfo();
                 NBootWorkspaceCmdLineParser.parseNutsArguments(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), options);
                 return new NExceptionHandler()
-                        .setEx(ex)
-                        .setShowMessage(true)
-                        .setOut(out)
-                        .setStacktrace(NApiUtilsRPI.resolveShowStackTrace(options))
-                        .setGui(NApiUtilsRPI.resolveGui(options))
+                        .throwable(ex)
+                        .showMessage(true)
+                        .out(out)
+                        .stacktrace(NApiUtilsRPI.resolveShowStackTrace(options))
+                        .gui(NApiUtilsRPI.resolveGui(options))
                         .build();
             } catch (Exception e) {
                 //any, ignore...
                 return new NExceptionHandler()
-                        .setEx(ex)
-                        .setShowMessage(true)
-                        .setOut(out)
-                        .setStacktrace(true)
-                        .setGui(false)
+                        .throwable(ex)
+                        .showMessage(true)
+                        .out(out)
+                        .stacktrace(true)
+                        .gui(false)
                         .build();
             }
         }
@@ -89,11 +89,11 @@ public class NExceptionHandler {
     }
 
 
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 
-    public NExceptionHandler setSession(NSession session) {
+    public NExceptionHandler session(NSession session) {
         this.session = session;
         return this;
     }
@@ -102,34 +102,34 @@ public class NExceptionHandler {
         return showMessage;
     }
 
-    public NExceptionHandler setShowMessage(boolean showMessage) {
+    public NExceptionHandler showMessage(boolean showMessage) {
         this.showMessage = showMessage;
         return this;
     }
 
-    public Throwable getEx() {
-        return ex;
+    public Throwable throwable() {
+        return throwable;
     }
 
-    public NExceptionHandler setEx(Throwable ex) {
-        this.ex = ex;
+    public NExceptionHandler throwable(Throwable ex) {
+        this.throwable = ex;
         return this;
     }
 
-    public int getCode() {
+    public int code() {
         return code;
     }
 
-    public NExceptionHandler setCode(int code) {
+    public NExceptionHandler code(int code) {
         this.code = code;
         return this;
     }
 
-    public NLog getOut() {
+    public NLog out() {
         return out;
     }
 
-    public NExceptionHandler setOut(NLog out) {
+    public NExceptionHandler out(NLog out) {
         this.out = out;
         return this;
     }
@@ -138,7 +138,7 @@ public class NExceptionHandler {
         return stacktrace;
     }
 
-    public NExceptionHandler setStacktrace(boolean stacktrace) {
+    public NExceptionHandler stacktrace(boolean stacktrace) {
         this.stacktrace = stacktrace;
         return this;
     }
@@ -147,7 +147,7 @@ public class NExceptionHandler {
         return gui;
     }
 
-    public NExceptionHandler setGui(boolean gui) {
+    public NExceptionHandler gui(boolean gui) {
         this.gui = gui;
         return this;
     }
@@ -157,23 +157,23 @@ public class NExceptionHandler {
             return this;
         }
         built = true;
-        if (ex == null) {
-            setCode(0);
+        if (throwable == null) {
+            code(0);
             return this;
         }
-        int errorCode = NExceptions.resolveExitCode(ex).orElse(204);
-        setCode(errorCode);
+        int errorCode = NExceptions.resolveExitCode(throwable).orElse(204);
+        code(errorCode);
         if (errorCode == 0) {
             return this;
         }
-        setSession(NSessionAwareExceptionBase.resolveSession(ex).orNull());
-        messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::formattedMessage)
+        session(NSessionAwareExceptionBase.resolveSession(throwable).orNull());
+        messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable).map(NSessionAwareExceptionBase::formattedMessage)
                 .orNull();
-        messageString = NExceptions.getErrorMessage(ex);
-        if (getOut() == null) {
-            if (getSession() != null) {
+        messageString = NExceptions.getErrorMessage(throwable);
+        if (out() == null) {
+            if (session() != null) {
                 try {
-                    sessionOut = NIO.of().systemTerminal().getErr();
+                    sessionOut = NIO.of().systemTerminal().err();
                     if (messageFormatted != null) {
                         messageFormatted = NMsg.ofNtf(NTextBuilder.of().append(messageFormatted, NTextStyle.error()).build());
                     } else {
@@ -195,9 +195,9 @@ public class NExceptionHandler {
                 }
             }
         } else {
-            if (getSession() != null) {
+            if (session() != null) {
 //                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, null, session);
-                sessionOut = getSession().err();
+                sessionOut = session().err();
             } else {
                 sessionOut = null;
             }
@@ -206,10 +206,10 @@ public class NExceptionHandler {
     }
 
     public NExceptionHandler reThrow() {
-        if (ex == null) {
+        if (throwable == null) {
             return this;
         }
-        NOptional<NExceptionWithExitCodeBase> u = NExceptions.resolveWithExitCodeExceptionBase(ex);
+        NOptional<NExceptionWithExitCodeBase> u = NExceptions.resolveWithExitCodeExceptionBase(throwable);
         if (u.isPresent()) {
             NExceptionWithExitCodeBase o = u.get();
             if (o instanceof RuntimeException) {
@@ -217,18 +217,18 @@ public class NExceptionHandler {
             }
             if (session != null) {
                 session.runWith(() -> {
-                    throw new NException(NMsg.ofC("%s", o.toString(), o.getExitCode()));
+                    throw new NException(NMsg.ofC("%s", o.toString(), o.exitCode()));
                 });
             }
-            throw new NBootException(NBootMsg.ofC("%s", o.toString(), o.getExitCode()));
+            throw new NBootException(NBootMsg.ofC("%s", o.toString(), o.exitCode()));
         }
-        throw new NBootException(NBootMsg.ofC("%s", ex.toString(), 255));
+        throw new NBootException(NBootMsg.ofC("%s", throwable.toString(), 255));
     }
 
 
     public NExceptionHandler showError() {
         build();
-        if (ex == null) {
+        if (throwable == null) {
             return this;
         }
         if (showMessage) {
@@ -241,7 +241,7 @@ public class NExceptionHandler {
                             sessionOut.println(messageString);
                         }
                         if (stacktrace) {
-                            ex.printStackTrace(sessionOut.asPrintStream());
+                            throwable.printStackTrace(sessionOut.asPrintStream());
                         }
                         sessionOut.flush();
                     } else {
@@ -253,7 +253,7 @@ public class NExceptionHandler {
                             );
                             if (stacktrace) {
                                 session.eout().add(NElement.ofObjectBuilder().set("errorTrace",
-                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
+                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                                 ).build());
                             }
                             NArrayElementBuilder e = session.eout();
@@ -269,7 +269,7 @@ public class NExceptionHandler {
                                     .build());
                             if (stacktrace) {
                                 session.eout().add(NElement.ofObjectBuilder().set("errorTrace",
-                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
+                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                                 ).build());
                             }
                             NArrayElementBuilder e = session.eout();
@@ -295,7 +295,7 @@ public class NExceptionHandler {
                         out.log(msgBuilder.withMsgPlain(">  STACKTRACE :"));
                         out.log(msgBuilder.withMsgPlain("---------------"));
                         out.log(msgBuilder.withMsgPlain(
-                                NStringUtils.stacktrace(ex)
+                                NStringUtils.stacktrace(throwable)
                         ));
                     }
                 }else{
@@ -309,7 +309,7 @@ public class NExceptionHandler {
                         System.err.println(NMsg.ofPlain(">  STACKTRACE :"));
                         System.err.println(NMsg.ofPlain("---------------"));
                         System.err.println(NMsg.ofPlain(
-                                NStringUtils.stacktrace(ex)
+                                NStringUtils.stacktrace(throwable)
                         ));
                     }
                 }
@@ -329,7 +329,7 @@ public class NExceptionHandler {
             if (stacktrace) {
                 if (sb.length() > 0) {
                     sb.append("\n");
-                    sb.append(NStringUtils.stacktrace(ex));
+                    sb.append(NStringUtils.stacktrace(throwable));
                 }
             }
             if (session != null) {
@@ -351,7 +351,7 @@ public class NExceptionHandler {
     }
 
     public void handleFatal() {
-        System.exit(showError().getCode());
+        System.exit(showError().code());
     }
 
 }

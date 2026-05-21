@@ -107,19 +107,19 @@ public class YamlTest {
                 NTableModel.of(NText.of("JSON"))
         ));
         NElementWriter.ofJson()
-                .setFormatter(NElementFormatter.ofPretty())
+                .formatter(NElementFormatter.ofPretty())
                 .writeln(e);
         NOut.println(NTextArtTableRenderer.of().render(
                 NTableModel.of(NText.of("TSON"))
         ));
         NElementWriter.ofTson()
-                .setFormatter(NElementFormatter.ofCompact())
+                .formatter(NElementFormatter.ofCompact())
                 .writeln(e);
         NOut.println(NTextArtTableRenderer.of().render(
                 NTableModel.of(NText.of("YAML"))
         ));
         NElementWriter.ofYaml()
-                .setFormatter(NElementFormatter.ofCompact())
+                .formatter(NElementFormatter.ofCompact())
                 .writeln(e);
     }
 

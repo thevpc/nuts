@@ -43,7 +43,7 @@ public class NElementNotFoundException extends NException {
      * call to {@link #initCause}.
      *
      * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     *                later retrieval by the {@link #message()} method.
      */
     public NElementNotFoundException(NMsg message) {
         super(message);
@@ -58,7 +58,7 @@ public class NElementNotFoundException extends NException {
      * this runtime exception's detail message.
      *
      * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
+     *                by the {@link #message()} method).
      * @param cause   the cause (which is saved for later retrieval by the
      *                {@link #getCause()} method).  (A {@code null} value is
      *                permitted, and indicates that the cause is nonexistent or

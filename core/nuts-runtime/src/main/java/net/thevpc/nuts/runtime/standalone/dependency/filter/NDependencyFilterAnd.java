@@ -66,7 +66,7 @@ public class NDependencyFilterAnd extends AbstractDependencyFilter implements NC
         return true;
     }
 
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
     }
 }

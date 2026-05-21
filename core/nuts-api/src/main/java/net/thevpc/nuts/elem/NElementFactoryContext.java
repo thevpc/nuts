@@ -43,9 +43,9 @@ public interface NElementFactoryContext {
 
     boolean isAtomicType(Type any);
 
-    Predicate<Type> getSimpleTypesFilter();
+    Predicate<Type> simpleTypesFilter();
 
-    Map<String, Object> getProperties();
+    Map<String, Object> properties();
 
     NElement defaultCreateElement(Object o, Type expectedType);
 
@@ -67,7 +67,7 @@ public interface NElementFactoryContext {
 
     boolean isNtf();
 
-    NReflectRepository getTypesRepository();
+    NReflectRepository typesRepository();
 
     <T> NElementSerializer<T> getSerializer(Type type, boolean defaultOnly);
 

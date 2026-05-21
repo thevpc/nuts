@@ -10,17 +10,17 @@ import java.util.function.Predicate;
 public interface NElementDeserializerBuilder<T> {
     NElementDeserializer<T> build();
 
-    Predicate<String> getParamFieldFilter();
+    Predicate<String> paramFieldFilter();
 
-    NElementDeserializerBuilder<T> setParamFieldFilter(Predicate<String> paramFieldFilter);
+    NElementDeserializerBuilder<T> paramFieldFilter(Predicate<String> paramFieldFilter);
 
-    Predicate<String> getChildFieldNameFilter();
+    Predicate<String> childFieldNameFilter();
 
-    NElementDeserializerBuilder<T> setChildFieldNameFilter(Predicate<String> childFieldNameFilter);
+    NElementDeserializerBuilder<T> childFieldNameFilter(Predicate<String> childFieldNameFilter);
 
-    NElementDeserializerBuilder<T> setWrapCollections(boolean wrapCollections);
+    NElementDeserializerBuilder<T> wrapCollections(boolean wrapCollections);
 
-    NElementDeserializerBuilder<T> setContainerIsCollection(boolean value);
+    NElementDeserializerBuilder<T> containerIsCollection(boolean value);
 
     NElementDeserializerBuilder<T> onUnsupportedParam(NElementDeserializerFieldConfigurer<T> a);
 
@@ -28,16 +28,18 @@ public interface NElementDeserializerBuilder<T> {
 
     NElementDeserializerBuilder<T> onInitializeInstance(NElementDeserializerInitializer<T> a);
 
-    NElementDeserializerBuilder<T> setTypeDefaultValue(Type type, Object defaultValue);
+    NElementDeserializerBuilder<T> typeDefaultValue(Type type, Object defaultValue);
 
-    NElementDeserializerBuilder<T> setInstanceFactory(NElementDeserializerInstanceFactory<T> instanceFactory);
+    NElementDeserializerBuilder<T> instanceFactory(NElementDeserializerInstanceFactory<T> instanceFactory);
 
-    NElementDeserializerBuilder<T> setBooleanDefaultTrue();
+    NElementDeserializerBuilder<T> booleanDefaultTrue();
 
-    NElementDeserializerBuilder<T> setBooleanDefaultFalse();
+    NElementDeserializerBuilder<T> booleanDefaultFalse();
 
     NElementDeserializerBuilder<T> configureLenient();
+
     NElementDeserializerBuilder<T> fieldNameNormalizer(Function<String, String> normalizer);
+
     NElementDeserializerBuilder<T> fieldNameNormalizer(NNameFormat normalizer);
 
     NElementDeserializerField<T> field(String name);

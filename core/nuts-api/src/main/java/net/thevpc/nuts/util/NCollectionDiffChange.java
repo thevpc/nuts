@@ -31,15 +31,15 @@ public class NCollectionDiffChange<T> {
         );
     }
 
-    public NDiffMode getMode() {
+    public NDiffMode mode() {
         return mode;
     }
 
-    public T getOldValue() {
+    public T oldValue() {
         return oldValue;
     }
 
-    public T getNewValue() {
+    public T newValue() {
         return newValue;
     }
 }

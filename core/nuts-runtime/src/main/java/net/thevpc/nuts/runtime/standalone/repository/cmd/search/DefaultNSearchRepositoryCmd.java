@@ -65,7 +65,7 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
             boolean processIndexFirst =
-                getFetchMode()== NFetchMode.REMOTE && session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled();
+                fetchMode()== NFetchMode.REMOTE && session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled();
             if (processIndexFirst) {
                 Iterator<NId> o = null;
                 try {
@@ -79,12 +79,12 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
                 }
                 if (o != null) {
                     result = NIteratorBuilder.of(new NIndexFirstIterator<>(o,
-                            xrepo.searchImpl(filter, getFetchMode())
+                            xrepo.searchImpl(filter, fetchMode())
                     )).onStart(startRunnable).onFinish(endRunnable).build();
                     return this;
                 }
             }
-            result = NIteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode()))
+            result = NIteratorBuilder.of(xrepo.searchImpl(filter, fetchMode()))
                     .onStart(startRunnable)
                     .onFinish(endRunnable)
                     .build();

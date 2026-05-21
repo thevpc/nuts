@@ -130,16 +130,16 @@ public class DefaultNPropertiesObjectWriter extends DefaultObjectWriterBase<NPro
         return sorted;
     }
 
-    public String getSeparator() {
+    public String separator() {
         return separator;
     }
 
-    public DefaultNPropertiesObjectWriter setSeparator(String separator) {
+    public DefaultNPropertiesObjectWriter separator(String separator) {
         this.separator = separator;
         return this;
     }
 
-    public DefaultNPropertiesObjectWriter setSorted(boolean sort) {
+    public DefaultNPropertiesObjectWriter sorted(boolean sort) {
         this.sorted = sort;
         return this;
     }

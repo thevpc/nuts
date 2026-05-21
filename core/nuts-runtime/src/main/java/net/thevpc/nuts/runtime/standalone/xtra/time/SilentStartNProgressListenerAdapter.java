@@ -25,20 +25,20 @@ class SilentStartNProgressListenerAdapter implements NProgressListener {
     
     @Override
     public boolean onProgress(NProgressEvent event) {
-        switch (event.getState()){
+        switch (event.state()){
             case START:{
                 return false;
             }
             case COMPLETE:{
                 boolean b=delegate.onProgress(event);
-                if (event.getError() != null) {
+                if (event.error() != null) {
                     _LOG()
 
-                            .log(NMsg.ofC(NI18n.of("download failed    : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL).withDurationMillis(event.getDuration().toMillis()));
+                            .log(NMsg.ofC(NI18n.of("download failed    : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL).withDurationMillis(event.duration().toMillis()));
                 } else {
                     _LOG()
 
-                            .log(NMsg.ofC( NI18n.of("download succeeded : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS).withDurationMillis(event.getDuration().toMillis()));
+                            .log(NMsg.ofC( NI18n.of("download succeeded : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS).withDurationMillis(event.duration().toMillis()));
                 }
                 return b;
             }

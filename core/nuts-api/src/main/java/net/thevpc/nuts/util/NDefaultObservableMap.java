@@ -54,7 +54,7 @@ public class NDefaultObservableMap<K, V> extends AbstractMap<K, V> implements NO
         }
     }
 
-    public List<NObservableMapListener<K, V>> getMapListeners() {
+    public List<NObservableMapListener<K, V>> mapListeners() {
         return listeners;
     }
 

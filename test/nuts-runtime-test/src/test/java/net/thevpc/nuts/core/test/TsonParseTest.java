@@ -42,7 +42,7 @@ public class TsonParseTest {
                 "}";
         NElement parsed = NElementReader.ofTson().read(tson);
         TestUtils.println(parsed.toString());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
 
@@ -50,7 +50,7 @@ public class TsonParseTest {
     public void test01b() {
         String tson = "a:b b";
         NElement parsed = NElementReader.ofTson().read(tson);
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class TsonParseTest {
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
         Assertions.assertEquals("/home/install", parsed.asObject().get().get("redirect").get().asStringValue().get());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class TsonParseTest {
                 "\n" +
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
-        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed);
+        String s = NElementWriter.ofTson().formatterCompact().formatPlain(parsed);
         TestUtils.println(s);
         String expected = "// load configuration from the following path. will ignore all the remaining\n" +
                 "(redirect:\"/home/install\")";
@@ -109,7 +109,7 @@ public class TsonParseTest {
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
         Assertions.assertEquals("env", parsed.asObject().get().name().get());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class TsonParseTest {
                 "    MVN_HOME                       : \"${IDEA_HOME}/plugins/maven/lib/maven3\"\n" +
                 "}\n";
         NElement parsed = NElementReader.ofTson().read(tson);
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
 
         NObjectElement env = parsed.asNamedObject("env").get();
         NBinaryOperatorElement assign1 = env.get(0).get().asFlatExpression().get().reshape().asBinaryOperator(NOperatorSymbol.EQ).get();
@@ -149,7 +149,7 @@ public class TsonParseTest {
                 "\n" +
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
     @Test

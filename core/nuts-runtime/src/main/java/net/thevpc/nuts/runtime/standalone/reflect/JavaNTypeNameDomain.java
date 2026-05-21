@@ -38,7 +38,7 @@ class JavaNTypeNameDomain implements NTypeNamePlatformDomain {
 
     @Override
     public NTypeName getComponentType(NTypeName type) {
-        return type.getComponentType();
+        return type.componentType();
     }
 
     @Override

@@ -20,12 +20,12 @@ public class FixedNScoredValue<T> implements NScoredValue<T> {
     }
 
     @Override
-    public Class<T> getApiType() {
+    public Class<T> apiType() {
         return null;
     }
 
     @Override
-    public Class<? extends T> getImplType() {
+    public Class<? extends T> implType() {
         return null;
     }
 

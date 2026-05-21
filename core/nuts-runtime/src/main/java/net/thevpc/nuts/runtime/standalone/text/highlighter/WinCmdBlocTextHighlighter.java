@@ -37,16 +37,16 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private static boolean isWord(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            return Character.isAlphabetic(((DefaultNTextPlain) n).getValue().charAt(0));
+            return Character.isAlphabetic(((DefaultNTextPlain) n).value().charAt(0));
         }
         return false;
     }
 
     private static boolean isSeparator(NText n) {
         if (n instanceof DefaultNTextStyled) {
-            NText v = ((DefaultNTextStyled) n).getChild();
+            NText v = ((DefaultNTextStyled) n).child();
             if (v instanceof DefaultNTextPlain) {
-                String t = ((DefaultNTextPlain) v).getValue();
+                String t = ((DefaultNTextPlain) v).value();
                 switch (t.charAt(0)) {
                     case ';':
                     case '&':
@@ -60,7 +60,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private static boolean isWhites(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            return Character.isWhitespace(((DefaultNTextPlain) n).getValue().charAt(0));
+            return Character.isWhitespace(((DefaultNTextPlain) n).value().charAt(0));
         }
         return false;
     }
@@ -122,13 +122,13 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "cmd";
     }
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if (s == null) {
             return NScorable.DEFAULT_SCORE;
         }
@@ -143,7 +143,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 return NScorable.DEFAULT_SCORE;
             }
             case "system": {
-                switch (NShellFamily.getCurrent()) {
+                switch (NShellFamily.current()) {
                     case WIN_CMD:
                     case WIN_POWER_SHELL: {
                         return NScorable.DEFAULT_SCORE + 10;
@@ -283,7 +283,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).type() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getValue())) {
+        if (ret.get(0).type() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).value())) {
             ret.set(0, txt.ofStyled(ret.get(0), NTextStyle.option()));
         }
         return ret.toArray(new NText[0]);

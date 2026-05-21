@@ -80,10 +80,10 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     @Override
-    public final NProgressMonitor setProgress(double progress, NMsg message) {
-        setProgress(progress);
+    public final NProgressMonitor progress(double progress, NMsg message) {
+        progress(progress);
         if (message != null) {
-            setMessage(message);
+            message(message);
         }
         return this;
     }
@@ -311,17 +311,17 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     @Override
-    public String getId() {
-        return model.getId();
+    public String id() {
+        return model.id();
     }
 
     @Override
-    public String getName() {
-        return model.getName();
+    public String name() {
+        return model.name();
     }
 
     protected void setName(String name) {
-        String old = this.model.getName();
+        String old = this.model.name();
         if (!Objects.equals(old, name)) {
             this.model.setName(name);
             fireEvent(NProgressEventType.UPDATE, "name", old);
@@ -329,12 +329,12 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     @Override
-    public NMsg getDescription() {
-        return model.getDescription();
+    public NMsg description() {
+        return model.description();
     }
 
     protected NProgressMonitor setDescription(NMsg desc) {
-        NMsg old = this.model.getDescription();
+        NMsg old = this.model.description();
         if (!Objects.equals(old, desc)) {
             this.model.setDescription(desc);
             fireEvent(NProgressEventType.UPDATE, "description", old);
@@ -355,22 +355,22 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     @Override
-    public NProgressListener[] getListeners() {
-        return listeners.toArray(new NProgressListener[0]);
+    public List<NProgressListener> listeners() {
+        return Collections.unmodifiableList(listeners);
     }
 
-    public NDuration getDuration() {
+    public NDuration duration() {
         return model.getChronometer().duration();
     }
 
-    public NClock getStartClock() {
+    public NClock startClock() {
         return model.getChronometer().startClock();
     }
 
 
     @Override
-    public final NProgressMonitor setMessage(NMsg message) {
-        NMsg old = getMessage();
+    public final NProgressMonitor message(NMsg message) {
+        NMsg old = message();
         if (setMessage0(message)) {
             fireEvent(NProgressEventType.MESSAGE, "message", old);
         }
@@ -378,18 +378,18 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     @Override
-    public NMsg getMessage() {
-        return model.getMessage();
+    public NMsg message() {
+        return model.message();
     }
 
     @Override
     public boolean isIndeterminate() {
-        return Double.isNaN(model.getProgress());
+        return Double.isNaN(model.progress());
     }
 
     @Override
-    public double getProgress() {
-        return model.getProgress();
+    public double progress() {
+        return model.progress();
     }
 
     private final boolean setMessageIfNotNull(NMsg message) {
@@ -401,7 +401,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
 
     private final boolean setMessage0(NMsg message) {
         NMsg newMessage = message == null ? EMPTY_MESSAGE : message;
-        if (!Objects.equals(getMessage(), newMessage)) {
+        if (!Objects.equals(message(), newMessage)) {
             model.setMessage(newMessage);
             return true;
         }
@@ -410,18 +410,18 @@ public class DefaultProgressMonitor implements NProgressMonitor {
 
     private void fireEvent(NProgressEventType state, String propertyName, Object oldValue) {
         spi.onEvent(new DefaultNProgressHandlerEvent(state, propertyName, model, NSession.of()));
-        for (NProgressListener listener : getListeners()) {
+        for (NProgressListener listener : listeners()) {
             switch (state) {
                 case START: {
-                    listener.onProgress(NProgressEvent.ofStart(null, getMessage(), -1));
+                    listener.onProgress(NProgressEvent.ofStart(null, message(), -1));
                     break;
                 }
                 case COMPLETE: {
-                    listener.onProgress(NProgressEvent.ofComplete(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException()));
+                    listener.onProgress(NProgressEvent.ofComplete(null, message(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.progress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException()));
                     break;
                 }
                 default: {
-                    listener.onProgress(NProgressEvent.ofProgress(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException()));
+                    listener.onProgress(NProgressEvent.ofProgress(null, message(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.progress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException()));
                     break;
                 }
             }
@@ -429,7 +429,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     @Override
-    public final NProgressMonitor setProgress(double progress) {
+    public final NProgressMonitor progress(double progress) {
         if (!isStarted()) {
             start();
         }
@@ -459,7 +459,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
                 }
             }
         }
-        double oldProgress = this.getProgress();
+        double oldProgress = this.progress();
         if (oldProgress != progress) {
             model.setProgress(progress);
             fireEvent(NProgressEventType.PROGRESS, "progress", oldProgress);
@@ -474,24 +474,24 @@ public class DefaultProgressMonitor implements NProgressMonitor {
 
 
     @Override
-    public final NProgressMonitor setProgress(long i, long max) {
-        return this.setProgress(i, max, null);
+    public final NProgressMonitor progress(long i, long max) {
+        return this.progress(i, max, null);
     }
 
     @Override
-    public final NProgressMonitor setProgress(long i, long max, NMsg message) {
-        return this.setProgress((1.0 * i / max), message);
+    public final NProgressMonitor progress(long i, long max, NMsg message) {
+        return this.progress((1.0 * i / max), message);
     }
 
     @Override
-    public final NProgressMonitor setProgress(long i, long maxi, long j, long maxj) {
-        return this.setProgress(i, maxi, j, maxj, null);
+    public final NProgressMonitor progress(long i, long maxi, long j, long maxj) {
+        return this.progress(i, maxi, j, maxj, null);
     }
 
 
     @Override
-    public final NProgressMonitor setProgress(long i, long j, long maxi, long maxj, NMsg message) {
-        return this.setProgress(((1.0 * i * maxi) + j) / (maxi * maxj), message);
+    public final NProgressMonitor progress(long i, long j, long maxi, long maxj, NMsg message) {
+        return this.progress(((1.0 * i * maxi) + j) / (maxi * maxj), message);
     }
 
     @Override
@@ -504,16 +504,16 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     public final NProgressMonitor inc(NMsg message) {
         NProgressMonitorInc incrementor = this.incrementor;
         NAssert.requireNamedNonNull(incrementor, "incrementor");
-        double oldProgress = getProgress();
+        double oldProgress = progress();
         double newProgress = incrementor.inc(oldProgress);
-        setProgress(newProgress, message);
+        progress(newProgress, message);
         return this;
     }
 
     @Override
-    public final NDuration getEstimatedTotalDuration() {
-        double d = getProgress();
-        NDuration spent = getDuration();
+    public final NDuration estimatedTotalDuration() {
+        double d = progress();
+        NDuration spent = duration();
         if (spent == null) {
             return null;
         }
@@ -521,9 +521,9 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     @Override
-    public final NDuration getEstimatedRemainingDuration() {
-        double d = getProgress();
-        NDuration spent = getDuration();
+    public final NDuration estimatedRemainingDuration() {
+        double d = progress();
+        NDuration spent = duration();
         if (spent == null) {
             return null;
         }
@@ -532,13 +532,13 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     }
 
     @Override
-    public NProgressMonitor setIndeterminate() {
-        return setIndeterminate(null);
+    public NProgressMonitor indeterminate() {
+        return indeterminate(null);
     }
 
     @Override
-    public NProgressMonitor setIndeterminate(NMsg message) {
-        return setProgress(Double.NaN, message);
+    public NProgressMonitor indeterminate(NMsg message) {
+        return progress(Double.NaN, message);
     }
 
     public DefaultProgressMonitor setIncrementor(NProgressMonitorInc incrementor) {
@@ -569,10 +569,10 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     public NProgressMonitor stepInto(NMsg message) {
         final NProgressMonitorInc incrementor = getIncrementor();
         NAssert.requireNamedNonNull(incrementor, "incrementor");
-        double a = getProgress();
+        double a = progress();
         double b = incrementor.inc(a);
         if (message != null) {
-            setMessage(message);
+            message(message);
         }
         return translate(b - a, a);
     }

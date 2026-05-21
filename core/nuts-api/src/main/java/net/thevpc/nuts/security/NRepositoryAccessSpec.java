@@ -41,29 +41,29 @@ public interface NRepositoryAccessSpec {
         return NSecurityManager.of().createRepositoryAccessSpec(userName, repository);
     }
 
-    String getUserName();
+    String userName();
 
-    String getRepository();
+    String repository();
 
-    String getRemoteUserName();
+    String remoteUserName();
 
-    NSecureString getRemoteCredential();
+    NSecureString remoteCredential();
 
-    String getRemoteAuthType();
+    String remoteAuthType();
 
-    List<String> getPermissions();
+    List<String> permissions();
 
-    NRepositoryAccessSpec setRemoteUserName(String remoteUserName);
+    NRepositoryAccessSpec remoteUserName(String remoteUserName);
 
-    NRepositoryAccessSpec setRemoteCredential(NSecureString remoteCredential);
+    NRepositoryAccessSpec remoteCredential(NSecureString remoteCredential);
 
-    NRepositoryAccessSpec setRemoteAuthType(String remoteAuthType);
+    NRepositoryAccessSpec remoteAuthType(String remoteAuthType);
 
     NRepositoryAccessSpec addPermissions(String... permissions);
 
     NRepositoryAccessSpec removePermissions(String... permissions);
 
-    NRepositoryAccessSpec setPermissions(List<String> permissions);
+    NRepositoryAccessSpec permissions(List<String> permissions);
 
 
 }

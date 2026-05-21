@@ -29,7 +29,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
             support.pushNode(NText.ofCommand(NTerminalCmd.CLEAR_LINE));
             support.pushNode(NText.ofCommand(NTerminalCmd.MOVE_LINE_START));
             support.flush();
-            terminal.setLastWasProgress(false);
+            terminal.lastWasProgress(false);
         }
     }
 
@@ -84,7 +84,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
     public NPrintStream printProgressLine(NText b) {
         NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.terminal();
         if(!terminal.isLastWasProgress()) {
-            terminal.setLastWasProgress(true);
+            terminal.lastWasProgress(true);
             support.flush();
         }
         for (NText line : b.split("\n\r")) {
@@ -104,7 +104,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                         break;
                     }
                     case STYLED: {
-                        printParsed0(((NTextStyled) line).getChild());
+                        printParsed0(((NTextStyled) line).child());
                         break;
                     }
                     default: {
@@ -133,7 +133,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                     break;
                 }
                 case STYLED: {
-                    printParsed(((NTextStyled) b).getChild());
+                    printParsed(((NTextStyled) b).child());
                     break;
                 }
                 default: {
@@ -157,7 +157,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                     break;
                 }
                 case STYLED: {
-                    printParsed0(((NTextStyled) b).getChild());
+                    printParsed0(((NTextStyled) b).child());
                     break;
                 }
                 default: {

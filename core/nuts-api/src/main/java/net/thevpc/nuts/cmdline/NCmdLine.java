@@ -104,7 +104,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     static NCmdLine ofArgs(String... args) {
         if (NWorkspace.get().isNotPresent()) {
-            return new DefaultNCmdLine(args, NShellFamily.getCurrent());
+            return new DefaultNCmdLine(args, NShellFamily.current());
         }
         return NCmdLines.of().of(args);
     }
@@ -178,13 +178,13 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         return parseDefault(line).get();
     }
 
-    Object getSource();
+    Object source();
 
-    NCmdLine setSource(Object source);
+    NCmdLine source(Object source);
 
     boolean isUnsafe();
 
-    NCmdLine setUnsafe(boolean safe);
+    NCmdLine unsafe(boolean safe);
 
     @NGetter
     NCmdLineConfigurable configurable();

@@ -57,7 +57,7 @@ public class MavenSettingsRepository extends NRepositoryList {
         base.add(createChild(options, "maven-local", name()+"-local", settings.getLocalRepository()));
         base.add(createChild(options, "maven-central", name()+"-central", settings.getRemoteRepository()));
         for (NRepositoryLocation activeRepository : settings.getActiveRepositories()) {
-            base.add(createChild(options, "maven-extra", name()+"-" + activeRepository.getName(), activeRepository.getPath()));
+            base.add(createChild(options, "maven-extra", name()+"-" + activeRepository.name(), activeRepository.path()));
         }
         this.repoItems = base.toArray(base.toArray(new NRepository[0]));
     }

@@ -43,9 +43,9 @@ public interface NTextBuilder extends NText, Iterable<NText> {
         return NTexts.of().ofBuilder();
     }
 
-    NTextStyleGenerator getStyleGenerator();
+    NTextStyleGenerator styleGenerator();
 
-    NTextBuilder setStyleGenerator(NTextStyleGenerator styleGenerator);
+    NTextBuilder styleGenerator(NTextStyleGenerator styleGenerator);
 
     NTextBuilder appendCommand(NTerminalCmd command);
 
@@ -73,7 +73,7 @@ public interface NTextBuilder extends NText, Iterable<NText> {
 
     NText build();
 
-    List<NText> getChildren();
+    List<NText> children();
 
     NTextBuilder delete(int start, int end);
 

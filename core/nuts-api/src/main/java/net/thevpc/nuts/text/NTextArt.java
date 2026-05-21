@@ -39,21 +39,21 @@ public interface NTextArt extends NComponent {
         return NExtensions.of(NTextArt.class);
     }
 
-    List<NTextArtTableRenderer> getTableRenderers();
+    List<NTextArtTableRenderer> tableRenderers();
 
-    List<NTextArtTreeRenderer> getTreeRenderers();
+    List<NTextArtTreeRenderer> treeRenderers();
 
-    List<NTextArtTextRenderer> getTextRenderers();
+    List<NTextArtTextRenderer> textRenderers();
 
-    List<NTextArtImageRenderer> getImageRenderers();
+    List<NTextArtImageRenderer> imageRenderers();
 
     <T extends NTextArtRenderer> List<NTextArtRenderer> getRenderers(Class<T> rendererType);
 
-    List<NTextArtRenderer> getRenderers();
+    List<NTextArtRenderer> renderers();
 
     NOptional<NTextArtRenderer> loadRenderer(NPath path);
 
-    NOptional<NTextArtRenderer> getDefaultRenderer();
+    NOptional<NTextArtRenderer> defaultRenderer();
 
     NOptional<NTextArtRenderer> getRenderer(String rendererName);
 
@@ -74,12 +74,12 @@ public interface NTextArt extends NComponent {
 
     NOptional<NTextArtTreeRenderer> getTreeRenderer(String rendererName);
 
-    NOptional<NTextArtTextRenderer> getTextRenderer();
+    NOptional<NTextArtTextRenderer> textRenderer();
 
-    NOptional<NTextArtImageRenderer> getImageRenderer();
+    NOptional<NTextArtImageRenderer> imageRenderer();
 
-    NOptional<NTextArtTableRenderer> getTableRenderer();
+    NOptional<NTextArtTableRenderer> tableRenderer();
 
-    NOptional<NTextArtTreeRenderer> getTreeRenderer();
+    NOptional<NTextArtTreeRenderer> treeRenderer();
 
 }

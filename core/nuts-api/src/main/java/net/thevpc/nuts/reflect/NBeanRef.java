@@ -26,11 +26,11 @@ public class NBeanRef {
         this.variant = variant;
     }
 
-    public String getId() {
+    public String id() {
         return id;
     }
 
-    public NElement getVariant() {
+    public NElement variant() {
         return variant;
     }
 
@@ -65,7 +65,7 @@ public class NBeanRef {
 
         @Override
         public String toString() {
-            return "NBeanRef{id=" + ref.getId() + ", variant=" + ref.getVariant() + "}";
+            return "NBeanRef{id=" + ref.id() + ", variant=" + ref.variant() + "}";
         }
     }
 

@@ -79,18 +79,18 @@ public class NLogFileHandler implements NLogSPI {
 
     @Override
     public void log(NMsg message) {
-        if (!isLoggable(message.getLevel())) {
+        if (!isLoggable(message.level())) {
             return;
         }
         Instant now = Instant.now();
-        NDuration duration = message.getDuration();
-        NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.getLevel(), message.getIntent(), message,
+        NDuration duration = message.duration();
+        NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.level(), message.intent(), message,
                 (duration==null|| duration.isZero()) ? ""
-                        : NMsg.ofC(" (duration: %s)", message.getDuration())
+                        : NMsg.ofC(" (duration: %s)", message.duration())
         );
-        LogRecord r = new LogRecord(message.getLevel(),"{0}");
+        LogRecord r = new LogRecord(message.level(),"{0}");
         r.setMillis(now.toEpochMilli());
-        r.setThrown(message.getThrowable());
+        r.setThrown(message.throwable());
         r.setParameters(new Object[]{msg2.toString()});
         this.fileHandler.publish(r);
     }

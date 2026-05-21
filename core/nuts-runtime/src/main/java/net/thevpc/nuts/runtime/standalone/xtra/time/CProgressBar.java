@@ -619,12 +619,12 @@ public class CProgressBar {
             NSystemTerminalBase.Size size = null;
             int max=maxColumnsInOutput;
             try {
-                size = out.terminal().getTerminalSize();
+                size = out.terminal().terminalSize();
             }catch (Exception ex) {
                 // just ignore
             }
-            if(size!=null && size.getColumns()>0){
-                max=size.getColumns()-1;
+            if(size!=null && size.columns()>0){
+                max=size.columns()-1;
             }
 //            out.resetLine();
             int len = p.length();

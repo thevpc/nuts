@@ -146,9 +146,9 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             if (repo != null) {
                 NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
                 return repoSPI.fetchContent()
-                        .setId(id)
-                        .setDescriptor(descriptor)
-                        .setFetchMode(NFetchMode.LOCAL)
+                        .id(id)
+                        .descriptor(descriptor)
+                        .fetchMode(NFetchMode.LOCAL)
                         .run()
                         .getResult();
             }

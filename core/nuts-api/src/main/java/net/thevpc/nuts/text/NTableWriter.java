@@ -52,6 +52,6 @@ public interface NTableWriter extends NContentTypeWriter {
     NTableWriter configure(boolean skipUnsupported, String... args);
 
     @Override
-    NTableWriter setNtf(boolean ntf);
+    NTableWriter ntf(boolean ntf);
 
 }

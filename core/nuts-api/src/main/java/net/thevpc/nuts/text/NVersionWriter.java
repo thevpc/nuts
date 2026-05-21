@@ -43,7 +43,7 @@ public interface NVersionWriter extends NObjectWriter, NComponent {
 
 
     @Override
-    NVersionWriter setNtf(boolean ntf);
+    NVersionWriter ntf(boolean ntf);
 
     NVersionWriter addProperty(String key, String value);
 

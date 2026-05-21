@@ -46,7 +46,7 @@ public class NRepositorySelectorList {
         }
     }
 
-    public List<NRepositorySelector> getSelectors() {
+    public List<NRepositorySelector> selectors() {
         return Collections.unmodifiableList(selectors);
     }
 
@@ -64,7 +64,7 @@ public class NRepositorySelectorList {
         boolean includeOthers = true;
         for (NRepositorySelector s : selectors) {
             if (s.matches(location.sourceLocation())) {
-                switch (s.getOp()) {
+                switch (s.op()) {
                     case EXACT:
                     case INCLUDE:
                         return true;
@@ -72,7 +72,7 @@ public class NRepositorySelectorList {
                         return false;
                 }
             }
-            if (s.getOp() == NSelectorOp.EXACT) {
+            if (s.op() == NSelectorOp.EXACT) {
                 includeOthers = false;
             }
         }

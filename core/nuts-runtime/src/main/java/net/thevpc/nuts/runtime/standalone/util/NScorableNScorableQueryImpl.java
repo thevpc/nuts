@@ -159,7 +159,7 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
     }
 
     @Override
-    public List<T> getAll() {
+    public List<T> all() {
         return getResults().stream().map(x -> x.value()).collect(Collectors.toList());
     }
 
@@ -275,12 +275,12 @@ public class NScorableNScorableQueryImpl<T extends NScorable> implements NScorab
 
 
     @Override
-    public NOptional<T> getBest() {
-        return getBestResult().map(x -> x.value());
+    public NOptional<T> best() {
+        return bestResult().map(x -> x.value());
     }
 
     @Override
-    public NOptional<NScoredValue<T>> getBestResult() {
+    public NOptional<NScoredValue<T>> bestResult() {
         NScoredValue<T> track = null;
         for (Src source : all) {
             if (source != null) {

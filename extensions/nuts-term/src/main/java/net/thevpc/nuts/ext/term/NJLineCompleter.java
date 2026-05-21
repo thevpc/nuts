@@ -20,7 +20,7 @@ class NJLineCompleter implements Completer {
 
     @Override
     public void complete(LineReader reader, final ParsedLine line, List<Candidate> candidates) {
-        NCmdLineAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
+        NCmdLineAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.autoCompleteResolver();
         if (autoCompleteResolver != null) {
 
             NCmdLine cmdLine = NCmdLine.of(line.words());

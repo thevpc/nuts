@@ -59,7 +59,7 @@ public class NWorkspaceListConfig implements Serializable {
     public NWorkspaceListConfig(NWorkspaceListConfig other) {
         this.uuid = other.uuid();
         this.name = other.name();
-        this.workspaces = other.getWorkspaces() == null ? null : new ArrayList<>(other.getWorkspaces());
+        this.workspaces = other.workspaces() == null ? null : new ArrayList<>(other.workspaces());
     }
 
     @NGetter
@@ -84,11 +84,11 @@ public class NWorkspaceListConfig implements Serializable {
         return this;
     }
 
-    public List<NWorkspaceLocation> getWorkspaces() {
+    public List<NWorkspaceLocation> workspaces() {
         return workspaces;
     }
 
-    public void setWorkspaces(List<NWorkspaceLocation> workspaces) {
+    public void workspaces(List<NWorkspaceLocation> workspaces) {
         this.workspaces = workspaces;
     }
 

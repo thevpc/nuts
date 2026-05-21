@@ -63,23 +63,23 @@ public class NAnsiTermHelper {
         int intensity = 0;
         if (styles != null) {
             for (NTextStyle style : styles) {
-                switch (style.getType()) {
+                switch (style.type()) {
                     case PRIMARY:
                     case FORE_COLOR: {
-                        foreground = NColor.of8(style.getVariant());
+                        foreground = NColor.of8(style.variant());
                         break;
                     }
                     case SECONDARY:
                     case BACK_COLOR: {
-                        background = NColor.of8(style.getVariant());
+                        background = NColor.of8(style.variant());
                         break;
                     }
                     case FORE_TRUE_COLOR: {
-                        foreground = (NColor.of24(style.getVariant()));
+                        foreground = (NColor.of24(style.variant()));
                         break;
                     }
                     case BACK_TRUE_COLOR: {
-                        background = NColor.of24(style.getVariant());
+                        background = NColor.of24(style.variant());
                         break;
                     }
                     case ITALIC: {
@@ -114,9 +114,9 @@ public class NAnsiTermHelper {
 
     public String foreColor(NColor c) {
         if (c != null) {
-            switch (c.getBits()) {
+            switch (c.bits()) {
                 case BITS_4: {
-                    int intColor = c.getIntColor();
+                    int intColor = c.intColor();
                     if (intColor <= 0) {
                         intColor = 0;
                     }
@@ -126,7 +126,7 @@ public class NAnsiTermHelper {
                     return ("" + FG8[intColor]);
                 }
                 case BITS_8: {
-                    int intColor = c.getIntColor();
+                    int intColor = c.intColor();
                     if (intColor <= 0) {
                         intColor = 0;
                     }
@@ -140,15 +140,15 @@ public class NAnsiTermHelper {
                 case BITS_32:
                 case BITS_64:
                 {
-                    int red = c.getRed();
-                    int green = c.getGreen();
-                    int blue = c.getBlue();
+                    int red = c.red();
+                    int green = c.green();
+                    int blue = c.blue();
                     return ("38;2;" + red + ";" + green + ";" + blue);
                 }
                 default: {
-                    int red = c.getRed();
-                    int green = c.getGreen();
-                    int blue = c.getBlue();
+                    int red = c.red();
+                    int green = c.green();
+                    int blue = c.blue();
                     return ("38;2;" + red + ";" + green + ";" + blue);
                 }
             }
@@ -158,9 +158,9 @@ public class NAnsiTermHelper {
 
     public String backColor(NColor c) {
         if (c != null) {
-            switch (c.getBits()) {
+            switch (c.bits()) {
                 case BITS_4: {
-                    int intColor = c.getIntColor();
+                    int intColor = c.intColor();
                     if (intColor <= 0) {
                         intColor = 0;
                     }
@@ -170,7 +170,7 @@ public class NAnsiTermHelper {
                     return "" + BG8[intColor];
                 }
                 case BITS_8: {
-                    int intColor = c.getIntColor();
+                    int intColor = c.intColor();
                     if (intColor <= 0) {
                         intColor = 0;
                     }
@@ -184,9 +184,9 @@ public class NAnsiTermHelper {
                 case BITS_32:
                 case BITS_64:
                 {
-                    int red = c.getRed();
-                    int green = c.getGreen();
-                    int blue = c.getBlue();
+                    int red = c.red();
+                    int green = c.green();
+                    int blue = c.blue();
                     return ("48;2;" + red + ";" + green + ";" + blue);
                 }
             }
@@ -275,12 +275,12 @@ public class NAnsiTermHelper {
     }
 
     public String command(NTerminalCmd command) {
-        switch (command.getName()) {
+        switch (command.name()) {
             case NTerminalCmd.Ids.MOVE_LINE_START: {
                 return ("\r");
             }
             case NTerminalCmd.Ids.MOVE_TO: {
-                List<String> a = command.getArgs();
+                List<String> a = command.args();
                 if (a.size() >= 2) {
                     Integer col = NLiteral.of(a.get(0)).asInt().orNull();
                     Integer row = NLiteral.of(a.get(1)).asInt().orNull();
@@ -292,7 +292,7 @@ public class NAnsiTermHelper {
             }
 
             case NTerminalCmd.Ids.MOVE_UP: {
-                List<String> a = command.getArgs();
+                List<String> a = command.args();
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
                     if (count1 != null) {
@@ -302,7 +302,7 @@ public class NAnsiTermHelper {
                 return null;
             }
             case NTerminalCmd.Ids.MOVE_DOWN: {
-                List<String> a = command.getArgs();
+                List<String> a = command.args();
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
                     if (count1 != null) {
@@ -312,7 +312,7 @@ public class NAnsiTermHelper {
                 return null;
             }
             case NTerminalCmd.Ids.MOVE_RIGHT: {
-                List<String> a = command.getArgs();
+                List<String> a = command.args();
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
                     if (count1 != null) {
@@ -322,7 +322,7 @@ public class NAnsiTermHelper {
                 return null;
             }
             case NTerminalCmd.Ids.MOVE_LEFT: {
-                List<String> a = command.getArgs();
+                List<String> a = command.args();
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
                     if (count1 != null) {

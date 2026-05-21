@@ -110,7 +110,7 @@ public class NVersionFilterOr extends AbstractVersionFilter implements NExprIdFi
         return CoreStringUtils.trueOrOr(Arrays.stream(all).map(NComplexExpressionString::toString).collect(Collectors.toList()));
     }
 
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
     }
 

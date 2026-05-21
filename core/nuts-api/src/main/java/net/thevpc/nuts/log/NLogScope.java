@@ -12,7 +12,7 @@ public interface NLogScope extends NBlankable {
         return NLogs.of().newContext();
     }
 
-    Map<String, Supplier<?>> getPlaceholders();
+    Map<String, Supplier<?>> placeholders();
 
     Object getPlaceholder(String name);
 
@@ -40,9 +40,9 @@ public interface NLogScope extends NBlankable {
 
     NLogScope mergedWith(NLogScope other);
 
-    NMsgSupplier<NMsg> getMessagePrefix();
+    NMsgSupplier<NMsg> messagePrefix();
 
-    NMsgSupplier<NMsg> getMessageSuffix();
+    NMsgSupplier<NMsg> messageSuffix();
 
     NLog log();
 

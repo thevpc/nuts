@@ -36,7 +36,7 @@ public class NEnvLocal extends NEnvBase {
             this.osDist = platformOsDist;
             this.java = NJavaSdkUtils.of().createJdkId(System.getProperty("java.version"));
             this.arch = NId.get(System.getProperty("os.arch")).get();
-            this.archFamily = NArchFamily.getCurrent();
+            this.archFamily = NArchFamily.current();
             this.initialized = true;
             userHome = System.getProperty("user.home");
             userName = System.getProperty("user.name");
@@ -84,12 +84,12 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     protected NOsFamily getOsFamily0() {
-        return NOsFamily.getCurrent();
+        return NOsFamily.current();
     }
 
     @Override
     public NShellFamily getShellFamily0() {
-        return NShellFamily.getCurrent();
+        return NShellFamily.current();
     }
 
     @Override
@@ -139,7 +139,7 @@ public class NEnvLocal extends NEnvBase {
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        Object criteria = context.getCriteria();
+        Object criteria = context.criteria();
         if (NBlankable.isBlank(criteria)) {
             return NScorable.DEFAULT_SCORE;
         }
@@ -153,7 +153,7 @@ public class NEnvLocal extends NEnvBase {
             public String apply(String[] cmd) {
                 return NExec.ofSystem(cmd)
                         .failFast(true)
-                        .getGrabbedOutOnlyString();
+                        .grabbedOutOnly();
             }
         });
     }
@@ -165,7 +165,7 @@ public class NEnvLocal extends NEnvBase {
             public String apply(String[] strings) {
                 return NExec.ofSystem(strings)
                         .failFast(true)
-                        .getGrabbedOutOnlyString();
+                        .grabbedOutOnly();
             }
         }, null);
     }

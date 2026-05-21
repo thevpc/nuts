@@ -145,7 +145,7 @@ public class NStoreKey {
     }
 
     public static NStoreKey ofShared(NId id) {
-        return new NStoreKey(NStoreScope.WORKSPACE, NStoreType.CONF, id == null ? null : id.getSharedId(), null, null);
+        return new NStoreKey(NStoreScope.WORKSPACE, NStoreType.CONF, id == null ? null : id.sharedId(), null, null);
     }
 
     public static NStoreKey of(NStoreScope storeScope, NStoreType storeType, NId id, String name) {
@@ -206,7 +206,7 @@ public class NStoreKey {
     }
 
     public NStoreKey sharedId(NId id) {
-        return new NStoreKey(storeScope, storeType, id == null ? null : id.getSharedId(), repoUuid, name);
+        return new NStoreKey(storeScope, storeType, id == null ? null : id.sharedId(), repoUuid, name);
     }
 
     public NStoreKey name(String name) {

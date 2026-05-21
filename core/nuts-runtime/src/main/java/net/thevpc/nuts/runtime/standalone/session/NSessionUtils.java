@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NUnsupportedArgumentException;
 public class NSessionUtils {
     public static boolean setSession(Object o, NSession session) {
         if (o instanceof NSessionAware) {
-            ((NSessionAware) o).setSession(session);
+            ((NSessionAware) o).session(session);
             return true;
         }
         return false;

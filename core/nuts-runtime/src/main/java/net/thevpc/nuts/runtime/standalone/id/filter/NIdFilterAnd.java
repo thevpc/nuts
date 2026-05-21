@@ -115,7 +115,7 @@ public class NIdFilterAnd extends AbstractIdFilter implements NIdFilter, NSimpli
         return true;
     }
 
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(children);
     }
 }

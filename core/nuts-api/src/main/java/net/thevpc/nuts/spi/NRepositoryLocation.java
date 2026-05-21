@@ -25,6 +25,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
@@ -108,7 +109,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
     public static NRepositoryLocation of(String name, String fullLocation) {
         NRepositoryLocation q = of(fullLocation);
         if (name != null) {
-            q = q.setName(name);
+            q = q.name(name);
         }
         return q;
     }
@@ -119,7 +120,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *
      * @return location name
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -129,7 +130,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @param name name
      * @return a new instance with the updated name
      */
-    public NRepositoryLocation setName(String name) {
+    public NRepositoryLocation name(String name) {
         return new NRepositoryLocation(name, locationType, path);
     }
 
@@ -138,7 +139,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *
      * @return location name
      */
-    public String getPath() {
+    public String path() {
         return path;
     }
 
@@ -148,7 +149,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @param path location
      * @return a new instance with the updated location
      */
-    public NRepositoryLocation setPath(String path) {
+    public NRepositoryLocation path(String path) {
         return new NRepositoryLocation(name, locationType, path);
     }
 
@@ -157,7 +158,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *
      * @return location type
      */
-    public String getLocationType() {
+    public String locationType() {
         return locationType;
     }
 
@@ -167,7 +168,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @param locationType locationType
      * @return a new instance with the updated location type
      */
-    public NRepositoryLocation setLocationType(String locationType) {
+    public NRepositoryLocation locationType(String locationType) {
         return new NRepositoryLocation(name, locationType, path);
     }
 
@@ -204,7 +205,8 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *
      * @return location prefixed with location locationType if specified
      */
-    public String getFullLocation() {
+    @NGetter
+    public String fullLocation() {
         StringBuilder sb = new StringBuilder();
         if (!NBlankable.isBlank(locationType)) {
             sb.append(locationType);

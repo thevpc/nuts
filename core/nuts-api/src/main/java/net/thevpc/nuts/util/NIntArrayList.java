@@ -266,7 +266,7 @@ public class NIntArrayList {
                 '}';
     }
 
-    public int getCommittedSize() {
+    public int committedSize() {
         return values.length;
     }
 

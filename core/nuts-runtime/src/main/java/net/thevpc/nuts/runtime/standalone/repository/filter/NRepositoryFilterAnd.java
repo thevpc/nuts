@@ -65,7 +65,7 @@ public class NRepositoryFilterAnd extends AbstractRepositoryFilter implements NC
     public int hashCode() {
         return Arrays.hashCode(all);
     }
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
     }
 }

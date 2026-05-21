@@ -86,8 +86,8 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
      */
     public abstract String format(String text);
 
-    public NElementType getQuoteType()     { return quoteType; }
-    public NSupportMode getCondition()     { return condition; }
+    public NElementType quoteType()     { return quoteType; }
+    public NSupportMode condition()     { return condition; }
 
     // ── Static factories ──────────────────────────────────────────────────────
 

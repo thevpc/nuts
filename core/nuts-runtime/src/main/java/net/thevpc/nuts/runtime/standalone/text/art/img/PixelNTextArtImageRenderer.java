@@ -132,7 +132,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     }
 
     @Override
-    public NTextArtImageRenderer setFontSize(int fontSize) {
+    public NTextArtImageRenderer fontSize(int fontSize) {
         if (this.fontSize == fontSize) {
             return this;
         }
@@ -140,7 +140,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     }
 
     @Override
-    public NTextArtImageRenderer setFontItalic(boolean fontItalic) {
+    public NTextArtImageRenderer fontItalic(boolean fontItalic) {
         if (this.fontItalic == fontItalic) {
             return this;
         }
@@ -148,7 +148,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     }
 
     @Override
-    public NTextArtImageRenderer setFontBold(boolean fontBold) {
+    public NTextArtImageRenderer fontBold(boolean fontBold) {
         if (this.fontBold == fontBold) {
             return this;
         }
@@ -156,7 +156,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     }
 
     @Override
-    public NTextArtImageRenderer setFontName(String fontName) {
+    public NTextArtImageRenderer fontName(String fontName) {
         fontName = NBlankable.firstNonBlank(NStringUtils.trim(fontName), "Monospaced");
         if (Objects.equals(this.fontName, fontName)) {
             return this;
@@ -165,7 +165,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     }
 
     @Override
-    public NTextArtImageRenderer setOutputSize(int columns, int rows) {
+    public NTextArtImageRenderer outputSize(int columns, int rows) {
         columns = columns <= 0 ? -1 : columns;
         columns = columns <= 0 ? -1 : columns;
 
@@ -176,8 +176,8 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
     }
 
     @Override
-    public NTextArtImageRenderer setOutputColumns(int columns) {
-        return setOutputSize(columns, -1);
+    public NTextArtImageRenderer outputColumns(int columns) {
+        return outputSize(columns, -1);
     }
 
     public static NOptional<PixelNTextArtImageRenderer> ofName(String name) {

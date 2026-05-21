@@ -1545,7 +1545,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<String> getLocale() {
+    public NOptional<String> locale() {
         return NOptional.ofNamed(locale, "locale");
     }
 
@@ -1556,7 +1556,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<String> getTheme() {
+    public NOptional<String> theme() {
         return NOptional.ofNamed(theme, "theme");
     }
 
@@ -1721,8 +1721,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.errors(other.errors().orNull());
         this.skipErrors(other.skipErrors().orNull());
         this.switchWorkspace(other.switchWorkspace().orNull());
-        this.locale(other.getLocale().orNull());
-        this.theme(other.getTheme().orNull());
+        this.locale(other.locale().orNull());
+        this.theme(other.theme().orNull());
         this.dependencySolver(other.dependencySolver().orNull());
         this.isolationLevel(other.isolationLevel().orNull());
         this.initLaunchers(other.initLaunchers().orNull());
@@ -1931,8 +1931,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             assignmentPolicy.applyOptionalValue(this::errors, other::errors, this::errors);
             assignmentPolicy.applyOptionalValue(this::skipErrors, other::skipErrors, this::skipErrors);
             assignmentPolicy.applyOptionalValue(this::switchWorkspace, other::switchWorkspace, this::switchWorkspace);
-            assignmentPolicy.applyOptionalValue(this::getLocale, other::locale, this::locale);
-            assignmentPolicy.applyOptionalValue(this::getTheme, other::theme, this::theme);
+            assignmentPolicy.applyOptionalValue(this::locale, other::locale, this::locale);
+            assignmentPolicy.applyOptionalValue(this::theme, other::theme, this::theme);
             assignmentPolicy.applyOptionalValue(this::dependencySolver, other::dependencySolver, this::dependencySolver);
             assignmentPolicy.applyOptionalValue(this::isolationLevel, other::isolationLevel, this::isolationLevel);
             assignmentPolicy.applyOptionalValue(this::initLaunchers, other::initLaunchers, this::initLaunchers);
@@ -2074,7 +2074,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 name().orNull(), javaCommand().orNull(), javaOptions().orNull(),
                 outLinePrefix().orNull(), errLinePrefix().orNull(), userName().orNull(),
                 credential().orNull(), progressOptions().orNull(), dependencySolver().orNull(),
-                debug().orNull(), archetype().orNull(), getLocale().orNull(), getTheme().orNull(),
+                debug().orNull(), archetype().orNull(), locale().orNull(), theme().orNull(),
                 logConfig().orNull(), confirm().orNull(), outputFormat().orNull(), openMode().orNull(),
                 executionType().orNull(), storeStrategy().orNull(), repositoryStoreStrategy().orNull(),
                 storeLayout().orNull(), terminalMode().orNull(), fetchStrategy().orNull(),

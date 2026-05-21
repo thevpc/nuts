@@ -41,11 +41,11 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
 //                                sb.append(sb2);
                         NText u = txt.of(a);
                         if (u.type() == NTextType.PLAIN) {
-                            sb.append(NText.ofPlain(doFormatPlain(((NTextPlain) u).getValue(), part.getValue())));
-                        } else if (u.type() == NTextType.STYLED && ((NTextStyled) u).getChild().type() == NTextType.PLAIN) {
+                            sb.append(NText.ofPlain(doFormatPlain(((NTextPlain) u).value(), part.getValue())));
+                        } else if (u.type() == NTextType.STYLED && ((NTextStyled) u).child().type() == NTextType.PLAIN) {
                             sb.append(NText.ofStyled(doFormatPlain(
-                                    ((NTextPlain) ((NTextStyled) u).getChild()).getValue()
-                                    , part.getValue()), ((NTextStyled) u).getStyles()));
+                                    ((NTextPlain) ((NTextStyled) u).child()).value()
+                                    , part.getValue()), ((NTextStyled) u).styles()));
                         } else {
                             //TODO : must support more complex NText tre
                             sb.append(u);

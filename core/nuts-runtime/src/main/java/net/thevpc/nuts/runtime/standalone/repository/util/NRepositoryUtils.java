@@ -43,11 +43,11 @@ public class NRepositoryUtils {
     }
 
     public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog) {
-        if (NBlankable.isBlank(r.getLocationType()) /*|| NBlankable.isBlank(r.getName())*/) {
-            if (r.getFullLocation() != null) {
-                NPath r1 = NPath.of(r.getPath()).toAbsolute();
-                if (!Objects.equals(r.getPath(),r1.toString())) {
-                    r = r.setPath(r1.toString());
+        if (NBlankable.isBlank(r.locationType()) /*|| NBlankable.isBlank(r.getName())*/) {
+            if (r.fullLocation() != null) {
+                NPath r1 = NPath.of(r.path()).toAbsolute();
+                if (!Objects.equals(r.path(),r1.toString())) {
+                    r = r.path(r1.toString());
                 }
                 NPath r2 = r1.resolve(".nuts-repository");
                 boolean fileExists = false;
@@ -61,20 +61,20 @@ public class NRepositoryUtils {
                         if (bytes != null) {
                             fileExists = true;
                             NObjectElement jsonObject = NElementReader.ofJson().read(bytes).asObject().get();
-                            if (NBlankable.isBlank(r.getLocationType())) {
+                            if (NBlankable.isBlank(r.locationType())) {
                                 String o = jsonObject.getStringValue("repositoryType").orNull();
                                 if (!NBlankable.isBlank(o)) {
-                                    r = r.setLocationType(String.valueOf(o));
+                                    r = r.locationType(String.valueOf(o));
                                 }
                             }
-                            if (NBlankable.isBlank(r.getName())) {
+                            if (NBlankable.isBlank(r.name())) {
                                 String o = jsonObject.getStringValue("repositoryName").orNull();
                                 if (!NBlankable.isBlank(o)) {
-                                    r = r.setName(String.valueOf(o));
+                                    r = r.name(String.valueOf(o));
                                 }
                             }
-                            if (NBlankable.isBlank(r.getName())) {
-                                r = r.setName(r.getName());
+                            if (NBlankable.isBlank(r.name())) {
+                                r = r.name(r.name());
                             }
                         }
                     }
@@ -84,15 +84,15 @@ public class NRepositoryUtils {
                     }
                 }
                 if (fileExists) {
-                    if (NBlankable.isBlank(r.getLocationType())) {
-                        r = r.setLocationType(NConstants.RepoTypes.NUTS);
+                    if (NBlankable.isBlank(r.locationType())) {
+                        r = r.locationType(NConstants.RepoTypes.NUTS);
                     }
                 }
-                if (NBlankable.isBlank(r.getLocationType())) {
-                    NPath p = NPath.of(r.getPath());
+                if (NBlankable.isBlank(r.locationType())) {
+                    NPath p = NPath.of(r.path());
                     if (p.isLocal()) {
                         if (!p.exists() || p.isDirectory()) {
-                            r = r.setLocationType(NConstants.RepoTypes.NUTS);
+                            r = r.locationType(NConstants.RepoTypes.NUTS);
                         }
                     }
                 }
@@ -103,11 +103,11 @@ public class NRepositoryUtils {
 
     public static String getRepoType(NRepositoryConfig conf) {
         if (conf != null) {
-            NRepositoryLocation loc = conf.getLocation();
+            NRepositoryLocation loc = conf.location();
             if (loc != null) {
                 loc = validateLocation(loc, null);
-                if (!NBlankable.isBlank(loc.getLocationType())) {
-                    return loc.getLocationType();
+                if (!NBlankable.isBlank(loc.locationType())) {
+                    return loc.locationType();
                 }
             }
         }
@@ -119,8 +119,8 @@ public class NRepositoryUtils {
             NRepositoryLocation loc = conf.sourceLocation();
             if (loc != null) {
                 loc = validateLocation(loc, null);
-                if (!NBlankable.isBlank(loc.getLocationType())) {
-                    return loc.getLocationType();
+                if (!NBlankable.isBlank(loc.locationType())) {
+                    return loc.locationType();
                 }
             }
         }
@@ -162,7 +162,7 @@ public class NRepositoryUtils {
                     return NOptional.ofError(() -> NMsg.ofC("invalid selector list : %s", expression));
                 }
                 NRepositorySelector e = oe.get();
-                op = e.getOp();
+                op = e.op();
                 all.add(e);
             }
         }
@@ -243,7 +243,7 @@ public class NRepositoryUtils {
             if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
                 name = locationString;
                 NRepositorySpec ro = db.getDefinitionByName(name).orNull();
-                String u = ro==null?null:ro.sourceLocation().getFullLocation();
+                String u = ro==null?null:ro.sourceLocation().fullLocation();
                 if (u == null) {
                     url = name;
                 } else {
@@ -275,14 +275,14 @@ public class NRepositoryUtils {
                 if(entry!=null) {
                     String k = entry.name();
                     NRepositoryLocation sl = entry.sourceLocation();
-                    String k2 = sl ==null?null: sl.getName();
+                    String k2 = sl ==null?null: sl.name();
                     if(NBlankable.isBlank(k) && !NBlankable.isBlank(k2)){
                         k=k2;
                     }
-                    String v = sl ==null?null: sl.getFullLocation();
+                    String v = sl ==null?null: sl.fullLocation();
                     if (NBlankable.isBlank(v) && !NBlankable.isBlank(k)) {
                         NRepositorySpec ro = db.getDefinitionByName(k).orNull();
-                        String u = (ro==null ||ro.sourceLocation()==null)?null:ro.sourceLocation().getFullLocation();
+                        String u = (ro==null ||ro.sourceLocation()==null)?null:ro.sourceLocation().fullLocation();
                         if (u != null) {
                             v = u;
                         } else {
@@ -307,8 +307,8 @@ public class NRepositoryUtils {
         List<NRepositorySelector> selectorsExclude = new ArrayList<>();
         List<NRepositorySelector> selectorsInclude = new ArrayList<>();
         boolean exact = false;
-        for (NRepositorySelector selector : list.getSelectors()) {
-            switch (selector.getOp()) {
+        for (NRepositorySelector selector : list.selectors()) {
+            switch (selector.op()) {
                 case EXACT: {
                     exact = true;
                     selectorsInclude.add(selector);
@@ -343,8 +343,8 @@ public class NRepositoryUtils {
             if (!isVisitedFlag(allNames, visited)) {
                 visited.addAll(allNames);
                 result.add(new NRepositorySpec()
-                        .name(r.getName())
-                        .sourceLocation(NRepositoryLocation.of(r.getName(), r.getUrl()))
+                        .name(r.name())
+                        .sourceLocation(NRepositoryLocation.of(r.name(), r.url()))
                 );
             }
         }
@@ -373,10 +373,10 @@ public class NRepositoryUtils {
 
     private static Set<String> getAllNames(NRepositorySelector r){
         DefaultNRepositoryDB db = NWorkspaceExt.of().getRepositoryModel().getDB();
-        if (!NBlankable.isBlank(r.getName())) {
-            return db.findAllNamesByName(r.getName());
+        if (!NBlankable.isBlank(r.name())) {
+            return db.findAllNamesByName(r.name());
         }else{
-            String name = db.getDefinitionByPath(r.getUrl()).map(x->x.name()).orNull();
+            String name = db.getDefinitionByPath(r.url()).map(x->x.name()).orNull();
             return db.findAllNamesByName(name);
         }
     }

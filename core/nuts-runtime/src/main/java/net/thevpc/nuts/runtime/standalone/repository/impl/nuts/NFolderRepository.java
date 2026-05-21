@@ -195,7 +195,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
         }
         Throwable cause=null;
         if(nutsPathEx!=null){
-            NId i = nutsPathEx.getId();
+            NId i = nutsPathEx.id();
             if(i!=null && i.equalsLongId(id)){
                 cause=nutsPathEx.getCause();
             }else{

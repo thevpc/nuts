@@ -96,7 +96,7 @@ public class NDefaultObservableSet<V> extends AbstractSet<V> implements NObserva
         return base.hashCode();
     }
 
-    public List<NObservableSetListener<V>> getSetListeners() {
+    public List<NObservableSetListener<V>> listeners() {
         return listeners;
     }
 

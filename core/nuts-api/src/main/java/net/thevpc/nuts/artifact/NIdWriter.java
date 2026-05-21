@@ -186,7 +186,7 @@ public interface NIdWriter extends NObjectWriter, NComponent {
     NIdWriter configure(boolean skipUnsupported, String... args);
 
 
-    NIdWriter setNtf(boolean ntf);
+    NIdWriter ntf(boolean ntf);
 
     boolean isOmitCondition();
 

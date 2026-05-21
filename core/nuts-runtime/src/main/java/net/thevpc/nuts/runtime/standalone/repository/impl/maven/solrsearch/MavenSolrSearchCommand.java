@@ -113,7 +113,7 @@ public class MavenSolrSearchCommand {
                             public boolean hasNext() {
                                 if (arr == null) {
                                     NElement e = NElementReader.ofJson()
-                                            .setLogProgress(true)
+                                            .logProgress(true)
                                             .read(query);
                                     if (e.isObject()) {
                                         NObjectElement o = e.asObject().get();

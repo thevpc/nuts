@@ -71,7 +71,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false)) {
 
-            if (NOut.getTerminalMode() == NTerminalMode.FORMATTED) {
+            if (NOut.terminalMode() == NTerminalMode.FORMATTED) {
                 NOut.print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
                 NOut.println(NText.of(commandOut));
             } else {

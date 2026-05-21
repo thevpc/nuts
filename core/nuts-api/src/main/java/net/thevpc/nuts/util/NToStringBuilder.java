@@ -27,12 +27,12 @@ public class NToStringBuilder {
         this.name = NStringUtils.trimToNull(name);
     }
 
-    public NToStringBuilder setRowSize(int rowSize) {
+    public NToStringBuilder rowSize(int rowSize) {
         this.rowSize = rowSize <= 1 ? 1 : rowSize;
         return this;
     }
 
-    public NToStringBuilder setIndentString(String indentString) {
+    public NToStringBuilder indentString(String indentString) {
         this.indentString = indentString == null ? "" : indentString;
         return this;
     }
@@ -151,9 +151,9 @@ public class NToStringBuilder {
         int cols = 0;
         for (Map.Entry<String, Object> e : str) {
             NStringBox t = buildEntry(e.getKey(), e.getValue());
-            cols += t.getCols();
+            cols += t.columns();
             rows.add(t);
-            if (!multiLine && t.getRows() > 1) {
+            if (!multiLine && t.rows() > 1) {
                 multiLine = true;
             }
         }
@@ -163,12 +163,12 @@ public class NToStringBuilder {
                 if (i > 0) {
                     sb.append(",");
                 }
-                sb.append(row.getValue());
+                sb.append(row.value());
             }
         } else {
             for (int i = 0; i < rows.size(); i++) {
                 NStringBox row = rows.get(i);
-                sb.append(new NStringBuilder(row.getValue()).indent(indent));
+                sb.append(new NStringBuilder(row.value()).indent(indent));
                 if (i + 1 < rows.size()) {
                     sb.append(",\n");
                 } else {
@@ -184,15 +184,15 @@ public class NToStringBuilder {
         return build();
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public int getRowSize() {
+    public int rowSize() {
         return rowSize;
     }
 
-    public String getIndentString() {
+    public String indentString() {
         return indentString;
     }
 }

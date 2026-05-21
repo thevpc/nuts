@@ -67,7 +67,7 @@ class IdCache {
     ) {
         int count = 0;
         for (Class<?> extensionPoint : extensionPoints) {
-            Class<?> c = new NTypeLoaderImpl(className).tryLoad(bootClassLoader).getType().orNull();
+            Class<?> c = new NTypeLoaderImpl(className).tryLoad(bootClassLoader).type().orNull();
             if (c != null) {
                 if (!logStart.get()) {
                     Set<String> extensionPointStrings = Arrays.stream(extensionPoints).map(x -> x.getName()).collect(Collectors.toSet());

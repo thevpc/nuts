@@ -10,7 +10,7 @@ public class SafeNDefinitionFilter extends AbstractDefinitionFilter {
     private NMsg source;
 
     public SafeNDefinitionFilter(NDefinitionFilter base, NMsg source) {
-        super(base.getFilterOp());
+        super(base.filterOp());
         this.base = base;
         this.source = source;
     }

@@ -228,7 +228,7 @@ public class DefaultNId implements NId {
     }
 
     @Override
-    public NId getSharedId() {
+    public NId sharedId() {
         return new DefaultNId(groupId, artifactId, classifier, NVersion.of("SHARED"), "",
                 NEnvCondition.BLANK);
     }

@@ -104,7 +104,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     @NScore
     public static int getScore(NScorableContext criteria) {
         if (criteria != null) {
-            NRepositoryFactoryContext context = criteria.getCriteria(NRepositoryFactoryContext.class);
+            NRepositoryFactoryContext context = criteria.criteria(NRepositoryFactoryContext.class);
             if (context != null) {
                 String type = context.repositoryType();
                 if (NConstants.RepoTypes.NUTS.equals(type)) {
@@ -112,9 +112,9 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
                 }
                 NRepositoryConfig r = context.config();
                 if (NBlankable.isBlank(type)) {
-                    NPath rp = NPath.of(r.getLocation().getPath()).resolve("nuts-repository.json");
+                    NPath rp = NPath.of(r.location().path()).resolve("nuts-repository.json");
                     if (rp.exists()) {
-                        r.setLocation(r.getLocation().setLocationType(NConstants.RepoTypes.NUTS));
+                        r.location(r.location().locationType(NConstants.RepoTypes.NUTS));
                         return NScorable.DEFAULT_SCORE + 10;
                     }
                     return NScorable.DEFAULT_SCORE + 2;
@@ -125,12 +125,12 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     }
 
     @Override
-    public List<NRepositorySpec> getTemplateRepositoryDefinitions() {
+    public List<NRepositorySpec> templateRepositoryDefinitions() {
         return Collections.unmodifiableList(templates);
     }
 
     @Override
-    public List<NRepositorySpec> getDefaultRepositoryDefinitions() {
+    public List<NRepositorySpec> defaultRepositoryDefinitions() {
         List<NRepositorySpec> all=new ArrayList<>();
         NSession session= NSession.of();
         if (!NWorkspace.of().isSystemWorkspace()) {
@@ -154,10 +154,10 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         }
         if (NConstants.RepoTypes.NUTS.equals(type)) {
             if (NBlankable.isBlank(options.sourceLocation()) ||
-                    NPath.of(options.sourceLocation().getPath()).isLocal()
+                    NPath.of(options.sourceLocation().path()).isLocal()
             ) {
                 return new NFolderRepository(options, parentRepository);
-            } else if (NPath.of(options.sourceLocation().getPath()).isURL()) {
+            } else if (NPath.of(options.sourceLocation().path()).isURL()) {
                 Map<String, String> e = options.env();
                 if (e != null) {
                     if (NLiteral.of(e.get("nuts-api-server")).asBoolean().orElse(false)) {

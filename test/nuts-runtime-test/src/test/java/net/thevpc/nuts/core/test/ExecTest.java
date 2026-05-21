@@ -80,7 +80,7 @@ public class ExecTest {
                             "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
                             "--version"
-                    ).grabAll().failFast(true).getGrabbedOutString();
+                    ).grabAll().failFast(true).grabbedOut();
             TestUtils.println("Result:");
             TestUtils.println(result);
         }
@@ -100,7 +100,7 @@ public class ExecTest {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 .addCommand("info")
-                .getGrabbedAllString();
+                .grabbedAll();
         NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
     }
@@ -119,7 +119,7 @@ public class ExecTest {
                         "https://search.maven.org/remotecontent?filepath=net/java/sezpoz/demo/app/1.6/app-1.6.jar"
 //                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "--version"
-                ).grabAll().failFast(true).getGrabbedOutString();
+                ).grabAll().failFast(true).grabbedOut();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
@@ -131,7 +131,7 @@ public class ExecTest {
         String result = NExec.of()
                 //.addExecutorOption()
                 .addCommand(NConstants.Ids.NSH, "-c", "ls")
-                .grabAll().failFast(true).getGrabbedOutString();
+                .grabAll().failFast(true).grabbedOut();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
@@ -146,7 +146,7 @@ public class ExecTest {
                 //.setExecutionType(NExecutionType.EMBEDDED)
                 .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
                 .addCommand("list", "-i")
-                .getGrabbedAllString();
+                .grabbedAll();
         NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
     }
@@ -179,9 +179,9 @@ public class ExecTest {
                 .run();
         System.out.println(e.exitCode());
         System.out.println("============= OUT");
-        System.out.println(e.getGrabbedOutString());
+        System.out.println(e.grabbedOut());
         System.out.println("============= ERR");
-        System.out.println(e.getGrabbedErrString());
+        System.out.println(e.grabbedErr());
     }
 
     private void runUsingProcessBuilder2(String... args) {

@@ -30,6 +30,6 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextAnchor extends NText {
-    String getSeparator();
-    String getValue();
+    String separator();
+    String value();
 }

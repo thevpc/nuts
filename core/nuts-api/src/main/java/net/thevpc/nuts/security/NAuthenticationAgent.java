@@ -48,7 +48,7 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      *
      * @return agent id
      */
-    String getId();
+    String id();
 
 
     <T> T withSecret(NSecureToken id, NSecretCaller<T> consumer, Function<String, String> env);

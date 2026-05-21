@@ -9,7 +9,7 @@ public class NMsgCodeException extends NException implements NMsgCodeAware {
         super(message);
         this.code = NMsgCode.ofMessage(
                 message.toString(),
-                code == null ? null : code.getCode(), code == null ? new String[0] : code.getParams()
+                code == null ? null : code.code(), code == null ? new String[0] : code.params()
         );
     }
 
@@ -17,12 +17,12 @@ public class NMsgCodeException extends NException implements NMsgCodeAware {
         super(message, cause);
         this.code = NMsgCode.ofMessage(
                 message.toString(),
-                code == null ? null : code.getCode(), code == null ? new String[0] : code.getParams()
+                code == null ? null : code.code(), code == null ? new String[0] : code.params()
         );
     }
 
     @Override
-    public NMsgCode getMsgCode() {
+    public NMsgCode msgCode() {
         return code;
     }
 }

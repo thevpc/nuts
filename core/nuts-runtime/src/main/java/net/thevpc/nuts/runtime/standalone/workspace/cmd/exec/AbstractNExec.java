@@ -358,30 +358,30 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public String getGrabbedAllString() {
+    public String grabbedAll() {
         if (!executed) {
             grabAll();
         }
-        return getGrabbedOutString();
+        return grabbedOut();
     }
 
     @Override
-    public String getGrabbedOutOnlyString() {
+    public String grabbedOutOnly() {
         if (!executed) {
             if (out.type() != NRedirectType.GRAB_STREAM) {
                 grabOutOnly();
             }
         }
-        return getGrabbedOutString();
+        return grabbedOut();
     }
 
     @Override
-    public String getGrabbedOutString() {
-        return new String(getGrabbedOutBytes());
+    public String grabbedOut() {
+        return new String(grabbedOutBytes());
     }
 
     @Override
-    public byte[] getGrabbedOutBytes() {
+    public byte[] grabbedOutBytes() {
         if (!executed) {
             if (out.type() != NRedirectType.GRAB_STREAM) {
                 grabOut();
@@ -402,7 +402,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public byte[] getGrabbedErrBytes() {
+    public byte[] grabbedErrBytes() {
         if (!executed) {
             if (err.type() != NRedirectType.GRAB_STREAM) {
                 grabErr();
@@ -413,7 +413,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             throw new NIllegalArgumentException(NMsg.ofPlain("no buffer was configured; should call grabErr"));
         }
         if (err().type() == NRedirectType.REDIRECT) {
-            return getGrabbedOutBytes();
+            return grabbedOutBytes();
         }
         if (err().resultSource().isNotPresent()) {
             if (err().type() == NRedirectType.GRAB_FILE || err().type() == NRedirectType.GRAB_STREAM) {
@@ -426,8 +426,8 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public String getGrabbedErrString() {
-        return new String(getGrabbedErrBytes());
+    public String grabbedErr() {
+        return new String(grabbedErrBytes());
     }
 
     @Override
@@ -548,11 +548,11 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 //                // ignore;
 //            }
         }
-        if (resultException != null && resultException.getExitCode() != NExecutionException.SUCCESS && failFast) {
+        if (resultException != null && resultException.exitCode() != NExecutionException.SUCCESS && failFast) {
             throw resultException;
 //            checkFailFast(result.getExitCode());
         }
-        return resultException == null ? NExecutionException.SUCCESS : resultException.getExitCode();
+        return resultException == null ? NExecutionException.SUCCESS : resultException.exitCode();
     }
 
     @Override
@@ -582,20 +582,20 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             if (out().type() == NRedirectType.GRAB_FILE
                     || out().type() == NRedirectType.GRAB_STREAM) {
                 if (out() != null && out().resultSource().isPresent()) {
-                    return getGrabbedOutString();
+                    return grabbedOut();
                 }
             }
         } else {
             if (err().type() == NRedirectType.GRAB_FILE
                     || err().type() == NRedirectType.GRAB_STREAM) {
                 if (err() != null && err().resultSource().isPresent()) {
-                    return getGrabbedErrString();
+                    return grabbedErr();
                 }
             }
             if (out().type() == NRedirectType.GRAB_FILE
                     || out().type() == NRedirectType.GRAB_STREAM) {
                 if (out() != null && out().resultSource().isPresent()) {
-                    return getGrabbedOutString();
+                    return grabbedOut();
                 }
             }
         }

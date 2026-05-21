@@ -30,17 +30,17 @@ package net.thevpc.nuts.reflect;
  */
 public interface NReflectMethod {
 
-    String getName();
+    String name();
 
     boolean isAccessible();
 
-    NReflectParameter[] getParameters();
+    NReflectParameter[] parameters();
 
     Object invoke(Object instance, Object... args);
 
-    NReflectType getDeclaringType();
+    NReflectType declaringType();
 
     boolean isVarArgs();
 
-    NReflectSignature getSignature();
+    NReflectSignature signature();
 }

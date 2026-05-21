@@ -62,7 +62,7 @@ public class Slf4JNLogSPI implements NLogSPI {
             NMsg msg1 = msg.get();
             if (msg1 != null) {
                 mm = msg1.toString();
-                throwable = msg1.getThrowable();
+                throwable = msg1.throwable();
             }
         }
         log0(slf4jLevel, mm, throwable);
@@ -71,7 +71,7 @@ public class Slf4JNLogSPI implements NLogSPI {
 
     @Override
     public void log(NMsg message) {
-        Level level = message == null ? Level.INFO : message.getNormalizedLevel();
+        Level level = message == null ? Level.INFO : message.normalizedLevel();
         if (level == null) {
             level = Level.INFO;
         }
@@ -83,13 +83,13 @@ public class Slf4JNLogSPI implements NLogSPI {
             return;
         }
 
-        NDuration duration = message==null?null:message.getDuration();
-        NMsg msg2=NMsg.ofC("[%-7s] %s%s", message==null?null:message.getIntent(), message,
+        NDuration duration = message==null?null:message.duration();
+        NMsg msg2=NMsg.ofC("[%-7s] %s%s", message==null?null:message.intent(), message,
                 (duration==null || duration.isZero()) ? ""
                         : NMsg.ofC(" (duration: %s)", duration)
         );
 
-        log0(slf4jLevel, msg2.toString(), message == null ? null : message.getThrowable());
+        log0(slf4jLevel, msg2.toString(), message == null ? null : message.throwable());
     }
 
     private void log0(org.slf4j.event.Level slf4jLevel, String message, Throwable throwable) {

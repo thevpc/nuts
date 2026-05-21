@@ -68,40 +68,40 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     }
 
     @Override
-    public String getFormatMode() {
+    public String formatMode() {
         return formatMode;
     }
 
     @Override
-    public NObjectObjectWriter setFormatMode(String formatMode) {
+    public NObjectObjectWriter formatMode(String formatMode) {
         this.formatMode = formatMode;
         return this;
     }
 
     @Override
-    public String getFormatString() {
+    public String formatString() {
         return formatString;
     }
 
     @Override
-    public NObjectObjectWriter setFormatString(String formatString) {
+    public NObjectObjectWriter formatString(String formatString) {
         this.formatString = formatString;
         return this;
     }
 
     @Override
-    public Map<String, Object> getFormatParams() {
+    public Map<String, Object> formatParams() {
         return formatParams;
     }
 
     @Override
-    public NObjectObjectWriter setFormatParams(Map<String, Object> formatParams) {
+    public NObjectObjectWriter formatParams(Map<String, Object> formatParams) {
         this.formatParams = formatParams;
         return this;
     }
 
     @Override
-    public NObjectObjectWriter setFormatParam(String name, Object value) {
+    public NObjectObjectWriter formatParam(String name, Object value) {
         if (value == null) {
             if (this.formatParams != null) {
                 this.formatParams.remove(name);
@@ -116,12 +116,12 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     }
 
     @Override
-    public NContentType getOutputFormat() {
+    public NContentType outputFormat() {
         return outputFormat;
     }
 
     @Override
-    public NObjectObjectWriter setOutputFormat(NContentType outputFormat) {
+    public NObjectObjectWriter outputFormat(NContentType outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }
@@ -133,7 +133,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     }
 
     @Override
-    public DefaultNObjectObjectWriter setCompact(boolean compact) {
+    public DefaultNObjectObjectWriter compact(boolean compact) {
         this.compact = compact;
         return this;
     }
@@ -141,14 +141,14 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     public NFormatAndValue<Object, NContentTypeWriter> getBase(Object aValue) {
         NSession session = NSession.of();
         NFormatAndValue<Object, NContentTypeWriter> base = createObjectFormat(aValue);
-        base.getFormat().configure(true, NWorkspace.of().bootOptions().outputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
-        base.getFormat().configure(true, session.outputFormatOptions().toArray(new String[0]));
+        base.format().configure(true, NWorkspace.of().bootOptions().outputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+        base.format().configure(true, session.outputFormatOptions().toArray(new String[0]));
         return base;
     }
 
     public NFormatAndValue<Object, NContentTypeWriter> createObjectFormat(Object value) {
         NSession session = NSession.of();
-        String formatMode = getFormatMode();
+        String formatMode = formatMode();
         String type2 = formatMode == null ? "" : NNameFormat.CLASS_NAME.format(NStringUtils.trim(formatMode));
         switch (type2) {
             case "Byte":
@@ -180,16 +180,16 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
                 break;
             }
         }
-        NContentType nContentType = NUtils.firstNonNull(getOutputFormat(), session.outputFormat().orDefault(), NContentType.PLAIN);
+        NContentType nContentType = NUtils.firstNonNull(outputFormat(), session.outputFormat().orDefault(), NContentType.PLAIN);
         switch (nContentType) {
             //structured formats!
             case XML:
             case JSON:
             case TSON:
             case YAML: {
-                NElementWriter ee = NElementWriter.of().setNtf(isNtf())
-                        .setCompact(isCompact())
-                        .setContentType(nContentType);
+                NElementWriter ee = NElementWriter.of().ntf(isNtf())
+                        .compact(isCompact())
+                        .contentType(nContentType);
                 Object aValue = null;
                 if (value instanceof NText) {
                     NTextBuilder builder = ((NText) value).builder();
@@ -215,7 +215,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
             }
             case PROPS: {
                 Object aValue = null;
-                NPropertiesWriter ee = NPropertiesWriter.of().setNtf(isNtf());
+                NPropertiesWriter ee = NPropertiesWriter.of().ntf(isNtf());
                 if (value instanceof NText) {
                     NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
@@ -229,14 +229,14 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
                 return new NFormatAndValue<>(aValue, ee);
             }
             case TREE: {
-                NTreeObjectWriter ee = NTreeObjectWriter.of().setNtf(isNtf());
+                NTreeObjectWriter ee = NTreeObjectWriter.of().ntf(isNtf());
                 for (String[] confCmd : confCmds) {
                     ee.configure(true, confCmd);
                 }
                 return new NFormatAndValue<>(value, ee);
             }
             case TABLE: {
-                NTableWriter ee = NTableWriter.of().setNtf(isNtf());
+                NTableWriter ee = NTableWriter.of().ntf(isNtf());
                 Object aValue = null;
                 if (value instanceof NText) {
                     NTextBuilder builder = ((NText) value).builder();
@@ -251,7 +251,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
                 return new NFormatAndValue<>(aValue, ee);
             }
             case PLAIN: {
-                NWriterPlain ee = new NWriterPlain().setCompact(isCompact()).setNtf(isNtf());
+                NWriterPlain ee = new NWriterPlain().setCompact(isCompact()).ntf(isNtf());
                 for (String[] confCmd : confCmds) {
                     ee.configure(true, confCmd);
                 }
@@ -268,67 +268,67 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
 
     @Override
     public NText format(Object aValue) {
-        return getBase(aValue).getFormat().format(aValue);
+        return getBase(aValue).format().format(aValue);
     }
 
     @Override
     public void print(Object aValue) {
-        getBase(aValue).getFormat().print(aValue);
+        getBase(aValue).format().print(aValue);
     }
 
     @Override
     public void println(Object aValue) {
-        getBase(aValue).getFormat().println(aValue);
+        getBase(aValue).format().println(aValue);
     }
 
     @Override
     public void print(Object aValue, NPrintStream out) {
-        getBase(aValue).getFormat().print(aValue, out);
+        getBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, Writer out) {
-        getBase(aValue).getFormat().print(aValue, out);
+        getBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, Path out) {
-        getBase(aValue).getFormat().print(aValue, out);
+        getBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, File out) {
-        getBase(aValue).getFormat().print(aValue, out);
+        getBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, NTerminal terminal) {
-        getBase(aValue).getFormat().print(aValue, terminal);
+        getBase(aValue).format().print(aValue, terminal);
     }
 
     @Override
     public void println(Object aValue, Writer w) {
-        getBase(aValue).getFormat().println(aValue, w);
+        getBase(aValue).format().println(aValue, w);
     }
 
     @Override
     public void println(Object aValue, NPrintStream out) {
-        getBase(aValue).getFormat().println(aValue, out);
+        getBase(aValue).format().println(aValue, out);
     }
 
     @Override
     public void println(Object aValue, Path path) {
-        getBase(aValue).getFormat().println(aValue, path);
+        getBase(aValue).format().println(aValue, path);
     }
 
     @Override
     public void println(Object aValue, NTerminal terminal) {
-        getBase(aValue).getFormat().println(aValue, terminal);
+        getBase(aValue).format().println(aValue, terminal);
     }
 
     @Override
     public void println(Object aValue, File file) {
-        getBase(aValue).getFormat().println(aValue, file);
+        getBase(aValue).format().println(aValue, file);
     }
 
     @Override

@@ -262,7 +262,7 @@ public class DefaultNRepositoryModel {
                 options.mergeConfig(conf2);
                 if (options.isEnabled()) {
                     NRepositorySpec cp = options.copy();
-                    cp.sourceLocation(options.sourceLocation().copy().setName(options.name()));
+                    cp.sourceLocation(options.sourceLocation().copy().name(options.name()));
                     options.enabled(
                             NWorkspace.of().bootOptions().repositories() == null
                                     || NRepositoryUtils.createRepositorySelectorList(
@@ -272,7 +272,7 @@ public class DefaultNRepositoryModel {
             } else {
                 if (options.isEnabled()) {
                     NRepositorySpec cp = options.copy();
-                    cp.sourceLocation(options.sourceLocation().copy().setName(options.name()));
+                    cp.sourceLocation(options.sourceLocation().copy().name(options.name()));
                     options.enabled(
                             NWorkspace.of().bootOptions().repositories() == null
                                     || NRepositoryUtils.createRepositorySelectorList(

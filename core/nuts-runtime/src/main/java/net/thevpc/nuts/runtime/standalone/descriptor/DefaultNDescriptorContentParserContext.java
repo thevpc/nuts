@@ -56,12 +56,12 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
     }
 
     @Override
-    public List<String> getParseOptions() {
+    public List<String> parseOptions() {
         return parseOptions;
     }
 
     @Override
-    public InputStream getHeadStream() {
+    public InputStream headStream() {
         if (bytes == null) {
             try {
                 try (InputStream is = file.inputStream()) {
@@ -76,22 +76,22 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
     }
 
     @Override
-    public InputStream getFullStream() {
+    public InputStream fullStream() {
         return file.inputStream();
     }
 
     @Override
-    public String getFileExtension() {
+    public String fileExtension() {
         return fileExtension;
     }
 
     @Override
-    public String getMimeType() {
+    public String mimeType() {
         return mimeType;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return file.name();
     }
 

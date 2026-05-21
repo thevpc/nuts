@@ -30,20 +30,20 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
         this.type = javaWord.getType(type);
     }
 
-    public Predicate<String> getParamFieldFilter() {
+    public Predicate<String> paramFieldFilter() {
         return paramFieldFieldFilter;
     }
 
-    public NElementDeserializerBuilder<T> setParamFieldFilter(Predicate<String> paramFieldFilter) {
+    public NElementDeserializerBuilder<T> paramFieldFilter(Predicate<String> paramFieldFilter) {
         this.paramFieldFieldFilter = paramFieldFilter;
         return this;
     }
 
-    public Predicate<String> getChildFieldNameFilter() {
+    public Predicate<String> childFieldNameFilter() {
         return bodyFieldNameFilter;
     }
 
-    public NElementDeserializerBuilder<T> setChildFieldNameFilter(Predicate<String> childFieldNameFilter) {
+    public NElementDeserializerBuilder<T> childFieldNameFilter(Predicate<String> childFieldNameFilter) {
         this.bodyFieldNameFilter = childFieldNameFilter;
         return this;
     }
@@ -57,9 +57,9 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
     @Override
     public NElementDeserializerBuilder<T> configureLenient() {
         this
-                .setParamFieldFilter(null)
-                .setChildFieldNameFilter(null)
-                .setWrapCollections(true)
+                .paramFieldFilter(null)
+                .childFieldNameFilter(null)
+                .wrapCollections(true)
         ;
         return this;
     }
@@ -76,13 +76,13 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
         return this;
     }
 
-    public NElementDeserializerBuilder<T> setWrapCollections(boolean wrapCollections) {
+    public NElementDeserializerBuilder<T> wrapCollections(boolean wrapCollections) {
         this.wrapCollections = wrapCollections;
         invalidateBuild();
         return this;
     }
 
-    public NElementDeserializerBuilder<T> setContainerIsCollection(boolean value) {
+    public NElementDeserializerBuilder<T> containerIsCollection(boolean value) {
         this.containerIsCollection = value;
         invalidateBuild();
         return this;
@@ -105,21 +105,21 @@ public class DefaultNElementDeserializerBuilder<T> implements NElementDeserializ
     }
 
     @Override
-    public NElementDeserializerBuilder<T> setBooleanDefaultTrue() {
-        return setTypeDefaultValue(Boolean.class, true);
+    public NElementDeserializerBuilder<T> booleanDefaultTrue() {
+        return typeDefaultValue(Boolean.class, true);
     }
 
     @Override
-    public NElementDeserializerBuilder<T> setBooleanDefaultFalse() {
-        return setTypeDefaultValue(Boolean.class, false);
+    public NElementDeserializerBuilder<T> booleanDefaultFalse() {
+        return typeDefaultValue(Boolean.class, false);
     }
 
-    public NElementDeserializerBuilder<T> setInstanceFactory(NElementDeserializerInstanceFactory<T> instanceFactory) {
+    public NElementDeserializerBuilder<T> instanceFactory(NElementDeserializerInstanceFactory<T> instanceFactory) {
         this.onNewInstance = instanceFactory;
         return this;
     }
 
-    public NElementDeserializerBuilder<T> setTypeDefaultValue(Type type, Object defaultValue) {
+    public NElementDeserializerBuilder<T> typeDefaultValue(Type type, Object defaultValue) {
         defaultValueByType.put(uniformType(type), defaultValue);
         return this;
     }

@@ -179,7 +179,7 @@ public enum NArchFamily implements NEnum {
     }
 
     public boolean is64Bit() {
-        return getBits() == 64;
+        return bits() == 64;
     }
 
     public boolean isArm() {
@@ -200,7 +200,7 @@ public enum NArchFamily implements NEnum {
         return false;
     }
 
-    public int getBits() {
+    public int bits() {
         switch (this) {
             case AARCH_64:
             case ARM_64:
@@ -230,7 +230,7 @@ public enum NArchFamily implements NEnum {
         return -1;
     }
 
-    public static NArchFamily getCurrent() {
+    public static NArchFamily current() {
         return _curr;
     }
 

@@ -33,7 +33,6 @@ import net.thevpc.nuts.util.NStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/23/17.
@@ -53,9 +52,9 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
         }
         if (any instanceof NTextStyled) {
             NTextStyled base = (NTextStyled) any;
-            NTextStyles styles = base.getStyles();
+            NTextStyles styles = base.styles();
             NTextStyles newStyles = styles.append(textStyles);
-            return new DefaultNTextStyled(base.getChild(), newStyles);
+            return new DefaultNTextStyled(base.child(), newStyles);
         }
         return new DefaultNTextStyled(any, textStyles);
     }
@@ -79,7 +78,7 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public NTextStyles getStyles() {
+    public NTextStyles styles() {
         return textStyles;
     }
 
@@ -99,7 +98,7 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
 
 
     @Override
-    public NText getChild() {
+    public NText child() {
         return child;
     }
 

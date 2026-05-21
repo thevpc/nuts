@@ -256,7 +256,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return NCollections.unmodifiableList(ids == null ? null : ids.keySet());
     }
 

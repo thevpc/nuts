@@ -50,7 +50,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
     public static NId ID=NId.get("net.thevpc.nuts.exec:exec-native").get();
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 

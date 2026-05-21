@@ -70,17 +70,17 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
     }
 
     @Override
-    public NCmdLineHistory setPath(Path path) {
-        return setPath(path==null?null: NPath.of(path));
+    public NCmdLineHistory path(Path path) {
+        return path(path==null?null: NPath.of(path));
     }
 
     @Override
-    public NCmdLineHistory setPath(File path) {
-        return setPath(path==null?null: NPath.of(path));
+    public NCmdLineHistory path(File path) {
+        return path(path==null?null: NPath.of(path));
     }
 
     @Override
-    public NCmdLineHistory setPath(NPath path) {
+    public NCmdLineHistory path(NPath path) {
         this.path=path;
         if(this.path!=null) {
             reader.getVariables().put(LineReader.HISTORY_FILE, path.toPath().get());
@@ -89,7 +89,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
     }
 
     @Override
-    public NPath getPath() {
+    public NPath path() {
         return null;
     }
 

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
 import net.thevpc.nuts.text.NCmdLineWriter;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
@@ -15,32 +14,32 @@ import net.thevpc.nuts.text.NText;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNCmdLineWriter extends DefaultObjectWriterBase<NCmdLineWriter> implements NCmdLineWriter {
 
-    private NShellFamily formatFamily = NShellFamily.getCurrent();
+    private NShellFamily formatFamily = NShellFamily.current();
     private NCmdLineFormatStrategy formatStrategy = NCmdLineFormatStrategy.DEFAULT;
 
     public DefaultNCmdLineWriter() {
         super("commandLine");
     }
 
-    public NCmdLineWriter setNtf(boolean ntf) {
-        super.setNtf(ntf);
+    public NCmdLineWriter ntf(boolean ntf) {
+        super.ntf(ntf);
         return this;
     }
 
-    public NShellFamily getShellFamily() {
+    public NShellFamily shellFamily() {
         return formatFamily;
     }
 
-    public NCmdLineWriter setShellFamily(NShellFamily family) {
-        this.formatFamily = family == null ? NShellFamily.getCurrent() : family;
+    public NCmdLineWriter shellFamily(NShellFamily family) {
+        this.formatFamily = family == null ? NShellFamily.current() : family;
         return this;
     }
 
-    public NCmdLineFormatStrategy getFormatStrategy() {
+    public NCmdLineFormatStrategy formatStrategy() {
         return formatStrategy;
     }
 
-    public void setFormatStrategy(NCmdLineFormatStrategy formatStrategy) {
+    public void formatStrategy(NCmdLineFormatStrategy formatStrategy) {
         this.formatStrategy = formatStrategy == null ? NCmdLineFormatStrategy.DEFAULT : formatStrategy;
     }
 
@@ -53,10 +52,10 @@ public class DefaultNCmdLineWriter extends DefaultObjectWriterBase<NCmdLineWrite
     public void print(Object aValue, NPrintStream out) {
         if (aValue != null) {
             String cmd =
-                    NShellHelper.of(getShellFamily())
+                    NShellHelper.of(shellFamily())
                             .escapeArguments(((NCmdLine)aValue).toStringArray(),
                                     new NCmdLineShellOptions()
-                                            .setFormatStrategy(getFormatStrategy())
+                                            .setFormatStrategy(formatStrategy())
                                             .setExpectEnv(true)
                             );
             if (isNtf()) {

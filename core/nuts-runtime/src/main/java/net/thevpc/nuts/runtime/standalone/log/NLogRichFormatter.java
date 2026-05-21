@@ -82,22 +82,22 @@ public class NLogRichFormatter extends Formatter {
         }
 
         sb.append(" ");
-        switch (wRecord.getVerb() == null ? "" : wRecord.getVerb().name()) {
+        switch (wRecord.verb() == null ? "" : wRecord.verb().name()) {
             case "FAIL": {//Level.SEVERE
-                sb.append(NLogUtils.logVerb(wRecord.getVerb().name()), NTextStyle.error());
+                sb.append(NLogUtils.logVerb(wRecord.verb().name()), NTextStyle.error());
                 break;
             }
             case "WARNING": {//Level.WARNING
-                sb.append(NLogUtils.logVerb(wRecord.getVerb().name()), NTextStyle.warn());
+                sb.append(NLogUtils.logVerb(wRecord.verb().name()), NTextStyle.warn());
                 break;
             }
             case "UPDATE":
             case "START": {//Level.WARNING
-                sb.append(NLogUtils.logVerb(wRecord.getVerb().name()), NTextStyle.info());
+                sb.append(NLogUtils.logVerb(wRecord.verb().name()), NTextStyle.info());
                 break;
             }
             case "SUCCESS": {//Level.INFO
-                sb.append(NLogUtils.logVerb(wRecord.getVerb().name()), NTextStyle.success());
+                sb.append(NLogUtils.logVerb(wRecord.verb().name()), NTextStyle.success());
                 break;
             }
 //                case NutsLogVerb.BIND:
@@ -109,12 +109,12 @@ public class NLogRichFormatter extends Formatter {
 //                }
             case "INFO":
             case "READ": {//Level.FINE
-                sb.append(NLogUtils.logVerb(wRecord.getVerb().name()), NTextStyle.option());
+                sb.append(NLogUtils.logVerb(wRecord.verb().name()), NTextStyle.option());
                 break;
             }
             case "CACHE":
             case "DEBUG": {//Level.FINE
-                sb.append(NLogUtils.logVerb(wRecord.getVerb().name()), NTextStyle.pale());
+                sb.append(NLogUtils.logVerb(wRecord.verb().name()), NTextStyle.pale());
                 break;
             }
 //                case NutsLogVerb.INIT: {//Level.FINER
@@ -130,7 +130,7 @@ public class NLogRichFormatter extends Formatter {
 //                    break;
 //                }
             default: {
-                sb.append(NLogUtils.logVerb(wRecord.getVerb() == null ? null : wRecord.getVerb().name()));
+                sb.append(NLogUtils.logVerb(wRecord.verb() == null ? null : wRecord.verb().name()));
                 break;
             }
         }

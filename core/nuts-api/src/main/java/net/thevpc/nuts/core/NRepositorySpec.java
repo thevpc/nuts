@@ -427,68 +427,68 @@ public class NRepositorySpec implements Serializable, Cloneable {
 
     public NRepositorySpec mergeConfig(NRepositoryConfig config) {
         if (config == null) return this;
-        if (config.getUuid() != null) {
-            this.uuid(config.getUuid());
+        if (config.uuid() != null) {
+            this.uuid(config.uuid());
         }
-        if (config.getLocation()!=null) {
-            this.sourceLocation(config.getLocation().copy());
+        if (config.location()!=null) {
+            this.sourceLocation(config.location().copy());
         }
-        if (config.getStoreStrategy()!=null) {
-            this.storeStrategy(config.getStoreStrategy());
+        if (config.storeStrategy()!=null) {
+            this.storeStrategy(config.storeStrategy());
         }
-        if (config.getGroups()!=null) {
-            this.groups(config.getGroups());
+        if (config.groups()!=null) {
+            this.groups(config.groups());
         }
-        if (config.getEnv()!=null) {
+        if (config.env()!=null) {
             if(env()==null){
-                env(new HashMap<>(config.getEnv()));
+                env(new HashMap<>(config.env()));
             }else{
-                env().putAll(config.getEnv());
+                env().putAll(config.env());
             }
         }
-        if (config.getTags()!=null) {
+        if (config.tags()!=null) {
             if(tags()==null){
-                tags(new LinkedHashSet<>(Arrays.asList(config.getTags())).toArray(new String[0]));
+                tags(new LinkedHashSet<>(Arrays.asList(config.tags())).toArray(new String[0]));
             }else{
                 LinkedHashSet<String> a = new LinkedHashSet<>(Arrays.asList(this.tags()));
-                a.addAll(Arrays.asList(config.getTags()));
+                a.addAll(Arrays.asList(config.tags()));
                 tags(a.toArray(new String[0]));
             }
         }
-        if (config.getStoreLocations()!=null) {
+        if (config.storeLocations()!=null) {
             if(storeLocations()==null){
-                storeLocations(new HashMap<>(config.getStoreLocations()));
+                storeLocations(new HashMap<>(config.storeLocations()));
             }else{
-                storeLocations().putAll(config.getStoreLocations());
+                storeLocations().putAll(config.storeLocations());
             }
         }
-        if (config.getMirrors()!=null) {
+        if (config.mirrors()!=null) {
             if(mirrors()==null){
-                mirrors(new ArrayList<>(config.getMirrors()));
+                mirrors(new ArrayList<>(config.mirrors()));
             }else{
-                mirrors().addAll(config.getMirrors());
+                mirrors().addAll(config.mirrors());
             }
         }
-        this.mirrors(config.getMirrors() == null ? null : new ArrayList<>(config.getMirrors().stream().map(x -> x.copy()).collect(Collectors.toList())));
+        this.mirrors(config.mirrors() == null ? null : new ArrayList<>(config.mirrors().stream().map(x -> x.copy()).collect(Collectors.toList())));
         this.indexEnabled(config.isIndexEnabled());
-        if (config.getAuthenticationAgent() != null) {
-            this.authenticationAgent(config.getAuthenticationAgent());
+        if (config.authenticationAgent() != null) {
+            this.authenticationAgent(config.authenticationAgent());
         }
         return this;
     }
 
     public NRepositoryConfig toConfig() {
         NRepositoryConfig config=new NRepositoryConfig();
-        config.setUuid(this.uuid());
-        config.setLocation(this.sourceLocation()==null?null:this.sourceLocation().copy());
-        config.setStoreStrategy(this.storeStrategy());
-        config.setGroups(this.groups());
-        config.setEnv(this.env()==null?null:new HashMap<>(this.env()));
-        config.setTags(this.tags()==null?null:Arrays.copyOf(this.tags(), this.tags().length));
-        config.setStoreLocations(this.storeLocations()==null?null:new HashMap<>(this.storeLocations()));
-        config.setMirrors(this.mirrors()==null?null:new ArrayList<>(this.mirrors().stream().map(x->x.copy()).collect(Collectors.toList())));
-        config.setIndexEnabled(this.isIndexEnabled());
-        config.setAuthenticationAgent(this.authenticationAgent());
+        config.uuid(this.uuid());
+        config.location(this.sourceLocation()==null?null:this.sourceLocation().copy());
+        config.storeStrategy(this.storeStrategy());
+        config.groups(this.groups());
+        config.env(this.env()==null?null:new HashMap<>(this.env()));
+        config.tags(this.tags()==null?null:Arrays.copyOf(this.tags(), this.tags().length));
+        config.storeLocations(this.storeLocations()==null?null:new HashMap<>(this.storeLocations()));
+        config.mirrors(this.mirrors()==null?null:new ArrayList<>(this.mirrors().stream().map(x->x.copy()).collect(Collectors.toList())));
+        config.indexEnabled(this.isIndexEnabled());
+        config.authenticationAgent(this.authenticationAgent());
         return config;
     }
 

@@ -31,7 +31,7 @@ class ScopedNLog implements NLog {
 
     @Override
     public boolean isLoggable(Level level) {
-        NLogScope c = NLogs.of().getContext();
+        NLogScope c = NLogs.of().context();
         NLog s = c.log();
         if (s != null) {
             return s.isLoggable(level);
@@ -41,7 +41,7 @@ class ScopedNLog implements NLog {
 
     @Override
     public void log(Level level, Supplier<NMsg> msgSupplier) {
-        NLogScope c = NLogs.of().getContext();
+        NLogScope c = NLogs.of().context();
         NLog s = c.log();
         if (s != null) {
             s.log(level, () -> prepareMsg(msgSupplier.get(), c));
@@ -52,7 +52,7 @@ class ScopedNLog implements NLog {
 
     @Override
     public void log(NMsg msg) {
-        NLogScope c = NLogs.of().getContext();
+        NLogScope c = NLogs.of().context();
         NLog s = c.log();
         if (s != null) {
             s.log(msg);
@@ -68,7 +68,7 @@ class ScopedNLog implements NLog {
     }
 
     private NMsg prepareMsg(NMsg other, NLogScope c) {
-        return other.withPrefix(c.getMessagePrefix()).withSuffix(c.getMessageSuffix()).withPlaceholders(c::getPlaceholder);
+        return other.withPrefix(c.messagePrefix()).withSuffix(c.messageSuffix()).withPlaceholders(c::getPlaceholder);
     }
 
 }

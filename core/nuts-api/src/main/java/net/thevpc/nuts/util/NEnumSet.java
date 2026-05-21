@@ -381,7 +381,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
         return values.isEmpty();
     }
 
-    public int getMaxSize() {
+    public int maxSize() {
         return maxSize;
     }
 

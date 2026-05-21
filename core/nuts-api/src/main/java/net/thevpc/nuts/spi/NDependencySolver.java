@@ -50,7 +50,7 @@ public interface NDependencySolver {
     }
 
     static List<String> solverNames() {
-        return NDependencySolvers.of().getSolverNames();
+        return NDependencySolvers.of().solverNames();
     }
 
 

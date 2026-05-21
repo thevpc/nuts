@@ -14,51 +14,51 @@ class NPatternInfo implements Comparable<NPatternInfo> {
         this.pattern = pattern;
     }
 
-    public String getPattern() {
+    public String pattern() {
         return pattern;
     }
 
-    public void setPattern(String pattern) {
+    public void pattern(String pattern) {
         this.pattern = pattern;
     }
 
-    public Consumer<NStringMatchResult> getAction() {
+    public Consumer<NStringMatchResult> action() {
         return action;
     }
 
-    public void setAction(Consumer<NStringMatchResult> action) {
+    public void action(Consumer<NStringMatchResult> action) {
         this.action = action;
     }
 
-    public Consumer<NStringMatchResult> getFullMatchAction() {
+    public Consumer<NStringMatchResult> fullMatchAction() {
         return fullMatchAction;
     }
 
-    public void setFullMatchAction(Consumer<NStringMatchResult> fullMatchAction) {
+    public void fullMatchAction(Consumer<NStringMatchResult> fullMatchAction) {
         this.fullMatchAction = fullMatchAction;
     }
 
-    public Consumer<NStringMatchResult> getMatchAction() {
+    public Consumer<NStringMatchResult> matchAction() {
         return matchAction;
     }
 
-    public void setMatchAction(Consumer<NStringMatchResult> matchAction) {
+    public void matchAction(Consumer<NStringMatchResult> matchAction) {
         this.matchAction = matchAction;
     }
 
-    public Consumer<NStringMatchResult> getPartialMatchAction() {
+    public Consumer<NStringMatchResult> partialMatchAction() {
         return partialMatchAction;
     }
 
-    public void setPartialMatchAction(Consumer<NStringMatchResult> partialMatchAction) {
+    public void partialMatchAction(Consumer<NStringMatchResult> partialMatchAction) {
         this.partialMatchAction = partialMatchAction;
     }
 
-    public NStringMatchResult getResult() {
+    public NStringMatchResult result() {
         return result;
     }
 
-    public void setResult(NStringMatchResult result) {
+    public void result(NStringMatchResult result) {
         this.result = result;
     }
 

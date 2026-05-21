@@ -167,10 +167,10 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
+    public List<NExprOperator> operators() {
         List<NExprOperator> all = new ArrayList<>();
         if (parent != null) {
-            for (NExprOperator o : parent.getOperators()) {
+            for (NExprOperator o : parent.operators()) {
                 if(alteration.userOperators!=null) {
                     NExprContextAlteration.DecInfo<NExprOperator> y = alteration.userOperators.get(new NExprOpNameAndType(o.name(), o.operatorType()));
                     if (y == null) {

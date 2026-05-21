@@ -109,7 +109,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
                                 .addCommand(helpCommand)
                                 .failFast(false)
                                 .run()
-                                .getGrabbedAllString()
+                                .grabbedAll()
                 );
             } catch (Exception ex) {
                 _LOG().log(NMsg.ofC("failed to retrieve help for %s", name()).asFine(ex));

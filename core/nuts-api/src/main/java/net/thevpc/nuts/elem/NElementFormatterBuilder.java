@@ -51,11 +51,11 @@ public interface NElementFormatterBuilder {
 
     NElementFormatterBuilder addNewline(NElementType elementType, NAffixAnchor anchor);
 
-    int getIndent();
+    int indent();
 
-    int getComplexityThreshold();
+    int complexityThreshold();
 
-    int getColumnLimit();
+    int columnLimit();
 
     NElementFormatter build();
 }

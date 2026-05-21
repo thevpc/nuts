@@ -75,30 +75,30 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private AttributedString toAttributedString(NText n, NTextStyles styles) {
         switch (n.type()) {
             case PLAIN: {
-                styles = NTexts.of().getTheme().toBasicStyles(styles, false);
+                styles = NTexts.of().theme().toBasicStyles(styles, false);
                 NTextPlain p = (NTextPlain) n;
                 if (styles.isPlain()) {
-                    return new AttributedString(p.getValue());
+                    return new AttributedString(p.value());
                 } else {
                     AttributedStyle s = AttributedStyle.DEFAULT;
                     for (int i = 0; i < styles.size(); i++) {
                         NTextStyle ii = styles.get(i);
-                        switch (ii.getType()) {
+                        switch (ii.type()) {
                             case BACK_COLOR: {
-                                s = s.background(ii.getVariant());
+                                s = s.background(ii.variant());
                                 break;
                             }
                             case BACK_TRUE_COLOR: {
-                                Color c = new Color(ii.getVariant());
+                                Color c = new Color(ii.variant());
                                 s = s.background(c.getRed(), c.getGreen(), c.getBlue());
                                 break;
                             }
                             case FORE_COLOR: {
-                                s = s.foreground(ii.getVariant());
+                                s = s.foreground(ii.variant());
                                 break;
                             }
                             case FORE_TRUE_COLOR: {
-                                Color c = new Color(ii.getVariant());
+                                Color c = new Color(ii.variant());
                                 s = s.foreground(c.getRed(), c.getGreen(), c.getBlue());
                                 break;
                             }
@@ -124,7 +124,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                             }
                         }
                     }
-                    return new AttributedString(p.getValue(), s);
+                    return new AttributedString(p.value(), s);
                 }
             }
             case ANCHOR: {
@@ -140,12 +140,12 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             }
             case TITLE: {
                 NTextTitle p = (NTextTitle) n;
-                return toAttributedString(p.getChild(), NTextStyles.PLAIN);
+                return toAttributedString(p.child(), NTextStyles.PLAIN);
             }
             case LINK: {
                 NTextLink p = (NTextLink) n;
                 return toAttributedString(
-                        NText.ofPlain(p.getValue()),
+                        NText.ofPlain(p.value()),
                         styles.append(NTextStyle.underlined())
                 );
             }
@@ -154,7 +154,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 return toAttributedString(
                         NText.ofList(
                                 NText.ofPlain("include"),
-                                NText.ofPlain(p.getValue())
+                                NText.ofPlain(p.value())
                         ),
                         styles.append(NTextStyle.danger())
                 );
@@ -170,11 +170,11 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             case STYLED: {
                 NTextStyled p = (NTextStyled) n;
                 if (styles.isPlain()) {
-                    return toAttributedString(p.getChild(), p.getStyles());
+                    return toAttributedString(p.child(), p.styles());
                 } else {
                     return toAttributedString(
-                            p.getChild(),
-                            styles.append(p.getStyles())
+                            p.child(),
+                            styles.append(p.styles())
                     );
                 }
             }
@@ -186,7 +186,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         return lastWasProgress;
     }
 
-    public void setLastWasProgress(boolean lastWasProgress) {
+    public void lastWasProgress(boolean lastWasProgress) {
         this.lastWasProgress = lastWasProgress;
     }
 
@@ -315,25 +315,25 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public InputStream getIn() {
+    public InputStream in() {
         prepare();
         return in;
     }
 
     @Override
-    public NPrintStream getOut() {
+    public NPrintStream out() {
         prepare();
         return out;
     }
 
     @Override
-    public NPrintStream getErr() {
+    public NPrintStream err() {
         prepare();
         return err;
     }
 
     @Override
-    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
+    public NCmdLineAutoCompleteResolver autoCompleteResolver() {
         return autoCompleteResolver;
     }
 
@@ -343,27 +343,27 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NJLineTerminal setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NJLineTerminal commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
         this.autoCompleteResolver = autoCompleteResolver;
         return this;
     }
 
     @Override
-    public NCmdLineHistory getCommandHistory() {
+    public NCmdLineHistory commandHistory() {
         return commandHistory;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
+    public NSystemTerminalBase commandHistory(NCmdLineHistory history) {
         this.commandHistory = history;
         return this;
     }
 
-    public NTerminalFormatter getCommandHighlighter() {
+    public NTerminalFormatter commandHighlighter() {
         return commandHighlighter;
     }
 
-    public NJLineTerminal setCommandHighlighter(NTerminalFormatter commandHighlighter) {
+    public NJLineTerminal commandHighlighter(NTerminalFormatter commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
         return this;
     }
@@ -371,7 +371,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     @Override
     public Object run(NTerminalCmd command, NPrintStream printStream) {
         prepare();
-        switch (command.getName()) {
+        switch (command.name()) {
             case NTerminalCmd.Ids.GET_CURSOR: {
                 org.jline.terminal.Cursor c = terminal.getCursorPosition(new IntConsumer() {
                     @Override
@@ -411,7 +411,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         }
     }
 
-    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+    public void styles(NTextStyles styles, NPrintStream printStream) {
         String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();
@@ -484,7 +484,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             return session.callWith(() -> {
                 setErrorIndex(-1);
                 setErrorPattern(null);
-                NTerminalFormatter ct = getCommandHighlighter();
+                NTerminalFormatter ct = commandHighlighter();
                 if(ct==null){
                     ct=NTerminalFormatter.ofSystemHighlighter();
                 }

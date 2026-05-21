@@ -57,7 +57,7 @@ public abstract class NRepositoryException extends NException {
      *
      * @return the repository of this exception
      */
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 }

@@ -17,7 +17,7 @@ public class NEnvRnsh implements NEnv {
     private NEnv defEnv;
 
     public NEnvRnsh(NScorableContext context) {
-        init(context.getCriteria());
+        init(context.criteria());
     }
     public NEnvRnsh(NConnectionString connectionString) {
         init(connectionString);
@@ -30,7 +30,7 @@ public class NEnvRnsh implements NEnv {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        Object c = context.getCriteria();
+        Object c = context.criteria();
         if (c instanceof NConnectionString) {
             NConnectionString z = (NConnectionString) c;
             if (isSupportedProtocol(z.protocol())) {

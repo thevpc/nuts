@@ -45,7 +45,7 @@ public interface NLogs extends NComponent {
 
     NLogScope newContext();
 
-    NLogScope getContext();
+    NLogScope context();
 
     void runInScope(NLogScope context, Runnable runnable);
 

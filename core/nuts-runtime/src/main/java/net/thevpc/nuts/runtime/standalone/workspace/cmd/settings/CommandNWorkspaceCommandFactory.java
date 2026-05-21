@@ -118,7 +118,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
                     .grabAll();
             int r = b.exitCode();
             if (r == 0) {
-                for (String s : b.getGrabbedOutString().split("\n")) {
+                for (String s : b.grabbedOut().split("\n")) {
                     s = s.trim();
                     if (s.length() > 0) {
                         c.add(new NCommandConfig().name(s).command(new String[]{NConstants.Ids.NSH, s}));

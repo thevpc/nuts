@@ -3,9 +3,9 @@ package net.thevpc.nuts.time;
 import net.thevpc.nuts.core.NSessionProvider;
 
 public interface NProgressHandlerEvent extends NSessionProvider {
-    NProgressEventType getEventType();
+    NProgressEventType eventType();
 
-    String getPropertyName();
+    String propertyName();
 
-    NProgressMonitorModel getModel();
+    NProgressMonitorModel model();
 }

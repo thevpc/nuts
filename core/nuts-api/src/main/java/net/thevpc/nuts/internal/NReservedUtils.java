@@ -149,7 +149,7 @@ public final class NReservedUtils {
     }
 
     public static String resolveJavaCommand(String javaHome) {
-        String exe = NOsFamily.getCurrent().equals(NOsFamily.WINDOWS) ? "java.exe" : "java";
+        String exe = NOsFamily.current().equals(NOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (NBlankable.isBlank(javaHome) || "null".equals(javaHome)) {
@@ -266,7 +266,7 @@ public final class NReservedUtils {
         List<String> oss = NReservedLangUtils.uniqueNonBlankList(cond.os());
         List<String> archs = NReservedLangUtils.uniqueNonBlankList(cond.arch());
         if (!oss.isEmpty()) {
-            NOsFamily eos = NOsFamily.getCurrent();
+            NOsFamily eos = NOsFamily.current();
             boolean osOk = false;
             for (String e : oss) {
                 NId ee = NId.get(e).get();

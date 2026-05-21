@@ -61,7 +61,7 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
     }
 
     @Override
-    public String getScriptName() {
+    public String scriptName() {
         return scriptName;
     }
 
@@ -127,7 +127,7 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
         if (value != null) {
             id(value.id());
             arguments(value.arguments());
-            scriptName(value.getScriptName());
+            scriptName(value.scriptName());
             scriptContent(value.scriptContent());
         }
         return this;

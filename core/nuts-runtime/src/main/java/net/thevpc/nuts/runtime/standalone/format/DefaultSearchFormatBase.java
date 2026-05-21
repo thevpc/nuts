@@ -50,7 +50,7 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
     }
 
     @Override
-    public NContentType getOutputFormat() {
+    public NContentType outputFormat() {
         return format;
     }
 
@@ -68,7 +68,7 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
      */
     @Override
     public NIterableFormat configure(boolean skipUnsupported, String... args) {
-        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"search-" + getOutputFormat().id());
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"search-" + outputFormat().id());
     }
 
     public NPrintStream getWriter() {

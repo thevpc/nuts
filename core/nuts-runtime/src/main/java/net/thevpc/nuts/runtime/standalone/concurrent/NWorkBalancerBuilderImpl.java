@@ -65,7 +65,7 @@ public class NWorkBalancerBuilderImpl<T> implements NWorkBalancerBuilder<T> {
         NWorkBalancerModel model = new NWorkBalancerModel();
         model.id(id);
         model.workers(new ArrayList<>(workers).stream().map(x -> x.copy()).collect(Collectors.toList()));
-        model.setStrategy(strategy);
+        model.strategy(strategy);
         model.options(new HashMap<>(options));
         return new NWorkBalancerImpl<>(model, factory);
     }

@@ -129,7 +129,7 @@ public class NInstallStatusDefinitionFilter2 extends AbstractDefinitionFilter {
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Collections.emptyList();
     }
 

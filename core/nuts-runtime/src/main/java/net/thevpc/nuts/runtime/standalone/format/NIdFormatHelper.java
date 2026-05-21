@@ -270,7 +270,7 @@ public class NIdFormatHelper {
             NUserConfig[] users = NWorkspaceExt.of(workspace).getConfigModel().getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NUserConfig user : users) {
-                    String s = user.getUserName();
+                    String s = user.userName();
                     if (s != null) {
                         z = Math.max(s.length(), z);
                     }
@@ -330,7 +330,7 @@ public class NIdFormatHelper {
         }
         switch (dp) {
             case ID: {
-                return oo.getIdFormat().setNtf(ntf).format(id);
+                return oo.getIdFormat().ntf(ntf).format(id);
             }
             case STATUS: {
                 return getFormattedStatusString();

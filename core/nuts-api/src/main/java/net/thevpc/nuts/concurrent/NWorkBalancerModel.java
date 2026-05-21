@@ -64,11 +64,11 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
     }
 
     @NGetter
-    public String getStrategy() {
+    public String strategy() {
         return strategy;
     }
 
-    public NWorkBalancerModel setStrategy(String strategy) {
+    public NWorkBalancerModel strategy(String strategy) {
         this.strategy = strategy;
         return this;
     }

@@ -17,12 +17,12 @@ public abstract class AbstractNFilter implements NFilter {
     }
 
     @Override
-    public NFilterOp getFilterOp() {
+    public NFilterOp filterOp() {
         return op;
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Collections.emptyList();
     }
 
@@ -31,13 +31,13 @@ public abstract class AbstractNFilter implements NFilter {
         if (other == null) {
             return this;
         }
-        switch (other.getFilterOp()) {
+        switch (other.filterOp()) {
             case TRUE:
                 return other;
             case FALSE:
                 return this;
         }
-        switch (getFilterOp()) {
+        switch (filterOp()) {
             case TRUE:
                 return other;
             case FALSE:
@@ -51,13 +51,13 @@ public abstract class AbstractNFilter implements NFilter {
         if (other == null) {
             return this;
         }
-        switch (other.getFilterOp()) {
+        switch (other.filterOp()) {
             case TRUE:
                 return this;
             case FALSE:
                 return other;//false
         }
-        switch (getFilterOp()) {
+        switch (filterOp()) {
             case TRUE:
                 return other;
             case FALSE:
@@ -77,7 +77,7 @@ public abstract class AbstractNFilter implements NFilter {
     }
 
     @Override
-    public Class<? extends NFilter> getFilterType() {
+    public Class<? extends NFilter> filterType() {
         return NFilters.of().detectType(this);
     }
 

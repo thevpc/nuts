@@ -44,7 +44,7 @@ public class OptionalJansi {
     private static final NTypeLoader jansiAnsiOutputStream = new NTypeLoaderImpl("org.fusesource.jansi.io.AnsiOutputStream");
 
     public static boolean isatty(int fd) {
-        if (jansiCLibrary.getType().isPresent()) {
+        if (jansiCLibrary.type().isPresent()) {
             try {
                 Method m = jansiCLibrary.getDeclaredMethod("isatty", int.class).orNull();
                 if (m != null) {
@@ -59,8 +59,8 @@ public class OptionalJansi {
     }
 
     public static boolean isAvailable() {
-        if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
-            return jansiAnsiOutputStream.getType().isPresent();
+        if (NOsFamily.current() == NOsFamily.WINDOWS) {
+            return jansiAnsiOutputStream.type().isPresent();
         }
         return false;
     }

@@ -18,9 +18,9 @@ public class NDependencyFilterUtils {
         if (filter instanceof NDependencyScopeFilter) {
             return new LinkedHashSet<>(((NDependencyScopeFilter) filter).getScopes());
         }
-        if (filter.getFilterOp() == NFilterOp.AND) {
+        if (filter.filterOp() == NFilterOp.AND) {
             Set<NDependencyScope> a = null;
-            for (NFilter subFilter : filter.getSubFilters()) {
+            for (NFilter subFilter : filter.subFilters()) {
                 Set<NDependencyScope> r = toScopeFilterPossibilities((NDependencyFilter) subFilter);
                 if (r == null) {
                     return null;
@@ -36,9 +36,9 @@ public class NDependencyFilterUtils {
             }
             return a;
         }
-        if (filter.getFilterOp() == NFilterOp.OR) {
+        if (filter.filterOp() == NFilterOp.OR) {
             Set<NDependencyScope> a = null;
-            for (NFilter subFilter : filter.getSubFilters()) {
+            for (NFilter subFilter : filter.subFilters()) {
                 Set<NDependencyScope> r = toScopeFilterPossibilities((NDependencyFilter) subFilter);
                 if (r == null) {
                     return null;
@@ -61,11 +61,11 @@ public class NDependencyFilterUtils {
         if (filter instanceof NDependencyScopeFilter) {
             return true;
         }
-        if (filter.getFilterOp() == NFilterOp.AND) {
-            return filter.getSubFilters().stream().allMatch(x -> isScopeFilter((NDependencyFilter) x));
+        if (filter.filterOp() == NFilterOp.AND) {
+            return filter.subFilters().stream().allMatch(x -> isScopeFilter((NDependencyFilter) x));
         }
-        if (filter.getFilterOp() == NFilterOp.OR) {
-            return filter.getSubFilters().stream().allMatch(x -> isScopeFilter((NDependencyFilter) x));
+        if (filter.filterOp() == NFilterOp.OR) {
+            return filter.subFilters().stream().allMatch(x -> isScopeFilter((NDependencyFilter) x));
         }
         return false;
     }
@@ -110,10 +110,10 @@ public class NDependencyFilterUtils {
         if (n != parent) {
             return n;
         }
-        if (parent.getFilterOp() == NFilterOp.AND) {
+        if (parent.filterOp() == NFilterOp.AND) {
             List<NDependencyFilter> newList = new ArrayList<>();
             boolean someChanges = false;
-            for (NFilter subFilter : parent.getSubFilters()) {
+            for (NFilter subFilter : parent.subFilters()) {
                 n = replacer.apply((NDependencyFilter) subFilter);
                 if (n == null) {
                     someChanges = true;

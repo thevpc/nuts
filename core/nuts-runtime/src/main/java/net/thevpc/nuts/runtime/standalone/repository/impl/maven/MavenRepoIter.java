@@ -27,7 +27,7 @@ class MavenRepoIter extends NIdPathIteratorBase {
 
     @Override
     public void undeploy(NId id) throws NExecutionException {
-        r.undeploy().setId(id)
+        r.undeploy().id(id)
                 //.setFetchMode(NutsFetchMode.LOCAL)
                 .run();
     }

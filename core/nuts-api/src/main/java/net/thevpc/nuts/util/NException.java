@@ -52,7 +52,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      * to {@link #initCause}.
      *
      * @param message the detail message. The detail message is saved for later
-     *                retrieval by the {@link #getMessage()} method.
+     *                retrieval by the {@link #message()} method.
      */
     public NException(NMsg message) {
         super(NException.messageToString(message));
@@ -68,7 +68,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      * automatically incorporated in this runtime exception's detail message.
      *
      * @param message the detail message (which is saved for later retrieval by
-     *                the {@link #getMessage()} method).
+     *                the {@link #message()} method).
      * @param cause   the cause (which is saved for later retrieval by the
      *                {@link #getCause()} method). (A {@code null} value is permitted, and
      *                indicates that the cause is nonexistent or unknown.)

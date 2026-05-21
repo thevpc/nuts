@@ -111,7 +111,7 @@ public class NElementDeserializerBuilderNElementDeserializerFieldImpl<T> impleme
         if (valueWhenMissing != null) {
             return valueWhenMissing;
         }
-        Type raw = field.getDeclaringType().javaType();
+        Type raw = field.declaringType().javaType();
         return parent.getDefaultValueByType(raw);
     }
 
@@ -119,12 +119,12 @@ public class NElementDeserializerBuilderNElementDeserializerFieldImpl<T> impleme
         if (useDefaultWhenMissingValue != null) {
             return useDefaultWhenMissingValue;
         }
-        Type raw = field.getDeclaringType().javaType();
+        Type raw = field.declaringType().javaType();
         return parent.hasDefaultValueByType(raw);
     }
 
     public boolean isBooleanType() {
-        Type raw = field.getDeclaringType().javaType();
+        Type raw = field.declaringType().javaType();
         if (raw instanceof Class) {
             Class<?> cls = (Class<?>) raw;
             return cls.equals(Boolean.class) || cls.equals(Boolean.TYPE);
@@ -133,7 +133,7 @@ public class NElementDeserializerBuilderNElementDeserializerFieldImpl<T> impleme
     }
 
     public boolean isCollectionType() {
-        Type raw = field.getDeclaringType().javaType();
+        Type raw = field.declaringType().javaType();
         if (raw instanceof Class) {
             Class<?> cls = (Class<?>) raw;
             if (cls.isArray()) {

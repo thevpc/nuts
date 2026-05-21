@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NInputContentProvider;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,8 @@ import java.util.function.Consumer;
 public interface NWebRequest extends NMsgFormattable {
     boolean isOneWay();
 
-    NWebRequest setOneWay(boolean oneWay);
+    @NSetter
+    NWebRequest oneWay(boolean oneWay);
 
     String uri();
 
@@ -61,33 +63,33 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest DELETE(String url);
 
-    String getHeader(String name);
+    String header(String name);
 
     List<String> headers(String name);
 
     Map<String, List<String>> headers();
 
-    NWebRequest setHeaders(Map<String, List<String>> headers);
+    NWebRequest headers(Map<String, List<String>> headers);
 
     NWebRequest addHeaders(Map<String, List<String>> headers);
 
     NWebRequest addParameters(Map<String, List<String>> parameters);
 
-    NWebRequest setPropsFileHeaders(NPath path);
+    NWebRequest propsFileHeaders(NPath path);
 
     NWebRequest addPropsFileHeaders(NPath path);
 
     NWebRequest addJsonFileHeaders(NPath path);
 
-    NWebRequest setJsonFileHeaders(NPath path);
+    NWebRequest jsonFileHeaders(NPath path);
 
-    NWebRequest setPropsFileParameters(NPath path);
+    NWebRequest propsFileParameters(NPath path);
 
     NWebRequest addPropsFileParameters(NPath path);
 
     NWebRequest addJsonFileParameters(NPath path);
 
-    NWebRequest setJsonFileParameters(NPath path);
+    NWebRequest psonFileParameters(NPath path);
 
     /**
      * equivalent to set header, to match JDK's method
@@ -100,19 +102,15 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest addHeader(String name, String value);
 
-    NWebRequest setHeader(String name, String value);
-
     Map<String, List<String>> parameters();
 
-    NWebRequest setParameters(Map<String, List<String>> parameters);
+    NWebRequest parameters(Map<String, List<String>> parameters);
 
     NWebRequest doWith(Consumer<NWebRequest> any);
 
     NWebRequest parameter(String name, String value);
 
     NWebRequest addParameter(String name, String value);
-
-    NWebRequest setParameter(String name, String value);
 
     NInputSource requestBody();
 
@@ -142,13 +140,9 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest addFormUrlEncoded(Map<String, String> value);
 
-    NWebRequest setFormData(String key, NInputContentProvider value);
+    NWebRequest formData(String key, NInputContentProvider value);
 
-    NWebRequest addFormData(String key, NInputContentProvider value);
-
-    NWebRequest setFormData(String key, String value);
-
-    NWebRequest addFormData(String key, String value);
+    NWebRequest formData(String key, String value);
 
     NWebRequest formUrlEncoded(Map<String, String> m);
 

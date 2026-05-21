@@ -32,25 +32,25 @@ public class DefaultNRepositoryAccessSpec implements NRepositoryAccessSpec {
     }
 
     @Override
-    public NRepositoryAccessSpec setRemoteUserName(String remoteUserName) {
+    public NRepositoryAccessSpec remoteUserName(String remoteUserName) {
         this.remoteUserName = remoteUserName;
         return this;
     }
 
     @Override
-    public DefaultNRepositoryAccessSpec setRemoteCredential(NSecureString remoteCredential) {
+    public DefaultNRepositoryAccessSpec remoteCredential(NSecureString remoteCredential) {
         this.remoteCredential = remoteCredential;
         return this;
     }
 
     @Override
-    public DefaultNRepositoryAccessSpec setRemoteAuthType(String remoteAuthType) {
+    public DefaultNRepositoryAccessSpec remoteAuthType(String remoteAuthType) {
         this.remoteAuthType = remoteAuthType;
         return this;
     }
 
     @Override
-    public DefaultNRepositoryAccessSpec setPermissions(List<String> permissions) {
+    public DefaultNRepositoryAccessSpec permissions(List<String> permissions) {
         this.permissions = permissions;
         return this;
     }
@@ -85,32 +85,32 @@ public class DefaultNRepositoryAccessSpec implements NRepositoryAccessSpec {
     }
 
     @Override
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
     @Override
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
     @Override
-    public String getRemoteUserName() {
+    public String remoteUserName() {
         return remoteUserName;
     }
 
     @Override
-    public NSecureString getRemoteCredential() {
+    public NSecureString remoteCredential() {
         return remoteCredential;
     }
 
     @Override
-    public String getRemoteAuthType() {
+    public String remoteAuthType() {
         return remoteAuthType;
     }
 
     @Override
-    public List<String> getPermissions() {
+    public List<String> permissions() {
         return permissions;
     }
 

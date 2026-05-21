@@ -16,10 +16,10 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      * call to {@link #initCause}.
      *
      * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     *                later retrieval by the {@link #message()} method.
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code) {
-        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message);
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message);
         this.code = code;
         this.responseMessage = message;
         this.messageCode = messageCode;
@@ -34,14 +34,14 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      * this runtime exception's detail message.
      *
      * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
+     *                by the {@link #message()} method).
      * @param cause   the cause (which is saved for later retrieval by the
      *                {@link #getCause()} method).  (A {@code null} value is
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause) {
-        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message, cause);
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message, cause);
         this.code = code;
         this.responseMessage = message;
         this.messageCode = messageCode;
@@ -61,22 +61,22 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      *                           be writable
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message, cause, enableSuppression, writableStackTrace);
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message, cause, enableSuppression, writableStackTrace);
         this.code = code;
         this.responseMessage = message;
         this.messageCode = messageCode;
     }
 
-    public NHttpCode getCode() {
+    public NHttpCode statusCode() {
         return code;
     }
 
     @Override
-    public NMsgCode getMsgCode() {
+    public NMsgCode msgCode() {
         return messageCode;
     }
 
-    public NMsg getResponseMessage() {
+    public NMsg responseMessage() {
         return responseMessage;
     }
 

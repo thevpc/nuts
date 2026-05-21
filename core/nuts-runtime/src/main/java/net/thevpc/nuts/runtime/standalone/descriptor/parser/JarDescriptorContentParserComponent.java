@@ -55,9 +55,9 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
 
     @NScore
     public static int getScore(NScorableContext criteria) {
-        NDescriptorContentParserContext cons = criteria.getCriteria(NDescriptorContentParserContext.class);
+        NDescriptorContentParserContext cons = criteria.criteria(NDescriptorContentParserContext.class);
         if (cons != null) {
-            String e = NStringUtils.trim(cons.getFileExtension());
+            String e = NStringUtils.trim(cons.fileExtension());
             switch (e) {
                 case "jar":
                 case "war":
@@ -74,7 +74,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
 
     @Override
     public NDescriptor parse(final NDescriptorContentParserContext parserContext) {
-        if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
+        if (!POSSIBLE_EXT.contains(parserContext.fileExtension())) {
             return null;
         }
         final NId JAVA = NId.get("java").get();
@@ -83,7 +83,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         final NRef<NDescriptor> maven = NRef.ofNull();
 //        final NutsRef<String> mainClass = new NutsRef<>();
 
-        ZipUtils.visitZipStream(parserContext.getFullStream(), (path, inputStream) -> {
+        ZipUtils.visitZipStream(parserContext.fullStream(), (path, inputStream) -> {
             switch (path) {
                 case "META-INF/MANIFEST.MF": {
                     try {
@@ -169,7 +169,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         }
         if (baseNutsDescriptor == null) {
             CoreDigestHelper d = new CoreDigestHelper();
-            d.append(parserContext.getFullStream());
+            d.append(parserContext.fullStream());
             String artifactId = d.getDigest();
             baseNutsDescriptor = new DefaultNDescriptorBuilder()
                     .id(NIdBuilder.of("temp",artifactId).version("1.0").build())
@@ -178,7 +178,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                     .build();
         }
         boolean alwaysSelectAllMainClasses = false;
-        NCmdLine cmd = NCmdLine.of(parserContext.getParseOptions());
+        NCmdLine cmd = NCmdLine.of(parserContext.parseOptions());
         NArg a;
         while (!cmd.isEmpty()) {
             if ((a = cmd.nextFlag("--all-mains").orNull()) != null) {

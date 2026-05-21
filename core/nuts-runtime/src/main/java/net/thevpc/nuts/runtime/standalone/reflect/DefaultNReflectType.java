@@ -87,7 +87,7 @@ public class DefaultNReflectType implements NReflectType {
         this.repo = repo;
         Class<?> c2 = javaClass().orNull();
         this.propertyAccessStrategies = resolveAccessStrategies(c2, repo);
-        this.propertyDefaultValueStrategy = c2 == null ? NReflectPropertyDefaultValueStrategy.BASE : this.repo.getConfiguration().getDefaultValueStrategy(c2);
+        this.propertyDefaultValueStrategy = c2 == null ? NReflectPropertyDefaultValueStrategy.BASE : this.repo.configuration().getDefaultValueStrategy(c2);
     }
 
 
@@ -101,7 +101,7 @@ public class DefaultNReflectType implements NReflectType {
             NReflectRepository repo) {
 
         if (clazz == null) {
-            Set<NReflectPropertyAccessStrategy> a = repo.getConfiguration().getDefaultAccessStrategies(clazz);
+            Set<NReflectPropertyAccessStrategy> a = repo.configuration().getDefaultAccessStrategies(clazz);
             if (a == null || a.isEmpty()) {
                 return NReflectPropertyAccessStrategy.all();
             }
@@ -125,7 +125,7 @@ public class DefaultNReflectType implements NReflectType {
             Collections.addAll(queue, current.getInterfaces());
         }
 
-        Set<NReflectPropertyAccessStrategy> a = repo.getConfiguration().getDefaultAccessStrategies(clazz);
+        Set<NReflectPropertyAccessStrategy> a = repo.configuration().getDefaultAccessStrategies(clazz);
         if (a == null || a.isEmpty()) {
             return NReflectPropertyAccessStrategy.all();
         }
@@ -384,12 +384,12 @@ public class DefaultNReflectType implements NReflectType {
             while (parent != null) {
                 hierarchyIndex++;
                 for (NReflectProperty property : parent.properties()) {
-                    if (!allProperties.containsKey(property.getName())) {
-                        allProperties.put(property.getName(), new IndexedItem<>(hierarchyIndex, property));
+                    if (!allProperties.containsKey(property.name())) {
+                        allProperties.put(property.name(), new IndexedItem<>(hierarchyIndex, property));
                     }
                 }
                 for (NReflectMethod m : parent.declaredMethods()) {
-                    String sig = normalizeSig(m.getName(), m.getSignature());
+                    String sig = normalizeSig(m.name(), m.signature());
                     if (!allMethods.containsKey(sig)) {
                         allMethods.put(sig, new IndexedItem<>(hierarchyIndex, m));
                     }
@@ -471,7 +471,7 @@ public class DefaultNReflectType implements NReflectType {
         Method[] declaredMethods2 = NReflectPropertyFiller._getMethods(javaType);
         for (Method m : declaredMethods2) {
             DefaultNReflectMethod rm = new DefaultNReflectMethod(m, this);
-            declaredMethods.put(normalizeSig(m.getName(), rm.getSignature()), new IndexedItem<>(hierarchyIndex, rm));
+            declaredMethods.put(normalizeSig(m.getName(), rm.signature()), new IndexedItem<>(hierarchyIndex, rm));
         }
     }
 

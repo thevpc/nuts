@@ -21,17 +21,17 @@ public class DefaultNProgressHandlerEvent implements NProgressHandlerEvent {
     }
 
     @Override
-    public NProgressEventType getEventType() {
+    public NProgressEventType eventType() {
         return eventType;
     }
 
     @Override
-    public String getPropertyName() {
+    public String propertyName() {
         return propertyName;
     }
 
     @Override
-    public NProgressMonitorModel getModel() {
+    public NProgressMonitorModel model() {
         return model;
     }
 
@@ -49,7 +49,7 @@ public class DefaultNProgressHandlerEvent implements NProgressHandlerEvent {
                 + (model.isBlocked() ? "B" : " ")
                 + (model.isCancelled() ? "C" : " ")
                 + (model.isCompleted() ? "T" : " ")
-                + " " + model.getProgress()
-                + " " + model.getMessage();
+                + " " + model.progress()
+                + " " + model.message();
     }
 }

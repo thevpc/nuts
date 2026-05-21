@@ -68,25 +68,25 @@ public class NDefinitionFilterUtils {
     }
 
     public static boolean isAlways(NDefinitionFilter any) {
-        return any == null || any.getFilterOp() == NFilterOp.TRUE;
+        return any == null || any.filterOp() == NFilterOp.TRUE;
     }
 
     public static boolean isNever(NDefinitionFilter any) {
-        return any != null && any.getFilterOp() == NFilterOp.FALSE;
+        return any != null && any.filterOp() == NFilterOp.FALSE;
     }
 
     public static boolean isInstallStatusFilter(NDefinitionFilter filter) {
         if (filter instanceof NInstallStatusDefinitionFilter2) {
             return true;
         }
-        if (filter.getFilterOp() == NFilterOp.AND) {
-            return filter.getSubFilters().stream().allMatch(x -> isInstallStatusFilter((NDefinitionFilter) x));
+        if (filter.filterOp() == NFilterOp.AND) {
+            return filter.subFilters().stream().allMatch(x -> isInstallStatusFilter((NDefinitionFilter) x));
         }
-        if (filter.getFilterOp() == NFilterOp.OR) {
-            return filter.getSubFilters().stream().allMatch(x -> isInstallStatusFilter((NDefinitionFilter) x));
+        if (filter.filterOp() == NFilterOp.OR) {
+            return filter.subFilters().stream().allMatch(x -> isInstallStatusFilter((NDefinitionFilter) x));
         }
-        if (filter.getFilterOp() == NFilterOp.NOT) {
-            return isInstallStatusFilter((NDefinitionFilter) filter.getSubFilters().get(0));
+        if (filter.filterOp() == NFilterOp.NOT) {
+            return isInstallStatusFilter((NDefinitionFilter) filter.subFilters().get(0));
         }
         return false;
     }
@@ -111,12 +111,12 @@ public class NDefinitionFilterUtils {
             }
             return null;
         }
-        if (filter.getFilterOp() == NFilterOp.NOT) {
-            return toRepositoryFilter((NDefinitionFilter) filter.getSubFilters().get(0)).neg();
+        if (filter.filterOp() == NFilterOp.NOT) {
+            return toRepositoryFilter((NDefinitionFilter) filter.subFilters().get(0)).neg();
         }
-        if (filter.getFilterOp() == NFilterOp.AND) {
+        if (filter.filterOp() == NFilterOp.AND) {
             NRepositoryFilter result = null;
-            for (NFilter subFilter : filter.getSubFilters()) {
+            for (NFilter subFilter : filter.subFilters()) {
                 NRepositoryFilter n = toRepositoryFilter((NDefinitionFilter) subFilter);
                 if (result == null) {
                     result = n;
@@ -129,9 +129,9 @@ public class NDefinitionFilterUtils {
             }
             return result;
         }
-        if (filter.getFilterOp() == NFilterOp.OR) {
+        if (filter.filterOp() == NFilterOp.OR) {
             NRepositoryFilter result = null;
-            for (NFilter subFilter : filter.getSubFilters()) {
+            for (NFilter subFilter : filter.subFilters()) {
                 NRepositoryFilter n = toRepositoryFilter((NDefinitionFilter) subFilter);
                 if (result == null) {
                     result = n;
@@ -174,10 +174,10 @@ public class NDefinitionFilterUtils {
         if (n != parent) {
             return n;
         }
-        if (parent.getFilterOp() == NFilterOp.AND) {
+        if (parent.filterOp() == NFilterOp.AND) {
             List<NDefinitionFilter> newList = new ArrayList<>();
             boolean someChanges = false;
-            for (NFilter subFilter : parent.getSubFilters()) {
+            for (NFilter subFilter : parent.subFilters()) {
                 n = replacer.apply((NDefinitionFilter) subFilter);
                 if (n == null) {
                     someChanges = true;

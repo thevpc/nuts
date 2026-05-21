@@ -77,7 +77,7 @@ public class CpTest {
                 .progressMonitor(new NProgressListener() {
                     @Override
                     public boolean onProgress(NProgressEvent event) {
-                        TestUtils.println(event.getProgress());
+                        TestUtils.println(event.progress());
                         return true;
                     }
                 }).run();

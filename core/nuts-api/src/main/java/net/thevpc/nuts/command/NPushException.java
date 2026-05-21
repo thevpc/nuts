@@ -79,7 +79,7 @@ public class NPushException extends NException {
      *
      * @return artifact id
      */
-    public NId getId() {
+    public NId id() {
         return id;
     }
 

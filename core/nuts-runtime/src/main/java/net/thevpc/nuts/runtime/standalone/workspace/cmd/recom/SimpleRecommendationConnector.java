@@ -29,15 +29,15 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             cli.readTimeout(NDuration.ofMillis(500));
             NWebRequest post = cli.POST(ri.server + url)
                     .contentType("application/json; charset=UTF-8")
-                    .setHeader("Accept", "*/*");
+                    .header("Accept", "*/*");
             String loc = NSession.of().locale().orDefault();
             if (loc == null) {
                 loc = Locale.getDefault().toString();
             }
-            post.setHeader("Accept-Language", loc);
+            post.header("Accept-Language", loc);
             String out = NElementWriter.ofJson().formatPlain(ri.q);
             post.requestBody(out.getBytes());
-            return post.run().getContentAs(resultType, NContentType.JSON);
+            return post.run().contentAs(resultType, NContentType.JSON);
         } catch (NException ex) {
             throw ex;
         } catch (UncheckedIOException ex) {

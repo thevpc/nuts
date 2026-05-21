@@ -91,8 +91,8 @@ public class DefaultNDurationFormat {
                 }
             }
         }
-        if (uordinal > duration.getLargestUnit().ordinal()
-                || uordinal < duration.getSmallestUnit().ordinal()
+        if (uordinal > duration.largestUnit().ordinal()
+                || uordinal < duration.smallestUnit().ordinal()
         ) {
             return;
         }
@@ -190,7 +190,7 @@ public class DefaultNDurationFormat {
     }
 
     private boolean accept(ChronoUnit c, NDuration duration) {
-        if (c.ordinal() < duration.getSmallestUnit().ordinal()) {
+        if (c.ordinal() < duration.smallestUnit().ordinal()) {
             return false;
         }
         switch (mode) {
@@ -219,8 +219,8 @@ public class DefaultNDurationFormat {
             formatUnit(duration, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
-            out.print(formatNumber(0, duration.getSmallestUnit()), NTextStyle.number());
-            out.print(unitString(duration.getSmallestUnit()), NTextStyle.info());
+            out.print(formatNumber(0, duration.smallestUnit()), NTextStyle.number());
+            out.print(unitString(duration.smallestUnit()), NTextStyle.info());
         } else if (mode == NDurationFormatMode.CLOCK) {
             if (processed.contains(ChronoUnit.MILLIS)) {
                 processed.add(ChronoUnit.SECONDS);
@@ -305,11 +305,11 @@ public class DefaultNDurationFormat {
         return this;
     }
 
-    public NDurationFormatMode getMode() {
+    public NDurationFormatMode mode() {
         return mode;
     }
 
-    public DefaultNDurationFormat setMode(NDurationFormatMode mode) {
+    public DefaultNDurationFormat mode(NDurationFormatMode mode) {
         if (this.mode != mode) {
             if (frozen) {
                 throw new IllegalArgumentException(NI18n.of("This instance is immutable and cannot be updated"));

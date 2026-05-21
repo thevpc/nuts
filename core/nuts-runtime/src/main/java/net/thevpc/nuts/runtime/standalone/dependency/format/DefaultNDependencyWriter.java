@@ -33,8 +33,8 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
         super("dependency-format");
     }
 
-    public NDependencyWriter setNtf(boolean ntf) {
-        super.setNtf(ntf);
+    public NDependencyWriter ntf(boolean ntf) {
+        super.ntf(ntf);
         return this;
     }
 
@@ -44,7 +44,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setOmitRepository(boolean omitRepository) {
+    public NDependencyWriter omitRepository(boolean omitRepository) {
         this.omitRepository = omitRepository;
         return this;
     }
@@ -55,7 +55,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setOmitGroupId(boolean omitGroup) {
+    public NDependencyWriter omitGroupId(boolean omitGroup) {
         this.omitGroup = omitGroup;
         return this;
     }
@@ -66,7 +66,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setOmitImportedGroup(boolean omitImportedGroup) {
+    public NDependencyWriter omitImportedGroup(boolean omitImportedGroup) {
         this.omitImportedGroup = omitImportedGroup;
         return this;
     }
@@ -77,7 +77,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setOmitOtherProperties(boolean value) {
+    public NDependencyWriter omitOtherProperties(boolean value) {
         this.omitQuery = value;
         return this;
     }
@@ -99,7 +99,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setHighlightImportedGroup(boolean highlightImportedGroup) {
+    public NDependencyWriter highlightImportedGroup(boolean highlightImportedGroup) {
         this.highlightImportedGroup = highlightImportedGroup;
         return this;
     }
@@ -124,7 +124,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
             }
         }
         NIdWriter id1 = NIdWriter.of();
-        for (String omitQueryProperty : getOmitQueryProperties()) {
+        for (String omitQueryProperty : omittedQueryProperties()) {
             id1.setOmitProperty(omitQueryProperty, true);
         }
         return id1
@@ -133,7 +133,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
                 .omitGroupId(isOmitGroupId())
                 .omitImportedGroupId(isOmitImportedGroupId())
                 .omitRepository(isOmitRepository())
-                .setNtf(isNtf())
+                .ntf(isNtf())
                 .format(id.build());
     }
 
@@ -144,8 +144,8 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setOmitOptional(boolean value) {
-        return setOmitQueryProperty(NConstants.IdProperties.OPTIONAL, value);
+    public NDependencyWriter omitOptional(boolean value) {
+        return omitQueryProperty(NConstants.IdProperties.OPTIONAL, value);
     }
 
     @Override
@@ -154,8 +154,8 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setOmitExclusions(boolean value) {
-        return setOmitQueryProperty(NConstants.IdProperties.EXCLUSIONS, value);
+    public NDependencyWriter omitExclusions(boolean value) {
+        return omitQueryProperty(NConstants.IdProperties.EXCLUSIONS, value);
     }
 
     @Override
@@ -164,13 +164,13 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setOmitScope(boolean value) {
-        return setOmitQueryProperty(NConstants.IdProperties.SCOPE, value);
+    public NDependencyWriter omitScope(boolean value) {
+        return omitQueryProperty(NConstants.IdProperties.SCOPE, value);
     }
 
 
     @Override
-    public List<String> getOmitQueryProperties() {
+    public List<String> omittedQueryProperties() {
         return new ArrayList<>(queryPropertiesOmitted);
     }
 
@@ -180,7 +180,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
     }
 
     @Override
-    public NDependencyWriter setOmitQueryProperty(String name, boolean value) {
+    public NDependencyWriter omitQueryProperty(String name, boolean value) {
         if (value) {
             queryPropertiesOmitted.add(name);
         } else {
@@ -204,7 +204,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
         boolean enabled = aa.isUncommented();
         switch (aa.key()) {
             case "--omit-env": {
-                cmdLine.matcher().matchFlag((v) -> setOmitOtherProperties(v.booleanValue())).anyMatch();
+                cmdLine.matcher().matchFlag((v) -> omitOtherProperties(v.booleanValue())).anyMatch();
                 return true;
             }
 //            case "--omit-face": {
@@ -212,19 +212,19 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
 //                return true;
 //            }
             case "--omit-group": {
-                cmdLine.matcher().matchFlag((v) -> setOmitGroupId(v.booleanValue())).anyMatch();
+                cmdLine.matcher().matchFlag((v) -> omitGroupId(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--omit-imported-group": {
-                cmdLine.matcher().matchFlag((v) -> setOmitImportedGroup(v.booleanValue())).anyMatch();
+                cmdLine.matcher().matchFlag((v) -> omitImportedGroup(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--omit-repo": {
-                cmdLine.matcher().matchFlag((v) -> setOmitRepository(v.booleanValue())).anyMatch();
+                cmdLine.matcher().matchFlag((v) -> omitRepository(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--highlight-imported-group": {
-                cmdLine.matcher().matchFlag((v) -> setHighlightImportedGroup(v.booleanValue())).anyMatch();
+                cmdLine.matcher().matchFlag((v) -> highlightImportedGroup(v.booleanValue())).anyMatch();
                 return true;
             }
         }

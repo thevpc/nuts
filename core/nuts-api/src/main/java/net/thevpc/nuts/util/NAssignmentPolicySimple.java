@@ -74,17 +74,17 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
 
     public <T> boolean applyValue(Supplier<T> sourceGetter, Supplier<T> targetGetter, Consumer<T> targetSetter) {
         return applyMappingValue(sourceGetter, targetGetter, a -> {
-            targetSetter.accept(a.getSourceValue());
+            targetSetter.accept(a.sourceValue());
             return true;
         });
     }
 
     public <T> boolean applyMappingValue(Supplier<T> sourceGetter, Supplier<T> targetGetter, MappingAssigner<T> targetSetter) {
         MappingValueImpl<T> assignableValue = new MappingValueImpl<>(sourceGetter, targetGetter);
-        if (doRejectSideStrategy(source, assignableValue::getSourceValue)) {
+        if (doRejectSideStrategy(source, assignableValue::sourceValue)) {
             return false;
         }
-        if (doRejectSideStrategy(target, assignableValue::getTargetValue)) {
+        if (doRejectSideStrategy(target, assignableValue::targetValue)) {
             return false;
         }
         return targetSetter.apply(assignableValue);
@@ -104,7 +104,7 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
             this.targetSupplier = targetSupplier;
         }
 
-        public T getSourceValue() {
+        public T sourceValue() {
             if (!sourceSet) {
                 sourceSet = true;
                 source = sourceSupplier.get();
@@ -112,7 +112,7 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
             return source;
         }
 
-        public T getTargetValue() {
+        public T targetValue() {
             if (!targetSet) {
                 targetSet = true;
                 target = targetSupplier.get();

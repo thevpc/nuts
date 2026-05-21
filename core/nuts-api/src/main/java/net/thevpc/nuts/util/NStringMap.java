@@ -40,7 +40,7 @@ public interface NStringMap<V> extends NCopiable {
 
     int size();
 
-    char getSeparator();
+    char separator();
 
     Map<String, V> toMap(String prefix);
 

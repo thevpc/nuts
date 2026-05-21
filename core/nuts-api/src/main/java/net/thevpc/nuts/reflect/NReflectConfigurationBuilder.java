@@ -43,17 +43,17 @@ public interface NReflectConfigurationBuilder extends NComponent {
 
     NReflectConfiguration build();
 
-    Function<Class, Set<NReflectPropertyAccessStrategy>> getPropertyAccessStrategy();
+    Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy();
 
-    Function<Class, NReflectPropertyDefaultValueStrategy> getPropertyDefaultValueStrategy();
+    Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy();
 
-    NReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy);
+    NReflectConfigurationBuilder propertyAccessStrategy(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy);
 
-    NReflectConfigurationBuilder setPropertyAccessStrategy(Set<NReflectPropertyAccessStrategy> propertyAccessStrategy);
+    NReflectConfigurationBuilder propertyAccessStrategy(Set<NReflectPropertyAccessStrategy> propertyAccessStrategy);
 
-    NReflectConfigurationBuilder setPropertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy);
+    NReflectConfigurationBuilder propertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy);
     
-    NReflectConfigurationBuilder setPropertyDefaultValueStrategy(Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy);
+    NReflectConfigurationBuilder propertyDefaultValueStrategy(Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy);
 
     NReflectConfigurationBuilder unsetPropertyAccessStrategy();
 

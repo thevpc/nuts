@@ -50,7 +50,7 @@ public class NTextArtImpl implements NTextArt {
     }
 
     @Override
-    public List<NTextArtRenderer> getRenderers() {
+    public List<NTextArtRenderer> renderers() {
         List<NTextArtRenderer> all = new ArrayList<>();
         for (NTextArtRendererFactory factory : getFactories()) {
             for (NTextArtRenderer nTextArtRenderer : factory.listRenderers().collect(Collectors.toList())) {
@@ -61,29 +61,29 @@ public class NTextArtImpl implements NTextArt {
     }
 
     @Override
-    public List<NTextArtTableRenderer> getTableRenderers() {
-        return NStream.ofIterable(getRenderers()).instanceOf(NTextArtTableRenderer.class).toList();
+    public List<NTextArtTableRenderer> tableRenderers() {
+        return NStream.ofIterable(renderers()).instanceOf(NTextArtTableRenderer.class).toList();
     }
 
     @Override
-    public List<NTextArtTreeRenderer> getTreeRenderers() {
-        return NStream.ofIterable(getRenderers()).instanceOf(NTextArtTreeRenderer.class).toList();
+    public List<NTextArtTreeRenderer> treeRenderers() {
+        return NStream.ofIterable(renderers()).instanceOf(NTextArtTreeRenderer.class).toList();
     }
 
     @Override
-    public List<NTextArtTextRenderer> getTextRenderers() {
-        return NStream.ofIterable(getRenderers()).instanceOf(NTextArtTextRenderer.class).toList();
+    public List<NTextArtTextRenderer> textRenderers() {
+        return NStream.ofIterable(renderers()).instanceOf(NTextArtTextRenderer.class).toList();
     }
 
 
     @Override
-    public List<NTextArtImageRenderer> getImageRenderers() {
-        return NStream.ofIterable(getRenderers()).instanceOf(NTextArtImageRenderer.class).collect(Collectors.toList());
+    public List<NTextArtImageRenderer> imageRenderers() {
+        return NStream.ofIterable(renderers()).instanceOf(NTextArtImageRenderer.class).collect(Collectors.toList());
     }
 
 
     public <T extends NTextArtRenderer> List<NTextArtRenderer> getRenderers(Class<T> rendererType){
-        return NStream.ofIterable(getRenderers())
+        return NStream.ofIterable(renderers())
                 .instanceOf(rendererType).collect(Collectors.toList());
     }
 
@@ -99,7 +99,7 @@ public class NTextArtImpl implements NTextArt {
     }
 
 
-    public NOptional<NTextArtRenderer> getDefaultRenderer() {
+    public NOptional<NTextArtRenderer> defaultRenderer() {
         return getRenderer("figlet:banner");
     }
 
@@ -156,22 +156,22 @@ public class NTextArtImpl implements NTextArt {
     }
 
     @Override
-    public NOptional<NTextArtImageRenderer> getImageRenderer() {
+    public NOptional<NTextArtImageRenderer> imageRenderer() {
         return getImageRenderer("pixel:standard").instanceOf(NTextArtImageRenderer.class);
     }
 
     @Override
-    public NOptional<NTextArtTextRenderer> getTextRenderer() {
+    public NOptional<NTextArtTextRenderer> textRenderer() {
         return getTextRenderer("figlet:banner");
     }
 
     @Override
-    public NOptional<NTextArtTableRenderer> getTableRenderer() {
+    public NOptional<NTextArtTableRenderer> tableRenderer() {
         return getTableRenderer("table:default");
     }
 
     @Override
-    public NOptional<NTextArtTreeRenderer> getTreeRenderer() {
+    public NOptional<NTextArtTreeRenderer> treeRenderer() {
         return getTreeRenderer("tree:default");
     }
 

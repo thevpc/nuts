@@ -53,8 +53,8 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
         return this;
     }
 
-    public NIdWriter setNtf(boolean ntf) {
-        super.setNtf(ntf);
+    public NIdWriter ntf(boolean ntf) {
+        super.ntf(ntf);
         return this;
     }
 

@@ -85,8 +85,8 @@ public class NJavaSdkUtils {
         for (JavaProvider kavaProvider : javaProviders) {
             String product2 = NJavaSdkUtils.validateJavaProduct(product).orElse(NExecutionEngineLocation.JAVA_PRODUCT_JDK);
             int version2 = NJavaSdkUtils.validateJavaMajorVersionOrDefault(version);
-            NOsFamily os2 = os == null ? NOsFamily.getCurrent() : os;
-            NArchFamily arch2 = arch == null ? NArchFamily.getCurrent() : arch;
+            NOsFamily os2 = os == null ? NOsFamily.current() : os;
+            NArchFamily arch2 = arch == null ? NArchFamily.current() : arch;
             NOptional<NPath> z = kavaProvider.resolveAndInstall(product2, version2, os2, arch2);
             if (z.isPresent()) {
                 NExecutionEngineLocation r = resolveJdkLocation(z.get(), kavaProvider.getName() + "-" + product2 + "-" + version2 + "-" + arch2);
@@ -264,7 +264,7 @@ public class NJavaSdkUtils {
                     product,
                     0
             );
-            current.setConfigVersion(DefaultNWorkspace.VERSION_SDK_LOCATION);
+            current.configVersion(DefaultNWorkspace.VERSION_SDK_LOCATION);
             hostVm = current;
         }
         return hostVm;
@@ -438,8 +438,8 @@ public class NJavaSdkUtils {
             }
             case WINDOWS: {
                 conf = new String[]{
-                        NPlatformHome.USER.getWindowsProgramFiles() + "\\Java",
-                        NPlatformHome.USER.getWindowsProgramFilesX86() + "\\Java",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\Java",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\Java",
                         (System.getProperty("java.home") + "\\.jdk")
                 };
                 break;
@@ -475,8 +475,8 @@ public class NJavaSdkUtils {
             }
             case WINDOWS: {
                 conf.addAll(Arrays.asList(
-                        NPlatformHome.USER.getWindowsProgramFiles() + "\\Java",
-                        NPlatformHome.USER.getWindowsProgramFilesX86() + "\\Java"
+                        NPlatformHome.USER.windowsProgramFiles() + "\\Java",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\Java"
                 ));
                 break;
             }
@@ -616,7 +616,7 @@ public class NJavaSdkUtils {
                         .addCommand(javaExePath.toString(), "-version")
                         .grabAll().failFast(true).run();
                 cmdRresult = cmd.exitCode();
-                cmdOutputString = cmd.getGrabbedOutString();
+                cmdOutputString = cmd.grabbedOut();
                 if (!cmdOutputString.isEmpty()) {
                     break;
                 } else {
@@ -697,7 +697,7 @@ public class NJavaSdkUtils {
                 product,
                 0
         );
-        r.setConfigVersion(DefaultNWorkspace.VERSION_SDK_LOCATION);
+        r.configVersion(DefaultNWorkspace.VERSION_SDK_LOCATION);
         return r;
     }
 

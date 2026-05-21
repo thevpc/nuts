@@ -89,10 +89,10 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     private static final String FIELD_TAG_NAME = "tagName";
 
     public static <V> V runWithDoc(NElementFactoryContext context, Supplier<V> impl, Document doc) {
-        Stack<Document> docs = (Stack<Document>) context.getProperties().get(Document.class.getName());
+        Stack<Document> docs = (Stack<Document>) context.properties().get(Document.class.getName());
         if (docs == null) {
             docs = new Stack<>();
-            context.getProperties().put(Document.class.getName(), docs);
+            context.properties().put(Document.class.getName(), docs);
             try {
                 docs.push(doc != null ? doc : XmlUtils.createDocument());
                 return impl.get();
@@ -120,9 +120,9 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     protected Node createObject0(NElementDeserializerContext context) {
         NElement element = context.element();
         Type to = context.instanceType();
-        if (context.getProperties().get(Document.class.getName()) == null || !(context.getProperties().get(Document.class.getName()) instanceof Stack)) {
+        if (context.properties().get(Document.class.getName()) == null || !(context.properties().get(Document.class.getName()) instanceof Stack)) {
             Stack<Document> docs = new Stack<>();
-            context.getProperties().put(Document.class.getName(), docs);
+            context.properties().put(Document.class.getName(), docs);
             try {
                 docs.push(XmlUtils.createDocument());
                 return this.toObject(context);
@@ -130,7 +130,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                 docs.pop();
             }
         } else {
-            Stack<Document> docs = (Stack<Document>) context.getProperties().get(Document.class.getName());
+            Stack<Document> docs = (Stack<Document>) context.properties().get(Document.class.getName());
             if (docs.isEmpty()) {
                 try {
                     docs.push(XmlUtils.createDocument());
@@ -142,7 +142,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                 //continue;
             }
         }
-        Document doc = ((Stack<Document>) context.getProperties().get(Document.class.getName())).peek();
+        Document doc = ((Stack<Document>) context.properties().get(Document.class.getName())).peek();
         switch (element.type()) {
             case NULL: {
                 Element e = doc.createElement(TAG_NULL);

@@ -49,7 +49,7 @@ public class ToolboxRepositoryFactoryComponent implements
     }
 
     @Override
-    public List<NRepositorySpec> getTemplateRepositoryDefinitions() {
+    public List<NRepositorySpec> templateRepositoryDefinitions() {
         return Collections.singletonList(
                 new NRepositorySpec().name(ToolboxRepositoryModel.REPOSITORY_TYPE)
                         .failSafe(false)
@@ -59,7 +59,7 @@ public class ToolboxRepositoryFactoryComponent implements
     }
 
     @Override
-    public List<NRepositorySpec> getDefaultRepositoryDefinitions() {
+    public List<NRepositorySpec> defaultRepositoryDefinitions() {
         return Collections.singletonList(
                 new NRepositorySpec().name(ToolboxRepositoryModel.REPOSITORY_TYPE)
         );
@@ -76,7 +76,7 @@ public class ToolboxRepositoryFactoryComponent implements
     @NScore
     public static int getScore(NScorableContext criteria) {
         if (criteria != null) {
-            NRepositoryFactoryContext context = criteria.getCriteria(NRepositoryFactoryContext.class);
+            NRepositoryFactoryContext context = criteria.criteria(NRepositoryFactoryContext.class);
             if (context != null) {
                 if (ToolboxRepositoryModel.REPOSITORY_TYPE.equals(context.repositoryType())) {
                     return NScorable.DEFAULT_SCORE + 10;

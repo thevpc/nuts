@@ -34,5 +34,5 @@ package net.thevpc.nuts.boot.core;
  * @since 0.5.4
  */
 public interface NExceptionWithExitCodeBase {
-    int getExitCode();
+    int exitCode();
 }

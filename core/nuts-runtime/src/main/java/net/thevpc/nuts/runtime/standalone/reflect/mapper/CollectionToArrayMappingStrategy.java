@@ -33,8 +33,8 @@ class CollectionToArrayMappingStrategy implements NReflectMappingStrategy {
         boolean changed = false;
         for (Object o : fromColl) {
             Object ov = Array.get(o2, i);
-            Object nv = context.mapToType(o, context.getRepository().getType(componentType));
-            if (!context.getEqualizer().equals(ov, nv)) {
+            Object nv = context.mapToType(o, context.repository().getType(componentType));
+            if (!context.equalizer().equals(ov, nv)) {
                 Array.set(o2, i, nv);
                 changed = true;
             }

@@ -83,7 +83,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
     public static NId ID;
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
@@ -98,7 +98,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         if (ID == null) {
             ID = NId.get("net.thevpc.nuts.exec:java").get();
         }
-        NDefinition def = ctx.getCriteria(NDefinition.class);
+        NDefinition def = ctx.criteria(NDefinition.class);
         if (def != null) {
             String shortName = def.id().shortName();
             //for executors
@@ -261,7 +261,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 if (def.id().equalsShortId(session.workspace().apiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
-                String bootArgumentsString = NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(ncmdLine
+                String bootArgumentsString = NCmdLineWriter.of().shellFamily(NShellFamily.SH).formatPlain(ncmdLine
                         .add(executionContext.definition().id().longName())
                 );
                 if (!NBlankable.isBlank(bootArgumentsString)) {
@@ -483,7 +483,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                             , th);
                 }
                 NExecutionException nex = (NExecutionException) th;
-                if (nex.getExitCode() != NExecutionException.SUCCESS) {
+                if (nex.exitCode() != NExecutionException.SUCCESS) {
                     if (def != null) {
                         NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.id().toString(), nex), NRecommendationPhase.EXEC, false);
                     }

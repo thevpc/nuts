@@ -25,14 +25,14 @@ public class NNumberUtils {
         }
     }
 
-    public static MathContext getContextMathContext(MathContext user) {
+    public static MathContext contextMathContext(MathContext user) {
         if (user != null) {
             return user;
         }
-        return getContextMathContext();
+        return contextMathContext();
     }
 
-    public static MathContext getContextMathContext() {
+    public static MathContext contextMathContext() {
         MathContext a = MATH_CONTEXT.get();
         return a == null ? MathContext.DECIMAL128 : a;
     }
@@ -469,7 +469,7 @@ public class NNumberUtils {
     }
 
     public static BigDecimal powBigDecimals(BigDecimal x, BigDecimal y, MathContext mc) {
-        mc = getContextMathContext(mc);
+        mc = contextMathContext(mc);
 
         if (y.scale() <= 0 && y.stripTrailingZeros().scale() <= 0) {
             return x.pow(y.intValueExact(), mc);
@@ -492,7 +492,7 @@ public class NNumberUtils {
     public static BigDecimal exp(BigDecimal x, MathContext mc) {
         BigDecimal sum = BigDecimal.ONE;
         BigDecimal term = BigDecimal.ONE;
-        mc = getContextMathContext(mc);
+        mc = contextMathContext(mc);
         int n = 1;
         while (term.compareTo(BigDecimal.ZERO) != 0) {
             term = term.multiply(x, mc).divide(BigDecimal.valueOf(n), mc);
@@ -505,7 +505,7 @@ public class NNumberUtils {
 
     public static BigDecimal lnBigDecimals(BigDecimal x, MathContext mc) {
         if (x.compareTo(BigDecimal.ZERO) <= 0) throw new ArithmeticException("ln(x) undefined for x <= 0");
-        mc = getContextMathContext(mc);
+        mc = contextMathContext(mc);
 
         BigDecimal two = BigDecimal.valueOf(2);
         BigDecimal y = x.subtract(BigDecimal.ONE).divide(x.add(BigDecimal.ONE), mc);
@@ -1360,11 +1360,11 @@ public class NNumberUtils {
                 return 1.0 / NLiteral.of(a).asDouble().get();
             }
             case "java.math.BigInteger": {
-                mc = getContextMathContext(mc);
+                mc = contextMathContext(mc);
                 return BigDecimal.ONE.divide(NLiteral.of(a).asBigDecimal().get(), mc);
             }
             case "java.math.BigDecimal": {
-                mc = getContextMathContext(mc);
+                mc = contextMathContext(mc);
                 return BigDecimal.ONE.divide(NLiteral.of(a).asBigDecimal().get(), mc);
             }
             case "net.thevpc.nuts.math.NFloatComplex": {

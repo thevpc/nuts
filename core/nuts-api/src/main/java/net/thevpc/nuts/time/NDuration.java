@@ -657,7 +657,7 @@ public class NDuration implements Serializable, NElementSimple {
         return ofMillisAndNanos(millis, ns);
     }
 
-    public long getNanos() {
+    public long nanos() {
         return nanos;
     }
 
@@ -799,47 +799,47 @@ public class NDuration implements Serializable, NElementSimple {
         return 0;
     }
 
-    public long getMicros() {
+    public long micros() {
         return micros;
     }
 
-    public long getMilliSeconds() {
+    public long milliSeconds() {
         return milliSeconds;
     }
 
-    public long getSeconds() {
+    public long seconds() {
         return seconds;
     }
 
-    public long getMinutes() {
+    public long minutes() {
         return minutes;
     }
 
-    public long getHours() {
+    public long hours() {
         return hours;
     }
 
-    public long getDays() {
+    public long days() {
         return days;
     }
 
-    public long getYears() {
+    public long years() {
         return years;
     }
 
-    public long getMonths() {
+    public long months() {
         return months;
     }
 
-    public long getWeeks() {
+    public long weeks() {
         return weeks;
     }
 
-    public ChronoUnit getLargestUnit() {
+    public ChronoUnit largestUnit() {
         return largestUnit;
     }
 
-    public ChronoUnit getSmallestUnit() {
+    public ChronoUnit smallestUnit() {
         return smallestUnit;
     }
 
@@ -871,7 +871,7 @@ public class NDuration implements Serializable, NElementSimple {
         return timeMillis / 1000;
     }
 
-    public double getTimeAsDoubleSeconds() {
+    public double timeAsDoubleSeconds() {
         return timeMillis / 1000.0 + ((double) timeNanos) / 1E9;
     }
 
@@ -887,11 +887,11 @@ public class NDuration implements Serializable, NElementSimple {
         return timeMillis * 1000000 + timeNanos;
     }
 
-    public long getTimeMillis() {
+    public long timeMillis() {
         return timeMillis;
     }
 
-    public int getTimeNanos() {
+    public int timeNanos() {
         return timeNanos;
     }
 
@@ -1001,8 +1001,8 @@ public class NDuration implements Serializable, NElementSimple {
             a[i] += b[i];
         }
         return of(a,
-                smallestUnit.compareTo(other.getSmallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
-                largestUnit.compareTo(other.getSmallestUnit()) > 0 ? largestUnit : other.smallestUnit
+                smallestUnit.compareTo(other.smallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
+                largestUnit.compareTo(other.smallestUnit()) > 0 ? largestUnit : other.smallestUnit
         );
     }
 
@@ -1028,8 +1028,8 @@ public class NDuration implements Serializable, NElementSimple {
             a[i] -= b[i];
         }
         return of(a,
-                smallestUnit.compareTo(other.getSmallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
-                largestUnit.compareTo(other.getSmallestUnit()) > 0 ? largestUnit : other.smallestUnit
+                smallestUnit.compareTo(other.smallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
+                largestUnit.compareTo(other.smallestUnit()) > 0 ? largestUnit : other.smallestUnit
         );
     }
 

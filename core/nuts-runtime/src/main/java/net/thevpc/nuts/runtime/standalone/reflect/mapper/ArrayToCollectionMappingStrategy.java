@@ -37,7 +37,7 @@ class ArrayToCollectionMappingStrategy implements NReflectMappingStrategy {
         int len = fromObj.size();
         boolean changed=false;
         for (int i = 0; i < len; i++) {
-            Object nv = context.mapToType(fromObj.get(i), context.getRepository().getType(componentType));
+            Object nv = context.mapToType(fromObj.get(i), context.repository().getType(componentType));
             boolean checkEq=true;
             while(i>=toList.size()){
                 toList.add(null);
@@ -46,7 +46,7 @@ class ArrayToCollectionMappingStrategy implements NReflectMappingStrategy {
             }
             if(checkEq){
                 Object tv = toList.get(i);
-                if(!context.getEqualizer().equals(tv,nv)) {
+                if(!context.equalizer().equals(tv,nv)) {
                     toList.set(i,nv);
                     changed=true;
                 }
@@ -63,7 +63,7 @@ class ArrayToCollectionMappingStrategy implements NReflectMappingStrategy {
 
     @Override
     public Object mapToType(Object o, NReflectType fromType, NReflectType toType, NReflectMapper context) {
-        Collection c = (Collection) context.getRepository().getType(to).newInstance();
+        Collection c = (Collection) context.repository().getType(to).newInstance();
         copy(o, c, context);
         return c;
     }

@@ -54,11 +54,11 @@ public class NMsgTemplate {
         this.format = format;
     }
 
-    public String getMessage() {
+    public String message() {
         return message;
     }
 
-    public String[] getParamNames() {
+    public String[] paramNames() {
         try {
             Set<String> paramSet = new HashSet<>();
             List<String> params = new ArrayList<>();
@@ -185,7 +185,7 @@ public class NMsgTemplate {
         }
     }
 
-    public NTextFormatType getFormat() {
+    public NTextFormatType format() {
         return format;
     }
 

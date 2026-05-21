@@ -87,7 +87,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                             )).asFinest().withIntent(NMsgIntent.START));
         }
         if (showCommand || CoreNUtils.isShowCommand()) {
-            if (NOut.getTerminalMode() == NTerminalMode.FORMATTED) {
+            if (NOut.terminalMode() == NTerminalMode.FORMATTED) {
                 NOut.print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
                 NOut.println(NText.ofCode("system", pb.getCommandString()));
             } else {

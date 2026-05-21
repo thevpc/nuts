@@ -21,7 +21,7 @@ class LeastLoad implements NWorkBalancerStrategy {
 
     @Override
     public String selectWorker(NWorkBalancerStrategyContext context) {
-        List<NWorkBalancerWorker> workers = context.getWorkers();
+        List<NWorkBalancerWorker> workers = context.workers();
         if (workers.isEmpty()) {
             throw new IllegalStateException("No workers available");
         }

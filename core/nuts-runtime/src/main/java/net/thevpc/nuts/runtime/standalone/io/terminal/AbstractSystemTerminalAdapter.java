@@ -28,10 +28,10 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
+    public NCmdLineAutoCompleteResolver autoCompleteResolver() {
         NSystemTerminalBase p = base();
         if (p != null) {
-            return p.getAutoCompleteResolver();
+            return p.autoCompleteResolver();
         }
         return null;
     }
@@ -41,23 +41,23 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
         NSystemTerminalBase p = base();
         if (p != null) {
-            p.setCommandAutoCompleteResolver(autoCompleteResolver);
+            p.commandAutoCompleteResolver(autoCompleteResolver);
         }
         return this;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
-        base().setCommandHistory(history);
+    public NSystemTerminalBase commandHistory(NCmdLineHistory history) {
+        base().commandHistory(history);
         return this;
     }
 
     @Override
-    public NCmdLineHistory getCommandHistory() {
-        return base().getCommandHistory();
+    public NCmdLineHistory commandHistory() {
+        return base().commandHistory();
     }
 
     @Override
@@ -78,23 +78,6 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
         } else {
             return p.readPassword(out(), message);
         }
-    }
-
-
-
-    @Override
-    public InputStream in() {
-        return getIn();
-    }
-
-    @Override
-    public NPrintStream out() {
-        return getOut();
-    }
-
-    @Override
-    public NPrintStream err() {
-        return getErr();
     }
 
     @Override
@@ -132,8 +115,8 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public InputStream getIn() {
-        return base().getIn();
+    public InputStream in() {
+        return base().in();
     }
 
     @Override
@@ -142,30 +125,30 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public void setLastWasProgress(boolean lastWasProgress) {
-        ((NSystemTerminalBaseImpl) base()).setLastWasProgress(lastWasProgress);
+    public void lastWasProgress(boolean lastWasProgress) {
+        ((NSystemTerminalBaseImpl) base()).lastWasProgress(lastWasProgress);
     }
 
     @Override
-    public NPrintStream getOut() {
-        return base().getOut();
+    public NPrintStream out() {
+        return base().out();
     }
 
     @Override
-    public NPrintStream getErr() {
-        return base().getErr();
+    public NPrintStream err() {
+        return base().err();
     }
 
     public abstract NSystemTerminalBase base();
 
     @Override
-    public NTerminalFormatter getCommandHighlighter() {
-        return base().getCommandHighlighter();
+    public NTerminalFormatter commandHighlighter() {
+        return base().commandHighlighter();
     }
 
     @Override
-    public NSystemTerminal setCommandHighlighter(NTerminalFormatter commandHighlighter) {
-        base().setCommandHighlighter(commandHighlighter);
+    public NSystemTerminal commandHighlighter(NTerminalFormatter commandHighlighter) {
+        base().commandHighlighter(commandHighlighter);
         return this;
     }
 
@@ -175,7 +158,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        base().setStyles(styles, printStream);
+    public void styles(NTextStyles styles, NPrintStream printStream) {
+        base().styles(styles, printStream);
     }
 }

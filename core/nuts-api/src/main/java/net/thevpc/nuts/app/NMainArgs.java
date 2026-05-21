@@ -29,7 +29,7 @@ public class NMainArgs {
     }
 
     public static NMainArgs of(NApplication application, String[] args) {
-        return new NMainArgs().applicationInstance(application).setNutsArgs(args);
+        return new NMainArgs().applicationInstance(application).nutsArgs(args);
     }
 
     public static NMainArgs ofHandled(NApplication application, String[] args) {
@@ -63,11 +63,11 @@ public class NMainArgs {
         return this;
     }
 
-    public String[] getNutsArgs() {
+    public String[] nutsArgs() {
         return nutsArgs;
     }
 
-    public NMainArgs setNutsArgs(String[] nutsArgs) {
+    public NMainArgs nutsArgs(String[] nutsArgs) {
         this.nutsArgs = nutsArgs;
         return this;
     }

@@ -167,7 +167,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludePlain(boolean includePlain) {
+    public NTextStyleGenerator includePlain(boolean includePlain) {
         this.includePlain = includePlain;
         return this;
     }
@@ -178,7 +178,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludeBold(boolean includeBold) {
+    public NTextStyleGenerator includeBold(boolean includeBold) {
         this.includeBold = includeBold;
         return this;
     }
@@ -189,7 +189,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludeBlink(boolean includeBlink) {
+    public NTextStyleGenerator includeBlink(boolean includeBlink) {
         this.includeBlink = includeBlink;
         return this;
     }
@@ -200,7 +200,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludeReversed(boolean includeReversed) {
+    public NTextStyleGenerator includeReversed(boolean includeReversed) {
         this.includeReversed = includeReversed;
         return this;
     }
@@ -211,7 +211,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludeItalic(boolean includeItalic) {
+    public NTextStyleGenerator includeItalic(boolean includeItalic) {
         this.includeItalic = includeItalic;
         return this;
     }
@@ -222,7 +222,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludeUnderlined(boolean includeUnderlined) {
+    public NTextStyleGenerator includeUnderlined(boolean includeUnderlined) {
         this.includeUnderlined = includeUnderlined;
         return this;
     }
@@ -233,7 +233,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludeStriked(boolean includeStriked) {
+    public NTextStyleGenerator includeStriked(boolean includeStriked) {
         this.includeStriked = includeStriked;
         return this;
     }
@@ -282,7 +282,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludeForeground(boolean includeForeground) {
+    public NTextStyleGenerator includeForeground(boolean includeForeground) {
         this.includeForeground = includeForeground;
         return this;
     }
@@ -293,7 +293,7 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
     }
 
     @Override
-    public NTextStyleGenerator setIncludeBackground(boolean includeBackground) {
+    public NTextStyleGenerator includeBackground(boolean includeBackground) {
         this.includeBackground = includeBackground;
         return this;
     }
@@ -311,19 +311,19 @@ public class DefaultNTextStyleGenerator implements NTextStyleGenerator {
         return this.colors == 24;
     }
     @Override
-    public NTextStyleGenerator setUseThemeColors() {
+    public NTextStyleGenerator useThemeColors() {
         this.colors = 4;
         return this;
     }
 
     @Override
-    public NTextStyleGenerator setUsePaletteColors() {
+    public NTextStyleGenerator usePaletteColors() {
         this.colors = 8;
         return this;
     }
 
     @Override
-    public NTextStyleGenerator setUseTrueColors() {
+    public NTextStyleGenerator useTrueColors() {
         this.colors = 24;
         return this;
     }

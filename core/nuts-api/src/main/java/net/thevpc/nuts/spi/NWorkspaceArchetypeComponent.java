@@ -45,7 +45,7 @@ public interface NWorkspaceArchetypeComponent extends NComponent/*archetype id*/
      *
      * @return archetype identifier name
      */
-    String getName();
+    String name();
 
     /**
      * called to initialize the workspace

@@ -41,7 +41,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
         v.setRepositoryStoreStrategy(w.getRepositoryStoreStrategy());
         v.setStoreStrategy(w.getStoreStrategy());
         v.setStoreLayout(w.getStoreLayout());
-        v.setConfigVersion(w.getConfigVersion());
+        v.configVersion(w.getConfigVersion());
         v.setExtensions(w.getExtensions()==null?null:w.getExtensions().stream().map(x->{
             if(x==null){
                 return null;
@@ -50,7 +50,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
             c.setDependencies(x.getDependencies());
             c.setEnabled(x.isEnabled());
             c.setId(x.getId());
-            c.setConfigVersion(x.getConfigVersion());
+            c.configVersion(x.getConfigVersion());
             return c;
         }).collect(Collectors.toList()));
         return v;
@@ -102,7 +102,7 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
         m.setCommandFactories(c.getCommandFactories());
         m.setRepositories(c.getRepositories());
         m.setImports(c.getImports());
-        m.setConfigVersion(CONFIG_VERSION_507);
+        m.configVersion(CONFIG_VERSION_507);
         m.setPlatforms(c.getSdk());
         return m;
     }

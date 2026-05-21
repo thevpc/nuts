@@ -992,7 +992,7 @@ public class NTFTest {
             r = p.readFully();
             Assertions.assertNotNull(r);
             Assertions.assertEquals(NTextType.TITLE, r.type());
-            Assertions.assertEquals(i, ((NTextTitle) r).getLevel());
+            Assertions.assertEquals(i, ((NTextTitle) r).level());
             Assertions.assertEquals(q + ") Hello #World\\#\n", r.toString());
         }
     }
@@ -1072,7 +1072,7 @@ public class NTFTest {
         NText r = p.read();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NTextType.CODE, r.type());
-        Assertions.assertEquals("public class \\` some thing ``` some thing", ((NTextCode) r).getValue());
+        Assertions.assertEquals("public class \\` some thing ``` some thing", ((NTextCode) r).value());
         Assertions.assertEquals("```java\npublic class \\` some thing \\``` some thing```", r.toString());
     }
 
@@ -1227,7 +1227,7 @@ public class NTFTest {
         Assertions.assertEquals(NTextType.LIST, s.type());
         Assertions.assertEquals(2, ((NTextList) s).size());
         Assertions.assertEquals(true, ((NTextList) s).get(0) instanceof NTextCmd);
-        Assertions.assertEquals(true, ((NTextCmd) ((NTextList) s).get(0)).getCommand().getName().equals("clear-line"));
+        Assertions.assertEquals(true, ((NTextCmd) ((NTextList) s).get(0)).terminalCommand().name().equals("clear-line"));
     }
 
     @Test
@@ -1290,7 +1290,7 @@ public class NTFTest {
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.PLAIN, parsed.type());
-        String text = ((NTextPlain) parsed).getValue();
+        String text = ((NTextPlain) parsed).value();
         Assertions.assertEquals("```underlined underlined```", text);
         String text2 = parsed.toString();
         Assertions.assertEquals(str, text2);
@@ -1302,7 +1302,7 @@ public class NTFTest {
         NText parsed = NText.of(str);
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.CODE, parsed.type());
-        String text = ((NTextCode) parsed).getValue();
+        String text = ((NTextCode) parsed).value();
         Assertions.assertEquals("#) Title 1", text);
         String text2 = parsed.toString();
         //will add leading space

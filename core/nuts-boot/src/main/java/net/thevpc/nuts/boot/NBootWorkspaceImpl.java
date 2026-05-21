@@ -1371,7 +1371,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     private RuntimeException doLogException(Exception ex) {
         return bContext.callWith(() -> {
             NExceptionWithExitCodeBase ec = NBootUtils.findThrowable(ex, NExceptionWithExitCodeBase.class, null);
-            int c = ec == null ? 254 : ec.getExitCode();
+            int c = ec == null ? 254 : ec.exitCode();
             if (c != 0) {
                 NAnyBootAwareExceptionBase u = NBootUtils.findThrowable(ex, NAnyBootAwareExceptionBase.class, null);
                 if (u != null) {

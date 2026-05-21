@@ -84,7 +84,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
 
     public void installCommand(NCommandConfig command) {
         NPath path = getCommandsFolder().resolve(command.name() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        NElementWriter.ofJson().setNtf(false).write(command,path);
+        NElementWriter.ofJson().ntf(false).write(command,path);
         NWorkspaceExt.of().getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
     }
 

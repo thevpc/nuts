@@ -108,8 +108,8 @@ public class DefaultNTexts implements NTexts {
         registerTextMapper(Path.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         registerTextMapper(File.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
         registerTextMapper(URL.class, (o, t) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        registerTextMapper(NTreeNode.class, (o, t) -> NTextArt.of().getTreeRenderer().get().render((NTreeNode) o));
-        registerTextMapper(NTableModel.class, (o, t) -> NTextArt.of().getTableRenderer().get().render((NTableModel) o));
+        registerTextMapper(NTreeNode.class, (o, t) -> NTextArt.of().treeRenderer().get().render((NTreeNode) o));
+        registerTextMapper(NTableModel.class, (o, t) -> NTextArt.of().tableRenderer().get().render((NTableModel) o));
         registerTextMapper(Class.class, (o, t) -> {
             Class cc = (Class) o;
             Class dc = cc.getDeclaringClass();
@@ -351,11 +351,11 @@ public class DefaultNTexts implements NTexts {
 
 
     private NText _NMsg_toString(NMsg m) {
-        NTextFormatType format = m.getFormat();
+        NTextFormatType format = m.format();
         if (format == null) {
             format = NTextFormatType.JFORMAT;
         }
-        Object msg = m.getMessage();
+        Object msg = m.message();
         switch (format) {
             case CFORMAT: {
                 return new NMsgCFormatHelper(m, this).format();
@@ -379,10 +379,10 @@ public class DefaultNTexts implements NTexts {
                 return this.of(msg);
             }
             case STYLED: {
-                return this.ofStyled(this.of(msg), m.getStyles());
+                return this.ofStyled(this.of(msg), m.styles());
             }
             case CODE: {
-                return this.ofCodeOrCommand(m.getCodeLang(), (String) msg);
+                return this.ofCodeOrCommand(m.codeLang(), (String) msg);
             }
         }
         throw new NUnsupportedEnumException(format);
@@ -443,7 +443,7 @@ public class DefaultNTexts implements NTexts {
         }
         NObjectWriter nFormat = NObjectWriter.get(t).orNull();
         if (nFormat != null) {
-            return (nFormat.setNtf(true).format(t));
+            return (nFormat.ntf(true).format(t));
         }
         return ofPlain(t.toString());
     }
@@ -687,18 +687,18 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public NTextFormatTheme getTheme() {
+    public NTextFormatTheme theme() {
         return shared.getTheme();
     }
 
     @Override
-    public NTexts setTheme(NTextFormatTheme theme) {
+    public NTexts theme(NTextFormatTheme theme) {
         shared.setTheme(theme);
         return this;
     }
 
     @Override
-    public NTexts setTheme(String theme) {
+    public NTexts theme(String theme) {
         shared.setTheme(theme);
         return this;
     }
@@ -894,8 +894,8 @@ public class DefaultNTexts implements NTexts {
         if (config == null) {
             config = new NTextTransformConfig();
         }
-        config.setFlatten(true);
-        config.setNormalize(true);
+        config.flatten(true);
+        config.normalize(true);
         NText z = transform(text, transformer, config);
         return NStream.ofIterator(new Iterator<NText>() {
             final Deque<NText> queue = new ArrayDeque<>();
@@ -923,7 +923,7 @@ public class DefaultNTexts implements NTexts {
                         case LIST: {
                             NTextList t = (NTextList) z;
                             queue.removeFirst();
-                            List<NText> children = t.getChildren();
+                            List<NText> children = t.children();
                             if (children.size() > 0) {
                                 for (int i = children.size() - 1; i >= 0; i--) {
                                     queue.addFirst(children.get(i));
@@ -934,7 +934,7 @@ public class DefaultNTexts implements NTexts {
                         case BUILDER: {
                             NTextBuilder t = (NTextBuilder) z;
                             queue.removeFirst();
-                            List<NText> children = t.getChildren();
+                            List<NText> children = t.children();
                             if (children.size() > 0) {
                                 for (int i = children.size() - 1; i >= 0; i--) {
                                     queue.addFirst(children.get(i));
@@ -978,7 +978,7 @@ public class DefaultNTexts implements NTexts {
         NRef<Integer> level = NRef.ofNull();
         traverseDFS(text, n -> {
             if (n.type() == NTextType.TITLE) {
-                int lvl = ((NTextTitle) n).getLevel();
+                int lvl = ((NTextTitle) n).level();
                 if (level.isNull() || level.get() > lvl) {
                     level.set(lvl);
                 }
@@ -1001,20 +1001,20 @@ public class DefaultNTexts implements NTexts {
         // start by processing includes
         if (config.isProcessIncludes()) {
             NTextTransformConfig iconfig = config.copy();
-            iconfig.setProcessIncludes(true);
-            iconfig.setImportClassLoader(config.getImportClassLoader());
+            iconfig.processIncludes(true);
+            iconfig.importClassLoader(config.importClassLoader());
             NTextTransformerContext c = new DefaultNTextTransformerContext(iconfig);
-            text = transform(text, c.getDefaultTransformer(), c);
-            config = config.copy().setProcessIncludes(false).setImportClassLoader(null);
+            text = transform(text, c.defaultTransformer(), c);
+            config = config.copy().processIncludes(false).importClassLoader(null);
         }
 
         if (NBlankable.isBlank(config) && transformer == null) {
             return text;
         }
 
-        Integer rootLevel = config.getRootLevel();
+        Integer rootLevel = config.rootLevel();
         if (rootLevel != null) {
-            config = config.copy().setRootLevel(null);
+            config = config.copy().rootLevel(null);
             //find root level
             int level = resolveRootLevel(text);
             if (level != rootLevel) {
@@ -1023,7 +1023,7 @@ public class DefaultNTexts implements NTexts {
                 text = transform(text, (text1, context) -> {
                     if (text1.type() == NTextType.TITLE) {
                         NTextTitle t = (NTextTitle) text1;
-                        return ofTitle(t.getChild(), t.getLevel() + offset);
+                        return ofTitle(t.child(), t.level() + offset);
                     }
                     return text1;
                 }, c);
@@ -1034,17 +1034,17 @@ public class DefaultNTexts implements NTexts {
             return text;
         }
 
-        String anchor = config.getAnchor();
+        String anchor = config.anchor();
         if (anchor != null) {
-            config = config.copy().setAnchor(null);
+            config = config.copy().anchor(null);
         }
 
         if (transformer != null || !config.isBlank()) {
             NTextTransformerContext c = new DefaultNTextTransformerContext(config);
             if (transformer == null) {
-                transformer = c.getDefaultTransformer();
+                transformer = c.defaultTransformer();
             }
-            text = transform(text, transformer == null ? c.getDefaultTransformer() : transformer, c);
+            text = transform(text, transformer == null ? c.defaultTransformer() : transformer, c);
         }
 
         if (anchor != null) {
@@ -1055,7 +1055,7 @@ public class DefaultNTexts implements NTexts {
                     if (foundAnchor) {
                         ok.add(o);
                     } else if (o.type() == NTextType.ANCHOR) {
-                        if (anchor.equals(((DefaultNTextAnchor) o).getValue())) {
+                        if (anchor.equals(((DefaultNTextAnchor) o).value())) {
                             foundAnchor = true;
                         }
                     }
@@ -1084,7 +1084,7 @@ public class DefaultNTexts implements NTexts {
             }
             case TITLE: {
                 NTextTitle t = (NTextTitle) text;
-                NText child = t.getChild();
+                NText child = t.child();
                 if (child != null) {
                     visitor.visit(child);
                 }
@@ -1093,7 +1093,7 @@ public class DefaultNTexts implements NTexts {
             }
             case STYLED: {
                 NTextStyled t = (NTextStyled) text;
-                NText child = t.getChild();
+                NText child = t.child();
                 if (child != null) {
                     visitor.visit(child);
                 }
@@ -1102,7 +1102,7 @@ public class DefaultNTexts implements NTexts {
             }
             case LIST: {
                 NTextList t = (NTextList) text;
-                for (NText child : t.getChildren()) {
+                for (NText child : t.children()) {
                     if (child != null) {
                         visitor.visit(child);
                     }
@@ -1112,7 +1112,7 @@ public class DefaultNTexts implements NTexts {
             }
             case BUILDER: {
                 NTextBuilder t = (NTextBuilder) text;
-                for (NText child : t.getChildren()) {
+                for (NText child : t.children()) {
                     if (child != null) {
                         visitor.visit(child);
                     }
@@ -1145,7 +1145,7 @@ public class DefaultNTexts implements NTexts {
                 }
                 case TITLE: {
                     NTextTitle t = (NTextTitle) text;
-                    NText child = t.getChild();
+                    NText child = t.child();
                     if (child != null) {
                         q.add(child);
                     }
@@ -1154,7 +1154,7 @@ public class DefaultNTexts implements NTexts {
                 }
                 case STYLED: {
                     NTextStyled t = (NTextStyled) text;
-                    NText child = t.getChild();
+                    NText child = t.child();
                     if (child != null) {
                         q.add(child);
                     }
@@ -1163,7 +1163,7 @@ public class DefaultNTexts implements NTexts {
                 }
                 case LIST: {
                     NTextList t = (NTextList) text;
-                    for (NText child : t.getChildren()) {
+                    for (NText child : t.children()) {
                         if (child != null) {
                             q.add(child);
                         }
@@ -1173,7 +1173,7 @@ public class DefaultNTexts implements NTexts {
                 }
                 case BUILDER: {
                     NTextBuilder t = (NTextBuilder) text;
-                    for (NText child : t.getChildren()) {
+                    for (NText child : t.children()) {
                         if (child != null) {
                             q.add(child);
                         }
@@ -1208,26 +1208,26 @@ public class DefaultNTexts implements NTexts {
             }
             case TITLE: {
                 NTextTitle t = (NTextTitle) text;
-                NText child = t.getChild();
+                NText child = t.child();
                 if (child == null) {
                     return null;
                 }
                 child = transform(child, transformer, c);
-                return transformer.postTransform(ofTitle(child, t.getLevel()), c);
+                return transformer.postTransform(ofTitle(child, t.level()), c);
             }
             case STYLED: {
                 NTextStyled t = (NTextStyled) text;
-                NText child = t.getChild();
+                NText child = t.child();
                 if (child == null) {
                     return null;
                 }
                 child = transform(child, transformer, c);
-                return transformer.postTransform(ofStyled(child, t.getStyles()), c);
+                return transformer.postTransform(ofStyled(child, t.styles()), c);
             }
             case LIST: {
                 NTextList t = (NTextList) text;
                 List<NText> li = new ArrayList<>();
-                for (NText child : t.getChildren()) {
+                for (NText child : t.children()) {
                     if (child != null) {
                         child = transform(child, transformer, c);
                         if (child != null) {
@@ -1246,7 +1246,7 @@ public class DefaultNTexts implements NTexts {
             case BUILDER: {
                 NTextBuilder t = (NTextBuilder) text;
                 List<NText> li = new ArrayList<>();
-                for (NText child : t.getChildren()) {
+                for (NText child : t.children()) {
                     if (child != null) {
                         child = transform(child, transformer, c);
                         if (child != null) {
@@ -1278,12 +1278,12 @@ public class DefaultNTexts implements NTexts {
         if (t != null) {
             if (t instanceof NTextPlain) {
                 try {
-                    out.write(((NTextPlain) t).getValue().getBytes());
+                    out.write(((NTextPlain) t).value().getBytes());
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
             } else if (t instanceof NTextList) {
-                for (NText child : ((NTextList) t).getChildren()) {
+                for (NText child : ((NTextList) t).children()) {
                     writeFilteredText(child, out);
                 }
             } else {
@@ -1297,7 +1297,7 @@ public class DefaultNTexts implements NTexts {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             NText parsed = this.parser().parse(new StringReader(text));
-            parsed = NTexts.of().transform(parsed, new NTextTransformConfig().setFiltered(true));
+            parsed = NTexts.of().transform(parsed, new NTextTransformConfig().filtered(true));
             writeFilteredText(parsed, out);
             return out.toString();
         } catch (Exception ex) {
@@ -1364,7 +1364,7 @@ public class DefaultNTexts implements NTexts {
         if (p != null) {
             NOptional<NScoredCallable<NTextFormat<T>>> b = NScorable.<NScoredCallable<NTextFormat<T>>>query()
                     .fromStream(p.stream().map(x -> x.resolveFormat(pattern, finalExpectedType)))
-                    .getBest();
+                    .best();
             return b.map(NScoredCallable::call)
                     .orElseGetOptionalFrom(() -> createTextFormatDefault(type, pattern, finalExpectedType))
                     .withMessage(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));

@@ -82,7 +82,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public int getColumnsCount() {
+    public int columnsCount() {
         int c = header.cells.size();
         for (Row row : rows) {
             c = Math.max(c, row.cells.size());
@@ -116,7 +116,7 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
     }
 
     @Override
-    public int getRowsCount() {
+    public int rowsCount() {
         return rows.size();
     }
 
@@ -165,44 +165,44 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
         NText value;
 
         @Override
-        public int getColspan() {
+        public int colspan() {
             return colspan;
         }
 
         @Override
-        public DefaultCell setColspan(int colspan) {
+        public DefaultCell colspan(int colspan) {
             this.colspan = colspan <= 0 ? 1 : colspan;
             return this;
         }
 
         @Override
-        public int getRowspan() {
+        public int rowspan() {
             return rowspan;
         }
 
         @Override
-        public DefaultCell setRowspan(int rowspan) {
+        public DefaultCell rowspan(int rowspan) {
             this.rowspan = rowspan <= 0 ? 1 : rowspan;
             return this;
         }
 
         @Override
-        public int getX() {
+        public int x() {
             return x;
         }
 
         @Override
-        public int getY() {
+        public int y() {
             return y;
         }
 
         @Override
-        public NText getContent() {
+        public NText content() {
             return value;
         }
 
         @Override
-        public DefaultCell setContent(NText content) {
+        public DefaultCell content(NText content) {
             this.value = content;
             return this;
         }

@@ -28,11 +28,11 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
             NBeanContainer.scopedStack().runWith(NBeanContainer.current(), () -> {
                 NOnceValueModel m = store.load(id);
                 if (m == null) {
-                    m = new NOnceValueModel(id, model.getSupplier());
+                    m = new NOnceValueModel(id, model.supplier());
                     _save(m);
                 } else {
-                    if (model.getSupplier() != null) {
-                        m.setSupplier(model.getSupplier());
+                    if (model.supplier() != null) {
+                        m.supplier(model.supplier());
                         store.save(m);
                     }
                 }
@@ -71,7 +71,7 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
                 }
                 return (T) model.value();
             }
-            return doSet((Supplier<T>) model.getSupplier());
+            return doSet((Supplier<T>) model.supplier());
         }
     }
 

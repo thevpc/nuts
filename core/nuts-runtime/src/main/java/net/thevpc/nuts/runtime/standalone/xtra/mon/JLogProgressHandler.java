@@ -46,30 +46,30 @@ public class JLogProgressHandler implements NProgressHandler {
 
     @Override
     public void onEvent(NProgressHandlerEvent event) {
-        NMsg msg = formatMessage(messageFormat, event.getModel());
+        NMsg msg = formatMessage(messageFormat, event.model());
         logger.log(msg);
     }
 
     public static NMsg formatMessage(NMsgTemplate messageFormat, NProgressMonitorModel model) {
         long newd = System.currentTimeMillis();
-        NMsg message = model.getMessage();
+        NMsg message = model.message();
         return messageFormat.build(
                 NMsgParam.of("message",()-> message==null?"":message),
                 NMsgParam.of("date",()-> new Date(newd)),
-                NMsgParam.of("progress",()-> Double.isNaN(model.getProgress()) ? "   ?%" : PERCENT_FORMAT.format(model.getProgress())),
+                NMsgParam.of("progress",()-> Double.isNaN(model.progress()) ? "   ?%" : PERCENT_FORMAT.format(model.progress())),
                 NMsgParam.of("inuse",()->MF.format(MemoryUtils.inUseMemory())),
                 NMsgParam.of("free",()-> MF.format(MemoryUtils.maxFreeMemory()))
-        ).withLevel(message==null?Level.INFO:message.getLevel());
+        ).withLevel(message==null?Level.INFO:message.level());
     }
 
     public static NMsgTemplate resolveFormat(NMsgTemplate messageFormat) {
         if (messageFormat == null) {
             messageFormat = NMsgTemplate.ofV("$inuse | $free | $progress : $message");
         }
-        if (messageFormat.getParamNames().length==0) {
-            switch (messageFormat.getFormat()){
+        if (messageFormat.paramNames().length==0) {
+            switch (messageFormat.format()){
                 case VFORMAT:{
-                    String message = messageFormat.getMessage();
+                    String message = messageFormat.message();
                     if (!message.endsWith(" ")) {
                         message += " ";
                     }
@@ -78,7 +78,7 @@ public class JLogProgressHandler implements NProgressHandler {
                     break;
                 }
                 case MFORMAT:{
-                    String message = messageFormat.getMessage();
+                    String message = messageFormat.message();
                     if (!message.endsWith(" ")) {
                         message += " ";
                     }
@@ -87,7 +87,7 @@ public class JLogProgressHandler implements NProgressHandler {
                     break;
                 }
                 case CFORMAT:{
-                    String message = messageFormat.getMessage();
+                    String message = messageFormat.message();
                     if (!message.endsWith(" ")) {
                         message += " ";
                     }
@@ -96,7 +96,7 @@ public class JLogProgressHandler implements NProgressHandler {
                     break;
                 }
                 case JFORMAT:{
-                    String message = messageFormat.getMessage();
+                    String message = messageFormat.message();
                     if (!message.endsWith(" ")) {
                         message += " ";
                     }

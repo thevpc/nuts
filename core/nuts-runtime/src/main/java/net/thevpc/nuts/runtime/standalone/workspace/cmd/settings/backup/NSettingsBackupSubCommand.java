@@ -48,9 +48,9 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             NArg a;
             while (cmdLine.hasNext()) {
                 if ((a = cmdLine.nextEntry("--file", "-f").orNull()) != null) {
-                    file = a.getValue().asString().orElse("");
+                    file = a.toLiteral().asString().orElse("");
                 } else if (cmdLine.peek().get().isNonOption()) {
-                    file = cmdLine.nextEntry().get().getValue().asString().orElse("");
+                    file = cmdLine.nextEntry().get().toLiteral().asString().orElse("");
                 } else {
                     session.configureLast(cmdLine);
                 }
@@ -90,11 +90,11 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             NArg a;
             while (cmdLine.hasNext()) {
                 if ((a = cmdLine.nextEntry("--file", "-f").orNull()) != null) {
-                    file = a.getValue().asString().orElse("");
+                    file = a.toLiteral().asString().orElse("");
                 } else if ((a = cmdLine.nextEntry("--workspace", "-w").orNull()) != null) {
-                    ws = a.getValue().asString().orElse("");
+                    ws = a.toLiteral().asString().orElse("");
                 } else if (cmdLine.peek().get().isNonOption()) {
-                    file = cmdLine.nextEntry().get().getValue().asString().orElse("");
+                    file = cmdLine.nextEntry().get().toLiteral().asString().orElse("");
                 } else {
                     session.configureLast(cmdLine);
                 }

@@ -51,7 +51,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "minimal";
     }
 

@@ -18,7 +18,7 @@ public class CSharpCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "csharp";
     }
 
@@ -30,7 +30,7 @@ public class CSharpCodeHighlighter implements NCodeHighlighter {
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if(s==null){
             return NScorable.DEFAULT_SCORE;
         }
@@ -120,7 +120,7 @@ public class CSharpCodeHighlighter implements NCodeHighlighter {
                         NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).getValue();
+                                String txt2 = ((NTextPlain) d[0]).value();
                                 if (reservedWords.contains(txt2)) {
                                     d[0] = txt.ofStyled(d[0], NTextStyle.keyword());
                                 }

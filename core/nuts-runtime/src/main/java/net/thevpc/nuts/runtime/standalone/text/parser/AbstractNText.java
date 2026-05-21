@@ -184,7 +184,7 @@ public abstract class AbstractNText implements NText {
         if (normalizeOne instanceof NPrimitiveText || normalizeOne instanceof NTextPlain) {
             primitiveList.add((NPrimitiveText) normalizeOne);
         } else {
-            primitiveList.addAll(((NTextList) normalizeOne).getChildren().stream().map(x -> (NPrimitiveText) x).collect(Collectors.toList()));
+            primitiveList.addAll(((NTextList) normalizeOne).children().stream().map(x -> (NPrimitiveText) x).collect(Collectors.toList()));
         }
         return primitiveList;
     }
@@ -201,7 +201,7 @@ public abstract class AbstractNText implements NText {
             full.append(t);
             offsets.add(new int[]{start, full.length()});
             if (child instanceof NTextStyled) {
-                styles.add(((NTextStyled) child).getStyles());
+                styles.add(((NTextStyled) child).styles());
             } else {
                 styles.add(null);
             }

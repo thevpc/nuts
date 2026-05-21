@@ -45,23 +45,23 @@ public interface NObjectObjectWriter extends NContentTypeWriter {
        return NExtensions.of(NObjectObjectWriter.class);
     }
 
-    String getFormatMode();
+    String formatMode();
 
-    NObjectObjectWriter setFormatMode(String formatMode);
+    NObjectObjectWriter formatMode(String formatMode);
 
-    String getFormatString();
+    String formatString();
 
-    NObjectObjectWriter setFormatString(String formatString);
+    NObjectObjectWriter formatString(String formatString);
 
-    Map<String, Object> getFormatParams();
+    Map<String, Object> formatParams();
 
-    NObjectObjectWriter setFormatParams(Map<String, Object> formatParams);
+    NObjectObjectWriter formatParams(Map<String, Object> formatParams);
 
-    NObjectObjectWriter setFormatParam(String name, Object value);
+    NObjectObjectWriter formatParam(String name, Object value);
 
-    NContentType getOutputFormat();
+    NContentType outputFormat();
 
-    NObjectObjectWriter setOutputFormat(NContentType outputFormat);
+    NObjectObjectWriter outputFormat(NContentType outputFormat);
 
     /**
      * configure the current command with the given arguments. This is an
@@ -88,8 +88,8 @@ public interface NObjectObjectWriter extends NContentTypeWriter {
      * @param compact true to enable compact mode
      * @return {@code this} instance
      */
-    NObjectObjectWriter setCompact(boolean compact);
+    NObjectObjectWriter compact(boolean compact);
 
 
-    NObjectObjectWriter setNtf(boolean ntf);
+    NObjectObjectWriter ntf(boolean ntf);
 }

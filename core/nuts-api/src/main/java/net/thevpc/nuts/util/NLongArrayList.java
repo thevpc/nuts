@@ -266,7 +266,7 @@ public class NLongArrayList {
                 '}';
     }
 
-    public int getCommittedSize() {
+    public int committedSize() {
         return values.length;
     }
 

@@ -72,7 +72,7 @@ public class NExtensionAlreadyRegisteredException extends NExtensionException {
      *
      * @return registered/installed extension
      */
-    public String getInstalled() {
+    public String installed() {
         return installed;
     }
 }

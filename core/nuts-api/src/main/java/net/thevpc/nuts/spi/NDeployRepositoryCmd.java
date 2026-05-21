@@ -50,7 +50,7 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      *
      * @return content to deploy
      */
-    NInputSource getContent();
+    NInputSource content();
 
     /**
      * set content to deploy
@@ -58,7 +58,7 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      * @param content content to deploy
      * @return {@code this} instance
      */
-    NDeployRepositoryCmd setContent(NInputSource content);
+    NDeployRepositoryCmd content(NInputSource content);
 
     /**
      * set content to deploy
@@ -66,7 +66,7 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      * @param content content to deploy
      * @return {@code this} instance
      */
-    NDeployRepositoryCmd setContent(NPath content);
+    NDeployRepositoryCmd content(NPath content);
 
     /**
      * set content to deploy
@@ -74,7 +74,7 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      * @param content content to deploy
      * @return {@code this} instance
      */
-    NDeployRepositoryCmd setContent(Path content);
+    NDeployRepositoryCmd content(Path content);
 
     /**
      * set content to deploy
@@ -82,7 +82,7 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      * @param content content to deploy
      * @return {@code this} instance
      */
-    NDeployRepositoryCmd setContent(URL content);
+    NDeployRepositoryCmd content(URL content);
 
     /**
      * set content to deploy
@@ -90,7 +90,7 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      * @param content content to deploy
      * @return {@code this} instance
      */
-    NDeployRepositoryCmd setContent(File content);
+    NDeployRepositoryCmd content(File content);
 
     /**
      * set content to deploy
@@ -98,14 +98,14 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      * @param content content to deploy
      * @return {@code this} instance
      */
-    NDeployRepositoryCmd setContent(InputStream content);
+    NDeployRepositoryCmd content(InputStream content);
 
     /**
      * descriptor to deploy
      *
      * @return descriptor to deploy
      */
-    NDescriptor getDescriptor();
+    NDescriptor descriptor();
 
     /**
      * set descriptor to deploy
@@ -113,14 +113,14 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      * @param descriptor descriptor to deploy
      * @return {@code this} instance
      */
-    NDeployRepositoryCmd setDescriptor(NDescriptor descriptor);
+    NDeployRepositoryCmd descriptor(NDescriptor descriptor);
 
     /**
      * id to deploy
      *
      * @return id to deploy
      */
-    NId getId();
+    NId id();
 
     /**
      * set id to deploy
@@ -128,7 +128,7 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
      * @param id id to deploy
      * @return {@code this} instance
      */
-    NDeployRepositoryCmd setId(NId id);
+    NDeployRepositoryCmd id(NId id);
 
     /**
      * run deploy command

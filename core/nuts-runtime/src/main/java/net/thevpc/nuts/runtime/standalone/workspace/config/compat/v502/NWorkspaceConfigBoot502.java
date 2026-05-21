@@ -650,7 +650,7 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
 
     public NWorkspaceConfigBoot toWorkspaceConfig() {
         NWorkspaceConfigBoot c = new NWorkspaceConfigBoot();
-        c.setConfigVersion(createApiVersion);
+        c.configVersion(createApiVersion);
         c.setBootRepositories(NStringUtils.split(bootRepositories,";,\n"));
 //         c.setConfigVersion(createApiVersion);
         Map<String, String> storeLocations = new LinkedHashMap<>();

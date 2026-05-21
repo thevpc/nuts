@@ -32,19 +32,19 @@ package net.thevpc.nuts.text;
  */
 public interface NTableCell {
 
-    int getColspan();
+    int colspan();
 
-    NTableCell setColspan(int colspan);
+    NTableCell colspan(int colspan);
 
-    int getRowspan();
+    int rowspan();
 
-    NTableCell setRowspan(int rowspan);
+    NTableCell rowspan(int rowspan);
 
-    int getX();
+    int x();
 
-    int getY();
+    int y();
 
-    NText getContent();
+    NText content();
 
-    NTableCell setContent(NText content);
+    NTableCell content(NText content);
 }

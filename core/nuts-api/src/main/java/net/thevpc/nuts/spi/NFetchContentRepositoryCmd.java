@@ -52,7 +52,7 @@ public interface NFetchContentRepositoryCmd extends NRepositoryCmd {
      *
      * @return id to fetch
      */
-    NId getId();
+    NId id();
 
     /**
      * set id to fetch.
@@ -60,7 +60,7 @@ public interface NFetchContentRepositoryCmd extends NRepositoryCmd {
      * @param id id to fetch
      * @return {@code this} instance
      */
-    NFetchContentRepositoryCmd setId(NId id);
+    NFetchContentRepositoryCmd id(NId id);
 
     /**
      * preform command. Should be called after setting all parameters.
@@ -76,7 +76,7 @@ public interface NFetchContentRepositoryCmd extends NRepositoryCmd {
      *
      * @return {@code this} instance
      */
-    NFetchMode getFetchMode();
+    NFetchMode fetchMode();
 
     /**
      * fetchMode
@@ -84,14 +84,14 @@ public interface NFetchContentRepositoryCmd extends NRepositoryCmd {
      * @param fetchMode fetchMode
      * @return {@code this} instance
      */
-    NFetchContentRepositoryCmd setFetchMode(NFetchMode fetchMode);
+    NFetchContentRepositoryCmd fetchMode(NFetchMode fetchMode);
 
     /**
      * description
      *
      * @return description
      */
-    NDescriptor getDescriptor();
+    NDescriptor descriptor();
 
     /**
      * set descriptor to fetch.
@@ -99,6 +99,6 @@ public interface NFetchContentRepositoryCmd extends NRepositoryCmd {
      * @param descriptor descriptor to fetch
      * @return {@code this} instance
      */
-    NFetchContentRepositoryCmd setDescriptor(NDescriptor descriptor);
+    NFetchContentRepositoryCmd descriptor(NDescriptor descriptor);
 
 }

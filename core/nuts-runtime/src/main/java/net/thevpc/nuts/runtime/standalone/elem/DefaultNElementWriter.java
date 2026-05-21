@@ -60,23 +60,23 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
 
 
     @Override
-    public NObjectWriter setFormatterCompact() {
-        return setFormatter(NElementFormatterStyle.COMPACT);
+    public NObjectWriter formatterCompact() {
+        return formatter(NElementFormatterStyle.COMPACT);
     }
 
     @Override
-    public NObjectWriter setFormatterPretty() {
-        return setFormatter(NElementFormatterStyle.PRETTY);
+    public NObjectWriter formatterPretty() {
+        return formatter(NElementFormatterStyle.PRETTY);
     }
 
     @Override
-    public NObjectWriter setFormatterVerbatim() {
-        return setFormatter(NElementFormatterStyle.VERBATIM);
+    public NObjectWriter formatterVerbatim() {
+        return formatter(NElementFormatterStyle.VERBATIM);
     }
 
     @Override
-    public NObjectWriter setFormatter(NElementFormatterStyle style) {
-        setFormatter(
+    public NObjectWriter formatter(NElementFormatterStyle style) {
+        formatter(
                 style == null ? null :
                         NElementFormatter.of(style)
         );
@@ -102,12 +102,12 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
     }
 
     @Override
-    public NContentType getContentType() {
+    public NContentType contentType() {
         return contentType;
     }
 
     @Override
-    public NElementWriter setContentType(NContentType contentType) {
+    public NElementWriter contentType(NContentType contentType) {
         if (contentType == null) {
             this.contentType = NContentType.JSON;
         } else {
@@ -118,27 +118,27 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
 
     @Override
     public NElementWriter json() {
-        return setContentType(NContentType.JSON);
+        return contentType(NContentType.JSON);
     }
 
     @Override
     public NElementWriter yaml() {
-        return setContentType(NContentType.YAML);
+        return contentType(NContentType.YAML);
     }
 
     @Override
     public NElementWriter tson() {
-        return setContentType(NContentType.TSON);
+        return contentType(NContentType.TSON);
     }
 
     @Override
     public NElementWriter xml() {
-        return setContentType(NContentType.XML);
+        return contentType(NContentType.XML);
     }
 
 
     @Override
-    public NElementFormatter getFormatter() {
+    public NElementFormatter formatter() {
         if (formatter != null) {
             return formatter;
         }
@@ -146,19 +146,19 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
     }
 
     @Override
-    public NElementWriter setFormatter(NElementFormatter formatter) {
+    public NElementWriter formatter(NElementFormatter formatter) {
         this.formatter = formatter;
         return this;
     }
 
     @Override
-    public NElementWriter setCompact(boolean compact) {
-        return setFormatter(NElementFormatter.ofCompact(compact));
+    public NElementWriter compact(boolean compact) {
+        return formatter(NElementFormatter.ofCompact(compact));
     }
 
     @Override
     public NIterableFormat iter(NPrintStream writer) {
-        switch (getContentType()) {
+        switch (contentType()) {
             case JSON:
                 return new DefaultSearchFormatJson(writer, new NFetchDisplayOptions());
             case TSON:
@@ -174,14 +174,14 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
             case PROPS:
                 return new DefaultSearchFormatProps(writer, new NFetchDisplayOptions());
         }
-        throw new NUnsupportedOperationException(NMsg.ofC("unsupported iterator for %s", getContentType()));
+        throw new NUnsupportedOperationException(NMsg.ofC("unsupported iterator for %s", contentType()));
     }
 
 
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
         DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(isNtf(), reflectRepository, userElementMapperStore);
-        switch (getContentType()) {
+        switch (contentType()) {
             case XML:
             case JSON:
             case TSON:
@@ -204,7 +204,7 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
             format.printElement(elem, bos, effectiveFormatter(), createFactoryContext());
-            out.print(NText.ofCode(getContentType().id(), bos.toString()));
+            out.print(NText.ofCode(contentType().id(), bos.toString()));
         } else {
             format.printElement(elem, out, effectiveFormatter(), createFactoryContext());
         }
@@ -237,12 +237,12 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
     }
 
     @Override
-    public NProgressFactory getProgressFactory() {
+    public NProgressFactory progressFactory() {
         return progressFactory;
     }
 
     @Override
-    public NElementWriter setProgressFactory(NProgressFactory progressFactory) {
+    public NElementWriter progressFactory(NProgressFactory progressFactory) {
         this.progressFactory = progressFactory;
         return this;
     }

@@ -41,7 +41,7 @@ public class TestSpecial_ExecURLTest {
                 .addCommand("nuts","info")
                 .failFast(true)
                 //.system()
-                .getGrabbedAllString();
+                .grabbedAll();
         NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }

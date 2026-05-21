@@ -16,12 +16,12 @@ public class DefaultNReflectParameter implements NReflectParameter {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return parameter.getName();
     }
 
     @Override
-    public NReflectType getParameterType() {
+    public NReflectType parameterType() {
         return repository.getType(parameter.getType());
     }
 

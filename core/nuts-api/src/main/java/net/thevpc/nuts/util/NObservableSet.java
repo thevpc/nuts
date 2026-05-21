@@ -38,6 +38,6 @@ public interface NObservableSet<V> extends Set<V> {
 
     void removeSetListener(NObservableSetListener<V> listener);
 
-    List<NObservableSetListener<V>> getSetListeners();
+    List<NObservableSetListener<V>> listeners();
 
 }

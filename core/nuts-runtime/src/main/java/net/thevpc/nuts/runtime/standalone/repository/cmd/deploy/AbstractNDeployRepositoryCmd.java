@@ -63,77 +63,77 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
     }
 
     @Override
-    public NInputSource getContent() {
+    public NInputSource content() {
         return content;
     }
 
     @Override
-    public NDeployRepositoryCmd setContent(NInputSource content) {
+    public NDeployRepositoryCmd content(NInputSource content) {
         this.content = content;
         return this;
     }
 
     @Override
-    public NDeployRepositoryCmd setContent(NPath content) {
+    public NDeployRepositoryCmd content(NPath content) {
         this.content = content;
         return this;
     }
 
     @Override
-    public NDeployRepositoryCmd setContent(Path content) {
+    public NDeployRepositoryCmd content(Path content) {
         this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
-    public NDeployRepositoryCmd setContent(URL content) {
+    public NDeployRepositoryCmd content(URL content) {
         this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
-    public NDeployRepositoryCmd setContent(File content) {
+    public NDeployRepositoryCmd content(File content) {
         this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
-    public NDeployRepositoryCmd setContent(InputStream content) {
+    public NDeployRepositoryCmd content(InputStream content) {
         this.content = content == null ? null : NInputSource.of(content);
         return this;
     }
 
     @Override
-    public NDescriptor getDescriptor() {
+    public NDescriptor descriptor() {
         return descriptor;
     }
 
     @Override
-    public NDeployRepositoryCmd setDescriptor(NDescriptor descriptor) {
+    public NDeployRepositoryCmd descriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
         return this;
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
     @Override
-    public NDeployRepositoryCmd setId(NId id) {
+    public NDeployRepositoryCmd id(NId id) {
         this.id = id;
         return this;
     }
 
     protected void checkParameters() {
         NSecurityManager.of().checkRepositoryAllowed(getRepo().uuid(), NConstants.Permissions.DEPLOY, "deploy");
-        CoreNIdUtils.checkLongId(getId());
-        NAssert.requireNamedNonNull(this.getContent(), "content");
-        NAssert.requireNamedNonNull(this.getDescriptor(), "descriptor");
-        if (this.getId().version().isRelease()
-                || this.getId().version().isLatest()
+        CoreNIdUtils.checkLongId(id());
+        NAssert.requireNamedNonNull(this.content(), "content");
+        NAssert.requireNamedNonNull(this.descriptor(), "descriptor");
+        if (this.id().version().isRelease()
+                || this.id().version().isLatest()
         ) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", this.getId().version()));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", this.id().version()));
         }
     }
 

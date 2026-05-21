@@ -68,7 +68,7 @@ public class NReflectMapperImpl implements NReflectMapper {
         this.tree = tree == null ? new TypeMapperTraversedTreeImpl() : tree;
     }
 
-    public NReflectMapper setRepository(NReflectRepository repository) {
+    public NReflectMapper repository(NReflectRepository repository) {
         if (repository != null) {
             this.repository = repository;
         }
@@ -76,7 +76,7 @@ public class NReflectMapperImpl implements NReflectMapper {
     }
 
     @Override
-    public NReflectMapper setPropertyConverter(String property, NReflectConverter converter) {
+    public NReflectMapper propertyConverter(String property, NReflectConverter converter) {
         if (converter == null) {
             convertersByName.remove(SPath.parse(property));
         } else {
@@ -86,7 +86,7 @@ public class NReflectMapperImpl implements NReflectMapper {
     }
 
     @Override
-    public NReflectMapper setTypeConverter(NReflectType fromType, NReflectType toType, NReflectConverter converter) {
+    public NReflectMapper typeConverter(NReflectType fromType, NReflectType toType, NReflectConverter converter) {
         if (converter == null) {
             convertersByType.remove(new TypeConverterKey(fromType, toType));
         } else {
@@ -133,26 +133,26 @@ public class NReflectMapperImpl implements NReflectMapper {
     }
 
     @Override
-    public NEqualizer<Object> getEqualizer() {
+    public NEqualizer<Object> equalizer() {
         return eq;
     }
 
-    public NReflectMapper setEqualizer(NEqualizer<Object> eq) {
+    public NReflectMapper equalizer(NEqualizer<Object> eq) {
         this.eq = eq == null ? NEqualizer.ofDefault() : eq;
         return this;
     }
 
-    public NAssignmentPolicy getAssignmentPolicy() {
+    public NAssignmentPolicy assignmentPolicy() {
         return assignmentPolicy;
     }
 
-    public NReflectMapperImpl setAssignmentPolicy(NAssignmentPolicy assignmentPolicy) {
+    public NReflectMapperImpl assignmentPolicy(NAssignmentPolicy assignmentPolicy) {
         this.assignmentPolicy = assignmentPolicy == null ? NAssignmentPolicy.ANY : assignmentPolicy;
         return this;
     }
 
     @Override
-    public NReflectRepository getRepository() {
+    public NReflectRepository repository() {
         return repository;
     }
 
@@ -165,9 +165,9 @@ public class NReflectMapperImpl implements NReflectMapper {
 
     public SPath path(NReflectProperty p) {
         if (root == null) {
-            return new SPath(new String[]{p.getName()});
+            return new SPath(new String[]{p.name()});
         }
-        return root.resolve(p.getName());
+        return root.resolve(p.name());
     }
 
     boolean isIncludedPath(SPath path) {
@@ -202,11 +202,11 @@ public class NReflectMapperImpl implements NReflectMapper {
                         (sourceValue) -> {
                             NReflectConverter converter = convertersByName.get(fpath);
                             Object newValue = (converter != null)
-                                    ? converter.convert(sourceValue, path.toString(), property.getPropertyType(), toProp.getPropertyType(), this)
-                                    : mapToType(sourceValue, toProp.getPropertyType());
+                                    ? converter.convert(sourceValue, path.toString(), property.propertyType(), toProp.propertyType(), this)
+                                    : mapToType(sourceValue, toProp.propertyType());
                             toProp.write(
                                     newValue,
-                                    mapToType(newValue, toProp.getPropertyType())
+                                    mapToType(newValue, toProp.propertyType())
                             );
                             return true;
                         }
@@ -228,7 +228,7 @@ public class NReflectMapperImpl implements NReflectMapper {
         if (value == null) {
             return toType.defaultValue();
         }
-        NReflectType u = getRepository().getType(value.getClass());
+        NReflectType u = repository().getType(value.getClass());
         if (u.equals(toType) || toType.isAssignableFrom(u)) {
             return value;
         }
@@ -291,7 +291,7 @@ public class NReflectMapperImpl implements NReflectMapper {
         if (to == null) {
             return false;
         }
-        NOptional<NReflectMappingStrategy> typeMapper = getMappingStrategy(getRepository().getType(from.getClass()), repository.getType(to.getClass()));
+        NOptional<NReflectMappingStrategy> typeMapper = getMappingStrategy(repository().getType(from.getClass()), repository.getType(to.getClass()));
         return typeMapper.get().copy(from, to, this);
     }
 

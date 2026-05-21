@@ -27,7 +27,7 @@ public interface NShellHelper {
             case WIN_POWER_SHELL:
                 return WinPowerShellNShellHelper.WIN_POWER_SHELL;
             default: {
-                switch (NOsFamily.getCurrent()) {
+                switch (NOsFamily.current()) {
                     case WINDOWS:
                         return of(NShellFamily.WIN_CMD);
                     default:

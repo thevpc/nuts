@@ -211,7 +211,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<String> getStringValue() {
-        return getValue().asString()
+        return this.toLiteral().asString()
                 .ifEmptyUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
@@ -222,42 +222,42 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<Integer> getIntValue() {
-        return getValue().asInt();
+        return this.toLiteral().asInt();
     }
 
     @Override
     public NOptional<Long> getLongValue() {
-        return getValue().asLong();
+        return this.toLiteral().asLong();
     }
 
     @Override
     public NOptional<Double> getDoubleValue() {
-        return getValue().asDouble();
+        return this.toLiteral().asDouble();
     }
 
     @Override
     public NOptional<Float> getFloatValue() {
-        return getValue().asFloat();
+        return this.toLiteral().asFloat();
     }
 
     @Override
     public NOptional<LocalDate> getLocalDateValue() {
-        return getValue().asLocalDate();
+        return this.toLiteral().asLocalDate();
     }
 
     @Override
     public NOptional<LocalTime> getLocalTimeValue() {
-        return getValue().asLocalTime();
+        return this.toLiteral().asLocalTime();
     }
 
     @Override
     public NOptional<LocalDateTime> getLocalDateTimeValue() {
-        return getValue().asLocalDateTime();
+        return this.toLiteral().asLocalDateTime();
     }
 
     @Override
     public NOptional<Instant> getInstantValue() {
-        return getValue().asInstant();
+        return this.toLiteral().asInstant();
     }
 
     @Override
@@ -302,7 +302,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<BigInteger> getBigIntValue() {
-        return getValue().asBigInt();
+        return this.toLiteral().asBigInt();
     }
 
     @Override
@@ -312,7 +312,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<BigDecimal> getBigDecimalValue() {
-        return getValue().asBigDecimal();
+        return this.toLiteral().asBigDecimal();
     }
 
     @Override
@@ -372,14 +372,14 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public NLiteral getValue() {
+    public NLiteral toLiteral() {
         return NLiteral.of(value);
     }
 
     @Override
     public NOptional<Boolean> getBooleanValue() {
         if (isNegated()) {
-            return getValue().asBoolean().onEmpty(true).map(x -> isNegated() != x)
+            return this.toLiteral().asBoolean().onEmpty(true).map(x -> isNegated() != x)
                     .ifEmptyUse(
                             () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                     )
@@ -387,7 +387,7 @@ public class DefaultNArg implements NArg {
                             () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                     );
         }
-        return getValue().asBoolean()
+        return this.toLiteral().asBoolean()
                 .ifEmptyUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
@@ -409,15 +409,11 @@ public class DefaultNArg implements NArg {
     @Override
     public boolean isFlagOption() {
         if (isOption()) {
-            if (getValue().isNull()) {
+            if (this.toLiteral().isNull()) {
                 return true;
             }
         }
         return false;
-    }
-
-    public NLiteral toLiteral() {
-        return NLiteral.of(image);
     }
 
     @Override

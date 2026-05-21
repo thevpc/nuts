@@ -527,26 +527,26 @@ public interface NColor {
         return AbstractNColor.of64(color,name);
     }
 
-    String getName();
+    String name();
 
-    NColorBits getBits();
+    NColorBits bits();
 
     NColor withName(String name);
 
-    int getIntColor();
+    int intColor();
 
-    long getLongColor();
+    long longColor();
 
     NColor toColor32();
 
-    int getRGB();
+    int rgb();
 
-    int getRed();
+    int red();
 
-    int getGreen();
+    int green();
 
-    int getBlue();
+    int blue();
 
-    int getAlpha();
+    int alpha();
 
 }

@@ -84,8 +84,8 @@ public class CoreFilterUtils {
         if (idFilter == null) {
             return Collections.emptyList();
         }
-        if (idFilter.getFilterOp() == NFilterOp.AND) {
-            return idFilter.getSubFilters();
+        if (idFilter.filterOp() == NFilterOp.AND) {
+            return idFilter.subFilters();
         }
         return Collections.singletonList(idFilter);
     }
@@ -596,7 +596,7 @@ public class CoreFilterUtils {
         for (NFilter t : all) {
             T t2 = t == null ? null : (T) t.simplify();
             if (t2 != null) {
-                switch (t2.getFilterOp()) {
+                switch (t2.filterOp()) {
                     case TRUE: {
                         return NFilters.of().always(cls);
                     }
@@ -642,7 +642,7 @@ public class CoreFilterUtils {
         for (NFilter t : all) {
             T t2 = t == null ? null : (T) t.simplify();
             if (t2 != null) {
-                switch (t2.getFilterOp()) {
+                switch (t2.filterOp()) {
                     case FALSE: {
                         return NFilters.of().never(cls);
                     }
@@ -682,7 +682,7 @@ public class CoreFilterUtils {
         for (NFilter t : all) {
             T t2 = t == null ? null : (T) t.simplify();
             if (t2 != null) {
-                switch (t2.getFilterOp()) {
+                switch (t2.filterOp()) {
                     case TRUE: {
                         return NFilters.of().never(cls);
                     }

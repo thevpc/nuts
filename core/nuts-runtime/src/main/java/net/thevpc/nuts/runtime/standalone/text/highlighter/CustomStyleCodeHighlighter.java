@@ -17,7 +17,7 @@ public class CustomStyleCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "styled("+style+")";
     }
 

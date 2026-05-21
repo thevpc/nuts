@@ -39,11 +39,11 @@ public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
 
     NDefinitionFilter getFilter();
 
-    NSearchVersionsRepositoryCmd setFilter(NDefinitionFilter filter);
+    NSearchVersionsRepositoryCmd filter(NDefinitionFilter filter);
 
-    NId getId();
+    NId id();
 
-    NSearchVersionsRepositoryCmd setId(NId id);
+    NSearchVersionsRepositoryCmd id(NId id);
 
     /**
      * run this command and return {@code this} instance
@@ -58,7 +58,7 @@ public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
      *
      * @return {@code this} instance
      */
-    NFetchMode getFetchMode();
+    NFetchMode fetchMode();
 
     /**
      * fetchMode
@@ -66,7 +66,7 @@ public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
      * @param fetchMode fetchMode
      * @return {@code this} instance
      */
-    NSearchVersionsRepositoryCmd setFetchMode(NFetchMode fetchMode);
+    NSearchVersionsRepositoryCmd fetchMode(NFetchMode fetchMode);
 
     NIterator<NId> getResult();
 }

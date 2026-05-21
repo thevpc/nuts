@@ -74,7 +74,7 @@ public interface NScorableContext {
      * @return the criteria cast to {@code T}
      * @throws ClassCastException if the criteria is not compatible with {@code T}
      */
-    <T> T getCriteria();
+    <T> T criteria();
 
     /**
      * Returns the criteria object cast to the specified type.
@@ -83,5 +83,5 @@ public interface NScorableContext {
      * @param expected the expected class of the criteria
      * @return the criteria cast to {@code T}, or {@code null} if not compatible
      */
-    <T> T getCriteria(Class<T> expected);
+    <T> T criteria(Class<T> expected);
 }

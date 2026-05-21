@@ -282,8 +282,8 @@ public class DefaultNFetch extends AbstractNFetch {
 //        }
 
         NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
-        NDescriptor descriptor = repoSPI.fetchDescriptor().setId(id)
-                .setFetchMode(mode)
+        NDescriptor descriptor = repoSPI.fetchDescriptor().id(id)
+                .fetchMode(mode)
                 .getResult();
         if (descriptor != null) {
             NId nutsId = dws.resolveEffectiveId(descriptor);
@@ -413,7 +413,7 @@ public class DefaultNFetch extends AbstractNFetch {
                 //ignore
                 DefaultNFetch.this._LOG()
                         .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", id,
-                                ex.getId())
+                                ex.id())
                                 .withLevel(Level.WARNING).withIntent(NMsgIntent.ALERT)
                         );
             }
@@ -524,10 +524,10 @@ public class DefaultNFetch extends AbstractNFetch {
                         NPath finalFetchedPath = fetchedPath;
                         NSession.of().copy().confirm(NConfirmationMode.YES).runWith(() -> {
                             installedRepositorySPI.deploy()
-                                    .setId(foundDefinitionBuilder.getId().get())
-                                    .setDescriptor(foundDefinitionBuilder.getDescriptor().get())
+                                    .id(foundDefinitionBuilder.getId().get())
+                                    .descriptor(foundDefinitionBuilder.getDescriptor().get())
                                     //.setFetchMode(mode)
-                                    .setContent(finalFetchedPath)
+                                    .content(finalFetchedPath)
                                     .run();
                         });
 
@@ -546,8 +546,8 @@ public class DefaultNFetch extends AbstractNFetch {
             try {
                 NDescriptor baseDescriptor = foundDefinitionBuilder.getDescriptor().get();
                 return repoSPI.fetchContent()
-                        .setId(id1).setDescriptor(baseDescriptor)
-                        .setFetchMode(repo.getFetchMode())
+                        .id(id1).descriptor(baseDescriptor)
+                        .fetchMode(repo.getFetchMode())
                         .getResult();
             } catch (NArtifactNotFoundException ex) {
                 reasons.add(ex);

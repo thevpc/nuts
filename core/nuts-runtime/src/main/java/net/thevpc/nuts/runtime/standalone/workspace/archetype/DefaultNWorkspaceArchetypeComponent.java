@@ -58,14 +58,14 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "default";
     }
 
     private String defaultRepoDiscriminator(NRepositorySpec d) {
         NPath repositoriesRoot = NWorkspaceExt.of().getConfigModel().getRepositoriesRoot();
         if (!NBlankable.isBlank(d.sourceLocation())) {
-            return NPath.of(d.sourceLocation().getPath()).toAbsolute(repositoriesRoot).toString();
+            return NPath.of(d.sourceLocation().path()).toAbsolute(repositoriesRoot).toString();
         } else if (!NBlankable.isBlank(d.location())) {
             return NPath.of(d.location()).toAbsolute(repositoriesRoot).toString();
         } else if (!NBlankable.isBlank(d.name())) {
@@ -98,8 +98,8 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
             NSecurityManager.of().addUser(
                     NUserSpec.of("user")
-                            .setCredential(ss)
-                            .setPermissions(
+                            .credential(ss)
+                            .permissions(
                                     Arrays.asList(
                                             NConstants.Permissions.FETCH_DESC,
                                             NConstants.Permissions.FETCH_CONTENT,

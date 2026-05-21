@@ -37,6 +37,6 @@ public interface NObservableMap<K, V> extends Map<K, V> {
 
     void removeMapListener(NObservableMapListener<K, V> listener);
 
-    List<NObservableMapListener<K, V>> getMapListeners();
+    List<NObservableMapListener<K, V>> mapListeners();
 
 }

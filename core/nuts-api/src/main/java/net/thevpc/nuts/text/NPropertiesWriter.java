@@ -61,14 +61,14 @@ public interface NPropertiesWriter extends NContentTypeWriter {
      * @param sort when true enable sorting
      * @return {@code this} instance
      */
-    NPropertiesWriter setSorted(boolean sort);
+    NPropertiesWriter sorted(boolean sort);
 
     /**
      * return key/value separator, default is " = "
      *
      * @return key/value separator
      */
-    String getSeparator();
+    String separator();
 
     /**
      * set key/value separator
@@ -76,7 +76,7 @@ public interface NPropertiesWriter extends NContentTypeWriter {
      * @param separator key/value separator
      * @return {@code this} instance
      */
-    NPropertiesWriter setSeparator(String separator);
+    NPropertiesWriter separator(String separator);
 
 
     /**
@@ -93,6 +93,6 @@ public interface NPropertiesWriter extends NContentTypeWriter {
     NPropertiesWriter configure(boolean skipUnsupported, String... args);
 
     @Override
-    NPropertiesWriter setNtf(boolean ntf);
+    NPropertiesWriter ntf(boolean ntf);
 
 }

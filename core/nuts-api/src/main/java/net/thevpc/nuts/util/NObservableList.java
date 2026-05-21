@@ -37,6 +37,6 @@ public interface NObservableList<V> extends List<V> {
 
     void removeListListener(NObservableListListener<V> listener);
 
-    List<NObservableListListener<V>> getListListeners();
+    List<NObservableListListener<V>> listListeners();
 
 }

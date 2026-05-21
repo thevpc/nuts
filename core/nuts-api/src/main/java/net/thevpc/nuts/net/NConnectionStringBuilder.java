@@ -62,7 +62,7 @@ public interface NConnectionStringBuilder extends NComponent {
     @NSetter
     NConnectionStringBuilder protocol(String protocol);
 
-    String getQueryString();
+    String queryString();
 
     @NSetter
     NConnectionStringBuilder queryString(String queryString);

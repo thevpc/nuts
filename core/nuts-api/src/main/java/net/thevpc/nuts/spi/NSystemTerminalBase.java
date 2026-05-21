@@ -48,13 +48,13 @@ public interface NSystemTerminalBase extends NComponent {
 
     char[] readPassword(NPrintStream out, NMsg message);
 
-    InputStream getIn();
+    InputStream in();
 
-    NPrintStream getOut();
+    NPrintStream out();
 
-    NPrintStream getErr();
+    NPrintStream err();
 
-    default NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
+    default NCmdLineAutoCompleteResolver autoCompleteResolver() {
         return null;
     }
 
@@ -62,14 +62,14 @@ public interface NSystemTerminalBase extends NComponent {
         return false;
     }
 
-    NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver);
+    NSystemTerminalBase commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver);
 
     /**
      * return History implementation
      *
      * @return History implementation
      */
-    NCmdLineHistory getCommandHistory();
+    NCmdLineHistory commandHistory();
 
     /**
      * set History implementation
@@ -77,7 +77,7 @@ public interface NSystemTerminalBase extends NComponent {
      * @param history new history implementation
      * @return {@code this} instance
      */
-    NSystemTerminalBase setCommandHistory(NCmdLineHistory history);
+    NSystemTerminalBase commandHistory(NCmdLineHistory history);
 
     /**
      * return command line language content type (or simple id) used for highlighting (syntax coloring).
@@ -86,7 +86,7 @@ public interface NSystemTerminalBase extends NComponent {
      * @return command line language content type (or simple id) used for highlighting (syntax coloring)
      * @since 0.8.3
      */
-    NTerminalFormatter getCommandHighlighter();
+    NTerminalFormatter commandHighlighter();
 
     /**
      * set command line language content type (or simple id) used for highlighting (syntax coloring).
@@ -96,19 +96,19 @@ public interface NSystemTerminalBase extends NComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NSystemTerminalBase setCommandHighlighter(NTerminalFormatter commandHighlighter);
+    NSystemTerminalBase commandHighlighter(NTerminalFormatter commandHighlighter);
 
     Object run(NTerminalCmd command, NPrintStream printStream);
 
-    Cursor getTerminalCursor();
+    Cursor terminalCursor();
 
-    Size getTerminalSize();
+    Size terminalSize();
 
     NSystemTerminalBase resetLine();
 
     NSystemTerminalBase clearScreen();
 
-    void setStyles(NTextStyles styles, NPrintStream printStream);
+    void styles(NTextStyles styles, NPrintStream printStream);
 
     class Cursor implements Serializable {
         private int x;
@@ -123,11 +123,11 @@ public interface NSystemTerminalBase extends NComponent {
             this.y = y;
         }
 
-        public int getX() {
+        public int x() {
             return x;
         }
 
-        public int getY() {
+        public int y() {
             return y;
         }
 
@@ -166,11 +166,11 @@ public interface NSystemTerminalBase extends NComponent {
             this.rows = rows;
         }
 
-        public int getColumns() {
+        public int columns() {
             return columns;
         }
 
-        public int getRows() {
+        public int rows() {
             return rows;
         }
 

@@ -69,13 +69,13 @@ public class GroupNonOption extends DefaultNonOption {
         NRepository repository=context.get(NRepository.class);
         NUserConfig securityEntityConfig=context.get(NUserConfig.class);
         if (securityEntityConfig != null) {
-            for (String n : securityEntityConfig.getGroups()) {
+            for (String n : securityEntityConfig.groups()) {
                 all.add(new DefaultNArgCandidate(n));
             }
         } else {
             for (NUser nutsSecurityEntityConfig : NSecurityManager.of()
-                    .findUsers()) {
-                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUsername()));
+                    .users()) {
+                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.username()));
             }
         }
         return all;

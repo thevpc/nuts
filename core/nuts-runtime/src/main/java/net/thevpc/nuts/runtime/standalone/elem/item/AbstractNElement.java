@@ -409,7 +409,7 @@ public abstract class AbstractNElement implements NElement {
     }
 
     public String toFormattedString(NContentType contentType, NElementFormatter formatter) {
-        return NElementWriter.of().setContentType(contentType).setFormatter(formatter).formatPlain(this);
+        return NElementWriter.of().contentType(contentType).formatter(formatter).formatPlain(this);
     }
 
     @Override

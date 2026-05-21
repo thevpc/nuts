@@ -293,7 +293,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         Boolean systemWideConfig = options.getLauncher().switchWorkspace();
         if (!idsToInstall.isEmpty()) {
             if (systemWideConfig == null) {
-                systemWideConfig = workspaceLocation.toString().equals(NPlatformHome.of(NOsFamily.getCurrent()).getWorkspaceLocation(null));
+                systemWideConfig = workspaceLocation.toString().equals(NPlatformHome.of(NOsFamily.current()).getWorkspaceLocation(null));
             }
             boolean includeEnv = options.isIncludeEnv();
             for (String id : idsToInstall) {

@@ -62,7 +62,7 @@ public class DefaultRootContext extends NExprContextBase {
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
+    public List<NExprOperator> operators() {
         List<NExprOperator> all = new ArrayList<>();
         all.addAll(ops.values());
         return all;

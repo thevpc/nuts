@@ -26,7 +26,7 @@ public class NStringMapFormatBuilder {
         return acceptNullKeys;
     }
 
-    public NStringMapFormatBuilder setAcceptNullKeys(boolean acceptNullKeys) {
+    public NStringMapFormatBuilder acceptNullKeys(boolean acceptNullKeys) {
         this.acceptNullKeys = acceptNullKeys;
         return this;
     }
@@ -35,7 +35,7 @@ public class NStringMapFormatBuilder {
         return doubleQuoteSupported;
     }
 
-    public NStringMapFormatBuilder setDoubleQuoteSupported(boolean doubleQuoteSupported) {
+    public NStringMapFormatBuilder doubleQuoteSupported(boolean doubleQuoteSupported) {
         this.doubleQuoteSupported = doubleQuoteSupported;
         return this;
     }
@@ -44,39 +44,39 @@ public class NStringMapFormatBuilder {
         return simpleQuoteSupported;
     }
 
-    public NStringMapFormatBuilder setSimpleQuoteSupported(boolean simpleQuoteSupported) {
+    public NStringMapFormatBuilder simpleQuoteSupported(boolean simpleQuoteSupported) {
         this.simpleQuoteSupported = simpleQuoteSupported;
         return this;
     }
 
     public NStringMapFormatBuilder setQuoteSupported(boolean quoteSupported) {
-        setDoubleQuoteSupported(quoteSupported);
-        setSimpleQuoteSupported(quoteSupported);
+        doubleQuoteSupported(quoteSupported);
+        simpleQuoteSupported(quoteSupported);
         return this;
     }
-    public String getEqualsChars() {
+    public String equalsChars() {
         return equalsChars;
     }
 
-    public NStringMapFormatBuilder setEqualsChars(String equalsChars) {
+    public NStringMapFormatBuilder equalsChars(String equalsChars) {
         this.equalsChars = equalsChars;
         return this;
     }
 
-    public String getSeparatorChars() {
+    public String separatorChars() {
         return separatorChars;
     }
 
-    public NStringMapFormatBuilder setSeparatorChars(String separatorChars) {
+    public NStringMapFormatBuilder separatorChars(String separatorChars) {
         this.separatorChars = separatorChars;
         return this;
     }
 
-    public String getEscapeChars() {
+    public String escapeChars() {
         return escapeChars;
     }
 
-    public NStringMapFormatBuilder setEscapeChars(String escapeChars) {
+    public NStringMapFormatBuilder escapeChars(String escapeChars) {
         this.escapeChars = escapeChars;
         return this;
     }
@@ -85,25 +85,25 @@ public class NStringMapFormatBuilder {
         return sort;
     }
 
-    public NStringMapFormatBuilder setSort(boolean sort) {
+    public NStringMapFormatBuilder sort(boolean sort) {
         this.sort = sort;
         return this;
     }
 
-    public Function<String, String> getDecoder() {
+    public Function<String, String> decoder() {
         return decoder;
     }
 
-    public NStringMapFormatBuilder setDecoder(Function<String, String> decoder) {
+    public NStringMapFormatBuilder decoder(Function<String, String> decoder) {
         this.decoder = decoder;
         return this;
     }
 
-    public Function<String, String> getEncoder() {
+    public Function<String, String> encoder() {
         return encoder;
     }
 
-    public NStringMapFormatBuilder setEncoder(Function<String, String> encoder) {
+    public NStringMapFormatBuilder encoder(Function<String, String> encoder) {
         this.encoder = encoder;
         return this;
     }
@@ -114,24 +114,24 @@ public class NStringMapFormatBuilder {
 
     public NStringMapFormatBuilder copyFrom(NStringMapFormatBuilder other) {
         if(other!=null) {
-            this.equalsChars = other.getEqualsChars();
-            this.separatorChars = other.getSeparatorChars();
-            this.escapeChars = other.getEscapeChars();
+            this.equalsChars = other.equalsChars();
+            this.separatorChars = other.separatorChars();
+            this.escapeChars = other.escapeChars();
             this.sort = other.isSort();
-            this.encoder = other.getEncoder();
-            this.decoder = other.getDecoder();
+            this.encoder = other.encoder();
+            this.decoder = other.decoder();
         }
         return this;
     }
 
     public NStringMapFormatBuilder copyFrom(NStringMapFormat other) {
         if(other!=null) {
-            this.equalsChars = other.getEqualsChars();
-            this.separatorChars = other.getSeparatorChars();
-            this.escapeChars = other.getEscapeChars();
+            this.equalsChars = other.equalsChars();
+            this.separatorChars = other.separatorChars();
+            this.escapeChars = other.escapeChars();
             this.sort = other.isSort();
-            this.encoder = other.getEncoder();
-            this.decoder = other.getDecoder();
+            this.encoder = other.encoder();
+            this.decoder = other.decoder();
         }
         return this;
     }

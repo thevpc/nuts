@@ -385,7 +385,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                 NVersion v = c.getConfigVersion();
                 if (NBlankable.isBlank(v)) {
                     c.setInstalled(true);
-                    c.setConfigVersion(NVersion.get("0.5.8").get()); //last version before 0.6
+                    c.configVersion(NVersion.get("0.5.8").get()); //last version before 0.6
                     changeStatus = true;
                 }
                 NId idOk = c.getId();
@@ -407,7 +407,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                     NLock.ofPath(path).callWith(() -> {
                                 _LOG()
                                         .log(NMsg.ofC("install-info upgraded %s", path).asConfig());
-                                c.setConfigVersion(workspace.apiVersion());
+                                c.configVersion(workspace.apiVersion());
                                 NElementWriter.ofJson().write(c, path);
                                 return null;
                             },
@@ -477,7 +477,7 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
             path.mkParentDirs().writeString((String) value);
         } else if (value instanceof NDescriptor) {
             try {
-                NDescriptorWriter.of().setNtf(false).print((NDescriptor) value, path);
+                NDescriptorWriter.of().ntf(false).print((NDescriptor) value, path);
             } catch (Exception ex) {
                 _LOG()
                         .log(NMsg.ofC("failed to print %s", path).asFineFail(ex));

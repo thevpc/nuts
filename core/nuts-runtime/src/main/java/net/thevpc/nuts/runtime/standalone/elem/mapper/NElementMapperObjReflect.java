@@ -24,12 +24,12 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
 
     @Override
     public Object toSimple(NElementSerializerContext<Object> context) {
-        NReflectType m = context.getTypesRepository().getType(context.instanceType());
+        NReflectType m = context.typesRepository().getType(context.instanceType());
         Map<String, Object> obj = new LinkedHashMap<>();
         for (NReflectProperty property : m.properties()) {
             final Object v = property.read(context.instance());
             if (!property.isDefaultValue(v)) {
-                obj.put(property.getName(), context.toSimple(v, null));
+                obj.put(property.name(), context.toSimple(v, null));
             }
         }
         return obj;
@@ -37,12 +37,12 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
 
     @Override
     public NElement toElement(NElementSerializerContext<Object> context) {
-        NReflectType m = context.getTypesRepository().getType(context.instanceType());
+        NReflectType m = context.typesRepository().getType(context.instanceType());
         NObjectElementBuilder obj = NElement.ofObjectBuilder();
         for (NReflectProperty property : m.properties()) {
             final Object v = property.read(context.instance());
             if (!property.isDefaultValue(v)) {
-                obj.set(property.getName(), context.toElement(v));
+                obj.set(property.name(), context.toElement(v));
             }
         }
         return obj.build();
@@ -152,15 +152,15 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         if (Modifier.isAbstract(mod)) {
             throw new NIllegalArgumentException(NMsg.ofC("cannot instantiate abstract class %s", typeOfResult));
         }
-        NReflectType m = context.getTypesRepository().getType(typeOfResult);
+        NReflectType m = context.typesRepository().getType(typeOfResult);
         Object instance = m.newInstance();
         NObjectElement eobj = element.asObject().get();
 //        NElements prv = NElements;
         for (NReflectProperty property : m.properties()) {
             if (property.isWrite()) {
-                NElement v = eobj.get(property.getName()).orNull();
+                NElement v = eobj.get(property.name()).orNull();
                 if (v != null) {
-                    property.write(instance, context.toObject(v, property.getPropertyType().javaType()));
+                    property.write(instance, context.toObject(v, property.propertyType().javaType()));
                 }
             }
         }

@@ -30,5 +30,5 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextCmd extends NText {
-    NTerminalCmd getCommand();
+    NTerminalCmd terminalCommand();
 }

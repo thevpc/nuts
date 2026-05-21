@@ -959,7 +959,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NSearch run() {
         if (describe) {
-            NElementWriter.ofTson().setFormatter(NElementFormatterStyle.PRETTY).writeln(getResultQueryPlan());
+            NElementWriter.ofTson().formatter(NElementFormatterStyle.PRETTY).writeln(getResultQueryPlan());
 //            NOut.println(getResultQueryPlan().format(NContentType.JSON, NElementFormatter.ofPretty()));
             return this;
         }

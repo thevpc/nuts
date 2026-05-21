@@ -48,7 +48,7 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 

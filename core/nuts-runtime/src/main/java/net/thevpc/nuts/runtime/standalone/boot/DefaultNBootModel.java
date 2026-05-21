@@ -108,7 +108,7 @@ public class DefaultNBootModel implements NBootModel {
     }
 
     public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NBootOptions bOption, boolean boot, NLog log) {
-        NOsFamily os = NOsFamily.getCurrent();
+        NOsFamily os = NOsFamily.current();
         LinkedHashSet<String> flags = new LinkedHashSet<>();
         boolean tty = false;
         boolean customOut = false;
@@ -264,7 +264,7 @@ public class DefaultNBootModel implements NBootModel {
                 extensions.loadExtension(extId);
                 NSystemTerminal systemTerminal = createSystemTerminal(
                         new NDefaultTerminalSpec()
-                                .setAutoComplete(true)
+                                .autoComplete(true)
                 );
                 setSystemTerminal(systemTerminal);
                 if (getSystemTerminal().isAutoCompleteSupported()) {
@@ -290,7 +290,7 @@ public class DefaultNBootModel implements NBootModel {
             syst = (NSystemTerminal) terminal;
         } else {
             try {
-                terminal.getOut();
+                terminal.out();
                 syst = new DefaultSystemTerminal(terminal);
                 //NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {

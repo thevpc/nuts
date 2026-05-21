@@ -19,7 +19,7 @@ public class NEnvAsCmd extends NEnvBase {
     private Map<String, String> envSnapshot;
 
     public NEnvAsCmd(NScorableContext context) {
-        Object criteria = context.getCriteria();
+        Object criteria = context.criteria();
         this.envCmdSPI = (NEnvCmdSPI) criteria;
     }
 
@@ -50,7 +50,7 @@ public class NEnvAsCmd extends NEnvBase {
     }
     @NScore
     public static int getScore(NScorableContext context) {
-        Object criteria = context.getCriteria();
+        Object criteria = context.criteria();
         if (criteria instanceof NEnvCmdSPI) {
             return NScorable.DEFAULT_SCORE;
         }

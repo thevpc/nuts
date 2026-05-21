@@ -54,13 +54,13 @@ public class NDefaultScorableContext implements NScorableContext {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCriteria() {
+    public <T> T criteria() {
         return (T) criteria;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCriteria(Class<T> expected) {
+    public <T> T criteria(Class<T> expected) {
         if (criteria == null) {
             return null;
         }

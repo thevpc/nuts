@@ -51,7 +51,7 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
     }
 
     @Override
-    public String getText() {
+    public String text() {
         return value;
     }
 

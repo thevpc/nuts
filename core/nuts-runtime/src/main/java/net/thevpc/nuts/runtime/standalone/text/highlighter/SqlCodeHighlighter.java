@@ -19,7 +19,7 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "sql";
     }
 
@@ -31,7 +31,7 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if (s == null) {
             return NScorable.DEFAULT_SCORE;
         }
@@ -120,7 +120,7 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
                         NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).getValue();
+                                String txt2 = ((NTextPlain) d[0]).value();
                                 if (reservedWords1.contains(txt2.toLowerCase())) {
                                     d[0] = txt.ofStyled(d[0], NTextStyle.keyword());
                                 }

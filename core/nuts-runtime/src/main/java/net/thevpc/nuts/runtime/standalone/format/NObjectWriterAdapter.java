@@ -52,35 +52,35 @@ public abstract class NObjectWriterAdapter /*extends DefaultFormatBase<NFormat>*
     public NFormatAndValue<Object, NObjectWriter> getConfBase(Object aValue) {
         NFormatAndValue<Object, NObjectWriter> b = getBase(aValue);
         for (String[] confCmd : confCmds) {
-            b.getFormat().configure(true).configure(true, confCmd);
+            b.format().configure(true).configure(true, confCmd);
         }
-        b.getFormat().setNtf(isNtf());
+        b.format().ntf(isNtf());
         return b;
     }
 
     @Override
     public String formatPlain(Object aValue) {
-        return getConfBase(aValue).getFormat().formatPlain(aValue);
+        return getConfBase(aValue).format().formatPlain(aValue);
     }
 
     @Override
     public void print(Object aValue, OutputStream out) {
-        getConfBase(aValue).getFormat().print(aValue, out);
+        getConfBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, NPath out) {
-        getConfBase(aValue).getFormat().print(aValue, out);
+        getConfBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void println(Object aValue, OutputStream out) {
-        getConfBase(aValue).getFormat().print(aValue, out);
+        getConfBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void println(Object aValue, NPath out) {
-        getConfBase(aValue).getFormat().print(aValue, out);
+        getConfBase(aValue).format().print(aValue, out);
     }
 
 
@@ -90,7 +90,7 @@ public abstract class NObjectWriterAdapter /*extends DefaultFormatBase<NFormat>*
     }
 
     @Override
-    public NObjectWriter setNtf(boolean ntf) {
+    public NObjectWriter ntf(boolean ntf) {
         this.ntf = ntf;
         return this;
     }
@@ -98,150 +98,150 @@ public abstract class NObjectWriterAdapter /*extends DefaultFormatBase<NFormat>*
 
     @Override
     public NText format(Object aValue) {
-        return getConfBase(aValue).getFormat().format(aValue);
+        return getConfBase(aValue).format().format(aValue);
     }
 
     @Override
     public void print(Object aValue) {
-        getConfBase(aValue).getFormat().print(aValue);
+        getConfBase(aValue).format().print(aValue);
     }
 
     @Override
     public void println(Object aValue) {
-        getConfBase(aValue).getFormat().println(aValue);
+        getConfBase(aValue).format().println(aValue);
     }
 
     @Override
     public void print(Object aValue, NPrintStream out) {
-        getConfBase(aValue).getFormat().print(aValue, out);
+        getConfBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, Writer out) {
-        getConfBase(aValue).getFormat().print(aValue, out);
+        getConfBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, Path out) {
-        getConfBase(aValue).getFormat().print(aValue, out);
+        getConfBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, File out) {
-        getConfBase(aValue).getFormat().print(aValue, out);
+        getConfBase(aValue).format().print(aValue, out);
     }
 
     @Override
     public void print(Object aValue, NTerminal terminal) {
-        getConfBase(aValue).getFormat().print(aValue, terminal);
+        getConfBase(aValue).format().print(aValue, terminal);
     }
 
     @Override
     public void println(Object aValue, Writer w) {
-        getConfBase(aValue).getFormat().println(aValue, w);
+        getConfBase(aValue).format().println(aValue, w);
     }
 
     @Override
     public void println(Object aValue, NPrintStream out) {
-        getConfBase(aValue).getFormat().println(aValue, out);
+        getConfBase(aValue).format().println(aValue, out);
     }
 
     @Override
     public void println(Object aValue, Path path) {
-        getConfBase(aValue).getFormat().println(aValue, path);
+        getConfBase(aValue).format().println(aValue, path);
     }
 
     @Override
     public void println(Object aValue, NTerminal terminal) {
-        getConfBase(aValue).getFormat().println(aValue, terminal);
+        getConfBase(aValue).format().println(aValue, terminal);
     }
     @Override
     public void println(Object aValue, File file) {
-        getConfBase(aValue).getFormat().println(aValue, file);
+        getConfBase(aValue).format().println(aValue, file);
     }
 
     @Override
     public void write(Object aValue) {
-        getConfBase(aValue).getFormat().write(aValue);
+        getConfBase(aValue).format().write(aValue);
     }
 
     @Override
     public void writeln(Object aValue) {
-        getConfBase(aValue).getFormat().writeln(aValue);
+        getConfBase(aValue).format().writeln(aValue);
     }
 
     @Override
     public void write(Object aValue, NPrintStream out) {
-        getConfBase(aValue).getFormat().write(aValue,out);
+        getConfBase(aValue).format().write(aValue,out);
     }
 
     @Override
     public void write(Object aValue, Writer out) {
-        getConfBase(aValue).getFormat().write(aValue,out);
+        getConfBase(aValue).format().write(aValue,out);
     }
 
     @Override
     public void write(Object aValue, OutputStream out) {
-        getConfBase(aValue).getFormat().write(aValue,out);
+        getConfBase(aValue).format().write(aValue,out);
     }
 
     @Override
     public void write(Object aValue, Path out) {
-        getConfBase(aValue).getFormat().write(aValue,out);
+        getConfBase(aValue).format().write(aValue,out);
     }
 
     @Override
     public void write(Object aValue, NPath out) {
-        getConfBase(aValue).getFormat().write(aValue,out);
+        getConfBase(aValue).format().write(aValue,out);
     }
 
     @Override
     public void write(Object aValue, File out) {
-        getConfBase(aValue).getFormat().write(aValue,out);
+        getConfBase(aValue).format().write(aValue,out);
     }
 
     @Override
     public void write(Object aValue, NTerminal out) {
-        getConfBase(aValue).getFormat().write(aValue,out);
+        getConfBase(aValue).format().write(aValue,out);
     }
 
     @Override
     public void writeln(Object aValue, Writer out) {
-        getConfBase(aValue).getFormat().writeln(aValue,out);
+        getConfBase(aValue).format().writeln(aValue,out);
     }
 
     @Override
     public void writeln(Object aValue, NPrintStream out) {
-        getConfBase(aValue).getFormat().writeln(aValue,out);
+        getConfBase(aValue).format().writeln(aValue,out);
 
     }
 
     @Override
     public void writeln(Object aValue, OutputStream out) {
-        getConfBase(aValue).getFormat().writeln(aValue,out);
+        getConfBase(aValue).format().writeln(aValue,out);
     }
 
     @Override
     public void writeln(Object aValue, Path out) {
-        getConfBase(aValue).getFormat().writeln(aValue,out);
+        getConfBase(aValue).format().writeln(aValue,out);
 
     }
 
     @Override
     public void writeln(Object aValue, NPath out) {
-        getConfBase(aValue).getFormat().writeln(aValue,out);
+        getConfBase(aValue).format().writeln(aValue,out);
 
     }
 
     @Override
     public void writeln(Object aValue, NTerminal out) {
-        getConfBase(aValue).getFormat().writeln(aValue,out);
+        getConfBase(aValue).format().writeln(aValue,out);
 
     }
 
     @Override
     public void writeln(Object aValue, File out) {
-        getConfBase(aValue).getFormat().writeln(aValue,out);
+        getConfBase(aValue).format().writeln(aValue,out);
     }
 
 

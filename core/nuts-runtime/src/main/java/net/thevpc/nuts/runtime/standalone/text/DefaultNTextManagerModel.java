@@ -84,7 +84,7 @@ public class DefaultNTextManagerModel {
     public void loadExtensions() {
         List<NCodeHighlighter> all = NExtensions.of().createAllSupported(NCodeHighlighter.class, null);
         for (NCodeHighlighter h : all) {
-            highlighters.put(h.getId().toLowerCase(), h);
+            highlighters.put(h.id().toLowerCase(), h);
         }
         try {
             try (BufferedReader reader = new BufferedReader(
@@ -176,15 +176,15 @@ public class DefaultNTextManagerModel {
 
     public void setTheme(NTextFormatTheme styleTheme) {
         if (styleTheme != null) {
-            cachedThemes.put(styleTheme.getName(), styleTheme);
-            styleThemeName = styleTheme.getName();
+            cachedThemes.put(styleTheme.name(), styleTheme);
+            styleThemeName = styleTheme.name();
         } else {
             styleThemeName = "default";
         }
     }
 
     public void setTheme(String styleThemeName) {
-        this.styleThemeName = loadTheme(styleThemeName).getName();
+        this.styleThemeName = loadTheme(styleThemeName).name();
     }
 
     public NCodeHighlighter getCodeHighlighter(String highlighterId) {
@@ -261,7 +261,7 @@ public class DefaultNTextManagerModel {
 
 
     public void addCodeHighlighter(NCodeHighlighter format) {
-        highlighters.put(format.getId(), format);
+        highlighters.put(format.id(), format);
     }
 
     public void removeCodeHighlighter(String id) {

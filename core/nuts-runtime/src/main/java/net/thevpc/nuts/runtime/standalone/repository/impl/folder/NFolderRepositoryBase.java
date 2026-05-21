@@ -41,7 +41,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                  NRepository parent, NSpeedQualifier speed,
                                  boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, parent,
-                speed == null ? (NPath.of(options.sourceLocation().getPath()
+                speed == null ? (NPath.of(options.sourceLocation().path()
                 ).isRemote() ? NSpeedQualifier.SLOW : NSpeedQualifier.FASTER) : speed
                 , supportedMirroring, repositoryType, supportsDeploy);
         if (!isRemote()) {
@@ -219,7 +219,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                                                 final NId nutsId = id.builder().version(versionFolder.name()).build();
                                                 if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdAndLazyDescriptor(
                                                         nutsId,
-                                                        () -> fetchDescriptor().setFetchMode(fetchMode).setId(nutsId).getResult(),
+                                                        () -> fetchDescriptor().fetchMode(fetchMode).id(nutsId).getResult(),
                                                         "NFolderRepositoryBase::findNonSingleVersionImpl"))) {
                                                     return expectedId;
                                                 }

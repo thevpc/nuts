@@ -610,7 +610,7 @@ public class DefaultNWorkspaceExtensionModel {
         );
         NTerminalSpec spec = new NDefaultTerminalSpec();
         if (session.terminal() != null) {
-            spec.setProperty("ignoreClass", session.terminal().getClass());
+            spec.property("ignoreClass", session.terminal().getClass());
         }
         NTerminal newTerminal = createTerminal(spec);
         if (newTerminal != null) {
@@ -735,7 +735,7 @@ public class DefaultNWorkspaceExtensionModel {
 //    }
     public NTerminal createTerminal(NTerminalSpec spec) {
         NSystemTerminalBase termb = createSupported(NSystemTerminalBase.class, spec).get();
-        if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
+        if (spec != null && spec.getProperty("ignoreClass") != null && spec.getProperty("ignoreClass").equals(termb.getClass())) {
             return null;
         }
         return new DefaultNTerminalFromSystem(termb);

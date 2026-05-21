@@ -94,7 +94,7 @@ public class NLockException extends NException {
      *
      * @return locked object
      */
-    public Object getLockedObject() {
+    public Object lockedObject() {
         return lockedObject;
     }
 
@@ -103,7 +103,7 @@ public class NLockException extends NException {
      *
      * @return lock object
      */
-    public Object getLockObject() {
+    public Object lockObject() {
         return lockObject;
     }
 }

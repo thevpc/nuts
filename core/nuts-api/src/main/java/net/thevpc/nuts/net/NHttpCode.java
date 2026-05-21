@@ -1,6 +1,5 @@
 package net.thevpc.nuts.net;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,7 +56,7 @@ public class NHttpCode {
         return (code >= 500);
     }
 
-    public int getCode() {
+    public int code() {
         return code;
     }
 

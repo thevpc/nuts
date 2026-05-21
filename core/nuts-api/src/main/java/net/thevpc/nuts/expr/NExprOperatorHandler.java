@@ -3,7 +3,7 @@ package net.thevpc.nuts.expr;
 import java.util.List;
 
 public interface NExprOperatorHandler {
-    NOperatorAssociativity getAssociativity();
+    NOperatorAssociativity qssociativity();
 
     NExprOpType operatorType();
 

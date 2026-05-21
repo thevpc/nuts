@@ -384,7 +384,7 @@ public class NTextStyle implements NEnum {
     }
 
     public static NTextStyle foregroundTrueColor(NColor variant) {
-        return of(NTextStyleType.FORE_TRUE_COLOR, variant == null ? 0 : variant.getRGB());
+        return of(NTextStyleType.FORE_TRUE_COLOR, variant == null ? 0 : variant.rgb());
     }
 
     public static NTextStyle backgroundColor(int variant) {
@@ -396,51 +396,51 @@ public class NTextStyle implements NEnum {
     }
 
     public static NTextStyle backgroundTrueColor(NColor variant) {
-        return of(NTextStyleType.BACK_TRUE_COLOR, variant == null ? 0 : variant.getRGB());
+        return of(NTextStyleType.BACK_TRUE_COLOR, variant == null ? 0 : variant.rgb());
     }
 
     public static NTextStyle backgroundColor(NColor variant) {
         if (variant == null) {
             return backgroundColor(0);
         }
-        switch (variant.getBits()) {
+        switch (variant.bits()) {
             case BITS_4:
             case BITS_8: {
-                return secondary(variant.getIntColor());
+                return secondary(variant.intColor());
             }
             case BITS_16:
             case BITS_24:
             {
-                return backgroundColor(variant.getIntColor());
+                return backgroundColor(variant.intColor());
             }
             case BITS_32:
             case BITS_64: {
-                return backgroundTrueColor(variant.getIntColor());
+                return backgroundTrueColor(variant.intColor());
             }
         }
-        return of(NTextStyleType.BACK_TRUE_COLOR, variant.getRGB());
+        return of(NTextStyleType.BACK_TRUE_COLOR, variant.rgb());
     }
 
     public static NTextStyle foregroundColor(NColor variant) {
         if (variant == null) {
             return foregroundColor(0);
         }
-        switch (variant.getBits()) {
+        switch (variant.bits()) {
             case BITS_4:
             case BITS_8: {
-                return primary(variant.getIntColor());
+                return primary(variant.intColor());
             }
             case BITS_16:
             case BITS_24:
             {
-                return foregroundColor(variant.getIntColor());
+                return foregroundColor(variant.intColor());
             }
             case BITS_32:
             case BITS_64: {
-                return foregroundTrueColor(variant.getIntColor());
+                return foregroundTrueColor(variant.intColor());
             }
         }
-        return of(NTextStyleType.FORE_TRUE_COLOR, variant.getRGB());
+        return of(NTextStyleType.FORE_TRUE_COLOR, variant.rgb());
     }
 
 
@@ -512,30 +512,30 @@ public class NTextStyle implements NEnum {
             }
             NOptional<NColor> u = NColor.ofName(key);
             if (u.isPresent()) {
-                return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().getIntColor()));
+                return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().intColor()));
             }
             if (NBlankable.isBlank(key)) {
                 u = NColor.ofName("fg_" + key.trim());
                 if (u.isPresent()) {
-                    return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().getIntColor()));
+                    return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().intColor()));
                 }
             }
             if (NBlankable.isBlank(key)) {
                 u = NColor.ofName("fore_" + key.trim());
                 if (u.isPresent()) {
-                    return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().getIntColor()));
+                    return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().intColor()));
                 }
             }
             if (NBlankable.isBlank(key)) {
                 u = NColor.ofName("bg_" + key.trim());
                 if (u.isPresent()) {
-                    return NOptional.of(NTextStyle.of(NTextStyleType.BACK_TRUE_COLOR, u.get().getIntColor()));
+                    return NOptional.of(NTextStyle.of(NTextStyleType.BACK_TRUE_COLOR, u.get().intColor()));
                 }
             }
             if (NBlankable.isBlank(key)) {
                 u = NColor.ofName("back_" + key.trim());
                 if (u.isPresent()) {
-                    return NOptional.of(NTextStyle.of(NTextStyleType.BACK_TRUE_COLOR, u.get().getIntColor()));
+                    return NOptional.of(NTextStyle.of(NTextStyleType.BACK_TRUE_COLOR, u.get().intColor()));
                 }
             }
             return NOptional.ofError(() -> NMsg.ofC("%s invalid value : %s", NTextStyle.class.getSimpleName(), finalValue));
@@ -575,11 +575,11 @@ public class NTextStyle implements NEnum {
         return NTextStyles.of(this).append(other);
     }
 
-    public NTextStyleType getType() {
+    public NTextStyleType type() {
         return type;
     }
 
-    public int getVariant() {
+    public int variant() {
         return variant;
     }
 

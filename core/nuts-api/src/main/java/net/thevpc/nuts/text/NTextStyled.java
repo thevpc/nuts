@@ -46,7 +46,7 @@ public interface NTextStyled extends NPrimitiveText {
         return NText.ofStyled(str, styles);
     }
 
-    NText getChild();
+    NText child();
 
-    NTextStyles getStyles();
+    NTextStyles styles();
 }

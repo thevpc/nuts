@@ -51,7 +51,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         Map<NTextStyleType, NTextStyle> visited = new TreeMap<>();
         for (NTextStyle element : others) {
             if (element != null) {
-                visited.put(element.getType(), element);
+                visited.put(element.type(), element);
             }
         }
         visited.remove(NTextStyleType.PLAIN);
@@ -62,7 +62,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
     }
 
     public static NTextStyles of(NTextStyle other) {
-        if (other == null || other.getType() == NTextStyleType.PLAIN) {
+        if (other == null || other.type() == NTextStyleType.PLAIN) {
             return PLAIN;
         }
         return new NTextStyles(new NTextStyle[]{other});
@@ -110,7 +110,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
     }
 
     public NTextStyles append(NTextStyle other) {
-        if (other == null || other.getType() == NTextStyleType.PLAIN) {
+        if (other == null || other.type() == NTextStyleType.PLAIN) {
             return this;
         }
         NTextStyle[] elements2 = new NTextStyle[elements.length + 1];

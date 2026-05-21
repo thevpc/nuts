@@ -28,7 +28,7 @@ package net.thevpc.nuts.text;
  */
 public interface NTextArtTextRenderer extends NTextArtRenderer {
     static NTextArtTextRenderer of() {
-        return NTextArt.of().getTextRenderer().get();
+        return NTextArt.of().textRenderer().get();
     }
 
     static NTextArtTextRenderer of(String name) {

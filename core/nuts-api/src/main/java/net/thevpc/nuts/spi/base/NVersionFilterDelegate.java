@@ -63,13 +63,13 @@ public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
 
 
     @Override
-    public NFilterOp getFilterOp() {
-        return baseVersionFilter().getFilterOp();
+    public NFilterOp filterOp() {
+        return baseVersionFilter().filterOp();
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
-        return baseVersionFilter().getSubFilters();
+    public List<NFilter> subFilters() {
+        return baseVersionFilter().subFilters();
     }
 
     @Override
@@ -83,8 +83,8 @@ public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
     }
 
     @Override
-    public Class<? extends NFilter> getFilterType() {
-        return baseVersionFilter().getFilterType();
+    public Class<? extends NFilter> filterType() {
+        return baseVersionFilter().filterType();
     }
 
     @Override

@@ -25,27 +25,23 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         super("descriptor-format");
     }
 
-    public NDescriptorWriter setNtf(boolean ntf) {
-        super.setNtf(ntf);
+    public NDescriptorWriter ntf(boolean ntf) {
+        super.ntf(ntf);
         return this;
     }
 
     @Override
-    public NDescriptorStyle getDescriptorStyle() {
+    public NDescriptorStyle descriptorStyle() {
         return descriptorStyle;
     }
 
     @Override
-    public NDescriptorWriter setDescriptorStyle(NDescriptorStyle descriptorStyle) {
+    public NDescriptorWriter descriptorStyle(NDescriptorStyle descriptorStyle) {
         this.descriptorStyle = descriptorStyle;
         return this;
     }
 
 
-    @Override
-    public NDescriptorWriter compact(boolean compact) {
-        return setCompact(compact);
-    }
 
     @Override
     public NDescriptorWriter compact() {
@@ -58,7 +54,7 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
     }
 
     @Override
-    public NDescriptorWriter setCompact(boolean compact) {
+    public NDescriptorWriter compact(boolean compact) {
         this.compact = compact;
         return this;
     }
@@ -283,7 +279,7 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
     @Override
     public void print(Object aValue, NPrintStream out) {
         NDescriptor desc=(NDescriptor) aValue;
-        NDescriptorStyle s = getDescriptorStyle();
+        NDescriptorStyle s = descriptorStyle();
         if (s == null) {
             s = NDescriptorStyle.NUTS;
         }
@@ -291,14 +287,14 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
             case NUTS: {
                 if (isNtf()) {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    NElementWriter.ofJson().setNtf(true)
-                            .setCompact(isCompact())
+                    NElementWriter.ofJson().ntf(true)
+                            .compact(isCompact())
                             .write(desc, os);
                     NTextCode r = NText.ofCode("json", os.toString());
                     out.print(r);
                 } else {
                     NElementWriter.ofJson()
-                            .setCompact(isCompact())
+                            .compact(isCompact())
                             .write(desc, out);
                 }
                 break;

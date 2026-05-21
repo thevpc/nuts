@@ -170,7 +170,7 @@ public interface NUncompress extends NComponent {
      *
      * @return target to uncompress to
      */
-    NOutputTarget getTarget();
+    NOutputTarget target();
 
     /**
      * update target
@@ -288,5 +288,5 @@ public interface NUncompress extends NComponent {
 
     NUncompress clearOptions();
 
-    Set<NPathOption> getOptions();
+    Set<NPathOption> options();
 }

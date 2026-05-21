@@ -192,7 +192,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
 
     @Override
     public List<NObservableMapListener<String, Object>> userPropertyListeners() {
-        return userProperties.getMapListeners();
+        return userProperties.mapListeners();
     }
 
     public boolean isEnabled() {

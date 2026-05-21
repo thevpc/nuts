@@ -51,12 +51,12 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
     }
 
     public NRepositoryAccessConfig(NRepositoryAccessConfig other) {
-        this.userName = other.getUserName();
-        this.repository = other.getRepository();
-        this.remoteUserName = other.getRemoteUserName();
-        this.remoteCredential = other.getRemoteCredential();
-        this.remoteAuthType = other.getRemoteAuthType();
-        setPermissions(other.getPermissions());
+        this.userName = other.userName();
+        this.repository = other.repository();
+        this.remoteUserName = other.remoteUserName();
+        this.remoteCredential = other.remoteCredential();
+        this.remoteAuthType = other.remoteAuthType();
+        permissions(other.permissions());
     }
 
     public NRepositoryAccessConfig(String userName, String repository, String remoteUserName, String remoteCredential, String remoteAuthType, List<String> permissions) {
@@ -65,50 +65,50 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
         this.remoteUserName = remoteUserName;
         this.remoteCredential = remoteCredential;
         this.remoteAuthType = remoteAuthType;
-        setPermissions(permissions);
+        permissions(permissions);
     }
 
-    public String getRemoteUserName() {
+    public String remoteUserName() {
         return remoteUserName;
     }
 
-    public NRepositoryAccessConfig setRemoteUserName(String remoteUserName) {
+    public NRepositoryAccessConfig remoteUserName(String remoteUserName) {
         this.remoteUserName = remoteUserName;
         return this;
     }
 
-    public String getRemoteAuthType() {
+    public String remoteAuthType() {
         return remoteAuthType;
     }
 
-    public NRepositoryAccessConfig setRemoteAuthType(String remoteAuthType) {
+    public NRepositoryAccessConfig remoteAuthType(String remoteAuthType) {
         this.remoteAuthType = remoteAuthType;
         return this;
     }
 
-    public String getRemoteCredential() {
+    public String remoteCredential() {
         return remoteCredential;
     }
 
-    public NRepositoryAccessConfig setRemoteCredential(String remoteCredential) {
+    public NRepositoryAccessConfig remoteCredential(String remoteCredential) {
         this.remoteCredential = remoteCredential;
         return this;
     }
 
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
-    public NRepositoryAccessConfig setUserName(String userName) {
+    public NRepositoryAccessConfig userName(String userName) {
         this.userName = userName;
         return this;
     }
 
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
-    public NRepositoryAccessConfig setRepository(String repository) {
+    public NRepositoryAccessConfig repository(String repository) {
         this.repository = repository;
         return this;
     }
@@ -130,11 +130,11 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
         }
     }
 
-    public List<String> getPermissions() {
+    public List<String> permissions() {
         return permissions;
     }
 
-    public void setPermissions(List<String> permissions) {
+    public void permissions(List<String> permissions) {
         this.permissions = NReservedLangUtils.nonNullList(permissions);
     }
 
@@ -161,7 +161,7 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
 
     @Override
     public String toString() {
-        return "NutsUserConfig{" +
+        return "NRepositoryAccessConfig{" +
                 ", user='" + userName + '\'' +
                 ", repository='" + repository + '\'' +
                 ", credentials='" + remoteCredential + '\'' +

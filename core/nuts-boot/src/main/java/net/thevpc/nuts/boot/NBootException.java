@@ -112,7 +112,7 @@ public class NBootException extends RuntimeException implements NExceptionWithEx
 
 
 
-    public int getExitCode() {
+    public int exitCode() {
         return exitCode;
     }
 }

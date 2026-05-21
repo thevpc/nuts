@@ -80,7 +80,7 @@ public class NFetchModeNotSupportedException extends NException {
      *
      * @return repository name
      */
-    public String getRepositoryName() {
+    public String repositoryName() {
         return repositoryName;
     }
 
@@ -89,7 +89,7 @@ public class NFetchModeNotSupportedException extends NException {
      *
      * @return repository uuid
      */
-    public String getRepositoryUuid() {
+    public String repositoryUuid() {
         return repositoryUuid;
     }
 
@@ -98,7 +98,7 @@ public class NFetchModeNotSupportedException extends NException {
      *
      * @return fetch mode
      */
-    public NFetchMode getFetchMode() {
+    public NFetchMode fetchMode() {
         return fetchMode;
     }
 
@@ -107,7 +107,7 @@ public class NFetchModeNotSupportedException extends NException {
      *
      * @return artifact id
      */
-    public String getId() {
+    public String id() {
         return id;
     }
 }

@@ -59,7 +59,7 @@ public abstract class DefaultObjectWriterBase<T extends NObjectWriter> extends D
             print(aValue, out);
             return out.toString();
         } finally {
-            setNtf(ntf);
+            ntf(ntf);
         }
     }
 

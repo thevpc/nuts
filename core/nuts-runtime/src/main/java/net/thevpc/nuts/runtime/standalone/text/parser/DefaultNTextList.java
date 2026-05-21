@@ -30,9 +30,6 @@ import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/23/17.
@@ -79,7 +76,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     }
 
     @Override
-    public List<NText> getChildren() {
+    public List<NText> children() {
         return new ArrayList<>(children);
     }
 
@@ -194,7 +191,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
         }
         List<NText> result = new ArrayList<>();
         int pos = 0;
-        for (NText child : getChildren()) {
+        for (NText child : children()) {
             int childLen = child.filteredText().length();
             int childStart = pos;
             int childEnd = pos + childLen;
@@ -215,7 +212,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
 
     @Override
     public NText trimLeft() {
-        List<NText> children = new ArrayList<>(getChildren());
+        List<NText> children = new ArrayList<>(children());
         boolean trimmed = false;
         for (int i = 0; i < children.size(); i++) {
             NText u = children.get(i);
@@ -238,7 +235,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
 
     @Override
     public NText trimRight() {
-        List<NText> children = new ArrayList<>(getChildren());
+        List<NText> children = new ArrayList<>(children());
         boolean trimmed = false;
         for (int i = children.size() - 1; i >= 0; i--) {
             NText u = children.get(i);

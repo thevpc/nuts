@@ -54,11 +54,11 @@ public class CompatUtils {
                 list.add(null);
             } else {
                 NUserConfig r2 = new NUserConfig();
-                r2.setGroups(r.getGroups());
-                r2.setPermissions(r.getPermissions());
+                r2.groups(r.groups());
+                r2.permissions(r.permissions());
 //                r2.setRemoteCredentials(r.getRemoteCredentials());
 //                r2.setRemoteIdentity(r.getRemoteIdentity());
-                r2.setUserName(r.getUserName());
+                r2.userName(r.userName());
                 list.add(r2);
             }
         }
@@ -75,11 +75,11 @@ public class CompatUtils {
                 list.add(null);
             } else {
                 NUserConfig r2 = new NUserConfig();
-                r2.setGroups(r.getGroups());
-                r2.setPermissions(r.getPermissions());
+                r2.groups(r.groups());
+                r2.permissions(r.permissions());
 //                r2.setRemoteCredentials(r.getRemoteCredentials());
 //                r2.setRemoteIdentity(r.getRemoteIdentity());
-                r2.setUserName(r.getUserName());
+                r2.userName(r.userName());
                 list.add(r2);
             }
         }
@@ -116,7 +116,7 @@ public class CompatUtils {
                 list.add(null);
             } else {
                 NExecutionEngineLocation r2 = r.copy();
-                r2.setConfigVersion(r.getConfigVersion());
+                r2.configVersion(r.getConfigVersion());
                 list.add(r2);
             }
         }

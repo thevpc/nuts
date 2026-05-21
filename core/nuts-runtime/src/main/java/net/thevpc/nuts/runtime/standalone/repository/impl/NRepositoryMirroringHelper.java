@@ -72,8 +72,8 @@ public class NRepositoryMirroringHelper {
                 if (sup != NSpeedQualifier.UNAVAILABLE) {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
                     list.add(
-                            NIteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter)
-                                            .setFetchMode(fetchMode)
+                            NIteratorBuilder.of(repoSPI.searchVersions().id(id).filter(idFilter)
+                                            .fetchMode(fetchMode)
                                             .getResult())
                                     .named(NElement.ofUplet("searchInMirror", NElement.ofString(repo.name())))
                                     .safeIgnore()
@@ -93,8 +93,8 @@ public class NRepositoryMirroringHelper {
             for (NRepository mirror : rconfig.mirrors()) {
                 try {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(mirror);
-                    NPath c = repoSPI.fetchContent().setId(id).setDescriptor(descriptor)
-                            .setFetchMode(fetchMode)
+                    NPath c = repoSPI.fetchContent().id(id).descriptor(descriptor)
+                            .fetchMode(fetchMode)
                             .getResult();
                     if (c != null) {
                         return c;
@@ -125,7 +125,7 @@ public class NRepositoryMirroringHelper {
                 NDescriptor nutsDescriptor = null;
                 try {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(remote);
-                    nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setFetchMode(fetchMode).getResult();
+                    nutsDescriptor = repoSPI.fetchDescriptor().id(id).fetchMode(fetchMode).getResult();
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -157,7 +157,7 @@ public class NRepositoryMirroringHelper {
         for (NRepository remote : rconfig.mirrors()) {
             NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(remote);
             all.add(NIteratorUtils.safeIgnore(
-                    repoSPI.search().setFilter(filter).setFetchMode(fetchMode).getResult()
+                    repoSPI.search().filter(filter).fetchMode(fetchMode).getResult()
             ));
         }
         return NIteratorUtils.concat(all);
@@ -165,13 +165,13 @@ public class NRepositoryMirroringHelper {
     }
 
     public void push(NPushRepositoryCmd cmd) {
-        NId id = cmd.getId();
-        String repository = cmd.getRepository();
+        NId id = cmd.id();
+        String repository = cmd.repository();
         NSession session = getWorkspace().currentSession();
         NSession nonTransitiveSession = session.copy().transitive(false);
 
-        NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchDescriptor().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
-        NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchContent().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
+        NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchDescriptor().id(id).fetchMode(NFetchMode.LOCAL).getResult());
+        NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of().toRepositorySPI(repo).fetchContent().id(id).fetchMode(NFetchMode.LOCAL).getResult());
         if (local == null) {
             throw new NArtifactNotFoundException(id.longId());
         }
@@ -207,9 +207,9 @@ public class NRepositoryMirroringHelper {
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
             NDeployRepositoryCmd dep = NWorkspaceUtils.of().toRepositorySPI(repo).deploy()
-                    .setId(effId)
-                    .setContent(local)
-                    .setDescriptor(desc)
+                    .id(effId)
+                    .content(local)
+                    .descriptor(desc)
 //                    .setOffline(cmd.isOffline())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .run();
@@ -228,7 +228,7 @@ public class NRepositoryMirroringHelper {
                 NDescriptor nutsDescriptor = null;
                 try {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(remote);
-                    nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setFetchMode(fetchMode).getResult();
+                    nutsDescriptor = repoSPI.fetchDescriptor().id(id).fetchMode(fetchMode).getResult();
                 } catch (Exception ex) {
                     //ignore
                 }

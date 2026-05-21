@@ -40,9 +40,9 @@ public interface NTableModel {
         return NMutableTableModel.of().addRow(text);
     }
 
-    int getColumnsCount();
+    int columnsCount();
 
-    int getRowsCount();
+    int rowsCount();
 
     NText getCellValue(int row, int column);
 

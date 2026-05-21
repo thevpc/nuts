@@ -55,7 +55,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
 
         NPrintStream fout = null;
         try {
-            fout = NIO.of().systemTerminal().getErr();
+            fout = NIO.of().systemTerminal().err();
             if (fm != null) {
                 fm = NMsg.ofStyledError(fm);
             } else {

@@ -30,11 +30,11 @@ class MapToMapMappingStrategy implements NReflectMappingStrategy {
         Map<Object, Object> toColl = (Map) toObj;
         boolean changed = false;
         for (Map.Entry<Object, Object> e : fromColl.entrySet()) {
-            Object k = context.mapToType(e.getKey(), context.getRepository().getType(keyType));
-            Object v = context.mapToType(e.getValue(), context.getRepository().getType(valueType));
+            Object k = context.mapToType(e.getKey(), context.repository().getType(keyType));
+            Object v = context.mapToType(e.getValue(), context.repository().getType(valueType));
             if (toColl.containsKey(k)) {
                 Object o = toColl.get(k);
-                if (!context.getEqualizer().equals(o, v)) {
+                if (!context.equalizer().equals(o, v)) {
                     toColl.put(k, v);
                     changed = true;
                 } else {
@@ -51,7 +51,7 @@ class MapToMapMappingStrategy implements NReflectMappingStrategy {
 
     @Override
     public Object mapToType(Object o, NReflectType fromType, NReflectType toType, NReflectMapper context) {
-        Map c = (Map) context.getRepository().getType(to).newInstance();
+        Map c = (Map) context.repository().getType(to).newInstance();
         copy(o, c, context);
         return c;
     }

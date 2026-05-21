@@ -46,27 +46,27 @@ public interface NUserSpec {
      *
      * @return return user name
      */
-    String getUserName();
+    String userName();
 
-    NSecureString getCredential();
+    NSecureString credential();
 
-    NSecureString getOldCredential();
+    NSecureString oldCredential();
 
-    NUserSpec setCredential(NSecureString value);
+    NUserSpec credential(NSecureString value);
 
-    NUserSpec setOldCredential(NSecureString value);
+    NUserSpec oldCredential(NSecureString value);
 
     NUserSpec addPermissions(String... value);
 
     NUserSpec removePermissions(String... value);
 
-    NUserSpec setPermissions(List<String> value);
+    NUserSpec permissions(List<String> value);
 
     NUserSpec addGroups(String... value);
 
     NUserSpec removeGroups(String... value);
 
-    NUserSpec setGroups(List<String> value);
+    NUserSpec groups(List<String> value);
 
 
     /**
@@ -74,13 +74,13 @@ public interface NUserSpec {
      *
      * @return user allowed permissions
      */
-    List<String> getPermissions();
+    List<String> permissions();
 
     /**
      * user groups
      *
      * @return user groups
      */
-    List<String> getGroups();
+    List<String> groups();
 
 }

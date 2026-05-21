@@ -72,7 +72,7 @@ public class ExprTest {
     private void _retain(NExprContext expr, String... patterns) {
         if (expr instanceof NExprMutableContext) {
             NExprMutableContext d = (NExprMutableContext) expr;
-            for (NExprOperator operator : d.getOperators()) {
+            for (NExprOperator operator : d.operators()) {
                 if (!accept(operator, patterns)) {
                     d.removeOperator(operator);
                 }

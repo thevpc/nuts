@@ -49,17 +49,17 @@ public final class NUserConfig extends NConfigItem implements Cloneable {
     }
 
     public NUserConfig(NUserConfig other) {
-        this.userName = other.getUserName();
-        this.credential = other.getCredential();
-        setGroups(other.getGroups());
-        setPermissions(other.getPermissions());
+        this.userName = other.userName();
+        this.credential = other.credential();
+        groups(other.groups());
+        permissions(other.permissions());
     }
 
     public NUserConfig(String userName, String credential, List<String> groups, List<String> permissions) {
         this.userName = (userName);
         this.credential = (credential);
-        setGroups(groups);
-        setPermissions(permissions);
+        groups(groups);
+        permissions(permissions);
     }
 
     public NUserConfig copy() {
@@ -82,35 +82,35 @@ public final class NUserConfig extends NConfigItem implements Cloneable {
         }
     }
 
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public void userName(String userName) {
         this.userName = userName;
     }
 
-    public String getCredential() {
+    public String credential() {
         return credential;
     }
 
-    public void setCredential(String credential) {
+    public void credential(String credential) {
         this.credential = credential;
     }
 
-    public List<String> getPermissions() {
+    public List<String> permissions() {
         return permissions;
     }
 
-    public void setPermissions(List<String> permissions) {
+    public void permissions(List<String> permissions) {
         this.permissions = NReservedLangUtils.nonNullList(permissions);
     }
 
-    public List<String> getGroups() {
+    public List<String> groups() {
         return groups;
     }
 
-    public void setGroups(List<String> groups) {
+    public void groups(List<String> groups) {
         this.groups = NReservedLangUtils.nonNullList(groups);
     }
 

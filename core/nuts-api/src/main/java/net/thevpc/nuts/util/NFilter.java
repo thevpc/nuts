@@ -36,9 +36,9 @@ import java.util.List;
  */
 public interface NFilter extends NRedescribable<NFilter> {
 
-    NFilterOp getFilterOp();
+    NFilterOp filterOp();
 
-    Class<? extends NFilter> getFilterType();
+    Class<? extends NFilter> filterType();
 
     NFilter simplify();
 
@@ -52,5 +52,5 @@ public interface NFilter extends NRedescribable<NFilter> {
 
     <T extends NFilter> T to(Class<T> type);
 
-    List<NFilter> getSubFilters();
+    List<NFilter> subFilters();
 }

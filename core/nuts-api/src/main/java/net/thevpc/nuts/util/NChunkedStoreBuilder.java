@@ -14,33 +14,33 @@ public interface NChunkedStoreBuilder<T> {
         return NCollectionsRPI.of().chunkedStoreBuilder(folder, storeFactory);
     }
 
-    int getMetadataBufferSize();
+    int metadataBufferSize();
 
-    NChunkedStoreBuilder<T> setMetadataBufferSize(int metadataBufferSize);
+    NChunkedStoreBuilder<T> metadataBufferSize(int metadataBufferSize);
 
-    NPath getFolder();
+    NPath folder();
 
-    NChunkedStoreBuilder<T> setFolder(NPath folder);
+    NChunkedStoreBuilder<T> folder(NPath folder);
 
-    NChunkedStoreFactory<T> getFactory();
+    NChunkedStoreFactory<T> factory();
 
-    NChunkedStoreBuilder<T> setFactory(NChunkedStoreFactory<T> factory);
+    NChunkedStoreBuilder<T> factory(NChunkedStoreFactory<T> factory);
 
-    int getChunkSize();
+    int chunkSize();
 
-    NChunkedStoreBuilder<T> setChunkSize(int chunkSize);
+    NChunkedStoreBuilder<T> chunkSize(int chunkSize);
 
     boolean isAppend();
 
-    NChunkedStoreBuilder<T> setAppend(boolean append);
+    NChunkedStoreBuilder<T> append(boolean append);
 
-    int getDataBufferSize();
+    int dataBufferSize();
 
-    NChunkedStoreBuilder<T> setBufferSize(int bufferSize);
+    NChunkedStoreBuilder<T> bufferSize(int bufferSize);
 
-    int getNumberLayout();
+    int numberLayout();
 
-    NChunkedStoreBuilder<T> setNumberLayout(int numberLayout);
+    NChunkedStoreBuilder<T> numberLayout(int numberLayout);
 
     NChunkedStore<T> build();
 }

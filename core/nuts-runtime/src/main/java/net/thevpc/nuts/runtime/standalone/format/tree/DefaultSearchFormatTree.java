@@ -66,10 +66,10 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     public void formatElement(Object object, long index, boolean last) {
-        NTextArtTreeRenderer treeRenderer = NTextArt.of().getTreeRenderer().get()
-                .setNodeFormat(nTreeNodeFormat)
-                .setOmitRoot(true)
-                .setInfinite(!last);
+        NTextArtTreeRenderer treeRenderer = NTextArt.of().treeRenderer().get()
+                .nodeFormat(nTreeNodeFormat)
+                .omitRoot(true)
+                .infinite(!last);
         getWriter().println(treeRenderer.render(
                         NTreeObjectWriter.of().getModel(new AbstractMap.SimpleEntry<Object, Object>("ROOT", object))
                 )

@@ -22,11 +22,11 @@ public class LazyNScoredValueImpl<T> implements NScoredValue<T> {
         this.apiType = apiType;
     }
 
-    public Class<? extends T> getImplType() {
+    public Class<? extends T> implType() {
         return implType;
     }
 
-    public Class<T> getApiType() {
+    public Class<T> apiType() {
         return apiType;
     }
 

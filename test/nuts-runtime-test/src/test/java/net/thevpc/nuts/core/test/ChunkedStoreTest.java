@@ -20,10 +20,10 @@ public class ChunkedStoreTest {
         }
         NChronometer chronometer = NChronometer.of();
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
-                .setAppend(false)
-                .setBufferSize(1000)
-                .setChunkSize(1000000)
-                .setNumberLayout(10)
+                .append(false)
+                .bufferSize(1000)
+                .chunkSize(1000000)
+                .numberLayout(10)
                 .build()
         ) {
             for (int i = 0; i < 5000000; i++) {
@@ -35,8 +35,8 @@ public class ChunkedStoreTest {
 
         chronometer = NChronometer.of();
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
-                .setMetadataBufferSize(100)
-                .setNumberLayout(3)
+                .metadataBufferSize(100)
+                .numberLayout(3)
                 .build()
         ) {
             try (NStream<String> st = fq.stream()) {
@@ -51,10 +51,10 @@ public class ChunkedStoreTest {
     @Test
     public void test1() {
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
-                .setAppend(false)
-                .setBufferSize(2)
-                .setChunkSize(5)
-                .setNumberLayout(3)
+                .append(false)
+                .bufferSize(2)
+                .chunkSize(5)
+                .numberLayout(3)
                 .build()
         ) {
             for (int i = 0; i < 5; i++) {
@@ -62,10 +62,10 @@ public class ChunkedStoreTest {
             }
         }
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
-                .setAppend(true)
-                .setBufferSize(2)
-                .setChunkSize(5)
-                .setNumberLayout(3)
+                .append(true)
+                .bufferSize(2)
+                .chunkSize(5)
+                .numberLayout(3)
                 .build()
         ) {
             for (int i = 0; i < 5; i++) {
@@ -75,8 +75,8 @@ public class ChunkedStoreTest {
 
 
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
-                .setMetadataBufferSize(1)
-                .setNumberLayout(3)
+                .metadataBufferSize(1)
+                .numberLayout(3)
                 .build()
         ) {
             try (NStream<String> st = fq.stream().limit(10)) {
@@ -87,8 +87,8 @@ public class ChunkedStoreTest {
         }
         System.out.println("----");
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
-                .setMetadataBufferSize(10)
-                .setNumberLayout(3)
+                .metadataBufferSize(10)
+                .numberLayout(3)
                 .build()
         ) {
             try (NStream<String> st = fq.stream().limit(10)) {

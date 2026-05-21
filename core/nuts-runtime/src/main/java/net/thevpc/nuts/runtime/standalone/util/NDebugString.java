@@ -44,18 +44,18 @@ public class NDebugString {
                         break;
                     }
                     case "port": {
-                        String s = na.getValue().asString().orElse("").trim();
+                        String s = na.toLiteral().asString().orElse("").trim();
                         if(s.matches("[0-9]+-[0-9]+")){
                             int sep = s.indexOf('-');
                             d.setPort(Integer.parseInt(s.substring(0,sep)));
                             d.setMaxPort(Integer.parseInt(s.substring(sep+1)));
                         }else{
-                            d.setPort(na.getValue().asInt().get());
+                            d.setPort(na.toLiteral().asInt().get());
                         }
                         break;
                     }
                     default: {
-                        if (na.getValue().isNull()) {
+                        if (na.toLiteral().isNull()) {
                             if (na.getKey().isBoolean()) {
                                 boolean v = na.getKey().asBoolean().get();
                                 d.setEnabled(na.isNegated() != v);

@@ -154,12 +154,12 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
     }
 
     @Override
-    public NConnectionString getConnectionString() {
+    public NConnectionString connectionString() {
         return connectionString;
     }
 
     @Override
-    public String[] getCommand() {
+    public String[] command() {
         return command;
     }
 
@@ -246,7 +246,7 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
         }
     }
 
-    public NExec getExecCommand() {
+    public NExec execCommand() {
         return execCommand;
     }
 }

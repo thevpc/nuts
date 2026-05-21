@@ -50,7 +50,7 @@ public class DefaultNTextAnchor extends NTextSpecialBase implements NTextAnchor 
         this.value = value;
     }
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 

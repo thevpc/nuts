@@ -74,13 +74,13 @@ public class DefaultNLog implements NLog {
         }
         DefaultNLogModel logModel = NWorkspaceExt.of().getModel().logModel;
 
-        if (logModel.getTermHandler().isLoggable(msg.getLevel())) {
+        if (logModel.getTermHandler().isLoggable(msg.level())) {
             logModel.getTermHandler().log(msg);
         }
-        if (logModel.getFileHandler() != null && logModel.getFileHandler().isLoggable(msg.getLevel())) {
+        if (logModel.getFileHandler() != null && logModel.getFileHandler().isLoggable(msg.level())) {
             logModel.getFileHandler().log(msg);
         }
-        if (logSPI.isLoggable(msg.getLevel())) {
+        if (logSPI.isLoggable(msg.level())) {
             logSPI.log(prepareMsg(msg));
         }
     }
@@ -123,7 +123,7 @@ public class DefaultNLog implements NLog {
     }
 
     private NMsg prepareMsg(NMsg other) {
-        NLogScope c = NLogs.of().getContext();
-        return other.withPrefix(c.getMessagePrefix()).withSuffix(c.getMessageSuffix()).withPlaceholders(c::getPlaceholder);
+        NLogScope c = NLogs.of().context();
+        return other.withPrefix(c.messagePrefix()).withSuffix(c.messageSuffix()).withPlaceholders(c::getPlaceholder);
     }
 }

@@ -241,7 +241,7 @@ public class NMsg implements NBlankable, NElementSimple {
         if (params == null) {
             return ofJ(message, new Object[]{null});
         }
-        Object[] paramsAsObjects = Arrays.stream(params).map(NMsgParam::getValue).toArray();
+        Object[] paramsAsObjects = Arrays.stream(params).map(NMsgParam::value).toArray();
         return ofJ(message, paramsAsObjects);
     }
 
@@ -249,7 +249,7 @@ public class NMsg implements NBlankable, NElementSimple {
         if (params == null) {
             return ofC(message, new Object[]{null});
         }
-        Object[] paramsAsObjects = Arrays.stream(params).map(NMsgParam::getValue).toArray();
+        Object[] paramsAsObjects = Arrays.stream(params).map(NMsgParam::value).toArray();
         return ofC(message, paramsAsObjects);
     }
 
@@ -262,31 +262,31 @@ public class NMsg implements NBlankable, NElementSimple {
         return of(NTextFormatType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null);
     }
 
-    public NTextFormatType getFormat() {
+    public NTextFormatType format() {
         return format;
     }
 
-    public NTextStyles getStyles() {
+    public NTextStyles styles() {
         return styles;
     }
 
-    public Object getMessage() {
+    public Object message() {
         return message;
     }
 
-    public Function<String, ?> getPlaceholders() {
+    public Function<String, ?> placeholders() {
         return placeholderBindings;
     }
 
-    public Object[] getParams() {
-        return params;
+    public Object[] params() {
+        return params==null?null:Arrays.copyOf(params,params.length);
     }
 
-    public String getCodeLang() {
+    public String codeLang() {
         return codeLang;
     }
 
-    public Level getNormalizedLevel() {
+    public Level normalizedLevel() {
         if (level == null) {
             return Level.INFO;
         }
@@ -349,7 +349,7 @@ public class NMsg implements NBlankable, NElementSimple {
         return level == null || (level.intValue() >= Level.INFO.intValue() && level.intValue() < Level.WARNING.intValue());
     }
 
-    public Level getLevel() {
+    public Level level() {
         return level;
     }
 
@@ -359,7 +359,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         if (o instanceof Placeholder) {
             if (placeholderBindings != null) {
-                Object v = placeholderBindings.apply(((Placeholder) o).getName());
+                Object v = placeholderBindings.apply(((Placeholder) o).name());
                 if (v != null) {
                     o = v;
                 }
@@ -724,8 +724,8 @@ public class NMsg implements NBlankable, NElementSimple {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
             for (NMsgParam param : params) {
                 NAssert.requireNamedNonNull(param, "param");
-                NAssert.requireNamedNonNull(param.getName(), "param.name");
-                newMap.put(param.getName(), new ConstSupplier<>(param.getValue()));
+                NAssert.requireNamedNonNull(param.name(), "param.name");
+                newMap.put(param.name(), new ConstSupplier<>(param.value()));
             }
             return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(newMap));
         }
@@ -736,8 +736,8 @@ public class NMsg implements NBlankable, NElementSimple {
             }
             for (NMsgParam param : params) {
                 NAssert.requireNamedNonNull(param, "param");
-                NAssert.requireNamedNonNull(param.getName(), "param.name");
-                newMap.put(param.getName(), new ConstSupplier<>(param.getValue()));
+                NAssert.requireNamedNonNull(param.name(), "param.name");
+                newMap.put(param.name(), new ConstSupplier<>(param.value()));
             }
             return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(newMap));
         }
@@ -931,15 +931,15 @@ public class NMsg implements NBlankable, NElementSimple {
     // STYLING
     // ---------------------------------------------------------------
 
-    public NDuration getDuration() {
+    public NDuration duration() {
         return duration;
     }
 
-    public Throwable getThrowable() {
+    public Throwable throwable() {
         return throwable;
     }
 
-    public NMsgIntent getIntent() {
+    public NMsgIntent intent() {
         return intent;
     }
 
@@ -1454,7 +1454,7 @@ public class NMsg implements NBlankable, NElementSimple {
             this.name = name;
         }
 
-        public String getName() {
+        public String name() {
             return name;
         }
 
@@ -1571,12 +1571,12 @@ public class NMsg implements NBlankable, NElementSimple {
             if (params != null) {
                 for (NMsgParam param : params) {
                     NAssert.requireNamedNonNull(param, "param");
-                    String e = param.getName();
+                    String e = param.name();
                     NAssert.requireNamedNonNull(e, "param.name");
                     if (content.containsKey(e)) {
                         throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("duplicate key %s", e));
                     }
-                    content.put(e, param.getValue());
+                    content.put(e, param.value());
                 }
             }
         }

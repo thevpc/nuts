@@ -98,10 +98,10 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     @Override
     public void pushImpl(NPushRepositoryCmd command) {
-        NPath content = lib.fetchContentImpl(command.getId());
-        NDescriptor desc = lib.fetchDescriptorImpl(command.getId());
+        NPath content = lib.fetchContentImpl(command.id());
+        NDescriptor desc = lib.fetchDescriptorImpl(command.id());
         if (content == null || desc == null) {
-            throw new NArtifactNotFoundException(command.getId());
+            throw new NArtifactNotFoundException(command.id());
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         NDescriptorWriter.of().print(desc, new OutputStreamWriter(descStream));
@@ -273,21 +273,21 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     private Creds resolveEncryptedAuth() {
-        String login = NSecurityManager.of().getCurrentUsername();
-        NRepositoryAccess security = NSecurityManager.of().findRepositoryAccess(uuid(), login).get();
+        String login = NSecurityManager.of().currentUsername();
+        NRepositoryAccess security = NSecurityManager.of().getRepositoryAccess(uuid(), login).get();
         String newLogin = "";
         NSecureToken credentials = null;
         if (security == null) {
             newLogin = "anonymous";
         } else {
-            newLogin = security.getRemoteUserName();
+            newLogin = security.remoteUserName();
             if (NBlankable.isBlank(newLogin)) {
                 newLogin = login;
             }
             if (NBlankable.isBlank(newLogin)) {
                 newLogin = login;
             }
-            credentials = security.getRemoteCredential();
+            credentials = security.remoteCredential();
         }
         return new Creds(newLogin, credentials);
     }

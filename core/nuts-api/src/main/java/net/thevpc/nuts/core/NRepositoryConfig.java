@@ -26,8 +26,6 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.security.NNamedCredentialConfig;
-import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NToStringBuilder;
 
@@ -87,83 +85,74 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
         }
     }
 
-    public String[] getTags() {
+    public String[] tags() {
         return tags;
     }
 
-    public NRepositoryConfig setTags(String[] tags) {
+    public NRepositoryConfig tags(String[] tags) {
         this.tags = tags;
         return this;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public NRepositoryConfig setName(String name) {
+    public NRepositoryConfig name(String name) {
         this.name = name;
         return this;
     }
 
-    public String getUuid() {
+    public String uuid() {
         return uuid;
     }
 
-    public NRepositoryConfig setUuid(String uuid) {
+    public NRepositoryConfig uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }
 
-//    public String getType() {
-//        return type;
-//    }
-//
-//    public NutsRepositoryConfig setType(String type) {
-//        this.type = type;
-//        return this;
-//    }
-
-    public NRepositoryLocation getLocation() {
+    public NRepositoryLocation location() {
         return location;
     }
 
-    public NRepositoryConfig setLocation(NRepositoryLocation location) {
+    public NRepositoryConfig location(NRepositoryLocation location) {
         this.location = location;
         return this;
     }
 
-    public NStoreStrategy getStoreStrategy() {
+    public NStoreStrategy storeStrategy() {
         return storeStrategy;
     }
 
-    public NRepositoryConfig setStoreStrategy(NStoreStrategy storeStrategy) {
+    public NRepositoryConfig storeStrategy(NStoreStrategy storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
 
-    public String getGroups() {
+    public String groups() {
         return groups;
     }
 
-    public NRepositoryConfig setGroups(String groups) {
+    public NRepositoryConfig groups(String groups) {
         this.groups = groups;
         return this;
     }
 
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         return env;
     }
 
-    public NRepositoryConfig setEnv(Map<String, String> env) {
+    public NRepositoryConfig env(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
-    public List<NRepositoryRef> getMirrors() {
+    public List<NRepositoryRef> mirrors() {
         return mirrors;
     }
 
-    public NRepositoryConfig setMirrors(List<NRepositoryRef> mirrors) {
+    public NRepositoryConfig mirrors(List<NRepositoryRef> mirrors) {
         this.mirrors = mirrors;
         return this;
     }
@@ -172,25 +161,25 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
         return indexEnabled;
     }
 
-    public NRepositoryConfig setIndexEnabled(boolean indexEnabled) {
+    public NRepositoryConfig indexEnabled(boolean indexEnabled) {
         this.indexEnabled = indexEnabled;
         return this;
     }
 
-    public String getAuthenticationAgent() {
+    public String authenticationAgent() {
         return authenticationAgent;
     }
 
-    public NRepositoryConfig setAuthenticationAgent(String authenticationAgent) {
+    public NRepositoryConfig authenticationAgent(String authenticationAgent) {
         this.authenticationAgent = authenticationAgent;
         return this;
     }
 
-    public Map<NStoreType, String> getStoreLocations() {
+    public Map<NStoreType, String> storeLocations() {
         return storeLocations;
     }
 
-    public NRepositoryConfig setStoreLocations(Map<NStoreType, String> storeLocations) {
+    public NRepositoryConfig storeLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }

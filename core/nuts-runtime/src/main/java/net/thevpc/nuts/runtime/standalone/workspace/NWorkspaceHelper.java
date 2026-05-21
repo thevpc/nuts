@@ -156,7 +156,7 @@ public class NWorkspaceHelper {
                             }
                         }
                     } catch (NExecutionException e) {
-                        if (e.getExitCode() == NExecutionException.SUCCESS) {
+                        if (e.exitCode() == NExecutionException.SUCCESS) {
                             return;
                         }
                         throw e;

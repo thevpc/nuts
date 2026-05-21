@@ -58,8 +58,8 @@ class NJLineHistory implements History {
     }
 
     private NCmdLineHistory getNutsCommandHistory() {
-        if (terminal.getCommandHistory() != null) {
-            return terminal.getCommandHistory();
+        if (terminal.commandHistory() != null) {
+            return terminal.commandHistory();
         }
         return defaultHistory;
     }

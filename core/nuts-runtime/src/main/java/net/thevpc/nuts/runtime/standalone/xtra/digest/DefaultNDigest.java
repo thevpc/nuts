@@ -345,7 +345,7 @@ public class DefaultNDigest implements NDigest {
 
         private byte[] getBytes() {
             return NDescriptorWriter.of()
-                    .setNtf(false)
+                    .ntf(false)
                     .format(source).filteredText().getBytes();
         }
 
@@ -362,7 +362,7 @@ public class DefaultNDigest implements NDigest {
         @Override
         public long contentLength() {
             return NDescriptorWriter.of()
-                    .setNtf(false)
+                    .ntf(false)
                     .format(source).filteredText().getBytes().length;
         }
 

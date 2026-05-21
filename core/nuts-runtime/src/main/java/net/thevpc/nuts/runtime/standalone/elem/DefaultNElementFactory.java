@@ -147,7 +147,7 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NElementDiagnostic ofDiagnostic(NMsg msg) {
-        return new DefaultNElementDiagnosticBuilder().setMessage(msg).build();
+        return new DefaultNElementDiagnosticBuilder().message(msg).build();
     }
 
     @Override

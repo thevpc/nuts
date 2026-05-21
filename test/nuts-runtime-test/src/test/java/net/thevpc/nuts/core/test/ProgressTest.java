@@ -37,11 +37,11 @@ public class ProgressTest {
             out.println(msg);
             out.flush();
         });
-        m.setProgress(0);
-        m.setProgress(0.2);
-        m.setProgress(1);
-        m.setProgress(0.2);
-        m.setProgress(0);
+        m.progress(0);
+        m.progress(0.2);
+        m.progress(1);
+        m.progress(0.2);
+        m.progress(0);
         Assertions.assertEquals(
                 f(NProgressEventType.START,true,false,false,false,false,0.0,null)+"\n" +
                 f(NProgressEventType.PROGRESS,true,false,false,false,false,0.2,null)+"\n" +
@@ -74,11 +74,11 @@ public class ProgressTest {
             out.println(msg);
             out.flush();
         });
-        m.setProgress(0);
-        m.setProgress(0.2);
-        m.setProgress(1);
-        m.setProgress(0.2);
-        m.setProgress(0);
+        m.progress(0);
+        m.progress(0.2);
+        m.progress(1);
+        m.progress(0.2);
+        m.progress(0);
         Assertions.assertEquals(
                 f(NProgressEventType.START,true,false,false,false,false,0.0,null)+"\n" +
                         f(NProgressEventType.PROGRESS,true,false,false,false,false,0.2,null)+"\n" +

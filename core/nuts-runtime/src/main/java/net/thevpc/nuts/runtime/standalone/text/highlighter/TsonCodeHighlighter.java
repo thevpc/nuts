@@ -16,7 +16,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "tson";
     }
 
@@ -27,7 +27,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if (s == null) {
             return NScorable.DEFAULT_SCORE;
         }
@@ -110,7 +110,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                         NText[] d = readIdentifier(txt, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).getValue();
+                                String txt2 = ((NTextPlain) d[0]).value();
                                 String s = ar.peekChars(10).replace("\n", " ");
                                 String next = "";
                                 if (s.matches(" *[(].*")) {

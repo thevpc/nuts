@@ -53,7 +53,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
 
     @NScore
     public static int getScore(NScorableContext ctx) {
-        NDefinition def = ctx.getCriteria(NDefinition.class);
+        NDefinition def = ctx.criteria(NDefinition.class);
         if (def != null) {
             if (def.descriptor() != null) {
                 if ("zip".equals(def.descriptor().packaging())) {

@@ -43,7 +43,7 @@ public class StringMapMap {
 
     @Test
     public void test01() {
-        NStringMapFormat t = NStringMapFormatBuilder.of().setEqualsChars("=").setQuoteSupported(true).build();
+        NStringMapFormat t = NStringMapFormatBuilder.of().equalsChars("=").setQuoteSupported(true).build();
         NOptional<Map<String, List<String>>> u = t.parseDuplicates("src=\"https://protos-erp.com/assets/crm/protos-banner-fr.png\"\n" +
                 "        tf=\"p\" tn=\"banner-fr.png\" trackerSecretEmail=\"${email}\" tsc=\"${company}\"\n" +
                 "        alt=\"Banner 2024\" style=\"outline:none;text-decoration:none;border:none;max-width:100%;font-size:16px;border-radius: 25px;\" width=\"560\" align=\"middle\"/");

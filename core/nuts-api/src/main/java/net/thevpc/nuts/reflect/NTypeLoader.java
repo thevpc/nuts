@@ -15,13 +15,13 @@ public interface NTypeLoader {
 
     boolean isLoaded() ;
 
-    NOptional<Class<?>> getType() ;
+    NOptional<Class<?>> type() ;
 
     NOptional<Method> getDeclaredMethod(String name, Class<?>... parameterTypes);
 
     NOptional<Field> getDeclaredField(String name);
 
-    String getClassName() ;
+    String className() ;
 
     NOptional<Object> newInstance();
 }

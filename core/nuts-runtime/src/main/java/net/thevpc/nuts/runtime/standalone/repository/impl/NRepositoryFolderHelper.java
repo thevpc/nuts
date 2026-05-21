@@ -300,11 +300,11 @@ public class NRepositoryFolderHelper {
             public void undeploy(NId id) throws NExecutionException {
                 if (repo == null) {
                     NRepositoryFolderHelper.this.undeploy(new DefaultNUndeployRepositoryCmd()
-                            .setFetchMode(NFetchMode.LOCAL)
-                            .setId(id));
+                            .fetchMode(NFetchMode.LOCAL)
+                            .id(id));
                 } else {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
-                    repoSPI.undeploy().setId(id)
+                    repoSPI.undeploy().id(id)
                             //.setFetchMode(NutsFetchMode.LOCAL)
                             .run();
                 }
@@ -365,26 +365,26 @@ public class NRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             throw new NIllegalArgumentException(NMsg.ofPlain("read-only repository"));
         }
-        NDescriptor descriptor = deployment.getDescriptor();
-        NId id = deployment.getId();
+        NDescriptor descriptor = deployment.descriptor();
+        NId id = deployment.id();
         if (id == null) {
             id = descriptor.id();
         }
         CoreNIdUtils.checkLongId(id);
         NInputSource inputSource = null;
-        if (deployment.getContent() == null) {
+        if (deployment.content() == null) {
             if (!descriptor.isNoContent()) {
-                NAssert.requireNonNull(deployment.getContent(), () -> NMsg.ofC("invalid deployment; missing content for %s", deployment.getId()));
+                NAssert.requireNonNull(deployment.content(), () -> NMsg.ofC("invalid deployment; missing content for %s", deployment.id()));
             }
         } else {
-            inputSource = NInputSource.ofMultiRead(deployment.getContent());
+            inputSource = NInputSource.ofMultiRead(deployment.content());
             inputSource.metaData().kind("package content");
             if (descriptor == null) {
                 try (final CharacterizedExecFile c = DefaultNExec.characterizeForExec(inputSource, null)) {
 //                    NutsUtils.requireNonNull(c.getDescriptor(),session,s->NMsg.ofC("invalid deployment; missing descriptor for %s", deployment.getContent()));
                     if (c.getDescriptor() == null) {
                         throw new NArtifactNotFoundException(null,
-                                NMsg.ofC("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
+                                NMsg.ofC("unable to resolve a valid descriptor for %s", deployment.content()), null);
                     }
                     descriptor = c.getDescriptor();
                 }
@@ -507,7 +507,7 @@ public class NRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             return false;
         }
-        NPath localFolder = getLongIdLocalFile(command.getId().builder().faceContent().build());
+        NPath localFolder = getLongIdLocalFile(command.id().builder().faceContent().build());
         if (localFolder != null && localFolder.exists()) {
             if (NLock.of(localFolder).callWith(() -> {
                 localFolder.deleteTree();

@@ -46,7 +46,7 @@ public class DefaultNArgName implements NArgName {
         this.type = type;
     }
 
-    public String getType() {
+    public String type() {
         return type;
     }
 

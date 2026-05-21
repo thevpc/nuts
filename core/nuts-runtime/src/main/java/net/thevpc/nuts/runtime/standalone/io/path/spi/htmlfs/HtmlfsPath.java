@@ -197,7 +197,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                             }
                             return null;
                         })
-                ).getBest().map(NScoredCallable::call).orElse(Collections.emptyList());
+                ).best().map(NScoredCallable::call).orElse(Collections.emptyList());
     }
 
     @Override
@@ -220,7 +220,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
+            Object cri = context.criteria();
             if(!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }

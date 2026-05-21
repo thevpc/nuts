@@ -341,7 +341,7 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
         c.setSystem(this.isGlobal());
         c.setName(this.getName());
         c.setWorkspace(this.getWorkspace());
-        c.setConfigVersion(this.getConfigVersion());
+        c.configVersion(this.getConfigVersion());
         c.setBootRepositories(NStringUtils.split(getBootRepositories(),";,\n"));
         c.setStoreLocations(this.getStoreLocations() == null ? null : new LinkedHashMap<>(this.getStoreLocations()));
         c.setHomeLocations(this.getHomeLocations() == null ? null : new LinkedHashMap<>(this.getHomeLocations()));

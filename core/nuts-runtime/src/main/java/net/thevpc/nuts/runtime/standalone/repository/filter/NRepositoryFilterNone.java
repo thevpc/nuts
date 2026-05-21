@@ -67,10 +67,10 @@ public class NRepositoryFilterNone extends AbstractRepositoryFilter {
     }
 
     @Override
-    public NFilterOp getFilterOp() {
+    public NFilterOp filterOp() {
         return NFilterOp.NOT;
     }
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
     }
 }

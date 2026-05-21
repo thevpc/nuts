@@ -49,7 +49,7 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     @Override
-    public NElementReader setNtf(boolean ntf) {
+    public NElementReader ntf(boolean ntf) {
         this.ntf = ntf;
         return this;
     }
@@ -60,7 +60,7 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     @Override
-    public NElementReader setLogProgress(boolean logProgress) {
+    public NElementReader logProgress(boolean logProgress) {
         this.logProgress = logProgress;
         return this;
     }
@@ -71,18 +71,18 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     @Override
-    public NElementReader setTraceProgress(boolean traceProgress) {
+    public NElementReader traceProgress(boolean traceProgress) {
         this.traceProgress = traceProgress;
         return this;
     }
 
     @Override
-    public NContentType getContentType() {
+    public NContentType contentType() {
         return contentType;
     }
 
     @Override
-    public NElementReader setContentType(NContentType contentType) {
+    public NElementReader contentType(NContentType contentType) {
         if (contentType == null) {
             this.contentType = NContentType.JSON;
         } else {
@@ -100,22 +100,22 @@ public class DefaultNElementReader implements NElementReader {
 
     @Override
     public NElementReader json() {
-        return setContentType(NContentType.JSON);
+        return contentType(NContentType.JSON);
     }
 
     @Override
     public NElementReader yaml() {
-        return setContentType(NContentType.YAML);
+        return contentType(NContentType.YAML);
     }
 
     @Override
     public NElementReader tson() {
-        return setContentType(NContentType.TSON);
+        return contentType(NContentType.TSON);
     }
 
     @Override
     public NElementReader xml() {
-        return setContentType(NContentType.XML);
+        return contentType(NContentType.XML);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class DefaultNElementReader implements NElementReader {
                     .origin(origin)
                     .logProgress(isLogProgress())
                     .traceProgress(isTraceProgress())
-                    .progressFactory(getProgressFactory())
+                    .progressFactory(progressFactory())
                     .create();
         }
         return is;
@@ -143,7 +143,7 @@ public class DefaultNElementReader implements NElementReader {
                     .origin(path)
                     .logProgress(isLogProgress())
                     .traceProgress(isTraceProgress())
-                    .progressFactory(getProgressFactory())
+                    .progressFactory(progressFactory())
                     .create();
         }
         return path.inputStream();
@@ -323,7 +323,7 @@ public class DefaultNElementReader implements NElementReader {
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
         DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(isNtf(), reflectRepository, userElementMapperStore);
-        switch (getContentType()) {
+        switch (contentType()) {
             case XML:
             case JSON:
             case TSON:
@@ -348,12 +348,12 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     @Override
-    public NProgressFactory getProgressFactory() {
+    public NProgressFactory progressFactory() {
         return progressFactory;
     }
 
     @Override
-    public NElementReader setProgressFactory(NProgressFactory progressFactory) {
+    public NElementReader progressFactory(NProgressFactory progressFactory) {
         this.progressFactory = progressFactory;
         return this;
     }

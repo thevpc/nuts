@@ -35,14 +35,14 @@ public abstract class NTypeReference<T> implements Serializable {
         return "TypeReference<" + type + ">";
     }
 
-    public static NTypeReference of(Type type, Type... args) {
+    public static <T> NTypeReference<T> of(Type type, Type... args) {
         if (type instanceof ParameterizedType) {
             ParameterizedType ptype = (ParameterizedType) type;
             ParameterizedType ptype2 = new MyParameterizedType(ptype, args);
-            return new NTypeReference(ptype2) {
+            return new NTypeReference<T>(ptype2) {
             };
         }
-        return new NTypeReference(type) {
+        return new NTypeReference<T>(type) {
         };
     }
 
@@ -66,7 +66,7 @@ public abstract class NTypeReference<T> implements Serializable {
     /**
      * Gets the referenced type.
      */
-    public Class getTypeClass() {
+    public Class typeClass() {
         try {
             Type tt = type;
             while (tt instanceof ParameterizedType) {
@@ -78,12 +78,12 @@ public abstract class NTypeReference<T> implements Serializable {
         }
     }
 
-    public Type getType() {
+    public Type type() {
         return this.type;
     }
 
     public boolean isAssignableFrom(NTypeReference<?> cls) {
-        return getTypeClass().isAssignableFrom(cls.getTypeClass());
+        return typeClass().isAssignableFrom(cls.typeClass());
     }
 
     @Override
@@ -102,11 +102,11 @@ public abstract class NTypeReference<T> implements Serializable {
     }
 
     public boolean isInterface() {
-        return getTypeClass().isInterface();
+        return typeClass().isInterface();
     }
 
-    public NTypeReference[] getInterfaces() {
-        Class[] interfaces = getTypeClass().getInterfaces();
+    public NTypeReference[] interfaces() {
+        Class[] interfaces = typeClass().getInterfaces();
         NTypeReference[] typeReferences = new NTypeReference[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {
             typeReferences[i] = of(interfaces[i]);//TODO params?
@@ -114,8 +114,8 @@ public abstract class NTypeReference<T> implements Serializable {
         return typeReferences;
     }
 
-    public NTypeReference getSuperclass() {
-        Class superclass = getTypeClass().getSuperclass();
+    public NTypeReference superclass() {
+        Class superclass = typeClass().getSuperclass();
         if (superclass == null) {
             return null;
         }
@@ -123,7 +123,7 @@ public abstract class NTypeReference<T> implements Serializable {
     }
 
     public <T> boolean isInstance(T t) {
-        return getTypeClass().isInstance(t);
+        return typeClass().isInstance(t);
     }
 
     private static class MyParameterizedType implements ParameterizedType {

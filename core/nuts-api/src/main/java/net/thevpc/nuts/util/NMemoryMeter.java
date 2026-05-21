@@ -63,7 +63,7 @@ public class NMemoryMeter implements NTextFormattable {
         return this;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 

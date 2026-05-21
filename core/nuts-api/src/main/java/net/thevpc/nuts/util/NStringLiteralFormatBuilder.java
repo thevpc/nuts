@@ -13,8 +13,8 @@ public class NStringLiteralFormatBuilder {
 
     public static NStringLiteralFormatBuilder ofTson(NElementType elementType) {
         NStringLiteralFormatBuilder b = new NStringLiteralFormatBuilder();
-        b.setCondition(NSupportMode.ALWAYS);
-        b.setElementType(elementType);
+        b.condition(NSupportMode.ALWAYS);
+        b.elementType(elementType);
         switch (elementType) {
             case DOUBLE_QUOTED_STRING:
             case TRIPLE_DOUBLE_QUOTED_STRING:
@@ -40,34 +40,34 @@ public class NStringLiteralFormatBuilder {
 
     public static NStringLiteralFormatBuilder ofJava(NElementType elementType) {
         NStringLiteralFormatBuilder b = new NStringLiteralFormatBuilder();
-        b.setCondition(NSupportMode.ALWAYS);
-        b.setElementType(elementType);
+        b.condition(NSupportMode.ALWAYS);
+        b.elementType(elementType);
         b.escapeSets.add(NCharEscapeSet.JAVA_WITH_SPACE);
         return b;
     }
 
     public static NStringLiteralFormatBuilder ofShell(NElementType elementType) {
         NStringLiteralFormatBuilder b = new NStringLiteralFormatBuilder();
-        b.setCondition(NSupportMode.SUPPORTED);
-        b.setElementType(elementType);
+        b.condition(NSupportMode.SUPPORTED);
+        b.elementType(elementType);
         b.escapeSets.add(NCharEscapeSet.JAVA_WITH_SPACE);
         return b;
     }
 
-    public NElementType getElementType() {
+    public NElementType elementType() {
         return elementType;
     }
 
-    public NStringLiteralFormatBuilder setElementType(NElementType elementType) {
+    public NStringLiteralFormatBuilder elementType(NElementType elementType) {
         this.elementType = elementType;
         return this;
     }
 
-    public NSupportMode getCondition() {
+    public NSupportMode condition() {
         return condition;
     }
 
-    public NStringLiteralFormatBuilder setCondition(NSupportMode condition) {
+    public NStringLiteralFormatBuilder condition(NSupportMode condition) {
         this.condition = condition;
         return this;
     }
@@ -83,7 +83,7 @@ public class NStringLiteralFormatBuilder {
         return skipBoundaries;
     }
 
-    public NStringLiteralFormatBuilder setSkipBoundaries(boolean skipBoundaries) {
+    public NStringLiteralFormatBuilder skipBoundaries(boolean skipBoundaries) {
         this.skipBoundaries = skipBoundaries;
         return this;
     }

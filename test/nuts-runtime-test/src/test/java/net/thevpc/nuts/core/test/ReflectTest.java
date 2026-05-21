@@ -44,7 +44,7 @@ public class ReflectTest {
     @Test
     public void test01() {
         NReflectMapper c = NReflectMapper.of();
-        c.setAssignmentPolicy(NAssignmentPolicy.SOURCE_NON_NULL);
+        c.assignmentPolicy(NAssignmentPolicy.SOURCE_NON_NULL);
         Object u = c.mapToType(new Toto("Hammadi"), Titi.class);
         Assertions.assertEquals("Titi{name='Hammadi'}", u.toString());
     }

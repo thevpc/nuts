@@ -131,7 +131,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                     .command(cmdList)
                     .addCommand()
                     .system()
-                    .getGrabbedAllString().trim();
+                    .grabbedAll().trim();
             NSession session = NSession.of();
             if (session.isPlainTrace() && !outStr.isEmpty()) {
                 NOut.println(CoreStringUtils.prefixLinesOsNL(outStr, "[" + sysCmd + "] "));

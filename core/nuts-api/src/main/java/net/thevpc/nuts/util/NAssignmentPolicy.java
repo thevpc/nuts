@@ -27,9 +27,9 @@ public interface NAssignmentPolicy {
     <T> boolean applyMappingValue(Supplier<T> sourceGetter, Supplier<T> targetGetter, MappingAssigner<T> targetSetter);
 
     interface MappingValue<T> {
-        T getSourceValue();
+        T sourceValue();
 
-        T getTargetValue();
+        T targetValue();
     }
 
     @FunctionalInterface

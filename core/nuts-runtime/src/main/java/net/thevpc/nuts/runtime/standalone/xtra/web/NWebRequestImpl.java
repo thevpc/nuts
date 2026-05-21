@@ -91,7 +91,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setOneWay(boolean oneWay) {
+    public NWebRequest oneWay(boolean oneWay) {
         this.oneWay = oneWay;
         return this;
     }
@@ -340,7 +340,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public String getHeader(String name) {
+    public String header(String name) {
         return headers.getFirst(name);
     }
 
@@ -355,7 +355,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setHeaders(Map<String, List<String>> headers) {
+    public NWebRequest headers(Map<String, List<String>> headers) {
         this.headers.clear();
         return this;
     }
@@ -391,8 +391,8 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setPropsFileHeaders(NPath path) {
-        setHeaders(_mapFromPropsFile(path));
+    public NWebRequest propsFileHeaders(NPath path) {
+        headers(_mapFromPropsFile(path));
         return this;
     }
 
@@ -410,14 +410,14 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setJsonFileHeaders(NPath path) {
-        setHeaders(_mapFromJsonFile(path));
+    public NWebRequest jsonFileHeaders(NPath path) {
+        headers(_mapFromJsonFile(path));
         return this;
     }
 
     @Override
-    public NWebRequest setPropsFileParameters(NPath path) {
-        setParameters(_mapFromPropsFile(path));
+    public NWebRequest propsFileParameters(NPath path) {
+        parameters(_mapFromPropsFile(path));
         return this;
     }
 
@@ -435,8 +435,8 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setJsonFileParameters(NPath path) {
-        setParameters(_mapFromJsonFile(path));
+    public NWebRequest psonFileParameters(NPath path) {
+        parameters(_mapFromJsonFile(path));
         return this;
     }
 
@@ -473,19 +473,7 @@ public class NWebRequestImpl implements NWebRequest {
         return newHeaders;
     }
 
-    @Override
-    public NWebRequest header(String name, String value) {
-        return setHeader(name, value);
-    }
-
-    @Override
-    public NWebRequestImpl addHeader(String name, String value) {
-        this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
-        return this;
-    }
-
-    @Override
-    public NWebRequestImpl setHeader(String name, String value) {
+    public NWebRequestImpl header(String name, String value) {
         if (name != null) {
             if (value != null) {
                 this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
@@ -496,6 +484,14 @@ public class NWebRequestImpl implements NWebRequest {
         return this;
     }
 
+    @Override
+    public NWebRequestImpl addHeader(String name, String value) {
+        this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
+        return this;
+    }
+
+
+
 
     @Override
     public Map<String, List<String>> parameters() {
@@ -503,7 +499,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setParameters(Map<String, List<String>> parameters) {
+    public NWebRequest parameters(Map<String, List<String>> parameters) {
         this.parameters = parameters == null ? new LinkedHashMap<>() : parameters;
         return this;
     }
@@ -514,11 +510,6 @@ public class NWebRequestImpl implements NWebRequest {
             any.accept(this);
         }
         return this;
-    }
-
-    @Override
-    public NWebRequest parameter(String name, String value) {
-        return setParameter(name, value);
     }
 
     @Override
@@ -533,7 +524,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setParameter(String name, String value) {
+    public NWebRequest parameter(String name, String value) {
         if (value != null) {
             if (this.parameters == null) {
                 this.parameters = new LinkedHashMap<>();
@@ -700,12 +691,12 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequestImpl contentLanguage(String contentLanguage) {
-        return setHeader("Content-Language", contentLanguage);
+    public NWebRequest contentLanguage(String contentLanguage) {
+        return header("Content-Language", contentLanguage);
     }
 
     @Override
-    public NWebRequestImpl authorizationBearer(String authorizationBearer) {
+    public NWebRequest authorizationBearer(String authorizationBearer) {
         authorizationBearer = NStringUtils.trimToNull(authorizationBearer);
         if (authorizationBearer != null) {
             authorizationBearer = "Bearer " + authorizationBearer;
@@ -727,18 +718,18 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequestImpl authorization(String authorization) {
-        return setHeader("Authorization", NStringUtils.trimToNull(authorization));
+    public NWebRequest authorization(String authorization) {
+        return header("Authorization", NStringUtils.trimToNull(authorization));
     }
 
     @Override
     public String authorization() {
-        return getHeader("Authorization");
+        return header("Authorization");
     }
 
     @Override
     public String authorizationBearer() {
-        String b = getHeader("Authorization");
+        String b = header("Authorization");
         if (b != null && b.toLowerCase().startsWith("bearer ")) {
             return b.substring("bearer ".length()).trim();
         }
@@ -747,12 +738,12 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public String contentLanguage() {
-        return getHeader("Content-Language");
+        return header("Content-Language");
     }
 
     @Override
     public String contentType() {
-        return getHeader("Content-Type");
+        return header("Content-Type");
     }
 
     @Override
@@ -788,7 +779,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest addFormData(String key, NInputContentProvider value) {
+    public NWebRequest formData(String key, NInputContentProvider value) {
         if (value == null) {
             return this;
         }
@@ -801,7 +792,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest addFormData(String key, String value) {
+    public NWebRequest formData(String key, String value) {
         if (value == null) {
             return this;
         }
@@ -813,15 +804,6 @@ public class NWebRequestImpl implements NWebRequest {
         return this;
     }
 
-    @Override
-    public NWebRequest setFormData(String key, NInputContentProvider value) {
-        return addFormData(key, value);
-    }
-
-    @Override
-    public NWebRequest setFormData(String key, String value) {
-        return addFormData(key, value);
-    }
 
     @Override
     public NWebRequest formUrlEncoded(Map<String, String> m) {
@@ -852,7 +834,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest contentType(String contentType) {
-        return setHeader("Content-Type", contentType);
+        return header("Content-Type", contentType);
     }
 
     @Override

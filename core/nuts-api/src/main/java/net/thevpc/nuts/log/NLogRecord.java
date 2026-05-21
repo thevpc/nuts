@@ -24,7 +24,7 @@ public class NLogRecord extends LogRecord implements NSessionProvider {
         this.verb = verb;
         this.session = session;
         this.time = time;
-        setParameters(msg.getParams());
+        setParameters(msg.params());
         setThrown(thrown);
     }
 
@@ -39,7 +39,7 @@ public class NLogRecord extends LogRecord implements NSessionProvider {
     }
 
     @NGetter
-    public NMsgIntent getVerb() {
+    public NMsgIntent verb() {
         return verb;
     }
 

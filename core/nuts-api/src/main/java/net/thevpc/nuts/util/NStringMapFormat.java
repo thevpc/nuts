@@ -50,9 +50,9 @@ public class NStringMapFormat {
             throw new IllegalArgumentException(e);
         }
     };
-    public static NStringMapFormat URL_FORMAT = NStringMapFormatBuilder.of().setEqualsChars("=").setSeparatorChars("&").setSort(true).setEncoder(URL_ENCODER).setDecoder(URL_DECODER).setAcceptNullKeys(false).build();
-    public static NStringMapFormat HTTP_HEADER_FORMAT = NStringMapFormatBuilder.of().setEqualsChars("=").setSeparatorChars(";").setDoubleQuoteSupported(true).setSort(false).setEncoder(URL_ENCODER).setDecoder(URL_DECODER).setAcceptNullKeys(false).build();
-    public static NStringMapFormat COMMA_FORMAT = NStringMapFormatBuilder.of().setEqualsChars("=").setSeparatorChars(",").setEscapeChars("\\").setSort(true).setQuoteSupported(true).setAcceptNullKeys(false).build();
+    public static NStringMapFormat URL_FORMAT = NStringMapFormatBuilder.of().equalsChars("=").separatorChars("&").sort(true).encoder(URL_ENCODER).decoder(URL_DECODER).acceptNullKeys(false).build();
+    public static NStringMapFormat HTTP_HEADER_FORMAT = NStringMapFormatBuilder.of().equalsChars("=").separatorChars(";").doubleQuoteSupported(true).sort(false).encoder(URL_ENCODER).decoder(URL_DECODER).acceptNullKeys(false).build();
+    public static NStringMapFormat COMMA_FORMAT = NStringMapFormatBuilder.of().equalsChars("=").separatorChars(",").escapeChars("\\").sort(true).setQuoteSupported(true).acceptNullKeys(false).build();
     public static NStringMapFormat DEFAULT = URL_FORMAT;
 
     private final String equalsChars;
@@ -71,32 +71,32 @@ public class NStringMapFormat {
             builder = new NStringMapFormatBuilder();
         }
         this.sort = builder.isSort();
-        this.encoder = builder.getEncoder();
-        this.decoder = builder.getDecoder();
-        if (builder.getEqualsChars() != null) {
-            for (char c : builder.getEqualsChars().toCharArray()) {
+        this.encoder = builder.encoder();
+        this.decoder = builder.decoder();
+        if (builder.equalsChars() != null) {
+            for (char c : builder.equalsChars().toCharArray()) {
                 if (isWhitespace(c)) {
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
         }
-        if (builder.getEscapeChars() != null) {
-            for (char c : builder.getEscapeChars().toCharArray()) {
+        if (builder.escapeChars() != null) {
+            for (char c : builder.escapeChars().toCharArray()) {
                 if (isWhitespace(c)) {
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
         }
-        if (builder.getSeparatorChars() != null) {
-            for (char c : builder.getSeparatorChars().toCharArray()) {
+        if (builder.separatorChars() != null) {
+            for (char c : builder.separatorChars().toCharArray()) {
                 if (isWhitespace(c)) {
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
         }
-        this.equalsChars = builder.getEqualsChars() == null ? "" : builder.getEqualsChars();
-        this.separatorChars = builder.getSeparatorChars() == null ? "" : builder.getSeparatorChars();
-        this.escapeChars = builder.getEscapeChars() == null ? "" : builder.getEscapeChars();
+        this.equalsChars = builder.equalsChars() == null ? "" : builder.equalsChars();
+        this.separatorChars = builder.separatorChars() == null ? "" : builder.separatorChars();
+        this.escapeChars = builder.escapeChars() == null ? "" : builder.escapeChars();
         this.doubleQuoteSupported = builder.isDoubleQuoteSupported();
         this.simpleQuoteSupported = builder.isSimpleQuoteSupported();
         this.acceptNullKeys = builder.isAcceptNullKeys();
@@ -381,7 +381,7 @@ public class NStringMapFormat {
                     } else if (tokens.get(0).type == TokenType.SEP) {
                         tokens.remove(0);
                         return new AbstractMap.SimpleEntry<>(k, null);
-                    } else if (getEqualsChars().isEmpty() && tokens.get(0).type.isAnyWord()) {
+                    } else if (equalsChars().isEmpty() && tokens.get(0).type.isAnyWord()) {
                         String v = tokens.remove(0).value;
                         return new AbstractMap.SimpleEntry<>(k, v);
                     } else {
@@ -489,15 +489,15 @@ public class NStringMapFormat {
         return Objects.hash(equalsChars, separatorChars, escapeChars, sort, decoder, encoder);
     }
 
-    public String getEqualsChars() {
+    public String equalsChars() {
         return equalsChars;
     }
 
-    public String getSeparatorChars() {
+    public String separatorChars() {
         return separatorChars;
     }
 
-    public String getEscapeChars() {
+    public String escapeChars() {
         return escapeChars;
     }
 
@@ -505,11 +505,11 @@ public class NStringMapFormat {
         return sort;
     }
 
-    public Function<String, String> getDecoder() {
+    public Function<String, String> decoder() {
         return decoder;
     }
 
-    public Function<String, String> getEncoder() {
+    public Function<String, String> encoder() {
         return encoder;
     }
 

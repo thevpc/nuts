@@ -246,7 +246,7 @@ public class DefaultNInstall extends AbstractNInstall {
         return Arrays.asList(result);
     }
 
-    public List<NId> getResultFaileList() {
+    public List<NId> getResultFailedList() {
         tryRunIgnoreFail();
         return Arrays.asList(failed);
     }

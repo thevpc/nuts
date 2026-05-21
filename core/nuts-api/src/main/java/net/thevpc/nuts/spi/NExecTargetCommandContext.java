@@ -7,9 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface NExecTargetCommandContext {
-    NConnectionString getConnectionString();
+    NConnectionString connectionString();
 
-    String[] getCommand();
+    String[] command();
 
     boolean isRawCommand();
 
@@ -19,5 +19,5 @@ public interface NExecTargetCommandContext {
 
     OutputStream err();
 
-    NExec getExecCommand();
+    NExec execCommand();
 }

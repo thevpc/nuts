@@ -5,8 +5,6 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NColor;
 
-import java.awt.*;
-
 public class DefaultNTextFormatTheme implements NTextFormatTheme {
 
     public static final int BLACK = 1;
@@ -42,7 +40,7 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "default";
     }
 
@@ -55,7 +53,7 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
         }
         color = color % 255;
         NColor c = NColor.ansiToColor(color);
-        int rgb = c.getIntColor();
+        int rgb = c.intColor();
         return rgb;
     }
 
@@ -68,7 +66,7 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
         }
         color = color % 255;
         NColor c = NColor.ansiToColor(color);
-        int rgb = c.getIntColor();
+        int rgb = c.intColor();
         return rgb;
     }
 
@@ -90,13 +88,13 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
         if (style == null) {
             return NTextStyles.PLAIN;
         }
-        if(style.getType().isBasic(basicTrueStyles)) {
+        if(style.type().isBasic(basicTrueStyles)) {
             return NTextStyles.of(style);
         }
         NTextStyles y = toBasicStyles0(style, basicTrueStyles);
         if(basicTrueStyles) {
             for (NTextStyle yy : y) {
-                switch (yy.getType()) {
+                switch (yy.type()) {
                     case FORE_COLOR:
                     case BACK_COLOR: {
                         break;
@@ -118,16 +116,16 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
         if (style == null) {
             return NTextStyles.PLAIN;
         }
-        switch (style.getType()) {
+        switch (style.type()) {
             case FORE_COLOR:{
                 if(basicTrueStyles){
-                    return NTextStyles.of(NTextStyle.foregroundTrueColor(foregroundSimpleToTrueColor(style.getVariant())));
+                    return NTextStyles.of(NTextStyle.foregroundTrueColor(foregroundSimpleToTrueColor(style.variant())));
                 }
                 return NTextStyles.of(style);
             }
             case BACK_COLOR:{
                 if(basicTrueStyles){
-                    return NTextStyles.of(NTextStyle.backgroundTrueColor(backgroundSimpleToTrueColor(style.getVariant())));
+                    return NTextStyles.of(NTextStyle.backgroundTrueColor(backgroundSimpleToTrueColor(style.variant())));
                 }
                 return NTextStyles.of(style);
             }
@@ -142,17 +140,17 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
                 return NTextStyles.of(style);
             }
             case PRIMARY: {
-                return toBasicStyles(NTextStyle.foregroundColor(mapColor(style.getVariant())), basicTrueStyles);
+                return toBasicStyles(NTextStyle.foregroundColor(mapColor(style.variant())), basicTrueStyles);
             }
             case SECONDARY: {
-                return toBasicStyles(NTextStyle.backgroundColor(mapColor(style.getVariant())), basicTrueStyles);
+                return toBasicStyles(NTextStyle.backgroundColor(mapColor(style.variant())), basicTrueStyles);
             }
             case TITLE: {
-                return toBasicStyles(NTextStyle.primary(style.getVariant()), basicTrueStyles)
+                return toBasicStyles(NTextStyle.primary(style.variant()), basicTrueStyles)
                         .append(NTextStyle.underlined());
             }
             case KEYWORD: {
-                int x = mod4(style.getVariant());
+                int x = mod4(style.variant());
                 return toBasicStyles(NTextStyle.foregroundColor(
                         x == 0 ? DARK_BLUE
                                 : x == 1 ? DARK_SKY
@@ -162,7 +160,7 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
             }
 
             case OPTION: {
-                int x = mod4(style.getVariant());
+                int x = mod4(style.variant());
                 return toBasicStyles(NTextStyle.foregroundColor(
                         x == 0 ? DARK_SKY
                                 : x == 1 ? 66

@@ -477,7 +477,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return output stream, ignoring error stream
      */
-    String getGrabbedAllString();
+    String grabbedAll();
 
     /**
      * silences error, runs the command and return out string equivalent to
@@ -487,7 +487,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return output stream, ignoring error stream
      */
-    String getGrabbedOutOnlyString();
+    String grabbedOutOnly();
 
     /**
      * return grabbed output after command execution Also runs the command if
@@ -495,26 +495,26 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return grabbed output after command execution
      */
-    String getGrabbedOutString();
+    String grabbedOut();
 
     /**
      *
      * @since 0.8.9
      */
-    byte[] getGrabbedOutBytes();
+    byte[] grabbedOutBytes();
 
     /**
      * return grabbed error after command execution
      *
      * @return grabbed error after command execution
      */
-    String getGrabbedErrString();
+    String grabbedErr();
 
     /**
      *
      * @since 0.8.9
      */
-    byte[] getGrabbedErrBytes();
+    byte[] grabbedErrBytes();
 
     /**
      * return new command error stream (standard error destination)
@@ -693,7 +693,6 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return result exception or null
      */
-    @NGetter
     NOptional<NExecutionException> resultException();
 
 

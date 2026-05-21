@@ -193,7 +193,7 @@ public class NErr {
         return err().print(csq, start, end);
     }
 
-    public static NTerminalMode getTerminalMode(){
+    public static NTerminalMode terminalMode(){
         return err().terminalMode();
     }
 
@@ -201,7 +201,7 @@ public class NErr {
         return err().isAutoFlash();
     }
 
-    public static NPrintStream setTerminalMode(NTerminalMode other){
+    public static NPrintStream terminalMode(NTerminalMode other){
         return err().terminalMode(other);
     }
 

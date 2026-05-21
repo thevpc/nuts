@@ -109,7 +109,7 @@ public abstract class NExprContextBase implements NExprContext {
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
+    public List<NExprOperator> operators() {
         return Collections.emptyList();
     }
 

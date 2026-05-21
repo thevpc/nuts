@@ -57,7 +57,7 @@ public class NExprChildContextImpl extends NExprContextBase {
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
-        return parent.getOperators();
+    public List<NExprOperator> operators() {
+        return parent.operators();
     }
 }

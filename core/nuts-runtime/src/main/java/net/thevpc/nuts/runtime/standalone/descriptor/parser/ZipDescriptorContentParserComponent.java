@@ -60,9 +60,9 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz","war","ear"));
 
     public static int getScore(NScorableContext criteria) {
-        NDescriptorContentParserContext constraints = criteria.getCriteria(NDescriptorContentParserContext.class);
+        NDescriptorContentParserContext constraints = criteria.criteria(NDescriptorContentParserContext.class);
         if(constraints!=null) {
-            String e = NStringUtils.trim(constraints.getFileExtension());
+            String e = NStringUtils.trim(constraints.fileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
                 return NScorable.UNSUPPORTED_SCORE;
             }
@@ -72,13 +72,13 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
 
     @Override
     public NDescriptor parse(NDescriptorContentParserContext parserContext) {
-        String e = NStringUtils.trim(parserContext.getFileExtension());
+        String e = NStringUtils.trim(parserContext.fileExtension());
         if (!POSSIBLE_EXT.contains(e)) {
             return null;
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
-            if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
+            if (ZipUtils.extractFirstPath(parserContext.fullStream(), POSSIBLE_PATHS, buffer, true)) {
                 return NDescriptorParser.of()
                         .parse(buffer.toByteArray()).get();
             }

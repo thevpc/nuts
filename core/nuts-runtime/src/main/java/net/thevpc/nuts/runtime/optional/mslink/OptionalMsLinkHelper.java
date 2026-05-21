@@ -32,7 +32,7 @@ public class OptionalMsLinkHelper {
     }
 
     public static boolean isSupported() {
-        if(!mslinksShellLink.getType().isPresent()){
+        if(!mslinksShellLink.type().isPresent()){
             return false;
         }
         try {

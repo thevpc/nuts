@@ -17,11 +17,11 @@ public class NMsgParam {
         this.value = NAssert.requireNamedNonNull(value, "value");
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public Supplier<?> getValue() {
+    public Supplier<?> value() {
         return value;
     }
 }

@@ -89,8 +89,8 @@ public class DefaultNDurationFormat2 {
                 }
             }
         }
-        if (uordinal > duration.getLargestUnit().ordinal()
-                || uordinal < duration.getSmallestUnit().ordinal()
+        if (uordinal > duration.largestUnit().ordinal()
+                || uordinal < duration.smallestUnit().ordinal()
         ) {
             return;
         }
@@ -188,7 +188,7 @@ public class DefaultNDurationFormat2 {
     }
 
     private boolean accept(ChronoUnit c, NDuration duration) {
-        if (c.ordinal() < duration.getSmallestUnit().ordinal()) {
+        if (c.ordinal() < duration.smallestUnit().ordinal()) {
             return false;
         }
         switch (mode) {
@@ -223,8 +223,8 @@ public class DefaultNDurationFormat2 {
             formatUnit(duration, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
-            out.append(formatNumber(0, duration.getSmallestUnit()), NTextStyle.number());
-            out.append(unitString(duration.getSmallestUnit()), NTextStyle.info());
+            out.append(formatNumber(0, duration.smallestUnit()), NTextStyle.number());
+            out.append(unitString(duration.smallestUnit()), NTextStyle.info());
         } else if (mode == NDurationFormatMode.CLOCK) {
             if (processed.contains(ChronoUnit.MILLIS)) {
                 processed.add(ChronoUnit.SECONDS);

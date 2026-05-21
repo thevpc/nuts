@@ -56,5 +56,5 @@ public interface NContentTypeWriter extends NObjectWriter {
     @Override
     NContentTypeWriter configure(boolean skipUnsupported, String... args);
 
-    NContentTypeWriter setNtf(boolean ntf);
+    NContentTypeWriter ntf(boolean ntf);
 }

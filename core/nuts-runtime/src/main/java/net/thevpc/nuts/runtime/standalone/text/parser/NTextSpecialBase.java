@@ -50,7 +50,7 @@ public abstract class NTextSpecialBase extends AbstractNText {
         return kind;
     }
 
-    public String getSeparator() {
+    public String separator() {
         return separator;
     }
 

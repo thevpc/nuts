@@ -68,5 +68,5 @@ public interface NTreeObjectWriter extends NContentTypeWriter {
     NTreeObjectWriter configure(boolean skipUnsupported, String... args);
 
     @Override
-    NTreeObjectWriter setNtf(boolean ntf);
+    NTreeObjectWriter ntf(boolean ntf);
 }

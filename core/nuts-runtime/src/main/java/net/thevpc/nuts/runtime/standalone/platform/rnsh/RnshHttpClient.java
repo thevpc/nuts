@@ -96,15 +96,15 @@ public class RnshHttpClient {
                 NPath toStr = translate(x, fromPathObj, toPathObj);
 
                 NWebCli.of().POST(resolveUrl("put-file"))
-                        .addFormData("content", x.toString())
-                        .addFormData("path", toStr.toString())
+                        .formData("content", x.toString())
+                        .formData("path", toStr.toString())
                         .doWith(this::prepareSecurity)
                         .run().content();
             });
         } else if (fromPathObj.isRegularFile()) {
             NWebCli.of().POST(resolveUrl("put-file"))
-                    .addFormData("content", fromPathObj.toString())
-                    .addFormData("path", toPathObj.toString())
+                    .formData("content", fromPathObj.toString())
+                    .formData("path", toPathObj.toString())
                     .doWith(this::prepareSecurity)
                     .run().content();
         }
@@ -118,8 +118,8 @@ public class RnshHttpClient {
 
     public void putFile(NInputContentProvider localPath, String remotePath) {
         NWebResponse run = NWebCli.of().POST(resolveUrl("put-file"))
-                .addFormData("content", localPath)
-                .addFormData("path", remotePath)
+                .formData("content", localPath)
+                .formData("path", remotePath)
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(run);
@@ -128,8 +128,8 @@ public class RnshHttpClient {
 
     private void rethrowError(NWebResponse run) {
         NHttpCode statusCode = run.statusCode();
-        if (statusCode.getCode() >= 400) {
-            String appError = run.getHeader("X-APP-ERROR").orNull();
+        if (statusCode.code() >= 400) {
+            String appError = run.header("X-APP-ERROR").orNull();
             NMsgCode code = null;
             try {
                 if (!NBlankable.isBlank(appError)) {
@@ -153,7 +153,7 @@ public class RnshHttpClient {
                 code = NMsgCode.ofMessage(appError, "error", new String[0]);
             }
             if (code != null) {
-                throw new NWebResponseException(NMsg.ofC("%s", code.getMessage()),
+                throw new NWebResponseException(NMsg.ofC("%s", code.message()),
                         code, statusCode);
             } else {
                 throw new NWebResponseException(
@@ -281,7 +281,7 @@ public class RnshHttpClient {
                 )
                 .run();
         if (response.isOk()) {
-            LoginResult rr = response.getContentAsJson(LoginResult.class);
+            LoginResult rr = response.contentAsJson(LoginResult.class);
             if (rr != null) {
                 if (!NBlankable.isBlank(rr.accessToken)) {
                     this.loginResult = rr;
@@ -313,7 +313,7 @@ public class RnshHttpClient {
                 )
                 .run();
         if (response.isOk()) {
-            LoginResult rr = response.getContentAsJson(LoginResult.class);
+            LoginResult rr = response.contentAsJson(LoginResult.class);
             if (rr != null) {
                 if (!NBlankable.isBlank(rr.accessToken)) {
                     this.loginResult = rr;
@@ -457,8 +457,8 @@ public class RnshHttpClient {
             cmdString = NCmdLine.of(command).toString();
         }
         NWebResponse r = NWebCli.of().POST(resolveUrl("exec"))
-                .setFormData("command", cmdString)
-                .setFormData(inputSource == null ? null : "in", inputSource)
+                .formData("command", cmdString)
+                .formData(inputSource == null ? null : "in", inputSource)
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(r);
@@ -466,7 +466,7 @@ public class RnshHttpClient {
 //        byte[] bytes = content.readBytes();
 //        content=NInputSource.of(bytes);
         return new ExecResult(
-                r.getHeader("X-EXEC-CODE").flatMap(x -> NLiteral.of(x).asInt()).orElse(0),
+                r.header("X-EXEC-CODE").flatMap(x -> NLiteral.of(x).asInt()).orElse(0),
                 content,
                 NInputSource.of(NInputSource.of(new byte[0]))
         );
@@ -535,7 +535,7 @@ public class RnshHttpClient {
                 )
                 .run();
         rethrowError(run);
-        return run.getContentAsJson(NFileInfo.class);
+        return run.contentAsJson(NFileInfo.class);
     }
 
     public String[] listNames(String remotePath) {
@@ -548,7 +548,7 @@ public class RnshHttpClient {
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(run);
-        return run.getContentAsJson(String[].class);
+        return run.contentAsJson(String[].class);
     }
 
     public String digest(String remotePath, String algo) {
@@ -562,7 +562,7 @@ public class RnshHttpClient {
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(run);
-        Map<String, Object> path = (Map<String, Object>) run.getContentAsJson(Map.class);
+        Map<String, Object> path = (Map<String, Object>) run.contentAsJson(Map.class);
         return path == null ? null : (String) path.get("hash");
     }
 
@@ -578,7 +578,7 @@ public class RnshHttpClient {
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(run);
-        Map<String, Object>[] res = (Map[]) run.getContentAsJson(Map[].class);
+        Map<String, Object>[] res = (Map[]) run.contentAsJson(Map[].class);
         if (res == null) {
             return new ArrayList<>();
         }
@@ -599,6 +599,6 @@ public class RnshHttpClient {
                 .doWith(this::prepareSecurity)
                 .run();
         rethrowError(run);
-        return run.getContentAsJson(NFileInfo[].class);
+        return run.contentAsJson(NFileInfo[].class);
     }
 }

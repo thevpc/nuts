@@ -66,7 +66,7 @@ public class NRepositoryFilterOr extends AbstractRepositoryFilter implements NCo
         return Arrays.hashCode(all);
     }
 
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
     }
 

@@ -138,7 +138,7 @@ public interface NInstall extends NWorkspaceCmd {
      * @return all ids to install
      */
     @NGetter
-    List<NId> getIds();
+    List<NId> ids();
 
     /**
      * add artifact ids to install
@@ -286,7 +286,7 @@ public interface NInstall extends NWorkspaceCmd {
 
     List<NDefinition> getResultSuccessfulList();
 
-    List<NId> getResultFaileList();
+    List<NId> getResultFailedList();
 
     @NGetter
     boolean isFailFast();

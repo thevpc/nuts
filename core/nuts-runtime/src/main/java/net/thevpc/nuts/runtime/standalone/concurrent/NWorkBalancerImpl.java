@@ -20,7 +20,7 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
 
     public NWorkBalancerImpl(NWorkBalancerModel model, NWorkBalancerFactoryImpl factory) {
         this.model = model;
-        this.strategy = factory.createStrategy(model.getStrategy());
+        this.strategy = factory.createStrategy(model.strategy());
         this.factory = factory;
         _updateModel();
     }

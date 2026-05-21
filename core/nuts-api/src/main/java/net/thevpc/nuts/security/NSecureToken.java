@@ -30,11 +30,11 @@ public class NSecureToken implements Serializable, NToElement {
         this.payload = payload;
     }
 
-    public String getAgentId() {
+    public String agentId() {
         return agentId;
     }
 
-    public String getPayload() {
+    public String payload() {
         return payload;
     }
 

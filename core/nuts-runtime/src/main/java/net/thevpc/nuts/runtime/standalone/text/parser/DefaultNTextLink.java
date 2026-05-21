@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NImmutable;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
@@ -49,7 +48,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     }
 
     @Override
-    public String getValue() {
+    public String value() {
         return value;
     }
 
@@ -135,7 +134,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
         if (Objects.equals(value, c)) {
             return this;
         }
-        return new DefaultNTextLink(getSeparator(), c);
+        return new DefaultNTextLink(separator(), c);
     }
 
     @Override
@@ -144,7 +143,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
         if (Objects.equals(value, c)) {
             return this;
         }
-        return new DefaultNTextLink(getSeparator(), c);
+        return new DefaultNTextLink(separator(), c);
     }
 
     @Override
@@ -153,7 +152,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
         if (Objects.equals(value, c)) {
             return this;
         }
-        return new DefaultNTextLink(getSeparator(), c);
+        return new DefaultNTextLink(separator(), c);
     }
 
 }

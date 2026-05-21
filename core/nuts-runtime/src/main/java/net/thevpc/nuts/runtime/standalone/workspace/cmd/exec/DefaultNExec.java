@@ -281,8 +281,8 @@ public class DefaultNExec extends AbstractNExec {
                 String p = getExtraErrorMessage();
                 if (p != null) {
                     resultException = new NExecutionException(
-                            NMsg.ofC("execution failed with code %s and message : %s", ex.getExitCode(), p),
-                            ex, ex.getExitCode());
+                            NMsg.ofC("execution failed with code %s and message : %s", ex.exitCode(), p),
+                            ex, ex.exitCode());
                 } else {
                     resultException = ex;
                 }
@@ -308,7 +308,7 @@ public class DefaultNExec extends AbstractNExec {
                             exitCode);
                 }
             }
-            if (resultException != null && resultException.getExitCode() != NExecutionException.SUCCESS && failFast) {
+            if (resultException != null && resultException.exitCode() != NExecutionException.SUCCESS && failFast) {
                 throw resultException;
 //            checkFailFast(result.getExitCode());
             }
@@ -414,7 +414,7 @@ public class DefaultNExec extends AbstractNExec {
                                 //ignore
                                 _LOG()
                                         .log(NMsg.ofC("executable artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", descriptor.id(),
-                                                        ex.getId())
+                                                        ex.id())
                                                 .asWarningAlert()
                                         );
                                 throw ex;

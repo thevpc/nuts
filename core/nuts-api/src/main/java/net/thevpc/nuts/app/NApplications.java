@@ -63,7 +63,7 @@ public final class NApplications {
      *
      * @return thread local map
      */
-    public static Map<String, Object> getSharedMap() {
+    public static Map<String, Object> sharedMap() {
         Map<String, Object> m = sharedMap.get();
         if (m == null) {
             m = new LinkedHashMap<>();
@@ -240,7 +240,7 @@ public final class NApplications {
             this.appInstance = appInstance;
         }
 
-        public Object getAppInstance() {
+        public Object appInstance() {
             return appInstance;
         }
 

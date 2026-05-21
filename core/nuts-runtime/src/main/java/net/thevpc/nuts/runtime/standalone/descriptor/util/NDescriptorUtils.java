@@ -673,7 +673,7 @@ public class NDescriptorUtils {
                     return NEnv.of().os().artifactId()+"-"+ NEnv.of().arch().artifactId();
                 }
                 case "os.detected.bitness":{
-                    return String.valueOf(NEnv.of().archFamily().getBits());
+                    return String.valueOf(NEnv.of().archFamily().bits());
                 }
                 case "os.detected.release.like":{
                     return NEnv.of().osDist().properties().get("like");

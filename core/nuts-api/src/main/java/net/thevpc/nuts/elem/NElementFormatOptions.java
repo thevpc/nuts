@@ -3,9 +3,9 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.text.NNewLineMode;
 
 public interface NElementFormatOptions {
-    int getComplexityThreshold() ;
-    int getIndent() ;
-    int getColumnLimit();
+    int complexityThreshold() ;
+    int indent() ;
+    int columnLimit();
 
-    NNewLineMode getNewLineMode();
+    NNewLineMode newLineMode();
 }

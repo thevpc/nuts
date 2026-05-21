@@ -31,7 +31,7 @@ public class PlatformHomeTest {
         String workspaceName = "workspace-name";
         System.out.println();
         System.out.println("-----------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-20s %-8s %-6s %-8s %s%n", "getHome", family, system ? "system" : "user", "", z.getHome());
+        System.out.printf("%-20s %-8s %-6s %-8s %s%n", "getHome", family, system ? "system" : "user", "", z.home());
 
         for (NStoreType location : NStoreType.values()) {
             System.out.printf("%-20s %-8s %-6s %-8s %s%n", "getStore", family, system ? "system" : "user", location, z.getStore(location));

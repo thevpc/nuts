@@ -71,7 +71,7 @@ public class CorePlatformUtils {
 //        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
         boolean _e = new String("ø".getBytes()).equals("ø");
         if (_e) {
-            switch (NOsFamily.getCurrent()) {
+            switch (NOsFamily.current()) {
                 case LINUX:
                 case MACOS: {
                     //okkay
@@ -180,7 +180,7 @@ public class CorePlatformUtils {
                         NExec.of().system()
                                 .command("uname", "-r")
                                 .sleepDuration(NDuration.ofMillis(50))
-                                .getGrabbedAllString()
+                                .grabbedAll()
                 );
             } catch (Exception e) {
                 NLog.of(CorePlatformUtils.class).log(NMsg.ofC("failed to run \"uname -a\" : %s", e).asFinestFail(e));

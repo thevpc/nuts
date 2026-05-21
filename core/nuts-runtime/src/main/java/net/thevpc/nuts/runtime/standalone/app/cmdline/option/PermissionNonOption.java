@@ -60,8 +60,8 @@ public class PermissionNonOption extends DefaultNonOption {
             all.add(new DefaultNArgCandidate(r));
         }
         Iterator<NArgCandidate> i = all.iterator();
-        NUser info = NSecurityManager.of().findUser(user).orNull();
-        Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : (info.getPermissions()));
+        NUser info = NSecurityManager.of().getUser(user).orNull();
+        Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : (info.permissions()));
         while (i.hasNext()) {
             NArgCandidate right = i.next();
             if (existing) {

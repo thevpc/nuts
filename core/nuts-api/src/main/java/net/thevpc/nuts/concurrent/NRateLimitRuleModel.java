@@ -65,7 +65,7 @@ public class NRateLimitRuleModel implements Serializable, NDescribable {
 
     /** Returns a defensive copy of the serialized configuration. */
     @NGetter
-    public byte[] getConfig() {
+    public byte[] config() {
         return config == null ? new byte[0] : Arrays.copyOf(config, config.length);
     }
 

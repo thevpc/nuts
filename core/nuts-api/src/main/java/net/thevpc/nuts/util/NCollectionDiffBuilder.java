@@ -12,38 +12,38 @@ public class NCollectionDiffBuilder<T, K> {
     NCollectionDiffBuilder() {
     }
 
-    public Collection<T> getOldItems() {
+    public Collection<T> oldItems() {
         return oldItems;
     }
 
-    public NCollectionDiffBuilder<T, K> setOldItems(Collection<T> oldItems) {
+    public NCollectionDiffBuilder<T, K> oldItems(Collection<T> oldItems) {
         this.oldItems = oldItems;
         return this;
     }
 
-    public Collection<T> getNewItems() {
+    public Collection<T> newItems() {
         return newItems;
     }
 
-    public NCollectionDiffBuilder<T, K> setNewItems(Collection<T> newItems) {
+    public NCollectionDiffBuilder<T, K> newItems(Collection<T> newItems) {
         this.newItems = newItems;
         return this;
     }
 
-    public Function<T, K> getIdResolver() {
+    public Function<T, K> idResolver() {
         return idResolver;
     }
 
-    public NCollectionDiffBuilder<T, K> setIdResolver(Function<T, K> idResolver) {
+    public NCollectionDiffBuilder<T, K> idResolver(Function<T, K> idResolver) {
         this.idResolver = idResolver;
         return this;
     }
 
-    public NEqualizer<T> getEqualizer() {
+    public NEqualizer<T> equalizer() {
         return equalizer;
     }
 
-    public NCollectionDiffBuilder<T, K> setEqualizer(NEqualizer<T> equalize) {
+    public NCollectionDiffBuilder<T, K> equalizer(NEqualizer<T> equalize) {
         this.equalizer = equalize;
         return this;
     }

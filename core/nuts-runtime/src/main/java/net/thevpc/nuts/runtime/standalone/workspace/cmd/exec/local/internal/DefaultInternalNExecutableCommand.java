@@ -65,10 +65,10 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
         }
         return txt.transform(n,
                 new NTextTransformConfig()
-                        .setProcessAll(true)
-                        .setRootLevel(1)
-                        .setImportClassLoader(getClass().getClassLoader())
-                        .setCurrentDir(path.parent())
+                        .processAll(true)
+                        .rootLevel(1)
+                        .importClassLoader(getClass().getClassLoader())
+                        .currentDir(path.parent())
         );
     }
 

@@ -25,9 +25,6 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * @author thevpc
@@ -59,23 +56,23 @@ public class NRepositorySelector {
         return sb.toString();
     }
 
-    public NSelectorOp getOp() {
+    public NSelectorOp op() {
         return op;
     }
 
-    public String getName() {
-        return location.getName();
+    public String name() {
+        return location.name();
     }
 
-    public String getUrl() {
-        return location.getFullLocation();
+    public String url() {
+        return location.fullLocation();
     }
 
     public boolean matches(NRepositoryLocation other) {
-        String otherName = other.getName();
-        String otherURL = other.getFullLocation();
-        String name0 = location.getName();
-        String url0 = location.getFullLocation();
+        String otherName = other.name();
+        String otherURL = other.fullLocation();
+        String name0 = location.name();
+        String url0 = location.fullLocation();
         otherName = otherName == null ? "" : otherName.trim();
         otherURL = otherURL == null ? "" : otherURL.trim();
         String _name = name0 == null ? "" : name0.trim();

@@ -152,7 +152,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 for (NExecutionEngineLocation jloc : sdks) {
                     m.addRow(NText.of(jloc.name()), NText.of(jloc.version()), NText.of(jloc.path()));
                 }
-                out.print(NTextArt.of().getTableRenderer().get().render(m));
+                out.print(NTextArt.of().tableRenderer().get().render(m));
             }
             return true;
         }

@@ -104,9 +104,6 @@ public interface NExtensions extends NComponent {
 
     <T> List<T> createAll(Class<T> type);
 
-//    Set<Class> getExtensionPoints(NSession session);
-
-
     <T> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint);
 
     <T> List<T> getExtensionObjects(Class<T> extensionPoint);
@@ -127,7 +124,8 @@ public interface NExtensions extends NComponent {
 
     boolean isLoadedExtensions(NId id);
 
-    List<NId> getLoadedExtensions();
+    @NGetter
+    List<NId> loadedExtensions();
 
     NExtensions loadExtension(NId extension);
 
@@ -138,6 +136,7 @@ public interface NExtensions extends NComponent {
      *
      * @return extension ids
      */
+    @NGetter
     List<NId> configExtensions();
 
     boolean isExcludedExtension(String extensionId, NWorkspaceOptions options);

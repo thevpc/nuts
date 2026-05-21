@@ -197,7 +197,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      * @return new instance (never null) of the value part of the argument
      * (after =)
      */
-    NLiteral getValue();
+    NLiteral toLiteral();
 
     NOptional<Boolean> getBooleanValue();
 

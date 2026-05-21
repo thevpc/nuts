@@ -27,7 +27,7 @@ public class DefaultNLogs implements NLogs {
     }
 
     @Override
-    public NLogScope getContext() {
+    public NLogScope context() {
         return model.getContext();
     }
 

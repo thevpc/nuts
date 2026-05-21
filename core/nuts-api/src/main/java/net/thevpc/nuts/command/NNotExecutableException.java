@@ -57,7 +57,7 @@ public class NNotExecutableException extends NExecutionException {
      *
      * @return artifact id
      */
-    public NId getId() {
+    public NId id() {
         return id;
     }
 }

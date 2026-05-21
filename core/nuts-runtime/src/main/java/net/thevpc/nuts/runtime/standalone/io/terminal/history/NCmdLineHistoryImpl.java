@@ -112,25 +112,25 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
     }
 
     @Override
-    public NCmdLineHistory setPath(Path path) {
+    public NCmdLineHistory path(Path path) {
         this.path = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
-    public NCmdLineHistory setPath(File path) {
+    public NCmdLineHistory path(File path) {
         this.path = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
-    public NCmdLineHistory setPath(NPath path) {
+    public NCmdLineHistory path(NPath path) {
         this.path = path;
         return this;
     }
 
     @Override
-    public NPath getPath() {
+    public NPath path() {
         return path;
     }
 

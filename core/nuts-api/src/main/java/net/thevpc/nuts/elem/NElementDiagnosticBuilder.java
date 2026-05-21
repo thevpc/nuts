@@ -7,12 +7,12 @@ public interface NElementDiagnosticBuilder {
         return NElement.ofDiagnosticBuilder();
     }
 
-    NMsg getMessage();
+    NMsg message();
 
-    NElementDiagnosticBuilder setMessage(NMsg message);
+    NElementDiagnosticBuilder message(NMsg message);
 
-    NElementToken getToken();
+    NElementToken token();
 
-    NElementDiagnosticBuilder setToken(NElementToken message);
+    NElementDiagnosticBuilder token(NElementToken message);
     NElementDiagnostic build();
 }

@@ -178,19 +178,19 @@ public class NByteArrayQueue {
         return to > from;
     }
 
-    public int getIncrement() {
+    public int increment() {
         return increment;
     }
 
-    public int getFrom() {
+    public int from() {
         return from;
     }
 
-    public int getTo() {
+    public int to() {
         return to;
     }
 
-    public int getAllocatedSize() {
+    public int allocatedSize() {
         return content.length;
     }
 }

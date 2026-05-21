@@ -128,8 +128,8 @@ public class DefaultNSearch extends AbstractNSearch {
                                     consideredRepos.add(repoAndMode.getRepository());
                                     NRepositorySPI repoSPI = wu.toRepositorySPI(repoAndMode.getRepository());
                                     if (nutsIdNonLatest.groupId() != null) {
-                                        NIterator<NId> baseIter = repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
-                                                .setFetchMode(repoAndMode.getFetchMode())
+                                        NIterator<NId> baseIter = repoSPI.searchVersions().id(nutsIdNonLatest).filter(filter)
+                                                .fetchMode(repoAndMode.getFetchMode())
                                                 .getResult();
                                         if(!NIteratorUtils.isNullOrEmpty(baseIter)) {
                                             NIterator<NId> z = NIteratorBuilder.of(baseIter)
@@ -146,8 +146,8 @@ public class DefaultNSearch extends AbstractNSearch {
                                         }
                                     } else {
                                         NDefinitionFilter restrictedFilter = (NDefinitionFilter) NDefinitionFilters.of().byName(nutsIdNonLatest.toString()).and(filter).simplify();
-                                        NIterator<NId> baseIter = repoSPI.search().setFilter(restrictedFilter)
-                                                .setFetchMode(repoAndMode.getFetchMode())
+                                        NIterator<NId> baseIter = repoSPI.search().filter(restrictedFilter)
+                                                .fetchMode(repoAndMode.getFetchMode())
                                                 .getResult();
                                         if(!NIteratorUtils.isNullOrEmpty(baseIter)) {
                                             NIterator<NId> z = NIteratorBuilder.of(baseIter)
@@ -189,8 +189,8 @@ public class DefaultNSearch extends AbstractNSearch {
                 consideredRepos.add(repoAndMode.getRepository());
                 all.add(
                         NIteratorBuilder.ofSupplier(() -> wu.toRepositorySPI(repoAndMode.getRepository()).search()
-                                                .setFilter(filter)
-                                                .setFetchMode(repoAndMode.getFetchMode())
+                                                .filter(filter)
+                                                .fetchMode(repoAndMode.getFetchMode())
                                                 .getResult(),
                                         NDescribables.ofDesc(NElement.ofObjectBuilder()
                                                 .set("description", "searchRepository")

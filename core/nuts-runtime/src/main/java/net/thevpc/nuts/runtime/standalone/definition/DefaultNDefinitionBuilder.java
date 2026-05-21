@@ -99,13 +99,13 @@ public class DefaultNDefinitionBuilder implements NDefinitionBuilder {
             this.effectiveDescriptor = other.effectiveDescriptor().orNull();
             this.dependencies = other.dependencies().orNull();
             this.apiId = other.apiId();
-            this.dependency = other.getDependency();
+            this.dependency = other.dependency();
             this.effectiveFlags = other.effectiveFlags().orNull();
         }
     }
 
     @Override
-    public NDependency getDependency() {
+    public NDependency dependency() {
         return dependency;
     }
 

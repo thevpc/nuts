@@ -33,9 +33,9 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
             case FILTERED:{
                 NText transformed = txt().transform(b,
                         new NTextTransformConfig()
-                                .setFiltered(true)
-                                .setNormalize(true)
-                                .setFlatten(true)
+                                .filtered(true)
+                                .normalize(true)
+                                .flatten(true)
                 );
                 print(transformed.toString());
                 return this;

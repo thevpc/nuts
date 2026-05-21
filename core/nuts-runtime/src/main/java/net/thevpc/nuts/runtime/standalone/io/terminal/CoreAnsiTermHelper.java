@@ -76,7 +76,7 @@ public class CoreAnsiTermHelper {
                         .in(NExecInput.ofNull())
                         .addCommand(cmd)
                         .failFast(true)
-                        .getGrabbedOutOnlyString()
+                        .grabbedOutOnly()
                         .trim();
                 if (!s.trim().isEmpty()) {
                     return s.trim();
@@ -89,7 +89,7 @@ public class CoreAnsiTermHelper {
                         .addCommand(cmd)
                         .failFast(true)
                         .sleepDuration(NDuration.ofMillis(500))
-                        .getGrabbedOutOnlyString()
+                        .grabbedOutOnly()
                         .trim()
                 ;
                 if (!s.trim().isEmpty()) {

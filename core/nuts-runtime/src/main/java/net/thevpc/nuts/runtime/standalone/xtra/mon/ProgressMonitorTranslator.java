@@ -29,14 +29,14 @@ public class ProgressMonitorTranslator implements NProgressHandler {
 
     @Override
     public void onEvent(NProgressHandlerEvent event) {
-        double progress = event.getModel().getProgress();
+        double progress = event.model().progress();
         double translatedProgress = Double.isNaN(progress) ? progress : (progress * factor + start);
         if (!Double.isNaN(progress) && (translatedProgress < 0 || translatedProgress > 1)) {
             if (translatedProgress > 1 && translatedProgress < 1.1) {
                 translatedProgress = 1;
             }
         }
-        getDelegate().setProgress(translatedProgress, event.getModel().getMessage());
+        getDelegate().progress(translatedProgress, event.model().message());
     }
 
 //    @Override

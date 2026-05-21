@@ -29,7 +29,7 @@ package net.thevpc.nuts.text;
 public interface NTextArtTableRenderer extends NTextArtRenderer {
 
     static NTextArtTableRenderer of() {
-        return NTextArt.of().getTableRenderer().get();
+        return NTextArt.of().tableRenderer().get();
     }
 
     static NTextArtTableRenderer of(String name) {

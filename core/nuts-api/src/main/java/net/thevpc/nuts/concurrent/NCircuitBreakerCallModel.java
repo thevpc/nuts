@@ -106,35 +106,35 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
     }
 
     @NGetter
-    public NCircuitBreakerCall.Status getStatus() {
+    public NCircuitBreakerCall.Status status() {
         return status;
     }
 
-    public NCircuitBreakerCallModel setStatus(NCircuitBreakerCall.Status status) {
+    public NCircuitBreakerCallModel status(NCircuitBreakerCall.Status status) {
         this.status = status;
         return this;
     }
 
 
     @NGetter
-    public NCallable<?> getCaller() {
+    public NCallable<?> caller() {
         return caller;
     }
 
-    public NCircuitBreakerCallModel setCaller(NCallable<?> caller) {
+    public NCircuitBreakerCallModel caller(NCallable<?> caller) {
         this.caller = caller;
         return this;
     }
 
 
     @NGetter
-    public Object getError() {
+    public Object error() {
         return error;
     }
 
 
 
-    public NCircuitBreakerCallModel setError(Throwable error) {
+    public NCircuitBreakerCallModel error(Throwable error) {
         this.error = error;
         return this;
     }

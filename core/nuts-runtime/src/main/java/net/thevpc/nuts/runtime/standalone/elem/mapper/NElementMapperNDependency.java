@@ -18,11 +18,11 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
         if (o.exclusions().isEmpty()) {
             //use compact form
             if (context.isNtf()) {
-                return NDependencyWriter.of().setNtf(true).format(o);
+                return NDependencyWriter.of().ntf(true).format(o);
             } else {
 
                 return context.defaultToSimple(NObjectWriter.of(o)
-                        .setNtf(context.isNtf())
+                        .ntf(context.isNtf())
                         .format(o), null);
             }
         }
@@ -33,7 +33,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
     public NElement toElement(NElementSerializerContext<NDependency> context) {
         NDependency o = context.instance();
         NText format = NObjectWriter.of(o)
-                .setNtf(context.isNtf())
+                .ntf(context.isNtf())
                 .format(o);
         return context.defaultCreateElement(format, null);
     }

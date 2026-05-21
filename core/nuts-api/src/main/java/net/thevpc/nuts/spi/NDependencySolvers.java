@@ -39,6 +39,6 @@ public interface NDependencySolvers extends NComponent {
 
     NDependencySolver createSolver(String solverName);
 
-    List<String> getSolverNames();
+    List<String> solverNames();
 
 }

@@ -56,13 +56,13 @@ public interface NCmdLineHistory extends NComponent {
 
     void save(OutputStream out);
 
-    NPath getPath();
+    NPath path();
 
-    NCmdLineHistory setPath(Path path);
+    NCmdLineHistory path(Path path);
 
-    NCmdLineHistory setPath(File path);
+    NCmdLineHistory path(File path);
 
-    NCmdLineHistory setPath(NPath path);
+    NCmdLineHistory path(NPath path);
 
     int size();
 

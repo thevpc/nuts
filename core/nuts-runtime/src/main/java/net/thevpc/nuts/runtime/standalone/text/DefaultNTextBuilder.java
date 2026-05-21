@@ -27,7 +27,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
 
     @Override
     public Iterator<NText> iterator() {
-        return Collections.unmodifiableList(getChildren()).iterator();
+        return Collections.unmodifiableList(children()).iterator();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public NTextStyleGenerator getStyleGenerator() {
+    public NTextStyleGenerator styleGenerator() {
         if (styleGenerator == null) {
             styleGenerator = new DefaultNTextStyleGenerator();
         }
@@ -49,7 +49,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public DefaultNTextBuilder setStyleGenerator(NTextStyleGenerator styleGenerator) {
+    public DefaultNTextBuilder styleGenerator(NTextStyleGenerator styleGenerator) {
         this.styleGenerator = styleGenerator;
         return this;
     }
@@ -81,7 +81,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         if (text == null) {
             return this;
         }
-        return append(text, getStyleGenerator().random());
+        return append(text, styleGenerator().random());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         if (hash == null) {
             hash = text;
         }
-        return append(text, getStyleGenerator().hash(hash));
+        return append(text, styleGenerator().hash(hash));
     }
 
     @Override
@@ -140,7 +140,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         }
         DefaultNTextBuilder result = new DefaultNTextBuilder();
         int pos = 0;
-        for (NText child : getChildren()) {
+        for (NText child : children()) {
             int childLen = child.filteredText().length();
             int childStart = pos;
             int childEnd = pos + childLen;
@@ -253,7 +253,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public List<NText> getChildren() {
+    public List<NText> children() {
         return new ArrayList<>(children);
     }
 
@@ -359,7 +359,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     public NTextBuilder flatten() {
         if (!flattened) {
             NText build = build();
-            NText a = txt.transform(build, new NTextTransformConfig().setFlatten(true));
+            NText a = txt.transform(build, new NTextTransformConfig().flatten(true));
             this.children.clear();
             fill(a);
             flattened = true;
@@ -370,14 +370,14 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     private void fill(NText z) {
         if (z != null) {
             if (z instanceof NTextList) {
-                for (NText c : ((NTextList) z).getChildren()) {
+                for (NText c : ((NTextList) z).children()) {
                     fill(c);
                 }
             } else if (z instanceof NTextPlain) {
                 this.children.add(z);
             } else if (z instanceof NTextStyled) {
-                if (((NTextStyled) z).getChild() instanceof NTextList) {
-                    NText z2 = txt.transform(z, new NTextTransformConfig().setFlatten(true));
+                if (((NTextStyled) z).child() instanceof NTextList) {
+                    NText z2 = txt.transform(z, new NTextTransformConfig().flatten(true));
                 }
                 this.children.add(z);
             } else {
@@ -443,7 +443,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
 
     private boolean isNewLine(NText t) {
         if (t.type() == NTextType.PLAIN) {
-            String txt = ((NTextPlain) t).getValue();
+            String txt = ((NTextPlain) t).value();
             return (txt.equals("\n") || txt.equals("\r\n"));
         }
         return false;

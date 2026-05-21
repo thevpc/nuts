@@ -1026,7 +1026,7 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      * @return session locale
      * @since 0.8.1
      */
-    NOptional<String> getLocale();
+    NOptional<String> locale();
 
     /**
      * theme
@@ -1034,7 +1034,7 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      * @return session locale
      * @since 0.8.1
      */
-    NOptional<String> getTheme();
+    NOptional<String> theme();
 
     NWorkspaceOptionsBuilder builder();
 

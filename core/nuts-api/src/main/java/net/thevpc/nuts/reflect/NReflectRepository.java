@@ -42,7 +42,7 @@ public interface NReflectRepository extends NComponent {
 
     NReflectType getType(Type clazz);
 
-    NReflectConfiguration getConfiguration();
+    NReflectConfiguration configuration();
 
-    NReflectRepository setConfiguration(NReflectConfiguration config);
+    NReflectRepository configuration(NReflectConfiguration config);
 }

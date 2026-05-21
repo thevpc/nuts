@@ -34,7 +34,7 @@ public class EmptyRootContext extends NExprContextBase {
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
+    public List<NExprOperator> operators() {
         return Collections.emptyList();
     }
 }

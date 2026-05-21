@@ -53,11 +53,11 @@ public class NOnceValueModel implements Cloneable, NCopiable {
         this.supplier = supplier;
     }
 
-    public Supplier<?> getSupplier() {
+    public Supplier<?> supplier() {
         return supplier;
     }
 
-    public NOnceValueModel setSupplier(Supplier<?> supplier) {
+    public NOnceValueModel supplier(Supplier<?> supplier) {
         this.supplier = supplier;
         return this;
     }

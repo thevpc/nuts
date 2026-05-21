@@ -9,33 +9,33 @@ public interface NNamedCredentialBuilder {
      * Human-readable name (e.g., "github-personal", "nexus-corp").
      * Used in .nops files: include(url, credential:"github-personal")
      */
-    String getName();
+    String name();
 
     /**
      * Nuts workspace user who owns this credential (permission scoping).
      * Only this user (or admin) can use/reference this credential.
      */
-    String getUserName();
+    String userName();
 
-    NSecureToken getCredentialId();
+    NSecureToken credentialId();
 
     /**
      * Optional URL pattern for auto-resolution (e.g., "https://github.com/*").
      * When null, credential must be explicitly referenced by name.
      */
-    String getResource();
+    String resource();
 
-    NNamedCredentialBuilder setResource(String resource);
+    NNamedCredentialBuilder resource(String resource);
 
-    NNamedCredentialBuilder setCredentialId(NSecureToken credentialId);
+    NNamedCredentialBuilder credentialId(NSecureToken credentialId);
 
-    NNamedCredentialBuilder setUserName(String user);
+    NNamedCredentialBuilder userName(String user);
 
-    NNamedCredentialBuilder setName(String name);
+    NNamedCredentialBuilder name(String name);
 
-    String getAuthType();
+    String authType();
 
-    NNamedCredentialBuilder setAuthType(String authType);
+    NNamedCredentialBuilder authType(String authType);
 
     NNamedCredential build();
 }

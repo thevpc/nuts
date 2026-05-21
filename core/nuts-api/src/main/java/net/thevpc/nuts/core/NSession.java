@@ -81,8 +81,6 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      */
     boolean isTrace();
 
-    NSession trace();
-
     /**
      * change trace flag value. When true, operations are invited to print to
      * output stream information about processing. Output may be in different

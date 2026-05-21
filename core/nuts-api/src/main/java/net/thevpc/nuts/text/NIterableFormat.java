@@ -41,7 +41,7 @@ public interface NIterableFormat extends NCmdLineConfigurable {
      *
      * @return Current output format
      */
-    NContentType getOutputFormat();
+    NContentType outputFormat();
 
     /**
      * configure the current command with the given arguments. This is an

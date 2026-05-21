@@ -52,19 +52,19 @@ public interface NUndeployRepositoryCmd extends NRepositoryCmd {
     @Override
     NUndeployRepositoryCmd run();
 
-    NId getId();
+    NId id();
 
-    NUndeployRepositoryCmd setId(NId id);
+    NUndeployRepositoryCmd id(NId id);
 
-    String getRepository();
+    String repository();
 
-    NUndeployRepositoryCmd setRepository(String repository);
+    NUndeployRepositoryCmd repository(String repository);
 
     boolean isTransitive();
 
-    NUndeployRepositoryCmd setTransitive(boolean transitive);
+    NUndeployRepositoryCmd transitive(boolean transitive);
 
     boolean isOffline();
 
-    NUndeployRepositoryCmd setOffline(boolean offline);
+    NUndeployRepositoryCmd offline(boolean offline);
 }

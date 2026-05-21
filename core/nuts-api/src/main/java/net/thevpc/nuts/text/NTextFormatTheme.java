@@ -27,7 +27,7 @@
 package net.thevpc.nuts.text;
 
 public interface NTextFormatTheme {
-    String getName();
+    String name();
 
     /**
      * return styles in terms of color

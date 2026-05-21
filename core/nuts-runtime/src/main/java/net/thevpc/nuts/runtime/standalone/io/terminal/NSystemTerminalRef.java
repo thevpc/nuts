@@ -48,7 +48,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        base.setStyles(styles, printStream);
+    public void styles(NTextStyles styles, NPrintStream printStream) {
+        base.styles(styles, printStream);
     }
 }

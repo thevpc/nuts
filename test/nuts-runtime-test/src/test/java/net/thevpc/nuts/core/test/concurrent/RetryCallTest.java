@@ -56,7 +56,7 @@ public class RetryCallTest {
 
             @Override
             public <T> NOptional<T> get(NBeanRef ref) {
-                return NOptional.ofNamed((T) beans.get(ref.getId()), ref.getId());
+                return NOptional.ofNamed((T) beans.get(ref.id()), ref.id());
             }
         };
         NBeanContainer.scopedStack().runWith(springContainer,()->{

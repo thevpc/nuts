@@ -88,7 +88,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     public DefaultNCmdLine(String[] args, NShellFamily shellFamily) {
-        this.shellFamily = shellFamily == null ? NShellFamily.getCurrent() : NShellFamily.BASH;
+        this.shellFamily = shellFamily == null ? NShellFamily.current() : NShellFamily.BASH;
         setArguments(args);
     }
 
@@ -107,12 +107,12 @@ public class DefaultNCmdLine implements NCmdLine {
 
 
     @Override
-    public Object getSource() {
+    public Object source() {
         return source;
     }
 
     @Override
-    public NCmdLine setSource(Object source) {
+    public NCmdLine source(Object source) {
         this.source = source;
         return this;
     }
@@ -123,7 +123,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLine setUnsafe(boolean safe) {
+    public NCmdLine unsafe(boolean safe) {
         this.unsafe = safe;
         return this;
     }
@@ -1072,7 +1072,7 @@ public class DefaultNCmdLine implements NCmdLine {
             List<String> all = new ArrayList<>();
             NShellFamily s = shellFamily;
             if (s == null) {
-                s = NShellFamily.getCurrent();
+                s = NShellFamily.current();
 //                s = NShellFamily.BASH;
             }
             String fileContent = path.readString();

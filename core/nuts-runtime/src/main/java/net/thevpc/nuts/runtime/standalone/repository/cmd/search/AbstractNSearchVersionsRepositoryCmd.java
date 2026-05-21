@@ -42,7 +42,7 @@ public abstract class AbstractNSearchVersionsRepositoryCmd extends NRepositoryCm
 //    }
 
     @Override
-    public NSearchVersionsRepositoryCmd setFilter(NDefinitionFilter filter) {
+    public NSearchVersionsRepositoryCmd filter(NDefinitionFilter filter) {
         this.filter = filter;
         return this;
     }
@@ -61,13 +61,13 @@ public abstract class AbstractNSearchVersionsRepositoryCmd extends NRepositoryCm
     }
 
     @Override
-    public NSearchVersionsRepositoryCmd setId(NId id) {
+    public NSearchVersionsRepositoryCmd id(NId id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
