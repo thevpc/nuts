@@ -1672,7 +1672,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             case "--verbose":
             {
                 cmdLine.skip();
-                if (enabled && a.toLiteral().asBoolean().orElse(true)) {
+                if (enabled && a.literalValue().asBoolean().orElse(true)) {
                     this.setLogTermLevel(Level.FINEST);
                     this.logFileLevel(Level.FINEST);
                 }

@@ -97,12 +97,12 @@ public final class JavaExecutorOptions {
             switch (a.key()) {
                 case "--java-version":
                 case "-java-version": {
-                    cmdLine.matcher().matchEntry((v) -> javaVersion = v.stringValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> javaVersion = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--java-home":
                 case "-java-home": {
-                    cmdLine.matcher().matchEntry((v) -> javaCommand = v.stringValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> javaCommand = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--class-path":
@@ -111,7 +111,7 @@ public final class JavaExecutorOptions {
                 case "-classpath":
                 case "--cp":
                 case "-cp": {
-                    cmdLine.matcher().matchEntry((v) -> addCp(currentCP, v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> addCp(currentCP, v.stringValue())).anyMatch();
                     break;
                 }
 
@@ -121,69 +121,69 @@ public final class JavaExecutorOptions {
                 case "-nutspath":
                 case "--np":
                 case "-np": {
-                    cmdLine.matcher().matchEntry((v) -> addNp(currentCP, v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> addNp(currentCP, v.stringValue())).anyMatch();
                     break;
                 }
                 case "--main-class":
                 case "-main-class":
                 case "--class":
                 case "-class": {
-                    cmdLine.matcher().matchEntry((v) -> mainClass = v.stringValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> mainClass = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--dir":
                 case "-dir": {
-                    cmdLine.matcher().matchEntry((v) -> this.dir = NPath.of(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> this.dir = NPath.of(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--win":
                 case "--javaw": {
-                    cmdLine.matcher().matchFlag((v) -> javaw = v.booleanValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchFlag((v) -> javaw = v.booleanValue()).anyMatch();
                     break;
                 }
                 case "--jar":
                 case "-jar": {
-                    cmdLine.matcher().matchFlag((v) -> jar = v.booleanValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchFlag((v) -> jar = v.booleanValue()).anyMatch();
                     break;
                 }
                 case "--show-command":
                 case "-show-command": {
-                    cmdLine.matcher().matchFlag((v) -> showCommand = v.booleanValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchFlag((v) -> showCommand = v.booleanValue()).anyMatch();
                     break;
                 }
                 case "--exclude-base":
                 case "-exclude-base": {
-                    cmdLine.matcher().matchFlag((v) -> excludeBase = v.booleanValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchFlag((v) -> excludeBase = v.booleanValue()).anyMatch();
                     break;
                 }
                 case "--add-module": {
-                    cmdLine.matcher().matchEntry((v) -> this.j9_addModules.add(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> this.j9_addModules.add(v.stringValue())).anyMatch();
                     break;
                 }
                 case "-m":
                 case "--module": {
                     //<module>/<mainclass>
-                    cmdLine.matcher().matchEntry((v) -> this.j9_module = v.stringValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> this.j9_module = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--module-path": {
-                    cmdLine.matcher().matchEntry((v) -> this.j9_modulePath.add(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> this.j9_modulePath.add(v.stringValue())).anyMatch();
                     break;
                 }
                 case "-splash": {
-                    cmdLine.matcher().matchEntry((v) -> splash = v.stringValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> splash = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--upgrade-module-path": {
-                    cmdLine.matcher().matchEntry((v) -> this.j9_upgradeModulePath.add(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> this.j9_upgradeModulePath.add(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--prepend-arg": {
-                    cmdLine.matcher().matchEntry((v) -> this.prependArgs.add(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> this.prependArgs.add(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--append-arg": {
-                    cmdLine.matcher().matchEntry((v) -> this.appendArgs.add(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> this.appendArgs.add(v.stringValue())).anyMatch();
                     break;
                 }
                 case "-s": {

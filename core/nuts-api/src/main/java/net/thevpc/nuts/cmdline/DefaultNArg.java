@@ -211,7 +211,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<String> getStringValue() {
-        return this.toLiteral().asString()
+        return this.literalValue().asString()
                 .ifEmptyUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
@@ -222,47 +222,87 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<Integer> getIntValue() {
-        return this.toLiteral().asInt();
+        return this.literalValue().asInt();
+    }
+
+    @Override
+    public NOptional<Byte> getByteValue() {
+        return this.literalValue().asByte();
+    }
+
+    @Override
+    public NOptional<Short> getShortValue() {
+        return this.literalValue().asShort();
+    }
+
+    @Override
+    public NOptional<Character> getCharValue() {
+        return this.literalValue().asChar();
+    }
+
+    @Override
+    public NOptional<Number> getNumberValue() {
+        return this.literalValue().asNumber();
     }
 
     @Override
     public NOptional<Long> getLongValue() {
-        return this.toLiteral().asLong();
+        return this.literalValue().asLong();
     }
 
     @Override
     public NOptional<Double> getDoubleValue() {
-        return this.toLiteral().asDouble();
+        return this.literalValue().asDouble();
     }
 
     @Override
     public NOptional<Float> getFloatValue() {
-        return this.toLiteral().asFloat();
+        return this.literalValue().asFloat();
     }
 
     @Override
     public NOptional<LocalDate> getLocalDateValue() {
-        return this.toLiteral().asLocalDate();
+        return this.literalValue().asLocalDate();
     }
 
     @Override
     public NOptional<LocalTime> getLocalTimeValue() {
-        return this.toLiteral().asLocalTime();
+        return this.literalValue().asLocalTime();
     }
 
     @Override
     public NOptional<LocalDateTime> getLocalDateTimeValue() {
-        return this.toLiteral().asLocalDateTime();
+        return this.literalValue().asLocalDateTime();
     }
 
     @Override
     public NOptional<Instant> getInstantValue() {
-        return this.toLiteral().asInstant();
+        return this.literalValue().asInstant();
     }
 
     @Override
     public int intValue() {
         return getIntValue().get();
+    }
+
+    @Override
+    public byte byteValue() {
+        return getByteValue().get();
+    }
+
+    @Override
+    public short shortValue() {
+        return getShortValue().get();
+    }
+
+    @Override
+    public char charValue() {
+        return getCharValue().get();
+    }
+
+    @Override
+    public Number numberValue() {
+        return getNumberValue().get();
     }
 
     @Override
@@ -286,8 +326,8 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public LocalDateTime localTimeValue() {
-        return getLocalDateTimeValue().get();
+    public LocalTime localTimeValue() {
+        return getLocalTimeValue().get();
     }
 
     @Override
@@ -302,7 +342,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<BigInteger> getBigIntValue() {
-        return this.toLiteral().asBigInt();
+        return this.literalValue().asBigInt();
     }
 
     @Override
@@ -312,7 +352,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NOptional<BigDecimal> getBigDecimalValue() {
-        return this.toLiteral().asBigDecimal();
+        return this.literalValue().asBigDecimal();
     }
 
     @Override
@@ -372,22 +412,20 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public NLiteral toLiteral() {
+    public NLiteral literalValue() {
         return NLiteral.of(value);
     }
 
     @Override
+    public NLiteral asLiteral() {
+        return NLiteral.of(image);
+    }
+
+    @Override
     public NOptional<Boolean> getBooleanValue() {
-        if (isNegated()) {
-            return this.toLiteral().asBoolean().onEmpty(true).map(x -> isNegated() != x)
-                    .ifEmptyUse(
-                            () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
-                    )
-                    .onErrorUse(
-                            () -> NOptional.ofEmpty(() -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
-                    );
-        }
-        return this.toLiteral().asBoolean()
+        return this.literalValue().asBoolean()
+                .onEmpty(!isNegated())
+                .map(x -> isNegated() != x)
                 .ifEmptyUse(
                         () -> NOptional.ofEmpty(() -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
@@ -409,7 +447,7 @@ public class DefaultNArg implements NArg {
     @Override
     public boolean isFlagOption() {
         if (isOption()) {
-            if (this.toLiteral().isNull()) {
+            if (this.literalValue().isNull()) {
                 return true;
             }
         }
@@ -427,108 +465,125 @@ public class DefaultNArg implements NArg {
     }
 
 
+    @Override
     public NOptional<Instant> asInstant() {
-        return toLiteral().asInstant();
+        return asLiteral().asInstant();
     }
 
 
+    @Override
     public NOptional<LocalDate> asLocalDate() {
-        return toLiteral().asLocalDate();
+        return asLiteral().asLocalDate();
     }
 
 
+    @Override
     public NOptional<LocalDateTime> asLocalDateTime() {
-        return toLiteral().asLocalDateTime();
+        return asLiteral().asLocalDateTime();
     }
 
 
+    @Override
     public NOptional<LocalTime> asLocalTime() {
-        return toLiteral().asLocalTime();
+        return asLiteral().asLocalTime();
     }
 
 
+    @Override
     public NOptional<NBigComplex> asBigComplex() {
-        return toLiteral().asBigComplex();
+        return asLiteral().asBigComplex();
     }
 
 
+    @Override
     public NOptional<NDoubleComplex> asDoubleComplex() {
-        return toLiteral().asDoubleComplex();
+        return asLiteral().asDoubleComplex();
     }
 
 
+    @Override
     public NOptional<NFloatComplex> asFloatComplex() {
-        return toLiteral().asFloatComplex();
+        return asLiteral().asFloatComplex();
     }
 
 
+    @Override
     public NOptional<Number> asNumber() {
-        return toLiteral().asNumber();
+        return asLiteral().asNumber();
     }
 
 
     public NOptional<Boolean> asBoolean() {
-        return toLiteral().asBoolean();
+        return asLiteral().asBoolean();
     }
 
 
     public NOptional<Long> asLong() {
-        return toLiteral().asLong();
+        return asLiteral().asLong();
     }
 
 
+    @Override
     public NOptional<Double> asDouble() {
-        return toLiteral().asDouble();
+        return asLiteral().asDouble();
     }
 
 
+    @Override
     public NOptional<Float> asFloat() {
-        return toLiteral().asFloat();
+        return asLiteral().asFloat();
     }
 
 
+    @Override
     public NOptional<Byte> asByte() {
-        return toLiteral().asByte();
+        return asLiteral().asByte();
     }
 
 
+    @Override
     public NOptional<Short> asShort() {
-        return toLiteral().asShort();
+        return asLiteral().asShort();
     }
 
 
     public NOptional<Integer> asInt() {
-        return toLiteral().asInt();
+        return asLiteral().asInt();
     }
 
 
+    @Override
     public NOptional<BigInteger> asBigInt() {
-        return toLiteral().asBigInt();
+        return asLiteral().asBigInt();
     }
 
 
+    @Override
     public NOptional<BigDecimal> asBigDecimal() {
-        return toLiteral().asBigDecimal();
+        return asLiteral().asBigDecimal();
     }
 
 
     public boolean isBoolean() {
-        return toLiteral().asBoolean().isPresent();
+        return asLiteral().asBoolean().isPresent();
     }
 
 
+    @Override
     public boolean isString() {
-        return toLiteral().asString().isPresent();
+        return asLiteral().asString().isPresent();
     }
 
 
+    @Override
     public boolean isComplexNumber() {
-        return toLiteral().isComplexNumber();
+        return asLiteral().isComplexNumber();
     }
 
 
+    @Override
     public boolean isTemporal() {
-        NLiteral t = toLiteral();
+        NLiteral t = asLiteral();
         return t.asLocalDate().isPresent()
                 || t.asLocalDateTime().isPresent()
                 || t.asLocalTime().isPresent()
@@ -537,8 +592,9 @@ public class DefaultNArg implements NArg {
     }
 
 
+    @Override
     public boolean isLocalTemporal() {
-        NLiteral t = toLiteral();
+        NLiteral t = asLiteral();
         return t.asLocalDate().isPresent()
                 || t.asLocalDateTime().isPresent()
                 || t.asLocalTime().isPresent()
@@ -546,157 +602,177 @@ public class DefaultNArg implements NArg {
     }
 
 
+    @Override
     public boolean isNull() {
-        return toLiteral().isNull();
+        return asLiteral().isNull();
     }
 
 
+    @Override
     public boolean isByte() {
-        return toLiteral().asByte().isPresent();
+        return asLiteral().asByte().isPresent();
     }
 
 
+    @Override
     public boolean isDecimalNumber() {
-        return toLiteral().asBigDecimal().isPresent();
+        return asLiteral().asBigDecimal().isPresent();
     }
 
 
+    @Override
     public boolean isBigNumber() {
-        return toLiteral().asBigDecimal().isPresent();
+        return asLiteral().asBigDecimal().isPresent();
     }
 
 
+    @Override
     public boolean isBigDecimal() {
-        return toLiteral().asBigDecimal().isPresent();
+        return asLiteral().asBigDecimal().isPresent();
     }
 
 
+    @Override
     public boolean isBigInt() {
-        return toLiteral().asBigInt().isPresent();
+        return asLiteral().asBigInt().isPresent();
     }
 
 
     public boolean isInt() {
-        return toLiteral().asInt().isPresent();
+        return asLiteral().asInt().isPresent();
     }
 
 
     public boolean isLong() {
-        return toLiteral().asLong().isPresent();
+        return asLiteral().asLong().isPresent();
     }
 
 
     public boolean isShort() {
-        return toLiteral().asShort().isPresent();
+        return asLiteral().asShort().isPresent();
     }
 
 
+    @Override
     public boolean isFloat() {
-        return toLiteral().asFloat().isPresent();
+        return asLiteral().asFloat().isPresent();
     }
 
 
+    @Override
     public boolean isDouble() {
-        return toLiteral().asDouble().isPresent();
+        return asLiteral().asDouble().isPresent();
     }
 
 
+    @Override
     public boolean isInstant() {
-        return toLiteral().asInstant().isPresent();
+        return asLiteral().asInstant().isPresent();
     }
 
 
+    @Override
     public boolean isEmpty() {
-        return toLiteral().isEmpty();
+        return asLiteral().isEmpty();
     }
 
     @Override
     public boolean isBlank() {
-        return toLiteral().isBlank();
+        return asLiteral().isBlank();
     }
 
+    @Override
     public boolean isNumber() {
-        return toLiteral().asNumber().isPresent();
+        return asLiteral().asNumber().isPresent();
     }
 
     @Override
     public NOptional<String> asString() {
-        return toLiteral().asString();
+        return NOptional.ofNamed(image(),"image");
     }
 
 
+    @Override
     public String toStringLiteral() {
-        return toLiteral().toStringLiteral();
+        return asLiteral().toStringLiteral();
     }
 
 
+    @Override
     public NOptional<Character> asChar() {
-        return toLiteral().asChar();
+        return asLiteral().asChar();
     }
 
 
-    public boolean isSupportedType(Class<?> type) {
-        return toLiteral().isSupportedType(type);
-    }
-
-
+    @Override
     public <ET> NOptional<ET> asType(Class<ET> expectedType) {
-        return toLiteral().asType(expectedType);
+        return asLiteral().asType(expectedType);
     }
 
 
+    @Override
     public <ET> NOptional<ET> asType(Type expectedType) {
-        return toLiteral().asType(expectedType);
+        return asLiteral().asType(expectedType);
     }
 
 
+    @Override
     public NOptional<String> asStringAt(int index) {
-        return toLiteral().asStringAt(index);
+        return asLiteral().asStringAt(index);
     }
 
 
+    @Override
     public NOptional<Long> asLongAt(int index) {
-        return toLiteral().asLongAt(index);
+        return asLiteral().asLongAt(index);
     }
 
 
+    @Override
     public NOptional<Integer> asIntAt(int index) {
-        return toLiteral().asIntAt(index);
+        return asLiteral().asIntAt(index);
     }
 
 
+    @Override
     public NOptional<Double> asDoubleAt(int index) {
-        return toLiteral().asDoubleAt(index);
+        return asLiteral().asDoubleAt(index);
     }
 
 
+    @Override
     public boolean isNullAt(int index) {
-        return toLiteral().isNullAt(index);
+        return asLiteral().isNullAt(index);
     }
 
 
+    @Override
     public NLiteral asLiteralAt(int index) {
-        return toLiteral().asLiteralAt(index);
+        return asLiteral().asLiteralAt(index);
     }
 
 
+    @Override
     public NOptional<Object> asObjectAt(int index) {
-        return toLiteral().asObjectAt(index);
+        return asLiteral().asObjectAt(index);
     }
 
 
+    @Override
     public boolean isStream() {
-        return toLiteral().isStream();
+        return asLiteral().isStream();
     }
 
 
+    @Override
     public boolean isOrdinalNumber() {
-        return toLiteral().asBigInt().isPresent();
+        return asLiteral().asBigInt().isPresent();
     }
 
 
+    @Override
     public boolean isFloatingNumber() {
-        return toLiteral().asBigDecimal().isPresent();
+        return asLiteral().asBigDecimal().isPresent();
     }
 
     @Override

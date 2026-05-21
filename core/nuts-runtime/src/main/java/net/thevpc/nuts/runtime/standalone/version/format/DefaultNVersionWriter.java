@@ -46,7 +46,7 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
         switch (aa.key()) {
             case "-a":
             case "--all": {
-                cmdLine.matcher().matchFlag((v) -> this.all = v.booleanValue()).anyMatch();
+                cmdLine.matcher().withAny().matchFlag((v) -> this.all = v.booleanValue()).anyMatch();
                 return true;
             }
             case "--add": {

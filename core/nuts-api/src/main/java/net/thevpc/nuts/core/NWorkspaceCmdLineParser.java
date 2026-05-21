@@ -1124,7 +1124,7 @@ public final class NWorkspaceCmdLineParser {
                             newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                             cmdLine.skipAll();
                             if (options != null) {
-                                if (!a.toLiteral().isNull()) {
+                                if (!a.literalValue().isNull()) {
                                     List<NMsg> showError = options.errors().orNull();
                                     if (showError == null) {
                                         showError = new ArrayList<>();
@@ -1217,7 +1217,7 @@ public final class NWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 if (!NBlankable.isBlank(a.getStringValue())) {
-                                    options.expireTime(a.toLiteral().asInstant().onEmpty(null).get());
+                                    options.expireTime(a.literalValue().asInstant().onEmpty(null).get());
                                 } else {
                                     options.expireTime(Instant.now());
                                 }
@@ -1631,7 +1631,7 @@ public final class NWorkspaceCmdLineParser {
             case "--log-file-count": {
                 a = cmdLine.nextEntry().get();
                 if (enabled) {
-                    logConfig.logFileCount(a.toLiteral().asInt().get());
+                    logConfig.logFileCount(a.literalValue().asInt().get());
                     return NOptional.of(a);
                 } else {
                     return NOptional.of(a);

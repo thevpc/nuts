@@ -288,8 +288,8 @@ public class NSysExecUtils {
             NArg ac = cmdLine.peek().get();
             switch (ac.key()) {
                 case "--sudo-prompt": {
-                    if (ac.toLiteral().isNull()) {
-                        cmdLine.matcher().matchFlag((v) -> {
+                    if (ac.literalValue().isNull()) {
+                        cmdLine.matcher().withAny().matchFlag((v) -> {
                             if (v.booleanValue()) {
                                 // --sudo-prompt will reset the prompt to its defaults!
                                 changePrompt.set(false);
@@ -300,8 +300,8 @@ public class NSysExecUtils {
                                 newPromptValue.set("");
                             }
                         }).anyMatch();
-                    } else if (ac.toLiteral().isString()) {
-                        cmdLine.matcher().matchEntry((v) -> {
+                    } else if (ac.literalValue().isString()) {
+                        cmdLine.matcher().withAny().matchEntry((v) -> {
                             changePrompt.set(true);
                             newPromptValue.set(v.stringValue());
                         }).anyMatch();

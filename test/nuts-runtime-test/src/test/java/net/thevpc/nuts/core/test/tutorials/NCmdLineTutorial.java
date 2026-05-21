@@ -61,12 +61,12 @@ public class NCmdLineTutorial {
                     switch (arg.key()) {
                         case "-o":
                         case "--option": {
-                            cmdLine.matcher().matchFlag((v) -> boolOption.set(v.booleanValue())).require();
+                            cmdLine.matcher().withAny().matchFlag((v) -> boolOption.set(v.booleanValue())).require();
                             return true;
                         }
                         case "-n":
                         case "--name": {
-                            cmdLine.matcher().matchEntry((v) -> stringOption.set(v.stringValue())).require();
+                            cmdLine.matcher().withAny().matchEntry((v) -> stringOption.set(v.stringValue())).require();
                             return true;
                         }
                     }
@@ -102,12 +102,12 @@ public class NCmdLineTutorial {
                 switch (a.key()) {
                     case "-o":
                     case "--option": {
-                        cmdLine1.matcher().matchFlag((v) -> boolOption.set(v.booleanValue())).require();
+                        cmdLine1.matcher().withAny().matchFlag((v) -> boolOption.set(v.booleanValue())).require();
                         return true;
                     }
                     case "-n":
                     case "--name": {
-                        cmdLine1.matcher().matchEntry((v) -> stringOption.set(v.stringValue())).require();
+                        cmdLine1.matcher().withAny().matchEntry((v) -> stringOption.set(v.stringValue())).require();
                         return true;
                     }
                 }

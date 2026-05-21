@@ -193,12 +193,12 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 boolean enabled = aa.isUncommented();
                 switch (aa.key()) {
                     case "--parent": {
-                        cmdLine.matcher().matchEntry((v) -> parent.set(v.stringValue())).anyMatch();
+                        cmdLine.matcher().withAny().matchEntry((v) -> parent.set(v.stringValue())).anyMatch();
                         break;
                     }
                     case "-l":
                     case "--long": {
-                        cmdLine.matcher().matchFlag((v) -> longFormat.set(v.booleanValue())).anyMatch();
+                        cmdLine.matcher().withAny().matchFlag((v) -> longFormat.set(v.booleanValue())).anyMatch();
                         break;
                     }
                     default: {
@@ -255,11 +255,11 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             boolean enabled = aa.isUncommented();
             switch (aa.key()) {
                 case "--name": {
-                    cmdLine.matcher().matchEntry((v) -> repositoryName.set(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> repositoryName.set(v.stringValue())).anyMatch();
                     break;
                 }
                 case "--parent": {
-                    cmdLine.matcher().matchEntry((v) -> parent.set(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> parent.set(v.stringValue())).anyMatch();
                     break;
                 }
                 default: {
@@ -305,22 +305,22 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             switch (aa.key()) {
                 case "-l":
                 case "--location": {
-                    cmdLine.matcher().matchEntry((v) -> d.location = v.stringValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> d.location = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--name": {
-                    cmdLine.matcher().matchEntry((v) -> d.repositoryName = v.stringValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> d.repositoryName = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--parent": {
-                    cmdLine.matcher().matchEntry((v) -> d.parent = v.stringValue()).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> d.parent = v.stringValue()).anyMatch();
                     break;
                 }
                 case "--env": {
-                    cmdLine.matcher().matchEntry((v) -> {
+                    cmdLine.matcher().withAny().matchEntry((v) -> {
                         NArg vv = NArg.of(v.stringValue());
                         d.env.put(vv.getKey() == null ? null : vv.key(),
-                                vv.toLiteral() == null ? null : vv.getStringValue().get());
+                                vv.literalValue() == null ? null : vv.getStringValue().get());
                     }).anyMatch();
                     break;
                 }
@@ -380,7 +380,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             boolean enabled = aa.isUncommented();
             switch (aa.key()) {
                 case "--name": {
-                    cmdLine.matcher().matchEntry((v) -> repositoryName.set(v.stringValue())).anyMatch();
+                    cmdLine.matcher().withAny().matchEntry((v) -> repositoryName.set(v.stringValue())).anyMatch();
                     break;
                 }
                 default: {

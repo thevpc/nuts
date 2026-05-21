@@ -317,29 +317,29 @@ public abstract class AbstractNDeploy extends NWorkspaceCmdBase<NDeploy> impleme
         switch (a.key()) {
             case "-d":
             case "--desc": {
-                return cmdLine.matcher().matchEntry((v) -> descriptor(v.stringValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> descriptor(v.stringValue())).anyMatch();
             }
             case "-s":
             case "--source":
             case "--from": {
-                return cmdLine.matcher().matchEntry((v) -> from(v.stringValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> from(v.stringValue())).anyMatch();
             }
             case "-r":
             case "--target":
             case "--to": {
-                return cmdLine.matcher().matchEntry((v) -> to(v.stringValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> to(v.stringValue())).anyMatch();
             }
             case "--desc-sha1": {
-                return cmdLine.matcher().matchEntry((v) -> descriptorSha1(v.stringValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> descriptorSha1(v.stringValue())).anyMatch();
             }
             case "--desc-sha1-file": {
-                return cmdLine.matcher().matchEntry((v) -> this.descriptorSha1(NPath.of(v.stringValue()).readString())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.descriptorSha1(NPath.of(v.stringValue()).readString())).anyMatch();
             }
             case "--sha1": {
-                return cmdLine.matcher().matchEntry((v) -> this.sha1(v.stringValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.sha1(v.stringValue())).anyMatch();
             }
             case "--sha1-file": {
-                return cmdLine.matcher().matchEntry((v) -> this.sha1(NPath.of(v.stringValue()).readString())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.sha1(NPath.of(v.stringValue()).readString())).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {

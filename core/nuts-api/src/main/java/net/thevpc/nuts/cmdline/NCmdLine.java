@@ -178,13 +178,25 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         return parseDefault(line).get();
     }
 
+    /**
+     * Returns an optional user-defined object attached to this command line,
+     * typically used to identify the origin of the arguments
+     * (e.g. a config file path, a plugin descriptor, or a request context).
+     * Not used internally by NCmdLine.
+     *
+     * @return source object or null
+     */
     Object source();
 
+    /**
+     * Attaches a user-defined object to this command line to identify its origin.
+     * Not used internally by NCmdLine.
+     *
+     * @param source any object representing the source of this command line
+     * @return {@code this} instance
+     */
     NCmdLine source(Object source);
 
-    boolean isUnsafe();
-
-    NCmdLine unsafe(boolean safe);
 
     @NGetter
     NCmdLineConfigurable configurable();
@@ -682,14 +694,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     interface Matcher {
         Matcher matchAll(NCmdLineProcessor processor);
 
-        Matcher matchFlag(Consumer<NArg> consumer);
-
-        Matcher matchEntry(Consumer<NArg> consumer);
-
-        Matcher matchAny(Consumer<NArg> consumer);
-
-        Matcher matchTrueFlag(Consumer<NArg> consumer);
-
         MatcherCondition withAny();
 
         MatcherCondition with(String... names);
@@ -700,15 +704,28 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
         MatcherCondition withOption();
 
+        Matcher withDefaults();
+
         boolean anyMatch();
 
         boolean noMatch();
 
+
+        /**
+         * Equivalent to {@code withDefaults().require()} — first registers
+         * the session's built-in options (e.g. --verbose, --debug) as fallback
+         * processors, then throws if still no match.
+         * Prefer this over {@code require()} unless you explicitly want to
+         * exclude session defaults.
+         */
         void requireDefaults();
 
+        /**
+         * Throws an error if no processor matched the current argument.
+         * Does not apply session defaults.
+         */
         void require();
 
-        Matcher withDefaults();
 
         Matcher withDefaultFirst();
     }

@@ -25,10 +25,14 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.math.NBigComplex;
+import net.thevpc.nuts.math.NDoubleComplex;
+import net.thevpc.nuts.math.NFloatComplex;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NLiteral;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -37,7 +41,40 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
- * Command Line Argument
+ * Represents a parsed command-line argument with a dual-source value model.
+ *
+ * <p>An argument has two distinct value sources, reflected in three method families:</p>
+ *
+ * <ul>
+ *   <li><b>{@code asXxx()}</b> — interprets the <em>full image</em> (raw string) as a typed value.
+ *       Works on non-option args like {@code "3"} or {@code "true"}.
+ *       Example: {@code NArg.of("3").asInt()} → {@code NOptional.of(3)}
+ *       Example: {@code NArg.of("--count=3").asInt()} → {@code NOptional.ofError()}
+ *   </li>
+ *   <li><b>{@code getXxxValue()}</b> — interprets the <em>value segment</em> (after {@code =}),
+ *       with option-aware semantics (negation, flag presence).
+ *       Example: {@code NArg.of("--count=3").getIntValue()} → {@code NOptional.of(3)}
+ *       Example: {@code NArg.of("--distinct").getBooleanValue()} → {@code NOptional.of(true)}
+ *       Example: {@code NArg.of("--!distinct").getBooleanValue()} → {@code NOptional.of(false)}
+ *   </li>
+ *   <li><b>{@code xxxValue()}</b> — same as {@code getXxxValue()} but throws instead of
+ *       returning {@code NOptional}.
+ *   </li>
+ * </ul>
+ *
+ * <p>The two literal anchors are:</p>
+ * <ul>
+ *   <li>{@link #asLiteral()} — the full raw image, feeds {@code asXxx()}</li>
+ *   <li>{@link #literalValue()} — the value segment only, feeds {@code getXxxValue()}</li>
+ * </ul>
+ *
+ * <p>Note: the value segment may be implicit (no {@code =} present) depending on how
+ * the argument was produced by {@link NCmdLine}:
+ * <ul>
+ *   <li>{@code nextEntry("--a")} → value segment is {@code null}</li>
+ *   <li>{@code nextFlag("--a")} → value segment is implicitly {@code true}</li>
+ * </ul>
+ * </p>
  *
  * @author thevpc
  * @app.category Command Line
@@ -197,7 +234,9 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      * @return new instance (never null) of the value part of the argument
      * (after =)
      */
-    NLiteral toLiteral();
+    NLiteral literalValue();
+
+    NLiteral asLiteral();
 
     NOptional<Boolean> getBooleanValue();
 
@@ -215,11 +254,27 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      */
     int intValue();
 
+    NOptional<Byte> getByteValue();
+
+    NOptional<Short> getShortValue();
+
+    NOptional<Character> getCharValue();
+
+    NOptional<Number> getNumberValue();
+
     /**
      * @return value
      * @since 0.8.7
      */
     NOptional<Long> getLongValue();
+
+    byte byteValue();
+
+    short shortValue();
+
+    char charValue();
+
+    Number numberValue();
 
     /**
      * @return value
@@ -299,7 +354,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      * @return value
      * @since 0.8.6
      */
-    LocalDateTime localTimeValue();
+    LocalTime localTimeValue();
 
     /**
      * @return value
@@ -351,19 +406,105 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
 
     boolean isFlagOption();
 
+    boolean isFloat();
+
+    boolean isDouble();
+
+    boolean isInstant();
+
+    boolean isEmpty();
+
+    boolean isNumber();
+
     NOptional<String> asString();
+
+    NOptional<Instant> asInstant();
+
+    NOptional<LocalDate> asLocalDate();
+
+    NOptional<LocalDateTime> asLocalDateTime();
+
+    NOptional<LocalTime> asLocalTime();
+
+    NOptional<NBigComplex> asBigComplex();
+
+    NOptional<NDoubleComplex> asDoubleComplex();
+
+    NOptional<NFloatComplex> asFloatComplex();
+
+    NOptional<Number> asNumber();
 
     NOptional<Boolean> asBoolean();
 
+    NOptional<BigInteger> asBigInt();
+
+    NOptional<BigDecimal> asBigDecimal();
+
     boolean isBoolean();
 
+    boolean isString();
+
+    boolean isComplexNumber();
+
+    boolean isTemporal();
+
+    boolean isLocalTemporal();
+
+    boolean isNull();
+
+    boolean isByte();
+
+    boolean isDecimalNumber();
+
+    boolean isBigNumber();
+
+    boolean isBigDecimal();
+
+    boolean isBigInt();
+
     boolean isInt();
+
+    NOptional<Double> asDouble();
+
+    NOptional<Float> asFloat();
+
+    NOptional<Byte> asByte();
+
+    NOptional<Short> asShort();
 
     NOptional<Integer> asInt();
 
     boolean isLong();
 
     NOptional<Long> asLong();
+
+    String toStringLiteral();
+
+    NOptional<Character> asChar();
+
+    <ET> NOptional<ET> asType(Class<ET> expectedType);
+
+    <ET> NOptional<ET> asType(Type expectedType);
+
+    NOptional<String> asStringAt(int index);
+
+    NOptional<Long> asLongAt(int index);
+
+    NOptional<Integer> asIntAt(int index);
+
+    NOptional<Double> asDoubleAt(int index);
+
+    boolean isNullAt(int index);
+
+    NLiteral asLiteralAt(int index);
+
+    NOptional<Object> asObjectAt(int index);
+
+    boolean isStream();
+
+    boolean isOrdinalNumber();
+
+    boolean isFloatingNumber();
 
     /**
      * returns the owner commandline

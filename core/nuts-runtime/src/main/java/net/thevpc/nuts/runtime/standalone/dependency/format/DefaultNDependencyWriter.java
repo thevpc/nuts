@@ -204,7 +204,7 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
         boolean enabled = aa.isUncommented();
         switch (aa.key()) {
             case "--omit-env": {
-                cmdLine.matcher().matchFlag((v) -> omitOtherProperties(v.booleanValue())).anyMatch();
+                cmdLine.matcher().withAny().matchFlag((v) -> omitOtherProperties(v.booleanValue())).anyMatch();
                 return true;
             }
 //            case "--omit-face": {
@@ -212,19 +212,19 @@ public class DefaultNDependencyWriter extends DefaultObjectWriterBase<NDependenc
 //                return true;
 //            }
             case "--omit-group": {
-                cmdLine.matcher().matchFlag((v) -> omitGroupId(v.booleanValue())).anyMatch();
+                cmdLine.matcher().withAny().matchFlag((v) -> omitGroupId(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--omit-imported-group": {
-                cmdLine.matcher().matchFlag((v) -> omitImportedGroup(v.booleanValue())).anyMatch();
+                cmdLine.matcher().withAny().matchFlag((v) -> omitImportedGroup(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--omit-repo": {
-                cmdLine.matcher().matchFlag((v) -> omitRepository(v.booleanValue())).anyMatch();
+                cmdLine.matcher().withAny().matchFlag((v) -> omitRepository(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--highlight-imported-group": {
-                cmdLine.matcher().matchFlag((v) -> highlightImportedGroup(v.booleanValue())).anyMatch();
+                cmdLine.matcher().withAny().matchFlag((v) -> highlightImportedGroup(v.booleanValue())).anyMatch();
                 return true;
             }
         }

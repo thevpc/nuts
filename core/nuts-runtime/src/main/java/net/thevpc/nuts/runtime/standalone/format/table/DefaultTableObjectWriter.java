@@ -335,7 +335,7 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
             return true;
         } else if ((a = cmdLine.nextEntry("--border").orNull()) != null) {
             if (a.isUncommented()) {
-                helper.setBorder(a.toLiteral().asString().orElse(""));
+                helper.setBorder(a.literalValue().asString().orElse(""));
             }
             return true;
         } else if (cmdLine.hasNext() && cmdLine.isNextOption()) {

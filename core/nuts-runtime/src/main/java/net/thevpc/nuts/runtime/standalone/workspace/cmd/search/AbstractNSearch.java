@@ -649,90 +649,90 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         boolean enabled = a.isUncommented();
         switch (a.key()) {
             case "--inline-dependencies": {
-                return cmdLine.matcher().matchFlag((v) -> this.inlineDependencies(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.inlineDependencies(v.booleanValue())).anyMatch();
             }
             case "--describe": {
-                return cmdLine.matcher().matchFlag((v) -> this.describe = v.booleanValue()).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.describe = v.booleanValue()).anyMatch();
             }
             case "-L":
             case "--latest":
             case "--latest-versions": {
-                return cmdLine.matcher().matchFlag((v) -> this.latest(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.latest(v.booleanValue())).anyMatch();
             }
             case "--repo": {
-                return cmdLine.matcher().matchEntry((v) -> this.repositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v.stringValue(), ";,|", true, true).toArray(new String[0])))).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.repositoryFilter(NRepositoryFilters.of().bySelector(NStringUtils.split(v.stringValue(), ";,|", true, true).toArray(new String[0])))).anyMatch();
             }
             case "--distinct": {
-                return cmdLine.matcher().matchFlag((v) -> this.distinct(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.distinct(v.booleanValue())).anyMatch();
             }
             case "--default":
             case "--default-versions": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.getBooleanValue().onError(false).orElse(null)))).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDefaultVersion(v.getBooleanValue().onError(false).orElse(null)))).anyMatch();
             }
             case "--duplicates": {
-                return cmdLine.matcher().matchFlag((v) -> this.distinct(!v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.distinct(!v.booleanValue())).anyMatch();
             }
             case "-s":
             case "--sort": {
-                return cmdLine.matcher().matchFlag((v) -> this.sorted(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.sorted(v.booleanValue())).anyMatch();
             }
             case "--base": {
-                return cmdLine.matcher().matchFlag((v) -> this.includeBasePackage = v.booleanValue()).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.includeBasePackage = v.booleanValue()).anyMatch();
             }
             case "--lib":
             case "--libs": {
-                return cmdLine.matcher().matchFlag((v) -> this.setLib(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.setLib(v.booleanValue())).anyMatch();
             }
             case "--app":
             case "--apps": {
-                return cmdLine.matcher().matchFlag((v) -> this.executable(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.executable(v.booleanValue())).anyMatch();
             }
             case "--companion":
             case "--companions": {
-                return cmdLine.matcher().matchFlag((v) -> this.companion(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.companion(v.booleanValue())).anyMatch();
             }
             case "--extension":
             case "--extensions": {
-                return cmdLine.matcher().matchFlag((v) -> this.extension(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.extension(v.booleanValue())).anyMatch();
             }
             case "--runtime": {
-                return cmdLine.matcher().matchFlag((v) -> this.runtime(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.runtime(v.booleanValue())).anyMatch();
             }
             case "--api-version": {
-                return cmdLine.matcher().matchEntry((v) -> this.targetApiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.targetApiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                return cmdLine.matcher().matchFlag((v) -> this.nutsApplication(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.nutsApplication(v.booleanValue())).anyMatch();
             }
             case "--arch": {
-                return cmdLine.matcher().matchEntry((v) -> this.addDefinitionFilter(
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.addDefinitionFilter(
                         NDefinitionFilters.of().nonnull(this.definitionFilter()).and(NDefinitionFilters.of().byArch(v.stringValue()))
                 )).anyMatch();
             }
             case "--packaging": {
-                return cmdLine.matcher().matchEntry((v) -> this.addDefinitionFilter(
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.addDefinitionFilter(
                         NDefinitionFilters.of().nonnull(this.definitionFilter()).and(NDefinitionFilters.of().byPackaging(v.stringValue()))
                 )).anyMatch();
             }
             case "--id": {
-                return cmdLine.matcher().matchEntry((v) -> this.addId(v.stringValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.addId(v.stringValue())).anyMatch();
             }
             case "--locked-id": {
-                return cmdLine.matcher().matchEntry((v) -> definitionFilter(NDefinitionFilterUtils.addLockedIds(definitionFilter(), NId.of(v.stringValue())))).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> definitionFilter(NDefinitionFilterUtils.addLockedIds(definitionFilter(), NId.of(v.stringValue())))).anyMatch();
             }
             case "--deployed": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDeployed(a.booleanValue()).and(definitionFilter()))).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byDeployed(a.booleanValue()).and(definitionFilter()))).anyMatch();
             }
             case "-i":
             case "--installed": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byInstalled(a.booleanValue()).and(definitionFilter()))).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byInstalled(a.booleanValue()).and(definitionFilter()))).anyMatch();
             }
             case "--required": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byRequired(a.booleanValue()).and(definitionFilter()))).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byRequired(a.booleanValue()).and(definitionFilter()))).anyMatch();
             }
             case "--obsolete": {
-                return cmdLine.matcher().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byObsolete(a.booleanValue()).and(definitionFilter()))).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.addDefinitionFilter(NDefinitionFilters.of().byObsolete(a.booleanValue()).and(definitionFilter()))).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {

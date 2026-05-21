@@ -331,22 +331,22 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
         }
         switch (aa.key()) {
             case "--omit-env": {
-                return cmdLine.matcher().matchFlag((v) -> this.omitOtherProperties(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.omitOtherProperties(v.booleanValue())).anyMatch();
             }
             case "--omit-face": {
-                return cmdLine.matcher().matchFlag((v) -> this.omitFace(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.omitFace(v.booleanValue())).anyMatch();
             }
             case "--omit-group": {
-                return cmdLine.matcher().matchFlag((v) -> this.omitGroupId(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.omitGroupId(v.booleanValue())).anyMatch();
             }
             case "--omit-imported-group": {
-                return cmdLine.matcher().matchFlag((v) -> this.omitImportedGroupId(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.omitImportedGroupId(v.booleanValue())).anyMatch();
             }
             case "--omit-repo": {
-                return cmdLine.matcher().matchFlag((v) -> this.omitRepository(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.omitRepository(v.booleanValue())).anyMatch();
             }
             case "--highlight-imported-group": {
-                return cmdLine.matcher().matchFlag((v) -> this.highlightImportedGroupId(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.highlightImportedGroupId(v.booleanValue())).anyMatch();
             }
         }
         return false;

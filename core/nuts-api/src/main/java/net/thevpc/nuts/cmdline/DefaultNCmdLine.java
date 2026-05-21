@@ -73,7 +73,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
     private Object source;
 
-    private boolean unsafe;
 
     /**
      * configurable or null
@@ -88,7 +87,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     public DefaultNCmdLine(String[] args, NShellFamily shellFamily) {
-        this.shellFamily = shellFamily == null ? NShellFamily.current() : NShellFamily.BASH;
+        this.shellFamily = shellFamily == null ? NShellFamily.current() : shellFamily;
         setArguments(args);
     }
 
@@ -114,17 +113,6 @@ public class DefaultNCmdLine implements NCmdLine {
     @Override
     public NCmdLine source(Object source) {
         this.source = source;
-        return this;
-    }
-
-    @Override
-    public boolean isUnsafe() {
-        return unsafe;
-    }
-
-    @Override
-    public NCmdLine unsafe(boolean safe) {
-        this.unsafe = safe;
         return this;
     }
 
@@ -415,7 +403,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     public static class MatcherImpl implements Matcher {
-        private NCmdLine cmdLine;
+        private final NCmdLine cmdLine;
         List<NCmdLineProcessor> processors = new ArrayList<>();
 
         public MatcherImpl(NCmdLine cmdLine) {
@@ -451,27 +439,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition withAny() {
-            return new MyMatcherConditionImpl(this, c -> true, new String[0]);
-        }
-
-        @Override
-        public Matcher matchTrueFlag(Consumer<NArg> consumer) {
-            return withAny().matchTrueFlag(consumer);
-        }
-
-        @Override
-        public Matcher matchFlag(Consumer<NArg> consumer) {
-            return withAny().matchFlag(consumer);
-        }
-
-        @Override
-        public Matcher matchEntry(Consumer<NArg> consumer) {
-            return withAny().matchEntry(consumer);
-        }
-
-        @Override
-        public Matcher matchAny(Consumer<NArg> consumer) {
-            return withAny().matchAny(consumer);
+            return new MyMatcherConditionImpl(this, c -> true);
         }
 
         @Override
@@ -498,7 +466,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
         @Override
         public MatcherCondition withCondition(Predicate<NCmdLine> condition) {
-            return new MyMatcherConditionImpl(this, condition, new String[0]);
+            return new MyMatcherConditionImpl(this, condition);
         }
 
         @Override
@@ -713,12 +681,9 @@ public class DefaultNCmdLine implements NCmdLine {
         }
         int initialCount = count;
         while (initialCount > 0 && hasNext()) {
-            if (next() != null) {
-                wordIndex++;
-                initialCount--;
-            } else {
-                break;
-            }
+            next();
+            wordIndex++;
+            initialCount--;
         }
         return count;
     }
@@ -1187,7 +1152,6 @@ public class DefaultNCmdLine implements NCmdLine {
         c.commandName = this.commandName;
         c.configurable = this.configurable;
         c.source = this.source;
-        c.unsafe = this.unsafe;
         return c;
     }
 
@@ -1409,39 +1373,27 @@ public class DefaultNCmdLine implements NCmdLine {
         NCmdLine cmd = this;
         NArg a;
         processor.init(cmd);
-        if (isUnsafe()) {
-            while ((a = peek().orNull()) != null) {
-                if (processor.next(a, cmd)) {
-                    // safe
-                } else if (configurable != null && configurable.configureFirst(this)) {
-                    // safe
-                } else {
-                    this.throwUnexpectedArgument();
+        while (cmd.hasNext()) {
+            a = cmd.peek().get();
+            if (processor.next(a, cmd)) {
+                NArg next = cmd.peek().orNull();
+                //reference equality!
+                if (next == a) {
+                    //was not consumed!
+                    throwError(NMsg.ofC("next must consume the argument: %s",
+                            a));
                 }
-            }
-        } else {
-            while (cmd.hasNext()) {
-                a = cmd.peek().get();
-                if (processor.next(a, cmd)) {
-                    NArg next = cmd.peek().orNull();
-                    //reference equality!
-                    if (next == a) {
-                        //was not consumed!
-                        throwError(NMsg.ofC("next must consume the argument: %s",
-                                a));
-                    }
-                } else if (configurable != null && configurable.configureFirst(cmd)) {
-                    NArg next = cmd.peek().orNull();
-                    //reference equality!
-                    if (next == a) {
-                        //was not consumed!
-                        throwError(NMsg.ofC("%s must consume the option: %s",
-                                ("configurable.configureFirst(...)"),
-                                a));
-                    }
-                } else {
-                    cmd.throwUnexpectedArgument();
+            } else if (configurable != null && configurable.configureFirst(cmd)) {
+                NArg next = cmd.peek().orNull();
+                //reference equality!
+                if (next == a) {
+                    //was not consumed!
+                    throwError(NMsg.ofC("%s must consume the option: %s",
+                            ("configurable.configureFirst(...)"),
+                            a));
                 }
+            } else {
+                cmd.throwUnexpectedArgument();
             }
         }
         processor.validate(cmd);
@@ -1490,32 +1442,26 @@ public class DefaultNCmdLine implements NCmdLine {
                         some = true;
                         break;
                     } else {
-                        if (isUnsafe()) {
-                            NArg b = peek().orNull();
-                            if (b != a) {
-                                throwError(NMsg.ofC("process(...) must not consume the argument if not relevant"));
-                            }
+                        NArg b = peek().orNull();
+                        if (b != a) {
+                            throwError(NMsg.ofC("process(...) returned false but consumed argument: %s", a));
                         }
                     }
                 }
             }
             if (!some) {
                 if (configurable != null && configurable.configureFirst(this)) {
-                    if (isUnsafe()) {
-                        NArg b = peek().orNull();
-                        if (b == a) {
-                            throwError(NMsg.ofC("process(...) must consume the argument if relevant"));
-                        }
-                    }
-                } else {
-                    this.throwUnexpectedArgument();
-                }
-            } else {
-                if (isUnsafe()) {
                     NArg b = peek().orNull();
                     if (b == a) {
-                        throwError(NMsg.ofC("process(...) must consume the argument if relevant"));
+                        throwError(NMsg.ofC("configureFirst(...) returned true but did not consume argument: %s", a));
+                    } else {
+                        this.throwUnexpectedArgument();
                     }
+                }
+            } else {
+                NArg b = peek().orNull();
+                if (b == a) {
+                    throwError(NMsg.ofC("process(...) returned true but did not consume argument: %s", a));
                 }
             }
         }
@@ -1582,7 +1528,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 return false;
             }
             return nextFlag((value) -> {
-                if (value.isBoolean() && value.booleanValue()) {
+                if (value.getBooleanValue().isPresent() && value.booleanValue()) {
                     consumer.accept(value);
                 }
             });
@@ -1592,8 +1538,8 @@ public class DefaultNCmdLine implements NCmdLine {
     private static class MyMatcherConditionImpl implements MatcherCondition {
         private final Predicate<NCmdLine> baseCondition;
         private final String[] names;
-        private MatcherImpl selector;
-        private List<Predicate<NCmdLine>> otherConditions = new ArrayList<>();
+        private final MatcherImpl selector;
+        private final List<Predicate<NCmdLine>> otherConditions = new ArrayList<>();
 
         public MyMatcherConditionImpl(MatcherImpl selector, Predicate<NCmdLine> baseCondition, String... names) {
             this.baseCondition = baseCondition;
@@ -1713,6 +1659,7 @@ public class DefaultNCmdLine implements NCmdLine {
             });
             return selector;
         }
+
         @Override
         public Matcher skip() {
             selector.matchAll(new NCmdLineProcessor() {
@@ -1722,10 +1669,7 @@ public class DefaultNCmdLine implements NCmdLine {
                         return false;
                     }
                     NOptional<NArg> v = selector.cmdLine.next();
-                    if (v.isPresent()) {
-                        return true;
-                    }
-                    return false;
+                    return v.isPresent();
 
                 }
             });

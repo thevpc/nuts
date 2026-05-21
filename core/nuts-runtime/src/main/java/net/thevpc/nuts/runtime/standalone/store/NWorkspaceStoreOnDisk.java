@@ -404,15 +404,14 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
                     }
                 }
                 if (changeStatus && !workspace.isReadOnly()) {
-                    NLock.ofPath(path).callWith(() -> {
+                    NLock.ofPath(path).runWith(() -> {
                                 _LOG()
                                         .log(NMsg.ofC("install-info upgraded %s", path).asConfig());
                                 c.configVersion(workspace.apiVersion());
                                 NElementWriter.ofJson().write(c, path);
-                                return null;
                             },
                             CoreNUtils.LOCK_TIME, CoreNUtils.LOCK_TIME_UNIT
-                    ).get();
+                    );
                 }
             }
             return c;

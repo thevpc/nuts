@@ -438,29 +438,29 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
 //            }
             case "-i":
             case "--installed": {
-                return cmdLine.matcher().matchFlag((v) -> this.installed(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.installed(v.booleanValue())).anyMatch();
             }
             case "-r":
             case "--runtime": {
-                return cmdLine.matcher().matchFlag((v) -> this.runtime(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.runtime(v.booleanValue())).anyMatch();
             }
             case "-A":
             case "--api": {
-                return cmdLine.matcher().matchFlag((v) -> this.api(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.api(v.booleanValue())).anyMatch();
             }
 
             case "-e":
             case "--extensions": {
-                return cmdLine.matcher().matchFlag((v) -> this.extensions(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.extensions(v.booleanValue())).anyMatch();
             }
             case "-c":
             case "--companions": {
-                return cmdLine.matcher().matchFlag((v) -> this.companions(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.companions(v.booleanValue())).anyMatch();
             }
             case "-v":
             case "--api-version":
             case "--to-version": {
-                return cmdLine.matcher().matchEntry((v) -> this.apiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> this.apiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
             }
             case "-g":
             case "--args": {

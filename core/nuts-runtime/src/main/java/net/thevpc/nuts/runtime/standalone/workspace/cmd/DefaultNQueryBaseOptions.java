@@ -207,15 +207,15 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         }
         switch (a.key()) {
             case "--failfast": {
-                return cmdLine.matcher().matchFlag((v) -> this.failFast(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> this.failFast(v.booleanValue())).anyMatch();
             }
             case "-r":
             case "--repository": {
-                return cmdLine.matcher().matchEntry((v) -> addRepositoryFilter(NRepositoryFilters.of().bySelector(v.stringValue()))).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> addRepositoryFilter(NRepositoryFilters.of().bySelector(v.stringValue()))).anyMatch();
             }
 
             case "--scope": {
-                return cmdLine.matcher().matchEntry((v) -> NDependencyFilterUtils.addScope(dependencyFilter(),NDependencyScopePattern.parse(v.stringValue()).orElse(NDependencyScopePattern.API))).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> NDependencyFilterUtils.addScope(dependencyFilter(),NDependencyScopePattern.parse(v.stringValue()).orElse(NDependencyScopePattern.API))).anyMatch();
             }
 
 //            case "-i":
@@ -226,7 +226,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 //                return true;
 //            }
             case "--optional": {
-                return cmdLine.matcher().matchEntry((v) ->
+                return cmdLine.matcher().withAny().matchEntry((v) ->
                         this.dependencyFilter(NDependencyFilters.of().nonnull(this.dependencyFilter()).and(NDependencyFilters.of().byOptional(NLiteral.of(v.asString().get()).asBoolean()
                                 .orNull())))).anyMatch();
             }

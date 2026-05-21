@@ -103,10 +103,10 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         }
         switch (a.key()) {
             case "--compact": {
-                return cmdLine.matcher().matchFlag((v) -> compact = v.booleanValue()).anyMatch();
+                return cmdLine.matcher().withAny().matchFlag((v) -> compact = v.booleanValue()).anyMatch();
             }
             case "--root-name": {
-                return cmdLine.matcher().matchEntry((v) -> rootName = v.stringValue()).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> rootName = v.stringValue()).anyMatch();
             }
         }
         return false;
