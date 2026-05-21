@@ -53,3 +53,6 @@ Follow this strict discovery workflow:
 1. **Locate by Filename First:** Use `folder_find` or `list_files` from the project root using a glob pattern for the filename (e.g., name="*NApp.java*") to discover its exact path.
 2. **Loosen Content Search Patterns:** If you cannot find the file by name and must use `folder_grep` to find a definition, search for the identifier name alone (e.g., pattern="NApp") rather than a rigid string like "public class NApp" which fails if the target is an interface, abstract class, or annotated definition.
 3. **Verify Before Action:** Only attempt to read (`file_read`, `file_grep`, etc.) or modify a file once you have verified its real path through a discovery tool.
+
+## Tools preference
+when trying to solve a problem, and you need to use a tool, try specific tools first. as an example, prefer to use `folder_find` over `run_shell` if you just need to find a file in a directory.
