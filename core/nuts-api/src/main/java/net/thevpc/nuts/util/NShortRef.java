@@ -4,6 +4,12 @@ package net.thevpc.nuts.util;
  * @author vpc
  */
 public class NShortRef extends NObjectRef<Short> {
+    public static NShortRef of(){
+        return new NShortRef(null);
+    }
+    public static NShortRef of(Short value){
+        return new NShortRef(value);
+    }
 
     public NShortRef(Short value) {
         super(value);

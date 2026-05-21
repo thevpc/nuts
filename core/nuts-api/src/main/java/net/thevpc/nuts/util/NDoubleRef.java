@@ -8,6 +8,9 @@ public class NDoubleRef extends NObjectRef<Double> {
     public static NDoubleRef of(){
         return new NDoubleRef(null);
     }
+    public static NDoubleRef of(Double value){
+        return new NDoubleRef(value);
+    }
 
     public NDoubleRef(Double value) {
         super(value);

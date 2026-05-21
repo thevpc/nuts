@@ -5,6 +5,12 @@ package net.thevpc.nuts.util;
  * @author vpc
  */
 public class NFloatRef extends NObjectRef<Float> {
+    public static NFloatRef of(){
+        return new NFloatRef(null);
+    }
+    public static NFloatRef of(Float value){
+        return new NFloatRef(value);
+    }
 
     public NFloatRef(Float value) {
         super(value);

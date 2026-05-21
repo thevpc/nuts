@@ -5,6 +5,12 @@ package net.thevpc.nuts.util;
  * @author vpc
  */
 public class NLongRef extends NObjectRef<Long> {
+    public static NLongRef of(){
+        return new NLongRef(null);
+    }
+    public static NLongRef of(Long value){
+        return new NLongRef(value);
+    }
 
     public NLongRef(Long value) {
         super(value);

@@ -4,6 +4,12 @@ package net.thevpc.nuts.util;
  * @author vpc
  */
 public class NByteRef extends NObjectRef<Byte> {
+    public static NByteRef of(){
+        return new NByteRef(null);
+    }
+    public static NByteRef of(Byte value){
+        return new NByteRef(value);
+    }
 
     public NByteRef(Byte value) {
         super(value);

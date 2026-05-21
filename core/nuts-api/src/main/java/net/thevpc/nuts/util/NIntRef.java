@@ -8,6 +8,10 @@ public class NIntRef extends NObjectRef<Integer> {
     public static NIntRef of(){
         return new NIntRef(null);
     }
+    public static NIntRef of(Integer value){
+        return new NIntRef(value);
+    }
+
     public NIntRef(Integer value) {
         super(value);
     }
