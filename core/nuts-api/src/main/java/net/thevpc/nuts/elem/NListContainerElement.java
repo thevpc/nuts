@@ -205,5 +205,7 @@ public interface NListContainerElement extends NElement, NListOrParametrizedCont
      */
     int size();
 
+    List<NPairElement> pairs();
+    List<NPairElement> namedPairs();
 
 }

@@ -517,6 +517,20 @@ public class DefaultNCmdLine implements NCmdLine {
                 cmdLine.throwUnexpectedArgument();
             }
         }
+
+        @Override
+        public void requireAll() {
+            while (cmdLine.hasNext()) {
+                require();
+            }
+        }
+
+        @Override
+        public void requireAllDefaults() {
+            while (cmdLine.hasNext()) {
+                requireDefaults();
+            }
+        }
     }
 
     public Matcher matcher() {

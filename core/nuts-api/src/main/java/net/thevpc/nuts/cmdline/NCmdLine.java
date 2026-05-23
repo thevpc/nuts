@@ -726,11 +726,21 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
          */
         void require();
 
+        /**
+         * equivalent to {@code while(cmdline.hasMode()){require()} }
+         */
+        void requireAll();
+
+        /**
+         * equivalent to {@code while(cmdline.hasMode()){requireDefaults()} }
+         */
+        void requireAllDefaults();
+
 
         Matcher withDefaultFirst();
     }
 
-    public interface MatcherCondition {
+    interface MatcherCondition {
         /**
          * consume next argument with boolean value and run {@code consumer}
          *

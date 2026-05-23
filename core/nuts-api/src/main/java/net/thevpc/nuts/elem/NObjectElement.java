@@ -51,6 +51,4 @@ public interface NObjectElement extends NNamedElement, NListContainerElement, NP
     NObjectElementBuilder builder();
 
 
-    List<NPairElement> pairs();
-    List<NPairElement> namedPairs();
 }

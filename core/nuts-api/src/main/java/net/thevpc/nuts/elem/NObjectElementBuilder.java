@@ -63,6 +63,10 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder set(String name, Double value);
 
+    NObjectElementBuilder set(String name, Float value);
+
+    NObjectElementBuilder set(String name, Byte value);
+
     NObjectElementBuilder set(String name, String value);
 
     NObjectElementBuilder set(String name, Long value);
@@ -227,6 +231,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder set(NElement name, Boolean value);
 
     NObjectElementBuilder set(NElement name, Double value);
+
     NObjectElementBuilder set(NElement name, Float value);
 
     NObjectElementBuilder set(NElement name, Integer value);

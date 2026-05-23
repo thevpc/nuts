@@ -381,6 +381,16 @@ public interface NArrayElementBuilder extends NElementBuilder {
 
     NArrayElementBuilder set(String name, Double value);
 
+    NArrayElementBuilder set(String name, Float value);
+
+    NArrayElementBuilder set(String name, Long value);
+
+    NArrayElementBuilder set(String name, Byte value);
+
+    NArrayElementBuilder set(String name, Short value);
+
+    NArrayElementBuilder set(String name, Character value);
+
     NArrayElementBuilder set(String name, String value);
 
     NArrayElementBuilder setParamAt(int index, Boolean value);

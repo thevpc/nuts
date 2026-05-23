@@ -1,5 +1,6 @@
 package net.thevpc.nuts.net;
 
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.text.NMsg;
@@ -31,6 +32,7 @@ public interface NWebResponse {
     <T> List<T> contentArrayAsJson();
 
     <T> T contentAsJson(Class<T> clz);
+    NElement contentAsJson();
 
     <T> T contentAs(Class<T> clz, NContentType type);
 

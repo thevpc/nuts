@@ -270,3 +270,4 @@ core/nuts-app-full/target
 /nuts-release-tool.local.tson
 .aider*
 /.naru/local
+/._config.yml.swp

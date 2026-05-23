@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
 import net.thevpc.nuts.concurrent.NOnceValue;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NInputSource;
@@ -103,6 +104,11 @@ public class NWebResponseImpl implements NWebResponse {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    @Override
+    public NElement contentAsJson() {
+        return contentAs(NElement.class, NContentType.JSON);
     }
 
     @Override

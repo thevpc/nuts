@@ -281,6 +281,16 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NObjectElementBuilder set(String name, Float value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NObjectElementBuilder set(String name, Byte value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
     public NObjectElementBuilder set(String name, String value) {
         return set(CoreNElementUtils.pair(name, value));
     }

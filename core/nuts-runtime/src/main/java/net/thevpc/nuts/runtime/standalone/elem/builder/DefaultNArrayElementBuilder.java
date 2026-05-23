@@ -264,6 +264,31 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
+    public NArrayElementBuilder set(String name, Float value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, Long value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, Byte value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, Short value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
+    public NArrayElementBuilder set(String name, Character value) {
+        return set(CoreNElementUtils.pair(name, value));
+    }
+
+    @Override
     public NArrayElementBuilder set(String name, String value) {
         return set(CoreNElementUtils.pair(name, value));
     }
