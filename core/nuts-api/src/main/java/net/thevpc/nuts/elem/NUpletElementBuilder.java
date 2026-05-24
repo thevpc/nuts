@@ -53,6 +53,8 @@ public interface NUpletElementBuilder extends NElementBuilder {
 
     List<NElement> params();
 
+    NUpletElementBuilder remove(String child);
+
     /**
      * element count
      *

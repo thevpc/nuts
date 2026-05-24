@@ -210,12 +210,12 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public String prefix() {
+    public String baseUri() {
         return prefix;
     }
 
     @Override
-    public NWebCli prefix(String prefix) {
+    public NWebCli baseUri(String prefix) {
         this.prefix = prefix;
         return this;
     }

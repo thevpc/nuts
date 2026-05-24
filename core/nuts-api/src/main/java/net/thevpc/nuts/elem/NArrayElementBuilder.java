@@ -53,6 +53,8 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     List<NElement> children();
 
+    NArrayElementBuilder remove(String child);
+
     /**
      * element count
      *

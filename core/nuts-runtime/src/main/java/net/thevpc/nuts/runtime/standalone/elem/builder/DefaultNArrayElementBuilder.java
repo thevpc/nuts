@@ -54,6 +54,12 @@ public class DefaultNArrayElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    @Override
+    public NArrayElementBuilder remove(String child) {
+        CoreNElementUtils.removePairByKey(child,values);
+        return this;
+    }
+
     public NOptional<String> name() {
         return NOptional.ofNamed(name, name);
     }

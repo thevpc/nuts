@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class NWebRequestImpl implements NWebRequest {
-    private String url;
+    private String uri;
     private NHttpMethod method;
     private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
     private Map<String, List<String>> parameters;
@@ -98,7 +98,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public String uri() {
-        return url;
+        return uri;
     }
 
     @Override
@@ -212,7 +212,7 @@ public class NWebRequestImpl implements NWebRequest {
                 }
             }
         }
-        this.url = sb.toString();
+        this.uri = sb.toString();
         return this;
     }
 
@@ -234,7 +234,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest uri(String url) {
-        this.url = url;
+        this.uri = url;
         return this;
     }
 
@@ -905,20 +905,20 @@ public class NWebRequestImpl implements NWebRequest {
         return cli.run(this);
     }
 
-    public String effectiveUrl() {
+    public String effectiveUri() {
         return cli.formatURL(this, true);
     }
 
     @Override
     public String toString() {
-        return effectiveUrl();
+        return effectiveUri();
     }
 
     @Override
     public NMsg toMsg() {
         return NMsg.ofC("%s %s",
                 method == null ? NHttpMethod.GET : method,
-                NMsg.ofStyledPath(effectiveUrl())
+                NMsg.ofStyledPath(effectiveUri())
         );
     }
 }

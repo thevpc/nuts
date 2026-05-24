@@ -20,9 +20,9 @@ public interface NWebCli extends NComponent {
     NWebCli responsePostProcessor(Function<NWebResponse, NWebResponse> responsePostProcessor);
 
     @NGetter
-    String prefix();
+    String baseUri();
 
-    NWebCli prefix(String prefix);
+    NWebCli baseUri(String prefix);
 
     NWebRequest req(NHttpMethod method);
 

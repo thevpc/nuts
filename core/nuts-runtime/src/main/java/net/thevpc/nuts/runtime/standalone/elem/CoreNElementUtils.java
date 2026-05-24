@@ -674,4 +674,19 @@ public class CoreNElementUtils {
         }
         return NOptional.ofNamedEmpty("property " + s);
     }
+
+    public static void removePairByKey(String child, List<NElement> values) {
+        if(values!=null) {
+            Iterator<NElement> it = values.iterator();
+            while (it.hasNext()) {
+                NElement n = it.next();
+                if (n.isNamedPair()) {
+                    NPairElement p = n.asPair().get();
+                    if ((p.key().isNull() && child == null) || Objects.equals(p.key().asStringValue().orNull(), child)) {
+                        it.remove();
+                    }
+                }
+            }
+        }
+    }
 }

@@ -893,8 +893,9 @@ public class NMemorySize implements Serializable{
                         r = st.nextToken();
                         if (r == StreamTokenizer.TT_EOF) {
                             break;
-                        }
-                        if (r == ' ') {
+                        }else  if (r == StreamTokenizer.TT_WORD) {
+                            sb.append(st.sval);
+                        } else if (r == ' ') {
                             //ignore
                         } else if (
                                 (r >= 'a' && r <= 'z')
@@ -915,7 +916,21 @@ public class NMemorySize implements Serializable{
                     if (unitString.isEmpty()) {
                         return NOptional.of(NMemorySize.ofUnit(nval.longValue(), defaultUnit, false));
                     }
-                    return NOptional.ofNull();
+                    NMemoryUnit u = NMemoryUnit.parse(sb.toString()).orNull();
+                    if(u!=null){
+                        return NOptional.of(NMemorySize.ofUnit(nval.longValue(), u, false));
+                    }
+                    if(sb.toString().endsWith("i")){
+                        u = NMemoryUnit.parse(sb.toString().substring(0,sb.length()-1)).orNull();
+                        if(u!=null){
+                            return NOptional.of(NMemorySize.ofUnit(nval.longValue(), u, true));
+                        }
+                    }
+                    String finalValue2 = value;
+                    return NOptional.ofError(() -> NMsg.ofC(
+                            "erroneous memory size : %s",
+                            finalValue2
+                    ));
                 }
             }
         } catch (Exception ie) {

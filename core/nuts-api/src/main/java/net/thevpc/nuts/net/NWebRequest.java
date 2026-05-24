@@ -174,7 +174,7 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest addPart(String name, String fileName, String contentType, NInputSource body);
 
-    String effectiveUrl();
+    String effectiveUri();
 
     NWebResponse run();
 

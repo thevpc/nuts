@@ -55,6 +55,12 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
         return this;
     }
 
+    @Override
+    public NObjectElementBuilder remove(String child) {
+        CoreNElementUtils.removePairByKey(child,values);
+        return this;
+    }
+
     public NOptional<String> name() {
         return NOptional.ofNamed(name, name);
     }

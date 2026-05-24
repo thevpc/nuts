@@ -54,6 +54,13 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         return this;
     }
 
+    @Override
+    public NUpletElementBuilder remove(String child) {
+        CoreNElementUtils.removePairByKey(child,params);
+        return this;
+    }
+
+
     public NOptional<String> name() {
         return NOptional.ofNamed(name, name);
     }

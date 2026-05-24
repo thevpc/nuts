@@ -219,6 +219,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder removeAllPairs(NElement name);
 
+    NObjectElementBuilder remove(String child);
+
     NObjectElementBuilder remove(NElement child);
 
     NObjectElementBuilder removeAll(NElement child);
