@@ -211,6 +211,8 @@ public interface NFragmentElement extends NElement, Iterable<NElement> {
      */
     int size();
 
+    List<NPairElement> pairs();
+    List<NPairElement> namedPairs();
     /**
      * return new builder initialized with this instance
      *

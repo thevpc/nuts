@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -86,6 +87,15 @@ public class DefaultNFragmentElement extends AbstractNElement
         return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.size()));
     }
 
+    @Override
+    public List<NPairElement> pairs() {
+        return values.stream().filter(NElement::isPair).map(x -> x.asPair().get()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NPairElement> namedPairs() {
+        return values.stream().filter(NElement::isNamedPair).map(x -> x.asPair().get()).collect(Collectors.toList());
+    }
 
     @Override
     public NOptional<NElement> getAt(int index) {
