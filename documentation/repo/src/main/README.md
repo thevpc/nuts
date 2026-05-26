@@ -25,6 +25,8 @@ nuts io.github.jiashunx:masker-flappybird
 
 If it runs, Nuts is working.
 
+![Nuts in action](documentation/term-cast/nuts-install-demo.webp)
+
 ## What is Nuts?
 
 Unlike Maven, which resolves dependencies at compile time, ```nuts``` is the Java Package Manager that resolves them at install or runtime, saving disk space and bandwidth by caching only what’s needed for the current environment and sharing it across apps.
@@ -51,14 +53,14 @@ No more ugly lib folders or fat-jars. Just install and run in a single command.
 
 ### Essential Commands
 
-| Action      | Command                                 |
-|:------------|-----------------------------------------|
-| Install     | nuts install <group-id>:<artifact-id>   |
-| Update      | nuts update <group-id>:<artifact-id>    |
-| Run         | nuts  <group-id>:<artifact-id>          |
-| Uninstall   | nuts uninstall <group-id>:<artifact-id> |
-| Search      | nuts search <keyword>                   |
-| Update Nuts | nuts update                             |
+| Action      | Command                                   |
+|:------------|-------------------------------------------|
+| Install     | `nuts install <group-id>:<artifact-id>`   |
+| Update      | `nuts update <group-id>:<artifact-id>`    |
+| Run         | `nuts  <group-id>:<artifact-id>`          |
+| Uninstall   | `nuts uninstall <group-id>:<artifact-id>` |
+| Search      | `nuts search <keyword>`                   |
+| Update Nuts | `nuts update`                             |
 
 ## Try Nuts (Cool Examples)
 
