@@ -12,7 +12,7 @@ No fat-jars. No manual JDK setup. Dependencies are shared and resolved at runtim
 Website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
 Docs: [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 
-## Install (30 seconds)
+## Install
 
 ```bash
 curl -s https://thevpc.net/nuts/install-latest.sh | bash
