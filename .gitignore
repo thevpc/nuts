@@ -271,3 +271,5 @@ core/nuts-app-full/target
 .aider*
 /.naru/local
 /._config.yml.swp
+/documentation/term-cast/server.log
+/documentation/term-cast/nuts-install-demo.gif

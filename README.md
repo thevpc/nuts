@@ -25,6 +25,8 @@ nuts io.github.jiashunx:masker-flappybird
 
 If it runs, Nuts is working.
 
+![Nuts in action](documentation/term-cast/nuts-install-demo.webp)
+
 ## What is Nuts?
 
 Unlike Maven, which resolves dependencies at compile time, ```nuts``` is the Java Package Manager that resolves them at install or runtime, saving disk space and bandwidth by caching only what’s needed for the current environment and sharing it across apps.

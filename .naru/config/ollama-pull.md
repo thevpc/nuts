@@ -5,6 +5,8 @@ ollama pull qwen2.5-coder:32b
 ollama pull qwen3-coder:30b
 ollama pull qwen3:8b
 ollama pull qwen3:latest
+ollama pull qwen3:14b
+ollama pull qwen3:30b
 ollama pull gemma4:26b
 ollama pull gemma4:e4b
 ollama pull gemma3:latest

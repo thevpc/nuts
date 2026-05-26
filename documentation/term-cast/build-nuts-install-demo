@@ -1,0 +1,25 @@
+#!/bin/bash
+
+## CLEANUP CURRENT
+rm -Rf ~/.nuts
+rm -Rf ~/.config/nuts
+rm -Rf ~/.local/share/nuts
+rm -Rf ~/.local/log/nuts
+rm -Rf ./nuts.jar
+rm -Rf ./server.log
+rm -Rf ./demo.war
+export PROMPT='>'
+
+
+vhs < nuts-install-demo.tape
+ffmpeg -i nuts-install-demo.gif -f \
+  -c:v libwebp_anim \
+  -loop 0 \
+  -compression_level 6 \
+  -quality 80 \
+  -lossless 0 \
+  nuts-install-demo.webp
+
+rm -Rf ./nuts.jar
+#rm -Rf ./server.log
+rm -Rf ./demo.war
