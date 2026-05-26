@@ -17,7 +17,7 @@ Docs: [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 ```bash
 curl -s https://thevpc.net/nuts/install-latest.sh | bash
 ```
->> Restart your terminal, then try:
+> Restart your terminal, then try:
 
 ```bash
 nuts io.github.jiashunx:masker-flappybird
