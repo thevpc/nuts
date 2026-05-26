@@ -86,7 +86,7 @@ Sleep 2s
 
 Type "nuts -y com.puppycrawl.tools:checkstyle -help"
 Enter
-Sleep 5s
+Sleep 10s
 
 Type "# ...now lets run a webserver..."
 Enter
@@ -94,31 +94,16 @@ Sleep 2s
 Type "curl -sL https://repo1.maven.org/maven2/com/example/simple-servlet/1.0/simple-servlet-1.0.war -o demo.war"
 Enter
 Sleep 1s
-Type "nuts -yb  --exec --class=1 org.eclipse.jetty:jetty-runner --port 8080 demo.war  > server.log 2>&1 &"
+Type "nuts -yb  --exec --class=1 org.eclipse.jetty:jetty-runner --port 8080 demo.war &"
 Enter
-Sleep 10s
+Sleep 30s
 
-Type "# Verify it's running"
 Enter
-Sleep 2s
-Type "curl -s http://localhost:8080"
 Enter
-Type "tail server.log"
-Enter
-Sleep 3s
 
-Type "# Show it's a real process"
+Type "kill -9 %1"
 Enter
-Sleep 2s
-Type "ps aux | grep jetty-runner | grep org.eclipse.jetty.runner.Runner | grep -v grep | awk '{print $2}'"
-Enter
-Sleep 3s
-
-Type "# Cleanup"
-Enter
-Type "kill %1"
-Enter
-Sleep 2s
+Sleep 4s
 
 Type "# nuts can also update all installed packages at once..."
 Enter

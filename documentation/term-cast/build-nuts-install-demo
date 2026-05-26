@@ -12,13 +12,11 @@ export PROMPT='>'
 
 
 vhs < nuts-install-demo.tape
-ffmpeg -i nuts-install-demo.gif -f \
-  -c:v libwebp_anim \
-  -loop 0 \
-  -compression_level 6 \
-  -quality 80 \
-  -lossless 0 \
-  nuts-install-demo.webp
+
+kill -9 $(ps aux | grep jetty-runner | grep org.eclipse.jetty.runner.Runner | grep -v grep | awk '{print $2}') 2>/dev/null
+
+rm -Rf nuts-install-demo.webp
+ffmpeg -i nuts-install-demo.gif -c:v libwebp_anim  -loop 0  -compression_level 6  -quality 80  -lossless 0  nuts-install-demo.webp
 
 rm -Rf ./nuts.jar
 #rm -Rf ./server.log
