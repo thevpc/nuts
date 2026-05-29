@@ -407,7 +407,7 @@ public class FilePath implements NPathSPI {
         Set<PosixFilePermission> a = null;
         try {
             a = Files.getPosixFilePermissions(path, LinkOption.NOFOLLOW_LINKS);
-        } catch (IOException e) {
+        } catch (UnsupportedOperationException|IOException e) {
             //
         }
         File file = path.toFile();
