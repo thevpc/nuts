@@ -227,7 +227,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath writeBytes(byte[] bytes, NPathOption... options) {
-        try (OutputStream os = outputStream()) {
+        try (OutputStream os = getOutputStream(options)) {
             os.write(bytes);
         } catch (IOException ex) {
             throw new NIOException(NMsg.ofC("unable to write to %s", this));
