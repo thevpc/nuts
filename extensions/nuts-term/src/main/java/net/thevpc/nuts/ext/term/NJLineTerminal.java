@@ -459,7 +459,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         private final String buffer;
         private final Highlighter h;
 
-        public MyContext(String buffer,Highlighter h) {
+        public MyContext(String buffer, Highlighter h) {
             this.buffer = buffer;
             this.h = h;
         }
@@ -485,17 +485,17 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 setErrorIndex(-1);
                 setErrorPattern(null);
                 NTerminalFormatter ct = commandHighlighter();
-                if(ct==null){
-                    ct=NTerminalFormatter.ofSystemHighlighter();
+                if (ct == null) {
+                    ct = NTerminalFormatter.ofSystemHighlighter();
                 }
                 NText n;
                 try {
-                    n = ct.format(new MyContext(buffer,NutsJLineHighlighter.this));
-                }catch (Exception ex){
-                    n=NText.ofPlain(buffer);
+                    n = ct.format(new MyContext(buffer, NutsJLineHighlighter.this));
+                } catch (Exception ex) {
+                    n = NText.ofPlain(buffer);
                 }
-                if(n==null){
-                    n=NText.ofPlain(buffer);
+                if (n == null) {
+                    n = NText.ofPlain(buffer);
                 }
                 return toAttributedString(n, NTextStyles.PLAIN);
             });
