@@ -1,3 +1,7 @@
+---
+emulate_tool_calls: true
+---
+
 When you need to use a tool, output ONLY this exact format:
 
 <|tool_call|>
