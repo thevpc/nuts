@@ -3,7 +3,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.expr.NExprOpPrecedence;
 import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 
 public class ExprOpHelper {
     public static NExprOpType resolveOpDefaultType(String name, NExprOpType type) {
@@ -34,8 +36,7 @@ public class ExprOpHelper {
             case "&":
             case "||":
             case "|":
-            case "??":
-            {
+            case "??": {
                 return NExprOpType.INFIX;
             }
             case "(":
@@ -43,8 +44,7 @@ public class ExprOpHelper {
             case "[":
             case "[]":
             case "{":
-            case "{}":
-            {
+            case "{}": {
                 return NExprOpType.POSTFIX;
             }
         }
@@ -220,7 +220,7 @@ public class ExprOpHelper {
                 break;
             }
         }
-        throw new IllegalArgumentException("unsupported operator " + name);
+        throw new NIllegalArgumentException(NMsg.ofC("cannot resolve operator precedence for :%s", name));
     }
 
     public static NOperatorAssociativity resolveOpDefaultAssociativity(String name, NExprOpType type, NOperatorAssociativity associativity) {

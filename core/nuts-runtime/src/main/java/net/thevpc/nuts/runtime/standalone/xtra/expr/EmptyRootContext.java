@@ -37,4 +37,10 @@ public class EmptyRootContext extends NExprContextBase {
     public List<NExprOperator> operators() {
         return Collections.emptyList();
     }
+
+    @Override
+    public NExprLiteralMapper literalMapper() {
+        return (x,c)->x;
+    }
+
 }

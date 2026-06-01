@@ -11,14 +11,26 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NExprChildContextImpl extends NExprContextBase {
     private NExprResolver resolver;
     private NExprContext parent;
+    private NExprLiteralMapper literalMapper;
     private Map<String,NExprVar> varToDeclaration=new ConcurrentHashMap<>();
 
-    public NExprChildContextImpl(NExprRPI nExprRPI, NExprResolver resolver, NExprContext parent) {
+    public NExprChildContextImpl(NExprRPI nExprRPI, NExprResolver resolver, NExprLiteralMapper literalMapper,NExprContext parent) {
         super(nExprRPI);
         this.resolver = resolver;
         this.parent = parent;
+        this.literalMapper = literalMapper;
     }
 
+    @Override
+    public NExprLiteralMapper literalMapper() {
+        if (literalMapper != null) {
+            return literalMapper;
+        }
+        if (parent != null) {
+            return parent.literalMapper();
+        }
+        return (x,c)->x;
+    }
 
     @Override
     public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args) {

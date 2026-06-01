@@ -47,6 +47,24 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
+    public NExprLiteralMapper literalMapper() {
+        NExprLiteralMapper m = alteration.getLiteralMapper();
+        if(m!=null) {
+            return m;
+        }
+        if(parent!=null) {
+            return parent.literalMapper();
+        }
+        return null;
+    }
+
+    @Override
+    public NExprContextBuilder literalMapper(NExprLiteralMapper mapper) {
+        alteration.setLiteralMapper(mapper);
+        return this;
+    }
+
+    @Override
     public NExprContextBuilder declarePhysicsConstants() {
 // Already present
         this.declareVar(NExprVar.ofConst("C", 299792458.0));       // speed of light (m/s)
@@ -668,12 +686,12 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             if (mutable) {
                 return new NExprMutableContextImpl(rpi, parent);
             }
-            return new NExprChildContextImpl(rpi, NExprContextAlteration.EMPTY_RESOLVER, parent);
+            return new NExprChildContextImpl(rpi, NExprContextAlteration.EMPTY_RESOLVER, null,parent);
         }
         if (mutable) {
             return new NExprMutableContextImpl(rpi, alteration, parent);
         }
-        return new NExprChildContextImpl(rpi, alteration.toExprResolver(), parent);
+        return new NExprChildContextImpl(rpi, alteration.toExprResolver(),alteration.getLiteralMapper(), parent);
     }
 
     @Override

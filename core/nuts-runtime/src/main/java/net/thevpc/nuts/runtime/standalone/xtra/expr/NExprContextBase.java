@@ -120,8 +120,13 @@ public abstract class NExprContextBase implements NExprContext {
 
 
     @Override
-    public NExprInterpolatedStrNode ofInterpolatedStr(String a) {
-        return new DefaultNExprInterpolatedStrNode(a);
+    public NExprInterpolatedStringNode ofDollarInterpolatedString(String a) {
+        return new DefaultNExprDollarInterpolatedStringNode(a);
+    }
+
+    @Override
+    public NExprInterpolatedStringNode ofMoustacheInterpolatedString(String a) {
+        return new DefaultNExprMoustacheInterpolatedStringNode(a);
     }
 
     @Override

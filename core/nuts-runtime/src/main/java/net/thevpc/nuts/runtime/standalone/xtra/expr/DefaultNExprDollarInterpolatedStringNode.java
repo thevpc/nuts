@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultNExprInterpolatedStrNode implements NExprInterpolatedStrNode {
+public class DefaultNExprDollarInterpolatedStringNode implements NExprInterpolatedStringNode {
     private final String expression;
 
     @Override
@@ -32,7 +32,7 @@ public class DefaultNExprInterpolatedStrNode implements NExprInterpolatedStrNode
         return null;
     }
 
-    public DefaultNExprInterpolatedStrNode(String expression) {
+    public DefaultNExprDollarInterpolatedStringNode(String expression) {
         this.expression = expression;
     }
 

@@ -23,6 +23,7 @@ public class NExprContextAlteration {
     public Map<String, DecInfo<NExprFunction>> userConstructs;
     public Map<NExprOpNameAndType, DecInfo<NExprOperator>> userOperators;
     public Map<String, DecInfo<NExprVar>> userVars;
+    private NExprLiteralMapper literalMapper;
 
 
     public void addAll(NExprContextAlteration alteration) {
@@ -84,7 +85,19 @@ public class NExprContextAlteration {
                 }
                 varEvaluators.addAll(alteration.varEvaluators);
             }
+            if (alteration.literalMapper != null) {
+                this.literalMapper = alteration.literalMapper;
+            }
         }
+    }
+
+    public NExprLiteralMapper getLiteralMapper() {
+        return literalMapper;
+    }
+
+    public NExprContextAlteration setLiteralMapper(NExprLiteralMapper literalMapper) {
+        this.literalMapper = literalMapper;
+        return this;
     }
 
     public static class DecInfo<T> {
@@ -134,7 +147,13 @@ public class NExprContextAlteration {
         if (consEvaluators != null && !consEvaluators.isEmpty()) {
             return false;
         }
-        return varEvaluators == null || varEvaluators.isEmpty();
+        if(varEvaluators != null && !varEvaluators.isEmpty()){
+            return false;
+        }
+        if(literalMapper != null){
+            return false;
+        }
+        return true;
     }
 
     /// /////////////////////////////////////
@@ -242,7 +261,7 @@ public class NExprContextAlteration {
             this.userOperators.put(new NExprOpNameAndType(name, type), REMOVED);
             return null;
         } else {
-            int prec = ExprOpHelper.resolveOpPrecedence(name, typeOk, -1);
+            int prec = ExprOpHelper.resolveOpPrecedence(name, typeOk, precedence);
             NOperatorAssociativity associativityOk = ExprOpHelper.resolveOpDefaultAssociativity(name, typeOk, associativity);
             DefaultNExprOpDeclaration d = new DefaultNExprOpDeclaration(name, typeOk, prec, associativityOk, impl);
             this.userOperators.put(new NExprOpNameAndType(name, typeOk), new DecInfo<>(d));
@@ -406,7 +425,7 @@ public class NExprContextAlteration {
     }
 
     public NExprVar getOrDeclareVar(NExprContext context, NExprContext parent, String name, Supplier<Object> value) {
-        NExprVar o = getVar(context,parent, name).orNull();
+        NExprVar o = getVar(context, parent, name).orNull();
         if (o != null) {
             return o;
         }
@@ -429,7 +448,7 @@ public class NExprContextAlteration {
         }
         if (fctEvaluators != null) {
             for (NExprFunctionResolver ev : fctEvaluators) {
-                NOptional<NExprFunction> a = ev.getFunction(name,args, current);
+                NOptional<NExprFunction> a = ev.getFunction(name, args, current);
                 if (a != null && a.isPresent()) {
                     return a;
                 }
@@ -437,7 +456,7 @@ public class NExprContextAlteration {
         }
         if (evaluators != null) {
             for (NExprResolver ev : evaluators) {
-                NOptional<NExprFunction> a = ev.getFunction(name,args, current);
+                NOptional<NExprFunction> a = ev.getFunction(name, args, current);
                 if (a != null && a.isPresent()) {
                     return a;
                 }
@@ -461,7 +480,7 @@ public class NExprContextAlteration {
         }
         if (consEvaluators != null) {
             for (NExprFunctionResolver ev : consEvaluators) {
-                NOptional<NExprFunction> a = ev.getFunction(name,args, current);
+                NOptional<NExprFunction> a = ev.getFunction(name, args, current);
                 if (a != null && a.isPresent()) {
                     return a;
                 }
@@ -469,7 +488,7 @@ public class NExprContextAlteration {
         }
         if (evaluators != null) {
             for (NExprResolver ev : evaluators) {
-                NOptional<NExprFunction> a = ev.getConstruct(name,args, current);
+                NOptional<NExprFunction> a = ev.getConstruct(name, args, current);
                 if (a != null && a.isPresent()) {
                     return a;
                 }

@@ -14,6 +14,10 @@ public interface NExprContextBuilder {
 
     NExprContextBuilder declareVars(NExprVarResolver resolver);
 
+    NExprLiteralMapper  literalMapper();
+
+    NExprContextBuilder  literalMapper(NExprLiteralMapper mapper);
+
     NExprContextBuilder declareOperators(NExprOperatorResolver resolver);
 
     NExprContextBuilder declareResolver(NExprResolver resolver);

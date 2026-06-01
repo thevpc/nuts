@@ -22,12 +22,12 @@ public class DefaultRootContext extends NExprContextBase {
     public DefaultRootContext(NExprRPI nExprRPI) {
         super(nExprRPI);
         reflectRepository = NReflectRepository.of();
-
     }
 
-
-
-
+    @Override
+    public NExprLiteralMapper literalMapper() {
+        return (x,c)->x;
+    }
 
     @Override
     public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args) {

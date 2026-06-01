@@ -10,7 +10,7 @@ import java.util.List;
 public interface NExprContext {
 
 
-    static NExprContext of(){
+    static NExprContext of() {
         return NExprRPI.of().createEmptyContext();
     }
 
@@ -61,7 +61,11 @@ public interface NExprContext {
 
     <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType);
 
-    NExprInterpolatedStrNode ofInterpolatedStr(String a);
+    NExprInterpolatedStringNode ofDollarInterpolatedString(String a);
+
+    NExprInterpolatedStringNode ofMoustacheInterpolatedString(String a);
 
     NExprTemplate ofTemplate();
+
+    NExprLiteralMapper literalMapper();
 }

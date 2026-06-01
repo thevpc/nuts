@@ -91,10 +91,7 @@ public class SyntaxParser {
         if (t == null) {
             return false;
         }
-        if ("if".equals(t.sval)) {
-            return true;
-        }
-        return false;
+        return "if".equals(t.sval);
     }
 
     boolean isOpenParStart(NToken t) {
@@ -119,7 +116,7 @@ public class SyntaxParser {
         if (t == null) {
             return false;
         }
-        if(opType==NExprOpType.POSTFIX){
+        if (opType == NExprOpType.POSTFIX) {
             switch (t.ttype) {
                 case '(':
                 case '[':
@@ -167,6 +164,14 @@ public class SyntaxParser {
     }
 
 
+    public NExprNode resolveNode(NExprNode node) {
+        NExprNode n = withCache.evaluator.literalMapper().mapNode(node, withCache.evaluator);
+        if (n != null) {
+            return n;
+        }
+        return node;
+    }
+
     private NOptional<NExprNode> nextNonTerminalIf() {
         NToken t = peekSkipSpace();
         if (t == null) {
@@ -193,21 +198,21 @@ public class SyntaxParser {
                 if (falseNode.isNotPresent()) {
                     return NOptional.ofNamedEmpty("false statement for if statement");
                 } else {
-                    return NOptional.of(new DefaultIfNode(
+                    return NOptional.of(resolveNode(new DefaultIfNode(
                             cond.get(),
                             trueNode.get(),
                             falseNode.get()
-                    ));
+                    )));
                 }
             } else {
                 return NOptional.ofError(() -> NMsg.ofPlain("expected else statement"));
             }
         } else {
-            return NOptional.of(new DefaultIfNode(
+            return NOptional.of(resolveNode(new DefaultIfNode(
                     cond.get(),
                     trueNode.get(),
                     null
-            ));
+            )));
         }
     }
 
@@ -248,7 +253,7 @@ public class SyntaxParser {
             }
             if (isCloseParStart(p2, t.ttype)) {
                 tokens.next();
-                return NOptional.of(new DefaultOpNode(t.sval, t.sval + p2.sval, NExprOpType.PREFIX, -1, new ArrayList<>()));
+                return NOptional.of(resolveNode(new DefaultOpNode(t.sval, t.sval + p2.sval, NExprOpType.PREFIX, -1, new ArrayList<>())));
             }
             List<NExprNode> args = new ArrayList<>();
             NOptional<NExprNode> e = nextExpr();
@@ -263,7 +268,7 @@ public class SyntaxParser {
                     return NOptional.ofError(() -> NMsg.ofPlain("expected closing " + finalT.sval));
                 } else if (isCloseParStart(p2, t.ttype)) {
                     tokens.next();
-                    return NOptional.of(new DefaultOpNode(t.sval, t.sval + p2.sval, NExprOpType.PREFIX, -1, args));
+                    return NOptional.of(resolveNode(new DefaultOpNode(t.sval, t.sval + p2.sval, NExprOpType.PREFIX, -1, args)));
                 } else if (p2.sval.equals(",")) {
                     tokens.next();
                     e = nextExpr();
@@ -291,7 +296,7 @@ public class SyntaxParser {
                 return q;
             }
             return NOptional.of(
-                    new DefaultOpNode(t.image, opName(t), NExprOpType.PREFIX, op.operatorPrecedence(), Arrays.asList(q.get()))
+                    resolveNode(new DefaultOpNode(t.image, opName(t), NExprOpType.PREFIX, op.operatorPrecedence(), Collections.singletonList(q.get())))
             );
         }
         return nextTerminalOrStmt();
@@ -330,13 +335,13 @@ public class SyntaxParser {
                             throw new IllegalArgumentException("unsupported");
                         }
                     }
-                    return new DefaultOpNode(finalInfixOp.sval, opName, NExprOpType.POSTFIX, -1, cc);
+                    return resolveNode(new DefaultOpNode(finalInfixOp.sval, opName, NExprOpType.POSTFIX, -1, cc));
                 });
             } else {
                 NExprOperator op = withCache.getOp(t, NExprOpType.POSTFIX);
                 if (op != null && !(op.operatorPrecedence() < precedence)) {
                     tokens.next();
-                    first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, op.operatorPrecedence(), Arrays.asList(first.get())));
+                    first = NOptional.of(resolveNode(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, op.operatorPrecedence(), Collections.singletonList(first.get()))));
                 } else {
                     break;
                 }
@@ -429,7 +434,7 @@ public class SyntaxParser {
                 tokens.next(); // consume closing bracket
                 NToken finalT = t;
                 String opName = t.ttype == '[' ? "[]" : t.ttype == '(' ? "()" : "{}";
-                first = NOptional.of(new DefaultOpNode(finalT.sval, opName, NExprOpType.POSTFIX, -1, args));
+                first = NOptional.of(resolveNode(new DefaultOpNode(finalT.sval, opName, NExprOpType.POSTFIX, -1, args)));
                 continue;
             }
 
@@ -437,7 +442,7 @@ public class SyntaxParser {
             NExprOperator postfixOp = withCache.getOp(t, NExprOpType.POSTFIX);
             if (postfixOp != null && !(postfixOp.operatorPrecedence() < precedence)) {
                 tokens.next();
-                first = NOptional.of(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, postfixOp.operatorPrecedence(), Arrays.asList(first.get())));
+                first = NOptional.of(resolveNode(new DefaultOpNode(t.sval, opName(t), NExprOpType.POSTFIX, postfixOp.operatorPrecedence(), Collections.singletonList(first.get()))));
                 continue;
             }
 
@@ -520,7 +525,7 @@ public class SyntaxParser {
         return first;
     }
 
-    private NExprOpNode createInfixOpNodeOrCombine(String name, String uniformName, int precedence, NExprNode a, NExprNode b) {
+    private NExprNode createInfixOpNodeOrCombine(String name, String uniformName, int precedence, NExprNode a, NExprNode b) {
         if (isInfixOpZipped(name, uniformName)) {
             if ((a != null && a.name().equals(name)) || (b != null && b.name().equals(name))) {
                 List<NExprNode> aa = new ArrayList<>();
@@ -534,10 +539,10 @@ public class SyntaxParser {
                 } else {
                     aa.add(b);
                 }
-                return new DefaultOpNode(name, uniformName, NExprOpType.INFIX, precedence, aa);
+                return resolveNode(new DefaultOpNode(name, uniformName, NExprOpType.INFIX, precedence, aa));
             }
         }
-        return new DefaultOpNode(name, uniformName, NExprOpType.INFIX, precedence, new ArrayList<>(Arrays.asList(a, b)));
+        return resolveNode(new DefaultOpNode(name, uniformName, NExprOpType.INFIX, precedence, new ArrayList<>(Arrays.asList(a, b))));
     }
 
 
@@ -573,11 +578,11 @@ public class SyntaxParser {
                     }
                 }
                 return NOptional.of(
-                        new DefaultOpNode(t0.sval, "(",
+                        resolveNode(new DefaultOpNode(t0.sval, "(",
                                 NExprOpType.PREFIX,
                                 -1,
                                 all
-                        )
+                        ))
                 );
             }
             case '[': {
@@ -607,11 +612,11 @@ public class SyntaxParser {
                     }
                 }
                 return NOptional.of(
-                        new DefaultOpNode(t0.sval, "[",
+                        resolveNode(new DefaultOpNode(t0.sval, "[",
                                 NExprOpType.PREFIX,
                                 -1,
                                 all
-                        )
+                        ))
                 );
             }
             case '{': {
@@ -640,11 +645,11 @@ public class SyntaxParser {
                     }
                 }
                 return NOptional.of(
-                        new DefaultOpNode(t0.sval, "{",
+                        resolveNode(new DefaultOpNode(t0.sval, "{",
                                 NExprOpType.PREFIX,
                                 -1,
                                 all
-                        )
+                        ))
                 );
             }
             case NToken.TT_WORD: {
@@ -670,7 +675,7 @@ public class SyntaxParser {
                         functionParams.add(e.get());
                         while (true) {
                             t = peekSkipSpace();
-                            if(t==null){
+                            if (t == null) {
                                 break;
                             }
                             if (t.ttype == ')') {
@@ -692,9 +697,9 @@ public class SyntaxParser {
                             }
                         }
                     }
-                    return NOptional.of(new DefaultFunctionNode(n, functionParams.toArray(new NExprNode[0])));
+                    return NOptional.of(resolveNode(new DefaultFunctionNode(n, functionParams.toArray(new NExprNode[0]))));
                 } else {
-                    return NOptional.of(new DefaultWordNode(n));
+                    return NOptional.of(resolveNode(new DefaultWordNode(n)));
                 }
             }
             case NToken.TT_INT:
@@ -704,14 +709,14 @@ public class SyntaxParser {
             case NToken.TT_DOUBLE:
             case NToken.TT_BIG_DECIMAL: {
                 tokens.next();
-                return NOptional.of(new DefaultLiteralNode(t.nval));
+                return NOptional.of(resolveNode(new DefaultLiteralNode(t.nval)));
             }
             case NToken.TT_STRING_LITERAL: {
                 tokens.next();
                 if (t.image.charAt(0) == '$') {
-                    return NOptional.of(new DefaultNExprInterpolatedStrNode(t.sval));
+                    return NOptional.of(resolveNode(new DefaultNExprDollarInterpolatedStringNode(t.sval)));
                 }
-                return NOptional.of(new DefaultLiteralNode(t.sval));
+                return NOptional.of(resolveNode(new DefaultLiteralNode(t.sval)));
             }
         }
         NToken ftok = t;
