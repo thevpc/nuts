@@ -692,44 +692,50 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public NOptional<Byte> asByte() {
-        return asLong()
-                .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Byte")))
-                .onErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObject().orNull())))
-                .flatMap(value -> {
-                    byte smallValue = value.byteValue();
-                    if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObject().orNull()));
-                    }
-                    return NOptional.of(smallValue);
-                });
+        NOptional<Long> al = asLong();
+        if(al.isEmpty()){
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty Byte"));
+        }
+        if(al.isError()){
+            return NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObject().orNull()));
+        }
+        long l=al.get();
+        if((byte)l==l){
+            return NOptional.of((byte)l);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("invalid Byte : %s", asObject().orNull()));
     }
 
     @Override
     public NOptional<Short> asShort() {
-        return asLong()
-                .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Short")))
-                .onErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObject().orNull())))
-                .flatMap(value -> {
-                    short smallValue = value.shortValue();
-                    if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObject().orNull()));
-                    }
-                    return NOptional.of(smallValue);
-                });
+        NOptional<Long> al = asLong();
+        if(al.isEmpty()){
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty Short"));
+        }
+        if(al.isError()){
+            return NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObject().orNull()));
+        }
+        long l=al.get();
+        if((short)l==l){
+            return NOptional.of((short)l);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("invalid Short : %s", asObject().orNull()));
     }
 
     @Override
     public NOptional<Integer> asInt() {
-        return asLong()
-                .ifEmptyUse(() -> NOptional.ofEmpty(() -> NMsg.ofPlain("empty Integer")))
-                .onErrorUse(() -> NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObject().orNull())))
-                .flatMap(value -> {
-                    int smallValue = value.intValue();
-                    if (!Long.valueOf(smallValue).equals(value)) {
-                        return NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObject().orNull()));
-                    }
-                    return NOptional.of(smallValue);
-                });
+        NOptional<Long> al = asLong();
+        if(al.isEmpty()){
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty Integer"));
+        }
+        if(al.isError()){
+            return NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObject().orNull()));
+        }
+        long l=al.get();
+        if((int)l==l){
+            return NOptional.of((int)l);
+        }
+        return NOptional.ofError(() -> NMsg.ofC("invalid Integer : %s", asObject().orNull()));
     }
 
 
@@ -997,7 +1003,7 @@ public class DefaultNLiteral implements NLiteral {
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NOptional.ofEmpty(() -> NMsg.ofC("invalid BigInteger %s", value));
+                return NOptional.ofError(() -> NMsg.ofC("invalid BigInteger %s", value));
             } else {
                 try {
                     if (s.startsWith("0x")) {
@@ -1007,10 +1013,10 @@ public class DefaultNLiteral implements NLiteral {
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NOptional.ofEmpty(() -> NMsg.ofC("invalid BigInteger %s", value));
+                return NOptional.ofError(() -> NMsg.ofC("invalid BigInteger %s", value));
             }
         }
-        return NOptional.ofEmpty(() -> NMsg.ofC("invalid BigInteger %s", value));
+        return NOptional.ofError(() -> NMsg.ofC("invalid BigInteger %s", value));
     }
 
     @Override
@@ -1046,17 +1052,17 @@ public class DefaultNLiteral implements NLiteral {
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NOptional.ofEmpty(() -> NMsg.ofC("invalid BigDecimal %s", value));
+                return NOptional.ofError(() -> NMsg.ofC("invalid BigDecimal %s", value));
             } else {
                 try {
                     return NOptional.of(new BigDecimal(new BigInteger(s)));
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NOptional.ofEmpty(() -> NMsg.ofC("invalid BigDecimal %s", value));
+                return NOptional.ofError(() -> NMsg.ofC("invalid BigDecimal %s", value));
             }
         }
-        return NOptional.ofEmpty(() -> NMsg.ofC("invalid BigDecimal %s", value));
+        return NOptional.ofError(() -> NMsg.ofC("invalid BigDecimal %s", value));
     }
 
     @Override
