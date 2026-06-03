@@ -93,6 +93,9 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     public NExprContextBuilder declareBuiltins() {
+        this.declareVar(NExprVar.ofConst("true", true));
+        this.declareVar(NExprVar.ofConst("false", false));
+        this.declareVar(NExprVar.ofConst("null", null));
         addDefaultOp(NExprCommonOp.AND, NExprOpType.INFIX, NExprOpPrecedence.AND, NOperatorAssociativity.LEFT, "&");
         addDefaultOp(NExprCommonOp.OR, NExprOpType.INFIX, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT, "|");
         addDefaultOp(NExprCommonOp.LT, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);

@@ -745,7 +745,7 @@ public class NExprContextAlteration {
             if (userVars != null) {
                 DecInfo<NExprVar> d = userVars.get(varName);
                 if (d != null) {
-                    NExprVar v = (NExprVar) d;
+                    NExprVar v = d.value;
                     if (v != null) {
                         if (context instanceof NExprMutableContext) {
                             ((NExprMutableContext) context).declareVar(v);
