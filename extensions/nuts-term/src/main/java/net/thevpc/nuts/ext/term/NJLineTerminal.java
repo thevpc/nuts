@@ -178,6 +178,9 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                     );
                 }
             }
+            case BUILDER: {
+                return toAttributedString(((NTextBuilder) n).build(), styles);
+            }
         }
         return new AttributedString(n.toString());
     }
