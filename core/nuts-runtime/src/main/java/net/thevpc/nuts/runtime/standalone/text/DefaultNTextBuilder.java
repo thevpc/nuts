@@ -246,10 +246,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         if (all.size() == 1) {
             return all.get(0);
         }
-        if (!all.equals(children)) {
-            return new DefaultNTextList(all.toArray(new NText[0]));
-        }
-        return this;
+        return new DefaultNTextList(all.toArray(new NText[0]));
     }
 
     @Override
