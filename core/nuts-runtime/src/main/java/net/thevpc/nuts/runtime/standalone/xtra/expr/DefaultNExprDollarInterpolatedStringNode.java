@@ -41,7 +41,15 @@ public class DefaultNExprDollarInterpolatedStringNode implements NExprInterpolat
         return NOptional.of(NMsg.ofV(expression == null ? "" : expression, new NFunction<String, Object>() {
             @Override
             public Object apply(String s) {
-                return context.getVarValue(s).get();
+                NExprNode n = context.parse(s).orNull();
+                if(n==null){
+                    return s;
+                }
+                NOptional<Object> z = n.eval(context);
+                if(z.isError()){
+                    return s;
+                }
+                return z.orNull();
             }
         }).toString());
     }
