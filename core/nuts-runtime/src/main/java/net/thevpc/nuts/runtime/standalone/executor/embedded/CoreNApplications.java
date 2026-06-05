@@ -32,10 +32,20 @@ public class CoreNApplications {
                             && declaredMethod.getParameterTypes()[1].equals(String[].class)
                     ) {
                         if (appType.isAssignableFrom(declaredMethod.getReturnType())) {
-                            declaredMethod.setAccessible(true);
-                            Object o = declaredMethod.invoke(null, session, args);
-                            if (o != null) {
-                                return appType.cast(o);
+                            boolean accessible = Modifier.isPublic(declaredMethod.getModifiers());
+                            if(!accessible) {
+                                try {
+                                    declaredMethod.setAccessible(true);
+                                    accessible=true;
+                                }catch (Exception e){
+                                    //
+                                }
+                            }
+                            if(accessible) {
+                                Object o = declaredMethod.invoke(null, session, args);
+                                if (o != null) {
+                                    return appType.cast(o);
+                                }
                             }
                         } else {
                             throw new NWorkspaceException(NMsg.ofC("createApplicationInstance must return %s", appType.getName()));

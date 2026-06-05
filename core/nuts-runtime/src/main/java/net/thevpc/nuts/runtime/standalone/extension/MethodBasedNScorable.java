@@ -13,7 +13,6 @@ class MethodBasedNScorable<T> implements NScorable {
     public MethodBasedNScorable(NExtensionTypeInfo<T> nExtensionTypeInfo, Method declaredMethod) {
         this.nExtensionTypeInfo = nExtensionTypeInfo;
         this.declaredMethod = declaredMethod;
-        declaredMethod.setAccessible(true);
     }
 
     @Override

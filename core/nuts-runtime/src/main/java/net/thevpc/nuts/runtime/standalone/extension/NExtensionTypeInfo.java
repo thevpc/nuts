@@ -210,7 +210,20 @@ public class NExtensionTypeInfo<T> {
                 if (Modifier.isStatic(declaredMethod.getModifiers())) {
                     if (parameterTypes.length == 1 && parameterTypes[0].equals(NScorableContext.class) && declaredMethod.getReturnType().equals(int.class)) {
                         declaredMethod.setAccessible(true);
-                        return new MethodBasedNScorable(this, declaredMethod);
+                        boolean accessible = Modifier.isPublic(declaredMethod.getModifiers());
+                        if (!accessible) {
+                            try {
+                                declaredMethod.setAccessible(true);
+                                accessible = true;
+                            } catch (Exception e) {
+                                //
+                            }
+                        }
+                        if (accessible) {
+                            return new MethodBasedNScorable(this, declaredMethod);
+                        } else {
+                            LOG().log(NMsg.ofC("[%s] [%s] scorer method ignored (non accessible) :: %s", implType, apiType, declaredMethod).asSevere());
+                        }
                     } else {
                         LOG().log(NMsg.ofC("[%s] [%s] scorer method ignored (invalid params) :: %s", implType, apiType, declaredMethod).asSevere());
                     }
@@ -224,8 +237,19 @@ public class NExtensionTypeInfo<T> {
                                 && parameterTypes.length == 1 && parameterTypes[0].equals(NScorableContext.class)
                                 && declaredMethod.getReturnType().equals(int.class)
                 ) {
-                    LOG().log(NMsg.ofC("[%s] [%s] invalid (still accepted) score method %s ", implType, apiType, declaredMethod).asSevere());
-                    return new MethodBasedNScorable(this, declaredMethod);
+                    boolean accessible = Modifier.isPublic(declaredMethod.getModifiers());
+                    if (!accessible) {
+                        try {
+                            declaredMethod.setAccessible(true);
+                            accessible = true;
+                        } catch (Exception e) {
+                            //
+                        }
+                    }
+                    if(accessible) {
+                        LOG().log(NMsg.ofC("[%s] [%s] invalid (still accepted) score method %s ", implType, apiType, declaredMethod).asSevere());
+                        return new MethodBasedNScorable(this, declaredMethod);
+                    }
                 }
             }
         }

@@ -95,84 +95,105 @@ public class NBeanConstructorHelper {
 
         if (best instanceof Constructor) {
             Constructor<?> ctor = (Constructor) best;
-            ctor.setAccessible(true);
-            int[] positions = bestPositions;
-            Class<?>[] paramTypes = ctor.getParameterTypes();
-
-            return (userArgs) -> {
-                Object[] finalArgs = new Object[paramTypes.length];
-
-                // user args
-                for (int i = 0; i < userArgs.length; i++) {
-                    finalArgs[positions[i]] = userArgs[i];
-                }
-
-                // context args (may resolve to null)
-                for (int i = 0; i < paramTypes.length; i++) {
-                    if (finalArgs[i] == null) {
-                        finalArgs[i] = ctx.resolve(paramTypes[i]);
-                    }
-                }
-
+            boolean accessible = Modifier.isPublic(ctor.getModifiers());
+            if (!accessible) {
                 try {
-                    @SuppressWarnings("unchecked")
-                    T t = (T) ctor.newInstance(finalArgs);
-                    return t;
-                } catch (Exception ex) {
-                    NMsg errorMessage = NMsg.ofC("error when instantiating %s as %s(%s) : %s", apiType, implType,
-                            Arrays.stream(userArgTypes).map(Class::getSimpleName).collect(Collectors.joining(",")),
-                            ex).asFinest().withIntent(NMsgIntent.FAIL);
-                    if (NExtensionUtils.isBootstrapLogType(apiType)) {
-                        //do not use log. this is a bug that must be resolved fast!
-                        NFailSafeHelper.log(err->err.println(errorMessage.toString()));
-                    } else {
-                        if (LOG.isLoggable(Level.FINEST)) {
-                            LOG.log(errorMessage);
+                    ctor.setAccessible(true);
+                    accessible = true;
+                } catch (Exception e) {
+                    //
+                }
+            }
+            if(accessible) {
+                int[] positions = bestPositions;
+                Class<?>[] paramTypes = ctor.getParameterTypes();
+
+                return (userArgs) -> {
+                    Object[] finalArgs = new Object[paramTypes.length];
+
+                    // user args
+                    for (int i = 0; i < userArgs.length; i++) {
+                        finalArgs[positions[i]] = userArgs[i];
+                    }
+
+                    // context args (may resolve to null)
+                    for (int i = 0; i < paramTypes.length; i++) {
+                        if (finalArgs[i] == null) {
+                            finalArgs[i] = ctx.resolve(paramTypes[i]);
                         }
                     }
-                    throw new NFactoryException(errorMessage, ex);
-                }
-            };
+
+                    try {
+                        @SuppressWarnings("unchecked")
+                        T t = (T) ctor.newInstance(finalArgs);
+                        return t;
+                    } catch (Exception ex) {
+                        NMsg errorMessage = NMsg.ofC("error when instantiating %s as %s(%s) : %s", apiType, implType,
+                                Arrays.stream(userArgTypes).map(Class::getSimpleName).collect(Collectors.joining(",")),
+                                ex).asFinest().withIntent(NMsgIntent.FAIL);
+                        if (NExtensionUtils.isBootstrapLogType(apiType)) {
+                            //do not use log. this is a bug that must be resolved fast!
+                            NFailSafeHelper.log(err -> err.println(errorMessage.toString()));
+                        } else {
+                            if (LOG.isLoggable(Level.FINEST)) {
+                                LOG.log(errorMessage);
+                            }
+                        }
+                        throw new NFactoryException(errorMessage, ex);
+                    }
+                };
+            }
         } else if (best instanceof Method) {
             Method ctor = (Method) best;
-            ctor.setAccessible(true);
-            int[] positions = bestPositions;
-            Class<?>[] paramTypes = ctor.getParameterTypes();
 
-            return (userArgs) -> {
-                Object[] finalArgs = new Object[paramTypes.length];
-
-                // user args
-                for (int i = 0; i < userArgs.length; i++) {
-                    finalArgs[positions[i]] = userArgs[i];
-                }
-
-                // context args (may resolve to null)
-                for (int i = 0; i < paramTypes.length; i++) {
-                    if (finalArgs[i] == null) {
-                        finalArgs[i] = ctx.resolve(paramTypes[i]);
-                    }
-                }
-
+            boolean accessible = Modifier.isPublic(ctor.getModifiers());
+            if (!accessible) {
                 try {
-                    @SuppressWarnings("unchecked")
-                    T t = (T) ctor.invoke(null, finalArgs);
-                    return t;
-                } catch (Exception ex) {
-                    NMsg errorMessage = NMsg.ofC("error when instantiating %s as %s(%s) : %s", apiType, implType,
-                            Arrays.stream(userArgTypes).map(Class::getSimpleName).collect(Collectors.joining(",")),
-                            ex).asFinest().withIntent(NMsgIntent.FAIL);
-                    if (NExtensionUtils.isBootstrapLogType(apiType)) {
-                        //do not use log. this is a bug that must be resolved fast!
-                        NFailSafeHelper.log(err->err.println(errorMessage.toString()));
-                    } else {
-                        if (LOG.isLoggable(Level.FINEST)) {
-                            LOG.log(errorMessage);
+                    ctor.setAccessible(true);
+                    accessible = true;
+                } catch (Exception e) {
+                    //
+                }
+            }
+            if(accessible) {
+                int[] positions = bestPositions;
+                Class<?>[] paramTypes = ctor.getParameterTypes();
+
+                return (userArgs) -> {
+                    Object[] finalArgs = new Object[paramTypes.length];
+
+                    // user args
+                    for (int i = 0; i < userArgs.length; i++) {
+                        finalArgs[positions[i]] = userArgs[i];
+                    }
+
+                    // context args (may resolve to null)
+                    for (int i = 0; i < paramTypes.length; i++) {
+                        if (finalArgs[i] == null) {
+                            finalArgs[i] = ctx.resolve(paramTypes[i]);
                         }
                     }
-                    throw new NFactoryException(errorMessage, ex);
-                }
-            };
+
+                    try {
+                        @SuppressWarnings("unchecked")
+                        T t = (T) ctor.invoke(null, finalArgs);
+                        return t;
+                    } catch (Exception ex) {
+                        NMsg errorMessage = NMsg.ofC("error when instantiating %s as %s(%s) : %s", apiType, implType,
+                                Arrays.stream(userArgTypes).map(Class::getSimpleName).collect(Collectors.joining(",")),
+                                ex).asFinest().withIntent(NMsgIntent.FAIL);
+                        if (NExtensionUtils.isBootstrapLogType(apiType)) {
+                            //do not use log. this is a bug that must be resolved fast!
+                            NFailSafeHelper.log(err -> err.println(errorMessage.toString()));
+                        } else {
+                            if (LOG.isLoggable(Level.FINEST)) {
+                                LOG.log(errorMessage);
+                            }
+                        }
+                        throw new NFactoryException(errorMessage, ex);
+                    }
+                };
+            }
         }
 
 

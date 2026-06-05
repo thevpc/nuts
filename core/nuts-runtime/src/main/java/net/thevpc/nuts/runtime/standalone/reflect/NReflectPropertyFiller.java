@@ -401,10 +401,15 @@ public class NReflectPropertyFiller {
             for (Field f : fields) {
                 if (Modifier.isStatic(f.getModifiers()) || Modifier.isTransient(f.getModifiers())) continue;
                 if (f.getName().equals(propName) && f.getType().equals(setter.propertyType)) {
-                    f.setAccessible(true);
-                    NReflectProperty prop = new MethodReflectProperty3(
-                            propName, f, setter.method, cleanInstance, THIS, propertyDefaultValueStrategy);
-                    out.put(propName, new IndexedItem<>(hierarchyIndex, prop));
+                    try {
+                        f.setAccessible(true);
+                        NReflectProperty prop = new MethodReflectProperty3(
+                                propName, f, setter.method, cleanInstance, THIS, propertyDefaultValueStrategy);
+                        out.put(propName, new IndexedItem<>(hierarchyIndex, prop));
+                    }catch (Exception e){
+                        // InaccessibleObjectException in java 9
+                        //just ignore...
+                    }
                     break;
                 }
             }
@@ -426,10 +431,14 @@ public class NReflectPropertyFiller {
             if (Modifier.isStatic(f.getModifiers())) continue;
             if (Modifier.isTransient(f.getModifiers())) continue;
             if (out.containsKey(f.getName())) continue;
-
-            f.setAccessible(true);
-            FieldReflectProperty prop = new FieldReflectProperty(f, cleanInstance, THIS, propertyDefaultValueStrategy);
-            out.put(f.getName(), new IndexedItem<>(hierarchyIndex, prop));
+            try {
+                f.setAccessible(true);
+                FieldReflectProperty prop = new FieldReflectProperty(f, cleanInstance, THIS, propertyDefaultValueStrategy);
+                out.put(f.getName(), new IndexedItem<>(hierarchyIndex, prop));
+            }catch (Exception e){
+                // InaccessibleObjectException in java 9
+                //just ignore...
+            }
         }
     }
 
