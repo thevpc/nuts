@@ -45,7 +45,7 @@ public interface NShellHelper {
 
     String getSetVarStaticCommand(String name, String value);
 
-    String getCallScriptCommand(String path, String... args);
+    String getCallScriptCommand(String VAR_NAME, String path, String... args);
 
     boolean isComments(String line);
 

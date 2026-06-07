@@ -40,7 +40,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     }
 
     public FromTemplateScriptBuilder printCall(String line, String... args) {
-        return println(NShellHelper.of(getShellFamily()).getCallScriptCommand(line, args));
+        return println(NShellHelper.of(getShellFamily()).getCallScriptCommand("_V", line, args));
     }
 
     public FromTemplateScriptBuilder printSet(String var, String value) {

@@ -24,7 +24,7 @@ public class SimpleScriptBuilder extends AbstractScriptBuilder {
     }
 
     public SimpleScriptBuilder printCall(String line, String... args) {
-        return println(NShellHelper.of(getShellFamily()).getCallScriptCommand(line,args));
+        return println(NShellHelper.of(getShellFamily()).getCallScriptCommand("_V", line,args));
     }
 
     public SimpleScriptBuilder printSet(String var, String value) {

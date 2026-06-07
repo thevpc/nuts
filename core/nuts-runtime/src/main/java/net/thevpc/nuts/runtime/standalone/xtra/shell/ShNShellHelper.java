@@ -2,10 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
-import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.expr.NParseException;
-import net.thevpc.nuts.util.NUnsupportedEnumException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +30,24 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
     }
 
     @Override
-    public String getCallScriptCommand(String path, String... args) {
-        return ". " + dblQte(path) + " " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+    public String getCallScriptCommand(String VAR_NAME, String path, String... args) {
+        String v= NStringUtils.firstNonBlankTrimmed(VAR_NAME,"_V");
+        // _f="..."; [ -f "$_f" ] && . "$_f"
+        String qp = dblQte(path);
+        String qv = dblQte("$"+v);
+        String argsString = Arrays.stream(args).map(this::dblQte).collect(Collectors.joining(" "));
+        if(!argsString.isEmpty()){
+            argsString=" "+argsString;
+        }
+
+        //return ". " + qp + " " + argsString;
+        return NMsg.ofM("{{v}}={{qp}}; [ -f {{qv}} ] && . {{qv}}"
+        , NMaps.of(
+                "v",v,
+                "qv",qv,
+                "qp",qp
+                )
+        ).toString();
     }
 
     @Override

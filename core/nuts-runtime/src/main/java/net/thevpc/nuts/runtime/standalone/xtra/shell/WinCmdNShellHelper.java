@@ -1,5 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.util.NStringUtils;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -37,8 +41,21 @@ public class WinCmdNShellHelper extends AbstractWinNShellHelper {
     }
 
     @Override
-    public String getCallScriptCommand(String path, String... args) {
-        return "@CALL \"" + path + "\"" + " " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+    public String getCallScriptCommand(String VAR_NAME, String path, String... args) {
+        String v = NStringUtils.firstNonBlankTrimmed(VAR_NAME, "_V");
+        String argsString = Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+        if (!argsString.isEmpty()) {
+            argsString = " " + argsString;
+        }
+        // SET _V="..."; IF EXIST %_V% CALL %_V%
+        return NMsg.ofM("SET {{v}}={{qp}}& IF EXIST {{qv}} CALL {{qv}}{{args}}",
+                NMaps.of(
+                        "v", v,
+                        "qp", dblQte(path),
+                        "qv", "%" + v + "%",
+                        "args", argsString
+                )
+        ).toString();
     }
 
     @Override

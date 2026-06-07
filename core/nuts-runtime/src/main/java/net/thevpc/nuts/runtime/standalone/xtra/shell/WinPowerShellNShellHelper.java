@@ -1,5 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.util.NStringUtils;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -37,8 +41,20 @@ public class WinPowerShellNShellHelper extends AbstractWinNShellHelper {
     }
 
     @Override
-    public String getCallScriptCommand(String path, String... args) {
-        return "\"" + path + "\"" + " " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+    public String getCallScriptCommand(String VAR_NAME, String path, String... args) {
+        String v = NStringUtils.firstNonBlankTrimmed(VAR_NAME, "_V");
+        String argsString = Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+        if (!argsString.isEmpty()) {
+            argsString = " " + argsString;
+        }
+        // $_V="..."; if (Test-Path $_V) { & $_V }
+        return NMsg.ofM("${{v}}={{qp}}; if (Test-Path ${{v}}) { & ${{v}}{{args}} }",
+                NMaps.of(
+                        "v", v,
+                        "qp", dblQte(path),
+                        "args", argsString
+                )
+        ).toString();
     }
 
     @Override

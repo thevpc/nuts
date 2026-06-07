@@ -1001,7 +1001,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             return addFileLine("sysrc",
                     options.resolveNutsApiId(),
                     apiConfigFile, getCommentLineConfigHeader(),
-                    sh.getCallScriptCommand(getIncludeNutsInit(options, shellFamily).path().toString()),
+                    sh.getCallScriptCommand("_NUTS_INIT", getIncludeNutsInit(options, shellFamily).path().toString()),
                     sh.getShebanSh(), shellFamily);
         }
     }
