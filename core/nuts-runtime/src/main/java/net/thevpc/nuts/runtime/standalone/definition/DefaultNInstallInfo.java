@@ -78,7 +78,7 @@ public class DefaultNInstallInfo implements NInstallInformation {
     }
 
     public static DefaultNInstallInfo notInstalled(NId id) {
-        return new DefaultNInstallInfo(null,
+        return new DefaultNInstallInfo(id,
                 NInstallStatus.NONE,
                 null,
                 null,

@@ -9,6 +9,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNInstallEvent;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNUpdateEvent;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionListHelper;
@@ -57,6 +58,7 @@ public class InstallHelper {
     public InstallIdCacheItem getCache(NId id) {
         return cache.get(id);
     }
+
     private Map<String, String> prepareInstallVars(NDefinition def) {
         Map<String, String> m = new HashMap<>();
         m.put("nutsIdContentPath", def.content().get().toString());
@@ -442,23 +444,28 @@ public class InstallHelper {
                     );
                 }
                 NExecutionContext executionContext = cc.build();
+                NInstallInformation before = installedRepository.getInstallInformation(executionContext.definition().id());
                 if (updateMode || info.flags.install) {
                     newNInstallInformation = installedRepository.deploy(executionContext.definition());
                     newNInstallInformation = installedRepository.install(executionContext.definition());
-                    if (info.flags.require){
-                        newNInstallInformation = installedRepository.require(executionContext.definition(),  info.requiredForIds.toArray(new NId[0]), null);
+                    if (info.flags.require) {
+                        newNInstallInformation = installedRepository.require(executionContext.definition(), info.requiredForIds.toArray(new NId[0]), null);
                     }
                 } else if (info.flags.require) {
                     newNInstallInformation = installedRepository.deploy(executionContext.definition());
-                    newNInstallInformation = installedRepository.require(executionContext.definition(),  info.requiredForIds.toArray(new NId[0]), null);
+                    newNInstallInformation = installedRepository.require(executionContext.definition(), info.requiredForIds.toArray(new NId[0]), null);
                 } else if (info.flags.deployOnly) {
-                    newNInstallInformation = installedRepository.deploy(executionContext.definition());
                     newNInstallInformation = installedRepository.deploy(executionContext.definition());
                 }
                 if (info.flags.switchVersion) {
                     installedRepository.setDefaultVersion(def.id());
                 }
-
+                if(before!=null && newNInstallInformation!=null) {
+                    DefaultNInstallInfo after = new DefaultNInstallInfo(newNInstallInformation);
+                    after.setWasInstalled(before.isWasInstalled());
+                    after.setWasRequired(before.isWasRequired());
+                    newNInstallInformation = after;
+                }
                 //now should reload definition from install repo
                 NFetch fetch2 = NFetch.of(executionContext.definition().id())
                         .dependencyFilter(NDependencyFilters.of().byRunnable())
@@ -759,7 +766,7 @@ public class InstallHelper {
                         text.ofStyled(saction,
                                 saction.equals("set as default") ? NTextStyle.primary3() :
                                         saction.equals("ignored") ? NTextStyle.pale() :
-                                        NTextStyle.primary1()
+                                                NTextStyle.primary1()
                         );
                 NTextBuilder msg = NTextBuilder.of();
                 msg.append("the following ")
@@ -819,11 +826,11 @@ public class InstallHelper {
         ws.getInstalledRepository().uninstall(definition);
         NId id = definition.id();
         if (deleteFiles) {
-            for (NStoreType type : new NStoreType[]{NStoreType.BIN,NStoreType.LIB,NStoreType.LOG,NStoreType.CACHE,
-                    eraseFiles?NStoreType.VAR:null,eraseFiles?NStoreType.CONF:null}) {
-                if(type != null){
+            for (NStoreType type : new NStoreType[]{NStoreType.BIN, NStoreType.LIB, NStoreType.LOG, NStoreType.CACHE,
+                    eraseFiles ? NStoreType.VAR : null, eraseFiles ? NStoreType.CONF : null}) {
+                if (type != null) {
                     NPath p = NPath.of(NStoreKey.of(id).type(type));
-                    if(p.exists()){
+                    if (p.exists()) {
                         p.deleteTree();
                     }
                 }

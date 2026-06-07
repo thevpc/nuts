@@ -82,9 +82,9 @@ public interface NInstallInformation {
     boolean isWasRequired();
 
     /**
-     * return the user responsible of the installation
+     * return the user responsible for the installation
      *
-     * @return the user responsible of the installation
+     * @return the user responsible for the installation
      */
     @NGetter
     String installUser();

@@ -154,6 +154,9 @@ public class NInstallStatus {
             sb.append("installed");
         }
         if (deployed) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
             sb.append("deployed");
         }
         if (required) {
