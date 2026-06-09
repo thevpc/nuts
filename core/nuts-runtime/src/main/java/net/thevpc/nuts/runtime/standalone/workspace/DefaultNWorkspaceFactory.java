@@ -135,7 +135,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 if (NFailSafeHelper.isWorkspaceInitializing()) {
                     NFailSafeHelper.log(err -> err.println(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e)));
                 } else {
-                    LOG.log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e));
+                    try {
+                        LOG.log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e));
+                    }catch (Throwable ex) {
+                        System.err.println(NMsg.ofJ("error while instantiating {0} for {1} : {2}", a, type, e).asError(e));
+                    }
                 }
             }
         }

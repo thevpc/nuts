@@ -193,14 +193,14 @@ public class DefaultCustomCommandsModel {
             }
         } else {
             defaultCommandFactory.installCommand(command);
-            NSession session = workspace.currentSession();
-            if (session.isPlainTrace()) {
-                NPrintStream out = session.terminal().out();
-                NTexts text = NTexts.of();
-                out.println(NMsg.ofC("%s command %s",
-                        text.ofStyled("install", NTextStyle.success()),
-                        text.ofStyled(command.name(), NTextStyle.primary3())));
-            }
+//            NSession session = workspace.currentSession();
+//            if (session.isPlainTrace()) {
+//                NPrintStream out = session.terminal().out();
+//                NTexts text = NTexts.of();
+//                out.println(NMsg.ofC("%s command %s",
+//                        text.ofStyled("install", NTextStyle.success()),
+//                        text.ofStyled(command.name(), NTextStyle.primary3())));
+//            }
             return true;
         }
     }
@@ -211,7 +211,7 @@ public class DefaultCustomCommandsModel {
                 || command.name().contains(" ") || command.name().contains(".")
                 || command.name().contains("/") || command.name().contains("\\")
                 || command.command() == null
-                || command.command().size() == 0) {
+                || command.command().isEmpty()) {
             throw new NIllegalArgumentException(
                     NMsg.ofC("invalid command %s", (command == null ? "<NULL>" : command.name()))
             );
@@ -223,14 +223,14 @@ public class DefaultCustomCommandsModel {
             }
             defaultCommandFactory.uninstallCommand(command.name());
             defaultCommandFactory.installCommand(command);
-            NSession session = workspace.currentSession();
-            if (session.isPlainTrace()) {
-                NPrintStream out = session.terminal().out();
-                NTexts text = NTexts.of();
-                out.println(NMsg.ofC("%s command %s",
-                        text.ofStyled("update ", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
-                        text.ofStyled(command.name(), NTextStyle.primary3())));
-            }
+//            NSession session = workspace.currentSession();
+//            if (session.isPlainTrace()) {
+//                NPrintStream out = session.terminal().out();
+//                NTexts text = NTexts.of();
+//                out.println(NMsg.ofC("%s command %s",
+//                        text.ofStyled("update ", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
+//                        text.ofStyled(command.name(), NTextStyle.primary3())));
+//            }
             return true;
         } else {
             throw new NIllegalArgumentException(

@@ -86,6 +86,9 @@ public class TableNTextArtRendererFactory implements NTextArtRendererFactory {
     }
 
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
+        if (renderName.equals(rendererType)) {
+            return NOptional.of(new DefaultNTextArtTableRenderer().setBorder("default"));
+        }
         if (renderName.startsWith(rendererType + ":")) {
             switch (renderName) {
                 case "table:default":

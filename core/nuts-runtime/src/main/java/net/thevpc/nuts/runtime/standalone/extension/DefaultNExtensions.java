@@ -8,7 +8,11 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.core.NWorkspaceOptions;
+import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
+import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.log.NLogs;
@@ -99,6 +103,24 @@ public class DefaultNExtensions implements NExtensions {
                 if (t == null) {
                     t = new DefaultNLogs();
                     wsModel.defaultNLogs = t;
+                }
+                return NOptional.of((T) t);
+            }
+            //log will need Element Factory so...
+            case "net.thevpc.nuts.elem.NElementFactory": {
+                NElementFactory t = wsModel.defaultNElementFactory;
+                if (t == null) {
+                    t = new DefaultNElementFactory();
+                    wsModel.defaultNElementFactory = t;
+                }
+                return NOptional.of((T) t);
+            }
+            //log will need NCollectionsRPI so...
+            case "net.thevpc.nuts.internal.rpi.NCollectionsRPI": {
+                NCollectionsRPI t = wsModel.defaultNCollectionsRPI;
+                if (t == null) {
+                    t = new DefaultNCollectionsRPI();
+                    wsModel.defaultNCollectionsRPI = t;
                 }
                 return NOptional.of((T) t);
             }

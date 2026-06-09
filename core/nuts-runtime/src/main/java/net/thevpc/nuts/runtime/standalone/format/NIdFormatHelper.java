@@ -42,6 +42,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 
 /**
@@ -266,7 +267,7 @@ public class NIdFormatHelper {
             if (maxUserNameSize != null) {
                 return maxUserNameSize;
             }
-            int z = "anonymous".length();
+            int z = NConstants.Users.ANONYMOUS.length();
             NUserConfig[] users = NWorkspaceExt.of(workspace).getConfigModel().getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NUserConfig user : users) {
@@ -439,9 +440,15 @@ public class NIdFormatHelper {
             }
             case INSTALL_USER: {
                 if (def != null && def.installInformation().isPresent()) {
-                    return stringValue(def.installInformation().get().installUser());
+                    String any = def.installInformation().get().installUser();
+                    if(!NBlankable.isBlank(any)) {
+                        if(NConstants.Users.ANONYMOUS.equals(any)){
+                            return text.ofStyled(NConstants.Users.ANONYMOUS, NTextStyle.pale());
+                        }
+                        return stringValue(any);
+                    }
                 }
-                return text.ofStyled("nobody", NTextStyle.error());
+                return text.ofStyled(NConstants.Users.ANONYMOUS, NTextStyle.error());
             }
             case CACHE_FOLDER: {
                 if (def != null) {

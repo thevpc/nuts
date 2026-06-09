@@ -278,7 +278,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         String newLogin = "";
         NSecureToken credentials = null;
         if (security == null) {
-            newLogin = "anonymous";
+            newLogin = NConstants.Users.ANONYMOUS;
         } else {
             newLogin = security.remoteUserName();
             if (NBlankable.isBlank(newLogin)) {

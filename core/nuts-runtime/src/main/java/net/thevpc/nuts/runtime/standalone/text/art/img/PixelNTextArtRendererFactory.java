@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text.art.img;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl;
+import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTextArtTableRenderer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NTextArtImageRenderer;
 import net.thevpc.nuts.text.NTextArtRenderer;
@@ -84,6 +85,13 @@ public class PixelNTextArtRendererFactory implements NTextArtRendererFactory {
     }
 
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
+        if (renderName.equals(rendererType)) {
+            try {
+                return PixelNTextArtImageRenderer.ofName("standard").instanceOf(NTextArtRenderer.class);
+            } catch (Exception e) {
+                return NOptional.ofNamedEmpty(renderName);
+            }
+        }
         if (renderName.startsWith(rendererType + ":")) {
             switch (renderName) {
                 case "pixel:cipher":

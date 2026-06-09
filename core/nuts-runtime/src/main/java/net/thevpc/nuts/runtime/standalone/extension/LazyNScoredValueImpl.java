@@ -64,4 +64,15 @@ public class LazyNScoredValueImpl<T> implements NScoredValue<T> {
         }
         return _score;
     }
+
+    @Override
+    public String toString() {
+        return "LazyNScoredValueImpl{" +
+                "_instance=" + _instance +
+                ", _score=" + _score +
+                ", supportCriteria=" + supportCriteria +
+                ", implType=" + implType +
+                ", apiType=" + apiType +
+                '}';
+    }
 }

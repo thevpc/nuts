@@ -116,6 +116,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 eargs.addAll(executionContext.arguments());
                 NExec.of()
                         .commandDefinition(def2.build())
+                        .env(executionContext.env())
                         .addCommand(eargs)
                         .executionType(NWorkspace.of().bootOptions().executionType().orNull())
                         .executionType(

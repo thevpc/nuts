@@ -195,10 +195,10 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        if (super.configureFirst(cmdLine)) {
+        if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
-        if (getDisplayOptions().configureFirst(cmdLine)) {
+        if (super.configureFirst(cmdLine)) {
             return true;
         }
         NArg a = cmdLine.peek().get();

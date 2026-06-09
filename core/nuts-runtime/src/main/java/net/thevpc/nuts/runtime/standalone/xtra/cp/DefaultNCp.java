@@ -572,7 +572,7 @@ public class DefaultNCp implements NCp {
                 return transferTo(in, out);
             }
         }
-        return Files.copy(in, target, CoreIOUtils.asCopyOptions(options).toArray(new CopyOption[0]));
+        return CoreIOUtils.copyWithBuffer(in, target, CoreIOUtils.asCopyOptions(options).toArray(new CopyOption[0]));
     }
 
     public long copy(InputStream in, OutputStream out, Set<NPathOption> options)

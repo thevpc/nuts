@@ -261,9 +261,9 @@ public interface NId extends Comparable<NId>, NBlankable {
     /**
      * return a string concatenation of group, name and version,
      * ignoring repository, and queryMap values. An example of long name is
-     * <code>my-group:my-artifact#my-version?alt</code>
+     * <code>my-group:my-artifact:classifier#my-version</code>
      *
-     * @return group id, artifact id and version only Id instance
+     * @return group id, artifact id and version only id instance
      */
     @NGetter
     String longName();

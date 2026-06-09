@@ -357,7 +357,7 @@ public class InstallHelper {
         if (info.flags.install) {
             args = buildArgs(info);
         }
-        boolean resolveInstaller = info.resolveInstaller;
+        boolean resolveInstaller = true;//info.resolveInstaller;
         fireEventBeforeInstall(def);
         NSession session = ws.getModel().workspace.currentSession();
         NPrintStream out = session.out();

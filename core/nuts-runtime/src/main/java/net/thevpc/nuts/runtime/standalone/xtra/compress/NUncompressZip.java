@@ -47,7 +47,8 @@ public class NUncompressZip implements NUncompressPackaging {
                     ZipEntry ze = zis.getNextEntry();
                     String root = null;
                     while (ze != null) {
-                        String fileName = ze.getName();
+                        String fileName0 = ze.getName();
+                        String fileName = fileName0;
                         if (uncompress.isSkipRoot()) {
                             String root2 = extractRoot(fileName);
                             if (root == null) {
@@ -57,9 +58,11 @@ public class NUncompressZip implements NUncompressPackaging {
                             }
                             fileName = fileName.substring(root.length());
                         }
-                        if (fileName.endsWith("/")) {
-                            Path newFile = folder.resolve(fileName);
-                            NPath.of(newFile).mkdirs();
+                        if (fileName0.endsWith("/")) {
+                            if(!fileName.isEmpty()){ //check the case of skip riit
+                                Path newFile = folder.resolve(fileName);
+                                NPath.of(newFile).mkdirs();
+                            }
                         } else {
                             Path newFile = folder.resolve(fileName);
                             _LOG()

@@ -401,6 +401,11 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                 NIteratorBuilder.of(getResultIdIteratorBase(true)).map(
                                 NFunction.of(NId::toDependency)
                                         .withDescription(NDescribables.ofDesc("Id->Dependency")))
+                        .distinct(x->{
+                            //always distinct by id and repo
+                            NId _id = x.toId();
+                            return _id.longName()+":"+NStringUtils.trim(_id.repository());
+                        })
                         .build()
         );
     }
@@ -791,7 +796,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     public <T> NIterator<T> runIterator() {
         NDisplayProperty[] a = getDisplayOptions().getDisplayProperties();
         NStream r = null;
-        if (/*isDependencies() && */!isInlineDependencies()) {
+        if (isInlineDependencies()) {
             NContentType of = getSearchSession().outputFormat().orDefault();
             if (of == null) {
                 of = NContentType.TREE;
@@ -806,6 +811,11 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                             .flatMap(NFunction.of((NDefinition x) -> x.dependencies().get().transitiveNodes().iterator())
                                     .withDescription(NDescribables.ofDesc("getDependencies"))
                             )
+                            .distinct(x->{
+                                //always distinct by id and repo
+                                NId _id = x.dependency().toId();
+                                return _id.longName()+":"+NStringUtils.trim(_id.repository());
+                            })
                             .map(NFunction.of((NDependencyTreeNode x) -> dependenciesToElement(x))
                                     .withDescription(NDescribables.ofDesc("dependenciesToElement"))
                             )
@@ -814,7 +824,8 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
 
                 default: {
                     NStream<NDependency> rr = getResultInlineDependencies();
-                    return (NIterator) rr.iterator();
+                    return (NIterator) rr.map(x->loadedIdToDefinition(x.toId())).iterator();
+//                    return (NIterator) rr.iterator();
                 }
             }
         } else {
@@ -965,6 +976,46 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         }
         NIterator<Object> it = runIterator();
         NSession session = NSession.of();
+        NFetchDisplayOptions displayOptions = getDisplayOptions();
+        boolean requireDef=false;
+        if(displayOptions!=null){
+            for (NDisplayProperty p : displayOptions.getDisplayProperties()) {
+                switch (p) {
+                    case NAME:{
+                        break;
+                    }
+                    case DESKTOP_ENVIRONMENT:
+                    case EXEC_ENTRY:
+                    case INSTALL_FOLDER:
+                    case LIB_FOLDER:
+                    case LONG_STATUS:
+                    case VAR_LOCATION:
+                    case OS:
+                    case CONF_FOLDER:
+                    case FILE_NAME:
+                    case INSTALL_DATE:
+                    case INSTALL_USER:
+                    case FILE:
+                    case OSDIST:
+                    case PROFILE:
+                    case REPOSITORY:
+                    case REPOSITORY_ID:
+                    case LOG_FOLDER:
+                    case ARCH:
+                    case PLATFORM:
+                    case PACKAGING:
+                    case TEMP_FOLDER:
+                    case STATUS:
+                    case CACHE_FOLDER:
+                    case ID:
+                    case BIN_FOLDER:{
+                        requireDef=true;
+                        break;
+                    }
+
+                }
+            }
+        }
         NIteratorBuilder.of(it)
                 .map(x -> {
 //                    if (x instanceof NDefinition) {
@@ -1018,7 +1069,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
         if (session.isDry()) {
             displayDryQueryPlan(it);
         } else {
-            it = NWorkspaceUtils.of().decoratePrint(it, getDisplayOptions());
+            it = NWorkspaceUtils.of().decoratePrint(it, displayOptions);
             long count = 0;
             while (it.hasNext()) {
                 it.next();

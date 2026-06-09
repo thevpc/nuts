@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text.art.figlet;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl;
+import net.thevpc.nuts.runtime.standalone.text.art.tree.DefaultNTextArtTreeRenderer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NTextArtRenderer;
 import net.thevpc.nuts.text.NTextArtRendererFactory;
@@ -72,6 +73,13 @@ public class FigletNTextArtRendererFactory implements NTextArtRendererFactory {
     }
 
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
+        if (renderName.equals(rendererType)) {
+            try {
+                return FigletNTextArtTextRenderer.ofName("banner").instanceOf(NTextArtRenderer.class);
+            } catch (Exception e) {
+                return NOptional.ofNamedEmpty(renderName);
+            }
+        }
         if (renderName.startsWith(rendererType + ":")) {
             try {
                 return FigletNTextArtTextRenderer.ofName(renderName.substring(rendererType.length() + 1)).instanceOf(NTextArtRenderer.class);

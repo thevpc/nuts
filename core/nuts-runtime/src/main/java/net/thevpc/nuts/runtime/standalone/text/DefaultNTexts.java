@@ -239,7 +239,7 @@ public class DefaultNTexts implements NTexts {
         registerTextFormatProvider(new NTextFormatProvider() {
             @Override
             public String[] types() {
-                return new String[]{"m", "meter", "meters", "metric","distance"};
+                return new String[]{"m", "meter", "meters", "metric", "distance"};
             }
 
             @Override
@@ -255,7 +255,7 @@ public class DefaultNTexts implements NTexts {
         registerTextFormatProvider(new NTextFormatProvider() {
             @Override
             public String[] types() {
-                return new String[]{"memory", "bytes","byte", "size"};
+                return new String[]{"memory", "bytes", "byte", "size"};
             }
 
             @Override
@@ -1227,11 +1227,21 @@ public class DefaultNTexts implements NTexts {
             case LIST: {
                 NTextList t = (NTextList) text;
                 List<NText> li = new ArrayList<>();
+                boolean wasNullInclude = false; // used to track when a newline is
                 for (NText child : t.children()) {
                     if (child != null) {
+                        NText oldChild = child;
                         child = transform(child, transformer, c);
                         if (child != null) {
-                            li.add(child);
+                            if (child.isNewLine() && wasNullInclude) {
+                                //just ignore
+                            } else {
+                                li.add(child);
+                            }
+                            wasNullInclude = false;
+                        }else if(oldChild instanceof  NTextInclude){
+                            // starts with new line, then include, then newline
+                            wasNullInclude = true;
                         }
                     }
                 }

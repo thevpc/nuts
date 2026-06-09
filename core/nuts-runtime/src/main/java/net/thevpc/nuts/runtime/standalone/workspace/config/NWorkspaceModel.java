@@ -10,6 +10,8 @@ import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.elem.NElementFactory;
+import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.platform.NEnv;
@@ -55,6 +57,8 @@ import java.util.function.Supplier;
 public class NWorkspaceModel {
     public NLog LOG;
     public NLogs defaultNLogs;
+    public NElementFactory defaultNElementFactory;
+    public NCollectionsRPI defaultNCollectionsRPI;
     public NWorkspace workspace;
     public NScopedValue<NSession> sessionScopes = new NScopedValue<>();
     public NSession initSession;

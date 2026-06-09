@@ -15,21 +15,13 @@ import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.DefaultNRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.text.NContentType;
-import net.thevpc.nuts.text.NMutableTableModel;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NSettingsUserSubCommand;
 import net.thevpc.nuts.spi.NRepositoryLocation;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextArt;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 
@@ -43,7 +35,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
     }
 
     public static RepoInfo repoInfo(NRepository x, boolean tree) {
-        return new RepoInfo(x.name(), x.config().type(), x.config().locationPath(),
+        return new RepoInfo(x.name(), x.config().type(), x.config().locationPath().toString(),
                 x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
                 (tree ? x.config().mirrors().stream().map(e -> repoInfo(e, tree)).toArray(RepoInfo[]::new) : null),
                 x.config().isTemporary(),
@@ -123,7 +115,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 NRepository repo = editedRepo.config().addMirror(
                         new NRepositorySpec()
                                 .name(repositoryName)
-                        .location(repositoryName)
+                                .location(repositoryName)
                                 .sourceLocation(NRepositoryLocation.of(location))
                 );
                 workspace.saveConfig();
@@ -148,22 +140,32 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 List<NRepository> linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().mirrors() : Collections.emptyList();
                 out.println(NMsg.ofC("%s sub repositories.", linkRepositories.size()));
 
-                NMutableTableModel m = NMutableTableModel.of();
-                m.addHeaderRow(NText.ofPlain("Id"), NText.ofPlain("Enabled"), NText.ofPlain("Type"), NText.ofPlain("Location"))
-                ;
                 while (cmdLine.hasNext()) {
                     if (!NSession.of().configureFirst(cmdLine)) {
                         cmdLine.commandName("config edit repo").throwUnexpectedArgument();
                     }
                 }
-                for (NRepository repository : linkRepositories) {
-                    m.addRow(
-                            NText.ofStyledPrimary4(repository.name()), repository.config().isEnabled() ? repository.isEnabled() ? NText.ofStyled("ENABLED", NTextStyle.success()) : NText.ofStyled("<RT-DISABLED>", NTextStyle.error()) : NText.ofStyled("<DISABLED>", NTextStyle.error()),
-                            NText.of(repository.repositoryType()),
-                            NText.of(repository.config().location()));
-                }
-                out.print(NTextArt.of().tableRenderer()
-                        .get().render(m));
+                printPlainRepoList(
+                        linkRepositories.stream().map(x->{
+                            RepoInfo r = new RepoInfo();
+                            r.name=x.name();
+                            r.enabled=(x.config().isEnabled() && x.isEnabled())?RepoStatus.enabled :  RepoStatus.disabled;
+                            r.type=x.repositoryType();
+                            r.location=x.config().location().fullLocation();
+                            r.preview=x.config().isPreview();
+                            r.temporary=x.config().isTemporary();
+                            TreeSet<String> t = new TreeSet<>();
+                            if(r.preview){
+                                t.add("@preview");
+                            }
+                            if(r.temporary){
+                                t.add("@temp");
+                            }
+                            t.addAll(x.tags());
+                            r.tags= t.toArray(new String[0]);
+                            return r;
+                        }).toArray(RepoInfo[]::new)
+                        , out);
             } else if (cmdLine.next("-h", "-?", "--help").isPresent()) {
                 out.println(NMsg.ofC("edit repository %s add repo ...", repoId));
                 out.println(NMsg.ofC("edit repository %s remove repo ...", repoId));
@@ -232,17 +234,41 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 }
             } else {
                 if (cf == NContentType.PLAIN) {
-                    NMutableTableModel model = NMutableTableModel.of();
-                    for (RepoInfo repoInfo : array) {
-                        model.addRow(NText.of(repoInfo.name), NText.of(repoInfo.enabled), NText.of(repoInfo.location), NText.of(repoInfo.tags));
-                    }
-                    out.println(NTextArt.of().getTableRenderer("table:spaces")
-                            .get()
-                            .render(model));
+                    printPlainRepoList(array, out);
                 } else {
                     out.println(array);
                 }
             }
+        }
+    }
+
+    private void printPlainRepoList(RepoInfo[] array, NPrintStream out) {
+        int[] colSizes = new int[5];
+        for (RepoInfo repoInfo : array) {
+            colSizes[0] = Math.max(colSizes[0], repoInfo.name.length());
+            colSizes[1] = Math.max(colSizes[2], NStringUtils.trim(repoInfo.location).length());
+            colSizes[3] = Math.max(colSizes[3], Arrays.toString(repoInfo.tags).length());
+        }
+        for (RepoInfo repoInfo : array) {
+            NTextBuilder ll = NTextBuilder.of();
+            if( repoInfo.enabled == RepoStatus.enabled){
+                ll.append("[");
+                ll.append(NText.ofStyled("x", NTextStyle.success()));
+                ll.append("]");
+            }else{
+                ll.append("[ ]");
+            }
+            ll.append(" ");
+            ll.append(NStringUtils.alignLeft(repoInfo.name, colSizes[0]));
+            ll.append(" ");
+            ll.append(
+                    NText.ofStyled(NStringUtils.alignLeft(repoInfo.location, colSizes[1]), NTextStyle.path())
+            );
+            ll.append(" ");
+            if(repoInfo.tags.length>0){
+                ll.appendJoined(",",Arrays.asList(repoInfo.tags));
+            }
+            out.println(ll);
         }
     }
 
@@ -416,14 +442,14 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
 
         String name;
         String type;
-        NPath location;
+        String location;
         boolean temporary;
         boolean preview;
         RepoStatus enabled;
         RepoInfo[] mirrors;
         String[] tags;
 
-        public RepoInfo(String name, String type, NPath location, RepoStatus enabled, RepoInfo[] mirrors, boolean temporary, boolean preview, String[] tags) {
+        public RepoInfo(String name, String type, String location, RepoStatus enabled, RepoInfo[] mirrors, boolean temporary, boolean preview, String[] tags) {
             this.name = name;
             this.type = type;
             this.location = location;
@@ -489,11 +515,11 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             this.type = type;
         }
 
-        public NPath getLocation() {
+        public String getLocation() {
             return location;
         }
 
-        public void setLocation(NPath location) {
+        public void setLocation(String location) {
             this.location = location;
         }
 

@@ -1149,4 +1149,37 @@ public class CoreIOUtils {
         });
     }
 
+    public static long copyWithBuffer(InputStream in, Path target, CopyOption... options) throws IOException {
+        boolean replaceExisting = false;
+        for (CopyOption o : options) {
+            if (o == StandardCopyOption.REPLACE_EXISTING) replaceExisting = true;
+        }
+
+        Path parent = target.getParent();
+        if (parent != null) Files.createDirectories(parent);
+
+        Path tmp = parent != null
+                ? parent.resolve(target.getFileName() + ".part")
+                : target.resolveSibling(target.getFileName() + ".part");
+
+        try {
+            byte[] buf = new byte[1024 * 1024]; // 128KB buffer
+            try (OutputStream out = Files.newOutputStream(tmp, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                int n;
+                while ((n = in.read(buf)) >= 0) {
+                    out.write(buf, 0, n);
+                }
+                out.flush();
+            }
+            if (replaceExisting) {
+                Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } else {
+                Files.move(tmp, target);
+            }
+            return Files.size(target);
+        } catch (IOException | RuntimeException e) {
+            try { Files.deleteIfExists(tmp); } catch (IOException ignored) {}
+            throw e;
+        }
+    }
 }

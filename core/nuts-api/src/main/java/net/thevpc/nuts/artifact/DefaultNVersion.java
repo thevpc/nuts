@@ -254,7 +254,8 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public NVersionFilter toFilter(NVersionComparator comparator) {
-        return NVersionFilters.of().byValue(expression,comparator).get();
+        // some versions are invalid (in maven pom.xml) they will be supposed empty
+        return NVersionFilters.of().byValue(expression,comparator).orElseGet(()->NVersionFilters.of().always());
     }
 
     @Override

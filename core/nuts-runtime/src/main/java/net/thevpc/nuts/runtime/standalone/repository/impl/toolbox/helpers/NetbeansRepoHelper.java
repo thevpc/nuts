@@ -61,12 +61,11 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                 )
                 .installer(NArtifactCallBuilder.of()
                         .id(NId.of(NConstants.Ids.NSH))
-                        .arguments(
-                                "-c", "unzip",
-                                "--skip-root",
-                                "$nutsIdContentPath",
-                                "-d",
-                                "$nutsIdBinPath/app"
+                        .arguments("$nutsIdInstallScriptPath")
+                        .scriptName("post-install.sh")
+                        .scriptContent(
+                                "\nunzip --skip-root \"$nutsIdContentPath\" -d \"$nutsIdBinPath/app\""
+                                +"\nchmod +x \"$nutsIdBinPath/app/bin/netbeans\""
                         )
                         .build()
                 )
@@ -130,6 +129,10 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
     }
 
     private String getUrl(NVersion version) {
+        if(true) {
+            // for test purposes
+            return "/home/vpc/Downloads/netbeans-" + version + "-bin.zip";
+        }
         //nuts supports out of the box navigating apache website using htmlfs
         NPath b = NPath.of("https://archive.apache.org/dist/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
         if (b.exists()) {

@@ -76,6 +76,9 @@ public class TreeNTextArtRendererFactory implements NTextArtRendererFactory {
     }
 
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
+        if (renderName.equals(rendererType)) {
+            return NOptional.of(new DefaultNTextArtTreeRenderer("tree:default"));
+        }
         if (renderName.startsWith(rendererType + ":")) {
             switch (renderName){
                 case "tree:default":return NOptional.of(new DefaultNTextArtTreeRenderer("tree:default"));
