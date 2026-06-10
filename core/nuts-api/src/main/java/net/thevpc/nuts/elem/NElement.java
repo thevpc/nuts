@@ -623,6 +623,14 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
         return NElementFactory.of().ofByteArray(items);
     }
 
+    static NArrayElement ofCharArray(char... items) {
+        return NElementFactory.of().ofCharArray(items);
+    }
+
+    static NArrayElement ofCharArray(Character... items) {
+        return NElementFactory.of().ofCharArray(items);
+    }
+
     static NArrayElement ofByteArray(Byte... items) {
         return NElementFactory.of().ofByteArray(items);
     }

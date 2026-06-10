@@ -48,31 +48,36 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
         return NCollectionsRPI.of().arrayToStream(str);
     }
 
-    static <T> NStream<T> ofArray(int... items) {
+    static <T> NStream<T> ofIntArray(int... items) {
         return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofIntArray(items));
     }
 
-    static <T> NStream<T> ofArray(long... items) {
+    static <T> NStream<T> ofLongArray(long... items) {
         return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofLongArray(items));
     }
 
-    static <T> NStream<T> ofArray(boolean... items) {
+    static <T> NStream<T> ofBooleanArray(boolean... items) {
         return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofBooleanArray(items));
     }
 
-    static <T> NStream<T> ofArray(byte... items) {
+    static <T> NStream<T> ofByteArray(byte... items) {
         return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofByteArray(items));
     }
 
-    static <T> NStream<T> ofArray(short... items) {
+
+    static <T> NStream<T> ofCharArray(char... items) {
+        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofCharArray(items));
+    }
+
+    static <T> NStream<T> ofShortArray(short... items) {
         return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofShortArray(items));
     }
 
-    static <T> NStream<T> ofArray(float... items) {
+    static <T> NStream<T> ofFloatArray(float... items) {
         return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofFloatArray(items));
     }
 
-    static <T> NStream<T> ofArray(double... items) {
+    static <T> NStream<T> ofDoubleArray(double... items) {
         return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofDoubleArray(items));
     }
 
