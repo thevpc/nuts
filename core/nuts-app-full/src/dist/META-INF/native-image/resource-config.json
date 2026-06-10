@@ -5,6 +5,8 @@
   }, {
     "pattern":"\\QMETA-INF/MANIFEST.MF\\E"
   }, {
+    "pattern":"\\QMETA-INF/nuts-extension-catalog/net.thevpc.nuts.spi.path.properties\\E"
+  }, {
     "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
   }, {
     "pattern":"\\QMETA-INF/services/java.net.spi.InetAddressResolverProvider\\E"

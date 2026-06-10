@@ -49,36 +49,36 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     static <T> NStream<T> ofIntArray(int... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofIntArray(items));
+        return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofIntArray(items));
     }
 
     static <T> NStream<T> ofLongArray(long... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofLongArray(items));
+        return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofLongArray(items));
     }
 
     static <T> NStream<T> ofBooleanArray(boolean... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofBooleanArray(items));
+        return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofBooleanArray(items));
     }
 
     static <T> NStream<T> ofByteArray(byte... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofByteArray(items));
+        return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofByteArray(items));
     }
 
 
     static <T> NStream<T> ofCharArray(char... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofCharArray(items));
+        return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofCharArray(items));
     }
 
     static <T> NStream<T> ofShortArray(short... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofShortArray(items));
+        return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofShortArray(items));
     }
 
     static <T> NStream<T> ofFloatArray(float... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofFloatArray(items));
+        return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofFloatArray(items));
     }
 
     static <T> NStream<T> ofDoubleArray(double... items) {
-        return (NStream<T>) ofStream(Stream.of(items)).withDescription(() -> NElement.ofDoubleArray(items));
+        return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofDoubleArray(items));
     }
 
     static <T> NStream<T> ofOptional(NOptional<T> str) {

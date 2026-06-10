@@ -22,8 +22,10 @@ import java.util.Collections;
 public class MvnRepoHelper implements ToolboxRepoHelper {
 
     public static final String HTTPS_ARCHIVE_APACHE_ORG_DIST_MAVEN = "https://archive.apache.org/dist/maven/maven-";
+    public static final String HELPER_GROUP = "org.apache.maven";
+    public static final String HELPER_ARTIFACT = "mvn";
 
-    protected SingleBaseIdFilterHelper baseIdFilterHelper = new SingleBaseIdFilterHelper("org.apache.maven:mvn");
+    protected SingleBaseIdFilterHelper baseIdFilterHelper = new SingleBaseIdFilterHelper(HELPER_GROUP+":"+HELPER_ARTIFACT);
 
     @Override
     public boolean acceptId(NId id) {
@@ -41,7 +43,7 @@ public class MvnRepoHelper implements ToolboxRepoHelper {
             return null;
         }
         SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("repo %s", "maven"));
-        NIdBuilder idBuilder = NIdBuilder.of("org.apache.maven", "apache-maven");
+        NIdBuilder idBuilder = NIdBuilder.of(HELPER_GROUP, HELPER_ARTIFACT);
 
         // Maven releases are under: https://archive.apache.org/dist/maven/maven-<major>/<version>/binaries/
         // We'll scan major versions 3 and 4 (and maybe 2)

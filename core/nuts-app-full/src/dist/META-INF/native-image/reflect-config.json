@@ -73,7 +73,11 @@
 },
 {
   "name":"java.io.Serializable",
-  "methods":[{"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }]
+  "methods":[{"name":"authenticationAgent","parameterTypes":[] }, {"name":"credential","parameterTypes":[] }, {"name":"deployWeight","parameterTypes":[] }, {"name":"env","parameterTypes":[] }, {"name":"executionEngineFamily","parameterTypes":[] }, {"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }, {"name":"groups","parameterTypes":[] }, {"name":"id","parameterTypes":[] }, {"name":"location","parameterTypes":[] }, {"name":"name","parameterTypes":[] }, {"name":"packaging","parameterTypes":[] }, {"name":"path","parameterTypes":[] }, {"name":"priority","parameterTypes":[] }, {"name":"product","parameterTypes":[] }, {"name":"storeLocations","parameterTypes":[] }, {"name":"storeStrategy","parameterTypes":[] }, {"name":"tags","parameterTypes":[] }, {"name":"userName","parameterTypes":[] }, {"name":"uuid","parameterTypes":[] }, {"name":"variant","parameterTypes":[] }, {"name":"vendor","parameterTypes":[] }, {"name":"version","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.Class",
+  "methods":[{"name":"getRecordComponents","parameterTypes":[] }]
 },
 {
   "name":"java.lang.ClassLoader",
@@ -81,7 +85,7 @@
 },
 {
   "name":"java.lang.Cloneable",
-  "methods":[{"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }]
+  "methods":[{"name":"authenticationAgent","parameterTypes":[] }, {"name":"credential","parameterTypes":[] }, {"name":"deployWeight","parameterTypes":[] }, {"name":"env","parameterTypes":[] }, {"name":"executionEngineFamily","parameterTypes":[] }, {"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }, {"name":"groups","parameterTypes":[] }, {"name":"id","parameterTypes":[] }, {"name":"location","parameterTypes":[] }, {"name":"name","parameterTypes":[] }, {"name":"packaging","parameterTypes":[] }, {"name":"path","parameterTypes":[] }, {"name":"priority","parameterTypes":[] }, {"name":"product","parameterTypes":[] }, {"name":"storeLocations","parameterTypes":[] }, {"name":"storeStrategy","parameterTypes":[] }, {"name":"tags","parameterTypes":[] }, {"name":"userName","parameterTypes":[] }, {"name":"uuid","parameterTypes":[] }, {"name":"variant","parameterTypes":[] }, {"name":"vendor","parameterTypes":[] }, {"name":"version","parameterTypes":[] }]
 },
 {
   "name":"java.lang.Object",
@@ -158,19 +162,19 @@
   "name":"net.thevpc.nuts.core.NRepositoryConfig",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getAuthenticationAgent","parameterTypes":[] }, {"name":"getEnv","parameterTypes":[] }, {"name":"getGroups","parameterTypes":[] }, {"name":"getLocation","parameterTypes":[] }, {"name":"getMirrors","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getStoreLocations","parameterTypes":[] }, {"name":"getStoreStrategy","parameterTypes":[] }, {"name":"getTags","parameterTypes":[] }, {"name":"getUuid","parameterTypes":[] }, {"name":"isIndexEnabled","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"authenticationAgent","parameterTypes":[] }, {"name":"env","parameterTypes":[] }, {"name":"getAuthenticationAgent","parameterTypes":[] }, {"name":"getEnv","parameterTypes":[] }, {"name":"getGroups","parameterTypes":[] }, {"name":"getLocation","parameterTypes":[] }, {"name":"getMirrors","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getStoreLocations","parameterTypes":[] }, {"name":"getStoreStrategy","parameterTypes":[] }, {"name":"getTags","parameterTypes":[] }, {"name":"getUuid","parameterTypes":[] }, {"name":"groups","parameterTypes":[] }, {"name":"isIndexEnabled","parameterTypes":[] }, {"name":"location","parameterTypes":[] }, {"name":"name","parameterTypes":[] }, {"name":"storeLocations","parameterTypes":[] }, {"name":"storeStrategy","parameterTypes":[] }, {"name":"tags","parameterTypes":[] }, {"name":"uuid","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.core.NRepositoryRef",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getDeployWeight","parameterTypes":[] }, {"name":"getLocation","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"isEnabled","parameterTypes":[] }, {"name":"isFailSafe","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"deployWeight","parameterTypes":[] }, {"name":"getDeployWeight","parameterTypes":[] }, {"name":"getLocation","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"isEnabled","parameterTypes":[] }, {"name":"isFailSafe","parameterTypes":[] }, {"name":"location","parameterTypes":[] }, {"name":"name","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.platform.NExecutionEngineLocation",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getPriority","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getPriority","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }, {"name":"priority","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder"
@@ -302,6 +306,9 @@
   "name":"net.thevpc.nuts.runtime.standalone.executor.pom.PomAndUnsupportedJavaExecutorComponent"
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.executor.system.ExecExecutorComponent"
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecutorComponent"
 },
 {
@@ -309,6 +316,12 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.executor.zip.ZipExecutorComponent"
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.extension.ClassPathNExtensionCatalog",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions"
@@ -797,6 +810,9 @@
   "name":"net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNUncompress"
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.xtra.compress.NCompressGzip"
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.xtra.compress.NCompressZip"
 },
 {
@@ -854,7 +870,7 @@
   "name":"net.thevpc.nuts.security.NUserConfig",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getCredential","parameterTypes":[] }, {"name":"getGroups","parameterTypes":[] }, {"name":"getPermissions","parameterTypes":[] }, {"name":"getUserName","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"credential","parameterTypes":[] }, {"name":"getCredential","parameterTypes":[] }, {"name":"getGroups","parameterTypes":[] }, {"name":"getPermissions","parameterTypes":[] }, {"name":"getUserName","parameterTypes":[] }, {"name":"userName","parameterTypes":[] }]
 },
 {
   "name":"sun.java2d.marlin.DMarlinRenderingEngine",

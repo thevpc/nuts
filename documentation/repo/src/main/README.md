@@ -303,6 +303,8 @@ Because this is the runtime, not the shell, every Nuts-aware tool inherits it au
 | `nuts myapp#1.0.0` | run a specific installed version |
 | `nuts nsh -c "cp http://host/a.pdf ssh://user@server/b.pdf"` | cross-protocol file copy |
 
+→ [See the full showcase](SHOWCASE.md) for more examples including databases, IDEs, security tools, and games.
+
 ---
 
 ## How Nuts relates to other tools

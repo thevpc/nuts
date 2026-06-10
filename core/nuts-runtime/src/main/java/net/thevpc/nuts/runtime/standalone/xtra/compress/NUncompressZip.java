@@ -64,6 +64,7 @@ public class NUncompressZip implements NUncompressPackaging {
                             // Edge case: If the entry IS the root directory itself, its stripped name will be empty.
                             // We skip it to avoid creating an empty directory or triggering weird edge cases.
                             if (fileName.isEmpty() || fileName.equals("/")) {
+                                ze = zis.getNextEntry();
                                 continue;
                             }
                         }
