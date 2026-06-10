@@ -8,6 +8,7 @@
     <modules>
         <module>nuts-term</module>
         <module>nuts-ssh</module>
+        <module>nuts-compression</module>
     </modules>
     <properties>
     </properties>
