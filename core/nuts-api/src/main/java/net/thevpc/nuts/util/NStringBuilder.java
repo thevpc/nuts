@@ -12,6 +12,29 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+/**
+ * A mutable sequence of characters with extensive utility methods,
+ * similar to {@link StringBuilder} but with additional conveniences for
+ * indentation, line handling, pattern replacement, and charset operations.
+ *
+ * <p>Implements {@link CharSequence} and {@link NBlankable}. All index‑based methods
+ * support negative indexing (e.g., {@code -1} refers to the last character).
+ *
+ * <p>Many operations return the builder itself, allowing fluent chaining.
+ *
+ * <p>Examples:
+ * <pre>{@code
+ * NStringBuilder sb = NStringBuilder.of();
+ * sb.println("Hello").append("world").indent("  ");
+ * System.out.println(sb); // prints "  Hello\n  world"
+ *
+ * // Negative indexing
+ * sb.setCharAt(-1, '!');  // changes last character to '!'
+ * }</pre>
+ *
+ * @see StringBuilder
+ * @see NBlankable
+ */
 public class NStringBuilder implements CharSequence, NBlankable {
     private StringBuilder data;
 
@@ -29,6 +52,10 @@ public class NStringBuilder implements CharSequence, NBlankable {
 
     public NStringBuilder(int capacity) {
         data = new StringBuilder(capacity);
+    }
+
+    public static NStringBuilder of() {
+        return new NStringBuilder();
     }
 
     public NStringWriter asStringWriter() {
