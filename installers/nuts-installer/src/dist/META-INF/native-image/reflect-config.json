@@ -208,6 +208,10 @@
   "name":"java.util.Date"
 },
 {
+  "name":"java.util.LinkedHashMap",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"java.util.Map",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },

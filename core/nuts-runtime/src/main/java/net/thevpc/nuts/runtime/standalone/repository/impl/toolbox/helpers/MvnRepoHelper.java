@@ -45,7 +45,7 @@ public class MvnRepoHelper implements ToolboxRepoHelper {
 
         // Maven releases are under: https://archive.apache.org/dist/maven/maven-<major>/<version>/binaries/
         // We'll scan major versions 3 and 4 (and maybe 2)
-        return NStream.ofArray(3, 4)
+        return NStream.ofIntArray(3, 4)
                 .flatMapStream(major -> {
                     String majorUrl = HTTPS_ARCHIVE_APACHE_ORG_DIST_MAVEN + major + "/";
                     return NPath.of("htmlfs+" + majorUrl)

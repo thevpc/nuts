@@ -246,6 +246,16 @@ public class DefaultNElementFactory implements NElementFactory {
     }
 
     @Override
+    public NArrayElement ofCharArray(char... items) {
+        return ofArrayBuilder().addAll(IntStream.range(0, items.length).mapToObj(i -> ofChar(items[i])).collect(Collectors.toList())).build();
+    }
+
+    @Override
+    public NArrayElement ofCharArray(Character... items) {
+        return ofArrayBuilder().addAll(IntStream.range(0, items.length).mapToObj(i -> ofChar(items[i])).collect(Collectors.toList())).build();
+    }
+
+    @Override
     public NArrayElement ofByteArray(Byte... items) {
         return ofArrayBuilder().addAll(Arrays.stream(items).map(this::ofByte).collect(Collectors.toList())).build();
     }
