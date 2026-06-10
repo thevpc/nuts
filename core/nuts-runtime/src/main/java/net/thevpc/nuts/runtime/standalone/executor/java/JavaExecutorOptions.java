@@ -210,6 +210,8 @@ public final class JavaExecutorOptions {
                         } else {
                             extraMayBeJvmOptions.add(cmdLine.next().get());
                         }
+                    }else{
+                        cmdLine.throwUnexpectedArgument();
                     }
                 }
             }

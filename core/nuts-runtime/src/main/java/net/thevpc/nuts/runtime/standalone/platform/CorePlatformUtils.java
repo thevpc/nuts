@@ -46,6 +46,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.zip.ZipEntry;
@@ -66,6 +67,32 @@ public class CorePlatformUtils {
                     && System.getenv("MSYSTEM").startsWith("MINGW")
                     && "xterm".equals(System.getenv("TERM"));
     private static Map<String, String> LOADED_OS_DIST_MAP = null;
+
+    public static class JdkVersionAndReleaseDate {
+        private final int version;
+        private final LocalDate releaseDate;
+
+        public JdkVersionAndReleaseDate(int version, LocalDate releaseDate) {
+            this.version = version;
+            this.releaseDate = releaseDate;
+        }
+
+        public int majorVersion() {
+            return version;
+        }
+
+        public LocalDate releaseDate() {
+            return releaseDate;
+        }
+    }
+
+    public static List<JdkVersionAndReleaseDate> JAVA_LTS_RELEASES = Arrays.asList(
+            new JdkVersionAndReleaseDate(8, LocalDate.of(2014, 3, 18)),
+            new JdkVersionAndReleaseDate(11, LocalDate.of(2018, 9, 25)),
+            new JdkVersionAndReleaseDate(17, LocalDate.of(2021, 9, 14)),
+            new JdkVersionAndReleaseDate(21, LocalDate.of(2023, 9, 19)),
+            new JdkVersionAndReleaseDate(25, LocalDate.of(2025, 9, 16))
+    );
 
     static {
 //        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
@@ -491,38 +518,38 @@ public class CorePlatformUtils {
     }
 
 
-    public static List<Class> resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass){
-        List<Class> acceptableInterfaces=new ArrayList<>();
-        resolveInterfacesDeclaringNoArgMethod(methodName,declaringClass,acceptableInterfaces,new HashSet<>());
+    public static List<Class> resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass) {
+        List<Class> acceptableInterfaces = new ArrayList<>();
+        resolveInterfacesDeclaringNoArgMethod(methodName, declaringClass, acceptableInterfaces, new HashSet<>());
         return acceptableInterfaces;
     }
 
-    public static void resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass, List<Class> acceptableInterfaces, Set<Class> visitedClasses){
-        if(declaringClass==null){
+    public static void resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass, List<Class> acceptableInterfaces, Set<Class> visitedClasses) {
+        if (declaringClass == null) {
             return;
         }
-        if(visitedClasses.contains(declaringClass)){
+        if (visitedClasses.contains(declaringClass)) {
             return;
         }
-        if(declaringClass.isInterface()){
-            Method mm=null;
+        if (declaringClass.isInterface()) {
+            Method mm = null;
             try {
                 mm = declaringClass.getDeclaredMethod(methodName);
                 int mod = mm.getModifiers();
-                if(Modifier.isStatic(mod) || Modifier.isPrivate(mod)){
-                    mm=null;
+                if (Modifier.isStatic(mod) || Modifier.isPrivate(mod)) {
+                    mm = null;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 //
             }
-            if(mm!=null){
+            if (mm != null) {
                 acceptableInterfaces.add(declaringClass);
             }
             visitedClasses.add(declaringClass);
         }
-        resolveInterfacesDeclaringNoArgMethod(methodName,declaringClass.getSuperclass(),acceptableInterfaces,visitedClasses);
+        resolveInterfacesDeclaringNoArgMethod(methodName, declaringClass.getSuperclass(), acceptableInterfaces, visitedClasses);
         for (Class d : declaringClass.getInterfaces()) {
-            resolveInterfacesDeclaringNoArgMethod(methodName,d,acceptableInterfaces,visitedClasses);
+            resolveInterfacesDeclaringNoArgMethod(methodName, d, acceptableInterfaces, visitedClasses);
         }
     }
 }

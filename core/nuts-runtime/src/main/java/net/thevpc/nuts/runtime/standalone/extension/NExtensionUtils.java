@@ -3,47 +3,31 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NOptional;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class NExtensionUtils {
-    private static Map<String, NId> protocolToExtensionMap = new HashMap<>(
-            NMaps.of(
-                    "ssh", NId.of("net.thevpc.nuts:nuts-ssh"),
-                    "nagent", NId.of("com.cts.nuts.enterprise:next-agent")
-            )
-    );
-
-    public static NOptional<NId> ensureExtensionLoadedForProtocol(NConnectionString connectionString) {
-        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.protocol())) {
-            return NOptional.ofNamedEmpty("protocol");
+    public static void ensureExtensionLoadedForProtocol(NConnectionString connectionString) {
+        if (NBlankable.isBlank(connectionString)) {
+            return ;//
         }
-        return ensureExtensionLoadedForProtocol(connectionString == null ? null : connectionString.protocol());
+        ensureExtensionLoadedForProtocol(connectionString.protocol());
     }
 
-    public static NOptional<NId> ensureExtensionLoadedForProtocol(String protocol) {
-        NOptional<NId> u = extensionForProtocol(protocol);
-        if (u.isPresent()) {
-            NExtensions.of().loadExtension(u.get());
+    public static void ensureExtensionLoadedForProtocol(String protocol) {
+        if (NBlankable.isBlank(protocol)) {
+            return ;//
         }
-        return u;
+        NWorkspaceExt.of().getModel().extensionCatalogManager.loadExtensionFor("net.thevpc.nuts.spi.path", protocol);
     }
-
-    public static NOptional<NId> extensionForProtocol(String protocol) {
-        return NOptional.ofNamed(protocolToExtensionMap.get(protocol), protocol);
-    }
-
 
     public static NExecTargetSPI createNExecTargetSPI(NConnectionString connectionString) {
         if (!NBlankable.isBlank(connectionString)) {
-            NExtensionUtils.ensureExtensionLoadedForProtocol(connectionString);
+            ensureExtensionLoadedForProtocol(connectionString);
             return NExtensions.of().createSupported(NExecTargetSPI.class, connectionString)
                     .orElseThrow(() -> new NIllegalArgumentException(NMsg.ofC("invalid execution target string : %s", connectionString)));
         }

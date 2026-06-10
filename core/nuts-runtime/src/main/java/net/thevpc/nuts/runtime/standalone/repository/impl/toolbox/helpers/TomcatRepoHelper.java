@@ -126,7 +126,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                                     .platform(Arrays.asList("java" + javaVersion))
                     )
                     .description("Apache Tomcat Official Zip Bundle")
-                    .setProperty("dynamic-descriptor", "true")
+                    .setProperty(DYNAMIC_DESCRIPTOR, "true")
                     .build();
         }
         return null;

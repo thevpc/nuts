@@ -53,9 +53,9 @@ public class NCompressZip implements NCompressPackaging {
                         zip = new ZipOutputStream(fW);
                         if (compress.isSkipRoot()) {
                             for (NInputSource s : sources) {
-                                DefaultNCompress.Item file1 = new DefaultNCompress.Item(s, compress);
+                                DefaultNCompressItem file1 = new DefaultNCompressItem(s, compress);
                                 if (file1.isSourceDirectory()) {
-                                    for (DefaultNCompress.Item c : file1.list()) {
+                                    for (DefaultNCompressItem c : file1.list()) {
                                         add("", c, zip);
                                     }
                                 } else {
@@ -64,7 +64,7 @@ public class NCompressZip implements NCompressPackaging {
                             }
                         } else {
                             for (NInputSource s : sources) {
-                                add("", new DefaultNCompress.Item(s, compress), zip);
+                                add("", new DefaultNCompressItem(s, compress), zip);
                             }
                         }
                     } finally {
@@ -117,7 +117,7 @@ public class NCompressZip implements NCompressPackaging {
     }
 
 
-    private void add(String path, DefaultNCompress.Item srcFolder, ZipOutputStream zip) {
+    private void add(String path, DefaultNCompressItem srcFolder, ZipOutputStream zip) {
         if (srcFolder.isSourceDirectory()) {
             addFolderToZip(path, srcFolder, zip);
         } else {
@@ -125,12 +125,12 @@ public class NCompressZip implements NCompressPackaging {
         }
     }
 
-    private void addFolderToZip(String path, DefaultNCompress.Item srcFolder, ZipOutputStream zip) throws UncheckedIOException {
-        DefaultNCompress.Item[] dirChildren = srcFolder.list();
+    private void addFolderToZip(String path, DefaultNCompressItem srcFolder, ZipOutputStream zip) throws UncheckedIOException {
+        DefaultNCompressItem[] dirChildren = srcFolder.list();
         if (dirChildren.length == 0) {
             addFileToZip(path, srcFolder, zip, true);
         } else {
-            for (DefaultNCompress.Item c : dirChildren) {
+            for (DefaultNCompressItem c : dirChildren) {
                 if (path.equals("")) {
                     addFileToZip(srcFolder.getName(), c, zip, false);
                 } else {
@@ -151,7 +151,7 @@ public class NCompressZip implements NCompressPackaging {
         return path;
     }
 
-    private void addFileToZip(String path, DefaultNCompress.Item srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
+    private void addFileToZip(String path, DefaultNCompressItem srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
 //        File folder = new File(srcFile);
         String pathPrefix = path;
         if (!pathPrefix.endsWith("/")) {
@@ -201,12 +201,11 @@ public class NCompressZip implements NCompressPackaging {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NCompress c = context.criteria(NCompress.class);
-        String z = NStringUtils.trim(c.packaging()).toLowerCase();
+        String z = NStringUtils.trim(context.criteria(String.class)).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")
-                || z.equals("gzip")
-                || z.equals("gz")
+//                || z.equals("gzip")
+//                || z.equals("gz")
         ) {
             return NScorable.DEFAULT_SCORE;
         }

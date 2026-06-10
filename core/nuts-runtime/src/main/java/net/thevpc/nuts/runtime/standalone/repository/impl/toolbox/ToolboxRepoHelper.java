@@ -8,6 +8,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.util.NIterator;
 
 public interface ToolboxRepoHelper {
+    String DYNAMIC_DESCRIPTOR = "dynamic-descriptor";
     NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository);
 
     boolean acceptId(NId id);

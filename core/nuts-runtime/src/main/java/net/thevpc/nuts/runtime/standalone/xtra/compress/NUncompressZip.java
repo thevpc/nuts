@@ -50,13 +50,22 @@ public class NUncompressZip implements NUncompressPackaging {
                         String fileName0 = ze.getName();
                         String fileName = fileName0;
                         if (uncompress.isSkipRoot()) {
-                            String root2 = extractRoot(fileName);
+                            String currentRoot = extractRoot(fileName0);
+
                             if (root == null) {
-                                root = root2;
-                            } else if (!Objects.equals(root2, root)) {
-                                throw new IOException("not a single root zip : '" + root2 + "' <> '" + root + "'");
+                                root = currentRoot;
+                            } else if (!Objects.equals(root, currentRoot)) {
+                                throw new IOException("not a single root archive: '" + currentRoot + "' <> '" + root + "'");
                             }
-                            fileName = fileName.substring(root.length());
+
+                            // Strip the root from the filename
+                            fileName = fileName0.substring(root.length());
+
+                            // Edge case: If the entry IS the root directory itself, its stripped name will be empty.
+                            // We skip it to avoid creating an empty directory or triggering weird edge cases.
+                            if (fileName.isEmpty() || fileName.equals("/")) {
+                                continue;
+                            }
                         }
                         if (fileName0.endsWith("/")) {
                             if(!fileName.isEmpty()){ //check the case of skip riit
@@ -109,19 +118,21 @@ public class NUncompressZip implements NUncompressPackaging {
 
                         String fileName = ze.getName();
                         if (uncompress.isSkipRoot()) {
+                            String currentRoot = extractRoot(fileName);
+
                             if (root == null) {
-                                if (fileName.endsWith("/")) {
-                                    root = fileName;
-                                    ze = zis.getNextEntry();
-                                    continue;
-                                } else {
-                                    throw new IOException("not a single root zip");
-                                }
+                                root = currentRoot;
+                            } else if (!Objects.equals(root, currentRoot)) {
+                                throw new IOException("not a single root archive: '" + currentRoot + "' <> '" + root + "'");
+
                             }
-                            if (fileName.startsWith(root)) {
-                                fileName = fileName.substring(root.length());
-                            } else {
-                                throw new IOException("not a single root zip");
+
+                            // Strip the root from the filename
+                            fileName = fileName.substring(root.length());
+
+                            // Edge case: Skip the root directory entry itself
+                            if (fileName.isEmpty() || fileName.equals("/")) {
+                                continue;
                             }
                         }
                         if (fileName.endsWith("/")) {
@@ -181,8 +192,7 @@ public class NUncompressZip implements NUncompressPackaging {
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        NUncompress c = context.criteria(NUncompress.class);
-        String z = NStringUtils.trim(c.packaging()).toLowerCase();
+        String z = NStringUtils.trim(context.criteria(String.class)).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")
                 || z.equals("jar")

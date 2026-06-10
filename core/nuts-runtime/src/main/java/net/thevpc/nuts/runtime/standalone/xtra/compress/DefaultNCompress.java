@@ -5,10 +5,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.util.*;
@@ -42,7 +44,7 @@ public class DefaultNCompress implements NCompress {
     private NProgressFactory progressFactory;
     private String packaging = "zip";
     private NCompressPackaging packagingImpl;
-    private Set<NPathOption> options = new LinkedHashSet<>();
+    private final Set<NPathOption> options = new LinkedHashSet<>();
 
     public DefaultNCompress(NWorkspace ws) {
         this.ws = ws;
@@ -76,7 +78,7 @@ public class DefaultNCompress implements NCompress {
             packaging = "zip";
         }
         this.packaging = packaging;
-        this.packagingImpl = NExtensions.of().createSupported(NCompressPackaging.class, this).get();
+        this.packagingImpl = NWorkspaceExt.of().getModel().extensionCatalogManager.createSupported(NCompressPackaging.class, packaging,"net.thevpc.nuts.spi.compression", packaging.toLowerCase()).get();
         return this;
     }
 
@@ -221,7 +223,7 @@ public class DefaultNCompress implements NCompress {
     @Override
     public NCompress run() {
         if (packagingImpl == null) {
-            this.packagingImpl = NExtensions.of().createSupported(NCompressPackaging.class, this).get();
+            packaging("");
         }
         packagingImpl.compressPackage(this);
         return this;
@@ -293,57 +295,6 @@ public class DefaultNCompress implements NCompress {
     public NCompress skipRoot(boolean value) {
         this.skipRoot = value;
         return this;
-    }
-
-    public static class Item {
-
-        private final NInputSource inSource;
-        private final NCompress c;
-
-        public Item(NInputSource value, NCompress c) {
-            this.inSource = value;
-            this.c = c;
-        }
-
-        public boolean isSourcePath() {
-            return ((inSource instanceof NPath));
-        }
-
-        public boolean isSourceDirectory() {
-            return isSourcePath() && ((NPath) inSource).isDirectory();
-        }
-
-        public Item[] list() {
-            if (isSourcePath()) {
-                NPath p = (NPath) inSource;
-                return p.stream().map(
-                                NFunction.of(
-                                        (NPath x) -> new Item(x, c)
-                                ).withDescription(NDescribables.ofDesc("NutsStreamOrPath::of"))
-                        )
-                        .toArray(Item[]::new);
-            }
-            return new Item[0];
-        }
-
-        public InputStream open() {
-            if (c.options().contains(NPathOption.LOG)
-                    || c.options().contains(NPathOption.TRACE)
-                    || c.progressFactory() != null) {
-                NInputStreamMonitor monitor = NInputStreamMonitor.of();
-                monitor.origin(inSource);
-                monitor.logProgress(c.options().contains(NPathOption.LOG));
-                monitor.traceProgress(c.options().contains(NPathOption.TRACE));
-                monitor.progressFactory(c.progressFactory());
-                monitor.source(inSource);
-                return monitor.create();
-            }
-            return inSource.inputStream();
-        }
-
-        public String getName() {
-            return inSource.metaData().name().orElse(inSource.toString());
-        }
     }
 
     @Override

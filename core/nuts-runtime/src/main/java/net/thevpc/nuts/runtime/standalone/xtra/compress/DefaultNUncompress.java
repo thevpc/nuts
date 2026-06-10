@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensions;
@@ -61,7 +63,10 @@ public class DefaultNUncompress implements NUncompress {
 
     @Override
     public NUncompress packaging(String packaging) {
-        this.packagingImpl = NExtensions.of().createSupported(NUncompressPackaging.class, this).get();
+        if (NBlankable.isBlank(packaging)) {
+            packaging = "zip";
+        }
+        this.packagingImpl = NWorkspaceExt.of().getModel().extensionCatalogManager.createSupported(NUncompressPackaging.class, packaging,"net.thevpc.nuts.spi.compression", packaging.toLowerCase()).get();
         return this;
     }
 

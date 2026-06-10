@@ -12,6 +12,7 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNInstallEvent;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNUpdateEvent;
+import net.thevpc.nuts.runtime.standalone.executor.exec.NExecHelper;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
@@ -57,15 +58,6 @@ public class InstallHelper {
 
     public InstallIdCacheItem getCache(NId id) {
         return cache.get(id);
-    }
-
-    private Map<String, String> prepareInstallVars(NDefinition def) {
-        Map<String, String> m = new HashMap<>();
-        m.put("nutsIdContentPath", def.content().get().toString());
-        for (NStoreType st : NStoreType.values()) {
-            m.put("nutsId" + NNameFormat.TITLE_CASE.format(st.id()) + "Path", NPath.of(NStoreKey.of(def.id()).type(st)).toString());
-        }
-        return m;
     }
 
     private void ensureLoaded(InstallIdInfo info) {
@@ -422,18 +414,14 @@ public class InstallHelper {
                     if (!NBlankable.isBlank(scriptName) && !NBlankable.isBlank(scriptContent)) {
                         installScriptPath = NPath.ofTempIdFile(scriptName, def.id());
                     }
-                    Map<String, String> installVars = prepareInstallVars(def);
+                    Map<String, String> installVars = NExecHelper.defVarMap(def, null);
                     if (installScriptPath != null) {
                         installScriptPath.writeString(scriptContent == null ? "" : scriptContent);
                         installVars.put("nutsIdInstallScriptPath", installScriptPath.toString());
                     }
 
                     // all vars are replicated as environment vars
-                    Map<String, String> installEnv = installVars.entrySet().stream().map(x -> {
-                        return new AbstractMap.SimpleImmutableEntry<>(
-                                NNameFormat.CONST_NAME.format(x.getKey())
-                                , x.getValue());
-                    }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                    Map<String, String> installEnv = NExecHelper.asConstVarNames(installVars);
                     //accept both namings...
                     installEnv.putAll(installVars);
                     cc.setEnv(installEnv);

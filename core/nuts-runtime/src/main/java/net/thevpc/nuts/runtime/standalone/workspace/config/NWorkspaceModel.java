@@ -22,6 +22,7 @@ import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
+import net.thevpc.nuts.runtime.standalone.extension.NExtensionCatalogManager;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionTypeInfo;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
@@ -57,6 +58,7 @@ import java.util.function.Supplier;
 public class NWorkspaceModel {
     public NLog LOG;
     public NLogs defaultNLogs;
+    public NExtensionCatalogManager extensionCatalogManager=new NExtensionCatalogManager();
     public NElementFactory defaultNElementFactory;
     public NCollectionsRPI defaultNCollectionsRPI;
     public NWorkspace workspace;
