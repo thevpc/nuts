@@ -256,9 +256,6 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
                         id.builder().faceContent().build(), repository));
 
         NPath path = NPath.of(jarUrl);
-        if(true){
-            path=NPath.ofUserHome().resolve("Downloads/embedded-postgres-binaries-linux-amd64-18.4.0.jar");
-        }
         NCp.of().from(path).to(localPath)
                 .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
                 .run();

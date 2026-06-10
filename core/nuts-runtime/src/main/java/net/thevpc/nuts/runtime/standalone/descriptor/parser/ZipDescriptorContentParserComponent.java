@@ -59,6 +59,7 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
     ));
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz","war","ear"));
 
+    @NScore
     public static int getScore(NScorableContext criteria) {
         NDescriptorContentParserContext constraints = criteria.criteria(NDescriptorContentParserContext.class);
         if(constraints!=null) {

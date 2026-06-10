@@ -8,6 +8,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.MvnRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.NetbeansRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.PostgresRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.TomcatRepoHelper;
@@ -24,6 +25,7 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
         register(new TomcatRepoHelper());
         register(new NetbeansRepoHelper());
         register(new PostgresRepoHelper());
+        register(new MvnRepoHelper());
     }
 
     private void register(ToolboxRepoHelper t) {

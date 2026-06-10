@@ -247,7 +247,7 @@ public class NExtensionTypeInfo<T> {
                         }
                     }
                     if(accessible) {
-                        LOG().log(NMsg.ofC("[%s] [%s] invalid (still accepted) score method %s ", implType, apiType, declaredMethod).asSevere());
+                        LOG().log(NMsg.ofC("[%s] [%s] invalid (still accepted) score method %s . Think to add @NScore", implType, apiType, declaredMethod).asSevere());
                         return new MethodBasedNScorable(this, declaredMethod);
                     }
                 }

@@ -23,18 +23,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.Function;
 
 
 public class TomcatRepoHelper implements ToolboxRepoHelper {
+
     public static final String HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT = "https://archive.apache.org/dist/tomcat/";
-
     protected SingleBaseIdFilterHelper baseIdFilterHelper = new SingleBaseIdFilterHelper("org.apache.catalina:apache-tomcat");
-
-    @Override
-    public NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository) {
-        return search(id,filter, new NPath[]{null}, repository);
-    }
 
     @Override
     public boolean acceptId(NId id) {
@@ -42,215 +38,141 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
     }
 
     @Override
-    public NDescriptor fetchDescriptor(NId id, NRepository repository) {
-        //            String r = getUrl(id.getVersion(), ".zip.md5");
-        if (!acceptId(id)) {
-            return null;
-        }
-        String r = getUrl(id.version(), ".zip");
-        URL url = null;
-        boolean found = false;
-        try {
-            url = new URL(r);
-        } catch (MalformedURLException e) {
-
-        }
-        NSession session = NSession.of();
-        if (url != null) {
-            session.terminal().printProgress(NMsg.ofC("peek %s", NCoreLogUtils.forProgressUrl(url)));
-            try (InputStream inputStream = DefaultNWebCli.prepareGlobalOpenStream(url)) {
-                //ws.io().copy().from(r).getByteArrayResult();
-                found = true;
-            } catch (Exception ex) {
-                found = false;
-            }
-        }
-        if (found) {
-            // http://tomcat.apache.org/whichversion.html
-            int i = id.version().getIntAt(0).orElse(-1);
-            int j = id.version().getIntAt(1).orElse(-1);
-            String javaVersion = "";
-            if (i <= 0) {
-                //
-            } else if (i <= 3) {
-                javaVersion = "#1.1";
-            } else if (i <= 4) {
-                javaVersion = "#1.3";
-            } else if (i <= 5) {
-                javaVersion = "#1.4";
-            } else if (i <= 6) {
-                javaVersion = "#1.5";
-            } else if (i <= 7) {
-                javaVersion = "#1.6";
-            } else if (i <= 8) {
-                javaVersion = "#1.7";
-            } else if (i <= 9) {
-                javaVersion = "#1.8";
-            } else /*if(i<=10)*/ {
-                if (j <= 0) {
-                    javaVersion = "#1.8";
-                } else {
-                    javaVersion = "#11";
-                }
-            }
-
-            return NDescriptorBuilder.of()
-                    .id(id.longId())
-                    .packaging("zip")
-                    .icons(
-                            "https://upload.wikimedia.org/wikipedia/commons/f/fe/Apache_Tomcat_logo.svg",
-                            "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Apache_Tomcat_logo.svg/595px-Apache_Tomcat_logo.svg.png"
-                    )
-                    .installer(NArtifactCallBuilder.of()
-                            .id(NId.of(NConstants.Ids.NSH))
-                            .arguments("$nutsIdInstallScriptPath")
-                            .scriptName("install-catalina.nsh")
-                            .scriptContent(
-                                    "unzip --skip-root \"$nutsIdContentPath\" \"$nutsIdBinPath/app\" \n" +
-                                            (NEnv.of().osFamily().isPosix() ?
-                                                    "chmod a+x $nutsIdBinPath/app/*.sh \n" : "")
-                            )
-                            .build()
-                    )
-                    .executor(NArtifactCallBuilder.of()
-                            .id(NId.of("exec"))
-                            .arguments(
-                                    NEnv.of().osFamily().isWindow()
-                                            ? "$nutsIdBinPath/app/bin/catalina.bat"
-                                            : "$nutsIdBinPath/app/bin/catalina.sh"
-                            )
-                            .build()
-                    )
-                    .condition(
-                            NEnvConditionBuilder.of()
-                                    .platform(Arrays.asList("java" + javaVersion))
-                    )
-                    .description("Apache Tomcat Official Zip Bundle")
-                    .setProperty(DYNAMIC_DESCRIPTOR, "true")
-                    .build();
-        }
-        return null;
+    public NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository) {
+        return search(id, filter, new NPath[]{null}, repository);
     }
-
 
     @Override
     public NIterator<NId> search(NId id, NDefinitionFilter filter, NPath[] basePaths, NRepository repository) {
-        //List<NutsId> all = new ArrayList<>();
-//        NutsWorkspace ws = session.getWorkspace();
         if (!baseIdFilterHelper.accept(id, basePaths)) {
             return null;
         }
-        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("repo %s","tomcat"));
-
+        SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("repo %s", "tomcat"));
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.catalina", "apache-tomcat");
 
-        return NPath.of("htmlfs+https://archive.apache.org/dist/tomcat/")
+        // Browse the Apache Tomcat archive
+        return NPath.of("htmlfs+" + HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT)
                 .stream()
-                .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.name().matches("tomcat-[0-9.]+")).withDescription(NDescribables.ofDesc("directory && tomcat")))
-                .flatMapStream(NFunction.of(
-                        (NPath s) -> s.stream()
-                                .filter(NPredicate.of((NPath x2) -> x2.isDirectory() && x2.name().startsWith("v")).withDescription(NDescribables.ofDesc("isDirectory")))
-                                .flatMapStream(
-                                        NFunction.of(
-                                                new Function<NPath, NStream<NId>>() {
-                                                    @Override
-                                                    public NStream<NId> apply(NPath x3) {
-                                                        String s2n = x3.name();
-                                                        String prefix = "apache-tomcat-";
-                                                        String bin = "bin";
-                                                        if (
-                                                                s2n.endsWith("-alpha/") || s2n.endsWith("-beta/")
-                                                                        || s2n.endsWith("-copyforpermissions/") || s2n.endsWith("-original/")
-                                                                        || s2n.matches(".*-RC[0-9]+/") || s2n.matches(".*-M[0-9]+/")
-                                                        ) {
-                                                            //will ignore all alpha versions
-                                                            return NStream.ofEmpty();
-                                                        }
-                                                        NVersion version = NVersion.get(s2n.substring(1, s2n.length() - 1)).get();
-                                                        if (version.compareTo("4.1.32") < 0) {
-                                                            prefix = "jakarta-tomcat-";
-                                                        }
-                                                        if (version.compareTo("4.1.27") == 0) {
-                                                            bin = "binaries";
-                                                        }
-                                                        boolean checkBin = false;
-                                                        if (checkBin) {
-                                                            String finalPrefix = prefix;
-                                                            return x3.resolve(bin)
-                                                                    .stream()
-                                                                    .filter(
-                                                                            NPredicate.<NPath>of((NPath x4) -> x4.name().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"))
-                                                                                    .withDescription(NDescribables.ofDesc("name.isZip"))
+                .filter(p -> p.isDirectory() && p.name().matches("tomcat-[0-9.]+"))
+                .flatMapStream(tomcatDir -> {
+                    String major = tomcatDir.name().substring("tomcat-".length());
+                    return tomcatDir.stream()
+                            .filter(vDir -> vDir.isDirectory() && vDir.name().startsWith("v"))
+                            .map(vDir -> {
+                                String versionStr = vDir.name().substring(1); // remove leading 'v'
+                                NVersion version = NVersion.get(versionStr).orNull();
+                                if (version == null) return null;
+                                // Build expected zip URL
+                                String zipUrl = getUrl(version, ".zip");
+                                if (NPath.of(zipUrl).exists()) {
+                                    NId candidate = idBuilder.version(version).build();
+                                    if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(candidate, repository, "TomcatRepoHelper"))) {
+                                        return candidate;
+                                    }
+                                }
+                                return null;
+                            });
+                })
+                .nonNull()
+                .iterator();
+    }
 
-                                                                    )
-                                                                    .map(NFunction.<NPath, NId>of(
-                                                                            (NPath x5) -> {
-                                                                                String s3 = x5.name();
-                                                                                String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                                                NVersion v = NVersion.get(v0).get();
-                                                                                NId id2 = idBuilder.version(v).build();
-                                                                                if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2, repository, "TomcatRepoHelper 1"))) {
-                                                                                    return id2;
-                                                                                }
-                                                                                return null;
-                                                                            }).<NId>withDescription(NDescribables.ofDesc("toZip")))
-                                                                    .<NId>nonNull();
-                                                        } else {
-                                                            NId id2 = idBuilder.version(version).build();
-                                                            if (safeFilter.acceptDefinition(NDefinitionHelper.ofIdOnlyFromRepo(id2, repository, "TomcatRepoHelper 2"))) {
-                                                                return NStream.ofSingleton(id2);
-                                                            }
-                                                            return NStream.ofEmpty();
-                                                        }
+    @Override
+    public NDescriptor fetchDescriptor(NId id, NRepository repository) {
+        if (!acceptId(id)) return null;
+        NVersion version = id.version();
+        String zipUrl = getUrl(version, ".zip");
+        if (!NPath.of(zipUrl).exists()) return null;
 
-                                                    }
-                                                }).withDescription(NDescribables.ofDesc("flatMap")))
-                ).withDescription(NDescribables.ofDesc("flatMap"))).iterator();
+        // Determine required Java version based on Tomcat version
+        String javaVersion = requiredJavaVersion(version);
+
+        NEnv env = NEnv.of();
+        boolean isWindows = env.osFamily().isWindow();
+
+        // Build installer script (NSH) that unzips and creates the wrapper
+        NStringBuilder installerScript = NStringBuilder.of();
+        installerScript
+                .println("echo 'Extracting Apache Tomcat...'")
+                .println("unzip --skip-root \"$nutsIdContentPath\" -d \"$nutsIdBinPath/app\"")
+                .println("chmod +x \"$nutsIdBinPath/app/bin/\"*.sh")
+                .println()
+                .println("make-wrapper --target \"$nutsIdBinPath/tomcat-wrapper\" \\")
+                .println("    --default catalina=\"$nutsIdBinPath/app/bin/catalina.sh\" \\")
+                .println("    --cmd startup=\"$nutsIdBinPath/app/bin/startup.sh\" \\")
+                .println("    --cmd shutdown=\"$nutsIdBinPath/app/bin/shutdown.sh\" \\")
+                .println("    --cmd version=\"$nutsIdBinPath/app/bin/version.sh\"")
+                .println("echo 'Done.'");
+
+        // For Windows, use .bat files
+        if (isWindows) {
+            installerScript.replaceAll("catalina.sh", "catalina.bat")
+                    .replaceAll("startup.sh", "startup.bat")
+                    .replaceAll("shutdown.sh", "shutdown.bat")
+                    .replaceAll("version.sh", "version.bat");
+        }
+
+        return NDescriptorBuilder.of()
+                .id(id.longId())
+                .packaging("zip")
+                .icons(
+                        "https://upload.wikimedia.org/wikipedia/commons/f/fe/Apache_Tomcat_logo.svg",
+                        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Apache_Tomcat_logo.svg/595px-Apache_Tomcat_logo.svg.png"
+                )
+                .installer(NArtifactCallBuilder.of()
+                        .id(NId.of(NConstants.Ids.NSH))
+                        .arguments("$nutsIdInstallScriptPath")
+                        .scriptName("install-tomcat.nsh")
+                        .scriptContent(installerScript.build())
+                        .build()
+                )
+                .executor(NArtifactCallBuilder.of()
+                        .id(NId.of("exec"))
+                        .arguments("$nutsIdBinPath/tomcat-wrapper")
+                        .build()
+                )
+                .condition(NEnvConditionBuilder.of()
+                        .platform(Collections.singletonList("java" + javaVersion))
+                        .build()
+                )
+                .description("Apache Tomcat Official Zip Bundle (version " + version + ")")
+                .setProperty(DYNAMIC_DESCRIPTOR, "true")
+                .build();
     }
 
     @Override
     public NPath fetchContent(NId id, NDescriptor descriptor, NRepository repository) {
-        if (!baseIdFilterHelper.accept(id)) {
-            return null;
-        }
-        String r = getUrl(id.version(), ".zip");
+        if (!acceptId(id)) return null;
+        String zipUrl = getUrl(id.version(), ".zip");
         NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().faceContent().build(), repository));
-        NCp.of().from(NPath.of(r)).to(localPath)
-                .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+        NCp.of().from(NPath.of(zipUrl)).to(localPath)
+                .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
+                .run();
+        // Optional: add checksum validation
+        // String md5Url = zipUrl + ".md5";
+        // String expectedMd5 = NPath.of(md5Url).readString().trim().split(" ")[0];
+        // NCp.of().from(NPath.of(zipUrl)).addValidator(NValidator.ofChecksum(expectedMd5, "MD5")).to(localPath).run();
         return localPath;
     }
 
     private String getUrl(NVersion version, String extension) {
-        String bin = "bin";
-        String prefix = "apache-tomcat-";
-        if (version.compareTo("4.1.32") < 0) {
-            prefix = "jakarta-tomcat-";
-        }
-        if (version.compareTo("4.1.27") == 0) {
-            bin = "binaries";
-        }
-        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.getPartAt(0).map(NVersionPart::value).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
+        int major = version.getPartAt(0).map(NVersionPart::value).map(Integer::parseInt).orElse(0);
+        String prefix = (major < 5) ? "jakarta-tomcat-" : "apache-tomcat-";
+        String binDir = (version.compareTo("4.1.27") == 0) ? "binaries" : "bin";
+        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT
+                + "tomcat-" + major + "/v" + version + "/" + binDir + "/" + prefix + version + extension;
     }
 
-//    public boolean catalinaMatchesJavaVersion(NutsVersion cv, String javaVersion, NSession session) {
-//        if (NutsBlankable.isBlank(javaVersion)) {
-//            return true;
-//        }
-//        if (javaVersion.compareTo("1.8") >= 0) {
-//            return NutsVersion.of("[9,10.1[").get().filter(session).acceptVersion(cv, session);
-//        } else if (javaVersion.compareTo("1.7") >= 0) {
-//            return NutsVersion.of("[8.5,9[").get().filter(session).acceptVersion(cv, session);
-//        } else if (javaVersion.compareTo("1.6") >= 0) {
-//            return NutsVersion.of("[7,8[").get().filter(session).acceptVersion(cv, session);
-//        } else if (javaVersion.compareTo("1.5") < 0) {
-//            return NutsVersion.of("[6,7[").get().filter(session).acceptVersion(cv, session);
-//        } else if (javaVersion.compareTo("1.4") < 0) {
-//            return NutsVersion.of("[5.5,6[").get().filter(session).acceptVersion(cv, session);
-//        } else if (javaVersion.compareTo("1.3") < 0) {
-//            return NutsVersion.of("[4.1,5[").get().filter(session).acceptVersion(cv, session);
-//        } else {
-//            return NutsVersion.of("[3.3,4[").get().filter(session).acceptVersion(cv, session);
-//        }
-//    }
-
+    private String requiredJavaVersion(NVersion version) {
+        int major = version.getPartAt(0).map(NVersionPart::value).map(Integer::parseInt).orElse(0);
+        if (major <= 3) return "#1.1";
+        if (major <= 4) return "#1.3";
+        if (major <= 5) return "#1.4";
+        if (major <= 6) return "#1.5";
+        if (major <= 7) return "#1.6";
+        if (major <= 8) return "#1.7";
+        if (major <= 9) return "#1.8";
+        // Tomcat 10+ requires Java 11 or later
+        return "#11";
+    }
 }
