@@ -23,7 +23,9 @@ Docs: [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 Every major language has a package manager that lets you *run* things, not just build them.
 Python has `pip`, Node has `npm`, Rust has `cargo`.
 Java has Maven — but Maven resolves dependencies at *compile time*, for *developers*.
-There has never been a tool that lets you install and run Java applications the way `pip install` or `npx` does.
+
+`pip install` doesn't just run a script. It installs, manages versions, isolates
+environments, and handles the full lifecycle. Java has never had that — until Nuts.
 
 **Nuts fills that gap.**
 
