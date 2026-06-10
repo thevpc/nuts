@@ -4,8 +4,8 @@
      __        __
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   latest version 0.8.9.0
-\_\ \/\__,_/\__/____/    LTS version 0.8.8.0
+/ /\  / /_/ / /_(__  )   latest version 0.8.9.0 
+\_\ \/\__,_/\__/____/    LTS version 0.8.8.0 
 ```
 
 **The package manager Java never had.**

@@ -10,4 +10,4 @@ exampleCommand: nuts ntexup
 ---
 
 
-{{include($"$root/../nuts-productivity/ntexup/app/ntexup/src/main/resources/net/thevpc/ntexup.ntf"}}
+{{include($"$root/../nuts-productivity/ntexup/ntexup/app/ntexup/src/main/resources/net/thevpc/ntexup.ntf"}}
