@@ -1,0 +1,31 @@
+#!/bin/bash
+#!/bin/bash
+set -e  # stop on first failure
+
+DEPLOY_OPTS="-P deploy -Dgpg.keyname=C861C1799197D091"
+
+modules=(
+#    "../core/nuts-boot"
+#    "../core/nuts-api"
+#    "../core/nuts-runtime"
+#    "../extensions/nuts-compression"
+#    "../extensions/nuts-ssh"
+#    "../extensions/nuts-term"
+#    "../libraries/nuts-slf4j"
+#    "../libraries/nuts-spring-boot"
+#    "../libraries/nuts-swing"
+#    "../libraries/nuts-tomcat-classloader"
+#    "../core/nuts-app"
+#    "../core/nuts-app-full"
+#    "../../nuts-companions/nsh/nsh-lib"
+    "../../nuts-companions/nsh/nsh"
+)
+
+for module in "${modules[@]}"; do
+    echo "========================================="
+    echo "Deploying: $module"
+    echo "========================================="
+    (cd "$module" && mvn clean deploy $DEPLOY_OPTS)
+done
+
+echo "All modules deployed successfully!"
