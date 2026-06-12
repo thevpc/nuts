@@ -20,8 +20,11 @@ Docs: [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 
 ## What is Nuts?
 Nuts is a package manager for Java applications that focuses on the application lifecycle and isolated deployments.
-Reusing Maven descriptors directly, Nuts manages dependencies at runtime, not at build time and solves the long-standing fat-jars problem efficiently: 
+
+Reusing Maven descriptors directly, Nuts manages dependencies at runtime, not at build time and solves the long-standing fat-jars problem efficiently:
+
 It downloads only the JARs and dependencies that are actually needed on the target machine. Similarly, for native binaries, it retains only assets relevant for the target platform.
+
 Nuts does not require any custom descriptors or build tools, does not change classloading behavior, it just solves dependency tree, builds the classpath and runs the application. 
 
 What makes nuts unique is that it shares the same workspace across all applications, enables installing multiple versions of the same app, and automatically provisions the required platform binaries (JDK).
