@@ -30,7 +30,7 @@ Nuts does not require any custom descriptors or build tools, does not change cla
 What makes nuts unique is that it shares the same workspace across all applications, enables installing multiple versions of the same app, and automatically provisions the required platform binaries (JDK).
 A simple `nuts install myapp` is all what one needs to install the latest version of myapp and all its dependencies including the JDK while optimizing network and disk usage.
 
-Think of nuts as npm/nvm, or uv, but for the java ecosystem.
+Think of nuts as `npm`/`nvm`, or `uv`, but for the java ecosystem.
 
 ---
 
