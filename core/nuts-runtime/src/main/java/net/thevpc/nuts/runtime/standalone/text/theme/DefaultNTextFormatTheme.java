@@ -224,6 +224,15 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
             case BOOLEAN: {
                 return toBasicStyles(NTextStyle.foregroundColor(DARK_VIOLET), basicTrueStyles);
             }
+            case PLACEHOLDER: {
+                int x = mod4(style.variant());
+            return toBasicStyles(NTextStyle.foregroundColor(
+                    x == 0 ? DARK_GRAY
+                            : x == 1 ? 244 // Medium Slate Gray
+                            : x == 2 ? 247 // Light Muted Gray
+                            : 242          // Darker Muted Gray
+            ), basicTrueStyles);
+            }
 
             case STRING: {
                 return toBasicStyles(NTextStyle.foregroundColor(DARK_GREEN), basicTrueStyles);

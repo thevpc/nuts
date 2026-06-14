@@ -68,6 +68,7 @@ public enum NTextStyleType implements NEnum {
     BOOLEAN(false),
     OPTION(false),
     TITLE(false),
+    PLACEHOLDER(false),
 
     // === 3. UI / STATE STYLES ===
     INFO(false),

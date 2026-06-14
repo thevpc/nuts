@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+
 import net.thevpc.nuts.time.NDuration;
 
 public class NMsg implements NBlankable, NElementSimple {
@@ -279,7 +280,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     public Object[] params() {
-        return params==null?null:Arrays.copyOf(params,params.length);
+        return params == null ? null : Arrays.copyOf(params, params.length);
     }
 
     public String codeLang() {
@@ -402,9 +403,7 @@ public class NMsg implements NBlankable, NElementSimple {
         if (throwable == null) {
             return toString();
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(this).append("\n").append(NStringUtils.stacktrace(throwable));
-        return sb.toString();
+        return this + "\n" + NStringUtils.stacktrace(throwable);
     }
 
     @Override
@@ -451,7 +450,7 @@ public class NMsg implements NBlankable, NElementSimple {
                                 if (s2.isEmpty()) {
                                     s2 = String.valueOf(currentIndex);
                                 } else if (s2.trim().startsWith(":")) {
-                                    s2 = String.valueOf(currentIndex) + s2;
+                                    s2 = currentIndex + s2;
                                 }
                                 sb.append("{").append(s2).append("}");
                                 currentIndex++;
@@ -1051,6 +1050,22 @@ public class NMsg implements NBlankable, NElementSimple {
         return ofStyled(message, NTextStyle.option());
     }
 
+    public static NMsg ofStyledPlaceholder(String message) {
+        return ofStyled(message, NTextStyle.placeholder());
+    }
+
+    public static NMsg ofStyledEntity(String message) {
+        return ofStyled(message, NTextStyle.entity());
+    }
+
+    public static NMsg ofStyledAction(String message) {
+        return ofStyled(message, NTextStyle.action());
+    }
+
+    public static NMsg ofStyledAnnotation(String message) {
+        return ofStyled(message, NTextStyle.annotation());
+    }
+
     public static NMsg ofStyledPrimary1(String message) {
         return ofStyled(message, NTextStyle.primary1());
     }
@@ -1303,6 +1318,22 @@ public class NMsg implements NBlankable, NElementSimple {
         return ofStyled(message, NTextStyle.option());
     }
 
+    public static NMsg ofStyledPlaceholder(NMsg message) {
+        return ofStyled(message, NTextStyle.placeholder());
+    }
+
+    public static NMsg ofStyledEntity(NMsg message) {
+        return ofStyled(message, NTextStyle.entity());
+    }
+
+    public static NMsg ofStyledAction(NMsg message) {
+        return ofStyled(message, NTextStyle.action());
+    }
+
+    public static NMsg ofStyledAnnotation(NMsg message) {
+        return ofStyled(message, NTextStyle.annotation());
+    }
+
     public static NMsg ofStyledPrimary1(NMsg message) {
         return ofStyled(message, NTextStyle.primary1());
     }
@@ -1448,7 +1479,7 @@ public class NMsg implements NBlankable, NElementSimple {
     // ---------------------------------------------------------------
     public static final class Placeholder {
 
-        private String name;
+        private final String name;
 
         private Placeholder(String name) {
             this.name = name;
@@ -1546,7 +1577,7 @@ public class NMsg implements NBlankable, NElementSimple {
 
     private static class ConstSupplier<T> implements Supplier<T> {
 
-        private T value;
+        private final T value;
 
         public ConstSupplier(T value) {
             this.value = value;

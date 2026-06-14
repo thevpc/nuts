@@ -423,6 +423,14 @@ public class NTextStyle implements NEnum {
         return of(NTextStyleType.BACK_TRUE_COLOR, variant == null ? 0 : variant.rgb());
     }
 
+    public static NTextStyle placeholder() {
+        return of(NTextStyleType.PLACEHOLDER);
+    }
+
+    public static NTextStyle placeholder(int variant) {
+        return of(NTextStyleType.PLACEHOLDER, variant);
+    }
+
     public static NTextStyle backgroundColor(NColor variant) {
         if (variant == null) {
             return backgroundColor(0);
