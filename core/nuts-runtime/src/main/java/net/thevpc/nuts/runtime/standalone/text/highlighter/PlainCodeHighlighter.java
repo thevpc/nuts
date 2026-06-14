@@ -37,6 +37,7 @@ public class PlainCodeHighlighter implements NCodeHighlighter {
         switch (s){
             case "plain":
             case "text":
+            case "txt":
             case "text/plain":
             {
                 return NScorable.DEFAULT_SCORE;

@@ -97,6 +97,13 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.XmlCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.WinCmdBlocTextHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.CppCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.PlainCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.JsCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.TsCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.MarkdownCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.NaruCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.PythonCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.YamlCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.RustCodeHighlighter
 
 
 net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypeResolver

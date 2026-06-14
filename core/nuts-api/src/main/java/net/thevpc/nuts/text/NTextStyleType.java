@@ -30,6 +30,7 @@ import net.thevpc.nuts.util.*;
  * @app.category Format
  */
 public enum NTextStyleType implements NEnum {
+    // === 1. BASIC STYLES & MODIFIERS (Hardware/Ansi level effects) ===
     PLAIN(true),//f
     UNDERLINED(true),//_
     ITALIC(true),// /
@@ -37,35 +38,46 @@ public enum NTextStyleType implements NEnum {
     REVERSED(true),//v
     BOLD(true),//d
     BLINK(true),//k
+    PALE(false),
     FORE_COLOR(true),//f
     BACK_COLOR(true),//b
     FORE_TRUE_COLOR(true),//f
     BACK_TRUE_COLOR(true),//b
 
+    // === 2. THE CORE PALETTE (Branding / Base Theme FG & BG) ===
     PRIMARY(false), //p
     SECONDARY(false),//s
-    ERROR(false),
-    WARN(false),
-    INFO(false),
-    CONFIG(false),
+
+    // === 3. SYNTAX & LITERALS (Code tokens and data types) ===
+    KEYWORD(false),
+    ENTITY(false), // type, class, struct
+    ACTION(false), //function, method, ...
+    ANNOTATION(false),
+    VAR(false),
+    OPERATOR(false),
+    SEPARATOR(false),
     COMMENTS(false),
+
+    // Literals section (Strings, inputs, and string-variants)
     STRING(false),
+    INPUT(false),
+    PATH(false),
+    VERSION(false),
     NUMBER(false),
     DATE(false),
     BOOLEAN(false),
-    KEYWORD(false),
     OPTION(false),
-    INPUT(false),
-    SEPARATOR(false),
-    OPERATOR(false),
+    TITLE(false),
+
+    // === 3. UI / STATE STYLES ===
+    INFO(false),
+    CONFIG(false),
     SUCCESS(false),
-    FAIL(false),
+    WARN(false),
+    ERROR(false),
     DANGER(false),
-    VAR(false),
-    PALE(false),
-    PATH(false),
-    VERSION(false),
-    TITLE(false);
+    FAIL(false)
+    ;
     private final boolean basic;
     private final String id;
 

@@ -227,6 +227,30 @@ public class NTextStyle implements NEnum {
         return of(NTextStyleType.KEYWORD, variant);
     }
 
+    public static NTextStyle entity() {
+        return of(NTextStyleType.ENTITY);
+    }
+
+    public static NTextStyle action() {
+        return of(NTextStyleType.ACTION);
+    }
+
+    public static NTextStyle annotation() {
+        return of(NTextStyleType.ANNOTATION);
+    }
+
+    public static NTextStyle entity(int variant) {
+        return of(NTextStyleType.ENTITY, variant);
+    }
+
+    public static NTextStyle action(int variant) {
+        return of(NTextStyleType.ACTION, variant);
+    }
+
+    public static NTextStyle annotation(int variant) {
+        return of(NTextStyleType.ANNOTATION, variant);
+    }
+
     public static NTextStyle reversed() {
         return of(NTextStyleType.REVERSED);
     }
@@ -409,8 +433,7 @@ public class NTextStyle implements NEnum {
                 return secondary(variant.intColor());
             }
             case BITS_16:
-            case BITS_24:
-            {
+            case BITS_24: {
                 return backgroundColor(variant.intColor());
             }
             case BITS_32:
@@ -431,8 +454,7 @@ public class NTextStyle implements NEnum {
                 return primary(variant.intColor());
             }
             case BITS_16:
-            case BITS_24:
-            {
+            case BITS_24: {
                 return foregroundColor(variant.intColor());
             }
             case BITS_32:

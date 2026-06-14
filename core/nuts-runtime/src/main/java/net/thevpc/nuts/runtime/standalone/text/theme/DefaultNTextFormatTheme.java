@@ -158,6 +158,40 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
                                 : BRIGHT_VIOLET
                 ), basicTrueStyles);
             }
+            case ACTION: {
+                // Actions (Functions/methods/calls) traditionally match
+                // sky blues, teals, or bright yellows depending on theme.
+                // Reusing your variant cycling logic style here:
+                int x = mod4(style.variant());
+                return toBasicStyles(NTextStyle.foregroundColor(
+                        x == 0 ? DARK_SKY
+                                : x == 1 ? 75  // ANSI Slate/Blue
+                                  : x == 2 ? 111 // ANSI Light Sky Blue
+                                    : 147          // ANSI Light Purple-Blue
+                ), basicTrueStyles);
+            }
+
+            case ENTITY: {
+                // Entities (Classes, interfaces, structs)
+                int x = mod4(style.variant());
+                return toBasicStyles(NTextStyle.foregroundColor(
+                        x == 0 ? DARK_SKY
+                                : x == 1 ? 43  // ANSI Cyan/Teal
+                                  : x == 2 ? 115 // ANSI Light Greenish-Blue
+                                    : 123          // ANSI Bright Cyan
+                ), basicTrueStyles);
+            }
+
+            case ANNOTATION: {
+                // Annotations (@Override, @MyAnn) - Given a completely distinct warm color
+                int x = mod4(style.variant());
+                return toBasicStyles(NTextStyle.foregroundColor(
+                        x == 0 ? DARK_YELLOW
+                                : x == 1 ? 178 // ANSI Gold/Orange-Yellow
+                                  : x == 2 ? 215 // ANSI Orange
+                                    : 221          // ANSI Light Goldenrod
+                ), basicTrueStyles);
+            }
 
             case OPTION: {
                 int x = mod4(style.variant());
