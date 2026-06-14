@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-compression</artifactId>
-    <version>0.8.9.0</version>
+    <version>1.0.0.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community Library for Tar and TarGZ support</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -52,7 +52,7 @@
     </licenses>
 
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.9</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>1.0.0</version></dependency>
         <dependency><groupId>org.apache.commons</groupId><artifactId>commons-compress</artifactId><version>1.26.1</version></dependency>
         <!-- add these dependencies because extension transitive dependencies are not supported on bootsrap so need to add them explicitely-->
         <dependency><groupId>org.tukaani</groupId><artifactId>xz</artifactId><version>1.9</version></dependency>
