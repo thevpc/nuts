@@ -1079,7 +1079,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
         //has all rights (by default)
         //no right nor group is needed for admin user
-        if (!NSecurityManager.of().getUser(NConstants.Users.ADMIN).isEmpty()) {
+        if (NSecurityManager.of().getUser(NConstants.Users.ADMIN).isEmpty()) {
             try (NSecureString s = NSecureString.ofSecure("admin".toCharArray())) {
                 NSecurityManager.of().addUser(
                         NUserSpec.of(NConstants.Users.ADMIN)
