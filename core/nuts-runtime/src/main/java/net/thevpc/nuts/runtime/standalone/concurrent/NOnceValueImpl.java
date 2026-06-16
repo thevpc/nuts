@@ -168,4 +168,18 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
         }
         return u.build();
     }
+
+    @Override
+    public String toString() {
+        Boolean errorState = model.errorState();
+        if (errorState != null){
+            if(!errorState){
+                return String.valueOf(model.value());
+            }else{
+                return String.valueOf("error:"+model.error());
+            }
+        }else{
+            return "<pending...>";
+        }
+    }
 }
