@@ -28,7 +28,7 @@ public class NCharQueue implements CharSequence {
     }
 
     public static NCharQueue of(char[] content) {
-        return new NCharQueue(Math.min(content.length, 256));
+        return new NCharQueue(content, -1, -1);
     }
 
     public NCharQueue() {
@@ -42,6 +42,26 @@ public class NCharQueue implements CharSequence {
     public NCharQueue(int initial, int increment) {
         content = new char[initial];
         this.increment = increment;
+    }
+
+    public NCharQueue(char[] data, int initial, int increment) {
+        int len = data.length;
+        if (initial <= 0) {
+            if (len == 0) {
+                initial = 256;
+            } else {
+                initial = len;
+            }
+        }
+        if (increment <= 0) {
+            increment = Math.min(initial, 256);
+        }
+        this.content = new char[initial];
+        this.increment = increment;
+        this.to = len;
+        if (len > 0) {
+            System.arraycopy(data, 0, this.content, 0, len);
+        }
     }
 
     public int write(Reader reader, int max) {
