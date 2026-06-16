@@ -20,6 +20,7 @@ public class NEnvLocal extends NEnvBase {
 
     protected boolean initialized;
     protected boolean nativeImage;
+    protected boolean gui;
 
     @Override
     public NEnv refresh() {
@@ -37,6 +38,7 @@ public class NEnvLocal extends NEnvBase {
             this.java = NJavaSdkUtils.of().createJdkId(System.getProperty("java.version"));
             this.arch = NId.get(System.getProperty("os.arch")).get();
             this.archFamily = NArchFamily.current();
+            this.gui = CoreNUtilGui.isGraphicalDesktopEnvironment();
             this.initialized = true;
             userHome = System.getProperty("user.home");
             userName = System.getProperty("user.name");
@@ -123,7 +125,7 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     public boolean isGraphicalDesktopEnvironment0() {
-        return CoreNUtilGui.isGraphicalDesktopEnvironment();
+        return gui;
     }
 
 
