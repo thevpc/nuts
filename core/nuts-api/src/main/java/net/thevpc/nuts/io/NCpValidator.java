@@ -41,7 +41,6 @@ public interface NCpValidator {
      *
      * @param targetContent targetContent
      * @throws NCpValidatorException when no valid
-     * @throws IOException                   when I/O error occurs.
      */
-    void validate(InputStream targetContent) throws NCpValidatorException, IOException;
+    void validate(InputStream targetContent) throws NCpValidatorException;
 }

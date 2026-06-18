@@ -124,7 +124,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             list.add(
                     (NIterator) NIteratorBuilder.ofRunnable(
                             () -> session.terminal().printProgress(NMsg.ofC("%-14s %-8s %s", name(), "browse",
-                                            NCoreLogUtils.forProgress((basePath == null ? repoRoot : repoRoot.resolve(basePath)))
+                                    NCoreLogUtils.forProgress((basePath == null ? repoRoot : repoRoot.resolve(basePath)))
                             )),
                             "Log"
 
@@ -186,7 +186,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 NCp.of()
                         .from(getStream(id, "artifact binaries", "retrieve")).to(NPath.of(tempFile)).validator(new NCpValidator() {
                             @Override
-                            public void validate(InputStream in) throws IOException {
+                            public void validate(InputStream in) {
                                 checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries");
                             }
                         }).run();
@@ -297,38 +297,43 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 //        return CoreIOUtils.loadString(openStream(id, url, id, typeName, action, session), true, session);
     }
 
-    public void checkSHA1Hash(NId id, InputStream stream, String typeName) throws IOException {
-        if (!isRemote()) {
-            //do not do any test
-            stream.close();
-            return;
-        }
-        switch (NStringUtils.trim(id.face())) {
-            case NConstants.QueryFaces.CONTENT_HASH:
-            case NConstants.QueryFaces.DESCRIPTOR_HASH: {
-                break;
-            }
-            default: {
-                _LOG().log(NMsg.ofC("[BUG] unsupported Hash Type %s", id.face())
-                        .asError(new NIllegalArgumentException(NMsg.ofC("unsupported Hash Type %s", id.face())))
-                );
-                throw new IOException("unsupported hash type " + id.face());
-            }
-        }
+    public void checkSHA1Hash(NId id, InputStream stream, String typeName) {
         try {
-            String rhash = null;
-            try {
-                rhash = getStreamSHA1(id, typeName);
-            } catch (UncheckedIOException | NIOException ex) {
-                //sha is not provided... so do not check anything!
+            if (!isRemote()) {
+                //do not do any test
+                stream.close();
                 return;
             }
-            String lhash = NDigestUtils.evalSHA1Hex(stream, true);
-            if (!rhash.equalsIgnoreCase(lhash)) {
-                throw new IOException("invalid file hash " + id);
+            switch (NStringUtils.trim(id.face())) {
+                case NConstants.QueryFaces.CONTENT_HASH:
+                case NConstants.QueryFaces.DESCRIPTOR_HASH: {
+                    break;
+                }
+                default: {
+                    _LOG().log(NMsg.ofC("[BUG] unsupported Hash Type %s", id.face())
+                            .asError(new NIllegalArgumentException(NMsg.ofC("unsupported Hash Type %s", id.face())))
+                    );
+                    throw new NIOException(NMsg.ofC("unsupported hash type %s", id.face()));
+                }
             }
-        } finally {
-            stream.close();
+            try {
+                String rhash = null;
+                try {
+                    rhash = getStreamSHA1(id, typeName);
+                } catch (UncheckedIOException | NIOException ex) {
+                    //sha is not provided... so do not check anything!
+                    return;
+                }
+                String lhash = NDigestUtils.evalSHA1Hex(stream, true);
+                if (!rhash.equalsIgnoreCase(lhash)) {
+                    throw new NIOException(NMsg.ofC("invalid file hash %s", id));
+                }
+            } finally {
+                stream.close();
+
+            }
+        } catch (IOException ex) {
+            throw new NIOException(ex);
         }
     }
 
