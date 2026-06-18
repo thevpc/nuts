@@ -1,5 +1,5 @@
 #!/bin/bash
-NUTS_VERSION=0.8.8
+NUTS_VERSION=1.0.0
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

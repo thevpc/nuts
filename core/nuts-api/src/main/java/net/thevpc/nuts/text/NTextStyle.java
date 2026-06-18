@@ -227,26 +227,56 @@ public class NTextStyle implements NEnum {
         return of(NTextStyleType.KEYWORD, variant);
     }
 
+    /**
+     * entity style
+     * @since 1.0.0
+     * @return entity style
+     */
     public static NTextStyle entity() {
         return of(NTextStyleType.ENTITY);
     }
 
+    /**
+     * action style
+     * @since 1.0.0
+     * @return action style
+     */
     public static NTextStyle action() {
         return of(NTextStyleType.ACTION);
     }
 
+    /**
+     * annotation style
+     * @since 1.0.0
+     * @return annotation style
+     */
     public static NTextStyle annotation() {
         return of(NTextStyleType.ANNOTATION);
     }
 
+    /**
+     * entity style
+     * @since 1.0.0
+     * @return entity style
+     */
     public static NTextStyle entity(int variant) {
         return of(NTextStyleType.ENTITY, variant);
     }
 
+    /**
+     * action style
+     * @since 1.0.0
+     * @return action style
+     */
     public static NTextStyle action(int variant) {
         return of(NTextStyleType.ACTION, variant);
     }
 
+    /**
+     * annotation style
+     * @since 1.0.0
+     * @return annotation style
+     */
     public static NTextStyle annotation(int variant) {
         return of(NTextStyleType.ANNOTATION, variant);
     }

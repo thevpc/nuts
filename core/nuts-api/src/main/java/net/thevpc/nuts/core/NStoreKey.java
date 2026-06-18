@@ -156,6 +156,13 @@ public class NStoreKey {
         return new NStoreKey(storeScope, storeType, id, repoUuid, name);
     }
 
+    /**
+     * @since 1.0.0
+     * @param storeScope user or system scope
+     * @param storeType storeType (conf, bin, etc)
+     * @param id application id
+     * @return NStoreKey instance
+     */
     public static NStoreKey of(NStoreScope storeScope, NStoreType storeType, NId id) {
         return new NStoreKey(storeScope, storeType, id, null, null);
     }

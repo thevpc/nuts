@@ -39,8 +39,14 @@ Think of **Nuts** as `npm`/`nvm`, or `uv`, but for the java ecosystem.
 
 ### Latest (recommended)
 
+🐧 Linux / 🍏 macOS
 ```bash
 curl -s https://thevpc.net/nuts/install-latest.sh | bash
+```
+
+🪟 Windows (PowerShell)
+```bash
+powershell -Command "irm https://thevpc.net/nuts/install-latest.ps1 | iex"
 ```
 
 Restart your terminal, then verify:
@@ -51,9 +57,16 @@ nuts --version
 
 ### Stable (for production)
 
+🐧 Linux / 🍏 macOS
 ```bash
 curl -s https://thevpc.net/nuts/install-stable.sh | bash
 ```
+
+🪟 Windows (PowerShell)
+```bash
+powershell -Command "irm https://thevpc.net/nuts/install-stable.ps1 | iex"
+```
+
 
 ### Update existing installation
 

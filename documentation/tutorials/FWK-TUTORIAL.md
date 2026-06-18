@@ -1,8 +1,7 @@
-# Comprehensive Nuts Application Framework (NAF) Tutorial
-Welcome to the comprehensive, step-by-step tutorial for the Nuts Application Framework (NAF).
-Introduction
-Nuts is fundamentally dual-purpose: it is both a runtime package manager and a zero-dependency application framework. Unlike traditional frameworks that require heavy boilerplate or external dependency injection containers, NAF provides a standalone, embeddable runtime that handles application lifecycle, I/O, configuration, and dependency resolution natively.
-In this tutorial, we will build NutsAdminCLI, a professional, unified system administration and diagnostics command-line tool. We will build this application incrementally. We start with a pure, standalone NAF application and progressively add advanced features like native CLI parsing, rich terminal styling, resilient caching, and dynamic runtime classloading. Finally, we will demonstrate how to bridge this standalone application into the Spring Boot and SLF4J ecosystems for enterprise integration.
+# A First Tour of NAF: Building NutsAdminCLI, One Nuts Idiom at a Time
+This is a first tour of NAF — not a reference, and not a pitch. NAF grew out of building Nuts itself: wherever an existing library was too heavy, did things differently than I wanted, or simply wasn't good enough, I built the piece myself, and over time those pieces became reusable on their own. The result is a large toolkit, and this tutorial deliberately covers a small slice of it — a sample, not an inventory.
+The goal is narrow and practical: by the end, you should be able to open Nuts' own source code and not flinch at an unfamiliar NXxx type or an ofXxx() factory call — and you should have a working, standalone command-line tool built with a few of Nuts' power tools along the way. We'll build that tool, NutsAdminCLI, incrementally across ten modules, each one a stop at a different corner of the toolkit: CLI parsing, terminal output, files, structured data, concurrency, process execution, expressions, dynamic loading, and (in the last module) bridging into Spring Boot.
+What this tutorial is not: it's not exhaustive (this is a fraction of the API surface), it's not making the case that NAF is the right choice for your project, and it's not a tour of NAF's internal design decisions. If you want that conversation, that's a different document. This one just wants you fluent enough, fast enough, to keep going on your own.
 
 > PLAN
 

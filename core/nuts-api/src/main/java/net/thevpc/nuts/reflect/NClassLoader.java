@@ -9,6 +9,11 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.stream.Stream;
 
+/**
+ * Nuts mutable ClassLoader contract Interface.
+ * Instances of this class must extend Java's Classloader.
+ * <code>asClassLoader</code> is the way this instance is cast to ClassLoader
+ */
 public interface NClassLoader {
     static NClassLoader of(){
         return NReflectRPI.of().createClassLoader(null,null);
@@ -16,6 +21,7 @@ public interface NClassLoader {
     static NClassLoader of(String name,ClassLoader parent){
         return NReflectRPI.of().createClassLoader(name,parent);
     }
+
     default ClassLoader asClassLoader(){
         return (ClassLoader) this;
     }
@@ -29,7 +35,7 @@ public interface NClassLoader {
     Class<?> loadClass(String name) throws ClassNotFoundException ;
     URL getResource(String name) ;
     Enumeration<URL> getResources(String name) throws IOException;
-    Stream<URL> resources(String name);
+//    Stream<URL> resources(String name);
     InputStream getResourceAsStream(String name);
     ClassLoader getParent();
 }

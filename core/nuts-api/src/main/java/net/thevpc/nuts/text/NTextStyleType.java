@@ -50,8 +50,20 @@ public enum NTextStyleType implements NEnum {
 
     // === 3. SYNTAX & LITERALS (Code tokens and data types) ===
     KEYWORD(false),
+    /**
+     * entity, class, object, ...
+     * @since 1.0.0
+     */
     ENTITY(false), // type, class, struct
-    ACTION(false), //function, method, ...
+    /**
+     * function, method, ...
+     * @since 1.0.0
+     */
+    ACTION(false),
+    /**
+     * annotation, attribute, metadata ...
+     * @since 1.0.0
+     */
     ANNOTATION(false),
     VAR(false),
     OPERATOR(false),
