@@ -156,6 +156,10 @@ public class NStoreKey {
         return new NStoreKey(storeScope, storeType, id, repoUuid, name);
     }
 
+    public static NStoreKey of(NStoreScope storeScope, NStoreType storeType, NId id) {
+        return new NStoreKey(storeScope, storeType, id, null, null);
+    }
+
     public static NStoreKey ofCache(NId id, String repoUuid, String name) {
         return new NStoreKey(NStoreScope.WORKSPACE, NStoreType.CACHE, id, repoUuid, name);
     }
