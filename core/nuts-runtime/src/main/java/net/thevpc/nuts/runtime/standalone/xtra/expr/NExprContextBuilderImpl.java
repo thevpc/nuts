@@ -851,8 +851,8 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             @Override
             public Object eval(NExprCallContext callContext) {
                 if (callContext.operatorType() == NExprOpType.INFIX) {
-                    Object a = callContext.getArg(0).get().value().orNull();
-                    Object b = callContext.getArg(1).get().value().orNull();
+                    Object a = callContext.arg(0).get().value().orNull();
+                    Object b = callContext.arg(1).get().value().orNull();
                     Class<?> aClass = a == null ? null : a.getClass();
                     Class<?> bClass = b == null ? null : b.getClass();
                     NFunction2 f = callContext.context().findCommonInfixOp(op, aClass, bClass).orNull();
@@ -861,7 +861,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                     }
                     throw new IllegalArgumentException("not found infix operator '" + callContext.name() + "'");
                 } else if (callContext.operatorType() == NExprOpType.PREFIX) {
-                    Object a = callContext.getArg(0).get().value().get();
+                    Object a = callContext.arg(0).get().value().get();
                     NFunction f = callContext.context().findCommonPrefixOp(op
                             , a == null ? null : a.getClass()
                     ).orNull();
@@ -870,7 +870,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                     }
                     throw new IllegalArgumentException("not found prefix operator '" + callContext.name() + "'");
                 } else if (callContext.operatorType() == NExprOpType.POSTFIX) {
-                    Object a = callContext.getArg(0).get().value().get();
+                    Object a = callContext.arg(0).get().value().get();
                     NFunction f = callContext.context().findCommonPrefixOp(op, a == null ? null : a.getClass()
                     ).orNull();
                     if (f != null) {

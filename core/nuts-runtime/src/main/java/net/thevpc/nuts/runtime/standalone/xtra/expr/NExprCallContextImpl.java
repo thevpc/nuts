@@ -49,7 +49,7 @@ public class NExprCallContextImpl implements NExprCallContext {
     }
 
     @Override
-    public NOptional<NExprNodeValue> getArg(int index) {
+    public NOptional<NExprNodeValue> arg(int index) {
         if (index >= 0 && index < args.size()) {
             return NOptional.ofNullable(args.get(index));
         }
