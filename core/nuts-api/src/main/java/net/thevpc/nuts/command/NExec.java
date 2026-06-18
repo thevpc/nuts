@@ -87,7 +87,7 @@ import java.util.Map;
  *         .at("ssh://remote-server")
  *         .grabOut()
  *         .run();
- * String output = cmd.getGrabbedOutString();
+ * String output = cmd.grabbedOut();
  * }</pre>
  *
  * @author thevpc
@@ -448,7 +448,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
 
     /**
      * grub output stream to be retrieved later using
-     * <code>getGrabbedOutString</code>.
+     * <code>grabbedOut</code>.
      *
      * @return this instance
      */
@@ -471,7 +471,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
 
     /**
      * redirects error to out, runs the command and returns out string
-     * equivalent to <code>grabAll().getGrabbedOutString()</code> if the command
+     * equivalent to <code>grabAll().grabbedOut()</code> if the command
      * is already run, has no effect, and may fail if the out stream is not
      * configured to bed grabbed.
      *
@@ -481,7 +481,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
 
     /**
      * silences error, runs the command and return out string equivalent to
-     * <code>grabOutOnly().getGrabbedOutString()</code> if the command is
+     * <code>grabOutOnly().grabbedOut()</code> if the command is
      * already run, has no effect, and may fail if the out stream is not
      * configured to bed grabbed.
      *
