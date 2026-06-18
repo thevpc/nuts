@@ -9,7 +9,7 @@ public interface NExprCallContext {
 
     List<NExprNodeValue> args();
 
-    NOptional<NExprNodeValue> getArg(int index);
+    NOptional<NExprNodeValue> arg(int index);
 
     NExprContext context();
 
