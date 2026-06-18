@@ -186,6 +186,7 @@ net.thevpc.nuts.runtime.standalone.platform.rnsh.RnshPathFactorySPI
 ##################### Reserved Programming Interface
 
 net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl
+net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectRPI
 net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI
 

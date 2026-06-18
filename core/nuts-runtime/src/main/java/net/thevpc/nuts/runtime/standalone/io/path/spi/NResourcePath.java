@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPath;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPathHelper;
@@ -120,7 +121,7 @@ public class NResourcePath implements NPathSPI {
             urlPathLookedUp = true;
             try {
                 String loc = location;
-                ClassLoader resultClassLoader = NSearch.of().addIds(
+                NClassLoader resultClassLoader = NSearch.of().addIds(
                                 this.ids.toArray(new NId[0])
                         ).latest(true)
                         .dependencyFilter(

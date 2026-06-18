@@ -32,6 +32,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.util.*;
 
 import java.time.Instant;
@@ -558,7 +559,7 @@ public interface NSearch extends NWorkspaceCmd {
      *
      * @return result as class loader
      */
-    ClassLoader getResultClassLoader();
+    NClassLoader getResultClassLoader();
 
     /**
      * execute query and return result as class loader
@@ -566,7 +567,9 @@ public interface NSearch extends NWorkspaceCmd {
      * @param parent parent class loader
      * @return result as class loader
      */
-    ClassLoader getResultClassLoader(ClassLoader parent);
+    NClassLoader getResultClassLoader(ClassLoader parent);
+
+    NClassLoader getResultIntoClassLoader(NClassLoader classLoader);
 
     ///////////////////////
     // SHARED

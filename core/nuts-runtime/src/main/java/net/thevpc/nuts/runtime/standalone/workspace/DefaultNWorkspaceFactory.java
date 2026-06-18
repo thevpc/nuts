@@ -224,7 +224,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
                 return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
             }
-            case "net.thevpc.nuts.internal.expr.NExprRPI": {
+            case "net.thevpc.nuts.internal.rpi.NExprRPI": {
                 return NOptional.of((T) new NExprRPIImpl());
             }
             case "net.thevpc.nuts.spi.NUtilSPI": {

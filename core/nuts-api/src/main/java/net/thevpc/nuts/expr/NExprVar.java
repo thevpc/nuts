@@ -1,6 +1,6 @@
 package net.thevpc.nuts.expr;
 
-import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
 
 public interface NExprVar extends NExprVarReader, NExprVarWriter {
     static NExprVar ofVar(String name) {

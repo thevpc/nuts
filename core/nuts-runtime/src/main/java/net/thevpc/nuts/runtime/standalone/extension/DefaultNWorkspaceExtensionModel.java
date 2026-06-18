@@ -848,7 +848,7 @@ public class DefaultNWorkspaceExtensionModel {
         if (parent == null) {
             parent = workspaceExtensionsClassLoader;
         }
-        return new DefaultNClassLoader(name, parent);
+        return new DefaultNClassLoader(NStringUtils.firstNonNull(name,"nclassloader"), parent);
     }
 
     public static class RegInfo {

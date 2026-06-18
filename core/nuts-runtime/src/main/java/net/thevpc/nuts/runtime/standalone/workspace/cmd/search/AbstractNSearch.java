@@ -37,6 +37,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
@@ -421,12 +422,12 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     @Override
-    public ClassLoader getResultClassLoader() {
+    public NClassLoader getResultClassLoader() {
         return getResultClassLoader(null);
     }
 
     @Override
-    public ClassLoader getResultClassLoader(ClassLoader parent) {
+    public NClassLoader getResultClassLoader(ClassLoader parent) {
         //force content and dependencies!
 //        setContent(true);
 //        setDependencies(true);
@@ -445,6 +446,28 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             cl.add(NClassLoaderUtils.definitionToClassLoaderNode(def, repositoryFilter()));
         }
         return cl;
+    }
+
+    @Override
+    public NClassLoader getResultIntoClassLoader(NClassLoader classLoader) {
+        if (classLoader == null) {
+            classLoader = ((DefaultNExtensions) NExtensions.of())
+                    .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), null);
+        }
+
+        List<NDefinition> nDefinitions = getResultDefinitions().toList();
+        URL[] allURLs = new URL[nDefinitions.size()];
+        NId[] allIds = new NId[nDefinitions.size()];
+        for (int i = 0; i < allURLs.length; i++) {
+            NDefinition d = nDefinitions.get(i);
+            allURLs[i] = d.content().flatMap(NPath::toURL).orNull();
+            allIds[i] = d.id();
+        }
+
+        for (NDefinition def : nDefinitions) {
+            classLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, repositoryFilter()));
+        }
+        return classLoader;
     }
 
     @Override

@@ -1,16 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NOperatorAssociativity;
-import net.thevpc.nuts.internal.expr.NExprRPI;
-import net.thevpc.nuts.runtime.standalone.reflect.NReflectSignatureImpl;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.expr.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DefaultRootContext extends NExprContextBase {
     final Map<String, NExprFunction> defaultFunctions = new HashMap<>();

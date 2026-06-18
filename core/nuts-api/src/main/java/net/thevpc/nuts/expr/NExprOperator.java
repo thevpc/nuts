@@ -1,6 +1,6 @@
 package net.thevpc.nuts.expr;
 
-import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
 
 public interface NExprOperator {
     static NExprOperator of(String name, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity associativity,NExprCallHandler handler) {

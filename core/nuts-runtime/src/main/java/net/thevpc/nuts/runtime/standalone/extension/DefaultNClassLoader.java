@@ -26,11 +26,13 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.core.NClassLoaderNode;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.reflect.NClassLoader;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedHashMap;
 
-public class DefaultNClassLoader extends URLClassLoader {
+public class DefaultNClassLoader extends URLClassLoader implements NClassLoader {
 
     private String name;
     private LinkedHashMap<String, NClassLoaderNode> nodes = new LinkedHashMap<>();

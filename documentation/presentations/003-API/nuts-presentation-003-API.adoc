@@ -280,7 +280,7 @@ public class Main implements NApplication {
     }
     @Override
     public void run() {
-        NCmdLine cmd=NApp.of().getCmdLine();
+        NCmdLine cmd=NApp.of().cmdLine();
         ...
     }
 }
@@ -295,7 +295,7 @@ public class Main implements NApplication {
     public static void main(String[] args) {new Main().run(NAppRunOptions.ofExit(args));}
     @Override
     public void run() {
-        NCmdLine cmd=NApp.of().getCmdLine();
+        NCmdLine cmd=NApp.of().cmdLine();
         ...
     }
     @Override

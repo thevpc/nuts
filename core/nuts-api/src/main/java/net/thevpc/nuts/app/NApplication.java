@@ -113,7 +113,7 @@ package net.thevpc.nuts.app;
  *
  *     // do the main staff in launch method
  *     public void run() {
- *         NCmdLine cmdLine = session.getCmdLine();
+ *         NCmdLine cmdLine = NApp.of().cmdLine();
  *         boolean boolOption = false;
  *         String stringOption = null;
  *         List<String> others = new ArrayList<>();
@@ -179,7 +179,7 @@ package net.thevpc.nuts.app;
  *
  *     // do the main staff in launch method
  *     public void run() {
- *         NCmdLine cmdLine = session.getCmdLine();
+ *         NCmdLine cmdLine = NApp.of().cmdLine();
  *         NRef<Boolean> boolOption = NRef.of(false);
  *         NRef<String> stringOption = NRef.ofNull();
  *         List<String> others = new ArrayList<>();
@@ -239,7 +239,7 @@ package net.thevpc.nuts.app;
  *     App.Main
  *     // do the main staff in launch method
  *     public void run() {
- *         NCmdLine cmdLine = session.getCmdLine();
+ *         NCmdLine cmdLine = NApp.of().cmdLine();
  *         NRef<Boolean> boolOption = NRef.of(false);
  *         NRef<String> stringOption = NRef.ofNull();
  *         List<String> others = new ArrayList<>();

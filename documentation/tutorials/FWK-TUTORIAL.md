@@ -132,7 +132,7 @@ Create a new Maven project and update your pom.xml:
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.9</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
@@ -314,7 +314,7 @@ We will update our `run()` method to parse a `--verbose` flag, a `--config` opti
 
 ```java
 // Retrieve the command line for the current application
-NCmdLine cmdLine = NApp.of().getCmdLine();
+NCmdLine cmdLine = NApp.of().cmdLine();
 
 // Use NRef to hold mutable state that can be updated inside lambdas
 NRef<Boolean> verbose = NRef.of(false);
@@ -445,7 +445,7 @@ public class NutsAdminCLI {
     @NAppRunner
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApp.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -709,7 +709,7 @@ public class NutsAdminCLI {
     @NAppRunner
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApp.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -910,7 +910,7 @@ NPath treats local files, HTTP URLs, SSH remote paths, classpath resources, and 
 NPath localFile = NPath.of("/etc/myconfig.json");
 
 // 2. Remote HTTP file
-NPath remoteFile = NPath.of("https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.9/nuts-0.8.9.pom");
+NPath remoteFile = NPath.of("https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/1.0.0/nuts-1.0.0.pom");
 
 // 3. Remote SSH file (The DevOps Superpower!)
 // Access a file on a remote server transparently. 
@@ -924,7 +924,7 @@ String remoteConfig = sshFile.readString();
 NPath classpathFile = NPath.of("classpath:/default-settings.json");
 
 // 5. Resource from ANY Maven Artifact
-NPath artifactResource = NPath.of("resource://net.thevpc.nuts:nuts#0.8.9/META-INF/MANIFEST.MF");
+NPath artifactResource = NPath.of("resource://net.thevpc.nuts:nuts#1.0.0/META-INF/MANIFEST.MF");
 ```
 
 ** The Consistency of the ssh:// Protocol:**
@@ -987,7 +987,7 @@ public class NutsAdminCLI {
     @NAppRunner
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApp.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -1042,7 +1042,7 @@ public class NutsAdminCLI {
         NOut.println();
 
         // 2. Define a remote resource (using a small, stable Maven POM for demonstration)
-        NPath remoteScript = NPath.of("https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.9/nuts-0.8.9.pom");
+        NPath remoteScript = NPath.of("https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/1.0.0/nuts-1.0.0.pom");
         NPath localScript = cacheDir.resolve("diagnostic-def.pom");
 
         // 3. Compute the expected hash from the remote source 
@@ -1238,7 +1238,7 @@ public class NutsAdminCLI {
     @NAppRunner
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApp.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -1597,7 +1597,7 @@ public class NutsAdminCLI {
     @NAppRunner
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApp.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -1732,7 +1732,70 @@ public class NutsAdminCLI {
 }
 ```
 
-### Step 6.9: Testing Resilience and Rollbacks
+### Step 6.9: Smart Collection Synchronization with NCollectionDiff
+
+We will enhance the sync command in Module 6. Instead of just downloading a file, let's simulate synchronizing a list of Monitored Services (e.g., endpoints our CLI checks for uptime) from a remote configuration to our local database.
+This is where NCollectionDiff shines, especially if you are using JPA/Hibernate. It prevents the destructive "clear and re-add" anti-pattern.
+Update the executeSyncCommand method (add this after the Saga execution):
+
+```java
+// --- Simulating JPA/ORM Collection Synchronization ---
+NOut.println();
+NOut.println(NMsg.ofStyled("=== Synchronizing Monitored Services (JPA Style) ===", NTextStyle.primary1()));
+
+// Simulate "Old" services currently in the local database
+List<MonitoredService> dbServices = Arrays.asList(
+    new MonitoredService("svc-nginx", "http://localhost:80", 60),
+    new MonitoredService("svc-postgres", "jdbc:localhost:5432", 30), // Will be CHANGED
+    new MonitoredService("svc-redis", "redis://localhost:6379", 30)   // Will be REMOVED
+);
+
+// Simulate "New" services fetched from remote configuration
+List<MonitoredService> remoteServices = Arrays.asList(
+    new MonitoredService("svc-nginx", "http://localhost:80", 60),       // UNCHANGED
+    new MonitoredService("svc-postgres", "jdbc:localhost:5433", 30),    // CHANGED (port updated)
+    new MonitoredService("svc-memcached", "memcached://localhost:11211", 45) // ADDED
+);
+
+NOut.println(NMsg.ofC("Comparing %d local services with %d remote services...", dbServices.size(), remoteServices.size()));
+
+// Use NCollectionDiff to compute the delta based on the Service's ID
+for (NCollectionDiffChange<MonitoredService> diff : NCollectionDiff
+        .of(dbServices, remoteServices)
+        .idResolver(e -> e.id())
+        .equalizer((a, b) ->
+        a.getName().equals(b.getName()) &&
+        a.getEndpoint().equals(b.getEndpoint())
+        // Ignore updatedAt, createdAt, etc.
+        ).diff()
+        ) {
+    switch (diff.mode()) {
+        case ADDED: {
+            NOut.println(NMsg.ofStyled("[INSERT] ", NTextStyle.success()).append(NMsg.ofC("Adding new service: %s", diff.newValue().id())));
+            // JPA equivalent: entityManager.persist(diff.newValue());
+            break;
+        }
+        case REMOVED: {
+            NOut.println(NMsg.ofStyled("[DELETE] ", NTextStyle.error()).append(NMsg.ofC("Removing obsolete service: %s", diff.oldValue().id())));
+            // JPA equivalent: entityManager.remove(entityManager.merge(diff.oldValue()));
+            break;
+        }
+        case CHANGED: {
+            NOut.println(NMsg.ofStyled("[UPDATE] ", NTextStyle.warn()).append(NMsg.ofC("Updating service: %s (Preserving ID and created_at!)", diff.newValue().id())));
+            // JPA equivalent: Update fields of the managed entity (diff.oldValue()) 
+            // with values from diff.newValue(). This avoids deleting and re-inserting!
+            break;
+        }
+        case UNCHANGED: {
+            // Do nothing. The entity remains untouched in the database.
+            break;
+        }
+    }
+}
+private record MonitoredService(String id, String endpoint, int checkIntervalSec) {}
+```
+
+### Step 6.10: Testing Resilience and Rollbacks
 
 Rebuild and test the new sync command:
 
@@ -1859,6 +1922,17 @@ Let's put it all together. We will add an inspect command to our NutsAdminCLI. T
 First, update your `run()` method's switch statement to route the inspect command:
 
 ```java
+
+NTextArt art = NTextArt.of();
+// 2. Define the text to render (can be styled with NTF!)
+NText text = NText.ofStyled("NutsAdmin", NTextStyle.primary1());
+// 3. Render using the "figlet:standard" font
+// NTextArt provides multiple built-in fonts (e.g., "figlet:block", "figlet:slant")
+NText renderedBanner = art.getTextRenderer("figlet:standard").get().render(text);
+// 4. Print to the terminal
+NOut.println(renderedBanner);
+ 
+
 switch (command) {
     case "status": executeStatusCommand(verbose.get()); break;
     case "check": executeCheckCommand(verbose.get()); break;
@@ -2222,7 +2296,124 @@ public class NutsAdminCLI {
 }
 ```
 
-### Step 8.6: Testing the Expression Engine
+### Step 8.6: Advanced Templating and Dynamic Generation with NExprTemplate
+When you need to generate entire documents or complex multi-line outputs based on runtime data, string concatenation is not enough. You need control flow (loops, conditionals) and dynamic expression evaluation.
+NAF solves this with NExprTemplate. It provides a polyglot templating engine that supports multiple syntax styles, all backed by the same powerful NExpr evaluation engine we learned about in Step 8.2.
+
+1. Multiple Syntax Styles
+   Unlike templating libraries that lock you into one syntax, NExprTemplate adapts to your preferences and use case
+```java
+NExprTemplate templateEngine = NExprContextBuilder.of()
+    .declareBuiltins()
+    .declareVars(NExprVarResolver.ofMap(metrics))
+    .build()
+    .ofTemplate();
+
+// Choose your preferred syntax:
+templateEngine.withMoustacheStyle();  // {{expression}} - Web developers
+templateEngine.withJspStyle();        // <%=expression%> - Java developers  
+templateEngine.withBashStyle();       // ${expression} - DevOps/Shell scripts
+templateEngine.withBoundaries("<%", "%>"); // Custom delimiters
+```
+
+2. Example: Bash-Style Templating for DevOps
+Let's generate a shell script dynamically using Bash-style syntax, which feels natural for system administration tools:
+
+```java
+// Switch to Bash-style syntax
+NExprTemplate bashTemplate = NExprContextBuilder.of()
+    .declareVars(NExprVarResolver.ofMap(Map.of(
+        "hostname", "prod-server-01",
+        "port", 8080,
+        "services", Arrays.asList("nginx", "postgres")
+    )))
+    .build()
+    .ofTemplate()
+    .withBashStyle(); // Uses ${...} syntax
+
+String scriptTemplate = """
+    #!/bin/bash
+    # Auto-generated deployment script for ${hostname}
+    
+    echo "Starting services on ${hostname}:${port}"
+    
+    ${:for svc:services}
+    systemctl start ${svc}
+    echo "Started ${svc}"
+    ${:end}
+    
+    echo "Deployment complete"
+    """;
+
+String renderedScript = bashTemplate.processString(scriptTemplate);
+NOut.println(renderedScript);
+```
+
+Output:
+```
+#!/bin/bash
+# Auto-generated deployment script for prod-server-01
+
+echo "Starting services on prod-server-01:8080"
+
+systemctl start nginx
+echo "Started nginx"
+systemctl start postgres
+echo "Started postgres"
+
+echo "Deployment complete"
+```
+
+3. Example: JSP-Style for Java Developers
+For teams more comfortable with Java web syntax:
+
+```java
+NExprTemplate jspTemplate = NExprContextBuilder.of()
+    .declareVars(NExprVarResolver.ofMap(Map.of("user", "Alice", "role", "admin")))
+    .build()
+    .ofTemplate()
+    .withJspStyle(); // Uses <%=...%> syntax
+
+String jspTemplateStr = """
+    Welcome, <%=user%>!
+    Your role is: <%=role%>
+        <%:if role == "admin"%>
+    [Admin Panel Access Granted]
+        <%:end%>
+    """;
+
+NOut.println(jspTemplate.processString(jspTemplateStr));
+```
+
+
+4. Compilation for Performance
+For templates that are reused frequently (e.g., generating reports in a loop), you can compile the template once and reuse it:
+
+```java
+// Compile once
+NExprCompiledTemplate compiled = templateEngine.compile(templateString);
+
+// Reuse many times with different contexts
+for (User user : users) {
+    NExprContext userContext = baseContext.childContext()
+        .declareVars(NExprVarResolver.ofMap(Map.of("user", user)))
+        .build();
+    
+    String output = compiled.process(userContext);
+    // ... use output
+}
+```
+
+Why This Flexibility Matters:
+
+- Team Familiarity: Java teams can use JSP-style, DevOps teams can use Bash-style, frontend teams can use Mustache-style.
+- Context-Appropriate: Generate shell scripts with Bash syntax, HTML with Mustache, or Java code with JSP syntax.
+- Zero Lock-in: Switch styles based on the output format or team preference.
+- Custom Domains: Use withBoundaries() for DSL-specific syntax.
+
+
+
+### Step 8.7: Testing the Expression Engine
 Rebuild and reinstall your application:
 ```bash
 mvn clean install
@@ -2289,3 +2480,508 @@ We have integrated a highly extensible, context-aware expression engine into our
 - We implemented a Custom Function (either) by extending BaseNexprNExprFct.
 - We defined a Custom Infix Operator (->) using NExprOperator, demonstrating how to extend the language's grammar natively.
 - We utilized the robust NOptional-based parsing and evaluation flow to handle errors gracefully.
+
+
+## Module 9: Runtime Dependency Resolution and Dynamic Classloading
+**Objective:** Unlock the ultimate "Nuts Superpower" by dynamically fetching, resolving, and executing third-party Maven artifacts at runtime. We will add a plugin command to our CLI that allows users to specify any Java tool via its Maven coordinates (Group:Artifact:Version), and Nuts will automatically download it, resolve its transitive dependencies, and execute it on the fly—all without the tool being present in our pom.xml.
+
+## Step 9.1: The "Zero-Dependency" Deployment Philosophy##
+In traditional Java development, if your application has an optional feature (e.g., a specific database driver, a heavy XML validator, or a specialized network scanner), you must include it in your pom.xml. This bloats your deployment artifact and risks "dependency hell" (classpath conflicts).
+Because Nuts is fundamentally a runtime package manager, it allows you to deploy your application as a tiny, bare JAR (often just a few kilobytes). When the user invokes an optional feature, Nuts intercepts the request, queries Maven Central (or your private repositories), downloads the required artifact and its transitive dependencies into the local Nuts cache, and executes it in an isolated classloader. 
+
+## Step 9.2: Identifying Artifacts with NId
+To request a dependency at runtime, we use NId, NAF's representation of a Maven coordinate. The standard format is `groupId:artifactId#version` (or `groupId:artifactId:classifier#version`).
+
+```java
+// Define the coordinate for a third-party tool
+NId toolId = NId.of("org.apache.commons:commons-text#1.10.0");
+
+// You can also use version ranges or dynamic resolution
+NId latestTool = NId.of("com.mycompany:diagnostic-plugin"); // Resolves to the latest version
+```
+
+### Step 9.3: Executing Remote Artifacts Directly via NExec
+The most mind-blowing feature of NAF is that you don't even need to manually download the JAR to run it. The NExec engine (covered in Module 7) natively understands Maven coordinates. If you pass an NId as the command, Nuts handles the entire resolution, download, and execution pipeline transparently.
+
+```java
+// Execute a remote Java artifact directly from Maven Central!
+// Nuts will download 'com.mycompany:my-remote-tool#1.0.0' and all its dependencies, 
+// build the classpath, find the main class, and execute it.
+String result = NExec.of()
+    .addCommand("com.mycompany:my-remote-tool#1.0.0")
+    .addCommand("--help")
+    .grabOut()
+    .failFast()
+    .getGrabbedOutString();
+
+NOut.println(result);
+```
+
+### Step 9.4: Controlling the Fetch Strategy
+When resolving these dynamic dependencies, you can control how Nuts searches for them using the NSession's fetch strategy (as detailed in the NAF documentation). This is crucial for enterprise environments where you might want to enforce offline-only builds or prioritize remote repositories.
+
+```java
+NSession session = NSession.of();
+
+// Force Nuts to search local and remote repositories concurrently
+session.setFetchStrategy(NFetchStrategy.ANYWHERE);
+
+// Or enforce strict offline mode (only use the local Nuts cache)
+session.setFetchStrategy(NFetchStrategy.OFFLINE);
+
+// Or force a remote-first search
+session.setFetchStrategy(NFetchStrategy.REMOTE);
+```
+
+### Step 9.5: Implementing the plugin Command
+
+Let's integrate this into our NutsAdminCLI. We will add a plugin command that takes a Maven coordinate as the first argument, and passes all subsequent arguments directly to that dynamically loaded tool.
+Update your run() method's switch statement:
+
+```java
+switch (command) {
+    case "status": executeStatusCommand(verbose.get()); break;
+    case "check": executeCheckCommand(verbose.get()); break;
+    case "config": executeConfigCommand(); break;
+    case "sync": executeSyncCommand(); break;
+    case "inspect": executeInspectCommand(); break;
+    case "eval": executeEvalCommand(commands); break;
+    case "plugin": executePluginCommand(commands); break; // NEW
+    default: NErr.println(NMsg.ofC("Unknown command: ##%s##", command));
+}
+```
+
+Now, implement the executePluginCommand method:
+
+```java
+package com.mycompany.admin;
+
+import net.thevpc.nuts.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@NAppDefinition
+public class NutsAdminCLI {
+    // ... (previous code remains the same)
+
+    /**
+     * Implements the 'plugin' command using NExec and dynamic Maven resolution.
+     */
+    private void executePluginCommand(List<String> commands) {
+        if (commands.size() < 2) {
+            NErr.println(NMsg.ofStyled("Error: Missing plugin coordinate.", NTextStyle.error()));
+            NErr.println(NMsg.ofStyled("Usage: nuts-admin-cli plugin <groupId:artifactId#version> [args...]", NTextStyle.comment()));
+            return;
+        }
+
+        // 1. Extract the Maven coordinate (e.g., "com.example:my-tool#1.0.0")
+        String pluginCoordinate = commands.get(1);
+        
+        log.info(NMsg.ofC("Resolving and executing plugin: %s", pluginCoordinate).withIntent(NLogIntent.START));
+        NOut.println(NMsg.ofStyled("=== Dynamic Plugin Executor ===", NTextStyle.primary1()));
+        NOut.println(NMsg.ofC("Resolving ##%s## from repositories...", pluginCoordinate));
+
+        // 2. Ensure we are allowed to fetch from remote repositories if not cached
+        NSession session = NSession.of();
+        if (!session.isCached()) {
+            session.setFetchStrategy(NFetchStrategy.ANYWHERE);
+        }
+
+        // 3. Build the NExec command dynamically
+        NExec exec = NExec.of()
+            .addCommand(pluginCoordinate) // Nuts recognizes this as a Maven GAV!
+            .grabOut()
+            .grabErr()
+            .setFailFast(false); // We want to capture the plugin's output even if it exits with non-zero
+
+        // 4. Pass all remaining CLI arguments to the plugin
+        for (int i = 2; i < commands.size(); i++) {
+            exec.addCommand(commands.get(i));
+        }
+
+        // 5. Execute and capture output
+        try {
+            NTrace.println("Starting remote execution...");
+            String stdout = exec.getGrabbedOutString();
+            String stderr = exec.getGrabbedErrString();
+            int exitCode = exec.getResultCode();
+
+            if (!stdout.isEmpty()) {
+                NOut.println(NMsg.ofStyled("--- Plugin Output ---", NTextStyle.primary2()));
+                NOut.println(stdout);
+            }
+            if (!stderr.isEmpty()) {
+                NErr.println(NMsg.ofStyled("--- Plugin Errors ---", NTextStyle.warn()));
+                NErr.println(stderr);
+            }
+
+            NOut.println();
+            if (exitCode == 0) {
+                NOut.println(NMsg.ofStyled("Plugin execution completed successfully.", NTextStyle.success()));
+            } else {
+                NOut.println(NMsg.ofC("Plugin exited with code: ##%d##", exitCode));
+            }
+
+            log.info(NMsg.ofC("Plugin execution finished with exit code %d", exitCode).withIntent(NLogIntent.SUCCESS));
+        } catch (Exception e) {
+            NErr.println(NMsg.ofStyled("Error: Failed to resolve or execute the plugin.", NTextStyle.error()));
+            NErr.println(NMsg.ofC("Details: %s", e.getMessage()));
+            log.error(NMsg.ofC("Plugin execution failed: %s", e.getMessage()).withIntent(NLogIntent.FAIL));
+        }
+    }
+
+    // ... (other commands and lifecycle hooks)
+}
+```
+
+### Step 9.6: Testing the Dynamic Resolution
+Rebuild and reinstall your application:
+```bash
+mvn clean install
+nuts reinstall com.mycompany.admin:nuts-admin-cli
+```
+
+Now, let's test the dynamic resolution engine. For this example, let's assume we want to run a hypothetical diagnostic tool hosted on Maven Central. 
+
+1. Executing a Remote Plugin:
+
+```bash
+nuts nuts-admin-cli plugin "com.example:network-scanner#2.1.0" --target=192.168.1.1 --verbose
+```
+
+What happens under the hood when you press Enter:
+
+- Nuts parses com.example:network-scanner#2.1.0.
+- It checks the local Nuts cache (~/.cache/nuts/...).
+- If missing, it queries Maven Central for the POM, resolves the transitive dependency tree (e.g., downloading commons-net, slf4j-api, etc.).
+- It downloads all required JARs into the isolated Nuts workspace.
+- It constructs a temporary, isolated classpath.
+- It locates the Main-Class defined in the JAR's MANIFEST.MF and executes it, passing --target=192.168.1.1 --verbose.
+- It captures the standard output and returns it to our NutsAdminCLI.
+
+2. Observing the Resolution Trace:
+If you run the command with --trace, you will see the exact resolution pipeline:
+```bash
+nuts nuts-admin-cli --trace plugin "com.example:network-scanner#2.1.0"
+```
+
+Output:
+
+```
+=== Dynamic Plugin Executor ===
+Resolving com.example:network-scanner#2.1.0 from repositories...
+[TRACE] Searching for com.example:network-scanner#2.1.0 in local cache...
+[TRACE] Not found. Querying remote repository: https://repo1.maven.org/maven2/
+[TRACE] Resolving transitive dependencies...
+[TRACE] Downloading com.example:network-scanner-2.1.0.jar (45 KB)
+[TRACE] Downloading commons-net:commons-net#3.8.0 (310 KB)
+[TRACE] Building isolated classpath...
+Starting remote execution...
+--- Plugin Output ---
+Scanning 192.168.1.1...
+Found 3 open ports.
+```
+
+### Step 9.7: Programmatic Classloading (For Libraries)
+
+While `NExec` is perfect for running standalone tools, what if you need to use a downloaded JAR as a library inside your own Java code?
+NAF provides the `NClassLoader` (or workspace classpath manipulation) to dynamically inject JARs into the current JVM's execution context.
+
+```java
+// 1. Define the dependency
+NId libId = NId.of("com.google.code.gson:gson#2.10.1");
+
+// 2. Fetch the artifact paths (downloads if necessary)
+// Nuts returns a list of NPaths representing the JAR and all its transitive dependencies
+
+// 3. Create an isolated ClassLoader
+try (NClassLoader classLoader = NSession.of().search().addId(libId).getResultClassLoader()) {
+    
+    // 4. Load the class dynamically
+    Class<?> gsonClass = classLoader.loadClass("com.google.gson.Gson");
+    
+    // 5. Instantiate and invoke via Reflection
+    Object gsonInstance = gsonClass.getDeclaredConstructor().newInstance();
+    Method toJsonMethod = gsonClass.getMethod("toJson", Object.class);
+    
+    String json = (String) toJsonMethod.invoke(gsonInstance, Map.of("status", "success"));
+    NOut.println(NMsg.ofC("Dynamically loaded Gson produced: %s", json));
+    
+} catch (Exception e) {
+    log.error(NMsg.ofC("Dynamic classloading failed: %s", e));
+}
+```
+
+> Note: While NExec is the recommended approach for running external tools, NClassLoader is available when you absolutely must integrate a dynamically downloaded library directly into your application's logic.
+
+### Summary of Module 9
+We have unlocked the true power of the Nuts ecosystem.
+
+- We utilized NId to define Maven coordinates dynamically.
+- We leveraged NExec to transparently download, resolve, and execute remote Java artifacts without a single line of classpath boilerplate.
+- We controlled the resolution behavior using NFetchStrategy on the NSession.
+- We demonstrated how to use NClassLoader to programmatically inject downloaded libraries into the running JVM.
+
+By moving dependency resolution to runtime, our NutsAdminCLI remains incredibly lightweight, while possessing the ability to dynamically adopt any tool in the Maven ecosystem on demand.
+
+## Module 10: Enterprise Integration: Spring Boot & SLF4J
+
+**Objective:** Bridge our standalone NAF application into the enterprise Spring ecosystem. We will demonstrate how to seamlessly integrate NAF's powerful runtime utilities (NWorkspace, NExec, NPath) into Spring Boot, inject them into Spring Beans, and unify NAF's semantic NLog with the industry-standard SLF4J/Logback infrastructure.
+
+### Step 10.1: The Philosophy of Integration
+As we established in Module 1, NAF is fundamentally a standalone, zero-dependency framework. You do not need Spring to use NAF.
+However, in enterprise environments, Spring Boot and SLF4J are ubiquitous. NAF is designed to play beautifully with them. By adding just two lightweight bridge dependencies, you can:
+
+- Inject NAF's session-aware components (NSession, NWorkspace) directly into Spring @Component beans.
+- Route NAF's rich, structured NLog (with its NMsgIntent semantics and NMsg formatting) directly into your existing SLF4J/Logback configuration.
+- Use NAF's NBeanRef to safely reference Spring-managed beans inside NAF's concurrency primitives (like NRetryCall or NSaga) without serialization issues.
+
+
+### Step 10.2: Maven Configuration
+To enable Spring Boot and SLF4J integration, we add the respective NAF bridge modules to our pom.xml.
+
+
+```xml
+<dependencies>
+    <!-- Standard Spring Boot Starter -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- NAF Core -->
+    <dependency>
+        <groupId>net.thevpc.nuts</groupId>
+        <artifactId>nuts</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+
+    <!-- NAF Spring Boot Bridge -->
+    <dependency>
+        <groupId>net.thevpc.nuts</groupId>
+        <artifactId>nuts-spring-boot</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+
+    <!-- NAF SLF4J Bridge (Routes NLog to SLF4J/Logback) -->
+    <dependency>
+        <groupId>net.thevpc.nuts</groupId>
+        <artifactId>nuts-slf4j</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>
+```
+
+### Step 10.3: Bootstrapping the Hybrid Application
+To merge the NAF lifecycle with the Spring Boot lifecycle, we annotate our main class with both @SpringBootApplication and @NAppDefinition, and import the NAF Spring configuration.
+
+```java
+package com.mycompany.admin.spring;
+
+import net.thevpc.nuts.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
+
+@NAppDefinition
+@SpringBootApplication
+@Import(NutsSpringBootConfig.class) // Crucial: Wires NAF components into the Spring Context
+public class NutsAdminSpringApp {
+
+    public static void main(String[] args) {
+        // Spring Boot handles the startup, which in turn initializes the NAF Workspace
+        SpringApplication.run(NutsAdminSpringApp.class, args);
+    }
+
+    /**
+     * This NAF lifecycle hook runs AFTER the Spring ApplicationContext is fully initialized.
+     * It allows you to execute NAF-specific CLI logic or startup routines within the Spring environment.
+     */
+    @NAppRunner
+    public void run() {
+        NSession session = NSession.of();
+        NOut.println(NMsg.ofStyled(">> NAF is running seamlessly inside Spring Boot!", NTextStyle.success()));
+        
+        // You can still parse CLI arguments passed to the Spring Boot app
+        NCmdLine cmdLine = NApp.of().cmdLine();
+        // ... handle custom NAF flags ...
+    }
+}
+```
+
+### Step 10.4: Injecting NAF Components into Spring Beans
+Thanks to `@Import(NutsSpringBootConfig.class)`, NAF's core services are now available as Spring Beans. You can inject them directly into your @Service or @Controller classes.
+Note: NSession is thread-scoped. Spring's integration ensures that when you inject NSession, you get a proxy that correctly resolves to the current thread's execution context.
+
+```java
+package com.mycompany.admin.spring;
+
+import net.thevpc.nuts.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class DiagnosticsService {
+
+    // Inject NAF components directly!
+    @Autowired private NSession session;
+    @Autowired private NWorkspace workspace;
+    @Autowired private NExec exec;
+
+    public String getRemoteServerStatus(String sshTarget) {
+        // Use the injected, session-aware NExec to run a remote command via SSH
+        // The session automatically handles trace modes, output formats, and timeouts.
+        return exec.at(sshTarget)
+            .addCommand("systemctl", "status", "nginx")
+            .grabOut()
+            .failFast(false)
+            .getGrabbedOutString();
+    }
+    
+    public String getConfigPath() {
+        // Use the injected workspace/session to resolve XDG-compliant paths
+        return NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApp.of().getId()))
+                    .toString();
+    }
+}
+```
+
+### Step 10.5: Unifying Logging (NLog -> SLF4J)
+
+The true magic of the nuts-slf4j bridge is that you do not need to change your NAF logging code.
+All your existing NLog calls—complete with NMsg formatting, NLogIntent semantics, and Scoped Logging—will automatically be routed through SLF4J to your configured backend (e.g., Logback). This means your enterprise logging aggregators (like ELK or Splunk) will receive NAF's rich, structured logs.
+
+```java
+package com.mycompany.admin.spring;
+
+import net.thevpc.nuts.*;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OrderProcessingService {
+
+    // NLog automatically delegates to SLF4J/Logback under the hood!
+    private static final NLog log = NLog.of(OrderProcessingService.class);
+
+    public void processOrder(String orderId) {
+        long startTime = System.currentTimeMillis();
+
+        // 1. Semantic Logging with NMsg formatting
+        // This will appear in Logback with the formatted message and the START intent marker
+        log.info(NMsg.ofC("Processing order #%s", orderId)
+            .withIntent(NLogIntent.START));
+
+        try {
+            // ... business logic ...
+            simulateWork();
+
+            long duration = System.currentTimeMillis() - startTime;
+            
+            // 2. Attach execution duration and SUCCESS intent
+            log.info(NMsg.ofC("Order #%s completed successfully", orderId)
+                .withIntent(NLogIntent.SUCCESS)
+                .withDurationMs(duration));
+
+        } catch (Exception ex) {
+            // 3. Attach exceptions and FAIL intent
+            log.error(NMsg.ofC("Payment failed for order #%s", orderId)
+                .withIntent(NLogIntent.FAIL)
+                .withThrowable(ex));
+        }
+    }
+
+    private void simulateWork() {
+        try { Thread.sleep(100); } catch (InterruptedException e) {}
+    }
+}
+```
+
+### Step 10.6: Scoped Logging across Spring Beans
+
+One of the most powerful features of NAF is Scoped Logging (using NLog.ofScoped()). When integrated with Spring, you can establish a logging scope at the Controller/API layer, and all downstream Spring Services that use NLog.ofScoped() will automatically inherit the context (prefixes, placeholders, and custom handlers) without polluting the global MDC.
+
+```java
+@RestController
+@RequestMapping("/api/orders")
+public class OrderController {
+
+    @Autowired private OrderProcessingService orderService;
+    @Autowired private InventoryService inventoryService;
+
+    @PostMapping("/{orderId}")
+    public String handleOrder(@PathVariable String orderId, @RequestHeader("X-User-Id") String userId) {
+        
+        // Establish a NAF Logging Scope for this specific HTTP Request
+        NLog.runInScope(
+            NLogScope.of()
+                .withMessagePrefix(NMsg.ofC("[API-REQ-%s] ", orderId))
+                .withPlaceholder("userId", userId)
+                .withPlaceholder("orderId", orderId),
+            () -> {
+                // All NLog.ofScoped() calls inside these Spring Services 
+                // will automatically include the [API-REQ-123] prefix and $userId placeholder!
+                
+                inventoryService.reserveStock(); 
+                orderService.processOrder(orderId);
+            }
+        );
+        
+        return "Order Processed";
+    }
+}
+
+@Service
+public class InventoryService {
+    // EXPLICITLY opt-in to the scoped context
+    private static final NLog scopedLog = NLog.ofScoped(InventoryService.class);
+
+    public void reserveStock() {
+        // Output in Logback: [API-REQ-123] Reserving stock for user U-99 and order 123
+        scopedLog.info(NMsg.ofV("Reserving stock for user $userId and order $orderId")
+            .withIntent(NLogIntent.UPDATE));
+    }
+}
+```
+
+### Step 10.7: Referencing Spring Beans inside NAF Concurrency (Advanced)
+
+Sometimes, you want to use NAF's powerful NRetryCall or NSaga engines, but the actual work needs to be done by a Spring-managed Bean (e.g., a @Transactional service).
+NAF provides NBeanRef to safely reference Spring beans. The reference itself is serializable and lightweight; the actual Spring bean is resolved lazily from the Spring Context only when the method is invoked.
+
+```java
+@Service
+public class ResilientSpringWorkflow {
+
+    @Autowired private NConcurrent concurrent;
+    
+    // Reference a Spring Bean by its name and interface
+    // This does NOT trigger bean resolution yet. It's just a safe, serializable pointer.
+    private final NBeanRef<PaymentGateway> paymentGatewayRef = NBeanRef.of("paymentGatewayImpl").as(PaymentGateway.class);
+
+    public void executeResilientPayment(String orderId) {
+        
+        // Create a NAF Retry Call that delegates to the Spring Bean
+        concurrent.retryCallFactory()
+            .of("payment-retry", () -> {
+                // The Spring Bean is resolved HERE, from the active ApplicationContext
+                return paymentGatewayRef.charge(orderId, 100.0); 
+            })
+            .setMaxRetries(3)
+            .setExponentialRetryPeriod(Duration.ofSeconds(1), 2.0)
+            .call();
+    }
+}
+```
+
+
+### Summary of Module 10 & The Tutorial
+
+We have successfully taken our NutsAdminCLI from a standalone, zero-dependency package manager-aware tool, and bridged it into the enterprise Java ecosystem.
+
+- Standalone Power: Modules 1-9 proved that NAF provides a complete, production-ready foundation (CLI, I/O, Filesystems, Resilience, Expressions, Dynamic Classloading) without forcing you to adopt a massive framework like Spring.
+- Seamless Integration: By adding nuts-spring-boot and nuts-slf4j, we unlocked the ability to inject NAF's session-aware components into Spring Beans and route NAF's semantic, structured logs directly into Logback/SLF4J.
+- The Best of Both Worlds: You retain NAF's deterministic workspace constraints, tri-state error modeling (NOptional), and zero-boilerplate CLI parsing, while leveraging Spring's massive ecosystem of starters, AOP, and dependency injection.
+
+### Final Thoughts on the Nuts Application Framework
+Throughout this tutorial, we've seen that Nuts is not just a package manager. It is a comprehensive, battle-tested Application Framework born out of the necessity to build a robust, zero-dependency runtime environment.
+By standardizing how Java applications handle I/O, configuration, cross-platform execution, and resilience, NAF allows you to focus entirely on your business logic, whether you are building a lightweight CLI tool, a DevOps automation script, or a massive enterprise Spring Boot microservice.
