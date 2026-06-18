@@ -27,10 +27,18 @@ NMsg.ofV("Threshold=$th, Date=$date", name -> switch (name) {
     case "date" -> LocalDate.now();
     default     -> null;
 });
+
+// Variable substitution from function (with mustache)
+NMsg.ofM("Threshold={{th}}, Date={{date}}", name -> switch (name) {
+    case "th"   -> 0.85;
+    case "date" -> LocalDate.now();
+    default     -> null;
+});
 ```
 Notes:
 - Avoid mixing styles in a single message.
 - `${}` syntax is safer for complex strings (e.g., `$val123text` vs `${val}123text`).
+- `{{}}` syntax is safer when '$' has specific meanings in your context.
 
 ### C-style Formatting (`ofC`)
 
@@ -68,6 +76,20 @@ particularly when formatting messages from dynamic key-value maps (e.g., for tem
 
 - $v is simple and concise.
 - ${v} is safer when followed by alphanumeric characters (e.g., `$val123text` vs `${val}123text`).
+
+Missing variables are left as-is or replaced with a placeholder, depending on context or configuration.
+
+
+
+## Variable-based Moustache Formatting (ofM)
+Use `ofM` to format messages using named variables with Mustache-style placeholders:
+
+```java
+NOut.println(NMsg.ofV("Hello {{v}}", NMaps.of("v", "world")));
+```
+
+Variables are replaced by name using Mustache-style. This is useful for dynamically named arguments or template-based rendering,
+particularly when formatting messages from dynamic key-value maps (e.g., for templates or localization).
 
 Missing variables are left as-is or replaced with a placeholder, depending on context or configuration.
 

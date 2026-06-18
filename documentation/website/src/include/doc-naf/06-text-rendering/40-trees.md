@@ -15,7 +15,7 @@ NTreeNode root = new MyNode("Root", List.of(
     ))
 ));
 
-NOut.println(NTextArt.of().getTreeRenderer().get().render(root));
+NOut.println(NTextArt.of().treeRenderer().get().render(root));
 ```
 
 Result :
@@ -37,7 +37,7 @@ class MyNode implements NTreeNode {
     public MyNode(int value) { this.value = value; }
     @Override
     public NText value() {
-        return art.getTableRenderer().get().render(
+        return art.tableRenderer().get().render(
             NTableModel.of().addRow(NText.of(value))
         );
     }
@@ -47,7 +47,7 @@ class MyNode implements NTreeNode {
     }
 }
 NTreeNode tree = new MyNode(1);
-NOut.println(art.getTreeRenderer().get().render(tree));
+NOut.println(art.treeRenderer().get().render(tree));
 
 ```
 

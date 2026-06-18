@@ -34,7 +34,7 @@ String result = NExec.of()
         .addCommand(NConstants.Ids.NSH, "-c", "ls")
         .grabAll()
         .failFast()
-        .getGrabbedOutString();
+        .grabbedOut();
 
 NOut.println("Result:");
 NOut.println(result);
@@ -53,7 +53,7 @@ String result = NExec.of()
         .addExecutorOptions("--bot")
         .addCommand("com.mycompany:my-remote-artifact")
         .addCommand("list", "-i")
-        .getGrabbedAllString();
+        .grabbedAll();
 
 NOut.println(result);
 ```
@@ -77,8 +77,8 @@ NExec u = NExec.of()
         .grabOut();                           // Capture stdout
 
 // Access results
-String stdout = u.getGrabbedOutString();
-String stderr = u.getGrabbedErrString();
+String stdout = u.grabbedOut();
+String stderr = u.grabbedErr();
 int exitCode = u.getResultCode();
 
 NOut.println("Exit code: " + exitCode);

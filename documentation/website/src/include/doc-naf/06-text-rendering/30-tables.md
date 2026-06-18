@@ -17,7 +17,7 @@ NMutableTableModel table = NTableModel.of()
 .addRow(NText.of("adam"), NText.ofStyled("active", NTextStyle.italic()))
 .addRow(NText.of("eve"),  NText.ofStyled("inactive", NTextStyle.success()));
 
-NOut.println(NTextArt.of().getTableRenderer().get().render(table));
+NOut.println(NTextArt.of().tableRenderer().get().render(table));
 ```
 
 Output:

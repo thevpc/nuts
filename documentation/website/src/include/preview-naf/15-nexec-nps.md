@@ -12,7 +12,7 @@ contentType: java
 ---
 
     // Run a system command and capture output
-    String out = NExec.of("ls").system().grabAll().run().getGrabbedOutString();
+    String out = NExec.of("ls").system().grabAll().run().grabbedOut();
 
     // Run a Maven artifact (auto-resolves if missing)
     NExec.of("netbeans-launcher").run();

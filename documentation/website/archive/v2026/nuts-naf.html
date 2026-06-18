@@ -303,7 +303,7 @@ limiter.claimAndRun(() -> <span class="kw">NOut</span>.println(<span class="str"
     <div class="feat-cols">
       <div class="feat-card">
         <h3>NElement — Any Format</h3>
-        <div class="code-block"><pre><span class="ty">Person</span> p = <span class="kw">NElementParser</span>.ofJson()
+        <div class="code-block"><pre><span class="ty">Person</span> p = <span class="kw">NElementReader</span>.ofJson()
     .parse(<span class="kw">NPath</span>.of(<span class="str">"person.json"</span>), <span class="ty">Person</span>.class);
 <span class="kw">NElementFormat</span>.ofPlainXml(doc)
     .println(<span class="kw">NPath</span>.of(<span class="str">"out.xml"</span>));</pre></div>
@@ -311,7 +311,7 @@ limiter.claimAndRun(() -> <span class="kw">NOut</span>.println(<span class="str"
       <div class="feat-card">
         <h3>NExec — Unified Process Execution</h3>
         <div class="code-block"><pre><span class="ty">String</span> out = <span class="kw">NExec</span>.of(<span class="str">"ls"</span>).system()
-    .grabAll().run().getGrabbedOutString();
+    .grabAll().run().grabbedOut();
 <span class="cm">// Run Maven artifact (auto-resolve)</span>
 <span class="kw">NExec</span>.of(<span class="str">"netbeans-launcher"</span>).run();</pre></div>
       </div>

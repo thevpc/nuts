@@ -88,7 +88,7 @@ nuts update
 | `nuts nsh -c "cp http://host/a.pdf ssh://user@server/b.pdf"`                   | cross-protocol file copy                                      |
 | `nuts settings install-service myapp`                                          | Register system service across all major init systems         |
 
-→ [See the full showcase](SHOWCASE.md) for more examples including databases, IDEs, security tools, and games.
+→ [See the full showcase](documentation/tutorials/SHOWCASE.md) for more examples including databases, IDEs, security tools, and games.
 
 ---
 

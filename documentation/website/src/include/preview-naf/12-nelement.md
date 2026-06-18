@@ -17,10 +17,10 @@ NElement document = NElement.ofObjectBuilder()
     .build();
 
 // Parse JSON into Java object
-Person person = NElementParser.ofJson().parse(NPath.of("person.json"), Person.class);
+Person person = NElementReader.ofJson().read(NPath.of("person.json"), Person.class);
 
 // Format and write XML to file
-NElementFormat.ofPlainXml(document).println(NPath.of("person.xml"));
+NElementWriter.ofPlainXml(document).println(NPath.of("person.xml"));
 
 // Print TSON to terminal with colors
-NElementFormat.ofNtfTson(document).println();
+NElementWriter.ofNtfTson(document).println();

@@ -7,9 +7,9 @@ title: Convert Elements
 ```java
 
 // Parse JSON into Element
-NElement personJson = NElementParser.ofJson().parse(NPath.of("person.json"));
+NElement personJson = NElementReader.ofJson().parse(NPath.of("person.json"));
 
 // Format and write XML to file
-NElementFormat.ofPlainXml(personJson).println(NPath.of("person.xml"));
+NElementWriter.ofPlainXml(personJson).println(NPath.of("person.xml"));
 ```
 

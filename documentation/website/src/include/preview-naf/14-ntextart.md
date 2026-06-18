@@ -16,7 +16,7 @@ contentType: java
         public MyNode(int value) { this.value = value;}
         @Override
         public NText value() {
-            return art.getTableRenderer().get().render(NTableModel.of().addRow(NText.of(value)));
+            return art.tableRenderer().get().render(NTableModel.of().addRow(NText.of(value)));
         }
         @Override
         public List&lt;NTreeNode> children() {
@@ -25,7 +25,7 @@ contentType: java
         }
     }
     NTreeNode tree = new MyNode(1);
-    NOut.println(art.getTreeRenderer().get().render(tree));
+    NOut.println(art.treeRenderer().get().render(tree));
     //   ╭─╮
     //   │1│
     //   ╰─╯

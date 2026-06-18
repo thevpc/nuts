@@ -1168,7 +1168,7 @@ NText text = NText.of("hello world");
 .addRow(NText.of("adam"), NText.ofStyled("active", NTextStyle.italic()))
 .addRow(NText.of("eve"),  NText.ofStyled("inactive", NTextStyle.success()));
 
-NOut.println(NTextArt.of().getTableRenderer().get().render(table));
+NOut.println(NTextArt.of().tableRenderer().get().render(table));
 </code></pre>Output:<pre class="md-code md-code-``` "><code class="">+------+----------+
 | Name | Status   |
 +------+----------+
@@ -1233,7 +1233,7 @@ NOut.println(NTextArt.of().getTableRenderer().get().render(table));
     ))
 ));
 
-NOut.println(NTextArt.of().getTreeRenderer().get().render(root));
+NOut.println(NTextArt.of().treeRenderer().get().render(root));
 </code></pre>Result :<pre class="md-code md-code-``` "><code class="">Root
 ├─ Child 1
 └─ Child 2
@@ -1244,7 +1244,7 @@ NOut.println(NTextArt.of().getTreeRenderer().get().render(root));
     public MyNode(int value) { this.value = value; }
     @Override
     public NText value() {
-        return art.getTableRenderer().get().render(
+        return art.tableRenderer().get().render(
             NTableModel.of().addRow(NText.of(value))
         );
     }
@@ -1254,7 +1254,7 @@ NOut.println(NTextArt.of().getTreeRenderer().get().render(root));
     }
 }
 NTreeNode tree = new MyNode(1);
-NOut.println(art.getTreeRenderer().get().render(tree));
+NOut.println(art.treeRenderer().get().render(tree));
 
 </code></pre>Result: <pre class="md-code md-code-``` "><code class="">╭─╮
    │1│
