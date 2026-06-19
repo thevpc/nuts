@@ -35,7 +35,6 @@ public interface NClassLoader {
     Class<?> loadClass(String name) throws ClassNotFoundException ;
     URL getResource(String name) ;
     Enumeration<URL> getResources(String name) throws IOException;
-//    Stream<URL> resources(String name);
     InputStream getResourceAsStream(String name);
     ClassLoader getParent();
 }

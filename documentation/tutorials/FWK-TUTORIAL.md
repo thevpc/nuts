@@ -53,7 +53,7 @@ Module 4: Filesystem Abstraction and Data Integrity
 Module 5: Structured Data Parsing and Serialization
 
     Objective: Read, manipulate, and write configuration files without external JSON/XML libraries.
-    Core APIs: NElement, NElementParser, NElementFormat.
+    Core APIs: NElement, NElementReader, NElementWriter.
     Key Concepts: 
         Format-agnostic data virtualization.
         Dynamic tree navigation and manipulation of structured data.
@@ -1275,7 +1275,7 @@ public class NutsAdminCLI {
     }
 
     /**
-     * Implements the 'config' command using NElement, NElementParser, and NElementFormat.
+     * Implements the 'config' command using NElement, NElementReader, and NElementWriter.
      */
     private void executeConfigCommand() {
         log.info(NMsg.ofC("Executing 'config' command").withIntent(NLogIntent.READ));
@@ -1300,12 +1300,12 @@ public class NutsAdminCLI {
                 .build();
             
             // Save defaults to disk as JSON
-            NElementFormat.ofPlainJson(config).println(settingsFile);
+            NElementWriter.ofPlainJson(config).println(settingsFile);
             NOut.println(NMsg.ofStyled(">> Created default settings.json", NTextStyle.success()));
         } else {
             // 3. Parse existing JSON into NElement
             NTrace.println("Loading existing settings...");
-            config = NElementParser.ofJson().parse(settingsFile);
+            config = NElementReader.ofJson().read(settingsFile);
         }
 
         // 4. Manipulate the data in memory
@@ -1318,13 +1318,13 @@ public class NutsAdminCLI {
             .build());
 
         // 5. Save the updated configuration back to disk as JSON
-        NElementFormat.ofPlainJson(config).println(settingsFile);
+        NElementWriter.ofPlainJson(config).println(settingsFile);
         NOut.println(NMsg.ofStyled(">> Settings updated and saved.", NTextStyle.success()));
         NOut.println();
 
         // 6. Print the configuration to the terminal using NTF-colored TSON
         NOut.println(NMsg.ofStyled("Current Active Configuration:", NTextStyle.primary2()));
-        NElementFormat.ofNtfTson(config).println();
+        NElementWriter.ofNtfTson(config).println();
         
         log.info(NMsg.ofPlain("Config command completed.").withIntent(NLogIntent.SUCCESS));
     }
@@ -1409,9 +1409,9 @@ nuts nuts-admin-cli --trace config
 ### Summary of Module 5
 We have successfully eliminated the need for heavy JSON/XML libraries.
 
-- We used NElementParser to seamlessly parse JSON from disk into memory.
+- We used NElementReader to seamlessly parse JSON from disk into memory.
 - We used NElement.ofObjectBuilder() to construct and manipulate structured data dynamically.
-- We used NElementFormat to serialize the data back to disk as standard JSON, and simultaneously render it to the terminal as colorized TSON.
+- We used NElementWriter to serialize the data back to disk as standard JSON, and simultaneously render it to the terminal as colorized TSON.
 - We integrated this flawlessly with the NStoreKey XDG directory resolution we built in Module 4.
 
 ## Module 6: Concurrency, Resilience Patterns, and Error Modeling
