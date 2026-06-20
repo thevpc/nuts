@@ -2073,7 +2073,11 @@ public final class NBootUtils {
                         try {
                             Files.delete(file);
                         } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            if(NBootPlatformHome.isWindows()){
+                                // in windows just ignore becau used log files cannot be deleted
+                            }else {
+                                throw new UncheckedIOException(e);
+                            }
                         }
                         count[0]++;
                         return FileVisitResult.CONTINUE;
@@ -2110,7 +2114,11 @@ public final class NBootUtils {
                             try {
                                 Files.delete(dir);
                             } catch (IOException e) {
-                                throw new UncheckedIOException(e);
+                                if(NBootPlatformHome.isWindows()){
+                                    // in windows just ignore becau used log files cannot be deleted
+                                }else {
+                                    throw new UncheckedIOException(e);
+                                }
                             }
                         }
                         return FileVisitResult.CONTINUE;
