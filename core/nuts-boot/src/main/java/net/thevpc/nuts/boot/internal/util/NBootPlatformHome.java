@@ -263,6 +263,10 @@ public class NBootPlatformHome {
         return getStore(storeType) + getNativePath("/global");
     }
 
+    public static boolean isWindows() {
+        return "WINDOWS".equals(currentOsFamily());
+    }
+
     public static String currentOsFamily() {
         return NBootUtils.enumName(NBootUtils.firstNonBlank(parseOsFamily(System.getProperty("os.name")),"UNKNOWN"));
     }

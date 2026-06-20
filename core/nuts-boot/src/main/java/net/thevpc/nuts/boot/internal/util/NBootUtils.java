@@ -200,7 +200,7 @@ public final class NBootUtils {
     }
 
     public static String resolveJavaCommand(String javaHome) {
-        String exe = sameEnum(NBootPlatformHome.currentOsFamily(), "WINDOWS") ? "java.exe" : "java";
+        String exe = NBootPlatformHome.isWindows() ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (isBlank(javaHome) || "null".equals(javaHome)) {
@@ -2093,7 +2093,11 @@ public final class NBootUtils {
                                 // the children (asynchronous)
                                 //try three times and then exit!
                             } catch (IOException e) {
-                                throw new UncheckedIOException(e);
+                                if(NBootPlatformHome.isWindows()){
+                                    // in windows just ignore becau used log files cannot be deleted
+                                }else {
+                                    throw new UncheckedIOException(e);
+                                }
                             }
                             try {
                                 Thread.sleep(500);
