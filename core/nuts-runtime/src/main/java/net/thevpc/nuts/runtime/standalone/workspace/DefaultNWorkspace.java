@@ -283,7 +283,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         String workspaceLocation = data.effectiveBootOptions.workspace().orNull();
         data.bootRepositories = data.effectiveBootOptions.bootRepositories().orNull();
         NBootWorkspaceFactory bootFactory = data.effectiveBootOptions.bootWorkspaceFactory().orNull();
-        ClassLoader bootClassLoader = data.effectiveBootOptions.classWorldLoader().orNull();
         this.wsModel.extensionModel = new DefaultNWorkspaceExtensionModel(this, bootFactory,
                 data.effectiveBootOptions.excludedExtensions().orElse(Collections.emptyList()));
         this.wsModel.filtersModel = new DefaultNFilterModel(this);
@@ -293,7 +292,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.locationsModel = new DefaultNWorkspaceLocationModel(this,
                 this.wsModel.location == null ? null : Paths.get(this.wsModel.location).toString());
 
-        this.wsModel.extensionModel.onInitializeWorkspace(data.effectiveBootOptions, bootClassLoader);
+        this.wsModel.extensionModel.onInitializeWorkspace(data.effectiveBootOptions, wsModel.bootClassLoader);
         this.wsModel.logModel.setFactorySPI(
                 NExtensions.of().createSupported(NLogFactorySPI.class, null).orElse(this.wsModel.logModel.getFactorySPI())
         );

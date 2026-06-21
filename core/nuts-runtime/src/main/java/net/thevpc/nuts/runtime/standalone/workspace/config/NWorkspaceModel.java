@@ -102,6 +102,7 @@ public class NWorkspaceModel {
     protected NObservableMap<String, Object> userProperties;
     private String pid;
     private NEnvLocal env;
+    public ClassLoader bootClassLoader;
     private final Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> configPlatforms = new LinkedHashMap<>();
 
 
@@ -124,6 +125,7 @@ public class NWorkspaceModel {
         this.repositoryModel = new DefaultNRepositoryModel(workspace);
         this.extensions = new DefaultNExtensions(this);
         this.bootModel = new DefaultNBootModel(workspace, this, initialBootOptions, LOG);
+        this.bootClassLoader = initialBootOptions.classWorldLoader().orNull();
     }
 
     public void init() {

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -60,6 +61,14 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
             }
             if (!checked) {
                 loadUnsafe(Thread.currentThread().getContextClassLoader());
+                if(NWorkspaceExt.of().getModel().extensionModel!=null) {
+                    if (loadedType == null) {
+                        loadUnsafe(NWorkspaceExt.of().getModel().extensionModel.getWorkspaceExtensionsClassLoader());
+                    }
+                }
+                if (loadedType == null) {
+                    loadUnsafe(NWorkspaceExt.of().getModel().bootClassLoader);
+                }
             }
             return NOptional.ofNamed(loadedType,NMsg.ofC("type %s",className));
         }

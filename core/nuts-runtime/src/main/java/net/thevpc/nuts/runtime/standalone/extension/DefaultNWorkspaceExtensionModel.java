@@ -844,6 +844,10 @@ public class DefaultNWorkspaceExtensionModel {
         return NWorkspaceExt.of(workspace).getConfigModel().getStoredConfigBoot();
     }
 
+    public DefaultNClassLoader getWorkspaceExtensionsClassLoader() {
+        return workspaceExtensionsClassLoader;
+    }
+
     public synchronized DefaultNClassLoader getNutsURLClassLoader(String name, ClassLoader parent) {
         if (parent == null) {
             parent = workspaceExtensionsClassLoader;
