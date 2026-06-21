@@ -48,16 +48,19 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
         List<NdiScriptInfo> scriptInfos = new ArrayList<>();
-        Set<String> visited = new LinkedHashSet<>();
+//        Set<String> visited = new LinkedHashSet<>();
         for (NShellFamily sf : NEnv.of().shellFamilies()) {
-            String z = NShellHelper.of(sf).getSysRcName();
-            if (!visited.contains(z)) {
-                visited.add(z);
-                NdiScriptInfo i = new RcNdiScriptInfo(z, options, sf);
-                scriptInfos.add(i);
+            NdiScriptInfo rr = getSysRc(options, sf);
+            if (rr!=null) {
+                scriptInfos.add(rr);
             }
         }
         return scriptInfos.toArray(new NdiScriptInfo[0]);
+    }
+
+    public NdiScriptInfo getSysRc(NdiScriptOptions options, NShellFamily shellFamily){
+        String name = NShellHelper.of(shellFamily).getSysRcName();
+        return new RcNdiScriptInfo(name, options, shellFamily);
     }
 
     public NdiScriptInfo[] getIncludeNutsInit(NdiScriptOptions options) {
@@ -928,51 +931,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
 
-//    public String createNutsEnvString(NdiScriptOptions options, boolean updateEnv, boolean updatePATH) {
-//        final NutsWorkspace ws = session.getWorkspace();
-//        String NUTS_APP_JAR_PATH = ws.search()
-//                .setSession(session.copy())
-//                .addId(ws.getApiId()).getResultPaths().required();
-//
-//        TreeSet<String> exports = new TreeSet<>();
-//        SimpleScriptBuilder tmp = scriptBuilderSimple("nuts-env", options.resolveNutsApiId(), options);
-//        if (updateEnv) {
-//            exports.addAll(Arrays.asList("NUTS_VERSION", "NUTS_WORKSPACE", "NUTS_APP_JAR", "NUTS_WORKSPACE_BINDIR"));
-//            tmp.printSetStatic("NUTS_VERSION", ws.getApiVersion().toString());
-//            tmp.printSetStatic("NUTS_WORKSPACE", ws.locations().getWorkspaceLocation());
-//            for (NutsStoreLocation value : NutsStoreLocation.values()) {
-//                tmp.printSetStatic("NUTS_WORKSPACE_" + value, ws.locations().getStoreLocation(value));
-//                exports.add("NUTS_WORKSPACE_" + value);
-//            }
-//            if (NUTS_APP_JAR_PATH.startsWith(ws.locations().getStoreLocation(NutsStoreLocation.LIB))) {
-//                String pp = NUTS_APP_JAR_PATH.substring(ws.locations().getStoreLocation(NutsStoreLocation.LIB).length());
-//                tmp.printSet("NUTS_APP_JAR", varRef("NUTS_WORKSPACE_LIB") + pp);
-//            } else {
-//                tmp.printSetStatic("NUTS_APP_JAR", NUTS_APP_JAR_PATH);
-//            }
-//            String p0 = options.resolveBinFolder().toString().substring(
-//                    ws.locations().getStoreLocation(NutsStoreLocation.APPS).length()
-//            );
-//            tmp.printSet("NUTS_WORKSPACE_BINDIR", varRef("NUTS_WORKSPACE_BIN") + p0);
-//        }
-//        if (updatePATH) {
-//            exports.add("PATH");
-//            tmp.printSet("PATH", varRef("NUTS_WORKSPACE_BINDIR") + getPathVarSep() + varRef("PATH"));
-//        }
-//        String export = getExportCommand(exports.toArray(new String[0]));
-//        if (!NutsBlankable.isBlank(export)) {
-//            tmp.println(export);
-//        }
-//        return tmp.buildString();
-//    }
-
     public ReplaceString getCommentLineConfigHeader() {
         return COMMENT_LINE_CONFIG_HEADER;
     }
 
     public abstract String getTemplateName(String name, NShellFamily shellFamily);
 
-    private class RcNdiScriptInfo implements NdiScriptInfo {
+    public class RcNdiScriptInfo implements NdiScriptInfo {
         private final String bashrcName;
         private final NdiScriptOptions options;
         private final NShellFamily shellFamily;

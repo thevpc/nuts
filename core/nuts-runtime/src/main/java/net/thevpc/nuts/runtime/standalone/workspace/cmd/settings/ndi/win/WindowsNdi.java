@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptIn
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -28,29 +29,34 @@ public class WindowsNdi extends BaseSystemNdi {
         return all.toArray(new NShellFamily[0]);
     }
 
-    //    @Override
-//    public NdiScriptInfo getNutsTerm(NdiScriptOptions options) {
-//        return new NdiScriptInfo() {
-//            @Override
-//            public Path path() {
-//                return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
-//            }
-//
-//            @Override
-//            public PathInfo create() {
-//                Path apiConfigFile = path();
-//                return addFileLine("nuts-term",
-//                        options.resolveNutsApiId(),
-//                        apiConfigFile, getCommentLineConfigHeader(),
-//                        "@ECHO OFF" + newlineString() +
-//                                createNutsEnvString(options, true, true) + newlineString()
-//                                + "cmd.exe /K " + getExecFileName("nuts") + " welcome " + newlineString()
-//                        ,
-//                        getShebanSh());
-//            }
-//        };
-//    }
+    public NdiScriptInfo getSysRc(NdiScriptOptions options, NShellFamily shellFamily){
+        switch (shellFamily){
+            case WIN_POWER_SHELL:{
+                String p = NEnv.of().getEnv("PROFILE").orNull();
+                if(!NBlankable.isBlank(p)){
+                    return new NdiScriptInfo() {
+                        @Override
+                        public NPath path() {
+                            return NPath.of(p);
+                        }
 
+                        @Override
+                        public PathInfo create() {
+                            NPath apiConfigFile = path();
+                            NShellHelper sh = NShellHelper.of(shellFamily);
+                            return addFileLine("sysrc",
+                                    options.resolveNutsApiId(),
+                                    apiConfigFile, getCommentLineConfigHeader(),
+                                    sh.getCallScriptCommand("_NUTS_INIT", getIncludeNutsInit(options, shellFamily).path().toString()),
+                                    sh.getShebanSh(), shellFamily);
+                        }
+                    };
+                }
+                break;
+            }
+        }
+        return null;
+    }
 
     @Override
     protected String createNutsScriptContent(NId fnutsId, NdiScriptOptions options, NShellFamily shellFamily) {
