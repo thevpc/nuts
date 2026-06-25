@@ -173,8 +173,8 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * Creates an {@code NPath} from a textual location using the given class loader
      * to resolve classpath-based paths when applicable.
      *
-     * @param path         the textual location (file, URL, classpath resource)
-     * @param classLoader  optional class loader for resource resolution
+     * @param path        the textual location (file, URL, classpath resource)
+     * @param classLoader optional class loader for resource resolution
      * @return a new {@code NPath} instance
      */
     static NPath of(String path, ClassLoader classLoader) {
@@ -397,13 +397,14 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     }
 
 
-    static NOptional<NPath> ofOrigin(Class<?> clazz){
+    static NOptional<NPath> ofOrigin(Class<?> clazz) {
         return NIORPI.of().ofOrigin(clazz);
     }
 
-    static List<NPath> ofOrigins(Class<?> clazz){
+    static List<NPath> ofOrigins(Class<?> clazz) {
         return NIORPI.of().ofOrigins(clazz);
     }
+
     /**
      * content encoding if explicitly defined (from HTTP headers for instance).
      * return null when unknown.
@@ -460,6 +461,25 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
 
     NPathNameParts nameParts(NPathExtensionType type);
+
+    /**
+     * Returns a memory representation of a new path sibling with the provided name resolver.
+     *
+     * @param newNameResolver name resolver
+     * @return new path sibling
+     * @since 1.0.0
+     */
+    NPath resolveSibling(Function<NPath, String> newNameResolver);
+
+    /**
+     * renames (moves) this path to the same location but with a distinct name.
+     *
+     * @param newNameResolver name resolver
+     * @param options         rename options
+     * @return new path sibling
+     * @since 1.0.0
+     */
+    NPath rename(Function<NPath, String> newNameResolver, NPathOption... options);
 
     String name();
 
@@ -720,7 +740,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return an {@link NOptional} containing the string representing the route
      * from the origin to this path.
      * @throws IllegalArgumentException if the paths cannot be relativized against
-     * each other (e.g., different protocols or roots).
+     *                                  each other (e.g., different protocols or roots).
      */
     NOptional<String> relativize(NPath origin);
 

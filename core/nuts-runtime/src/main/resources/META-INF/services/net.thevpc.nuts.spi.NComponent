@@ -14,6 +14,7 @@ net.thevpc.nuts.runtime.standalone.workspace.archetype.MinimalNWorkspaceArchetyp
 net.thevpc.nuts.runtime.standalone.workspace.archetype.DefaultNWorkspaceArchetypeComponent
 
 net.thevpc.nuts.runtime.standalone.installer.ZipInstallerComponent
+net.thevpc.nuts.runtime.standalone.installer.CommandForIdNInstallerComponent
 
 net.thevpc.nuts.runtime.standalone.descriptor.parser.ZipDescriptorContentParserComponent
 net.thevpc.nuts.runtime.standalone.descriptor.parser.JarDescriptorContentParserComponent

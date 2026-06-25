@@ -20,11 +20,12 @@ import java.nio.charset.CharsetDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath, NPathSPIAware {
 
     public static final int BUFFER_SIZE = 8192;
-    private DefaultNPathMetadata omd = new DefaultNPathMetadata(this);
+    private final DefaultNPathMetadata omd = new DefaultNPathMetadata(this);
     private boolean deleteOnDispose;
 
     public NPathBase() {
@@ -33,12 +34,12 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public InputStream inputStream() {
-        return getInputStream(new NPathOption[0]);
+        return getInputStream();
     }
 
     @Override
     public OutputStream outputStream() {
-        return getOutputStream(new NPathOption[0]);
+        return getOutputStream();
     }
 
     protected NPath copyExtraFrom(NPath other) {
@@ -247,27 +248,39 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         return nameParts(NPathExtensionType.SMART);
     }
 
-    public NPath resolveSibling(NPathRenameOptions renameOptions){
-        if(renameOptions==null){
+    public NPath resolveSibling(NPathRenameOptions renameOptions) {
+        if (renameOptions == null) {
             return this;
         }
         NPathExtensionType t = renameOptions.type();
-        if(t==null){
-            t=NPathExtensionType.SMART;
+        if (t == null) {
+            t = NPathExtensionType.SMART;
         }
         String template = renameOptions.template();
         String extension = renameOptions.extension();
-        if(!NBlankable.isBlank(template)){
+        if (!NBlankable.isBlank(template)) {
             return resolveSibling(
                     nameParts(t).toName(template)
             );
         }
-        if(!NBlankable.isBlank(extension)){
+        if (!NBlankable.isBlank(extension)) {
             return resolveSibling(
                     nameParts(t).toNameWithExtension(extension)
             );
         }
         return this;
+    }
+
+    @Override
+    public NPath rename(Function<NPath, String> newNameResolver, NPathOption... options) {
+        NPath p2 = this.resolveSibling(newNameResolver);
+        moveTo(p2, options);
+        return p2;
+    }
+
+    @Override
+    public NPath resolveSibling(Function<NPath, String> newNameResolver) {
+        return this.resolveSibling(newNameResolver.apply(this));
     }
 
     @Override
@@ -315,9 +328,9 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                     return rebuildSmartParts(vals, i);
                 }
                 NVersionPart v2 = vals.get(i + 1);
-                if (v2.type()== NVersionPartType.NUMBER) {
+                if (v2.type() == NVersionPartType.NUMBER) {
                     //check if the part before is also a number
-                    if (i > 0 && vals.get(i - 1).type()==NVersionPartType.NUMBER) {
+                    if (i > 0 && vals.get(i - 1).type() == NVersionPartType.NUMBER) {
                         if (i + 1 == vals.size() - 1) {
                             return rebuildSmartParts(vals, i + 2);
                         } else if (vals.get(i + 1).value().equals(".")) {
@@ -444,7 +457,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public Writer getWriter(NPathOption... options) {
-        return getWriter((Charset) null, options);
+        return getWriter(null, options);
     }
 
     @Override
@@ -472,7 +485,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public Reader getReader(NPathOption... options) {
-        return asReader((Charset) null);
+        return asReader(null);
     }
 
     @Override
@@ -510,7 +523,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public NPath writeString(String string, Charset cs, NPathOption... options) {
-        return writeBytes(string==null?new byte[0]:string.getBytes(nonNullCharset(cs)));
+        return writeBytes(string == null ? new byte[0] : string.getBytes(nonNullCharset(cs)));
     }
 
     @Override
@@ -589,7 +602,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 d.addSource(this);
                 return d.computeBytes();
             }
-            default:{
+            default: {
                 NDigest d = NDigest.of();
                 d.algorithm(algo);
                 d.addSource(type().name().getBytes());

@@ -394,6 +394,17 @@ public class PathTest {
 
 
     }
+    @Test
+    public void test08() {
+        NPath t = NPath.ofTempFile();
+        NPath newPath = t.rename(v -> v.nameParts().toName("${base}-toz.${ext}"));
+        Assertions.assertEquals(t.name().length() + 4, newPath.name().length());
+        Assertions.assertTrue(!t.name().contains("-toz"));
+        Assertions.assertTrue(newPath.name().contains("-toz"));
+        Assertions.assertTrue(newPath.name().replace("-toz","").equals(t.name()));
+        Assertions.assertTrue(newPath.exists());
+        newPath.delete();
+    }
 
     private String[] d(String n) {
         NPath p = NPath.of(n);

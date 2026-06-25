@@ -40,6 +40,7 @@ import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NInstallerComponent;
+import net.thevpc.nuts.util.NScorableContext;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
 
@@ -52,6 +53,23 @@ import java.util.List;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class CommandForIdNInstallerComponent implements NInstallerComponent {
     NDefinition runnerId;
+
+    public CommandForIdNInstallerComponent() {
+
+    }
+
+    @NScore
+    public static int getScore(NScorableContext ctx) {
+        NDefinition def = ctx.criteria(NDefinition.class);
+        if (def != null) {
+            if (def.descriptor() != null) {
+                if ("jar".equals(def.descriptor().packaging())) {
+                    return NScorable.DEFAULT_SCORE;
+                }
+            }
+        }
+        return NScorable.UNSUPPORTED_SCORE;
+    }
 
     public CommandForIdNInstallerComponent(NDefinition runnerId) {
         this.runnerId = runnerId;
