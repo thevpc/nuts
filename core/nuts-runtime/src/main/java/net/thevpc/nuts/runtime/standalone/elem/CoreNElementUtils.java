@@ -11,6 +11,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.*;
+import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.function.Predicate;
@@ -75,7 +76,7 @@ public class CoreNElementUtils {
                 // e.g. List<String> -> get raw type List
                 Type rawType = ((ParameterizedType) type).getRawType();
                 if (rawType instanceof Class<?>) {
-                    return test((Class<?>) rawType);
+                    return test(rawType);
                 } else {
                     throw new IllegalArgumentException("Unexpected raw type: " + rawType);
                 }
@@ -219,15 +220,12 @@ public class CoreNElementUtils {
                 if (Temporal.class.isAssignableFrom(cls)) {
                     return true;
                 }
-                if (java.util.Date.class.isAssignableFrom(cls)) {
-                    return true;
-                }
-                return false;
+                return Date.class.isAssignableFrom(cls);
             } else if (type instanceof ParameterizedType) {
                 // e.g. List<String> -> get raw type List
                 Type rawType = ((ParameterizedType) type).getRawType();
                 if (rawType instanceof Class<?>) {
-                    return test((Class<?>) rawType);
+                    return test(rawType);
                 } else {
                     throw new IllegalArgumentException("Unexpected raw type: " + rawType);
                 }
@@ -256,7 +254,7 @@ public class CoreNElementUtils {
             if (type == null) {
                 return true;
             }
-            if(DEFAULT_INDESTRUCTIBLE_PRIMITIVE.test(type)) {
+            if (DEFAULT_INDESTRUCTIBLE_PRIMITIVE.test(type)) {
                 return true;
             }
             if (type instanceof Class<?>) {
@@ -266,7 +264,7 @@ public class CoreNElementUtils {
                 // e.g. List<String> -> get raw type List
                 Type rawType = ((ParameterizedType) type).getRawType();
                 if (rawType instanceof Class<?>) {
-                    return test((Class<?>) rawType);
+                    return test(rawType);
                 } else {
                     throw new IllegalArgumentException("Unexpected raw type: " + rawType);
                 }
@@ -539,6 +537,11 @@ public class CoreNElementUtils {
         return new DefaultNPairElement(denullOne(k), NElement.ofBoolean(v));
     }
 
+    public static NPairElement pair(NElement k, Instant v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofInstant(v));
+    }
+
+
     public static NPairElement pair(NElement k, Integer v) {
         return new DefaultNPairElement(denullOne(k), NElement.ofInt(v));
     }
@@ -562,6 +565,10 @@ public class CoreNElementUtils {
 
     public static NPairElement pair(String name, NElement value) {
         return pair(NElement.ofNameOrString(name), denullOne(value));
+    }
+
+    public static NPairElement pair(String k, Instant v) {
+        return new DefaultNPairElement(NElement.ofNameOrString(k), NElement.ofInstant(v));
     }
 
     public static NPairElement pair(String name, Boolean value) {
@@ -654,8 +661,8 @@ public class CoreNElementUtils {
         return ret;
     }
 
-    public static NOptional<NElement> getByName(List<NElement> values,String s) {
-        if(values==null){
+    public static NOptional<NElement> getByName(List<NElement> values, String s) {
+        if (values == null) {
             return NOptional.ofNamedEmpty("property " + s);
         }
         for (NElement x : values) {
@@ -676,7 +683,7 @@ public class CoreNElementUtils {
     }
 
     public static void removePairByKey(String child, List<NElement> values) {
-        if(values!=null) {
+        if (values != null) {
             Iterator<NElement> it = values.iterator();
             while (it.hasNext()) {
                 NElement n = it.next();

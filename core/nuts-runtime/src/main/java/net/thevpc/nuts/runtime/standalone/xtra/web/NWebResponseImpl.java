@@ -71,6 +71,11 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
+    public Map<String, String> firstHeaders() {
+        return headers.toFirstMap();
+    }
+
+    @Override
     public NInputSource content() {
         return content.get();
     }

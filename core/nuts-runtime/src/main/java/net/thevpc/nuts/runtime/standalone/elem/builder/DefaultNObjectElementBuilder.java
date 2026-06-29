@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNObjectElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -247,6 +248,12 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NObjectElementBuilder add(NElement name, Instant value) {
+        add(CoreNElementUtils.pair(name, value));
+        return this;
+    }
+
+    @Override
     public NObjectElementBuilder addIf(NElement name, NElement value, Predicate<NElement> predicate) {
         if (predicate == null || predicate.test(value)) {
             add(CoreNElementUtils.pair(name, value));
@@ -261,8 +268,20 @@ public class DefaultNObjectElementBuilder extends AbstractNElementBuilder implem
     }
 
     @Override
+    public NObjectElementBuilder set(String name, Instant value) {
+        CoreNElementUtils.setPair(CoreNElementUtils.pair(name, value), values);
+        return this;
+    }
+
+    @Override
     public NObjectElementBuilder setAt(int i, NElement element) {
         CoreNElementUtils.setAt(i, element, values);
+        return this;
+    }
+
+    @Override
+    public NObjectElementBuilder setAt(int i, Instant element) {
+        CoreNElementUtils.setAt(i, NElement.ofInstant(element), values);
         return this;
     }
 

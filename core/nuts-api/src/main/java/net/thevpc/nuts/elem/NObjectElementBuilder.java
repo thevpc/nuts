@@ -28,6 +28,7 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
     }
 
     NObjectElementBuilder setAt(int i, NElement element);
+    NObjectElementBuilder setAt(int i, Instant element);
 
     /**
      * set value for property {@code name}
@@ -55,6 +57,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param value property value. should not be null
      * @return this {@code this} instance
      */
+    NObjectElementBuilder set(String name, Instant value);
     NObjectElementBuilder set(String name, NElement value);
 
     NObjectElementBuilder set(String name, Boolean value);
@@ -100,6 +103,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder setParamAt(int index, String value);
 
     NObjectElementBuilder add(NElement name, NElement value);
+    NObjectElementBuilder add(NElement name, Instant value);
 
     NObjectElementBuilder addIf(String name, NElement value, Predicate<NElement> predicate);
 
