@@ -23,6 +23,8 @@ public interface NWebResponse {
 
     Map<String, List<String>> headers();
 
+    Map<String, String> firstHeaders();
+
     NInputSource content();
 
     <K, V> Map<K, V> contentMapAsJson();
@@ -32,6 +34,7 @@ public interface NWebResponse {
     <T> List<T> contentArrayAsJson();
 
     <T> T contentAsJson(Class<T> clz);
+
     NElement contentAsJson();
 
     <T> T contentAs(Class<T> clz, NContentType type);
