@@ -30,23 +30,23 @@ class NRateLimitValueImpl implements NRateLimitValue {
     @Override
     public synchronized NRateLimitValueResult take(int count) {
         Instant lastAccess = Instant.now();
-        NRateLimitValueModel model = model();
-        NRateLimitRuleModel[] ruleModels = model.rules();
-        NRateLimitRule[] rules = new NRateLimitRule[ruleModels.length];
-
-        for (int i = 0; i < ruleModels.length; i++) {
-            NRateLimitRuleModel ruleModel = ruleModels[i];
-            NRateLimitRule rule = factory.createRule(ruleModel);
-            rules[i] = rule;
-            if (!rule.tryConsume(count)) {
-                return new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded (%s) for %s", ruleModel.id(), id));
+        synchronized (factory.store()) {
+            NRateLimitValueModel model = model();
+            NRateLimitRuleModel[] ruleModels = model.rules();
+            NRateLimitRule[] rules = new NRateLimitRule[ruleModels.length];
+            for (int i = 0; i < ruleModels.length; i++) {
+                NRateLimitRuleModel ruleModel = ruleModels[i];
+                NRateLimitRule rule = factory.createRule(ruleModel);
+                rules[i] = rule;
+                if (!rule.tryConsume(count)) {
+                    return new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded (%s) for %s", ruleModel.id(), id));
+                }
             }
+            factory.save(new NRateLimitValueModel(
+                    id, lastAccess == null ? 0 : lastAccess.getEpochSecond(),
+                    Arrays.stream(rules).map(NRateLimitRule::toModel).toArray(NRateLimitRuleModel[]::new)
+            ));
         }
-
-        factory.save(new NRateLimitValueModel(
-                id, lastAccess == null ? 0 : lastAccess.getEpochSecond(),
-                Arrays.stream(rules).map(NRateLimitRule::toModel).toArray(NRateLimitRuleModel[]::new)
-        ));
         return new NRateLimitValueResultImpl(true, null, null);
     }
 
@@ -83,28 +83,30 @@ class NRateLimitValueImpl implements NRateLimitValue {
         long deadline = (timeout != null) ? start + timeout.toMillis() : Long.MAX_VALUE;
         while (true) {
             NRateLimitValueResult take = null;
-            NRateLimitValueModel model = model();
             Instant lastAccess = Instant.now();
             long shouldWaitForMs = 0;
-            NRateLimitRuleModel[] ruleModels = model.rules();
-            NRateLimitRule[] rules = new NRateLimitRule[ruleModels.length];
             NRateLimitRuleModel faultyRuleModel = null;
-            for (int i = 0; i < ruleModels.length; i++) {
-                NRateLimitRuleModel ruleModel = ruleModels[i];
-                NRateLimitRule rule = factory.createRule(ruleModel);
-                rules[i] = rule;
-                if (!rule.tryConsume(count)) {
-                    if (take == null) {
-                        faultyRuleModel = ruleModel;
-                        take = new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded (%s) for %s", ruleModel.id(), id));
+            synchronized (factory.store()) {
+                NRateLimitValueModel model = model();
+                NRateLimitRuleModel[] ruleModels = model.rules();
+                NRateLimitRule[] rules = new NRateLimitRule[ruleModels.length];
+                for (int i = 0; i < ruleModels.length; i++) {
+                    NRateLimitRuleModel ruleModel = ruleModels[i];
+                    NRateLimitRule rule = factory.createRule(ruleModel);
+                    rules[i] = rule;
+                    if (!rule.tryConsume(count)) {
+                        if (take == null) {
+                            faultyRuleModel = ruleModel;
+                            take = new NRateLimitValueResultImpl(false, null, NMsg.ofC("rate limit exceeded (%s) for %s", ruleModel.id(), id));
+                        }
+                        shouldWaitForMs = Math.max(shouldWaitForMs, rule.nextAvailableMillis(count));
                     }
-                    shouldWaitForMs = Math.max(shouldWaitForMs, rule.nextAvailableMillis(count));
                 }
+                factory.save(new NRateLimitValueModel(
+                        id, lastAccess == null ? 0 : lastAccess.getEpochSecond(),
+                        Arrays.stream(rules).map(NRateLimitRule::toModel).toArray(NRateLimitRuleModel[]::new)
+                ));
             }
-            factory.save(new NRateLimitValueModel(
-                    id, lastAccess == null ? 0 : lastAccess.getEpochSecond(),
-                    Arrays.stream(rules).map(NRateLimitRule::toModel).toArray(NRateLimitRuleModel[]::new)
-            ));
             if (take == null) {
                 take = new NRateLimitValueResultImpl(true, null, null);
             }

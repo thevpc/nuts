@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
 import java.util.function.IntFunction;
 
 public class NRetryCallImpl<T> implements NRetryCall<T> {
-    private NRetryCallStore store;
+    private final NRetryCallStore store;
     private NRetryCallModel model;
 
     public NRetryCallImpl(String id, NCallable<T> callable, NRetryCallStore store) {
@@ -27,7 +27,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     public void reload() {
-        synchronized (this) {
+        synchronized (store) {
             String oldId = model.id();
             NCallable<?> oldCaller = model.caller();
             NRetryCallModel m = store.load(oldId);
@@ -48,11 +48,13 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
 
     @Override
     public NRetryCall<T> maxRetries(int maxRetries) {
-        maxRetries=Math.max(1, maxRetries);
-        int old = model.maxRetries();
-        if(old!=maxRetries) {
-            model.maxRetries(maxRetries);
-            store.save(model);
+        synchronized (store) {
+            maxRetries = Math.max(1, maxRetries);
+            int old = model.maxRetries();
+            if (old != maxRetries) {
+                model.maxRetries(maxRetries);
+                store.save(model);
+            }
         }
         return this;
     }
@@ -79,22 +81,28 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
 
     @Override
     public NRetryCall<T> retryPeriod(IntFunction<NDuration> retryPeriod) {
-        model.retryPeriod(retryPeriod);
-        store.save(model);
+        synchronized (store) {
+            model.retryPeriod(retryPeriod);
+            store.save(model);
+        }
         return this;
     }
 
     @Override
     public NRetryCall<T> recover(NCallable<T> recover) {
-        model.recover(recover);
-        store.save(model);
+        synchronized (store) {
+            model.recover(recover);
+            store.save(model);
+        }
         return this;
     }
 
     @Override
     public NRetryCall<T> handler(Handler<T> handler) {
-        model.handler(handler);
-        store.save(model);
+        synchronized (store) {
+            model.handler(handler);
+            store.save(model);
+        }
         return this;
     }
 
@@ -252,7 +260,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
             public T result() {
                 switch (status) {
                     case SUCCEEDED: {
-                        return (T) result;
+                        return result;
                     }
                     case FAILED: {
                         throw NExceptions.ofUncheckedException((Throwable) model.error());
