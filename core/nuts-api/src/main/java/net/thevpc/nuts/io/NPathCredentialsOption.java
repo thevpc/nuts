@@ -25,14 +25,14 @@ public class NPathCredentialsOption implements NPathOption {
     }
 
     public NPathCredentialsOption(String scheme, Map<String, String> attributes) {
-        this.scheme = scheme==null?"":NStringUtils.trim(scheme.toUpperCase());
+        this.scheme = scheme==null?"":NStringUtils.strip(scheme.toUpperCase());
         LinkedHashMap<String, String> c = new LinkedHashMap<>();
         if (attributes != null) {
             for (Map.Entry<String, String> e : attributes.entrySet()) {
                 String key = e.getKey();
                 String value = e.getValue();
                 if (key != null && value != null) {
-                    c.put(NStringUtils.trim(key), value);
+                    c.put(NStringUtils.strip(key), value);
                 }
             }
         }

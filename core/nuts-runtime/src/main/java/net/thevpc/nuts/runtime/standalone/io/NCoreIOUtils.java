@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -264,7 +265,7 @@ public class NCoreIOUtils {
     }
 
     public static String expandPath(String path, String base, Function<String, String> pathExpansionConverter) {
-        path = NMsg.ofV(path.trim(), pathExpansionConverter).toString();
+        path = NMsg.ofV(NStringUtils.strip(path), pathExpansionConverter).toString();
         if (isURL(path)) {
             return path;
         }

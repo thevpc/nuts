@@ -42,7 +42,7 @@ public class WinCmdNShellHelper extends AbstractWinNShellHelper {
 
     @Override
     public String getCallScriptCommand(String VAR_NAME, String path, String... args) {
-        String v = NStringUtils.firstNonBlankTrimmed(VAR_NAME, "_V");
+        String v = NStringUtils.firstNonBlankStripped(VAR_NAME, "_V");
         String argsString = Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
         if (!argsString.isEmpty()) {
             argsString = " " + argsString;

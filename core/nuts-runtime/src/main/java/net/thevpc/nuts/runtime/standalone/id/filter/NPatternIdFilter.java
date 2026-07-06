@@ -116,7 +116,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
 
         @Override
         public boolean test(Map<String, String> x) {
-            String sv = NStringUtils.trim(x.get(key));
+            String sv = NStringUtils.strip(x.get(key));
             return valPattern.matcher(sv).matches();
         }
 
@@ -144,7 +144,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         public boolean test(Map<String, String> x) {
             for (Map.Entry<String, String> entry : x.entrySet()) {
                 if (keyPattern.matcher(entry.getKey()).matches()) {
-                    String sv = NStringUtils.trim(entry.getValue());
+                    String sv = NStringUtils.strip(entry.getValue());
                     return valPattern.matcher(sv).matches();
                 }
             }

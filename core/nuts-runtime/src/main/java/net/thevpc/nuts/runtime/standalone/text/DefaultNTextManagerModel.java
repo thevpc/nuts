@@ -129,7 +129,7 @@ public class DefaultNTextManagerModel {
     }
 
     public NTextFormatTheme loadTheme(String y) {
-        y = NStringUtils.trim(y);
+        y = NStringUtils.strip(y);
         if (NBlankable.isBlank(y)) {
             y = "default";
         }
@@ -188,7 +188,7 @@ public class DefaultNTextManagerModel {
     }
 
     public NCodeHighlighter getCodeHighlighter(String highlighterId) {
-        String lc = NStringUtils.trim(highlighterId).toLowerCase();
+        String lc = NStringUtils.strip(highlighterId).toLowerCase();
         NCodeHighlighter old = _cachedHighlighters.get(lc);
         if (old != null) {
             return old;
@@ -227,7 +227,7 @@ public class DefaultNTextManagerModel {
 
         if (lc.length() > 0) {
             try {
-                NTextStyle found = NTextStyle.parse(NStringUtils.trim(highlighterId)).orNull();
+                NTextStyle found = NTextStyle.parse(NStringUtils.strip(highlighterId)).orNull();
                 if (found != null) {
                     h = new CustomStyleCodeHighlighter(found);
                     _cachedHighlighters.put(lc, h);

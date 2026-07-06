@@ -112,17 +112,17 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
     }
 
     @Override
-    public NText trim() {
+    public NText strip() {
         return this;
     }
 
     @Override
-    public NText trimLeft() {
+    public NText stripLeft() {
         return this;
     }
 
     @Override
-    public NText trimRight() {
+    public NText stripRight() {
         return this;
     }
 }

@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -25,19 +26,19 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                String trimmedLine = line.trim();
+                String strippedLine = NStringUtils.strip(line);
                 if (!expectTomcat) {
-                    if(trimmedLine.matches("<hr class=\"line\"><h3>[^<>]+</h3></body>")) {
+                    if(strippedLine.matches("<hr class=\"line\"><h3>[^<>]+</h3></body>")) {
                         expectTomcat = true;
                     }
-                    if(trimmedLine.matches("<hr class=\"line\">")) {
+                    if(strippedLine.matches("<hr class=\"line\">")) {
                         expectTomcat = true;
                     }
-                    if(trimmedLine.matches("<th [^<>]+Filename[^<>]+</th>")) {
+                    if(strippedLine.matches("<th [^<>]+Filename[^<>]+</th>")) {
                         expectTomcat = true;
                     }
                 }
-                if (!expectDirListing && trimmedLine.matches("<title>Directory Listing For.*")) {
+                if (!expectDirListing && strippedLine.matches("<title>Directory Listing For.*")) {
                     expectDirListing = true;
                 }
             }
@@ -54,7 +55,7 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                line = line.trim();
+                line = NStringUtils.strip(line);
                 Matcher m = pattern.matcher(line);
                 if (m.find()) {
                     found.add(XmlEscaper.escapeToUnicode(m.group("title")));

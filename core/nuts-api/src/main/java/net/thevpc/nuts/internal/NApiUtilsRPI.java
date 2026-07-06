@@ -57,10 +57,6 @@ public class NApiUtilsRPI {
     private NApiUtilsRPI() {
     }
 
-    public static boolean isBlank(CharSequence s) {
-        return s == null || isBlank(s.toString().toCharArray());
-    }
-
     public static boolean isBlank(Object any) {
         if (any == null) {
             return true;
@@ -68,11 +64,14 @@ public class NApiUtilsRPI {
         if (any instanceof NBlankable) {
             return ((NBlankable) any).isBlank();
         }
+        if (any instanceof String) {
+            return NStringUtils.isBlank((String) any);
+        }
         if (any instanceof CharSequence) {
-            return isBlank((CharSequence) any);
+            return NStringUtils.isBlank((CharSequence) any);
         }
         if (any instanceof char[]) {
-            return isBlank((char[]) any);
+            return NStringUtils.isBlank((char[]) any);
         }
         if (any.getClass().isArray()) {
             return Array.getLength(any) == 0;
@@ -84,18 +83,6 @@ public class NApiUtilsRPI {
             return ((Map) any).isEmpty();
         }
         return false;
-    }
-
-    public static boolean isBlank(char[] string) {
-        if (string == null || string.length == 0) {
-            return true;
-        }
-        for (char c : string) {
-            if (c > ' ') {
-                return false;
-            }
-        }
-        return true;
     }
 
     public static boolean resolveShowStackTrace(NWorkspaceOptions bo) {
@@ -184,7 +171,7 @@ public class NApiUtilsRPI {
     @SuppressWarnings("unchecked")
 
     public static <T> T getOrCreateRefProperty(String name, Class<T> type, Supplier<T> sup) {
-        name = NStringUtils.trim(name);
+        name = NStringUtils.strip(name);
         if (NBlankable.isBlank(name)) {
             name = "default";
         }

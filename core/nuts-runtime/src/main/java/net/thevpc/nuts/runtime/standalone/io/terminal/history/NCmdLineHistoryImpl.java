@@ -31,6 +31,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -88,7 +89,7 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
                     if (line.length() > 0) {
                         if (line.startsWith("#")) {
                             if (line.startsWith("#at:")) {
-                                instant = Instant.parse(line.substring("#at:".length()).trim());
+                                instant = Instant.parse(NStringUtils.strip(line.substring("#at:".length())));
                             }
                         } else {
                             entries.add(new NCmdLineHistoryEntryImpl(index, line, instant));

@@ -46,21 +46,21 @@ public class DefaultFileNLock extends AbstractNLock {
             if (value == null || value.isEmpty()) return;
             String[] lines = value.split("\\r?\\n");
             for (String line : lines) {
-                line = line.trim();
+                line = NStringUtils.strip(line);
                 if (line.isEmpty()) continue;
                 if (line.startsWith("hostname=")) {
-                    hostname = line.substring("hostname=".length()).trim();
+                    hostname = NStringUtils.strip(line.substring("hostname=".length()));
                 } else if (line.startsWith("pid=")) {
-                    pid = line.substring("pid=".length()).trim();
+                    pid = NStringUtils.strip(line.substring("pid=".length()));
                 } else if (line.startsWith("instant=")) {
                     try {
-                        instant = Instant.parse(line.substring("instant=".length()).trim());
+                        instant = Instant.parse(NStringUtils.strip(line.substring("instant=".length())));
                     } catch (Exception e) {
                         NLog.of(LockInfo.class).debug(NMsg.ofC("Failed to parse instant: %s", line));
                     }
                 } else if (line.startsWith("maxValidInstant=")) {
                     try {
-                        maxValidInstant = Instant.parse(line.substring("maxValidInstant=".length()).trim());
+                        maxValidInstant = Instant.parse(NStringUtils.strip(line.substring("maxValidInstant=".length())));
                     } catch (Exception e) {
                         NLog.of(LockInfo.class).debug(NMsg.ofC("Failed to parse maxValidInstant: %s", line));
                     }
@@ -70,8 +70,8 @@ public class DefaultFileNLock extends AbstractNLock {
 
         public String serialize() {
             NStringBuilder sb = new NStringBuilder();
-            sb.println("hostname=" + NStringUtils.trim(hostname));
-            sb.println("pid=" + NStringUtils.trim(pid));
+            sb.println("hostname=" + NStringUtils.strip(hostname));
+            sb.println("pid=" + NStringUtils.strip(pid));
             sb.println("instant=" + instant);
             sb.println("maxValidInstant=" + maxValidInstant);
             return sb.toString();

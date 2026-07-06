@@ -134,7 +134,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 return p;
             }
         }
-        String defaultVersion = NStringUtils.trim(_wstore().loadInstalledDefaultVersion(id));
+        String defaultVersion = NStringUtils.strip(_wstore().loadInstalledDefaultVersion(id));
         synchronized (cachedDefaultVersions) {
             cachedDefaultVersions.put(baseVersion, defaultVersion);
         }

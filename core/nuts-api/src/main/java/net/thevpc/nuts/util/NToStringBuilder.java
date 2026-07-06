@@ -24,7 +24,7 @@ public class NToStringBuilder {
     }
 
     public NToStringBuilder(String name) {
-        this.name = NStringUtils.trimToNull(name);
+        this.name = NStringUtils.stripToNull(name);
     }
 
     public NToStringBuilder rowSize(int rowSize) {

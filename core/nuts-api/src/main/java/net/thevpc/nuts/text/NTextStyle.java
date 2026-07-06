@@ -505,7 +505,7 @@ public class NTextStyle implements NEnum {
 
 
     public static NOptional<NTextStyle> parse(String value) {
-        value = value == null ? "" : value.trim();
+        value = NStringUtils.strip(value);
         if (value.isEmpty()) {
             return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", NTextStyle.class.getSimpleName()));
         }
@@ -534,17 +534,18 @@ public class NTextStyle implements NEnum {
                 key = value.substring(0, par);
             }
         } else {
-            if (value.trim().startsWith("fx") || value.trim().startsWith("bx")) {
-                key = value.trim().substring(0, 2);
-                nbr = value.trim().substring(2);
-            } else if (value.trim().startsWith("foregroundx")) {
+            String svalue = NStringUtils.strip(value);
+            if (svalue.startsWith("fx") || svalue.startsWith("bx")) {
+                key = svalue.substring(0, 2);
+                nbr = svalue.substring(2);
+            } else if (svalue.startsWith("foregroundx")) {
                 int len = "foregroundx".length();
-                key = value.trim().substring(0, len);
-                nbr = value.trim().substring(len);
-            } else if (value.trim().startsWith("backgroundx")) {
+                key = svalue.substring(0, len);
+                nbr = svalue.substring(len);
+            } else if (svalue.startsWith("backgroundx")) {
                 int len = "backgroundx".length();
-                key = value.trim().substring(0, len);
-                nbr = value.trim().substring(len);
+                key = svalue.substring(0, len);
+                nbr = svalue.substring(len);
             } else {
                 int len = value.length();
                 int x = len;
@@ -557,8 +558,8 @@ public class NTextStyle implements NEnum {
                 }
             }
         }
-        nbr = nbr.trim();
-        key = key.trim();
+        nbr = NStringUtils.strip(nbr);
+        key = NStringUtils.strip(key);
         if (nbr.isEmpty()) {
             nbr = "0";
         }
@@ -575,25 +576,25 @@ public class NTextStyle implements NEnum {
                 return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().intColor()));
             }
             if (NBlankable.isBlank(key)) {
-                u = NColor.ofName("fg_" + key.trim());
+                u = NColor.ofName("fg_" + NStringUtils.strip(key));
                 if (u.isPresent()) {
                     return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().intColor()));
                 }
             }
             if (NBlankable.isBlank(key)) {
-                u = NColor.ofName("fore_" + key.trim());
+                u = NColor.ofName("fore_" + NStringUtils.strip(key));
                 if (u.isPresent()) {
                     return NOptional.of(NTextStyle.of(NTextStyleType.FORE_TRUE_COLOR, u.get().intColor()));
                 }
             }
             if (NBlankable.isBlank(key)) {
-                u = NColor.ofName("bg_" + key.trim());
+                u = NColor.ofName("bg_" + NStringUtils.strip(key));
                 if (u.isPresent()) {
                     return NOptional.of(NTextStyle.of(NTextStyleType.BACK_TRUE_COLOR, u.get().intColor()));
                 }
             }
             if (NBlankable.isBlank(key)) {
-                u = NColor.ofName("back_" + key.trim());
+                u = NColor.ofName("back_" + NStringUtils.strip(key));
                 if (u.isPresent()) {
                     return NOptional.of(NTextStyle.of(NTextStyleType.BACK_TRUE_COLOR, u.get().intColor()));
                 }

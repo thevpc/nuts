@@ -100,7 +100,7 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
                                                 txt.ofStyled("Failed", NTextStyle.fail()),
                                         r.getId()==null?"":r.getId(),
                                         r.getForId()==null?"":r.getForId(),
-                                        NStringUtils.trim(r.getMessage()))
+                                        NStringUtils.strip(r.getMessage()))
                         );
                     }
                 }else{

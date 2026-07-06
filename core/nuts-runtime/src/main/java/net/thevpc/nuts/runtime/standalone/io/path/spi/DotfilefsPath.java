@@ -48,7 +48,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 return NScorable.DEFAULT_SCORE;
             }
             String path = (String) cri;
-            if (NStringUtils.trim(path).startsWith(PREFIX)) {
+            if (NStringUtils.strip(path).startsWith(PREFIX)) {
                 return NScorable.DEFAULT_SCORE;
             }
             return NScorable.UNSUPPORTED_SCORE;
@@ -202,13 +202,13 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
             try {
                 List<String> splitted = StringTokenizerUtils.splitNewLine(dotFilesContent);
                 for (String s : splitted) {
-                    s = s.trim();
+                    s = NStringUtils.strip(s);
                     if (!s.isEmpty()) {
                         if (s.startsWith("#")) {
                             if (all.isEmpty()) {
-                                s = s.substring(1).trim();
+                                s = NStringUtils.strip(s.substring(1));
                                 if (s.startsWith("version=")) {
-                                    versionString = NVersion.get(s.substring("version=".length()).trim()).get();
+                                    versionString = NVersion.get(NStringUtils.strip(s.substring("version=".length()))).get();
                                 }
                             }
                         } else {
@@ -266,7 +266,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 try (InputStream stream = NInputStreamMonitor.of().source(NPath.of(dotFolderUrl))
                         .create()) {
                     dotFoldersContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
-                            .stream().map(x -> x.trim()).filter(x -> !x.isEmpty()).toArray(String[]::new);
+                            .stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
                     NLog.of(DotfilefsPath.class)
                             .log(NMsg.ofC("unable to navigate : file not found %s", dotFolderUrl).asFineFail().withDurationMillis(c.stop().durationMs()));

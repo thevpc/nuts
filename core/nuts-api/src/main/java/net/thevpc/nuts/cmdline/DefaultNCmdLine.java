@@ -855,7 +855,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public void throwError(NMsg message) {
-        throw NExceptions.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlankTrimmed(commandName, "command"), message));
+        throw NExceptions.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlankStripped(commandName, "command"), message));
     }
 
     @Override
@@ -1057,7 +1057,7 @@ public class DefaultNCmdLine implements NCmdLine {
             String fileContent = path.readString();
             List<String> parsed = new ArrayList<>();
             for (String line : new NStringBuilder(fileContent).lines().toList()) {
-                if (!NBlankable.isBlank(line) && !line.trim().startsWith("#")) {
+                if (!NBlankable.isBlank(line) && !NStringUtils.strip(line).startsWith("#")) {
                     NCmdLine subCmd = NCmdLines.of().shellFamily(s).parseCmdLine(line).get();
                     subCmd.expandArgumentsFile(false);
                     subCmd.expandArgumentsFile(false);

@@ -167,8 +167,8 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public NText trimLeft() {
-        NText c = child.trimLeft();
+    public NText stripLeft() {
+        NText c = child.stripLeft();
         if (c == child) {
             return this;
         }
@@ -176,8 +176,8 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public NText trimRight() {
-        NText c = child.trimRight();
+    public NText stripRight() {
+        NText c = child.stripRight();
         if (c == child) {
             return this;
         }
@@ -185,8 +185,8 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public NText trim() {
-        NText c = child.trim();
+    public NText strip() {
+        NText c = child.strip();
         if (c == child) {
             return this;
         }

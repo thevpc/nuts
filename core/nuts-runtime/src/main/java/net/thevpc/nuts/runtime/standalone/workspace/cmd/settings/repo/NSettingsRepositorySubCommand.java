@@ -16,7 +16,6 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.DefaultNRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NSettingsUserSubCommand;
@@ -246,7 +245,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         int[] colSizes = new int[5];
         for (RepoInfo repoInfo : array) {
             colSizes[0] = Math.max(colSizes[0], repoInfo.name.length());
-            colSizes[1] = Math.max(colSizes[2], NStringUtils.trim(repoInfo.location).length());
+            colSizes[1] = Math.max(colSizes[2], NStringUtils.strip(repoInfo.location).length());
             colSizes[3] = Math.max(colSizes[3], Arrays.toString(repoInfo.tags).length());
         }
         for (RepoInfo repoInfo : array) {

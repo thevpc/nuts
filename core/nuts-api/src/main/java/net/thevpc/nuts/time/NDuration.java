@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElementSimple;
 import net.thevpc.nuts.elem.NMapBy;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -1205,11 +1206,11 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     public static NOptional<NDuration> parse(String any) {
-        if (any == null || any.trim().isEmpty()) {
+        if (NStringUtils.isBlank(any)) {
             return NOptional.ofEmpty();
         }
 
-        String input = any.trim().toLowerCase();
+        String input = NStringUtils.strip(any).toLowerCase();
 
         try {
             // Try parsing as ISO-8601 duration format first
@@ -1237,9 +1238,9 @@ public class NDuration implements Serializable, NElementSimple {
 
             // Parse simple duration formats with spaces and various abbreviations
             // Normalize the input: handle spaces, commas, and common abbreviations
-            input = input.replace(',', '.')
+            input = NStringUtils.strip(input.replace(',', '.')
                     .replace("  ", " ") // collapse multiple spaces
-                    .trim();
+                    );
 
             // Pattern to match number-unit pairs with optional spaces
             // This handles: "1mn 32s", "1h 30m 15s", "2d 5h", etc.

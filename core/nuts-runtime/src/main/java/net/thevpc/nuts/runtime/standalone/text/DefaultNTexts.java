@@ -78,7 +78,7 @@ public class DefaultNTexts implements NTexts {
         if (types != null) {
             for (String type : types) {
                 if (!NBlankable.isBlank(type)) {
-                    String type2 = NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.trim(type));
+                    String type2 = NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.strip(type));
                     providers.computeIfAbsent(type2, r -> new LinkedHashSet<>()).add(provider);
                 }
             }
@@ -245,7 +245,7 @@ public class DefaultNTexts implements NTexts {
             @Override
             public <T> NScoredCallable<NTextFormat<T>> resolveFormat(String pattern, Class<T> expectedType) {
                 if (Number.class.isAssignableFrom(expectedType)) {
-                    String p = NStringUtils.trim(pattern);
+                    String p = NStringUtils.strip(pattern);
                     return NScoredCallable.ofValid((NTextFormat<T>) new DefaultUnitFormat("m " + (p.isEmpty() ? "M-3 M3 I2 D2" : p)));
                 }
                 return NScoredCallable.ofInvalid(NMsg.ofC("unknown metric format with type %s. Expected Number.", expectedType));
@@ -261,7 +261,7 @@ public class DefaultNTexts implements NTexts {
             @Override
             public <T> NScoredCallable<NTextFormat<T>> resolveFormat(String pattern, Class<T> expectedType) {
                 if (Number.class.isAssignableFrom(expectedType)) {
-                    String p = NStringUtils.trim(pattern);
+                    String p = NStringUtils.strip(pattern);
                     return NScoredCallable.ofValid((NTextFormat<T>) new BytesSizeFormat(p));
                 }
                 return NScoredCallable.ofInvalid(NMsg.ofC("unknown memory format with type %s. Expected Number.", expectedType));
@@ -277,7 +277,7 @@ public class DefaultNTexts implements NTexts {
             @Override
             public <T> NScoredCallable<NTextFormat<T>> resolveFormat(String pattern, Class<T> expectedType) {
                 if (Number.class.isAssignableFrom(expectedType)) {
-                    String p = NStringUtils.trim(pattern);
+                    String p = NStringUtils.strip(pattern);
                     return NScoredCallable.ofValid((NTextFormat<T>) new DefaultUnitFormat("Hz " + (p.isEmpty() ? "M1 M12 I2 D3" : p)));
                 }
                 return NScoredCallable.ofInvalid(NMsg.ofC("unknown frequency format with type %s. Expected Number.", expectedType));
@@ -1356,7 +1356,7 @@ public class DefaultNTexts implements NTexts {
     }
 
     private <T> NOptional<NTextFormat<T>> createTextFormatDefault(String type, String pattern, Class<T> expectedType) {
-        String p = NStringUtils.trim(pattern);
+        String p = NStringUtils.strip(pattern);
         if (Number.class.isAssignableFrom(expectedType)) {
             return NOptional.of((NTextFormat<T>) new DefaultUnitFormat(type + " " + (p.isEmpty() ? "M-6 M12 I2 D3" : p)));
         }
@@ -1370,7 +1370,7 @@ public class DefaultNTexts implements NTexts {
             expectedType = (Class) NReflectUtils.toBoxedType(expectedType).get();
         }
         Class<T> finalExpectedType = expectedType;
-        Set<NTextFormatProvider> p = providers.get(NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.trim(type)));
+        Set<NTextFormatProvider> p = providers.get(NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.strip(type)));
         if (p != null) {
             NOptional<NScoredCallable<NTextFormat<T>>> b = NScorable.<NScoredCallable<NTextFormat<T>>>query()
                     .fromStream(p.stream().map(x -> x.resolveFormat(pattern, finalExpectedType)))

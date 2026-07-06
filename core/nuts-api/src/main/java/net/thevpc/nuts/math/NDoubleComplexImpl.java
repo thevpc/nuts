@@ -3,6 +3,7 @@ package net.thevpc.nuts.math;
 import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
 
@@ -32,7 +33,7 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
             if (NBlankable.isBlank(any)) {
                 return NOptional.ofNamedEmpty("complex");
             }
-            any = any.trim();
+            any = NStringUtils.strip(any);
             String[] c = NReservedUtils.parseComplexStrings(any);
             return NOptional.of(new NDoubleComplexImpl(Double.parseDouble(c[0]), Double.parseDouble(c[1])));
         } catch (Exception e) {

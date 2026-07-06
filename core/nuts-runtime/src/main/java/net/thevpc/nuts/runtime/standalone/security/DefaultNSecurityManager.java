@@ -314,10 +314,10 @@ public class DefaultNSecurityManager implements NSecurityManager {
                 c.permissions(repositoryAccess.permissions());
             }
             if (repositoryAccess.remoteUserName() != null) {
-                c.remoteUserName(NStringUtils.trimToNull(repositoryAccess.remoteUserName()));
+                c.remoteUserName(NStringUtils.stripToNull(repositoryAccess.remoteUserName()));
             }
             if (repositoryAccess.remoteAuthType() != null) {
-                c.remoteAuthType(NStringUtils.trimToNull(repositoryAccess.remoteAuthType()));
+                c.remoteAuthType(NStringUtils.stripToNull(repositoryAccess.remoteAuthType()));
             }
             c.remoteCredential(repositoryAccess.remoteCredential() == null ? null : repositoryAccess.remoteCredential().toString());
         });

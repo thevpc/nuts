@@ -106,7 +106,7 @@ public class CoreNIdUtils {
 
     public static NId createContentFaceId(NId id, NDescriptor desc) {
         Map<String, String> q = id.properties();
-        q.put(NConstants.IdProperties.PACKAGING, NStringUtils.trim(desc.packaging()));
+        q.put(NConstants.IdProperties.PACKAGING, NStringUtils.strip(desc.packaging()));
         q.put(NConstants.IdProperties.FACE, NConstants.QueryFaces.CONTENT);
         return id.builder().setProperties(q).build();
     }

@@ -79,7 +79,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
             name = "noname";
         }
         this.name = name.startsWith("pixel:") ? name : ("pixel:" + name);
-        this.fontName = NBlankable.firstNonBlank(NStringUtils.trim(fontName), "Monospaced");
+        this.fontName = NBlankable.firstNonBlank(NStringUtils.strip(fontName), "Monospaced");
         this.fontItalic = fontItalic;
         this.fontBold = fontBold;
         this.fontSize = fontSize <= 0 ? 24 : fontSize;
@@ -93,7 +93,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
             name = "noname";
         }
         this.name = name.startsWith("pixel:") ? name : ("pixel:" + name);
-        this.fontName = NBlankable.firstNonBlank(NStringUtils.trim(fontName), "Monospaced");
+        this.fontName = NBlankable.firstNonBlank(NStringUtils.strip(fontName), "Monospaced");
         this.fontItalic = fontItalic;
         this.fontBold = fontBold;
         this.fontSize = fontSize <= 0 ? 24 : fontSize;
@@ -157,7 +157,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
 
     @Override
     public NTextArtImageRenderer fontName(String fontName) {
-        fontName = NBlankable.firstNonBlank(NStringUtils.trim(fontName), "Monospaced");
+        fontName = NBlankable.firstNonBlank(NStringUtils.strip(fontName), "Monospaced");
         if (Objects.equals(this.fontName, fontName)) {
             return this;
         }
@@ -307,7 +307,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
             }
         }
         if (styleLevel.isEmpty()) {
-            switch (NStringUtils.trim(name).toLowerCase()) {
+            switch (NStringUtils.strip(name).toLowerCase()) {
                 case "block": {
                     for (char c : " █".toCharArray()) {
                         styleLevel.add(String.valueOf(c));
@@ -356,7 +356,7 @@ public class PixelNTextArtImageRenderer implements NTextArtImageRenderer, NTextA
             name = "noname";
         }
         this.name = name.startsWith("pixel:") ? name : ("pixel:" + name);
-        this.fontName = NBlankable.firstNonBlank(NStringUtils.trim(fontName), "Monospaced");
+        this.fontName = NBlankable.firstNonBlank(NStringUtils.strip(fontName), "Monospaced");
         this.fontSize = fontSize <= 0 ? 24 : fontSize;
         this.fontItalic = fontItalic;
         this.fontBold = fontBold;

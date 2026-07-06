@@ -59,9 +59,9 @@ public class NRepositoryURLList {
     }
 
     public int indexOfName(String name, int offset) {
-        String trimmedName = NStringUtils.trim(name);
+        String trimmedName = NStringUtils.strip(name);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NStringUtils.trim(all.get(i).name()))) {
+            if (trimmedName.equals(NStringUtils.strip(all.get(i).name()))) {
                 return i;
             }
         }
@@ -70,9 +70,9 @@ public class NRepositoryURLList {
     public int indexOfNames(String[] names, int offset) {
         for (int i = offset; i < all.size(); i++) {
             NRepositorySpec loc = all.get(i);
-            String trimmedLocName = NStringUtils.trim(loc.name());
+            String trimmedLocName = NStringUtils.strip(loc.name());
             for (String name : names) {
-                String trimmedName = NStringUtils.trim(name);
+                String trimmedName = NStringUtils.strip(name);
                 if (trimmedName.equals(trimmedLocName)) {
                     return i;
                 }
@@ -82,9 +82,9 @@ public class NRepositoryURLList {
     }
 
     public int indexOfURL(String url, int offset) {
-        String trimmedName = NStringUtils.trim(url);
+        String trimmedName = NStringUtils.strip(url);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NStringUtils.trim(all.get(i).sourceLocation().path()))) {
+            if (trimmedName.equals(NStringUtils.strip(all.get(i).sourceLocation().path()))) {
                 return i;
             }
         }
@@ -97,8 +97,8 @@ public class NRepositoryURLList {
         }
         for (int i = offset; i < all.size(); i++) {
             NRepositorySpec o = all.get(i);
-            if (NStringUtils.trim(other.name()).equals(NStringUtils.trim(o.name()))) {
-                if (NStringUtils.trim(other.sourceLocation().path()).equals(NStringUtils.trim(o.sourceLocation().path()))) {
+            if (NStringUtils.strip(other.name()).equals(NStringUtils.strip(o.name()))) {
+                if (NStringUtils.strip(other.sourceLocation().path()).equals(NStringUtils.strip(o.sourceLocation().path()))) {
                     return i;
                 }
             }
@@ -117,7 +117,7 @@ public class NRepositoryURLList {
 
     public NRepositoryURLList add(NRepositorySpec a) {
         if (a != null) {
-            String n = NStringUtils.trim(a.name());
+            String n = NStringUtils.strip(a.name());
             if (n.isEmpty()) {
                 if (indexOf(a, 0) < 0) {
                     all.add(a);

@@ -46,7 +46,7 @@ public class NRateLimitValueFactoryImpl implements NRateLimitValueFactory {
                 return s;
             }
         }
-        switch (NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.trim(strategyId))) {
+        switch (NNameFormat.LOWER_KEBAB_CASE.format(NStringUtils.strip(strategyId))) {
             case "bucket": {
                 return new NRateLimitBucketRule(model);
             }

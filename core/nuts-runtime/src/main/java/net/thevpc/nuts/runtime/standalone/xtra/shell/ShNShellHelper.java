@@ -31,7 +31,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
 
     @Override
     public String getCallScriptCommand(String VAR_NAME, String path, String... args) {
-        String v= NStringUtils.firstNonBlankTrimmed(VAR_NAME,"_V");
+        String v= NStringUtils.firstNonBlankStripped(VAR_NAME,"_V");
         // _f="..."; [ -f "$_f" ] && . "$_f"
         String qp = dblQte(path);
         String qv = dblQte("$"+v);
@@ -93,12 +93,12 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
 
     @Override
     public String trimComments(String line) {
-        line = line.trim();
+        line = NStringUtils.strip(line);
         if (line.startsWith("#")) {
             while (line.startsWith("#")) {
                 line = line.substring(1);
             }
-            return line.trim();
+            return NStringUtils.strip(line);
         }
         return "";
     }

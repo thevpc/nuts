@@ -26,11 +26,11 @@ public class NNames {
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                         String line = null;
                         while ((line = br.readLine()) != null) {
-                            line = line.trim();
+                            line = NStringUtils.strip(line);
                             if (!line.isEmpty()) {
                                 if (!line.startsWith("#")) {
                                     for (String s : line.split("[, ;]+")) {
-                                        String ts = s.trim();
+                                        String ts = NStringUtils.strip(s);
                                         if (!ts.isEmpty()) {
                                             all.add(ts.toLowerCase());
                                         }

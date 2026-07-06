@@ -63,7 +63,7 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
     public static int getScore(NScorableContext criteria) {
         NDescriptorContentParserContext constraints = criteria.criteria(NDescriptorContentParserContext.class);
         if(constraints!=null) {
-            String e = NStringUtils.trim(constraints.fileExtension());
+            String e = NStringUtils.strip(constraints.fileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
                 return NScorable.UNSUPPORTED_SCORE;
             }
@@ -73,7 +73,7 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
 
     @Override
     public NDescriptor parse(NDescriptorContentParserContext parserContext) {
-        String e = NStringUtils.trim(parserContext.fileExtension());
+        String e = NStringUtils.strip(parserContext.fileExtension());
         if (!POSSIBLE_EXT.contains(e)) {
             return null;
         }

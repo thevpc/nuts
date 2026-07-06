@@ -672,7 +672,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NPath createPath(String path, ClassLoader classLoader) {
-        if (path == null || path.trim().isEmpty()) {
+        if (NStringUtils.isBlank(path)) {
             return null;
         }
         NPath p = cmodel.resolve(path, classLoader);

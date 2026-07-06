@@ -30,6 +30,7 @@ import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +73,7 @@ public class NHomeLocation implements NEnum {
         if (value == null) {
             value = "";
         } else {
-            value = value.trim().toLowerCase();
+            value = NStringUtils.strip(value).toLowerCase();
         }
         if (value.isEmpty()) {
             return NOptional.ofEmpty(() -> NMsg.ofC(NI18n.of("%s is empty"), NHomeLocation.class.getSimpleName()));

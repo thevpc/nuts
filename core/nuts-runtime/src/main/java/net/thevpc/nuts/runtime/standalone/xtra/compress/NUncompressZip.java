@@ -193,7 +193,7 @@ public class NUncompressZip implements NUncompressPackaging {
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        String z = NStringUtils.trim(context.criteria(String.class)).toLowerCase();
+        String z = NStringUtils.strip(context.criteria(String.class)).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")
                 || z.equals("jar")

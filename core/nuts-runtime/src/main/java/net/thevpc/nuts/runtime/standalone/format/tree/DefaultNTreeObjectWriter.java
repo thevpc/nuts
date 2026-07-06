@@ -96,7 +96,7 @@ public class DefaultNTreeObjectWriter extends DefaultObjectWriterBase<NTreeObjec
         switch (aa.key()) {
             case "--border": {
                 return cmdLine.matcher().withAny().matchEntry((v) -> {
-                    switch (NStringUtils.trim(v.stringValue())) {
+                    switch (NStringUtils.strip(v.stringValue())) {
                         case "simple": {
                             renderer.linkFormat(DefaultNTextArtTreeRenderer.LINK_ASCII_FORMATTER);
                             break;

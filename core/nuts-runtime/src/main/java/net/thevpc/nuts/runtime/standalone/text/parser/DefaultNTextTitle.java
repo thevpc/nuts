@@ -151,20 +151,20 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
     }
 
     @Override
-    public NText trimLeft() {
-        NText c = child().trimLeft();
+    public NText stripLeft() {
+        NText c = child().stripLeft();
         return new DefaultNTextTitle(start, level, c);
     }
 
     @Override
-    public NText trimRight() {
-        NText c = child().trimRight();
+    public NText stripRight() {
+        NText c = child().stripRight();
         return new DefaultNTextTitle(start, level, c);
     }
 
     @Override
-    public NText trim() {
-        NText c = child().trim();
+    public NText strip() {
+        NText c = child().strip();
         return new DefaultNTextTitle(start, level, c);
     }
 

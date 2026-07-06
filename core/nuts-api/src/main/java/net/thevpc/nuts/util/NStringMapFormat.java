@@ -474,7 +474,7 @@ public class NStringMapFormat {
                 }
             }
         }
-        return NStringUtils.trimToNull(sb.toString());
+        return NStringUtils.stripToNull(sb.toString());
     }
 
     @Override

@@ -9,6 +9,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -70,7 +71,7 @@ public class OptionalMsLinkHelper {
             se.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
             se.getHeader().setIconIndex(148);
         } else {
-            se.setIconLocation(icon.trim());
+            se.setIconLocation(NStringUtils.strip(icon));
         }
         se.getConsoleData()
                 .setFont(mslinks.extra.ConsoleData.Font.Consolas);

@@ -311,7 +311,7 @@ public class DefaultNLiteral implements NLiteral {
                     .atZone(ZoneId.systemDefault())
                     .toInstant());
         }
-        String s = String.valueOf(value).trim();
+        String s = NStringUtils.strip(String.valueOf(value));
         if (s.isEmpty()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty instant"));
         }
@@ -442,7 +442,7 @@ public class DefaultNLiteral implements NLiteral {
                 );
             }
         }
-        String svalue = String.valueOf(value).trim().toLowerCase();
+        String svalue = NStringUtils.strip(String.valueOf(value)).toLowerCase();
         if (svalue.isEmpty()) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty boolean"));
         }
@@ -516,7 +516,7 @@ public class DefaultNLiteral implements NLiteral {
             return NOptional.of(((Date) value).getTime());
         }
         if (value instanceof CharSequence) {
-            String s = value.toString().trim();
+            String s = NStringUtils.strip(value.toString());
             if (isCouldBeNumber(s)) {
                 if (s.indexOf('.') >= 0 || s.toLowerCase().indexOf('e') >= 0) {
                     try {
@@ -548,7 +548,7 @@ public class DefaultNLiteral implements NLiteral {
     }
 
     private boolean isCouldBeNumber(String s) {
-        s = s.trim();
+        s = NStringUtils.strip(s);
         if (!s.isEmpty()) {
             char c = s.charAt(0);
             if (c == '-' || c == '+') {
@@ -1090,7 +1090,7 @@ public class DefaultNLiteral implements NLiteral {
             case LINE_STRING:
             case BLOCK_STRING: {
                 String s = asString().get();
-                s = s.trim();
+                s = NStringUtils.strip(s);
                 try {
                     new BigDecimal(s);
                     return true;
@@ -1297,15 +1297,15 @@ public class DefaultNLiteral implements NLiteral {
             }
             if (NEnum.class.isAssignableFrom(type)) {
                 try {
-                    return (NOptional<ET>) NOptional.of(NEnum.parse((Class<? extends NEnum>) type, String.valueOf(value).trim()).get());
+                    return (NOptional<ET>) NOptional.of(NEnum.parse((Class<? extends NEnum>) type, NStringUtils.strip(String.valueOf(value))).get());
                 } catch (RuntimeException ex) {
-                    NOptional.ofError(() -> NMsg.ofC("unable to parse %s as %s", String.valueOf(value).trim(), type));
+                    NOptional.ofError(() -> NMsg.ofC("unable to parse %s as %s", NStringUtils.strip(String.valueOf(value)), type));
                 }
             }
             try {
-                return (NOptional<ET>) NOptional.of(Enum.valueOf((Class) type, String.valueOf(value).trim()));
+                return (NOptional<ET>) NOptional.of(Enum.valueOf((Class) type, NStringUtils.strip(String.valueOf(value))));
             } catch (RuntimeException ex) {
-                NOptional.ofError(() -> NMsg.ofC("unable to parse %s as %s", String.valueOf(value).trim(), type));
+                NOptional.ofError(() -> NMsg.ofC("unable to parse %s as %s", NStringUtils.strip(String.valueOf(value)), type));
             }
         }
         return NOptional.ofError(() -> NMsg.ofC("unsupported type %s", type));

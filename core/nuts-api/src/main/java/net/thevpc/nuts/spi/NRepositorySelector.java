@@ -25,6 +25,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * @author thevpc
@@ -73,11 +74,11 @@ public class NRepositorySelector {
         String otherURL = other.fullLocation();
         String name0 = location.name();
         String url0 = location.fullLocation();
-        otherName = otherName == null ? "" : otherName.trim();
-        otherURL = otherURL == null ? "" : otherURL.trim();
-        String _name = name0 == null ? "" : name0.trim();
-        String _url = url0 == null ? "" : url0.trim();
-        otherURL = otherURL == null ? otherURL : otherURL.trim();
+        otherName = NStringUtils.strip(otherName);
+        otherURL = NStringUtils.strip(otherURL);
+        String _name = NStringUtils.strip(name0);
+        String _url = NStringUtils.strip(url0);
+        otherURL = otherURL == null ? otherURL : NStringUtils.strip(otherURL);
         if (_name.length() > 0 && _name.equals(otherName)) {
             return true;
         }

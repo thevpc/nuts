@@ -12,10 +12,7 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import org.jline.reader.History;
@@ -282,7 +279,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
             return;
         }
         if (isSet(reader, LineReader.Option.HISTORY_REDUCE_BLANKS)) {
-            line = line.trim();
+            line = NStringUtils.strip(line);
         }
         if (isSet(reader, LineReader.Option.HISTORY_IGNORE_DUPS)) {
             if (!items.isEmpty() && line.equals(items.get(items.size() - 1).line())) {
@@ -395,11 +392,11 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
         int idx = 0;
         while (idx < allItems.size()) {
             int ridx = allItems.size() - idx - 1;
-            String line = allItems.get(ridx).line().trim();
+            String line = NStringUtils.strip(allItems.get(ridx).line());
             ListIterator<Entry> iterator = allItems.listIterator(ridx);
             while (iterator.hasPrevious()) {
                 String l = iterator.previous().line();
-                if (line.equals(l.trim())) {
+                if (line.equals(NStringUtils.strip(l))) {
                     iterator.remove();
                 }
             }

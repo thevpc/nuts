@@ -86,7 +86,7 @@ public class NPathNameParts {
     public String toName(String template) {
         return NMsg.ofV(template,
                 s -> {
-                    switch (NStringUtils.trim(s).toLowerCase()) {
+                    switch (NStringUtils.strip(s).toLowerCase()) {
                         case "name":
                             return toName();
                         case "base":
@@ -111,7 +111,7 @@ public class NPathNameParts {
         if (NBlankable.isBlank(extension)) {
             return baseName;
         }
-        extension = extension.trim();
+        extension = NStringUtils.strip(extension);
         if (!extension.startsWith(".")) {
             extension = "." + extension;
         }

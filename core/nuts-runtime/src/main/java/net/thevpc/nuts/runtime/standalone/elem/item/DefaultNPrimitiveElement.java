@@ -58,7 +58,7 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
 
     @Override
     public List<NElement> resolveAll(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
             return new ArrayList<>(Arrays.asList(this));
         }

@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -109,13 +110,13 @@ public class RollingFileService {
                 }
             }
         }
-        String z = sb1.toString().trim();
+        String z = NStringUtils.strip(sb1.toString());
         if (z.isEmpty()) {
             z = "(?<t>\\d{17})-(?<n>\\d{1,10})";
         }
         ps = z;
 
-        z = sb2.toString().trim();
+        z = NStringUtils.strip(sb2.toString());
         if (z.isEmpty()) {
             z = "#";
         }

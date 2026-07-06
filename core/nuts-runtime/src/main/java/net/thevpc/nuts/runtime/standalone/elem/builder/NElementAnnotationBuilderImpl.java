@@ -20,7 +20,7 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
     }
 
     public NElementAnnotationBuilderImpl(String name, List<NElement> params, List<NBoundAffix> affixes) {
-        this.name = NStringUtils.trim(name);
+        this.name = NStringUtils.strip(name);
         this.params = params == null ? null : new ArrayList<>(params);
         this.affixes.addAffixes(affixes);
     }
@@ -114,12 +114,12 @@ public class NElementAnnotationBuilderImpl implements NElementAnnotationBuilder 
 
     @Override
     public NElementAnnotationBuilder setName(String name) {
-        this.name = NStringUtils.trim(name);
+        this.name = NStringUtils.strip(name);
         return this;
     }
 
     public NElementAnnotation build() {
-        return new NElementAnnotationImpl(NStringUtils.trim(name), params, affixes.list());
+        return new NElementAnnotationImpl(NStringUtils.strip(name), params, affixes.list());
     }
 
     public boolean isParametrized() {

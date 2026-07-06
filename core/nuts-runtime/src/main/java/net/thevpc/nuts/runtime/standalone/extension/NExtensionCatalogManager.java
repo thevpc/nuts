@@ -76,11 +76,11 @@ public class NExtensionCatalogManager {
         Map<String, NId> map = new LinkedHashMap<>();
         try {
             for (String s : path.lines().toList()) {
-                s = s.trim();
+                s = NStringUtils.strip(s);
                 if (!s.isEmpty()) {
                     if (s.startsWith("#")) {
                         if (firstLine) {
-                            s = s.substring(1).trim();
+                            s = NStringUtils.strip(s.substring(1));
                             Map.Entry<String, String> e = parseEntry(s);
                             if (e != null && e.getKey().equals("score")) {
                                 Integer uu = NLiteral.of(e.getValue()).asInt().orNull();
@@ -117,8 +117,8 @@ public class NExtensionCatalogManager {
     private static Map.Entry<String, String> parseEntry(String s) {
         int i = s.indexOf('=');
         if (i > 0) {
-            String k = s.substring(0, i).trim();
-            String v = s.substring(i + 1).trim();
+            String k = NStringUtils.strip(s.substring(0, i));
+            String v = NStringUtils.strip(s.substring(i + 1));
             if (isValidKey(k)) {
                 return new AbstractMap.SimpleEntry<>(k, v);
             }

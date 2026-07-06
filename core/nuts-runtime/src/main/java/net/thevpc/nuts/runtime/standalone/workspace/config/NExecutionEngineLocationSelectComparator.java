@@ -26,32 +26,32 @@ public class NExecutionEngineLocationSelectComparator implements Comparator<NExe
         if (x != 0) {
             return x;
         }
-        String s1 = NStringUtils.trim(o1.name());
-        String s2 = NStringUtils.trim(o2.name());
+        String s1 = NStringUtils.strip(o1.name());
+        String s2 = NStringUtils.strip(o2.name());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = NStringUtils.trim(o1.vendor());
-        s2 = NStringUtils.trim(o2.vendor());
+        s1 = NStringUtils.strip(o1.vendor());
+        s2 = NStringUtils.strip(o2.vendor());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = NStringUtils.trim(o1.product());
-        s2 = NStringUtils.trim(o2.product());
+        s1 = NStringUtils.strip(o1.product());
+        s2 = NStringUtils.strip(o2.product());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = NStringUtils.trim(o1.variant());
-        s2 = NStringUtils.trim(o2.variant());
+        s1 = NStringUtils.strip(o1.variant());
+        s2 = NStringUtils.strip(o2.variant());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = NStringUtils.trim(o1.path());
-        s2 = NStringUtils.trim(o2.path());
+        s1 = NStringUtils.strip(o1.path());
+        s2 = NStringUtils.strip(o2.path());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;

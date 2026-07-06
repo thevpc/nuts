@@ -33,8 +33,8 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
         for (NId exclusion : exclusions) {
             NId nutsId = dependency.toId();
             if (
-                    GlobUtils.ofExact(exclusion.groupId()).matcher(NStringUtils.trim(nutsId.groupId())).matches()
-                    && GlobUtils.ofExact(exclusion.artifactId()).matcher(NStringUtils.trim(nutsId.artifactId())).matches()
+                    GlobUtils.ofExact(exclusion.groupId()).matcher(NStringUtils.strip(nutsId.groupId())).matches()
+                    && GlobUtils.ofExact(exclusion.artifactId()).matcher(NStringUtils.strip(nutsId.artifactId())).matches()
                     && exclusion.version().toFilter().acceptVersion(nutsId.version())) {
                 return false;
             }

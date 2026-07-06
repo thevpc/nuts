@@ -140,7 +140,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
             return null;
         }
         NPath p = NPath.of(options.sourceLocation().path());
-        String pr = NStringUtils.trim(p.protocol());
+        String pr = NStringUtils.strip(p.protocol());
         switch (pr) {
             //non traversable!
             case "http":
@@ -164,7 +164,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
                         repositoryLayout = o.getStringValue("repositoryLayout").orNull();
                     }
                     if (!NBlankable.isBlank(repositoryLayout)) {
-                        options.sourceLocation(options.sourceLocation().path(NStringUtils.trim(repositoryLayout) + "+" + options.sourceLocation().path()));
+                        options.sourceLocation(options.sourceLocation().path(NStringUtils.strip(repositoryLayout) + "+" + options.sourceLocation().path()));
                     }
                     return new MavenFolderRepository(options, parentRepository);
                 } else {

@@ -144,22 +144,22 @@ public class NPlatformHome {
         }
         String s;
         String locationName = location.id();
-        s = NStringUtils.trim(props.apply("nuts.home." + locationName + "." + platformOsFamily.id()));
+        s = NStringUtils.strip(props.apply("nuts.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s/* + "/" + workspaceName*/;
         }
-        s = NStringUtils.trim(props.apply("nuts.export.home." + locationName + "." + platformOsFamily.id()));
+        s = NStringUtils.strip(props.apply("nuts.export.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s/* + "/" + workspaceName*/;
         }
         if (homeLocations != null && homeLocations.size() > 0) {
             NHomeLocation key = NHomeLocation.of(platformOsFamily, location);
-            s = NStringUtils.trim(homeLocations.get(key));
+            s = NStringUtils.strip(homeLocations.get(key));
             if (!s.isEmpty()) {
                 return s/* + "/" + workspaceName*/;
             }
             key = NHomeLocation.of(null, location);
-            s = NStringUtils.trim(homeLocations.get(key));
+            s = NStringUtils.strip(homeLocations.get(key));
             if (!s.isEmpty()) {
                 return s /* + "/" + workspaceName*/;
             }
@@ -288,13 +288,13 @@ public class NPlatformHome {
         String locationName = location.id();
         if (system) {
             String s = null;
-            s = NStringUtils.trim(props.apply("nuts.store.system." + locationName + "." + platformOsFamily.id()));
+            s = NStringUtils.strip(props.apply("nuts.store.system." + locationName + "." + platformOsFamily.id()));
             if (!s.isEmpty()) {
                 return s;
             }
-            s = NStringUtils.trim(props.apply("nuts.export.store.system." + locationName + "." + platformOsFamily.id()));
+            s = NStringUtils.strip(props.apply("nuts.export.store.system." + locationName + "." + platformOsFamily.id()));
             if (!s.isEmpty()) {
-                return s.trim();
+                return NStringUtils.strip(s);
             }
             switch (location) {
                 case BIN: {
@@ -398,7 +398,7 @@ public class NPlatformHome {
                             return userHome + nativePath("/AppData/Roaming/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_DATA_HOME"));
+                            String val = NStringUtils.strip(env.apply("XDG_DATA_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts/" + locationName;
                             }
@@ -412,7 +412,7 @@ public class NPlatformHome {
                             return userHome + nativePath("/AppData/LocalLow/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_LOG_HOME"));
+                            String val = NStringUtils.strip(env.apply("XDG_LOG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -426,7 +426,7 @@ public class NPlatformHome {
                             return userHome + nativePath("/AppData/Local/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_RUNTIME_DIR"));
+                            String val = NStringUtils.strip(env.apply("XDG_RUNTIME_DIR"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -440,7 +440,7 @@ public class NPlatformHome {
                             return userHome + nativePath("/AppData/Roaming/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_CONFIG_HOME"));
+                            String val = NStringUtils.strip(env.apply("XDG_CONFIG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -454,7 +454,7 @@ public class NPlatformHome {
                             return userHome + nativePath("/AppData/Local/nuts/cache");
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_CACHE_HOME"));
+                            String val = NStringUtils.strip(env.apply("XDG_CACHE_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }

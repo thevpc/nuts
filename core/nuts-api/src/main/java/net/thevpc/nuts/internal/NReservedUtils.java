@@ -168,7 +168,7 @@ public final class NReservedUtils {
         String ss
                 =
                 (s instanceof Enum) ? NNameFormat.CONST_NAME.format(((Enum<?>) s).name())
-                        : s.toString().trim();
+                        : NStringUtils.strip(s.toString());
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
@@ -226,13 +226,13 @@ public final class NReservedUtils {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId).append(":");
             }
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
         } else {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId);
             }
             sb.append(":");
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
             sb.append(":");
             sb.append(classifier);
         }
@@ -245,13 +245,13 @@ public final class NReservedUtils {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId).append(":");
             }
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
         } else {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId);
             }
             sb.append(":");
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
             sb.append(":");
             sb.append(classifier);
         }
@@ -367,7 +367,7 @@ public final class NReservedUtils {
      * @return nutsId
      */
     public static NOptional<NId> parseId(String nutsId) {
-        nutsId = NStringUtils.trim(nutsId);
+        nutsId = NStringUtils.strip(nutsId);
         if (NBlankable.isBlank(nutsId)) {
             return NOptional.of(NId.BLANK);
         }
@@ -396,7 +396,7 @@ public final class NReservedUtils {
                 Map.Entry<String, String> e = iterator.next();
                 String key = e.getKey();
                 String value = e.getValue();
-                switch (NStringUtils.trim(key)) {
+                switch (NStringUtils.strip(key)) {
                     case NConstants.IdProperties.CLASSIFIER: {
                         classifier = value;
                         break;
@@ -459,19 +459,19 @@ public final class NReservedUtils {
             }
             String[] fileRows = fileContent.split("\n");
             if (ensureHeader != null) {
-                if (fileRows.length == 0 || !fileRows[0].trim().matches(ensureHeader)) {
+                if (fileRows.length == 0 || !NStringUtils.strip(fileRows[0]).matches(ensureHeader)) {
                     lines.add(headerReplace);
                     updatedFile = true;
                 }
             }
             for (int i = 0; i < fileRows.length; i++) {
                 String row = fileRows[i];
-                if (row.trim().equals("# " + (commentLine))) {
+                if (NStringUtils.strip(row).equals("# " + (commentLine))) {
                     lines.add(row);
                     found = true;
                     i++;
                     if (i < fileRows.length) {
-                        if (!fileRows[i].trim().equals(goodLine)) {
+                        if (!NStringUtils.strip(fileRows[i]).equals(goodLine)) {
                             updatedFile = true;
                         }
                     }
@@ -514,7 +514,7 @@ public final class NReservedUtils {
                 String[] fileRows = fileContent.split("\n");
                 for (int i = 0; i < fileRows.length; i++) {
                     String row = fileRows[i];
-                    if (row.trim().equals("# " + (commentLine))) {
+                    if (NStringUtils.strip(row).equals("# " + (commentLine))) {
                         found = true;
                         i += 2;
                         for (; i < fileRows.length; i++) {
@@ -545,7 +545,7 @@ public final class NReservedUtils {
         LinkedHashSet<String> allIds = new LinkedHashSet<>();
         if (s != null) {
             for (String s1 : s) {
-                s1 = NStringUtils.trim(s1);
+                s1 = NStringUtils.strip(s1);
                 if (s1.length() > 0) {
                     allIds.add(s1);
                 }
@@ -630,19 +630,19 @@ public final class NReservedUtils {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s;
         if (condition.arch() != null) {
-            s = condition.arch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            s = condition.arch().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.ARCH, s);
             }
         }
         if (condition.os() != null) {
-            s = condition.os().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            s = condition.os().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.OS, s);
             }
         }
         if (condition.osDist() != null) {
-            s = condition.osDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            s = condition.osDist().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.OS_DIST, s);
             }
@@ -654,13 +654,13 @@ public final class NReservedUtils {
             }
         }
         if (condition.desktopEnvironment() != null) {
-            s = condition.desktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            s = condition.desktopEnvironment().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.DESKTOP, s);
             }
         }
         if (condition.profiles() != null) {
-            s = condition.profiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            s = condition.profiles().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.PROFILE, s);
             }

@@ -3,19 +3,13 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPsInfo;
-import net.thevpc.nuts.io.NpsStatus;
 import net.thevpc.nuts.io.NpsType;
 import net.thevpc.nuts.util.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
 
 public class LinuxPsParser {
@@ -95,9 +89,9 @@ public class LinuxPsParser {
                         pi.setCmdLineArgs(null);
                         int x = cmd.indexOf("/");
                         if (x >= 0) {
-                            pi.setName(NStringUtils.trimToNull(cmd.substring(0, x)));
+                            pi.setName(NStringUtils.stripToNull(cmd.substring(0, x)));
                         } else {
-                            pi.setName(NStringUtils.trimToNull(cmd));
+                            pi.setName(NStringUtils.stripToNull(cmd));
                         }
                     } else {
                         pi.setType(NpsType.PROCESS);

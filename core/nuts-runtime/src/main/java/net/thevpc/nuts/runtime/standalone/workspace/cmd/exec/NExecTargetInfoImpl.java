@@ -190,7 +190,7 @@
 //    }
 //
 //    private void resolveWindowAdminName() {
-//        switch (NStringUtils.trim(target.getUserName()).toLowerCase()) {
+//        switch (NStringUtils.strip(target.getUserName()).toLowerCase()) {
 //            case "adminitrateur": {
 //                rootUserName = "Administrateur";
 //                break;

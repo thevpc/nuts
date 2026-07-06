@@ -63,7 +63,7 @@ public class ReflectTest {
             Assertions.assertEquals(("net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bij\n" +
                     "net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bjk\n" +
                     "net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bik")
-                    .trim(), s.trim().toString());
+                    .trim(), s.strip().toString());
             System.out.println(type);
         }
 
@@ -77,7 +77,7 @@ public class ReflectTest {
             Assertions.assertEquals((
                     "net.thevpc.nuts.core.test.ReflectTest$D<java.lang.Double, java.lang.Integer>.an\n" +
                             "net.thevpc.nuts.core.test.ReflectTest$D<java.lang.Double, java.lang.Integer>.bmn\n")
-                    .trim(), s.trim().toString());
+                    .trim(), s.strip().toString());
             System.out.println(type);
         }
 

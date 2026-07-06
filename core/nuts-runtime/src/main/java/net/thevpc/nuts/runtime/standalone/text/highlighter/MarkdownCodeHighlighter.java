@@ -6,9 +6,6 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
 import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
@@ -70,9 +67,9 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
                 }
             } else {
                 // inside fenced code: look for closing fence
-                String trimmed = NStringUtils.trimLeft(line);
+                String trimmed = NStringUtils.stripLeft(line);
                 String finalFenceMarker = fenceMarker;
-                if (trimmed.startsWith(fenceMarker) && NStringUtils.trimRight(trimmed).chars().allMatch(c -> c == finalFenceMarker.charAt(0))) {
+                if (trimmed.startsWith(fenceMarker) && NStringUtils.stripRight(trimmed).chars().allMatch(c -> c == finalFenceMarker.charAt(0))) {
                     inFencedCode = false;
                     fenceMarker = null;
                     highlightFenceLine(line, txt, all);
@@ -107,7 +104,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     private void highlightLine(String line, NTexts txt, List<NText> all) {
         if (line.isEmpty()) return;
 
-        String trimmed = NStringUtils.trimLeft(line);
+        String trimmed = NStringUtils.stripLeft(line);
         int indent = line.length() - trimmed.length();
 
         // indented code block (4 spaces or 1 tab)
@@ -203,11 +200,11 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
         }
         // optional trailing ### — strip for inline parsing
         String content = line.substring(level);
-        String stripped = NStringUtils.trimRight(content);
+        String stripped = NStringUtils.stripRight(content);
         int trailStart = stripped.length();
         while (trailStart > 0 && stripped.charAt(trailStart - 1) == '#') trailStart--;
-        String trail = NStringUtils.trimLeft(stripped.substring(trailStart));
-        String body = trailStart > 0 ? NStringUtils.trimRight(stripped.substring(0, trailStart)) : "";
+        String trail = NStringUtils.stripLeft(stripped.substring(trailStart));
+        String body = trailStart > 0 ? NStringUtils.stripRight(stripped.substring(0, trailStart)) : "";
 
         if (!body.isEmpty()) highlightInline(body, txt, all);
         else if (!trail.isEmpty()) {
@@ -495,7 +492,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     // -------------------------------------------------------------------------
 
     private String detectFenceOpen(String line) {
-        String t = NStringUtils.trimLeft(line);
+        String t = NStringUtils.stripLeft(line);
         if (t.startsWith("```") || t.startsWith("~~~")) {
             return t.substring(0, 3);
         }

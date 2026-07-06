@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -73,7 +74,7 @@ public class ServiceTypeIterator<T> implements Iterator<Class<? extends T>>, Aut
             try {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    line = line.trim();
+                    line = NStringUtils.strip(line);
                     if (line.isEmpty() || line.startsWith("#")) continue;
                     if (!seenNames.add(line)) {
                         continue;

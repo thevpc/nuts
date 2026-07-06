@@ -384,16 +384,16 @@ public class NStringBuilder implements CharSequence, NBlankable {
         return new NStringBuilder().append(data);
     }
 
-    public NStringBuilder trim() {
+    public NStringBuilder strip() {
         int len0 = length();
         int len = len0;
         int st = 0;
         char[] val = toString().toCharArray();    /* avoid getfield opcode */
 
-        while ((st < len) && (val[st] <= ' ')) {
+        while ((st < len) && Character.isWhitespace(val[st])) {
             st++;
         }
-        while ((st < len) && (val[len - 1] <= ' ')) {
+        while ((st < len) && Character.isWhitespace(val[len - 1])) {
             len--;
         }
         if (((st > 0) || (len < len0))) {

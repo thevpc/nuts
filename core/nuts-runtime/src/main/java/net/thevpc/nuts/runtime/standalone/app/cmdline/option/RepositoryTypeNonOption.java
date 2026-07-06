@@ -35,6 +35,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
         for (NRepositorySpec repo : NWorkspace.of().defaultRepositories()) {
             String t = NRepositoryUtils.getRepoType(repo);
             if(!NBlankable.isBlank(t)){
-                allValid.add(t.trim());
+                allValid.add(NStringUtils.strip(t));
             }
         }
         List<NArgCandidate> all = new ArrayList<>();

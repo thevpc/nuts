@@ -281,11 +281,11 @@ public interface NText extends NBlankable, NElementSimple {
 
     NStream<NPrimitiveText> toCharStream();
 
-    NText trim();
+    NText strip();
 
-    NText trimLeft();
+    NText stripLeft();
 
-    NText trimRight();
+    NText stripRight();
 
     NText repeat(int times);
 

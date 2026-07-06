@@ -1655,7 +1655,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public void setInstallationDigest(String value) {
         this.wsModel.installationDigest = value;
-        store().saveLocationKey(NStoreKey.ofConf(apiId(), null, "installation-digest"), NStringUtils.trimToNull(value));
+        store().saveLocationKey(NStoreKey.ofConf(apiId(), null, "installation-digest"), NStringUtils.stripToNull(value));
     }
 
     @Override

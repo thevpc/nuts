@@ -122,9 +122,9 @@ public class NMsgTemplate {
                             String nsIntString = "";
                             Integer nsInt = null;
                             if (sep < 0) {
-                                nsIntString = ns.trim();
+                                nsIntString = NStringUtils.strip(ns);
                             } else {
-                                nsIntString = ns.substring(0, sep).trim();
+                                nsIntString = NStringUtils.strip(ns.substring(0, sep));
                             }
                             if (nsIntString.isEmpty()) {
                                 nsIntString = String.valueOf(currentIndex);

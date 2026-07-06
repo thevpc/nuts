@@ -581,7 +581,7 @@ public class DefaultNElementFactory implements NElementFactory {
 
     @Override
     public NElement ofCharStream(NReaderProvider value, String blockIdentifier) {
-        return value == null ? ofNull() : new DefaultNCharStreamElement(NStringUtils.trim(blockIdentifier), value);
+        return value == null ? ofNull() : new DefaultNCharStreamElement(NStringUtils.strip(blockIdentifier), value);
     }
 
     @Override

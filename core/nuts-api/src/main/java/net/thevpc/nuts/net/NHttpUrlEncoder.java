@@ -1,5 +1,7 @@
 package net.thevpc.nuts.net;
 
+import net.thevpc.nuts.util.NStringUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -17,7 +19,7 @@ public class NHttpUrlEncoder {
             return "";
         }
         if (any instanceof String) {
-            return encode(((String) any).trim());
+            return encode(NStringUtils.strip((String) any));
         }
         if (any instanceof Number) {
             return encode(String.valueOf(((Number) any)));

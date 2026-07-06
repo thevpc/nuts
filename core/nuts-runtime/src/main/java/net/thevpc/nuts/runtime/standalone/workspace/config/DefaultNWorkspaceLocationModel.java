@@ -299,7 +299,7 @@ public class DefaultNWorkspaceLocationModel {
 
     public String getDefaultIdExtension(NId id) {
         Map<String, String> q = id.properties();
-        String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
+        String f = NStringUtils.strip(q.get(NConstants.IdProperties.FACE));
         switch (f) {
             case NConstants.QueryFaces.DESCRIPTOR: {
                 return NConstants.Files.DESCRIPTOR_FILE_EXTENSION;

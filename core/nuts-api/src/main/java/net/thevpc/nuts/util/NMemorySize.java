@@ -872,7 +872,7 @@ public class NMemorySize implements Serializable{
         if (defaultUnit == null) {
             defaultUnit = NMemoryUnit.BYTE;
         }
-        value = NStringUtils.trimToNull(value);
+        value = NStringUtils.stripToNull(value);
         if (value == null) {
             return NOptional.ofNull();
         }

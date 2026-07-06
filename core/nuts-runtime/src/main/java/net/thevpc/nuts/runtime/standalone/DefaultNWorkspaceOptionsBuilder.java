@@ -2037,7 +2037,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         if (options != null) {
             for (String option : options) {
                 if (option != null) {
-                    option = NStringUtils.trim(option);
+                    option = NStringUtils.strip(option);
                     if (!option.isEmpty()) {
                         if (outputFormatOptions == null) {
                             outputFormatOptions = new ArrayList<>();

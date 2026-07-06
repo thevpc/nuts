@@ -58,9 +58,9 @@ public class NExceptionHandler {
             });
         } else {
             //load inherited
-            String nutsArgs = NStringUtils.trim(
-                    NStringUtils.trim(System.getProperty("nuts.boot.args"))
-                            + " " + NStringUtils.trim(System.getProperty("nuts.args"))
+            String nutsArgs = NStringUtils.strip(
+                    NStringUtils.strip(System.getProperty("nuts.boot.args"))
+                            + " " + NStringUtils.strip(System.getProperty("nuts.args"))
             );
             try {
                 NBootOptionsInfo options = new NBootOptionsInfo();

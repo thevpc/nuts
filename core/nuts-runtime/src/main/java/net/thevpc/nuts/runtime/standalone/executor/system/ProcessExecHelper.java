@@ -190,7 +190,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         List<String> args2 = new ArrayList<>();
         for (String arg : args) {
-            String s = NStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
+            String s = NStringUtils.strip(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
                 Collections.addAll(args2, NCmdLine.of(s, NShellFamily.BASH).expandSimpleOptions(false).toStringArray());
             } else {

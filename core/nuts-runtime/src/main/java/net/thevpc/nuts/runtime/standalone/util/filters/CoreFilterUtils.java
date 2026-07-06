@@ -161,7 +161,7 @@ public class CoreFilterUtils {
         if (CoreFilterUtils.acceptCondition(dep.condition(), false)) {
             // fast reject jfx dependencies with different environment defined by classifier!
             if (dep.groupId().equals("org.openjfx") && dep.artifactId().startsWith("javafx")) {
-                String c = NStringUtils.trim(dep.classifier());
+                String c = NStringUtils.strip(dep.classifier());
                 if (c.length() > 0) {
                     String[] a = c.split("-");
                     if (a.length > 0) {
@@ -326,8 +326,8 @@ public class CoreFilterUtils {
         if (expected == null) {
             return f != null;
         }
-        expected = NStringUtils.trim(expected);
-        f = NStringUtils.trim(f);
+        expected = NStringUtils.strip(expected);
+        f = NStringUtils.strip(f);
         if (expected.startsWith("!")) {
             expected = expected.substring(1).trim();
             return !expected.equals(f);
@@ -545,22 +545,22 @@ public class CoreFilterUtils {
         if (location == null) {
             return false;
         }
-        String c0 = NStringUtils.trim(classifier);
-        String c1 = NStringUtils.trim(location.classifier());
+        String c0 = NStringUtils.strip(classifier);
+        String c1 = NStringUtils.strip(location.classifier());
         return c0.equals(c1);
     }
 
     public static Map<String, String> toMap(NEnvCondition condition) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
-        String s = condition.arch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        String s = condition.arch().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.ARCH, s);
         }
-        s = condition.os().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.os().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.OS, s);
         }
-        s = condition.osDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.osDist().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.OS_DIST, s);
         }
@@ -568,11 +568,11 @@ public class CoreFilterUtils {
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.PLATFORM, s);
         }
-        s = condition.desktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.desktopEnvironment().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.DESKTOP, s);
         }
-        s = condition.profiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.profiles().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.PROFILE, s);
         }

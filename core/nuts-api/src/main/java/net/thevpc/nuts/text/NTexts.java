@@ -155,7 +155,7 @@ public interface NTexts extends NComponent {
 
     NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern);
 
-    public static NText[] trimLeft(NText[] value) {
+    public static NText[] stripLeft(NText[] value) {
         if (value == null) {
             return new NText[0];
         }
@@ -173,7 +173,7 @@ public interface NTexts extends NComponent {
         return value;
     }
 
-    public static NText[] trimRight(NText[] value) {
+    public static NText[] stripRight(NText[] value) {
         if (value == null) {
             return new NPrimitiveText[0];
         }
@@ -191,7 +191,7 @@ public interface NTexts extends NComponent {
         return value;
     }
 
-    public static NText[] trim(NText[] value) {
+    public static NText[] strip(NText[] value) {
         if (value == null || value.length == 0) {
             return new NPrimitiveText[0];
         }
@@ -214,7 +214,7 @@ public interface NTexts extends NComponent {
         return Arrays.copyOfRange(value, start, end + 1);
     }
 
-    public static NPrimitiveText[] trim(NPrimitiveText[] value) {
+    public static NPrimitiveText[] strip(NPrimitiveText[] value) {
         if (value == null || value.length == 0) {
             return new NPrimitiveText[0];
         }
@@ -237,7 +237,7 @@ public interface NTexts extends NComponent {
         return Arrays.copyOfRange(value, start, end + 1);
     }
 
-    public static NPrimitiveText[] trimLeft(NPrimitiveText[] value) {
+    public static NPrimitiveText[] stripLeft(NPrimitiveText[] value) {
         if (value == null) {
             return new NPrimitiveText[0];
         }
@@ -255,7 +255,7 @@ public interface NTexts extends NComponent {
         return value;
     }
 
-    public static NPrimitiveText[] trimRight(NPrimitiveText[] value) {
+    public static NPrimitiveText[] stripRight(NPrimitiveText[] value) {
         if (value == null) {
             return new NPrimitiveText[0];
         }

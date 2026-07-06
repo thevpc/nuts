@@ -38,7 +38,7 @@ public class ShCodeHighlighter implements NCodeHighlighter {
         if (kind == null) {
             return "sh";
         }
-        String k = NStringUtils.trim((String) kind).toLowerCase();
+        String k = NStringUtils.strip((String) kind).toLowerCase();
         switch (k) {
             case "sh":
             case "bash":

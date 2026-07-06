@@ -8,6 +8,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
 import java.lang.reflect.Type;
@@ -29,7 +30,7 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
         NElement element = context.element();
         Type to = context.instanceType();
         String s = element.asStringValue().orNull();
-        if(s==null || s.trim().isEmpty()){
+        if(NStringUtils.isBlank(s)){
             s="true";
         }
         if(to instanceof Class) {

@@ -103,7 +103,7 @@ public class URLPath implements NPathSPI {
         if (index >= 0) {
             name = name.substring(0, index);
         }
-        name = name.trim();
+        name = NStringUtils.strip(name);
         return name;
     }
 

@@ -68,19 +68,19 @@ public class NCollections {
         return t -> visited.putIfAbsent(distinctMapper.apply(t), Boolean.TRUE) == null;
     }
 
-    public static List<String> toDistinctTrimmedNonEmptyList(List<String> values0) {
-        Set<String> set = toTrimmedNonEmptySet(
+    public static List<String> toDistinctStrippedNonEmptyList(List<String> values0) {
+        Set<String> set = toStrippedNonEmptySet(
                 values0==null?null:values0.toArray(new String[0])
         );
         return new ArrayList<>(set);
     }
-    public static List<String> toDistinctTrimmedNonEmptyList(List<String> values0, List<String>... values) {
-        Set<String> set = toTrimmedNonEmptySet(
+    public static List<String> toDistinctStrippedNonEmptyList(List<String> values0, List<String>... values) {
+        Set<String> set = toStrippedNonEmptySet(
                 values0==null?null:values0.toArray(new String[0])
         );
         if (values != null) {
             for (List<String> value : values) {
-                set.addAll(toTrimmedNonEmptySet(
+                set.addAll(toStrippedNonEmptySet(
                         values0==null?null:values0.toArray(new String[0])
                 ));
             }
@@ -120,11 +120,11 @@ public class NCollections {
         return new ArrayList<>(other);
     }
 
-    public static Set<String> toTrimmedNonEmptySet(String[] values0) {
+    public static Set<String> toStrippedNonEmptySet(String[] values0) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {
             for (String a : values0) {
-                a = NStringUtils.trim(a);
+                a = NStringUtils.strip(a);
                 if (!NBlankable.isBlank(a)) {
                     set.add(a);
                 }
@@ -133,8 +133,8 @@ public class NCollections {
         return set;
     }
 
-    public static ArrayList<String> toDistinctTrimmedNonEmptyList(String[] values0) {
-        return new ArrayList<>(toTrimmedNonEmptySet(values0));
+    public static ArrayList<String> toDistinctStrippedNonEmptyList(String[] values0) {
+        return new ArrayList<>(toStrippedNonEmptySet(values0));
     }
 
     public static Set<NIdLocation> toSet(NIdLocation[] classifierMappings) {
@@ -367,13 +367,13 @@ public class NCollections {
         return dest;
     }
 
-    public static Set<String> toSet(String[] values0, boolean trim, boolean ignoreEmpty, boolean ignoreNull) {
+    public static Set<String> toSet(String[] values0, boolean strip, boolean ignoreEmpty, boolean ignoreNull) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {
             for (String a : values0) {
                 if (a != null) {
-                    if (trim) {
-                        a = a.trim();
+                    if (strip) {
+                        a = NStringUtils.strip(a);
                     }
                     if (a.isEmpty()) {
                         a = null;

@@ -17,7 +17,7 @@ public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
         super(NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>(
                 exactRepos==null?new ArrayList<>() :
-                        exactRepos.stream().map(x-> NStringUtils.trimToNull(x))
+                        exactRepos.stream().map(x-> NStringUtils.stripToNull(x))
                                 .filter(x->x!=null).collect(Collectors.toList())
         );
     }

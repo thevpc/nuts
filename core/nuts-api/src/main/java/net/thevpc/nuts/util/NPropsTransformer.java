@@ -246,10 +246,10 @@ public class NPropsTransformer {
                 break;
             }
             line = sb.toString();
-            String trimmedLine = line.trim();
-            if (trimmedLine.isEmpty()) {
+            String strippedLine = NStringUtils.strip(line);
+            if (strippedLine.isEmpty()) {
                 rows.add(new Row(RowType.EMPTY, null, line));
-            } else if (trimmedLine.startsWith("#") || trimmedLine.startsWith("!")) {
+            } else if (strippedLine.startsWith("#") || strippedLine.startsWith("!")) {
                 rows.add(new Row(RowType.COMMENT, null, line));
             } else {
                 if (!processLine(line, rows)) {
@@ -312,7 +312,7 @@ public class NPropsTransformer {
         if (line == null) {
             return null;
         }
-        line = line.trim();
+        line = NStringUtils.strip(line);
         StringBuilder sb = new StringBuilder();
         StringBuilder pending = new StringBuilder();
         char[] charArray = line.toCharArray();
@@ -390,12 +390,12 @@ public class NPropsTransformer {
     }
 
     private boolean replaceVar(String varName, Function<String, String> suffix, String line, List<Row> rows) {
-        String lineTrimmed = line.trim();
-        if (lineTrimmed.startsWith(varName)) {
-            String ext = lineTrimmed.substring(varName.length());
-            if (ext.trim().startsWith("=")) {
+        String lineStripped = NStringUtils.strip(line);
+        if (lineStripped.startsWith(varName)) {
+            String ext = lineStripped.substring(varName.length());
+            if (NStringUtils.strip(ext).startsWith("=")) {
                 int e = line.indexOf('=');
-                String oldValue = NStringUtils.trimLeft(ext.substring(1));
+                String oldValue = NStringUtils.stripLeft(ext.substring(1));
                 String nv = suffix.apply(decodeString(oldValue));
                 if (nv == null) {
                     //do nothing
@@ -403,9 +403,9 @@ public class NPropsTransformer {
                     rows.add(newKeyVal(varName, line.substring(0, e + 1) + encodeValue(nv), rows));
                 }
                 return true;
-            } else if (ext.trim().startsWith(":")) {
+            } else if (NStringUtils.strip(ext).startsWith(":")) {
                 int e = line.indexOf(':');
-                String oldValue = NStringUtils.trimLeft(ext.substring(1));
+                String oldValue = NStringUtils.stripLeft(ext.substring(1));
                 String nv = suffix.apply(decodeString(oldValue));
                 if (nv == null) {
                     //do nothing

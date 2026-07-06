@@ -72,7 +72,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
             if ("zip".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
-            switch (NStringUtils.trim(def.descriptor().packaging())) {
+            switch (NStringUtils.strip(def.descriptor().packaging())) {
                 case "zip": {
                     return NScorable.DEFAULT_SCORE + 10;
                 }

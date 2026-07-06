@@ -472,7 +472,7 @@ public final class JavaExecutorOptions {
             try (BufferedReader br = cacheFile.asBufferedReader()) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    if (!line.trim().isEmpty()) {
+                    if (!NStringUtils.isBlank(line)) {
                         String[] split = line.split("\\|");
                         if (split.length >= 2) {
                             String idStr = split[0];
@@ -661,7 +661,7 @@ public final class JavaExecutorOptions {
         NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of();
         NOptional<NExecutionEngineLocation> nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(), false, true, true);
         if (!nutsPlatformLocation.isPresent()) {
-            throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.strip(getJavaVersion())), NExecutionException.ERROR_1);
         }
         javaEffVersion = nutsPlatformLocation.get().version();
         javaCommand = nJavaSdkUtils.resolveJavaCommandByVersion(nutsPlatformLocation.get(), javaw).orNull();

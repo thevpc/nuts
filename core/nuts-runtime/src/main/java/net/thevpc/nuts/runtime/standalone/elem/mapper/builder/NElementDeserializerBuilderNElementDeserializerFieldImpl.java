@@ -59,7 +59,7 @@ public class NElementDeserializerBuilderNElementDeserializerFieldImpl<T> impleme
         this.aliases = new HashSet<>();
         if (aliases != null) {
             for (String alias : aliases) {
-                String a = NStringUtils.trimToNull(alias);
+                String a = NStringUtils.stripToNull(alias);
                 if (a != null) {
                     this.aliases.add(a);
                 }

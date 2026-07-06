@@ -61,7 +61,7 @@ public class NResourcePath implements NPathSPI {
             throw new NIllegalArgumentException(NMsg.ofC("invalid path %s", path));
         }
         this.ids = StringTokenizerUtils.splitSemiColon(idsStr).stream().map(x -> {
-            x = x.trim();
+            x = NStringUtils.strip(x);
             if (x.length() > 0) {
                 return NId.get(x).get();
             }
@@ -486,7 +486,7 @@ public class NResourcePath implements NPathSPI {
                     tb.appendJoined(
                             NText.ofStyled(";", NTextStyle.separator()),
                             StringTokenizerUtils.splitSemiColon(idsStr).stream().map(xi -> {
-                                xi = xi.trim();
+                                xi = NStringUtils.strip(xi);
                                 if (!xi.isEmpty()) {
                                     NId pp = NId.get(xi).get();
                                     if (pp == null) {

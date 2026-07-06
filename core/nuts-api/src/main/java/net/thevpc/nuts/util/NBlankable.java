@@ -42,33 +42,33 @@ import java.util.function.Supplier;
 public interface NBlankable {
 
     /**
-     * true if the value is null or blank (trimmed to empty)
+     * true if the value is null or blank (stripped to empty)
      *
      * @param value value to check
      * @return true if the value is null or blank
      */
     static boolean isBlank(String value) {
-        return NApiUtilsRPI.isBlank(value);
+        return NStringUtils.isBlank(value);
     }
 
     /**
-     * true if the value is null or blank (trimmed to empty)
+     * true if the value is null or blank (stripped to empty)
      *
      * @param value value to check
      * @return true if the value is null or blank
      */
     static boolean isBlank(CharSequence value) {
-        return NApiUtilsRPI.isBlank(value);
+        return NStringUtils.isBlank(value);
     }
 
     /**
-     * true if the value is null or blank (trimmed to empty)
+     * true if the value is null or blank (stripped to empty)
      *
      * @param value value to check
      * @return true if the value is null or blank
      */
     static boolean isBlank(char[] value) {
-        return NApiUtilsRPI.isBlank(value);
+        return NStringUtils.isBlank(value);
     }
 
     /**
@@ -91,8 +91,8 @@ public interface NBlankable {
         return NApiUtilsRPI.isBlank(value);
     }
 
-    static boolean isNonBlank(Object v) {
-        return !NApiUtilsRPI.isBlank(v);
+    static boolean isNonBlank(Object value) {
+        return !NApiUtilsRPI.isBlank(value);
     }
 
     /**

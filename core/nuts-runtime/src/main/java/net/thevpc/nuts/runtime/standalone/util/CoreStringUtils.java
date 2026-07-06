@@ -344,13 +344,13 @@ public final class CoreStringUtils {
         if (s == null) {
             return new String[0];
         }
-        return StringTokenizerUtils.splitDefault(s).stream().map(String::trim)
+        return StringTokenizerUtils.splitDefault(s).stream().map(NStringUtils::strip)
                 .filter(x -> x.length() > 0)
                 .distinct().toArray(String[]::new);
     }
 
     public static String joinAndTrimToNull(List<String> args) {
-        return NStringUtils.trimToNull(
+        return NStringUtils.stripToNull(
                 String.join(",", args)
         );
     }
@@ -510,7 +510,7 @@ public final class CoreStringUtils {
         List<String> w=new  ArrayList<>();
         if(other!=null){
             for (String s : other) {
-                s=NStringUtils.trimToNull(s);
+                s=NStringUtils.stripToNull(s);
                 if(s!=null){
                     w.add(s);
                 }

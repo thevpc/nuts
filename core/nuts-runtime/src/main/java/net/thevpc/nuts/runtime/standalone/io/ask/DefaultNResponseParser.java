@@ -38,7 +38,7 @@ public class DefaultNResponseParser<T> implements NAskParser<T> {
             return (T) response;
         }
         if (type.isEnum()) {
-            String s = String.valueOf(response).trim();
+            String s = NStringUtils.strip(String.valueOf(response));
             return (T) CoreEnumUtils.parseEnumString(s,(Class)type,false);
         }
         switch (type.getName()) {

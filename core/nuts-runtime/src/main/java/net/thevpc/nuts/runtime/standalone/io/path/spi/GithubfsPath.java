@@ -273,12 +273,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     private String _type() {
         if (info != null) {
-            return NStringUtils.trim(info.type);
+            return NStringUtils.strip(info.type);
         }
         Object a = load();
         if (a != null) {
             if (a instanceof Info) {
-                return NStringUtils.trim(((Info) a).type);
+                return NStringUtils.strip(((Info) a).type);
             }
             if (a instanceof Info[]) {
                 return "dir";

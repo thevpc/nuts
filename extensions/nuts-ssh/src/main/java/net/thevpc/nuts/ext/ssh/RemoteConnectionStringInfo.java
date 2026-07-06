@@ -294,7 +294,7 @@ public class RemoteConnectionStringInfo {
     public String getSuPath(NExecTargetSPI commExec) {
         if (isUpdatable(loadedSu)) {
             loadedSu = System.currentTimeMillis();
-            suPath = NStringUtils.trimToNull(NStringUtils.trim(runOnceSystemGrab(commExec, connectionString, "which", "su")).trim());
+            suPath = NStringUtils.stripToNull(NStringUtils.strip(runOnceSystemGrab(commExec, connectionString, "which", "su")));
         }
         return suPath;
     }
@@ -302,7 +302,7 @@ public class RemoteConnectionStringInfo {
     public String getSudoPath(NExecTargetSPI commExec) {
         if (isUpdatable(loadedSudo)) {
             loadedSudo = System.currentTimeMillis();
-            sudoPath = NStringUtils.trimToNull(NStringUtils.trim(runOnceSystemGrab(commExec, connectionString, "which", "sudo")).trim());
+            sudoPath = NStringUtils.stripToNull(NStringUtils.strip(runOnceSystemGrab(commExec, connectionString, "which", "sudo")));
         }
         return sudoPath;
     }

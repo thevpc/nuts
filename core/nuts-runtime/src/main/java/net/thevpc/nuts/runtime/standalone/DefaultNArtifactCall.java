@@ -58,8 +58,8 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
     public DefaultNArtifactCall(NArtifactCall other) {
         this.id = other.id();
         this.arguments = NReservedLangUtils.nonNullList(other.arguments());
-        this.scriptName = NStringUtils.trimToNull(other.scriptName());
-        this.scriptContent = NStringUtils.trimToNull(other.scriptContent());
+        this.scriptName = NStringUtils.stripToNull(other.scriptName());
+        this.scriptContent = NStringUtils.stripToNull(other.scriptContent());
     }
 
     @Override
@@ -100,7 +100,7 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
     public DefaultNArtifactCall(NId id, List<String> args, String scriptName, String scriptContent) {
         this.id = id;
         this.arguments = NReservedLangUtils.nonNullList(args);
-        this.scriptName = NStringUtils.trimToNull(scriptName);
+        this.scriptName = NStringUtils.stripToNull(scriptName);
         this.scriptContent = scriptContent;
     }
 

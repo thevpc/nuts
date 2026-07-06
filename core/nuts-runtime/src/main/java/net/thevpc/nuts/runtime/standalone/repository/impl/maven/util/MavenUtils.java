@@ -244,7 +244,7 @@ public class MavenUtils {
                         if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
                             return true;
                         }
-                        if (NStringUtils.trim(e.getTextContent()).equals("exec-war-only") &&
+                        if (NStringUtils.strip(e.getTextContent()).equals("exec-war-only") &&
                                 XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "goals", "goal")) {
                             return true;
                         }
@@ -396,7 +396,7 @@ public class MavenUtils {
                     .standardDependencies(depsM)
                     .categories(
                             StringTokenizerUtils.splitDefault(categories).stream()
-                                    .map(String::trim)
+                                    .map(NStringUtils::strip)
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
                     )
@@ -404,7 +404,7 @@ public class MavenUtils {
                     .executor(executorCall)
                     .icons(
                             StringTokenizerUtils.splitDefault(icons).stream()
-                                    .map(String::trim)
+                                    .map(NStringUtils::strip)
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
                     )
@@ -489,7 +489,7 @@ public class MavenUtils {
             toRemoveProps.add(propName + ".url");
             toRemoveProps.add(propName + ".region");
             toRemoveProps.add(propName + ".classifier");
-            return new NIdLocation(NStringUtils.trimToNull(url), NStringUtils.trimToNull(region), NStringUtils.trimToNull(classifier));
+            return new NIdLocation(NStringUtils.stripToNull(url), NStringUtils.stripToNull(region), NStringUtils.stripToNull(classifier));
         }
         return null;
     }

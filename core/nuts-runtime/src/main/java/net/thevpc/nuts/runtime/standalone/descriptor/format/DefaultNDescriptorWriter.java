@@ -96,13 +96,13 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         }
 
         // Implementation-Vendor-Title from name
-        String name = NStringUtils.trimToNull(desc.name());
+        String name = NStringUtils.stripToNull(desc.name());
         if (name != null) {
             writer.writeAttribute("Implementation-Vendor-Title", name);
         }
 
         // Main-Class from executor
-        String mainClass = NStringUtils.trimToNull(extractMainClass(desc));
+        String mainClass = NStringUtils.stripToNull(extractMainClass(desc));
         if (mainClass != null) {
             writer.writeAttribute("Main-Class", mainClass);
         }
@@ -116,17 +116,17 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
             writer.writeAttribute("Nuts-Name", name);
         }
 
-        String description = NStringUtils.trimToNull(desc.description());
+        String description = NStringUtils.stripToNull(desc.description());
         if (description != null) {
             writer.writeAttribute("Nuts-Description", description);
         }
 
-        String genericName = NStringUtils.trimToNull(desc.genericName());
+        String genericName = NStringUtils.stripToNull(desc.genericName());
         if (genericName != null) {
             writer.writeAttribute("Nuts-Generic-Name", genericName);
         }
 
-        String packaging = NStringUtils.trimToNull(desc.packaging());
+        String packaging = NStringUtils.stripToNull(desc.packaging());
         if (packaging != null) {
             writer.writeAttribute("Nuts-Packaging", packaging);
         }
@@ -162,7 +162,7 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         // Properties
         if (desc.properties() != null) {
             for (net.thevpc.nuts.artifact.NDescriptorProperty prop : desc.properties()) {
-                String propName = NStringUtils.trimToNull(prop.name());
+                String propName = NStringUtils.stripToNull(prop.name());
                 if (propName != null) {
                     String value = prop.value() != null ? prop.value().asString().orElse("") : "";
                     writer.writeAttribute("Nuts-Property-" + propName, value);

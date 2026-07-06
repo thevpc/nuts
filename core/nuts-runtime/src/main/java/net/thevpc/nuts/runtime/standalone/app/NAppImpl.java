@@ -414,7 +414,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
         }
         if (n != null) {
-            n = n.trim();
+            n = NStringUtils.strip(n);
             if (!n.isEmpty()) {
                 try {
                     n = URLDecoder.decode(n, StandardCharsets.UTF_8.name());

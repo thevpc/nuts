@@ -443,7 +443,7 @@ public class NWebRequestImpl implements NWebRequest {
     private static Map<String, List<String>> _mapFromPropsFile(NPath path) {
         Map<String, List<String>> m = new LinkedHashMap<>();
         path.lines().forEach(x -> {
-            x = x.trim();
+            x = NStringUtils.strip(x);
             if (!x.startsWith("#")) {
                 NArg a = NArg.of(x);
                 m.computeIfAbsent(a.key(), r -> new ArrayList<>()).add(String.valueOf(a.key()));
@@ -558,9 +558,9 @@ public class NWebRequestImpl implements NWebRequest {
                     }
                     try {
                         sb
-                                .append(URLEncoder.encode(NStringUtils.trim(e.getKey()), "UTF-8"))
+                                .append(URLEncoder.encode(NStringUtils.strip(e.getKey()), "UTF-8"))
                                 .append("=")
-                                .append(URLEncoder.encode(NStringUtils.trim(e.getValue()), "UTF-8"))
+                                .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
                         ;
                     } catch (UnsupportedEncodingException ex) {
                         throw new RuntimeException(ex);
@@ -697,7 +697,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest authorizationBearer(String authorizationBearer) {
-        authorizationBearer = NStringUtils.trimToNull(authorizationBearer);
+        authorizationBearer = NStringUtils.stripToNull(authorizationBearer);
         if (authorizationBearer != null) {
             authorizationBearer = "Bearer " + authorizationBearer;
         }
@@ -719,7 +719,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest authorization(String authorization) {
-        return header("Authorization", NStringUtils.trimToNull(authorization));
+        return header("Authorization", NStringUtils.stripToNull(authorization));
     }
 
     @Override
@@ -731,7 +731,7 @@ public class NWebRequestImpl implements NWebRequest {
     public String authorizationBearer() {
         String b = header("Authorization");
         if (b != null && b.toLowerCase().startsWith("bearer ")) {
-            return b.substring("bearer ".length()).trim();
+            return NStringUtils.strip(b.substring("bearer ".length()));
         }
         return b;
     }
@@ -819,9 +819,9 @@ public class NWebRequestImpl implements NWebRequest {
                 }
                 try {
                     sb
-                            .append(URLEncoder.encode(NStringUtils.trim(e.getKey()), "UTF-8"))
+                            .append(URLEncoder.encode(NStringUtils.strip(e.getKey()), "UTF-8"))
                             .append("=")
-                            .append(URLEncoder.encode(NStringUtils.trim(e.getValue()), "UTF-8"))
+                            .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
                     ;
                 } catch (UnsupportedEncodingException ex) {
                     throw new RuntimeException(ex);

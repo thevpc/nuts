@@ -159,12 +159,12 @@ public class NDescriptorUtils {
 
 
     public static NEnvConditionBuilder simplifyNutsEnvConditionBuilder(NEnvConditionBuilder c) {
-        c.arch(NCollections.toDistinctTrimmedNonEmptyList(c.arch()));
-        c.os(NCollections.toDistinctTrimmedNonEmptyList(c.os()));
-        c.osDist(NCollections.toDistinctTrimmedNonEmptyList(c.osDist()));
-        c.platform(NCollections.toDistinctTrimmedNonEmptyList(c.platform()));
-        c.desktopEnvironment(NCollections.toDistinctTrimmedNonEmptyList(c.desktopEnvironment()));
-        c.profile(NCollections.toDistinctTrimmedNonEmptyList(c.profiles()));
+        c.arch(NCollections.toDistinctStrippedNonEmptyList(c.arch()));
+        c.os(NCollections.toDistinctStrippedNonEmptyList(c.os()));
+        c.osDist(NCollections.toDistinctStrippedNonEmptyList(c.osDist()));
+        c.platform(NCollections.toDistinctStrippedNonEmptyList(c.platform()));
+        c.desktopEnvironment(NCollections.toDistinctStrippedNonEmptyList(c.desktopEnvironment()));
+        c.profile(NCollections.toDistinctStrippedNonEmptyList(c.profiles()));
         return c;
     }
 
@@ -263,7 +263,7 @@ public class NDescriptorUtils {
     }
 
     private static String sPropId(NDescriptorProperty d) {
-        return NStringUtils.trim(d.name()) + ":" + d.condition().toString();
+        return NStringUtils.strip(d.name()) + ":" + d.condition().toString();
     }
 
     private static Map<String, NDescriptorProperty> propsAsMap(List<NDescriptorProperty> arr) {
@@ -629,7 +629,7 @@ public class NDescriptorUtils {
     }
 
     private static String sDepId(NDependency d) {
-        return NStringUtils.trim(d.groupId()) + ":" + NStringUtils.trim(d.artifactId()) + "?" + NStringUtils.trim(d.classifier());
+        return NStringUtils.strip(d.groupId()) + ":" + NStringUtils.strip(d.artifactId()) + "?" + NStringUtils.strip(d.classifier());
     }
 
 

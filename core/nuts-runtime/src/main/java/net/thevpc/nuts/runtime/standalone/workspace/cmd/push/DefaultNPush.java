@@ -66,7 +66,7 @@ public class DefaultNPush extends AbstractDefaultNPush {
         NRepositoryFilter repositoryFilter = null;
         Map<NId, NDefinition> toProcess = new LinkedHashMap<>();
         for (NId id : this.ids()) {
-            if (NStringUtils.trim(id.version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+            if (NStringUtils.strip(id.version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.version()));
             }
             NDefinition file = NFetch.of(id)

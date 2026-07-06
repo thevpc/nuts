@@ -536,9 +536,9 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder trimLeft() {
+    public NTextBuilder stripLeft() {
         for (int i = 0; i < children.size(); i++) {
-            NText c = children.get(i).trimLeft();
+            NText c = children.get(i).stripLeft();
             int l = c.length();
             if (l > 0) {
                 children.set(i, c);
@@ -552,9 +552,9 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder trimRight() {
+    public NTextBuilder stripRight() {
         for (int i = children.size() - 1; i >= 0; i--) {
-            NText c = children.get(i).trimRight();  // delegate to child
+            NText c = children.get(i).stripRight();  // delegate to child
             int l = c.length();
             if (l > 0) {
                 children.set(i, c);
@@ -599,9 +599,9 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder trim() {
-        trimLeft();
-        trimRight();
+    public NTextBuilder strip() {
+        stripLeft();
+        stripRight();
         return this;
     }
 }

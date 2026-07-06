@@ -526,10 +526,10 @@ public class JCshConnection extends SshConnectionBase {
 
     public void copyLocalToRemote(String from, String to, boolean mkdirs) {
         try {
-            if (from == null || from.trim().isEmpty()) {
+            if (from == null || NStringUtils.strip(from).isEmpty()) {
                 throw new IllegalArgumentException("missing source path");
             }
-            if (to == null || to.trim().isEmpty()) {
+            if (NBlankable.isBlank(to)) {
                 throw new IllegalArgumentException("missing target path");
             }
             for (SshListener listener : listeners) {

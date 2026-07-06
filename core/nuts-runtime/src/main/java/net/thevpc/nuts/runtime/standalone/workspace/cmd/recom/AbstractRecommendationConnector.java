@@ -99,7 +99,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     }
 
     private String resolveDefaultEndpointURL() {
-        String p = NStringUtils.trim(System.getProperty("nuts-endpoint-url"));
+        String p = NStringUtils.strip(System.getProperty("nuts-endpoint-url"));
         if (!p.isEmpty()) {
             if (p.equals("dev") || p.equals("debug")) {
                 p = "http://127.0.0.1:8080/public/nuts";
@@ -117,7 +117,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
                 NWebCli cli = NWebCli.of();
                 cli.connectTimeout(NDuration.ofMillis(500));
                 cli.readTimeout(NDuration.ofMillis(500));
-                s = NStringUtils.trim(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
+                s = NStringUtils.strip(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
                         .run().content().readString());
             } catch (Exception ex) {
                 //error;

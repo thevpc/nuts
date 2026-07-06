@@ -125,7 +125,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder packaging(String packaging) {
-        this.packaging = NStringUtils.trim(packaging);
+        this.packaging = NStringUtils.strip(packaging);
         return this;
     }
 
@@ -136,7 +136,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder name(String name) {
-        this.name = NStringUtils.trim(name);
+        this.name = NStringUtils.strip(name);
         return this;
     }
 
@@ -248,7 +248,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder description(String description) {
-        this.description = NStringUtils.trim(description);
+        this.description = NStringUtils.strip(description);
         return this;
     }
 

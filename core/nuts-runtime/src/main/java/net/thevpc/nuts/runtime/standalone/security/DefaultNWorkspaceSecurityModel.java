@@ -448,7 +448,7 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
     public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId) {
-        authenticationAgentId = NStringUtils.trim(authenticationAgentId);
+        authenticationAgentId = NStringUtils.strip(authenticationAgentId);
         if (NBlankable.isBlank(authenticationAgentId)) {
             authenticationAgentId = workspace
                     .getConfigModel().getStoredConfigSecurity().getAuthenticationAgent();

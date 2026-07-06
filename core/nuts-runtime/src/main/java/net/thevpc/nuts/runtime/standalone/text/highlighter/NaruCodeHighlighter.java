@@ -61,7 +61,7 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
     }
 
     private void highlightLine(String line, NTexts txt, List<NText> all) {
-        String trimmed = NStringUtils.trimLeft(line);
+        String trimmed = NStringUtils.stripLeft(line);
         int indent = line.length() - trimmed.length();
         if (indent > 0) {
             all.add(txt.ofPlain(line.substring(0, indent)));

@@ -54,9 +54,9 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *                     location)
      */
     public NRepositoryLocation(String name, String locationType, String path) {
-        this.name = NStringUtils.trimToNull(name);
-        this.locationType = NStringUtils.trimToNull(locationType);
-        this.path = NStringUtils.trimToNull(path);
+        this.name = NStringUtils.stripToNull(name);
+        this.locationType = NStringUtils.stripToNull(locationType);
+        this.path = NStringUtils.stripToNull(path);
     }
 
     /**
@@ -71,13 +71,13 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         }
         Matcher nm = FULL_PATTERN.matcher(locationString);
         if (nm.find()) {
-            name = NStringUtils.trimToNull(nm.group("n"));
-            locationType = NStringUtils.trimToNull(nm.group("t"));
-            path = NStringUtils.trimToNull(nm.group("r"));
+            name = NStringUtils.stripToNull(nm.group("n"));
+            locationType = NStringUtils.stripToNull(nm.group("t"));
+            path = NStringUtils.stripToNull(nm.group("r"));
         } else {
             name = null;
             locationType = null;
-            path = NStringUtils.trimToNull(locationString);
+            path = NStringUtils.stripToNull(locationString);
         }
     }
 

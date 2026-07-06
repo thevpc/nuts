@@ -405,7 +405,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                         .distinct(x->{
                             //always distinct by id and repo
                             NId _id = x.toId();
-                            return _id.longName()+":"+NStringUtils.trim(_id.repository());
+                            return _id.longName()+":"+NStringUtils.strip(_id.repository());
                         })
                         .build()
         );
@@ -837,7 +837,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                             .distinct(x->{
                                 //always distinct by id and repo
                                 NId _id = x.dependency().toId();
-                                return _id.longName()+":"+NStringUtils.trim(_id.repository());
+                                return _id.longName()+":"+NStringUtils.strip(_id.repository());
                             })
                             .map(NFunction.of((NDependencyTreeNode x) -> dependenciesToElement(x))
                                     .withDescription(NDescribables.ofDesc("dependenciesToElement"))

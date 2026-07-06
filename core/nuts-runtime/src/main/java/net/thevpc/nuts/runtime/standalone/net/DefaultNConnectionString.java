@@ -140,11 +140,11 @@ public class DefaultNConnectionString implements NConnectionString {
         StringBuilder sb = new StringBuilder();
         boolean fileProtocol = "file".equals(protocol);
         if (!NBlankable.isBlank(protocol)) {
-            sb.append(safeUrlEncode(NStringUtils.trim(protocol))).append(":");
+            sb.append(safeUrlEncode(NStringUtils.strip(protocol))).append(":");
             if (!fileProtocol) {
                 sb.append("//");
                 if (!NBlankable.isBlank(userName)) {
-                    sb.append(safeUrlEncode(NStringUtils.trim(userName)));
+                    sb.append(safeUrlEncode(NStringUtils.strip(userName)));
                     if (!NBlankable.isBlank(safeUrlEncode(password))) {
                         sb.append(':');
                         sb.append(safeUrlEncode(password));
@@ -154,7 +154,7 @@ public class DefaultNConnectionString implements NConnectionString {
                 if (NBlankable.isBlank(host)) {
                     sb.append("localhost");
                 } else {
-                    sb.append(NStringUtils.trim(host));
+                    sb.append(NStringUtils.strip(host));
                 }
                 if (!NBlankable.isBlank(port)) {
                     sb.append(":");
@@ -163,7 +163,7 @@ public class DefaultNConnectionString implements NConnectionString {
             }
         } else {
             if (!NBlankable.isBlank(userName)) {
-                sb.append(safeUrlEncode(NStringUtils.trim(userName)));
+                sb.append(safeUrlEncode(NStringUtils.strip(userName)));
                 if (!NBlankable.isBlank(password)) {
                     sb.append(':');
                     sb.append(safeUrlEncode(password));
@@ -176,7 +176,7 @@ public class DefaultNConnectionString implements NConnectionString {
                 if (NBlankable.isBlank(host)) {
                     sb.append("localhost");
                 } else {
-                    sb.append(safeUrlEncode(NStringUtils.trim(host)));
+                    sb.append(safeUrlEncode(NStringUtils.strip(host)));
                 }
                 if (!NBlankable.isBlank(port)) {
                     sb.append(":");

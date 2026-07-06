@@ -26,7 +26,7 @@ public class NSecureToken implements Serializable, NToElement {
         if (agentId.contains(":")) {
             throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("agentId must not contain '#' or ':'"));
         }
-        this.agentId = NStringUtils.trim(agentId);
+        this.agentId = NStringUtils.strip(agentId);
         this.payload = payload;
     }
 

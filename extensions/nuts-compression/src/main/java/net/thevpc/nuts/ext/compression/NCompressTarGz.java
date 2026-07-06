@@ -1,6 +1,5 @@
 package net.thevpc.nuts.ext.compression;
 
-import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
@@ -29,7 +28,7 @@ public class NCompressTarGz extends NCompressTar {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String z = NStringUtils.trim(context.criteria(String.class)).toLowerCase();
+        String z = NStringUtils.strip(context.criteria(String.class)).toLowerCase();
         if (z.equals("tar.gz") || z.equals("tgz")) {
             return NScorable.DEFAULT_SCORE;
         }

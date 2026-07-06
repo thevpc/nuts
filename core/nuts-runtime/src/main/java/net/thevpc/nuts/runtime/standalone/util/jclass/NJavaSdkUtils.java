@@ -132,7 +132,7 @@ public class NJavaSdkUtils {
 
     public static NOptional<String> validateJavaProduct(String product) {
         if (!NBlankable.isBlank(product)) {
-            switch (NStringUtils.trim(product).toLowerCase()) {
+            switch (NStringUtils.strip(product).toLowerCase()) {
                 case NExecutionEngineLocation.JAVA_PRODUCT_JDK: {
                     return NOptional.of(NExecutionEngineLocation.JAVA_PRODUCT_JDK);
                 }
@@ -223,7 +223,7 @@ public class NJavaSdkUtils {
     }
 
     public NVersionFilter createVersionFilterExact(String requestedJavaVersion) {
-        requestedJavaVersion = NStringUtils.trim(requestedJavaVersion);
+        requestedJavaVersion = NStringUtils.strip(requestedJavaVersion);
         NVersion vv = NVersion.get(requestedJavaVersion).get();
         String singleVersion = vv.asSingleValue().orNull();
         if (singleVersion != null) {
@@ -233,7 +233,7 @@ public class NJavaSdkUtils {
     }
 
     public NVersionFilter createVersionFilter(String requestedJavaVersion) {
-        requestedJavaVersion = NStringUtils.trim(requestedJavaVersion);
+        requestedJavaVersion = NStringUtils.strip(requestedJavaVersion);
         NVersion vv = NVersion.get(requestedJavaVersion).get();
         String singleVersion = vv.asSingleValue().orNull();
         if (singleVersion != null) {
@@ -684,7 +684,7 @@ public class NJavaSdkUtils {
         if (NBlankable.isBlank(preferredName)) {
             preferredName = product + "-" + vendor + "-" + jdkVersion;
         } else {
-            preferredName = NStringUtils.trim(preferredName);
+            preferredName = NStringUtils.strip(preferredName);
         }
         NExecutionEngineLocation r = new NExecutionEngineLocation(
                 NWorkspaceUtils.of().createSdkId("java", jdkVersion),
@@ -904,19 +904,19 @@ public class NJavaSdkUtils {
             if (c != 0) {
                 return c;
             }
-            c = NStringUtils.trim(a.name()).compareTo(NStringUtils.trim(b.name()));
+            c = NStringUtils.strip(a.name()).compareTo(NStringUtils.strip(b.name()));
             if (c != 0) {
                 return c;
             }
-            c = NStringUtils.trim(a.variant()).compareTo(NStringUtils.trim(b.variant()));
+            c = NStringUtils.strip(a.variant()).compareTo(NStringUtils.strip(b.variant()));
             if (c != 0) {
                 return c;
             }
-            c = NStringUtils.trim(a.path()).compareTo(NStringUtils.trim(b.path()));
+            c = NStringUtils.strip(a.path()).compareTo(NStringUtils.strip(b.path()));
             if (c != 0) {
                 return c;
             }
-            c = NStringUtils.trim(a.packaging()).compareTo(NStringUtils.trim(b.packaging()));
+            c = NStringUtils.strip(a.packaging()).compareTo(NStringUtils.strip(b.packaging()));
             if (c != 0) {
                 return c;
             }

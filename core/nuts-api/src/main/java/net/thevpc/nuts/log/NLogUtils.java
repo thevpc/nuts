@@ -3,6 +3,7 @@ package net.thevpc.nuts.log;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,11 +13,11 @@ public class NLogUtils {
     }
 
     public static NOptional<Level> parseLogLevel(String value) {
-        value = value == null ? "" : value.trim();
+        value = NStringUtils.strip(value);
         if (value.isEmpty()) {
             return NOptional.ofNamedEmpty("log level");
         }
-        switch (value.trim().toLowerCase()) {
+        switch (value.toLowerCase()) {
             case "off": {
                 return NOptional.of(Level.OFF);
             }

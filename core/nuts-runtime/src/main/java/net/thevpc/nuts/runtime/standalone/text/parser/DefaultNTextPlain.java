@@ -131,8 +131,8 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     }
 
     @Override
-    public NText trimLeft() {
-        String c = NStringUtils.trimLeft(text);
+    public NText stripLeft() {
+        String c = NStringUtils.stripLeft(text);
         if (Objects.equals(text, c)) {
             return this;
         }
@@ -140,8 +140,8 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     }
 
     @Override
-    public NText trimRight() {
-        String c = NStringUtils.trimRight(text);
+    public NText stripRight() {
+        String c = NStringUtils.stripRight(text);
         if (Objects.equals(text, c)) {
             return this;
         }
@@ -149,8 +149,8 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     }
 
     @Override
-    public NText trim() {
-        String c = NStringUtils.trim(text);
+    public NText strip() {
+        String c = NStringUtils.strip(text);
         if (Objects.equals(text, c)) {
             return this;
         }

@@ -106,7 +106,7 @@ public enum NShellFamily implements NEnum {
         return NEnumUtils.parseEnum(value, NShellFamily.class, s -> {
             String n = null;
             if (s.value().contains("/")) {
-                List<String> parts = NStringUtils.split(s.value().trim().toUpperCase(), "/",true,true);
+                List<String> parts = NStringUtils.split(s.value().toUpperCase(), "/",true,true);
                 if (parts.size() > 0) {
                     n = parts.get(parts.size() - 1);
                 } else {

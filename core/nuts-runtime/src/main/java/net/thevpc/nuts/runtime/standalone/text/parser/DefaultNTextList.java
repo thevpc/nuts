@@ -211,12 +211,12 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     }
 
     @Override
-    public NText trimLeft() {
+    public NText stripLeft() {
         List<NText> children = new ArrayList<>(children());
         boolean trimmed = false;
         for (int i = 0; i < children.size(); i++) {
             NText u = children.get(i);
-            NText c = u.trimLeft();
+            NText c = u.stripLeft();
             trimmed |= (u != c);
             int l = c.length();
             if (l > 0) {
@@ -234,12 +234,12 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     }
 
     @Override
-    public NText trimRight() {
+    public NText stripRight() {
         List<NText> children = new ArrayList<>(children());
         boolean trimmed = false;
         for (int i = children.size() - 1; i >= 0; i--) {
             NText u = children.get(i);
-            NText c = u.trimRight();  // delegate to child
+            NText c = u.stripRight();  // delegate to child
             trimmed |= (u != c);
             int l = c.length();
             if (l > 0) {
@@ -256,7 +256,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     }
 
     @Override
-    public NText trim() {
-        return trimLeft().trimRight();
+    public NText strip() {
+        return stripLeft().stripRight();
     }
 }

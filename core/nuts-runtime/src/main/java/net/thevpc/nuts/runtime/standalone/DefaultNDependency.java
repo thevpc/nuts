@@ -62,14 +62,14 @@ public class DefaultNDependency implements NDependency {
     public DefaultNDependency(String repository, String groupId, String artifactId, String classifier, NVersion version, String scope, String optional, List<NId> exclusions,
                               NEnvCondition condition, String type,
                               String properties) {
-        this.repository = NStringUtils.trimToNull(repository);
-        this.groupId = NStringUtils.trimToNull(groupId);
-        this.artifactId = NStringUtils.trimToNull(artifactId);
+        this.repository = NStringUtils.stripToNull(repository);
+        this.groupId = NStringUtils.stripToNull(groupId);
+        this.artifactId = NStringUtils.stripToNull(artifactId);
         this.version = version == null ? NVersion.BLANK : version;
-        this.classifier = NStringUtils.trimToNull(classifier);
+        this.classifier = NStringUtils.stripToNull(classifier);
         this.scope = NDependencyScope.parse(scope).orElse(NDependencyScope.API).id();
 
-        String validOptional = NStringUtils.trimToNull(optional);
+        String validOptional = NStringUtils.stripToNull(optional);
         if ("false".equalsIgnoreCase(validOptional)) {
             validOptional = null;
         } else if ("true".equalsIgnoreCase(validOptional)) {
@@ -83,7 +83,7 @@ public class DefaultNDependency implements NDependency {
         this.optional = validOptional;
         this.exclusions = NReservedLangUtils.unmodifiableList(exclusions);
         this.condition = condition == null ? NEnvCondition.BLANK : condition;
-        this.type = NStringUtils.trimToNull(type);
+        this.type = NStringUtils.stripToNull(type);
         Map<String, String> m = NStringMapFormat.DEFAULT.parse(properties).get();
         for (String k : new String[]{
                 NConstants.IdProperties.SCOPE,
@@ -121,7 +121,7 @@ public class DefaultNDependency implements NDependency {
                 }
             }
         }
-        this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(m));
+        this.properties = NStringUtils.strip(NStringMapFormat.DEFAULT.format(m));
     }
 
     @Override

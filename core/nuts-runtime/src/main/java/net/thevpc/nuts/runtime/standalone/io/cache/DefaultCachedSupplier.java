@@ -11,6 +11,7 @@ import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -114,7 +115,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
     private String loadCachedId() {
         try {
             if (cachePath.isRegularFile()) {
-                return cacheIdPath.readString().trim();
+                return NStringUtils.strip(cacheIdPath.readString());
             }
         } catch (Exception ex) {
             //just ignore

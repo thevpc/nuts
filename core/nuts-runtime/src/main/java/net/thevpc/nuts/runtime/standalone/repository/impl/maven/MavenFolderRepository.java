@@ -164,7 +164,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
 
     public String getIdExtension(NId id) {
         Map<String, String> q = id.properties();
-        String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
+        String f = NStringUtils.strip(q.get(NConstants.IdProperties.FACE));
         switch (f) {
             case NConstants.QueryFaces.DESCRIPTOR: {
                 return ".pom";

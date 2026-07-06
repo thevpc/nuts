@@ -64,7 +64,7 @@ public class MavenSettingsRepository extends NRepositoryList {
 
     private MavenFolderRepository createChild(NRepositorySpec options0, String type, String id, String url) {
         NPath p = NPath.of(url);
-        String pr = NStringUtils.trim(p.protocol());
+        String pr = NStringUtils.strip(p.protocol());
         MavenFolderRepository mavenChild = null;
         NRepositorySpec options = new NRepositorySpec();
         options.name(id);
@@ -99,7 +99,7 @@ public class MavenSettingsRepository extends NRepositoryList {
                             repositoryLayout = o.getStringValue("repositoryLayout").orNull();
                         }
                         if(!NBlankable.isBlank(repositoryLayout)) {
-                            options.sourceLocation(new NRepositoryLocation(id, "maven", NStringUtils.trim(repositoryLayout)+"+"+url));
+                            options.sourceLocation(new NRepositoryLocation(id, "maven", NStringUtils.strip(repositoryLayout)+"+"+url));
                         }
 //                        if(!NBlankable.isBlank(repositoryName)) {
 //                            config.setName(repositoryName);

@@ -47,7 +47,7 @@ class NRateLimitRuleBuilderImpl implements NRateLimitRuleBuilder {
 
     @Override
     public NRateLimitRuleBuilder withStrategy(String strategy) {
-        this.strategy= NStringUtils.trimToNull(strategy);
+        this.strategy= NStringUtils.stripToNull(strategy);
         return this;
     }
 

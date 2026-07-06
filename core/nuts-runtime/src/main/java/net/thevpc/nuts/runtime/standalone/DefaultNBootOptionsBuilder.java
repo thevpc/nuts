@@ -791,7 +791,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
 //
 //    @Override
 //    public DefaultNBootOptionsBuilder setBootRepositories(String bootRepositories) {
-//        this.bootRepositories = NStringUtils.trimToNull(bootRepositories);
+//        this.bootRepositories = NStringUtils.stripToNull(bootRepositories);
 //        return this;
 //    }
 
@@ -861,7 +861,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
 
     @Override
     public DefaultNBootOptionsBuilder uuid(String uuid) {
-        this.uuid = NStringUtils.trimToNull(uuid);
+        this.uuid = NStringUtils.stripToNull(uuid);
         return this;
     }
 
@@ -2768,7 +2768,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         if (options != null) {
             for (String option : options) {
                 if (option != null) {
-                    option = NStringUtils.trim(option);
+                    option = NStringUtils.strip(option);
                     if (!option.isEmpty()) {
                         if (outputFormatOptions == null) {
                             outputFormatOptions = new ArrayList<>();

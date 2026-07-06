@@ -220,23 +220,23 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                         NPairElement p = child.asPair().get();
                         switch (NNameFormat.VAR_NAME.format(p.name().get())) {
                             case "languageId": {
-                                info.languageId = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.languageId = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                             case "languageName": {
-                                info.languageName = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.languageName = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                             case "languageVersion": {
-                                info.languageVersion = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.languageVersion = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                             case "languageGroupId": {
-                                info.languageGroupId = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.languageGroupId = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                             case "fileExtension": {
-                                info.fileExtension = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.fileExtension = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 if (info.fileExtension != null) {
                                     if (info.fileExtension.startsWith("*.")) {
                                         info.fileExtension = info.fileExtension.substring(2);
@@ -247,7 +247,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                                 break;
                             }
                             case "fileName": {
-                                info.fileName = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.fileName = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                         }

@@ -62,8 +62,8 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     public DefaultNDependencyBuilder(String groupId, String artifactId) {
-        this.groupId = NStringUtils.trimToNull(groupId);
-        this.artifactId = NStringUtils.trimToNull(artifactId);
+        this.groupId = NStringUtils.stripToNull(groupId);
+        this.artifactId = NStringUtils.stripToNull(artifactId);
     }
 
     @Override
@@ -180,7 +180,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder type(String type) {
-        this.type = NStringUtils.trimToNull(type);
+        this.type = NStringUtils.stripToNull(type);
         return this;
     }
 
@@ -191,7 +191,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder optional(String optional) {
-        String o = NStringUtils.trimToNull(optional);
+        String o = NStringUtils.stripToNull(optional);
         if ("false".equals(o)) {
             o = null;
         } else if ("true".equalsIgnoreCase(o)) {
@@ -251,7 +251,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder repository(String repository) {
-        this.repo = NStringUtils.trimToNull(repository);
+        this.repo = NStringUtils.stripToNull(repository);
         return this;
     }
 
@@ -262,7 +262,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder groupId(String groupId) {
-        this.groupId = NStringUtils.trimToNull(groupId);
+        this.groupId = NStringUtils.stripToNull(groupId);
         return this;
     }
 
@@ -273,7 +273,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder artifactId(String artifactId) {
-        this.artifactId = NStringUtils.trimToNull(artifactId);
+        this.artifactId = NStringUtils.stripToNull(artifactId);
         return this;
     }
 
@@ -284,16 +284,16 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder classifier(String classifier) {
-        this.classifier = NStringUtils.trimToNull(classifier);
+        this.classifier = NStringUtils.stripToNull(classifier);
         return this;
     }
 
     @Override
     public String fullName() {
         if (NBlankable.isBlank(groupId)) {
-            return NStringUtils.trim(artifactId);
+            return NStringUtils.strip(artifactId);
         }
-        return NStringUtils.trim(groupId) + ":" + NStringUtils.trim(artifactId);
+        return NStringUtils.strip(groupId) + ":" + NStringUtils.strip(artifactId);
     }
 
     @Override

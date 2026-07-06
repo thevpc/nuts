@@ -49,7 +49,7 @@ public class DefaultNCustomElement extends AbstractNElement implements NCustomEl
 
     @Override
     public NOptional<NElement> resolve(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
             return NOptional.of(this);
         }
@@ -58,7 +58,7 @@ public class DefaultNCustomElement extends AbstractNElement implements NCustomEl
 
     @Override
     public List<NElement> resolveAll(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
             return new ArrayList<>(Arrays.asList(this));
         }

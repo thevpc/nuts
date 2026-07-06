@@ -57,7 +57,7 @@ public class WarExecutorComponent implements NExecutorComponent {
     public static int getScore(NScorableContext context) {
         NDefinition def = context.criteria(NDefinition.class);
         if (def != null) {
-            if ("war".equals(NStringUtils.trim(def.descriptor().packaging()))) {
+            if ("war".equals(NStringUtils.strip(def.descriptor().packaging()))) {
                 return NScorable.DEFAULT_SCORE + 1;
             }
         }

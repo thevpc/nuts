@@ -149,7 +149,7 @@ public class DefaultNObjectObjectWriter extends DefaultObjectWriterBase<NObjectO
     public NFormatAndValue<Object, NContentTypeWriter> createObjectFormat(Object value) {
         NSession session = NSession.of();
         String formatMode = formatMode();
-        String type2 = formatMode == null ? "" : NNameFormat.CLASS_NAME.format(NStringUtils.trim(formatMode));
+        String type2 = formatMode == null ? "" : NNameFormat.CLASS_NAME.format(NStringUtils.strip(formatMode));
         switch (type2) {
             case "Byte":
             case "Bytes":

@@ -356,7 +356,7 @@ public class NPomXmlParser {
                                 break;
                             }
                             case "activeByDefault": {
-                                String s = NStringUtils.trim(elemToStr(cc));
+                                String s = NStringUtils.strip(elemToStr(cc));
                                 a.setActiveByDefault(s.equalsIgnoreCase("true"));
                                 break;
                             }

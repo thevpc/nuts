@@ -66,7 +66,7 @@ public class NRunAs {
         if(NBlankable.isBlank(runAs)){
             return NOptional.ofNamedEmpty("NRunAs "+runAs);
         }
-        runAs=runAs.trim();
+        runAs=NStringUtils.strip(runAs);
         String urunAs=runAs.toUpperCase();
         switch (urunAs){
             case "ROOT":

@@ -77,7 +77,7 @@ public interface NLock extends Lock, NDescribable {
 
     static NLock ofIdPath(NId id, NStoreScope storeScope, String path) {
         if(NBlankable.isBlank(path)){
-            path="nuts-" + NStringUtils.firstNonBlankTrimmed(id.face(), "content") + ".lock";
+            path="nuts-" + NStringUtils.firstNonBlankStripped(id.face(), "content") + ".lock";
         }
         return NLockBuilder.of().source(id.longId()).resource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
     }

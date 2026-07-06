@@ -18,7 +18,7 @@ public class RnshPool {
 
     public RnshHttpClient get(NConnectionString cnx) {
         NConnectionStringBuilder cb = cnx.builder();
-        String v = NStringUtils.trimToNull(cb.path());
+        String v = NStringUtils.stripToNull(cb.path());
         Map<String, List<String>> qm = cb.queryMap().orElse(new HashMap<>());
         String context = NOptional.ofFirst(qm.get("context")).orElse(null);
         if (NBlankable.isBlank(context)) {

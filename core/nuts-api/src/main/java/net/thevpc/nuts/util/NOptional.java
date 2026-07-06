@@ -46,7 +46,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
     }
 
     static <T> NOptional<T> ofNamedEmpty(String name) {
-        return ofEmpty(() -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
+        return ofEmpty(() -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
     static <T> NOptional<T> ofNamedEmpty(NMsg name) {
@@ -62,7 +62,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
     }
 
     static <T> NOptional<T> ofNamedError(String name) {
-        return ofError(() -> NMsg.ofC("error evaluating %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
+        return ofError(() -> NMsg.ofC("error evaluating %s", NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
     static <T> NOptional<T> ofNamedError(String name, Throwable throwable) {
@@ -124,7 +124,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
     }
 
     static <T> NOptional<T> ofNamed(T value, String name) {
-        return of(value, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
+        return of(value, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
     static <T> NOptional<T> ofNamed(T value, NMsg name) {
@@ -150,7 +150,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
     }
 
     static <T> NOptional<T> ofNamedOptional(Optional<T> optional, String name) {
-        return ofOptional(optional, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")));
+        return ofOptional(optional, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
     static <T> NOptional<T> ofOptional(Optional<T> optional, NMsg errorMessage) {
@@ -215,8 +215,8 @@ public interface NOptional<T> extends NBlankable, NDescribable {
             return ofSingleton(collection, null, null);
         }
         return ofSingleton(collection,
-                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value")),
-                () -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlankTrimmed(name, "value")));
+                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankStripped(name, "value")),
+                () -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
     /**
@@ -278,7 +278,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> ofNamedFirst(Collection<T> collection, String name) {
         return ofFirst(collection,
-                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankTrimmed(name, "value"))
+                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankStripped(name, "value"))
         );
     }
 
@@ -403,9 +403,9 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * <p>
      * Example:
      * <pre>
-     *   NOptional.of("  ").mapIfNotBlank(String::trim);
+     *   NOptional.of("  ").mapIfNotBlank(NStringUtils::strip);
      *       // Returns empty (whitespace is blank)
-     *   NOptional.of("hello").mapIfNotBlank(String::trim);
+     *   NOptional.of("hello").mapIfNotBlank(NStringUtils::strip);
      *       // Returns "hello"
      *   NOptional.of(new int[0]).mapIfNotBlank(arr -> arr.length);
      *       // Returns empty (empty array is blank)

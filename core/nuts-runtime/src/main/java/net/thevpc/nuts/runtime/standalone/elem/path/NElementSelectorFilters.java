@@ -31,6 +31,7 @@ import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStreamTokenizer;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -100,6 +101,23 @@ public class NElementSelectorFilters {
                     case NToken.TT_WORD: {
                         wasNotDotName = true;
                         q.queue.add(new SubItemJsonSelector(st.sval));
+                        break;
+                    }
+                    case NToken.TT_OP: {
+                        for (char c : st.sval.toCharArray()) {
+                            switch (c){
+                                case '.':{
+                                    if (!wasNotDotName) {
+                                        q.queue.add(new SubItemJsonSelector("*"));
+                                    }
+                                    wasNotDotName = false;
+                                    break;
+                                }
+                                default:{
+                                    throw new IllegalArgumentException("Unexpected " + st);
+                                }
+                            }
+                        }
                         break;
                     }
                     case '.': {
@@ -273,7 +291,7 @@ public class NElementSelectorFilters {
                         s = s.substring(2);
                         List<NElementNameMatcher> ors = new ArrayList<>();
                         for (String vir : s.split(",")) {
-                            vir = vir.trim();
+                            vir = NStringUtils.strip(vir);
                             if (vir.length() > 0) {
                                 if (vir.indexOf('-') > 0) {
                                     String[] inter = vir.split("-");
@@ -348,7 +366,7 @@ public class NElementSelectorFilters {
         private NElementIndexMatcher createIndexValueInervalMatcher(String s) throws NumberFormatException {
             List<NElementIndexMatcher> ors = new ArrayList<>();
             for (String vir : s.split(",")) {
-                vir = vir.trim();
+                vir = NStringUtils.strip(vir);
                 if (vir.length() > 0) {
                     if (vir.indexOf('-') > 0) {
                         String[] inter = vir.split("-");

@@ -60,7 +60,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
         }
         NDefinition def = context.criteria(NDefinition.class);
         if (def != null) {
-            switch (NStringUtils.trim(def.descriptor().packaging())){
+            switch (NStringUtils.strip(def.descriptor().packaging())){
                 case "jar":
                 case "war":
                 case "zip":

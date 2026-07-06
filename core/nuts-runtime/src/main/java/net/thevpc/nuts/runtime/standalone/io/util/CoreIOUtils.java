@@ -92,7 +92,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isValidConfLine(String line) {
-        String l = NStringUtils.trimLeftToNull(line);
+        String l = NStringUtils.stripLeftToNull(line);
         if (l == null) {
             return false;
         }

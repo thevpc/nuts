@@ -213,7 +213,7 @@ public class DefaultNRepositoryModel {
             uuid = UUID.randomUUID().toString();
         }
         NRepositorySpec options2 = new NRepositorySpec();
-        options2.name(NStringUtils.firstNonBlankTrimmed(options.name(),name));
+        options2.name(NStringUtils.firstNonBlankStripped(options.name(),name));
         options2.sourceLocation(NRepositoryLocation.of("custom@"));
         options2.uuid(uuid);
         options2.storeStrategy(repoModel.storeStrategy());

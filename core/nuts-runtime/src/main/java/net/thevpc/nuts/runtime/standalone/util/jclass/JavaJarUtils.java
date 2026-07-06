@@ -81,7 +81,7 @@ public class JavaJarUtils {
                 if (a != null) {
                     String v = a.getValue("Main-Class");
                     if (!NBlankable.isBlank(v)) {
-                        v = NStringUtils.trim(v);
+                        v = NStringUtils.strip(v);
                         classes.add(new DefaultNExecutionEntry(v, true, false));
                     }
                 }
@@ -89,7 +89,7 @@ public class JavaJarUtils {
                 NPom pom = new NPomXmlParser().parse(inputStream);
                 final Element ee = pom.getXml().getDocumentElement();
                 if (pom.getParent() != null && pom.getParent().getArtifactId().equals("spring-boot-starter-parent")) {
-                    String springStartClass = NStringUtils.trim(pom.getProperties().get("start-class"));
+                    String springStartClass = NStringUtils.strip(pom.getProperties().get("start-class"));
                     if (springStartClass.length() > 0) {
                         classes.add(new DefaultNExecutionEntry(springStartClass, true, false));
                     }
@@ -106,7 +106,7 @@ public class JavaJarUtils {
                                     pluginId.shortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
                                             || pluginId.shortName().equals("org.apache.maven.plugins:maven-jar-plugin")
                             ) {
-                                String s = NStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.strip(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
                                     classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -121,7 +121,7 @@ public class JavaJarUtils {
                                             || pluginId.shortName().equals("org.springframework.boot:spring-boot-maven-plugin")
                                             || pluginId.shortName().equals("org.openjfx:javafx-maven-plugin")
                             ) {
-                                String s = NStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.strip(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
                                     classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -134,7 +134,7 @@ public class JavaJarUtils {
                             Node plugin = e.getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
                             if (pluginId.shortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
-                                String s = NStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.strip(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
                                     classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -147,7 +147,7 @@ public class JavaJarUtils {
                             if (
                                     pluginId.shortName().equals("org.apache.maven.plugins:maven-shade-plugin")
                             ) {
-                                String s = NStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.strip(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
                                     classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -179,7 +179,7 @@ public class JavaJarUtils {
                 }
                 NDescriptorProperty mc = descriptor.getProperty("nuts.mainClass").orNull();
                 if (mc != null) {
-                    String s = NStringUtils.trim(mc.value().asString().get());
+                    String s = NStringUtils.strip(mc.value().asString().get());
                     if (!s.isEmpty()) {
                         s = resolveMainClassString(s, descriptor);
                         classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -252,15 +252,15 @@ public class JavaJarUtils {
             if (ne != null) {
                 switch (ne.getNodeName()) {
                     case "groupId": {
-                        ib.groupId(NStringUtils.trim(ne.getTextContent()));
+                        ib.groupId(NStringUtils.strip(ne.getTextContent()));
                         break;
                     }
                     case "artifactId": {
-                        ib.artifactId(NStringUtils.trim(ne.getTextContent()));
+                        ib.artifactId(NStringUtils.strip(ne.getTextContent()));
                         break;
                     }
                     case "version": {
-                        ib.version(NStringUtils.trim(ne.getTextContent()));
+                        ib.version(NStringUtils.strip(ne.getTextContent()));
                         break;
                     }
                 }
@@ -295,7 +295,7 @@ public class JavaJarUtils {
                     for (Object o : attrs.keySet()) {
                         Attributes.Name attrName = (Attributes.Name) o;
                         if ("Automatic-Module-Name".equals(attrName.toString())) {
-                            automaticModuleName.setNonNull(NStringUtils.trimToNull(attrs.getValue(attrName)));
+                            automaticModuleName.setNonNull(NStringUtils.stripToNull(attrs.getValue(attrName)));
                             return NVisitResult.TERMINATE;
                         }
                     }

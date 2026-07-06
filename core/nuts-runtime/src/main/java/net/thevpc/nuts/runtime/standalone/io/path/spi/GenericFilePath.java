@@ -473,7 +473,7 @@ public class GenericFilePath implements NPathSPI {
         @Override
         public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path != null) {
-                if (path.trim().length() > 0) {
+                if (!NStringUtils.isBlank(path)) {
                     for (char c : path.toCharArray()) {
                         if (c < 32) {
                             return null;
@@ -493,7 +493,7 @@ public class GenericFilePath implements NPathSPI {
             }
             String path = (String) cri;
             try {
-                if (!path.trim().isEmpty()) {
+                if (!NStringUtils.isBlank(path)) {
                     for (char c : path.toCharArray()) {
                         if (c < 32) {
                             return NScorable.UNSUPPORTED_SCORE;

@@ -36,7 +36,7 @@ public class NEnvUtils {
         List<NId> a = new ArrayList<>();
         if (!NBlankable.isBlank(_XDG_SESSION_DESKTOP) && !NBlankable.isBlank(_XDG_SESSION_DESKTOP)) {
             String[] supportedSessions = new LinkedHashSet<>(
-                    Arrays.stream(NStringUtils.trim(_XDG_CURRENT_DESKTOP).split(":"))
+                    Arrays.stream(NStringUtils.strip(_XDG_CURRENT_DESKTOP).split(":"))
                             .map(x -> x.trim().toLowerCase()).filter(x -> x.length() > 0)
                             .collect(Collectors.toList())
             ).toArray(new String[0]);
@@ -280,7 +280,7 @@ public class NEnvUtils {
             }
 
             if (!NBlankable.isBlank(hostName) && !hostName.equals("localhost")) {
-                return NStringUtils.trim(hostName);
+                return NStringUtils.strip(hostName);
             }
         } catch (Exception ignored) {
             // Fall through to OS-specific methods
@@ -298,14 +298,14 @@ public class NEnvUtils {
                             .compile("Hostname\\s+REG_SZ\\s+(\\S+)")
                             .matcher(regQuery);
                     if (m.find()) {
-                        return NStringUtils.trim(m.group(1));
+                        return NStringUtils.strip(m.group(1));
                     }
                 } catch (Exception ignored) {
                     // Fallback to 'hostname' command
                 }
 
                 try {
-                    return NStringUtils.trim(
+                    return NStringUtils.strip(
                             cmdRunner.apply(new String[]{"hostname"})
                     );
                 } catch (Exception ignored) {
@@ -318,7 +318,7 @@ public class NEnvUtils {
             default: {
                 String h = null;
                 try {
-                    h = NStringUtils.trim(
+                    h = NStringUtils.strip(
                             (connectionString==null? NPath.of("/etc/hostname"):NPath.of(connectionString.builder().path("/etc/hostname").build()))
                             .readString());
                 } catch (Exception e) {
@@ -327,7 +327,7 @@ public class NEnvUtils {
                 if (NBlankable.isBlank(h)) {
                     h = cmdRunner.apply(new String[]{"/bin/hostname"});
                 }
-                hostName = NStringUtils.trim(h);
+                hostName = NStringUtils.strip(h);
                 break;
             }
         }
@@ -345,7 +345,7 @@ public class NEnvUtils {
                 // macOS "Computer Name" (friendly name shown in System Settings)
                 try {
                     String name = cmdRunner.apply(new String[]{"/usr/sbin/scutil", "--get", "ComputerName"});
-                    String trimmed = NStringUtils.trim(name);
+                    String trimmed = NStringUtils.strip(name);
                     if (!NBlankable.isBlank(trimmed)) {
                         return trimmed;
                     }
@@ -360,7 +360,7 @@ public class NEnvUtils {
                 // systemd "Pretty Hostname" if available
                 try {
                     String pretty = cmdRunner.apply(new String[]{"hostnamectl", "--pretty"});
-                    String trimmed = NStringUtils.trim(pretty);
+                    String trimmed = NStringUtils.strip(pretty);
                     if (!NBlankable.isBlank(trimmed) && !"n/a".equalsIgnoreCase(trimmed)) {
                         return trimmed;
                     }

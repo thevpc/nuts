@@ -18,8 +18,8 @@ public class MavenNVersionComparator implements NVersionComparator {
         if (version2 == null) {
             version2 = NVersion.BLANK;
         }
-        String v1 = NStringUtils.trim(version1.value());
-        String v2 = NStringUtils.trim(version2.value());
+        String v1 = NStringUtils.strip(version1.value());
+        String v2 = NStringUtils.strip(version2.value());
         if (v1.equals(v2)) {
             return 0;
         }

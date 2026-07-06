@@ -116,11 +116,11 @@ public class DefaultNDescriptor implements NDescriptor {
     ) {
         this.id = id;
         this.idType = idType == null ? NIdType.REGULAR : idType;
-        this.packaging = NStringUtils.trimToNull(packaging);
+        this.packaging = NStringUtils.stripToNull(packaging);
         this.parents = NReservedLangUtils.uniqueList(parents);
-        this.description = NStringUtils.trimToNull(description);
-        this.name = NStringUtils.trimToNull(name);
-        this.genericName = NStringUtils.trimToNull(genericName);
+        this.description = NStringUtils.stripToNull(description);
+        this.name = NStringUtils.stripToNull(name);
+        this.genericName = NStringUtils.stripToNull(genericName);
         this.icons = NReservedLangUtils.uniqueNonBlankList(icons);
         this.categories = NReservedLangUtils.uniqueNonBlankList(categories);
         this.executor = executor;
@@ -137,7 +137,7 @@ public class DefaultNDescriptor implements NDescriptor {
             this.properties = p.toList();
         }
         this.flags = NReservedLangUtils.nonBlankSet(flags);
-        this.solver = NStringUtils.trimToNull(solver);
+        this.solver = NStringUtils.stripToNull(solver);
         this.contributors = NReservedLangUtils.unmodifiableUniqueList(contributors);
         this.developers = NReservedLangUtils.unmodifiableUniqueList(developers);
         this.licenses = NReservedLangUtils.unmodifiableUniqueList(licenses);

@@ -76,35 +76,93 @@ public class NStringUtils {
         return pattern.matcher(nfdNormalizedString).replaceAll("");
     }
 
-    /**
-     * @param value value
-     * @return trimmed value (never null)
-     */
-    public static String trim(String value) {
+    public static boolean isBlank(String value) {
         if (value == null) {
-            return "";
+            return true;
         }
-        return value.trim();
+        int len = value.length();
+        if (len == 0) {
+            return true;
+        }
+        for (int i = 0; i < len; i++) {
+            if (!Character.isWhitespace(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isBlank(char[] value) {
+        if (value == null) {
+            return true;
+        }
+        int len = value.length;
+        if (len == 0) {
+            return true;
+        }
+        for (int i = 0; i < len; i++) {
+            if (!Character.isWhitespace(value[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isBlank(CharSequence value) {
+        if (value == null) {
+            return true;
+        }
+        int len = value.length();
+        if (len == 0) {
+            return true;
+        }
+        for (int i = 0; i < len; i++) {
+            if (!Character.isWhitespace(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
+     * @since 1.0.0 dropped trim in favor of strip
      */
-    public static CharSequence trim(CharSequence value) {
+    public static String strip(String value) {
         if (value == null) {
             return "";
-        }
-        if (value instanceof String) {
-            return value.toString().trim();
         }
         int len0 = value.length();
         int len = len0;
         int st = 0;
-        while ((st < len) && (value.charAt(st) <= ' ')) {
+        while ((st < len) && Character.isWhitespace(value.charAt(st))) {
             st++;
         }
-        while ((st < len) && (value.charAt(len - 1) <= ' ')) {
+        while ((st < len) && Character.isWhitespace(value.charAt(len - 1))) {
+            len--;
+        }
+        return ((st > 0) || (len < len0)) ? value.substring(st, len) : value;
+    }
+
+    /**
+     * @param value value
+     * @return stripped value (never null)
+     */
+    public static CharSequence strip(CharSequence value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof String) {
+            return strip(value.toString());
+        }
+        int len0 = value.length();
+        int len = len0;
+        int st = 0;
+        while ((st < len) && Character.isWhitespace(value.charAt(st))) {
+            st++;
+        }
+        while ((st < len) && Character.isWhitespace(value.charAt(len - 1))) {
             len--;
         }
         return ((st > 0) || (len < len0)) ? value.subSequence(st, len) : value.toString();
@@ -112,9 +170,9 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static CharSequence trimLeft(CharSequence value) {
+    public static CharSequence stripLeft(CharSequence value) {
         if (value == null) {
             return "";
         }
@@ -123,7 +181,7 @@ public class NStringUtils {
             return value.toString();
         }
         int st = 0;
-        while ((st < len) && (value.charAt(st) <= ' ')) {
+        while ((st < len) && Character.isWhitespace(value.charAt(st))) {
             st++;
         }
         if (st > 0) {
@@ -134,9 +192,9 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static CharSequence trimRight(CharSequence value) {
+    public static CharSequence stripRight(CharSequence value) {
         if (value == null) {
             return "";
         }
@@ -145,7 +203,7 @@ public class NStringUtils {
             return value.toString();
         }
         int st = len;
-        while ((st > 0) && (value.charAt(st - 1) <= ' ')) {
+        while ((st > 0) && Character.isWhitespace(value.charAt(st - 1))) {
             st--;
         }
         if (st < len) {
@@ -156,9 +214,9 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimLeft(String value) {
+    public static String stripLeft(String value) {
         if (value == null) {
             return "";
         }
@@ -167,7 +225,7 @@ public class NStringUtils {
             return value;
         }
         int st = 0;
-        while ((st < len) && (value.charAt(st) <= ' ')) {
+        while ((st < len) && Character.isWhitespace(value.charAt(st))) {
             st++;
         }
         if (st > 0) {
@@ -178,9 +236,9 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimRight(String value) {
+    public static String stripRight(String value) {
         if (value == null) {
             return "";
         }
@@ -189,7 +247,7 @@ public class NStringUtils {
             return value;
         }
         int st = len;
-        while ((st > 0) && (value.charAt(st - 1) <= ' ')) {
+        while ((st > 0) && Character.isWhitespace(value.charAt(st - 1))) {
             st--;
         }
         if (st < len) {
@@ -200,13 +258,13 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimToNull(String value) {
+    public static String stripToNull(String value) {
         if (value == null) {
             return null;
         }
-        String t = value.trim();
+        String t = strip(value);
         if (t.isEmpty()) {
             return null;
         }
@@ -215,13 +273,13 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimToNull(CharSequence value) {
+    public static String stripToNull(CharSequence value) {
         if (value == null) {
             return null;
         }
-        String t = trim(value).toString();
+        String t = strip(value).toString();
         if (t.isEmpty()) {
             return null;
         }
@@ -230,13 +288,13 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimLeftToNull(CharSequence value) {
+    public static String stripLeftToNull(CharSequence value) {
         if (value == null) {
             return null;
         }
-        String t = trimLeft(value).toString();
+        String t = stripLeft(value).toString();
         if (t.isEmpty()) {
             return null;
         }
@@ -245,13 +303,13 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimRightToNull(CharSequence value) {
+    public static String stripRightToNull(CharSequence value) {
         if (value == null) {
             return null;
         }
-        String t = trimRight(value).toString();
+        String t = stripRight(value).toString();
         if (t.isEmpty()) {
             return null;
         }
@@ -309,22 +367,22 @@ public class NStringUtils {
         return null;
     }
 
-    public static String firstNonBlankTrimmedToNull(String a, String b) {
+    public static String firstNonBlankStrippedToNull(String a, String b) {
         if (!NBlankable.isBlank(a)) {
-            return trimToNull(a);
+            return stripToNull(a);
         }
         if (!NBlankable.isBlank(b)) {
-            return trimToNull(b);
+            return stripToNull(b);
         }
         return null;
     }
 
-    public static String firstNonBlankTrimmed(String a, String b) {
+    public static String firstNonBlankStripped(String a, String b) {
         if (!NBlankable.isBlank(a)) {
-            return trim(a);
+            return strip(a);
         }
         if (!NBlankable.isBlank(b)) {
-            return trim(b);
+            return strip(b);
         }
         return "";
     }
@@ -343,30 +401,30 @@ public class NStringUtils {
         return firstNonBlank(values == null ? null : Arrays.asList(values));
     }
 
-    public static String firstNonBlankTrimmed(String... values) {
-        return firstNonBlankTrimmed(values == null ? null : Arrays.asList(values));
+    public static String firstNonBlankStripped(String... values) {
+        return firstNonBlankStripped(values == null ? null : Arrays.asList(values));
     }
 
-    public static String firstNonBlankTrimmedToNull(String... values) {
-        return firstNonBlankTrimmedToNull(values == null ? null : Arrays.asList(values));
+    public static String firstNonBlankStrippedToNull(String... values) {
+        return firstNonBlankStrippedToNull(values == null ? null : Arrays.asList(values));
     }
 
-    public static String firstNonBlankTrimmedToNull(List<String> values) {
+    public static String firstNonBlankStrippedToNull(List<String> values) {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
-                    return trimToNull(value);
+                    return stripToNull(value);
                 }
             }
         }
         return null;
     }
 
-    public static String firstNonBlankTrimmed(List<String> values) {
+    public static String firstNonBlankStripped(List<String> values) {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
-                    return trim(value);
+                    return strip(value);
                 }
             }
         }
@@ -475,7 +533,7 @@ public class NStringUtils {
     }
 
     public static List<String> parsePropertyStringList(String s) {
-        return NReservedLangUtils.parseAndTrimToDistinctList(s);
+        return NReservedLangUtils.parseAndStripToDistinctList(s);
     }
 
     public static List<String> split(String value, String chars) {
@@ -529,7 +587,7 @@ public class NStringUtils {
         return sb.toString();
     }
 
-    public static List<String> split(String value, String chars, boolean trim, boolean ignoreEmpty) {
+    public static List<String> split(String value, String chars, boolean strip, boolean ignoreEmpty) {
         if (value == null) {
             value = "";
         }
@@ -548,8 +606,8 @@ public class NStringUtils {
                 wasSep = true;
             } else {
                 wasSep = false;
-                if (trim) {
-                    s = s.trim();
+                if (strip) {
+                    s = NStringUtils.strip(s);
                 }
                 if (!ignoreEmpty || !s.isEmpty()) {
                     all.add(s);
@@ -1222,13 +1280,13 @@ public class NStringUtils {
         }
     }
 
-    public static StringBuilder trim(StringBuilder sb) {
-        trimLeft(sb);
-        trimRight(sb);
+    public static StringBuilder strip(StringBuilder sb) {
+        stripLeft(sb);
+        stripRight(sb);
         return sb;
     }
 
-    public static StringBuilder trimLeft(StringBuilder sb) {
+    public static StringBuilder stripLeft(StringBuilder sb) {
         int len = sb.length();
         int start = 0;
         while (start < len && Character.isWhitespace(sb.charAt(start))) {
@@ -1265,7 +1323,7 @@ public class NStringUtils {
         }
     }
 
-    public static StringBuilder trimRight(StringBuilder sb) {
+    public static StringBuilder stripRight(StringBuilder sb) {
         int end = sb.length() - 1;
         while (end >= 0 && Character.isWhitespace(sb.charAt(end))) {
             end--;

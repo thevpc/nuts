@@ -62,7 +62,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
         if (NBlankable.isBlank(version)) {
             return NOptional.of(BLANK);
         }
-        String version2 = NStringUtils.trim(version);
+        String version2 = NStringUtils.strip(version);
         if (PATTERN.matcher(version2).matches()) {
             return NOptional.of(new DefaultNVersion(version2));
         }

@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.reflect.NReflectUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -229,7 +230,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
     }
 
     private String uniformName(String s) {
-        s = s.trim();
+        s = NStringUtils.strip(s);
         if(fieldNameNormalizer !=null){
             return fieldNameNormalizer.apply(s);
         }

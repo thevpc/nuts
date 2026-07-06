@@ -40,7 +40,7 @@ import java.util.TreeSet;
 public class NDependencyUtils {
 
     public static String normalizeDependencyType(String s1) {
-        return NStringUtils.trimToNull(s1);
+        return NStringUtils.stripToNull(s1);
     }
 
     public static String toExclusionListString(NId[] exclusions) {
@@ -84,7 +84,7 @@ public class NDependencyUtils {
     }
 
     public static boolean isDefaultOptional(String s1) {
-        s1 = NStringUtils.trim(s1);
+        s1 = NStringUtils.strip(s1);
         return s1.isEmpty() || s1.equals("false");
     }
 }

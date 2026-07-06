@@ -97,7 +97,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
     // -------------------------------------------------------------------------
 
     private int detectBlockScalar(String line) {
-        String trimmed = NStringUtils.trimRight(line);
+        String trimmed = NStringUtils.stripRight(line);
         if (trimmed.isEmpty()) return -1;
         char last = trimmed.charAt(trimmed.length() - 1);
         // allow chomping indicators: |-, |+, >-, >+, |2-, etc.
@@ -268,7 +268,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
         while (ar.hasNext() && ar.peekChar() != ':' && ar.peekChar() != '\n') {
             sb.append(ar.readChar());
         }
-        all.add(txt.ofStyled(NStringUtils.trimRight(sb.toString()), NTextStyle.keyword()));
+        all.add(txt.ofStyled(NStringUtils.stripRight(sb.toString()), NTextStyle.keyword()));
     }
 
     // -------------------------------------------------------------------------
@@ -346,7 +346,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
             // inline comment: '#' preceded by a space
             if (ar.peekChar() == '#' && sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ') {
                 // trim trailing space from value, emit comment
-                String val = NStringUtils.trimRight(sb.toString());
+                String val = NStringUtils.stripRight(sb.toString());
                 all.add(styleScalarValue(val, txt));
                 all.add(txt.ofPlain(" "));
                 all.add(txt.ofStyled(readToEnd(ar), NTextStyle.comments()));
@@ -355,7 +355,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
             sb.append(ar.readChar());
         }
 
-        String val = NStringUtils.trimRight(sb.toString());
+        String val = NStringUtils.stripRight(sb.toString());
         if (!val.isEmpty()) all.add(styleScalarValue(val, txt));
     }
 

@@ -77,7 +77,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
 
     @Override
     public boolean containsTag(String tag) {
-        return configModel.containsTag(NStringUtils.trim(tag));
+        return configModel.containsTag(NStringUtils.strip(tag));
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
 
     @Override
     public NRepository addTag(String tag) {
-        configModel.addTag(NStringUtils.trim(tag));
+        configModel.addTag(NStringUtils.strip(tag));
         return this;
     }
 

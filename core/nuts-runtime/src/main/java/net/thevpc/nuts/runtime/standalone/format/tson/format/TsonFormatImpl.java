@@ -304,7 +304,7 @@
 //                case PARAMETRIZED_ARRAY:
 //                case NAMED_ARRAY: {
 //                    NArrayElement list = element.asArray().get();
-//                    String n = NStringUtils.trimToNull(list.name().orNull());
+//                    String n = NStringUtils.stripToNull(list.name().orNull());
 //                    boolean hasName = false;
 //                    if (n != null) {
 //                        writer.append(n);
@@ -324,7 +324,7 @@
 //                case NAMED_OBJECT:
 //                case PARAMETRIZED_OBJECT: {
 //                    NObjectElement list = element.asObject().get();
-//                    String n = NStringUtils.trimToNull(list.name().orNull());
+//                    String n = NStringUtils.stripToNull(list.name().orNull());
 //                    boolean hasName = false;
 //                    if (n != null) {
 //                        writer.append(n);

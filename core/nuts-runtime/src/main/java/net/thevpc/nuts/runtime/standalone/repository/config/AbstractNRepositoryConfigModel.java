@@ -16,7 +16,7 @@ public abstract class AbstractNRepositoryConfigModel implements NRepositoryConfi
 
     @Override
     public boolean containsTag(String tag) {
-        return tags.contains(NStringUtils.trim(tag));
+        return tags.contains(NStringUtils.strip(tag));
     }
 
     @Override
@@ -27,7 +27,7 @@ public abstract class AbstractNRepositoryConfigModel implements NRepositoryConfi
     @Override
     public void addTag(String tag) {
         if (!NBlankable.isBlank(tag)) {
-            if (tags.add(NStringUtils.trim(tag))) {
+            if (tags.add(NStringUtils.strip(tag))) {
                 fireConfigurationChanged("tags");
             }
         }

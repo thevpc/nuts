@@ -70,13 +70,13 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
 
 
     public static NOptional<NTextStyles> parse(String value) {
-        value = NStringUtils.trim(value);
+        value = NStringUtils.strip(value);
         if (value.isEmpty()) {
             return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", NTextStyles.class.getSimpleName()));
         }
         List<NTextStyle> all = new ArrayList<>();
         for (String s : NStringUtils.split(value, ",", true, true)) {
-            s = s.trim();
+            s = NStringUtils.strip(s);
             if (s.length() > 0) {
                 NTextStyle a = NTextStyle.parse(s).orNull();
                 if (a == null) {

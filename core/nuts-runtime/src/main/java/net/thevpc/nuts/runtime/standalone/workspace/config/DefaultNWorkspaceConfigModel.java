@@ -1079,7 +1079,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NAuthenticationAgent createAuthenticationAgent(String authenticationAgent) {
-        authenticationAgent = NStringUtils.trim(authenticationAgent);
+        authenticationAgent = NStringUtils.strip(authenticationAgent);
         NAuthenticationAgent supported = null;
         if (authenticationAgent.isEmpty()) {
             supported = NExtensions.of().createSupported(NAuthenticationAgent.class, "").get();

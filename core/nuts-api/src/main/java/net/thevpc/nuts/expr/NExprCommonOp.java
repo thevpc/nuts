@@ -25,7 +25,7 @@ public enum NExprCommonOp implements NEnum {
         for (NExprCommonOp value : values()) {
             HashSet<String> u = new HashSet<>(Arrays.asList(value.name().toLowerCase(), value.id().toLowerCase(), value.image.toLowerCase()));
             for (String alias : value.aliases) {
-                u.add(NStringUtils.trim(alias.toLowerCase()));
+                u.add(NStringUtils.strip(alias.toLowerCase()));
             }
             for (String s : u) {
                 register(s, value);
@@ -49,7 +49,7 @@ public enum NExprCommonOp implements NEnum {
 
     public static NOptional<NExprCommonOp> parse(String value) {
         return NEnumUtils.parseEnum(value, NExprCommonOp.class, s -> {
-            NExprCommonOp u = byImage.get(NStringUtils.trim(value).toLowerCase());
+            NExprCommonOp u = byImage.get(NStringUtils.strip(value).toLowerCase());
             return NOptional.of(u);
         });
     }

@@ -410,8 +410,8 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
         public NodeInfo(Element e) {
             String name0 = e.getAttribute(ATTRIBUTE_NAME);
             String type0 = e.getAttribute(ATTRIBUTE_TYPE);
-            name = NBlankable.isBlank(name0) ? e.getTagName() : NStringUtils.trim(name0);
-            type = NBlankable.isBlank(type0) ? e.getTagName() : NStringUtils.trim(type0);
+            name = NBlankable.isBlank(name0) ? e.getTagName() : NStringUtils.strip(name0);
+            type = NBlankable.isBlank(type0) ? e.getTagName() : NStringUtils.strip(type0);
             if (type.isEmpty()) {
                 type = "string";
             }

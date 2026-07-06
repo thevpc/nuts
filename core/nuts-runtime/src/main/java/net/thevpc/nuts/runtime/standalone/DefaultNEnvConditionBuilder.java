@@ -269,7 +269,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder addProperty(String key, String value) {
-        key = NStringUtils.trimToNull(key);
+        key = NStringUtils.stripToNull(key);
         if (key != null) {
             if (this.properties == null) {
                 this.properties = new HashMap<>();

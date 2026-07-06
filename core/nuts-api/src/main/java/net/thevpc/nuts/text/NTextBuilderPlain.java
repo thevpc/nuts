@@ -436,7 +436,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     @Override
     public boolean isWhitespace() {
         String s = sb.toString();
-        return !s.isEmpty() && s.trim().isEmpty();
+        return !s.isEmpty() && NStringUtils.isBlank(s);
     }
 
     @Override
@@ -513,20 +513,20 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder trim() {
-        NStringUtils.trim(sb);
+    public NTextBuilder strip() {
+        NStringUtils.strip(sb);
         return this;
     }
 
     @Override
-    public NTextBuilder trimLeft() {
-        NStringUtils.trimLeft(sb);
+    public NTextBuilder stripLeft() {
+        NStringUtils.stripLeft(sb);
         return this;
     }
 
     @Override
-    public NTextBuilder trimRight() {
-        NStringUtils.trimRight(sb);
+    public NTextBuilder stripRight() {
+        NStringUtils.stripRight(sb);
         return this;
     }
 
@@ -664,7 +664,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public boolean isBlank() {
-            return str.trim().isEmpty();
+            return NStringUtils.isBlank(str);
         }
 
         @Override
@@ -684,7 +684,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public boolean isWhitespace() {
-            return !str.isEmpty() && str.trim().isEmpty();
+            return !str.isEmpty() && NStringUtils.isBlank(str);
         }
 
         @Override
@@ -753,18 +753,18 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
 
         @Override
-        public NText trim() {
-            return new ImmutableNTextPlain(this.str.trim());
+        public NText strip() {
+            return new ImmutableNTextPlain(NStringUtils.strip(this.str));
         }
 
         @Override
-        public NText trimLeft() {
-            return new ImmutableNTextPlain(NStringUtils.trimLeft(this.str));
+        public NText stripLeft() {
+            return new ImmutableNTextPlain(NStringUtils.stripLeft(this.str));
         }
 
         @Override
-        public NText trimRight() {
-            return new ImmutableNTextPlain(NStringUtils.trimRight(this.str));
+        public NText stripRight() {
+            return new ImmutableNTextPlain(NStringUtils.stripRight(this.str));
         }
 
         @Override

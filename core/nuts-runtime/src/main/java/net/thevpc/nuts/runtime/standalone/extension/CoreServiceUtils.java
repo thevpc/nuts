@@ -33,6 +33,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 
 import java.io.*;
@@ -55,7 +56,7 @@ public final class CoreServiceUtils {
             ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
                 if (path.equals("META-INF/services/" + service.getName())) {
                     try (Reader reader = new InputStreamReader(inputStream)) {
-                        found.addAll(CoreIOUtils.confLines(reader).map(String::trim).collect(Collectors.toSet()));
+                        found.addAll(CoreIOUtils.confLines(reader).map(NStringUtils::strip).collect(Collectors.toSet()));
                     } catch (IOException ex) {
                         throw new NIOException(ex);
                     }
@@ -74,7 +75,7 @@ public final class CoreServiceUtils {
             for (URL url : found2) {
                 try (Reader reader = new InputStreamReader(DefaultNWebCli.prepareGlobalOpenStream(url))) {
                     found.addAll(
-                            CoreIOUtils.confLines(reader).map(String::trim).collect(Collectors.toSet())
+                            CoreIOUtils.confLines(reader).map(NStringUtils::strip).collect(Collectors.toSet())
                     );
                 } catch (IOException ex) {
                     throw new NIOException(ex);
@@ -94,7 +95,7 @@ public final class CoreServiceUtils {
             for (File f : files) {
                 if (f.getName().equals(service.getName())) {
                     try (Reader reader = new FileReader(f)) {
-                        return CoreIOUtils.confLines(reader).map(String::trim).collect(Collectors.toSet());
+                        return CoreIOUtils.confLines(reader).map(NStringUtils::strip).collect(Collectors.toSet());
                     } catch (IOException ex) {
                         throw new NIOException(ex);
                     }
@@ -131,7 +132,7 @@ public final class CoreServiceUtils {
     public static List<String> loadServiceClassNames(URL u, Class<?> service) {
 
         try (InputStreamReader ir = new InputStreamReader(CoreIOUtils.openStream(u).get(), StandardCharsets.UTF_8)) {
-            return CoreIOUtils.confLines(ir).map(String::trim).collect(Collectors.toList());
+            return CoreIOUtils.confLines(ir).map(NStringUtils::strip).collect(Collectors.toList());
         } catch (IOException ex) {
             throw new NIOException(ex);
         }

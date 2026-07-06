@@ -57,7 +57,7 @@ public class DefaultNRepositoryDB  {
         String[] aliases = options.aliases();
         if (aliases != null) {
             for (String alias : aliases) {
-                alias=NStringUtils.trimToNull(alias);
+                alias=NStringUtils.stripToNull(alias);
                 if (alias != null) {
                     optionByName.alias(alias, name);
                 }

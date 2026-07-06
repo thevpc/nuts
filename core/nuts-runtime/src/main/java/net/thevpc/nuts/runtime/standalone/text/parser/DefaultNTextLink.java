@@ -129,8 +129,8 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     }
 
     @Override
-    public NText trimLeft() {
-        String c = NStringUtils.trimLeft(value);
+    public NText stripLeft() {
+        String c = NStringUtils.stripLeft(value);
         if (Objects.equals(value, c)) {
             return this;
         }
@@ -138,8 +138,8 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     }
 
     @Override
-    public NText trimRight() {
-        String c = NStringUtils.trimRight(value);
+    public NText stripRight() {
+        String c = NStringUtils.stripRight(value);
         if (Objects.equals(value, c)) {
             return this;
         }
@@ -147,8 +147,8 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     }
 
     @Override
-    public NText trim() {
-        String c = NStringUtils.trim(value);
+    public NText strip() {
+        String c = NStringUtils.strip(value);
         if (Objects.equals(value, c)) {
             return this;
         }

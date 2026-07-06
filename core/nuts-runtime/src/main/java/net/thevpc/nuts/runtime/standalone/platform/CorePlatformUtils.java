@@ -334,10 +334,10 @@ public class CorePlatformUtils {
             m.put("container", "container");
         }
         if (disLike != null) {
-            m.put("like", NStringUtils.trim(disLike));
+            m.put("like", NStringUtils.strip(disLike));
         }
         if (disVersionCodeName != null) {
-            m.put("codename", NStringUtils.trim(disVersionCodeName));
+            m.put("codename", NStringUtils.strip(disVersionCodeName));
         }
         if (kubernetes) {
             m.put("kubernetes", "true");

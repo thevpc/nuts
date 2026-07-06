@@ -360,7 +360,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         args.add(joptions.getJ9_addModules().stream().distinct().collect(Collectors.joining(",")));
                     }
                     if (!NBlankable.isBlank(joptions.getSplash())) {
-                        args.add("-splash:" + NStringUtils.trim(joptions.getSplash()));
+                        args.add("-splash:" + NStringUtils.strip(joptions.getSplash()));
                     }
                     List<String> classPathStrings = joptions.getClassPath();
                     if (!classPathStrings.isEmpty()) {

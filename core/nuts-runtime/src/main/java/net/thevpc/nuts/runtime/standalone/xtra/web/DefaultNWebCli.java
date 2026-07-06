@@ -331,7 +331,7 @@ public class DefaultNWebCli implements NWebCli {
                 }
             }
         }
-        String bu = u.toString().trim();
+        String bu = NStringUtils.strip(u.toString());
         if (bu.isEmpty() || bu.equals("/")) {
             if (!safe) {
                 throw new IllegalArgumentException("missing url : " + bu);
@@ -461,7 +461,7 @@ public class DefaultNWebCli implements NWebCli {
                     throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, seenError), seenError);
                 }
 
-                String rm = NStringUtils.trim(uc.getResponseMessage());
+                String rm = NStringUtils.strip(uc.getResponseMessage());
                 if (rCode != null && !rCode.isOk() && rm.isEmpty()) {
                     rm = "Error " + rCode;
                 }
@@ -591,7 +591,7 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     public static String UNIFORM_HEADER(String h) {
-        return NStringUtils.trim(h).toUpperCase();
+        return NStringUtils.strip(h).toUpperCase();
     }
 
 }

@@ -151,13 +151,13 @@ public class NPredicates {
                 return true;
             }
             if (t instanceof CharSequence) {
-                return t.toString().trim().isEmpty();
+                return NStringUtils.isBlank((CharSequence) t);
+            }
+            if (t instanceof char[]) {
+                return NStringUtils.isBlank((char[]) t);
             }
             if (t instanceof NBlankable) {
                 return ((NBlankable) t).isBlank();
-            }
-            if (t instanceof char[]) {
-                return NBlankable.isBlank((char[]) t);
             }
             return false;
         }

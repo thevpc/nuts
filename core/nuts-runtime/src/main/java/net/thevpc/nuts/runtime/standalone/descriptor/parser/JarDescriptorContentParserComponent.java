@@ -57,7 +57,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
     public static int getScore(NScorableContext criteria) {
         NDescriptorContentParserContext cons = criteria.criteria(NDescriptorContentParserContext.class);
         if (cons != null) {
-            String e = NStringUtils.trim(cons.fileExtension());
+            String e = NStringUtils.strip(cons.fileExtension());
             switch (e) {
                 case "jar":
                 case "war":
@@ -142,12 +142,12 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 for (int i = 0; i < args.size(); i++) {
                     String arg = args.get(i);
                     if (arg.startsWith("--main-class=")) {
-                        mainClassString = NStringUtils.trimToNull(arg.substring("--main-class=".length()));
+                        mainClassString = NStringUtils.stripToNull(arg.substring("--main-class=".length()));
                         break;
                     } else if (arg.equals("--main-class")) {
                         i++;
                         if (i < args.size()) {
-                            mainClassString = NStringUtils.trimToNull(args.get(i));
+                            mainClassString = NStringUtils.stripToNull(args.get(i));
                         }
                     }
                 }

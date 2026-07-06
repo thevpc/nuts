@@ -41,7 +41,7 @@ public class NSysExecUtils {
         if (p != null) {
             for (String s : p.split(File.pathSeparator)) {
                 try {
-                    if (!s.trim().isEmpty()) {
+                    if (!NStringUtils.isBlank(s)) {
                         Path c = Paths.get(s, commandName);
                         if (Files.isRegularFile(c)) {
                             if (Files.isExecutable(c)) {
@@ -188,7 +188,7 @@ public class NSysExecUtils {
             }
             case USER: {
                 String s = runAsMode.user();
-                s = s.trim();
+                s = NStringUtils.strip(s);
                 if (currentUserName.equals(s)) {
                     runAsMode = NRunAs.currentUser();
                 }

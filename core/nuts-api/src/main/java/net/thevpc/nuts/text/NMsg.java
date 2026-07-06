@@ -53,7 +53,7 @@ public class NMsg implements NBlankable, NElementSimple {
 
     public static Placeholder placeholder(String name) {
         NAssert.requireNamedNonBlank(name, "name");
-        return new Placeholder(name.trim());
+        return new Placeholder(NStringUtils.strip(name));
     }
 
     public static NMsg ofMissingValue() {
@@ -137,7 +137,7 @@ public class NMsg implements NBlankable, NElementSimple {
         } else {
             NAssert.requireNamedNull(styles, "styles for " + format + " (not supported)");
         }
-        this.codeLang = NStringUtils.trimToNull(codeLang);
+        this.codeLang = NStringUtils.stripToNull(codeLang);
         this.message = message;
         this.params = params;
         this.intent = intent;
@@ -449,7 +449,7 @@ public class NMsg implements NBlankable, NElementSimple {
                                 String s2 = sb2.toString();
                                 if (s2.isEmpty()) {
                                     s2 = String.valueOf(currentIndex);
-                                } else if (s2.trim().startsWith(":")) {
+                                } else if (NStringUtils.strip(s2).startsWith(":")) {
                                     s2 = currentIndex + s2;
                                 }
                                 sb.append("{").append(s2).append("}");

@@ -2,6 +2,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 
 public class NTerminalFormatterFromHighlighter implements NTerminalFormatter {
     private static final NTerminalFormatter SYSTEM_HIGHLIGHTER = new NTerminalFormatterFromHighlighter("system");
@@ -16,7 +17,7 @@ public class NTerminalFormatterFromHighlighter implements NTerminalFormatter {
         if (NBlankable.isBlank(ct)) {
             ct = "system";
         }
-        switch (ct.trim().toLowerCase()) {
+        switch (NStringUtils.strip(ct).toLowerCase()) {
             case "system":
                 return SYSTEM_HIGHLIGHTER;
         }

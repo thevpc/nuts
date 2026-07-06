@@ -491,7 +491,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
             fillOption("---system-custom-launcher", null, options.desktopLauncher().orNull(), NSupportMode.class, arguments, false);
         }
 
-        fillOption("--name", null, NStringUtils.trim(options.name().orNull()), arguments, false);
+        fillOption("--name", null, NStringUtils.strip(options.name().orNull()), arguments, false);
         fillOption("--archetype", "-A", options.archetype().orNull(), arguments, false);
         fillOption("--store-layout", null, options.storeLayout().orNull(), NOsFamily.class, arguments, false);
         fillOption("--store-strategy", null, options.storeStrategy().orNull(), NStoreStrategy.class, arguments, false);

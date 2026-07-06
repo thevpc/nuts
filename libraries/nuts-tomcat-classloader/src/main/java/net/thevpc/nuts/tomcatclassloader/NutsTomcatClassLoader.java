@@ -6,6 +6,7 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NOpenMode;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
+import net.thevpc.nuts.util.NStringUtils;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.loader.WebappClassLoader;
@@ -265,7 +266,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     private String[] splitString(String nutsPath, String sep) {
         List<String> all = new ArrayList<>();
         for (String s : (nutsPath == null ? "" : nutsPath).split("[" + sep + "]")) {
-            s = s.trim();
+            s = NStringUtils.strip(s);
             if (s.length() > 0) {
                 all.add(s);
             }

@@ -87,11 +87,11 @@ public interface NTextBuilder extends NText, Iterable<NText> {
 
     NText get(int index);
 
-    NTextBuilder trim();
+    NTextBuilder strip();
 
-    NTextBuilder trimLeft();
+    NTextBuilder stripLeft();
 
-    NTextBuilder trimRight();
+    NTextBuilder stripRight();
 
     /**
      * replaces the builder content with the simplest text in the form of suite

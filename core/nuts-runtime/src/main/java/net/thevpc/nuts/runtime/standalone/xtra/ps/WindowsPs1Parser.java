@@ -113,7 +113,7 @@ public class WindowsPs1Parser {
                             break;
                         }
                         case "STAT": {
-                            switch (NStringUtils.trim(value).toLowerCase()) {
+                            switch (NStringUtils.strip(value).toLowerCase()) {
                                 case "suspended": {
                                     v.setStatus(NpsStatus.SUSPENDED);
                                     break;
@@ -233,17 +233,17 @@ public class WindowsPs1Parser {
             if (a.length > 0) {
                 int x = Math.max(a[0].lastIndexOf("/"), a[0].lastIndexOf("\\"));
                 if (x >= 0) {
-                    v.setName(NStringUtils.trimToNull(a[0].substring(x + 1)));
+                    v.setName(NStringUtils.stripToNull(a[0].substring(x + 1)));
                 } else {
-                    v.setName(NStringUtils.trimToNull(a[0]));
+                    v.setName(NStringUtils.stripToNull(a[0]));
                 }
             }
         } else {
             int x = Math.max(v.getCmdLine().lastIndexOf("/"), v.getCmdLine().lastIndexOf("\\"));
             if (x >= 0) {
-                v.setName(NStringUtils.trimToNull(v.getCmdLine().substring(x + 1)));
+                v.setName(NStringUtils.stripToNull(v.getCmdLine().substring(x + 1)));
             } else {
-                v.setName(NStringUtils.trimToNull(v.getCmdLine()));
+                v.setName(NStringUtils.stripToNull(v.getCmdLine()));
             }
         }
     }

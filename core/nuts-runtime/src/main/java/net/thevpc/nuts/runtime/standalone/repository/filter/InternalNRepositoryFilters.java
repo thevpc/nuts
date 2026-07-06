@@ -48,7 +48,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         }
         List<String> namesList = Arrays.asList(names).stream()
                 .filter(x -> !NBlankable.isBlank(x))
-                .map(String::trim).collect(Collectors.toList());
+                .map(NStringUtils::strip).collect(Collectors.toList());
         if (namesList.isEmpty()) {
             return always();
         }

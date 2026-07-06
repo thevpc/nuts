@@ -49,17 +49,17 @@ public final class NReservedLangUtils {
         return NStringUtils.split(str, " ;,\n\r\t|", true, true);
     }
 
-    public static List<String> parseAndTrimToDistinctList(String s) {
+    public static List<String> parseAndStripToDistinctList(String s) {
         if (s == null) {
             return new ArrayList<>();
         }
-        return splitDefault(s).stream().map(String::trim)
+        return splitDefault(s).stream().map(NStringUtils::strip)
                 .filter(x -> x.length() > 0)
                 .distinct().collect(Collectors.toList());
     }
 
-    public static String joinAndTrimToNull(List<String> args) {
-        return NStringUtils.trimToNull(
+    public static String joinAndStripToNull(List<String> args) {
+        return NStringUtils.stripToNull(
                 String.join(",", args)
         );
     }
@@ -68,7 +68,7 @@ public final class NReservedLangUtils {
         if (NBlankable.isBlank(value)) {
             return NOptional.ofEmpty(() -> NMsg.ofPlain("empty size"));
         }
-        value = value.trim();
+        value = NStringUtils.strip(value);
         Integer i = NLiteral.of(value).asInt().orNull();
         if (i != null) {
             if (defaultMultiplier != null) {
@@ -79,7 +79,7 @@ public final class NReservedLangUtils {
         }
         for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
             if (value.toLowerCase().endsWith(s)) {
-                String v = value.substring(0, value.length() - s.length()).trim();
+                String v = NStringUtils.strip(value.substring(0, value.length() - s.length()));
                 i = NLiteral.of(v).asInt().orNull();
                 if (i != null) {
                     switch (s) {
@@ -162,7 +162,7 @@ public final class NReservedLangUtils {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
-                    if (newList.add(NStringUtils.trim(value))) {
+                    if (newList.add(NStringUtils.strip(value))) {
                         someUpdates = true;
                     }
                 }

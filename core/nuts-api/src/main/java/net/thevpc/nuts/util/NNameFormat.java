@@ -54,8 +54,8 @@ public class NNameFormat {
      * @return true if a and b have equivalent (case ignored) parts.
      */
     public static boolean equalsIgnoreFormat(String a, String b) {
-        String[] aa = parse(NStringUtils.trim(a));
-        String[] bb = parse(NStringUtils.trim(b));
+        String[] aa = parse(NStringUtils.strip(a));
+        String[] bb = parse(NStringUtils.strip(b));
         int length = aa.length;
         if (bb.length != length) {
             return false;
@@ -144,7 +144,7 @@ public class NNameFormat {
         if (NBlankable.isBlank(value)) {
             return new String[]{""};
         }
-        String aValue = value.trim();
+        String aValue = NStringUtils.strip(value);
         List<String> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 

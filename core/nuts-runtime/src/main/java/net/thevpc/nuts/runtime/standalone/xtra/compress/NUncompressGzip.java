@@ -134,7 +134,7 @@ public class NUncompressGzip implements NUncompressPackaging {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String z = NStringUtils.trim(context.criteria(String.class)).toLowerCase();
+        String z = NStringUtils.strip(context.criteria(String.class)).toLowerCase();
         if (
                 z.equals("gzip")
                         || z.equals("gz")

@@ -9,6 +9,7 @@ import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
 
@@ -71,29 +72,29 @@ public class CoreAnsiTermHelper {
         NChronometer chronometer = NChronometer.of();
         try {
             try {
-                String s = NExec.of()
+                String s = NStringUtils.strip(NExec.of()
                         .system()
                         .in(NExecInput.ofNull())
                         .addCommand(cmd)
                         .failFast(true)
                         .grabbedOutOnly()
-                        .trim();
-                if (!s.trim().isEmpty()) {
-                    return s.trim();
+                );
+                if (!s.isEmpty()) {
+                    return s;
                 }
                 NLog.of(CoreAnsiTermHelper.class)
                         .log(NMsg.ofC("command (%s) returned nothing, repeat with delay").asFinest());
                 //add 500 of sleep time!
-                s = NExec.of()
+                s = NStringUtils.strip(NExec.of()
                         .system()
                         .addCommand(cmd)
                         .failFast(true)
                         .sleepDuration(NDuration.ofMillis(500))
                         .grabbedOutOnly()
-                        .trim()
+                        )
                 ;
-                if (!s.trim().isEmpty()) {
-                    return s.trim();
+                if (!NStringUtils.isBlank(s)) {
+                    return NStringUtils.strip(s);
                 }
                 return null;
             } catch (Exception ex) {

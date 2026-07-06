@@ -204,7 +204,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 
     @Override
     public NPath getLocationPath() {
-        String s = NStringUtils.trimToNull(config.location().path());
+        String s = NStringUtils.stripToNull(config.location().path());
         if (s != null) {
             return NPath.of(s).toAbsolute(NWorkspace.of().workspaceLocation());
         }
@@ -285,7 +285,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         if (this.config.tags() != null) {
             for (String tag : this.config.tags()) {
                 if (!NBlankable.isBlank(tag)) {
-                    tags.add(NStringUtils.trim(tag));
+                    tags.add(NStringUtils.strip(tag));
                 }
             }
         }

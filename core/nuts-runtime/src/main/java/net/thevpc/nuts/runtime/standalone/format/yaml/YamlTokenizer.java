@@ -264,7 +264,7 @@ public class YamlTokenizer {
                     sb.append(' ');
                 }
                 if (!isBlankLine) {
-                    sb.append(NStringUtils.trim(lineContent));
+                    sb.append(NStringUtils.strip(lineContent));
                 }
             } else {
                 // Literal scalar: preserve newlines and indentation
@@ -339,15 +339,15 @@ public class YamlTokenizer {
             }
         }
 
-        String trimmed = value.toString().trim();
-        if (trimmed.isEmpty()) {
+        String tripped = NStringUtils.strip(value.toString());
+        if (tripped.isEmpty()) {
             return new YamlToken(image.toString(), "", YamlToken.Type.NAME, indentation);
         }
 
-        if (trimmed.length() > 0) {
+        if (tripped.length() > 0) {
             boolean digit = true;
             boolean dec = false;
-            char[] charArray = trimmed.toCharArray();
+            char[] charArray = tripped.toCharArray();
             for (int i = 0; i < charArray.length; i++) {
                 char c = charArray[i];
                 if (c == 'e' || c == 'E' || c == '.') {
@@ -364,23 +364,23 @@ public class YamlTokenizer {
             if (digit) {
                 if (dec) {
                     try {
-                        return new YamlToken(image.toString(), Double.parseDouble(trimmed), YamlToken.Type.DECIMAL, indentation);
+                        return new YamlToken(image.toString(), Double.parseDouble(tripped), YamlToken.Type.DECIMAL, indentation);
                     } catch (Exception ex) {
                         try {
-                            return new YamlToken(image.toString(), Long.parseLong(trimmed), YamlToken.Type.INTEGER, indentation);
+                            return new YamlToken(image.toString(), Long.parseLong(tripped), YamlToken.Type.INTEGER, indentation);
                         } catch (Exception ex2) {
-                            return new YamlToken(image.toString(), trimmed, isName(trimmed) ? YamlToken.Type.NAME : YamlToken.Type.OPEN_STRING, indentation);
+                            return new YamlToken(image.toString(), tripped, isName(tripped) ? YamlToken.Type.NAME : YamlToken.Type.OPEN_STRING, indentation);
                         }
                     }
                 } else {
                     try {
-                        return new YamlToken(image.toString(), Long.parseLong(trimmed), YamlToken.Type.INTEGER, indentation);
+                        return new YamlToken(image.toString(), Long.parseLong(tripped), YamlToken.Type.INTEGER, indentation);
                     } catch (Exception ex2) {
-                        return new YamlToken(image.toString(), trimmed, isName(trimmed) ? YamlToken.Type.NAME : YamlToken.Type.OPEN_STRING, indentation);
+                        return new YamlToken(image.toString(), tripped, isName(tripped) ? YamlToken.Type.NAME : YamlToken.Type.OPEN_STRING, indentation);
                     }
                 }
             } else {
-                switch (trimmed) {
+                switch (tripped) {
                     case "true":
                         return new YamlToken(image.toString(), true, YamlToken.Type.TRUE, indentation);
                     case "false":
@@ -389,10 +389,10 @@ public class YamlTokenizer {
                     case "null":
                         return new YamlToken(image.toString(), false, YamlToken.Type.NULL, indentation);
                 }
-                return new YamlToken(image.toString(), trimmed, isName(trimmed) ? YamlToken.Type.NAME : YamlToken.Type.OPEN_STRING, indentation);
+                return new YamlToken(image.toString(), tripped, isName(tripped) ? YamlToken.Type.NAME : YamlToken.Type.OPEN_STRING, indentation);
             }
         }
-        return new YamlToken(image.toString(), trimmed, isName(trimmed) ? YamlToken.Type.NAME : YamlToken.Type.OPEN_STRING, indentation);
+        return new YamlToken(image.toString(), tripped, isName(tripped) ? YamlToken.Type.NAME : YamlToken.Type.OPEN_STRING, indentation);
     }
 
     private boolean isName(String a) {

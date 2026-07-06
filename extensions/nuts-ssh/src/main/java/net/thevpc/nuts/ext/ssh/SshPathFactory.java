@@ -38,7 +38,7 @@ public class SshPathFactory implements NPathFactorySPI {
             return NScorable.DEFAULT_SCORE;
         }
         String path = (String) cri;
-        if(NStringUtils.trim(path).startsWith("ssh:")){
+        if(NStringUtils.strip(path).startsWith("ssh:")){
             return NScorable.DEFAULT_SCORE;
         }
         return NScorable.UNSUPPORTED_SCORE;

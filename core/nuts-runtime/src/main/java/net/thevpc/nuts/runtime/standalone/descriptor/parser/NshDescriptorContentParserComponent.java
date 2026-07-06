@@ -77,7 +77,7 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
     public static int getScore(NScorableContext criteria) {
         NDescriptorContentParserContext ctr=criteria.criteria(NDescriptorContentParserContext.class);
         if(ctr!=null) {
-            String e = NStringUtils.trim(ctr.fileExtension());
+            String e = NStringUtils.strip(ctr.fileExtension());
             switch (e) {
                 case "":
                 case "sh":
@@ -116,7 +116,7 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
             String sheban = "";
             boolean start = false;
             while ((line = r.readLine()) != null) {
-                line = line.trim();
+                line = NStringUtils.strip(line);
                 if (line.length() > 0) {
                     if (line.startsWith("#")) {
                         line = removeBashComment(line);
@@ -124,7 +124,7 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                             firstLine = false;
                             //sheban
                             if (line.startsWith("!")) {
-                                sheban = line.substring(1).trim();
+                                sheban = NStringUtils.strip(line.substring(1));
                             } else {
                                 break;
                             }
@@ -158,7 +158,7 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                     return null;
                 }
             }
-            if (comment.toString().trim().isEmpty()) {
+            if (NStringUtils.isBlank(comment.toString())) {
                 return new DefaultNDescriptorBuilder()
                         .id(NId.get("temp:nsh#1.0").get())
                         .packaging("nsh")

@@ -238,7 +238,7 @@ public class CoreNUtils {
             return NVersion.BLANK;
         }
         String s2 = applyStringProperties(s, properties);
-        if (!NStringUtils.trim(s2).equals(s)) {
+        if (!NStringUtils.strip(s2).equals(s)) {
             return NVersion.get(s2).orElse(NVersion.BLANK);
         }
         return child;
@@ -259,8 +259,8 @@ public class CoreNUtils {
 //        return CoreStringUtils.replaceDollarPlaceHolders(child, properties);
 //    }
     public static String applyStringInheritance(String child, String parent) {
-        child = NStringUtils.trimToNull(child);
-        parent = NStringUtils.trimToNull(parent);
+        child = NStringUtils.stripToNull(child);
+        parent = NStringUtils.stripToNull(parent);
         if (child == null) {
             return parent;
         }

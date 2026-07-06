@@ -48,9 +48,9 @@ public class NExprTemplateImpl implements NExprTemplate {
         if (escape == null) {
             escape = "\\" + stop;
         }
-        this.start = NAssert.requireNamedNonBlank(NStringUtils.trim(start), "start");
-        this.stop = NAssert.requireNamedNonBlank(NStringUtils.trim(stop), "stop");
-        this.escape = NStringUtils.trimToNull(escape);
+        this.start = NAssert.requireNamedNonBlank(NStringUtils.strip(start), "start");
+        this.stop = NAssert.requireNamedNonBlank(NStringUtils.strip(stop), "stop");
+        this.escape = NStringUtils.stripToNull(escape);
         this.processor = null;
         return this;
     }

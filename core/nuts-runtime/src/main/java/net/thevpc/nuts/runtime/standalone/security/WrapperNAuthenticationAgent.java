@@ -33,7 +33,7 @@ public class WrapperNAuthenticationAgent {
     }
 
     public NAuthenticationAgent getCachedAuthenticationAgent(String name) {
-        name = NStringUtils.trim(name);
+        name = NStringUtils.strip(name);
         NAuthenticationAgent a = cache.get(name);
         if (a == null) {
             a = provider.create(name);

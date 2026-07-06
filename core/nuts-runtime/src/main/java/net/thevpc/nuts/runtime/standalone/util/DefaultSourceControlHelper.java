@@ -48,7 +48,7 @@ public class DefaultSourceControlHelper {
 
         Path file = folder.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
         NDescriptor d = NDescriptorParser.of().parse(file).get();
-        String oldVersion = NStringUtils.trim(d.id().version().value());
+        String oldVersion = NStringUtils.strip(d.id().version().value());
         if (oldVersion.endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNConstants.Versions.CHECKED_OUT_EXTENSION.length());
             String newVersion = NVersion.get(oldVersion).get().inc().value();

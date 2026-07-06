@@ -186,7 +186,7 @@ public class NRepositoryUtils {
     }
 
     public static NOptional<NRepositorySelector> createRepositorySelector(NSelectorOp op, String location) {
-        location = NStringUtils.trim(location);
+        location = NStringUtils.strip(location);
         if (op == null) {
             op = NSelectorOp.INCLUDE;
         }

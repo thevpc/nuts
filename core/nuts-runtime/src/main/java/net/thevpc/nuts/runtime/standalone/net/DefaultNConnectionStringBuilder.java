@@ -52,11 +52,11 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
     public NConnectionString build() {
         if (normalized) {
             Map<String, List<String>> queryMap2 = DefaultNConnectionStringBuilder.prepareQueryMap(queryMap, true);
-            String protocol2 = NStringUtils.trimToNull(protocol);
-            String userName2 = NStringUtils.trimToNull(userName);
-            String host2 = NStringUtils.trimToNull(host);
-            String port2 = NStringUtils.trimToNull(port);
-            String path2 = NStringUtils.trimToNull(path);
+            String protocol2 = NStringUtils.stripToNull(protocol);
+            String userName2 = NStringUtils.stripToNull(userName);
+            String host2 = NStringUtils.stripToNull(host);
+            String port2 = NStringUtils.stripToNull(port);
+            String path2 = NStringUtils.stripToNull(path);
             return new DefaultNConnectionString(protocol2, userName2, password, host2, port2, path2, queryMap2);
         } else {
             return new DefaultNConnectionString(protocol, userName, password, host, port, path, queryMap);

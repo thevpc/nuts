@@ -64,6 +64,7 @@ public class NIOUtils {
         }
         return null;
     }
+
     public static String relativize(String first, String second) {
         if (first == null || second == null) return null;
         if (first.equals(second)) return "";
@@ -139,7 +140,7 @@ public class NIOUtils {
 
     /**
      * return normalized file name by replacing any special character with a
-     * space and trimming the result
+     * space and stripping the result
      *
      * @param name fine name to normalize
      * @return normalized string without accents
@@ -181,7 +182,7 @@ public class NIOUtils {
                 }
             }
         }
-        return new String(chars).trim();
+        return NStringUtils.strip(new String(chars));
     }
 
     /**
@@ -510,21 +511,21 @@ public class NIOUtils {
     }
 
     public static String getFileExtension(Path s) {
-        if(s==null){
+        if (s == null) {
             return "";
         }
         return getFileExtension(s.getFileName().toString());
     }
 
     public static String getFileExtension(File s) {
-        if(s==null){
+        if (s == null) {
             return "";
         }
         return getFileExtension(s.getName());
     }
 
     public static String getFileExtension(String s) {
-        if(s==null){
+        if (s == null) {
             return "";
         }
         int i = s.lastIndexOf('.');

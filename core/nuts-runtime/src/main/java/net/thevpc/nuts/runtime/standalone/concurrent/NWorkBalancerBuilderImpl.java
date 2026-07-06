@@ -24,7 +24,7 @@ public class NWorkBalancerBuilderImpl<T> implements NWorkBalancerBuilder<T> {
 
     @Override
     public WorkerBuilder<T> addWorker(String workerName) {
-        String validWorkerName = NStringUtils.trimToNull(workerName);
+        String validWorkerName = NStringUtils.stripToNull(workerName);
         NAssert.requireFalse(workers.stream().filter(x -> Objects.equals(x.name(), validWorkerName)).findFirst().isPresent(), () -> NMsg.ofC("duplicate worker name : %s", validWorkerName));
         NWorkBalancerWorkerModel worker = new NWorkBalancerWorkerModel()
                 .name(validWorkerName)

@@ -140,10 +140,10 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 }
             }
         }
-        nuts_bundle_info_config.appName = NStringUtils.firstNonBlankTrimmed(boptions.appName, boptions.appTitle, defaultName);
-        nuts_bundle_info_config.appVersion = NStringUtils.firstNonBlankTrimmed(boptions.appVersion, defaultVersion, "1.0");
-        nuts_bundle_info_config.appTitle = NStringUtils.firstNonBlankTrimmed(boptions.appTitle, nuts_bundle_info_config.appName);
-        nuts_bundle_info_config.appDesc = NStringUtils.firstNonBlankTrimmed(boptions.appDesc, nuts_bundle_info_config.appTitle);
+        nuts_bundle_info_config.appName = NStringUtils.firstNonBlankStripped(boptions.appName, boptions.appTitle, defaultName);
+        nuts_bundle_info_config.appVersion = NStringUtils.firstNonBlankStripped(boptions.appVersion, defaultVersion, "1.0");
+        nuts_bundle_info_config.appTitle = NStringUtils.firstNonBlankStripped(boptions.appTitle, nuts_bundle_info_config.appName);
+        nuts_bundle_info_config.appDesc = NStringUtils.firstNonBlankStripped(boptions.appDesc, nuts_bundle_info_config.appTitle);
         String fullAppFileName = ensureValidFileName(nuts_bundle_info_config.appName).orElse("app") + "-" + ensureValidFileName(nuts_bundle_info_config.appVersion).orElse("1.0");
         nuts_bundle_info_config.target = "${user.dir}/" + fullAppFileName;
 

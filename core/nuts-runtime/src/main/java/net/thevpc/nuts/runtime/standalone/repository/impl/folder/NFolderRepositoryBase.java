@@ -304,7 +304,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 stream.close();
                 return;
             }
-            switch (NStringUtils.trim(id.face())) {
+            switch (NStringUtils.strip(id.face())) {
                 case NConstants.QueryFaces.CONTENT_HASH:
                 case NConstants.QueryFaces.DESCRIPTOR_HASH: {
                     break;

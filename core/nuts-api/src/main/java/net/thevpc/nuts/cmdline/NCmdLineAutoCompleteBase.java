@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.util.NStringUtils;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -66,7 +68,7 @@ public abstract class NCmdLineAutoCompleteBase implements NCmdLineAutoComplete {
      */
     @Override
     public void addCandidate(NArgCandidate value) {
-        if (value != null && !value.value().trim().isEmpty()) {
+        if (value != null && !NStringUtils.strip(value.value()).isEmpty()) {
             addCandidatesImpl(value);
         }
     }

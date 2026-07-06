@@ -116,7 +116,7 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
     }
 
     public NText tokenToText(String text, String nodeType, NTexts txt) {
-        switch (NStringUtils.trim(nodeType).toLowerCase()) {
+        switch (NStringUtils.strip(nodeType).toLowerCase()) {
             case "name":
                 return formatNodeName(text, txt);
             case "attribute":

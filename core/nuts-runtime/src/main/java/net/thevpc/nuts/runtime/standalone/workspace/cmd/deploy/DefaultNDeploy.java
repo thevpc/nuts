@@ -227,7 +227,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 }
                 //remove workspace
                 descriptor = descriptor.builder().id(descriptor.id().builder().repository(null).build()).build();
-                if (NStringUtils.trim(descriptor.id().version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                if (NStringUtils.strip(descriptor.id().version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
                     throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", descriptor.id().version()));
                 }
 

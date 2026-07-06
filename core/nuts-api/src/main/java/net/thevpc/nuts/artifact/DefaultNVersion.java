@@ -46,7 +46,7 @@ public class DefaultNVersion implements NVersion {
     private VersionParts parts;
 
     public DefaultNVersion(String expression) {
-        this.expression = (NStringUtils.trim(expression));
+        this.expression = (NStringUtils.strip(expression));
     }
 
     public static String incVersion(String oldVersion, int level, long count) {
@@ -84,11 +84,11 @@ public class DefaultNVersion implements NVersion {
 
 
     public List<NVersionPart> parts() {
-        return new ArrayList<>(splitVersionParts2(NStringUtils.trim(expression)).all);
+        return new ArrayList<>(splitVersionParts2(NStringUtils.strip(expression)).all);
     }
 
     private static VersionParts splitVersionParts2(String v1) {
-        v1 = NStringUtils.trim(v1);
+        v1 = NStringUtils.strip(v1);
         List<NVersionPart> parts = new ArrayList<>();
         StringBuilder last = null;
         NVersionPartType partType = null;
@@ -179,7 +179,7 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public boolean isBlank() {
-        return expression == null || expression.trim().isEmpty();
+        return expression == null || NStringUtils.strip(expression).isEmpty();
     }
 
     @Override
@@ -292,7 +292,7 @@ public class DefaultNVersion implements NVersion {
         }
         int commas = 0;
         int seps = 0;
-        String s = expression.trim();
+        String s = NStringUtils.strip(expression);
         NOptional<String> emptyVersion = NOptional.ofEmpty(() -> NMsg.ofC("not a single value : %s", expression));
         if (s.isEmpty()) {
             return emptyVersion;
@@ -333,7 +333,7 @@ public class DefaultNVersion implements NVersion {
         if (seps == 0) {
             if (commas == 0) {
                 if (VERSION_PART_PATTERN.matcher(expression).matches()) {
-                    return NOptional.of(expression.trim());
+                    return NOptional.of(NStringUtils.strip(expression));
                 }
             } else {
                 Set<String> all = new HashSet<>(NStringUtils.split(s, ",", true, true));
@@ -354,7 +354,7 @@ public class DefaultNVersion implements NVersion {
             if (c == ')') {
                 c = '[';
             }
-            s = s.substring(1, s.length() - 1).trim();
+            s = NStringUtils.strip(s.substring(1, s.length() - 1));
             if (o == '[' && c == ']') {
                 if (commas == 0) {
                     if (VERSION_PART_PATTERN.matcher(s).matches()) {

@@ -271,7 +271,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     /**
      * returns a string concatenation of group and name (':' separated) ignoring
      * version,repository, and queryMap values. In group is empty or null, name
-     * is returned. Ann null values are trimmed to "" An example of simple name
+     * is returned. Ann null values are stripped to "" An example of simple name
      * is <code>my-group:my-artifact</code>
      *
      * @return group id and artifact id

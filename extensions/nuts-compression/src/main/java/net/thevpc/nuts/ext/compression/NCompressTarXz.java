@@ -1,6 +1,5 @@
 package net.thevpc.nuts.ext.compression;
 
-import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NScorable;
 import net.thevpc.nuts.util.NScorableContext;
@@ -11,7 +10,6 @@ import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.zip.GZIPOutputStream;
 
 public class NCompressTarXz extends NCompressTar {
 
@@ -31,7 +29,7 @@ public class NCompressTarXz extends NCompressTar {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String z = NStringUtils.trim(context.criteria(String.class)).toLowerCase();
+        String z = NStringUtils.strip(context.criteria(String.class)).toLowerCase();
         if (z.equals("tar.xz") || z.equals("txz")) {
             return NScorable.DEFAULT_SCORE;
         }

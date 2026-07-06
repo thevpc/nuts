@@ -8,6 +8,8 @@ import net.thevpc.nuts.ext.ssh.SshConnectionPool;
 import net.thevpc.nuts.ext.ssh.util.SshUtils;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NUnused;
 
 import java.io.*;
@@ -61,7 +63,7 @@ public class JCshFileOutputStreamScpOld extends OutputStream {
     }
 
     private boolean _start() throws JSchException, IOException {
-        if (to == null || to.trim().isEmpty()) {
+        if (NBlankable.isBlank(to)) {
             throw new IllegalArgumentException("missing target path");
         }
         if (mkdirs) {

@@ -70,10 +70,10 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
                                     + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
                             getRepository().uuid(),
-                            NStringUtils.trim(id.artifactId()), NStringUtils.trim(id.repository()), NStringUtils.trim(id.groupId()),
-                            NStringUtils.trim(String.join(",",id.condition().os())),
-                            NStringUtils.trim(String.join(",",id.condition().osDist())),
-                            NStringUtils.trim(String.join(",",id.condition().arch())), NStringUtils.trim(id.face())
+                            NStringUtils.strip(id.artifactId()), NStringUtils.strip(id.repository()), NStringUtils.strip(id.groupId()),
+                            NStringUtils.strip(String.join(",",id.condition().os())),
+                            NStringUtils.strip(String.join(",",id.condition().osDist())),
+                            NStringUtils.strip(String.join(",",id.condition().arch())), NStringUtils.strip(id.face())
 //                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
@@ -135,11 +135,11 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         String uu = getIndexURL().resolve( NConstants.Folders.ID).resolve("delete")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().uuid(),
-                NStringUtils.trim(id.artifactId()), NStringUtils.trim(id.repository()), NStringUtils.trim(id.groupId()), NStringUtils.trim(id.version().toString()),
-                NStringUtils.trim(String.join(",",id.condition().os())),
-                NStringUtils.trim(String.join(",",id.condition().osDist())),
-                NStringUtils.trim(String.join(",",id.condition().arch())),
-                NStringUtils.trim(id.face())
+                NStringUtils.strip(id.artifactId()), NStringUtils.strip(id.repository()), NStringUtils.strip(id.groupId()), NStringUtils.strip(id.version().toString()),
+                NStringUtils.strip(String.join(",",id.condition().os())),
+                NStringUtils.strip(String.join(",",id.condition().osDist())),
+                NStringUtils.strip(String.join(",",id.condition().arch())),
+                NStringUtils.strip(id.face())
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
@@ -159,11 +159,11 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         String uu = getIndexURL().resolve(NConstants.Folders.ID).resolve("addData")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().uuid(),
-                NStringUtils.trim(id.artifactId()), NStringUtils.trim(id.repository()), NStringUtils.trim(id.groupId()), NStringUtils.trim(id.version().toString()),
-                NStringUtils.trim(String.join(",",id.condition().os())),
-                NStringUtils.trim(String.join(",",id.condition().osDist())),
-                NStringUtils.trim(String.join(",",id.condition().arch())),
-                NStringUtils.trim(id.face())
+                NStringUtils.strip(id.artifactId()), NStringUtils.strip(id.repository()), NStringUtils.strip(id.groupId()), NStringUtils.strip(id.version().toString()),
+                NStringUtils.strip(String.join(",",id.condition().os())),
+                NStringUtils.strip(String.join(",",id.condition().osDist())),
+                NStringUtils.strip(String.join(",",id.condition().arch())),
+                NStringUtils.strip(id.face())
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {

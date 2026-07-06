@@ -27,7 +27,7 @@ public class ShoptCodeHighlighter extends ShCodeHighlighter {
         if (kind == null) {
             return "shopt";
         }
-        String k = NStringUtils.trim((String) kind).toLowerCase();
+        String k = NStringUtils.strip((String) kind).toLowerCase();
         switch (k) {
             case "shopt":
             case "bashopt":

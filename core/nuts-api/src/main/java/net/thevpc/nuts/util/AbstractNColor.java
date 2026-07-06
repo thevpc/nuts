@@ -102,7 +102,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     private static String normalizeName(String name) {
-        return name == null ? null : NNameFormat.CLASS_NAME.format(name.trim()).toLowerCase();
+        return name == null ? null : NNameFormat.CLASS_NAME.format(NStringUtils.strip(name)).toLowerCase();
     }
 
 
@@ -148,7 +148,7 @@ abstract class AbstractNColor implements NColor {
 
 
     public static NColor of4(int color, String name) {
-        name = NStringUtils.trimToNull(name);
+        name = NStringUtils.stripToNull(name);
         if (name == null) {
             return of4(color);
         }
@@ -160,7 +160,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     public static NColor of8(int color, String name) {
-        name = NStringUtils.trimToNull(name);
+        name = NStringUtils.stripToNull(name);
         if (name == null) {
             return of8(color);
         }
@@ -172,7 +172,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     public static NColor of16(int color, String name) {
-        name = NStringUtils.trimToNull(name);
+        name = NStringUtils.stripToNull(name);
         if (name == null) {
             return of16(color);
         }
@@ -180,7 +180,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     public static NColor of24(int color, String name) {
-        name = NStringUtils.trimToNull(name);
+        name = NStringUtils.stripToNull(name);
         if (name == null) {
             return of24(color);
         }
@@ -192,7 +192,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     public static NColor of32(int r, int g, int b, String name) {
-        name = NStringUtils.trimToNull(name);
+        name = NStringUtils.stripToNull(name);
         if (name == null) {
             return of32(r, g, b);
         }
@@ -208,7 +208,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     public static NColor of32(int r, int g, int b, int a, String name) {
-        name = NStringUtils.trimToNull(name);
+        name = NStringUtils.stripToNull(name);
         if (name == null) {
             return of32(r, g, b, a);
         }
@@ -220,7 +220,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     public static NColor of32(int color, String name) {
-        name = NStringUtils.trimToNull(name);
+        name = NStringUtils.stripToNull(name);
         if (name == null) {
             return of32(color);
         }
@@ -232,7 +232,7 @@ abstract class AbstractNColor implements NColor {
     }
 
     public static NColor of64(long color, String name) {
-        name = NStringUtils.trimToNull(name);
+        name = NStringUtils.stripToNull(name);
         if (name == null) {
             return of64(color);
         }
@@ -277,7 +277,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return this;
             }
@@ -328,7 +328,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return NColor.of4(color);
             }
@@ -380,7 +380,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return this;
             }
@@ -431,7 +431,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return NColor.of8(color);
             }
@@ -480,7 +480,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return this;
             }
@@ -554,7 +554,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return NColor.of16(color);
             }
@@ -604,7 +604,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return this;
             }
@@ -654,7 +654,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return NColor.of24(color);
             }
@@ -705,7 +705,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return this;
             }
@@ -762,7 +762,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return NColor.of32(color);
             }
@@ -805,7 +805,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return this;
             }
@@ -856,7 +856,7 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public NColor withName(String name) {
-            name = NStringUtils.trimToNull(name);
+            name = NStringUtils.stripToNull(name);
             if (name == null) {
                 return NColor.of64(color);
             }
