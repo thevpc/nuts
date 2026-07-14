@@ -10,12 +10,12 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.util.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 public class NWebRequestImpl implements NWebRequest {
@@ -491,8 +491,6 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
 
-
-
     @Override
     public Map<String, List<String>> parameters() {
         return parameters;
@@ -900,9 +898,46 @@ public class NWebRequestImpl implements NWebRequest {
         return addPart().name(name).contentType(contentType).body(body).end();
     }
 
+    public NWebRequest addPart(String name, File file) {
+        return addPart(name, file == null ? null : file.getName(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(String name, Path file) {
+        return addPart(name, file == null ? null : file.getFileName().toString(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(String name, NPath file) {
+        return addPart(name, file == null ? null : file.name(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(File file) {
+        NAssert.requireNamedNonNull(file, "file");
+        return addPart(file.getName(), file.getName(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(Path file) {
+        NAssert.requireNamedNonNull(file, "file");
+        return addPart(file.getFileName().toString(), file.getFileName().toString(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(NPath file) {
+        NAssert.requireNamedNonNull(file, "file");
+        return addPart(file.name(), file.name(), null, NInputSource.of(file));
+    }
+
     @Override
     public NWebResponse run() {
         return cli.run(this);
+    }
+
+    @Override
+    public CompletableFuture<NWebResponse> runAsync() {
+        return runAsync(null);
+    }
+
+    @Override
+    public CompletableFuture<NWebResponse> runAsync(Executor executor) {
+        return cli.runAsync(this,executor);
     }
 
     public String effectiveUri() {

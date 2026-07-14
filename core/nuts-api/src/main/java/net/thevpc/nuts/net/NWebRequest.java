@@ -7,8 +7,12 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NSetter;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 public interface NWebRequest extends NMsgFormattable {
@@ -174,8 +178,24 @@ public interface NWebRequest extends NMsgFormattable {
 
     NWebRequest addPart(String name, String fileName, String contentType, NInputSource body);
 
+    NWebRequest addPart(String name, File file);
+
+    NWebRequest addPart(String name, Path file);
+
+    NWebRequest addPart(String name, NPath file);
+
+    NWebRequest addPart(File file);
+
+    NWebRequest addPart(Path file);
+
+    NWebRequest addPart(NPath file);
+
     String effectiveUri();
 
     NWebResponse run();
+
+    CompletableFuture<NWebResponse> runAsync();
+
+    CompletableFuture<NWebResponse> runAsync(Executor executor);
 
 }

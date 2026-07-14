@@ -4,9 +4,11 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 public interface NWebCli extends NComponent {
@@ -28,6 +30,12 @@ public interface NWebCli extends NComponent {
 
     @NGetter
     List<NWebCookie> cookies();
+
+    @NGetter
+    Executor executor();
+
+    @NSetter
+    NWebCli executor(Executor executor);
 
     NWebCli header(String name, String value);
 

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
+import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.boot.internal.util.NBootLog;
 import net.thevpc.nuts.io.NCp;
@@ -26,12 +27,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWebCli implements NWebCli {
+    private Executor executor;
 
     public static URLConnection prepareGlobalConnection(URLConnection c) {
         NDuration connectionTimeout = getGlobalConnectionTimeoutOrDefault();
@@ -86,6 +91,15 @@ public class DefaultNWebCli implements NWebCli {
         c = url.openConnection();
         prepareGlobalConnection(c);
         return c.getInputStream();
+    }
+
+    public Executor executor() {
+        return executor;
+    }
+
+    public NWebCli executor(Executor executor) {
+        this.executor = executor;
+        return this;
     }
 
     @Override
@@ -369,6 +383,16 @@ public class DefaultNWebCli implements NWebCli {
             }
         }
         return u.toString();
+    }
+
+    public CompletableFuture<NWebResponse> runAsync(NWebRequest r, Executor executor) {
+        if (executor == null) {
+            executor = this.executor;
+            if (executor == null) {
+                executor = NConcurrent.of().executorService();
+            }
+        }
+        return CompletableFuture.supplyAsync(() -> run(r), executor);
     }
 
     public NWebResponse run(NWebRequest r) {

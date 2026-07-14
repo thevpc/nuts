@@ -197,7 +197,7 @@ existing Maven workflow.
 &lt;dependencies&gt;
     &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
     &lt;artifactId&gt;nuts&lt;/artifactId&gt;
-    &lt;version&gt;0.8.9&lt;/version&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
 &lt;/dependency&gt;
 &lt;/dependencies&gt;
 &lt;repositories&gt;
@@ -522,13 +522,13 @@ NElement document = NElement.ofObjectBuilder()
     .build();
 
 // Parse JSON into Java object
-Person person = NElementParser.ofJson().parse(NPath.of(&quot;person.json&quot;), Person.class);
+Person person = NElementReader.ofJson().read(NPath.of(&quot;person.json&quot;), Person.class);
 
 // Format and write XML to file
-NElementFormat.ofPlainXml(document).println(NPath.of(&quot;person.xml&quot;));
+NElementWriter.ofPlainXml(document).println(NPath.of(&quot;person.xml&quot;));
 
 // Print TSON to terminal with colors
-NElementFormat.ofNtfTson(document).println();
+NElementWriter.ofNtfTson(document).println();
 </code></pre>
                                                 </p>
                                             </div>
@@ -637,7 +637,7 @@ and supervising processes trivial — whether locally or remotely.
                                                 <p>
                                                     <pre><code class="language-java">
     // Run a system command and capture output
-    String out = NExec.of(&quot;ls&quot;).system().grabAll().run().getGrabbedOutString();
+    String out = NExec.of(&quot;ls&quot;).system().grabAll().run().grabbedOut();
 
     // Run a Maven artifact (auto-resolves if missing)
     NExec.of(&quot;netbeans-launcher&quot;).run();
@@ -1179,7 +1179,7 @@ NOut.println(&quot;Was executed? &quot; + executed);
             <p class="text-2 text-center mb-0">
                 Copyright © 2018-2026 Nuts Package Manager Team.
                 <br>
-                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-06-10-155053
+                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-14-124618
                 <br>
                 <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                             href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>

@@ -318,7 +318,12 @@
                             
                         </li>
                         
-                        <li class="nav-item"><a class="nav-link" href="#filesystem">7.7 File system</a>
+                        <li class="nav-item"><a class="nav-link" href="#U3100fad96ae912458ac0ffb7b8713efe4f1b9839">7.7 HTTP Web Client (NWebCli)</a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="#filesystem">7.8 File system</a>
                             
                             
                         </li>
@@ -520,8 +525,8 @@
                             <section id="Ue1da83f7adef997558e2ba966c3a4fa154d756fc" >
                                 <h3 class="main-section2"><a href="#Ub3e3bcd2cbeb8025f027ce4249ebad5bd32ea817">1.1 Hello World</a></h3>
                                 <div class="text-card">
-                                <p class="md-phrase">To make use of <mark class="md-code md-code-` ">NAF</mark>  you need add the dependency  <code class="md-code md-code-``` ">net.thevpc.nuts#nuts:0.8.9</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-``` ">https://maven.thevpc.net</code></p><H4 class="md-title-2">Configure your pom.xml</H4><pre class="md-code md-code-``` xml"><code class="xml">&lt;dependencies&gt;
-        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts&lt;/artifactId&gt;&lt;version&gt;0.8.9&lt;/version&gt;&lt;/dependency&gt;
+                                <p class="md-phrase">To make use of <mark class="md-code md-code-` ">NAF</mark>  you need add the dependency  <code class="md-code md-code-``` ">net.thevpc.nuts#nuts:1.0.0</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-``` ">https://maven.thevpc.net</code></p><H4 class="md-title-2">Configure your pom.xml</H4><pre class="md-code md-code-``` xml"><code class="xml">&lt;dependencies&gt;
+        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts&lt;/artifactId&gt;&lt;version&gt;1.0.0&lt;/version&gt;&lt;/dependency&gt;
     &lt;/dependencies&gt;
     &lt;repositories&gt;
         &lt;repository&gt;&lt;id&gt;thevpc&lt;/id&gt;&lt;url&gt;https://maven.thevpc.net&lt;/url&gt;&lt;/repository&gt;
@@ -863,12 +868,20 @@ NMsg.ofV("Threshold=$th, Date=$date", name -&gt; switch (name) {
     case "date" -&gt; LocalDate.now();
     default     -&gt; null;
 });
-</code></pre>Notes:<ul class="md-ul"><li class="md-uli">Avoid mixing styles in a single message.</li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">${}</code> syntax is safer for complex strings (e.g., <code class="md-code md-code-` ">$val123text</code> vs <code class="md-code md-code-` ">${val}123text</code>).</p></li></ul><H4 class="md-title-3"><p class="md-phrase">C-style Formatting (<mark class="md-code md-code-` ">ofC</mark>)</p></H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofC</mark> to create messages using standard <code class="md-code md-code-` ">String.format()</code>-style syntax:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofC("Hello %s", "world"));
+
+// Variable substitution from function (with mustache)
+NMsg.ofM("Threshold=, Date=", name -&gt; switch (name) {
+    case "th"   -&gt; 0.85;
+    case "date" -&gt; LocalDate.now();
+    default     -&gt; null;
+});
+</code></pre>Notes:<ul class="md-ul"><li class="md-uli">Avoid mixing styles in a single message.</li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">${}</code> syntax is safer for complex strings (e.g., <code class="md-code md-code-` ">$val123text</code> vs <code class="md-code md-code-` ">${val}123text</code>).</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` "></code> syntax is safer when '$' has specific meanings in your context.</p></li></ul><H4 class="md-title-3"><p class="md-phrase">C-style Formatting (<mark class="md-code md-code-` ">ofC</mark>)</p></H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofC</mark> to create messages using standard <code class="md-code md-code-` ">String.format()</code>-style syntax:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofC("Hello %s", "world"));
 </code></pre><p class="md-phrase">Placeholders like <code class="md-code md-code-` ">%s</code>, <code class="md-code md-code-` ">%d</code>, etc., behave as expected. Useful for simple messages with positional arguments.</p><H4 class="md-title-3">Java MessageFormat (ofJ)</H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofJ</mark> for Java-style formatting with <code class="md-code md-code-` ">{0}</code>, <code class="md-code md-code-` ">{1}</code> placeholders:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofJ("Hello {0}", "world"));
 NOut.println(NMsg.ofJ("Hello {}", "world"));      // SLF4J-style
 </code></pre>Both formats are supported, and will be filled using the provided arguments in order (but should not be mixed).<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">{}</code> placeholders are matched sequentially, like in SLF4J.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">{0}</code>, <code class="md-code md-code-` ">{1}</code>, etc. allow for specific argument reordering or reuse.</p></li></ul><H4 class="md-title-2">Variable-based Formatting (ofV)</H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofV</mark> to format messages using named variables:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofV("Hello $v", NMaps.of("v", "world")));
 NOut.println(NMsg.ofV("Hello ${v}", NMaps.of("v", "world")));
-</code></pre><p class="md-phrase">Both <code class="md-code md-code-` ">$v</code> and <code class="md-code md-code-` ">${v}</code> syntaxes are supported.</p>Variables are replaced by name using the $ prefix. This is useful for dynamically named arguments or template-based rendering, particularly when formatting messages from dynamic key-value maps (e.g., for templates or localization).<ul class="md-ul"><li class="md-uli">$v is simple and concise.</li><li class="md-uli"><p class="md-phrase">${v} is safer when followed by alphanumeric characters (e.g., <code class="md-code md-code-` ">$val123text</code> vs <code class="md-code md-code-` ">${val}123text</code>).</p></li></ul>Missing variables are left as-is or replaced with a placeholder, depending on context or configuration.
+</code></pre><p class="md-phrase">Both <code class="md-code md-code-` ">$v</code> and <code class="md-code md-code-` ">${v}</code> syntaxes are supported.</p>Variables are replaced by name using the $ prefix. This is useful for dynamically named arguments or template-based rendering, particularly when formatting messages from dynamic key-value maps (e.g., for templates or localization).<ul class="md-ul"><li class="md-uli">$v is simple and concise.</li><li class="md-uli"><p class="md-phrase">${v} is safer when followed by alphanumeric characters (e.g., <code class="md-code md-code-` ">$val123text</code> vs <code class="md-code md-code-` ">${val}123text</code>).</p></li></ul>Missing variables are left as-is or replaced with a placeholder, depending on context or configuration.<H4 class="md-title-2">Variable-based Moustache Formatting (ofM)</H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofM</mark> to format messages using named variables with Mustache-style placeholders:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofV("Hello ", NMaps.of("v", "world")));
+</code></pre>Variables are replaced by name using Mustache-style. This is useful for dynamically named arguments or template-based rendering, particularly when formatting messages from dynamic key-value maps (e.g., for templates or localization).Missing variables are left as-is or replaced with a placeholder, depending on context or configuration.
                                 </div>
                                 
                             </section>
@@ -979,14 +992,14 @@ NElement document = NElement.ofObjectBuilder()
                                 <h3 class="main-section2"><a href="#U082c7713a2f645deae990e4f4399934d94a35b64">4.2 Parse Elements</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase">use <mark class="md-code md-code-` ">ofJson</mark>, <mark class="md-code md-code-` ">ofTson</mark>, <mark class="md-code md-code-` ">ofYaml</mark>, and <mark class="md-code md-code-` ">ofXml</mark> to parse into <mark class="md-code md-code-` ">NElement</mark></p><pre class="md-code md-code-``` java"><code class="java">// Parse JSON into Java object
-NElement personJson = NElementParser.ofJson().parse(NPath.of("person.json"));
-NElement personXml = NElementParser.ofXml().parse(NPath.of("person.xml"));
+NElement personJson = NElementReader.ofJson().read(NPath.of("person.json"));
+NElement personXml = NElementReader.ofXml().read(NPath.of("person.xml"));
 
 </code></pre>You can parse into a Java class as well :<pre class="md-code md-code-``` java"><code class="java">// Parse JSON into Java object
-Person person = NElementParser.ofJson().parse(NPath.of("person.json"), Person.class);
+Person person = NElementReader.ofJson().read(NPath.of("person.json"), Person.class);
 
 // Format and write XML to file
-NElementFormat.ofPlainXml(document).println(NPath.of("person.xml"));
+NElementWriter.ofPlainXml(document).println(NPath.of("person.xml"));
 
 // Print TSON to terminal with colors
         NElementFormat.ofNtfTson(document).println();
@@ -1024,10 +1037,10 @@ Person person = ...;
                                 <h3 class="main-section2"><a href="#U082c7713a2f645deae990e4f4399934d94a35b64">4.4 Convert Elements</a></h3>
                                 <div class="text-card">
                                 <p class="md-phrase"><mark class="md-code md-code-` ">NElement</mark> is an excellent way to convert between text formats (<mark class="md-code md-code-` ">json</mark> to <mark class="md-code md-code-` ">tson</mark> etc.)</p><pre class="md-code md-code-``` java"><code class="java">// Parse JSON into Element
-NElement personJson = NElementParser.ofJson().parse(NPath.of("person.json"));
+NElement personJson = NElementReader.ofJson().parse(NPath.of("person.json"));
 
 // Format and write XML to file
-NElementFormat.ofPlainXml(personJson).println(NPath.of("person.xml"));
+NElementWriter.ofPlainXml(personJson).println(NPath.of("person.xml"));
 </code></pre>
                                 </div>
                                 
@@ -1538,8 +1551,67 @@ List&lt;NPath&gt; files = dir.stream()
                             <hr class="divider">
                         
                             <!--pageLevel2-->
+                            <section id="U3100fad96ae912458ac0ffb7b8713efe4f1b9839" >
+                                <h3 class="main-section2"><a href="#U6413499fae4672c548d930b297101fd249f37a66">7.7 HTTP Web Client (NWebCli)</a></h3>
+                                <div class="text-card">
+                                <p class="md-phrase">For communicating with external HTTP web services, NAF provides <mark class="md-code md-code-` ">NWebCli</mark>[cite: 7]. It offers a fluent, highly configurable, and context-aware builder API to construct synchronous or asynchronous HTTP requests, handle payloads (JSON, URL-encoded forms, multipart), manage headers/cookies, and process raw or structured JSON responses[cite: 7, 8, 9].</p><H4 class="md-title-2">Key features:</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Fluent Request Building</b> – Construct requests naturally using method shortcuts like <code class="md-code md-code-` ">GET()</code>, <code class="md-code md-code-` ">POST()</code>, <code class="md-code md-code-` ">PUT()</code>, <code class="md-code md-code-` ">DELETE()</code>, etc., passing relative or absolute target paths[cite: 7, 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Flexible Body Serialization</b> – Send payloads easily with <code class="md-code md-code-` ">jsonRequestBody(Object)</code>[cite: 8], raw text with <code class="md-code md-code-` ">requestBody(String)</code>[cite: 8], or handle multipart file uploads via <code class="md-code md-code-` ">addPart()</code>[cite: 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Integrated JSON Mapping</b> – Automatically bind response payloads directly into Java POJOs using <code class="md-code md-code-` ">contentAsJson(Class&lt;T&gt;)</code>[cite: 9], or interact with them dynamically via <code class="md-code md-code-` ">contentAsJsonMap()</code> or <code class="md-code md-code-` ">contentAsJsonList()</code>[cite: 9].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Stateful Cookie & Header Management</b> – Attach global cookies and base URIs to the client instance (<mark class="md-code md-code-` ">NWebCli</mark>)[cite: 7], or override them granularly on a per-request layer (<mark class="md-code md-code-` ">NWebRequest</mark>)[cite: 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Robust Error Handling</b> – Inspect status codes quickly using semantic utilities like <code class="md-code md-code-` ">isOk()</code>, <code class="md-code md-code-` ">isClientError()</code>, and <code class="md-code md-code-` ">isServerError()</code>[cite: 5, 9], or use <code class="md-code md-code-` ">ifErrorThrow()</code> to chain defensive error state processing[cite: 9].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Timeout Adaptability</b> – Configure explicit connection and read deadlines via <code class="md-code md-code-` ">connectTimeout(NDuration)</code> and <code class="md-code md-code-` ">readTimeout(NDuration)</code> directly on the client[cite: 7] or specific requests[cite: 8].</p></li></ul><pre class="md-code md-code-``` java"><code class="java">// Fast execution instance retrieving a payload
+String payload = NWebCli.of()
+        .GET("https://api.example.com/status")
+        .run()
+        .contentAsString();
+</code></pre><H4 class="md-title-2">Example: JSON Request and Response Parsing</H4>The client simplifies interactions with REST APIs by abstracting the explicit manual mapping boilerplate of JSON payloads back and forth:<pre class="md-code md-code-``` java"><code class="java">public void login(String login, String password) {
+    NWebResponse response = NWebCli.of()
+            .POST(resolveUrl("login"))
+            .jsonRequestBody(
+                    NMapBuilder.ofLinked()
+                            .put("userName", login)
+                            .put("password", password)
+                            .build()
+            )
+            .run();
+
+    if (response.isOk()) {
+        LoginResult rr = response.contentAsJson(LoginResult.class);
+        if (rr != null &amp;&amp; !NBlankable.isBlank(rr.accessToken)) {
+            this.loginResult = rr;
+            return;
+        }
+    } else {
+        throw new NIllegalArgumentException(
+            NMsg.ofC("unable to login to %s", toSafeConnectionString(resolveConnectionString()))
+        );
+    }
+    throw new NIllegalArgumentException(
+        NMsg.ofC("unable to login to %s", toSafeConnectionString(resolveConnectionString()))
+    );
+}
+</code></pre><H4 class="md-title-2">Example: Seamless Multipart Form Uploads</H4>NWebCli provides highly optimized overloads for uploading files (File, Path, or NPath). It automatically infers the form parameters and filenames behind the scenes:<pre class="md-code md-code-``` java"><code class="java">// Upload a file where the form name matches the local filename
+NWebCli.of().POST("/upload")
+    .addPart(myFile) 
+    .run();
+
+// Or specify an explicit form parameter name
+NWebCli.of().POST("/upload")
+    .addPart("avatar", myFile)
+    .run();
+</code></pre><H4 class="md-title-2">Resilience & Asynchronous Execution</H4>To keep your application non-blocking, you can submit tasks asynchronously. Additionally, rather than bloating the HTTP client with retry logic, NWebCli integrates cleanly with your workspace's concurrency engine (NConcurrent):<pre class="md-code md-code-``` java"><code class="java">// Run asynchronously using a custom Executor or your NConcurrent ExecutorService
+CompletableFuture&lt;NWebResponse&gt; asyncResponse = NWebCli.of()
+        .GET("/long-task")
+        .runAsync(NConcurrent.of().executorService());
+
+// Combine NWebCli and NConcurrent for robust network retry behaviors
+NWebResponse resilientResponse = NConcurrent.of()
+        .retryCall(() -&gt; NWebCli.of().GET("/flaky-service").run())
+        .run();
+</code></pre>
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                            <!--pageLevel2-->
                             <section id="filesystem" >
-                                <h3 class="main-section2"><a href="#U6413499fae4672c548d930b297101fd249f37a66">7.7 File system</a></h3>
+                                <h3 class="main-section2"><a href="#U6413499fae4672c548d930b297101fd249f37a66">7.8 File system</a></h3>
                                 <div class="text-card">
                                 <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> manages multiple workspaces. It has a default one located at ~/.config/nuts (~ is the user home directory). Each workspace handles a database and files related to the installed applications. The workspace has a specific layout to store different types of files relatives to your applications. <b class="md-bold">nuts</b><p class="md-phrase"> is largely inspired by <a href="https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html" class="md-link">XDG Base Directory Specification</a> and hence defines several  store locations for each file type. Such organization of folders is called Layout and is dependent on the current operating system, the layout strategy and any custom configuration.</p><H4 class="md-title-2">Store Locations</H4>Supported Store Locations are : <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> File System defines the following folders :</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">config</b> : defines the base directory relative to which application specific configuration files should be stored.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">apps</b> : defines the base directory relative to which application executable binaries should be stored</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">lib</b> : defines the base directory relative to which application non executable binaries should be stored</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">var</b> : defines the base directory relative to which application specific data files (other than config) should be stored</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">log</b> : defines the base directory relative to which application specific log and trace files should be stored</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">temp</b> : defines the base directory relative to which application specific temporary files should be stored</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">cache</b> : defines the base directory relative to which application non-essential data and binary files should be stored to optimize bandwidth or performance</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">run</b> : defines the base directory relative to which application-specific non-essential runtime files and other file objects (such as sockets, named pipes, ...) should be stored</p></li></ul><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> defines such distinct folders (named Store Locations) for storing different types of application data according to your operating system.</p>On Windows Systems the default locations are :<ul class="md-ul"><li class="md-uli">apps     : "$HOME/AppData/Roaming/nuts/apps"</li><li class="md-uli">lib      : "$HOME/AppData/Roaming/nuts/lib"</li><li class="md-uli">config   : "$HOME/AppData/Roaming/nuts/config"</li><li class="md-uli">var      : "$HOME/AppData/Roaming/nuts/var"</li><li class="md-uli">log      : "$HOME/AppData/Roaming/nuts/log"</li><li class="md-uli">temp     : "$HOME/AppData/Local/nuts/temp"</li><li class="md-uli">cache    : "$HOME/AppData/Local/nuts/cache"</li><li class="md-uli">run      : "$HOME/AppData/Local/nuts/run"</li></ul>On Linux, Unix, MacOS and any POSIX System the default locations are :<ul class="md-ul"><li class="md-uli">config   : "$HOME/.config/nuts"</li><li class="md-uli">apps     : "$HOME/.local/share/nuts/apps"</li><li class="md-uli">lib      : "$HOME/.local/share/nuts/lib"</li><li class="md-uli">var      : "$HOME/.local/share/nuts/var"</li><li class="md-uli">log      : "$HOME/.local/log/nuts"</li><li class="md-uli">cache    : "$HOME/.cache/nuts"</li><li class="md-uli">temp     : "$java.io.tmpdir/$username/nuts"</li><li class="md-uli">run      : "/run/user/$USER_ID/nuts"</li></ul>As an example, the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is<pre class="md-code md-code-``` "><code class="">home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/
 </code></pre>And the log file "app.log" for the same artifact in the workspace named "personal" in a Windows environment is located at<pre class="md-code md-code-``` "><code class="">C:/Users/me/AppData/Roaming/nuts/log/nuts/personal/config/id/net/vpc/app/netbeans-launcher/1.2.4/app.log
@@ -2085,7 +2157,7 @@ NOut.println(result);
         .addCommand(NConstants.Ids.NSH, "-c", "ls")
         .grabAll()
         .failFast()
-        .getGrabbedOutString();
+        .grabbedOut();
 
 NOut.println("Result:");
 NOut.println(result);
@@ -2093,7 +2165,7 @@ NOut.println(result);
         .addExecutorOptions("--bot")
         .addCommand("com.mycompany:my-remote-artifact")
         .addCommand("list", "-i")
-        .getGrabbedAllString();
+        .grabbedAll();
 
 NOut.println(result);
 </code></pre><ul class="md-ul"><li class="md-uli">Useful for running workspace-bound tools or remote executables.</li><li class="md-uli">Works with Maven coordinates or URLs pointing to executable jars.</li></ul><H4 class="md-title-2">Remote & Structured Command Execution</H4>NExec is not limited to local commands: you can execute processes on remote systems via SSH (or any supported executor) and easily capture stdout/stderr with minimal boilerplate:<pre class="md-code md-code-``` java"><code class="java">NExec u = NExec.of()
@@ -2106,8 +2178,8 @@ NOut.println(result);
         .grabOut();                           // Capture stdout
 
 // Access results
-String stdout = u.getGrabbedOutString();
-String stderr = u.getGrabbedErrString();
+String stdout = u.grabbedOut();
+String stderr = u.grabbedErr();
 int exitCode = u.getResultCode();
 
 NOut.println("Exit code: " + exitCode);
@@ -2440,7 +2512,7 @@ nuts my-app
         &lt;dependency&gt;
             &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
             &lt;artifactId&gt;nuts&lt;/artifactId&gt;
-            &lt;version&gt;0.8.9.0&lt;/version&gt;
+            &lt;version&gt;1.0.0.0&lt;/version&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
@@ -2633,7 +2705,7 @@ Implementation-Version: 1.2.3
                                 nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation @NAppDefinition to mark your SpringBootApplication.Add the following dependency to you spring boot project<pre class="md-code md-code-``` xml"><code class="xml">&lt;dependency&gt;
         &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
         &lt;artifactId&gt;nuts-spring-boot&lt;/artifactId&gt;
-        &lt;version&gt;0.8.9.0&lt;/version&gt;
+        &lt;version&gt;1.0.0.0&lt;/version&gt;
     &lt;/dependency&gt;
 </code></pre><p class="md-phrase">Add @NAppDefinition in your <mark class="md-code md-code-` ">SpringBootApplication</mark> top class.</p><pre class="md-code md-code-``` java"><code class="java">@NAppDefinition
 @SpringBootApplication
@@ -2698,7 +2770,7 @@ NBeanRef.of("nonExistentBean").as(SomeInterface.class).someMethod(); // ← Erro
                                 <H4 class="md-title-1">Nuts SLF4J Integration</H4><p class="md-phrase">Nuts provides seamless integration with SLF4J, the standard logging facade for Java applications. This integration allows you to use Nuts' powerful <mark class="md-code md-code-` ">NLog</mark> structured logging system while maintaining compatibility with your existing SLF4J infrastructure.</p><H4 class="md-title-2">Installation</H4>Add the following dependency to your Spring Boot project:<pre class="md-code md-code-``` xml"><code class="xml">&lt;dependency&gt;
     &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
     &lt;artifactId&gt;nuts-nuts-slf4j&lt;/artifactId&gt;
-    &lt;version&gt;0.8.9.0&lt;/version&gt;
+    &lt;version&gt;1.0.0.0&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre><H4 class="md-title-2">Why SLF4J Integration?</H4>SLF4J is the de facto standard logging facade in the Java ecosystem. By integrating Nuts with SLF4J, you get:<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Unified logging:</b> Use <mark class="md-code md-code-` ">NLog</mark> alongside your existing SLF4J loggers without conflicts</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Flexible backend support:</b> Route logs to Logback, Log4j2, or any SLF4J-compatible backend</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Structured logging:</b> Leverage Nuts' <mark class="md-code md-code-` ">NLog</mark> for rich, semantically meaningful logs with <mark class="md-code md-code-` ">NMsg</mark></p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Backward compatibility:</b> Existing SLF4J code continues to work without modification</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Context propagation:</b> MDC (Mapped Diagnostic Context) values flow seamlessly between Nuts and SLF4J</p></li></ul><H4 class="md-title-2">Basic Usage</H4><p class="md-phrase">Once the dependency is added, <mark class="md-code md-code-` ">NLog</mark> automatically delegates to SLF4J:</p><pre class="md-code md-code-``` java"><code class="java">import net.thevpc.nuts.NLog;
 import net.thevpc.nuts.NMsg;
@@ -2985,7 +3057,7 @@ session.setLogFilter(log -&gt; log.getVerb().equals(NLogIntent.FAIL));
         <p class="text-2 text-center mb-0">
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2026-06-10-155053
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2026-07-14-124618
             <br>
             <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
                                                         href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
