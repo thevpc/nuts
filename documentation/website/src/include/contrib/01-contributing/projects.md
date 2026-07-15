@@ -109,7 +109,7 @@ You can search for files than contains some text or jars that contain some class
 
 ### **ndocusaurus**
 **ndocusaurus** is a [Docusaurus 2](https://docusaurus.io) toolbox that adds several features to the tool such as: 
-* templating (using ndoc)
+* templating (using nsite)
 * pdf generation
 
 ### **ntalk-agent**

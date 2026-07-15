@@ -24,9 +24,9 @@ $(window).on('load', function () {
 // Dropdown show on hover
 $('.primary-menu ul.navbar-nav li.dropdown, .login-signup ul.navbar-nav li.dropdown').on("mouseover", function() {
 	if ($(window).width() > 991) {
-		$(this).find('> .dropdown-menu').stop().slideDown('fast');
+		$(this).find('> .dropdown-menu').stop().fadeIn('fast');
 		$(this).bind('mouseleave', function() {
-		$(this).find('> .dropdown-menu').stop().css('display', 'none'); 
+		$(this).find('> .dropdown-menu').stop().fadeOut('fast'); 
 		});
 	}
 });
@@ -97,11 +97,27 @@ $('#sidebarCollapse').on('click', function () {
    Sections Scroll
 -------------------------- */
 
-$('.smooth-scroll,.idocs-navigation a').on('click', function() {
-	event.preventDefault();
+$(document).on('click', '.smooth-scroll, .idocs-navigation a', function(event) {
     var sectionTo = $(this).attr('href');
-	$('html, body').stop().animate({
-      scrollTop: $(sectionTo).offset().top - 120}, 1000, 'easeInOutExpo');
+    if (sectionTo && sectionTo.startsWith('#') && sectionTo.length > 1) {
+        var $target = $(sectionTo);
+        if ($target.length) {
+            event.preventDefault();
+            var offset = 120;
+            if ($(window).width() < 768) {
+                offset = 70; // adjusted for mobile if needed
+            }
+            $('html, body').stop().animate({
+                scrollTop: $target.offset().top - offset
+            }, 1000, 'easeInOutExpo');
+            
+            // If on mobile and sidebar is active, close it
+            if ($('.idocs-navigation').hasClass('active')) {
+                $('.idocs-navigation').removeClass('active');
+                $('#sidebarCollapse span:nth-child(3)').removeClass('w-50');
+            }
+        }
+    }
 });
 
 /*-----------------------------

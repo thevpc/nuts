@@ -42,9 +42,24 @@
 .idocs-navigation::-webkit-scrollbar-track { background: transparent; }
 .idocs-navigation::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
 
-/* Sidebar search (future) placeholder */
+/* Sidebar search area */
 .idocs-navigation .nav-search {
-  padding: 0 16px 16px;
+  padding: 0 20px 20px;
+}
+
+.idocs-navigation .nav-search input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.idocs-navigation .nav-search input:focus {
+  border-color: #0366d6;
+  box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
 }
 
 /* Level 1 nav items — section labels (uppercase, muted) */
@@ -94,7 +109,7 @@
   font-weight: 400;
   color: #374151;
   border-left: 3px solid transparent;
-  transition: all 0.15s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   line-height: 1.5;
   white-space: normal;
   word-break: break-word;
@@ -105,8 +120,9 @@
 .idocs-navigation .nav .nav > .nav-item > .nav-link:hover {
   color: #0366d6;
   border-left-color: #0366d6;
-  background: #eef2ff;
+  background: #f8fafc;
   text-decoration: none;
+  transform: translateX(4px);
 }
 
 .idocs-navigation .nav .nav > .nav-item > .nav-link.active {
@@ -145,6 +161,20 @@
 /* width handled below */
 
 /* ---- Section headings ---- */
+
+.idocs-content h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.idocs-content .lead {
+  font-size: 1.15rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
 
 /* Level 1 — major section */
 .main-section1 {
@@ -469,85 +499,45 @@ hr.divider {
   user-select: none;
 }
 
+/* ---- Reveal animations ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Ensure footer has room on doc pages with sticky sidebar */
+#footer {
+  position: relative;
+  z-index: 10;
+}
+
+/* Show mobile sidebar toggler on doc pages */
+@media (max-width: 768px) {
+  #sidebarCollapse {
+    display: block !important;
+  }
+}
+
+/* Sidebar section number badges */
+.nav-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
 /* navbar styles are in stylesheet-navbar.css */
-
-/* ============================================================
-   Override stylesheet.css idocs-navigation rules
-   ============================================================ */
-
-/* stylesheet.css hides sub-navs by default — we always show them */
-.idocs-navigation .nav .nav {
-  display: block !important;
-}
-
-/* stylesheet.css sets padding:6px 30px and font-weight:600 on all nav-links */
-.idocs-navigation .nav .nav-link {
-  padding: 0 !important;
-  font-weight: 400 !important;
-  line-height: 1.5 !important;
-}
-
-/* Override the ::after pseudo bullet that stylesheet.css adds */
-.idocs-navigation .nav .nav .nav-item .nav-link:after {
-  display: none !important;
-}
-
-/* Level 1 label links — clickable section headers */
-.idocs-navigation .nav > .nav-item > .nav-link {
-  padding: 12px 20px 4px !important;
-  font-size: 0.7rem !important;
-  font-weight: 700 !important;
-  color: #94a3b8 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.1em !important;
-  pointer-events: auto !important;
-  cursor: pointer !important;
-  height: auto !important;
-  transition: color 0.15s;
-}
-
-.idocs-navigation .nav > .nav-item > .nav-link:hover {
-  color: #0366d6 !important;
-}
-
-/* Level 2 links — re-apply with !important */
-.idocs-navigation .nav .nav > .nav-item > .nav-link {
-  display: block !important;
-  padding: 5px 20px !important;
-  font-size: 0.83rem !important;
-  font-weight: 400 !important;
-  color: #374151 !important;
-  border-left: 3px solid transparent !important;
-  text-transform: none !important;
-  line-height: 1.5 !important;
-  height: auto !important;
-  white-space: normal !important;
-}
-
-.idocs-navigation .nav .nav > .nav-item > .nav-link:hover {
-  color: #0366d6 !important;
-  border-left-color: #0366d6 !important;
-  background: #eef2ff !important;
-  text-decoration: none !important;
-}
-
-.idocs-navigation .nav .nav > .nav-item > .nav-link.active {
-  color: #0366d6 !important;
-  border-left-color: #0366d6 !important;
-  background: #eef2ff !important;
-  font-weight: 600 !important;
-}
-
-/* Level 3 links */
-.idocs-navigation .nav .nav .nav > .nav-item > .nav-link {
-  display: block !important;
-  padding: 4px 20px 4px 32px !important;
-  font-size: 0.78rem !important;
-  color: #6b7280 !important;
-  text-transform: none !important;
-  height: auto !important;
-}
-
-.idocs-navigation .nav .nav .nav > .nav-item > .nav-link:after {
-  display: none !important;
-}

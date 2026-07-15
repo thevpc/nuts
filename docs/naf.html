@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>NAF — Nuts Application Framework</title>
+    <meta name="description" content="NAF is an a-la-carte toolkit of reusable Java components — CLI parsing, unified IO, logging, concurrency, expression engine and more.">
+    <meta name="author" content="thevpc">
+
+    <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
     <link href="assets/images/favicon.ico" rel="icon"/>
     <title>Nuts Java Package Manager</title>
-    <meta name="description" content="Your ThemeForest item Name and description">
+    <meta name="description" content="Nuts Java Package Manager Website">
     <meta name="author" content="thevpc">
 
     <!-- Stylesheet
@@ -20,150 +31,274 @@
     <!-- Highlight Syntax -->
     <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
-    <link rel="stylesheet" type="text/css" href="assets/css/caroussel.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+    <!-- Shared navbar (all pages) -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-navbar.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-xml.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="assets/css/code.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2SH2Y1383S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2SH2Y1383S');
+    </script>
+
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-naf.css"/>
 
-<!-- Preloader -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+</head>
+<body>
+
+<div id="doc-progress"></div>
 <div class="preloader">
-    <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
 </div>
-<!-- Preloader End -->
 
-<!-- Document Wrapper   
-=============================== -->
-<div id="main-wrapper" class="index-main-wrapper">
+<div id="main-wrapper" class="naf-main-wrapper">
 
-    
-    <!-- Header
-    ============================ -->
+    <!-- Header NAF -->
 <header id="header" class="sticky-top">
-    <!-- Navbar -->
     <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
         <div class="container-fluid">
-            <!-- Sidebar Toggler -->
-            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
-                    class="w-75"></span><span class="w-50"></span></button>
 
-            <!-- Logo -->
-            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
-                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
-            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="naf.html">Nuts Application Framework</a></strong></span>
-            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.9.0</span></span>
-            <!-- Logo End -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button">
+                <span></span><span class="w-75"></span><span class="w-50"></span>
+            </button>
 
-            <!-- Navbar Toggler -->
-            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
-                <span></span><span></span><span></span></button>
+            <!-- Brand -->
+            <a class="nuts-brand" href="naf.html" title="NAF — Nuts Application Framework">
+                <img src="assets/images/nuts-icon.png" alt="NAF" width="28"/>
+                <span class="nuts-brand__name">NAF</span>
+                <span class="nuts-brand__version">v1.0.0</span>
+            </a>
+
+            <button class="navbar-toggler ml-auto" type="button"
+                    data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span>
+            </button>
 
             <div id="header-nav" class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav">
-                    <li><a href="index.html" class="">Nuts Package Manager</a></li>
-                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
-                      <ul class="dropdown-menu">
-                          <li><a class="dropdown-item " href="doc-naf.html">Developer Documentation</a></li>
-                          <li><a class="dropdown-item " href="contrib.html">Contributing</a></li>
-                          <li><a class="dropdown-item " href="faq.html">FAQ</a></li>
-                          <!--
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
-                          <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
-                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
-                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
-                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
-                          </ul>
-                        </li>
-                        -->
-                      </ul>
+                <ul class="navbar-nav nuts-nav">
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">Docs</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item "
+                                   href="doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="contrib.html">Contributing</a></li>
+                            <li><a class="dropdown-item "
+                                   href="faq.html">FAQ</a></li>
+                        </ul>
                     </li>
-                    <li><a href="blog.html" class="">Blog</a></li>
-                    <li><a href="apps.html" class="">Apps</a></li>
-                    <li><a href="download.html" class="">Download</a></li>
-                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+
+                    <li><a href="https://github.com/thevpc/nuts" target="_blank"
+                           class="nuts-nav__github"><i class="fab fa-github"></i></a></li>
+
+                    <!-- Back to Nuts -->
+                    <li><a href="index.html" class="nuts-nav__back-nuts">
+                        &larr; Nuts Package Manager
+                    </a></li>
+
                 </ul>
             </div>
-            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
-                <li class="social-icons-twitter"><a data-toggle="tooltip"
-                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
-                                                    title="" data-original-title="Twitter"><i
-                        class="fab fa-twitter"></i></a></li>
-                <li class="social-icons-facebook"><a data-toggle="tooltip"
-                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
-                                                     title="" data-original-title="Facebook"><i
-                        class="fab fa-facebook-f"></i></a></li>
-                <li class="social-icons-dribbble"><a data-toggle="tooltip"
-                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
-                                                     title="" data-original-title="Dribbble"><i
-                        class="fab fa-dribbble"></i></a></li>
-            </ul>
+
         </div>
     </nav>
-    <!-- Navbar End -->
 </header>
-<!-- Header End -->
+<!-- Header NAF End -->
 
-
-    <!-- Content
-    ============================ -->
-    <div id="content" role="main">
-
-        <!-- Docs Content
-        ============================ -->
-        <div class="idocs-content">
-            <div class="container-landing">
-
-                <header class="hero hero-primary">
-                    <div class="container feature-anim-right"><h1 class="hero_title">
-                        <img src="assets/images/nuts-icon.png" alt="" width="128">NAF</h1>
-                        <p class="hero_subtitle">Nuts Application Framework</p>
-                        <p class="hero_subsubtitle">The core API foundation for modular and dynamic Java
-                            applications</p>
-                        <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="">
+    <!-- HERO -->
+    <section class="naf-hero">
+        <div class="naf-hero__grid-overlay"></div>
+        <div class="container naf-hero__inner">
+            <div class="naf-hero__left">
+                <div class="naf-hero__eyebrow">
+                    <img src="assets/images/nuts-icon.png" alt="Nuts" width="18" style="vertical-align:-2px;opacity:0.7">
+                    &nbsp;Part of the Nuts ecosystem
+                </div>
+                <h1 class="naf-hero__title">
+                    <span class="naf-hero__naf">NAF</span>
+                    <span class="naf-hero__framework">Nuts Application Framework</span>
+                </h1>
+                <p class="naf-hero__tagline">
+                    An &agrave;-la-carte toolkit of reusable Java components.<br>
+                    Take what you need. Leave the rest. No lock-in.
+                </p>
+                <div class="naf-hero__pills">
+                    <span class="naf-pill">Spring-compatible</span>
+                    <span class="naf-pill">SLF4J-compatible</span>
+                    <span class="naf-pill">JVM 8+</span>
+                    <span class="naf-pill">Maven Central</span>
+                </div>
+                <div class="naf-hero__ctas">
+                    <a href="doc-naf.html" class="btn-naf-primary">
+                        <i class="fas fa-book"></i> Developer Docs
+                    </a>
+                    <a href="contrib.html" class="btn-naf-secondary">Contributing &rarr;</a>
+                    <a href="https://github.com/thevpc/nuts" target="_blank" class="btn-naf-secondary">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </div>
+            </div>
+            <div class="naf-hero__right">
+                <div class="naf-code-window">
+                    <div class="naf-code-window__bar">
+                        <span class="naf-dot naf-dot--red"></span>
+                        <span class="naf-dot naf-dot--yellow"></span>
+                        <span class="naf-dot naf-dot--green"></span>
+                        <span class="naf-code-window__filename">MyApp.java</span>
                     </div>
-                </header>
+                    <pre class="naf-code-window__pre"><code class="language-java">@NAppDefinition
+public class MyApp {
+  public static void main(String[] args) {
+    NApp.builder(args).run();
+  }
+  @NAppInstaller public void onInstall() {
+        NOut.println(NMsg.ofC("installing the %s app",NApp.of().id()));
+  }
+  @NAppRunner public void run() {
+        NCmdLine cmdLine = NApp.of().cmdLine();
+        NRef&lt;String&gt; name = NRef.ofNull();
+        cmdLine.matcher()
+                .with("-n", "--name").matchEntry((v) -> name.set(v.stringValue()))
+                .requireAllDefaults();
+        NOut.println(NMsg.ofC("name=%s", name.get()));
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-naf" alt="" style="display:none">
+    </section>
+
+    <!-- MAVEN SNIPPET -->
+    <section class="naf-section naf-section--maven">
+        <div class="container naf-maven">
+            <div class="naf-maven__text">
+                <span class="naf-eyebrow">Get started</span>
+                <h2 class="naf-maven__title">Add NAF to your project</h2>
+                <p class="naf-maven__sub">Each NAF component is independently selectable.<br>
+                    You don't need to add everything &mdash; just what you use.</p>
+            </div>
+            <div class="naf-maven__snippet">
+                <div class="nuts-snippet-tabs">
+                    <button class="nuts-snippet-tab active" data-target="dep-lts">LTS &mdash; Maven Central</button>
+                    <button class="nuts-snippet-tab" data-target="dep-latest">Latest &mdash; thevpc</button>
+                </div>
+                <div class="nuts-snippet-body naf-snippet-body">
+                    <div class="nuts-snippet-block active" id="dep-lts">
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+    &lt;artifactId&gt;nuts&lt;/artifactId&gt;
+    &lt;version&gt;0.8.9&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                    </div>
+                    <div class="nuts-snippet-block" id="dep-latest">
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+    &lt;artifactId&gt;nuts&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;thevpc&lt;/id&gt;
+        &lt;url&gt;https://maven.thevpc.net&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+            &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;</code></pre>
+                    </div>
+                    <button class="nuts-snippet-copy" title="Copy to clipboard">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+                <p class="naf-maven__note">
+                    <span class="nuts-badge nuts-badge--stable">LTS</span> 0.8.9 on Maven Central &nbsp;&middot;&nbsp;
+                    <span class="nuts-badge nuts-badge--preview">Latest</span> 1.0.0 on maven.thevpc.net
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4 PATHS -->
+    <section class="naf-section naf-section--paths">
+        <div class="container">
+            <span class="naf-eyebrow naf-eyebrow--center">Why NAF?</span>
+            <h2 class="naf-section__title naf-section__title--center">Four ways to use NAF</h2>
+            <div class="naf-paths">
+
+                <div class="naf-path naf-path--1">
+                    <div class="naf-path__icon"><i class="fas fa-bolt"></i></div>
+                    <h3 class="naf-path__title">Zero-dependency lifecycle</h3>
+                    <p class="naf-path__body">Make your app nuts-aware with zero extra dependencies. Just handle <code>--nuts-exec-mode=install|uninstall|update|auto-complete</code> as <code>args[0]</code> and add <code>&lt;nuts.application&gt;true&lt;/nuts.application&gt;</code> to your pom. Nothing else required.</p>
+                    <a href="doc-naf.html#lifecycle" class="naf-path__link">Learn more &rarr;</a>
+                </div>
+
+                <div class="naf-path naf-path--2">
+                    <div class="naf-path__icon"><i class="fas fa-puzzle-piece"></i></div>
+                    <h3 class="naf-path__title">&Agrave;-la-carte toolkit</h3>
+                    <p class="naf-path__body">Pick individual NAF components &mdash; NPath for unified IO, NMsg for console output, NLog for logging, NExpr for expressions. Each is self-contained. Integrates cleanly with Spring, SLF4J, and whatever you already use.</p>
+                    <a href="#modules" class="naf-path__link">Browse modules &darr;</a>
+                </div>
+
+                <div class="naf-path naf-path--3">
+                    <div class="naf-path__icon"><i class="fas fa-layer-group"></i></div>
+                    <h3 class="naf-path__title">Embed Nuts as a library</h3>
+                    <p class="naf-path__body">Use Nuts programmatically inside your app to install, resolve and run Maven artifacts at runtime. Full workspace and session API available for advanced integration scenarios.</p>
+                    <a href="doc-naf.html#embedding" class="naf-path__link">Embedding guide &rarr;</a>
+                </div>
+
+                <div class="naf-path naf-path--4">
+                    <div class="naf-path__icon"><i class="fas fa-code-branch"></i></div>
+                    <h3 class="naf-path__title">Contribute to Nuts</h3>
+                    <p class="naf-path__body">Nuts itself is built on NAF. Understanding NAF is the entry point for contributing to the Nuts codebase &mdash; architecture, module structure, build process and conventions all documented.</p>
+                    <a href="contrib.html" class="naf-path__link">Contributing guide &rarr;</a>
+                </div>
 
             </div>
-            <main>
-                <section>
-                    <!------------------- -->
-                    <div class="container">
-                        <div class="row">
-                            <div class="col col-12">
-                                <div class="carousel-container">
-                                    <div class="carousel-slides">
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Genesis</h3>
-                                                <p>
-                                                    <span style="color: #000055" class="">Nuts Application Framework</span> (NAF) is a <span style="color: #000055" class="">lightweight</span>, <span style="color: #000055" class="">modular</span> framework designed 
+        </div>
+    </section>
+
+    <!-- MODULE SHOWCASE -->
+    <section class="naf-section naf-section--modules" id="modules">
+        <div class="container">
+            <span class="naf-eyebrow naf-eyebrow--center">The toolkit</span>
+            <h2 class="naf-section__title naf-section__title--center">Everything in NAF</h2>
+            <p class="naf-section__intro">A coherent set of components built with the same philosophy and patterns. Learn one, understand all.</p>
+
+            <div class="naf-modules">
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Genesis</span>
+                    </div>
+                    <p class="naf-module__desc"><span style="color: #000055" class="">Nuts Application Framework</span> (NAF) is a <span style="color: #000055" class="">lightweight</span>, <span style="color: #000055" class="">modular</span> framework designed 
 to simplify the development of modern Java applications. Built on top of the <span style="color: #000055" class="">Nuts</span> runtime, 
 <span style="color: #0070A8" class="">NAF</span> provides a unified foundation for configuration, logging, dependency injection, modularity, 
 and extensibility, all while remaining <span style="color: #000055" class="">Java 8 compatible</span> and able to leverage the <span style="color: #000055" class="">latest</span> 
 Java features when available.
-
-                                                </p>
-                                                <p>
-                                                    
+</p>
+                    <div class="naf-module__preview">
+                        
 <span style="color: #000055" class="">NAF</span> is <span style="color: #000055" class="">non-invasive by design</span>: it
 integrates seamlessly with existing frameworks and libraries such as
 <span style="color: #000055" class="">Spring</span>, <span style="color: #000055" class="">Spring Boot</span>,
@@ -175,25 +310,23 @@ productivity, and maintainability, giving you a consistent
 foundation and powerful conventions without imposing complexity or
 locking you in.
 
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Maven Integration</h3>
-                                                <p>
-                                                    NAF can be added to your project with <span style="color: #000055" class="">one</span> single JAR
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Maven Integration</span>
+                    </div>
+                    <p class="naf-module__desc">NAF can be added to your project with <span style="color: #000055" class="">one</span> single JAR
 dependency, fully compatible with Maven repositories. Once included,
 it brings runtime dependency resolution, artifact management, and
 dynamic execution to your application without additional setup. Just
 add the dependency, and NAF takes care of the rest — from fetching
 artifacts to managing versions, all seamlessly integrated with your
 existing Maven workflow.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-xml">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-xml">
 &lt;dependencies&gt;
     &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
     &lt;artifactId&gt;nuts&lt;/artifactId&gt;
@@ -205,36 +338,33 @@ existing Maven workflow.
 &lt;/repositories&gt;
 
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Easy Onboarding</h3>
-                                                <p>
-                                                    One line to start. Full runtime at your fingertips.
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Easy Onboarding</span>
+                    </div>
+                    <p class="naf-module__desc">One line to start. Full runtime at your fingertips.
 Get started instantly with NAF — no setup, no configuration, just
 run. Behind that single line lies a powerful, fully-featured
 runtime: dependency management, sessions, workspaces, and automation
 tools ready for anything your application needs. NAF makes modern
 Java development simple, composable, and ready to scale.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 Nuts.require();
 NOut.println(&quot;Hello Nuts!&quot;);
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NMsg in a nutshell</h3>
-                                                <p>
-                                                    <code>NMsg</code> allows you to create structured messages with
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NMsg in a nutshell</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NMsg</code> allows you to create structured messages with
 dynamic <strong>placeholders</strong>, automatically rendering
 common types such as <strong>booleans</strong>,
 <strong>numbers</strong>, <strong>paths</strong>,
@@ -244,10 +374,9 @@ placeholders or entire messages, and even nest messages within
 messages to build complex, rich, and expressive content. This makes
 <code>NMsg</code> a versatile tool for clear, context-aware, and
 visually informative output in any application.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // Simple example with automatic coloring
 NMsg.ofC(&quot;User %s set flag %s on path %s&quot;,
     &quot;Alice&quot;, true, NPath.of(&quot;/tmp/data.txt&quot;)
@@ -268,15 +397,14 @@ NMsg.ofV(&quot;User $user completed ${task}&quot;,
     )
 );
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Placeholder Formats</h3>
-                                                <p>
-                                                    <code>NMsg</code> supports multiple placeholder formats to create
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Placeholder Formats</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NMsg</code> supports multiple placeholder formats to create
 flexible and dynamic messages. You can use C-style placeholders
 (<code>%s</code>, <code>%d</code>) for traditional printf-style
 formatting, Java-style placeholders (<code>{}</code>) similar to
@@ -284,10 +412,9 @@ MessageFormat or <strong>SLF4J</strong>, and variable substitution (<code>$name<
 for named placeholders. The variable substitution format can take
 parameters, maps, or functions, making it easy to build messages
 dynamically and adaptively for your application.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NMsg.ofC(&quot;Hello %s, you have %d new notifications&quot;, &quot;Alice&quot;, 5);
 NMsg.ofJ(&quot;Downloading {} from {}&quot;, &quot;report.pdf&quot;, &quot;server-01&quot;);
 NMsg.ofV(&quot;User $user on ${app}&quot;, Map.of(&quot;user&quot;, &quot;Alice&quot;, &quot;app&quot;, &quot;NAF&quot;));
@@ -297,15 +424,14 @@ NMsg.ofV(&quot;Threshold=$th, Date=$date&quot;, name -&gt; switch (name) {
     default     -&gt; null;
 });
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Text Rendering Formats</h3>
-                                                <p>
-                                                    <code>NMsg</code> NMsg also provides multiple text rendering formats
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Text Rendering Formats</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NMsg</code> NMsg also provides multiple text rendering formats
 to make messages visually expressive. You can use plain messages
 that print as-is, styled messages to highlight errors, warnings, or
 other emphasis, code blocks for monospaced text with optional
@@ -313,34 +439,31 @@ language hints, and NTF (Nuts Text Format) for lightweight markup
 supporting bold, italic, colors, and other rich formatting. These
 formats, combined with placeholders, allow NMsg to produce rich,
 dynamic, and visually informative output in any context.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NMsg.ofPlain(&quot;This is a plain message&quot;);
 NMsg.ofStyled(&quot;Error: file not found&quot;, NTextStyle.error());
 NMsg.ofCode(&quot;java&quot;, &quot;System.out.println(\&quot;Hello NAF\&quot;);&quot;);
 NMsg.ofNtf(&quot;##bold## ##:/:italic## ```java public class{} ```&quot;);
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Universal Path</h3>
-                                                <p>
-                                                    NPath gives you a unified way to work with both local and remote
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Universal Path</span>
+                    </div>
+                    <p class="naf-module__desc">NPath gives you a unified way to work with both local and remote
 paths, letting you read, write, and manipulate files from HTTP, SSH,
 or the local filesystem with the same simple API. It also provides
 convenient access to standard system and user directories, including
 home, working, configuration, and application paths, making
 cross-platform file handling seamless and consistent across
 environments.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // manipulate local and remote paths
 String content=NPath.of(&quot;http://myserver/myfile.txt&quot;).readString();
 String[] lines=NPath.of(&quot;ssh://myserver/myfile.txt&quot;).lines().toArray(String[]::new);
@@ -353,24 +476,22 @@ NPath.ofUserStore(NStoreType.CONFIG);
 // User store path (/opt/nuts/ on linux, C:\Program Files\nuts on windows)
 NPath.ofSystemStore(NStoreType.BIN);  // System store path
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Commandline</h3>
-                                                <p>
-                                                    NCmdLine lets you parse and handle command-line arguments with full
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Commandline</span>
+                    </div>
+                    <p class="naf-module__desc">NCmdLine lets you parse and handle command-line arguments with full
 flexibility, while keeping your code clean and readable. Define
 flags, options, and non-option arguments, all with automatic type
 handling and default values. With NAF, building sophisticated CLI
 tools becomes straightforward, letting you focus on functionality
 instead of parsing logic.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NCmdLine cmdLine = NApp.of().getCmdLine(); // or from somewhere else
 NRef&amp;lt;Boolean&gt; boolOption = NRef.of(false);
 NRef&amp;lt;String&gt; stringOption = NRef.ofNull();
@@ -385,24 +506,22 @@ while (cmdLine.hasNext()) {
 }
 NOut.println(NMsg.ofC(&quot;boolOption=%s stringOption=%s others=%s&quot;, boolOption, stringOption, others));
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Structured Console Output with NTF</h3>
-                                                <p>
-                                                    <code>NAF</code> supports <code>NTF</code> (<strong>Nuts Text
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Structured Console Output with NTF</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NAF</code> supports <code>NTF</code> (<strong>Nuts Text
 Format</strong>), enabling rich, structured, and styled console
 output. You can embed variables, apply colors or styles, and produce
 messages that are both human-readable and machine-friendly. This
 makes your CLI output more expressive, interactive, and easier to
 interpret.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NOut.println(
     NMsg.ofV(&quot;Hello ${user}, your task status is ${status}&quot;,
              NMaps.of(
@@ -423,15 +542,14 @@ NOut.println(
     )
 );
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Unified Logging with NLog</h3>
-                                                <p>
-                                                    <code>NLog</code> combines structured messages (<code>NMsg</code>),
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Unified Logging with NLog</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NLog</code> combines structured messages (<code>NMsg</code>),
 styled output with colors and <code>NTF</code> formatting, and
 seamless integration with <strong>JUL</strong> or
 <strong>SLF4J</strong>. Messages carry an <strong>Intent</strong>,
@@ -439,10 +557,9 @@ similar to logging markers, which allows you to classify, filter, or
 style logs at runtime. Whether you’re building CLI tools, scripts,
 or full applications, <code>NLog</code> makes logs expressive, rich,
 and easy to understand.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NLog.of(&quot;myapp&quot;).info(
 NMsg.ofV(&quot;Hello %s, task %s completed with status %s&quot;,
 &quot;user&quot;,&quot;Alice&quot;,&quot;status&quot;,
@@ -453,15 +570,14 @@ NText.ofStyled(&quot;OK&quot;, NTextStyle.primary1()), exception
 .withDurationMs(123)             // Optional: report task duration
 );
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Scoped, Context-Aware Logging (Beyond MDC)</h3>
-                                                <p>
-                                                    Traditional MDC allows you to store key-value pairs for the current
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Scoped, Context-Aware Logging (Beyond MDC)</span>
+                    </div>
+                    <p class="naf-module__desc">Traditional MDC allows you to store key-value pairs for the current
 thread, but managing nested or dynamic contexts often becomes
 cumbersome. NLog builds on and extends this concept by allowing
 nested logging scopes, dynamic placeholders, message prefixes, and
@@ -470,10 +586,9 @@ rewriting classes. Logs automatically inherit the correct context,
 making them structured, expressive, and runtime-aware. With NLog,
 you get the convenience of MDC plus the power of non-invasive,
 modular, and scoped logging.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 class MyApp {
     public void test() {
         NLog.runInScope(
@@ -497,24 +612,22 @@ class OtherClass {
 }
 
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NElement — Structured Data, Any Format</h3>
-                                                <p>
-                                                    With <code>NElement</code>, <code>Nuts</code> lets you build, parse,
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NElement — Structured Data, Any Format</span>
+                    </div>
+                    <p class="naf-module__desc">With <code>NElement</code>, <code>Nuts</code> lets you build, parse,
 and format structured data effortlessly. From plain objects to
 <strong>JSON</strong>, <strong>XML</strong>, or
 <strong>TSON</strong>, you can read and write files, parse into Java
 objects, or print with optional <code>NTF</code> color formatting —
 all in a runtime-friendly way.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // Build an element
 NElement document = NElement.ofObjectBuilder()
     .set(&quot;app-id&quot;, NApp.of().getId().get())
@@ -530,22 +643,20 @@ NElementWriter.ofPlainXml(document).println(NPath.of(&quot;person.xml&quot;));
 // Print TSON to terminal with colors
 NElementWriter.ofNtfTson(document).println();
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NTextArt — Turn Text into Art</h3>
-                                                <p>
-                                                    Bring your CLI, logs, or console output to life with NTextArt. Render
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NTextArt — Turn Text into Art</span>
+                    </div>
+                    <p class="naf-module__desc">Bring your CLI, logs, or console output to life with NTextArt. Render
 text as classic ASCII banners, pixel-style visuals, or even
 image-like representations, with multiple renderers at your
 fingertips — all workspace-aware and fully embeddable.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
     NTextArt art = NTextArt.of();
     NText text = NText.of(&quot;hello world&quot;);
     NOut.println(art.getTextRenderer(&quot;figlet:standard&quot;).get().render(text));
@@ -567,25 +678,23 @@ fingertips — all workspace-aware and fully embeddable.
     //  ▓  ▓░ ░▓▓    ▓▓   ▓▓░  ▓░       ░▓ ▓   ▓▒  ▒▒     ░▓▓ ░▓ ▓
 
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NTextArt — Turn Text into Art</h3>
-                                                <p>
-                                                    Beyond ASCII banners and pixel-style visuals, <code>NTextArt</code>
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NTextArt — Turn Text into Art</span>
+                    </div>
+                    <p class="naf-module__desc">Beyond ASCII banners and pixel-style visuals, <code>NTextArt</code>
 also supports structured data rendering. You can display tables with
 aligned rows and columns, and hierarchical trees where each node can
 contain multi-line or styled text — even full tables. Branches,
 indentation, and node formatting are handled automatically, making
 it easy to visualize complex hierarchical or tabular data directly
 in the terminal with a clean, readable layout.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
     class MyNode implements NTreeNode {
         int value;
         public MyNode(int value) { this.value = value;}
@@ -617,25 +726,23 @@ in the terminal with a clean, readable layout.
     //       │3│
     //       ╰─╯
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NExec & NPs — Unified Process Execution</h3>
-                                                <p>
-                                                    NAF offers a complete abstraction for process execution and
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NExec & NPs — Unified Process Execution</span>
+                    </div>
+                    <p class="naf-module__desc">NAF offers a complete abstraction for process execution and
 monitoring. With NExec, you can run system commands, remote jobs, or
 even Maven artifacts seamlessly. With NPs, you can introspect and
 control running processes across platforms. Together, they form a
 portable, workspace-aware execution toolkit that abstracts OS
 differences, integrates with Nuts’ runtime, and makes both starting
 and supervising processes trivial — whether locally or remotely.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
     // Run a system command and capture output
     String out = NExec.of(&quot;ls&quot;).system().grabAll().run().grabbedOut();
 
@@ -653,23 +760,21 @@ and supervising processes trivial — whether locally or remotely.
     // Inspect processes on a remote host
     NPs.of().at(&quot;ssh://myuser@myserver&quot;).getResultList();
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NCp — Copy with Options & Validation</h3>
-                                                <p>
-                                                    NCp provides a unified, flexible API to copy resources of various
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NCp — Copy with Options & Validation</span>
+                    </div>
+                    <p class="naf-module__desc">NCp provides a unified, flexible API to copy resources of various
 types — files, streams, URLs, or paths — while supporting advanced
 features like logging, progress monitoring, and validation. You can
 start with a simple copy, then gradually enable tracing, progress
 feedback, or integrity checks, all with the same intuitive API.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // --- Basic copy: simple source to target ---
 NCp.of()
     .from(source)                     // set source (File, Path, InputStream, etc.)
@@ -696,25 +801,23 @@ NCp.of()
     })
     .run();
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NCompress / NUncompress — Flexible Compression & Extraction</h3>
-                                                <p>
-                                                    NAF provides unified APIs for compressing and uncompressing files,
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NCompress / NUncompress — Flexible Compression & Extraction</span>
+                    </div>
+                    <p class="naf-module__desc">NAF provides unified APIs for compressing and uncompressing files,
 directories, or streams, supporting multiple formats (e.g., ZIP).
 You can monitor progress, skip root directories, or apply custom
 options for logging and safety. NCompress and NUncompress make it
 easy to handle resource packaging in a consistent, OS-aligned
 manner, while fully integrating with Nuts’ filesystem
 abstractions.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // --- Compress a file or directory into a ZIP ---
 NCompress.of()
     .addSource(example)                          // source to compress
@@ -732,25 +835,23 @@ NUncompress.of()
         module.rt().addOperation(&quot;Unzipping &quot; + i))) // progress monitoring
     .run();                                      // execute uncompression
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NDigest – Hashing Made Simple</h3>
-                                                <p>
-                                                    NDigest is a fluent I/O command to compute hash digests of one or
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NDigest – Hashing Made Simple</span>
+                    </div>
+                    <p class="naf-module__desc">NDigest is a fluent I/O command to compute hash digests of one or
 multiple sources. It supports files, streams, URLs, byte arrays, or
 Nuts descriptors, and allows combining multiple sources into a
 single digest. Built on top of Java's MessageDigest, it simplifies
 hashing in Nuts workflows, integrates seamlessly with download
 validation, and supports MD5, SHA1, SHA256, or any algorithm
 provided by MessageDigest.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // Simple SHA256 digest of a file
 String hash = NDigest.of()
         .sha256()
@@ -771,15 +872,14 @@ byte[] bytes = NDigest.of()
         .addSource(stream)
         .computeBytes();
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">NInputSource & NInputSourceBuilder – Flexible Input Abstraction</h3>
-                                                <p>
-                                                    NInputSource represents a flexible, metadata-aware source of content
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">NInputSource & NInputSourceBuilder – Flexible Input Abstraction</span>
+                    </div>
+                    <p class="naf-module__desc">NInputSource represents a flexible, metadata-aware source of content
 in NAF. It can wrap files, paths, URLs, byte arrays, streams,
 readers, or other providers, offering a unified API for reading,
 digesting, or streaming content. NInputSourceBuilder allows
@@ -787,10 +887,9 @@ fine-grained configuration of sources, such as expected length,
 progress monitoring, interruptibility, multi-read capability, or
 non-blocking streams. Together, they decouple I/O handling from
 concrete types and simplify building robust I/O pipelines.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NInputSource src = NInputSource.of(file)
         .readBytes(); // get content
 
@@ -804,24 +903,22 @@ NInputSourceBuilder b = NInputSourceBuilder.of(stream)
 InputStream in = b.createInputStream();
 NInputSource source = b.createInputSource();
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Progress Monitoring with NProgressMonitor</h3>
-                                                <p>
-                                                    NProgressMonitor provides a flexible and context-aware way to track
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Progress Monitoring with NProgressMonitor</span>
+                    </div>
+                    <p class="naf-module__desc">NProgressMonitor provides a flexible and context-aware way to track
 progress in tasks. You can create incremental, split, and nested
 monitors, log events to any output, and automatically propagate the
 current progress context using NProgressMonitor.of(). This allows
 embedded or nested operations to report progress seamlessly without
 explicit parameter passing.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // 1. Simple incremental progress
 NProgressMonitor mon = NProgressMonitors.of().ofSysOut();
 mon.start();
@@ -844,24 +941,22 @@ NProgressMonitors.of().of(handler).runWith(() -&gt; {
     inner.complete();
 });
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Rate Limiting with NRateLimitValue</h3>
-                                                <p>
-                                                    <code>NRateLimitValue</code> lets you control how often actions can
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Rate Limiting with NRateLimitValue</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NRateLimitValue</code> lets you control how often actions can
 be executed.
 For example, you can allow only <em>10 actions every 2 minutes</em>,
 using a strategy like <em>sliding window</em>.
 This makes it easy to protect APIs, services, or expensive
 operations from overuse.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // Example 1: Basic sliding window rate limit
 NRateLimitedValue limiter = NRateLimitedValue.ofBuilder(&quot;example&quot;)
         .withLimit(&quot;calls&quot;, 10).per(Duration.ofMinutes(2))
@@ -878,20 +973,18 @@ for (int i = 0; i &lt; 15; i++) {
     }
 }
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Running Limited Actions with claimAndRun</h3>
-                                                <p>
-                                                    Instead of consuming tokens immediately, <code>claimAndRun</code> will wait until the limiter can provide a slot before executing your code. This is useful when you want the action to eventually run rather than fail.
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Running Limited Actions with claimAndRun</span>
+                    </div>
+                    <p class="naf-module__desc">Instead of consuming tokens immediately, <code>claimAndRun</code> will wait until the limiter can provide a slot before executing your code. This is useful when you want the action to eventually run rather than fail.
 You can also define multiple independent limits (per minute, per day, etc.) in a single limiter, and <code>claimAndRun</code> will respect all limits before executing.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 /// Example 2: Using claimAndRun
 limiter.claimAndRun(() -&gt; {
     NOut.println(&quot;Doing a limited action...&quot;);
@@ -907,22 +1000,20 @@ limiter2.claimAndRun(() -&gt; {
     NOut.println(&quot;API call allowed&quot;);
 });
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Lazy, One-Time Evaluation with NStableValue</h3>
-                                                <p>
-                                                    <code>NStableValue</code> stores a value that is computed lazily — the supplier is not
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Lazy, One-Time Evaluation with NStableValue</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NStableValue</code> stores a value that is computed lazily — the supplier is not
 invoked until the first call to <code>get()</code>. Once evaluated, the value remains stable
 and is reused for all subsequent accesses. This is perfect for expensive computations,
 constants, or resources that should only be initialized once.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // Example 1: Lazy initialization
 NStableValue&amp;lt;Double&gt; stableRandom = NStableValue.of(Math::random);
 
@@ -936,24 +1027,22 @@ NOut.println(&quot;Same value = &quot; + stableRandom.get());
 NOut.println(&quot;Evaluated? &quot; + stableRandom.isEvaluated());
 NOut.println(&quot;Valid? &quot; + stableRandom.isValid());
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Caching with NCachedValue</h3>
-                                                <p>
-                                                    <code>NCachedValue</code> helps you cache expensive computations or
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Caching with NCachedValue</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NCachedValue</code> helps you cache expensive computations or
 resources.
 It evaluates a <code>Supplier</code> once, stores the result, and
 reuses it until
 the cache expires or is invalidated.
 You can configure expiry policies to automatically refresh values.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // Example 1: Cache with expiry
 NCachedValue&amp;lt;Double&gt; cachedRandom = NCachedValue.of(Math::random)
         .setExpiry(Duration.ofSeconds(5));
@@ -968,22 +1057,20 @@ NOut.println(&quot;Cached value = &quot; + cachedRandom.get());
 cachedRandom.invalidate();
 NOut.println(&quot;New value after invalidate = &quot; + cachedRandom.get());
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Resilient Caching with Retries</h3>
-                                                <p>
-                                                    Sometimes a computation may fail (for example, a remote call).
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Resilient Caching with Retries</span>
+                    </div>
+                    <p class="naf-module__desc">Sometimes a computation may fail (for example, a remote call).
 <code>NCachedValue</code> can automatically retry, retain the last good value
 on failure, and recover gracefully.
 This makes it ideal for unstable resources or intermittent network services.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // Example 2: Cache with retries and fallback
 AtomicInteger counter = new AtomicInteger();
 
@@ -1003,25 +1090,23 @@ NOut.println(&quot;Value = &quot; + cached.get());
 // Next call may fail internally but still returns last good value
 NOut.println(&quot;Resilient value = &quot; + cached.get());
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Expression Parsing & Evaluation with NExpr</h3>
-                                                <p>
-                                                    NExpr is a powerful expression parser and evaluator designed to
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Expression Parsing & Evaluation with NExpr</span>
+                    </div>
+                    <p class="naf-module__desc">NExpr is a powerful expression parser and evaluator designed to
 handle dynamic, runtime expressions within the Nuts ecosystem. It
 allows declaration of constants, variables, and functions, supports
 custom operators, and can evaluate expressions in a context-aware
 way. This makes it ideal for dynamic queries, runtime computation,
 scripting, and configuration-driven logic in Java applications — all
 while remaining type-safe, extensible, and embeddable.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NExprMutableDeclarations d = NExprs.of().newMutableDeclarations();
 d.declareConstant(&quot;pi&quot;, Math.PI);
 d.declareFunction(&quot;sin&quot;, (name, args, ctx) -&gt; {
@@ -1047,24 +1132,22 @@ if (ne.isPresent()) {
     double result = fct.apply(0.5); // evaluates sin(0.5*pi)
 }
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Working with Workspaces and Session</h3>
-                                                <p>
-                                                    With NAF, what starts as a simple one-line setup can grow into a
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Working with Workspaces and Session</span>
+                    </div>
+                    <p class="naf-module__desc">With NAF, what starts as a simple one-line setup can grow into a
 fully controlled runtime environment. Create multiple workspaces,
 configure sessions with custom flags, manage output formats, and
 orchestrate complex automation — all while keeping your code clean
 and portable. NAF gives you both simplicity for quick experiments
 and full power for advanced applications.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NWorkspace ws = Nuts.openWorkspace(&quot;--workspace=&quot;/path/to/ws&quot;);
 ws.runWith(() -&gt; {
     NSession.of()
@@ -1076,22 +1159,20 @@ ws.runWith(() -&gt; {
             });
 });
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Safe Locking with NLock</h3>
-                                                <p>
-                                                    <code>NLock</code> provides a flexible, high-level way to lock resources across threads
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Safe Locking with NLock</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NLock</code> provides a flexible, high-level way to lock resources across threads
 and even processes. You can create locks from objects, paths, or resource IDs,
 and execute code safely while the lock is held. This ensures that critical sections
 are executed exclusively and consistently.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 // Example 1: Create a lock from an object
 NLock lock = NLock.ofPath(NPath.of(&quot;/path/to/resource.txt&quot;);
 
@@ -1106,21 +1187,19 @@ lock.runWith(() -&gt; {
 // Check if current thread holds the lock
 Nout.println(&quot;Held by current thread? &quot; + lock.isHeldByCurrentThread());
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">Advanced Locking and Timed Execution</h3>
-                                                <p>
-                                                    <code>NLock</code> also supports locks tied to workspace resources or IDs, allowing
+                    </div>
+                </div>
+                
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">Advanced Locking and Timed Execution</span>
+                    </div>
+                    <p class="naf-module__desc"><code>NLock</code> also supports locks tied to workspace resources or IDs, allowing
 inter-process synchronization. You can execute tasks immediately, with a timeout,
 or safely retrieve results using <code>callWith</code>.
-
-                                                </p>
-                                                <p>
-                                                    <pre><code class="language-java">
+</p>
+                    <div class="naf-module__preview">
+                        <pre><code class="language-java">
 NId resourceId = NId.of(&quot;net.thevpc.nuts:nuts#0.8.9&quot;);
 // Lock tied to workspace resource
 NLock idLock = NLock.ofIdPath(resourceId);
@@ -1140,56 +1219,46 @@ boolean executed = idLock.runWithImmediately(() -&gt; {
 });
 NOut.println(&quot;Was executed? &quot; + executed);
 </code></pre>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div class="carousel-controls">
-                                        <button id="prevBtn">&lt;</button>
-                                        <button id="nextBtn">&gt;</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </section>
-            </main>
+                </div>
+                
+            </div>
+
         </div>
-
-
-    </div>
-    <!-- Content end -->
-
+    </section>
 
     <!-- Footer
-    ============================ -->
-    <footer id="footer" class="section bg-dark footer-text-light">
-        <div class="container">
-            <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
-                <li><a data-toggle="tooltip" href="https://twitter.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
-                <li><a data-toggle="tooltip" href="http://www.facebook.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
-                <li><a data-toggle="tooltip" href="http://www.dribbble.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
-                <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
-                       data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
-            </ul>
-            <p class="text-2 text-center mb-0">
-                Copyright © 2018-2026 Nuts Package Manager Team.
-                <br>
-                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-14-124618
-                <br>
-                <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
-                                                            href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
-            </p>
-        </div>
-    </footer>
-    <!-- Footer end -->
+============================ -->
+<footer id="footer">
+    <div class="container">
+        <ul class="social-icons">
+            <li>
+                <a href="https://github.com/thevpc/nuts" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com/tbensalah/" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.facebook.com/tbensalah/" target="_blank" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </li>
+        </ul>
+        <p>
+            Copyright © 2018-2026 Nuts Package Manager Team.
+            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-16-005041
+        </p>
+    </div>
+</footer>
+<!-- Footer end -->
+
 
 </div>
-<!-- Document Wrapper end -->
 
 <!-- Back To Top -->
 <a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
@@ -1206,7 +1275,9 @@ NOut.println(&quot;Was executed? &quot; + executed);
 <script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 <!-- Custom Script -->
 <script src="assets/js/theme.js"></script>
-<script src="assets/js/caroussel.js"></script>
-<script src="assets/js/code.js"></script>
+<script src="assets/js/nuts-docs.js"></script>
+</body>
+<script src="assets/js/nuts-docs.js"></script>
+<script src="assets/js/nuts-landing.js"></script>
 </body>
 </html>

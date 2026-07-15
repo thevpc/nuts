@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
+    <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
@@ -21,10 +23,12 @@
     <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+    <!-- Shared navbar (all pages) -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-navbar.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 
     <!-- Google tag (gtag.js) -->
@@ -40,90 +44,76 @@
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
-
-<!-- Preloader -->
-<div class="preloader">
-    <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
-<!-- Preloader -->
-
-<!-- Document Wrapper   
-=============================== -->
+    <title>Apps — Nuts Package Manager</title>
+    <!-- Doc-specific overrides -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
+</head>
+<body>
 <div id="main-wrapper" class="apps-main-wrapper">
-    
-    <!-- Header
-    ============================ -->
+    <!-- Header -->
 <header id="header" class="sticky-top">
-    <!-- Navbar -->
     <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
         <div class="container-fluid">
-            <!-- Sidebar Toggler -->
-            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
-                    class="w-75"></span><span class="w-50"></span></button>
 
-            <!-- Logo -->
-            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
-                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
-            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
-            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.9.0</span></span>
-            <!-- Logo End -->
+            <!-- Mobile sidebar toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button">
+                <span></span><span class="w-75"></span><span class="w-50"></span>
+            </button>
 
-            <!-- Navbar Toggler -->
-            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
-                <span></span><span></span><span></span></button>
+            <!-- Logo + brand -->
+            <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
+                <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
+                <span class="nuts-brand__name">Nuts</span>
+                <span class="nuts-brand__version">v1.0.0.0</span>
+            </a>
 
+            <!-- Mobile collapse toggler -->
+            <button class="navbar-toggler ml-auto" type="button"
+                    data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span>
+            </button>
+
+            <!-- Nav links -->
             <div id="header-nav" class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav">
-                    <li><a href="naf.html" class="">Nuts Application Framework</a></li>
-                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
-                      <ul class="dropdown-menu">
-                          <li><a class="dropdown-item " href="doc-nuts.html">User Documentation</a>
-                          <li><a class="dropdown-item " href="contrib.html">Contributing</a></li>
-                          <li><a class="dropdown-item " href="faq.html">FAQ</a></li>
-                          <!--
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
-                          <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
-                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
-                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
-                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
-                          </ul>
-                        </li>
-                        -->
-                      </ul>
+                <ul class="navbar-nav nuts-nav">
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#">Docs</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item "
+                                   href="doc-nuts.html">User Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="faq.html">FAQ</a></li>
+                            <li><a class="dropdown-item "
+                                   href="contrib.html">Contributing</a></li>
+                        </ul>
                     </li>
-                    <li><a href="blog.html" class="">Blog</a></li>
-                    <li><a href="apps.html" class="not-active">Apps</a></li>
-                    <li><a href="download.html" class="">Download</a></li>
-                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+
+                    <li><a href="blog.html"
+                           class="">Blog</a></li>
+
+                    <li><a href="apps.html"
+                           class="not-active">Apps</a></li>
+
+                    <li><a href="download.html"
+                           class="">Download</a></li>
+
+                    <li><a href="https://github.com/thevpc/nuts" target="_blank"
+                           class="nuts-nav__github">
+                        <i class="fab fa-github"></i>
+                    </a></li>
+
+                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers →</a></li>
+
                 </ul>
             </div>
-            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
-                <li class="social-icons-twitter"><a data-toggle="tooltip"
-                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
-                                                    title="" data-original-title="Twitter"><i
-                        class="fab fa-twitter"></i></a></li>
-                <li class="social-icons-facebook"><a data-toggle="tooltip"
-                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
-                                                     title="" data-original-title="Facebook"><i
-                        class="fab fa-facebook-f"></i></a></li>
-                <li class="social-icons-dribbble"><a data-toggle="tooltip"
-                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
-                                                     title="" data-original-title="Dribbble"><i
-                        class="fab fa-dribbble"></i></a></li>
-            </ul>
+
         </div>
     </nav>
-    <!-- Navbar End -->
 </header>
 <!-- Header End -->
-
 
     <!-- Content
     ============================ -->
@@ -132,6 +122,9 @@
         <!-- Sidebar Navigation
         ============================ -->
         <div class="idocs-navigation bg-light">
+            <div class="nav-search">
+                <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
+            </div>
             <ul class="nav flex-column ">
                 
                 <li class="nav-item"><a class="nav-link" href="#U5faaea5385c407d11520e7f0436641a2e4a2c217">1
@@ -2557,25 +2550,29 @@ echo "unix_socket_directories = '/tmp'" &gt;&gt; $PGDATA/postgresql.conf
 
     <!-- Footer
 ============================ -->
-<footer id="footer" class="section bg-dark footer-text-light">
+<footer id="footer">
     <div class="container">
-        <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
-            <li><a data-toggle="tooltip" href="https://twitter.com/tbensalah/" target="_blank" title=""
-                   data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
-            <li><a data-toggle="tooltip" href="http://www.facebook.com/tbensalah/" target="_blank" title=""
-                   data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
-            <li><a data-toggle="tooltip" href="http://www.dribbble.com/tbensalah/" target="_blank" title=""
-                   data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
-            <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
-                   data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
+        <ul class="social-icons">
+            <li>
+                <a href="https://github.com/thevpc/nuts" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com/tbensalah/" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.facebook.com/tbensalah/" target="_blank" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </li>
         </ul>
-        <p class="text-2 text-center mb-0">
+        <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2026-07-14-124618
-            <br>
-            <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
-                                                        href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-16-005041
         </p>
     </div>
 </footer>
@@ -2599,5 +2596,7 @@ echo "unix_socket_directories = '/tmp'" &gt;&gt; $PGDATA/postgresql.conf
 <script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 <!-- Custom Script -->
 <script src="assets/js/theme.js"></script>
+<script src="assets/js/nuts-docs.js"></script>
+</body>
 </body>
 </html>

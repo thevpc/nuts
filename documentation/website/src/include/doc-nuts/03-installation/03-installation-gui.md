@@ -82,7 +82,7 @@ $> nuts search
 
 $> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nuts.toolbox:ndoc#{{runtimeVersion}}
+        net.thevpc.nuts.toolbox:nsite#{{runtimeVersion}}
         net.thevpc.nuts.toolbox:ndexer#{{runtimeVersion}}
         net.thevpc.nuts.toolbox:njob#{{runtimeVersion}}
         net.thevpc.nuts.toolbox:nmvn#{{runtimeVersion}}

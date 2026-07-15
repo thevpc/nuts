@@ -1,164 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    {{:: pageId='naf'}}
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
     <link href="assets/images/favicon.ico" rel="icon"/>
-    <title>Nuts Java Package Manager</title>
-    <meta name="description" content="Your ThemeForest item Name and description">
+    <title>NAF — Nuts Application Framework</title>
+    <meta name="description" content="NAF is an a-la-carte toolkit of reusable Java components — CLI parsing, unified IO, logging, concurrency, expression engine and more.">
     <meta name="author" content="thevpc">
 
-    <!-- Stylesheet
-    ============================== -->
-    <!-- Bootstrap -->
-    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css"/>
-    <!-- Font Awesome Icon -->
-    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css"/>
-    <!-- Magnific Popup -->
-    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css"/>
-    <!-- Highlight Syntax -->
-    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
-    <!-- Custom Stylesheet -->
+    {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
-    <link rel="stylesheet" type="text/css" href="assets/css/caroussel.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-naf.css"/>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-xml.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="assets/css/code.css"/>
 </head>
+<body>
 
-<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
-
-<!-- Preloader -->
+<div id="doc-progress"></div>
 <div class="preloader">
-    <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
 </div>
-<!-- Preloader End -->
 
-<!-- Document Wrapper   
-=============================== -->
-<div id="main-wrapper" class="index-main-wrapper">
+<div id="main-wrapper" class="naf-main-wrapper">
 
-    {{:: pageId='landing'}}
     {{:include $'$projectRoot/src/include/template/v1/12-header-naf.html'}}
 
-    <!-- Content
-    ============================ -->
-    <div id="content" role="main">
-
-        <!-- Docs Content
-        ============================ -->
-        <div class="idocs-content">
-            <div class="container-landing">
-
-                <header class="hero hero-primary">
-                    <div class="container feature-anim-right"><h1 class="hero_title">
-                        <img src="assets/images/nuts-icon.png" alt="" width="128">NAF</h1>
-                        <p class="hero_subtitle">Nuts Application Framework</p>
-                        <p class="hero_subsubtitle">The core API foundation for modular and dynamic Java
-                            applications</p>
-                        <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="">
+    <!-- HERO -->
+    <section class="naf-hero">
+        <div class="naf-hero__grid-overlay"></div>
+        <div class="container naf-hero__inner">
+            <div class="naf-hero__left">
+                <div class="naf-hero__eyebrow">
+                    <img src="assets/images/nuts-icon.png" alt="Nuts" width="18" style="vertical-align:-2px;opacity:0.7">
+                    &nbsp;Part of the Nuts ecosystem
+                </div>
+                <h1 class="naf-hero__title">
+                    <span class="naf-hero__naf">NAF</span>
+                    <span class="naf-hero__framework">Nuts Application Framework</span>
+                </h1>
+                <p class="naf-hero__tagline">
+                    An &agrave;-la-carte toolkit of reusable Java components.<br>
+                    Take what you need. Leave the rest. No lock-in.
+                </p>
+                <div class="naf-hero__pills">
+                    <span class="naf-pill">Spring-compatible</span>
+                    <span class="naf-pill">SLF4J-compatible</span>
+                    <span class="naf-pill">JVM 8+</span>
+                    <span class="naf-pill">Maven Central</span>
+                </div>
+                <div class="naf-hero__ctas">
+                    <a href="doc-naf.html" class="btn-naf-primary">
+                        <i class="fas fa-book"></i> Developer Docs
+                    </a>
+                    <a href="contrib.html" class="btn-naf-secondary">Contributing &rarr;</a>
+                    <a href="https://github.com/thevpc/nuts" target="_blank" class="btn-naf-secondary">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </div>
+            </div>
+            <div class="naf-hero__right">
+                <div class="naf-code-window">
+                    <div class="naf-code-window__bar">
+                        <span class="naf-dot naf-dot--red"></span>
+                        <span class="naf-dot naf-dot--yellow"></span>
+                        <span class="naf-dot naf-dot--green"></span>
+                        <span class="naf-code-window__filename">MyApp.java</span>
                     </div>
-                </header>
+                    <pre class="naf-code-window__pre"><code class="language-java">@NAppDefinition
+public class MyApp {
+  public static void main(String[] args) {
+    NApp.builder(args).run();
+  }
+  @NAppInstaller public void onInstall() {
+        NOut.println(NMsg.ofC("installing the %s app",NApp.of().id()));
+  }
+  @NAppRunner public void run() {
+        NCmdLine cmdLine = NApp.of().cmdLine();
+        NRef&lt;String&gt; name = NRef.ofNull();
+        cmdLine.matcher()
+                .with("-n", "--name").matchEntry((v) -> name.set(v.stringValue()))
+                .requireAllDefaults();
+        NOut.println(NMsg.ofC("name=%s", name.get()));
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-naf" alt="" style="display:none">
+    </section>
+
+    <!-- MAVEN SNIPPET -->
+    <section class="naf-section naf-section--maven">
+        <div class="container naf-maven">
+            <div class="naf-maven__text">
+                <span class="naf-eyebrow">Get started</span>
+                <h2 class="naf-maven__title">Add NAF to your project</h2>
+                <p class="naf-maven__sub">Each NAF component is independently selectable.<br>
+                    You don't need to add everything &mdash; just what you use.</p>
+            </div>
+            <div class="naf-maven__snippet">
+                <div class="nuts-snippet-tabs">
+                    <button class="nuts-snippet-tab active" data-target="dep-lts">LTS &mdash; Maven Central</button>
+                    <button class="nuts-snippet-tab" data-target="dep-latest">Latest &mdash; thevpc</button>
+                </div>
+                <div class="nuts-snippet-body naf-snippet-body">
+                    <div class="nuts-snippet-block active" id="dep-lts">
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+    &lt;artifactId&gt;nuts&lt;/artifactId&gt;
+    &lt;version&gt;0.8.9&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                    </div>
+                    <div class="nuts-snippet-block" id="dep-latest">
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+    &lt;artifactId&gt;nuts&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;thevpc&lt;/id&gt;
+        &lt;url&gt;https://maven.thevpc.net&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+            &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;</code></pre>
+                    </div>
+                    <button class="nuts-snippet-copy" title="Copy to clipboard">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+                <p class="naf-maven__note">
+                    <span class="nuts-badge nuts-badge--stable">LTS</span> 0.8.9 on Maven Central &nbsp;&middot;&nbsp;
+                    <span class="nuts-badge nuts-badge--preview">Latest</span> 1.0.0 on maven.thevpc.net
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4 PATHS -->
+    <section class="naf-section naf-section--paths">
+        <div class="container">
+            <span class="naf-eyebrow naf-eyebrow--center">Why NAF?</span>
+            <h2 class="naf-section__title naf-section__title--center">Four ways to use NAF</h2>
+            <div class="naf-paths">
+
+                <div class="naf-path naf-path--1">
+                    <div class="naf-path__icon"><i class="fas fa-bolt"></i></div>
+                    <h3 class="naf-path__title">Zero-dependency lifecycle</h3>
+                    <p class="naf-path__body">Make your app nuts-aware with zero extra dependencies. Just handle <code>--nuts-exec-mode=install|uninstall|update|auto-complete</code> as <code>args[0]</code> and add <code>&lt;nuts.application&gt;true&lt;/nuts.application&gt;</code> to your pom. Nothing else required.</p>
+                    <a href="doc-naf.html#lifecycle" class="naf-path__link">Learn more &rarr;</a>
+                </div>
+
+                <div class="naf-path naf-path--2">
+                    <div class="naf-path__icon"><i class="fas fa-puzzle-piece"></i></div>
+                    <h3 class="naf-path__title">&Agrave;-la-carte toolkit</h3>
+                    <p class="naf-path__body">Pick individual NAF components &mdash; NPath for unified IO, NMsg for console output, NLog for logging, NExpr for expressions. Each is self-contained. Integrates cleanly with Spring, SLF4J, and whatever you already use.</p>
+                    <a href="#modules" class="naf-path__link">Browse modules &darr;</a>
+                </div>
+
+                <div class="naf-path naf-path--3">
+                    <div class="naf-path__icon"><i class="fas fa-layer-group"></i></div>
+                    <h3 class="naf-path__title">Embed Nuts as a library</h3>
+                    <p class="naf-path__body">Use Nuts programmatically inside your app to install, resolve and run Maven artifacts at runtime. Full workspace and session API available for advanced integration scenarios.</p>
+                    <a href="doc-naf.html#embedding" class="naf-path__link">Embedding guide &rarr;</a>
+                </div>
+
+                <div class="naf-path naf-path--4">
+                    <div class="naf-path__icon"><i class="fas fa-code-branch"></i></div>
+                    <h3 class="naf-path__title">Contribute to Nuts</h3>
+                    <p class="naf-path__body">Nuts itself is built on NAF. Understanding NAF is the entry point for contributing to the Nuts codebase &mdash; architecture, module structure, build process and conventions all documented.</p>
+                    <a href="contrib.html" class="naf-path__link">Contributing guide &rarr;</a>
+                </div>
 
             </div>
-            <main>
-                <section>
-                    <!------------------- -->
-                    <div class="container">
-                        <div class="row">
-                            <div class="col col-12">
-                                <div class="carousel-container">
-                                    <div class="carousel-slides">
-                                        {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/preview-naf')}}
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-title">{{pageLevel1.title}}</h3>
-                                                <p>
-                                                    {{toHtml('ntf',pageLevel1.subTitle)}}
-                                                </p>
-                                                <p>
-                                                    {{toHtml(pageLevel1.contentType,pageLevel1.stringContent)}}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        {{:end}}
-                                    </div>
-                                    <div class="carousel-controls">
-                                        <button id="prevBtn">&lt;</button>
-                                        <button id="nextBtn">&gt;</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
         </div>
+    </section>
 
-
-    </div>
-    <!-- Content end -->
-
-
-    <!-- Footer
-    ============================ -->
-    <footer id="footer" class="section bg-dark footer-text-light">
+    <!-- MODULE SHOWCASE -->
+    <section class="naf-section naf-section--modules" id="modules">
         <div class="container">
-            <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
-                <li><a data-toggle="tooltip" href="https://twitter.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
-                <li><a data-toggle="tooltip" href="http://www.facebook.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
-                <li><a data-toggle="tooltip" href="http://www.dribbble.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
-                <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
-                       data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
-            </ul>
-            <p class="text-2 text-center mb-0">
-                Copyright © 2018-{{currentYear()}} Nuts Package Manager Team.
-                <br>
-                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on {{buildTime}}
-                <br>
-                <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
-                                                            href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
-            </p>
+            <span class="naf-eyebrow naf-eyebrow--center">The toolkit</span>
+            <h2 class="naf-section__title naf-section__title--center">Everything in NAF</h2>
+            <p class="naf-section__intro">A coherent set of components built with the same philosophy and patterns. Learn one, understand all.</p>
+
+            <div class="naf-modules">
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/preview-naf')}}
+                <div class="naf-module">
+                    <div class="naf-module__header">
+                        <span class="naf-module__name">{{pageLevel1.title}}</span>
+                    </div>
+                    <p class="naf-module__desc">{{toHtml('ntf',pageLevel1.subTitle)}}</p>
+                    <div class="naf-module__preview">
+                        {{toHtml(pageLevel1.contentType,pageLevel1.stringContent)}}
+                    </div>
+                </div>
+                {{:end}}
+            </div>
+
         </div>
-    </footer>
-    <!-- Footer end -->
+    </section>
+
+    {{:include $'$projectRoot/src/include/template/v1/30-footer.html'}}
 
 </div>
-<!-- Document Wrapper end -->
 
-<!-- Back To Top -->
-<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
-
-<!-- JavaScript
-============================ -->
-<script src="assets/vendor/jquery/jquery.min.js"></script>
-<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- Highlight JS -->
-<script src="assets/vendor/highlight.js/highlight.min.js"></script>
-<!-- Easing -->
-<script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
-<!-- Magnific Popup -->
-<script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-<!-- Custom Script -->
-<script src="assets/js/theme.js"></script>
-<script src="assets/js/caroussel.js"></script>
-<script src="assets/js/code.js"></script>
+{{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
+<script src="assets/js/nuts-docs.js"></script>
+<script src="assets/js/nuts-landing.js"></script>
 </body>
 </html>

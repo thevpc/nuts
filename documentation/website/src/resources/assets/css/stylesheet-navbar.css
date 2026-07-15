@@ -1,0 +1,337 @@
+/* ============================================================
+   Nuts Shared Navbar Stylesheet
+   Loaded by ALL pages (index, doc, naf, blog, apps, download…)
+   ============================================================ */
+
+@font-face {
+    font-family: 'ZeroesTwo';
+    src: url('../fonts/ZeroesTwo.ttf') format('truetype');
+}
+
+/* ---- Navbar shell ---- */
+#header {
+    background: rgba(15, 15, 30, 0.97) !important;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    z-index: 1000;
+}
+
+#header .navbar {
+    padding: 0 !important;
+    min-height: 56px;
+}
+
+#header .container-fluid {
+    padding: 0 20px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ---- Brand ---- */
+.nuts-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+    flex-shrink: 0;
+}
+
+.nuts-brand img {
+    display: block;
+}
+
+.nuts-brand__name {
+    font-family: ZeroesTwo, sans-serif;
+    font-size: 1.15rem;
+    color: #ffffff;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.nuts-brand__version {
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: #1a4a7a;
+    color: #60b4f5;
+    border-radius: 4px;
+    padding: 2px 6px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+/* ---- Nav list ---- */
+.nuts-nav {
+    display: flex !important;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
+}
+
+.nuts-nav > li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.nuts-nav > li > a {
+    display: block;
+    color: rgba(255,255,255,0.75) !important;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 6px 11px !important;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+    text-decoration: none !important;
+    line-height: 1;
+}
+
+.nuts-nav > li > a:hover {
+    color: #ffffff !important;
+    background: rgba(255,255,255,0.08);
+}
+
+/* ---- GitHub icon link ---- */
+.nuts-nav__github {
+    font-size: 1.1rem !important;
+    padding: 6px 9px !important;
+}
+
+/* ---- "For developers →" CTA pill ---- */
+.nuts-nav__dev-cta {
+    background: rgba(99, 102, 241, 0.15) !important;
+    border: 1px solid rgba(99, 102, 241, 0.35) !important;
+    color: #a5b4fc !important;
+    border-radius: 6px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    padding: 5px 12px !important;
+    margin-left: 4px;
+    white-space: nowrap;
+}
+
+.nuts-nav__dev-cta:hover {
+    background: rgba(99, 102, 241, 0.28) !important;
+    border-color: rgba(99, 102, 241, 0.6) !important;
+    color: #c7d2fe !important;
+}
+
+/* ---- Dropdown toggle ---- */
+.nuts-nav > li.dropdown > a.dropdown-toggle::after {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    vertical-align: middle;
+    border-top: 4px solid rgba(255,255,255,0.5);
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+    content: '';
+}
+
+/* ---- Dropdown menu ---- */
+.nuts-nav .dropdown-menu {
+    background: #1a1a2e !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important;
+    padding: 6px !important;
+    min-width: 200px;
+    margin-top: 0; /* matches top:100% and avoids gap */
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.nuts-nav .dropdown-item {
+    color: rgba(255,255,255,0.75) !important;
+    font-size: 0.875rem;
+    border-radius: 5px;
+    padding: 7px 12px !important;
+    transition: background 0.15s;
+}
+
+.nuts-nav .dropdown-item:hover {
+    background: rgba(255,255,255,0.08) !important;
+    color: #fff !important;
+}
+
+/* ---- Mobile toggler ---- */
+.navbar-toggler {
+    border-color: rgba(255,255,255,0.2) !important;
+}
+
+.navbar-toggler span {
+    display: block;
+    background: rgba(255,255,255,0.75);
+    height: 2px;
+    margin: 4px 0;
+    border-radius: 2px;
+}
+
+/* ---- Active page marker ---- */
+.not-active {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.5;
+}
+
+/* ---- Collapse on mobile ---- */
+@media (max-width: 991px) {
+    #header-nav {
+        background: #0f0f1e;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding: 12px 0;
+        margin-top: 4px;
+    }
+
+    .nuts-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding: 0 12px;
+    }
+
+    .nuts-nav > li { width: 100%; }
+
+    .nuts-nav > li > a {
+        width: 100%;
+        padding: 10px 12px !important;
+    }
+
+    .nuts-nav__dev-cta {
+        margin-left: 0 !important;
+        margin-top: 8px;
+    }
+
+    .nuts-nav .dropdown-menu {
+        position: static !important;
+        float: none;
+        box-shadow: none;
+        border: none !important;
+        background: rgba(255,255,255,0.04) !important;
+        margin: 4px 0 0 12px;
+        padding: 4px !important;
+    }
+}
+
+
+/* ============================================================
+   Override stylesheet.css primary-menu rules
+   These must come AFTER stylesheet.css loads
+   ============================================================ */
+
+/* Fix: primary-menu sets height:70px and light color on nav links */
+.primary-menu ul.navbar-nav > li > a:not(.btn) {
+    height: auto !important;
+    color: rgba(255,255,255,0.75) !important;
+    padding: 6px 11px !important;
+    line-height: 1 !important;
+}
+
+.primary-menu ul.navbar-nav > li:hover > a:not(.btn),
+.primary-menu ul.navbar-nav > li > a.active:not(.btn) {
+    color: #ffffff !important;
+}
+
+/* Fix: primary-menu sets margin-left:2px between items — we use gap instead */
+.primary-menu ul.navbar-nav > li + li {
+    margin-left: 0 !important;
+}
+
+/* Fix: primary-menu navbar height */
+.primary-menu.navbar {
+    min-height: 56px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Fix: dropdown items */
+.primary-menu ul.navbar-nav > li.dropdown .dropdown-menu li > a:not(.btn) {
+    height: auto !important;
+    color: rgba(255,255,255,0.75) !important;
+    padding: 7px 12px !important;
+    line-height: 1.4 !important;
+}
+
+.primary-menu ul.navbar-nav > li.dropdown .dropdown-menu li:hover > a:not(.btn) {
+    color: #ffffff !important;
+}
+
+/* ---- NAF header: "← Nuts Package Manager" back link ---- */
+.nuts-nav__back-nuts {
+    background: rgba(139,92,246,0.12) !important;
+    border: 1px solid rgba(139,92,246,0.3) !important;
+    color: #c4b5fd !important;
+    border-radius: 6px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    padding: 5px 12px !important;
+    margin-left: 4px;
+    white-space: nowrap;
+}
+.nuts-nav__back-nuts:hover {
+    background: rgba(139,92,246,0.25) !important;
+    color: #ddd6fe !important;
+    border-color: rgba(139,92,246,0.5) !important;
+}
+
+/* Hide mobile sidebar toggler by default (only visible on doc pages) */
+#sidebarCollapse {
+    display: none !important;
+}
+
+/* ===================== SHARED FOOTER ===================== */
+#footer {
+    background: #0f0f1e !important;
+    padding: 60px 0 40px !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
+}
+
+#footer .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px;
+}
+
+#footer .social-icons li a {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.25rem;
+    transition: all 0.2s;
+}
+
+#footer .social-icons li a:hover {
+    color: #60b4f5;
+    transform: translateY(-2px);
+}
+
+#footer p {
+    font-size: 0.85rem;
+    line-height: 1.8;
+    margin: 0;
+    text-align: center;
+}
+
+#footer .btn-link {
+    color: #60b4f5 !important;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+#footer .btn-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    #footer {
+        padding: 40px 0 30px !important;
+    }
+}

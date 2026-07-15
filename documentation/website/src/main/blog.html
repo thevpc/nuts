@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-{{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
-
-<!-- Document Wrapper   
-=============================== -->
-<div id="main-wrapper" class="blog-main-wrapper">
+<head>
     {{:: pageId='blog'}}
+    {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
+    <title>Blog — Nuts Package Manager</title>
+</head>
+<body>
+<div id="main-wrapper" class="blog-main-wrapper">
     {{:include $'$projectRoot/src/include/template/v1/11-header-nuts.html'}}
 
     <!-- Content
@@ -98,4 +99,5 @@
 <!-- Document Wrapper end -->
 
 {{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
+</body>
 </html>

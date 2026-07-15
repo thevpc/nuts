@@ -37,7 +37,7 @@ ISBL Editor style light color schemec (c) Dmitriy Tarasov <dimatar@gmail.com>
 /* User color: hue: 0 */
 
 .hljs-string {
-  color: #000080;
+  color: #4646d5;
 }
 
 .hljs-type,
@@ -74,7 +74,7 @@ ISBL Editor style light color schemec (c) Dmitriy Tarasov <dimatar@gmail.com>
 
 .hljs-built_in,
 .hljs-literal {
-  color: #000080;
+  color: #4646d5;
   font-weight: bold;
 }
 

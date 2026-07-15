@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
+    <title>Nuts — The Java Package Manager</title>
+    <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
     <link href="assets/images/favicon.ico" rel="icon"/>
     <title>Nuts Java Package Manager</title>
-    <meta name="description" content="Nuts Java Package Manager">
+    <meta name="description" content="Nuts Java Package Manager Website">
     <meta name="author" content="thevpc">
 
     <!-- Stylesheet
@@ -20,388 +23,401 @@
     <!-- Highlight Syntax -->
     <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
-    <link rel="stylesheet" type="text/css" href="assets/css/caroussel.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+    <!-- Shared navbar (all pages) -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-navbar.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="assets/css/code.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2SH2Y1383S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2SH2Y1383S');
+    </script>
+
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
+</head>
+
+<body>
 
 <!-- Preloader -->
 <div class="preloader">
-    <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
 </div>
-<!-- Preloader End -->
 
-<!-- Document Wrapper   
-=============================== -->
-<div id="main-wrapper" class="index-main-wrapper">
+<div id="main-wrapper">
 
-    
-    <!-- Header
-    ============================ -->
+    <!-- Header -->
 <header id="header" class="sticky-top">
-    <!-- Navbar -->
     <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
         <div class="container-fluid">
-            <!-- Sidebar Toggler -->
-            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
-                    class="w-75"></span><span class="w-50"></span></button>
 
-            <!-- Logo -->
-            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
-                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
-            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
-            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.9.0</span></span>
-            <!-- Logo End -->
+            <!-- Mobile sidebar toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button">
+                <span></span><span class="w-75"></span><span class="w-50"></span>
+            </button>
 
-            <!-- Navbar Toggler -->
-            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
-                <span></span><span></span><span></span></button>
+            <!-- Logo + brand -->
+            <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
+                <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
+                <span class="nuts-brand__name">Nuts</span>
+                <span class="nuts-brand__version">v1.0.0.0</span>
+            </a>
 
+            <!-- Mobile collapse toggler -->
+            <button class="navbar-toggler ml-auto" type="button"
+                    data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span>
+            </button>
+
+            <!-- Nav links -->
             <div id="header-nav" class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav">
-                    <li><a href="naf.html" class="">Nuts Application Framework</a></li>
-                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
-                      <ul class="dropdown-menu">
-                          <li><a class="dropdown-item " href="doc-nuts.html">User Documentation</a>
-                          <li><a class="dropdown-item " href="contrib.html">Contributing</a></li>
-                          <li><a class="dropdown-item " href="faq.html">FAQ</a></li>
-                          <!--
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
-                          <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
-                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
-                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
-                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
-                          </ul>
-                        </li>
-                        -->
-                      </ul>
+                <ul class="navbar-nav nuts-nav">
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#">Docs</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item "
+                                   href="doc-nuts.html">User Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="faq.html">FAQ</a></li>
+                            <li><a class="dropdown-item "
+                                   href="contrib.html">Contributing</a></li>
+                        </ul>
                     </li>
-                    <li><a href="blog.html" class="">Blog</a></li>
-                    <li><a href="apps.html" class="">Apps</a></li>
-                    <li><a href="download.html" class="">Download</a></li>
-                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+
+                    <li><a href="blog.html"
+                           class="">Blog</a></li>
+
+                    <li><a href="apps.html"
+                           class="">Apps</a></li>
+
+                    <li><a href="download.html"
+                           class="">Download</a></li>
+
+                    <li><a href="https://github.com/thevpc/nuts" target="_blank"
+                           class="nuts-nav__github">
+                        <i class="fab fa-github"></i>
+                    </a></li>
+
+                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers →</a></li>
+
                 </ul>
             </div>
-            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
-                <li class="social-icons-twitter"><a data-toggle="tooltip"
-                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
-                                                    title="" data-original-title="Twitter"><i
-                        class="fab fa-twitter"></i></a></li>
-                <li class="social-icons-facebook"><a data-toggle="tooltip"
-                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
-                                                     title="" data-original-title="Facebook"><i
-                        class="fab fa-facebook-f"></i></a></li>
-                <li class="social-icons-dribbble"><a data-toggle="tooltip"
-                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
-                                                     title="" data-original-title="Dribbble"><i
-                        class="fab fa-dribbble"></i></a></li>
-            </ul>
+
         </div>
     </nav>
-    <!-- Navbar End -->
 </header>
 <!-- Header End -->
 
+    <!-- ===================== HERO ===================== -->
+    <section class="nuts-hero">
+        <div class="nuts-hero__inner container">
+            <div class="nuts-hero__identity">
+                <img src="assets/images/nuts-icon.png" alt="Nuts" class="nuts-hero__icon">
+                <h1 class="nuts-hero__title">Nuts</h1>
+            </div>
+            <p class="nuts-hero__tagline">The package manager Java never had.</p>
+            <p class="nuts-hero__sub">Install, manage and run any Maven-published Java app —<br>JDK provisioned automatically, no fat jars, no setup scripts.</p>
 
-    <!-- Content
-    ============================ -->
-    <div id="content" role="main">
+            <div class="nuts-hero__snippet">
+                <div class="nuts-snippet-tabs">
+                    <button class="nuts-snippet-tab active" data-os="linux">Linux / macOS</button>
+                    <button class="nuts-snippet-tab" data-os="windows">Windows</button>
+                </div>
+                <div class="nuts-snippet-body">
+                    <div class="nuts-snippet-block active" data-os="linux">
+<pre><code class="language-bash"># install NetBeans IDE — JDK provisioned automatically
+nuts install org.apache.netbeans:netbeans
 
-        <!-- Docs Content
-        ============================ -->
-        <div class="idocs-content">
-            <div class="container-landing">
-
-                <header class="hero hero-primary">
-                    <div class="container feature-anim-right"><h1 class="hero_title">
-                        <img src="assets/images/nuts-icon.png" alt="" width="128">Nuts</h1>
-                        <p class="hero_subtitle">The Java Package Manager</p>
-                        <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="">
+# run it
+nuts netbeans</code></pre>
                     </div>
-                </header>
+                    <div class="nuts-snippet-block" data-os="windows">
+<pre><code class="language-bash"># install NetBeans IDE — JDK provisioned automatically
+nuts install org.apache.netbeans:netbeans
+
+# run it
+nuts netbeans</code></pre>
+                    </div>
+                    <button class="nuts-snippet-copy" title="Copy to clipboard">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="nuts-hero__ctas">
+                <a href="download.html" class="btn-nuts-primary">
+                    <i class="fas fa-download"></i> Download Nuts
+                </a>
+                <a href="doc-nuts.html" class="btn-nuts-secondary">
+                    Read the docs →
+                </a>
+            </div>
+        </div>
+        <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="" style="display:none">
+    </section>
+
+    <!-- ===================== VALUE PROPS ===================== -->
+    <section class="nuts-section nuts-section--light">
+        <div class="container">
+            <div class="nuts-props">
+
+                <div class="nuts-prop">
+                    <div class="nuts-prop__icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3 class="nuts-prop__title">If it builds with Maven, it runs with Nuts</h3>
+                    <p class="nuts-prop__body">Any Maven-published application is instantly installable. No repackaging, no formula to write, no submission process. If the developer already uses Maven — and most Java developers do — their app is nuts-compatible out of the box.</p>
+                </div>
+
+                <div class="nuts-prop">
+                    <div class="nuts-prop__icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h3 class="nuts-prop__title">Platform-native, no fat jar</h3>
+                    <p class="nuts-prop__body">Publish one thin artifact. Nuts resolves OS-specific dependencies, native libs, AI/FFM binaries, and the right JDK at install time — only what the user's platform actually needs. No bundling, no bloat.</p>
+                </div>
+
+                <div class="nuts-prop">
+                    <div class="nuts-prop__icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3 class="nuts-prop__title">A proper lifecycle, not just a runner</h3>
+                    <p class="nuts-prop__body">Install, update, uninstall. Run multiple versions of the same app side by side. Works offline after first install. Hermetic bundles for air-gapped environments. Nuts stays involved after install — not just a launcher.</p>
+                </div>
 
             </div>
-            <main>
-                <section>
-                    <!------------------- -->
-                    <div class="container">
-                        <div class="row">
-                            <div class="col col-4">
-                                <div class="text--center"><img class="feature-anim-down img-icon"
-                                                               src="assets/images/slim-jar.png">
-                                    <div class="glow-wrap"><i class="glow"></i></div>
-                                </div>
-                                <h3 class="feature-title">No Fat Jar</h3>
-                                <p>Developers, say goodbye to the hassle of <i>big jars</i>! Forget packaging
-                                    dependencies with your application—they'll be downloaded automatically when you
-                                    install.
-                                    This means your <code>pom.xml</code> file will be much smaller.
-                            </div>
-                            <div class="col col--4">
-                                <div class="text--center"><img class="feature-anim-down img-icon"
-                                                               src="assets/images/package.png">
-                                    <div class="glow-wrap"><i class="glow"></i></div>
-                                </div>
-                                <h3 class="feature-title">Any application</h3>
-                                <p>Installing a Java application is as easy as running the command <span
-                                        style="font-family: 'Courier New'; font-weight: bolder; color: #3a3a3a">nuts install <span
-                                        style="font-family: 'Courier New'; font-weight: bolder; color: #5e1700">&lt;your-package&gt;</span></span>.
-                                    Nuts manages dependencies and allows you to install and run <strong>multiple
-                                        versions</strong> of the same application. Plus, any application built with
-                                    Maven is already <code>nuts</code>-aware!
-                            </div>
-                            <div class="col col--4">
-                                <div class="text--center"><img class="feature-anim-down img-icon"
-                                                               src="assets/images/gear.png">
-                                    <div class="glow-wrap"><i class="glow"></i></div>
-                                </div>
-                                <h3 class="feature-title">Automate</h3>
-                                <p>Use the nuts toolbox, which provides a portable, Java-based version of common GNU
-                                    commands like <code>bash</code>, <code>ls</code>, and <code>cp</code>. These
-                                    commands are enhanced to support output formats like JSON and XML, making your
-                                    automation scripts more predictable, debuggable, and easy to use.</p>
-                            </div>
-                            <div class="col col-12">
-                                <div class="carousel-container">
-                                    <div class="carousel-slides">
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Why Nuts?</h3>
-                                                <p>Traditional package managers solve build-time dependencies but fall short at <strong>runtime</strong> execution, <strong>multi-version</strong> management, and <strong>polyglot</strong> distribution. <code>Nuts</code> fills this gap as a <strong>universal runtime package manager</strong>, designed with <strong>DevOps in mind</strong> — enabling applications to be packaged, distributed, and executed anywhere, across multiple platforms and languages, while simplifying deployment, automation, and version management.</p>
-                                            </div>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Reliable Dependency Management</h3>
-                                                <p>Once installed, your app can run <strong>offline</strong> instantly.</p>
-                                                <ul>
-                                                    <li>Dependencies and JARs are cached locally; network access is required only at install.</li>
-                                                    <li>Cached JARs are shared across apps.</li>
-                                                </ul>
-                                            </div>
-                                            <pre>
-                                                    <code class="language-bash">
-                                                    nuts install myapp
-                                                    </code>
-                                            </pre>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Fast Start After First Install</h3>
-                                                <p>First install may take a few seconds/minutes; subsequent runs are instant.</p>
-                                                <ul>
-                                                    <li>Initial download required only once.</li>
-                                                    <li>Reuse <strong>cached</strong> dependencies for other apps.</li>
-                                                </ul>
-                                            </div>
-                                            <pre>
-                                                    <code class="language-bash">
-                                                    nuts install myapp
-                                                    </code>
-                                            </pre>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Flexible Adoption</h3>
-                                                <p>You can adopt <code>Nuts</code> gradually; <strong>no proprietary APIs</strong> required.</p>
-                                                <ul>
-                                                    <li>Nuts works standalone; no need for <code>NAF</code>.</li>
-                                                    <li>NAF is optional, providing reusable components for file, process, and CLI management.</li>
-                                                </ul>
-                                            </div>
-                                            <pre>
-                                                    <code class="language-bash">
-                                                    nuts install --repo=maven:http://myrepo myapp
-                                                    </code>
-                                            </pre>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Secure and Audit-Friendly</h3>
-                                                <p><code>Nuts</code> supports auditable, secure deployments.</p>
-                                                <ul>
-                                                    <li>Downloads can be limited to <strong>trusted</strong> repositories.</li>
-                                                    <li>Built-in <strong>SHA</strong> verification and <strong>retries</strong>.</li>
-                                                </ul>
-                                            </div>
-                                            <pre>
-                                                    <code class="language-bash">
-                                                    nuts install --repo=maven:http://mytrustedrepo myapp
-                                                    </code>
-                                            </pre>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Hermetic Deployment Without Fatjars</h3>
-                                                <p>Deploy apps in a fully controlled environment with all dependencies included.</p>
-                                                <ul>
-                                                    <li>Bundle multiple apps for <strong>offline</strong> execution.</li>
-                                                    <li>Keeps apps modular while ensuring <strong>reproducibility</strong>.</li>
-                                                </ul>
-                                            </div>
-                                            <pre>
-                                                    <code class="language-bash">
-                                                    nuts bundle myapp1 myapp2
-                                                    </code>
-                                            </pre>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Install & Manage Versions</h3>
-                                                <p>Nuts makes installing applications effortless. You can install specific versions (even multiple side by side), grab the latest release, or uninstall when done — all with a single command.</p>
-                                                <pre>
-                                                    <code class="language-bash">
-                                                    nuts install net.thevpc.app:netbeans-launcher#1.2.2   # Install a specific version
-                                                    nuts install net.thevpc.app:netbeans-launcher         # Install latest version if none exists
-                                                    nuts uninstall net.thevpc.app:netbeans-launcher#1.2.2 # Uninstall a specific version
-                                                    </code>
-                                                </pre>
-                                            </div>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Run Anywhere, Any Version</h3>
-                                                <p>Run applications directly, whether installed or not. Nuts installs missing versions on-the-fly, lets you pin exact releases, and updates seamlessly.</p>
-                                                <pre>
-                                                    <code class="language-bash">
-                                                        nuts netbeans-launcher           # Run the active version (installs if missing)
-                                                        nuts netbeans-launcher#1.2.2     # Run a specific version (installs if missing)
-                                                        nuts update netbeans-launcher    # Check for and apply updates
-                                                    </code>
-                                                </pre>
-                                            </div>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Search Made Easy</h3>
-                                                <p>Find what you need quickly with Nuts’ powerful search. Look locally, remotely, or everywhere at once. Filter by platform, packaging, or latest versions, and even preview execution plans.</p>
-                                                <pre>
-                                                    <code class="language-bash">
-                                                    nuts search -l --offline netbeans*                      # Search locally (installed & cached)
-                                                    nuts search -online -l --latest --distinct --sorted \   # Search remote repos for latest jars
-                                                       --os=windows --packaging=jar netbeans*
-                                                    nuts search -online -l --describe netbeans*             # Show search plan (TSON format)
-                                                    </code>
-                                                </pre>
-                                            </div>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Built-in Help Anywhere</h3>
-                                                <p>Never get lost. Nuts provides detailed help for the CLI itself, or for any installed application, right when you need it.</p>
-                                                <pre>
-                                                    <code class="language-bash">
-                                                    nuts help                        # Show help on Nuts CLI
-                                                    nuts help netbeans-launcher       # Show help for an app
-                                                    nuts netbeans-launcher --help     # Same as above, directly from the app
-                                                    </code>
-                                                </pre>
-                                            </div>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Customize with Aliases & Settings</h3>
-                                                <p>Tailor Nuts to your workflow by creating command aliases, managing repositories, or resolving commands to see where they come from.</p>
-                                                <pre>
-                                                    <code class="language-bash">
-                                                    nuts settings add alias ls='nsh -c ls'  # Create alias 'ls' → run 'nsh -c ls'
-                                                    nuts settings list repos                # List configured repositories
-                                                    nuts which ls                           # Resolve if 'ls' is internal, alias, or system cmd
-                                                    </code>
-                                                </pre>
-                                            </div>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Run as Different Users or Modes</h3>
-                                                <p>Switch execution contexts with ease. Run as root, sudo, or another user. Use embedded mode to avoid starting a new JVM, or exec mode for controlled execution.</p>
-                                                <pre>
-                                                    <code class="language-bash">
-                                                    nuts --as-root netbeans-launcher     # Run as root
-                                                    nuts --as-user:vpc netbeans-launcher # Run as user 'vpc'
-                                                    nuts --sudo netbeans-launcher        # Run with sudo privileges
-                                                    nuts --embedded netbeans-launcher    # Run in current JVM (embedded)
-                                                    nuts --exec netbeans-launcher        # Run in exec mode (like default run)
-                                                    </code>
-                                                </pre>
-                                            </div>
-                                        </div>
-                                        <div class="carousel-slide">
-                                            <div class="col col--3">
-                                                <h3 class="feature-subtitle">Automate & Distribute Execution</h3>
-                                                <p>Nuts isn’t just about local runs — it’s built for automation and remote execution. Schedule tasks with cron, or run commands seamlessly on remote machines.</p>
-                                                <pre>
-                                                    <code class="language-bash">
-                                                    nuts --exec --cron "* * * * *" ls                 # Run 'ls' every minute (cron)
-                                                    nuts --exec --target="ssh://myuser@myserver" ls   # Run 'ls' remotely over SSH
-                                                    </code>
-                                                </pre>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="carousel-controls">
-                                        <button id="prevBtn">&lt;</button>
-                                        <button id="nextBtn">&gt;</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
         </div>
+    </section>
 
+    <!-- ===================== QUICK INSTALL ===================== -->
+    <section class="nuts-section nuts-section--dark" id="install">
+        <div class="container nuts-install">
+            <div class="nuts-install__text">
+                <span class="nuts-eyebrow">Get started in seconds</span>
+                <h2 class="nuts-section__title nuts-section__title--light">Install Nuts</h2>
+                <p class="nuts-install__sub">Bootstrap once, then <code>nuts install &lt;app&gt;</code> for anything.</p>
+                <a href="download.html" class="btn-nuts-secondary btn-nuts-secondary--light">
+                    All download options →
+                </a>
+            </div>
+            <div class="nuts-install__snippet">
+                <div class="nuts-snippet-tabs">
+                    <button class="nuts-snippet-tab active" data-target="install-linux">Linux / macOS</button>
+                    <button class="nuts-snippet-tab" data-target="install-windows">Windows</button>
+                </div>
+                <div class="nuts-snippet-body">
+                    <div class="nuts-snippet-block active" id="install-linux">
+                        <pre><code class="language-bash">curl -sL https://thevpc.net/nuts/install-latest.sh | bash</code></pre>
+                    </div>
+                    <div class="nuts-snippet-block" id="install-windows">
+                        <pre><code class="language-bash">powershell -c "iwr https://thevpc.net/nuts/install-latest.ps1 | iex"</code></pre>
+                    </div>
+                    <button class="nuts-snippet-copy" title="Copy to clipboard">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+                <p class="nuts-install__channels">
+                    <span class="nuts-badge nuts-badge--stable">LTS</span> Stable on Maven Central &nbsp;·&nbsp;
+                    <span class="nuts-badge nuts-badge--preview">Latest</span> Preview on maven.thevpc.net
+                </p>
+            </div>
+        </div>
+    </section>
 
-    </div>
-    <!-- Content end -->
+    <!-- ===================== HOW IT WORKS ===================== -->
+    <section class="nuts-section nuts-section--light">
+        <div class="container">
+            <span class="nuts-eyebrow nuts-eyebrow--center">How it works</span>
+            <h2 class="nuts-section__title nuts-section__title--center">Three commands. That's it.</h2>
+            <div class="nuts-steps">
+                <div class="nuts-step">
+                    <div class="nuts-step__num">1</div>
+                    <h4 class="nuts-step__title">Bootstrap</h4>
+                    <div class="nuts-step__code"><code>curl ... | bash</code></div>
+                    <p class="nuts-step__desc">Install Nuts itself. One time, any platform.</p>
+                </div>
+                <div class="nuts-step__arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="nuts-step">
+                    <div class="nuts-step__num">2</div>
+                    <h4 class="nuts-step__title">Install</h4>
+                    <div class="nuts-step__code"><code>nuts install &lt;app&gt;</code></div>
+                    <p class="nuts-step__desc">Dependencies, native libs and JDK resolved automatically.</p>
+                </div>
+                <div class="nuts-step__arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="nuts-step">
+                    <div class="nuts-step__num">3</div>
+                    <h4 class="nuts-step__title">Run</h4>
+                    <div class="nuts-step__code"><code>nuts &lt;app&gt;</code></div>
+                    <p class="nuts-step__desc">Instant. Offline. Any version, side by side.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- ===================== FEATURES ===================== -->
+    <section class="nuts-section nuts-section--white">
+        <div class="container">
+            <span class="nuts-eyebrow nuts-eyebrow--center">What Nuts does</span>
+            <h2 class="nuts-section__title nuts-section__title--center">Everything a runtime package manager should be</h2>
+            <div class="nuts-features">
+
+                <div class="nuts-feature">
+                    <i class="fas fa-wifi-slash nuts-feature__icon"></i>
+                    <div>
+                        <h4 class="nuts-feature__title">Offline after first install</h4>
+                        <p class="nuts-feature__desc">Dependencies cached locally, shared across all apps in the workspace. No network needed to run.</p>
+                    </div>
+                </div>
+
+                <div class="nuts-feature">
+                    <i class="fas fa-code-branch nuts-feature__icon"></i>
+                    <div>
+                        <h4 class="nuts-feature__title">Multiple versions, side by side</h4>
+                        <p class="nuts-feature__desc">Install and run <code>myapp#1.2.1</code> and <code>myapp#1.2.2</code> simultaneously in the same workspace.</p>
+                    </div>
+                </div>
+
+                <div class="nuts-feature">
+                    <i class="fas fa-cube nuts-feature__icon"></i>
+                    <div>
+                        <h4 class="nuts-feature__title">Hermetic bundles</h4>
+                        <p class="nuts-feature__desc"><code>nuts bundle myapp1 myapp2</code> packages everything for fully offline, air-gapped deployment.</p>
+                    </div>
+                </div>
+
+                <div class="nuts-feature">
+                    <i class="fas fa-shield-alt nuts-feature__icon"></i>
+                    <div>
+                        <h4 class="nuts-feature__title">Trusted repositories</h4>
+                        <p class="nuts-feature__desc">Restrict downloads to approved sources. Built-in SHA verification and automatic retries.</p>
+                    </div>
+                </div>
+
+                <div class="nuts-feature">
+                    <i class="fas fa-network-wired nuts-feature__icon"></i>
+                    <div>
+                        <h4 class="nuts-feature__title">Remote execution</h4>
+                        <p class="nuts-feature__desc">Run any app on a remote machine with <code>nuts --at=ssh://user@host myapp</code>.</p>
+                    </div>
+                </div>
+
+                <div class="nuts-feature">
+                    <i class="fas fa-terminal nuts-feature__icon"></i>
+                    <div>
+                        <h4 class="nuts-feature__title">Aliases &amp; settings</h4>
+                        <p class="nuts-feature__desc">Define command aliases, manage repositories, resolve which binary a command maps to.</p>
+                    </div>
+                </div>
+
+                <div class="nuts-feature">
+                    <i class="fas fa-question-circle nuts-feature__icon"></i>
+                    <div>
+                        <h4 class="nuts-feature__title">Built-in help anywhere</h4>
+                        <p class="nuts-feature__desc"><code>nuts help &lt;app&gt;</code> or <code>nuts &lt;app&gt; --help</code> — works for any installed application.</p>
+                    </div>
+                </div>
+
+                <div class="nuts-feature">
+                    <i class="fas fa-clock nuts-feature__icon"></i>
+                    <div>
+                        <h4 class="nuts-feature__title">Scheduling</h4>
+                        <p class="nuts-feature__desc">Run apps on a cron schedule with <code>nuts --exec --cron "* * * * *" myapp</code>.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== ECOSYSTEM ===================== -->
+    <section class="nuts-section nuts-section--light">
+        <div class="container">
+            <span class="nuts-eyebrow nuts-eyebrow--center">The Nuts ecosystem</span>
+            <h2 class="nuts-section__title nuts-section__title--center">More than a package manager</h2>
+            <div class="nuts-ecosystem">
+
+                <div class="nuts-eco-card nuts-eco-card--naf">
+                    <div class="nuts-eco-card__header">
+                        <span class="nuts-badge nuts-badge--sdk">SDK</span>
+                        <h3 class="nuts-eco-card__title">NAF — Nuts Application Framework</h3>
+                    </div>
+                    <p class="nuts-eco-card__body">Build nuts-aware Java apps. Zero-dependency lifecycle integration (<code>--nuts-exec-mode=install</code>), or pick from a coherent à-la-carte toolkit: NPath, NMsg, NLog, NOptional, NExpr and more. Integrates cleanly with Spring, SLF4J and whatever you already use.</p>
+                    <a href="naf.html" class="nuts-eco-card__link">Explore NAF for developers →</a>
+                </div>
+
+                <div class="nuts-eco-card nuts-eco-card--apps">
+                    <div class="nuts-eco-card__header">
+                        <span class="nuts-badge nuts-badge--apps">Apps</span>
+                        <h3 class="nuts-eco-card__title">Companion applications</h3>
+                    </div>
+                    <p class="nuts-eco-card__body">A growing catalog of ready-to-install apps: <strong>nsh</strong> (portable shell), <strong>nsite</strong> (static site generator), <strong>njob</strong>, <strong>ntomcat</strong>, <strong>noapi</strong>, <strong>ntexup</strong> and many third-party tools from Maven Central — databases, IDEs, dev tools, games.</p>
+                    <a href="apps.html" class="nuts-eco-card__link">Browse the app store →</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== BLOG ===================== -->
+    <section class="nuts-section nuts-section--white">
+        <div class="container">
+            <span class="nuts-eyebrow nuts-eyebrow--center">Latest</span>
+            <h2 class="nuts-section__title nuts-section__title--center">From the blog</h2>
+            <div class="nuts-blog-posts">
+                
+            </div>
+            <div class="nuts-section__footer">
+                <a href="blog.html" class="btn-nuts-secondary">All posts →</a>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer
-    ============================ -->
-    <footer id="footer" class="section bg-dark footer-text-light">
-        <div class="container">
-            <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
-                <li><a data-toggle="tooltip" href="https://twitter.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
-                <li><a data-toggle="tooltip" href="http://www.facebook.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
-                <li><a data-toggle="tooltip" href="http://www.dribbble.com/harnishdesign/" target="_blank" title=""
-                       data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
-                <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
-                       data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
-            </ul>
-            <p class="text-2 text-center mb-0">
-                Copyright © 2018-2026 Nuts Package Manager Team.
-                <br>
-                Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-14-124618
-                <br>
-                <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
-                                                            href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
-            </p>
-        </div>
-    </footer>
-    <!-- Footer end -->
+============================ -->
+<footer id="footer">
+    <div class="container">
+        <ul class="social-icons">
+            <li>
+                <a href="https://github.com/thevpc/nuts" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com/tbensalah/" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.facebook.com/tbensalah/" target="_blank" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </li>
+        </ul>
+        <p>
+            Copyright © 2018-2026 Nuts Package Manager Team.
+            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-16-005041
+        </p>
+    </div>
+</footer>
+<!-- Footer end -->
+
 
 </div>
-<!-- Document Wrapper end -->
 
 <!-- Back To Top -->
 <a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
@@ -418,7 +434,7 @@
 <script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 <!-- Custom Script -->
 <script src="assets/js/theme.js"></script>
-<script src="assets/js/caroussel.js"></script>
-<script src="assets/js/code.js"></script>
+<script src="assets/js/nuts-docs.js"></script>
 </body>
+<script src="assets/js/nuts-landing.js"></script>
 </html>
