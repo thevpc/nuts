@@ -39,8 +39,10 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -94,22 +96,26 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         }
         workspace.addImports("net.thevpc");
 
-        //has read rights
-        try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
-            NSecurityManager.of().addUser(
-                    NUserSpec.of("user")
-                            .credential(ss)
-                            .permissions(
-                                    Arrays.asList(
-                                            NConstants.Permissions.FETCH_DESC,
-                                            NConstants.Permissions.FETCH_CONTENT,
-                                            NConstants.Permissions.DEPLOY,
-                                            NConstants.Permissions.UNDEPLOY,
-                                            NConstants.Permissions.PUSH,
-                                            NConstants.Permissions.SAVE
-                                    )
-                            )
-            );
+        DefaultNWorkspaceConfigModel c = NWorkspaceExt.of().getConfigModel();
+        NUserConfig u = c.getUser("user");
+        if(u==null) {
+            //has read rights
+            try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
+                NSecurityManager.of().addUser(
+                        NUserSpec.of("user")
+                                .credential(ss)
+                                .permissions(
+                                        Arrays.asList(
+                                                NConstants.Permissions.FETCH_DESC,
+                                                NConstants.Permissions.FETCH_CONTENT,
+                                                NConstants.Permissions.DEPLOY,
+                                                NConstants.Permissions.UNDEPLOY,
+                                                NConstants.Permissions.PUSH,
+                                                NConstants.Permissions.SAVE
+                                        )
+                                )
+                );
+            }
         }
     }
 
