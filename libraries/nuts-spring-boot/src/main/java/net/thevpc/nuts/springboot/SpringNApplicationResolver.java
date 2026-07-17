@@ -1,6 +1,7 @@
 package net.thevpc.nuts.springboot;
 
 import net.thevpc.nuts.app.NAppDefinition;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.spi.NAppResolver;
 import org.springframework.context.ApplicationContext;
 
@@ -17,6 +18,13 @@ public class SpringNApplicationResolver implements NAppResolver {
             }
             if(all.size()>1){
                 throw new IllegalArgumentException("more than one NAppDefinition found : "+all.keySet());
+            }
+            all= (Map) globalApplicationContext.getBeansOfType(net.thevpc.nuts.app.NApplication.class);
+            if(all.size()==1){
+                return all.values().iterator().next();
+            }
+            if(all.size()>1){
+                throw new IllegalArgumentException("more than one NApplication found : "+all.keySet());
             }
             throw new IllegalArgumentException("no NAppDefinition found");
         }

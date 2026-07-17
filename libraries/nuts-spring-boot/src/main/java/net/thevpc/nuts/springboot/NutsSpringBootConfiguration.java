@@ -14,11 +14,13 @@ import net.thevpc.nuts.concurrent.NScopedStack;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NReflect;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NProgressMonitors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -152,11 +154,21 @@ public class NutsSpringBootConfiguration {
     @Bean
     public NApplication nutsApplication(@Autowired NWorkspace workspace, @Autowired ApplicationArguments applicationArguments) {
         NApplication validApp = null;
-        Object validAppBean = resolveValidSpringBootApplication(workspace, applicationArguments);
-        if (validAppBean instanceof NApplication) {
-            validApp = (NApplication) validAppBean;
-        } else {
-            validApp = NApplications.createApplicationInstanceFromAnnotatedInstance(validAppBean);
+        try {
+            Object validAppBean = resolveValidSpringBootApplication(workspace, applicationArguments);
+            if (validAppBean instanceof NApplication) {
+                validApp = (NApplication) validAppBean;
+            } else {
+                validApp = NApplications.createApplicationInstanceFromAnnotatedInstance(validAppBean);
+            }
+        }catch (Exception e) {
+            NLog.of(NApplication.class).info(NMsg.ofC("Error configuring the application : %s",e));
+            validApp=new NApplication() {
+                @Override
+                public void run() {
+                    // do nothing
+                }
+            };
         }
 //        Object finalValidAppBean = validAppBean;
 //        workspace.runWith(() -> {
