@@ -731,7 +731,8 @@
 </code></pre>you will see something like<pre class="md-code md-code-``` "><code class="">I-X 2019-08-21 04:54:22.951 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.0
 i-X 2019-08-21 04:54:05.196 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.2
 </code></pre><p class="md-phrase">The first column here is a the artifact status that helps getting zipped information of the artifact. the 'I' stands for 'installed and default' whereas, 'i' is simply 'installed'. The 'X' stands for 'executable application', where 'x' is simply 'executable'. Roughly said, executable applications are executables aware of (or depends on) <b class="md-bold">nuts</b>, as they provide a special api that helps nuts to get more information and more features for the application. As an example, executable applications have special OnInstall and OnUninstall hooks called by nuts. The second and the third columns are date and time of installation. The fourth column points to the installation user. When Secure mode has not been enabled (which is the default), you are running nuts as 'anonymous'. The fifth column shows the repository from which the package was installed. And the last column depicts the artifact long id.</p><H4 class="md-title-2">Running local jar file with its dependencies</H4><p class="md-phrase">Let's suppose that my-app.jar is a maven created jar (contains META-INF/maven files) with a number of dependencies. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is able to download on the fly needed dependencies, detect the Main class (no need for MANIFEST.MF) and run the  application. If a Main-Class Attribute was detected in a valid MANIFEST.MF, il will be considered. If more than one class is detected with a main method, <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> will ask for the current class to run.</p><p class="md-phrase">When you run a local file, <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> will behave as if the app is installed (in the given path, an no need to invoke install command). Local files are detected if they are denoted by a valid path (containing '/' or '' depending on the underlying operating system). Dependencies will be downloaded as well (and cached in the workspace)</p><pre class="md-code md-code-``` bash"><code class="bash">nuts ./my-app.jar some-argument-of-my-app
-</code></pre>If you need to pass JVM arguments you have to prefix them with "--exec". So if you want to fix maximum heap size use <pre class="md-code md-code-``` bash"><code class="bash">nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
+</code></pre>If you need to pass JVM arguments you have to prefix them with "--exec". So if you want to fix maximum heap size use <pre class="md-code md-code-``` bash"><code class="bash">nuts exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
+</code></pre>You can also select a specific version of the jdk to use. <pre class="md-code md-code-``` bash"><code class="bash">nuts exec --java-version=11 --verbose kifkif
 </code></pre>
                         </div>
 
@@ -3198,7 +3199,7 @@ show license info and exit
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-17-234209
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-18-003032
         </p>
     </div>
 </footer>
