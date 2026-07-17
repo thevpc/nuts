@@ -4,528 +4,33 @@
     {{:: pageId='blog'}}
     {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
     <title>Blog — Nuts Package Manager</title>
-    <style>
-        /* ============================================
-           BLOG STYLES — Consistent with Nuts Landing
-           ============================================ */
-
-        :root {
-            --nuts-teal: #00b4b4;
-            --nuts-teal-dark: #008b8b;
-            --nuts-teal-light: #e6f7f7;
-            --nuts-bg: #fafbfc;
-            --nuts-surface: #ffffff;
-            --nuts-text: #1a1a2e;
-            --nuts-text-secondary: #5a5a6e;
-            --nuts-text-muted: #8a8a9e;
-            --nuts-border: #e8e8ec;
-            --nuts-border-light: #f0f0f4;
-            --nuts-shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-            --nuts-shadow-md: 0 4px 12px rgba(0,0,0,0.06);
-            --nuts-shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
-            --nuts-radius: 12px;
-            --nuts-radius-sm: 8px;
-            --nuts-sidebar-width: 260px;
-        }
-
-        /* Layout */
-        .blog-main-wrapper {
-            background: var(--nuts-bg);
-            min-height: 100vh;
-        }
-
-        #content {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 24px;
-            gap: 40px;
-        }
-
-        /* Sidebar Navigation */
-        .idocs-navigation {
-            position: sticky;
-            top: 100px;
-            width: var(--nuts-sidebar-width);
-            flex-shrink: 0;
-            height: calc(100vh - 120px);
-            overflow-y: auto;
-            padding: 20px;
-            background: var(--nuts-surface);
-            border-radius: var(--nuts-radius);
-            border: 1px solid var(--nuts-border);
-            box-shadow: var(--nuts-shadow-sm);
-        }
-
-        .idocs-navigation::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .idocs-navigation::-webkit-scrollbar-thumb {
-            background: var(--nuts-border);
-            border-radius: 4px;
-        }
-
-        .idocs-navigation .nav {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .idocs-navigation .nav-item {
-            margin: 0;
-        }
-
-        .idocs-navigation .nav-link {
-            display: block;
-            padding: 8px 12px;
-            color: var(--nuts-text-secondary);
-            text-decoration: none;
-            border-radius: var(--nuts-radius-sm);
-            font-size: 13px;
-            line-height: 1.4;
-            transition: all 0.2s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .idocs-navigation .nav-link:hover {
-            background: var(--nuts-teal-light);
-            color: var(--nuts-teal-dark);
-            border-left-color: var(--nuts-teal);
-        }
-
-        .idocs-navigation .nav-link span {
-            color: var(--nuts-text-muted);
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-right: 6px;
-        }
-
-        /* Nested levels */
-        .idocs-navigation .nav .nav {
-            margin-left: 12px;
-            padding-left: 8px;
-            border-left: 1px solid var(--nuts-border-light);
-        }
-
-        .idocs-navigation .nav .nav .nav {
-            margin-left: 8px;
-        }
-
-        /* Main Content */
-        .idocs-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .idocs-content > .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Page Header */
-        .blog-page-header {
-            text-align: center;
-            margin-bottom: 48px;
-            padding-bottom: 32px;
-            border-bottom: 1px solid var(--nuts-border);
-        }
-
-        .blog-page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--nuts-text);
-            margin-bottom: 8px;
-            letter-spacing: -0.02em;
-        }
-
-        .blog-page-header p {
-            color: var(--nuts-text-muted);
-            font-size: 1.1rem;
-        }
-
-        /* Blog Post Card */
-        .blog-post {
-            background: var(--nuts-surface);
-            border-radius: var(--nuts-radius);
-            border: 1px solid var(--nuts-border);
-            box-shadow: var(--nuts-shadow-sm);
-            margin-bottom: 32px;
-            overflow: hidden;
-            transition: box-shadow 0.3s ease, transform 0.2s ease;
-            scroll-margin-top: 100px;
-        }
-
-        .blog-post:hover {
-            box-shadow: var(--nuts-shadow-md);
-        }
-
-        .blog-post-header {
-            padding: 32px 32px 0;
-        }
-
-        .blog-post-meta {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .blog-post-date {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--nuts-text-muted);
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .blog-post-date::before {
-            content: "";
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: var(--nuts-teal);
-            border-radius: 50%;
-        }
-
-        .blog-post-readtime {
-            color: var(--nuts-text-muted);
-            font-size: 0.875rem;
-        }
-
-        .blog-post h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--nuts-text);
-            margin: 0 0 12px 0;
-            line-height: 1.3;
-        }
-
-        .blog-post h2 a {
-            color: inherit;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .blog-post h2 a:hover {
-            color: var(--nuts-teal-dark);
-        }
-
-        .blog-post-subtitle {
-            font-size: 1.1rem;
-            color: var(--nuts-text-secondary);
-            margin: 0 0 20px 0;
-            line-height: 1.5;
-        }
-
-        /* Author Block */
-        .blog-author {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 32px;
-            background: var(--nuts-bg);
-            border-top: 1px solid var(--nuts-border-light);
-            border-bottom: 1px solid var(--nuts-border-light);
-        }
-
-        .blog-author-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--nuts-surface);
-            box-shadow: var(--nuts-shadow-sm);
-        }
-
-        .blog-author-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .blog-author-name {
-            font-weight: 600;
-            color: var(--nuts-text);
-            font-size: 0.9375rem;
-            text-decoration: none;
-        }
-
-        .blog-author-name:hover {
-            color: var(--nuts-teal-dark);
-        }
-
-        .blog-author-title {
-            font-size: 0.8125rem;
-            color: var(--nuts-text-muted);
-        }
-
-        /* Post Content */
-        .blog-post-body {
-            padding: 32px;
-            color: var(--nuts-text-secondary);
-            line-height: 1.7;
-            font-size: 1rem;
-        }
-
-        .blog-post-body h3,
-        .blog-post-body h4 {
-            color: var(--nuts-text);
-            margin-top: 28px;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .blog-post-body h3 {
-            font-size: 1.25rem;
-        }
-
-        .blog-post-body h4 {
-            font-size: 1.1rem;
-        }
-
-        .blog-post-body p {
-            margin-bottom: 16px;
-        }
-
-        .blog-post-body ul,
-        .blog-post-body ol {
-            margin-bottom: 16px;
-            padding-left: 24px;
-        }
-
-        .blog-post-body li {
-            margin-bottom: 6px;
-        }
-
-        .blog-post-body code {
-            background: #f4f4f8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-            color: var(--nuts-teal-dark);
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-        }
-
-        .blog-post-body pre {
-            background: #1e1e2e;
-            color: #e4e4e7;
-            padding: 20px;
-            border-radius: var(--nuts-radius-sm);
-            overflow-x: auto;
-            margin: 20px 0;
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-
-        .blog-post-body pre code {
-            background: transparent;
-            color: inherit;
-            padding: 0;
-            font-size: inherit;
-        }
-
-        .blog-post-body blockquote {
-            border-left: 4px solid var(--nuts-teal);
-            background: var(--nuts-teal-light);
-            padding: 16px 20px;
-            margin: 20px 0;
-            border-radius: 0 var(--nuts-radius-sm) var(--nuts-radius-sm) 0;
-            font-style: italic;
-            color: var(--nuts-text-secondary);
-        }
-
-        .blog-post-body a {
-            color: var(--nuts-teal-dark);
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.2s ease;
-        }
-
-        .blog-post-body a:hover {
-            border-bottom-color: var(--nuts-teal);
-        }
-
-        .blog-post-body strong {
-            color: var(--nuts-text);
-            font-weight: 600;
-        }
-
-        .blog-post-body img {
-            max-width: 100%;
-            border-radius: var(--nuts-radius-sm);
-            margin: 20px 0;
-        }
-
-        .blog-post-body table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 0.9375rem;
-        }
-
-        .blog-post-body th,
-        .blog-post-body td {
-            padding: 10px 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--nuts-border);
-        }
-
-        .blog-post-body th {
-            font-weight: 600;
-            color: var(--nuts-text);
-            background: var(--nuts-bg);
-        }
-
-        .blog-post-body tr:hover {
-            background: var(--nuts-bg);
-        }
-
-        /* Tags */
-        .blog-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 16px 32px;
-            border-top: 1px solid var(--nuts-border-light);
-        }
-
-        .blog-tag {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 12px;
-            background: var(--nuts-teal-light);
-            color: var(--nuts-teal-dark);
-            border-radius: 20px;
-            font-size: 0.8125rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .blog-tag:hover {
-            background: var(--nuts-teal);
-            color: white;
-        }
-
-        /* Divider between posts */
-        .blog-divider {
-            border: none;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--nuts-border), transparent);
-            margin: 48px 0;
-        }
-
-        /* Back to top */
-        .back-to-top {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            width: 44px;
-            height: 44px;
-            background: var(--nuts-surface);
-            border: 1px solid var(--nuts-border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: var(--nuts-shadow-md);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 100;
-            color: var(--nuts-text-secondary);
-            font-size: 1.2rem;
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .back-to-top:hover {
-            background: var(--nuts-teal);
-            color: white;
-            border-color: var(--nuts-teal);
-            transform: translateY(-2px);
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            #content {
-                flex-direction: column;
-                padding: 24px 16px;
-            }
-
-            .idocs-navigation {
-                position: relative;
-                top: 0;
-                width: 100%;
-                height: auto;
-                max-height: 300px;
-                order: -1;
-            }
-
-            .blog-post-header,
-            .blog-post-body,
-            .blog-author,
-            .blog-tags {
-                padding-left: 20px;
-                padding-right: 20px;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .blog-page-header h1 {
-                font-size: 1.75rem;
-            }
-
-            .blog-post h2 {
-                font-size: 1.4rem;
-            }
-
-            .blog-post-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-        }
-
-        /* Print styles */
-        @media print {
-            .idocs-navigation,
-            .back-to-top {
-                display: none !important;
-            }
-
-            .blog-post {
-                break-inside: avoid;
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-blog.css"/>
 </head>
 <body>
+
+<div id="doc-progress"></div>
+<div class="preloader">
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+</div>
+
 <div id="main-wrapper" class="blog-main-wrapper">
+
     {{:include $'$projectRoot/src/include/template/v1/11-header-nuts.html'}}
 
-    <!-- Content
-    ============================ -->
     <div id="content" role="main">
 
-        <!-- Sidebar Navigation
-        ============================ -->
+        <!-- Sidebar -->
         <div class="idocs-navigation">
+            <div class="blog-nav-header">
+                <i class="fas fa-rss"></i> Posts
+            </div>
             <ul class="nav flex-column">
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
                 <li class="nav-item">
                     <a class="nav-link" href="#{{pageLevel1.id}}">
-                        <span>{{formatDate(pageLevel1.publishDate)}}</span> {{pageLevel1.title}}
+                        <span class="blog-nav-date">{{formatDate(pageLevel1.publishDate)}}</span>
+                        {{pageLevel1.title}}
                     </a>
                     {{:: allPagesLevel2=loadPages(pageLevel1)}}
                     {{:if (allPagesLevel2.size)>0}}
@@ -533,20 +38,9 @@
                         {{:for pageLevel2,pageLevel2Index:allPagesLevel2}}
                         <li class="nav-item">
                             <a class="nav-link" href="#{{pageLevel2.id}}">
-                                <span>{{formatDate(pageLevel2.publishDate)}}</span> {{pageLevel2.title}}
+                                <span class="blog-nav-date">{{formatDate(pageLevel2.publishDate)}}</span>
+                                {{pageLevel2.title}}
                             </a>
-                            {{:: allPagesLevel3=loadPages(pageLevel2)}}
-                            {{:if (allPagesLevel3.size)>0}}
-                            <ul class="nav flex-column">
-                                {{:for pageLevel3,pageLevel3Index:allPagesLevel3}}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#{{pageLevel3.id}}">
-                                        <span>{{formatDate(pageLevel3.publishDate)}}</span> {{pageLevel3.title}}
-                                    </a>
-                                </li>
-                                {{:end}}
-                            </ul>
-                            {{:end}}
                         </li>
                         {{:end}}
                     </ul>
@@ -556,61 +50,69 @@
             </ul>
         </div>
 
-        <!-- Docs Content
-        ============================ -->
+        <!-- Main content -->
         <div class="idocs-content">
             <div class="container">
+
+                <!-- Page header -->
                 <div class="blog-page-header">
-                    <h1>Recent Blog</h1>
-                    <p>Updates, releases, and thoughts from the Nuts team</p>
+                    <span class="nuts-eyebrow">From the team</span>
+                    <h1 class="blog-page-header__title">Blog</h1>
+                    <p class="blog-page-header__sub">Releases, updates and thoughts from the Nuts project</p>
                 </div>
 
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
                 {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
+
                 <article class="blog-post" id="{{pageLevel1.id}}">
-                    <div class="blog-post-header">
-                        <div class="blog-post-meta">
-                            <time class="blog-post-date" datetime="{{pageLevel2.publishDate}}">
+
+                    <!-- Post header -->
+                    <div class="blog-post__header">
+                        <div class="blog-post__meta">
+                            <time class="blog-post__date" datetime="{{pageLevel2.publishDate}}">
+                                <i class="far fa-calendar-alt"></i>
                                 {{formatDate(pageLevel2.publishDate)}}
                             </time>
-                            <span class="blog-post-readtime">· One min read</span>
+                            {{:if pageLevel2.tags}}
+                            <div class="blog-post__tags">
+                                {{:for tag,tagIndex:pageLevel2.tags}}
+                                <span class="blog-tag">{{tag}}</span>
+                                {{:end}}
+                            </div>
+                            {{:end}}
                         </div>
-                        <h2>
+                        <h2 class="blog-post__title">
                             <a href="#{{pageLevel1.id}}">{{pageLevel1.title}}</a>
                         </h2>
                         {{:if pageLevel1.subTitle}}
-                        <p class="blog-post-subtitle">{{pageLevel1.subTitle}}</p>
+                        <p class="blog-post__subtitle">{{pageLevel1.subTitle}}</p>
                         {{:end}}
                     </div>
 
-                    <div class="blog-author">
+                    <!-- Author -->
+                    <div class="blog-post__author">
                         <a href="{{either(pageLevel2.authorUrl,'https://github.com/thevpc')}}" target="_blank" rel="noopener noreferrer">
-                            <img class="blog-author-avatar"
+                            <img class="blog-author__avatar"
                                  src="{{either(pageLevel2.authorImageUrl,'https://gravatar.com/avatar/977025550163b4a91397007f6ea9ee17')}}"
-                                 alt="{{pageLevel2.author}}" width="40" height="40">
+                                 alt="{{pageLevel2.author}}" width="36" height="36">
                         </a>
-                        <div class="blog-author-info">
-                            <a href="{{either(pageLevel2.authorUrl,'https://github.com/thevpc')}}" target="_blank" rel="noopener noreferrer" class="blog-author-name">
-                                {{pageLevel1.author}}
-                            </a>
-                            <span class="blog-author-title">{{pageLevel2.authorTitle}}</span>
+                        <div class="blog-author__info">
+                            <a href="{{either(pageLevel2.authorUrl,'https://github.com/thevpc')}}"
+                               target="_blank" rel="noopener noreferrer"
+                               class="blog-author__name">{{pageLevel2.author}}</a>
+                            <span class="blog-author__title">{{pageLevel2.authorTitle}}</span>
                         </div>
                     </div>
 
-                    <div class="blog-post-body">
+                    <!-- Post body -->
+                    <div class="blog-post__body">
                         {{pageContentToHtml(pageLevel2,formatDate(pageLevel2.publishDate))}}
                     </div>
 
-                    {{:if pageLevel2.tags}}
-                    <div class="blog-tags">
-                        {{:for tag,tagIndex:pageLevel2.tags}}
-                        <span class="blog-tag">{{tag}}</span>
-                        {{:end}}
-                    </div>
-                    {{:end}}
                 </article>
 
                 <hr class="blog-divider">
+
                 {{:end}}
                 {{:end}}
 
@@ -618,47 +120,12 @@
         </div>
 
     </div>
-    <!-- Content end -->
 
     {{:include $'$projectRoot/src/include/template/v1/30-footer.html'}}
-
-    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
 </div>
-<!-- Document Wrapper end -->
 
 {{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
-
-<script>
-    // Back to top button
-    (function() {
-        const btn = document.getElementById('backToTop');
-        if (!btn) return;
-
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 400) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
-            }
-        });
-
-        btn.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    })();
-
-    // Smooth scroll for anchor links
-    (function() {
-        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-            anchor.addEventListener('click', function(e) {
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-    })();
-</script>
+<script src="assets/js/nuts-docs.js"></script>
+<script src="assets/js/nuts-blog.js"></script>
 </body>
 </html>
