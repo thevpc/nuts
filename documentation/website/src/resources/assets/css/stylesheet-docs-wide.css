@@ -472,7 +472,7 @@ hr.divider {
 
 /* ---- Content area width ---- */
 .idocs-content > .container {
-  max-width: 960px;
+  max-width: 6000px;
   width: 100%;
   padding: 40px 48px 80px 40px;
 }
