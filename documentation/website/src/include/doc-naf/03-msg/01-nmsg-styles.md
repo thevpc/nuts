@@ -38,7 +38,7 @@ NMsg.ofM("Threshold={{th}}, Date={{date}}", name -> switch (name) {
 Notes:
 - Avoid mixing styles in a single message.
 - `${}` syntax is safer for complex strings (e.g., `$val123text` vs `${val}123text`).
-- `{{}}` syntax is safer when '$' has specific meanings in your context.
+- `{ { } }` syntax is safer when '$' has specific meanings in your context.
 
 ### C-style Formatting (`ofC`)
 

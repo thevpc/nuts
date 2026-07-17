@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Download — Nuts Package Manager</title>
+    <meta name="description" content="Download Nuts Java Package Manager. Available for Linux, macOS, Windows and Docker.">
+    <meta name="author" content="thevpc">
+
     
     <head>
     <meta charset="UTF-8"/>
@@ -44,10 +52,20 @@
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
-    <title>Download — Nuts Package Manager</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-download.css"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
 </head>
 <body>
-<div id="main-wrapper"  class="download-main-wrapper">
+
+<div class="preloader">
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+</div>
+
+<div id="main-wrapper" class="download-main-wrapper">
+
     <!-- Header -->
 <header id="header" class="sticky-top">
     <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
@@ -113,147 +131,236 @@
 </header>
 <!-- Header End -->
 
-    <!-- Content
-    ============================ -->
-    <div id="content" role="main">
-
-        <!-- Sidebar Navigation
-        ============================ -->
-        <div class="idocs-navigation bg-light">
-            <div class="nav-search">
-                <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
+    <!-- PAGE HEADER -->
+    <section class="dl-page-header">
+        <div class="container dl-page-header__inner">
+            <h1 class="dl-page-header__title">Download Nuts</h1>
+            <p class="dl-page-header__sub">The package manager Java never had &mdash; three steps to get started.</p>
+            <div class="dl-version-pills">
+                <span class="dl-version-pill dl-version-pill--latest">
+                    <i class="fas fa-bolt"></i> Latest &nbsp;<strong>1.0.0.0</strong>
+                </span>
+                <span class="dl-version-pill dl-version-pill--lts">
+                    <i class="fas fa-shield-alt"></i> LTS &nbsp;<strong>0.8.9.0</strong>
+                </span>
+                <span class="dl-version-pill dl-version-pill--java">
+                    <i class="fab fa-java"></i> Requires Java 8+
+                </span>
             </div>
-            <ul class="nav flex-column ">
-                
-                <li class="nav-item"><a class="nav-link" href="#U9e8c8ab124904bb9cedb553d558759ea44e24e8b">1 Download Nuts</a>
-                    
-                    
-                    <ul class="nav flex-column">
-                        
-                        <li class="nav-item"><a class="nav-link" href="#Uc98b4dfe89c20358bec0978924da34017ae4c7ba">1.1 Standard Binaries</a>
-                            
-                            
-                        </li>
-                        
-                        <li class="nav-item"><a class="nav-link" href="#Ueec80e81dbff162987380a96457e1a6fa33a0103">1.2 LTS Binaries</a>
-                            
-                            
-                        </li>
-                        
-                        <li class="nav-item"><a class="nav-link" href="#downloadInstaller">1.3 Graphical Installers</a>
-                            
-                            
-                        </li>
-                        
-                        <li class="nav-item"><a class="nav-link" href="#downloadAppFull">1.4 Offline Binaries</a>
-                            
-                            
-                        </li>
-                        
-                        <li class="nav-item"><a class="nav-link" href="#downloadArchive">1.5 Nuts Archive</a>
-                            
-                            
-                        </li>
-                        
-                    </ul>
-                    
-                </li>
-                
-            </ul>
+        </div>
+    </section>
+
+    <div class="container dl-container">
+
+        <!-- ===================== WIZARD ===================== -->
+        <div class="dl-wizard">
+
+            <!-- STEP 1: VERSION -->
+            <div class="dl-step-block" id="step-version">
+                <div class="dl-step-block__header">
+                    <span class="dl-step-block__num">1</span>
+                    <h2 class="dl-step-block__title">Choose a version</h2>
+                    <span class="dl-step-block__selection" id="sel-version"></span>
+                </div>
+                <div class="dl-step-block__body">
+                    <div class="dl-choice-grid dl-choice-grid--2">
+
+                        <button class="dl-choice dl-choice--version" data-version="latest">
+                            <div class="dl-choice__icon dl-choice__icon--blue">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">Latest</span>
+                                <span class="dl-choice__version">1.0.0.0</span>
+                                <span class="dl-choice__desc">Newest features and fixes. Recommended for development.</span>
+                            </div>
+                        </button>
+
+                        <button class="dl-choice dl-choice--version" data-version="lts">
+                            <div class="dl-choice__icon dl-choice__icon--green">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">LTS</span>
+                                <span class="dl-choice__version">0.8.9.0</span>
+                                <span class="dl-choice__desc">Long-term support. Critical patches only. Recommended for production.</span>
+                            </div>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: PLATFORM -->
+            <div class="dl-step-block dl-step-block--locked" id="step-platform">
+                <div class="dl-step-block__header">
+                    <span class="dl-step-block__num">2</span>
+                    <h2 class="dl-step-block__title">Choose your platform</h2>
+                    <span class="dl-step-block__selection" id="sel-platform"></span>
+                </div>
+                <div class="dl-step-block__body">
+                    <div class="dl-choice-grid dl-choice-grid--4">
+
+                        <button class="dl-choice dl-choice--platform" data-platform="linux">
+                            <div class="dl-choice__icon dl-choice__icon--orange">
+                                <i class="fab fa-linux"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">Linux</span>
+                                <span class="dl-choice__desc">All distributions</span>
+                            </div>
+                        </button>
+
+                        <button class="dl-choice dl-choice--platform" data-platform="macos">
+                            <div class="dl-choice__icon dl-choice__icon--silver">
+                                <i class="fab fa-apple"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">macOS</span>
+                                <span class="dl-choice__desc">Intel &amp; Apple Silicon</span>
+                            </div>
+                        </button>
+
+                        <button class="dl-choice dl-choice--platform" data-platform="windows">
+                            <div class="dl-choice__icon dl-choice__icon--blue">
+                                <i class="fab fa-windows"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">Windows</span>
+                                <span class="dl-choice__desc">Windows 7 and later</span>
+                            </div>
+                        </button>
+
+                        <button class="dl-choice dl-choice--platform" data-platform="docker">
+                            <div class="dl-choice__icon dl-choice__icon--docker">
+                                <i class="fab fa-docker"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">Docker</span>
+                                <span class="dl-choice__desc">Containers &amp; images</span>
+                            </div>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: METHOD -->
+            <div class="dl-step-block dl-step-block--locked" id="step-method">
+                <div class="dl-step-block__header">
+                    <span class="dl-step-block__num">3</span>
+                    <h2 class="dl-step-block__title">Choose install method</h2>
+                    <span class="dl-step-block__selection" id="sel-method"></span>
+                </div>
+                <div class="dl-step-block__body">
+
+                    <!-- METHOD CHOICES — shown/hidden by platform -->
+                    <div class="dl-method-choices" id="method-choices">
+                        <!-- populated by JS based on platform -->
+                    </div>
+
+                    <!-- INSTALL CONTENT — shown after method selected -->
+                    <div class="dl-install-content" id="install-content" style="display:none">
+                        <!-- populated by JS -->
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <!-- /wizard -->
+
+        <!-- VERIFY -->
+        <div class="dl-verify" id="dl-verify" style="display:none">
+            <h3 class="dl-verify__title"><i class="fas fa-check-circle"></i> Verify your installation</h3>
+            <p class="dl-verify__sub">Open a new terminal and run:</p>
+            <div class="dl-code-block">
+                <pre><code class="language-bash">nuts --version</code></pre>
+                <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+            </div>
+            <p class="dl-verify__sub">Then install your first app:</p>
+            <div class="dl-code-block">
+                <pre><code class="language-bash">nuts install org.apache.netbeans:netbeans
+nuts netbeans</code></pre>
+                <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+            </div>
         </div>
 
-        <!-- Docs Content
-        ============================ -->
-        <div class="idocs-content">
-            <div class="container">
-
-                
-                    <!--pageLevel1-->
-                    <section id="U9e8c8ab124904bb9cedb553d558759ea44e24e8b">
-                        <div class="text-card" style="margin-top: 10px">
-                            <H2>1 Download Nuts</H2>
-Nuts provides several download versions depending on your requirements<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><a href="#downloadPreview" class="md-link">Standard Binaries</a> are used if you want to benefit of all new features</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadStable" class="md-link">LTS Binaries</a> used mostly for older version with upto date patchs</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadInstaller" class="md-link">Installers</a> are used if you are more familiar with GUI Wizard installers</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadAppFull" class="md-link">Offline Binaries</a> are used critical or isolated systems, such as docker containers. They provide a statically built version of nuts that does not require external dependencies.</p></li><li class="md-uli"><p class="md-phrase"><a href="#downloadArchive" class="md-link">Older archived versions</a> are provided for you to browse old version</p></li></ul>
+        <!-- ARCHIVE -->
+        <div class="dl-archive-block">
+            <button class="dl-archive-toggle" id="archive-toggle">
+                <i class="fas fa-archive"></i> Previous versions
+                <i class="fas fa-chevron-down dl-archive-toggle__chevron"></i>
+            </button>
+            <div class="dl-archive-body" id="archive-body" style="display:none">
+                <div class="dl-archive-table">
+                    <div class="dl-archive-header">
+                        <span>Version</span>
+                        <span>Install command</span>
+                        <span>Notes</span>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.9</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
                         </div>
-                        
-                            <!--pageLevel2-->
-                            <section id="Uc98b4dfe89c20358bec0978924da34017ae4c7ba">
-                                <div class="text-card" style="margin-top: 10px">
-                                <H3>1.1 Standard Binaries</H3>
-Select the Standard version (1.0.0.0) to get the latest features, updates, and bug fixes. If you are not sure what to choose, choose StandardFor production environments, we strongly advise using the production version (0.8.9.0), which is tested and packaged specifically for stability and long-term use.<div class="alert alert-success mb-4">Note: Nuts requires a Java Runtime Environment (JRE) version 1.8 or higher, and is fully compatible with the latest Java 24 release.</div><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi30-tab" data-toggle="tab" href="#idi30" role="tab" aria-controls="idi30" aria-selected="false">windows</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi31-tab" data-toggle="tab" href="#idi31" role="tab" aria-controls="idi31" aria-selected="true">linux</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi32-tab" data-toggle="tab" href="#idi32" role="tab" aria-controls="idi32" aria-selected="false">macos</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi30" role="tabpanel" aria-labelledby="idi30-tab"><p class="md-phrase">download manually <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar" class="md-link">https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar</a></p><pre class="md-code md-code-``` "><code class="">java -jar nuts.jar  -Zy
-</code></pre>On Windows systems, first launch will create a new <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.- <b class="md-bold">nuts-cmd-1.0.0</b> : this shortcut will open a configured command terminal. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> command will be available as well as several nuts companion tools installed by <b class="md-bold">nadmin</b> by default- <b class="md-bold">nuts-cmd</b>       : this shortcut will point to the last installed <b class="md-bold">nuts</b> version, here 1.0.0Any of these shortcuts will launch a nuts-aware terminal.Supported Windows systems include Window 7 and later.<div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.</div></div><div class="tab-pane fade show active" id="idi31" role="tabpanel" aria-labelledby="idi31-tab"><b class="md-bold">(using curl):</b>This will reuse any previous nuts installation before installing the latest version.<pre class="md-code md-code-``` "><code class="">$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre><b class="md-bold">(using wget):</b>This will reuse any previous nuts installation before installing the latest version.<pre class="md-code md-code-``` "><code class="">$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar -qO nuts.jar
-$ java -jar nuts.jar -y
-$ exit
-</code></pre>Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that <b class="md-bold">nuts</b> and other companion tool commands will be available in any future terminal instances. Note that shells are also supported and the relative <mark class="md-code md-code-` ">rcfiles</mark> are also updated (including <mark class="md-code md-code-` ">zsh</mark>, <mark class="md-code md-code-` ">fish</mark> etc) Using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using <b class="md-bold">nuts</b>. All tests where performed on OpenSuse Tumbleweed.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div><div class="tab-pane fade show " id="idi32" role="tabpanel" aria-labelledby="idi32-tab"><pre class="md-code md-code-``` "><code class="">$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre>MacOS Systems installation is based on <b class="md-bold">bash</b> shell. First launch will configure "~/.bashrc" so that <b class="md-bold">nuts</b> and other companion tool commands will be available in any future terminal instances. Using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div></div>
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                            <!--pageLevel2-->
-                            <section id="Ueec80e81dbff162987380a96457e1a6fa33a0103">
-                                <div class="text-card" style="margin-top: 10px">
-                                <H3>1.2 LTS Binaries</H3>
-Select the long-term support (LTS) version (0.8.9.0) for maximum stability and long-term support. It receives critical security patches only<div class="alert alert-success mb-4">Note: Nuts requires a Java Runtime Environment (JRE) version 1.8 or higher, and is fully compatible with the latest Java 24 release.</div>Download Nuts Stable version 0.8.9.0. Download stable version, this is production ready version.Download Nuts jar file to perform installation using your favourite shell. After downloading the installer, follow the documentation to install the package manager. Use 'Production' version for production and 'Standard' for all other cases. A valid java 1.8+ runtime is required.<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi40-tab" data-toggle="tab" href="#idi40" role="tab" aria-controls="idi40" aria-selected="false">windows</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi41-tab" data-toggle="tab" href="#idi41" role="tab" aria-controls="idi41" aria-selected="true">linux</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi42-tab" data-toggle="tab" href="#idi42" role="tab" aria-controls="idi42" aria-selected="false">macos</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi40" role="tabpanel" aria-labelledby="idi40-tab"><p class="md-phrase">download manually <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar" class="md-link">https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar</a></p><pre class="md-code md-code-``` "><code class="">java -jar nuts.jar  -Zy
-</code></pre>On Windows systems, first launch will create a new <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.- <b class="md-bold">nuts-cmd-1.0.0</b> : this shortcut will open a configured command terminal. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> command will be available as well as several nuts companion tools installed by <b class="md-bold">nadmin</b> by default- <b class="md-bold">nuts-cmd</b>       : this shortcut will point to the last installed <b class="md-bold">nuts</b> version, here 1.0.0Any of these shortcuts will launch a nuts-aware terminal.Supported Windows systems include Window 7 and later.<div class="alert alert-success mb-4">Any of the created shortcuts for windows is a nuts-aware terminal.</div></div><div class="tab-pane fade show active" id="idi41" role="tabpanel" aria-labelledby="idi41-tab"><b class="md-bold">(using curl):</b>This will reuse any previous nuts installation before installing the latest version.<pre class="md-code md-code-``` "><code class="">$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre><b class="md-bold">(using wget):</b>This will reuse any previous nuts installation before installing the latest version.<pre class="md-code md-code-``` "><code class="">$ wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -qO nuts.jar
-$ java -jar nuts.jar -y
-$ exit
-</code></pre>Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that <b class="md-bold">nuts</b> and other companion tool commands will be available in any future terminal instances. Note that shells are also supported and the relative <mark class="md-code md-code-` ">rcfiles</mark> are also updated (including <mark class="md-code md-code-` ">zsh</mark>, <mark class="md-code md-code-` ">fish</mark> etc) Using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using <b class="md-bold">nuts</b>. All tests where performed on OpenSuse Tumbleweed.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div><div class="tab-pane fade show " id="idi42" role="tabpanel" aria-labelledby="idi42-tab"><pre class="md-code md-code-``` "><code class="">$ curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
-$ exit
-</code></pre>MacOS Systems installation is based on <b class="md-bold">zsh</b> shell. First launch will configure "~/.zshrc" so that <b class="md-bold">nuts</b> and other companion tool commands will be available in any future terminal instances. Using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div></div>
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                            <!--pageLevel2-->
-                            <section id="downloadInstaller">
-                                <div class="text-card" style="margin-top: 10px">
-                                <H3>1.3 Graphical Installers</H3>
-Download Installer for your Operating System.<p class="md-phrase">Download the appropriate installer for your operating system. Graphical installers are available for major platforms and provide a simple setup wizard. > <b class="md-bold">Note:</b> A valid Java Runtime Environment (JRE) version <b class="md-bold">1.8 or higher</b> is required, and Nuts is compatible with the latest Java 24 release.</p><table class="table table-bordered table-striped"><tr><th>Platform</th><th>Installer Type</th><th>Description</th><th>Download Link</th></tr><tr><td><p class="md-phrase"> <b class="md-bold">All OS</b>     </p></td><td>Java Installer</td><td>Cross-platform graphical installer. Double-click to run and follow the wizard.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-1.0.0.0.jar" class="md-link">Portable Installer (212KB)</a>                                                    </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">All OS</b>     </p></td><td>No Installer</td><td>Lightweight version (173KB). Requires existing Java 8+ installation.</td><td><p class="md-phrase"> <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar" class="md-link">Download Portable</a>                                                                                                                                                                             </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Linux</b>      </p></td><td>Linux x64 Installer</td><td>Native installer. Requires existing Java 8+ installation.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-linux-x64-1.0.0.0.zip" class="md-link">Linux x64 Installer (6MB)</a>                             </p></td></tr><tr><td></td><td>Linux x64 Installer + JRE</td><td>Native installer bundled with JRE. No pre-installed Java required.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-linux64-bin-with-java-1.0.0.0.zip" class="md-link">Linux x64 Installer + JRE (5MB)</a> </p></td></tr><tr><td></td><td>RedHat / OpenSuSE RPM</td><td>RPM package for RPM-based distros (RedHat, Fedora, OpenSuSE, etc.).</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-linux64-rpm-1.0.0.0.rpm" class="md-link">Redhat/OpenSuSE Linux x64 RPM (NOT_FOUND)</a>                 </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Windows</b>    </p></td><td>Windows x64 Installer</td><td>Native installer. Requires existing Java 8+ installation.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-windows64-1.0.0.0.exe" class="md-link">Win x64 Installer (NOT_FOUND)</a>                                 </p></td></tr><tr><td></td><td>Windows x64 Installer + JRE</td><td>Installer bundled with JRE. No pre-installed Java required.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-windows64-with-java-1.0.0.0.zip" class="md-link">Win x64 Installer + JRE (7MB)</a>       </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">macOS</b>      </p></td><td>macOS x64 Installer</td><td>Native installer for macOS. Requires existing Java 8+ installation.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/nuts-installer-mac64-1.0.0.0.app.zip" class="md-link">MacOS x64 Installer (208KB)</a>                                   </p></td></tr></table>
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                            <!--pageLevel2-->
-                            <section id="downloadAppFull">
-                                <div class="text-card" style="margin-top: 10px">
-                                <H3>1.4 Offline Binaries</H3>
-<p class="md-phrase">Offline binaries bundle the Nuts bootstrapper together with its runtime, eliminating the need for internet access during the first execution.   These distributions are ideal for <b class="md-bold">offline environments</b>, <b class="md-bold">Docker images</b>, and <b class="md-bold">fast installations</b> in controlled setups.</p><div class="alert alert-success mb-4"><p class="md-phrase"><b class="md-bold">Note:</b> A valid Java Runtime Environment (JRE) version <b class="md-bold">1.8 or higher</b> is required unless otherwise noted. Nuts is fully compatible with the latest <b class="md-bold">Java 24</b> release.</p></div><table class="table table-bordered table-striped"><tr><th>Platform</th><th>Package Type</th><th>Description</th><th>Download Link</th></tr><tr><td><p class="md-phrase"> <b class="md-bold">All OS</b>     </p></td><td>Java Offline Binaries</td><td>Cross-platform archive including bootstrapper and runtime. Requires Java 8+ installed.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/1.0.0/nuts-app-full-1.0.0.0.jar" class="md-link">Portable Offline Binaries (898KB)</a>                                     </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Linux</b>      </p></td><td>Linux x64 Offline Binaries</td><td>Native offline package. Requires Java 8+ already installed.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/1.0.0/nuts-app-full-linux-x64-1.0.0.0.zip" class="md-link">Linux x64 Offline Binaries (10MB)</a>                             </p></td></tr><tr><td></td><td>Linux x64 Offline Binaries + JRE</td><td>Bundled with compatible JRE. Does not require pre-installed Java.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/1.0.0/nuts-app-full-linux64-bin-with-java-1.0.0.0.zip" class="md-link">Linux x64 Offline Binaries + JRE (NOT_FOUND)</a> </p></td></tr><tr><td></td><td>RedHat/OpenSuSE Offline RPM</td><td>RPM package with all dependencies for RPM-based distros (RedHat, Fedora, OpenSuSE, etc.).</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/1.0.0/nuts-app-full-linux64-rpm-1.0.0.0.rpm" class="md-link">Redhat/OpenSuSE Linux x64 Offline RPM (NOT_FOUND)</a>                </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">Windows</b>    </p></td><td>Windows x64 Offline Binaries</td><td>Native offline package. Requires Java 8+ already installed.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/1.0.0/nuts-app-full-windows64-1.0.0.0.exe" class="md-link">Win x64 Offline Binaries (NOT_FOUND)</a>                                 </p></td></tr><tr><td></td><td>Windows x64 Offline Binaries + JRE</td><td>Bundled with JRE. Does not require pre-installed Java.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/1.0.0/nuts-app-full-windows64-with-java-1.0.0.0.zip" class="md-link">Win x64 Offline Binaries + JRE (7MB)</a>       </p></td></tr><tr><td><p class="md-phrase"> <b class="md-bold">macOS</b>      </p></td><td>macOS x64 Offline Binaries</td><td>Native offline archive for macOS. Requires Java 8+ already installed.</td><td><p class="md-phrase"> <a href="https://thevpc.net/nuts/1.0.0/nuts-app-full-mac64-1.0.0.0.app.zip" class="md-link">MacOS x64 Offline Binaries (819KB)</a>                                   </p></td></tr></table>
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                            <!--pageLevel2-->
-                            <section id="downloadArchive">
-                                <div class="text-card" style="margin-top: 10px">
-                                <H3>1.5 Nuts Archive</H3>
-<H4 class="md-title-1">Old versions</H4><table class="table table-bordered table-striped"><tr><th>version</th><th>Info</th><th>Download</th></tr><tr><td>0.8.9</td><td></td><td><p class="md-phrase"> <code class="md-code md-code-``` bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code>     </p></td></tr><tr><td>0.8.8</td><td></td><td><p class="md-phrase"> <code class="md-code md-code-``` bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code>     </p></td></tr><tr><td>0.8.7</td><td></td><td><p class="md-phrase"> <code class="md-code md-code-``` bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code>     </p></td></tr><tr><td>0.8.6</td><td></td><td><p class="md-phrase"> <code class="md-code md-code-``` bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code>     </p></td></tr><tr><td>0.8.5</td><td></td><td><p class="md-phrase"> <code class="md-code md-code-``` bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code>     </p></td></tr><tr><td>0.8.4</td><td></td><td><p class="md-phrase"> <code class="md-code md-code-``` bash">curl -sL https://thevpc.net/nuts/nuts-0.8.4.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy</code>                                          </p></td></tr><tr><td>0.8.3</td><td></td><td><p class="md-phrase"> <code class="md-code md-code-``` bash">curl -sL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -o nuts.jar &amp;&amp; java -jar nuts.jar -Zy </code> </p></td></tr></table>
-                                </div>
-                                
-                            </section>
-                            <hr class="divider">
-                        
-                    </section>
-                    <hr class="divider">
-                
-
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.8</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.7</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.6</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.5</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.4</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://thevpc.net/nuts/nuts-0.8.4.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.3</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
-    <!-- Content end -->
+    <!-- /dl-container -->
 
     <!-- Footer
 ============================ -->
@@ -279,14 +386,13 @@ Download Installer for your Operating System.<p class="md-phrase">Download the a
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-16-005041
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-17-003458
         </p>
     </div>
 </footer>
 <!-- Footer end -->
 
 </div>
-<!-- Document Wrapper end -->
 
 <!-- Back To Top -->
 <a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
@@ -305,5 +411,6 @@ Download Installer for your Operating System.<p class="md-phrase">Download the a
 <script src="assets/js/theme.js"></script>
 <script src="assets/js/nuts-docs.js"></script>
 </body>
+<script src="assets/js/nuts-download.js"></script>
 </body>
 </html>

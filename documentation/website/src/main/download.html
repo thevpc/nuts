@@ -1,94 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Download — Nuts Package Manager</title>
+    <meta name="description" content="Download Nuts Java Package Manager. Available for Linux, macOS, Windows and Docker.">
+    <meta name="author" content="thevpc">
+
     {{:: pageId='download'}}
     {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
-    <title>Download — Nuts Package Manager</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-download.css"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
 </head>
 <body>
-<div id="main-wrapper"  class="download-main-wrapper">
+
+<div class="preloader">
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+</div>
+
+<div id="main-wrapper" class="download-main-wrapper">
+
     {{:include $'$projectRoot/src/include/template/v1/11-header-nuts.html'}}
 
-    <!-- Content
-    ============================ -->
-    <div id="content" role="main">
-
-        <!-- Sidebar Navigation
-        ============================ -->
-        <div class="idocs-navigation bg-light">
-            <div class="nav-search">
-                <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
+    <!-- PAGE HEADER -->
+    <section class="dl-page-header">
+        <div class="container dl-page-header__inner">
+            <h1 class="dl-page-header__title">Download Nuts</h1>
+            <p class="dl-page-header__sub">The package manager Java never had &mdash; three steps to get started.</p>
+            <div class="dl-version-pills">
+                <span class="dl-version-pill dl-version-pill--latest">
+                    <i class="fas fa-bolt"></i> Latest &nbsp;<strong>{{runtimeVersion}}</strong>
+                </span>
+                <span class="dl-version-pill dl-version-pill--lts">
+                    <i class="fas fa-shield-alt"></i> LTS &nbsp;<strong>{{stableRuntimeVersion}}</strong>
+                </span>
+                <span class="dl-version-pill dl-version-pill--java">
+                    <i class="fab fa-java"></i> Requires Java 8+
+                </span>
             </div>
-            <ul class="nav flex-column ">
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}">{{pageLevel1Index+1}} {{pageLevel1.title}}</a>
-                    {{:: allPagesLevel2=loadPages(pageLevel1)}}
-                    {{:if (allPagesLevel2.size)>0}}
-                    <ul class="nav flex-column">
-                        {{:for pageLevel2,pageLevel2Index:allPagesLevel2}}
-                        <li class="nav-item"><a class="nav-link" href="#{{pageLevel2.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}} {{pageLevel2.title}}</a>
-                            {{:: allPagesLevel3=loadPages(pageLevel2)}}
-                            {{:if (allPagesLevel3.size)>0}}
-                            <ul class="nav flex-column">
-                                {{:for pageLevel3,pageLevel3Index:allPagesLevel3}}
-                                <li class="nav-item"><a class="nav-link" href="#{{pageLevel3.id}}">{{pageLevel1Index+1}}.{{pageLevel2Index+1}}.{{pageLevel3Index+1}} {{pageLevel3.title}}</a>
+        </div>
+    </section>
 
-                                </li>
-                                {{:end}}
-                            </ul>
-                            {{:end}}
-                        </li>
-                        {{:end}}
-                    </ul>
-                    {{:end}}
-                </li>
-                {{:end}}
-            </ul>
+    <div class="container dl-container">
+
+        <!-- ===================== WIZARD ===================== -->
+        <div class="dl-wizard">
+
+            <!-- STEP 1: VERSION -->
+            <div class="dl-step-block" id="step-version">
+                <div class="dl-step-block__header">
+                    <span class="dl-step-block__num">1</span>
+                    <h2 class="dl-step-block__title">Choose a version</h2>
+                    <span class="dl-step-block__selection" id="sel-version"></span>
+                </div>
+                <div class="dl-step-block__body">
+                    <div class="dl-choice-grid dl-choice-grid--2">
+
+                        <button class="dl-choice dl-choice--version" data-version="latest">
+                            <div class="dl-choice__icon dl-choice__icon--blue">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">Latest</span>
+                                <span class="dl-choice__version">{{runtimeVersion}}</span>
+                                <span class="dl-choice__desc">Newest features and fixes. Recommended for development.</span>
+                            </div>
+                        </button>
+
+                        <button class="dl-choice dl-choice--version" data-version="lts">
+                            <div class="dl-choice__icon dl-choice__icon--green">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">LTS</span>
+                                <span class="dl-choice__version">{{stableRuntimeVersion}}</span>
+                                <span class="dl-choice__desc">Long-term support. Critical patches only. Recommended for production.</span>
+                            </div>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: PLATFORM -->
+            <div class="dl-step-block dl-step-block--locked" id="step-platform">
+                <div class="dl-step-block__header">
+                    <span class="dl-step-block__num">2</span>
+                    <h2 class="dl-step-block__title">Choose your platform</h2>
+                    <span class="dl-step-block__selection" id="sel-platform"></span>
+                </div>
+                <div class="dl-step-block__body">
+                    <div class="dl-choice-grid dl-choice-grid--4">
+
+                        <button class="dl-choice dl-choice--platform" data-platform="linux">
+                            <div class="dl-choice__icon dl-choice__icon--orange">
+                                <i class="fab fa-linux"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">Linux</span>
+                                <span class="dl-choice__desc">All distributions</span>
+                            </div>
+                        </button>
+
+                        <button class="dl-choice dl-choice--platform" data-platform="macos">
+                            <div class="dl-choice__icon dl-choice__icon--silver">
+                                <i class="fab fa-apple"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">macOS</span>
+                                <span class="dl-choice__desc">Intel &amp; Apple Silicon</span>
+                            </div>
+                        </button>
+
+                        <button class="dl-choice dl-choice--platform" data-platform="windows">
+                            <div class="dl-choice__icon dl-choice__icon--blue">
+                                <i class="fab fa-windows"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">Windows</span>
+                                <span class="dl-choice__desc">Windows 7 and later</span>
+                            </div>
+                        </button>
+
+                        <button class="dl-choice dl-choice--platform" data-platform="docker">
+                            <div class="dl-choice__icon dl-choice__icon--docker">
+                                <i class="fab fa-docker"></i>
+                            </div>
+                            <div class="dl-choice__text">
+                                <span class="dl-choice__label">Docker</span>
+                                <span class="dl-choice__desc">Containers &amp; images</span>
+                            </div>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: METHOD -->
+            <div class="dl-step-block dl-step-block--locked" id="step-method">
+                <div class="dl-step-block__header">
+                    <span class="dl-step-block__num">3</span>
+                    <h2 class="dl-step-block__title">Choose install method</h2>
+                    <span class="dl-step-block__selection" id="sel-method"></span>
+                </div>
+                <div class="dl-step-block__body">
+
+                    <!-- METHOD CHOICES — shown/hidden by platform -->
+                    <div class="dl-method-choices" id="method-choices">
+                        <!-- populated by JS based on platform -->
+                    </div>
+
+                    <!-- INSTALL CONTENT — shown after method selected -->
+                    <div class="dl-install-content" id="install-content" style="display:none">
+                        <!-- populated by JS -->
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <!-- /wizard -->
+
+        <!-- VERIFY -->
+        <div class="dl-verify" id="dl-verify" style="display:none">
+            <h3 class="dl-verify__title"><i class="fas fa-check-circle"></i> Verify your installation</h3>
+            <p class="dl-verify__sub">Open a new terminal and run:</p>
+            <div class="dl-code-block">
+                <pre><code class="language-bash">nuts --version</code></pre>
+                <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+            </div>
+            <p class="dl-verify__sub">Then install your first app:</p>
+            <div class="dl-code-block">
+                <pre><code class="language-bash">nuts install org.apache.netbeans:netbeans
+nuts netbeans</code></pre>
+                <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+            </div>
         </div>
 
-        <!-- Docs Content
-        ============================ -->
-        <div class="idocs-content">
-            <div class="container">
-
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                    <!--pageLevel1-->
-                    <section id="{{pageLevel1.id}}">
-                        <div class="text-card" style="margin-top: 10px">
-                            {{pageToHtml(pageLevel1,(pageLevel1Index+1))}}
+        <!-- ARCHIVE -->
+        <div class="dl-archive-block">
+            <button class="dl-archive-toggle" id="archive-toggle">
+                <i class="fas fa-archive"></i> Previous versions
+                <i class="fas fa-chevron-down dl-archive-toggle__chevron"></i>
+            </button>
+            <div class="dl-archive-body" id="archive-body" style="display:none">
+                <div class="dl-archive-table">
+                    <div class="dl-archive-header">
+                        <span>Version</span>
+                        <span>Install command</span>
+                        <span>Notes</span>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.9</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
                         </div>
-                        {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
-                            <!--pageLevel2-->
-                            <section id="{{pageLevel2.id}}">
-                                <div class="text-card" style="margin-top: 10px">
-                                {{pageToHtml(pageLevel2,(pageLevel1Index+1)+"."+(pageLevel2Index+1))}}
-                                </div>
-                                {{:for pageLevel3,pageLevel3Index:loadPages(pageLevel2)}}
-                                    <!--pageLevel3-->
-                                    <section id="{{pageLevel3.id}}">
-                                        <div class="text-card" style="margin-top: 10px">
-                                        {{pageToHtml(pageLevel3,(pageLevel1Index+1)+"."+(pageLevel2Index+1)+"."+(pageLevel3Index+1))}}
-                                        </div>
-                                    </section>
-                                    <hr class="divider">
-                                {{:end}}
-                            </section>
-                            <hr class="divider">
-                        {{:end}}
-                    </section>
-                    <hr class="divider">
-                {{:end}}
-
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.8</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.8/nuts-app-0.8.8.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.7</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.7/nuts-app-0.8.7.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.6</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.6/nuts-app-0.8.6.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.5</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.5/nuts-app-0.8.5.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.4</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://thevpc.net/nuts/nuts-0.8.4.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                    <div class="dl-archive-row">
+                        <span class="dl-archive-version">0.8.3</span>
+                        <div class="dl-code-block dl-code-block--inline">
+                            <pre><code class="language-bash">curl -sL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -o nuts.jar && java -jar nuts.jar -Zy</code></pre>
+                            <button class="dl-copy-btn" title="Copy"><i class="far fa-copy"></i></button>
+                        </div>
+                        <a href="blog.html" class="dl-archive-notes">Notes →</a>
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
-    <!-- Content end -->
+    <!-- /dl-container -->
 
     {{:include $'$projectRoot/src/include/template/v1/30-footer.html'}}
 </div>
-<!-- Document Wrapper end -->
 
 {{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
+<script src="assets/js/nuts-download.js"></script>
 </body>
 </html>
