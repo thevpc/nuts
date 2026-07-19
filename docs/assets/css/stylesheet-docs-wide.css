@@ -1,0 +1,543 @@
+/* ============================================================
+   Nuts Documentation Stylesheet
+   Scope: doc-nuts.html, doc-naf.html, faq.html, contrib.html
+   Import AFTER stylesheet.css
+   ============================================================ */
+
+/* ---- Page shell ---- */
+.documentation-main-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  margin: 0 !important;
+  color: #1e2330 !important;
+  background: #f0f2f5 !important;
+}
+
+/* ---- Layout: sidebar + content side by side ---- */
+#content {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - 60px);
+  padding-top: 0;
+}
+
+/* ---- Sidebar ---- */
+.idocs-navigation {
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
+  position: sticky;
+  top: 60px; /* matches header height */
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #ffffff !important;
+  border-right: 1px solid #e2e8f0;
+  padding: 24px 0 40px;
+  flex-shrink: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent;
+}
+
+.idocs-navigation::-webkit-scrollbar { width: 4px; }
+.idocs-navigation::-webkit-scrollbar-track { background: transparent; }
+.idocs-navigation::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+
+/* Sidebar search area */
+.idocs-navigation .nav-search {
+  padding: 0 20px 20px;
+}
+
+.idocs-navigation .nav-search input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.idocs-navigation .nav-search input:focus {
+  border-color: #0366d6;
+  box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
+}
+
+/* Level 1 nav items — section labels (uppercase, muted) */
+.idocs-navigation > ul.nav {
+  padding: 0;
+  margin: 0;
+}
+
+.idocs-navigation .nav > .nav-item {
+  margin: 0;
+  border-top: 1px solid #f0f2f5;
+}
+
+.idocs-navigation .nav > .nav-item:first-child {
+  border-top: none;
+}
+
+.idocs-navigation .nav > .nav-item > .nav-link {
+  display: block;
+  padding: 12px 20px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-left: 3px solid transparent;
+  transition: color 0.15s;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* Level 2 nav items — the real clickable entries */
+.idocs-navigation .nav .nav {
+  padding: 0 0 10px;
+  margin: 0;
+  background: transparent;
+  border-left: none;
+}
+
+.idocs-navigation .nav .nav > .nav-item > .nav-link {
+  display: block;
+  padding: 5px 20px 5px 20px;
+  font-size: 0.83rem;
+  font-weight: 400;
+  color: #374151;
+  border-left: 3px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.idocs-navigation .nav .nav > .nav-item > .nav-link:hover {
+  color: #0366d6;
+  border-left-color: #0366d6;
+  background: #f8fafc;
+  text-decoration: none;
+  transform: translateX(4px);
+}
+
+.idocs-navigation .nav .nav > .nav-item > .nav-link.active {
+  color: #0366d6;
+  border-left-color: #0366d6;
+  background: #eef2ff;
+  font-weight: 600;
+}
+
+/* Level 3 nav items */
+.idocs-navigation .nav .nav .nav {
+  margin-left: 12px;
+  background: transparent;
+  border-left: 1px dashed #cbd5e0;
+}
+
+.idocs-navigation .nav .nav .nav > .nav-item > .nav-link {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+.idocs-navigation .nav .nav .nav > .nav-item > .nav-link:hover {
+  color: #0366d6;
+}
+
+/* ---- Main content area ---- */
+.idocs-content {
+  flex: 1;
+  min-width: 0;
+  background: #ffffff;
+  min-height: calc(100vh - 60px);
+  padding: 0;
+}
+
+/* width handled below */
+
+/* ---- Section headings ---- */
+
+.idocs-content h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.idocs-content .lead {
+  font-size: 1.15rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+/* Level 1 — major section */
+.main-section1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+  color: #ffffff !important;
+  padding: 18px 24px;
+  border-radius: 10px;
+  margin-top: 56px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(15,12,41,0.18);
+  font-family: ZeroesTwo, sans-serif;
+  font-size: 1.35rem !important;
+  font-weight: 700;
+  text-shadow: none !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-section1::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, rgba(35,166,213,0.15), transparent);
+  pointer-events: none;
+}
+
+.main-section1 a {
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+.main-section1 a:hover {
+  color: #93c5fd !important;
+}
+
+/* Level 2 — subsection */
+.main-section2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f0f6ff;
+  border-left: 4px solid #0366d6;
+  color: #1a202c !important;
+  padding: 12px 20px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 40px;
+  margin-bottom: 16px;
+  font-size: 1.1rem !important;
+  font-weight: 600;
+  text-shadow: none !important;
+}
+
+.main-section2 a {
+  color: #1a202c !important;
+  text-decoration: none;
+}
+
+.main-section2 a:hover { color: #0366d6 !important; }
+
+/* Level 3 — sub-subsection */
+.main-section3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fefce8;
+  border-left: 3px solid #d97706;
+  color: #1a202c !important;
+  padding: 9px 16px;
+  border-radius: 0 6px 6px 0;
+  margin-top: 28px;
+  margin-bottom: 12px;
+  font-size: 0.97rem !important;
+  font-weight: 600;
+  text-shadow: none !important;
+}
+
+.main-section3 a {
+  color: #1a202c !important;
+  text-decoration: none;
+}
+
+.main-section3 a:hover { color: #d97706 !important; }
+
+/* Anchor icons on headings */
+.main-section1 a::before,
+.main-section2 a::before,
+.main-section3 a::before {
+  content: '#';
+  opacity: 0;
+  margin-right: 6px;
+  font-size: 0.8em;
+  transition: opacity 0.15s;
+}
+
+.main-section1:hover a::before,
+.main-section2:hover a::before,
+.main-section3:hover a::before {
+  opacity: 0.5;
+}
+
+/* ---- Content sections ---- */
+.text-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 8px;
+}
+
+/* ---- Dividers ---- */
+hr.divider {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 40px 0;
+}
+
+/* ---- Inline headings inside content ---- */
+.idocs-content h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 24px 0 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.idocs-content h5 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 18px 0 8px;
+}
+
+/* ---- Paragraphs ---- */
+.idocs-content p {
+  line-height: 1.75;
+  color: #374151;
+  text-align: justify;
+  margin-bottom: 1rem;
+}
+
+/* ---- Code blocks ---- */
+.idocs-content pre {
+  background: #1e2330;
+  border-radius: 8px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  border: 1px solid #2d3748;
+  position: relative;
+}
+
+.idocs-content pre code {
+  background: transparent !important;
+  color: #e2e8f0;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  padding: 0;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.idocs-content code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.83em;
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ---- Tables ---- */
+.idocs-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0 28px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.idocs-content th {
+  background: #1e2330;
+  color: #e2e8f0;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.idocs-content td {
+  padding: 9px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #374151;
+  vertical-align: top;
+}
+
+.idocs-content tr:nth-child(even) td { background: #f8fafc; }
+.idocs-content tr:last-child td { border-bottom: none; }
+.idocs-content tr:hover td { background: #eef2ff; }
+
+/* ---- Lists ---- */
+.idocs-content ul,
+.idocs-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: #374151;
+  line-height: 1.75;
+}
+
+.idocs-content li { margin-bottom: 4px; }
+
+/* ---- Images ---- */
+.idocs-content img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  margin: 12px 0;
+}
+
+/* ---- Blockquotes ---- */
+.idocs-content blockquote {
+  border-left: 4px solid #0366d6;
+  background: #f0f6ff;
+  padding: 12px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 16px 0;
+  color: #374151;
+}
+
+.idocs-content blockquote p { margin: 0; }
+
+/* ---- Section number badges ---- */
+.main-section1::after {
+  content: attr(data-num);
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.08);
+  font-family: ZeroesTwo, sans-serif;
+  pointer-events: none;
+}
+
+/* ---- Responsive: collapse sidebar on mobile ---- */
+@media (max-width: 768px) {
+  #content { flex-direction: column; }
+
+  .idocs-navigation {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 0;
+  }
+
+  .idocs-content > .container {
+    padding: 20px 16px 40px;
+  }
+}
+
+/* ---- Progress bar: reading indicator ---- */
+#doc-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0366d6, #23a6d5);
+  z-index: 9999;
+  transition: width 0.1s;
+  width: 0%;
+}
+
+/* ---- "Back to top" within doc page ---- */
+.doc-back-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #718096;
+  margin-top: 8px;
+  text-decoration: none;
+}
+.doc-back-top:hover { color: #0366d6; }
+
+/* ---- Content area width ---- */
+.idocs-content > .container {
+  max-width: 6000px;
+  width: 100%;
+  padding: 40px 48px 80px 40px;
+}
+
+@media (max-width: 1200px) {
+  .idocs-content > .container { padding: 32px 32px 60px 32px; }
+}
+@media (max-width: 768px) {
+  .idocs-content > .container { padding: 20px 16px 40px; }
+}
+
+/* ---- Fix: watermark number more subtle ---- */
+.main-section1::after {
+  content: attr(data-num);
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.04);
+  font-family: ZeroesTwo, sans-serif;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---- Reveal animations ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Ensure footer has room on doc pages with sticky sidebar */
+#footer {
+  position: relative;
+  z-index: 10;
+}
+
+/* Show mobile sidebar toggler on doc pages */
+@media (max-width: 768px) {
+  #sidebarCollapse {
+    display: block !important;
+  }
+}
+
+/* Sidebar section number badges */
+.nav-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+/* navbar styles are in stylesheet-navbar.css */
