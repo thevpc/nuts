@@ -163,8 +163,8 @@ public class ExprTest {
 //        st.acceptTokenType(NToken.TT_LEFT_SHIFT);
         int i = st.nextToken();
         Assertions.assertEquals(st.image, "<<");
-        System.out.println(st.image);
-        System.out.println(st);
+        TestUtils.println(st.image);
+        TestUtils.println(st);
     }
 
 

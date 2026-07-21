@@ -226,20 +226,20 @@ public class NTFTest {
     //    @Test
 //    public void test0(){
 //        String msg="[[-t]] or [[--trace]] : enable trace operation with a meaning message ( or disable it with [[--!trace]] or [[--trace=false]] )";
-//        NutsPrintStreamFormattedUnixAnsi out=new NutsPrintStreamFormattedUnixAnsi(System.out);
+//        NutsPrintStreamFormattedUnixAnsi out=new NutsPrintStreamFormattedUnixAnsi(TestUtils);
 //        out.println(msg);
 //    }
 //    @Test
 //    public void test(){
 //        String msg="<-t>";
-//        NutsPrintStreamFormattedUnixAnsi out=new NutsPrintStreamFormattedUnixAnsi(System.out);
+//        NutsPrintStreamFormattedUnixAnsi out=new NutsPrintStreamFormattedUnixAnsi(TestUtils);
 //        out.println(msg);
 //    }
 //
 //    @Test
 //    public void test1(){
 //        String msg="x{{\\?}}x";
-//        NutsPrintStreamFormattedUnixAnsi out=new NutsPrintStreamFormattedUnixAnsi(System.out);
+//        NutsPrintStreamFormattedUnixAnsi out=new NutsPrintStreamFormattedUnixAnsi(TestUtils);
 //        out.println(msg);
 //        out.println();
 //    }
@@ -253,7 +253,7 @@ public class NTFTest {
 //    public void test2() {
 ////        String msg="x{{\\?}}x";
 //        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
-//        PrintStream out = new PrintStream(new FormatOutputStream(System.out, ws));
+//        PrintStream out = new PrintStream(new FormatOutputStream(TestUtils, ws));
 //        for (String msg : new String[]{
 //                "[]", "<>",
 //                "\"\"",
@@ -272,7 +272,7 @@ public class NTFTest {
 ////        String msg="x{{\\?}}x";
 //
 //        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
-//        PrintStream out = new PrintStream(new FormatOutputStream(System.out, ws));
+//        PrintStream out = new PrintStream(new FormatOutputStream(TestUtils, ws));
 //        out.println("#####value             ##### = me");
 //    }
 //
@@ -281,9 +281,9 @@ public class NTFTest {
 ////        String msg="x{{\\?}}x";
 //        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+//        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(TestUtils, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
-//        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out, ws);
+//        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(TestUtils, ws);
 ////        String text = "[#tet] hello == \\= me\n";
 //        String text = "\n##) njob" +
 //                "\n##) njob" +
@@ -318,9 +318,9 @@ public class NTFTest {
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
-//        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+//        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(TestUtils, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
-//        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out, ws);
+//        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(TestUtils, ws);
 ////        String text = "[#tet] hello == \\= me\n";
 //        String text =
 //                "\n 1 ## text ##" +

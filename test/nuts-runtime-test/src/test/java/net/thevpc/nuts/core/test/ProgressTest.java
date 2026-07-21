@@ -33,7 +33,7 @@ public class ProgressTest {
         PrintStream out = new PrintStream(bout);
         NProgressMonitor m = NProgressMonitors.of().of(event -> {
             String msg = event.toString();
-            System.out.println(msg);
+            TestUtils.println(msg);
             out.println(msg);
             out.flush();
         });
@@ -70,7 +70,7 @@ public class ProgressTest {
         PrintStream out = new PrintStream(bout);
         NProgressMonitor m = NProgressMonitors.of().of(event -> {
             String msg = event.toString();
-            System.out.println(msg);
+            TestUtils.println(msg);
             out.println(msg);
             out.flush();
         });

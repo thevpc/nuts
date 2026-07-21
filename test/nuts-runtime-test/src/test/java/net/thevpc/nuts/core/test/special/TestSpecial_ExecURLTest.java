@@ -38,7 +38,7 @@ public class TestSpecial_ExecURLTest {
         String result = NExec.of()
                 .connectionString("ssh://vpc:a@192.168.1.36")
                 //.addCommand("ls","-l")
-                .addCommand("nuts","info")
+                .command("nuts","info")
                 .failFast(true)
                 //.system()
                 .grabbedAll();

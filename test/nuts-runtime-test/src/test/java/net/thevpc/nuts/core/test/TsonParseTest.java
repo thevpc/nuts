@@ -158,7 +158,7 @@ public class TsonParseTest {
         NObjectElementBuilder b = b1.builder();
         String str = b1.toString();
         Assertions.assertEquals("a(b:\"b\"){c:\"c\"}", str);
-        System.out.println(str);
+        TestUtils.println(str);
         NObjectElement b2 = b1.builder().build();
         Assertions.assertEquals(b1, b2);
     }

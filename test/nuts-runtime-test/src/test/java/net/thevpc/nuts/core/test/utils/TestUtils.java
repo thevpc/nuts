@@ -330,10 +330,18 @@ public class TestUtils {
         return s[index];
     }
 
+    public static void println() {
+        System.out.println("[TEST] ");
+    }
     public static void println(Object any) {
         System.out.println("[TEST] "+any);
     }
     public static void print(Object any) {
         System.out.print("[TEST] "+any);
+    }
+    public static void printfln(String any,Object... args) {
+        System.out.print("[TEST] ");
+        System.out.printf(any,args);
+        System.out.println();
     }
 }

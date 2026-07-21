@@ -35,7 +35,7 @@ public class PsManualTest {
     @Test
     public void test1() {
         NOut.println("Hello ##world##");
-//        System.out.printf("hello %s","toto");
+//        TestUtils.printf("hello %s","toto");
 //        Logger.getAnonymousLogger().log(Level.INFO, "hello {0}","A");
 
 //        NOptional<Object> o = NOptional.ofNamedEmpty(NMsg.ofV("is really missing"));

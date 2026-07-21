@@ -274,14 +274,14 @@ public class PathTest {
     public void testInvalidPath04() {
         NPath a = NPath.of("/*");
         List<NPath> nutsPaths = a.walkGlob().toList();
-        System.out.println(nutsPaths);
+        TestUtils.println(nutsPaths);
     }
 
     @Test
     public void testThevpcPath() {
         NPath a = NPath.of("htmlfs+https://maven.thevpc.net/net/thevpc/nuts/toolbox/noapi/");
         List<NPath> nutsPaths = a.list();
-        System.out.println(nutsPaths);
+        TestUtils.println(nutsPaths);
     }
 
 
@@ -290,7 +290,7 @@ public class PathTest {
         NScoredCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
         NPath root = u.root();
-        System.out.println(root);
+        TestUtils.println(root);
     }
 
     @Test
@@ -298,7 +298,7 @@ public class PathTest {
         NScoredCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("/C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
         NPath root = u.root();
-        System.out.println(root);
+        TestUtils.println(root);
     }
 
     //--------------

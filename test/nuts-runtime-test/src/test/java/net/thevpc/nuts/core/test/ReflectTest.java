@@ -64,7 +64,7 @@ public class ReflectTest {
                     "net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bjk\n" +
                     "net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bik")
                     .trim(), s.strip().toString());
-            System.out.println(type);
+            TestUtils.println(type);
         }
 
         {
@@ -78,7 +78,7 @@ public class ReflectTest {
                     "net.thevpc.nuts.core.test.ReflectTest$D<java.lang.Double, java.lang.Integer>.an\n" +
                             "net.thevpc.nuts.core.test.ReflectTest$D<java.lang.Double, java.lang.Integer>.bmn\n")
                     .trim(), s.strip().toString());
-            System.out.println(type);
+            TestUtils.println(type);
         }
 
     }

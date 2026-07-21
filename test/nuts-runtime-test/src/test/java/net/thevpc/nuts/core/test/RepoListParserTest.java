@@ -115,6 +115,6 @@ public class RepoListParserTest {
     @Test
     public void test13() {
         NRepositorySelectorList li = NRepositoryUtils.createRepositorySelectorList(Arrays.asList("+/toto")).get();
-        System.out.println(li);
+        TestUtils.println(li);
     }
 }

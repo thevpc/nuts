@@ -84,7 +84,7 @@ public class WorkspaceTest {
         TestUtils.println("-----------------------");
         TestUtils.println(txt);
         long b=System.currentTimeMillis();
-        System.out.println(b-a);
+        TestUtils.println(b-a);
     }
 
     @Test

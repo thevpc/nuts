@@ -275,10 +275,10 @@ public class VersionTest {
         int s=new SpringComparableVersion(v1.toString()).compareTo(new SpringComparableVersion(v2.toString()));
         int m=new MavenComparableVersion(v1.toString()).compareTo(new MavenComparableVersion(v2.toString()));
         if(Math.signum(s)!=Math.signum(m)){
-            System.out.println("spring has a bad implementation  "+v1+" "+(s<0?'<':s>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
+            TestUtils.println("spring has a bad implementation  "+v1+" "+(s<0?'<':s>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
         }
         if(Math.signum(x)!=Math.signum(m)){
-            System.out.println("you said that "+v1+" "+(x<0?'<':x>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
+            TestUtils.println("you said that "+v1+" "+(x<0?'<':x>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
         }
         if(error){
             Assertions.assertEquals(Math.signum(x),Math.signum(m));

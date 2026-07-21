@@ -70,7 +70,7 @@ public class SshTest {
 //        String en = NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/tmp.txt").contentEncoding();
 //        String ct = NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/tmp.txt").getContentType();
 //        String cs = NPath.of("ssh://"+ TestUtils.WINDOWS_TEST_SERVER +"/tmp.txt").getCharset();
-        System.out.println(l);
+        TestUtils.println(l);
     }
 
     // disable test before commit

@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.time.NDurationFormatMode;
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +25,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.NANOS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("0ns",s);
     }
 
@@ -35,7 +36,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("0s",s);
     }
 
@@ -48,7 +49,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString();
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("0s",s);
     }
 
@@ -61,7 +62,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.MILLIS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("17ms 16ns",s);
     }
 
@@ -74,7 +75,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.MILLIS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("999ms 999ns",s);
 
     }
@@ -92,7 +93,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.HOURS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("6h 5mn 4s 3ms 2us 1ns",s);
 
     }
@@ -115,7 +116,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("10y 9m 8w 7d 6h 5mn 4s 3ms 2us 1ns",s);
     }
 
@@ -136,7 +137,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.MICROS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.DEFAULT);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("10y 9m 8w 6h 5mn 3ms 2us",s);
     }
 
@@ -149,7 +150,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.NANOS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.NANOS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals("  0ns",s);
     }
 
@@ -160,7 +161,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals(" 0s",s);
     }
 
@@ -173,7 +174,7 @@ public class DurationTest {
         Assertions.assertEquals(ChronoUnit.SECONDS,t.smallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.largestUnit());
         String s=t.toString(NDurationFormatMode.FIXED);
-        System.out.println(s);
+        TestUtils.println(s);
         Assertions.assertEquals(" 0s",s);
     }
 

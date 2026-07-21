@@ -30,7 +30,7 @@ public class ChunkedStoreTest {
                 fq.add(String.valueOf(i));
             }
         }
-        System.out.println("write in "+chronometer.stop());
+        TestUtils.println("write in "+chronometer.stop());
 
 
         chronometer = NChronometer.of();
@@ -41,11 +41,11 @@ public class ChunkedStoreTest {
         ) {
             try (NStream<String> st = fq.stream()) {
                 st.forEach(d->{
-                    System.out.println("READ "+d);
+                    TestUtils.println("READ "+d);
                 });
             }
         }
-        System.out.println("read in "+chronometer.stop());
+        TestUtils.println("read in "+chronometer.stop());
     }
 
     @Test
@@ -81,11 +81,11 @@ public class ChunkedStoreTest {
         ) {
             try (NStream<String> st = fq.stream().limit(10)) {
                 st.forEach(d->{
-                    System.out.println("READ "+d);
+                    TestUtils.println("READ "+d);
                 });
             }
         }
-        System.out.println("----");
+        TestUtils.println("----");
         try (NChunkedStore<String> fq = NChunkedStoreBuilder.ofLines(NPath.ofUserHome().resolve("test-file-queue"))
                 .metadataBufferSize(10)
                 .numberLayout(3)
@@ -93,7 +93,7 @@ public class ChunkedStoreTest {
         ) {
             try (NStream<String> st = fq.stream().limit(10)) {
                 st.forEach(d->{
-                    System.out.println("READ "+d);
+                    TestUtils.println("READ "+d);
                 });
             }
         }

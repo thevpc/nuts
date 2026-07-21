@@ -70,13 +70,13 @@ public class ExecTest {
         }
         if(false) {
             String result = NExec.of()
-                    .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
+                    .workspaceOptions(NWorkspaceOptionsBuilder.of()
                             .bot(true)
                             .workspace(NWorkspace.of().workspaceLocation().resolve("temp-ws").toString())
                             .build()
                     )
                     //.addExecutorOption("--main-class=Version")
-                    .addCommand(
+                    .command(
                             "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
                             "--version"
@@ -99,7 +99,7 @@ public class ExecTest {
     public void testEmbeddedInfo() {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
-                .addCommand("info")
+                .command("info")
                 .grabbedAll();
         NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
@@ -111,10 +111,10 @@ public class ExecTest {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 //there are three classes and no main-class, so need to specify the one
-                .addExecutorOption("--main-class=Version")
+                .executorOption("--main-class=Version")
 //                .addExecutorOption("--main-class=junit.runner.Version")
                 //get the command
-                .addCommand(
+                .command(
 //                        "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar"
                         "https://search.maven.org/remotecontent?filepath=net/java/sezpoz/demo/app/1.6/app-1.6.jar"
 //                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
@@ -130,7 +130,7 @@ public class ExecTest {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 //.addExecutorOption()
-                .addCommand(NConstants.Ids.NSH, "-c", "ls")
+                .command(NConstants.Ids.NSH, "-c", "ls")
                 .grabAll().failFast(true).grabbedOut();
         TestUtils.println("Result:");
         TestUtils.println(result);
@@ -142,10 +142,10 @@ public class ExecTest {
     public void testCallSpecialId() {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
-                .addExecutorOptions("--bot")
+                .executorOptions("--bot")
                 //.setExecutionType(NExecutionType.EMBEDDED)
-                .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
-                .addCommand("list", "-i")
+                .command("com.cts.nuts.enterprise.postgres:pgcli")
+                .command("list", "-i")
                 .grabbedAll();
         NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
@@ -161,10 +161,10 @@ public class ExecTest {
             MemConsumer err = new MemConsumer(p.getErrorStream()).run();
             p.getOutputStream().close();
             p.waitFor();
-            System.out.println("==================OUT");
-            System.out.println(out.sb2);
-            System.out.println("==================ERR");
-            System.out.println(err.sb2);
+            TestUtils.println("==================OUT");
+            TestUtils.println(out.sb2);
+            TestUtils.println("==================ERR");
+            TestUtils.println(err.sb2);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -177,11 +177,11 @@ public class ExecTest {
                 .err(NExecOutput.ofGrabMem())
                 .out(NExecOutput.ofGrabMem())
                 .run();
-        System.out.println(e.exitCode());
-        System.out.println("============= OUT");
-        System.out.println(e.grabbedOut());
-        System.out.println("============= ERR");
-        System.out.println(e.grabbedErr());
+        TestUtils.println(e.exitCode());
+        TestUtils.println("============= OUT");
+        TestUtils.println(e.grabbedOut());
+        TestUtils.println("============= ERR");
+        TestUtils.println(e.grabbedErr());
     }
 
     private void runUsingProcessBuilder2(String... args) {
@@ -197,8 +197,8 @@ public class ExecTest {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        System.out.println(e.getResult());
-        System.out.println("============= OUT");
+        TestUtils.println(e.getResult());
+        TestUtils.println("============= OUT");
         System.out.println(e.getOut().result().readString());
         System.out.println("============= ERR");
         System.out.println(e.getErr().result().readString());

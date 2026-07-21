@@ -156,12 +156,12 @@ public class TerminalTest {
         for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
-                System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
+                TestUtils.printfln("%2d ::" + rr.progress(i), i);
             }
             for (int i = 0; i < 12; i++) {
                 int finalI = i;
                 rr.setIndeterminatePosition((CProgressBar bar, int size) -> finalI % size);
-                System.out.printf("%2d ::" + rr.progress(-1) + "\n", i);
+                TestUtils.printfln("%2d ::" + rr.progress(-1) , i);
 //                try {
 //                    Thread.sleep(1000);
 //                } catch (InterruptedException ex) {
@@ -178,7 +178,7 @@ public class TerminalTest {
         for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
-//                System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
+//                TestUtils.printf("%2d ::" + rr.progress(i) + "\n", i);
                 NOut.println(NMsg.ofC("%2d ::" + rr.progress(i), i));
             }
             for (int i = 0; i < 12; i++) {

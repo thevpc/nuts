@@ -19,11 +19,11 @@ public class OldWorkspace084 extends OldWorkspace {
     public void upgrade() {
         NOut.println(NMsg.ofC("updating workspace %s in %s", version, ws));
         NExec.of().executionType(NExecutionType.SYSTEM)
-                .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
-                .addCommand("--workspace=" + workspaceLocation)
-                .addCommand("--yes")
-                .addCommand("--verbose")
-                .addCommand("update")
+                .command(resolveJavaFile(), "-jar", resolveJarFile().getPath())
+                .command("--workspace=" + workspaceLocation)
+                .command("--yes")
+                .command("--verbose")
+                .command("update")
                 .failFast(true)
                 .run();
     }
@@ -34,33 +34,33 @@ public class OldWorkspace084 extends OldWorkspace {
         NOut.println(NMsg.ofC("booting workspace %s in %s", version, ws));
 
         NExec.of().executionType(NExecutionType.SYSTEM)
-                .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
-                .addCommand("--workspace=" + workspaceLocation)
-                .addCommand("--desktop-launcher=unsupported")
+                .command(resolveJavaFile(), "-jar", resolveJarFile().getPath())
+                .command("--workspace=" + workspaceLocation)
+                .command("--desktop-launcher=unsupported")
                 //disable creation of desktop menus
-                .addCommand("--menu-launcher=unsupported")
+                .command("--menu-launcher=unsupported")
                 //disable creation of any icons
-                .addCommand("--user-launcher=unsupported")
+                .command("--user-launcher=unsupported")
                 //disable creating of bashrc, etc...
-                .addCommand("--!switch")
+                .command("--!switch")
                 //disable auto-detection of java
-                .addCommand("--!init-platforms")
+                .command("--!init-platforms")
                 //disable auto-creation of nuts scripts
-                .addCommand("--!init-scripts")
+                .command("--!init-scripts")
                 //disable auto-creation of nuts icons and menus
-                .addCommand("--!init-launchers")
+                .command("--!init-launchers")
                 //disable progress indicator
 //                    .addCommand("--!progress")
                 //disable interactive mode and 'always confirm'
-                .addCommand("--yes")
+                .command("--yes")
                 //enable installing nsh
-                .addCommand("--install-companions=true")
-                .addCommand("--skip-welcome")
-                .addCommand("-r=+thevpc")
-                .addCommand("-w", ws.getAbsolutePath())
-                .addCommand("-byZSK")
-                .addCommand("-!k")
-                .addCommand("--verbose")
+                .command("--install-companions=true")
+                .command("--skip-welcome")
+                .command("-r=+thevpc")
+                .command("-w", ws.getAbsolutePath())
+                .command("-byZSK")
+                .command("-!k")
+                .command("--verbose")
                 .failFast(true)
                 .run();
     }

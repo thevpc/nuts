@@ -19,6 +19,8 @@ package net.thevpc.nuts.core.test.borrowed;
  * under the License.
  */
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
+
 import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -692,7 +694,7 @@ public class MavenComparableVersion implements Comparable<MavenComparableVersion
      * two adjacent will be compared
      */
     public static void main(String... args) {
-        System.out.println("Display parameters as parsed by Maven (in canonical form and as a list of tokens) and"
+        TestUtils.println("Display parameters as parsed by Maven (in canonical form and as a list of tokens) and"
                 + " comparison result:");
         if (args.length == 0) {
             return;
@@ -705,11 +707,11 @@ public class MavenComparableVersion implements Comparable<MavenComparableVersion
 
             if (prev != null) {
                 int compare = prev.compareTo(c);
-                System.out.println("   " + prev.toString() + ' ' + ((compare == 0) ? "==" : ((compare < 0) ? "<" : ">"))
+                TestUtils.println("   " + prev.toString() + ' ' + ((compare == 0) ? "==" : ((compare < 0) ? "<" : ">"))
                         + ' ' + version);
             }
 
-            System.out.println(
+            TestUtils.println(
                     (i++) + ". " + version + " -> " + c.getCanonical() + "; tokens: " + c.items.toListString());
 
             prev = c;

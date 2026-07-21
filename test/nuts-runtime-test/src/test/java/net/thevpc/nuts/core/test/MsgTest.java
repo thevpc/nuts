@@ -22,38 +22,38 @@ public class MsgTest {
     @Test
     public void test01() {
         NMsgTemplate template = NMsgTemplate.ofC("a %s %n %s");
-        String[] paramNames = template.paramNames();
-        Assertions.assertEquals(Arrays.asList("", ""), Arrays.asList(paramNames));
+        List<String> paramNames = template.paramNames();
+        Assertions.assertEquals(Arrays.asList("", ""), paramNames);
     }
 
     @Test
     public void test02() {
         NMsgTemplate template = NMsgTemplate.ofJ("a {} {0} {3}");
-        String[] paramNames = template.paramNames();
-        Assertions.assertEquals(Arrays.asList("0", "1", "2", "3"), Arrays.asList(paramNames));
+        List<String> paramNames = template.paramNames();
+        Assertions.assertEquals(Arrays.asList("0", "1", "2", "3"), paramNames);
 
         template = NMsgTemplate.ofJ("a {} {}");
         paramNames = template.paramNames();
-        Assertions.assertEquals(Arrays.asList("0", "1"), Arrays.asList(paramNames));
-        System.out.println(template.build(NMsgParam.of("0", () -> "0"), NMsgParam.of("1", () -> "1")));
+        Assertions.assertEquals(Arrays.asList("0", "1"), paramNames);
+        TestUtils.println(template.build(NMsgParam.of("0", () -> "0"), NMsgParam.of("1", () -> "1")));
 
         template = NMsgTemplate.ofJ("a {} {0}");
         paramNames = template.paramNames();
-        Assertions.assertEquals(Collections.singletonList("0"), Arrays.asList(paramNames));
+        Assertions.assertEquals(Collections.singletonList("0"), paramNames);
 
         template = NMsgTemplate.ofJ("a {} {}");
         paramNames = template.paramNames();
-        Assertions.assertEquals(Arrays.asList("0", "1"), Arrays.asList(paramNames));
+        Assertions.assertEquals(Arrays.asList("0", "1"), paramNames);
 
         template = NMsgTemplate.ofJ("a {4} {}");
         paramNames = template.paramNames();
-        Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
+        Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), paramNames);
     }
 
     @Test
     public void test03() {
         List<NToken> textTokens = NStringUtils.parseDollarPlaceHolder("a${b}c").collect(Collectors.toList());
-        System.out.println(textTokens);
+        TestUtils.println(textTokens);
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
 
@@ -64,7 +64,7 @@ public class MsgTest {
                 "        trackerFolder=\"prospect\" trackerName=\"protos-banner-fr.png\" trackerSecretEmail=\"${email}\" trackerSecretCompany=\"${company}\"\n" +
                 "        alt=\"Banner 2024\" style=\"outline:none;text-decoration:none;border:none;max-width:100%;font-size:16px;border-radius: 25px;\" width=\"560\" align=\"middle\"/>\n" +
                 "        </a>").collect(Collectors.toList());
-        System.out.println(textTokens);
+        TestUtils.println(textTokens);
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
 
@@ -78,7 +78,7 @@ public class MsgTest {
                     }
                     return null;
                 }).toString();
-        System.out.println(r);
+        TestUtils.println(r);
         Assertions.assertEquals("A/B", r);
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
@@ -90,7 +90,7 @@ public class MsgTest {
                         "var")
                 .collect(Collectors.toList());
         for (NToken textToken : textTokens) {
-            System.out.println(textToken);
+            TestUtils.println(textToken);
         }
         Assertions.assertEquals(5, textTokens.size());
 

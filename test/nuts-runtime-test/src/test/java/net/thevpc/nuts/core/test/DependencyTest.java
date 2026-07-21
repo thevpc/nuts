@@ -29,7 +29,7 @@ public class DependencyTest {
     @BeforeAll
     public static void init() {
         TestUtils.openNewMinTestWorkspace();
-        System.out.println(NBootOptionsBuilder.of().toString());
+        TestUtils.println(NBootOptionsBuilder.of().toString());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class DependencyTest {
         cond.profile(new ArrayList<>(Arrays.asList("felix")));
         cond.setProperties(NMaps.of("a","b"));
         b.condition(cond);
-        System.out.println(b);
+        TestUtils.println(b);
     }
 
 }
