@@ -81,10 +81,10 @@ public class BinSshFileOutputStreamScp extends OutputStream {
             port=22;
         }
         if(port!=22){
-            scp.addCommand("-oPort",String.valueOf(port));
+            scp.command("-oPort",String.valueOf(port));
         }
         if(!NBlankable.isBlank(identityFile)){
-            scp.addCommand("-oIdentityFile",identityFile);
+            scp.command("-oIdentityFile",identityFile);
         }
         scp
                 .in(NExecInput.ofNull())

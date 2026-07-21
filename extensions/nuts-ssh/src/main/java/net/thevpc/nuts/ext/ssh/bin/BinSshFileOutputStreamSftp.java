@@ -85,13 +85,13 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
             int port = NLiteral.of(remotePath.port()).asInt().orElse(-1);
             NExec sftp = NExec.ofSystem("sftp");
             if (port > 0 && port != 22) {
-                sftp.addCommand("-oPort");
-                sftp.addCommand(String.valueOf(port));
+                sftp.command("-oPort");
+                sftp.command(String.valueOf(port));
             }
             if(!NBlankable.isBlank(identityFile)){
-                sftp.addCommand("-oIdentityFile",identityFile);
+                sftp.command("-oIdentityFile",identityFile);
             }
-            sftp.addCommand("-b", batchFile.toString(),
+            sftp.command("-b", batchFile.toString(),
                             cbuilder.queryMap(null).port(null).path(null).build().toString())
                     .in(NExecInput.ofNull())
                     .out(NExecOutput.ofNull())

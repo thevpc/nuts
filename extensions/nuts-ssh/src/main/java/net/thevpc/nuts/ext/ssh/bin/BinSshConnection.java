@@ -83,7 +83,7 @@ public class BinSshConnection extends SshConnectionBase {
             listener.onExec(command);
         }
         return NExec.ofSystem(sshCommandPrefix.toArray(new String[0]))
-                .addCommand(command)
+                .command(command)
                 .failFast(true)
                 .out(NExecOutput.ofStream(out))
                 .err(NExecOutput.ofStream(err))
@@ -123,12 +123,12 @@ public class BinSshConnection extends SshConnectionBase {
 
                 NExec exec = NExec.ofSystem("sftp");
                 if (port != 22) {
-                    exec.addCommand("-oPort", String.valueOf(port));
+                    exec.command("-oPort", String.valueOf(port));
                 }
                 if (!NBlankable.isBlank(identityFile)) {
-                    exec.addCommand("-oIdentityFile", identityFile);
+                    exec.command("-oIdentityFile", identityFile);
                 }
-                exec.addCommand("-b", batchFile.toString(),
+                exec.command("-b", batchFile.toString(),
                                 target)
                         .in(NExecInput.ofNull())
                         .out(NExecOutput.ofPipe())  // capture stdout
@@ -144,16 +144,16 @@ public class BinSshConnection extends SshConnectionBase {
             }
         } else {
             NExec exec = NExec.ofSystem();
-            exec.addCommand("scp");
+            exec.command("scp");
             if (port != 22) {
-                exec.addCommand("-oPort", String.valueOf(port));
+                exec.command("-oPort", String.valueOf(port));
             }
             if (!NBlankable.isBlank(identityFile)) {
-                exec.addCommand("-oIdentityFile", identityFile);
+                exec.command("-oIdentityFile", identityFile);
             }
-            exec.addCommand("-q"); // quiet
-            exec.addCommand(connectionString.builder().port(null).queryMap(null).toString());
-            exec.addCommand("-"); // output to stdout
+            exec.command("-q"); // quiet
+            exec.command(connectionString.builder().port(null).queryMap(null).toString());
+            exec.command("-"); // output to stdout
                     exec
                     .in(NExecInput.ofNull())
                     .out(NExecOutput.ofPipe()) // capture remote file via stdout

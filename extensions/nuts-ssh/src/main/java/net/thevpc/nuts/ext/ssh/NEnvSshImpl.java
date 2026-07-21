@@ -4,6 +4,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.spi.NEnvCmdSPI;
 import net.thevpc.nuts.util.*;
 
 import java.nio.file.Path;
