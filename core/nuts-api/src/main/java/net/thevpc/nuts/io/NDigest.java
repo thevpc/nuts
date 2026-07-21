@@ -49,7 +49,6 @@ public interface NDigest extends NComponent {
         return NExtensions.of(NDigest.class);
     }
 
-    NDigest addSource(NInputSource source);
     /**
      * source stream to  hash
      *
@@ -65,6 +64,14 @@ public interface NDigest extends NComponent {
      * @return {@code this} instance
      */
     NDigest source(File file);
+
+    /**
+     * Sets the source descriptor to hash.
+     *
+     * @param source the source {@link NDescriptor} to hash
+     * @return the {@code NDigest} instance
+     */
+    NDigest source(NDescriptor source);
 
     /**
      * file to  hash
@@ -92,28 +99,6 @@ public interface NDigest extends NComponent {
      * @since 0.8.3
      */
     NDigest source(byte[] path);
-
-    /**
-     * source stream to hash
-     * equivalent to addSource
-     * @param descriptor source descriptor to  hash
-     * @return {@code this} instance
-     */
-    NDigest source(NDescriptor descriptor);
-
-    NDigest addSource(InputStream source);
-
-    NDigest addSource(File source);
-
-    NDigest addSource(Path source);
-
-    NDigest addSource(URL url);
-
-    NDigest addSource(NPath source);
-
-    NDigest addSource(byte[] source);
-
-    NDigest addSource(NDescriptor source);
 
     /**
      * compute hash digest and return it as hexadecimal string
