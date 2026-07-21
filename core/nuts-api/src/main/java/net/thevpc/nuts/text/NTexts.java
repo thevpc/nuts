@@ -155,7 +155,7 @@ public interface NTexts extends NComponent {
 
     NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern);
 
-    public static NText[] stripLeft(NText[] value) {
+    static NText[] stripLeft(NText[] value) {
         if (value == null) {
             return new NText[0];
         }
@@ -168,12 +168,12 @@ public interface NTexts extends NComponent {
             st++;
         }
         if (st > 0) {
-            return Arrays.copyOfRange(value,st, len);
+            return Arrays.copyOfRange(value, st, len);
         }
         return value;
     }
 
-    public static NText[] stripRight(NText[] value) {
+    static NText[] stripRight(NText[] value) {
         if (value == null) {
             return new NPrimitiveText[0];
         }
@@ -186,12 +186,12 @@ public interface NTexts extends NComponent {
             st--;
         }
         if (st < len) {
-            return Arrays.copyOfRange(value,0, st);
+            return Arrays.copyOfRange(value, 0, st);
         }
         return value;
     }
 
-    public static NText[] strip(NText[] value) {
+    static NText[] strip(NText[] value) {
         if (value == null || value.length == 0) {
             return new NPrimitiveText[0];
         }
@@ -214,7 +214,7 @@ public interface NTexts extends NComponent {
         return Arrays.copyOfRange(value, start, end + 1);
     }
 
-    public static NPrimitiveText[] strip(NPrimitiveText[] value) {
+    static NPrimitiveText[] strip(NPrimitiveText[] value) {
         if (value == null || value.length == 0) {
             return new NPrimitiveText[0];
         }
@@ -237,7 +237,7 @@ public interface NTexts extends NComponent {
         return Arrays.copyOfRange(value, start, end + 1);
     }
 
-    public static NPrimitiveText[] stripLeft(NPrimitiveText[] value) {
+    static NPrimitiveText[] stripLeft(NPrimitiveText[] value) {
         if (value == null) {
             return new NPrimitiveText[0];
         }
@@ -250,12 +250,12 @@ public interface NTexts extends NComponent {
             st++;
         }
         if (st > 0) {
-            return Arrays.copyOfRange(value,st, len);
+            return Arrays.copyOfRange(value, st, len);
         }
         return value;
     }
 
-    public static NPrimitiveText[] stripRight(NPrimitiveText[] value) {
+    static NPrimitiveText[] stripRight(NPrimitiveText[] value) {
         if (value == null) {
             return new NPrimitiveText[0];
         }
@@ -268,7 +268,7 @@ public interface NTexts extends NComponent {
             st--;
         }
         if (st < len) {
-            return Arrays.copyOfRange(value,0, st);
+            return Arrays.copyOfRange(value, 0, st);
         }
         return value;
     }

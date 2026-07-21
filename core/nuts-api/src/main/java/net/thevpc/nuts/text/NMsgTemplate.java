@@ -1,64 +1,90 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class NMsgTemplate {
     private final String message;
-    private final NTextFormatType format;
+    private final String customMessageId;
+    private final NMsgType format;
+    private static Set<NMsgType> ACCEPTED_FORMATS = new HashSet<>(Arrays.asList(
+            NMsgType.CFORMAT,
+            NMsgType.JFORMAT,
+            NMsgType.VFORMAT,
+            NMsgType.MFORMAT,
+            NMsgType.SFORMAT,
+            NMsgType.CUSTOM
+    ));
 
     public static NMsgTemplate ofC(String message) {
-        return of(message, NTextFormatType.CFORMAT);
+        return of(message, NMsgType.CFORMAT,null);
     }
 
     public static NMsgTemplate ofJ(String message) {
-        return of(message, NTextFormatType.JFORMAT);
+        return of(message, NMsgType.JFORMAT,null);
+    }
+
+    public static NMsgTemplate ofS(String message) {
+        return of(message, NMsgType.SFORMAT,null);
     }
 
     public static NMsgTemplate ofV(String message) {
-        return of(message, NTextFormatType.VFORMAT);
+        return of(message, NMsgType.VFORMAT,null);
     }
 
     public static NMsgTemplate ofM(String message) {
-        return of(message, NTextFormatType.MFORMAT);
+        return of(message, NMsgType.MFORMAT,null);
+    }
+    public static NMsgTemplate ofCustom(String messageTypeId,String message) {
+        return of(message, NMsgType.CUSTOM,messageTypeId);
     }
 
-    public static NMsgTemplate of(String message, NTextFormatType format) {
-        return new NMsgTemplate(message, format);
+    public static NMsgTemplate of(String message, NMsgType format, String customMessageIt) {
+        return new NMsgTemplate(message, format,customMessageIt);
     }
 
-    public NMsgTemplate(String message, NTextFormatType format) {
+    public NMsgTemplate(String message, NMsgType format, String customMessageId) {
         NAssert.requireNamedNonNull(message, "message");
         NAssert.requireNamedNonNull(format, "format");
         switch (format) {
             case CFORMAT:
             case JFORMAT:
             case VFORMAT:
-            case MFORMAT: {
+            case MFORMAT:
+            case SFORMAT: {
+                this.customMessageId = null;
+                break;
+            }
+            case CUSTOM: {
+                NAssert.requireNamedNonBlank(customMessageId, "customMessageIt");
+                this.customMessageId = NStringUtils.strip(customMessageId);
                 break;
             }
             default: {
-                throw new IllegalArgumentException("invalid format. only Cformat, JFormat, VFormat and MFormat are allowed");
+                throw new IllegalArgumentException("invalid format. only "+ACCEPTED_FORMATS+" are allowed");
             }
         }
         this.message = message;
         this.format = format;
     }
 
+    public String customMessageId() {
+        return customMessageId;
+    }
+
     public String message() {
         return message;
     }
 
-    public String[] paramNames() {
+    public List<String> paramNames() {
         try {
             Set<String> paramSet = new HashSet<>();
             List<String> params = new ArrayList<>();
@@ -165,31 +191,41 @@ public class NMsgTemplate {
                     break;
                 }
                 case MFORMAT: {
-                    NStringUtils.parseMoustachePlaceHolder(message).forEach(s -> {
-                        if (s.ttype == NToken.TT_MOUSTACHE_START) {
-                            String ns = s.sval;
-                            if (paramSet.add(ns)) {
-                                params.add(ns);
-                            }
-                        }
-                    });
-                    break;
+                    return NUtilsRPI.of().extractMessageParams(message, NMsgType.MFORMAT, null);
+                }
+                case SFORMAT: {
+                    return NUtilsRPI.of().extractMessageParams(message, NMsgType.SFORMAT, null);
+                }
+                case CUSTOM:{
+                    return NUtilsRPI.of().extractMessageParams(message, NMsgType.CUSTOM, customMessageId());
                 }
                 default: {
-                    throw new IllegalArgumentException("invalid format. only Cformat, JFormat, VFormat and MFormat are allowed");
+                    throw new IllegalArgumentException("invalid format. only "+ACCEPTED_FORMATS+" are allowed");
                 }
             }
-            return params.toArray(new String[0]);
+            return params;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public NTextFormatType format() {
+    public NMsgType format() {
         return format;
     }
 
     public NMsg build(NMsgParam... params) {
+        Set<String> required = new HashSet<>(paramNames());
+        Set<String> provided = new HashSet<>();
+        if (params != null) {
+            for (NMsgParam p : params) {
+                provided.add(p.name());
+            }
+        }
+        if (!provided.containsAll(required)) {
+            Set<String> missing = new HashSet<>(required);
+            missing.removeAll(provided);
+            throw new NIllegalArgumentException(NMsg.ofC("missing template parameters %s", missing));
+        }
         switch (format) {
             case CFORMAT: {
                 return NMsg.ofC(message, params);
@@ -203,8 +239,14 @@ public class NMsgTemplate {
             case JFORMAT: {
                 return NMsg.ofJ(message, params);
             }
+            case SFORMAT: {
+                return NMsg.ofS(message, params);
+            }
+            case CUSTOM: {
+                return NMsg.ofCustom(customMessageId,message, params);
+            }
             default: {
-                throw new IllegalArgumentException("invalid format. only Cformat, JFormat, VFormat, and MFormat are allowed");
+                throw new IllegalArgumentException("invalid format. only "+ACCEPTED_FORMATS+" are allowed");
             }
         }
     }

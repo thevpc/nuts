@@ -37,7 +37,7 @@ import java.util.Locale;
  * @author thevpc
  * @app.category Format
  */
-public enum NTextFormatType implements NEnum {
+public enum NMsgType implements NEnum {
     /**
      * @see java.util.Formatter
      * @see String#format(Locale, String, Object...)
@@ -48,6 +48,10 @@ public enum NTextFormatType implements NEnum {
      */
     JFORMAT,
     /**
+     * support sql like formats, including both ? and :param format
+     */
+    SFORMAT,
+    /**
      * with var placeholders
      */
     VFORMAT,
@@ -55,6 +59,10 @@ public enum NTextFormatType implements NEnum {
      * with moustache var placeholders
      */
     MFORMAT,
+    /**
+     * with custom format
+     */
+    CUSTOM,
     /**
      * plain text
      */
@@ -77,12 +85,12 @@ public enum NTextFormatType implements NEnum {
     ;
     private final String id;
 
-    NTextFormatType() {
+    NMsgType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
-    public static NOptional<NTextFormatType> parse(String value) {
-        return NEnumUtils.parseEnum(value, NTextFormatType.class);
+    public static NOptional<NMsgType> parse(String value) {
+        return NEnumUtils.parseEnum(value, NMsgType.class);
     }
 
 
