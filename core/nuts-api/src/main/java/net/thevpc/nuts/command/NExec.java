@@ -115,7 +115,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return a new {@code NExec} instance with the specified command
      */
     static NExec of(String... cmd) {
-        return of().addCommand(cmd);
+        return of().command(cmd);
     }
 
     /**
@@ -127,11 +127,11 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return a new {@code NExec} instance configured for system execution
      */
     static NExec ofSystem(String... cmd) {
-        return of().addCommand(cmd).system();
+        return of().command(cmd).system();
     }
 
     static NExec ofOpenFile(NPath path) {
-        return of().addCommand(path).open();
+        return of().command(path).open();
     }
 
     /**
@@ -186,25 +186,6 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
     List<String> command();
 
     /**
-     * reset command arguments to the given array
-     *
-     * @param command command
-     * @return {@code this} instance
-     * @since 0.7.1
-     */
-    @NSetter
-    NExec command(String... command);
-
-    /**
-     * reset command arguments to the given collection
-     *
-     * @param command command
-     * @return {@code this} instance
-     */
-    @NSetter
-    NExec command(Collection<String> command);
-
-    /**
      * set command artifact definition. The definition is expected to include
      * content, dependencies, effective descriptor and install information.
      *
@@ -225,34 +206,34 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
     NDefinition commandDefinition();
 
     /**
-     * Appends one or more arguments to the command to be executed.
+     * Appends one or more arguments to the command to be executed  if not null.
      * These arguments are added to the existing command line and will be passed
      * to the underlying process or embedded executor as-is.
      *
      * @param command one or more command arguments to append
      * @return this instance for fluent API usage
      */
-    NExec addCommand(String... command);
+    NExec command(String... command);
 
 
     /**
-     * Appends a path to the command to be executed.
+     * Appends a path to the command to be executed  if not null
      * The path is converted to a string representation and added to the command line.
      * This is useful for passing executable files or file arguments.
      *
      * @param path the path to append to the command
      * @return this instance for fluent API usage
      */
-    NExec addCommand(NPath path);
+    NExec command(NPath path);
 
 
     /**
-     * append command arguments
+     * append command arguments if not null
      *
      * @param command command
      * @return {@code this} instance
      */
-    NExec addCommand(Collection<String> command);
+    NExec command(Collection<String> command);
 
     /**
      * clear command
@@ -267,7 +248,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executorOption executor options
      * @return {@code this} instance
      */
-    NExec addExecutorOption(String executorOption);
+    NExec executorOption(String executorOption);
 
     /**
      * append executor options
@@ -275,7 +256,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executorOptions executor options
      * @return {@code this} instance
      */
-    NExec addExecutorOptions(String... executorOptions);
+    NExec executorOptions(String... executorOptions);
 
     /**
      * Sets the executor options for this command, replacing any existing options.
@@ -285,18 +266,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executorOptions a collection of executor-specific options
      * @return this instance for fluent API usage
      */
-    @NSetter
     NExec executorOptions(Collection<String> executorOptions);
 
-    /**
-     * Appends executor options to the current set of options.
-     * These options are passed to the underlying process executor (or embedded runtime)
-     * in addition to any existing options.
-     *
-     * @param executorOptions a collection of executor-specific options to add
-     * @return this instance for fluent API usage
-     */
-    NExec addExecutorOptions(Collection<String> executorOptions);
 
     /**
      * clear executor options
@@ -334,7 +305,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param workspaceOptions the workspace option to add
      * @return this instance for fluent API usage
      */
-    NExec addWorkspaceOptions(NWorkspaceOptions workspaceOptions);
+    NExec workspaceOptions(NWorkspaceOptions workspaceOptions);
 
     /**
      * Adds a workspace option to this command using a string representation.
@@ -344,7 +315,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param workspaceOptions the workspace option to add as a string
      * @return this instance for fluent API usage
      */
-    NExec addWorkspaceOptions(String workspaceOptions);
+    NExec workspaceOptions(String workspaceOptions);
 
     /**
      * return env properties
@@ -355,21 +326,12 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
     Map<String, String> env();
 
     /**
-     * clear existing env and set new env
-     *
-     * @param env new env
-     * @return {@code this} instance
-     */
-    @NSetter
-    NExec env(Map<String, String> env);
-
-    /**
      * merge env properties
      *
      * @param env env properties
      * @return {@code this} instance
      */
-    NExec addEnv(Map<String, String> env);
+    NExec env(Map<String, String> env);
 
     /**
      * set or unset env property. the property is unset if the value is null.
