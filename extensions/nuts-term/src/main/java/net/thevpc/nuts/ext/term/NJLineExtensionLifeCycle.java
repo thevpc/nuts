@@ -32,4 +32,5 @@ public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
     public void onDestroyExtension(NWorkspaceExtension extension) {
         NIO.of().systemTerminal(null);
     }
+
 }
