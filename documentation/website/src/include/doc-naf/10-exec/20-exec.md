@@ -17,24 +17,22 @@ NAF provides a high-level API to execute external commands, whether locally or r
 
 ```java
 // Simple embedded command execution
-String result = NExec.of("info")
-                .getGrabbedAllString();
+String result = NExec.of("info").grabbedAll();
 NOut.println(result);
 ```
 
 - `.of("info")` creates the command to execute.
-- `.getGrabbedAllString()` captures the full output (stdout + stderr) as a string.
-- No exceptions are thrown automatically; the caller can inspect result or `getResultCode()` to decide if the execution succeeded.
+- `.grabbedAll()` captures the full output (stdout + stderr) as a string.
+- No exceptions are thrown automatically; the caller can inspect result or `resultCode()` to decide if the execution succeeded.
 
 
 ## Example: Executing a shell command with NSH
 
 ```java
 String result = NExec.of()
-        .addCommand(NConstants.Ids.NSH, "-c", "ls")
-        .grabAll()
-        .failFast()
-        .grabbedOut();
+        .ommand(NConstants.Ids.NSH, "-c", "ls")
+        .failFast(true)
+        .grabbedOut(); // implicitly calls .grabOut().run
 
 NOut.println("Result:");
 NOut.println(result);
@@ -50,9 +48,9 @@ Nuts can handle commands with special identifiers or remote resources:
 
 ```java
 String result = NExec.of()
-        .addExecutorOptions("--bot")
-        .addCommand("com.mycompany:my-remote-artifact")
-        .addCommand("list", "-i")
+        .executorOptions("--bot")
+        .command("com.mycompany:my-remote-artifact")
+        .command("list", "-i")
         .grabbedAll();
 
 NOut.println(result);
@@ -69,11 +67,11 @@ NExec is not limited to local commands: you can execute processes on remote syst
 ```java
 NExec u = NExec.of()
         .at("ssh://me@myserver")              // Execute on remote server
-        .setIn(NExecInput.ofNull())           // No stdin input
-        .addCommand("ps", "-eo",             // Command + arguments
+        .in(NExecInput.ofNull())           // No stdin input
+        .command("ps", "-eo",             // Command + arguments
             "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
         .grabErr()                            // Capture stderr
-        .setFailFast(true)                    // Optional: fail immediately on error
+        .failFast(true)                    // Optional: fail immediately on error
         .grabOut();                           // Capture stdout
 
 // Access results
@@ -89,7 +87,7 @@ Key points:
 
 - at(...) allows specifying a remote target (SSH, etc.).
 - grabOut() / grabErr() capture output streams automatically.
-- setFailFast(true) ensures that any failure will stop execution immediately.
+- failFast(true) ensures that any failure will stop execution immediately.
 - No need for Runtime.exec() boilerplate or manual stream handling.
 
 This makes NExec a powerful, concise, and cross-platform alternative to the traditional Java Process API.

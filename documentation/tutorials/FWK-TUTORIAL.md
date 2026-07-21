@@ -1866,8 +1866,7 @@ In standard Java, executing external commands requires Runtime.exec() or Process
 ```java
 // Execute a local command and capture stdout
 String hostname = NExec.of()
-    .addCommand("hostname")
-    .grabOut()          // Automatically consumes stdout on a background thread
+    .command("hostname")
     .failFast()         // Throws an exception immediately if the exit code is non-zero
     .grabbedOut()
     .trim();
@@ -1882,9 +1881,8 @@ Because NExec is deeply integrated with NAF's protocol abstraction, you can exec
 // Execute a command on a remote server via SSH
 String remoteUptime = NExec.of()
     .at("ssh://admin@192.168.1.100") // Transparently handles SSH connection
-    .addCommand("uptime")
-    .grabOut()
-    .getGrabbedOutString();
+    .command("uptime")
+    .grabbedOut();
 
 NOut.println(NMsg.ofC("Remote server uptime: ##%s##", remoteUptime));
 ```
@@ -1969,9 +1967,8 @@ public class NutsAdminCLI {
         String hostname = "Unknown";
         try {
             hostname = NExec.of()
-                .addCommand("hostname")
-                .grabOut()
-                .getGrabbedOutString()
+                .command("hostname")
+                .grabbedOut()
                 .trim();
         } catch (Exception e) {
             NTrace.println(NMsg.ofC("Could not fetch hostname: %s", e.getMessage()));
@@ -2507,11 +2504,10 @@ The most mind-blowing feature of NAF is that you don't even need to manually dow
 // Nuts will download 'com.mycompany:my-remote-tool#1.0.0' and all its dependencies, 
 // build the classpath, find the main class, and execute it.
 String result = NExec.of()
-    .addCommand("com.mycompany:my-remote-tool#1.0.0")
-    .addCommand("--help")
-    .grabOut()
+    .command("com.mycompany:my-remote-tool#1.0.0")
+    .command("--help")
     .failFast()
-    .getGrabbedOutString();
+    .grabbedOut();
 
 NOut.println(result);
 ```
@@ -2588,21 +2584,21 @@ public class NutsAdminCLI {
 
         // 3. Build the NExec command dynamically
         NExec exec = NExec.of()
-            .addCommand(pluginCoordinate) // Nuts recognizes this as a Maven GAV!
-            .grabOut()
-            .grabErr()
-            .setFailFast(false); // We want to capture the plugin's output even if it exits with non-zero
+            .command(pluginCoordinate) // Nuts recognizes this as a Maven GAV!
+            .grabOut() // mark as grabbed
+            .grabErr() // mark as grabbed
+            .failFast(false); // We want to capture the plugin's output even if it exits with non-zero
 
         // 4. Pass all remaining CLI arguments to the plugin
         for (int i = 2; i < commands.size(); i++) {
-            exec.addCommand(commands.get(i));
+            exec.command(commands.get(i));
         }
 
         // 5. Execute and capture output
         try {
             NTrace.println("Starting remote execution...");
-            String stdout = exec.getGrabbedOutString();
-            String stderr = exec.getGrabbedErrString();
+            String stdout = exec.grabbedOut();
+            String stderr = exec.grabbedErr();
             int exitCode = exec.getResultCode();
 
             if (!stdout.isEmpty()) {
@@ -2831,10 +2827,9 @@ public class DiagnosticsService {
         // Use the injected, session-aware NExec to run a remote command via SSH
         // The session automatically handles trace modes, output formats, and timeouts.
         return exec.at(sshTarget)
-            .addCommand("systemctl", "status", "nginx")
-            .grabOut()
+            .command("systemctl", "status", "nginx")
             .failFast(false)
-            .getGrabbedOutString();
+            .grabbedOut(); // implicitly includes grabOut().run()
     }
     
     public String getConfigPath() {

@@ -214,10 +214,8 @@ image::images/nuts-components.png[scaledwidth=80%]
 
 ```java
     NSession session=Nuts.openWorkspace("-Z","-S");
-    int code=NExecCmd.of().addCommand("ls", "-l").getResult();
-    String out=NExecCmd.of().addCommand("nsh", "ls","--table")
-        .grabOutputString()
-        .getOutputString();
+    int code=NExec.of().command("ls", "-l").getResult();
+    String out=NExec.of().command("nsh", "ls","--table").grabbedOut();
 ```
 
 <<<

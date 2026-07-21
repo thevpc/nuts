@@ -14,19 +14,19 @@ contentType: java
 // Simple SHA256 digest of a file
 String hash = NDigest.of()
         .sha256()
-        .addSource(path)
+        .source(path)
         .computeString();
 
 // Digest multiple sources
 String combined = NDigest.of()
         .sha1()
-        .addSource(file1)
-        .addSource(file2)
-        .addSource(url)
+        .source(file1)
+        .source(file2)
+        .source(url)
         .computeString();
 
 // Digest and get raw bytes
 byte[] bytes = NDigest.of()
         .md5()
-        .addSource(stream)
+        .source(stream)
         .computeBytes();
