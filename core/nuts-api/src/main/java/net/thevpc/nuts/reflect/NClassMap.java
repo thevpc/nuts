@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.*;
 
@@ -36,19 +36,19 @@ import java.util.*;
  */
 public interface NClassMap<K,V> {
     static <K,V> NClassMap<K,V> of(Class<V> clazz) {
-        return NCollectionsRPI.of().classMap(clazz);
+        return NUtilsRPI.of().classMap(clazz);
     }
 
     static <K,V> NClassMap<K,V> of(Class<K> keyType, Class<V> valueType) {
-        return NCollectionsRPI.of().classMap(keyType, valueType);
+        return NUtilsRPI.of().classMap(keyType, valueType);
     }
 
     static <K,V> NClassMap<K,V> of(Class<K> keyType, Class<V> valueType, int initialCapacity) {
-        return NCollectionsRPI.of().classMap(keyType, valueType, initialCapacity);
+        return NUtilsRPI.of().classMap(keyType, valueType, initialCapacity);
     }
 
     static <K,V> NClassMap<K,V> ofClass() {
-        return (NClassMap) NCollectionsRPI.of().classClassMap();
+        return (NClassMap) NUtilsRPI.of().classClassMap();
     }
 
     Set<Class<? extends K>> keySet();

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 public interface NEvictingCharQueue {
     static NEvictingCharQueue of(int size) {
-        return NCollectionsRPI.of().createEvictingCharQueue(size);
+        return NUtilsRPI.of().createEvictingCharQueue(size);
     }
 
     void clear();

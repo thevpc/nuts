@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.Collection;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface NIndexedMap<K, V> {
     static <K, V> NIndexedMap<K, V> of(){
-        return NCollectionsRPI.of().createIndexedMap();
+        return NUtilsRPI.of().createIndexedMap();
     }
 
     V getValueAt(int i);

@@ -27,6 +27,7 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgBuilder;

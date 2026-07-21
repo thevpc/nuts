@@ -1,5 +1,6 @@
 package net.thevpc.nuts.log;
 
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgSupplier;

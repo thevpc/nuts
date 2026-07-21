@@ -29,6 +29,7 @@ package net.thevpc.nuts.log;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.spi.NLogSPI;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

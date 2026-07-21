@@ -1,13 +1,13 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.Map;
 import java.util.function.Function;
 
 public interface NNormalizedStringMap<T> extends Map<String, T> {
     static <T> NNormalizedStringMap<T> ofCaseInsensitive() {
-        return NCollectionsRPI.of().createInsensitiveMap();
+        return NUtilsRPI.of().createInsensitiveMap();
     }
 
     static <T> NNormalizedStringMap<T> ofCaseInsensitive(Map<String, T> other) {
@@ -19,7 +19,7 @@ public interface NNormalizedStringMap<T> extends Map<String, T> {
     }
 
     static <T> NNormalizedStringMap<T> ofFormatInsensitive() {
-        return NCollectionsRPI.of().createFormatInsensitiveMap();
+        return NUtilsRPI.of().createFormatInsensitiveMap();
     }
 
     static <T> NNormalizedStringMap<T> ofFormatInsensitive(Map<String, T> other) {
@@ -31,7 +31,7 @@ public interface NNormalizedStringMap<T> extends Map<String, T> {
     }
 
     static <T> NNormalizedStringMap<T> of(Function<String,String> normalizer) {
-        return NCollectionsRPI.of().createNormalizedMap(normalizer);
+        return NUtilsRPI.of().createNormalizedMap(normalizer);
     }
 
     static <T> NNormalizedStringMap<T> of(Function<String,String> normalizer,Map<String, T> other) {

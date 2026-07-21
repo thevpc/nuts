@@ -724,11 +724,9 @@ public class NStreamTokenizer {
                     if (c == '.' && seendot == 0) {
                         markChar(1);
                         int n = readChar();
-                        if(n<0){
-                            //ok
-                        }else if(n=='.'){
-                            resetChar();
-                            // return
+                        resetChar();
+                        if (n == '.') {
+                            // double dot ("..") — stop the number here, leave this '.' as peekc for the next token
                             break;
                         }
                         seendot = 1;

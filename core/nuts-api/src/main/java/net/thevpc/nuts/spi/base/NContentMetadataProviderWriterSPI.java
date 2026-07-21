@@ -1,5 +1,7 @@
-package net.thevpc.nuts.io;
+package net.thevpc.nuts.spi.base;
 
+import net.thevpc.nuts.io.NContentMetadataProvider;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;

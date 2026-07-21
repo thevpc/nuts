@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +11,7 @@ public interface NDecisionFilter<T> {
     }
 
     static <T> NDecisionFilter<T> of(Class<T> type, NDecisionConflict decisionConflict, NDecision defaultDecision) {
-        return NCollectionsRPI.of().createDecisionFilter(type, decisionConflict, defaultDecision);
+        return NUtilsRPI.of().createDecisionFilter(type, decisionConflict, defaultDecision);
     }
 
     boolean accept(T t);

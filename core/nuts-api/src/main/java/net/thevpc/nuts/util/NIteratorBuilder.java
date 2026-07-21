@@ -8,7 +8,7 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,47 +23,47 @@ import java.util.function.Supplier;
 public interface NIteratorBuilder<T> {
 
     static <T> NIteratorBuilder<T> ofCoalesce(List<NIterator<? extends T>> t) {
-        return NCollectionsRPI.of().iteratorBuilderOfCoalesce(t);
+        return NUtilsRPI.of().iteratorBuilderOfCoalesce(t);
     }
 
     static <T> NIteratorBuilder<T> ofConcat(List<NIterator<? extends T>> t) {
-        return NCollectionsRPI.of().iteratorBuilderOfConcat(t);
+        return NUtilsRPI.of().iteratorBuilderOfConcat(t);
     }
 
     static <T> NIteratorBuilder<T> of(Iterator<T> t) {
-        return NCollectionsRPI.of().iteratorBuilder(t);
+        return NUtilsRPI.of().iteratorBuilder(t);
     }
 
     static <T> NIteratorBuilder<T> ofRunnable(NRunnable t) {
-        return NCollectionsRPI.of().iteratorBuilderOfRunnable(t);
+        return NUtilsRPI.of().iteratorBuilderOfRunnable(t);
     }
 
     static <T> NIteratorBuilder<T> ofRunnable(Runnable t, String n) {
-        return NCollectionsRPI.of().iteratorBuilderOfRunnable(t, n);
+        return NUtilsRPI.of().iteratorBuilderOfRunnable(t, n);
     }
 
     static <T> NIteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, Supplier<NElement> name) {
-        return NCollectionsRPI.of().iteratorBuilderOfSupplier(from, name);
+        return NUtilsRPI.of().iteratorBuilderOfSupplier(from, name);
     }
 
     static <T> NIteratorBuilder<T> ofArrayValues(T[] t, NElement n) {
-        return NCollectionsRPI.of().iteratorBuilderOfArrayValues(t, n);
+        return NUtilsRPI.of().iteratorBuilderOfArrayValues(t, n);
     }
 
     static <T> NIteratorBuilder<T> ofArrayValues(T[] t, String n) {
-        return NCollectionsRPI.of().iteratorBuilderOfArrayValues(t, n);
+        return NUtilsRPI.of().iteratorBuilderOfArrayValues(t, n);
     }
 
     static <T> NIteratorBuilder<T> ofArrayValues(T[] t, Supplier<NElement> n) {
-        return NCollectionsRPI.of().iteratorBuilderOfArrayValues(t, n);
+        return NUtilsRPI.of().iteratorBuilderOfArrayValues(t, n);
     }
 
     static <T> NIteratorBuilder<T> ofEmpty() {
-        return NCollectionsRPI.of().iteratorEmptyBuilder();
+        return NUtilsRPI.of().iteratorEmptyBuilder();
     }
 
     static <T> NIteratorBuilder<T> ofFlatMap(NIterator<? extends Collection<T>> from) {
-        return NCollectionsRPI.of().iteratorBuilderOfFlatMap(from);
+        return NUtilsRPI.of().iteratorBuilderOfFlatMap(from);
     }
 
     NIteratorBuilder<T> filter(Predicate<? super T> t, Supplier<NElement> e);

@@ -1,12 +1,12 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.*;
 
 public interface NMultiKeyMap<K, V> {
     static <K, V> NMultiKeyMap<K, V> of() {
-        return NCollectionsRPI.of().multiKeyMap();
+        return NUtilsRPI.of().multiKeyMap();
     }
 
     void clear();

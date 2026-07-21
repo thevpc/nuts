@@ -1,4 +1,4 @@
-package net.thevpc.nuts.platform;
+package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.net.NConnectionString;
 

@@ -24,11 +24,9 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
-import java.io.PrintStream;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * @author vpc from
@@ -39,11 +37,11 @@ import java.util.function.Function;
 public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V> , AutoCloseable{
 
     public static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int m, boolean allowDuplicates) {
-        return NCollectionsRPI.of().btreePlus(m,allowDuplicates);
+        return NUtilsRPI.of().btreePlus(m,allowDuplicates);
     }
 
     public static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int m) {
-        return NCollectionsRPI.of().btreePlus(m);
+        return NUtilsRPI.of().btreePlus(m);
     }
 
 

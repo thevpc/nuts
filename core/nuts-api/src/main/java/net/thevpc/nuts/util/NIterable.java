@@ -27,7 +27,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.internal.util.NIterableWithDescription;
 
 import java.util.function.Supplier;
@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 public interface NIterable<T> extends Iterable<T>, NRedescribable<NIterable<T>> {
     static <T> NIterable<T> of(Iterable<T> o){
-        return NCollectionsRPI.of().toIterable(o);
+        return NUtilsRPI.of().toIterable(o);
     }
 
     default NIterable<T> withDescription(Supplier<NElement> description) {

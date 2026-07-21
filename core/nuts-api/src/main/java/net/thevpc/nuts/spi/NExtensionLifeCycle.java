@@ -18,4 +18,8 @@ public interface NExtensionLifeCycle extends NComponent {
     default void onDestroyExtension(NWorkspaceExtension extension){
 
     }
+
+    default void onDiscoverType(NWorkspaceExtension workspaceExtension, Class<?> discoveredType){
+
+    }
 }

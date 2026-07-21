@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.util.NUplet;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public interface NClassPairMultiMap<A, B, V> {
     }
 
     static <A, B, V> NClassPairMultiMap<A, B, V> of(Class<A> key1Type, Class<B> key2Type, Class<V> valueType, boolean symmetric) {
-        return NCollectionsRPI.of().classPairMultiMap(key1Type, key2Type, valueType, symmetric);
+        return NUtilsRPI.of().classPairMultiMap(key1Type, key2Type, valueType, symmetric);
     }
 
     Set<NUplet<Class>> keySet();

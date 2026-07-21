@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.util.NDecision;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ public interface NClassDecisionFilter<T> {
     }
 
     static <T> NClassDecisionFilter<T> of(Class<T> type, NDecision defaultDecision) {
-        return NCollectionsRPI.of().createClassDecisionFilter(type, defaultDecision);
+        return NUtilsRPI.of().createClassDecisionFilter(type, defaultDecision);
     }
 
     NDecision defaultDecision();

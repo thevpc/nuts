@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.List;
 import java.util.Set;
@@ -11,7 +11,7 @@ public interface NClassMultiMap<K, V> {
     }
 
     static <K, V> NClassMultiMap<K, V> of(Class<K> key1Type, Class<V> valueType) {
-        return NCollectionsRPI.of().createClassMultiMap(key1Type, valueType);
+        return NUtilsRPI.of().createClassMultiMap(key1Type, valueType);
     }
 
     void add(Class<? extends K> classKey, V value);

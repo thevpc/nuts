@@ -1,17 +1,17 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.io.NPath;
 
 public interface NChunkedStoreBuilder<T> {
 
     static NChunkedStoreBuilder<String> ofLines(NPath folder) {
-        NCollectionsRPI r = NCollectionsRPI.of();
+        NUtilsRPI r = NUtilsRPI.of();
         return r.chunkedStoreBuilder(folder, r.lineChunkedStoreFactory());
     }
 
     static <T> NChunkedStoreBuilder<T> of(NPath folder, NChunkedStoreFactory<T> storeFactory) {
-        return NCollectionsRPI.of().chunkedStoreBuilder(folder, storeFactory);
+        return NUtilsRPI.of().chunkedStoreBuilder(folder, storeFactory);
     }
 
     int metadataBufferSize();

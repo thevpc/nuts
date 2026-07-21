@@ -27,7 +27,7 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NRedescribable;
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.*;
 import java.util.function.*;
@@ -45,7 +45,7 @@ import java.util.stream.*;
 public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, AutoCloseable {
 
     static <T> NStream<T> ofArray(T... str) {
-        return NCollectionsRPI.of().arrayToStream(str);
+        return NUtilsRPI.of().arrayToStream(str);
     }
 
     static <T> NStream<T> ofIntArray(int... items) {
@@ -82,27 +82,27 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     static <T> NStream<T> ofOptional(NOptional<T> str) {
-        return NCollectionsRPI.of().optionalToStream(str);
+        return NUtilsRPI.of().optionalToStream(str);
     }
 
     static <T> NStream<T> ofOptional(Optional<T> str) {
-        return NCollectionsRPI.of().optionalToStream(str);
+        return NUtilsRPI.of().optionalToStream(str);
     }
 
     static <T> NStream<T> ofIterable(Iterable<T> str) {
-        return NCollectionsRPI.of().iterableToStream(str);
+        return NUtilsRPI.of().iterableToStream(str);
     }
 
     static <T> NStream<T> ofIterator(Iterator<T> str) {
-        return NCollectionsRPI.of().iteratorToStream(str);
+        return NUtilsRPI.of().iteratorToStream(str);
     }
 
     static <T> NStream<T> ofStream(Stream<T> str) {
-        return NCollectionsRPI.of().toStream(str);
+        return NUtilsRPI.of().toStream(str);
     }
 
     static <T> NStream<T> ofEmpty() {
-        return NCollectionsRPI.of().emptyStream();
+        return NUtilsRPI.of().emptyStream();
     }
 
     static <T> NStream<T> ofSingleton(T element) {

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.List;
 import java.util.Map;
@@ -9,11 +9,11 @@ import java.util.Set;
 public interface NListMultiValueMap<K, V> {
 
     static <K, V> NListMultiValueMap<K, V> of(){
-        return NCollectionsRPI.of().createListMultiValueMap();
+        return NUtilsRPI.of().createListMultiValueMap();
     }
 
     static <K, V> NListMultiValueMap<K, V> of(Map<K, List<V>> map){
-        return NCollectionsRPI.of().createListMultiValueMap(map);
+        return NUtilsRPI.of().createListMultiValueMap(map);
     }
 
     V getFirst(K a);

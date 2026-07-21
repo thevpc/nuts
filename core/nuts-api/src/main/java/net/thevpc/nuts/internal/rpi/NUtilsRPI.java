@@ -32,6 +32,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.text.NMsgType;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -43,9 +44,9 @@ import java.util.stream.Stream;
 /**
  * Collections related Internal Programming Interface
  */
-public interface NCollectionsRPI extends NComponent {
-    static NCollectionsRPI of() {
-        return NExtensions.of(NCollectionsRPI.class);
+public interface NUtilsRPI extends NComponent {
+    static NUtilsRPI of() {
+        return NExtensions.of(NUtilsRPI.class);
     }
 
     <T> NStream<T> arrayToStream(T[] str);
@@ -196,4 +197,7 @@ public interface NCollectionsRPI extends NComponent {
     <K, V> NSetMultiValueMap<K, V> createSetMultiValueMap();
 
     <K, V> NSetMultiValueMap<K, V> createSetMultiValueMap(Map<K, Set<V>> map);
+
+
+    List<String> extractMessageParams(String msg, NMsgType type, String customMessageTypeId);
 }
