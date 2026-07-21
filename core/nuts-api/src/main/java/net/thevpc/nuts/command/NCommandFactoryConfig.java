@@ -38,7 +38,7 @@ import java.util.Objects;
  * Command Alias Factory Definition Config
  *
  * @author thevpc
- * @app.category SPI Base
+ * @app.category Config
  * @since 0.5.4
  */
 public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
