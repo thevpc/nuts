@@ -10,5 +10,6 @@ public interface NInterruptible<T> {
     }
 
     void interrupt() throws NInterruptException;
+
     T base();
 }
