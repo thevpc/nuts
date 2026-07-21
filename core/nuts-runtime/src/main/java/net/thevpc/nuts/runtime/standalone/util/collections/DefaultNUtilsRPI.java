@@ -2,25 +2,39 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgCustomFormatter;
+import net.thevpc.nuts.text.NMsgType;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-@NComponentScope(NScopeType.SESSION)
+@NComponentScope(NScopeType.WORKSPACE)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
-public class DefaultNCollectionsRPI implements NCollectionsRPI {
+public class DefaultNUtilsRPI implements NUtilsRPI {
+    private static Set<NMsgType> ACCEPTED_FORMATS = new HashSet<>(Arrays.asList(
+            NMsgType.CFORMAT,
+            NMsgType.JFORMAT,
+            NMsgType.VFORMAT,
+            NMsgType.MFORMAT,
+            NMsgType.SFORMAT
+    ));
 
-    public DefaultNCollectionsRPI() {
+    public DefaultNUtilsRPI() {
     }
 
     @Override
@@ -443,5 +457,199 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
     @Override
     public <K, V> NSetMultiValueMap<K, V> createSetMultiValueMap(Map<K, Set<V>> map) {
         return new NSetMultiValueMapImpl<>(map);
+    }
+
+    @Override
+    public List<String> extractMessageParams(String message, NMsgType format, String customMessageTypeId) {
+        if (format == null || message == null) return Collections.emptyList();
+        try {
+            Set<String> paramSet = new HashSet<>();
+            List<String> params = new ArrayList<>();
+            switch (format) {
+                case CFORMAT: {
+                    StringReader r = new StringReader(message);
+                    while (true) {
+                        int i = r.read();
+                        if (i < 0) {
+                            break;
+                        }
+                        char c = (char) i;
+                        if (c == '%') {
+                            i = r.read();
+                            if (i >= 0) {
+                                char c2 = (char) i;
+                                if (c2 == 'n') {
+                                    //ignore
+                                } else {
+                                    params.add("");
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+                case JFORMAT: {
+                    StringReader r = new StringReader(message);
+                    int maxElems = 0;
+                    int currentIndex = -1;
+                    while (true) {
+                        int i = r.read();
+                        if (i < 0) {
+                            break;
+                        }
+                        char c = (char) i;
+                        if (c == '{') {
+                            StringBuilder n = new StringBuilder();
+                            while (true) {
+                                i = r.read();
+                                if (i < 0) {
+                                    break;
+                                }
+                                c = (char) i;
+                                if (c == '\\') {
+                                    i = r.read();
+                                    if (i < 0) {
+                                        break;
+                                    } else {
+                                        n.append(c = (char) i);
+                                    }
+                                } else if (c == '}') {
+                                    break;
+                                } else {
+                                    n.append(c);
+                                }
+                            }
+                            currentIndex++;
+                            String ns = n.toString();
+                            int sep = ns.indexOf(':');
+                            String nsIntString = "";
+                            Integer nsInt = null;
+                            if (sep < 0) {
+                                nsIntString = NStringUtils.strip(ns);
+                            } else {
+                                nsIntString = NStringUtils.strip(ns.substring(0, sep));
+                            }
+                            if (nsIntString.isEmpty()) {
+                                nsIntString = String.valueOf(currentIndex);
+                            }
+                            NLiteral lit = NLiteral.of(nsIntString);
+                            if (lit.asInt().isPresent()) {
+                                nsInt = lit.asInt().get();
+                            }
+                            if (nsInt != null) {
+                                while (maxElems <= nsInt) {
+                                    if (paramSet.add(String.valueOf(maxElems))) {
+                                        params.add(String.valueOf(maxElems));
+                                    }
+                                    maxElems++;
+                                }
+                            } else {
+                                if (paramSet.add(nsIntString)) {
+                                    params.add(nsIntString);
+                                }
+                            }
+                        } else if (c == '\\') {
+                            r.read();
+                        } else {
+                            //ignore
+                        }
+                    }
+                    break;
+                }
+                case VFORMAT: {
+                    NStringUtils.parseDollarPlaceHolder(message).forEach(s -> {
+                        if (s.ttype == NToken.TT_DOLLAR || s.ttype == NToken.TT_DOLLAR_BRACE) {
+                            String ns = s.sval;
+                            if (paramSet.add(ns)) {
+                                params.add(ns);
+                            }
+                        }
+                    });
+                    break;
+                }
+                case MFORMAT: {
+                    NStringUtils.parseMoustachePlaceHolder(message).forEach(s -> {
+                        if (s.ttype == NToken.TT_MOUSTACHE_START) {
+                            String ns = s.sval;
+                            if (paramSet.add(ns)) {
+                                params.add(ns);
+                            }
+                        }
+                    });
+                    break;
+                }
+                case SFORMAT: {
+                    String sMsg = message;
+                    int posIndex = 0;
+                    char quote = 0; // 0 = not in string literal
+                    int n = sMsg.length();
+                    for (int i = 0; i < n; i++) {
+                        char c = sMsg.charAt(i);
+                        if (quote != 0) {
+                            if (c == quote) {
+                                // handle doubled-quote escape: 'it''s'
+                                if (i + 1 < n && sMsg.charAt(i + 1) == quote) {
+                                } else {
+                                    quote = 0;
+                                }
+                            }
+                            continue;
+                        }
+
+                        if (c == '\'' || c == '"') {
+                            quote = c;
+                            continue;
+                        }
+
+                        if (c == '\\' && i + 1 < n && (sMsg.charAt(i + 1) == '?' || sMsg.charAt(i + 1) == ':')) {
+                            continue;
+                        }
+
+                        if (c == ':' && i + 1 < n && sMsg.charAt(i + 1) == ':') {
+                            i++;
+                            continue;
+                        }
+
+                        if (c == '?') {
+                            // guard against jsonb ?, ?|, ?& if you care to special-case; otherwise treat as positional
+                            params.add(String.valueOf(posIndex));
+                            posIndex++;
+                            continue;
+                        }
+
+                        if (c == ':' && i + 1 < n && (Character.isLetter(sMsg.charAt(i + 1)) || sMsg.charAt(i + 1) == '_')) {
+                            int j = i + 1;
+                            while (j < n && (Character.isLetterOrDigit(sMsg.charAt(j)) || sMsg.charAt(j) == '_')) {
+                                j++;
+                            }
+                            String name = sMsg.substring(i + 1, j);
+                            params.add(name);
+                            i = j - 1;
+                            continue;
+                        }
+                    }
+                    break;
+                }
+                case CUSTOM: {
+                    if(customMessageTypeId!=null){
+                        NMsgCustomFormatter ff = NWorkspaceExt.of().getModel().textModel.customFormatters.get(customMessageTypeId);
+                        if (ff == null) {
+                            throw new NIllegalArgumentException(NMsg.ofC("missing customer NMsg formatter %s", customMessageTypeId));
+                        }
+                        List<String> extractParams = ff.extractParams(message);
+                        if(extractParams!=null){
+                            params.addAll(extractParams);
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    throw new IllegalArgumentException("invalid format. only " + ACCEPTED_FORMATS + " are allowed");
+                }
+            }
+            return params;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

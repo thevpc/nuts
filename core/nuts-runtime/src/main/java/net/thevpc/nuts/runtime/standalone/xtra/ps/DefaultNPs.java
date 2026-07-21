@@ -195,7 +195,7 @@ public class DefaultNPs implements NPs {
                 NExec u = NExec.of()
                         .in(NExecInput.ofNull())
                         .at(connectionString)
-                        .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
+                        .command("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
                         .grabErr()
                         .failFast(isFailFast())
                         .grabOut();
@@ -207,7 +207,7 @@ public class DefaultNPs implements NPs {
                 NExec u = NExec.of()
                         .in(NExecInput.ofNull())
                         .at(connectionString)
-                        .addCommand("ps", "aux")
+                        .command("ps", "aux")
                         .grabErr()
                         .failFast(isFailFast())
                         .grabOut();
@@ -265,8 +265,8 @@ public class DefaultNPs implements NPs {
             b = NExec.of()
                     .system()
                     .at(connectionString)
-                    .addCommand(cmd)
-                    .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
+                    .command(cmd)
+                    .command("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
                     .grabAll()
                     .failFast(isFailFast());
             b.exitCode();

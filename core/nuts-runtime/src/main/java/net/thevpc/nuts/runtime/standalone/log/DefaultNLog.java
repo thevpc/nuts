@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgBuilder;

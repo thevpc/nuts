@@ -59,8 +59,8 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                 }
                 session.configure(o.build());
                 NExec.of()
-                        .addCommand(appArgs)
-                        .addExecutorOptions(o.executorOptions().orNull())
+                        .command(appArgs)
+                        .executorOptions(o.executorOptions().orNull())
                         .executionType(o.executionType().orNull())
                         .failFast(true)
                         .run();

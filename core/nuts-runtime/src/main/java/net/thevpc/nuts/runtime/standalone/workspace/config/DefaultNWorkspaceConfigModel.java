@@ -46,6 +46,7 @@ import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgCustomFormatter;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
@@ -159,12 +160,22 @@ public class DefaultNWorkspaceConfigModel {
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
-    public void onNewComponent(Class componentType) {
+    public void onDiscoverType(Class componentType) {
         if (NPathFactorySPI.class.isAssignableFrom(componentType)) {
             DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (workspace.getModel().extensionModel.getObjectFactory());
             addPathFactory(
                     aa.newInstance(componentType, NPathFactorySPI.class)
             );
+        }
+        if (NMsgCustomFormatter.class.isAssignableFrom(componentType)) {
+            NWorkspaceExt we = NWorkspaceExt.of();
+            NMsgCustomFormatter q = (NMsgCustomFormatter) we.getModel().extensions.createComponent(componentType).get();
+            String qid = q.id();
+            if (!we.getModel().textModel.customFormatters.containsKey(qid)) {
+                we.getModel().textModel.customFormatters.put(qid, q);
+            } else {
+                _LOG().warn(NMsg.ofC("duplicate custom formatter id %s, ignored %s", qid, q.getClass()));
+            }
         }
     }
 

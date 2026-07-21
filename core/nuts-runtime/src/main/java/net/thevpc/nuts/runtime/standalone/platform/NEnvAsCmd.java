@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NEnvCmdSPI;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 

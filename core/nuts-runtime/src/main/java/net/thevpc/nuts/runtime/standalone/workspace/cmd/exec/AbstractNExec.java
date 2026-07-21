@@ -92,20 +92,9 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 
     @Override
     public List<String> command() {
-        return NCollections.unmodifiableList(command);
+        return command == null ? Collections.emptyList() : NCollections.unmodifiableList(command);
     }
 
-    @Override
-    public NExec command(String... command) {
-        this.command = null;
-        return addCommand(command);
-    }
-
-    @Override
-    public NExec command(Collection<String> command) {
-        this.command = null;
-        return addCommand(command);
-    }
 
     @Override
     public NExec commandDefinition(NDefinition definition) {
@@ -124,11 +113,11 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec addCommand(NPath path) {
-        if (this.command == null) {
-            this.command = new ArrayList<>();
-        }
+    public NExec command(NPath path) {
         if (path != null) {
+            if (this.command == null) {
+                this.command = new ArrayList<>();
+            }
             this.command.add(path.toString());
         }
         return this;
@@ -136,13 +125,13 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 
 
     @Override
-    public NExec addCommand(String... command) {
-        if (this.command == null) {
-            this.command = new ArrayList<>();
-        }
+    public NExec command(String... command) {
         if (command != null) {
             for (String s : command) {
                 if (s != null) {
+                    if (this.command == null) {
+                        this.command = new ArrayList<>();
+                    }
                     this.command.add(s);
                 }
             }
@@ -151,13 +140,13 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec addCommand(Collection<String> command) {
-        if (this.command == null) {
-            this.command = new ArrayList<>();
-        }
+    public NExec command(Collection<String> command) {
         if (command != null) {
             for (String s : command) {
                 if (s != null) {
+                    if (this.command == null) {
+                        this.command = new ArrayList<>();
+                    }
                     this.command.add(s);
                 }
             }
@@ -172,7 +161,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec addExecutorOption(String executorOption) {
+    public NExec executorOption(String executorOption) {
         if (executorOption != null) {
             if (this.executorOptions == null) {
                 this.executorOptions = new ArrayList<>();
@@ -183,10 +172,10 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec addExecutorOptions(String... executorOptions) {
+    public NExec executorOptions(String... executorOptions) {
         if (executorOptions != null) {
             for (String executorOption : executorOptions) {
-                addExecutorOption(executorOption);
+                executorOption(executorOption);
             }
         }
         return this;
@@ -194,20 +183,9 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 
     @Override
     public NExec executorOptions(Collection<String> executorOptions) {
-        this.executorOptions = new ArrayList<>();
         if (executorOptions != null) {
             for (String executorOption : executorOptions) {
-                addExecutorOption(executorOption);
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NExec addExecutorOptions(Collection<String> executorOptions) {
-        if (executorOptions != null) {
-            for (String executorOption : executorOptions) {
-                addExecutorOption(executorOption);
+                executorOption(executorOption);
             }
         }
         return this;
@@ -231,15 +209,15 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
     }
 
     @Override
-    public NExec addWorkspaceOptions(NWorkspaceOptions workspaceOptions) {
+    public NExec workspaceOptions(NWorkspaceOptions workspaceOptions) {
         if (workspaceOptions != null) {
-            addWorkspaceOptions(workspaceOptions.toCmdLine().toString());
+            workspaceOptions(workspaceOptions.toCmdLine().toString());
         }
         return this;
     }
 
     @Override
-    public NExec addWorkspaceOptions(String workspaceOptions) {
+    public NExec workspaceOptions(String workspaceOptions) {
         if (workspaceOptions != null) {
             if (this.workspaceOptions == null) {
                 this.workspaceOptions = new ArrayList<>();
@@ -256,13 +234,6 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
 
     @Override
     public NExec env(Map<String, String> env) {
-        clearEnv();
-        addEnv(env);
-        return this;
-    }
-
-    @Override
-    public NExec addEnv(Map<String, String> env) {
         if (env != null) {
             for (Map.Entry<String, String> entry : env.entrySet()) {
                 env(entry.getKey(), entry.getValue());
@@ -308,15 +279,6 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
         return in;
     }
 
-    //    @Override
-//    public InputStream in() {
-//        return getIn();
-//    }
-//
-//    @Override
-//    public NutsExecCommand in(InputStream in) {
-//        return setIn(in);
-//    }
     @Override
     public NExec in(NExecInput in) {
         this.in = in == null ? NExecInput.ofInherit() : in;
@@ -517,20 +479,20 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             return this;
         }
         super.copyFromWorkspaceCommandBase((NWorkspaceCmdBase) other);
-        addCommand(other.command());
-        addEnv(other.env());
-        addExecutorOptions(other.executorOptions());
-        directory(other.directory());
-        in(other.in());
-        out(other.out());
-        err(other.err());
-        failFast(other.isFailFast());
-        executionType(other.executionType());
-        runAs(other.runAs());
-        connectionString(other.connectionString());
-        dry(other.dry());
-        bot(other.bot());
-        rawCommand(other.isRawCommand());
+        this.command(other.command());
+        this.env(other.env());
+        this.executorOptions(other.executorOptions());
+        this.directory(other.directory());
+        this.in(other.in());
+        this.out(other.out());
+        this.err(other.err());
+        this.failFast(other.isFailFast());
+        this.executionType(other.executionType());
+        this.runAs(other.runAs());
+        this.connectionString(other.connectionString());
+        this.dry(other.dry());
+        this.bot(other.bot());
+        this.rawCommand(other.isRawCommand());
         return this;
     }
 
@@ -706,10 +668,10 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
                 }
                 cmdLine.skip();
                 if (a.isOption()) {
-                    addExecutorOption(a.asString().get());
+                    executorOption(a.asString().get());
                 } else {
-                    addCommand(a.asString().get());
-                    addCommand(cmdLine.toStringArray());
+                    this.command(a.asString().get());
+                    this.command(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 }
                 return true;

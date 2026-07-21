@@ -10,9 +10,9 @@ import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
-import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI;
+import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNUtilsRPI;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.log.NLogs;
@@ -117,10 +117,10 @@ public class DefaultNExtensions implements NExtensions {
             }
             //log will need NCollectionsRPI so...
             case "net.thevpc.nuts.internal.rpi.NCollectionsRPI": {
-                NCollectionsRPI t = wsModel.defaultNCollectionsRPI;
+                NUtilsRPI t = wsModel.defaultNUtilsRPI;
                 if (t == null) {
-                    t = new DefaultNCollectionsRPI();
-                    wsModel.defaultNCollectionsRPI = t;
+                    t = new DefaultNUtilsRPI();
+                    wsModel.defaultNUtilsRPI = t;
                 }
                 return NOptional.of((T) t);
             }

@@ -49,7 +49,7 @@ public class NativeImageHelper {
             NIndexSelectionStrategy.parse("");
             NNewLineMode.parse("");
             NNameSelectorStrategy.parse("");
-            NTextFormatType.parse("");
+            NMsgType.parse("");
             NExecutionEngineFamily.parse("");
             NPathStandardOption.parse("");
             NAffixType.parse("");

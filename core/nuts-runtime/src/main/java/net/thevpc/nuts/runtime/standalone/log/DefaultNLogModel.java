@@ -30,6 +30,8 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.spi.NLogFactorySPI;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.text.NMsg;
 
 import java.nio.file.Path;

@@ -64,7 +64,7 @@ public class DefaultNWorkspaceExtension implements NWorkspaceExtension {
         return this;
     }
 
-    public List<NExtensionLifeCycle> getEvents() {
+    public List<NExtensionLifeCycle> getEventLifeCycles() {
         return events;
     }
 

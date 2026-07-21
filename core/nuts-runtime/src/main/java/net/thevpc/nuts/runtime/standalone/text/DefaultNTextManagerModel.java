@@ -76,6 +76,7 @@ public class DefaultNTextManagerModel {
     private NElementStreamFormat tsonMan;
     private Map<String, NTextFormatTheme> cachedThemes = new HashMap<>();
     public NTexts defaultNTexts;
+    public final Map<String, NMsgCustomFormatter> customFormatters = new HashMap<>();
 
     public DefaultNTextManagerModel(NWorkspace workspace) {
         this.workspace = workspace;

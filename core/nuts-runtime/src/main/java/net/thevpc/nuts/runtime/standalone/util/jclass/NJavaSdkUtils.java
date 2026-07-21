@@ -613,7 +613,7 @@ public class NJavaSdkUtils {
             for (int i = 0; i < MAX_ITER; i++) {
                 NExec cmd = NExec.of()
                         .system()
-                        .addCommand(javaExePath.toString(), "-version")
+                        .command(javaExePath.toString(), "-version")
                         .grabAll().failFast(true).run();
                 cmdRresult = cmd.exitCode();
                 cmdOutputString = cmd.grabbedOut();

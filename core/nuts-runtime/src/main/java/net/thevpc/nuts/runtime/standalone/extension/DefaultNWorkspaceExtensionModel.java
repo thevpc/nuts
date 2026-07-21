@@ -472,9 +472,6 @@ public class DefaultNWorkspaceExtensionModel {
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, null));
                     Set<Class<?>> classes = objectFactory.discoverTypes(def.id(), def.content().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader);
-                    for (Class<?> aClass : classes) {
-                        ((NWorkspaceExt) workspace).getModel().configModel.onNewComponent(aClass);
-                    }
                     //should check current classpath
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
@@ -525,6 +522,9 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     //    @Override
+    public NOptional<NWorkspaceExtension> getWorkspaceExtension(NId id) {
+        return NOptional.ofNamed(extensions.get(id),String.valueOf(id));
+    }
     public NWorkspaceExtension[] getWorkspaceExtensions() {
         return extensions.values().toArray(new NWorkspaceExtension[0]);
     }
@@ -595,8 +595,12 @@ public class DefaultNWorkspaceExtensionModel {
             this.workspaceExtensionsClassLoader.add(node);
         }
         DefaultNWorkspaceExtension workspaceExtension = new DefaultNWorkspaceExtension(id, ecId, this.workspaceExtensionsClassLoader);
+        extensions.put(id, workspaceExtension);
         //now will iterate over Extension classes to wire them ...
         Set<Class<?>> discoveredTypes = objectFactory.discoverTypes(ecId, ecPath == null ? null : ecPath.toURL().orNull(), workspaceExtension.getClassLoader());
+        for (NExtensionLifeCycle eventLifeCycle : workspaceExtension.getEventLifeCycles()) {
+            eventLifeCycle.onInitExtension(workspaceExtension);
+        }
 //        for (Class extensionImpl : getExtensionTypes(NutsComponent.class, session)) {
 //            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
 //                if (registerType(extensionPointType, extensionImpl, session)) {
@@ -604,7 +608,6 @@ public class DefaultNWorkspaceExtensionModel {
 //                }
 //            }
 //        }
-        extensions.put(id, workspaceExtension);
         _LOG().log(NMsg.ofC("extension %s installed successfully", id)
                 .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
         );
@@ -620,16 +623,7 @@ public class DefaultNWorkspaceExtensionModel {
                     );
             session.terminal(newTerminal);
         }
-        for (Class<?> discoveredType : discoveredTypes) {
-            if (NExtensionLifeCycle.class.isAssignableFrom(discoveredType)) {
-                workspaceExtension.getEvents().add(
-                        (NExtensionLifeCycle) objectFactory.createComponent(discoveredType, null).get()
-                );
-            }
-        }
-        for (NExtensionLifeCycle event : workspaceExtension.getEvents()) {
-            event.onInitExtension(workspaceExtension);
-        }
+
         return workspaceExtension;
     }
 

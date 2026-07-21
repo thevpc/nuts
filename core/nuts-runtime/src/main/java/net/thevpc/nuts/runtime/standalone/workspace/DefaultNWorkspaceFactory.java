@@ -30,6 +30,7 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.core.NWorkspace;
 
+import net.thevpc.nuts.core.NWorkspaceExtension;
 import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
@@ -50,7 +51,7 @@ import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
@@ -62,7 +63,7 @@ import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNCollectionsRPI;
+import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNUtilsRPI;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
@@ -102,14 +103,42 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     @Override
     public Set<Class<?>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class<?>[] extensionPoints) {
+        NWorkspaceExtension we=NWorkspaceExt.of(workspace).getModel().extensionModel.getWorkspaceExtension(id).orNull();
         if (!discoveredCacheById.containsKey(id)) {
             IdCache value = new IdCache(id, url, bootClassLoader, LOG, extensionPoints, workspace);
             discoveredCacheById.put(id, value);
-            Set<Class<?>> all = new HashSet<>();
+            Set<Class<?>> allLifeCycles = new HashSet<>();
+            Set<Class<?>> allNonLifeCycles = new HashSet<>();
+            List<NExtensionLifeCycle> extractedLifcycles=new ArrayList<>();
             for (NClassClassMap m : value.classes.values()) {
                 Collection<Class<?>> values = (Collection) m.values();
-                all.addAll(values);
+                for (Class<?> a : values) {
+                    if (NExtensionLifeCycle.class.isAssignableFrom(a)) {
+                        allLifeCycles.add(a);
+                        ((NWorkspaceExt) workspace).getModel().configModel.onDiscoverType(a);
+                        extractedLifcycles.add((NExtensionLifeCycle) createComponent(a, null).get());
+                    } else{
+                        allNonLifeCycles.add(a);
+                    }
+                }
             }
+            for (Class<?> a : allNonLifeCycles) {
+                ((NWorkspaceExt) workspace).getModel().configModel.onDiscoverType(a);
+            }
+            if(we!=null){
+                ((DefaultNWorkspaceExtension)we).getEventLifeCycles().addAll(extractedLifcycles);
+                for (NExtensionLifeCycle elc : ((DefaultNWorkspaceExtension)we).getEventLifeCycles()) {
+                    for (Class c : allLifeCycles) {
+                        elc.onDiscoverType(we,c);
+                    }
+                    for (Class c : allNonLifeCycles) {
+                        elc.onDiscoverType(we,c);
+                    }
+                }
+            }
+            Set<Class<?>> all = new HashSet<>();
+            all.addAll(allLifeCycles);
+            all.addAll(allNonLifeCycles);
             return all;
         }
         return Collections.emptySet();
@@ -186,8 +215,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 NIORPI p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNIORPI.class, NIORPI.class, NScopeType.SESSION, DefaultNIORPI::new);
                 return NOptional.of((T) p);
             }
-            case "net.thevpc.nuts.internal.rpi.NCollectionsRPI": {
-                NCollectionsRPI p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNCollectionsRPI.class, NCollectionsRPI.class, NScopeType.SESSION, DefaultNCollectionsRPI::new);
+            case "net.thevpc.nuts.internal.rpi.NUtilsRPI": {
+                NUtilsRPI p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNUtilsRPI.class, NUtilsRPI.class, NScopeType.SESSION, DefaultNUtilsRPI::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.artifact.NIdWriter": {

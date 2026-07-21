@@ -75,7 +75,7 @@ public class CoreAnsiTermHelper {
                 String s = NStringUtils.strip(NExec.of()
                         .system()
                         .in(NExecInput.ofNull())
-                        .addCommand(cmd)
+                        .command(cmd)
                         .failFast(true)
                         .grabbedOutOnly()
                 );
@@ -87,7 +87,7 @@ public class CoreAnsiTermHelper {
                 //add 500 of sleep time!
                 s = NStringUtils.strip(NExec.of()
                         .system()
-                        .addCommand(cmd)
+                        .command(cmd)
                         .failFast(true)
                         .sleepDuration(NDuration.ofMillis(500))
                         .grabbedOutOnly()

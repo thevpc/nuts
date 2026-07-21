@@ -127,10 +127,8 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         Path a = NSysExecUtils.sysWhich(sysCmd);
         if (a != null) {
             cmdList.add(0, a.toString());
-            String outStr = NExec.of()
+            String outStr = NExec.ofSystem()
                     .command(cmdList)
-                    .addCommand()
-                    .system()
                     .grabbedAll().trim();
             NSession session = NSession.of();
             if (session.isPlainTrace() && !outStr.isEmpty()) {

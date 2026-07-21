@@ -63,8 +63,8 @@ public class DefaultNCustomCommand implements NCustomCmd {
             args = r.toArray(new String[0]);
 
             return NExec.of()
-                    .addCommand(args)
-                    .addExecutorOptions(executorOptions)
+                    .command(args)
+                    .executorOptions(executorOptions)
                     .directory(options.directory())
                     .failFast(true)
                     .env(options.env())
@@ -82,8 +82,8 @@ public class DefaultNCustomCommand implements NCustomCmd {
             args = r.toArray(new String[0]);
 
             return NExec.of()
-                    .addCommand(args)
-                    .addExecutorOptions(executorOptions)
+                    .command(args)
+                    .executorOptions(executorOptions)
                     .directory(options.directory())
                     .failFast(true)
                     .env(options.env())
@@ -106,7 +106,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
             try {
                 return NText.ofPlain(
                         NExec.of()
-                                .addCommand(helpCommand)
+                                .command(helpCommand)
                                 .failFast(false)
                                 .run()
                                 .grabbedAll()

@@ -77,8 +77,8 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.apiId()))) {
             if (!isLocalhost()) {
                 String targetServer = getTargetServer();
-                NExec.of().addCommand("scp")
-                        .addCommand(apiJar.toString()).addCommand(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.apiId()))
+                NExec.of().command("scp")
+                        .command(apiJar.toString()).command(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.apiId()))
                         .failFast(true).grabbedAll();
             } else {
                 NPath to = NPath.of(remoteIdMavenJar(def.apiId()));
@@ -155,9 +155,9 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
 
         if (!isLocalhost()) {
             String targetServer = getTargetServer();
-            e.addCommand("ssh", remoteUser + "@" + targetServer);
+            e.command("ssh", remoteUser + "@" + targetServer);
         }
-        return e.addCommand(cmd).failFast(true).grabbedAll();
+        return e.command(cmd).failFast(true).grabbedAll();
     }
 
 }

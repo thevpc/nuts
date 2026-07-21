@@ -26,6 +26,7 @@ import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.base.NContentMetadataProviderWriterSPI;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NChronometerView;
 import net.thevpc.nuts.util.NBlankable;
@@ -351,9 +352,9 @@ public class DefaultNTexts implements NTexts {
 
 
     private NText _NMsg_toString(NMsg m) {
-        NTextFormatType format = m.format();
+        NMsgType format = m.format();
         if (format == null) {
-            format = NTextFormatType.JFORMAT;
+            format = NMsgType.JFORMAT;
         }
         Object msg = m.message();
         switch (format) {
@@ -363,11 +364,21 @@ public class DefaultNTexts implements NTexts {
             case JFORMAT: {
                 return new NMsgJFormatHelper(m, this).format();
             }
+            case SFORMAT: {
+                return new NMsgSFormatHelper(m, this).format();
+            }
             case VFORMAT: {
                 return new NMsgVFormatHelper(m, this).format();
             }
             case MFORMAT: {
                 return new NMsgMFormatHelper(m, this).format();
+            }
+            case CUSTOM: {
+                NMsgCustomFormatter ff = NWorkspaceExt.of().getModel().textModel.customFormatters.get(m.getCustomFormatId());
+                if (ff == null) {
+                    throw new NIllegalArgumentException(NMsg.ofC("missing customer NMsg formatter %s", m.getCustomFormatId()));
+                }
+                return ff.format(m);
             }
             case PLAIN: {
                 return this.ofPlain((String) msg);
@@ -1239,7 +1250,7 @@ public class DefaultNTexts implements NTexts {
                                 li.add(child);
                             }
                             wasNullInclude = false;
-                        }else if(oldChild instanceof  NTextInclude){
+                        } else if (oldChild instanceof NTextInclude) {
                             // starts with new line, then include, then newline
                             wasNullInclude = true;
                         }
@@ -1588,5 +1599,6 @@ public class DefaultNTexts implements NTexts {
             this.writerMappers.put(clz, mapper);
         }
     }
+
 
 }

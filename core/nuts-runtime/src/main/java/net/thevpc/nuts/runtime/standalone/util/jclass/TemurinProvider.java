@@ -45,7 +45,7 @@ public class TemurinProvider implements JavaProvider {
                 checkFolder = true;
             } else if (toCache.name().endsWith(".tar.gz")) {
                 NExec.of()
-                        .addCommand("tar", "-xzf", toCache.toString(), "-C", folderBin.mkdirs().toString())
+                        .command("tar", "-xzf", toCache.toString(), "-C", folderBin.mkdirs().toString())
                         .run();
                 checkFolder = true;
             }

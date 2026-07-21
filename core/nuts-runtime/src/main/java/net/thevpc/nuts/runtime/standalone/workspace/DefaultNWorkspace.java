@@ -46,7 +46,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.text.NVersionWriter;
-import net.thevpc.nuts.log.NLogFactorySPI;
+import net.thevpc.nuts.spi.NLogFactorySPI;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;

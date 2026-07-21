@@ -25,7 +25,7 @@ public class WindowsPs1Caller {
                 .at(connectionString)
                 .grabErr()
                 .grabOut()
-                .addCommand("powershell", "-NoProfile", "-EncodedCommand", base64)
+                .command("powershell", "-NoProfile", "-EncodedCommand", base64)
                 .failFast(failFast);
         byte[] resultBytes = u.grabbedOutBytes();
         StringReader br = new StringReader(new String(resultBytes, StandardCharsets.UTF_8));

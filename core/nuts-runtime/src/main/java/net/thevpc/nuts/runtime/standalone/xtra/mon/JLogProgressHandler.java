@@ -66,7 +66,7 @@ public class JLogProgressHandler implements NProgressHandler {
         if (messageFormat == null) {
             messageFormat = NMsgTemplate.ofV("$inuse | $free | $progress : $message");
         }
-        if (messageFormat.paramNames().length==0) {
+        if (messageFormat.paramNames().isEmpty()) {
             switch (messageFormat.format()){
                 case VFORMAT:{
                     String message = messageFormat.message();
@@ -102,6 +102,15 @@ public class JLogProgressHandler implements NProgressHandler {
                     }
                     message += "{0}";
                     messageFormat=NMsgTemplate.ofJ(message);
+                    break;
+                }
+                case SFORMAT:{
+                    String message = messageFormat.message();
+                    if (!message.endsWith(" ")) {
+                        message += " ";
+                    }
+                    message += "?";
+                    messageFormat=NMsgTemplate.ofS(message);
                     break;
                 }
             }

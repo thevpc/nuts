@@ -589,23 +589,23 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
             case DIRECTORY: {
                 NDigest d = NDigest.of();
                 d.algorithm(algo);
-                d.addSource(type().name().getBytes());
+                d.source(type().name().getBytes());
                 for (NPath nPath : list()) {
-                    d.addSource(nPath.name().getBytes());
+                    d.source(nPath.name().getBytes());
                 }
                 return d.computeBytes();
             }
             case FILE: {
                 NDigest d = NDigest.of();
                 d.algorithm(algo);
-                d.addSource(type().name().getBytes());
-                d.addSource(this);
+                d.source(type().name().getBytes());
+                d.source(this);
                 return d.computeBytes();
             }
             default: {
                 NDigest d = NDigest.of();
                 d.algorithm(algo);
-                d.addSource(type().name().getBytes());
+                d.source(type().name().getBytes());
                 return d.computeBytes();
             }
         }

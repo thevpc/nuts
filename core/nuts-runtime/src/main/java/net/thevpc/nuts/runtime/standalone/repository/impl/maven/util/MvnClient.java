@@ -68,7 +68,7 @@ public class MvnClient {
         try {
             NExec b = NExec.of()
                     .failFast(true)
-                    .addCommand(
+                    .command(
                             NET_VPC_APP_NUTS_MVN,
                             "--json",
                             "get",

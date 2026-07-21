@@ -58,10 +58,6 @@ public class DefaultNDigest implements NDigest {
     public DefaultNDigest() {
     }
 
-    public NDigest addSource(NInputSource source) {
-        return addSource0(source);
-    }
-
     private NDigest addSource0(NInputSource source) {
         if (source != null) {
             if (this.sources == null) {
@@ -100,6 +96,12 @@ public class DefaultNDigest implements NDigest {
     }
 
     @Override
+    public NDigest source(NDescriptor source) {
+        this.addSource0((source == null ? null : new NDescriptorInputSource(source)));
+        return this;
+    }
+
+    @Override
     public NDigest source(Path source) {
         this.addSource0(source == null ? null : NPath.of(source));
         return this;
@@ -120,54 +122,6 @@ public class DefaultNDigest implements NDigest {
     @Override
     public NDigest source(byte[] source) {
         this.addSource0(source == null ? null : NInputSource.of(source));
-        return this;
-    }
-
-    @Override
-    public NDigest source(NDescriptor source) {
-        this.addSource(source == null ? null : new NDescriptorInputSource(source));
-        return this;
-    }
-
-    @Override
-    public NDigest addSource(InputStream source) {
-        this.addSource0((source == null ? null : NInputSource.of(source)));
-        return this;
-    }
-
-    @Override
-    public NDigest addSource(File source) {
-        this.addSource0((source == null ? null : NPath.of(source)));
-        return this;
-    }
-
-    @Override
-    public NDigest addSource(Path source) {
-        this.addSource0(source == null ? null : NPath.of(source));
-        return this;
-    }
-
-    @Override
-    public NDigest addSource(URL url) {
-        this.addSource0(url == null ? null : NPath.of(url));
-        return this;
-    }
-
-    @Override
-    public NDigest addSource(NPath source) {
-        this.addSource0(source);
-        return this;
-    }
-
-    @Override
-    public NDigest addSource(byte[] source) {
-        this.addSource0(source == null ? null : NInputSource.of(source));
-        return this;
-    }
-
-    @Override
-    public NDigest addSource(NDescriptor source) {
-        this.addSource0(source == null ? null : new NDescriptorInputSource(source));
         return this;
     }
 

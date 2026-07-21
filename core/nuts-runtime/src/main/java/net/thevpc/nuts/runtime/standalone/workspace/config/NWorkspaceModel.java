@@ -11,7 +11,7 @@ import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementFactory;
-import net.thevpc.nuts.internal.rpi.NCollectionsRPI;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.platform.NEnv;
@@ -60,7 +60,7 @@ public class NWorkspaceModel {
     public NLogs defaultNLogs;
     public NExtensionCatalogManager extensionCatalogManager=new NExtensionCatalogManager();
     public NElementFactory defaultNElementFactory;
-    public NCollectionsRPI defaultNCollectionsRPI;
+    public NUtilsRPI defaultNUtilsRPI;
     public NWorkspace workspace;
     public NScopedValue<NSession> sessionScopes = new NScopedValue<>();
     public NSession initSession;

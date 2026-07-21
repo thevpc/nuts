@@ -54,7 +54,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         NExec pb = NExec.of();
         NCmdLineUtils.OptionsAndArgs optionsAndArgs = NCmdLineUtils.parseOptionsFirst(args);
         pb.command(optionsAndArgs.getArgs())
-                .addExecutorOptions(optionsAndArgs.getOptions())
+                .executorOptions(optionsAndArgs.getOptions())
                 .runAs(runAs)
                 .env(env)
                 .directory(directory == null ? null : NPath.of(directory))

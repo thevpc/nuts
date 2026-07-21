@@ -5,18 +5,57 @@ import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.text.NMsg;
 
-import java.util.Formatter;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
     int paramIndex = 0;
+    private static Pattern CFORMAT_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
 
     public NMsgCFormatHelper(NMsg m, NTexts txt) {
         super(m, txt);
     }
 
 
+    protected NFormattedTextParts parseStyle(String msg) {
+        if (msg == null) {
+            return new NFormattedTextParts(NMsgType.CFORMAT, Collections.emptyList());
+        }
+        List<NFormattedTextPart> al = new ArrayList<>();
+        Matcher m = CFORMAT_PATTERN.matcher(msg);
+        int length = msg.length();
+        for (int i = 0; i < length; ) {
+            if (m.find(i)) {
+                if (m.start() != i) {
+                    checkCFormatText(msg, i, m.start());
+                    al.add(new NFormattedTextPart(false, msg.substring(i, m.start())));
+                }
+
+                al.add(new NFormattedTextPart(true, m.group()));
+                i = m.end();
+            } else {
+                checkCFormatText(msg, i, length);
+                al.add(new NFormattedTextPart(false, msg.substring(i)));
+                break;
+            }
+        }
+        return new NFormattedTextParts(NMsgType.CFORMAT, al);
+    }
+
+
+    private static void checkCFormatText(String s, int start, int end) {
+        for (int i = start; i < end; i++) {
+            // Any '%' found in the region starts an invalid format specifier.
+            if (s.charAt(i) == '%') {
+                char c = (i == end - 1) ? '%' : s.charAt(i + 1);
+                throw new UnknownFormatConversionException(String.valueOf(c)+" in "+s);
+            }
+        }
+    }
+
     protected NText formatPlain(String ss) {
-        NFormattedTextParts r = NFormattedTextParts.parseCFormat(ss);
+        NFormattedTextParts r = parseStyle(ss);
         NTextBuilder sb = NTextBuilder.of();
         for (NFormattedTextPart part : r.getParts()) {
             if (part.isFormat()) {

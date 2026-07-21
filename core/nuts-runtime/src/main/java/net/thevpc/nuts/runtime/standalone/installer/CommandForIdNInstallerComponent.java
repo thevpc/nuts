@@ -105,13 +105,13 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                         );
                 NExec cmd = NExec.of()
                         .commandDefinition(def2.build())
-                        .addCommand("--nuts-exec-mode=" + mode);
+                        .command("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
-                    cmd.addExecutorOptions("--nuts-auto-install=false");
+                    cmd.executorOptions("--nuts-auto-install=false");
                 }else if (mode.equals("uninstall")) {
-                    cmd.addExecutorOptions("--nuts-auto-install=false");
+                    cmd.executorOptions("--nuts-auto-install=false");
                 }
-                cmd.addCommand(executionContext.arguments())
+                cmd.command(executionContext.arguments())
                         .executionType(NWorkspace.of().bootOptions().executionType().orNull())
                         .failFast(true)
                         .run();
@@ -135,7 +135,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 NExec.of()
                         .commandDefinition(def2.build())
                         .env(executionContext.env())
-                        .addCommand(eargs)
+                        .command(eargs)
                         .executionType(NWorkspace.of().bootOptions().executionType().orNull())
                         .executionType(
                                 NConstants.Ids.NSH.equals(def2.id().shortName()) ?

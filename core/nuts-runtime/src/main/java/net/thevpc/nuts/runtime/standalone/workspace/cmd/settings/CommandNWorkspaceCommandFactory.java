@@ -94,7 +94,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         if (findCommand.length > 0 && execCommand.length > 0) {
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
-            NExec exec = NExec.of().addCommand(fc)
+            NExec exec = NExec.of().command(fc)
                     //                        .setExecutorOptions("--show-command")
                     .grabAll()
                     .run();
@@ -114,7 +114,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     public List<NCommandConfig> findCommands() {
         List<NCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
-            NExec b = NExec.of().addCommand(listCommand)
+            NExec b = NExec.of().command(listCommand)
                     .grabAll();
             int r = b.exitCode();
             if (r == 0) {

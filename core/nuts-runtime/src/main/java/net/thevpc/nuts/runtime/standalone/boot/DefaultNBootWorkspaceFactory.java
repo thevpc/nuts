@@ -100,9 +100,9 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
                 if (info2.skipWelcome().orElse(false)) {
                     return;
                 }
-                execCmd.addCommand("welcome");
+                execCmd.command("welcome");
             } else {
-                execCmd.addCommand(info2.applicationArguments().get());
+                execCmd.command(info2.applicationArguments().get());
             }
             execCmd.run();
         });
