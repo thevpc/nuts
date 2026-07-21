@@ -1,7 +1,7 @@
 package net.thevpc.nuts.lib.slf4j;
 
-import net.thevpc.nuts.log.NLogFactorySPI;
-import net.thevpc.nuts.log.NLogSPI;
+import net.thevpc.nuts.spi.NLogFactorySPI;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.util.NScore;
 import net.thevpc.nuts.util.NScorable;
 

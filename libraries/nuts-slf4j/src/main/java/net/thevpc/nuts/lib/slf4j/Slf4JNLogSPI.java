@@ -1,6 +1,6 @@
 package net.thevpc.nuts.lib.slf4j;
 
-import net.thevpc.nuts.log.NLogSPI;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.text.NMsg;
 import org.slf4j.Logger;
