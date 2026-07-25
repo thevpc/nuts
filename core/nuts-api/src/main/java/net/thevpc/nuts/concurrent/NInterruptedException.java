@@ -45,6 +45,10 @@ public class NInterruptedException extends NException {
         super(message);
     }
 
+    public NInterruptedException() {
+        super(NMsg.ofC("interrupted"));
+    }
+
     public NInterruptedException(NMsg message, Throwable cause) {
         super(message, cause);
     }
