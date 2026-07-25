@@ -2,205 +2,367 @@
 title: NPath
 ---
 
+# NPath
 
+NPath is a powerful, protocol-aware abstraction introduced by Nuts to handle resource locations in a uniform way. Similar to Java's URL or Path, but with extended capabilities, built-in protocol support, and a fluent, intuitive API, NPath bridges the gap between local files, remote URLs, classpath resources, and virtual in-memory locations.
 
-NPath is a powerful abstraction introduced by nuts to handle paths in a uniform way, similar to Java's URL, but with extended capabilities, built-in protocol support, and a fluent, intuitive API.
+## Key Features
 
-# Key Features
+- Unified Abstraction: Seamlessly handle local files, HTTP/SSH URLs, classpath resources, in-memory buffers, and artifact repositories with a single API.
+- Protocol-Aware: Natively supports file, http, https, ssh, classpath, mem, and custom Nuts protocols (e.g., htmlfs+https://).
+- Rich I/O Operations: First-class support for reading/writing bytes, strings, structured objects, and streaming, with automatic parent directory creation.
+- Fluent Metadata & Behavior: Dynamically attach content hints (charset, content type, kind) and behavioral flags (cache, temporary) via fluent builders.
+- Advanced Navigation: Robust path manipulation including relativize, stripParent, smart extension parsing (nameParts), and glob/DFS tree walking.
+- Lifecycle Management: Built-in support for temporary files, auto-cleanup (deleteOnDispose), and OS-compliant user/system store locations.
 
-- Unified path abstraction for local files, URLs, classpath resources, and artifacts.
-- Protocol-aware: supports file, http(s), classpath, and resource URLs.
-- Stream access, input/output helpers, and file tree navigation.
-- Support for creating temporary files/folders and content manipulation.
+---
 
 ## Supported Protocols
 
-- File paths: "/path/to/resource", "C:\\path\\to\\resource"
-- File URLs: "file:/path/to/resource", "file:C:/path/to/resource"
-- HTTP/HTTPS URLs: "http://...", "https://..."
-- Ssh URLs: "ssh://user@server/path/to/resource"
-- Classpath: "classpath:/path/to/resource" (requires classloader)
-- Resource paths: "resource://group:artifact#version/path/to/resource"
+| Protocol | Example | Description |
+|----------|---------|-------------|
+| Local File | /path/to/resource, C:\path | Standard filesystem paths (protocol is implicitly ""). |
+| File URL | file:/path/to/resource | Explicit file URL scheme. |
+| HTTP/HTTPS | https://example.com/data.json | Remote web resources. |
+| SSH | ssh://user@server/path/to/resource | Secure remote file access. |
+| Classpath | classpath:/com/myapp/config.xml | Resources bundled in JARs or classpath folders. |
+| In-Memory | mem://sandbox/data.txt | Virtual in-memory filesystem. Zero disk I/O, ideal for testing or transient data. |
+| Nuts Resource | resource://group:artifact#version/path | Nuts-specific artifact resolution. |
+| HTML FS | htmlfs+https://archive.apache.org/dist/ | Browses Apache-style HTML directory listings as a virtual filesystem. |
+
+---
 
 ## Creating an NPath
 
-```java
-NPath localFile = NPath.of("C:/path/to/resource");
-```
-
-## Other creation methods include:
-
+### Basic Creation
 
 ```java
-NPath.of(URL url);
-NPath.of(File file);
-NPath.of(Path path);
-NPath.of(String path, ClassLoader cl);
-NPath.of(NConnexionString connection);
+    // From String (local, URL, classpath, or memory)
+    NPath localFile = NPath.of("/path/to/resource.txt");
+    NPath remoteFile = NPath.of("https://example.com/data.json");
+    NPath memFile = NPath.of("mem://sandbox/temp-data.txt");
+
+    // From standard Java types
+    NPath fromUrl = NPath.of(new URL("file:///tmp/test.txt"));
+    NPath fromFile = NPath.of(new File("/tmp/test.txt"));
+    NPath fromNio = NPath.of(Paths.get("/tmp/test.txt"));
+
+    // From a Nuts Connection String
+    NPath fromConn = NPath.of(NConnectionString.of("ssh://user@host/path"));
 ```
 
-## Special Locations
+### Classpath & Origins
+```java
+    // Resolve with a specific ClassLoader
+    NPath cpResource = NPath.of("classpath:/config.properties", MyClass.class.getClassLoader());
+
+    // Find where a class was loaded from (e.g., which JAR)
+    NOptional<NPath> origin = NPath.ofOrigin(MyClass.class);
+    List<NPath> allOrigins = NPath.ofOrigins(MyClass.class);
+```
+
+---
+
+## Behavioral Flags & Content Metadata
+
+While structural operations (resolve, normalize) return new path instances, NPath provides fluent methods to adjust its behavior and attach content metadata. This is especially useful for virtual paths (mem://), HTTP responses, or when you need to override inferred file characteristics.
+
+### Behavioral Flags
+```java
+    NPath tempFile = NPath.ofTempFile("report.pdf");
+
+    // Mark this path to be treated as user cache (affects storage/cleanup policies)
+    NPath cachedFile = tempFile.userCache(true);
+
+    // Explicitly mark as temporary (may influence disposal or OS-level temp handling)
+    NPath explicitTemp = cachedFile.userTemporary(true);
+```
+
+### Content Metadata (NContentMetadata)
+
+The NContentMetadata interface acts as a fluent builder to attach or override metadata without altering the underlying physical resource. This is heavily utilized when NPath acts as an NInputSource or NOutputTarget.
 
 ```java
-NPath.ofUserHome();         // User home directory
-NPath.ofUserDirectory();    // Current working directory
-NPath.ofUserStore(type);    // User store path
-NPath.ofSystemStore(type);  // System store path
+    NPath memResponse = NPath.of("mem://api/response");
+
+    // Build metadata fluently
+    NContentMetadata meta = memResponse.metaData()
+        .name("user-profile.json")          // Override the logical name
+        .contentType("application/json")    // Force content type (bypasses extension guessing)
+        .charset("UTF-8")                   // Explicit charset
+        .kind("api-response")               // Custom semantic kind
+        .message(NMsg.ofInfo("Generated successfully")) // Attach a status/description
+        .contentLength(1024L);              // Pre-declare length if known
 ```
 
-## NPath.ofUserStore(NStoreType storeType)
+---
 
-Returns the path to the user-specific store folder of the given storeType.
+## Special Locations: Stores & Temporary Files
 
-This method is used to access various predefined storage locations that conform to standard OS conventions (such as XDG Base Directory Specification on Linux). These locations are used to store user-specific data in structured, OS-compliant folders.
+### User and System Stores
 
-Example:
-```java
-NPath configFolder = NPath.ofUserStore(NStoreType.CONF);
-System.out.println("User config path: " + configFolder);
-```
-
-### Supported `NStoreType`s
-
-Each `NStoreType` corresponds to a logical category of user data:
-
-| StoreType | Purpose | Typical Usage | Linux Equivalent |
-|-----------|---------|---------------|------------------|
-| `BIN`     | Stores user-specific executable binaries (non-modifiable). | Custom installed commands/tools. | `$HOME/.local/bin` |
-| `CONF`    | Stores user-specific configuration files. | App or tool settings, preferences. | `$XDG_CONFIG_HOME` or `$HOME/.config` |
-| `VAR`     | Stores user-specific modifiable data. | Data files, downloaded content. | `$XDG_DATA_HOME` or `$HOME/.local/share` |
-| `LOG`     | Stores log files. | Runtime logs, audit trails. | `$XDG_LOG_HOME` or `$HOME/.local/log` |
-| `TEMP`    | Stores temporary files. | Temp input/output files. | `$TMPDIR`, `/tmp`, or equivalent |
-| `CACHE`   | Stores non-essential cache files. | Cached packages, resources. | `$XDG_CACHE_HOME` or `$HOME/.cache` |
-| `LIB`     | Stores user-specific non-executable binaries. | Local libraries and dependencies. | `$HOME/.local/lib` |
-| `RUN`     | Stores runtime file system entries. | Sockets, pipes, PID files. | `$XDG_RUNTIME_DIR` or `/run/user/<uid>` |
-
-
-### Why Use ofUserStore()?
-This method ensures:
-- Cross-platform compatibility: Automatically maps to platform-appropriate folders.
-- Correct file placement: Keeps your workspace clean and organized.
-- Portable behavior: Works reliably across Linux, Windows, and macOS.
-
-### Advanced Example: Write to User Log Folder
+NPath provides OS-compliant storage locations (aligning with XDG Base Directory Specification on Linux). Use NStoreKey to target a specific application (GAV) and store type.
 
 ```java
-NPath logFile = NPath.ofUserStore(NStoreType.LOG).resolve("myapp.log");
-logFile.writeString("This is a log entry.\n", StandardCharsets.UTF_8);
+    NId appId = NId.of("com.mycompany:myapp");
+    NStoreKey configKey = new NStoreKey(appId, NStoreType.CONF);
+    NPath configFolder = NPath.of(configKey);
+
+    configFolder.mkdirs();
+    configFolder.resolve("settings.json").writeString("{\"theme\": \"dark\"}");
 ```
 
-:::tip
-Notes : You can get the resolved directory path as a string via getLocation() or toString().
-:::
+Supported NStoreTypes:
 
-:::tip
-Notes : If you're working in a system context (e.g. root user or shared tools), consider NPath.ofSystemStore(NStoreType).
-:::
+| StoreType | Purpose | Linux Equivalent |
+|-----------|---------|------------------|
+| BIN | User-specific executable binaries | $HOME/.local/bin |
+| CONF | Configuration files | $XDG_CONFIG_HOME or $HOME/.config |
+| VAR | Modifiable data files | $XDG_DATA_HOME or $HOME/.local/share |
+| LOG | Runtime logs and audit trails | $XDG_LOG_HOME or $HOME/.local/log |
+| TEMP | Temporary files | $TMPDIR or /tmp |
+| CACHE | Non-essential cached data | $XDG_CACHE_HOME or $HOME/.cache |
+| LIB | Non-executable libraries | $HOME/.local/lib |
+| RUN | Runtime files (sockets, PID files) | $XDG_RUNTIME_DIR |
 
-
-## Browsing HTML Folders
-Supports Apache Tomcat and Apache Httpd directory listings.
+### Temporary Files and Folders
 
 ```java
-NPath httpFolder = NPath.of("htmlfs+https://archive.apache.org/dist/tomcat/");
-try (NStream s = httpFolder.stream()) {
-    List<NPath> matches = s.filter(x -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+"))
-                            .toList();
-}
+    // Workspace-level temp file/folder
+    NPath tempFile = NPath.ofTempFile("buffer.bin");
+    NPath tempFolder = NPath.ofTempFolder("project-workspace");
+
+    // Repository-scoped temp file
+    NPath repoTemp = NPath.ofTempRepositoryFile("download.tmp", myRepository);
+
+    // ID-scoped temp folder
+    NPath idTemp = NPath.ofTempIdFolder("build-output", NId.of("com.example:lib:1.0"));
+
+    // AUTO-CLEANUP: Mark a temp path to be deleted when the JVM exits or session ends
+    tempFile.deleteOnDispose(true);
 ```
 
-## Working with Temp Files and Folders
+---
+
+## Path Manipulation & Navigation
 
 ```java
-NPath tempFile = NPath.ofTempFile("example.txt");
-NPath tempFolder = NPath.ofTempFolder("project-workspace");
+    NPath base = NPath.of("/var/log/myapp");
+
+    // Resolve: standard resolution
+    NPath logFile = base.resolve("app.log");
+
+    // ResolveChild: ignores leading slashes in the child (safer for dynamic concatenation)
+    NPath safeChild = base.resolveChild("/app.log");
+
+    // ResolveSibling: replaces the last name element
+    NPath sibling = logFile.resolveSibling("error.log");
+
+    // Normalize and Absolute
+    NPath normalized = NPath.of("/a/b/../c").normalize();
+    NPath absolute = NPath.of("relative.txt").toAbsolute();
 ```
 
-Also supports temp locations for repositories and artifact ids:
+### Advanced Navigation: relativize vs stripParent
 
 ```java
-NPath.ofTempRepositoryFile("temp.txt", repository);
-NPath.ofTempIdFolder(id);
+    NPath path = NPath.of("/a/b/c");
+
+    // stripParent: Strict prefix removal. Returns empty if not a direct descendant.
+    path.stripParent(NPath.of("/a"));      // Optional["b/c"]
+    path.stripParent(NPath.of("/x"));      // Optional.empty()
+
+    // relativize: Navigational. Calculates the route from origin to this path.
+    path.relativize(NPath.of("/a/b"));     // Optional["c"]
+    NPath.of("/a/c").relativize(NPath.of("/a/b")); // Optional["../b"]
 ```
 
+### Name Parsing (nameParts)
+
+```java
+    NPath p = NPath.of("/archive/my.backup.tar.gz");
+
+    // SHORT: splits at the last dot
+    p.nameParts(NPathExtensionType.SHORT); 
+    // base="my.backup.tar", ext=".gz", fullExt=".gz"
+
+    // LONG: splits at the first dot
+    p.nameParts(NPathExtensionType.LONG);  
+    // base="my", ext=".backup.tar.gz", fullExt=".backup.tar.gz"
+
+    // SMART: heuristic-based (e.g., knows about .tar.gz)
+    p.nameParts(NPathExtensionType.SMART); 
+    // base="my.backup", ext=".tar.gz", fullExt=".tar.gz"
+```
+
+---
 
 ## Content I/O
-Reading:
+
+### Reading
 
 ```java
-byte[] data = path.readBytes();
-String content = path.readString();
+    byte[] data = path.readBytes();
+    String text = path.readString(); // Defaults to UTF-8
+    String textIso = path.readString(StandardCharsets.ISO_8859_1);
+
+    // Streaming
+    try (InputStream is = path.getInputStream()) { /* process */ }
+    try (BufferedReader reader = path.getBufferedReader()) {
+        reader.lines().forEach(System.out::println);
+    }
 ```
 
-Writing:
+### Writing
 
 ```java
-path.writeBytes(data);
-path.writeString("Hello World");
+    path.writeBytes(new byte[]{1, 2, 3});
+    path.writeString("Hello World", StandardCharsets.UTF_8);
+
+    // Write structured objects (uses Nuts formatting/serialization)
+    path.writeObject(myPojo);
+    path.writeText(NText.of("Formatted text"));
+    path.writeMsg(NMsg.ofInfo("Operation completed"));
 ```
 
-Writing Structured Objects:
+### Copying and Moving
 
 ```java
-path.writeObject(myObject);     // Any serializable
-path.writeMsg(NMsg.ofText("Hi"));
+    NPath source = NPath.of("/tmp/data.txt");
+    NPath target = NPath.of("/backup/data.txt");
+
+    source.copyTo(target, NPathOption.CREATE_PARENTS);
+    source.moveTo(target, NPathOption.REPLACE_EXISTING);
+
+    // Copy from external streams
+    try (InputStream is = new URL("https://example.com/file").openStream()) {
+        target.copyFromInputStream(is, NPathOption.CREATE_PARENTS);
+    }
 ```
 
+---
 
-## Path Operations
-- resolve, resolveSibling, normalize, toAbsolute, toRelative
-- exists(), isDirectory(), isFile(), delete(), mkdir()
-- getName(), getNameCount(), getNames(), getParent()
-
-## File Tree
+## File & Directory Operations
 
 ```java
-path.walk();                    // DFS walk
-path.walkGlob();               // Glob walk
+    NPath dir = NPath.of("/tmp/myapp/data");
+
+    // Creation
+    dir.mkdirs();                  // Create directory and all missing parents
+    dir.mkParentDirs();            // Only create parents of the current path
+    dir.ensureEmptyDirectory();    // Creates if missing, or deletes contents if exists
+
+    // Inspection
+    boolean exists = dir.exists();
+    boolean isDir = dir.isDirectory();
+    boolean isRemote = dir.isRemote(); // true for http://, ssh://, mem://, etc.
+
+    // Deletion
+    dir.delete();                  // Delete file or empty directory
+    dir.deleteTree();              // Recursively delete directory and contents
 ```
 
-## Streaming and Navigation
-```java
-try (NStream<NPath> stream = path.stream()) {
-    stream.forEach(x -> ...);
-}
-```
+---
 
-## Permissions & Metadata
-
-```java
-Set<NPathPermission> perms = path.getPermissions();
-path.setPermissions(...);
-```
-
-## Type & Protocol
-
-```java
-String protocol = path.getProtocol();
-boolean isFile = path.isFile();
-boolean isHttp = path.isHttp();
-NPathType type = path.type();
-```
-
-## Conversion
+## File Tree & Searching
 
 ```java
-URL url = path.toURL().orNull();
-File file = path.toFile().orNull();
-Path nioPath = path.toPath().orNull();
+    NPath dir = NPath.of("/var/log");
+
+    // Simple list
+    List<NPath> files = dir.list();
+    List<NPathInfo> infos = dir.listInfos(); // Includes size, type, etc.
+
+    // Stream with filtering (Lazy evaluation)
+    try (NStream<NPath> stream = dir.stream()) {
+        List<NPath> txtFiles = stream.filter(p -> p.getName().endsWith(".log")).toList();
+    }
+
+    // Glob pattern matching
+    dir.walkGlob("**/*.java").forEach(p -> System.out.println("Found: " + p));
+
+    // Digest and Checksums
+    List<NPathChildStringDigestInfo> digests = dir.listStringDigestInfo("SHA-256");
 ```
 
+---
 
-## Example: Directory Listing
+## Metadata & Permissions (Filesystem Level)
+
 ```java
-NPath dir = NPath.of("/my/folder");
-List<NPath> files = dir.stream()
-    .filter(p -> p.getName().endsWith(".txt"))
-    .toList();
+    NPath file = NPath.of("/etc/secure/config.yml");
+
+    // Basic File Metadata
+    NPathInfo info = file.info();
+    long size = file.contentLength();
+    Instant modified = file.lastModifiedInstant();
+
+    // Ownership & Permissions (POSIX)
+    String owner = file.owner();
+    Set<NPathPermission> perms = file.permissions();
+
+    // Modify permissions
+    file.addPermissions(NPathPermission.OWNER_READ, NPathPermission.OWNER_WRITE);
+    file.removePermissions(NPathPermission.OTHERS_EXECUTE);
 ```
+
+---
+
+## Conversion & Introspection
+
+Convert NPath back to standard Java types when interoperability is required. All return NOptional to safely handle unsupported conversions.
+
+```java
+    NPath path = NPath.of("/tmp/test.txt");
+
+    // Safe conversions
+    Optional<Path> nioPath = path.toPath().asOptional();
+    Optional<File> javaFile = path.toFile().asOptional();
+    Optional<URL> javaUrl = path.toURL().asOptional();
+
+    // Introspection
+    String protocol = path.protocol();       // "" for local, "https" for web, "mem" for memory
+    String location = path.location();       // The raw string representation
+    NPath compressed = path.toCompressedForm(); // Shortened form (e.g., using ~ for home)
+```
+
+---
+
+## Advanced Example: Robust Remote Download with Metadata & In-Memory Staging
+
+```java
+    public void downloadArtifact(String urlStr, NId artifactId) {
+        NPath remote = NPath.of(urlStr);
+        
+        // 1. Stage the download in memory first (zero disk I/O until verified)
+        NPath memStaging = NPath.of("mem://staging/" + artifactId.getName() + ".tmp")
+            .userTemporary(true); // Explicitly mark as transient
+        
+        // 2. Copy with automatic parent creation
+        remote.copyTo(memStaging, NPathOption.CREATE_PARENTS);
+
+        // 3. Attach rich metadata before further processing
+        NContentMetadata meta = memStaging.metaData()
+            .name(artifactId.getName() + ".jar")
+            .contentType("application/java-archive")
+            .kind("downloaded-artifact");
+
+        // 4. Verify integrity using metadata
+        if (meta.contentLength().orElse(0L) == 0) {
+            throw new IOException("Downloaded payload is empty");
+        }
+
+        // 5. Move to final destination on disk atomically
+        NPath finalDest = NPath.ofUserStore(new NStoreKey(artifactId, NStoreType.CACHE))
+                                .resolve(artifactId.getName() + ".jar");
+        finalDest.mkParentDirs();
+        
+        memStaging.copyTo(finalDest, NPathOption.REPLACE_EXISTING);
+    }
+```
+
+---
 
 ## Summary
-NPath is a versatile and protocol-aware abstraction that unifies file, URL, and resource path handling. Its rich API and Nuts integration make it ideal for building tools that require flexible resource access, remote artifact inspection, or file system utilities.
 
-
-
+NPath is a unified resource locator that goes beyond simple string manipulation. By abstracting away the differences between local disks, remote servers, in-memory buffers (mem://), and virtual repositories, it allows you to write clean, portable, and resilient I/O code. Its fluent API for behavioral flags and NContentMetadata, combined with Nuts-specific features like NStoreKey and deleteOnDispose, makes it the ideal foundation for any tool requiring flexible, context-aware resource access.
