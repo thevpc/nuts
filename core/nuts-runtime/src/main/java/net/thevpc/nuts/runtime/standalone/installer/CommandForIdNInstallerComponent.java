@@ -40,9 +40,9 @@ import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NInstallerComponent;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;

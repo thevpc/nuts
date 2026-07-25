@@ -14,8 +14,8 @@ import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNUndeploy extends AbstractNUndeploy {

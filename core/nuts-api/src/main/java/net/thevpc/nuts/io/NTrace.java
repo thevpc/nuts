@@ -1,7 +1,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;

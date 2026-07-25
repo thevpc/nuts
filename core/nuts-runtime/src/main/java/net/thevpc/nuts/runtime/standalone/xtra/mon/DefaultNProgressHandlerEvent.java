@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.text.NPositionType;
-import net.thevpc.nuts.time.NProgressEventType;
-import net.thevpc.nuts.time.NProgressHandlerEvent;
-import net.thevpc.nuts.time.NProgressMonitorModel;
+import net.thevpc.nuts.mon.NProgressEventType;
+import net.thevpc.nuts.mon.NProgressHandlerEvent;
+import net.thevpc.nuts.mon.NProgressMonitorModel;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class DefaultNProgressHandlerEvent implements NProgressHandlerEvent {

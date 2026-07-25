@@ -14,6 +14,8 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.reflect.NReflectUtils;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;

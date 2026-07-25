@@ -6,7 +6,7 @@ import net.thevpc.nuts.core.NWorkspaceEvent;
 import net.thevpc.nuts.core.NWorkspaceListener;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTextStyles;
 
 public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {

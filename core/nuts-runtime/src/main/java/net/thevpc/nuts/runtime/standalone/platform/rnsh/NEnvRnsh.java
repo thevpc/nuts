@@ -5,6 +5,9 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NullInputStream;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.spi.NEnvCmdSPI;
 import net.thevpc.nuts.util.*;
 

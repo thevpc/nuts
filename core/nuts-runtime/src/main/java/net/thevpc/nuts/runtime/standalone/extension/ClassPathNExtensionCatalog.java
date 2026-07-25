@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.ext.NExtensionCatalog;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScored;
+import net.thevpc.nuts.reflect.NScored;
 
 import java.net.URL;
 import java.util.*;
@@ -22,7 +22,7 @@ public class ClassPathNExtensionCatalog implements NExtensionCatalog {
                     if (ok != null) {
                         NId i = ok.map().get(pattern);
                         if (i != null) {
-                            ids.add(new net.thevpc.nuts.util.NScored(i, ok.score()));
+                            ids.add(new NScored(i, ok.score()));
                         }
                     }
                 }

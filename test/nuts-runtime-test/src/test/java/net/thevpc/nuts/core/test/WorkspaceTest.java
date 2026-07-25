@@ -23,7 +23,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 
 import net.thevpc.nuts.io.NDigest;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.artifact.NDependencySolver;
 import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

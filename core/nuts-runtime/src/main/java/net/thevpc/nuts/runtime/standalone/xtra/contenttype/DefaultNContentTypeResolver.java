@@ -30,6 +30,8 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NPathExtensionType;
 import net.thevpc.nuts.io.NPath;

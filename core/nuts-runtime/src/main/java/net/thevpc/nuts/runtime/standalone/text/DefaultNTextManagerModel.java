@@ -30,7 +30,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;

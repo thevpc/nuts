@@ -1,13 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.command.NSearch;
+import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
 
-import net.thevpc.nuts.command.NExecutionEntry;
-import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
+import net.thevpc.nuts.runtime.standalone.atrifact.DefaultNClasspathEntry;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -17,19 +16,15 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NClassLoaderNodeExt;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
-import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
-import net.thevpc.nuts.command.NFetchStrategy;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,6 +32,7 @@ import java.util.stream.Collectors;
 public final class JavaExecutorOptions {
 
     private final boolean mainClassApp = false;
+    private Boolean acceptOptional = null;
     private final List<String> execArgs;
     private final List<String> jvmArgs = new ArrayList<String>();
     private final List<String> extraExecutorOptions = new ArrayList<String>();
@@ -48,7 +44,7 @@ public final class JavaExecutorOptions {
     private final List<String> appArgs = new ArrayList<>();
     private final List<String> appendArgs = new ArrayList<>();
     //    private NutsDefinition nutsMainDef;
-    private final List<NClassLoaderNode> classPathNodes = new ArrayList<>();
+    private final List<NClasspathEntry> resolvedCP = new ArrayList<>();
     private final List<String> classPath = new ArrayList<>();
     private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
     private String javaEffVersion = null;
@@ -62,175 +58,98 @@ public final class JavaExecutorOptions {
     private boolean jar = false;
     private String splash;
     private String j9_module;
+    private NDependencyFilter dependencyFilter;
 
     public JavaExecutorOptions(NDefinition def, boolean tempId, List<String> args,
                                List<String> executorOptions, NPath dir) {
         showCommand = CoreNUtils.isShowCommand();
         NId id = def.id();
-        NDescriptor descriptor = null;
-        if (tempId) {
-            descriptor = def.descriptor();
-//            if (!CoreNutsUtils.isEffectiveId(id)) {
-//                throw new NutsException(session, NMsg.ofC("id should be effective : %s", id));
+//        NDescriptor descriptor = null;
+//        if (tempId) {
+//            descriptor = def.descriptor();
+////            if (!CoreNutsUtils.isEffectiveId(id)) {
+////                throw new NutsException(session, NMsg.ofC("id should be effective : %s", id));
+////            }
+//            id = descriptor.id();
+//        } else {
+//            descriptor = def.effectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.descriptor(),
+//                    new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(false)));
+//            if (!CoreNUtils.isEffectiveId(id)) {
+//                id = descriptor.id();
 //            }
-            id = descriptor.id();
-        } else {
-            descriptor = def.effectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.descriptor(),
-                    new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(false)));
-            if (!CoreNUtils.isEffectiveId(id)) {
-                id = descriptor.id();
-            }
-        }
+//        }
         Path path = def.content().flatMap(NPath::toPath).orNull();
         this.dir = dir;
         this.execArgs = executorOptions;
+
 //        List<String> classPath0 = new ArrayList<>();
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
         //will accept all -- and - based options!
         NCmdLine cmdLine = NCmdLine.of(getExecArgs()).expandSimpleOptions(false);
         NArg a;
-        List<NClassLoaderNode> currentCP = new ArrayList<>();
+        NClasspathBuilder currentCP = NClasspathBuilder.of();
         List<NArg> extraMayBeJvmOptions = new ArrayList<>();
 
-        while (cmdLine.hasNext()) {
-            a = cmdLine.peek().get();
-            switch (a.key()) {
-                case "--java-version":
-                case "-java-version": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> javaVersion = v.stringValue()).anyMatch();
-                    break;
-                }
-                case "--java-home":
-                case "-java-home": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> javaCommand = v.stringValue()).anyMatch();
-                    break;
-                }
-                case "--class-path":
-                case "-class-path":
-                case "--classpath":
-                case "-classpath":
-                case "--cp":
-                case "-cp": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> addCp(currentCP, v.stringValue())).anyMatch();
-                    break;
-                }
-
-                case "--nuts-path":
-                case "-nuts-path":
-                case "--nutspath":
-                case "-nutspath":
-                case "--np":
-                case "-np": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> addNp(currentCP, v.stringValue())).anyMatch();
-                    break;
-                }
-                case "--main-class":
-                case "-main-class":
-                case "--class":
-                case "-class": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> mainClass = v.stringValue()).anyMatch();
-                    break;
-                }
-                case "--dir":
-                case "-dir": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> this.dir = NPath.of(v.stringValue())).anyMatch();
-                    break;
-                }
-                case "--win":
-                case "--javaw": {
-                    cmdLine.matcher().withAny().matchFlag((v) -> javaw = v.booleanValue()).anyMatch();
-                    break;
-                }
-                case "--jar":
-                case "-jar": {
-                    cmdLine.matcher().withAny().matchFlag((v) -> jar = v.booleanValue()).anyMatch();
-                    break;
-                }
-                case "--show-command":
-                case "-show-command": {
-                    cmdLine.matcher().withAny().matchFlag((v) -> showCommand = v.booleanValue()).anyMatch();
-                    break;
-                }
-                case "--exclude-base":
-                case "-exclude-base": {
-                    cmdLine.matcher().withAny().matchFlag((v) -> excludeBase = v.booleanValue()).anyMatch();
-                    break;
-                }
-                case "--add-module": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> this.j9_addModules.add(v.stringValue())).anyMatch();
-                    break;
-                }
-                case "-m":
-                case "--module": {
-                    //<module>/<mainclass>
-                    cmdLine.matcher().withAny().matchEntry((v) -> this.j9_module = v.stringValue()).anyMatch();
-                    break;
-                }
-                case "--module-path": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> this.j9_modulePath.add(v.stringValue())).anyMatch();
-                    break;
-                }
-                case "-splash": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> splash = v.stringValue()).anyMatch();
-                    break;
-                }
-                case "--upgrade-module-path": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> this.j9_upgradeModulePath.add(v.stringValue())).anyMatch();
-                    break;
-                }
-                case "--prepend-arg": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> this.prependArgs.add(v.stringValue())).anyMatch();
-                    break;
-                }
-                case "--append-arg": {
-                    cmdLine.matcher().withAny().matchEntry((v) -> this.appendArgs.add(v.stringValue())).anyMatch();
-                    break;
-                }
-                case "-s": {
-                    NArg s = cmdLine.next().get();
+        cmdLine.matcher()
+                .with("--java-version","-java-version").matchEntry((v) -> javaVersion = v.stringValue())
+                .with("--java-home","-java-home").matchEntry((v) -> javaCommand = v.stringValue())
+                .with("--class-path","-class-path","--classpath","-classpath","--cp","-cp").matchEntry((v) -> addCp(currentCP, v.stringValue()))
+                .with("--nuts-path","-nuts-path","--nutspath","-nutspath","--np","-np").matchEntry((v) -> addNp(currentCP, v.stringValue()))
+                .with("--main-class","-main-class","--class","-class").matchEntry((v) -> mainClass = v.stringValue())
+                .with("--dir","-dir").matchEntry((v) -> this.dir = NPath.of(v.stringValue()))
+                .with("--win","-javaw").matchFlag((v) -> javaw = v.booleanValue())
+                .with("--jar","-jar").matchFlag((v) -> jar = v.booleanValue())
+                .with("--show-command","-show-command").matchFlag((v) -> showCommand = v.booleanValue())
+                .with("--exclude-base","-exclude-base").matchFlag((v) -> excludeBase = v.booleanValue())
+                .with("--add-module","-add-module").matchEntry((v) -> this.j9_addModules.add(v.stringValue()))
+                .with("--m","-m","--module","-module").matchEntry((v) -> this.j9_module = v.stringValue())
+                .with("--module-path","-module-path").matchEntry((v) -> this.j9_modulePath.add(v.stringValue()))
+                .with("--splash","-splash").matchEntry((v) -> this.splash=v.stringValue())
+                .with("--upgrade-module-path","-upgrade-module-path").matchEntry((v) -> this.j9_upgradeModulePath.add(v.stringValue()))
+                .with("--prepend-arg","-prepend-arg").matchEntry((v) -> this.prependArgs.add(v.stringValue()))
+                .with("--prepend-arg","-prepend-arg").matchEntry((v) -> this.prependArgs.add(v.stringValue()))
+                .with("--append-arg","-append-arg").matchEntry((v) -> this.appendArgs.add(v.stringValue()))
+                .with("--optional","-optional").matchFlag((v) -> this.acceptOptional=v.booleanValue())
+                .with("-s").matchFlag((v) -> {
                     getJvmArgs().add("-Dswing.aatext=true");
                     getJvmArgs().add("-Dawt.useSystemAAFontSettings=on");
                     getJvmArgs().add("-Dapple.laf.useScreenMenuBar=true");
                     getJvmArgs().add("-Dapple.awt.graphics.UseQuartz=true");
 //                    getJvmArgs().add("-Dsun.java2d.noddraw=true");
 //                    getJvmArgs().add("-Dsun.java2d.dpiaware=true");
-                    break;
-                }
-                default: {
-                    if (a.isOption()) {
-                        List<NArg> nArgs = NWorkspaceCmdLineParser.nextNutsArgument(cmdLine, null).orNull();
-                        if (nArgs != null) {
-                            for (NArg nArg : nArgs) {
-                                extraNutsOptions.add(nArg.toString());
-                            }
-                        } else if (a.toString().startsWith("--jvm-")) {
-                            getJvmArgs().add(cmdLine.next().get().toString().substring("--jvm".length()));
-                        } else if (a.toString().startsWith("--nuts-")) {
-                            extraNutsOptions.add(cmdLine.next().get().toString().substring("--nuts".length()));
-                        } else {
-                            extraMayBeJvmOptions.add(cmdLine.next().get());
+                })
+                .withOption().matchAnyMultiple(v->{
+                    NArg aa = v.peek().get();
+                    List<NArg> nArgs = NWorkspaceCmdLineParser.nextNutsArgument(v, null).orNull();
+                    if (nArgs != null) {
+                        for (NArg nArg : nArgs) {
+                            extraNutsOptions.add(nArg.toString());
                         }
-                    }else{
-                        cmdLine.throwUnexpectedArgument();
+                    } else if (aa.toString().startsWith("--jvm-")) {
+                        getJvmArgs().add(v.next().get().toString().substring("--jvm".length()));
+                    } else if (aa.toString().startsWith("--nuts-")) {
+                        extraNutsOptions.add(v.next().get().toString().substring("--nuts".length()));
+                    } else {
+                        extraMayBeJvmOptions.add(v.next().get());
                     }
-                }
-            }
-        }
+                })
+                .requireAll();
+
+        dependencyFilter = NDependencyFilters.of().byScope(NDependencyScopePattern.RUN)
+                .and(NDependencyFilters.of().byOptional(acceptOptional));
+
         boolean cached = NSession.of().isCached() && NSession.of().fetchStrategy().orNull() != NFetchStrategy.REMOTE;
         NPath cacheFile = null;
         if (cached) {
-            cacheFile = loadCachedClassPath(id, currentCP, classPathNodes);
+            cacheFile = loadCachedClassPath(id, currentCP, resolvedCP);
         }
 
-        if (classPathNodes.isEmpty()) {
+        if (resolvedCP.isEmpty()) {
             List<NDefinition> nDefinitions = new ArrayList<>();
             NSearch se = NSearch.of();
-            NDependencyFilters dependencyFilters = NDependencyFilters.of();
-            NDependencyFilter defFilter = dependencyFilters.byScope(NDependencyScopePattern.RUN)
-                    .and(dependencyFilters.byOptional(false));
             if (tempId) {
-                for (NDependency dependency : descriptor.dependencies()) {
-                    if (defFilter.acceptDependency(dependency, null)) {
+                for (NDependency dependency : def.dependencies().get().immediate().toList()) {
+                    if (dependencyFilter.acceptDependency(dependency, null)) {
                         se.addId(dependency.toId());
                     }
                 }
@@ -244,7 +163,7 @@ public final class JavaExecutorOptions {
                                 .distinct(true)
                                 .latest(true)
                                 .inlineDependencies(true)
-                                .dependencyFilter(dependencyFilters.byRunnable())
+                                .dependencyFilter(dependencyFilter)
                                 .getResultDefinitions().toList()
                 );
             }
@@ -260,7 +179,7 @@ public final class JavaExecutorOptions {
                     if (NOut.isPlain()) {
                         session.terminal().err().println(NMsg.ofC("ignored class-path=%s. running jar!", currentCP
                                 .stream()
-                                .map(x -> x.url().toString()).collect(Collectors.joining(","))
+                                .map(x -> x.toString()).collect(Collectors.joining(","))
                         ));
                     }
                 }
@@ -272,38 +191,26 @@ public final class JavaExecutorOptions {
                 NId finalId = id;
                 NAssert.requireNonNull(mainClass, () -> NMsg.ofC("missing Main Class for %s", finalId));
                 boolean baseDetected = false;
-                NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
                 for (NDefinition nDefinition : nDefinitions) {
-                    NClassLoaderNode nn = null;
                     if (nDefinition.content().isPresent()) {
                         if (id.longName().equals(nDefinition.id().longName())) {
                             baseDetected = true;
                             if (!isExcludeBase()) {
-                                nn = (NClassLoaderUtils.definitionToClassLoaderNodeSafer(nDefinition,
-                                        nRepositoryFilters.installedRepo()
-                                ));
-                                //                            classPath.add(nutsDefinition.getPath().toString());
-                                //                            nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
+                                currentCP.add(nDefinition);
                             }
                         } else {
-                            nn = (NClassLoaderUtils.definitionToClassLoaderNodeSafer(nDefinition,
-                                    nRepositoryFilters.installedRepo()
-                            ));
-                            //                        classPath.add(nutsDefinition.getPath().toString());
-                            //                        nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
+                            currentCP.add(nDefinition);
                         }
-                    }
-                    if (nn != null) {
-                        currentCP.add(nn);
                     }
                 }
                 if (!isExcludeBase() && !baseDetected) {
                     NAssert.requireNonNull(path, () -> NMsg.ofC("missing path %s", finalId));
-                    currentCP.add(0, NClassLoaderUtils.definitionToClassLoaderNodeSafer(def, nRepositoryFilters.installedRepo()));
+                    //do append, not prepend, because use cp shall prevail
+                    currentCP.add(def);
                 }
-                classPathNodes.addAll(currentCP);
+                resolvedCP.addAll(currentCP.resolve());
                 if (cached && cacheFile != null) {
-                    writeCache(cacheFile, classPathNodes);
+                    writeCache(cacheFile, resolvedCP);
                 }
             }
         } else {
@@ -325,10 +232,10 @@ public final class JavaExecutorOptions {
             }
         }
 
-        if (!classPathNodes.isEmpty()) {
+        if (!resolvedCP.isEmpty()) {
             List<NClassLoaderNodeExt> ln =
                     NJavaSdkUtils.loadNutsClassLoaderNodeExts(
-                            classPathNodes.toArray(new NClassLoaderNode[0]),
+                            resolvedCP.toArray(new NClassLoaderNode[0]),
                             java9
                     );
             if (java9) {
@@ -442,12 +349,12 @@ public final class JavaExecutorOptions {
         }
     }
 
-    private void writeCache(NPath cacheFile, List<NClassLoaderNode> classPathNodes) {
+    private void writeCache(NPath cacheFile, List<NClasspathEntry> classPathNodes) {
         try {
             cacheFile.mkParentDirs();
             try (BufferedWriter bw = cacheFile.getBufferedWriter(NPathOption.CREATE, NPathOption.TRUNCATE_EXISTING)) {
-                for (NClassLoaderNode node : classPathNodes) {
-                    bw.write((node.id() == null ? "" : node.id().toString()) + "|" + node.url().toString());
+                for (NClasspathEntry node : classPathNodes) {
+                    bw.write((node.id() == null ? "" : node.id().toString()) + "|" + (node.path() == null ? "" : node.path().toString()));
                     bw.newLine();
                 }
             }
@@ -456,7 +363,7 @@ public final class JavaExecutorOptions {
         }
     }
 
-    private NPath loadCachedClassPath(NId id, List<NClassLoaderNode> currentCP, List<NClassLoaderNode> classPathNodes) {
+    private NPath loadCachedClassPath(NId id, NClasspathBuilder currentCP, List<NClasspathEntry> resolvedCP) {
         CoreDigestHelper dh = new CoreDigestHelper();
         dh.append(String.valueOf(id).getBytes());
         dh.append(currentCP.stream().map(Object::toString).collect(Collectors.joining(":")).getBytes());
@@ -478,14 +385,29 @@ public final class JavaExecutorOptions {
                             String idStr = split[0];
                             String urlStr = split[1];
                             NId nid = NId.get(idStr).orNull();
-                            URL url = new URL(urlStr);
-                            classPathNodes.add(new NDefaultClassLoaderNode(nid, url, true, true));
+                            if (NStringUtils.isBlank(urlStr)) {
+                                if (!NStringUtils.isBlank(idStr)) {
+                                    resolvedCP.add(new DefaultNClasspathEntry(
+                                            NFetch.of(nid).getResultDefinition()
+                                    ));
+                                } else {
+                                    resolvedCP.clear();
+                                    return cacheFile;
+                                }
+                            } else {
+                                if(NPath.of(urlStr).exists()) {
+                                    resolvedCP.add(new DefaultNClasspathEntry(nid, NPath.of(urlStr)));
+                                }else{
+                                    resolvedCP.clear();
+                                    return cacheFile;
+                                }
+                            }
                         }
                     }
                 }
             } catch (Exception ex) {
                 // ignore and re-compute
-                classPathNodes.clear();
+                resolvedCP.clear();
             }
         }
         return cacheFile;
@@ -544,10 +466,7 @@ public final class JavaExecutorOptions {
         if (s.startsWith("-agentlib:")) {
             return true;
         }
-        if (s.startsWith("-javaagent:")) {
-            return true;
-        }
-        return false;
+        return s.startsWith("-javaagent:");
     }
 
     private String resolveMainClass(String name, List<String> possibleClasses) {
@@ -605,7 +524,7 @@ public final class JavaExecutorOptions {
         return null;
     }
 
-    private void addCp(List<NClassLoaderNode> classPath, String value) {
+    private void addCp(NClasspathBuilder classPath, String value) {
         if (value == null) {
             value = "";
         }
@@ -616,26 +535,24 @@ public final class JavaExecutorOptions {
         } else {
             for (String n : StringTokenizerUtils.splitColon(value)) {
                 if (!NBlankable.isBlank(n)) {
-                    URL url = NPath.of(n).toURL().get();
-                    classPath.add(new NDefaultClassLoaderNode(null, url, true, true));
+                    classPath.add(NPath.of(n));
                 }
             }
         }
 
     }
 
-    private void addNp(List<NClassLoaderNode> classPath, String value) {
+    private void addNp(NClasspathBuilder classPath, String value) {
         NSearch ns = NSearch.of().latest(true);
-        NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
         for (String n : StringTokenizerUtils.splitDefault(value)) {
             if (!NBlankable.isBlank(n)) {
                 ns.addId(n);
             }
         }
         for (NId nutsId : ns.getResultIds()) {
-            NDefinition f = NSearch.of().addId(nutsId)
+            NDefinition d = NSearch.of().addId(nutsId)
                     .latest(true).getResultDefinitions().findFirst().get();
-            classPath.add(NClassLoaderUtils.definitionToClassLoaderNodeSafer(f, nRepositoryFilters.installedRepo()));
+            classPath.add(d);
         }
     }
 
@@ -816,28 +733,16 @@ public final class JavaExecutorOptions {
 //    }
 
 
-    public void fillNidStrings(NClassLoaderNode n, List<String> list) {
-        if (NBlankable.isBlank(n.id())) {
-            URL f = n.url();
-            list.add(NPath.of(f).toPath().get().toString());
-        } else {
-            list.add(n.id().toString());
-        }
-        for (NClassLoaderNode d : n.dependencies()) {
-            fillNidStrings(d, list);
-        }
-    }
-
     public List<String> getClassPathNidStrings() {
         List<String> li = new ArrayList<>();
-        for (NClassLoaderNode n : getClassPathNodes()) {
-            fillNidStrings(n, li);
+        for (NClasspathEntry n : getResolvedCP()) {
+            li.add(n.toString());
         }
         return li;
     }
 
-    public List<NClassLoaderNode> getClassPathNodes() {
-        return classPathNodes;
+    public List<NClasspathEntry> getResolvedCP() {
+        return resolvedCP;
     }
 
     public String getJavaEffVersion() {

@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
@@ -19,10 +22,10 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressFactory;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NChronometer;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
@@ -450,7 +453,7 @@ public class DefaultNCp implements NCp {
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NInterruptException();
+            throw new NInterruptedException();
         }
     }
 

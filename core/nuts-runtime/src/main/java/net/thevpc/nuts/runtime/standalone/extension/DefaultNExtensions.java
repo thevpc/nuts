@@ -6,20 +6,21 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNUtilsRPI;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.text.NMsg;
 
@@ -47,31 +48,11 @@ public class DefaultNExtensions implements NExtensions {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(NId.get("net.thevpc.nsh:nsh").get())));
     }
 
-
-    @Override
-    public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl) {
-        return wsModel.extensionModel.installWorkspaceExtensionComponent(extensionPointType, extensionImpl);
-    }
-
     @Override
     public Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader) {
         return wsModel.extensionModel.discoverTypes(id, classLoader);
     }
 
-    @Override
-    public <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
-        return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType);
-    }
-
-    @Override
-    public <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
-        return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType, classLoader);
-    }
-
-    @Override
-    public NMutableClassLoader createMutableClassLoader(ClassLoader parentClassLoader) {
-        return new NMutableClassLoaderImpl(parentClassLoader);
-    }
 
     public <T> NOptional<NScorable> getTypeScorable(Class<? extends T> implType, Class<T> apiType) {
         return wsModel.extensionModel.getObjectFactory().getTypeScorer(implType, apiType);
@@ -116,7 +97,7 @@ public class DefaultNExtensions implements NExtensions {
                 return NOptional.of((T) t);
             }
             //log will need NCollectionsRPI so...
-            case "net.thevpc.nuts.internal.rpi.NCollectionsRPI": {
+            case "net.thevpc.nuts.internal.rpi.NUtilsRPI": {
                 NUtilsRPI t = wsModel.defaultNUtilsRPI;
                 if (t == null) {
                     t = new DefaultNUtilsRPI();

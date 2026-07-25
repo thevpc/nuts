@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.io.NTerminalFormatter;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NAnsiTermHelper;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 

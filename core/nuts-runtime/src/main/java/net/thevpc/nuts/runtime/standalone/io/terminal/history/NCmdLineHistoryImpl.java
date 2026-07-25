@@ -28,8 +28,8 @@ import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
 

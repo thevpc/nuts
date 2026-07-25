@@ -20,8 +20,8 @@ import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
 import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;

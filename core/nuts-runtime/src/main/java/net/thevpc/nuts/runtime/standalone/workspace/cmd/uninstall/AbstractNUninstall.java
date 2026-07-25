@@ -13,8 +13,8 @@ import net.thevpc.nuts.command.NUninstall;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.AbstractNInstall;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.ArrayList;
 import java.util.Arrays;

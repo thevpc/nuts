@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NBPlusTree;
+import net.thevpc.nuts.util.store.NBPlusTree;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

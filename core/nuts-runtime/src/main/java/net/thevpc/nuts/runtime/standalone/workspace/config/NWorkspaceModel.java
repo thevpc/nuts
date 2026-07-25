@@ -37,7 +37,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NProgressMonitor;
+import net.thevpc.nuts.mon.NProgressMonitor;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;

@@ -8,6 +8,8 @@ import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;

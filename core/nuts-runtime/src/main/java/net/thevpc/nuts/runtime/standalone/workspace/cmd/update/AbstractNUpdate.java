@@ -16,6 +16,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 

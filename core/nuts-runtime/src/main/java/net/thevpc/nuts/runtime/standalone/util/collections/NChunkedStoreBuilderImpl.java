@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NChunkedStoreFactory;
-import net.thevpc.nuts.util.NChunkedStore;
-import net.thevpc.nuts.util.NChunkedStoreBuilder;
+import net.thevpc.nuts.util.store.NChunkedStoreFactory;
+import net.thevpc.nuts.util.store.NChunkedStore;
+import net.thevpc.nuts.util.store.NChunkedStoreBuilder;
 
 public class NChunkedStoreBuilderImpl<T> implements NChunkedStoreBuilder<T> {
     private NPath folder;

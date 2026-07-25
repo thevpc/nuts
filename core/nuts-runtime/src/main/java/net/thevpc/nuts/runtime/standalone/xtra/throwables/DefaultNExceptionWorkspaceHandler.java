@@ -8,6 +8,8 @@ import net.thevpc.nuts.elem.NElement;
 
 
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.workspace.NFailSafeHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NContentType;

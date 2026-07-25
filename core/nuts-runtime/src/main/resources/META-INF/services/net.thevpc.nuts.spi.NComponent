@@ -50,6 +50,7 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNUp
 net.thevpc.nuts.runtime.standalone.security.DefaultNSecurityManager
 net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions
 net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli
+net.thevpc.nuts.runtime.standalone.atrifact.DefaultNClasspathBuilder
 
 net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder
 net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder

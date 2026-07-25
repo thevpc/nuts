@@ -951,25 +951,42 @@ public class NStringUtils {
                     p += 2;
                     n.setLength(0);
                     ni.setLength(0);
-                    ni.append(c).append('{');
+                    ni.append("{{");
+
+                    boolean closed = false;
                     while (p < length) {
                         c = t[p];
-                        if (c == '}' && p + 1 < t.length && t[p + 1] == '}') {
-                            ni.append(c);
-                            p++;
-                            ni.append(c);
+                        if (c == '}' && p + 1 < length && t[p + 1] == '}') {
+                            ni.append("}}");
+                            p += 2; // Advance past both closing braces
+                            closed = true;
                             break;
                         } else {
+                            // Strip trailing unmatched single '}' if we hit one at the end
+                            if (c != '}' || p + 1 < length) {
+                                n.append(c);
+                            }
                             ni.append(c);
-                            n.append(c);
                             p++;
                         }
                     }
+
                     if (sb.length() > 0) {
                         buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
                         sb.setLength(0);
                     }
-                    buffer.add(NToken.of(NToken.TT_MOUSTACHE_START, n.toString(), 0, 0, ni.toString(), TT_DOLLAR_BRACE_STR));
+
+                    // Variable name 'n' is cleanly extracted even if unclosed
+                    String varName = n.toString();
+                    // Clean up any trailing single '}' from unclosed '{{v}'
+                    if (!closed && varName.endsWith("}")) {
+                        varName = varName.substring(0, varName.length() - 1);
+                    }
+
+                    buffer.add(NToken.of(NToken.TT_MOUSTACHE_START, varName, 0, 0, ni.toString(), TT_DOLLAR_BRACE_STR));
+
+                    // Return early since we consumed 'p' in the loop
+                    return;
                 } else {
                     sb.append(c);
                 }

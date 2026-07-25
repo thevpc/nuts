@@ -1,9 +1,9 @@
 package net.thevpc.nuts.ext.compression;
 
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.NStringUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;

@@ -5,8 +5,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
-import net.thevpc.nuts.util.NScorableContext;
-
 /**
  *
  * @author thevpc

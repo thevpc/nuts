@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNTextNodeParserDefaults;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 
 public class FormatOutputStreamSupport {

@@ -9,8 +9,8 @@ import net.thevpc.nuts.elem.NElementWriter;
 
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;

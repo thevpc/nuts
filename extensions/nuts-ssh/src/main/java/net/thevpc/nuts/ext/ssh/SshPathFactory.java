@@ -4,9 +4,9 @@ import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.spi.NDefaultScorableContext;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.NStringUtils;
 

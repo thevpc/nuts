@@ -7,8 +7,8 @@ import net.thevpc.nuts.text.NExecWriter;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.List;
 import java.util.Map;

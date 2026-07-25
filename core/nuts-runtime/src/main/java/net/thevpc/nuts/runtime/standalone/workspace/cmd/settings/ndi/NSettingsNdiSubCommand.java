@@ -23,10 +23,10 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win.Windows
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NSupportMode;
 
 import java.io.UncheckedIOException;

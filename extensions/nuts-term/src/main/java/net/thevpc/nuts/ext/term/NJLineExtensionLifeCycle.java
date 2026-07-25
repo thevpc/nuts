@@ -3,8 +3,8 @@ package net.thevpc.nuts.ext.term;
 import net.thevpc.nuts.core.NWorkspaceExtension;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.spi.NExtensionLifeCycle;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NUnused;
 
 @NUnused

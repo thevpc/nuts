@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import net.thevpc.nuts.util.*;
 

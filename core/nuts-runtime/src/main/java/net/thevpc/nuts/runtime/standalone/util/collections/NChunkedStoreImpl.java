@@ -5,6 +5,8 @@ import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.util.store.NChunkedStore;
+import net.thevpc.nuts.util.store.NChunkedStoreFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;

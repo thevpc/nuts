@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NBTreeMap;
-import net.thevpc.nuts.util.NBTreeSet;
+import net.thevpc.nuts.util.store.NBTreeMap;
+import net.thevpc.nuts.util.store.NBTreeSet;
 
 import java.util.*;
 

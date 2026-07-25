@@ -5,6 +5,8 @@ import net.thevpc.nuts.artifact.NDescriptorStyle;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;

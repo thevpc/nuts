@@ -6,9 +6,9 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgParam;
 import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.runtime.standalone.util.MemoryUtils;
-import net.thevpc.nuts.time.NProgressHandler;
-import net.thevpc.nuts.time.NProgressHandlerEvent;
-import net.thevpc.nuts.time.NProgressMonitorModel;
+import net.thevpc.nuts.mon.NProgressHandler;
+import net.thevpc.nuts.mon.NProgressHandlerEvent;
+import net.thevpc.nuts.mon.NProgressMonitorModel;
 
 import java.text.DecimalFormat;
 import java.util.Date;

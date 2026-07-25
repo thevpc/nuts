@@ -8,8 +8,8 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExec;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 @NScore(fixed = NScorable.UNSUPPORTED_SCORE)
 public class RemoteNExec extends AbstractNExec {

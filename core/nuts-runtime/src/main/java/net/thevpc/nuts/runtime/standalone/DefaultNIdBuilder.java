@@ -29,6 +29,8 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 
 import java.util.LinkedHashMap;

@@ -13,7 +13,7 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 

@@ -32,9 +32,9 @@ import net.thevpc.nuts.artifact.NDescriptorParser;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.ByteArrayOutputStream;

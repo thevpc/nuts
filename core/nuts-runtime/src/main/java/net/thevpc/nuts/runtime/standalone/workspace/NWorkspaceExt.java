@@ -20,7 +20,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledReposit
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.artifact.NDependencySolver;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.text.NText;
 

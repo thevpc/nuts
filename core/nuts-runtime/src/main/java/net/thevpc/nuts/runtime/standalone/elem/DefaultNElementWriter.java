@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.time.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressFactory;
 
 import java.lang.reflect.Type;
 import java.util.function.Consumer;

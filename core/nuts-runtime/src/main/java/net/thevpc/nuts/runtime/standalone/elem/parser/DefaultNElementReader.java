@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.elem.parser;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NParseException;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -11,7 +13,7 @@ import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressFactory;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;

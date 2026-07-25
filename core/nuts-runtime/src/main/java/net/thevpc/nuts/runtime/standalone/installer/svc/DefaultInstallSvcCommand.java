@@ -9,6 +9,8 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;

@@ -45,7 +45,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NativeImageHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NDefaultTerminalSpec;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NTerminalSpec;
 import net.thevpc.nuts.log.NLog;
 

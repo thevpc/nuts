@@ -51,6 +51,7 @@ public class NMsg implements NBlankable, NElementSimple {
     private final Throwable throwable;
     private final NDuration duration;
     private final String customFormatId;
+    private final boolean ntf;
 
     public static Placeholder placeholder(String name) {
         NAssert.requireNamedNonBlank(name, "name");
@@ -113,20 +114,20 @@ public class NMsg implements NBlankable, NElementSimple {
         return ofC("invalid %s : %s", valueName, NExceptions.getErrorMessage(throwable));
     }
 
-    private static NMsg of(NMsgType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, NDuration duration, Function<String, ?> placeholderBindings, String customFormatId) {
-        return new NMsg(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId);
+    private static NMsg of(NMsgType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, NDuration duration, Function<String, ?> placeholderBindings, String customFormatId, boolean ntf) {
+        return new NMsg(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
-    private NMsg(NMsgType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, NDuration duration, Function<String, ?> placeholderBindings, String customFormatId) {
+    private NMsg(NMsgType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, NDuration duration, Function<String, ?> placeholderBindings, String customFormatId, boolean ntf) {
         NAssert.requireNamedNonNull(message, "message");
         NAssert.requireNamedNonNull(format, "format");
         NAssert.requireNamedNonNull(params, "params");
         this.level = level == null ? Level.INFO : level;
         this.format = format;
+        this.ntf = ntf;
         this.throwable = throwable;
         this.styles = styles;
         if (format == NMsgType.PLAIN
-                || format == NMsgType.NTF
                 || format == NMsgType.STYLED
                 || format == NMsgType.CODE) {
             if (params.length > 0) {
@@ -154,15 +155,15 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     public static NMsg ofNtf(String message) {
-        return of(NMsgType.NTF, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null, null);
+        return of(NMsgType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofCode(String lang, String text) {
-        return of(NMsgType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null, null, null, null, null, null);
+        return of(NMsgType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, lang, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofCode(String text) {
-        return of(NMsgType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null, null, null, null, null, null);
+        return of(NMsgType.CODE, NStringUtils.firstNonNull(text, ""), NO_PARAMS, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofStringLiteral(String literal) {
@@ -173,47 +174,47 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     public static NMsg ofStyled(String message, NTextStyle style) {
-        return of(NMsgType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null, null);
+        return of(NMsgType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofStyled(String message, NTextStyles styles) {
-        return of(NMsgType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null, null, null, null, null, null);
+        return of(NMsgType.STYLED, NStringUtils.firstNonNull(message, ""), NO_PARAMS, styles, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyle style) {
-        return of(NMsgType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null, null);
+        return of(NMsgType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofStyled(NMsg message, NTextStyles styles) {
-        return of(NMsgType.STYLED, message, NO_PARAMS, styles, null, null, null, null, null, null, null);
+        return of(NMsgType.STYLED, message, NO_PARAMS, styles, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofStyled(NText message, NTextStyle style) {
-        return of(NMsgType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null, null);
+        return of(NMsgType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofStyled(NText message, NTextStyles styles) {
-        return of(NMsgType.STYLED, message, NO_PARAMS, styles, null, null, null, null, null, null, null);
+        return of(NMsgType.STYLED, message, NO_PARAMS, styles, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofNtf(NText message) {
-        return of(NMsgType.NTF, message, NO_PARAMS, null, null, null, null, null, null, null, null);
+        return of(NMsgType.PLAIN, message, NO_PARAMS, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofBlank() {
-        return of(NMsgType.PLAIN, "", NO_PARAMS, null, null, null, null, null, null, null, null);
+        return of(NMsgType.PLAIN, "", NO_PARAMS, null, null, null, null, null, null, null, null, false);
     }
 
     public static NMsg ofPlain(String message) {
-        return of(NMsgType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null, null);
+        return of(NMsgType.PLAIN, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null, null, false);
     }
 
     public static NMsg ofC(String message) {
-        return of(NMsgType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null, null);
+        return of(NMsgType.CFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofC(String message, Object... params) {
-        return of(NMsgType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null, null);
+        return of(NMsgType.CFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofV(String message, NMsgParam... params) {
@@ -224,11 +225,11 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     public static NMsg ofV(String message, Map<String, ?> vars) {
-        return of(NMsgType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null, null);
+        return of(NMsgType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofV(String message, Function<String, ?> vars) {
-        return of(NMsgType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null, null);
+        return of(NMsgType.VFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofM(String message, NMsgParam... params) {
@@ -239,11 +240,11 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     public static NMsg ofM(String message, Map<String, ?> vars) {
-        return of(NMsgType.MFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null, null);
+        return of(NMsgType.MFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofM(String message, Function<String, ?> vars) {
-        return of(NMsgType.MFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null, null);
+        return of(NMsgType.MFORMAT, NStringUtils.firstNonNull(message, ""), new Object[]{vars}, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofJ(String message, NMsgParam... params) {
@@ -264,26 +265,54 @@ public class NMsg implements NBlankable, NElementSimple {
 
     @Deprecated
     public static NMsg ofJ(String message) {
-        return of(NMsgType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null, null);
+        return of(NMsgType.JFORMAT, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, null, null, true);
     }
 
     public static NMsg ofJ(String message, Object... params) {
-        return of(NMsgType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null, null);
+        return of(NMsgType.JFORMAT, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null, null, true);
     }
 
+    /**
+     * defaults to no ntf because usually used in SQL
+     *
+     * @param sql    sql template
+     * @param params sql params in '?' or ':param' format
+     * @return new NMsg instance
+     */
     public static NMsg ofS(String sql, Object... params) {
-        return of(NMsgType.SFORMAT, NStringUtils.firstNonNull(sql, ""), params, null, null, null, null, null, null, null, null);
+        return of(NMsgType.SFORMAT, NStringUtils.firstNonNull(sql, ""), params, null, null, null, null, null, null, null, null, false);
     }
 
+    /**
+     * defaults to no ntf because usually used in SQL
+     *
+     * @param sql         sql template
+     * @param namedParams sql params in '?' or ':param' format
+     * @return new NMsg instance
+     */
     public static NMsg ofS(String sql, Map<String, ?> namedParams) {
         return of(NMsgType.SFORMAT, NStringUtils.firstNonNull(sql, ""), NO_PARAMS, null, null, null, null, null, null,
-                namedParams == null ? null : namedParams::get, null);
+                namedParams == null ? null : namedParams::get, null, false);
     }
 
+    /**
+     * defaults to no ntf because usually used in SQL
+     *
+     * @param sql         sql template
+     * @param namedParams sql params in '?' or ':param' format
+     * @return new NMsg instance
+     */
     public static NMsg ofS(String sql, Function<String, ?> namedParams) {
-        return of(NMsgType.SFORMAT, NStringUtils.firstNonNull(sql, ""), NO_PARAMS, null, null, null, null, null, null, namedParams, null);
+        return of(NMsgType.SFORMAT, NStringUtils.firstNonNull(sql, ""), NO_PARAMS, null, null, null, null, null, null, namedParams, null, false);
     }
 
+    /**
+     * defaults to no ntf because usually used in SQL
+     *
+     * @param sql    sql template
+     * @param params sql params in '?' or ':param' format
+     * @return new NMsg instance
+     */
     public static NMsg ofS(String sql, NMsgParam... params) {
         return ofS(sql, new MapAsSupplier2(params)); // reuse existing named-lookup plumbing
     }
@@ -379,7 +408,7 @@ public class NMsg implements NBlankable, NElementSimple {
         return level;
     }
 
-    private Object _preFormatOne(Object o) {
+    private Object _preFormatOne(Object o, boolean plain) {
         if (o == null) {
             return null;
         }
@@ -399,27 +428,32 @@ public class NMsg implements NBlankable, NElementSimple {
             o = ((NMsgSupplier) o).apply(this);
         }
         if (o instanceof NTextFormattable) {
-            return ((NTextFormattable) o).toText();
+            o = ((NTextFormattable) o).toText();
+        } else if (o instanceof NMsgFormattable) {
+            o = ((NMsgFormattable) o).toMsg();
+        } else if (o instanceof NMsg) {
+            o = ((NMsg) o).withPlaceholders(placeholderBindings);
+        } else if (o instanceof Throwable) {
+            o = NExceptions.getErrorMessage((Throwable) o);
         }
-        if (o instanceof NMsgFormattable) {
-            return ((NMsgFormattable) o).toMsg();
+        if (o instanceof NText) {
+            if (plain) {
+                return ((NText) o).filteredText();
+            }
         }
         if (o instanceof NMsg) {
-            return ((NMsg) o).withPlaceholders(placeholderBindings);
-        }
-        if (o instanceof Throwable) {
-            return NExceptions.getErrorMessage((Throwable) o);
+            return ((NMsg) o).toString(plain);
         }
         return o;
     }
 
-    private Object[] _preFormatArr(Object[] o) {
+    private Object[] _preFormatArr(Object[] o, boolean plain) {
         if (o == null) {
             return o;
         }
         Object[] r = new Object[o.length];
         for (int i = 0; i < r.length; i++) {
-            r[i] = _preFormatOne(o[i]);
+            r[i] = _preFormatOne(o[i],plain);
         }
         return r;
     }
@@ -440,34 +474,38 @@ public class NMsg implements NBlankable, NElementSimple {
         try {
             switch (format) {
                 case CFORMAT: {
-                    return formatAsC();
+                    return formatAsC(plain);
                 }
                 case JFORMAT: {
-                    return formatAsJ();
+                    return formatAsJ(plain);
                 }
                 case VFORMAT: {
-                    return formatAsV();
+                    return formatAsV(plain);
                 }
                 case SFORMAT:
                 case MFORMAT:
                 case CUSTOM: {
-                    return formatCustom();
+                    return formatCustom(plain);
                 }
-                case NTF: {
-                    if (plain) {
+                case PLAIN: {
+                    if (plain || !ntf) {
                         if (message instanceof NText) {
                             return ((NText) message).filteredText();
+                        } else if (message instanceof NMsg) {
+                            return NText.of((NMsg) message).filteredText();
+                        } else {
+                            return String.valueOf(message);
                         }
+                    } else {
+                        return String.valueOf(message);
                     }
-                    return String.valueOf(message);
                 }
                 case STYLED:
-                case CODE:
-                case PLAIN: {
+                case CODE: {
                     return String.valueOf(message); //ignore any style
                 }
             }
-            return "NMsg{" + "message=" + message + ", style=" + format + ", params=" + Arrays.toString(_preFormatArr(params)) + '}';
+            return "NMsg{" + "message=" + message + ", style=" + format + ", params=" + Arrays.toString(_preFormatArr(params,plain)) + '}';
 
         } catch (Exception e) {
             List<Object> a = new ArrayList<>();
@@ -479,25 +517,24 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
 
-
     public static NMsg ofCustom(String formatId, String message, Object... params) {
-        return of(NMsgType.CUSTOM, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null, formatId);
+        return of(NMsgType.CUSTOM, NStringUtils.firstNonNull(message, ""), params, null, null, null, null, null, null, null, formatId, false);
     }
 
     public static NMsg ofCustom(String formatId, String message, Map<String, ?> namedParams) {
         return of(NMsgType.CUSTOM, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null,
-                namedParams == null ? null : namedParams::get, formatId);
+                namedParams == null ? null : namedParams::get, formatId, false);
     }
 
     public static NMsg ofCustom(String formatId, String message, Function<String, ?> namedParams) {
-        return of(NMsgType.CUSTOM, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, namedParams, formatId);
+        return of(NMsgType.CUSTOM, NStringUtils.firstNonNull(message, ""), NO_PARAMS, null, null, null, null, null, null, namedParams, formatId, false);
     }
 
     public String getCustomFormatId() {
-        return format == NMsgType.CUSTOM ? codeLang : null;
+        return customFormatId;
     }
 
-    private String formatAsJ() {
+    private String formatAsJ(boolean plain) {
         //must process special case of {}
         String sMsg = (String) message;
         if (sMsg.contains("{}")) {
@@ -544,27 +581,32 @@ public class NMsg implements NBlankable, NElementSimple {
             }
             sMsg = sb.toString();
         }
-        return MessageFormat.format(sMsg, _preFormatArr(params));
+        return MessageFormat.format(sMsg, _preFormatArr(params,plain));
     }
 
-    private String formatAsC() {
+    private String formatAsC(boolean plain) {
         StringBuilder sb = new StringBuilder();
-        new Formatter(sb).format((String) message, _preFormatArr(params));
+        new Formatter(sb).format((String) message, _preFormatArr(params,plain));
         return sb.toString();
     }
 
-    private String formatCustom() {
+    private String formatCustom(boolean plain) {
         try {
-            return NTexts.of().of(this).filteredText();
+            NText t = NTexts.of().of(this);
+            if(plain){
+                return t.filteredText();
+            }
+            return t.filteredText();
         } catch (Exception e) {
             return String.valueOf(message);
         }
     }
 
-    private String formatAsV() {
+    private String formatAsV(boolean plain) {
+        Object[] params2 = _preFormatArr(params, plain);
         return NStringUtils.replaceDollarPlaceHolder((String) message,
                 s -> {
-                    Object param = params[0];
+                    Object param = params2[0];
                     Function<String, ?> m = null;
                     if (param instanceof Map) {
                         m = x -> ((Map<String, ?>) param).get(x);
@@ -623,7 +665,7 @@ public class NMsg implements NBlankable, NElementSimple {
         if (level == this.level && throwable == this.throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     public NMsg asInfo() {
@@ -735,7 +777,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     public NMsg withoutPlaceholders() {
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, null, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, null, customFormatId, ntf);
     }
 
     public NMsg withPlaceholders(Function<String, ?> placeholderSupplier) {
@@ -743,7 +785,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         Function<String, ?> oldPlaceholderBindings = placeholderBindings;
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, s -> {
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, s -> {
             Object r = placeholderSupplier.apply(s);
             if (r != null) {
                 return r;
@@ -752,7 +794,7 @@ public class NMsg implements NBlankable, NElementSimple {
                 return oldPlaceholderBindings.apply(s);
             }
             return null;
-        }, customFormatId);
+        }, customFormatId, ntf);
     }
 
     public NMsg withPlaceholders(NMsgParam... params) {
@@ -760,7 +802,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         if (placeholderBindings == null) {
-            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(params), customFormatId);
+            return of(format, message, params, styles, codeLang, level, throwable, intent, duration, new MapAsSupplier2(params), customFormatId, ntf);
         }
         if (placeholderBindings instanceof MapAsSupplier2) {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
@@ -769,7 +811,7 @@ public class NMsg implements NBlankable, NElementSimple {
                 NAssert.requireNamedNonNull(param.name(), "param.name");
                 newMap.put(param.name(), new ConstSupplier<>(param.value()));
             }
-            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(newMap), customFormatId);
+            return of(format, message, params, styles, codeLang, level, throwable, intent, duration, new MapAsSupplier2(newMap), customFormatId, ntf);
         }
         if (placeholderBindings instanceof MapAsSupplier) {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>();
@@ -781,11 +823,11 @@ public class NMsg implements NBlankable, NElementSimple {
                 NAssert.requireNamedNonNull(param.name(), "param.name");
                 newMap.put(param.name(), new ConstSupplier<>(param.value()));
             }
-            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(newMap), customFormatId);
+            return of(format, message, params, styles, codeLang, level, throwable, intent, duration, new MapAsSupplier2(newMap), customFormatId, ntf);
         }
         MapAsSupplier2 p2 = new MapAsSupplier2(params);
         Function<String, ?> oldPlaceholderBindings = placeholderBindings;
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, s -> {
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, s -> {
             if (p2.content.containsKey(s)) {
                 return p2.apply(s);
             }
@@ -793,7 +835,7 @@ public class NMsg implements NBlankable, NElementSimple {
                 return oldPlaceholderBindings.apply(s);
             }
             return null;
-        }, customFormatId);
+        }, customFormatId, ntf);
     }
 
     public NMsg withPlaceholder(String key, Object value) {
@@ -805,7 +847,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         if (placeholderBindings == null) {
-            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier(new LinkedHashMap<>(placeholderMap)), customFormatId);
+            return of(format, message, params, styles, codeLang, level, throwable, intent, duration, new MapAsSupplier(new LinkedHashMap<>(placeholderMap)), customFormatId, ntf);
         }
         if (placeholderBindings instanceof MapAsSupplier2) {
             Map<String, Supplier<?>> newMap = new LinkedHashMap<>(((MapAsSupplier2) placeholderBindings).content);
@@ -813,7 +855,7 @@ public class NMsg implements NBlankable, NElementSimple {
                 NAssert.requireNamedNonNull(e.getKey(), "param.name");
                 newMap.put(e.getKey(), new ConstSupplier<>(e.getValue()));
             }
-            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier2(newMap), customFormatId);
+            return of(format, message, params, styles, codeLang, level, throwable, intent, duration, new MapAsSupplier2(newMap), customFormatId, ntf);
         }
         if (placeholderBindings instanceof MapAsSupplier) {
             Map<String, Object> newMap = new LinkedHashMap<>(((MapAsSupplier) placeholderBindings).content);
@@ -825,10 +867,10 @@ public class NMsg implements NBlankable, NElementSimple {
                     newMap.put(e.getKey(), v);
                 }
             }
-            return of(format, message, params, styles, codeLang, level, null, intent, duration, new MapAsSupplier(newMap), customFormatId);
+            return of(format, message, params, styles, codeLang, level, throwable, intent, duration, new MapAsSupplier(newMap), customFormatId, ntf);
         }
         Function<String, ?> oldPlaceholderBindings = placeholderBindings;
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, s -> {
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, s -> {
             if (placeholderMap.containsKey(s)) {
                 return placeholderMap.get(s);
             }
@@ -836,14 +878,14 @@ public class NMsg implements NBlankable, NElementSimple {
                 return oldPlaceholderBindings.apply(s);
             }
             return null;
-        }, customFormatId);
+        }, customFormatId, ntf);
     }
 
     public NMsg withLevel(Level level) {
         if (level == this.level) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     private NMsg withLevelAndDefaultIntent(Level level, NMsgIntent intent) {
@@ -853,14 +895,14 @@ public class NMsg implements NBlankable, NElementSimple {
         if (level == this.level && Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     private NMsg withLevelAndIntent(Level level, NMsgIntent intent) {
         if (level == this.level && Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     private NMsg withLevelAndDefaultIntent(Level level, NMsgIntent intent, Throwable throwable) {
@@ -870,21 +912,21 @@ public class NMsg implements NBlankable, NElementSimple {
         if (level == this.level && Objects.equals(intent, this.intent) && this.throwable == throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     private NMsg withLevelAndIntent(Level level, NMsgIntent intent, Throwable throwable) {
         if (level == this.level && Objects.equals(intent, this.intent) && this.throwable == throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     public NMsg withIntent(NMsgIntent intent) {
         if (Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     public NMsg withDefaultIntent(NMsgIntent intent) {
@@ -894,14 +936,14 @@ public class NMsg implements NBlankable, NElementSimple {
         if (Objects.equals(intent, this.intent)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, null, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     public NMsg withThrowable(Throwable throwable) {
         if (throwable == this.throwable) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     public NMsg withDurationMillis(long elapsedTimeMillis) {
@@ -922,7 +964,7 @@ public class NMsg implements NBlankable, NElementSimple {
         if (Objects.equals(duration, this.duration)) {
             return this;
         }
-        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, level, throwable, intent, duration, placeholderBindings, customFormatId, ntf);
     }
 
     public NMsg withPrefix(NMsg prefixMessage) {
@@ -933,7 +975,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return prefixMessage;
         }
         //this if fast way to inherit level,intent, duration and throwable
-        return of(NMsgType.CFORMAT, "%s %s", new Object[]{prefixMessage, cloneWithoutMeta()}, null, null, level, throwable, intent, duration, null, customFormatId);
+        return of(NMsgType.CFORMAT, "%s %s", new Object[]{prefixMessage, cloneWithoutMeta()}, null, null, level, throwable, intent, duration, null, customFormatId, ntf);
     }
 
     public NMsg withSuffix(NMsg suffixMessage) {
@@ -944,7 +986,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return suffixMessage;
         }
         //this if fast way to inherit level,intent, duration and throwable
-        return of(NMsgType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixMessage}, null, null, level, throwable, intent, duration, null, customFormatId);
+        return of(NMsgType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixMessage}, null, null, level, throwable, intent, duration, null, customFormatId, ntf);
     }
 
     public NMsg withPrefix(NMsgSupplier<NMsg> prefixMessage) {
@@ -953,7 +995,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         //this if fast way to inherit level,intent, duration and throwable
         Supplier<NMsg> prefixSupplier = () -> prefixMessage.apply(this /**/);
-        return of(NMsgType.CFORMAT, "%s %s", new Object[]{prefixSupplier, cloneWithoutMeta()}, null, null, level, throwable, intent, duration, null, customFormatId);
+        return of(NMsgType.CFORMAT, "%s %s", new Object[]{prefixSupplier, cloneWithoutMeta()}, null, null, level, throwable, intent, duration, null, customFormatId, ntf);
     }
 
     public NMsg withSuffix(NMsgSupplier<NMsg> suffixMessage) {
@@ -962,11 +1004,11 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         //this if fast way to inherit level,intent, duration and throwable
         Supplier<NMsg> suffixSupplier = () -> suffixMessage.apply(this /**/);
-        return of(NMsgType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixSupplier}, null, null, level, throwable, intent, duration, null, customFormatId);
+        return of(NMsgType.CFORMAT, "%s %s", new Object[]{cloneWithoutMeta(), suffixSupplier}, null, null, level, throwable, intent, duration, null, customFormatId, ntf);
     }
 
     private NMsg cloneWithoutMeta() {
-        return of(format, message, params, styles, codeLang, null, null, null, null, placeholderBindings, customFormatId);
+        return of(format, message, params, styles, codeLang, null, null, null, null, placeholderBindings, customFormatId, ntf);
     }
 
     // ---------------------------------------------------------------
@@ -1519,6 +1561,10 @@ public class NMsg implements NBlankable, NElementSimple {
         return ofStyled(message, NTextStyle.backgroundTrueColor(color));
     }
 
+    public boolean isNtf() {
+        return ntf;
+    }
+
     // ---------------------------------------------------------------
     // PRIVATE CLASSES
     // ---------------------------------------------------------------
@@ -1595,7 +1641,6 @@ public class NMsg implements NBlankable, NElementSimple {
             return true;
         }
         switch (format) {
-            case PLAIN:
             case JFORMAT:
             case VFORMAT:
             case CFORMAT:
@@ -1604,7 +1649,7 @@ public class NMsg implements NBlankable, NElementSimple {
             case CUSTOM:
                 return NStringUtils.isEmpty((String) message);
             case STYLED:
-            case NTF: {
+            case PLAIN:{
                 if (message instanceof NMsg) {
                     NMsg m = (NMsg) message;
                     return m.isBlank();

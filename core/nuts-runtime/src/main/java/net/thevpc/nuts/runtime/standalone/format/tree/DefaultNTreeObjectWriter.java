@@ -6,6 +6,8 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesObjectWriter;
 import net.thevpc.nuts.runtime.standalone.text.art.tree.DefaultNTextArtTreeRenderer;

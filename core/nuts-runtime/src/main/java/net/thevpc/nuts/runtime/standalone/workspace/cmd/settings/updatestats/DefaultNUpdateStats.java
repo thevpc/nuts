@@ -22,10 +22,10 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenReposi
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScorable;
 
 /**
  * @author thevpc

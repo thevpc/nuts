@@ -7,7 +7,7 @@ import java.io.OutputStream;
 
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamBase;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamRaw;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 
 public class RenderedOutputStream extends OutputStream implements NOutputStreamTransparentAdapter {
 

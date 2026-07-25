@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;

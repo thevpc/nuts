@@ -63,7 +63,7 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
                 loadUnsafe(Thread.currentThread().getContextClassLoader());
                 if(NWorkspaceExt.of().getModel().extensionModel!=null) {
                     if (loadedType == null) {
-                        loadUnsafe(NWorkspaceExt.of().getModel().extensionModel.getWorkspaceExtensionsClassLoader());
+                        loadUnsafe(NWorkspaceExt.of().getModel().extensionModel.getWorkspaceExtensionsClassLoader().asClassLoader());
                     }
                 }
                 if (loadedType == null) {

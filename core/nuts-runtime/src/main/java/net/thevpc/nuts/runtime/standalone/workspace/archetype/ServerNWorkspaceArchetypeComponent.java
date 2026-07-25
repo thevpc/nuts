@@ -42,8 +42,8 @@ import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 /**
  * Created by vpc on 1/23/17.

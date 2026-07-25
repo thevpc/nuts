@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NLiteral;

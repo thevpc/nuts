@@ -34,6 +34,10 @@ import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NMsgType;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.util.store.NBPlusTree;
+import net.thevpc.nuts.util.store.NBPlusTreeStore;
+import net.thevpc.nuts.util.store.NChunkedStoreBuilder;
+import net.thevpc.nuts.util.store.NChunkedStoreFactory;
 
 import java.util.*;
 import java.util.function.Consumer;

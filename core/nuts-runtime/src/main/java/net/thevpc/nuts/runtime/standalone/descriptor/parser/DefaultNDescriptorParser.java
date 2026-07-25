@@ -6,6 +6,8 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder;

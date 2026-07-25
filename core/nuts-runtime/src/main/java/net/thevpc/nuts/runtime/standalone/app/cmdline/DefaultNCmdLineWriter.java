@@ -7,8 +7,8 @@ import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NText;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)

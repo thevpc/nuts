@@ -27,9 +27,9 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.toolbox;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.Collections;
 import java.util.List;

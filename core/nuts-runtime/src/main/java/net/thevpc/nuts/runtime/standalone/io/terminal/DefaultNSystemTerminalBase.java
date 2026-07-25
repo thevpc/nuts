@@ -14,13 +14,15 @@ import net.thevpc.nuts.io.NonClosablePrintStream;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.io.*;
 import java.util.Scanner;

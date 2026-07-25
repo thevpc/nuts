@@ -4,7 +4,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.time.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressFactory;
 
 import java.io.File;
 import java.io.InputStream;

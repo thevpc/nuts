@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.math.NDoubleComplex;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.net;
 
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 

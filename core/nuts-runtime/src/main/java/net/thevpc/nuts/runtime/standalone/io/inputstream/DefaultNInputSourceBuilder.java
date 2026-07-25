@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamTee;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.io.NullInputStream;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressListener;
 
 import java.io.InputStream;
 import java.io.OutputStream;

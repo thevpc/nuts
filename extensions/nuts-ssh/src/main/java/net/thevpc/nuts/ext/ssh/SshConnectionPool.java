@@ -5,7 +5,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;

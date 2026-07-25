@@ -1,0 +1,272 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ *
+ * and open the template in the editor.
+ */
+package net.thevpc.nuts.mon;
+
+import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.time.NClock;
+import net.thevpc.nuts.time.NDuration;
+
+import java.io.Serializable;
+import java.time.temporal.ChronoUnit;
+
+/**
+ * @author taha.bensalah@gmail.com
+ */
+public class NChronometer implements Serializable {
+
+    private final static long serialVersionUID = 1L;
+    private long accumulatedNanos;
+    private NClock startClock;
+    private NClock endClock;
+    private String name;
+    private long lastNanos;
+    private boolean running;
+    private ChronoUnit smallestUnit;
+    private ChronoUnit largestUnit;
+
+    public static NChronometer of() {
+        return of(null, null);
+    }
+
+    public static NChronometer of(String name) {
+        return of(name, null);
+    }
+
+    public static NChronometer of(ChronoUnit smallestUnit) {
+        return of(null, smallestUnit);
+    }
+
+    public static NChronometer of(String name, ChronoUnit smallestUnit) {
+        return new NChronometer(name, smallestUnit).start();
+    }
+
+    public static NChronometer ofUnstarted() {
+        return ofUnstarted(null, null);
+    }
+
+    public static NChronometer ofUnstarted(String name) {
+        return ofUnstarted(name, null);
+    }
+
+    public static NChronometer ofUnstarted(ChronoUnit smallestUnit) {
+        return ofUnstarted(null, smallestUnit);
+    }
+
+    public static NChronometer ofUnstarted(String name, ChronoUnit smallestUnit) {
+        return new NChronometer(name, smallestUnit);
+    }
+
+    public NChronometer() {
+    }
+
+    public NChronometer copy() {
+        return new NChronometer(
+                name, startClock, endClock, accumulatedNanos, lastNanos, running, smallestUnit, largestUnit
+        );
+    }
+
+    @NMapBy
+    public NChronometer(
+            @NMapBy(name = "name") String name,
+            @NMapBy(name = "startClock") NClock startClock,
+            @NMapBy(name = "endClock") NClock endClock,
+            @NMapBy(name = "accumulatedNanos") long accumulatedNanos,
+            @NMapBy(name = "lastNanos") long lastNanos,
+            @NMapBy(name = "running") boolean running,
+            @NMapBy(name = "smallestUnit") ChronoUnit smallestUnit,
+            @NMapBy(name = "largestUnit") ChronoUnit largestUnit) {
+        this.accumulatedNanos = accumulatedNanos;
+        this.startClock = startClock;
+        this.endClock = endClock;
+        this.name = name;
+        this.lastNanos = lastNanos;
+        this.running = running;
+        this.smallestUnit = smallestUnit;
+        this.largestUnit = largestUnit;
+    }
+
+    /**
+     * restart chronometer and returns a stopped snapshot/copy of the current
+     *
+     * @return {@code this} instance
+     */
+    public NChronometer restart() {
+        stop();
+        NChronometer c = copy();
+        start();
+        return c;
+    }
+
+    /**
+     * restart chronometer with new name and returns a stopped snapshot/copy of
+     * the current (with old name)
+     *
+     * @param newName newName
+     * @return {@code this} instance
+     */
+    public NChronometer restart(String newName) {
+        stop();
+        NChronometer c = copy();
+        setName(newName);
+        start();
+        return c;
+    }
+
+    public NChronometer(String name) {
+        this.name = name;
+    }
+
+    public NChronometer(String name, ChronoUnit smallestUnit) {
+        this.name = name;
+        this.smallestUnit = smallestUnit;
+    }
+
+    public NChronometer setName(String desc) {
+        this.name = desc;
+        return this;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public boolean isStarted() {
+        return startClock != null;
+    }
+
+    public boolean isStopped() {
+        return endClock != null;
+    }
+
+    public NChronometer reset() {
+        endClock = null;
+        startClock = null;
+        lastNanos = 0;
+        accumulatedNanos = 0;
+        running = false;
+        return this;
+    }
+
+    public NChronometer start() {
+        endClock = null;
+        startClock = NClock.now();
+        lastNanos = startClock.timeNanos();
+        accumulatedNanos = 0;
+        running = true;
+        return this;
+    }
+
+    public NChronometer accumulate() {
+        if (running) {
+            long n = System.nanoTime();
+            accumulatedNanos += n - lastNanos;
+            lastNanos = n;
+        }
+        return this;
+    }
+
+    public NDuration lap() {
+        if (running) {
+            long n = System.nanoTime();
+            long lapValue = n - lastNanos;
+            this.accumulatedNanos += lapValue;
+            lastNanos = n;
+            return NDuration.ofNanos(lapValue);
+        }
+        return NDuration.ZERO;
+    }
+
+    public boolean isSuspended() {
+        return !running;
+    }
+
+    public NChronometer suspend() {
+        if (running) {
+            long n = System.nanoTime();
+            accumulatedNanos += n - lastNanos;
+            lastNanos = -1;
+            running = false;
+        }
+        return this;
+    }
+
+    public NChronometer resume() {
+        if (!running) {
+            lastNanos = System.nanoTime();
+            running = true;
+        }
+        return this;
+    }
+
+    public NChronometer stop() {
+        if (running) {
+            endClock = NClock.now();
+            accumulatedNanos += endClock.timeNanos() - lastNanos;
+            lastNanos = -1;
+            running = false;
+        }
+        return this;
+    }
+
+    public NClock startClock() {
+        return startClock;
+    }
+
+    public NClock endClock() {
+        return endClock;
+    }
+
+    public NDuration duration() {
+        return NDuration.ofNanos(durationNanos(), smallestUnit(), largestUnit());
+    }
+
+    public long durationMs() {
+        return durationNanos() / 1000000L;
+    }
+
+    public long durationNanos() {
+        if (startClock == null) {
+            return 0;
+        }
+        if (running) {
+            long curr = System.nanoTime() - lastNanos;
+            return (curr + accumulatedNanos);
+        }
+        return accumulatedNanos;
+    }
+
+    public String toString() {
+        return toString(null);
+    }
+
+    public String toString(NDurationFormatMode mode) {
+        String s = name == null ? "" : name + "=";
+        return s + duration().toString(mode);
+    }
+
+    public ChronoUnit smallestUnit() {
+        return smallestUnit;
+    }
+
+    public NChronometer setSmallestUnit(ChronoUnit smallestUnit) {
+        this.smallestUnit = smallestUnit;
+        return this;
+    }
+
+    public ChronoUnit largestUnit() {
+        return largestUnit;
+    }
+
+    public NChronometer setLargestUnit(ChronoUnit largestUnit) {
+        this.largestUnit = largestUnit;
+        return this;
+    }
+
+    public NChronometerView asReadOnly() {
+        return new NReadOnlyChronometer(this);
+    }
+
+}

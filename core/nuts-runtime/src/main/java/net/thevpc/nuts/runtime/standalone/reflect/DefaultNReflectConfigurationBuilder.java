@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NReflectConfiguration;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;

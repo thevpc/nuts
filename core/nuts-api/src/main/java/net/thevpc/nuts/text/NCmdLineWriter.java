@@ -44,10 +44,6 @@ public interface NCmdLineWriter extends NObjectWriter {
         return of().ntf(false);
     }
 
-    static NCmdLineWriter of(NCmdLine value) {
-        return of();
-    }
-
     static NCmdLineWriter of() {
        return NExtensions.of(NCmdLineWriter.class);
     }

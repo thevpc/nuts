@@ -5,8 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensions;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NUncompressPackaging;
-import net.thevpc.nuts.time.NProgressFactory;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;

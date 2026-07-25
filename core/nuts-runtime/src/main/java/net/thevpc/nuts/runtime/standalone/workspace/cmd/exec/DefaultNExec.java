@@ -13,6 +13,8 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
@@ -70,9 +72,9 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.version.DefaultNVersionI
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.welcome.DefaultNWelcomeInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.which.DefaultNWhichInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.artifact.NDependencySolver;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.util.*;
 
 import java.io.IOException;

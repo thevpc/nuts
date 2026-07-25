@@ -4,7 +4,7 @@ import net.thevpc.nuts.concurrent.NTaskResult;
 import net.thevpc.nuts.concurrent.NTaskSet;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.BeforeAll;

@@ -34,6 +34,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.format.desc.NEDescHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;

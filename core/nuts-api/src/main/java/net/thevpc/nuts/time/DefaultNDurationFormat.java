@@ -1,5 +1,6 @@
 package net.thevpc.nuts.time;
 
+import net.thevpc.nuts.mon.NDurationFormatMode;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.io.NMemoryPrintStream;

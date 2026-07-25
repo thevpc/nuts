@@ -2,7 +2,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.util.NStringBuilder;
 
 import java.io.OutputStream;

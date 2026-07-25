@@ -6,7 +6,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.time.DefaultNDurationFormat;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.time.NDurationFormatMode;
+import net.thevpc.nuts.mon.NDurationFormatMode;
 
 public class NDurationWriterSPI implements NObjectWriterSPI {
     private NDurationFormatMode formatMode;

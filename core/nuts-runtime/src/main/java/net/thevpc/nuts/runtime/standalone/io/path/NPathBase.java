@@ -4,6 +4,8 @@ import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionPart;
 import net.thevpc.nuts.artifact.NVersionPartType;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
 import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.io.*;

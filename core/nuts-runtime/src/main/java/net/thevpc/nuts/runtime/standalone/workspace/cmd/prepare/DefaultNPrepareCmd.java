@@ -10,10 +10,10 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.HashSet;
 import java.util.Set;

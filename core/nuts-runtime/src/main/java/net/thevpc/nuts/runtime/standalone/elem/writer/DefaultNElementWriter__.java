@@ -5,8 +5,8 @@
 //import net.thevpc.nuts.cmdline.NCmdLine;
 //import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 //import net.thevpc.nuts.elem.*;
-//import net.thevpc.nuts.util.NScore;
-//import net.thevpc.nuts.util.NScorable;
+//import net.thevpc.nuts.reflect.NScore;
+//import net.thevpc.nuts.reflect.NScorable;
 //import net.thevpc.nuts.text.NContentType;
 //import net.thevpc.nuts.io.*;
 //import net.thevpc.nuts.reflect.NReflectRepository;
@@ -18,7 +18,7 @@
 //import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 //import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 //import net.thevpc.nuts.text.NText;
-//import net.thevpc.nuts.time.NProgressFactory;
+//import net.thevpc.nuts.mon.NProgressFactory;
 //
 //import java.io.*;
 //import java.nio.file.Path;

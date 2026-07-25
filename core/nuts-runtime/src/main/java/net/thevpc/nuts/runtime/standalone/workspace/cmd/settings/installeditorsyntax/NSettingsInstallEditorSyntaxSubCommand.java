@@ -6,13 +6,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.installeditorsyntax;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NSysEditorFamily;
+import net.thevpc.nuts.platform.NSysEditorFamily;
 import net.thevpc.nuts.command.NSysEditorSupportCmd;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NBooleanRef;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;

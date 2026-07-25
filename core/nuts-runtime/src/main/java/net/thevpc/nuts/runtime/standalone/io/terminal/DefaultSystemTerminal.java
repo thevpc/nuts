@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 
 public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {
 

@@ -18,7 +18,7 @@ import java.util.Arrays;
 import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
 import org.junit.jupiter.api.*;

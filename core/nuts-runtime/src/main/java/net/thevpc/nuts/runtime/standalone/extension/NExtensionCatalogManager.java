@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NScored;
+import net.thevpc.nuts.reflect.NScored;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;

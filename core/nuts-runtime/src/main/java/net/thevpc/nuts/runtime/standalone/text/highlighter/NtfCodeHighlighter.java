@@ -4,9 +4,9 @@ import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 
 public class NtfCodeHighlighter implements NCodeHighlighter {
     public NtfCodeHighlighter() {

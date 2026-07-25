@@ -99,12 +99,14 @@ class IdCache {
         return count;
     }
 
-    void add(Class<?> extensionPoint, Class<?> implementation) {
+    boolean add(Class<?> extensionPoint, Class<?> implementation) {
         NClassClassMap y = getClassClassMap(extensionPoint, true);
         if (!y.containsExactKey(implementation)) {
             y.add(implementation);
             invalidateCache();
+            return true;
         }
+        return false;
     }
 
     private void invalidateCache() {

@@ -4,7 +4,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.io.NAsk;

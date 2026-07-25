@@ -38,10 +38,11 @@ import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.reflect.NClassLoader;
+import net.thevpc.nuts.reflect.NMutableClassLoader;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
+import net.thevpc.nuts.runtime.standalone.extension.NClassLoaderBase;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.format.NDisplayProperty;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
@@ -428,10 +429,6 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
 
     @Override
     public NClassLoader getResultClassLoader(ClassLoader parent) {
-        //force content and dependencies!
-//        setContent(true);
-//        setDependencies(true);
-
         List<NDefinition> nDefinitions = getResultDefinitions().toList();
         URL[] allURLs = new URL[nDefinitions.size()];
         NId[] allIds = new NId[nDefinitions.size()];
@@ -440,32 +437,23 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             allURLs[i] = d.content().flatMap(NPath::toURL).orNull();
             allIds[i] = d.id();
         }
-        DefaultNClassLoader cl = ((DefaultNExtensions) NExtensions.of())
-                .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent);
-        for (NDefinition def : nDefinitions) {
-            cl.add(NClassLoaderUtils.definitionToClassLoaderNode(def, repositoryFilter()));
-        }
+        NClassLoader cl = NClassLoader.of(
+                "SEARCH-" + UUID.randomUUID(), parent,
+                nDefinitions.toArray(new NDefinition[0])
+                ,repositoryFilter(),dependencyFilter()
+        );
         return cl;
     }
 
     @Override
-    public NClassLoader getResultIntoClassLoader(NClassLoader classLoader) {
-        if (classLoader == null) {
-            classLoader = ((DefaultNExtensions) NExtensions.of())
-                    .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), null);
-        }
-
+    public NMutableClassLoader getResultMutableClassLoader(NMutableClassLoader classLoader) {
         List<NDefinition> nDefinitions = getResultDefinitions().toList();
-        URL[] allURLs = new URL[nDefinitions.size()];
-        NId[] allIds = new NId[nDefinitions.size()];
-        for (int i = 0; i < allURLs.length; i++) {
-            NDefinition d = nDefinitions.get(i);
-            allURLs[i] = d.content().flatMap(NPath::toURL).orNull();
-            allIds[i] = d.id();
-        }
-
-        for (NDefinition def : nDefinitions) {
-            classLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, repositoryFilter()));
+        if (classLoader == null) {
+            return NMutableClassLoader.of("SEARCH-" + UUID.randomUUID(), null,nDefinitions.toArray(new NDefinition[0]),repositoryFilter(),dependencyFilter());
+        }else{
+            for (NDefinition def : nDefinitions) {
+                classLoader.add(def);
+            }
         }
         return classLoader;
     }

@@ -27,7 +27,7 @@ public abstract class AbstractNMsgFormatHelper {
         this.txt = txt;
         Object msg = m.message();
         smsg = (String) msg;
-        nText = txt.of(smsg);
+        nText = m.isNtf()?txt.of(smsg):txt.ofPlain(smsg); // here using the isNtf flag
         session = NSession.of();
         String sLocale = session.locale().orDefault();
         locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);

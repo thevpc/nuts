@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextCommand;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextTitle;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 
 public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {

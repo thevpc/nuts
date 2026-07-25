@@ -36,6 +36,8 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;

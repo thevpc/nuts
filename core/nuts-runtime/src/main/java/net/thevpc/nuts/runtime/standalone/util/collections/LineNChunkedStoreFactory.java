@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NChunkedStoreFactory;
+import net.thevpc.nuts.util.store.NChunkedStoreFactory;
 import net.thevpc.nuts.util.NOptionalIterator;
 import net.thevpc.nuts.util.NOptional;
 

@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableQuery;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 

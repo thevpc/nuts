@@ -1,5 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.collections.NEvictingQueueImpl;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.util.*;

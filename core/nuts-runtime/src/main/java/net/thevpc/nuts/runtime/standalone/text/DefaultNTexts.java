@@ -7,6 +7,8 @@ import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.format.NDescriptorInputSourceWriterSPI;
 import net.thevpc.nuts.runtime.standalone.format.NDurationWriterSPI;
 import net.thevpc.nuts.runtime.standalone.format.NObjectWriterAdapter;
@@ -27,8 +29,8 @@ import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.spi.base.NContentMetadataProviderWriterSPI;
-import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.time.NChronometerView;
+import net.thevpc.nuts.mon.NChronometer;
+import net.thevpc.nuts.mon.NChronometerView;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NRef;
@@ -381,11 +383,14 @@ public class DefaultNTexts implements NTexts {
                 return ff.format(m);
             }
             case PLAIN: {
-                return this.ofPlain((String) msg);
-            }
-            case NTF: {
+                if(m.isNtf()){
+                    if (msg instanceof String) {
+                        return this.of((String) msg);
+                    }
+                    return this.of(msg);
+                }
                 if (msg instanceof String) {
-                    return this.of((String) msg);
+                    return this.ofPlain((String) msg);
                 }
                 return this.of(msg);
             }

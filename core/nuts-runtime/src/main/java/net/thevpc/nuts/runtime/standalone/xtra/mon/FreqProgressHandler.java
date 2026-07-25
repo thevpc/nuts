@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
-import net.thevpc.nuts.time.NProgressHandler;
-import net.thevpc.nuts.time.NProgressHandlerEvent;
-import net.thevpc.nuts.time.NProgressMonitor;
+import net.thevpc.nuts.mon.NProgressHandler;
+import net.thevpc.nuts.mon.NProgressHandlerEvent;
+import net.thevpc.nuts.mon.NProgressMonitor;
 
 import java.util.logging.Level;
 

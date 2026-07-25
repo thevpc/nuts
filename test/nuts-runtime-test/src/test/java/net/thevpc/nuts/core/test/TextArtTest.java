@@ -29,7 +29,7 @@ import net.thevpc.nuts.text.NMutableTableModel;
 import net.thevpc.nuts.text.NTableModel;
 import net.thevpc.nuts.text.NTreeNode;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

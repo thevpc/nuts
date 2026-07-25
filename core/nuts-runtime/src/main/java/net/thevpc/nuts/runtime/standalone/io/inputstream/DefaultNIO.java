@@ -3,11 +3,14 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOUtils;
 

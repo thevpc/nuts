@@ -1,5 +1,6 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
 import net.thevpc.nuts.internal.rpi.NIORPI;
 
 import java.io.InputStream;
@@ -9,7 +10,7 @@ public interface NInterruptible<T> {
         return NIORPI.of().ofInterruptible(base);
     }
 
-    void interrupt() throws NInterruptException;
+    void interrupt() throws NInterruptedException;
 
     T base();
 }

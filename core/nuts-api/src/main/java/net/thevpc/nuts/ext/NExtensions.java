@@ -27,10 +27,11 @@
 package net.thevpc.nuts.ext;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptions;
-import net.thevpc.nuts.io.NServiceLoader;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.*;
 
@@ -61,16 +62,7 @@ public interface NExtensions extends NComponent {
 
     Set<NId> companionIds();
 
-    <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl);
-
     Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader);
-
-    <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
-
-    <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
-
-
-    NMutableClassLoader createMutableClassLoader(ClassLoader parentClassLoader);
 
     <T> NScoredValue<T> getTypeScoredValue(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext);
 

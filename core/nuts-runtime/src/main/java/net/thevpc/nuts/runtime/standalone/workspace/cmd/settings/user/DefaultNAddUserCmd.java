@@ -33,10 +33,10 @@
 //import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 //import net.thevpc.nuts.security.NWorkspaceSecurityManager;
 //import net.thevpc.nuts.util.NBlankable;
-//import net.thevpc.nuts.util.NScore;
+//import net.thevpc.nuts.reflect.NScore;
 //import net.thevpc.nuts.util.NIllegalArgumentException;
 //import net.thevpc.nuts.text.NMsg;
-//import net.thevpc.nuts.util.NScorable;
+//import net.thevpc.nuts.reflect.NScorable;
 //
 ///**
 // *

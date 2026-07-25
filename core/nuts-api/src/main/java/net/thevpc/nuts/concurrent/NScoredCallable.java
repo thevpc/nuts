@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.function.Supplier;

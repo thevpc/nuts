@@ -7,7 +7,9 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NClassLoader;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.runtime.standalone.extension.NClassLoaderBase;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPath;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPathHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
@@ -15,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 
@@ -129,7 +131,7 @@ public class NResourcePath implements NPathSPI {
                                         .byRunnable()
                         )
                         .getResultClassLoader();
-                urls = ((DefaultNClassLoader) resultClassLoader).getURLs();
+                urls = ((NClassLoaderBase) resultClassLoader).getURLs();
                 //class loader do not expect leading '/'
                 if (loc.length() > 1 && loc.startsWith("/")) {
                     loc = loc.substring(1);

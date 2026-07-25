@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.time.NProgressMonitorModel;
+import net.thevpc.nuts.mon.NChronometer;
+import net.thevpc.nuts.mon.NProgressMonitorModel;
 
 public class DefaultNProgressMonitorModel implements NProgressMonitorModel {
     protected NChronometer chronometer = new NChronometer();

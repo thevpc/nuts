@@ -38,6 +38,9 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
 import net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader;
@@ -468,6 +471,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     );
         }
         instances.add(extensionPoint, implementation);
+        ((NWorkspaceExt) workspace).getModel().configModel.onDiscoverInstance(extensionPoint, implementation);
+
     }
 
     @Override
@@ -487,7 +492,10 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             t = new IdCache(source, workspace);
             discoveredCacheById.put(source, t);
         }
-        t.add(NComponent.class, implementationType);
+        if(t.add(NComponent.class, implementationType)){
+            ((NWorkspaceExt) workspace).getModel().configModel.onDiscoverType(implementationType);
+        }
+
     }
 
     @Override
@@ -571,7 +579,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         @Override
         public boolean isSupported(Class<?> paramType) {
             switch (paramType.getName()) {
-                case "net.thevpc.nuts.util.NScorableContext":
+                case "net.thevpc.nuts.reflect.NScorableContext":
                     return true;
             }
             return false;

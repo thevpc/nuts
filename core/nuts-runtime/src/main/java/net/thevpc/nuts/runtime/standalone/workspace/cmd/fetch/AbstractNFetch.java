@@ -6,8 +6,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNQueryBaseOptions;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.expr.NParseException;
 

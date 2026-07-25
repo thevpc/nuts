@@ -20,6 +20,8 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NPath;
@@ -28,7 +30,7 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.dependency.solver.NDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.artifact.NDependencySolver;
 import net.thevpc.nuts.util.*;
 
 /**

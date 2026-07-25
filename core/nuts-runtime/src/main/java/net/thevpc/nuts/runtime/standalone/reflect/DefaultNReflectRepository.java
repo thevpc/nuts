@@ -24,10 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.reflect.*;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

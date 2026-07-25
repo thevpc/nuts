@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.util.NBPlusTree;
-import net.thevpc.nuts.util.NBPlusTreeStore;
+import net.thevpc.nuts.util.store.NBPlusTree;
+import net.thevpc.nuts.util.store.NBPlusTreeStore;
 import net.thevpc.nuts.util.NExceptions;
 
 import java.io.*;

@@ -78,7 +78,7 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
 //                                StringBuilder sb2 = new StringBuilder();
 //                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
 //                                sb.append(sb2);
-                        NText u = txt.of(a);
+                        NText u = (a instanceof NText) ? (NText) a : txt.of(a);
                         if (u.type() == NTextType.PLAIN) {
                             sb.append(NText.ofPlain(doFormatPlain(((NTextPlain) u).value(), part.getValue())));
                         } else if (u.type() == NTextType.STYLED && ((NTextStyled) u).child().type() == NTextType.PLAIN) {

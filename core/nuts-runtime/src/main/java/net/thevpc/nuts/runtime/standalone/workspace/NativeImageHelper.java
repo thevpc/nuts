@@ -31,8 +31,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSelectorOp;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.time.NDurationFormatMode;
-import net.thevpc.nuts.time.NProgressEventType;
+import net.thevpc.nuts.mon.NDurationFormatMode;
+import net.thevpc.nuts.mon.NProgressEventType;
 import net.thevpc.nuts.util.*;
 
 public class NativeImageHelper {

@@ -4,6 +4,10 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceFactory;
@@ -83,7 +87,7 @@ public class NExtensionTypeInfo<T> {
             }
             case WORKSPACE: {
                 ConcurrentHashMap<String, Object> m = NWorkspace.of().getOrComputeProperty(beansKey, ConcurrentHashMap::new);
-                return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
+                return (T) m.computeIfAbsent(implType.getName(),s -> supplier.get());
             }
         }
         throw new NUnexpectedException(NMsg.ofC("enum not found %s", scope));

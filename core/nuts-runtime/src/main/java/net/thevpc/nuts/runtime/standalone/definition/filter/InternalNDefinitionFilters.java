@@ -5,6 +5,8 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import net.thevpc.nuts.util.*;
 

@@ -4,7 +4,7 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 

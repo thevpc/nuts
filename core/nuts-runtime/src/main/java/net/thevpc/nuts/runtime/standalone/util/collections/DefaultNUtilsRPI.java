@@ -14,6 +14,7 @@ import net.thevpc.nuts.text.NMsgType;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.util.store.*;
 
 import java.io.IOException;
 import java.io.StringReader;

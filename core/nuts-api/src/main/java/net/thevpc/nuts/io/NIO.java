@@ -29,7 +29,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathFactorySPI;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 
 import java.io.File;
 import java.io.InputStream;

@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.artifact.NDependencySolver;
+
 /**
  * Nuts descriptors solver factory responsible to building traversable dependency tree
  *

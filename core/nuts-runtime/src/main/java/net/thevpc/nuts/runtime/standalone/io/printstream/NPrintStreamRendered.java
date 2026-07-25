@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
-import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
+import net.thevpc.nuts.spi.base.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyled;

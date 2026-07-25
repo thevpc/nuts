@@ -15,6 +15,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;

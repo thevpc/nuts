@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.internal.NApiUtilsRPI;

@@ -36,6 +36,8 @@ import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.format.plain.NWriterPlain;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NMemorySize;

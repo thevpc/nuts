@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 
 import java.util.Objects;
 

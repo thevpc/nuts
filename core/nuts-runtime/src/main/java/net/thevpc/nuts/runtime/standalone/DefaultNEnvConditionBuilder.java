@@ -32,6 +32,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootEnvCondition;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 
 import java.io.Serializable;

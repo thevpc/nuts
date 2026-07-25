@@ -14,7 +14,7 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.text.NVersionWriter;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

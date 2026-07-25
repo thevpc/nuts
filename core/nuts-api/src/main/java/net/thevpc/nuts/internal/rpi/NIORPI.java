@@ -8,7 +8,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.util.NOptional;
 

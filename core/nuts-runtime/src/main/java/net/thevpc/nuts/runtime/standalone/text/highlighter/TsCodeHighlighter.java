@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 import java.util.Arrays;
 
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 
 public class TsCodeHighlighter extends JsCodeHighlighter {
 

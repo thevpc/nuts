@@ -34,9 +34,9 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 

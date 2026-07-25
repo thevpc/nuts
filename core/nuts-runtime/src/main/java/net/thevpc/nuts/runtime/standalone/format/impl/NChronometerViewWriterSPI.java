@@ -6,9 +6,8 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.time.NChronometerView;
-import net.thevpc.nuts.time.NDurationFormatMode;
+import net.thevpc.nuts.mon.NChronometerView;
+import net.thevpc.nuts.mon.NDurationFormatMode;
 
 public class NChronometerViewWriterSPI implements NObjectWriterSPI {
     private NDurationFormatMode formatMode;

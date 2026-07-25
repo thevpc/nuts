@@ -24,10 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NIdWriter;
-import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -35,13 +32,15 @@ import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NClassLoader;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.core.NWorkspaceCmdLineParser;
 
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -51,9 +50,7 @@ import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunn
 import net.thevpc.nuts.runtime.standalone.io.net.util.NetUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContext;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
@@ -416,7 +413,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 List<String> cmdLine = new ArrayList<>();
                 cmdLine.add("embedded-java");
                 cmdLine.add("-cp");
-                cmdLine.add(joptions.getClassPathNodes().stream().map(NClassLoaderNode::id).filter(NBlankable::isNonBlank)
+                cmdLine.add(joptions.getResolvedCP().stream().map(NClasspathEntry::id).filter(NBlankable::isNonBlank)
                         .map(Object::toString)
                         .collect(Collectors.joining(":")));
                 cmdLine.add(joptions.getMainClass());
@@ -435,16 +432,14 @@ public class JavaExecutorComponent implements NExecutorComponent {
             if (session.out() != null) {
                 NOut.flush();
             }
-            DefaultNClassLoader classLoader;
+            NClassLoader classLoader;
             Throwable th = null;
             try {
-                classLoader = ((DefaultNExtensions) NExtensions.of()).getModel().getNutsURLClassLoader(
+                classLoader = NClassLoader.of(
                         def.id().toString(),
-                        null//getSession().getWorkspace().config().getBootClassLoader()
+                        null,//getSession().getWorkspace().config().getBootClassLoader(),
+                        joptions.getResolvedCP().toArray(new NClasspathEntry[0])
                 );
-                for (NClassLoaderNode n : joptions.getClassPathNodes()) {
-                    classLoader.add(n);
-                }
                 if (joptions.getMainClass() == null) {
                     if (joptions.isJar()) {
                         throw new NIllegalArgumentException(NMsg.ofC("jar mode and embedded mode are exclusive for %s", def.id()));
@@ -452,7 +447,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         throw new NIllegalArgumentException(NMsg.ofC("unable resolve class name for %s", def.id()));
                     }
                 }
-                Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
+                Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader.asClassLoader());
                 Map<String, String> newEnv = new HashMap<>(NWorkspaceExt.of().getSysEnv());
                 newEnv.putAll(executionContext.env());
                 newEnv.putAll(NExecutionContextUtils.defaultEnv(def));
@@ -460,7 +455,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 th = session.copy().callWith(() -> {
                     Throwable th2 = null;
                     try {
-                        new ClassloaderAwareRunnableImpl(def.id(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
+                        new ClassloaderAwareRunnableImpl(def.id(), classLoader.asClassLoader(), cls, session, joptions, executionContext).runAndWaitFor();
                     } catch (InvocationTargetException e) {
                         th2 = e.getTargetException();
                     } catch (MalformedURLException | NoSuchMethodException | SecurityException

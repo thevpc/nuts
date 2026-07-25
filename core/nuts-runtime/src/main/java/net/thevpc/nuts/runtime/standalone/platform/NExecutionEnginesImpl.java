@@ -5,6 +5,8 @@ import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;

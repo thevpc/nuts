@@ -2,8 +2,9 @@ package net.thevpc.nuts.runtime.standalone.text.art.img;
 
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl;
-import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTextArtTableRenderer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NTextArtImageRenderer;
 import net.thevpc.nuts.text.NTextArtRenderer;

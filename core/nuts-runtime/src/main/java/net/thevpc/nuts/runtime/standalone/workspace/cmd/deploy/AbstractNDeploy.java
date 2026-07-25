@@ -8,8 +8,8 @@ import net.thevpc.nuts.command.NDeploy;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 

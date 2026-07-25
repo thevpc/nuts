@@ -6,6 +6,9 @@ import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -15,7 +18,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOUtils;
 

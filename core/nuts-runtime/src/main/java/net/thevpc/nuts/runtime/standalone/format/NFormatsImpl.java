@@ -20,7 +20,7 @@
 //import net.thevpc.nuts.spi.NPathSPI;
 //import net.thevpc.nuts.util.*;
 //import net.thevpc.nuts.text.*;
-//import net.thevpc.nuts.time.NChronometer;
+//import net.thevpc.nuts.mon.NChronometer;
 //import net.thevpc.nuts.runtime.standalone.format.impl.NChronometerNFormatSPI;
 //import net.thevpc.nuts.time.NDuration;
 //

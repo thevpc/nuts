@@ -21,7 +21,7 @@ import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.shell.NShellWriter;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;

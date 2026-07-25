@@ -2,7 +2,7 @@ package net.thevpc.nuts.ext;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NScored;
+import net.thevpc.nuts.reflect.NScored;
 
 import java.util.List;
 

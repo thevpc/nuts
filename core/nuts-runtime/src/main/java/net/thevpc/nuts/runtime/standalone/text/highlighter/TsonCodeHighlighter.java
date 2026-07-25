@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.*;
 
 import java.util.ArrayList;

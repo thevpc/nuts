@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NDependencySolvers;
-import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.artifact.NDependencySolvers;
+import net.thevpc.nuts.artifact.NDependencySolver;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.List;
 

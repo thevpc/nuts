@@ -6,6 +6,8 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.text.NPropertiesWriter;
 import net.thevpc.nuts.io.NPrintStream;

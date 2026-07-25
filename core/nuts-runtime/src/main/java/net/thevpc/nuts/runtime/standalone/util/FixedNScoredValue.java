@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIllegalStateException;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScoredValue;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScoredValue;
 
 public class FixedNScoredValue<T> implements NScoredValue<T> {
     T value;

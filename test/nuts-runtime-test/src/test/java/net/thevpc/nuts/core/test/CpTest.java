@@ -18,8 +18,8 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressListener;
 import org.junit.jupiter.api.*;
 import net.thevpc.nuts.core.test.utils.*;
 

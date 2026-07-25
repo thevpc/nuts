@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.editorsyntax;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NSysEditorFamily;
+import net.thevpc.nuts.platform.NSysEditorFamily;
 import net.thevpc.nuts.command.NSysEditorSupportCmd;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
@@ -12,6 +12,8 @@ import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NTrace;
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import org.w3c.dom.*;

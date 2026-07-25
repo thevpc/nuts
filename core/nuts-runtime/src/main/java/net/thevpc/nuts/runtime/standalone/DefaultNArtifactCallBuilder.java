@@ -30,8 +30,8 @@ import net.thevpc.nuts.artifact.NArtifactCallBuilder;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.io.Serializable;
 import java.util.*;

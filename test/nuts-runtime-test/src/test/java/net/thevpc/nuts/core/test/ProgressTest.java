@@ -7,9 +7,9 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.text.NPositionType;
-import net.thevpc.nuts.time.NProgressEventType;
-import net.thevpc.nuts.time.NProgressMonitor;
-import net.thevpc.nuts.time.NProgressMonitors;
+import net.thevpc.nuts.mon.NProgressEventType;
+import net.thevpc.nuts.mon.NProgressMonitor;
+import net.thevpc.nuts.mon.NProgressMonitors;
 import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

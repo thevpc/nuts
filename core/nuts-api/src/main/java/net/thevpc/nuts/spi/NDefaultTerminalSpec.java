@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

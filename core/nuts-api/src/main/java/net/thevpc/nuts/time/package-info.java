@@ -3,8 +3,7 @@
  * <p>
  * This package includes:
  * <ul>
- *     <li><b>Clock and chronometers</b> for measuring elapsed time, timestamps, and scheduling.</li>
- *     <li><b>Duration and time formatting</b> for human-readable or structured output.</li>
+ *     <li><b>memory and chronometers</b> for measuring elapsed time, timestamps, and scheduling.</li>
  *     <li><b>Progress tracking</b> to represent the advancement of tasks or operations, including
  *         hierarchical or aggregated progress.</li>
  * </ul>

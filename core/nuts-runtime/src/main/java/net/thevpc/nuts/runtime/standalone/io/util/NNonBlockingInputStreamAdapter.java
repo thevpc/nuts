@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
@@ -116,7 +117,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
     }
 
     @Override
-    public void interrupt() throws NInterruptException {
+    public void interrupt() throws NInterruptedException {
         this.interrupted = true;
         if (base instanceof NInterruptible) {
             ((NInterruptible) base).interrupt();

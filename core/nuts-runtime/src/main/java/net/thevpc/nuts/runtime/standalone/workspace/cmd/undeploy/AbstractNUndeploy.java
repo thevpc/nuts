@@ -7,8 +7,8 @@ import net.thevpc.nuts.command.NUndeploy;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 

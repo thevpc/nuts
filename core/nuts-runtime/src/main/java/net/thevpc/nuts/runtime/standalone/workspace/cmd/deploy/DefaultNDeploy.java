@@ -12,6 +12,8 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryDisabledException;
 import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;

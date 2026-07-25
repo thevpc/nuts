@@ -64,14 +64,9 @@ public enum NMsgType implements NEnum {
      */
     CUSTOM,
     /**
-     * plain text
+     * plain text or plain NTF
      */
     PLAIN,
-    /**
-     * NTF format without arguments.
-     * was (formatted)
-     */
-    NTF,
     /**
      * plain format given style
      *

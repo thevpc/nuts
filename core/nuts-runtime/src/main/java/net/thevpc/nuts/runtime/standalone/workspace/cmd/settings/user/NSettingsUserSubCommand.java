@@ -14,6 +14,8 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUser;

@@ -4,6 +4,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NDigestName;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)

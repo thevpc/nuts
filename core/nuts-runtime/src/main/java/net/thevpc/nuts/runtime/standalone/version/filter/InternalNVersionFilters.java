@@ -3,6 +3,8 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 import net.thevpc.nuts.artifact.NVersionComparator;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.artifact.NVersionFilters;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.List;

@@ -7,8 +7,8 @@ import net.thevpc.nuts.runtime.standalone.reflect.mapper.TypeHelper;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.lang.reflect.Type;
 import java.net.URI;

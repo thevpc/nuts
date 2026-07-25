@@ -35,8 +35,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.*;
 

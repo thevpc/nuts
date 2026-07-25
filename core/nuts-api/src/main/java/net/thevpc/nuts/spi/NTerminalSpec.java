@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
+
 import java.io.Serializable;
 import java.util.Map;
 

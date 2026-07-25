@@ -30,8 +30,8 @@
 //import net.thevpc.nuts.cmdline.NCmdLine;
 //import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBaseRepo;
 //import net.thevpc.nuts.security.NAddUserCmd;
-//import net.thevpc.nuts.util.NScore;
-//import net.thevpc.nuts.util.NScorable;
+//import net.thevpc.nuts.reflect.NScore;
+//import net.thevpc.nuts.reflect.NScorable;
 //
 //import java.util.*;
 //

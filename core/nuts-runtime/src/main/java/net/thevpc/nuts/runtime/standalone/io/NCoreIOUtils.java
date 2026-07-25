@@ -7,7 +7,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NExceptions;

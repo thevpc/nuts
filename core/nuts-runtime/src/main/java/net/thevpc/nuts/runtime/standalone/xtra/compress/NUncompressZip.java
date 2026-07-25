@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.log.NLog;

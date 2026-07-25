@@ -14,6 +14,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.DefaultNContentMetadata;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;

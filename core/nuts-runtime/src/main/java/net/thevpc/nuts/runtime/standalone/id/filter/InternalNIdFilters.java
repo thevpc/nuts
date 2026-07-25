@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.List;

@@ -6,6 +6,8 @@ import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.elem.builder.*;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementLineImpl;

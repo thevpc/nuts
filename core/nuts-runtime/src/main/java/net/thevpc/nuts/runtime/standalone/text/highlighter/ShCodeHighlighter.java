@@ -3,6 +3,9 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 

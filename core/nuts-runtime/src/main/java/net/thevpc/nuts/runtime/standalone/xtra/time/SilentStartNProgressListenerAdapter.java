@@ -4,8 +4,8 @@ import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.logging.Level;

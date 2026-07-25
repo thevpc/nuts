@@ -5,8 +5,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import net.thevpc.nuts.runtime.standalone.util.collections.NBPlusTreeStoreMem;
-import net.thevpc.nuts.util.NBPlusTreeStore;
+import net.thevpc.nuts.util.store.NBPlusTreeStore;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

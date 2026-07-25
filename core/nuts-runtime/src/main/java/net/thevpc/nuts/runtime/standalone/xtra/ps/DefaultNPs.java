@@ -10,6 +10,8 @@ import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;

@@ -589,7 +589,7 @@ public class NPathFromSPI extends NPathBase {
     @Override
     public int nameCount() {
         Integer r = base.getNameCount(this);
-        if (r != 0) {
+        if (r != null) {
             return r;
         }
         return names().size();
@@ -694,7 +694,7 @@ public class NPathFromSPI extends NPathBase {
                 items = NStringUtils.split(location, "/", true, true);
             }
         }
-        return items;
+        return Collections.unmodifiableList(items);
     }
 
     @Override

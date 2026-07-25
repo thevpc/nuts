@@ -4,8 +4,8 @@ import net.thevpc.nuts.util.NMemoryFormat;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.log.NLog;
 
-import net.thevpc.nuts.time.NProgressHandler;
-import net.thevpc.nuts.time.NProgressHandlerEvent;
+import net.thevpc.nuts.mon.NProgressHandler;
+import net.thevpc.nuts.mon.NProgressHandlerEvent;
 
 import java.text.DecimalFormat;
 import java.util.logging.Level;

@@ -27,6 +27,8 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.*;
@@ -259,7 +261,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public NDigest sha256() {
-        return algorithm("SHA256");
+        return algorithm("SHA-256");
     }
 
     @Override

@@ -3,11 +3,13 @@ package net.thevpc.nuts.runtime.standalone.platform.rnsh;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPathSPIAware;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 

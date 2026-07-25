@@ -2,7 +2,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
 

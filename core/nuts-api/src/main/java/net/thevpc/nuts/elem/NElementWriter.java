@@ -32,7 +32,7 @@ import net.thevpc.nuts.text.NContentTypeWriter;
 import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NObjectWriter;
-import net.thevpc.nuts.time.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressFactory;
 
 import java.util.function.Consumer;
 

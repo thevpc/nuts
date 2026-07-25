@@ -1,40 +1,183 @@
 package net.thevpc.nuts.reflect;
 
+import net.thevpc.nuts.artifact.NClasspathEntry;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NClassLoaderNode;
+import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.internal.rpi.NReflectRPI;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.stream.Stream;
 
 /**
- * Nuts mutable ClassLoader contract Interface.
+ * Nuts ClassLoader contract Interface.
  * Instances of this class must extend Java's Classloader.
  * <code>asClassLoader</code> is the way this instance is cast to ClassLoader
  */
 public interface NClassLoader {
-    static NClassLoader of(){
-        return NReflectRPI.of().createClassLoader(null,null);
-    }
-    static NClassLoader of(String name,ClassLoader parent){
-        return NReflectRPI.of().createClassLoader(name,parent);
+
+
+    /**
+     * search for existing immutable classloader with current name, parent, and entries (ignoring the name),
+     * when found return it, if not create a new one and cache it
+     *
+     * @param name   name
+     * @param parent parent or null
+     * @param entries  entries
+     * @return immutable classloader
+     */
+    static NClassLoader of(String name, ClassLoader parent, NDefinition... entries) {
+        return NReflectRPI.of().createImmutableClassLoader(name, parent, entries,null,null);
     }
 
-    default ClassLoader asClassLoader(){
+    /**
+     * search for existing immutable classloader with current parent and entries (ignoring the name),
+     * when found return it (even with other name)
+     *
+     * @param preferredName preferred name
+     * @param parent        parent or null
+     * @param entries         entries
+     * @return immutable classloader
+     */
+    static NClassLoader ofPreferred(String preferredName, ClassLoader parent, NDefinition... entries) {
+        return NReflectRPI.of().createPreferredImmutableClassLoader(preferredName, parent, entries,null,null);
+    }
+
+    /**
+     * search for existing immutable classloader with current name, parent, and entries (ignoring the name),
+     * when found return it, if not create a new one and cache it
+     *
+     * @param name   name
+     * @param parent parent or null
+     * @param entries  entries
+     * @return immutable classloader
+     */
+    static NClassLoader of(String name, ClassLoader parent, NClasspathEntry... entries) {
+        return NReflectRPI.of().createImmutableClassLoader(name, parent, entries,null,null);
+    }
+
+    /**
+     * search for existing immutable classloader with current parent and entries (ignoring the name),
+     * when found return it (even with other name)
+     *
+     * @param preferredName preferred name
+     * @param parent        parent or null
+     * @param entries         entries
+     * @return immutable classloader
+     */
+    static NClassLoader ofPreferred(String preferredName, ClassLoader parent, NClasspathEntry... entries) {
+        return NReflectRPI.of().createPreferredImmutableClassLoader(preferredName, parent, entries,null,null);
+    }
+
+    /**
+     * search for existing immutable classloader with current name, parent, and entries (ignoring the name),
+     * when found return it, if not create a new one and cache it
+     *
+     * @param name   name
+     * @param parent parent or null
+     * @param entries  entries
+     * @param repositoryFilter  repositoryFilter
+     * @param dependencyFilter  dependencyFilter, defaults to runnable non-optional
+     * @return immutable classloader
+     */
+    static NClassLoader of(String name, ClassLoader parent, NDefinition[] entries, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+        return NReflectRPI.of().createImmutableClassLoader(name, parent, entries,repositoryFilter, dependencyFilter);
+    }
+
+    /**
+     * search for existing immutable classloader with current parent and entries (ignoring the name),
+     * when found return it (even with other name)
+     *
+     * @param preferredName preferred name
+     * @param parent        parent or null
+     * @param entries         entries
+     * @param repositoryFilter  repositoryFilter
+     * @param dependencyFilter  dependencyFilter, defaults to runnable non-optional
+     * @return immutable classloader
+     */
+    static NClassLoader ofPreferred(String preferredName, ClassLoader parent, NDefinition[] entries, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+        return NReflectRPI.of().createPreferredImmutableClassLoader(preferredName, parent, entries,repositoryFilter, dependencyFilter);
+    }
+
+    /**
+     * search for existing immutable classloader with current name, parent, and entries (ignoring the name),
+     * when found return it, if not create a new one and cache it
+     *
+     * @param name   name
+     * @param parent parent or null
+     * @param entries  entries
+     * @param repositoryFilter  repositoryFilter
+     * @param dependencyFilter  dependencyFilter, defaults to runnable non-optional
+     * @return immutable classloader
+     */
+    static NClassLoader of(String name, ClassLoader parent, NClasspathEntry[] entries, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+        return NReflectRPI.of().createImmutableClassLoader(name, parent, entries,repositoryFilter, dependencyFilter);
+    }
+
+    /**
+     * search for existing immutable classloader with current parent and entries (ignoring the name),
+     * when found return it (even with other name)
+     *
+     * @param preferredName preferred name
+     * @param parent        parent or null
+     * @param entries         entries
+     * @param repositoryFilter  repositoryFilter
+     * @param dependencyFilter  dependencyFilter, defaults to runnable non-optional
+     * @return immutable classloader
+     */
+    static NClassLoader ofPreferred(String preferredName, ClassLoader parent, NClasspathEntry[] entries, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+        return NReflectRPI.of().createPreferredImmutableClassLoader(preferredName, parent, entries,repositoryFilter, dependencyFilter);
+    }
+
+    default ClassLoader asClassLoader() {
         return (ClassLoader) this;
     }
 
-    boolean contains(NClassLoaderNode node, boolean deep);
+    boolean contains(NId node);
 
-    NClassLoaderNode search(NClassLoaderNode node, boolean deep) ;
+    NOptional<NId> search(NId node);
 
-    boolean add(NClassLoaderNode node) ;
+    Class<?> loadClass(String name) throws ClassNotFoundException;
 
-    Class<?> loadClass(String name) throws ClassNotFoundException ;
-    URL getResource(String name) ;
+    URL getResource(String name);
+
     Enumeration<URL> getResources(String name) throws IOException;
+
     InputStream getResourceAsStream(String name);
+
     ClassLoader getParent();
+
+    boolean isLoaded(NId id);
+
+    /**
+     * classloader name.
+     * @return name
+     */
+    String name();
+
+    /**
+     * classloader name.
+     * defined to match java's ClassLoader getName signature.
+     * @return name
+     */
+    String getName();
+
+    /**
+     * return immutable version of this classloader or self if already immutable
+     *
+     * @return immutable version of this classloader or self if already immutable
+     */
+    NClassLoader immutable();
+
+    /**
+     * return mutable version of this classloader or self if already immutable
+     *
+     * @return mutable version of this classloader or self if already immutable
+     */
+    NMutableClassLoader mutable();
 }

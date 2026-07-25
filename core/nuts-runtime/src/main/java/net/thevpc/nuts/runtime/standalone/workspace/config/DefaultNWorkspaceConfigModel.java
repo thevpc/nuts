@@ -40,11 +40,16 @@ import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.core.NRepositoryRef;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
+import net.thevpc.nuts.runtime.standalone.io.path.spi.mem.NMemoryPathFactory;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.security.*;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgCustomFormatter;
 import net.thevpc.nuts.time.NDuration;
@@ -156,6 +161,7 @@ public class DefaultNWorkspaceConfigModel {
         addPathFactory(new DotfilefsPath.DotfilefsFactory());
         addPathFactory(new GithubfsPath.GithubfsFactory());
         addPathFactory(new GenericFilePath.GenericPathFactory());
+        addPathFactory(new NMemoryPathFactory());
         this.invalidPathFactory = new InvalidFilePathFactory();
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
@@ -163,13 +169,23 @@ public class DefaultNWorkspaceConfigModel {
     public void onDiscoverType(Class componentType) {
         if (NPathFactorySPI.class.isAssignableFrom(componentType)) {
             DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (workspace.getModel().extensionModel.getObjectFactory());
-            addPathFactory(
-                    aa.newInstance(componentType, NPathFactorySPI.class)
-            );
+            onDiscoverInstance(NPathFactorySPI.class,aa.newInstance(componentType, NPathFactorySPI.class));
         }
         if (NMsgCustomFormatter.class.isAssignableFrom(componentType)) {
             NWorkspaceExt we = NWorkspaceExt.of();
             NMsgCustomFormatter q = (NMsgCustomFormatter) we.getModel().extensions.createComponent(componentType).get();
+            onDiscoverInstance(NMsgCustomFormatter.class,q);
+        }
+    }
+
+
+    public <T> void onDiscoverInstance(Class<T> extensionPoint, T implementation) {
+        if (NPathFactorySPI.class.isAssignableFrom(extensionPoint)) {
+            addPathFactory((NPathFactorySPI) implementation);
+        }
+        if (NMsgCustomFormatter.class.isAssignableFrom(extensionPoint)) {
+            NWorkspaceExt we = NWorkspaceExt.of();
+            NMsgCustomFormatter q = (NMsgCustomFormatter) implementation;
             String qid = q.id();
             if (!we.getModel().textModel.customFormatters.containsKey(qid)) {
                 we.getModel().textModel.customFormatters.put(qid, q);
@@ -178,6 +194,8 @@ public class DefaultNWorkspaceConfigModel {
             }
         }
     }
+
+
 
     protected NLog _LOG() {
         return NLog.of(DefaultNWorkspaceConfigModel.class);

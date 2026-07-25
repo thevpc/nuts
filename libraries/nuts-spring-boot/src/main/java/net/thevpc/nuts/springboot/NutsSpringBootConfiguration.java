@@ -21,7 +21,7 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NProgressMonitors;
+import net.thevpc.nuts.mon.NProgressMonitors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;

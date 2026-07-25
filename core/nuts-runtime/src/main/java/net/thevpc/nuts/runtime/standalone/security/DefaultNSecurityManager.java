@@ -26,6 +26,8 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;

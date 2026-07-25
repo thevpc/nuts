@@ -20,8 +20,8 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.platform.NPlatformHome;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.io.File;
 import java.io.InputStream;

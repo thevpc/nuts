@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NObjectObjectWriter;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;

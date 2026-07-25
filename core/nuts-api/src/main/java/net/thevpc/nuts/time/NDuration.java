@@ -2,6 +2,7 @@ package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.elem.NElementSimple;
 import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.mon.NDurationFormatMode;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;

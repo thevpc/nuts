@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.platform.rnsh;
 
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.net.DefaultNConnectionStringBuilder;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.spi.NExecTargetCommandContext;
 import net.thevpc.nuts.spi.NExecTargetSPI;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.reflect.NScorableContext;
 
 public class RnshExecTargetSPI implements NExecTargetSPI {
 

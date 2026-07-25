@@ -30,13 +30,14 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * TODO : please check why is this UNSUPPORTED?
  */
 @NScore(fixed = NScorable.UNSUPPORTED_SCORE)
 public class ArtifactExecutorComponent implements NExecutorComponent {
