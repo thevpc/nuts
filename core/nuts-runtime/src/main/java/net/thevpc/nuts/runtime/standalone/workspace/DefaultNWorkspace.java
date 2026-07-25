@@ -320,7 +320,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         wsModel.bootModel.bootSession().terminal(NTerminal.ofSystem());
         wsModel.logModel.getTermHandler().resumeTerminal();
 
-        for (NPathFactorySPI nPathFactorySPI : wsModel.extensions.createServiceLoader(NPathFactorySPI.class, NWorkspace.class).loadAll(this)) {
+        for (NPathFactorySPI nPathFactorySPI : wsModel.extensionModel.createServiceLoader(NPathFactorySPI.class, NWorkspace.class).loadAll(this)) {
             this.wsModel.configModel.addPathFactory(nPathFactorySPI);
         }
 
