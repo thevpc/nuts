@@ -39,7 +39,7 @@ keep-stamp:false
 production-mode:false
 
 vars:{
-    JAVA8_HOME  : "$HOME/.jdks/corretto-1.8.0_442"
+    JAVA8_HOME  : "$HOME/.jdks/corretto-1.8.0_492"
     JAVA17_HOME : "/home/groups/ctsgroup/programs/dev/jdk/jdk-17.0.17+10/"
     IDEA_HOME   : "/home/groups/ctsgroup/programs/dev/idea"
     NUTS_GRAALVM_DIR: "/home/groups/ctsgroup/programs/dev/graalvm/graalvm-jdk-22+36.1/"
