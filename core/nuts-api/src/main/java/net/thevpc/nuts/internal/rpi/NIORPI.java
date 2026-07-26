@@ -65,6 +65,20 @@ public interface NIORPI extends NComponent {
 
     NInputSource ofInputSource(InputStream inputStream);
 
+    /**
+     * create input source
+     * @param chars chars
+     * @return NInputSource
+     */
+    NInputSource ofInputSource(char[] chars);
+
+    /**
+     * create input source
+     * @param stringValue stringValue
+     * @return NInputSource
+     */
+    NInputSource ofInputSource(String stringValue);
+
     NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata);
 
     NInputSource ofInputSource(NInputStreamProvider inputStream);

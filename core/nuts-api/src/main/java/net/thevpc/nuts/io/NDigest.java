@@ -92,13 +92,31 @@ public interface NDigest extends NComponent {
     NDigest source(URL path);
 
     /**
-     * file to  hash
+     * byte array to  hash
      *
-     * @param path source path to  hash
+     * @param bytes source byte array
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NDigest source(byte[] path);
+    NDigest source(byte[] bytes);
+
+    /**
+     * string value to  hash
+     *
+     * @param string value source
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    NDigest source(String string);
+
+    /**
+     * char array value to  hash
+     *
+     * @param chars char array value source
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    NDigest source(char[] chars);
 
     /**
      * compute hash digest and return it as hexadecimal string

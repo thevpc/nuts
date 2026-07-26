@@ -58,6 +58,26 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
         return bytes == null ? null : NIORPI.of().ofInputSource(bytes);
     }
 
+    /**
+     * input source from chars
+     * @param chars chars
+     * @return input source
+     * @since 1.0.0
+     */
+    static NInputSource of(char[] chars) {
+        return chars == null ? null : NIORPI.of().ofInputSource(chars);
+    }
+
+    /**
+     * input source from string value
+     * @param stringValue string value
+     * @return input source
+     * @since 1.0.0
+     */
+    static NInputSource of(String stringValue) {
+        return stringValue == null ? null : NIORPI.of().ofInputSource(stringValue);
+    }
+
     static NInputSource ofEmpty() {
         return NIORPI.of().ofEmptyInputSource();
     }

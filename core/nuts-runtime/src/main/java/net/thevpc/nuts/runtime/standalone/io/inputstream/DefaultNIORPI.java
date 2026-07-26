@@ -325,6 +325,22 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
+    public NInputSource ofInputSource(char[] chars) {
+        if (chars == null) {
+            return null;
+        }
+        return ofInputSource(new CharArrayReader(chars));
+    }
+
+    @Override
+    public NInputSource ofInputSource(String stringValue) {
+        if (stringValue == null) {
+            return null;
+        }
+        return ofInputSource(new StringReader(stringValue));
+    }
+
+    @Override
     public NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata) {
         if (inputStream == null) {
             return null;

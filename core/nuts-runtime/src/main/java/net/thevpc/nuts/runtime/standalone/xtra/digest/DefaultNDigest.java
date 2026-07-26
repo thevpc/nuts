@@ -122,8 +122,19 @@ public class DefaultNDigest implements NDigest {
     }
 
     @Override
-    public NDigest source(byte[] source) {
-        this.addSource0(source == null ? null : NInputSource.of(source));
+    public NDigest source(byte[] bytes) {
+        this.addSource0(bytes == null ? null : NInputSource.of(bytes));
+        return this;
+    }
+
+    @Override
+    public NDigest source(String string) {
+        this.addSource0(string == null ? null : NInputSource.of(string));
+        return this;
+    }
+    @Override
+    public NDigest source(char[] chars) {
+        this.addSource0(chars == null ? null : NInputSource.of(chars));
         return this;
     }
 
