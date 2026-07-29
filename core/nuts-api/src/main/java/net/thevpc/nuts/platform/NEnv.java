@@ -11,6 +11,7 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NSupportMode;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -113,6 +114,20 @@ public interface NEnv extends NComponent {
      * @return
      */
     String machineName();
+
+    /**
+     * CPU RAM
+     * @return CPU RAM
+     * @since 1.0.0
+     */
+    NRam ram();
+
+    /**
+     * GPU RAMs
+     * @return GPU RAMs
+     * @since 1.0.0
+     */
+    List<NGpu> gpus();
 
     /**
      * Returns a fresh NEnv instance with current runtime values.

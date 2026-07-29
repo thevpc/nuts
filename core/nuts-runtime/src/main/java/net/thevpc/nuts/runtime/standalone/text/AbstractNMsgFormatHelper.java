@@ -37,6 +37,16 @@ public abstract class AbstractNMsgFormatHelper {
         }
     }
 
+    protected Object applyPlaceholder(String name) {
+        Function<String, ?> h = m.placeholders();
+        if(h!=null) {
+            Object v =h.apply(name);
+            return resolvePlaceholder(v);
+        }else{
+            return null;
+        }
+    }
+
     public Object resolvePlaceholder(Object any) {
         if(any instanceof NMsg) {
             return ((NMsg) any).withPlaceholders(m.placeholders());

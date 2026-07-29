@@ -18,7 +18,7 @@ import java.util.*;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class NEnvAsCmd extends NEnvBase {
 
-    private NEnvCmdSPI envCmdSPI;
+    private final NEnvCmdSPI envCmdSPI;
     private boolean valid;
     private Map<String, String> envSnapshot;
 
@@ -48,10 +48,12 @@ public class NEnvAsCmd extends NEnvBase {
         }
         return false;
     }
+
     @Override
     public boolean isNativeImage() {
         return false;
     }
+
     @NScore
     public static int getScore(NScorableContext context) {
         Object criteria = context.criteria();
@@ -457,5 +459,220 @@ public class NEnvAsCmd extends NEnvBase {
     @Override
     public String getHostName0() {
         return NEnvUtils.getHostName(this, strings -> envCmdSPI.exec(NCmdLine.of(strings).toString()), connectionString());
+    }
+
+
+    public NRam ram() {
+        switch (osFamily()) {
+            case UNIX:
+            case LINUX:
+            case MACOS: {
+                String LINUX_OR_MAC_PROBE_SCRIPT =
+                        "if [ -f /proc/meminfo ]; then " +
+                                "awk '/MemTotal/{t=$2} /MemAvailable/{a=$2} /MemFree/{f=$2} " +
+                                "END{print t*1024\",\"f*1024\",\"a*1024}' /proc/meminfo; " +
+                                "elif command -v sysctl >/dev/null 2>&1; then " +
+                                "total=$(sysctl -n hw.memsize); " +
+                                "pagesize=$(sysctl -n hw.pagesize); " +
+                                "free=$(vm_stat | awk -v ps=\"$pagesize\" '/Pages free/{gsub(\"\\\\.\",\"\");print $3*ps}'); " +
+                                "inactive=$(vm_stat | awk -v ps=\"$pagesize\" '/Pages inactive/{gsub(\"\\\\.\",\"\");print $3*ps}'); " +
+                                "echo \"$total,$free,$((free+inactive))\"; " +
+                                "fi";
+                String result = envCmdSPI.exec(LINUX_OR_MAC_PROBE_SCRIPT);
+                return parseRam(result);
+            }
+            case WINDOWS: {
+                String WINDOWS_PROBE_SCRIPT =
+                        "$os = Get-CimInstance Win32_OperatingSystem; " +
+                                "$total = [int64]$os.TotalVisibleMemorySize * 1024; " +
+                                "$free = [int64]$os.FreePhysicalMemory * 1024; " +
+                                "Write-Output \"$total,$free,$free\"";
+                String result = envCmdSPI.exec(WINDOWS_PROBE_SCRIPT);
+                return parseRam(result);
+            }
+        }
+        return new NRam("NOT_FOUND", 0, 0, 0);
+    }
+
+    /**
+     * Parses "total,free,available" (bytes) into an NRam, tolerating extra output lines.
+     */
+    private NRam parseRam(String result) {
+        if (result == null || result.trim().isEmpty()) {
+            return new NRam("NOT_FOUND", 0, 0, 0);
+        }
+        String[] lines = result.trim().split("\\r?\\n");
+        String line = lines[lines.length - 1].trim(); // last non-blank line is the actual data
+        String[] parts = line.split(",");
+        if (parts.length < 3) {
+            return new NRam("NOT_FOUND", 0, 0, 0);
+        }
+        try {
+            long total = Long.parseLong(parts[0].trim());
+            long free = Long.parseLong(parts[1].trim());
+            long available = Long.parseLong(parts[2].trim());
+            return new NRam(osFamily().name(), total, free, available);
+        } catch (NumberFormatException e) {
+            return new NRam("NOT_FOUND", 0, 0, 0);
+        }
+    }
+
+    @Override
+    public List<NGpu> gpus() {
+        switch (osFamily()) {
+            case UNIX:
+            case LINUX:
+                return gpusLinux();
+            case MACOS:
+                return gpusMacos();
+            case WINDOWS:
+                return gpusWindows();
+        }
+        return new ArrayList<>();
+    }
+
+    private List<NGpu> gpusLinux() {
+        List<NGpu> result = new ArrayList<>();
+        // Prefer nvidia-smi: gives real name + total/used/free VRAM in MiB
+        String NVIDIA_SMI_SCRIPT =
+                "if command -v nvidia-smi >/dev/null 2>&1; then " +
+                        "nvidia-smi --query-gpu=name,memory.total,memory.used,memory.free --format=csv,noheader,nounits; " +
+                        "fi";
+        String out = envCmdSPI.exec(NVIDIA_SMI_SCRIPT);
+        if (out != null && !out.trim().isEmpty()) {
+            for (String line : out.trim().split("\\r?\\n")) {
+                String[] p = line.split(",");
+                if (p.length >= 4) {
+                    try {
+                        String name = p[0].trim();
+                        long totalMb = Long.parseLong(p[1].trim());
+                        long usedMb = Long.parseLong(p[2].trim());
+                        long freeMb = Long.parseLong(p[3].trim());
+                        result.add(new NGpu(name, new NRam(name,
+                                totalMb * 1024L * 1024L,
+                                freeMb * 1024L * 1024L,
+                                usedMb * 1024L * 1024L),new HashMap<>()));
+                    } catch (NumberFormatException ignored) {
+                        // skip malformed line
+                    }
+                }
+            }
+            if (!result.isEmpty()) {
+                return result;
+            }
+        }
+        // Fallback for non-NVIDIA (AMD/Intel/etc.): name only, no memory info via lspci
+        String LSPCI_SCRIPT =
+                "if command -v lspci >/dev/null 2>&1; then lspci | grep -Ei 'vga|3d|display'; fi";
+        String lspciOut = envCmdSPI.exec(LSPCI_SCRIPT);
+        if (lspciOut != null && !lspciOut.trim().isEmpty()) {
+            for (String line : lspciOut.trim().split("\\r?\\n")) {
+                int idx = line.indexOf(": ");
+                String name = idx >= 0 ? line.substring(idx + 2).trim() : line.trim();
+                result.add(new NGpu(name, new NRam(name, 0, 0, 0),new HashMap<>()));
+            }
+        }
+        return result;
+    }
+
+    private List<NGpu> gpusMacos() {
+        List<NGpu> result = new ArrayList<>();
+        String out = envCmdSPI.exec("system_profiler SPDisplaysDataType");
+        if (out != null) {
+            String currentName = null;
+            Long vramBytes = null;
+            for (String raw : out.split("\\r?\\n")) {
+                String line = raw.trim();
+                if (line.startsWith("Chipset Model:")) {
+                    if (currentName != null) {
+                        result.add(new NGpu(currentName, new NRam(currentName, vramBytes == null ? 0 : vramBytes, 0, 0),new HashMap<>()));
+                    }
+                    currentName = line.substring("Chipset Model:".length()).trim();
+                    vramBytes = null;
+                } else if (line.startsWith("VRAM")) {
+                    // e.g. "VRAM (Total): 8 GB" or "VRAM (Dynamic, Max): 1536 MB"
+                    int colon = line.indexOf(':');
+                    if (colon >= 0) {
+                        vramBytes = parseHumanSizeToBytes(line.substring(colon + 1).trim());
+                    }
+                }
+            }
+            if (currentName != null) {
+                result.add(new NGpu(currentName, new NRam(currentName, vramBytes == null ? 0 : vramBytes, 0, 0),new HashMap<>()));
+            }
+        }
+        return result;
+    }
+
+    private List<NGpu> gpusWindows() {
+        List<NGpu> result = new ArrayList<>();
+        // AdapterRAM in WMI is a 32-bit field and often wrong/capped at 4GB for modern GPUs,
+        // so try nvidia-smi first for accurate figures.
+        String nvidiaOut = envCmdSPI.exec(
+                "nvidia-smi --query-gpu=name,memory.total,memory.used,memory.free --format=csv,noheader,nounits");
+        if (nvidiaOut != null && !nvidiaOut.trim().isEmpty()
+                && !nvidiaOut.toLowerCase().contains("not recognized")) {
+            for (String line : nvidiaOut.trim().split("\\r?\\n")) {
+                String[] p = line.split(",");
+                if (p.length >= 4) {
+                    try {
+                        String name = p[0].trim();
+                        long totalMb = Long.parseLong(p[1].trim());
+                        long usedMb = Long.parseLong(p[2].trim());
+                        long freeMb = Long.parseLong(p[3].trim());
+                        result.add(new NGpu(name,
+                                new NRam(name, totalMb * 1024L * 1024L,
+                                        freeMb * 1024L * 1024L,
+                                        usedMb * 1024L * 1024L), new LinkedHashMap<>()));
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            }
+            if (!result.isEmpty()) {
+                return result;
+            }
+        }
+        // Fallback: WMI, name + possibly-inaccurate AdapterRAM, no free/used breakdown
+        String wmiOut = envCmdSPI.exec(
+                "Get-CimInstance Win32_VideoController | ForEach-Object { Write-Output \"$($_.Name),$($_.AdapterRAM)\" }");
+        if (wmiOut != null) {
+            for (String line : wmiOut.trim().split("\\r?\\n")) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty()) continue;
+                int lastComma = trimmed.lastIndexOf(',');
+                if (lastComma < 0) continue;
+                String name = trimmed.substring(0, lastComma).trim();
+                long ram = 0;
+                try {
+                    ram = Long.parseLong(trimmed.substring(lastComma + 1).trim());
+                } catch (NumberFormatException ignored) {
+                }
+                result.add(new NGpu(name, new NRam(name, ram, 0, 0),new HashMap<>()));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Parses strings like "8 GB" / "1536 MB" into bytes.
+     */
+    private long parseHumanSizeToBytes(String value) {
+        try {
+            String[] tokens = value.trim().split("\\s+");
+            double amount = Double.parseDouble(tokens[0]);
+            String unit = tokens.length > 1 ? tokens[1].toUpperCase() : "";
+            switch (unit) {
+                case "GB":
+                    return (long) (amount * 1024L * 1024L * 1024L);
+                case "MB":
+                    return (long) (amount * 1024L * 1024L);
+                case "KB":
+                    return (long) (amount * 1024L);
+                default:
+                    return (long) amount;
+            }
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

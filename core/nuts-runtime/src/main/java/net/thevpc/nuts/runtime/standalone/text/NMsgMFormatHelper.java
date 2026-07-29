@@ -33,10 +33,9 @@ public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
             mapper = x -> {
                 Object u = f.apply(x);
                 if (u == null) {
-                    Function<String, ?> h = m.placeholders();
-                    Object v = h.apply(x);
-                    if(v!=null){
-                        u=v;
+                    Object v = applyPlaceholder(x);
+                    if (v != null) {
+                        u = v;
                     }
                 }
                 u=resolvePlaceholder(u);

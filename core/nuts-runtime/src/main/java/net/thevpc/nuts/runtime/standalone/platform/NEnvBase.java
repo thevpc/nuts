@@ -7,6 +7,7 @@ import net.thevpc.nuts.util.NSupportMode;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class NEnvBase implements NEnv {

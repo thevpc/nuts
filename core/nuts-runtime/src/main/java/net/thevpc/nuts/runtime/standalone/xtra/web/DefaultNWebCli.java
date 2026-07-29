@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
 import net.thevpc.nuts.concurrent.NConcurrent;
+import net.thevpc.nuts.concurrent.NInterruptedException;
+import net.thevpc.nuts.concurrent.NTimeoutException;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.boot.internal.util.NBootLog;
 import net.thevpc.nuts.io.NCp;
@@ -546,9 +548,9 @@ public class DefaultNWebCli implements NWebCli {
                 }
             }
         } catch (SocketTimeoutException ex) {
-            throw new NIOException(NMsg.ofC("timed out loading %s (%s)", spec, ex), ex);
+            throw new NTimeoutException(NMsg.ofC("timed out loading %s (%s)", spec, ex), ex);
         } catch (InterruptedByTimeoutException | InterruptedIOException ex) {
-            throw new NIOException(NMsg.ofC("interrupt out loading %s (%s)", spec, ex), ex);
+            throw new NInterruptedException(NMsg.ofC("interrupt out loading %s (%s)", spec, ex), ex);
         } catch (UncheckedIOException | IOException ex) {
             throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, ex), ex);
         }

@@ -22,12 +22,12 @@ public class NMsgSFormatHelper extends AbstractNMsgFormatHelper {
     /**
      * Splits a SQL-like string into plain-text parts and placeholder parts.
      * Recognizes:
-     *  - '?'      -> positional placeholder (format value = "")
-     *  - ':name'  -> named placeholder (format value = "name")
-     *  - '::'     -> passthrough literal (postgres cast), never a placeholder
-     *  - '\?' '\:' -> escaped literal char
-     *  - single/double-quoted string literals (with doubled-quote escaping) are
-     *    copied verbatim; '?' and ':' inside them are never treated as placeholders
+     * - '?'      -> positional placeholder (format value = "")
+     * - ':name'  -> named placeholder (format value = "name")
+     * - '::'     -> passthrough literal (postgres cast), never a placeholder
+     * - '\?' '\:' -> escaped literal char
+     * - single/double-quoted string literals (with doubled-quote escaping) are
+     * copied verbatim; '?' and ':' inside them are never treated as placeholders
      */
     public static NFormattedTextParts parseStyle(String msg) {
         if (msg == null) {
@@ -121,9 +121,7 @@ public class NMsgSFormatHelper extends AbstractNMsgFormatHelper {
                     gParamIndex++;
                 } else {
                     // named ':name'
-                    Function<String, ?> h = m.placeholders();
-                    Object v = h != null ? h.apply(name) : null;
-                    a = resolvePlaceholder(v);
+                    a = applyPlaceholder(name);
                 }
                 if (a == null) {
                     sb.append((String) null);
@@ -138,4 +136,5 @@ public class NMsgSFormatHelper extends AbstractNMsgFormatHelper {
         }
         return txt.of(sb.toString());
     }
+
 }
