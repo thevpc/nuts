@@ -187,7 +187,7 @@ public class NutsSpringBootConfiguration {
         }
         NWorkspace workspace = Nuts.openWorkspace(
                 NBootArguments.of(resolveNutsArgs())
-                        .setAppArgs(applicationArguments.getSourceArgs())
+                        .appArgs(applicationArguments.getSourceArgs())
         );
         // prepare app early
         NApp.builder(applicationArguments.getSourceArgs())
