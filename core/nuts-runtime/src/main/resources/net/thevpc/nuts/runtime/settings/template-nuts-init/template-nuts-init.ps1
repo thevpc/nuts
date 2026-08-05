@@ -1,4 +1,4 @@
-"$$SCRIPT_NUTS_ENV$$"
+. "$$SCRIPT_NUTS_ENV$$"
 $env:Path=$NUTS_WORKSPACE_BINDIR;$env:Path
 
 # completion: interactive PowerShell sessions only
