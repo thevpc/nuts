@@ -80,6 +80,10 @@ public class NBootLog {
         cachedFileLogLevel = Level.OFF.intValue();
     }
 
+    public PrintStream out() {
+        return out;
+    }
+
     public void error(NBootMsg message, Throwable e) {
         log(Level.SEVERE, INTENT_FAIL,message,e);
     }
