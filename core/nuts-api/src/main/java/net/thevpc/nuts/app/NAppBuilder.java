@@ -232,7 +232,7 @@ public class NAppBuilder {
                 NClock now = NClock.now();
                 NWorkspace ws = NWorkspace.get().orNull();
                 if (ws == null) {
-                    ws = Nuts.openWorkspace(NBootArguments.of(this.nutsArgs()).setAppArgs(args));
+                    ws = Nuts.openWorkspace(NBootArguments.of(this.nutsArgs()).appArgs(args));
                 }
                 ws.runWith(() -> {
                     NApp a = NApp.of();
