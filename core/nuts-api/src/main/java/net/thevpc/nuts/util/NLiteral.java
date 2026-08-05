@@ -19,6 +19,86 @@ public interface NLiteral extends NBlankable {
         return DefaultNLiteral.of(any);
     }
 
+    static NOptional<Object> ofObject(Object any) {
+        return of(any).asObject();
+    }
+
+    static NOptional<Instant> ofInstant(Object any) {
+        return of(any).asInstant();
+    }
+
+    static NOptional<LocalDate> ofLocalDate(Object any) {
+        return of(any).asLocalDate();
+    }
+
+    static NOptional<LocalDateTime> ofLocalDateTime(Object any) {
+        return of(any).asLocalDateTime();
+    }
+
+    static NOptional<LocalTime> ofLocalTime(Object any) {
+        return of(any).asLocalTime();
+    }
+
+    static NOptional<NBigComplex> ofBigComplex(Object any) {
+        return of(any).asBigComplex();
+    }
+
+    static NOptional<NDoubleComplex> ofDoubleComplex(Object any) {
+        return of(any).asDoubleComplex();
+    }
+
+    static NOptional<NFloatComplex> ofFloatComplex(Object any) {
+        return of(any).asFloatComplex();
+    }
+
+    static NOptional<Number> ofNumber(Object any) {
+        return of(any).asNumber();
+    }
+
+    static NOptional<Boolean> ofBoolean(Object any) {
+        return of(any).asBoolean();
+    }
+
+    static NOptional<Long> ofLong(Object any) {
+        return of(any).asLong();
+    }
+
+    static NOptional<Double> ofDouble(Object any) {
+        return of(any).asDouble();
+    }
+
+    static NOptional<Float> ofFloat(Object any) {
+        return of(any).asFloat();
+    }
+
+    static NOptional<Byte> ofByte(Object any) {
+        return of(any).asByte();
+    }
+
+    static NOptional<Short> ofShort(Object any) {
+        return of(any).asShort();
+    }
+
+    static NOptional<Character> ofChar(Object any) {
+        return of(any).asChar();
+    }
+
+    static NOptional<Integer> ofInt(Object any) {
+        return of(any).asInt();
+    }
+
+    static NOptional<String> ofString(Object any) {
+        return of(any).asString();
+    }
+
+    static NOptional<BigInteger> ofBigInt(Object any) {
+        return of(any).asBigInt();
+    }
+
+    static NOptional<BigDecimal> ofBigDecimal(Object any) {
+        return of(any).asBigDecimal();
+    }
+
     NOptional<Object> asObject();
 
     NOptional<Instant> asInstant();
