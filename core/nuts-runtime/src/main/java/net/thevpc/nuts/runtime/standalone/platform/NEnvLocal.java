@@ -87,9 +87,9 @@ public class NEnvLocal extends NEnvBase {
             this.archFamily = NArchFamily.current();
             this.gui = CoreNUtilGui.isGraphicalDesktopEnvironment();
             this.initialized = true;
-            userHome = System.getProperty("user.home");
-            userName = System.getProperty("user.name");
-            nativeImage = "runtime".equals(System.getProperty("org.graalvm.nativeimage.imagecode"));
+            this.userHome = System.getProperty("user.home");
+            this.userName = System.getProperty("user.name");
+            this.nativeImage = "runtime".equals(System.getProperty("org.graalvm.nativeimage.imagecode"));
             NOsFamily nOsFamily = osFamily();
             if(nOsFamily==NOsFamily.WINDOWS) {
                 boolean ok=false;
@@ -101,7 +101,7 @@ public class NEnvLocal extends NEnvBase {
                                 "$osver=[System.Environment]::OSVersion.Version.ToString(); " +
                                 "$arch=$env:PROCESSOR_ARCHITECTURE; " +
                                 "$user=$env:USERNAME; $homedir=$env:USERPROFILE; " +
-                                "$shell=(Get-Command pwsh -ErrorAction SilentlyContinue).Name; " +
+                                "$shell=(Get-Process -Id $PID).Name; " +
                                 "$shellver=$PSVersionTable.PSVersion.ToString(); " +
                                 "Write-Output ($os+'|'+$osver+'|'+$user+'|'+$homedir+'|'+$shell+'|'+$shellver+'|'+$arch)}"
                         };
@@ -111,13 +111,8 @@ public class NEnvLocal extends NEnvBase {
                             if (cols.size() >= 6) {
                                 String luname = cols.get(0).toLowerCase();
                                 os = NId.of(null, cols.get(0), cols.get(1));
-//                                osFamily = NOsFamily.WINDOWS;
-//                                userName = cols.get(2);
-//                                userHome = cols.get(3);
                                 shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_POWER_SHELL);
                                 shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
-//                                arch = NId.of(null, cols.get(6));
-//                                archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
                                 rootUserName = getWindowsAdminName(NShellFamily.WIN_POWER_SHELL);
                                 ok = true;
                             }
@@ -128,20 +123,13 @@ public class NEnvLocal extends NEnvBase {
                 }
                 if (!ok) {
                     try {
-                        String[] cmd = {"cmd", "/c", "echo Windows|%OS%|%USERNAME%|%USERPROFILE%|cmd|unknown|%PROCESSOR_ARCHITECTURE%"};
+                        String[] cmd = {"cmd", "/c", "echo Windows^|%OS%^|%USERNAME%^|%USERPROFILE%^|cmd^|unknown^|%PROCESSOR_ARCHITECTURE%"};
                         String result = NExec.ofSystem(cmd).grabbedAll();
                         if (!NBlankable.isBlank(result)) {
                             List<String> cols = NStringUtils.split(result, "|", false, false);
                             if (cols.size() >= 6) {
-                                String luname = cols.get(0).toLowerCase();
-                                os = NId.of(null, cols.get(0), cols.get(1));
-                                osFamily = NOsFamily.WINDOWS;
-                                userName = cols.get(2);
-                                userHome = cols.get(3);
-                                shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_CMD);
-                                shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
-                                arch = NId.of(null, cols.get(6));
-                                archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
+                                shellFamily = NShellFamily.WIN_CMD;
+                                shell = NId.of(null, shellFamily.id(), os.version());
                                 rootUserName = getWindowsAdminName(NShellFamily.WIN_CMD);
                                 ok = true;
                             }
@@ -152,11 +140,9 @@ public class NEnvLocal extends NEnvBase {
                 }
                 if (!ok) {
                     os = NId.BLANK;
-                    shellFamily = NShellFamily.UNKNOWN;
-                    shell = NId.BLANK;
-                    userHome = null;
-                    userName = null;
-                    rootUserName = "root";
+                    shellFamily = NShellFamily.WIN_CMD;
+                    shell = NId.of(null, shellFamily.id(), os.version());
+                    rootUserName = "Administrator";
                 }
                 rootUserName = getWindowsAdminName(shellFamily());
             }else if(osFamily.isPosix()){
@@ -370,7 +356,7 @@ public class NEnvLocal extends NEnvBase {
                 // Query WMI via PowerShell for the user account with SID ending in -500
                 cmd=new String[]{"cmd.exe", "/c",
                         "wmic useraccount where \"SID like 'S-1-5-%-500' and LocalAccount=true\" get Name /value"};
-                for (String line : NStringUtils.splitLines(NExec.ofSystem(cmd).grabbedAll())) {
+                for (String line : NStringUtils.splitLines(NExec.ofSystem(cmd).grabbedAll().trim())) {
                     if (!NBlankable.isBlank(line)) {
                         String trimmed = line.trim();
                         if (trimmed.startsWith("Name=")) {
@@ -383,7 +369,7 @@ public class NEnvLocal extends NEnvBase {
                 }
             }else {
                 cmd = new String[]{"powershell", "-NoProfile", "-Command",
-                        "(Get-WmiObject Win32_UserAccount -Filter \"SID LIKE 'S-1-5-%-500' AND LocalAccount=TRUE\").Name"};
+                        "(Get-CimInstance Win32_UserAccount -Filter 'LocalAccount=True AND SID LIKE ''%-500''').Name"};
                 for (String line : NStringUtils.splitLines(NExec.ofSystem(cmd).grabbedAll())) {
                     if (!NBlankable.isBlank(line)) {
                         return line.trim();

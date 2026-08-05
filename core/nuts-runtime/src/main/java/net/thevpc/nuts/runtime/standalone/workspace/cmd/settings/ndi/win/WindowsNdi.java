@@ -32,6 +32,7 @@ public class WindowsNdi extends BaseSystemNdi {
     public NdiScriptInfo getSysRc(NdiScriptOptions options, NShellFamily shellFamily){
         switch (shellFamily){
             case WIN_POWER_SHELL:{
+
                 String p = NEnv.of().getEnv("PROFILE").orNull();
                 if(!NBlankable.isBlank(p)){
                     return new NdiScriptInfo() {
