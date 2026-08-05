@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NPath;
@@ -32,13 +33,19 @@ public class WindowsNdi extends BaseSystemNdi {
     public NdiScriptInfo getSysRc(NdiScriptOptions options, NShellFamily shellFamily){
         switch (shellFamily){
             case WIN_POWER_SHELL:{
-
-                String p = NEnv.of().getEnv("PROFILE").orNull();
-                if(!NBlankable.isBlank(p)){
+                String profilePath=null;
+                try {
+                    String[] cmd = {"powershell", "-NoProfile", "-Command", "echo $PROFILE.CurrentUserAllHosts"};
+                    profilePath = NExec.ofSystem(cmd).grabbedAll().trim();
+                }catch (Exception ex){
+                    //
+                }
+                if(!NBlankable.isBlank(profilePath)){
+                    String finalProfilePath = profilePath;
                     return new NdiScriptInfo() {
                         @Override
                         public NPath path() {
-                            return NPath.of(p);
+                            return NPath.of(finalProfilePath);
                         }
 
                         @Override
