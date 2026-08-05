@@ -95,28 +95,29 @@ public class NEnvLocal extends NEnvBase {
                 boolean ok=false;
                 if (!ok) {
                     try {
-                        String cmd =
-                                "powershell -NoProfile -Command \"& {" +
-                                        "$os='Windows'; " +
-                                        "$osver=[System.Environment]::OSVersion.Version.ToString(); " +
-                                        "$arch=$env:PROCESSOR_ARCHITECTURE; " +
-                                        "$user=$env:USERNAME; $homedir=$env:USERPROFILE; " +
-                                        "$shell=(Get-Command pwsh -ErrorAction SilentlyContinue).Name; " +
-                                        "$shellver=$PSVersionTable.PSVersion.ToString(); " +
-                                        "Write-Output ($os+'|'+$osver+'|'+$user+'|'+$homedir+'|'+$shell+'|'+$shellver+'|'+$arch)}\"";
+                        String[] cmd = {
+                                "powershell", "-NoProfile", "-Command", "& {" +
+                                "$os='Windows'; " +
+                                "$osver=[System.Environment]::OSVersion.Version.ToString(); " +
+                                "$arch=$env:PROCESSOR_ARCHITECTURE; " +
+                                "$user=$env:USERNAME; $homedir=$env:USERPROFILE; " +
+                                "$shell=(Get-Command pwsh -ErrorAction SilentlyContinue).Name; " +
+                                "$shellver=$PSVersionTable.PSVersion.ToString(); " +
+                                "Write-Output ($os+'|'+$osver+'|'+$user+'|'+$homedir+'|'+$shell+'|'+$shellver+'|'+$arch)}"
+                        };
                         String result = NExec.ofSystem(cmd).grabbedAll();
                         if (!NBlankable.isBlank(result)) {
-                            List<String> cols = NStringUtils.split(result, "|", true, false);
+                            List<String> cols = NStringUtils.split(result.trim(), "|", true, false);
                             if (cols.size() >= 6) {
                                 String luname = cols.get(0).toLowerCase();
                                 os = NId.of(null, cols.get(0), cols.get(1));
-                                osFamily = NOsFamily.WINDOWS;
-                                userName = cols.get(2);
-                                userHome = cols.get(3);
+//                                osFamily = NOsFamily.WINDOWS;
+//                                userName = cols.get(2);
+//                                userHome = cols.get(3);
                                 shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_POWER_SHELL);
                                 shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
-                                arch = NId.of(null, cols.get(6));
-                                archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
+//                                arch = NId.of(null, cols.get(6));
+//                                archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
                                 rootUserName = getWindowsAdminName(NShellFamily.WIN_POWER_SHELL);
                                 ok = true;
                             }
@@ -127,7 +128,7 @@ public class NEnvLocal extends NEnvBase {
                 }
                 if (!ok) {
                     try {
-                        String cmd = "cmd /c \"echo Windows|%OS%|%USERNAME%|%USERPROFILE%|cmd|unknown|%PROCESSOR_ARCHITECTURE%\"";
+                        String[] cmd = {"cmd", "/c", "echo Windows|%OS%|%USERNAME%|%USERPROFILE%|cmd|unknown|%PROCESSOR_ARCHITECTURE%"};
                         String result = NExec.ofSystem(cmd).grabbedAll();
                         if (!NBlankable.isBlank(result)) {
                             List<String> cols = NStringUtils.split(result, "|", false, false);
