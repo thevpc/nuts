@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.system;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -30,8 +31,6 @@ import java.util.Map;
 public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt {
 
     String[] cmd;
-    List<String> executorOptions;
-    private boolean showCommand = false;
 
     public DefaultNSystemExecutable(String[] cmd,
                                     List<String> executorOptions,
@@ -41,19 +40,11 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
         this.executorOptions = NCollections.nonNullList(executorOptions);
-        NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get();
-            switch (aa.key()) {
-                case "--show-command": {
-                    cmdLine.matcher().withAny().matchFlag((v) -> this.showCommand = (v.booleanValue())).anyMatch();
-                    break;
-                }
-                default: {
-                    cmdLine.skip();
-                }
-            }
-        }
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .withAny().skip()
+                .requireAll();
     }
 
     @Override
@@ -85,6 +76,9 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public int execute() {
+        if(completeRequest!=null){
+            return 0;
+        }
         return resolveExecHelper().exec();
     }
 

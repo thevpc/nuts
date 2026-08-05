@@ -1,0 +1,4 @@
+. "$$SCRIPT_NUTS_ENV$$"
+PATH="${NUTS_WORKSPACE_BINDIR}:${PATH}"
+export PATH
+

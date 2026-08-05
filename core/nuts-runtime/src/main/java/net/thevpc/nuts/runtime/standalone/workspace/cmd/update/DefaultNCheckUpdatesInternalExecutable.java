@@ -12,14 +12,16 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNCheckUpdatesInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNCheckUpdatesInternalExecutable(String[] args, NExec execCommand) {
-        super("check-updates", args, execCommand);
+    public DefaultNCheckUpdatesInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("check-updates", args, execCommand,executorOptions);
     }
 
     @Override

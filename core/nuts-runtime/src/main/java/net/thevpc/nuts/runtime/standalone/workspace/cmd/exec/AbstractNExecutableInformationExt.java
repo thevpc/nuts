@@ -5,12 +5,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
+
+import java.util.List;
 
 /**
  * @author thevpc
@@ -21,6 +24,9 @@ public abstract class AbstractNExecutableInformationExt implements NExecutableIn
     protected String name;
     protected String value;
     private final NExec execCommand;
+    protected NBootCompleteRequest completeRequest;
+    protected boolean showCommand = false;
+    protected List<String> executorOptions;
     public AbstractNExecutableInformationExt(String name, NExecutableType type, NExec execCommand) {
         this.type = type;
         this.name = name;

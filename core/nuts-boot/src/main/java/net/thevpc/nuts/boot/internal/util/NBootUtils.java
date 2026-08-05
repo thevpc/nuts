@@ -3002,6 +3002,7 @@ public final class NBootUtils {
             } else {
                 if (bootOptions == null) {
                     bootOptions = new NBootOptionsInfo();
+                    NBootWorkspaceCmdLineParser.denullProperties(bootOptions);
                     NBootWorkspaceCmdLineParser.parseNutsArguments(args, bootOptions);
                 }
                 return processThrowable(ex, true, resolveShowStackTrace(bootOptions), resolveGui(bootOptions));

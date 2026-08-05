@@ -29,7 +29,7 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     protected NShellFamily[] getShellGroups() {
         Set<NShellFamily> all = new LinkedHashSet<>(NEnv.of().shellFamilies());
-        all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
+//        all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.BASH, NShellFamily.FISH, NShellFamily.ZSH));
         return all.toArray(new NShellFamily[0]);
     }
 
@@ -145,19 +145,18 @@ public class AnyNixNdi extends BaseSystemNdi {
 
 
     public String getTemplateName(String name, NShellFamily shellFamily) {
+        String n = "template-" + name;
         switch (shellFamily) {
             case SH:
             case BASH:
             case CSH:
             case ZSH:
-            case KSH: {
-                return "template-" + name + ".sh";
-            }
+            case KSH:
             case FISH: {
-                return "template-" + name + ".fish";
+                return n + "/" + n + "."+shellFamily.id();
             }
         }
-        return "template-" + name + ".sh";
+        return n + "/" + n + ".sh";
     }
 
 
@@ -194,25 +193,12 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     public NdiScriptInfo getNutsTerm(NdiScriptOptions options, NShellFamily shellFamily) {
         switch (shellFamily) {
+            case CSH: // not supported yet
+            case KSH:
+                return null;
             case SH:
             case BASH:
             case ZSH:
-            case CSH:
-            case KSH: {
-                return new NdiScriptInfo() {
-                    @Override
-                    public NPath path() {
-                        return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
-                    }
-
-                    @Override
-                    public PathInfo create() {
-                        return scriptBuilderTemplate("nuts-term", NShellFamily.SH, "nuts-term", options.resolveNutsApiId(), options)
-                                .setPath(path())
-                                .build();
-                    }
-                };
-            }
             case FISH: {
                 return new NdiScriptInfo() {
                     @Override
@@ -222,7 +208,7 @@ public class AnyNixNdi extends BaseSystemNdi {
 
                     @Override
                     public PathInfo create() {
-                        return scriptBuilderTemplate("nuts-term", NShellFamily.FISH, "nuts-term", options.resolveNutsApiId(), options)
+                        return scriptBuilderTemplate("nuts-term", shellFamily, "nuts-term", options.resolveNutsApiId(), options)
                                 .setPath(path())
                                 .build();
                     }
@@ -232,128 +218,133 @@ public class AnyNixNdi extends BaseSystemNdi {
         return null;
     }
 
+
+
     public NdiScriptInfo getIncludeNutsEnv(NdiScriptOptions options, NShellFamily shellFamily) {
+        String ext = shellFamily.id();
+        if (ext != null) {
+            String finalExt = ext;
+            return new NdiScriptInfo() {
+                @Override
+                public NPath path() {
+                    return options.resolveIncFolder().resolve(".nuts-env." + finalExt);
+                }
+
+                @Override
+                public PathInfo create() {
+                    return scriptBuilderTemplate("nuts-env", shellFamily, "nuts-env", options.resolveNutsApiId(), options)
+                            .setPath(path())
+                            .build();
+                }
+            };
+        }
+        return null;
+    }
+
+    @Override
+    public NdiScriptInfo getIncludeNutsCompletion(NdiScriptOptions options, NShellFamily shellFamily) {
+        String ext = null;
         switch (shellFamily) {
-            case SH:
+            // no completion in sh
+            case SH: // not supported
+            case CSH: // not supported
+            case KSH: // not supported
+                return null;
+            case ZSH:
             case BASH:
-            case CSH:
-            case KSH:
-            case ZSH: {
-                return new NdiScriptInfo() {
-                    @Override
-                    public NPath path() {
-                        return options.resolveIncFolder().resolve(".nuts-env.sh");
-                    }
-
-                    @Override
-                    public PathInfo create() {
-                        return scriptBuilderTemplate("nuts-env", NShellFamily.SH, "nuts-env", options.resolveNutsApiId(), options)
-                                .setPath(path())
-                                .build();
-                    }
-                };
+            case FISH:
+            {
+                ext = shellFamily.id(); // reuse
+                break;
             }
-            case FISH: {
-                return new NdiScriptInfo() {
-                    @Override
-                    public NPath path() {
-                        return options.resolveIncFolder().resolve(".nuts-env.fish");
-                    }
-
-                    @Override
-                    public PathInfo create() {
-                        return scriptBuilderTemplate("nuts-env", NShellFamily.FISH, "nuts-env", options.resolveNutsApiId(), options)
-                                .setPath(path())
-                                .build();
-                    }
-                };
+            default: {
+                return null;
             }
+        }
+        if (ext != null) {
+            String finalExt = ext;
+            return new NdiScriptInfo() {
+                @Override
+                public NPath path() {
+                    return options.resolveIncFolder().resolve(".nuts-complete." + finalExt);
+                }
+
+                @Override
+                public PathInfo create() {
+                    return scriptBuilderTemplate("nuts-complete", shellFamily, "nuts-complete", options.resolveNutsApiId(), options)
+                            .setPath(path())
+                            .build();
+                }
+            };
         }
         return null;
     }
 
     public NdiScriptInfo getIncludeNutsTermInit(NdiScriptOptions options, NShellFamily shellFamily) {
         switch (shellFamily) {
-            case FISH: {
-                return
-                        new NdiScriptInfo() {
-                            @Override
-                            public NPath path() {
-                                return options.resolveIncFolder().resolve(".nuts-term-init.fish");
-                            }
-
-                            @Override
-                            public PathInfo create() {
-                                return scriptBuilderTemplate("nuts-term-init", NShellFamily.FISH, "nuts-term-init", options.resolveNutsApiId(), options)
-                                        .setPath(path())
-                                        .build();
-                            }
-                        }
-                        ;
-            }
+            // no completion in sh
             case SH:
+            case ZSH:
             case BASH:
-            case CSH:
-            case KSH:
-            case ZSH: {
-                return
-                        new NdiScriptInfo() {
-                            @Override
-                            public NPath path() {
-                                return options.resolveIncFolder().resolve(".nuts-term-init.sh");
-                            }
-
-                            @Override
-                            public PathInfo create() {
-                                return scriptBuilderTemplate("nuts-term-init", NShellFamily.SH, "nuts-term-init", options.resolveNutsApiId(), options)
-                                        .setPath(path())
-                                        .build();
-                            }
-                        }
-                        ;
+            case FISH:
+            {
+                break;
             }
+            case CSH: // not supported yet
+            case KSH: // not supported yet
+            default: {
+                return null;
+            }
+        }
+        String ext = shellFamily.id();
+        if (ext!=null) {
+            return
+                    new NdiScriptInfo() {
+                        @Override
+                        public NPath path() {
+                            return options.resolveIncFolder().resolve(".nuts-term-init."+ext);
+                        }
+
+                        @Override
+                        public PathInfo create() {
+                            return scriptBuilderTemplate("nuts-term-init", shellFamily, "nuts-term-init", options.resolveNutsApiId(), options)
+                                    .setPath(path())
+                                    .build();
+                        }
+                    }
+                    ;
         }
         return null;
     }
 
     public NdiScriptInfo getIncludeNutsInit(NdiScriptOptions options, NShellFamily shellFamily) {
-        switch (shellFamily) {
-            case SH:
-            case BASH:
-            case CSH:
-            case KSH:
-            case ZSH: {
-                return new NdiScriptInfo() {
-                    @Override
-                    public NPath path() {
-                        return options.resolveIncFolder().resolve(".nuts-init.sh");
-                    }
+        switch (shellFamily){
+            case  SH:
+            case  BASH:
+            case  CSH:
+            case  ZSH:
+            case  KSH:
+            case  FISH:
+                break;
+            default:
+                return null;
+        }
+        String ext = shellFamily.id();
+        if (ext!=null) {
+            return new NdiScriptInfo() {
+                @Override
+                public NPath path() {
+                    return options.resolveIncFolder().resolve(".nuts-init."+ ext);
+                }
 
-                    @Override
-                    public PathInfo create() {
-                        NPath apiConfigFile = path();
-                        return scriptBuilderTemplate("nuts-init", NShellFamily.SH, "nuts-init", options.resolveNutsApiId(), options)
-                                .setPath(apiConfigFile)
-                                .buildAddLine(AnyNixNdi.this);
-                    }
-                };
-            }
-            case FISH: {
-                return new NdiScriptInfo() {
-                    @Override
-                    public NPath path() {
-                        return options.resolveIncFolder().resolve(".nuts-init.fish");
-                    }
-
-                    @Override
-                    public PathInfo create() {
-                        NPath apiConfigFile = path();
-                        return scriptBuilderTemplate("nuts-init", NShellFamily.FISH, "nuts-init", options.resolveNutsApiId(), options)
-                                .setPath(apiConfigFile)
-                                .buildAddLine(AnyNixNdi.this);
-                    }
-                };
-            }
+                @Override
+                public PathInfo create() {
+                    NPath apiConfigFile = path();
+                    return scriptBuilderTemplate("nuts-init", shellFamily, "nuts-init", options.resolveNutsApiId(), options)
+                            .setPath(apiConfigFile)
+                            .buildAddLine(AnyNixNdi.this);
+                }
+            };
         }
         return null;
     }

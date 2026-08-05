@@ -15,14 +15,16 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExec execCommand) {
-        super("version", args, execCommand);
+    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExec execCommand, List<String> executorOptions) {
+        super("version", args, execCommand,executorOptions);
     }
 
     @Override

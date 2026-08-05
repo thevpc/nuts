@@ -12,14 +12,16 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNPushInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPushInternalExecutable(String[] args, NExec execCommand) {
-        super("push", args, execCommand);
+    public DefaultNPushInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("push", args, execCommand,executorOptions);
     }
 
     @Override

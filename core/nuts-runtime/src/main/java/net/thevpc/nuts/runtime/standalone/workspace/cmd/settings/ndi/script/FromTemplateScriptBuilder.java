@@ -153,6 +153,8 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                         return sndi.getIncludeNutsInit(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_ENV":
                                         return sndi.getIncludeNutsEnv(options,getShellFamily()).path().toString();
+                                    case "SCRIPT_NUTS_COMPLETION":
+                                        return sndi.getIncludeNutsCompletion(options,getShellFamily()).path().toString();
                                     case "NUTS_APP_JAR":
                                         return options.resolveNutsAppJarPath().toString();
                                     case "BIN_FOLDER":

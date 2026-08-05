@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.platform;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdBuilder;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.reflect.NScorable;
@@ -69,7 +70,7 @@ public class NEnvAsCmd extends NEnvBase {
         boolean ok = false;
         try {
             String cmd =
-                    "sh -c 'echo -n \"$(uname -s)|$(uname -r)|uname -m|$(whoami)|${HOME}|$SHELL\"; " +
+                    "sh -c 'echo -n \"$(uname -s)|$(uname -r)|$(uname -m)|$(whoami)|${HOME}|$SHELL\"; " +
                             "v=$($SHELL --version 2>/dev/null | head -n1 || " +
                             "$SHELL -version 2>/dev/null | head -n1 || " +
                             "$SHELL version 2>/dev/null | head -n1 || echo unknown); " +
@@ -123,14 +124,14 @@ public class NEnvAsCmd extends NEnvBase {
                     if (cols.size() >= 6) {
                         String luname = cols.get(0).toLowerCase();
                         os = NId.of(null, cols.get(0), cols.get(1));
-                        resolveWindowsOfFamilyFromOsId(luname);
+                        osFamily = NOsFamily.WINDOWS;
                         userName = cols.get(2);
                         userHome = cols.get(3);
                         shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_POWER_SHELL);
                         shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
                         arch = NId.of(null, cols.get(6));
                         archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
-                        resolveWindowAdminName();
+                        rootUserName=getWindowsAdminName(NShellFamily.WIN_CMD);
                         ok = true;
                     }
                 }
@@ -147,14 +148,14 @@ public class NEnvAsCmd extends NEnvBase {
                     if (cols.size() >= 6) {
                         String luname = cols.get(0).toLowerCase();
                         os = NId.of(null, cols.get(0), cols.get(1));
-                        resolveWindowsOfFamilyFromOsId(luname);
+                        osFamily = NOsFamily.WINDOWS;
                         userName = cols.get(2);
                         userHome = cols.get(3);
                         shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_CMD);
                         shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
                         arch = NId.of(null, cols.get(6));
                         archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
-                        resolveWindowAdminName();
+                        rootUserName=getWindowsAdminName(NShellFamily.WIN_CMD);
                         ok = true;
                     }
                 }
@@ -174,30 +175,49 @@ public class NEnvAsCmd extends NEnvBase {
 
     }
 
-    private void resolveWindowsOfFamilyFromOsId(String luname) {
-        if (luname.startsWith("linux")) {
-            osFamily = NOsFamily.LINUX;
-        } else if (luname.startsWith("darwin")) {
-            osFamily = NOsFamily.MACOS;
-        } else if (luname.startsWith("sunos")) {
-            osFamily = NOsFamily.UNIX;
-        } else if (
-                luname.startsWith("freebsd")
-                        || luname.startsWith("openbsd")
-                        || luname.startsWith("netbsd")
-        ) {
-        } else if (
-                luname.contains("windows")
-        ) {
-            osFamily = NOsFamily.WINDOWS;
-        } else {
-            osFamily = NOsFamily.WINDOWS;
-        }
+    public static String getWindowsAdminName(NShellFamily sf) {
+        try {
+            String cmd;
+            if(sf==NShellFamily.WIN_CMD){
+                // Query WMI via PowerShell for the user account with SID ending in -500
+                cmd="wmic useraccount where \"SID like 'S-1-5-%-500' and LocalAccount=true\" get Name /value";
+            }else {
+                cmd = "powershell -NoProfile -Command (Get-WmiObject Win32_UserAccount -Filter \"SID LIKE 'S-1-5-%-500' AND LocalAccount=TRUE\").Name";
+            }
+            for (String line : NStringUtils.splitLines(NExec.ofSystem(cmd).grabbedAll())) {
+                if (!NBlankable.isBlank(line)) {
+                    return line.trim();
+                }
+            }
+        } catch (Exception ignored) {}
+        // Fallback to English standard if detection fails
+        return "Administrator";
     }
 
-    private void resolveWindowAdminName() {
-        rootUserName = resolveWindowAdminName(envCmdSPI.targetConnectionString().userName(), rootUserName);
-    }
+//    private void resolveWindowsOfFamilyFromOsId(String luname) {
+//        if (luname.startsWith("linux")) {
+//            osFamily = NOsFamily.LINUX;
+//        } else if (luname.startsWith("darwin")) {
+//            osFamily = NOsFamily.MACOS;
+//        } else if (luname.startsWith("sunos")) {
+//            osFamily = NOsFamily.UNIX;
+//        } else if (
+//                luname.startsWith("freebsd")
+//                        || luname.startsWith("openbsd")
+//                        || luname.startsWith("netbsd")
+//        ) {
+//        } else if (
+//                luname.contains("windows")
+//        ) {
+//            osFamily = NOsFamily.WINDOWS;
+//        } else {
+//            osFamily = NOsFamily.WINDOWS;
+//        }
+//    }
+//
+//    private void resolveWindowAdminName() {
+//        rootUserName = resolveWindowAdminName(envCmdSPI.targetConnectionString().userName(), rootUserName);
+//    }
 
     public String runOnceSystemGrab(String cmd) {
         return envCmdSPI.exec(cmd);

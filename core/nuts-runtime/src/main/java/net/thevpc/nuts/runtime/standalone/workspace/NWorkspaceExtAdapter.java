@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.boot.NBootCompleteCmdlineRequest;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.command.*;
@@ -685,5 +686,10 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     @Override
     public void runBootCommand() {
         NWorkspaceHelper.runBootCommand(this);
+    }
+
+    @Override
+    public void completeBootCommand(NBootCompleteCmdlineRequest completeRequest) {
+        NWorkspaceHelper.completeBootCommand(this,completeRequest);
     }
 }

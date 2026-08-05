@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.artifact;
 
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NArtifactCall;
 import net.thevpc.nuts.artifact.NDefinition;
@@ -65,23 +66,14 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         this.execCommand = execCommand;
 
         List<String> executorOptionsList = new ArrayList<>();
-        NArtifactCall exc = def.descriptor().executor();
-        if (exc != null) {
-
-        }
-        for (String option : executorOptions) {
-            NArg a = NArg.of(option);
-            if (a.key().equals("--nuts-auto-install")) {
-                if (a.isKeyValue()) {
-                    autoInstall = a.isNegated() != a.getBooleanValue().get();
-                } else {
-                    autoInstall = true;
-                }
-            } else {
-                executorOptionsList.add(option);
-            }
-        }
         this.executorOptions = executorOptionsList;
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .with("--nuts-auto-install").matchFlag(a->this.autoInstall = a.booleanValue())
+                .withAny().matchAny(a->executorOptionsList.add(a.image()))
+                .requireAll();
+
         this.workspaceOptions = workspaceOptions;
     }
 
@@ -92,6 +84,10 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
 
     @Override
     public int execute() {
+        if(completeRequest!=null){
+            //TODO : should check
+            return 0;
+        }
         NSession session = NSession.of();
         if (session.isDry()) {
             if (autoInstall && !def.installInformation().get().installStatus().isInstalled()) {

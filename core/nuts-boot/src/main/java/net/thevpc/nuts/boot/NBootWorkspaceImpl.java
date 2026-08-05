@@ -120,6 +120,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     NBootArguments unparsedOptions;
     NWorkspaceBase loadedWorkspace;
     Runnable exceptionRunnable;
+    NBootCompleteRequest complete;
 
     public NBootWorkspaceImpl(NBootArguments userOptionsUnparsed0) {
         bContext.runWith(() -> {
@@ -130,27 +131,39 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             NBootOptionsInfo userOptions = new NBootOptionsInfo();
             try {
                 this.unparsedOptions = userOptionsUnparsed;
-                userOptions.setStdin(userOptionsUnparsed.getIn());
-                userOptions.setStdout(userOptionsUnparsed.getOut());
-                userOptions.setStderr(userOptionsUnparsed.getErr());
-                userOptions.setCreationTime(userOptionsUnparsed.getStartTime());
+                userOptions.setStdin(userOptionsUnparsed.in());
+                userOptions.setStdout(userOptionsUnparsed.out());
+                userOptions.setStderr(userOptionsUnparsed.err());
+                userOptions.setCreationTime(userOptionsUnparsed.startTime());
                 InputStream in = userOptions.getStdin();
                 scanner = new Scanner(in == null ? System.in : in);
                 NBootContext.context().log = new NBootLog(userOptions);
+                if (userOptionsUnparsed.complete() != null) {
+                    this.complete = userOptionsUnparsed.complete();
+                }
 
                 List<String> aargs = new ArrayList<>();
                 if (!userOptionsUnparsed.isSkipInherited()) {
                     aargs.addAll(Arrays.asList(NBootCmdLine.parseDefault(NBootUtils.trim(System.getProperty("nuts.boot.args")))));
                     aargs.addAll(Arrays.asList(NBootCmdLine.parseDefault(NBootUtils.trim(System.getProperty("nuts.args")))));
                 }
-                if (userOptionsUnparsed.getOptionArgs() != null) {
-                    for (String appArg : userOptionsUnparsed.getOptionArgs()) {
+                if (userOptionsUnparsed.optionArgs() != null) {
+                    for (String appArg : userOptionsUnparsed.optionArgs()) {
                         if (appArg != null) {
                             aargs.add(appArg);
                         }
                     }
                 }
-                NBootWorkspaceCmdLineParser.parseNutsArguments(aargs.toArray(new String[0]), userOptions);
+                NBootWorkspaceCmdLineParser.denullProperties(userOptions);
+                try {
+                    NBootWorkspaceCmdLineParser.parseNutsArguments(aargs.toArray(new String[0]), userOptions);
+                } catch (NBootException e) {
+                    if (complete != null) {
+                        //just ignore...
+                    } else {
+                        throw e;
+                    }
+                }
                 if (NBootUtils.firstNonNull(userOptions.getSkipErrors(), false)) {
                     StringBuilder errorMessage = new StringBuilder();
                     if (userOptions.getErrors() != null) {
@@ -161,8 +174,18 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     errorMessage.append(NBootI18n.of("Try 'nuts --help' for more information."));
                     NBootContext.log().warn(NBootMsg.ofC(NBootI18n.of("Skipped Error : %s"), errorMessage));
                 }
-                if (userOptionsUnparsed.getAppArgs() != null) {
-                    userOptions.getApplicationArguments().addAll(Arrays.asList(userOptionsUnparsed.getAppArgs()));
+                if (userOptionsUnparsed.appArgs() != null) {
+                    userOptions.getApplicationArguments().addAll(Arrays.asList(userOptionsUnparsed.appArgs()));
+                }
+                if (complete != null) {
+                    userOptions.setBot(true);
+                    if (isAskConfirm(userOptions)) {
+                        userOptions.setConfirm("ERROR");
+                    }
+                    userOptions.setOpenMode("OPEN_OR_NULL");
+                }
+                if(userOptions.getCustomOptions()==null){
+                    userOptions.setCustomOptions(new ArrayList<>());
                 }
                 this.options = userOptions.copy();
                 NBootContext.context().connectionTimout = options.getCustomOptions().stream().map(x -> NBootArg.of(x)).filter(x -> Objects.equals(x.getOptionName(), "---connection-timeout")).map(x -> x.getIntValue())
@@ -274,7 +297,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
         return newInstanceRequirements != 0;
     }
 
-    public void runNewProcess() {
+    public void runNewProcess(NBootCompleteCmdlineRequest cmdComplete) {
         String[] processCmdLine = createProcessCmdLine();
         int result;
         try {
@@ -1090,6 +1113,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             }
             NWorkspaceBaseAndError e = _doNormalBootstrap();
             if (e.workspace == null) {
+                if (complete != null) {
+                    return null;
+                }
                 boolean restAsked = bnn(options.getReset(), false) || bnn(options.getRecover(), false) || bnn(options.getResetHard(), false) || options.getExpireTime() != null;
                 boolean shouldDoMyBest = (e.hasErrorMessages() || e.error != null) && e.incompatibleClassChange && !restAsked;
                 if (e.error != null) {
@@ -1275,6 +1301,17 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     options.setBootWorkspaceFactory(factoryInstance);
                     result.factory = factoryInstance;
                     wsInstance = a.createWorkspace(options);
+                } catch (NBootWorkspaceAlreadyExistsException ex) {
+                    log.error(NBootMsg.ofPlain(ex.getMessage()), ex);
+                    return result;
+                } catch (NBootWorkspaceNotFoundException ex) {
+                    String m = options.getOpenMode();
+                    if (NBootUtils.sameEnum(m, "OPEN_OR_NULL")) {
+                        //just ignore
+                    } else {
+                        log.error(NBootMsg.ofPlain(ex.getMessage()), ex);
+                    }
+                    return result;
                 } catch (UnsatisfiedLinkError | Exception ex) {
                     exceptions.add(NBootUtils.stacktrace(ex));
                     log.error(NBootMsg.ofC(NBootI18n.of("unable to create workspace using factory %s"), a), ex);
@@ -1349,17 +1386,33 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     public NBootWorkspace runWorkspace() {
         return bContext.callWith(() -> {
             try {
+                NBootCompleteCmdlineRequest cmdComplete = null;
+                if (complete != null) {
+                    NBootCompleteRequestOrResult r = NBootWorkspaceCmdLineParser.complete(new NBootCompleteCmdlineRequest(complete, Arrays.asList(unparsedOptions.optionArgs())));
+                    if (r instanceof NBootCompleteResult) {
+                        NBootContext.context().log.out().println(((NBootCompleteResult) r).format());
+                        return this;
+                    } else {
+                        cmdComplete = (NBootCompleteCmdlineRequest) r;
+                    }
+                }
                 if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
-                    NBootWorkspaceHelper.runCommandHelp(options);
+                    NBootWorkspaceHelper.runCommandHelp(options, cmdComplete);
                 } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
-                    NBootWorkspaceHelper.runCommandVersion(() -> getApiDigestOrInternal(), options);
+                    NBootWorkspaceHelper.runCommandVersion(() -> getApiDigestOrInternal(), options, cmdComplete);
                 } else {
                     if (hasUnsatisfiedRequirements()) {
-                        runNewProcess();
+                        runNewProcess(cmdComplete);
                         return this;
                     }
                     NWorkspaceBase ws = this.getWorkspace();
-                    ws.runBootCommand();
+                    if (ws != null) {
+                        if (cmdComplete != null) {
+                            ws.completeBootCommand(cmdComplete);
+                        } else {
+                            ws.runBootCommand();
+                        }
+                    }
                 }
             } catch (Exception ex) {
                 throw doLogException(ex);

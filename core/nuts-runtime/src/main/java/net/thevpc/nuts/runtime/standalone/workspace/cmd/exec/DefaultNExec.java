@@ -158,7 +158,7 @@ public class DefaultNExec extends AbstractNExec {
                     throw new NIllegalArgumentException(NMsg.ofC("cannot run %s command remotely", executionType));
                 }
                 String[] ts = command.toArray(new String[0]);
-                exec = new DefaultNOpenExecutable(ts, executorOptions().toArray(new String[0]), this);
+                exec = new DefaultNOpenExecutable(ts, executorOptions(), this);
                 break;
             }
             case SYSTEM: {
@@ -470,7 +470,7 @@ public class DefaultNExec extends AbstractNExec {
                         List<String> cmdArr = new ArrayList<>();
                         cmdArr.add(cmdName);
                         cmdArr.addAll(Arrays.asList(args));
-                        return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
+                        return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this,executorOptions);
                     }
                     throw new NArtifactNotFoundException(goodId, NMsg.ofC("unable to resolve id %s", path));
                 }
@@ -514,9 +514,9 @@ public class DefaultNExec extends AbstractNExec {
                     if (remoteInfo0 != null) {
                         return _runRemoteInternalCommand(goodKw, remoteInfo0);
                     }
-                    return new DefaultInternalNExecutableCommand(ic, args, this);
+                    return new DefaultInternalNExecutableCommand(ic, args, this,executorOptions);
                 }
-                NExecutableInformationExt builtinExec = createBuiltinKeywordExecutable(goodKw, args);
+                NExecutableInformationExt builtinExec = createBuiltinKeywordExecutable(goodKw, args,executorOptions);
                 if (builtinExec != null) {
                     RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                     if (remoteInfo0 != null) {
@@ -543,7 +543,7 @@ public class DefaultNExec extends AbstractNExec {
                 if (customCmd != null) {
                     NCmdExecOptions o = new NCmdExecOptions().executorOptions(executorOptions).directory(directory).failFast(failFast)
                             .executionType(executionType).setEnv(env);
-                    return new DefaultNAliasExecutable(customCmd, o, args, this);
+                    return new DefaultNAliasExecutable(customCmd, o, args, this,executorOptions);
                 } else {
                     IdOrSysPath isp = null;
                     if (goodId != null) {
@@ -569,7 +569,7 @@ public class DefaultNExec extends AbstractNExec {
                     List<String> cmdArr = new ArrayList<>();
                     cmdArr.add(cmdName);
                     cmdArr.addAll(Arrays.asList(args));
-                    return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
+                    return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this,executorOptions);
                 }
             }
         }
@@ -582,28 +582,28 @@ public class DefaultNExec extends AbstractNExec {
      * This method has no side-effects and must not be called before resolving
      * higher-priority matches (dynamic internal commands, remote execution).
      */
-    private NExecutableInformationExt createBuiltinKeywordExecutable(String kw, String[] args) {
+    private NExecutableInformationExt createBuiltinKeywordExecutable(String kw, String[] args, List<String> executorOptions) {
         switch (kw) {
-            case "update":        return new DefaultNUpdateInternalExecutable(args, this);
-            case "check-updates": return new DefaultNCheckUpdatesInternalExecutable(args, this);
-            case "install":       return new DefaultNInstallInternalExecutable(args, this);
-            case "reinstall":     return new DefaultNReinstallInternalExecutable(args, this);
-            case "uninstall":     return new DefaultNUninstallInternalExecutable(args, this);
-            case "deploy":        return new DefaultNDeployInternalExecutable(args, this);
-            case "undeploy":      return new DefaultNUndeployInternalExecutable(args, this);
-            case "push":          return new DefaultNPushInternalExecutable(args, this);
-            case "fetch":         return new DefaultNFetchInternalExecutable(args, this);
-            case "search":        return new DefaultNSearchInternalExecutable(args, this);
-            case "version":       return new DefaultNVersionInternalExecutable(args, this);
-            case "prepare":       return new DefaultNPrepareInternalExecutable(args, this);
-            case "license":       return new DefaultNLicenseInternalExecutable(args, this);
-            case "bundle":        return new DefaultNBundleInternalExecutable(args, this);
-            case "help":          return new DefaultNHelpInternalExecutable(args, this);
-            case "welcome":       return new DefaultNWelcomeInternalExecutable(args, this);
-            case "info":          return new DefaultNInfoInternalExecutable(args, this);
-            case "which":         return new DefaultNWhichInternalExecutable(args, this);
-            case "exec":          return new DefaultNExecInternalExecutable(args, this);
-            case "settings":      return new DefaultNSettingsInternalExecutable(args, this);
+            case "update":        return new DefaultNUpdateInternalExecutable(args, this,executorOptions);
+            case "check-updates": return new DefaultNCheckUpdatesInternalExecutable(args, this,executorOptions);
+            case "install":       return new DefaultNInstallInternalExecutable(args, this,executorOptions);
+            case "reinstall":     return new DefaultNReinstallInternalExecutable(args, this,executorOptions);
+            case "uninstall":     return new DefaultNUninstallInternalExecutable(args, this,executorOptions);
+            case "deploy":        return new DefaultNDeployInternalExecutable(args, this,executorOptions);
+            case "undeploy":      return new DefaultNUndeployInternalExecutable(args, this,executorOptions);
+            case "push":          return new DefaultNPushInternalExecutable(args, this,executorOptions);
+            case "fetch":         return new DefaultNFetchInternalExecutable(args, this,executorOptions);
+            case "search":        return new DefaultNSearchInternalExecutable(args, this,executorOptions);
+            case "version":       return new DefaultNVersionInternalExecutable(args, this,executorOptions);
+            case "prepare":       return new DefaultNPrepareInternalExecutable(args, this,executorOptions);
+            case "license":       return new DefaultNLicenseInternalExecutable(args, this,executorOptions);
+            case "bundle":        return new DefaultNBundleInternalExecutable(args, this,executorOptions);
+            case "help":          return new DefaultNHelpInternalExecutable(args, this,executorOptions);
+            case "welcome":       return new DefaultNWelcomeInternalExecutable(args, this,executorOptions);
+            case "info":          return new DefaultNInfoInternalExecutable(args, this,executorOptions);
+            case "which":         return new DefaultNWhichInternalExecutable(args, this,executorOptions);
+            case "exec":          return new DefaultNExecInternalExecutable(args, this,executorOptions);
+            case "settings":      return new DefaultNSettingsInternalExecutable(args, this,executorOptions);
             default:              return null;
         }
     }

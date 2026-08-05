@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.open;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -30,31 +31,24 @@ import java.util.List;
 public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     String[] cmd;
-    String[] executorOptions;
     private boolean showCommand = false;
     private String[] effectiveOpenExecutable;
 
     public DefaultNOpenExecutable(String[] cmd,
-                                  String[] executorOptions, NExec execCommand
+                                  List<String> executorOptions, NExec execCommand
     ) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
-        this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
-        NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get();
-            switch (aa.key()) {
-                case "--show-command": {
-                    cmdLine.matcher().withAny().matchFlag((v) -> this.showCommand = (v.booleanValue())).anyMatch();
-                    break;
-                }
-                default: {
-                    cmdLine.skip();
-                }
-            }
-        }
+        this.executorOptions = executorOptions;
+
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .withAny().skip()
+                .requireAll();
+
         switch (NEnv.of().osFamily()) {
             case LINUX: {
                 Path execPath = NSysExecUtils.sysWhich("xdg-open");
@@ -86,6 +80,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
                 break;
             }
         }
+
     }
 
     @Override
@@ -107,6 +102,9 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     @Override
     public int execute() {
+        if(completeRequest!=null){
+            return 0;
+        }
         return resolveExecHelper().run().exitCode();
     }
 

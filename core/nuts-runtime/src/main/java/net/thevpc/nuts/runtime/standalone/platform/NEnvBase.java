@@ -260,29 +260,4 @@ public abstract class NEnvBase implements NEnv {
     }
 
 
-    protected String resolveWindowAdminName(String currUserName, String defaultRootUserName) {
-        switch (NStringUtils.strip(currUserName).toLowerCase()) {
-            case "adminitrateur": {
-                return "Administrateur";
-            }
-            case "administrador": {
-                return "Administrador";
-            }
-            case "administratör": {
-                return "Administratör";
-            }
-            case "järjestelmänvalvoja": {
-                return "Järjestelmänvalvoja";
-            }
-            case "rendszergazda": {
-                return "Rendszergazda";
-            }
-            case "администратор": {
-                return "Администратор";
-            }
-            default: {
-                return "Administrator";
-            }
-        }
-    }
 }

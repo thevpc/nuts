@@ -247,14 +247,30 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 currentApp = new NAppImpl();
                 this.wsModel.init();
                 _preloadWorkspace(data);
+                NOpenMode m = data.initialBootOptions.openMode().orElse(NOpenMode.OPEN_OR_CREATE);
                 if (!loadWorkspace(data.effectiveBootOptions.excludedExtensions().orElseGet(Collections::emptyList), null)) {
+                    switch (m){
+                        case OPEN_OR_NULL:{
+                            throw new NBootWorkspaceNotFoundException(wsModel.location);
+                        }
+                        case OPEN_OR_ERROR:{
+                            throw new NBootWorkspaceNotFoundException(wsModel.location);
+                        }
+                    }
                     _createWorkspaceFirstBoot(data);
                 } else {
+                    switch (m){
+                        case CREATE_OR_ERROR:{
+                            throw new NBootWorkspaceAlreadyExistsException(wsModel.location);
+                        }
+                    }
                     _createWorkspaceNonFirstBoot(data);
                 }
                 _postCreateWorkspace(data);
             });
 
+        } catch (NBootWorkspaceNotFoundException | NBootWorkspaceAlreadyExistsException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             if (wsModel != null && wsModel.recomm != null) {
                 this.runWith(() -> {
@@ -351,7 +367,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NOpenMode openMode = data.effectiveBootOptions.openMode().orNull();
         if (openMode != null) {
             switch (openMode) {
-                case OPEN_OR_ERROR: {
+                case OPEN_OR_ERROR:
+                case OPEN_OR_NULL:
+                {
                     if (!exists) {
                         throw new NBootWorkspaceNotFoundException(workspaceLocation);
                     }
@@ -517,7 +535,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         List<String> transientRepositoriesSet =
                 NCollections.nonNullList(effectiveBootOptions.repositories().orElseGet(Collections::emptyList));
         NRepositorySelectorList expected = NRepositoryUtils.createRepositorySelectorList(transientRepositoriesSet).get();
-        for (NRepositorySpec d : NRepositoryUtils.resolve(expected,null)) {
+        for (NRepositorySpec d : NRepositoryUtils.resolve(expected, null)) {
             String n = d.name();
             String ruuid = (NBlankable.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
             d.name(ruuid);
@@ -539,7 +557,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         for (NRepositorySpec liveRepository : getConfigModel().getRuntimeRepositoryDefinitions()) {
             NOptional<NRepository> n = findRepositoryByName(liveRepository.name());
             if (!n.isPresent()) {
-                if(expected.acceptExisting(liveRepository)){
+                if (expected.acceptExisting(liveRepository)) {
                     liveRepository.temporary(true);
                     liveRepository.storeStrategy(NStoreStrategy.STANDALONE);
                     addRepository(liveRepository);
@@ -547,7 +565,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
         }
     }
-
 
 
     private void _createWorkspaceFirstBoot(InitWorkspaceData data) {
@@ -1924,7 +1941,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             paths.addAll(Arrays.asList("C:\\Windows\\system32", "C:\\Windows"));
                         }
                         if (execExtensions.isEmpty()) {
-                            execExtensions.addAll(Collections.singletonList(".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"));
+                            execExtensions.add(".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC");
                         }
                         for (String z : paths) {
                             NPath t = NPath.of(z);
@@ -2300,4 +2317,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NWorkspaceHelper.runBootCommand(this);
     }
 
+    @Override
+    public void completeBootCommand(NBootCompleteCmdlineRequest completeRequest) {
+        NWorkspaceHelper.completeBootCommand(this, completeRequest);
+    }
 }

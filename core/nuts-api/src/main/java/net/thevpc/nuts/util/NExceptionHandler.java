@@ -64,6 +64,7 @@ public class NExceptionHandler {
             );
             try {
                 NBootOptionsInfo options = new NBootOptionsInfo();
+                NBootWorkspaceCmdLineParser.denullProperties(options);
                 NBootWorkspaceCmdLineParser.parseNutsArguments(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), options);
                 return new NExceptionHandler()
                         .throwable(ex)

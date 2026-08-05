@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.artifac
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -40,9 +41,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     String[] cmd;
     // effective cmd (incudes def)
     String[] ecmd;
-    List<String> executorOptions;
     NConnectionString connectionString;
-    private boolean showCommand = false;
     private NExecTargetSPI commExec;
     NExecInput in;
     NExecOutput out;
@@ -72,19 +71,11 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         ecmd = ecmdList.toArray(new String[0]);
         this.executorOptions = NCollections.nonNullList(executorOptions);
         this.commExec = commExec;
-        NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get();
-            switch (aa.key()) {
-                case "--show-command": {
-                    cmdLine.matcher().withAny().matchFlag((v) -> this.showCommand = (v.booleanValue())).anyMatch();
-                    break;
-                }
-                default: {
-                    cmdLine.skip();
-                }
-            }
-        }
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .withAny().skip()
+                .requireAll();
     }
 
     @Override
@@ -120,6 +111,9 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     @Override
     public int execute() {
+        if(completeRequest!=null){
+            return 0;
+        }
         return resolveExecHelper().exec();
     }
 

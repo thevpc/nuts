@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.system;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -33,8 +34,6 @@ import java.util.List;
 public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformationExt {
 
     String[] cmd;
-    List<String> executorOptions;
-    private boolean showCommand = false;
     private NExecTargetSPI commExec;
     private NExecInput in;
     private NExecOutput out;
@@ -56,19 +55,11 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
         this.cmd = cmd;
         this.executorOptions = NCollections.nonNullList(executorOptions);
         this.commExec = commExec;
-        NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get();
-            switch (aa.key()) {
-                case "--show-command": {
-                    cmdLine.matcher().withAny().matchFlag((v) -> this.showCommand = (v.booleanValue())).anyMatch();
-                    break;
-                }
-                default: {
-                    cmdLine.skip();
-                }
-            }
-        }
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .withAny().skip()
+                .requireAll();
     }
 
     @Override
@@ -77,27 +68,18 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
     }
 
     private AbstractSyncIProcessExecHelper resolveExecHelper() {
-//        Map<String, String> e2 = null;
-//        Map<String, String> env1 = execCommand.getEnv();
-//        if (env1 != null) {
-//            e2 = new HashMap<>((Map) env1);
-//        }
-//        return ProcessExecHelper.ofArgs(null,
-//                execCommand.getCommand().toArray(new String[0]), e2,
-//                execCommand.getDirectory() == null ? null : execCommand.getDirectory().toFile(),
-//                session.getTerminal(),
-//                execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
-//                inheritSystemIO,
-//                /*redirectErr*/ false,
-//                /*fileIn*/ execCommand.getRedirectInputFile(),
-//                /*fileOut*/ execCommand.getRedirectOutputFile(),
-//                execCommand.getRunAs(),
-//                session);
-
-
+        if(completeRequest!=null){
+            return new AbstractSyncIProcessExecHelper() {
+                @Override
+                public int exec() {
+                    return NExecutionException.SUCCESS;
+                }
+            };
+        }
         return new AbstractSyncIProcessExecHelper() {
             @Override
             public int exec() {
+
                 NExec execCommand = getExecCommand();
                 try(DefaultNExecTargetCommandContext d=new DefaultNExecTargetCommandContext(
                         execCommand.connectionString(),

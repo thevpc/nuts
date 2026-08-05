@@ -7,11 +7,13 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.path;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
@@ -32,7 +34,6 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
 
     String cmdName;
     String[] args;
-    List<String> executorOptions;
     List<String> workspaceOptions;
     NExecutionType executionType;
     NRunAs runAs;
@@ -63,6 +64,11 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
         this.executorOptions = executorOptions;
         this.workspaceOptions = workspaceOptions;
         this.executorComponentAndContext = executorComponentAndContext;
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .withAny().skip()
+                .requireAll();
     }
 
     @Override
@@ -76,6 +82,9 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     }
 
     public int executeHelper() {
+        if(completeRequest!=null){
+            return 0;
+        }
         try {
             return executorComponentAndContext.getComponent().exec(executorComponentAndContext.getExecutionContext());
         } finally {

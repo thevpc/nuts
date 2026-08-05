@@ -30,6 +30,8 @@ import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteCmdlineRequest;
+import net.thevpc.nuts.boot.NBootCompleteResult;
 import net.thevpc.nuts.boot.NBootWorkspaceImpl;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
@@ -110,8 +112,48 @@ public class NWorkspaceHelper {
             }
             execCmd.run();
         });
-
     }
+    public static void completeBootCommand(NWorkspace workspace, NBootCompleteCmdlineRequest completeRequest) {
+        workspace.runWith(() -> {
+            NBootOptions info2 = new DefaultNBootOptionsBuilder(((NWorkspaceExt)workspace).getCallerBootOptionsInfo()).build();
+            NApp.of().id(workspace.apiId());
+            NLog LOG = NLog.of(NBootWorkspaceImpl.class);
+            LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
+                    .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
+            );
+            NExec execCmd = NExec.of()
+                    .executionType(info2.executionType().orNull())
+                    .runAs(info2.runAs().orNull())
+                    .failFast(true);
+            List<String> executorOptions = info2.executorOptions().orNull();
+            if (executorOptions != null) {
+                execCmd.configure(true, executorOptions.toArray(new String[0]));
+            }
+            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).expandSimpleOptions(false);
+            while (executorOptionsCmdLine.hasNext()) {
+                execCmd.configureLast(executorOptionsCmdLine);
+            }
+            if (info2.applicationArguments().get().isEmpty() || completeRequest.request().argIndex()==0) {
+                workspace.bootOptions().stdout().orElse(System.out).println(
+                        new NBootCompleteResult(
+                                new ArrayList<>(Arrays.asList(
+                                        new NBootCompleteResult.Candidate("welcome")
+                                        ,new NBootCompleteResult.Candidate("install")
+                                        ,new NBootCompleteResult.Candidate("uninstall")
+                                        ,new NBootCompleteResult.Candidate("exec")
+                                )),
+                                new ArrayList<>(Arrays.asList())
+                        )
+                                .format()
+                );
+            } else {
+                execCmd.executorOption("--nuts-exec-mode=complete,"+completeRequest.request().argIndex()+","+completeRequest.request().argOffset());
+                execCmd.command(info2.applicationArguments().get());
+                execCmd.run();
+            }
+        });
+    }
+
     public static void runApplication(NWorkspace workspace,NApplicationHandleMode handleMode) {
         NApplicationHandleMode.runHandled(() ->
                 workspace.runWith(() -> {

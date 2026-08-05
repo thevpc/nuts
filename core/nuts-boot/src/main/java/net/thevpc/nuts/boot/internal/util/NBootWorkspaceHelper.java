@@ -1,5 +1,6 @@
 package net.thevpc.nuts.boot.internal.util;
 
+import net.thevpc.nuts.boot.NBootCompleteCmdlineRequest;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspaceImpl;
 
@@ -54,7 +55,7 @@ public class NBootWorkspaceHelper {
         }
     }
 
-    public static void runCommandVersion(Supplier<String> digest, NBootOptionsInfo options) {
+    public static void runCommandVersion(Supplier<String> digest, NBootOptionsInfo options, NBootCompleteCmdlineRequest complete) {
         String f = NBootUtils.firstNonNull(options.getOutputFormat(), "PLAIN");
         if (NBootUtils.firstNonNull(options.getDry(), false)) {
             printDryCommand("version",options);
@@ -132,7 +133,7 @@ public class NBootWorkspaceHelper {
         showError.add(err.toString());
     }
 
-    public static void runCommandHelp(NBootOptionsInfo options) {
+    public static void runCommandHelp(NBootOptionsInfo options, NBootCompleteCmdlineRequest complete) {
         String f = NBootUtils.firstNonNull(options.getOutputFormat(), "PLAIN");
         NBootLog log = NBootContext.log();
         if (NBootUtils.firstNonNull(options.getDry(), false)) {

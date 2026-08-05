@@ -22,6 +22,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
 import net.thevpc.nuts.text.NText;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,8 +30,8 @@ import java.util.Map;
  */
 public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWelcomeInternalExecutable(String[] args, NExec execCommand) {
-        super("welcome", args, execCommand);
+    public DefaultNWelcomeInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("welcome", args, execCommand,executorOptions);
     }
 
     @Override

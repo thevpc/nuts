@@ -14,14 +14,16 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNInfoInternalExecutable(String[] args, NExec execCommand) {
-        super("info", args, execCommand);
+    public DefaultNInfoInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("info", args, execCommand,executorOptions);
     }
 
     @Override

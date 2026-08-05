@@ -30,8 +30,8 @@ import java.util.List;
  */
 public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNHelpInternalExecutable(String[] args, NExec execCommand) {
-        super("help", args, execCommand);
+    public DefaultNHelpInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("help", args, execCommand,executorOptions);
     }
 
     @Override

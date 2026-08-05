@@ -76,35 +76,23 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             case BASH:
             case CSH:
             case KSH:
-            case ZSH: {
+            case ZSH:
+            case FISH:
+            {
                 return new NdiScriptInfo() {
                     @Override
                     public NPath path() {
-                        return options.resolveIncFolder().resolve(".nuts-init.sh");
+                        return options.resolveIncFolder().resolve(".nuts-init."+shellFamily.id());
                     }
 
                     @Override
                     public PathInfo create() {
                         NPath apiConfigFile = path();
-                        return scriptBuilderTemplate("nuts-init", NShellFamily.SH, "nuts-init", options.resolveNutsApiId(), options)
+                        return scriptBuilderTemplate("nuts-init", shellFamily, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
-                                .buildAddLine(BaseSystemNdi.this);
-                    }
-                };
-            }
-            case FISH: {
-                return new NdiScriptInfo() {
-                    @Override
-                    public NPath path() {
-                        return options.resolveIncFolder().resolve(".nuts-init.fish");
-                    }
-
-                    @Override
-                    public PathInfo create() {
-                        NPath apiConfigFile = path();
-                        return scriptBuilderTemplate("nuts-init", NShellFamily.FISH, "nuts-init", options.resolveNutsApiId(), options)
-                                .setPath(apiConfigFile)
-                                .buildAddLine(BaseSystemNdi.this);
+//                                .buildAddLine(BaseSystemNdi.this)
+                                .build()
+                                ;
                     }
                 };
             }
@@ -147,8 +135,16 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .filter(Objects::nonNull)
                 .toArray(NdiScriptInfo[]::new);
     }
+    public NdiScriptInfo[] getIncludeNutsCompletion(NdiScriptOptions options) {
+        return Arrays.stream(getShellGroups())
+                .map(x -> getIncludeNutsCompletion(options, x))
+                .filter(Objects::nonNull)
+                .toArray(NdiScriptInfo[]::new);
+    }
 
     public abstract NdiScriptInfo getIncludeNutsEnv(NdiScriptOptions options, NShellFamily shellFamily);
+
+    public abstract NdiScriptInfo getIncludeNutsCompletion(NdiScriptOptions options, NShellFamily shellFamily);
 
     public NdiScriptInfo getNutsStart(NdiScriptOptions options) {
         return new NdiScriptInfo() {
@@ -371,8 +367,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String preferredName = options.getLauncher().shortcutName();
         List<PathInfo> all = new ArrayList<>();
 
-        // create $nuts-api-app/.nutsenv
+        // create $nuts-api-app/.nuts-env
         for (NdiScriptInfo i : getIncludeNutsEnv(options)) {
+            all.add(i.create());
+        }
+        // create $nuts-api-app/.nuts-complete
+        for (NdiScriptInfo i : getIncludeNutsCompletion(options)) {
             all.add(i.create());
         }
 

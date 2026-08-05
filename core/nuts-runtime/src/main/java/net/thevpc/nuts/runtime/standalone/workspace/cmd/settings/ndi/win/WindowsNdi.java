@@ -59,6 +59,38 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     @Override
+    public NdiScriptInfo getIncludeNutsCompletion(NdiScriptOptions options, NShellFamily shellFamily) {
+        String ext = null;
+        switch (shellFamily) {
+            // no completion in sh
+            case WIN_POWER_SHELL:{
+                ext="ps1";
+                break;
+            }
+            default: {
+                return null;
+            }
+        }
+        if (ext != null) {
+            String finalExt = ext;
+            return new NdiScriptInfo() {
+                @Override
+                public NPath path() {
+                    return options.resolveIncFolder().resolve(".nuts-complete." + finalExt);
+                }
+
+                @Override
+                public PathInfo create() {
+                    return scriptBuilderTemplate("nuts-complete", shellFamily, "nuts-complete", options.resolveNutsApiId(), options)
+                            .setPath(path())
+                            .build();
+                }
+            };
+        }
+        return null;
+    }
+
+    @Override
     protected String createNutsScriptContent(NId fnutsId, NdiScriptOptions options, NShellFamily shellFamily) {
         StringBuilder command = new StringBuilder();
         command.append(getExecFileName("nuts")).append(" ").append(NShellHelper.of(shellFamily).varRef("NUTS_OPTIONS")).append(" ");
@@ -106,15 +138,16 @@ public class WindowsNdi extends BaseSystemNdi {
 
     @Override
     public String getTemplateName(String name, NShellFamily shellFamily) {
+        String n = "template-" + name;
         switch (shellFamily){
             case WIN_CMD:{
-                return "template-" + name + ".cmd";
+                return n + "/" + n + ".cmd";
             }
             case WIN_POWER_SHELL:{
-                return "template-" + name + ".ps1";
+                return n + "/" + n + ".ps1";
             }
         }
-        return "template-" + name + ".cmd";
+        return n + "/" + n + ".cmd";
     }
 
 

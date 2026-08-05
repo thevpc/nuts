@@ -90,14 +90,100 @@ public class NEnvLocal extends NEnvBase {
             userHome = System.getProperty("user.home");
             userName = System.getProperty("user.name");
             nativeImage = "runtime".equals(System.getProperty("org.graalvm.nativeimage.imagecode"));
-            switch (osFamily()) {
-                case WINDOWS: {
-                    rootUserName = resolveWindowAdminName(userName, rootUserName);
-                    break;
+            NOsFamily nOsFamily = osFamily();
+            if(nOsFamily==NOsFamily.WINDOWS) {
+                boolean ok=false;
+                if (!ok) {
+                    try {
+                        String cmd =
+                                "powershell -NoProfile -Command \"& {" +
+                                        "$os='Windows'; " +
+                                        "$osver=[System.Environment]::OSVersion.Version.ToString(); " +
+                                        "$arch=$env:PROCESSOR_ARCHITECTURE; " +
+                                        "$user=$env:USERNAME; $homedir=$env:USERPROFILE; " +
+                                        "$shell=(Get-Command pwsh -ErrorAction SilentlyContinue).Name; " +
+                                        "$shellver=$PSVersionTable.PSVersion.ToString(); " +
+                                        "Write-Output ($os+'|'+$osver+'|'+$user+'|'+$homedir+'|'+$shell+'|'+$shellver+'|'+$arch)}\"";
+                        String result = NExec.ofSystem(cmd).grabbedAll();
+                        if (!NBlankable.isBlank(result)) {
+                            List<String> cols = NStringUtils.split(result, "|", true, false);
+                            if (cols.size() >= 6) {
+                                String luname = cols.get(0).toLowerCase();
+                                os = NId.of(null, cols.get(0), cols.get(1));
+                                osFamily = NOsFamily.WINDOWS;
+                                userName = cols.get(2);
+                                userHome = cols.get(3);
+                                shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_POWER_SHELL);
+                                shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
+                                arch = NId.of(null, cols.get(6));
+                                archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
+                                rootUserName = getWindowsAdminName(NShellFamily.WIN_POWER_SHELL);
+                                ok = true;
+                            }
+                        }
+                    } catch (Exception ex) {
+                        // not posix
+                    }
                 }
-                default: {
+                if (!ok) {
+                    try {
+                        String cmd = "cmd /c \"echo Windows|%OS%|%USERNAME%|%USERPROFILE%|cmd|unknown|%PROCESSOR_ARCHITECTURE%\"";
+                        String result = NExec.ofSystem(cmd).grabbedAll();
+                        if (!NBlankable.isBlank(result)) {
+                            List<String> cols = NStringUtils.split(result, "|", false, false);
+                            if (cols.size() >= 6) {
+                                String luname = cols.get(0).toLowerCase();
+                                os = NId.of(null, cols.get(0), cols.get(1));
+                                osFamily = NOsFamily.WINDOWS;
+                                userName = cols.get(2);
+                                userHome = cols.get(3);
+                                shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_CMD);
+                                shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
+                                arch = NId.of(null, cols.get(6));
+                                archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
+                                rootUserName = getWindowsAdminName(NShellFamily.WIN_CMD);
+                                ok = true;
+                            }
+                        }
+                    } catch (Exception ex) {
+                        // not posix
+                    }
+                }
+                if (!ok) {
+                    os = NId.BLANK;
+                    shellFamily = NShellFamily.UNKNOWN;
+                    shell = NId.BLANK;
+                    userHome = null;
+                    userName = null;
                     rootUserName = "root";
                 }
+                rootUserName = getWindowsAdminName(shellFamily());
+            }else if(osFamily.isPosix()){
+                rootUserName = "root";
+                //test for posix
+                try {
+                    String result = NExec.ofSystem("sh","-c",
+                            "echo -n \"$(uname -s)|$(uname -r)|$(uname -m)|$(whoami)|${HOME}|$SHELL\"; " +
+                                    "echo -n \"|${BASH_VERSION:-${ZSH_VERSION:-${FISH_VERSION:-$KSH_VERSION}}}|\";"+
+                                    "v=$($SHELL --version 2>/dev/null | head -n1 || " +
+                                    "$SHELL -version 2>/dev/null | head -n1 || " +
+                                    "$SHELL version 2>/dev/null | head -n1 || echo unknown); " +
+                                    "echo \"$v\""
+                            ).grabbedAll();
+
+                    if (!NBlankable.isBlank(result)) {
+                        List<String> cols = NStringUtils.split(result, "|", false, false);
+                        if (cols.size() >= 6) {
+                            shellFamily = NShellFamily.parse(cols.get(5)).orElse(NShellFamily.SH);
+                            shell = NId.of(null, shellFamily.id(), cols.get(6));
+                        }
+                    }
+                } catch (Exception ex) {
+                    // not posix
+                }
+            }
+            if(shell()==null){
+                shell=NId.BLANK;
             }
         }
     }
@@ -272,7 +358,40 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     public NId getShell0() {
-        return null;
+        return shell;
+    }
+
+
+    public static String getWindowsAdminName(NShellFamily sf) {
+        try {
+            String[] cmd;
+            if(sf==NShellFamily.WIN_CMD){
+                // Query WMI via PowerShell for the user account with SID ending in -500
+                cmd=new String[]{"cmd.exe", "/c",
+                        "wmic useraccount where \"SID like 'S-1-5-%-500' and LocalAccount=true\" get Name /value"};
+                for (String line : NStringUtils.splitLines(NExec.ofSystem(cmd).grabbedAll())) {
+                    if (!NBlankable.isBlank(line)) {
+                        String trimmed = line.trim();
+                        if (trimmed.startsWith("Name=")) {
+                            String name = trimmed.substring(5).trim();
+                            if (!NBlankable.isBlank(name)) {
+                                return name;
+                            }
+                        }
+                    }
+                }
+            }else {
+                cmd = new String[]{"powershell", "-NoProfile", "-Command",
+                        "(Get-WmiObject Win32_UserAccount -Filter \"SID LIKE 'S-1-5-%-500' AND LocalAccount=TRUE\").Name"};
+                for (String line : NStringUtils.splitLines(NExec.ofSystem(cmd).grabbedAll())) {
+                    if (!NBlankable.isBlank(line)) {
+                        return line.trim();
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+        // Fallback to English standard if detection fails
+        return "Administrator";
     }
 
     public NConnectionString connectionString() {

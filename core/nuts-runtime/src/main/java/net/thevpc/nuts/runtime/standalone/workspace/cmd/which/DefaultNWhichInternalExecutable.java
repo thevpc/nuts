@@ -35,8 +35,8 @@ import java.util.List;
  */
 public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWhichInternalExecutable(String[] args, NExec execCommand) {
-        super("which", args, execCommand);
+    public DefaultNWhichInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("which", args, execCommand,executorOptions);
     }
 
     @Override

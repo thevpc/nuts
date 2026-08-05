@@ -417,5 +417,4 @@ public final class NBootConstants {
         }
     }
 
-
 }

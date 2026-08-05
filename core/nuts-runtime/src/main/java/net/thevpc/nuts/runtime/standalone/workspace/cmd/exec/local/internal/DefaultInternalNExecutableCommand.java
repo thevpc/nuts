@@ -6,9 +6,11 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
+import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -20,6 +22,8 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 
+import java.util.List;
+
 /**
  * @author thevpc
  */
@@ -27,18 +31,33 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
 
     protected String[] args;
     protected NInternalCommand impl;
-    public DefaultInternalNExecutableCommand(String name, String[] args, NExec execCommand) {
+    public DefaultInternalNExecutableCommand(String name, String[] args, NExec execCommand, List<String> executorOptions) {
         super(name, name, NExecutableType.INTERNAL,execCommand);
         this.args = args;
+        this.executorOptions = executorOptions;
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .withAny().skip()
+                .requireAll();
     }
-    public DefaultInternalNExecutableCommand(NInternalCommand impl, String[] args, NExec execCommand) {
+    public DefaultInternalNExecutableCommand(NInternalCommand impl, String[] args, NExec execCommand, List<String> executorOptions) {
         super(impl.getName(), impl.getName(), NExecutableType.INTERNAL,execCommand);
         this.args = args;
         this.impl = impl;
+        this.executorOptions = executorOptions;
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .withAny().skip()
+                .requireAll();
     }
 
     @Override
     public int execute() {
+        if(completeRequest!=null){
+            return NExecutionException.SUCCESS;
+        }
         if(impl==null){
             throw new NIllegalArgumentException(NMsg.ofC("impl is null"));
         }

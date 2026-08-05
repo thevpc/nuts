@@ -6,12 +6,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.text.NMsg;
+
+import java.util.List;
 
 /**
  * @author bacali95
@@ -20,12 +23,21 @@ import net.thevpc.nuts.text.NMsg;
 public class DefaultUnknownExecutable extends AbstractNExecutableInformationExt {
 
 
-    public DefaultUnknownExecutable(String[] cmd, NExec execCommand) {
+    public DefaultUnknownExecutable(String[] cmd, NExec execCommand, List<String> executorOptions) {
         super(cmd[0], NCmdLine.of(cmd).toString(), NExecutableType.UNKNOWN,execCommand);
+        this.executorOptions=executorOptions;
+        NCmdLine.of(this.executorOptions).matcher()
+                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
+                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .withAny().skip()
+                .requireAll();
     }
 
     @Override
     public int execute() {
+        if(completeRequest!=null){
+            return 0;
+        }
         NSession session = NSession.of();
         if(session.isDry()){
             throw new NExecutionException(NMsg.ofC("cannot execute an unknown command : %s", name), NExecutionException.ERROR_1);

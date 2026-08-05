@@ -35,8 +35,8 @@ import java.util.*;
  */
 public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNBundleInternalExecutable(String[] args, NExec execCommand) {
-        super("bundle", args, execCommand);
+    public DefaultNBundleInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("bundle", args, execCommand,executorOptions);
     }
 
     private NOptional<String> ensureValidFileName(String any) {

@@ -10,7 +10,7 @@ public interface NBootWorkspace {
     String NUTS_BOOT_VERSION = "1.0.0";
 
     static NBootWorkspace of(String[] args) {
-        return of(NBootArguments.of(args));
+        return of(NBootArguments.ofFullArgs(args));
     }
 
     static NBootWorkspace of(NBootOptionsInfo options) {
@@ -21,8 +21,8 @@ public interface NBootWorkspace {
         if (userOptionsUnparsed == null) {
             userOptionsUnparsed = new NBootArguments();
         }
-        if (userOptionsUnparsed.getOptionArgs() != null && userOptionsUnparsed.getOptionArgs().length > 0 && userOptionsUnparsed.getOptionArgs()[0].equals(NBootWorkspaceNativeExec.COMMAND_PREFIX)) {
-            userOptionsUnparsed.setOptionArgs(Arrays.copyOfRange(userOptionsUnparsed.getOptionArgs(), 1, userOptionsUnparsed.getOptionArgs().length));
+        if (userOptionsUnparsed.optionArgs() != null && userOptionsUnparsed.optionArgs().length > 0 && userOptionsUnparsed.optionArgs()[0].equals(NBootWorkspaceNativeExec.COMMAND_PREFIX)) {
+            userOptionsUnparsed.optionArgs(Arrays.copyOfRange(userOptionsUnparsed.optionArgs(), 1, userOptionsUnparsed.optionArgs().length));
             return new NBootWorkspaceNativeExec(userOptionsUnparsed);
         }
         return new NBootWorkspaceImpl(userOptionsUnparsed);
