@@ -60,20 +60,20 @@ public class LinuxPsParser {
                     pi.setResidentSetSize(NLiteral.of(sb.readUntil(spaces)).asLong().orElse(0L));
                     sb.readWhile(spaces);
 
-                    pi.setTerminal(UnixPsParser.parseTty(sb.readUntil(spaces)));
+                    pi.setTerminal(PosixPsParser.parseTty(sb.readUntil(spaces)));
                     sb.readWhile(spaces);
 
                     String stat = sb.readUntil(spaces);
                     sb.readWhile(spaces);
                     Set<String> s = new java.util.HashSet<>();
-                    pi.setStatus(UnixPsParser.parseStat(stat, s));
+                    pi.setStatus(PosixPsParser.parseStat(stat, s));
                     pi.setStatusFlags(s);
 
                     String lstart = sb.readCount("Tue Apr 22 18:03:39 2025".length());
                     sb.readWhile(spaces);
-                    pi.setStartTime(UnixPsParser.parseStartDateLong(lstart));
+                    pi.setStartTime(PosixPsParser.parseStartDateLong(lstart));
 
-                    pi.setTime(UnixPsParser.parseTime(sb.readUntil(spaces)));
+                    pi.setTime(PosixPsParser.parseTime(sb.readUntil(spaces)));
                     sb.readWhile(spaces);
 
                     String cmd = sb.readUntil(spaces);

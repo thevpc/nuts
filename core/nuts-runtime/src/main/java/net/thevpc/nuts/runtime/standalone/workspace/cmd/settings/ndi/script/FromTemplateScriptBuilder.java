@@ -144,11 +144,11 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                         return NWorkspace.of().runtimeId().longName();
                                     }
                                     case "SCRIPT_NUTS":
-                                        return sndi.getNutsStart(options).path().toString();
+                                        return sndi.getNutsStart(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_TERM_INIT":
-                                        return sndi.getIncludeNutsTermInit(options)[0].path().toString();
+                                        return sndi.getIncludeNutsTermInit(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_TERM":
-                                        return sndi.getNutsTerm(options)[0].path().toString();
+                                        return sndi.getNutsTerm(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_INIT":
                                         return sndi.getIncludeNutsInit(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_ENV":

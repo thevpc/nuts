@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
-public class UnixPsParser {
+public class PosixPsParser {
 
     public NStream<NPsInfo> parse(Reader reader) {
         BufferedReader br = new BufferedReader(reader);

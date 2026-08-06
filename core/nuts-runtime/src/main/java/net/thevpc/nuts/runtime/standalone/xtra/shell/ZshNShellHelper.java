@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
-public class ZshNShellHelper extends NixNShellHelper {
+public class ZshNShellHelper extends PosixNShellHelper {
     public static final NShellHelper ZSH = new ZshNShellHelper();
     public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/zsh", "#!.*");
 

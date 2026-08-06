@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
-public class ShNShellHelper extends NixNShellHelper {
+public class ShNShellHelper extends PosixNShellHelper {
     public static final NShellHelper SH=new ShNShellHelper();
     public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/sh", "#!.*");
     public ShNShellHelper() {

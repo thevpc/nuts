@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public abstract class NixNShellHelper extends AbstractNixNShellHelper {
+public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
 
     public String getSysRcName() {
         return ".profile";

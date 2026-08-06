@@ -14,11 +14,9 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.PosixNdi;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.LinuxNdi;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.MacosNdi;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win.WindowsNdi;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
@@ -44,19 +42,14 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         SystemNdi ndi = null;
         switch (NEnv.of().osFamily()) {
             case LINUX:
-            case UNIX: {
-
-                ndi = new LinuxNdi();
-                break;
-            }
+            case UNIX:
             case MACOS: {
-                ndi = new MacosNdi();
+
+                ndi = new PosixNdi();
                 break;
             }
             case WINDOWS: {
-                if (OptionalMsLinkHelper.isSupported()) {
-                    ndi = new WindowsNdi();
-                }
+                ndi = new WindowsNdi();
                 break;
             }
         }
@@ -82,7 +75,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
 //        String linkName = null;
 //        boolean env = false;
         cmdLine.commandName("settings add launcher");
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "-t":
@@ -201,7 +194,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                         session.confirm(NConfirmationMode.YES);
                         for (NId resultId : NSearch.of()
                                 .definitionFilter(NDefinitionFilters.of().byInstalled(true)
-                        ).getResultIds()) {
+                                ).getResultIds()) {
                             d.idsToInstall.add(resultId.longName());
                             d.missingAnyArgument = false;
                         }
@@ -298,7 +291,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         boolean missingAnyArgument = true;
         NArg a;
         boolean ignoreUnsupportedOs = false;
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextEntry("--ignore-unsupported-os").orNull()) != null) {
                 if (a.isUncommented()) {
@@ -355,7 +348,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             String shortcutName = null;
         }
         Data d = new Data();
-        NSession session= NSession.of();
+        NSession session = NSession.of();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "--ignore-unsupported-os": {
@@ -452,7 +445,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
     }
 
     private void printResults(PathInfo[] result) {
-        NSession session=NSession.of();
+        NSession session = NSession.of();
         if (session.isTrace()) {
             result = Arrays.stream(result).filter(x -> x.getStatus() != PathInfo.Status.DISCARDED).toArray(PathInfo[]::new);
             if (session.isPlainTrace()) {

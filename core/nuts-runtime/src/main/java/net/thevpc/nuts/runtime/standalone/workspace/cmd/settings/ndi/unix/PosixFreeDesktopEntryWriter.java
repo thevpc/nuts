@@ -42,10 +42,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
+public class PosixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private final NPath desktopPath;
 
-    public UnixFreeDesktopEntryWriter(NPath desktopPath) {
+    public PosixFreeDesktopEntryWriter(NPath desktopPath) {
         this.desktopPath = desktopPath;
     }
 

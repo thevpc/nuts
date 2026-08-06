@@ -21,9 +21,9 @@ import net.thevpc.nuts.util.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AnyNixNdi extends BaseSystemNdi {
+public class PosixNdi extends BaseSystemNdi {
 
-    public AnyNixNdi() {
+    public PosixNdi() {
         super();
     }
 
@@ -40,7 +40,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     @Override
     public String createNutsScriptContent(NId fnutsId, NdiScriptOptions options, NShellFamily shellFamily) {
         StringBuilder command = new StringBuilder();
-        command.append(getExecFileName("nuts")).append(" ").append(
+        command.append(getExecFileName("nuts", shellFamily)).append(" ").append(
                 NShellHelper.of(shellFamily).varRef("NUTS_OPTIONS")).append(" ");
         if (options.getLauncher().nutsOptions() != null) {
             for (String no : options.getLauncher().nutsOptions()) {
@@ -51,6 +51,8 @@ public class AnyNixNdi extends BaseSystemNdi {
         command.append(" \"$@\"");
         return command.toString();
     }
+
+
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
         NTexts factory = NTexts.of();
@@ -74,7 +76,7 @@ public class AnyNixNdi extends BaseSystemNdi {
 //                                            .collect(Collectors.toList()))
 //                    );
 //                }
-                NLog.of(AnyNixNdi.class)
+                NLog.of(PosixNdi.class)
                         .log(NMsg.ofC("%s scripts to point to current workspace : %s",
                                 session.isYes() ?
                                         factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
@@ -134,13 +136,13 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     @Override
-    public String getExecFileName(String name) {
+    public String getExecFileName(String name, NShellFamily shellFamily) {
         return name;
     }
 
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
-        return new UnixFreeDesktopEntryWriter(NPath.of(NEnv.of().desktopPath()));
+        return new PosixFreeDesktopEntryWriter(NPath.of(NEnv.of().desktopPath()));
     }
 
 
@@ -203,7 +205,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 return new NdiScriptInfo() {
                     @Override
                     public NPath path() {
-                        return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
+                        return options.resolveBinFolder().resolve(getExecFileName("nuts-term", shellFamily));
                     }
 
                     @Override
@@ -342,7 +344,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                     NPath apiConfigFile = path();
                     return scriptBuilderTemplate("nuts-init", shellFamily, "nuts-init", options.resolveNutsApiId(), options)
                             .setPath(apiConfigFile)
-                            .buildAddLine(AnyNixNdi.this);
+                            .buildAddLine(PosixNdi.this);
                 }
             };
         }

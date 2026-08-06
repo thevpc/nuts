@@ -51,14 +51,14 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //        Set<String> visited = new LinkedHashSet<>();
         for (NShellFamily sf : NEnv.of().shellFamilies()) {
             NdiScriptInfo rr = getSysRc(options, sf);
-            if (rr!=null) {
+            if (rr != null) {
                 scriptInfos.add(rr);
             }
         }
         return scriptInfos.toArray(new NdiScriptInfo[0]);
     }
 
-    public NdiScriptInfo getSysRc(NdiScriptOptions options, NShellFamily shellFamily){
+    public NdiScriptInfo getSysRc(NdiScriptOptions options, NShellFamily shellFamily) {
         String name = NShellHelper.of(shellFamily).getSysRcName();
         return new RcNdiScriptInfo(name, options, shellFamily);
     }
@@ -77,12 +77,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             case CSH:
             case KSH:
             case ZSH:
-            case FISH:
-            {
+            case FISH: {
                 return new NdiScriptInfo() {
                     @Override
                     public NPath path() {
-                        return options.resolveIncFolder().resolve(".nuts-init."+shellFamily.id());
+                        return options.resolveIncFolder().resolve(".nuts-init." + shellFamily.id());
                     }
 
                     @Override
@@ -135,6 +134,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .filter(Objects::nonNull)
                 .toArray(NdiScriptInfo[]::new);
     }
+
     public NdiScriptInfo[] getIncludeNutsCompletion(NdiScriptOptions options) {
         return Arrays.stream(getShellGroups())
                 .map(x -> getIncludeNutsCompletion(options, x))
@@ -146,11 +146,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public abstract NdiScriptInfo getIncludeNutsCompletion(NdiScriptOptions options, NShellFamily shellFamily);
 
-    public NdiScriptInfo getNutsStart(NdiScriptOptions options) {
+    public NdiScriptInfo getNutsStart(NdiScriptOptions options, NShellFamily shellFamily) {
         return new NdiScriptInfo() {
             @Override
             public NPath path() {
-                return options.resolveBinFolder().resolve(getExecFileName("nuts"));
+                return options.resolveBinFolder().resolve(getExecFileName("nuts", shellFamily));
             }
 
             @Override
@@ -164,12 +164,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     //ws.getApiId().getVersion()
 
 
-    public NPath getBinScriptFile(String name, NdiScriptOptions options) {
+    public NPath getBinScriptFile(String name, NdiScriptOptions options, NShellFamily shellFamily) {
         NPath pp = NPath.of(name);
         if (!pp.isName()) {
             return pp.toAbsolute();
         }
-        return options.resolveBinFolder().resolve(getExecFileName(name)).toAbsolute();
+        return options.resolveBinFolder().resolve(getExecFileName(name, shellFamily)).toAbsolute();
 //        Path bin =
 //                Paths.get(context.getAppsFolder());
 //        return bin.resolve(getExecFileName(name)).toAbsolutePath();
@@ -198,25 +198,25 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 //nutsId=fetched.getId().getLongNameId();
             }
             String n = nid.artifactId();
-            NPath ff = getBinScriptFile(n, options);
+            NShellFamily preferredBinScriptFamily = getPreferredBinScriptFamily();
+            NPath ff = getBinScriptFile(n, options, preferredBinScriptFamily);
             {
                 String s = options.getLauncher().customScriptPath();
                 if (NBlankable.isBlank(s)) {
                     NDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.id(), "%n", null, appDef.descriptor()).buildName();
-                    s = getBinScriptFile(s, options).toString();
+                    s = getBinScriptFile(s, options, preferredBinScriptFamily).toString();
                 } else if (NPath.of(s).isName()) {
                     NDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.id(), s, null, appDef.descriptor()).buildName();
-                    s = getBinScriptFile(s, options).toString();
+                    s = getBinScriptFile(s, options, preferredBinScriptFamily).toString();
                 } else {
                     NDefinition appDef = loadIdDefinition(nid);
-                    s = s + File.separator + NameBuilder.id(appDef.id(), getExecFileName("%n"), null, appDef.descriptor()).buildName();
+                    s = s + File.separator + NameBuilder.id(appDef.id(), getExecFileName("%n", preferredBinScriptFamily), null, appDef.descriptor()).buildName();
                 }
-                NShellFamily shellFamily = getShellGroups()[0];
-                r.add(scriptBuilderTemplate("body", shellFamily, "artifact", nid, options)
+                r.add(scriptBuilderTemplate("body", preferredBinScriptFamily, "artifact", nid, options)
                         .setPath(s)
-                        .println(createNutsScriptContent(nid, options, shellFamily))
+                        .println(createNutsScriptContent(nid, options, preferredBinScriptFamily))
                         .build());
             }
             if (matchCondition(options.getLauncher().createDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
@@ -237,7 +237,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NdiScriptOptions options = new NdiScriptOptions();
         options.getLauncher().switchWorkspaceLocation(switchWorkspaceLocation);
         NId nid = NId.get(id).get();
-        NPath f = getBinScriptFile(nid.artifactId(), options);
+        NPath f = getBinScriptFile(nid.artifactId(), options, getPreferredBinScriptFamily());
         NTexts factory = NTexts.of();
         if (f.isRegularFile()) {
             if (NIn.ask()
@@ -274,12 +274,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public boolean isNutsBootId(NId nid) {
         return
                 NConstants.Ids.NUTS_API_ARTIFACT_ID.equals(nid.shortName())
-                ||
-                NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.shortName())
-                ||
-                NConstants.Ids.NUTS_API.equals(nid.shortName())
-                ||
-                NConstants.Ids.NUTS_APP.equals(nid.shortName())
+                        ||
+                        NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.shortName())
+                        ||
+                        NConstants.Ids.NUTS_API.equals(nid.shortName())
+                        ||
+                        NConstants.Ids.NUTS_APP.equals(nid.shortName())
                 ;
     }
 
@@ -382,9 +382,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
 
         String scriptPath = options.getLauncher().customScriptPath();
-        all.add(scriptBuilderTemplate("nuts", getShellGroups()[0], "nuts", options.resolveNutsApiId(), options)
+        NShellFamily preferredBinScriptFamily = getPreferredBinScriptFamily();
+        all.add(scriptBuilderTemplate("nuts", preferredBinScriptFamily, "nuts", options.resolveNutsApiId(), options)
                 .setPath(getBinScriptFile(NameBuilder.id(options.resolveNutsApiId(), scriptPath, "%n",
-                        options.resolveNutsApiDef().descriptor()).buildName(), options))
+                        options.resolveNutsApiDef().descriptor()).buildName(), options, preferredBinScriptFamily))
                 .build());
         for (NdiScriptInfo i : getIncludeNutsTermInit(options)) {
             all.add(i.create());
@@ -631,7 +632,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return new PathInfo(type, id, filePath, updatedFile ? alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED : PathInfo.Status.DISCARDED);
     }
 
-    protected abstract String getExecFileName(String name);
+    protected abstract String getExecFileName(String name, NShellFamily shellFamily);
 
     protected abstract FreeDesktopEntryWriter createFreeDesktopEntryWriter();
 
@@ -689,7 +690,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected String resolveBestIcon(NId appId, List<String> iconPaths) {
-        iconPaths=toAbsoluteIconPaths(appId,iconPaths);
+        iconPaths = toAbsoluteIconPaths(appId, iconPaths);
         if (iconPaths != null) {
             List<String> all = iconPaths.stream().map(x -> (x == null) ? "" : x.trim())
                     .filter(x -> !x.isEmpty())
@@ -712,10 +713,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public List<String> toAbsoluteIconPaths(NId appId, List<String> iconPaths) {
-        if(iconPaths==null){
+        if (iconPaths == null) {
             return null;
         }
-        return iconPaths.stream().map(x->toAbsoluteIconPath(appId,x)).collect(Collectors.toList());
+        return iconPaths.stream().map(x -> toAbsoluteIconPath(appId, x)).collect(Collectors.toList());
     }
 
     public String toAbsoluteIconPath(NId appId, String iconPath) {
@@ -741,7 +742,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .dependencyFilter(NDependencyFilters.of().byRunnable())
                 .latest(true).distinct(true).getResultDefinitions()
                 .findSingleton().get();
-        String descAppIcon = resolveBestIcon(appDef.id(),appDef.descriptor().icons());
+        String descAppIcon = resolveBestIcon(appDef.id(), appDef.descriptor().icons());
         if (descAppIcon == null) {
             if (isNutsBootId(appDef.id())
                     || appDef.id().groupId().equals("net.thevpc.nuts")
@@ -752,9 +753,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 descAppIcon =
                         resolveBestIcon(rid,
                                 Arrays.asList(
-                                "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts.svg",
-                                "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts.png",
-                                "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts.ico"
+                                        "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts.svg",
+                                        "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts.png",
+                                        "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts.ico"
                                 )
                         );
             } else if (appDef.id().groupId().startsWith("net.thevpc.nuts")) {
@@ -763,9 +764,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 descAppIcon =
                         resolveBestIcon(rid,
                                 Arrays.asList(
-                                "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts-app.svg",
-                                "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts-app.png",
-                                "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts-app.ico"
+                                        "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts-app.svg",
+                                        "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts-app.png",
+                                        "resource://" + rid.longName() + "/net/thevpc/nuts/runtime/nuts-app.ico"
                                 )
                         );
             }
@@ -775,7 +776,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             String descAppIcon0 = descAppIcon;
             String descAppIconDigest = NDigest.of().md5().source(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
             NPath p0 = NPath.of(descAppIcon);
-            descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
+            descAppIcon = toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.nameParts(NPathExtensionType.SHORT).extension();
             NPath localIconPath = NPath.of(NStoreKey.ofConf(appDef.id()))
                     .resolve("icons")
@@ -824,8 +825,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NId appId = NId.get(options.getId()).get();
         NDefinition appDef = loadIdDefinition(appId);
         List<String> cmd = new ArrayList<>();
-
-        cmd.add(getNutsStart(options).path().toString());
+        NShellFamily preferredBinScriptFamily = getPreferredBinScriptFamily();
+        cmd.add(getNutsStart(options,preferredBinScriptFamily).path().toString());
         cmd.add("-y");
         cmd.add(appId.toString());
         if (options.getLauncher().args() != null) {
@@ -969,6 +970,42 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     sh.getCallScriptCommand("_NUTS_INIT", getIncludeNutsInit(options, shellFamily).path().toString()),
                     sh.getShebanSh(), shellFamily);
         }
+    }
+
+    public NShellFamily getPreferredBinScriptFamily() {
+        Set<NShellFamily> shellGroupsSet = NEnv.of().shellFamilies();
+        NShellFamily[] shellGroupsArr = shellGroupsSet.toArray(new NShellFamily[0]);
+        NShellFamily expected;
+        switch (NEnv.of().osFamily()){
+            case WINDOWS:{
+                expected=NShellFamily.WIN_CMD;
+                break;
+            }
+            case LINUX:{
+                expected=NShellFamily.BASH;
+                break;
+            }
+            case UNIX:{
+                expected=NShellFamily.SH;
+                break;
+            }
+            case MACOS:{
+                expected=NShellFamily.ZSH;
+                break;
+            }
+            case UNKNOWN:{
+                expected=NShellFamily.SH;
+                break;
+            }
+            default:{
+                expected=NShellFamily.SH;
+                break;
+            }
+        }
+        if(shellGroupsSet.contains(expected) || shellGroupsSet.isEmpty()){
+            return expected;
+        }
+        return shellGroupsArr[0];
     }
 
 }

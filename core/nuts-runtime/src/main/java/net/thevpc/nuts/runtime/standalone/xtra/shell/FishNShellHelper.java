@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
-public class FishNShellHelper extends NixNShellHelper {
+public class FishNShellHelper extends PosixNShellHelper {
     public static final NShellHelper FISH=new FishNShellHelper();
     public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/fish", "#!.*");
     public ReplaceString getShebanSh() {

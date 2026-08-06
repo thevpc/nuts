@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.ps.LinuxPsParser;
-import net.thevpc.nuts.runtime.standalone.xtra.ps.UnixPsParser;
+import net.thevpc.nuts.runtime.standalone.xtra.ps.PosixPsParser;
 import net.thevpc.nuts.runtime.standalone.xtra.ps.WindowsPs1Parser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class PsTest {
     @Test
     public void test02() {
         try (Reader r = new InputStreamReader(PsTest.class.getClassLoader().getResourceAsStream("net/thevpc/nuts/core/test/unix-ps-result.txt"))) {
-            UnixPsParser p = new UnixPsParser();
+            PosixPsParser p = new PosixPsParser();
             List<NPsInfo> parsed = p.parse(r).toList();
             for (NPsInfo nPsInfo : parsed) {
                 NOut.println(nPsInfo);

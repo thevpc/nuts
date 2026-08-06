@@ -213,7 +213,7 @@ public class DefaultNPs implements NPs {
                         .grabErr()
                         .failFast(isFailFast())
                         .grabOut();
-                return new UnixPsParser().parse(new StringReader(u.grabbedOut()));
+                return new PosixPsParser().parse(new StringReader(u.grabbedOut()));
             }
             case WINDOWS: {
                 final int IMPL_WmiObject_Win32_Process_Csv = 1;

@@ -31,7 +31,7 @@ import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.AnyNixNdi;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.PosixNdi;
 
 import java.io.*;
 import java.net.URL;
@@ -58,7 +58,7 @@ public class NdiUtils {
 
     public static void generateScript(String resourcePath, BufferedWriter w, Function<String, String> mapper) {
         try {
-            URL resource = AnyNixNdi.class.getResource(resourcePath);
+            URL resource = PosixNdi.class.getResource(resourcePath);
             if (resource == null) {
                 throw new NIllegalArgumentException(NMsg.ofC("resource not found %s",resourcePath));
             }
