@@ -42,6 +42,7 @@ import java.util.Set;
 public class OptionalJansi {
     private static final NTypeLoader jansiCLibrary = new NTypeLoaderImpl("org.fusesource.jansi.internal.CLibrary");
     private static final NTypeLoader jansiAnsiOutputStream = new NTypeLoaderImpl("org.fusesource.jansi.io.AnsiOutputStream");
+    private static volatile Boolean JANSI_INSTALLED = null;
 
     public static boolean isatty(int fd) {
         if (jansiCLibrary.type().isPresent()) {
@@ -70,7 +71,7 @@ public class OptionalJansi {
         if (isAvailable()) {
             flags.add("jansi");
             if (System.console() != null) {
-                org.fusesource.jansi.AnsiConsole.systemInstall();
+                ensureJansiInstalled();
                 flags.add("ansi");
                 return new NWorkspaceTerminalOptions(System.in, System.out, System.err, flags.toArray(new String[0]));
             } else {
@@ -90,7 +91,7 @@ public class OptionalJansi {
         if (isAvailable()) {
             flags.add("jansi");
             if (System.console() != null) {
-                org.fusesource.jansi.AnsiConsole.systemInstall();
+                ensureJansiInstalled();
                 flags.add("ansi");
             } else {
                 if (tty) {
@@ -102,6 +103,26 @@ public class OptionalJansi {
         }
     }
 
+    public static void ensureJansiInstalled() {
+        if (JANSI_INSTALLED == null) {
+            synchronized (OptionalJansi.class) {
+                if (JANSI_INSTALLED == null) {
+                    org.fusesource.jansi.AnsiConsole.systemInstall();
+                    JANSI_INSTALLED = true;
+                    // 2. Ensure console state is restored even on SIGINT / Ctrl+C / normal exit
+                    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                        try {
+                            if (org.fusesource.jansi.AnsiConsole.isInstalled()) {
+                                org.fusesource.jansi.AnsiConsole.systemUninstall();
+                            }
+                        } catch (Throwable ignored) {
+                            // Prevent shutdown exceptions from polluting stdout
+                        }
+                    }));
+                }
+            }
+        }
+    }
 //
 //    private static class ResetOnCloseOutputStream extends BaseTransparentFilterOutputStream {
 //
