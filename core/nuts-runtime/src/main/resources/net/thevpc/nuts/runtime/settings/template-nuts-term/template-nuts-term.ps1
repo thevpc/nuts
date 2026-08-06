@@ -8,17 +8,17 @@
 #
 # START-COMMAND
 
-$$SCRIPT_NUTS_TERM_INIT$$
+# If you are using Windows Terminal (wt.exe) uncomment this line
+# if (-not $env:NUTS_SYS_TERM_START) { $env:NUTS_SYS_TERM_START = "wt.exe powershell.exe -NoExit -ExecutionPolicy Bypass -File" }
 
-# If you are using ConEmu uncomment this line
-# if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=C:\Path\To\ConEmu\ConEmu64.exe  -run cmd /K"
+# If you are using PowerShell Core / PS 7+ (pwsh.exe) uncomment this line
+# if (-not $env:NUTS_SYS_TERM_START) { $env:NUTS_SYS_TERM_START = "pwsh.exe -NoExit -ExecutionPolicy Bypass -File" }
 
-# If you are using Console uncomment this line
-# if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=C:\Path\To\Console\Console.exe /K"
+# Default to standard Windows PowerShell (powershell.exe)
+if (-not $env:NUTS_SYS_TERM_START) {
+    $env:NUTS_SYS_TERM_START = "powershell.exe -NoExit -ExecutionPolicy Bypass -File"
+}
 
-# If you are using standard cmd.exe
-if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=cmd.exe /K"
-
-%NUTS_SYS_TERM_START% nuts welcome
+Invoke-Expression "$env:NUTS_SYS_TERM_START `"$$SCRIPT_NUTS_TERM_INIT$$`""
 
 # END-COMMAND

@@ -8,7 +8,15 @@
 #
 # START-COMMAND
 
-$$SCRIPT_NUTS_INIT$$
-$$SCRIPT_NUTS$$ welcome
+# Load user profile if it exists (equivalent to sourcing ~/.bashrc)
+if (Test-Path $PROFILE) {
+    . $PROFILE
+}
+
+# Dot-source the main Nuts environment setup script so environment variables persist
+. $$SCRIPT_NUTS_INIT$$
+
+# Execute nuts welcome once inside the initialized shell
+& $$SCRIPT_NUTS$$ welcome
 
 # END-COMMAND
