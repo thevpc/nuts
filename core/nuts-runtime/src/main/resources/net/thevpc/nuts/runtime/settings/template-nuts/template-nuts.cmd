@@ -34,16 +34,21 @@ if not defined _java (
 )
 
 REM "openjdk version "21.0.10" ..." / "java version "1.8.0_202"" -> token 3
+REM --- resolve java version safely ---
 set "_jver="
-for /f "tokens=3" %%V in ('") do @(""%_java%"" -version 2>&1) | findstr /i "version""') do if not defined _jver set "_jver=%%~V"
+for /f "tokens=3" %%V in ('"%_java%" -version 2^>^&1 ^| findstr /i "version"') do (
+    if not defined _jver set "_jver=%%~V"
+)
 
 REM "1.8.0_202" -> 8 ; "17.0.2" -> 17 ; "11-ea" -> 11 ; "21" -> 21
 set "_major="
-echo %_jver%| findstr /r "^1\." >nul
-if not errorlevel 1 (
-    for /f "tokens=1,2 delims=." %%a in ("%_jver%") do set "_major=%%b"
-) else (
-    for /f "tokens=1 delims=.-" %%a in ("%_jver%") do set "_major=%%a"
+if defined _jver (
+    echo %_jver%| findstr /r "^1\." >nul
+    if not errorlevel 1 (
+        for /f "tokens=1,2 delims=." %%a in ("%_jver%") do set "_major=%%b"
+    ) else (
+        for /f "tokens=1 delims=.-" %%a in ("%_jver%") do set "_major=%%a"
+    )
 )
 
 set "_isnum=1"
