@@ -34,13 +34,6 @@ if not defined _java (
 )
 
 REM "openjdk version "21.0.10" ..." / "java version "1.8.0_202"" -> token 3
-REM --- resolve java version safely ---
-set "_jver="
-for /f "tokens=3" %%V in ('"%_java%" -version 2^>^&1 ^| findstr /i "version"') do (
-    if not defined _jver set "_jver=%%~V"
-)
-
-REM "openjdk version "21.0.10" ..." / "java version "1.8.0_202"" -> token 3
 set "_jver="
 for /f "tokens=3" %%V in ('@ "%_java%" -version 2^>^&1 ^| findstr /i "version"') do if not defined _jver set "_jver=%%~V"
 
