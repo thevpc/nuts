@@ -54,9 +54,11 @@ if "%_isnum%"=="0" (
     echo warning: unable to determine java version from '%_jver%', skipping version check 1>&2
     set "_major="
 ) else (
-    if %_major% LSS 8 (
-        echo expected 1.8+ java version, found %_jver% 1>&2
-        exit /b 204
+    if defined _major (
+        if %_major% LSS 8 (
+            echo expected 1.8+ java version, found %_jver% 1>&2
+            exit /b 204
+        )
     )
 )
 
