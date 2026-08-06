@@ -17,9 +17,9 @@ CALL $$SCRIPT_NUTS_TERM_INIT$$
 :: If you are using Console uncomment this line
 :: if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=C:\Path\To\Console\Console.exe /K"
 
-:: If you are using standard cmd.exe
-if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=cmd.exe /K"
+:: If you are using standard cmd.exe, run init script then welcome in the subshell
+if "%NUTS_SYS_TERM_START%"=="" SET "NUTS_SYS_TERM_START=cmd.exe /K"
 
-%NUTS_SYS_TERM_START% nuts welcome
+%NUTS_SYS_TERM_START% CALL $$SCRIPT_NUTS_TERM_INIT$$
 
 :: END-COMMAND
