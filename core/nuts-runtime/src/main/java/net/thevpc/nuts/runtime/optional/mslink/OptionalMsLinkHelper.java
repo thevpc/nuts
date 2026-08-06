@@ -21,12 +21,12 @@ import java.util.Iterator;
 
 public class OptionalMsLinkHelper {
     private static final NTypeLoader mslinksShellLink = new NTypeLoaderImpl("mslinks.ShellLink");
-    private final String command;
+    private final String[] command;
     private final String wd;
     private final String icon;
     private final String filePath;
 
-    public OptionalMsLinkHelper(String command, String wd, String icon, String filePath) {
+    public OptionalMsLinkHelper(String[] command, String wd, String icon, String filePath) {
         this.command = command;
         this.wd = wd;
         this.icon = icon;
@@ -60,7 +60,7 @@ public class OptionalMsLinkHelper {
             //
         }
         byte[] oldContent=CoreIOUtils.loadFileContentLenient(outputFile);
-        String[] cmd = NCmdLine.parse(command,NShellFamily.WIN_POWER_SHELL).get().expandSimpleOptions(false).toStringArray();
+        String[] cmd = command;
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
                 .setCMDArgs(NCmdLine.of(

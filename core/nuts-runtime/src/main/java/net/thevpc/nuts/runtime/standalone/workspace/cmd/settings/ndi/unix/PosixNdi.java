@@ -351,4 +351,33 @@ public class PosixNdi extends BaseSystemNdi {
         return null;
     }
 
+    public NShellFamily getPreferredBinScriptFamily() {
+        Set<NShellFamily> shellGroupsSet = NEnv.of().shellFamilies();
+        NShellFamily[] shellGroupsArr = shellGroupsSet.toArray(new NShellFamily[0]);
+        NShellFamily expected;
+        switch (NEnv.of().osFamily()) {
+            case LINUX: {
+                expected = NShellFamily.BASH;
+                break;
+            }
+            case UNIX: {
+                expected = NShellFamily.SH;
+                break;
+            }
+            case MACOS: {
+                expected = NShellFamily.ZSH;
+                break;
+            }
+            default: {
+                expected = NShellFamily.SH;
+                break;
+            }
+        }
+        if (shellGroupsSet.contains(expected) || shellGroupsSet.isEmpty()) {
+            return expected;
+        }
+        return shellGroupsArr[0];
+    }
+
+
 }

@@ -15,6 +15,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.util.NdiUtils;
+import net.thevpc.nuts.text.NNewLineMode;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -124,7 +125,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {
                 NdiUtils.generateScript("/net/thevpc/nuts/runtime/settings/" + sndi.getTemplateName(templateName, getShellFamily()),
-                        w, new Function<String, String>() {
+                        w, NNewLineMode.system(), new Function<String, String>() {
                             @Override
                             public String apply(String s) {
                                 String v = mapper == null ? null : mapper.apply(s);

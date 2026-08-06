@@ -9,8 +9,6 @@
 :: START-COMMAND
 @ECHO OFF
 
-CALL $$SCRIPT_NUTS_TERM_INIT$$
-
 :: If you are using ConEmu uncomment this line
 :: if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=C:\Path\To\ConEmu\ConEmu64.exe  -run cmd /K"
 

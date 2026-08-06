@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
+import net.thevpc.nuts.cmdline.NCmdLine;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -84,7 +86,7 @@ public class FreeDesktopEntry {
         /**
          * Program to execute, possibly with arguments. See the Exec key for details on how this key works. The Exec key is required if DBusActivatable is not set to true. Even if DBusActivatable is true, Exec should be specified for compatibility with implementations that do not understand DBusActivatable.
          */
-        private String exec;
+        private String[] exec;
 
         /**
          * Icon to display in file manager, menus, etc. If the name is an absolute path, the given file will be used. If the name is not an absolute path, the algorithm described in the Icon Theme Specification will be used to locate the icon.
@@ -194,11 +196,11 @@ public class FreeDesktopEntry {
         }
 
 
-        public static Group desktopEntry(String name, String exec, String path) {
+        public static Group desktopEntry(String name, String[] exec, String path) {
             return application(GROUP_DESKTOP_ENTRY, name, exec, path);
         }
 
-        public static Group application(String entryId, String name, String exec, String path) {
+        public static Group application(String entryId, String name, String[] exec, String path) {
             return new Group(entryId).setType(Type.APPLICATION)
                     .setName(name)
                     .setExec(exec)
@@ -254,7 +256,7 @@ public class FreeDesktopEntry {
             addString("GenericName", genericName, m);
             addString("Comment", comment, m);
             addString("TryExec", tryExec, m);
-            addString("Exec", exec, m);
+            addString("Exec", exec==null?null: NCmdLine.of(exec).toString(), m);
             addString("Icon", icon, m);
             addString("Path", path, m);
             addString("URL", url, m);
@@ -339,11 +341,11 @@ public class FreeDesktopEntry {
             return this;
         }
 
-        public String getExec() {
+        public String[] getExec() {
             return exec;
         }
 
-        public Group setExec(String exec) {
+        public Group setExec(String[] exec) {
             this.exec = exec;
             return this;
         }

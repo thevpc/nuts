@@ -25,10 +25,12 @@
 package net.thevpc.nuts.runtime.optional.jansi;
 
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.reflect.NTypeLoader;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -104,24 +106,56 @@ public class OptionalJansi {
     }
 
     public static void ensureJansiInstalled() {
-        if (JANSI_INSTALLED == null) {
-            synchronized (OptionalJansi.class) {
+        boolean window = System.getProperty("os.name","").toLowerCase().contains("win");
+        window=false;
+        if(window) {
+            if (JANSI_INSTALLED == null) {
+                System.setProperty("jansi.passthrough", "true");
+                System.setProperty("jansi.mode", "strip");
+                synchronized (OptionalJansi.class) {
+                    if (JANSI_INSTALLED == null) {
+                        org.fusesource.jansi.AnsiConsole.systemInstall();
+                        try {
+                            org.fusesource.jansi.AnsiConsole.out().install();
+                        } catch (IOException e) {
+                            JANSI_INSTALLED=false;
+                            return;
+                        }
+                        try {
+                            org.fusesource.jansi.AnsiConsole.err().install();
+                        } catch (IOException e) {
+                            JANSI_INSTALLED=false;
+                            return;
+                        }
+                        JANSI_INSTALLED = true;
+                        // 2. Ensure console state is restored even on SIGINT / Ctrl+C / normal exit
+                        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                            try {
+                                org.fusesource.jansi.AnsiConsole.out().uninstall();
+                            } catch (IOException e) {
+                            }
+                            try {
+                                org.fusesource.jansi.AnsiConsole.err().uninstall();
+                            } catch (IOException e) {
+                            }
+                        }));
+                    }
+                }
+            }else{
                 if (JANSI_INSTALLED == null) {
                     org.fusesource.jansi.AnsiConsole.systemInstall();
                     JANSI_INSTALLED = true;
                     // 2. Ensure console state is restored even on SIGINT / Ctrl+C / normal exit
                     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                         try {
-                            if (org.fusesource.jansi.AnsiConsole.isInstalled()) {
-                                org.fusesource.jansi.AnsiConsole.systemUninstall();
-                            }
-                        } catch (Throwable ignored) {
-                            // Prevent shutdown exceptions from polluting stdout
+                            org.fusesource.jansi.AnsiConsole.systemUninstall();
+                        } catch (Exception e) {
                         }
                     }));
                 }
             }
         }
+
     }
 //
 //    private static class ResetOnCloseOutputStream extends BaseTransparentFilterOutputStream {

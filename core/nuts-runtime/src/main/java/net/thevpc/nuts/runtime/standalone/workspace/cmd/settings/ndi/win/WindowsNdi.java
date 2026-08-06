@@ -14,14 +14,18 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOp
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public class WindowsNdi extends BaseSystemNdi {
+    private static volatile NOptional<NPath> cachedPwshOrPowerShell;
+    private static volatile Boolean restrictedMode;
 
     public WindowsNdi() {
         super();
@@ -48,23 +52,32 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     public boolean isRestrictedMode() {
-        String profilePath = null;
-        try {
-            String[] cmd = {"powershell", "-NoProfile", "-Command", "Get-ExecutionPolicy"};
-            profilePath = NExec.ofSystem(cmd).grabbedAll().trim();
-        } catch (Exception ex) {
-            //
+        if (restrictedMode == null) {
+            String profilePath = null;
+            try {
+                String[] cmd = {findPwShOrPowerShell().orDefault().toString(), "-NoProfile", "-Command", "Get-ExecutionPolicy"};
+                profilePath = NExec.ofSystem(cmd).grabbedAll().trim();
+            } catch (Exception ex) {
+                //
+            }
+            switch (NStringUtils.strip(profilePath).toLowerCase()) {
+                case "remotesigned":
+                case "unrestricted":
+                case "bypass": {
+                    restrictedMode = false;
+                    break;
+                }
+                case "allsigned":
+                case "restricted": {
+                    restrictedMode = true;
+                    break;
+                }
+                default: {
+                    restrictedMode = true;
+                }
+            }
         }
-        switch (NStringUtils.strip(profilePath).toLowerCase()) {
-            case "remotesigned":
-            case "unrestricted":
-            case "bypass":
-                return false;
-            case "allsigned":
-            case "restricted":
-                return true;
-        }
-        return true;
+        return restrictedMode;
     }
 
     public NdiScriptInfo getSysRc(NdiScriptOptions options, NShellFamily shellFamily) {
@@ -150,6 +163,59 @@ public class WindowsNdi extends BaseSystemNdi {
         );
     }
 
+    public String[] getNutsTermFullCommand(NdiScriptOptions options, NShellFamily shellFamily) {
+        if (shellFamily == NShellFamily.WIN_POWER_SHELL) {
+            return new String[]{
+                    findPwShOrPowerShell().orDefault().toString()
+                    , "-NoExit", "-ExecutionPolicy", "Bypass", "-File", getNutsTerm(options, shellFamily).path().toString()};
+        }
+        return super.getNutsTermFullCommand(options, shellFamily);
+    }
+
+
+    public NOptional<NPath> findPwShOrPowerShell() {
+        if (cachedPwshOrPowerShell == null) {
+            NOptional<NPath> a = findPwsh();
+            if (a.isPresent()) {
+                cachedPwshOrPowerShell = a;
+            } else {
+                cachedPwshOrPowerShell = findPowerShell();
+            }
+        }
+        return cachedPwshOrPowerShell;
+    }
+
+    public NOptional<NPath> findPowerShell() {
+        return findCommand("powershell.exe").withDefault(NPath.of("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"));
+    }
+
+    public NOptional<NPath> findPwsh() {
+        return findCommand("pwsh.exe");
+    }
+
+    public NOptional<NPath> findCommand(String cmd) {
+        for (String line : NStringUtils.splitLines(NExec.ofSystem("where.exe", cmd).grabbedAll().trim())) {
+            if (!NStringUtils.isBlank(line)) {
+                NPath p = NPath.of(line);
+                if (p.exists()) {
+                    return NOptional.of(p);
+                }
+            }
+        }
+        String path = NEnv.of().env().get("PATH");
+        if (path != null) {
+            for (String s : path.split(File.pathSeparator)) {
+                if (!NBlankable.isBlank(s)) {
+                    NPath p = NPath.of(path).resolve(cmd);
+                    if (p.isRegularFile()) {
+                        return NOptional.of(p);
+                    }
+                }
+            }
+        }
+        return NOptional.<NPath>ofNamedEmpty(cmd).withDefault(NPath.of("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"));
+    }
+
     protected int resolveIconExtensionPriority(String extension) {
         extension = extension.toLowerCase();
         switch (extension) {
@@ -177,7 +243,7 @@ public class WindowsNdi extends BaseSystemNdi {
 
 
     public NdiScriptInfo[] getNutsTerm(NdiScriptOptions options) {
-        return Arrays.stream(new NShellFamily[]{NShellFamily.WIN_CMD})
+        return Arrays.stream(getShellGroups())
                 .map(x -> getNutsTerm(options, x))
                 .filter(Objects::nonNull)
                 .toArray(NdiScriptInfo[]::new);
@@ -268,4 +334,15 @@ public class WindowsNdi extends BaseSystemNdi {
         }
         return "";
     }
+
+    public NShellFamily getPreferredBinScriptFamily() {
+        Set<NShellFamily> shellGroupsSet = NEnv.of().shellFamilies();
+        NShellFamily[] shellGroupsArr = shellGroupsSet.toArray(new NShellFamily[0]);
+        NShellFamily expected = NShellFamily.WIN_CMD;
+        if (shellGroupsSet.contains(expected) || shellGroupsSet.isEmpty()) {
+            return expected;
+        }
+        return shellGroupsArr[0];
+    }
+
 }

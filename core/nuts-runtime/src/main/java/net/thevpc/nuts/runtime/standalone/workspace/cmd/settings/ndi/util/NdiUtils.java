@@ -44,10 +44,10 @@ import java.util.regex.Pattern;
  */
 public class NdiUtils {
 
-    public static String generateScriptAsString(String resourcePath, Function<String, String> mapper) {
+    public static String generateScriptAsString(String resourcePath, NNewLineMode newlineMode,Function<String, String> mapper) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         BufferedWriter w = new BufferedWriter(new OutputStreamWriter(b));
-        generateScript(resourcePath, w, mapper);
+        generateScript(resourcePath, w, newlineMode,mapper);
         try {
             w.flush();
         } catch (IOException ex) {
@@ -56,7 +56,7 @@ public class NdiUtils {
         return b.toString();
     }
 
-    public static void generateScript(String resourcePath, BufferedWriter w, Function<String, String> mapper) {
+    public static void generateScript(String resourcePath, BufferedWriter w, NNewLineMode newlineMode,Function<String, String> mapper) {
         try {
             URL resource = PosixNdi.class.getResource(resourcePath);
             if (resource == null) {
@@ -81,7 +81,7 @@ public class NdiUtils {
                 String line2 = null;
                 while ((line2 = br2.readLine()) != null) {
                     w.write(line2);
-                    w.write(NNewLineMode.system().value());
+                    w.write(newlineMode.value());
                 }
             }
             w.flush();

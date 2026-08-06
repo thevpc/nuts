@@ -125,6 +125,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .toArray(NdiScriptInfo[]::new);
     }
 
+    public String[] getNutsTermFullCommand(NdiScriptOptions options, NShellFamily shellFamily){
+        return new String[]{
+                getNutsTerm(options,shellFamily).path().toString()
+        };
+    }
+
     public abstract NdiScriptInfo getNutsTerm(NdiScriptOptions options, NShellFamily shellFamily);
 
 
@@ -409,20 +415,20 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
             }
             if (matchCondition(options.getLauncher().createDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
-                all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NDesktopIntegrationItem.DESKTOP, options)));
+                all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NDesktopIntegrationItem.DESKTOP, options, preferredBinScriptFamily)));
             }
             if (matchCondition(options.getLauncher().createMenuLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU))) {
-                all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NDesktopIntegrationItem.MENU, options)));
+                all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NDesktopIntegrationItem.MENU, options, preferredBinScriptFamily)));
             }
         } else {
             if (matchCondition(options.getLauncher().createDesktopLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP))) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.DESKTOP, options, scriptPath, preferredName)));
+                all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.DESKTOP, options, scriptPath, preferredName, preferredBinScriptFamily)));
             }
             if (matchCondition(options.getLauncher().createMenuLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU))) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.MENU, options, scriptPath, preferredName)));
+                all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.MENU, options, scriptPath, preferredName, preferredBinScriptFamily)));
             }
             if (matchCondition(options.getLauncher().createUserLauncher(), getDesktopIntegrationSupport(NDesktopIntegrationItem.USER))) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.USER, options, scriptPath, preferredName)));
+                all.addAll(Arrays.asList(createLaunchTermShortcut(NDesktopIntegrationItem.USER, options, scriptPath, preferredName, preferredBinScriptFamily)));
             }
         }
 
@@ -826,7 +832,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NDefinition appDef = loadIdDefinition(appId);
         List<String> cmd = new ArrayList<>();
         NShellFamily preferredBinScriptFamily = getPreferredBinScriptFamily();
-        cmd.add(getNutsStart(options,preferredBinScriptFamily).path().toString());
+        cmd.add(getNutsStart(options, preferredBinScriptFamily).path().toString());
         cmd.add("-y");
         cmd.add(appId.toString());
         if (options.getLauncher().args() != null) {
@@ -854,9 +860,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         shortcutName += "%s%v%s%h";
         shortcutName = NameBuilder.label(appDef.id(), shortcutName, null, appDef.descriptor()).buildName();
-
-        String execCmd = NCmdLine.of(cmd).toString();
-        FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, execCmd, cwd);
+        FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, cmd.toArray(new String[0]), cwd);
         sl.setStartNotify(true);
         sl.setIcon(iconPath);
         sl.setGenericName(apiDefinition.descriptor().genericName());
@@ -876,10 +880,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
 
-    public PathInfo[] createLaunchTermShortcutGlobal(NDesktopIntegrationItem nDesktopIntegrationItem, NdiScriptOptions options) {
+    public PathInfo[] createLaunchTermShortcutGlobal(NDesktopIntegrationItem nDesktopIntegrationItem, NdiScriptOptions options, NShellFamily shellFamily) {
         String fileName = options.resolveNutsApiId().shortName().replace(':', '-');
         String name = "Nuts Terminal";
-        return createLaunchTermShortcut(nDesktopIntegrationItem, options, fileName, name);
+        return createLaunchTermShortcut(nDesktopIntegrationItem, options, fileName, name, shellFamily);
     }
 
     public abstract boolean isShortcutFileNameUserFriendly();
@@ -909,15 +913,26 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public PathInfo[] createLaunchTermShortcut(NDesktopIntegrationItem nDesktopIntegrationItem,
                                                NdiScriptOptions options,
-                                               String fileName, String name
+                                               String fileName, String name,
+                                               NShellFamily shellFamily
     ) {
-        String cmd = getNutsTerm(options)[0].path().toString();
         fileName = resolveShortcutFileName(options.resolveNutsApiId(), options.resolveNutsApiDef().descriptor(), fileName, name);
         if (name == null) {
             name = NameBuilder.label(options.resolveNutsApiId(), "Nuts Terminal%s%v%s%h", null, options.resolveNutsApiDef().descriptor())
                     .buildName();
         }
-        String execCmd = NCmdLine.of(new String[]{cmd}).toString();
+        switch (shellFamily) {
+            case WIN_POWER_SHELL:{
+                name=name+" Powershell";
+                break;
+            }
+            case WIN_CMD:{
+                name=name+" Cmd";
+                break;
+            }
+        }
+
+        String[] execCmd=getNutsTermFullCommand(options, shellFamily);
         return createShortcut(nDesktopIntegrationItem,
                 options.resolveNutsApiId(),
                 fileName,
@@ -930,7 +945,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         .setTerminal(true)
         );
     }
-
 
     public ReplaceString getCommentLineConfigHeader() {
         return COMMENT_LINE_CONFIG_HEADER;
@@ -976,33 +990,33 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         Set<NShellFamily> shellGroupsSet = NEnv.of().shellFamilies();
         NShellFamily[] shellGroupsArr = shellGroupsSet.toArray(new NShellFamily[0]);
         NShellFamily expected;
-        switch (NEnv.of().osFamily()){
-            case WINDOWS:{
-                expected=NShellFamily.WIN_CMD;
+        switch (NEnv.of().osFamily()) {
+            case WINDOWS: {
+                expected = NShellFamily.WIN_POWER_SHELL;
                 break;
             }
-            case LINUX:{
-                expected=NShellFamily.BASH;
+            case LINUX: {
+                expected = NShellFamily.BASH;
                 break;
             }
-            case UNIX:{
-                expected=NShellFamily.SH;
+            case UNIX: {
+                expected = NShellFamily.SH;
                 break;
             }
-            case MACOS:{
-                expected=NShellFamily.ZSH;
+            case MACOS: {
+                expected = NShellFamily.ZSH;
                 break;
             }
-            case UNKNOWN:{
-                expected=NShellFamily.SH;
+            case UNKNOWN: {
+                expected = NShellFamily.SH;
                 break;
             }
-            default:{
-                expected=NShellFamily.SH;
+            default: {
+                expected = NShellFamily.SH;
                 break;
             }
         }
-        if(shellGroupsSet.contains(expected) || shellGroupsSet.isEmpty()){
+        if (shellGroupsSet.contains(expected) || shellGroupsSet.isEmpty()) {
             return expected;
         }
         return shellGroupsArr[0];
