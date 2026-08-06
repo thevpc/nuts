@@ -77,7 +77,7 @@ public class WinPowerShellNShellHelper extends AbstractWinNShellHelper {
 
     @Override
     public String varRef(String v) {
-        return "$" + v;
+        return "$env:" + v;
     }
 
     @Override
