@@ -40,6 +40,10 @@ for /f "tokens=3" %%V in ('"%_java%" -version 2^>^&1 ^| findstr /i "version"') d
     if not defined _jver set "_jver=%%~V"
 )
 
+REM "openjdk version "21.0.10" ..." / "java version "1.8.0_202"" -> token 3
+set "_jver="
+for /f "tokens=3" %%V in ('""%_java%" -version 2^>^&1 ^| findstr /i "version""') do if not defined _jver set "_jver=%%~V"
+
 REM "1.8.0_202" -> 8 ; "17.0.2" -> 17 ; "11-ea" -> 11 ; "21" -> 21
 set "_major="
 if defined _jver (
@@ -52,19 +56,14 @@ if defined _jver (
 )
 
 set "_isnum=1"
-for /f "delims=0123456789" %%c in ("%_major%") do set "_isnum=0"
-if "%_major%"=="" set "_isnum=0"
+if not defined _major set "_isnum=0"
+if defined _major for /f "delims=0123456789" %%c in ("%_major%") do set "_isnum=0"
 
 if "%_isnum%"=="0" (
     echo warning: unable to determine java version from '%_jver%', skipping version check 1>&2
     set "_major="
 ) else (
-    if defined _major (
-        if %_major% LSS 8 (
-            echo expected 1.8+ java version, found %_jver% 1>&2
-            exit /b 204
-        )
-    )
+    call :check_java_version
 )
 
 REM --- parse launcher-only options from the leading arguments ---
@@ -195,4 +194,13 @@ if not errorlevel 1 (
     echo %_tok% is unsupported 1>&2
 )
 goto :eof
+
+:check_java_version
+if %_major% LSS 8 (
+    echo expected 1.8+ java version, found %_jver% 1>&2
+    exit /b 204
+)
+goto :eof
+
+
 REM END-COMMAND
