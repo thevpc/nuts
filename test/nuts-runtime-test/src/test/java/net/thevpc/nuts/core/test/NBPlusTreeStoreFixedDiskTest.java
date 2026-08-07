@@ -162,11 +162,10 @@ public class NBPlusTreeStoreFixedDiskTest {
             if (tree.remove(i)) {
                 removedCount++;
             } else {
-                System.out.println("First deletion failure key: " + i);
+                System.out.println("First disk deletion failure key: " + i);
                 break;
             }
         }
-        System.out.println("Removed Count returned true: " + removedCount);
 
         tree.close();
 
@@ -174,12 +173,6 @@ public class NBPlusTreeStoreFixedDiskTest {
         NPageStore pageStore2 = NPageStore.ofFile(NPath.of(dbFile), 4096);
         NBPlusTree<Integer, Integer> tree2 = NBPlusTree.of(pageStore2, 5, false, INT_SERIALIZER, INT_SERIALIZER);
 
-        System.out.println("Tree size: " + tree2.size());
-        java.util.List<Integer> remaining = new java.util.ArrayList<>();
-        for (java.util.Map.Entry<Integer, Integer> e : tree2.entrySet()) {
-            remaining.add(e.getKey());
-        }
-        System.out.println("Remaining keys: " + remaining);
         assertEquals(total / 2, tree2.size());
         for (int i = 0; i < total; i++) {
             if (i % 2 == 1) {

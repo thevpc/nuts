@@ -35,7 +35,7 @@ import java.util.*;
 public interface NStringMap<V> extends NCopiable {
 
     static <V> NStringMap<V> of(Map<String, V> map, char separator) {
-        return NUtilsRPI.of().stringMap(map, separator);
+        return NUtilsRPI.of().createStringMap(map, separator);
     }
 
     NStringMap<V> clear();

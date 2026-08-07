@@ -79,22 +79,22 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     }
 
     @Override
-    public <T> NStream<T> toStream(Stream<T> str) {
+    public <T> NStream<T> streamToNStream(Stream<T> str) {
         return NStreamBase.ofJavaStream(null, str);
     }
 
     @Override
-    public <T> NStream<T> emptyStream() {
+    public <T> NStream<T> createEmptyStream() {
         return NStreamBase.ofEmpty(null);
     }
 
     @Override
-    public <T> NIterator<T> emptyIterator() {
+    public <T> NIterator<T> createEmptyIterator() {
         return NIteratorBuilderImpl.EMPTY_ITERATOR;
     }
 
     @Override
-    public <T> NIterator<T> toIterator(Iterator<T> str) {
+    public <T> NIterator<T> iteratorToNIterator(Iterator<T> str) {
         if (str == null) {
             return null;
         }
@@ -105,7 +105,7 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     }
 
     @Override
-    public <T> NIterable<T> toIterable(Iterable<T> o) {
+    public <T> NIterable<T> iterableToNIterable(Iterable<T> o) {
         if (o == null) {
             return null;
         }
@@ -119,7 +119,7 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     @Override
     public <T> NStream<T> optionalToStream(Optional<T> item) {
         if (item == null || !item.isPresent()) {
-            return emptyStream();
+            return createEmptyStream();
         }
         return NStream.ofArray(item.get());
     }
@@ -127,38 +127,43 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     @Override
     public <T> NStream<T> optionalToStream(NOptional<T> item) {
         if (item == null || !item.isPresent() || item.isError()) {
-            return emptyStream();
+            return createEmptyStream();
         }
         return NStream.ofArray(item.get());
     }
 
-    public NChunkedStoreBuilder<String> lineChunkedStoreWriterBuilder(NPath folder) {
-        return chunkedStoreBuilder(folder, new LineNChunkedStoreFactory());
-    }
-
-    public <T> NChunkedStoreBuilder<T> chunkedStoreBuilder(NPath folder, NChunkedStoreFactory<T> storeFactory) {
+    public <T> NChunkedStoreBuilder<T> createChunkedStoreBuilder(NPath folder, NChunkedStoreFactory<T> storeFactory) {
         return NChunkedStoreBuilderImpl.of(folder, storeFactory);
     }
 
     @Override
-    public NChunkedStoreFactory<String> lineChunkedStoreFactory() {
+    public NChunkedStoreFactory<String> createLineChunkedStoreFactory() {
         return new LineNChunkedStoreFactory();
     }
 
     /**
      * Constructor
      */
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int order, boolean allowDuplicates) {
+    public <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(int order, boolean allowDuplicates) {
         return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(order, allowDuplicates));
     }
 
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int order) {
+    public <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(int order) {
         return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(order, false));
     }
 
     @Override
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
+    public <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
         try {
+            if (order <= 0) {
+                if(store instanceof NPageStoreMem){
+                    order=5;
+                } else if(store instanceof NPageStoreFile){
+                    order=128;
+                }else{
+                    order=128;
+                }
+            }
             return new NBPlusTreeImpl<>(new NBPlusTreeStoreFixedDisk<>(store, order, allowDuplicates, keySerializer, valSerializer));
         } catch (IOException e) {
             throw new net.thevpc.nuts.io.NIOException(e);
@@ -167,45 +172,45 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
 
     @Override
     public NPageStore createInMemoryPageStore(int pageSize) {
-        return new NPageStoreMem(pageSize);
+        return new NPageStoreMem(pageSize<=0?4096:pageSize);
     }
 
     @Override
     public NPageStore createFilePageStore(NPath path, int pageSize) {
         try {
-            return new NPageStoreFile(new java.io.File(path.toString()), pageSize);
+            return new NPageStoreFile(new java.io.File(path.toString()), pageSize<=0?4096:pageSize);
         } catch (IOException e) {
             throw new net.thevpc.nuts.io.NIOException(e);
         }
     }
 
     @Override
-    public <K, V> NClassMap<K, V> classMap(Class<V> valueType) {
+    public <K, V> NClassMap<K, V> createClassMap(Class<V> valueType) {
         return new NClassMapImpl<>(valueType);
     }
 
     @Override
-    public <K, V> NClassMap<K, V> classMap(Class<K> keyType, Class<V> valueType) {
+    public <K, V> NClassMap<K, V> createClassMap(Class<K> keyType, Class<V> valueType) {
         return new NClassMapImpl<>(keyType, valueType);
     }
 
     @Override
-    public <A, B, V> NClassPairMap<A, B, V> classPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
+    public <A, B, V> NClassPairMap<A, B, V> createClassPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
         return new NClassPairMapImpl<>(baseKey1Type, baseKey2Type, valueType, symmetric);
     }
 
     @Override
-    public <A, B, V> NClassPairMultiMap<A, B, V> classPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
+    public <A, B, V> NClassPairMultiMap<A, B, V> createClassPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric) {
         return new NClassPairMultiMapImpl<>(baseKey1Type, baseKey2Type, valueType, symmetric);
     }
 
     @Override
-    public <K, V> NClassMap<K, V> classMap(Class<K> keyType, Class<V> valueType, int initialCapacity) {
+    public <K, V> NClassMap<K, V> createClassMap(Class<K> keyType, Class<V> valueType, int initialCapacity) {
         return new NClassMapImpl<>(keyType, valueType, initialCapacity);
     }
 
     @Override
-    public NClassMap<Object, Class> classClassMap() {
+    public NClassMap<Object, Class> createClassClassMap() {
         return new NClassClassMap();
     }
 
@@ -230,12 +235,12 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     }
 
     @Override
-    public <K, V> NMultiKeyMap<K, V> multiKeyMap() {
+    public <K, V> NMultiKeyMap<K, V> createMultiKeyMap() {
         return new NMultiKeyMapImpl<>();
     }
 
     @Override
-    public <V> NStringMap<V> stringMap(Map<String, V> map, char separator) {
+    public <V> NStringMap<V> createStringMap(Map<String, V> map, char separator) {
         return new NStringMapImpl<>(map, separator);
     }
 
@@ -246,22 +251,22 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
 
 
     @Override
-    public <T> NIterator<T> iteratorAutoClosable(NIterator<T> t, NRunnable close) {
+    public <T> NIterator<T> createIteratorAutoClosable(NIterator<T> t, NRunnable close) {
         return NIteratorsImpl.autoClosable(t, close);
     }
 
     @Override
-    public <T> NIterator<T> iteratorSafe(NIteratorErrorHandlerType type, NIterator<T> t) {
+    public <T> NIterator<T> createIteratorSafe(NIteratorErrorHandlerType type, NIterator<T> t) {
         return NIteratorsImpl.safe(type, t);
     }
 
     @Override
-    public <T> NIterator<T> iteratorSafeIgnore(NIterator<T> t) {
+    public <T> NIterator<T> createIteratorSafeIgnore(NIterator<T> t) {
         return NIteratorsImpl.safeIgnore(t);
     }
 
     @Override
-    public <T> NIterator<T> iteratorSafePostpone(NIterator<T> t) {
+    public <T> NIterator<T> createIteratorSafePostpone(NIterator<T> t) {
         return NIteratorsImpl.safePostpone(t);
     }
 

@@ -4,6 +4,8 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.collections.NBPlusTree;
 import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.io.NDataSerializer;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NExceptions;
 
 import java.io.*;
@@ -49,7 +51,10 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
         this.keySerializer = keySerializer;
         this.valSerializer = valSerializer;
         this.blockFile = new NBFixedBlockFile(pageStore);
-        
+        if (order <= 0) {
+            order=5;
+        }
+        NAssert.requireTrue(order>=3,() -> NMsg.ofC("B+Tree order must be >=3"));
         long storedM = this.blockFile.getUserData4();
         if (storedM != -1) {
             this.order = (int) storedM;
@@ -424,6 +429,13 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
 
     public V deserializeValue(DataInputStream dis) throws IOException {
         return valSerializer.deserialize(dis);
+    }
+
+    @Override
+    public void updateFirstKey(NBPlusTree.IntermediateNode<K, V> node, K firstKey) {
+        NBPlusTreeStoreFixedDiskIntermediateNode<K, V> in = (NBPlusTreeStoreFixedDiskIntermediateNode<K, V>) node;
+        in.firstKey = firstKey;
+        in.dirty = true;
     }
 
     @Override

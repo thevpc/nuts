@@ -61,64 +61,64 @@ public interface NUtilsRPI extends NComponent {
 
     <T> NStream<T> iteratorToStream(Iterator<T> str, Runnable onClose);
 
-    <T> NStream<T> toStream(Stream<T> str);
+    <T> NStream<T> streamToNStream(Stream<T> str);
 
-    <T> NStream<T> emptyStream();
+    <T> NStream<T> createEmptyStream();
 
-    <T> NIterator<T> emptyIterator();
+    <T> NIterator<T> createEmptyIterator();
 
-    <T> NIterator<T> toIterator(Iterator<T> str);
+    <T> NIterator<T> iteratorToNIterator(Iterator<T> str);
 
-    <T> NIterable<T> toIterable(Iterable<T> str);
+    <T> NIterable<T> iterableToNIterable(Iterable<T> str);
 
     <T> NStream<T> optionalToStream(Optional<T> str);
 
     <T> NStream<T> optionalToStream(NOptional<T> str);
 
-    <T> NChunkedStoreBuilder<T> chunkedStoreBuilder(NPath folder, NChunkedStoreFactory<T> storeFactory);
+    <T> NChunkedStoreBuilder<T> createChunkedStoreBuilder(NPath folder, NChunkedStoreFactory<T> storeFactory);
 
-    NChunkedStoreFactory<String> lineChunkedStoreFactory();
+    NChunkedStoreFactory<String> createLineChunkedStoreFactory();
 
     /**
      * Constructor
      */
-    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int order, boolean allowDuplicates);
+    <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(int order, boolean allowDuplicates);
 
-    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int order);
+    <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(int order);
 
-    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer);
+    <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer);
 
     NPageStore createInMemoryPageStore(int pageSize);
 
     NPageStore createFilePageStore(NPath path, int pageSize);
 
-    <K, V> NClassMap<K, V> classMap(Class<V> valueType);
+    <K, V> NClassMap<K, V> createClassMap(Class<V> valueType);
 
-    <K, V> NClassMap<K, V> classMap(Class<K> keyType, Class<V> valueType);
+    <K, V> NClassMap<K, V> createClassMap(Class<K> keyType, Class<V> valueType);
 
-    <A, B, V> NClassPairMap<A, B, V> classPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric);
+    <A, B, V> NClassPairMap<A, B, V> createClassPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric);
 
-    <A, B, V> NClassPairMultiMap<A, B, V> classPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric);
+    <A, B, V> NClassPairMultiMap<A, B, V> createClassPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric);
 
-    <K, V> NClassMap<K, V> classMap(Class<K> keyType, Class<V> valueType, int initialCapacity);
+    <K, V> NClassMap<K, V> createClassMap(Class<K> keyType, Class<V> valueType, int initialCapacity);
 
-    NClassMap<Object, Class> classClassMap();
+    NClassMap<Object, Class> createClassClassMap();
 
     <T> NNormalizedStringMap<T> createInsensitiveMap();
 
-    <K, V> NMultiKeyMap<K, V> multiKeyMap();
+    <K, V> NMultiKeyMap<K, V> createMultiKeyMap();
 
-    <V> NStringMap<V> stringMap(Map<String, V> map, char separator);
+    <V> NStringMap<V> createStringMap(Map<String, V> map, char separator);
 
     <T> NIterator<T> iteratorWithDescription(NIterator<T> base, Supplier<NElement> description, Runnable onClose);
 
-    <T> NIterator<T> iteratorAutoClosable(NIterator<T> t, NRunnable close);
+    <T> NIterator<T> createIteratorAutoClosable(NIterator<T> t, NRunnable close);
 
-    <T> NIterator<T> iteratorSafe(NIteratorErrorHandlerType type, NIterator<T> t);
+    <T> NIterator<T> createIteratorSafe(NIteratorErrorHandlerType type, NIterator<T> t);
 
-    <T> NIterator<T> iteratorSafeIgnore(NIterator<T> t);
+    <T> NIterator<T> createIteratorSafeIgnore(NIterator<T> t);
 
-    <T> NIterator<T> iteratorSafePostpone(NIterator<T> t);
+    <T> NIterator<T> createIteratorSafePostpone(NIterator<T> t);
 
     <T> boolean iteratorIsNullOrEmpty(Iterator<T> t);
 

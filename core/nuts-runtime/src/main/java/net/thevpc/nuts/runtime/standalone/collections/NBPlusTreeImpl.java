@@ -92,6 +92,20 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
         }
     }
 
+    private void propagateFirstKey(Node<K, V> node) {
+        IntermediateNode<K, V> parent = node.parent();
+        if (parent != null) {
+            int index = store.findIndexOfChild(parent, node);
+            if (index == 0) {
+                K newFirstKey = node.firstKey();
+                if (!Objects.equals(parent.firstKey(), newFirstKey)) {
+                    store.updateFirstKey(parent, newFirstKey);
+                    propagateFirstKey(parent);
+                }
+            }
+        }
+    }
+
     /**
      * This is a simple method that returns the midpoint (or lower bound
      * depending on the context of the method invocation) of the max degree m of
@@ -136,21 +150,29 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
                 }
             }
         } // Borrow:
-        else if (in.leftSibling() != null && NBPlusTreeHelper.isLendable(in.leftSibling())) {
+        else if (in.leftSibling() != null
+                && NBPlusTreeHelper.eq(in.leftSibling().parent(), in.parent())
+                && NBPlusTreeHelper.isLendable(in.leftSibling())) {
             sibling = in.leftSibling();
             Node<K, V> node = sibling.child(sibling.size() - 1);
-            store.updateChildAt(in, 0, parent.key(0), node);
+            store.addChild(in, node, 0);
             store.updateParent(node, in);
             store.removeChildAt(sibling, sibling.size() - 1);
-        } else if (in.rightSibling() != null && NBPlusTreeHelper.isLendable(in.rightSibling())) {
+            propagateFirstKey(in);
+        } else if (in.rightSibling() != null
+                && NBPlusTreeHelper.eq(in.rightSibling().parent(), in.parent())
+                && NBPlusTreeHelper.isLendable(in.rightSibling())) {
             sibling = in.rightSibling();
 
-            // Copy 1 key and pointer from sibling (atm just 1 key)
             Node<K, V> node = sibling.child(0);
-            store.updateChildAt(in, in.size(), parent.key(0), node);
+            store.addChild(in, node, in.size());
+            store.updateParent(node, in);
             store.removeChildAt(sibling, 0);
+            propagateFirstKey(sibling);
         } // Merge:
-        else if (in.leftSibling() != null && NBPlusTreeHelper.isMergeable(in.leftSibling())) {
+        else if (in.leftSibling() != null
+                && NBPlusTreeHelper.eq(in.leftSibling().parent(), in.parent())
+                && NBPlusTreeHelper.isMergeable(in.leftSibling())) {
             sibling = in.leftSibling();
 
             // Copy all of in's children into the left sibling
@@ -162,6 +184,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
 
             // Delete child pointer from parent to deficient node
             store.removeChildAt(parent, store.findIndexOfChild(parent, in));
+            propagateFirstKey(parent);
 
             // Update right sibling pointer
             store.updateRightSibling(sibling, in.rightSibling());
@@ -169,11 +192,11 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
                 store.updateLeftSibling(in.rightSibling(), sibling);
             }
             store.free(in);
-        } else if (in.rightSibling() != null && NBPlusTreeHelper.isMergeable(in.rightSibling())) {
+        } else if (in.rightSibling() != null
+                && NBPlusTreeHelper.eq(in.rightSibling().parent(), in.parent())
+                && NBPlusTreeHelper.isMergeable(in.rightSibling())) {
             sibling = in.rightSibling();
 
-            // Copy rightmost key in parent to beginning of sibling's keys &
-            // delete key from parent
             int childrenCount = in.size();
 
             // Copy in's child pointer over to sibling's list of child pointers
@@ -184,9 +207,14 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
 
             // Delete child pointer from grandparent to deficient node
             store.removeChildAt(parent, store.findIndexOfChild(parent, in));
+            propagateFirstKey(sibling);
+            propagateFirstKey(parent);
 
             // Remove left sibling
             store.updateLeftSibling(sibling, in.leftSibling());
+            if (in.leftSibling() != null) {
+                store.updateRightSibling(in.leftSibling(), sibling);
+            }
             store.free(in);
         }
 
@@ -294,15 +322,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
             // Get leaf node and attempt to find index of key to delete
             LeafNode<K, V> leafNode = findLeafNode(key);
 
-            if (key.equals(7)) {
-                System.out.println("[TRACE] remove(7) leafNode keys = " + leafNode.keys());
-            }
-
             int dpIndex = store.indexOfKey(leafNode, key);
-
-            if (key.equals(7)) {
-                System.out.println("[TRACE] remove(7) dpIndex = " + dpIndex);
-            }
 
             if (dpIndex < 0) {
                 return false;
@@ -310,6 +330,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
 
                 // Successfully delete the dictionary pair
                 store.removeChildAt(leafNode, dpIndex);
+                propagateFirstKey(leafNode);
 
                 Node<K, V> nn = leafNode;
                 while (nn != null) {
@@ -351,68 +372,81 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
                             LeafNode<K, V> sibling;
                             IntermediateNode<K, V> parent = nn.parent();
 
-                            // Borrow: First, check the left sibling, then the right sibling
-                            if (ln.leftSibling() != null
-                                    && NBPlusTreeHelper.eq(ln.leftSibling().parent(), ln.parent())
-                                    && NBPlusTreeHelper.isLendable(ln.leftSibling())) {
+                             // Borrow: First, check the left sibling, then the right sibling
+                             if (ln.leftSibling() != null
+                                     && NBPlusTreeHelper.eq(ln.leftSibling().parent(), ln.parent())
+                                     && NBPlusTreeHelper.isLendable(ln.leftSibling())) {
 
-                                sibling = ln.leftSibling();
-                                Entry<K, V> borrowedDP = sibling.entryAt(sibling.size() - 1);
+                                 sibling = ln.leftSibling();
+                                 Entry<K, V> borrowedDP = sibling.entryAt(sibling.size() - 1);
 
-                                /* Insert borrowed dictionary pair, sort dictionary,
-						   and delete dictionary pair from sibling */
-                                store.addEntry(ln, borrowedDP.getKey(), borrowedDP.getValue());
-                                store.removeChildAt(sibling, sibling.size() - 1);
-                            } else if (ln.rightSibling() != null
-                                    && NBPlusTreeHelper.eq(ln.rightSibling().parent(), ln.parent())
-                                    && NBPlusTreeHelper.isLendable(ln.rightSibling())) {
+                                 /* Insert borrowed dictionary pair, sort dictionary,
+ 						   and delete dictionary pair from sibling */
+                                 store.addEntry(ln, borrowedDP.getKey(), borrowedDP.getValue());
+                                 store.removeChildAt(sibling, sibling.size() - 1);
+                                 propagateFirstKey(ln);
+                                 propagateFirstKey(sibling);
+                             } else if (ln.rightSibling() != null
+                                     && NBPlusTreeHelper.eq(ln.rightSibling().parent(), ln.parent())
+                                     && NBPlusTreeHelper.isLendable(ln.rightSibling())) {
 
-                                sibling = ln.rightSibling();
-                                Entry<K, V> borrowedDP = sibling.entryAt(0);
+                                 sibling = ln.rightSibling();
+                                 Entry<K, V> borrowedDP = sibling.entryAt(0);
 
-                                /* Insert borrowed dictionary pair, sort dictionary,
-					       and delete dictionary pair from sibling */
-                                store.addEntry(ln, borrowedDP.getKey(), borrowedDP.getValue());
-                                store.removeChildAt(sibling, 0);
+                                 /* Insert borrowed dictionary pair, sort dictionary,
+ 					       and delete dictionary pair from sibling */
+                                 store.addEntry(ln, borrowedDP.getKey(), borrowedDP.getValue());
+                                 store.removeChildAt(sibling, 0);
+                                 propagateFirstKey(ln);
+                                 propagateFirstKey(sibling);
 
-                             } // Merge: First, check the left sibling, then the right sibling
-                            else if (ln.leftSibling() != null
-                                    && ln.leftSibling().parent() == ln.parent()
-                                    && NBPlusTreeHelper.isMergeable(ln.leftSibling())) {
+                              } // Merge: First, check the left sibling, then the right sibling
+                             else if (ln.leftSibling() != null
+                                     && ln.leftSibling().parent() == ln.parent()
+                                     && NBPlusTreeHelper.isMergeable(ln.leftSibling())) {
 
-                                sibling = ln.leftSibling();
-                                for (int idx = 0; idx < ln.size(); idx++) {
-                                    store.addEntry(sibling, ln.keyAt(idx), ln.valueAt(idx));
-                                }
-                                store.removeChildAt(parent, store.findIndexOfChild(parent, ln));
+                                 sibling = ln.leftSibling();
+                                 for (int idx = 0; idx < ln.size(); idx++) {
+                                     store.addEntry(sibling, ln.keyAt(idx), ln.valueAt(idx));
+                                 }
+                                 store.removeChildAt(parent, store.findIndexOfChild(parent, ln));
 
-                                // Update sibling pointer
-                                store.updateRightSibling(sibling, ln.rightSibling());
+                                 // Update sibling pointer
+                                 store.updateRightSibling(sibling, ln.rightSibling());
+                                 if (ln.rightSibling() != null) {
+                                     store.updateLeftSibling(ln.rightSibling(), sibling);
+                                 }
+                                 propagateFirstKey(sibling);
+                                 propagateFirstKey(parent);
 
-                                // Check for deficiencies in parent
-                                handleDeficiency(parent);
+                                 // Check for deficiencies in parent
+                                 handleDeficiency(parent);
 
-                            } else if (ln.rightSibling() != null
-                                    && NBPlusTreeHelper.eq(ln.rightSibling().parent(), ln.parent())
-                                    && NBPlusTreeHelper.isMergeable(ln.rightSibling())) {
+                             } else if (ln.rightSibling() != null
+                                     && NBPlusTreeHelper.eq(ln.rightSibling().parent(), ln.parent())
+                                     && NBPlusTreeHelper.isMergeable(ln.rightSibling())) {
 
-                                sibling = ln.rightSibling();
-                                int pointerIndex = store.findIndexOfChild(parent, ln);
-                                for (int idx = 0; idx < ln.size(); idx++) {
-                                    store.addEntry(sibling, ln.keyAt(idx), ln.valueAt(idx));
-                                }
+                                 sibling = ln.rightSibling();
+                                 int pointerIndex = store.findIndexOfChild(parent, ln);
+                                 for (int idx = 0; idx < ln.size(); idx++) {
+                                     store.addEntry(sibling, ln.keyAt(idx), ln.valueAt(idx));
+                                 }
 
-                                // Remove key and child pointer from parent
-                                store.removeChildAt(parent, pointerIndex);
+                                 // Remove key and child pointer from parent
+                                 store.removeChildAt(parent, pointerIndex);
 
-                                // Update sibling pointer
-                                store.updateLeftSibling(sibling, ln.leftSibling());
-                                if (sibling.leftSibling() == null) {
-                                    store.updateFirstLeaf(sibling);
-                                }
+                                 // Update sibling pointer
+                                 store.updateLeftSibling(sibling, ln.leftSibling());
+                                 if (ln.leftSibling() != null) {
+                                     store.updateRightSibling(ln.leftSibling(), sibling);
+                                 } else {
+                                     store.updateFirstLeaf(sibling);
+                                 }
+                                 propagateFirstKey(sibling);
+                                 propagateFirstKey(parent);
 
-                                handleDeficiency(parent);
-                            }
+                                 handleDeficiency(parent);
+                             }
                         } else {
 
                         }
@@ -578,6 +612,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
             } else {
                 store.addEntry(ln, key, value);
                 store.incSize(1);
+                propagateFirstKey(ln);
                 store.save();
                 return null;
             }
@@ -703,7 +738,6 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
             return null;
         }
 
-        // Find leaf node that holds the dictionary key
         LeafNode<K, V> ln = findLeafNode(key);
 
         // Perform binary search to find index of key within dictionary

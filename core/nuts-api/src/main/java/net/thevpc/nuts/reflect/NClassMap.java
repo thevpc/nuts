@@ -36,19 +36,19 @@ import java.util.*;
  */
 public interface NClassMap<K,V> {
     static <K,V> NClassMap<K,V> of(Class<V> clazz) {
-        return NUtilsRPI.of().classMap(clazz);
+        return NUtilsRPI.of().createClassMap(clazz);
     }
 
     static <K,V> NClassMap<K,V> of(Class<K> keyType, Class<V> valueType) {
-        return NUtilsRPI.of().classMap(keyType, valueType);
+        return NUtilsRPI.of().createClassMap(keyType, valueType);
     }
 
     static <K,V> NClassMap<K,V> of(Class<K> keyType, Class<V> valueType, int initialCapacity) {
-        return NUtilsRPI.of().classMap(keyType, valueType, initialCapacity);
+        return NUtilsRPI.of().createClassMap(keyType, valueType, initialCapacity);
     }
 
     static <K,V> NClassMap<K,V> ofClass() {
-        return (NClassMap) NUtilsRPI.of().classClassMap();
+        return (NClassMap) NUtilsRPI.of().createClassClassMap();
     }
 
     Set<Class<? extends K>> keySet();

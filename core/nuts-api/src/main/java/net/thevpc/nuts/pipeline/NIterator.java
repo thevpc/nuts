@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  */
 public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>, AutoCloseable {
     static <T> NIterator<T> of(Iterator<T> o) {
-        return NUtilsRPI.of().toIterator(o);
+        return NUtilsRPI.of().iteratorToNIterator(o);
     }
 
     static NIterator<NIntTuple2> ofInt2(int a, int b) {
@@ -56,11 +56,11 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     static <T> NIterator<T> ofEmpty() {
-        return NUtilsRPI.of().emptyIterator();
+        return NUtilsRPI.of().createEmptyIterator();
     }
 
     static <T> NIterator<T> ofSingleton(T element) {
-        return NUtilsRPI.of().toIterator(Collections.singletonList(element).iterator());
+        return NUtilsRPI.of().iteratorToNIterator(Collections.singletonList(element).iterator());
     }
 
     static <T> NIterator<T> ofWithDescription(NIterator<T> base, Supplier<NElement> description, Runnable onClose) {
@@ -68,19 +68,19 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     static <T> NIterator<T> ofAutoClosable(NIterator<T> t, NRunnable close) {
-        return NUtilsRPI.of().iteratorAutoClosable(t, close);
+        return NUtilsRPI.of().createIteratorAutoClosable(t, close);
     }
 
     static <T> NIterator<T> ofSafe(NIteratorErrorHandlerType type, NIterator<T> t) {
-        return NUtilsRPI.of().iteratorSafe(type, t);
+        return NUtilsRPI.of().createIteratorSafe(type, t);
     }
 
     static <T> NIterator<T> ofSafeIgnore(NIterator<T> t) {
-        return NUtilsRPI.of().iteratorSafeIgnore(t);
+        return NUtilsRPI.of().createIteratorSafeIgnore(t);
     }
 
     static <T> NIterator<T> ofSafePostpone(NIterator<T> t) {
-        return NUtilsRPI.of().iteratorSafePostpone(t);
+        return NUtilsRPI.of().createIteratorSafePostpone(t);
     }
 
     static <T> boolean isNullOrEmpty(Iterator<T> t) {

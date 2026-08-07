@@ -22,7 +22,7 @@ public interface NChunkedStoreBuilder<T> {
      */
     static NChunkedStoreBuilder<String> ofLines(NPath folder) {
         NUtilsRPI r = NUtilsRPI.of();
-        return r.chunkedStoreBuilder(folder, r.lineChunkedStoreFactory());
+        return r.createChunkedStoreBuilder(folder, r.createLineChunkedStoreFactory());
     }
 
     /**
@@ -34,7 +34,7 @@ public interface NChunkedStoreBuilder<T> {
      * @return a new {@code NChunkedStoreBuilder} for type {@code T}
      */
     static <T> NChunkedStoreBuilder<T> of(NPath folder, NChunkedStoreFactory<T> storeFactory) {
-        return NUtilsRPI.of().chunkedStoreBuilder(folder, storeFactory);
+        return NUtilsRPI.of().createChunkedStoreBuilder(folder, storeFactory);
     }
 
     /**

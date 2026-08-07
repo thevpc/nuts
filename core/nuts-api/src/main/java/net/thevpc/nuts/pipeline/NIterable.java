@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 public interface NIterable<T> extends Iterable<T>, NRedescribable<NIterable<T>> {
     static <T> NIterable<T> of(Iterable<T> o){
-        return NUtilsRPI.of().toIterable(o);
+        return NUtilsRPI.of().iterableToNIterable(o);
     }
 
     default NIterable<T> withDescription(Supplier<NElement> description) {

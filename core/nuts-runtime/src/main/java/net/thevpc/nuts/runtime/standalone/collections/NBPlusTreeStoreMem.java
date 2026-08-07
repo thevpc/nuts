@@ -320,6 +320,11 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
     }
 
     @Override
+    public void updateFirstKey(NBPlusTree.IntermediateNode<K, V> node, K firstKey) {
+        ((NBPlusTreeStoreMemIntermediateNode<K, V>) node).firstKey = firstKey;
+    }
+
+    @Override
     public void close() {
     }
 }

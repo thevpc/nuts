@@ -12,7 +12,7 @@ public interface NClassPairMultiMap<A, B, V> {
     }
 
     static <A, B, V> NClassPairMultiMap<A, B, V> of(Class<A> key1Type, Class<B> key2Type, Class<V> valueType, boolean symmetric) {
-        return NUtilsRPI.of().classPairMultiMap(key1Type, key2Type, valueType, symmetric);
+        return NUtilsRPI.of().createClassPairMultiMap(key1Type, key2Type, valueType, symmetric);
     }
 
     Set<NTuple<Class>> keySet();

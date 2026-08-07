@@ -62,8 +62,7 @@ public class NBPlusTreeStoreMemTest {
             }
         };
 
-        NPageStore pageStore = NPageStore.ofInMemory(4096);
-        try (NBPlusTree<String, String> tree = NBPlusTree.of(pageStore, 5, false, serializer, serializer)) {
+        try (NBPlusTree<String, String> tree = NBPlusTree.ofInMemory(4096, 5, false, serializer, serializer)) {
             tree.put("key1", "val1");
             tree.put("key2", "val2");
             tree.put("key3", "val3");
@@ -141,8 +140,19 @@ public class NBPlusTreeStoreMemTest {
             }
 
             // Remove odd keys
+            int removedCount = 0;
             for (int i = 1; i < total; i += 2) {
-                tree.remove(i);
+                if (tree.remove(i)) {
+                    removedCount++;
+                } else {
+                    System.out.println("First memory deletion failure key: " + i);
+                    dumpTree(tree);
+                    break;
+                }
+                if (i <= 27) {
+                    System.out.println("Tree after removing key: " + i);
+                    dumpTree(tree);
+                }
             }
             assertEquals(total / 2, tree.size());
 
@@ -154,5 +164,28 @@ public class NBPlusTreeStoreMemTest {
                 }
             }
         }
+    }
+
+    private void dumpTree(NBPlusTree<Integer, Integer> tree) {
+        net.thevpc.nuts.runtime.standalone.collections.NBPlusTreeImpl<Integer, Integer> impl = (net.thevpc.nuts.runtime.standalone.collections.NBPlusTreeImpl<Integer, Integer>) tree;
+        impl.visit(new NBPlusTree.Visitor<Integer, Integer>() {
+            @Override
+            public void visitIntermediate(NBPlusTree.IntermediateNode<Integer, Integer> node, int level) {
+                char[] chars = new char[level * 2];
+                java.util.Arrays.fill(chars, ' ');
+                java.util.List<Integer> keysList = new java.util.ArrayList<>();
+                for (int i = 1; i < node.size(); i++) {
+                    keysList.add(node.key(i));
+                }
+                System.out.println(new String(chars) + "Intermediate: keys=" + keysList + " firstKey=" + node.firstKey());
+            }
+
+            @Override
+            public void visitLeaf(NBPlusTree.LeafNode<Integer, Integer> node, int level) {
+                char[] chars = new char[level * 2];
+                java.util.Arrays.fill(chars, ' ');
+                System.out.println(new String(chars) + "Leaf: keys=" + (node == null ? "null" : node.keys()) + " parentKeys=" + (node == null || node.parent() == null ? "null" : "hasParent"));
+            }
+        });
     }
 }

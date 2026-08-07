@@ -84,6 +84,12 @@ public class NBPlusTreeHelper {
      * @return a boolean indicating whether or not the LeafNode is deficient
      */
     public static <K extends Comparable<K>, V> boolean isDeficient(NBPlusTree.Node<K, V> node) {
+        if (node.parent() == null) {
+            if (node.isLeaf()) {
+                return false;
+            }
+            return node.size() < 2;
+        }
         return node.size() < node.minSize();
     }
 

@@ -6,7 +6,7 @@ import java.util.*;
 
 public interface NMultiKeyMap<K, V> {
     static <K, V> NMultiKeyMap<K, V> of() {
-        return NUtilsRPI.of().multiKeyMap();
+        return NUtilsRPI.of().createMultiKeyMap();
     }
 
     void clear();

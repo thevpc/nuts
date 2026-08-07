@@ -101,11 +101,11 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     static <T> NStream<T> ofStream(Stream<T> str) {
-        return NUtilsRPI.of().toStream(str);
+        return NUtilsRPI.of().streamToNStream(str);
     }
 
     static <T> NStream<T> ofEmpty() {
-        return NUtilsRPI.of().emptyStream();
+        return NUtilsRPI.of().createEmptyStream();
     }
 
     static <T> NStream<T> ofSingleton(T element) {

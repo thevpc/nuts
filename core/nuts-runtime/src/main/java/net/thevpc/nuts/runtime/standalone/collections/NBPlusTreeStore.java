@@ -56,6 +56,8 @@ public interface NBPlusTreeStore<K extends Comparable<K>, V> extends AutoCloseab
 
     int indexOfKey(NBPlusTree.LeafNode<K, V> leafNode, K key);
 
+    void updateFirstKey(NBPlusTree.IntermediateNode<K, V> node, K firstKey);
+
     @Override
     void close();
 }
