@@ -26,12 +26,20 @@
 */
 package net.thevpc.nuts.collections;
 
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
+
 import java.util.*;
 
 /**
  * Created by vpc on 1/21/17.
  */
 public interface NObservableMap<K, V> extends Map<K, V> {
+    static <K, V> NObservableMap<K, V> of(){
+        return  NUtilsRPI.of().createObservableMap();
+    }
+    static <K, V> NObservableMap<K, V> of(Map<K, V> base){
+        return  NUtilsRPI.of().createObservableMap(base);
+    }
 
     void addMapListener(NObservableMapListener<K, V> listener);
 

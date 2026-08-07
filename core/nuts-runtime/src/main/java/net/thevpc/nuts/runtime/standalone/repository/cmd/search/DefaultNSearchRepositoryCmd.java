@@ -19,7 +19,7 @@ import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIndexFirstIterator;
+import net.thevpc.nuts.runtime.standalone.collections.NIndexFirstIterator;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.log.NLog;
 

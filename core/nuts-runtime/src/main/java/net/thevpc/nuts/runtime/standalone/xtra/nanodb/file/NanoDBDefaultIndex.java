@@ -1,28 +1,36 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb.file;
 
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPageStore;
+import net.thevpc.nuts.io.NDataSerializer;
+import net.thevpc.nuts.collections.NBPlusTree;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
-import net.thevpc.nuts.text.NMsg;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
-    public static final String NANODB_INDEX_0_8_1 = "nanodb-index-0.8.1";
-    private Map<T, DBIndexValueStore> index = new HashMap<>();
-    private DBIndexValueStoreFactory storeFactory;
-    private File file;
-    private Class<T> keyType;
+public class NanoDBDefaultIndex<T extends Comparable<T>> extends NanoDBAbstractIndex<T> implements NanoDBIndex<T>, Closeable {
+    private final File file;
+    private final Class<T> keyType;
+    private NBPlusTree<T, Long> tree;
+    private NPageStore pageStore;
 
-    public NanoDBDefaultIndex(Class<T> keyType, NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
+    private static final NDataSerializer<Long> LONG_SERIALIZER = new NDataSerializer<Long>() {
+        @Override
+        public void serialize(Long obj, DataOutputStream dos) throws IOException {
+            dos.writeLong(obj);
+        }
+
+        @Override
+        public Long deserialize(DataInputStream dis) throws IOException {
+            return dis.readLong();
+        }
+    };
+
+    public NanoDBDefaultIndex(Class<T> keyType, NanoDBSerializer<T> ser, File file) {
         super(ser);
         this.keyType = keyType;
-        this.index = index;
-        this.storeFactory = storeFactory;
         this.file = file;
     }
 
@@ -32,127 +40,75 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
 
     @Override
     public void load() {
-        if (file.exists()) {
-            load(file);
+        if (tree == null) {
+            try {
+                if (file != null) {
+                    File parent = file.getParentFile();
+                    if (parent != null) {
+                        parent.mkdirs();
+                    }
+                    pageStore = NPageStore.ofFile(net.thevpc.nuts.io.NPath.of(file), 4096);
+                } else {
+                    pageStore = NPageStore.ofInMemory(4096);
+                }
+                tree = NBPlusTree.of(
+                        pageStore,
+                        5,
+                        true,
+                        new NanoDBNDataSerializer<>(keyType, ser),
+                        LONG_SERIALIZER
+                );
+            } catch (Exception e) {
+                throw new NIOException(e);
+            }
         }
     }
 
     @Override
     public void flush() {
-        file.getParentFile().mkdirs();
-        try (OutputStream out = new FileOutputStream(file)) {
-            store(new NanoDBDefaultOutputStream(out));
-        } catch (IOException e) {
-            throw new NIOException(e);
+        if (pageStore != null) {
+            try {
+                pageStore.flush();
+            } catch (IOException e) {
+                throw new NIOException(e);
+            }
         }
     }
 
     @Override
     public void put(T s, long position) {
-        DBIndexValueStore store = index.get(s);
-        if (store == null) {
-            store = storeFactory.create(this, s);
-            index.put(s, store);
-        }
-        store.add(position);
-
+        load();
+        tree.put(s, position);
     }
 
     @Override
     public LongStream get(T s) {
-        DBIndexValueStore store = index.get(s);
-        return store == null ? Arrays.stream(new long[0]) : store.stream();
+        load();
+        return tree.search(s).stream().mapToLong(Long::longValue);
     }
 
     @Override
     public void clear() {
-        index.clear();
+        load();
+        tree.clear();
     }
 
     @Override
     public Stream<T> findAll() {
-        return index.keySet().stream();
+        load();
+        return tree.keySet().stream();
     }
 
-    public void storeKey(T k, NanoDBOutputStream dos) throws IOException {
-        ser.write(k, dos);
-    }
-
-
-    public void store(NanoDBOutputStream dos) {
-        try {
-            dos.writeUTF(NANODB_INDEX_0_8_1);
-            dos.writeLong(index.size());
-            for (Map.Entry<T, DBIndexValueStore> e : index.entrySet()) {
-                storeKey(e.getKey(), dos);
-                DBIndexValueStore store = e.getValue();
-                boolean mem = store.isMem();
-                if (mem) {
-                    long[] pos = store.stream().toArray();
-                    dos.writeByte(0);
-                    dos.writeInt(pos.length);
-                    for (long po : pos) {
-                        dos.writeLong(po);
-                    }
-                } else {
-                    dos.writeByte(1);
-                    store.flush();
-                }
+    @Override
+    public void close() throws IOException {
+        if (tree != null) {
+            try {
+                tree.close();
+            } catch (Exception e) {
+                // ignore
             }
-            dos.flush();
-        } catch (IOException ex) {
-            throw new NIOException(ex);
+            tree = null;
+            pageStore = null;
         }
     }
-
-    public void load(NanoDBInputStream in) {
-        try {
-            String header = in.readUTF();
-            if (!NANODB_INDEX_0_8_1.equals(header)) {
-                throw new NIOException(NMsg.ofC("unsupported index file %s",header));
-            }
-            long r = in.readLong();
-            index = new HashMap<T, DBIndexValueStore>(r <= 10 ? 10 : (int) r);
-
-            for (long i = 0; i < r; i++) {
-                T o = readKey(in);
-                byte type = in.readByte();
-                if (type == 0 /**in  memory **/) {
-                    int len = in.readInt();
-                    long[] pos = new long[len];
-                    for (int j = 0; j < len; j++) {
-                        pos[j] = in.readLong();
-                    }
-                    index.put(o, storeFactory.load(this, o, pos));
-                } else if (type == 1 /**in  memory **/) {
-                    index.put(o, storeFactory.loadExternal(this, o));
-                } else {
-                    index.put(o, storeFactory.loadExternal(this, o));
-                }
-            }
-        } catch (IOException ex) {
-            throw new NIOException(ex);
-        }
-    }
-
-    protected T readKey(NanoDBInputStream in) throws IOException {
-        return ser.read(in, keyType);
-    }
-
-    public void store(File stream) throws IOException {
-        try (OutputStream out = new FileOutputStream(stream)) {
-            store(new NanoDBDefaultOutputStream(out));
-        }
-    }
-
-
-
-    public void load(File stream) {
-        try (InputStream out = new FileInputStream(stream)) {
-            load(new NanoDBDefaultInputStream(out));
-        } catch (IOException ex) {
-            throw new NIOException(ex);
-        }
-    }
-
 }

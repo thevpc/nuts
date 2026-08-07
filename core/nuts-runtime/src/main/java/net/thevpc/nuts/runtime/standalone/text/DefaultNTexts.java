@@ -28,7 +28,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter
 import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
-import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NClassMapImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.spi.base.NContentMetadataProviderWriterSPI;

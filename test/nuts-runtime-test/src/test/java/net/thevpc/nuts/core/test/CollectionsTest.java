@@ -5,7 +5,7 @@ import net.thevpc.nuts.reflect.NPlatformSignature;
 import net.thevpc.nuts.runtime.standalone.reflect.NPlatformSignatureImpl;
 import net.thevpc.nuts.runtime.standalone.reflect.NSignatureMapImpl;
 import net.thevpc.nuts.reflect.NSignatureMap;
-import net.thevpc.nuts.runtime.standalone.util.collections.NEvictingCharQueueImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NEvictingCharQueueImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

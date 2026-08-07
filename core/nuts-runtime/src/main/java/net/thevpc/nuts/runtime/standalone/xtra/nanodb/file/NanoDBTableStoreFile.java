@@ -130,6 +130,9 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
             if (readChannel != null) {
                 readChannel = null;
             }
+            for (IndexInfo value : indexDefinitions.values()) {
+                value.close();
+            }
         }
     }
 
@@ -281,11 +284,23 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
                 if (data != null) {
                     return data;
                 }
-                NanoDBIndex fi = new NanoDBDefaultIndex<T>(def.getIndexType(),db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()),
-                        new DBIndexValueStoreDefaultFactory(), new HashMap<>(), getIndexFile());
+                NanoDBIndex fi = new NanoDBDefaultIndex(def.getIndexType(), db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()), getIndexFile());
                 fi.load();
                 data = fi;
                 return fi;
+            }
+        }
+
+        public void close() {
+            synchronized (tableLock) {
+                if (data != null) {
+                    try {
+                        data.close();
+                    } catch (IOException e) {
+                        // ignore
+                    }
+                    data = null;
+                }
             }
         }
 

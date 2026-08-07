@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore;
 
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementMapper;
-import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NClassMapImpl;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.*;

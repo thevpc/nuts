@@ -8,7 +8,7 @@ import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
-import net.thevpc.nuts.runtime.standalone.util.collections.NEvictingCharQueueImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NEvictingCharQueueImpl;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.collections.NEvictingCharQueue;

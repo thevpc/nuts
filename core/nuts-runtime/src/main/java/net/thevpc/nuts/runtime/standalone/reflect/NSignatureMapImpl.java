@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
+import net.thevpc.nuts.runtime.standalone.collections.DefaultNOptionalMap;
 import net.thevpc.nuts.reflect.NSignature;
 import net.thevpc.nuts.reflect.NSignatureDomain;
 import net.thevpc.nuts.reflect.NSignatureMap;
@@ -97,7 +98,7 @@ public class NSignatureMapImpl<S extends NSignature<T, ?>, T, V> implements NSig
     }
 
     private class NSigMapBySize<V> {
-        private final NOptionalMap<S, V> map = new NOptionalMap<>();
+        private final NOptionalMap<S, V> map = new DefaultNOptionalMap<>();
         private final int count;
         private boolean invalidCache;
         private final Map<S, ValueWithDistance<V>> cache = new HashMap<>();

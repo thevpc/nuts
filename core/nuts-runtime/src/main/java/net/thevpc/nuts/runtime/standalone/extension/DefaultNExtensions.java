@@ -15,7 +15,7 @@ import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
-import net.thevpc.nuts.runtime.standalone.util.collections.DefaultNUtilsRPI;
+import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;

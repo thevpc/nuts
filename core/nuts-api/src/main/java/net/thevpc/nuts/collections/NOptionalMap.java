@@ -1,74 +1,27 @@
 package net.thevpc.nuts.collections;
 
-import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.util.NOptional;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class NOptionalMap<K, V> {
-    private Map<K, V> map;
-
-    public NOptionalMap() {
-        this.map = new HashMap<>();
+public interface NOptionalMap<K, V> {
+    static <K, V> NOptionalMap<K, V> of(){
+        return  NUtilsRPI.of().createOptionalMap();
     }
+    int size();
 
-    public NOptionalMap(Map<K, V> map) {
-        this.map = map == null ? new HashMap<>() : map;
-    }
+    NOptionalMap<K, V> putAll(Map<K, V> map);
 
-    public int size() {
-        return map.size();
-    }
+    NOptionalMap<K, V> putIfAbsent(K key, V value);
 
-    public NOptionalMap<K, V> putAll(Map<K, V> map) {
-        this.map.putAll(map);
-        return this;
-    }
+    NOptional<V> put(K key, V value);
 
-    public NOptionalMap<K, V> putIfAbsent(K key, V value) {
-        this.map.putIfAbsent(key, value);
-        return this;
-    }
+    NOptional<V> get(K key);
 
-    public NOptional<V> put(K key, V value) {
-        boolean c = this.map.containsKey(key);
-        V u = this.map.put(key, value);
-        if (u == null) {
-            if (this.map.containsKey(key)) {
-                return NOptional.ofNull();
-            }
-            return NOptional.ofNamedEmpty(NMsg.ofC("%s", key));
-        }
-        return NOptional.of(u);
-    }
+    void clear();
 
-    public NOptional<V> get(K key) {
-        V u = this.map.get(key);
-        if (u == null) {
-            if (this.map.containsKey(key)) {
-                return NOptional.ofNull();
-            }
-            return NOptional.ofNamedEmpty(NMsg.ofC("%s", key));
-        }
-        return NOptional.of(u);
-    }
+    NOptional<V> remove(K key);
 
-    public void clear() {
-        map.clear();
-    }
-
-    public NOptional<V> remove(K key) {
-        boolean c = this.map.containsKey(key);
-        V ov = map.remove(key);
-        if (ov == null) {
-            return c ? NOptional.ofNull() : NOptional.ofNamedEmpty(NMsg.ofC("%s", key));
-        }
-        return NOptional.of(ov);
-    }
-
-    public Map<K, V> toMap() {
-        return new LinkedHashMap<>(map);
-    }
+    Map<K, V> toMap();
 }

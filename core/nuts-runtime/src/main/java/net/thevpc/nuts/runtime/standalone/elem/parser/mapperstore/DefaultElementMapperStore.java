@@ -11,7 +11,7 @@ import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlElement;
-import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NClassMapImpl;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.reflect.NClassMap;

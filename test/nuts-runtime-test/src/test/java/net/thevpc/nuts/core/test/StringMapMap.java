@@ -1,7 +1,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.util.collections.NStringMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NStringMapImpl;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.collections.NMaps;
 import net.thevpc.nuts.collections.NStringMap;

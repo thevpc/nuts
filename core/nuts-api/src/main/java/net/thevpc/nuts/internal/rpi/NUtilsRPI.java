@@ -194,6 +194,7 @@ public interface NUtilsRPI extends NComponent {
 
     <K, V> NLRUMap<K, V> createLruMap(int size);
 
+    NEvictingByteQueue createEvictingByteQueue(int size);
     NEvictingCharQueue createEvictingCharQueue(int size);
 
     NEvictingIntQueue createEvictingIntQueue(int size);
@@ -208,4 +209,53 @@ public interface NUtilsRPI extends NComponent {
 
 
     List<String> extractMessageParams(String msg, NMsgType type, String customMessageTypeId);
+
+    NByteList createByteList(int initialSize);
+
+    NByteList createByteList();
+
+    NByteList createByteList(byte[] values, int offset, int size);
+
+    NIntList createIntList(int initialSize);
+
+    NIntList createIntList();
+
+    NIntList createIntList(int[] values, int offset, int size);
+
+    NLongList createLongList(int initialSize);
+
+    NLongList createLongList();
+
+    NLongList createLongList(long[] values, int offset, int size);
+
+    NDoubleList createDoubleList(int initialSize);
+
+    NDoubleList createDoubleList();
+
+    NDoubleList createDoubleList(double[] values, int offset, int size);
+
+    <K, V> NObservableMap<K,V> createObservableMap();
+    <K, V> NObservableMap<K,V> createObservableMap(Map<K,V> base);
+    <K> NObservableSet<K> createObservableSet();
+    <K> NObservableSet<K> createObservableSet(Set<K> base);
+
+    <K> NObservableList<K> createObservableList();
+    <K> NObservableList<K> createObservableList(List<K> base);
+
+    <V, K> NOptionalMap<K,V> createOptionalMap();
+    <V, K> NOptionalMap<K,V> createOptionalMap(Map<K, V> base);
+
+    NCharQueue createCharQueue();
+
+    NCharQueue createCharQueue(int size);
+    NCharQueue createCharQueue(int size,int increment);
+
+    NCharQueue createCharQueue(char[] content);
+
+    NByteQueue createByteQueue();
+
+    NByteQueue createByteQueue(int size);
+    NByteQueue createByteQueue(int size,int increment);
+
+    NByteQueue createByteQueue(byte[] content);
 }

@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilte
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
 import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.util.NLiteral;
 

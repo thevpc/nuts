@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.collections.NEvictingIntQueue;
-import net.thevpc.nuts.runtime.standalone.util.collections.NEvictingIntQueueImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NEvictingIntQueueImpl;
 import net.thevpc.nuts.pipeline.NIteratorBase;
 
 import java.io.*;

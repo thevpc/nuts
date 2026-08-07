@@ -33,7 +33,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
-import net.thevpc.nuts.collections.NDefaultObservableMap;
+import net.thevpc.nuts.runtime.standalone.collections.NDefaultObservableMap;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySPI;

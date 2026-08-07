@@ -38,7 +38,7 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
-import net.thevpc.nuts.runtime.standalone.util.collections.NLRUMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NLRUMapImpl;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;

@@ -41,7 +41,7 @@ import net.thevpc.nuts.runtime.standalone.format.desc.NEDescHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetch;

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 
+import net.thevpc.nuts.runtime.standalone.collections.DefaultNCharQueue;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.util.*;
@@ -7,7 +8,6 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTextVisitor;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.collections.NCharQueue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         COMPOSITE_STYLE,
     }
 
-    private final NCharQueue q = new NCharQueue();
+    private final DefaultNCharQueue q = new DefaultNCharQueue();
     private NTexts txt;
     private boolean wasNewLine = true;
     private Stack<Embedded> stackedStyles = new Stack<>();

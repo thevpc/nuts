@@ -31,8 +31,8 @@ import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
-import net.thevpc.nuts.runtime.standalone.util.collections.NLRUMapImpl;
-import net.thevpc.nuts.runtime.standalone.util.collections.NNormalizedStringMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NLRUMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NNormalizedStringMapImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NScopeType;
@@ -50,7 +50,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalled
 import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendationConnector;
-import net.thevpc.nuts.collections.NDefaultObservableMap;
+import net.thevpc.nuts.runtime.standalone.collections.NDefaultObservableMap;
 import net.thevpc.nuts.collections.NLRUMap;
 import net.thevpc.nuts.collections.NObservableMap;
 

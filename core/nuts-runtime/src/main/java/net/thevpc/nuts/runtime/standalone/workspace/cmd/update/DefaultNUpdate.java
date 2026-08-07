@@ -22,7 +22,7 @@ import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.*;
 import net.thevpc.nuts.security.NSecurityManager;

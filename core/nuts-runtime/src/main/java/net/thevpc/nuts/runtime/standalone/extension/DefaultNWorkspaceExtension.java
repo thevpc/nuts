@@ -30,7 +30,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspaceExtension;
 import net.thevpc.nuts.collections.NListMultiValueMap;
 import net.thevpc.nuts.spi.NExtensionLifeCycle;
-import net.thevpc.nuts.runtime.standalone.util.collections.NListMultiValueMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NListMultiValueMapImpl;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -19,7 +19,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.reflect.NMutableClassLoader;
-import net.thevpc.nuts.runtime.standalone.util.collections.NListMultiValueMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NListMultiValueMapImpl;
 import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;

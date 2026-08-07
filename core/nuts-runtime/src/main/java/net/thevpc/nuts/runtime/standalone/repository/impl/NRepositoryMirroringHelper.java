@@ -26,7 +26,7 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
