@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.collections.NBPlusTree;
-import net.thevpc.nuts.collections.NBPlusTreeStore;
+import net.thevpc.nuts.io.NPageStore;
+import net.thevpc.nuts.io.NDataSerializer;
 import net.thevpc.nuts.util.NExceptions;
 
 import java.io.*;
@@ -10,21 +11,22 @@ import java.util.*;
 
 public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBPlusTreeStore<K, V>, Closeable {
 
-    public interface NBSerializer<T> {
-        void serialize(T obj, DataOutputStream dos) throws IOException;
-        T deserialize(DataInputStream dis) throws IOException;
-    }
-
     private NBFixedBlockFile blockFile;
-    private int m = -1;
+    private int order = -1;
     private boolean allowDuplicates;
     private long size = 0;
     
     private long rootId = -1;
     private long firstLeafId = -1;
 
-    private NBSerializer<K> keySerializer;
-    private NBSerializer<V> valSerializer;
+    private NDataSerializer<K> keySerializer;
+    private NDataSerializer<V> valSerializer;
+
+    private final ReusableByteArrayOutputStream serializeStream = new ReusableByteArrayOutputStream(4096);
+    private final DataOutputStream serializeDataStream = new DataOutputStream(serializeStream);
+
+    private final ReusableByteArrayInputStream deserializeStream = new ReusableByteArrayInputStream();
+    private final DataInputStream deserializeDataStream = new DataInputStream(deserializeStream);
 
     private Map<Long, NBPlusTreeStoreFixedDiskNode<K, V>> cache = new LinkedHashMap<Long, NBPlusTreeStoreFixedDiskNode<K, V>>(100, 0.75f, true) {
         @Override
@@ -43,29 +45,29 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
         }
     };
 
-    public NBPlusTreeStoreFixedDisk(File file, int m, boolean allowDuplicates, NBSerializer<K> keySerializer, NBSerializer<V> valSerializer) throws IOException {
+    public NBPlusTreeStoreFixedDisk(NPageStore pageStore, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) throws IOException {
         this.keySerializer = keySerializer;
         this.valSerializer = valSerializer;
-        this.blockFile = new NBFixedBlockFile(file, 4096);
+        this.blockFile = new NBFixedBlockFile(pageStore);
         
         long storedM = this.blockFile.getUserData4();
         if (storedM != -1) {
-            this.m = (int) storedM;
+            this.order = (int) storedM;
             this.allowDuplicates = this.blockFile.getUserData5() == 1;
             this.rootId = this.blockFile.getUserData1();
             this.firstLeafId = this.blockFile.getUserData2();
             this.size = this.blockFile.getUserData3();
         } else {
-            this.m = m;
+            this.order = order;
             this.allowDuplicates = allowDuplicates;
-            this.blockFile.setUserData4(m);
+            this.blockFile.setUserData4(order);
             this.blockFile.setUserData5(allowDuplicates ? 1 : 0);
         }
     }
 
     @Override
-    public int m() {
-        return m;
+    public int order() {
+        return order;
     }
 
     @Override
@@ -132,7 +134,7 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
 
     @Override
     public NBPlusTree.LeafNode<K, V> createLeafNode(NBPlusTree.IntermediateNode<K, V> parent) {
-        NBPlusTreeStoreFixedDiskLeafNode<K, V> node = new NBPlusTreeStoreFixedDiskLeafNode<>(this, m);
+        NBPlusTreeStoreFixedDiskLeafNode<K, V> node = new NBPlusTreeStoreFixedDiskLeafNode<>(this, order);
         try {
             saveNode(node);
         } catch (IOException e) {
@@ -144,7 +146,7 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
 
     @Override
     public NBPlusTree.IntermediateNode<K, V> createInternalNode() {
-        NBPlusTreeStoreFixedDiskIntermediateNode<K, V> node = new NBPlusTreeStoreFixedDiskIntermediateNode<>(this, m);
+        NBPlusTreeStoreFixedDiskIntermediateNode<K, V> node = new NBPlusTreeStoreFixedDiskIntermediateNode<>(this, order);
         try {
             saveNode(node);
         } catch (IOException e) {
@@ -191,19 +193,18 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
     @Override
     public void addEntry(NBPlusTree.LeafNode<K, V> node, K k, V v) {
         NBPlusTreeStoreFixedDiskLeafNode<K, V> ln = (NBPlusTreeStoreFixedDiskLeafNode<K, V>) node;
-        AbstractMap.SimpleEntry<K, V> nv = new AbstractMap.SimpleEntry<>(k, v);
-        int index = Arrays.binarySearch(ln.dictionary, 0, ln.size, nv, NBPlusTreeHelper::compareEntries);
+        int index = Arrays.binarySearch(ln.keys, 0, ln.size, k);
         if (index >= 0) {
-            while (index < ln.size && Objects.equals(ln.dictionary[index].getKey(), k)) {
+            while (index < ln.size && Objects.equals(ln.keys[index], k)) {
                 index++;
             }
-            System.arraycopy(ln.dictionary, index, ln.dictionary, index + 1, ln.size - index);
-            ln.dictionary[index] = nv;
         } else {
             index = -index - 1;
-            System.arraycopy(ln.dictionary, index, ln.dictionary, index + 1, ln.size - index);
-            ln.dictionary[index] = nv;
         }
+        System.arraycopy(ln.keys, index, ln.keys, index + 1, ln.size - index);
+        System.arraycopy(ln.values, index, ln.values, index + 1, ln.size - index);
+        ln.keys[index] = k;
+        ln.values[index] = v;
         ln.size++;
         ln.dirty = true;
     }
@@ -212,21 +213,35 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
     public void addEntries(NBPlusTree.LeafNode<K, V> node, NBPlusTree.Entry<K, V>[] orderedElements) {
         NBPlusTreeStoreFixedDiskLeafNode<K, V> ln = (NBPlusTreeStoreFixedDiskLeafNode<K, V>) node;
         if (orderedElements != null && orderedElements.length > 0) {
-            NBPlusTree.Entry<K, V>[] arr1 = new NBPlusTree.Entry[ln.size];
-            System.arraycopy(ln.dictionary, 0, arr1, 0, ln.size);
-            NBPlusTree.Entry<K, V>[] arr2 = orderedElements;
+            K[] arr1Keys = Arrays.copyOf(ln.keys, ln.size);
+            V[] arr1Values = Arrays.copyOf(ln.values, ln.size);
             int i = 0, j = 0, k = 0;
             int n1 = ln.size;
-            int n2 = arr2.length;
+            int n2 = orderedElements.length;
             while (i < n1 && j < n2) {
-                if (NBPlusTreeHelper.compareEntries(arr1[i], arr2[j]) < 0) {
-                    ln.dictionary[k++] = arr1[i++];
+                K key1 = arr1Keys[i];
+                K key2 = orderedElements[j].getKey();
+                if (key1.compareTo(key2) < 0) {
+                    ln.keys[k] = arr1Keys[i];
+                    ln.values[k] = arr1Values[i];
+                    i++;
                 } else {
-                    ln.dictionary[k++] = arr2[j++];
+                    ln.keys[k] = orderedElements[j].getKey();
+                    ln.values[k] = orderedElements[j].getValue();
+                    j++;
+                }
+                k++;
+            }
+            if (i < n1) {
+                System.arraycopy(arr1Keys, i, ln.keys, k, n1 - i);
+                System.arraycopy(arr1Values, i, ln.values, k, n1 - i);
+            }
+            if (j < n2) {
+                for (int idx = j; idx < n2; idx++) {
+                    ln.keys[k + idx - j] = orderedElements[idx].getKey();
+                    ln.values[k + idx - j] = orderedElements[idx].getValue();
                 }
             }
-            System.arraycopy(arr1, i, ln.dictionary, k, n1 - i);
-            System.arraycopy(arr2, j, ln.dictionary, k + n1 - i, n2 - j);
             ln.size += orderedElements.length;
             ln.dirty = true;
         }
@@ -307,17 +322,18 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
     @Override
     public void removeChildAt(NBPlusTree.LeafNode<K, V> node, int index) {
         NBPlusTreeStoreFixedDiskLeafNode<K, V> ln = (NBPlusTreeStoreFixedDiskLeafNode<K, V>) node;
-        System.arraycopy(ln.dictionary, index + 1, ln.dictionary, index, ln.size - index - 1);
+        System.arraycopy(ln.keys, index + 1, ln.keys, index, ln.size - index - 1);
+        System.arraycopy(ln.values, index + 1, ln.values, index, ln.size - index - 1);
         ln.size--;
-        ln.dictionary[ln.size] = null;
+        ln.keys[ln.size] = null;
+        ln.values[ln.size] = null;
         ln.dirty = true;
     }
 
     @Override
     public int indexOfKey(NBPlusTree.LeafNode<K, V> leafNode, K key) {
         NBPlusTreeStoreFixedDiskLeafNode<K, V> ln = (NBPlusTreeStoreFixedDiskLeafNode<K, V>) leafNode;
-        AbstractMap.SimpleEntry<K, V> e = new AbstractMap.SimpleEntry<>(key, null);
-        return Arrays.binarySearch(ln.dictionary, 0, ln.size, e, NBPlusTreeHelper::compareEntries);
+        return Arrays.binarySearch(ln.keys, 0, ln.size, key);
     }
 
     @Override
@@ -359,17 +375,17 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
             byte[] data = blockFile.readData(blockId);
             if (data == null) return null;
             
-            DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
-            boolean isLeaf = dis.readBoolean();
+            deserializeStream.setBuffer(data, 0, data.length);
+            boolean isLeaf = deserializeDataStream.readBoolean();
             
             NBPlusTreeStoreFixedDiskNode<K, V> node;
             if (isLeaf) {
-                node = new NBPlusTreeStoreFixedDiskLeafNode<>(this, m);
+                node = new NBPlusTreeStoreFixedDiskLeafNode<>(this, order);
             } else {
-                node = new NBPlusTreeStoreFixedDiskIntermediateNode<>(this, m);
+                node = new NBPlusTreeStoreFixedDiskIntermediateNode<>(this, order);
             }
             
-            node.deserialize(dis);
+            node.deserialize(deserializeDataStream);
             node.blockId = blockId;
             node.dirty = false;
             
@@ -381,17 +397,15 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
     }
 
     private void saveNode(NBPlusTreeStoreFixedDiskNode<K, V> node) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-        node.serialize(dos);
-        dos.flush();
-        byte[] data = baos.toByteArray();
+        serializeStream.reset();
+        node.serialize(serializeDataStream);
+        serializeDataStream.flush();
         
         if (node.blockId == -1) {
-            node.blockId = blockFile.writeData(data);
+            node.blockId = blockFile.writeData(serializeStream.getBuffer(), 0, serializeStream.size());
             cache.put(node.blockId, node);
         } else {
-            blockFile.updateDataSafe(node.blockId, data);
+            blockFile.updateDataSafe(node.blockId, serializeStream.getBuffer(), 0, serializeStream.size());
         }
         node.dirty = false;
     }

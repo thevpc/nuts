@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.collections.NBPlusTree;
-import net.thevpc.nuts.collections.NBPlusTreeStore;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.PrintStream;
@@ -42,17 +41,17 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
     private final NBPlusTreeStore<K, V> store;
     private final int m;
 
-    public static <K extends Comparable<K>, V> NBPlusTreeImpl<K, V> of(int m, boolean allowDuplicates) {
-        return new NBPlusTreeImpl<K, V>(new NBPlusTreeStoreMem<>(m, allowDuplicates));
+    public static <K extends Comparable<K>, V> NBPlusTreeImpl<K, V> of(int order, boolean allowDuplicates) {
+        return new NBPlusTreeImpl<K, V>(new NBPlusTreeStoreMem<>(order, allowDuplicates));
     }
 
-    public static <K extends Comparable<K>, V> NBPlusTreeImpl<K, V> of(int m) {
-        return new NBPlusTreeImpl<K, V>(new NBPlusTreeStoreMem<>(m, false));
+    public static <K extends Comparable<K>, V> NBPlusTreeImpl<K, V> of(int order) {
+        return new NBPlusTreeImpl<K, V>(new NBPlusTreeStoreMem<>(order, false));
     }
 
     public NBPlusTreeImpl(NBPlusTreeStore<K, V> store) {
         this.store = store;
-        m = store.m();
+        m = store.order();
     }
 
     /**

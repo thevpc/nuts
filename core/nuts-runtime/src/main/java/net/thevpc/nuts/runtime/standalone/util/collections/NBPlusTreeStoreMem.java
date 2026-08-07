@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.collections.NBPlusTree;
-import net.thevpc.nuts.collections.NBPlusTreeStore;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -38,7 +37,7 @@ import java.util.Objects;
 public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTreeStore<K, V> {
 
     protected boolean allowDuplicates;
-    protected int m;
+    protected int order;
     protected long size;
     protected NBPlusTree.IntermediateNode<K, V> root;
     protected NBPlusTree.LeafNode<K, V> firstLeaf;
@@ -46,8 +45,8 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
     public NBPlusTreeStoreMem() {
     }
 
-    public NBPlusTreeStoreMem(int m, boolean allowDuplicates) {
-        this.m = m;
+    public NBPlusTreeStoreMem(int order, boolean allowDuplicates) {
+        this.order = order;
         this.allowDuplicates = allowDuplicates;
     }
 
@@ -68,12 +67,12 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
 
     @Override
     public NBPlusTree.LeafNode<K, V> createLeafNode(NBPlusTree.IntermediateNode<K, V> parent) {
-        return new NBPlusTreeStoreMemLeafNode<>(this.m, parent);
+        return new NBPlusTreeStoreMemLeafNode<>(this.order, parent);
     }
 
     @Override
     public NBPlusTree.IntermediateNode<K, V> createInternalNode() {
-        return new NBPlusTreeStoreMemIntermediateNode<K, V>(m);
+        return new NBPlusTreeStoreMemIntermediateNode<K, V>(order);
     }
 
     public long size() {
@@ -93,8 +92,9 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
         return firstLeaf;
     }
 
-    public int m() {
-        return m;
+    @Override
+    public int order() {
+        return order;
     }
 
     @Override

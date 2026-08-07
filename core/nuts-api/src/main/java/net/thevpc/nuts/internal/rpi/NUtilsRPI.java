@@ -30,6 +30,8 @@ import net.thevpc.nuts.collections.*;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.io.NDataSerializer;
+import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.pipeline.*;
 import net.thevpc.nuts.reflect.*;
@@ -80,11 +82,15 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Constructor
      */
-    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int m, boolean allowDuplicates);
+    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int order, boolean allowDuplicates);
 
-    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int m);
+    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int order);
 
-    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(NBPlusTreeStore<K, V> store);
+    <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer);
+
+    NPageStore createInMemoryPageStore(int pageSize);
+
+    NPageStore createFilePageStore(NPath path, int pageSize);
 
     <K, V> NClassMap<K, V> classMap(Class<V> valueType);
 

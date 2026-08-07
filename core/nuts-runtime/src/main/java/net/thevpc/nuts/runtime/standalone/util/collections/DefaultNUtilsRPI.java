@@ -5,6 +5,8 @@ import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
+import net.thevpc.nuts.io.NDataSerializer;
+import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.pipeline.*;
 import net.thevpc.nuts.reflect.*;
@@ -146,16 +148,35 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     /**
      * Constructor
      */
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int m, boolean allowDuplicates) {
-        return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(m, allowDuplicates));
+    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int order, boolean allowDuplicates) {
+        return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(order, allowDuplicates));
     }
 
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int m) {
-        return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(m, false));
+    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(int order) {
+        return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(order, false));
     }
 
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(NBPlusTreeStore<K, V> store) {
-        return new NBPlusTreeImpl<>(store);
+    @Override
+    public <K extends Comparable<K>, V> NBPlusTree<K, V> btreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
+        try {
+            return new NBPlusTreeImpl<>(new NBPlusTreeStoreFixedDisk<>(store, order, allowDuplicates, keySerializer, valSerializer));
+        } catch (IOException e) {
+            throw new net.thevpc.nuts.io.NIOException(e);
+        }
+    }
+
+    @Override
+    public NPageStore createInMemoryPageStore(int pageSize) {
+        return new NPageStoreMem(pageSize);
+    }
+
+    @Override
+    public NPageStore createFilePageStore(NPath path, int pageSize) {
+        try {
+            return new NPageStoreFile(new java.io.File(path.toString()), pageSize);
+        } catch (IOException e) {
+            throw new net.thevpc.nuts.io.NIOException(e);
+        }
     }
 
     public <K extends Comparable<K>, V> NBTreeMapImpl<K, V> btreeMap(int order) {

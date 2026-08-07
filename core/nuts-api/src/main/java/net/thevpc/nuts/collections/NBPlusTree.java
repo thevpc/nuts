@@ -25,6 +25,8 @@
 package net.thevpc.nuts.collections;
 
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
+import net.thevpc.nuts.io.NDataSerializer;
+import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
@@ -37,12 +39,20 @@ import java.util.*;
  */
 public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V> , AutoCloseable{
 
-    public static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int m, boolean allowDuplicates) {
-        return NUtilsRPI.of().btreePlus(m,allowDuplicates);
+    public static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int order, boolean allowDuplicates) {
+        return NUtilsRPI.of().btreePlus(order,allowDuplicates);
     }
 
-    public static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int m) {
-        return NUtilsRPI.of().btreePlus(m);
+    public static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int order) {
+        return NUtilsRPI.of().btreePlus(order);
+    }
+
+    public static <K extends Comparable<K>, V> NBPlusTree<K, V> of(NPageStore store, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
+        return NUtilsRPI.of().btreePlus(store, 5, false, keySerializer, valSerializer);
+    }
+
+    public static <K extends Comparable<K>, V> NBPlusTree<K, V> of(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
+        return NUtilsRPI.of().btreePlus(store, order, allowDuplicates, keySerializer, valSerializer);
     }
 
 

@@ -1,163 +1,94 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
+import net.thevpc.nuts.io.NPageStore;
+
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.logging.Logger;
+import java.nio.ByteBuffer;
 
-/**
- * Manages fixed-size pages on disk, providing logical read/write of variable-length byte arrays.
- * Implements block chaining for data that exceeds the block payload size.
- * Implements a free-list for reclaiming deleted blocks.
- */
 public class NBFixedBlockFile implements Closeable {
-    private static final Logger LOG = Logger.getLogger(NBFixedBlockFile.class.getName());
-    private static final long MAGIC = 0x4E424C4B46494C45L; // "NBLKFILE"
+    private final NPageStore store;
+    private final int pageSize;
+    private final int payloadSize;
 
-    private RandomAccessFile file;
-    private int blockSize;
-    private int payloadSize;
-    private long totalBlocks;
-    private long firstFreeBlock;
-
-    private long userData1; // e.g., root block ID
-    private long userData2; // e.g., first leaf block ID
-    private long userData3; // e.g., tree size
-    private long userData4; // e.g., max degree (m)
-    private long userData5; // e.g., allow duplicates (1/0)
-
-    public NBFixedBlockFile(File f, int blockSize) throws IOException {
-        boolean init = !f.exists() || f.length() == 0;
-        this.file = new RandomAccessFile(f, "rw");
-        if (init) {
-            this.blockSize = blockSize;
-            this.payloadSize = blockSize - 8; // 8 bytes for next block pointer
-            this.totalBlocks = 0;
-            this.firstFreeBlock = -1;
-            this.userData1 = -1;
-            this.userData2 = -1;
-            this.userData3 = 0;
-            this.userData4 = -1;
-            this.userData5 = -1;
-            writeHeader();
-        } else {
-            readHeader();
-            this.payloadSize = this.blockSize - 8;
-        }
+    public NBFixedBlockFile(NPageStore store) {
+        this.store = store;
+        this.pageSize = store.pageSize();
+        this.payloadSize = pageSize - 8;
     }
 
-    private void writeHeader() throws IOException {
-        file.seek(0);
-        file.writeLong(MAGIC);
-        file.writeInt(blockSize);
-        file.writeLong(totalBlocks);
-        file.writeLong(firstFreeBlock);
-        file.writeLong(userData1);
-        file.writeLong(userData2);
-        file.writeLong(userData3);
-        file.writeLong(userData4);
-        file.writeLong(userData5);
-    }
-
-    private void readHeader() throws IOException {
-        file.seek(0);
-        long magic = file.readLong();
-        if (magic != MAGIC) {
-            throw new IOException("Invalid magic number for NBlockFile");
-        }
-        this.blockSize = file.readInt();
-        this.totalBlocks = file.readLong();
-        this.firstFreeBlock = file.readLong();
-        this.userData1 = file.readLong();
-        this.userData2 = file.readLong();
-        this.userData3 = file.readLong();
-        this.userData4 = file.readLong();
-        this.userData5 = file.readLong();
-    }
+    public long getUserData1() { return store.getUserData(1); }
+    public void setUserData1(long val) { store.setUserData(1, val); }
+    public long getUserData2() { return store.getUserData(2); }
+    public void setUserData2(long val) { store.setUserData(2, val); }
+    public long getUserData3() { return store.getUserData(3); }
+    public void setUserData3(long val) { store.setUserData(3, val); }
+    public long getUserData4() { return store.getUserData(4); }
+    public void setUserData4(long val) { store.setUserData(4, val); }
+    public long getUserData5() { return store.getUserData(5); }
+    public void setUserData5(long val) { store.setUserData(5, val); }
 
     public void flushHeader() throws IOException {
-        writeHeader();
-    }
-
-    public long getUserData1() { return userData1; }
-    public void setUserData1(long userData1) { this.userData1 = userData1; }
-    public long getUserData2() { return userData2; }
-    public void setUserData2(long userData2) { this.userData2 = userData2; }
-    public long getUserData3() { return userData3; }
-    public void setUserData3(long userData3) { this.userData3 = userData3; }
-    public long getUserData4() { return userData4; }
-    public void setUserData4(long userData4) { this.userData4 = userData4; }
-    public long getUserData5() { return userData5; }
-    public void setUserData5(long userData5) { this.userData5 = userData5; }
-
-    private long allocateBlock() throws IOException {
-        if (firstFreeBlock != -1) {
-            long allocated = firstFreeBlock;
-            file.seek(blockOffset(allocated));
-            long nextFree = file.readLong();
-            firstFreeBlock = nextFree;
-            return allocated;
-        } else {
-            long allocated = totalBlocks;
-            totalBlocks++;
-            // Don't need to write header totalBlocks immediately unless flushing
-            return allocated;
-        }
+        store.flush();
     }
 
     public void freeBlockChain(long blockId) throws IOException {
         long current = blockId;
         while (current != -1) {
-            file.seek(blockOffset(current));
-            long next = file.readLong();
-            
-            // push to free stack
-            file.seek(blockOffset(current));
-            file.writeLong(firstFreeBlock);
-            firstFreeBlock = current;
-            
+            ByteBuffer buf = ByteBuffer.allocate(store.pageSize());
+            store.readPage(current, buf);
+            buf.flip();
+            long next = buf.getLong(0);
+            store.freePage(current);
             current = next;
         }
     }
 
-    private long blockOffset(long blockId) {
-        // 128 bytes of header space
-        return 128 + (blockId * blockSize);
+    public long writeData(byte[] data) throws IOException {
+        return writeData(data, 0, data.length);
     }
 
-    public long writeData(byte[] data) throws IOException {
-        int offset = 0;
+    public long writeData(byte[] data, int dataOffset, int dataLength) throws IOException {
+        int offset = dataOffset;
+        int endOffset = dataOffset + dataLength;
         long headBlock = -1;
         long prevBlock = -1;
 
-        if (data.length == 0) {
-            long b = allocateBlock();
-            file.seek(blockOffset(b));
-            file.writeLong(-1);
-            file.writeInt(0);
+        if (dataLength == 0) {
+            long b = store.allocatePage();
+            ByteBuffer buf = ByteBuffer.allocate(pageSize);
+            buf.putLong(-1);
+            buf.putInt(0);
+            buf.flip();
+            store.writePage(b, buf);
             return b;
         }
 
-        while (offset < data.length) {
-            long currentBlock = allocateBlock();
+        while (offset < endOffset) {
+            long currentBlock = store.allocatePage();
             if (headBlock == -1) {
                 headBlock = currentBlock;
             }
             if (prevBlock != -1) {
-                file.seek(blockOffset(prevBlock));
-                file.writeLong(currentBlock);
+                ByteBuffer prevBuf = ByteBuffer.allocate(pageSize);
+                store.readPage(prevBlock, prevBuf);
+                prevBuf.flip();
+                prevBuf.putLong(0, currentBlock);
+                prevBuf.flip();
+                store.writePage(prevBlock, prevBuf);
             }
 
-            int toWrite = Math.min(payloadSize - (prevBlock == -1 ? 4 : 0), data.length - offset);
-            
-            file.seek(blockOffset(currentBlock));
-            file.writeLong(-1); // next block is -1 initially
+            int toWrite = Math.min(payloadSize - (prevBlock == -1 ? 4 : 0), endOffset - offset);
+
+            ByteBuffer buf = ByteBuffer.allocate(pageSize);
+            buf.putLong(-1);
             if (prevBlock == -1) {
-                file.writeInt(data.length); // write total length only in the first block
+                buf.putInt(dataLength);
             }
-            file.write(data, offset, toWrite);
-            
+            buf.put(data, offset, toWrite);
+            buf.flip();
+            store.writePage(currentBlock, buf);
+
             offset += toWrite;
             prevBlock = currentBlock;
         }
@@ -167,99 +98,104 @@ public class NBFixedBlockFile implements Closeable {
     public byte[] readData(long headBlock) throws IOException {
         if (headBlock == -1) return null;
 
-        file.seek(blockOffset(headBlock));
-        long nextBlock = file.readLong();
-        int totalLength = file.readInt();
-        
+        ByteBuffer buf = ByteBuffer.allocate(pageSize);
+        store.readPage(headBlock, buf);
+        buf.flip();
+        long nextBlock = buf.getLong();
+        int totalLength = buf.getInt();
+
         byte[] data = new byte[totalLength];
         int bytesReadTotal = 0;
-        
+
         int toRead = Math.min(payloadSize - 4, totalLength);
-        file.readFully(data, bytesReadTotal, toRead);
+        buf.get(data, bytesReadTotal, toRead);
         bytesReadTotal += toRead;
-        
+
         long currentBlock = nextBlock;
         while (currentBlock != -1 && bytesReadTotal < totalLength) {
-            file.seek(blockOffset(currentBlock));
-            currentBlock = file.readLong();
+            buf.clear();
+            store.readPage(currentBlock, buf);
+            buf.flip();
+            currentBlock = buf.getLong();
             int readAmount = Math.min(payloadSize, totalLength - bytesReadTotal);
-            file.readFully(data, bytesReadTotal, readAmount);
+            buf.get(data, bytesReadTotal, readAmount);
             bytesReadTotal += readAmount;
         }
-        
+
         return data;
     }
 
-    public void updateData(long headBlock, byte[] data) throws IOException {
-        freeBlockChain(headBlock);
-        // Writing will allocate new blocks and ideally reuse the ones we just freed
-        long newHead = writeData(data);
-        if (newHead != headBlock) {
-            // Because we pushed them to a LIFO stack, newHead SHOULD equal headBlock if we wrote the same or fewer blocks
-            // If it doesn't, we still have to return the new head, but wait... updateData should keep the same head!
-            // Wait, we can't change the headBlock easily because other structures point to it.
-            throw new IllegalStateException("Internal error: Freeing and reallocating changed head block ID.");
-        }
-    }
-    
     public void updateDataSafe(long headBlock, byte[] data) throws IOException {
-        // Collect existing blocks
+        updateDataSafe(headBlock, data, 0, data.length);
+    }
+
+    public void updateDataSafe(long headBlock, byte[] data, int dataOffset, int dataLength) throws IOException {
         long current = headBlock;
-        int offset = 0;
+        int offset = dataOffset;
+        int endOffset = dataOffset + dataLength;
         long prev = -1;
-        
-        while (offset < data.length) {
+
+        while (offset < endOffset) {
             if (current == -1) {
-                current = allocateBlock();
+                current = store.allocatePage();
                 if (prev != -1) {
-                    file.seek(blockOffset(prev));
-                    file.writeLong(current);
+                    ByteBuffer prevBuf = ByteBuffer.allocate(pageSize);
+                    store.readPage(prev, prevBuf);
+                    prevBuf.flip();
+                    prevBuf.putLong(0, current);
+                    prevBuf.flip();
+                    store.writePage(prev, prevBuf);
                 }
             }
-            
-            int toWrite = Math.min(payloadSize - (prev == -1 ? 4 : 0), data.length - offset);
-            file.seek(blockOffset(current));
-            
-            // Assume we might need another block
+
+            int toWrite = Math.min(payloadSize - (prev == -1 ? 4 : 0), endOffset - offset);
+            ByteBuffer buf = ByteBuffer.allocate(pageSize);
+            store.readPage(current, buf);
+            buf.flip();
+
             long nextBlock;
-            if (offset + toWrite < data.length) {
-                nextBlock = file.readLong(); // keep existing next if any
+            if (offset + toWrite < endOffset) {
+                nextBlock = buf.getLong(0);
             } else {
-                nextBlock = file.readLong();
-                file.seek(blockOffset(current));
-                file.writeLong(-1); // terminate here
+                nextBlock = buf.getLong(0);
+                buf.putLong(0, -1L);
                 if (nextBlock != -1) {
-                    freeBlockChain(nextBlock); // Free the rest
+                    freeBlockChain(nextBlock);
                 }
                 nextBlock = -1;
             }
-            
-            file.seek(blockOffset(current) + 8);
+
+            buf.position(8);
             if (prev == -1) {
-                file.writeInt(data.length);
+                buf.putInt(dataLength);
             }
-            file.write(data, offset, toWrite);
-            
+            buf.put(data, offset, toWrite);
+            buf.flip();
+            store.writePage(current, buf);
+
             offset += toWrite;
             prev = current;
             current = nextBlock;
         }
-        
-        if (offset == 0 && data.length == 0) {
-            file.seek(blockOffset(headBlock));
-            long nextInfo = file.readLong();
+
+        if (offset == dataOffset && dataLength == 0) {
+            ByteBuffer buf = ByteBuffer.allocate(pageSize);
+            store.readPage(headBlock, buf);
+            buf.flip();
+            long nextInfo = buf.getLong(0);
             if (nextInfo != -1) {
                 freeBlockChain(nextInfo);
             }
-            file.seek(blockOffset(headBlock));
-            file.writeLong(-1);
-            file.writeInt(0);
+            buf.putLong(0, -1L);
+            buf.putInt(8, 0);
+            buf.flip();
+            store.writePage(headBlock, buf);
         }
     }
 
     @Override
     public void close() throws IOException {
         flushHeader();
-        file.close();
+        store.close();
     }
 }

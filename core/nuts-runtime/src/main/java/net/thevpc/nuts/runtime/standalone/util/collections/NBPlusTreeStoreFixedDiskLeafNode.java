@@ -13,12 +13,14 @@ public class NBPlusTreeStoreFixedDiskLeafNode<K extends Comparable<K>, V> extend
 
     protected long leftSiblingId = -1;
     protected long rightSiblingId = -1;
-    protected NBPlusTree.Entry<K, V>[] dictionary;
+    protected K[] keys;
+    protected V[] values;
 
     @SuppressWarnings("unchecked")
     public NBPlusTreeStoreFixedDiskLeafNode(NBPlusTreeStoreFixedDisk<K, V> store, int m) {
         super(store, m);
-        this.dictionary = new NBPlusTree.Entry[m];
+        this.keys = (K[]) new Comparable[m];
+        this.values = (V[]) new Object[m];
     }
 
     @Override
@@ -28,7 +30,7 @@ public class NBPlusTreeStoreFixedDiskLeafNode<K extends Comparable<K>, V> extend
 
     @Override
     public K firstKey() {
-        return size == 0 ? null : dictionary[0].getKey();
+        return size == 0 ? null : keys[0];
     }
 
     @Override
@@ -36,7 +38,7 @@ public class NBPlusTreeStoreFixedDiskLeafNode<K extends Comparable<K>, V> extend
         return new AbstractList<K>() {
             @Override
             public K get(int index) {
-                return dictionary[index].getKey();
+                return keys[index];
             }
 
             @Override
@@ -48,17 +50,17 @@ public class NBPlusTreeStoreFixedDiskLeafNode<K extends Comparable<K>, V> extend
 
     @Override
     public V valueAt(int index) {
-        return dictionary[index].getValue();
+        return values[index];
     }
 
     @Override
     public K keyAt(int index) {
-        return dictionary[index].getKey();
+        return keys[index];
     }
 
     @Override
     public NBPlusTree.Entry<K, V> entryAt(int index) {
-        return dictionary[index];
+        return new AbstractMap.SimpleEntry<>(keys[index], values[index]);
     }
 
     @Override
@@ -72,9 +74,8 @@ public class NBPlusTreeStoreFixedDiskLeafNode<K extends Comparable<K>, V> extend
     }
 
     public V setValueAt(int index, V value) {
-        NBPlusTree.Entry<K, V> e = this.dictionary[index];
-        V old = e.getValue();
-        this.dictionary[index] = new AbstractMap.SimpleEntry<>(e.getKey(), value);
+        V old = this.values[index];
+        this.values[index] = value;
         dirty = true;
         return old;
     }
@@ -87,23 +88,20 @@ public class NBPlusTreeStoreFixedDiskLeafNode<K extends Comparable<K>, V> extend
         dos.writeLong(rightSiblingId);
         dos.writeInt(size);
         for (int i = 0; i < size; i++) {
-            NBPlusTree.Entry<K, V> entry = dictionary[i];
-            store.serializeKey(entry.getKey(), dos);
-            store.serializeValue(entry.getValue(), dos);
+            store.serializeKey(keys[i], dos);
+            store.serializeValue(values[i], dos);
         }
     }
 
     @Override
     public void deserialize(DataInputStream dis) throws IOException {
-        // boolean isLeaf is already read
         parentId = dis.readLong();
         leftSiblingId = dis.readLong();
         rightSiblingId = dis.readLong();
         size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            K k = store.deserializeKey(dis);
-            V v = store.deserializeValue(dis);
-            dictionary[i] = new AbstractMap.SimpleEntry<>(k, v);
+            keys[i] = store.deserializeKey(dis);
+            values[i] = store.deserializeValue(dis);
         }
     }
 }
