@@ -7,6 +7,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class NBFixedBlockFile implements Closeable {
+//    private static final int HEADER_ROOT_ID = 1;
+//    private static final int HEADER_FIRST_LEAF_ID = 2;
+//    private static final int HEADER_SIZE = 3;
+//    private static final int HEADER_ORDER = 4;
+//    private static final int HEADER_ALLOW_DUPLICATES = 5;
+
     private final NPageStore store;
     private final int pageSize;
     private final int payloadSize;
