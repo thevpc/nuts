@@ -9,6 +9,7 @@ import net.thevpc.nuts.util.*;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -126,6 +127,31 @@ public class NEnvRnsh implements NEnv {
     @Override
     public NArchFamily getArchFamily() {
         return defEnv.getArchFamily();
+    }
+
+    @Override
+    public List<NGpuDevice> getGpuDevices() {
+        return defEnv.getGpuDevices();
+    }
+
+    @Override
+    public NOptional<NGpuDevice> getGpuDevice() {
+        return defEnv.getGpuDevice();
+    }
+
+    @Override
+    public long queryGpuFreeMemoryBytes(NGpuDevice device) {
+        return defEnv.queryGpuFreeMemoryBytes(device);
+    }
+
+    @Override
+    public List<NParallelProcessorRuntime> getParallelProcessorRuntimes() {
+        return defEnv.getParallelProcessorRuntimes();
+    }
+
+    @Override
+    public NParallelProcessorFamily getParallelProcessorFamily() {
+        return defEnv.getParallelProcessorFamily();
     }
 
     @Override

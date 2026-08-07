@@ -384,6 +384,19 @@ public class NEnvAsCmd extends NEnvBase {
     }
 
     @Override
+    protected List<NGpuDevice> getGpuDevices0() {
+        // probing a target through commands is not implemented yet, reporting the
+        // local devices here would describe the wrong machine
+        return Collections.emptyList();
+    }
+
+    @Override
+    protected List<NParallelProcessorRuntime> getParallelProcessorRuntimes0() {
+        // same reasoning as getGpuDevices0
+        return Collections.emptyList();
+    }
+
+    @Override
     public NOptional<String> getEnv(String name) {
         return NOptional.ofNamed(getEnv().get(name), name);
     }

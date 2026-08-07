@@ -1,3 +1,26 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . It's based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
+ * <br>
+ * <p>
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.platform;
 
 import net.thevpc.nuts.util.NEnum;
@@ -6,31 +29,117 @@ import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * uniform parallel processing runtime family, the <em>software</em> stack able
+ * to drive a gpu.
+ * <p>
+ * This is the software axis, deliberately kept distinct from {@link NGpuVendor}
+ * and {@link NGpuDevice} which describe the hardware. The relation is not one to
+ * one : {@link #OPENCL}, {@link #VULKAN} and {@link #DIRECTML} run on any
+ * vendor's hardware, and a single physical device is usually reachable through
+ * several runtimes at once.
+ * <p>
+ * The list is restricted to stacks that artifacts actually ship variants for,
+ * so that every entry stays testable on commonly available hardware. Dedicated
+ * ai accelerators, Google TPU, AWS Neuron, Huawei Ascend, Qualcomm QNN and the
+ * like, are intentionally absent : no distributable artifact targets them on the
+ * jvm, so they cannot take part in artifact resolution. Their names remain
+ * accepted by {@link #parse(String)} and resolve to {@link #UNKNOWN}, so that a
+ * descriptor mentioning one degrades gracefully instead of failing.
+ *
+ * @author thevpc
+ * @app.category Base
+ * @since 0.8.9
+ */
 public enum NParallelProcessorFamily implements NEnum {
 
+    /**
+     * NVIDIA CUDA.
+     */
     CUDA,
+
+    /**
+     * AMD ROCm, and its HIP programming interface.
+     */
     ROCM,
+
+    /**
+     * Intel oneAPI, covering SYCL and Level Zero.
+     */
     ONEAPI,
+
+    /**
+     * Apple Metal, and Metal Performance Shaders.
+     */
     METAL,
-    OPENCL,
+
+    /**
+     * Khronos Vulkan compute, cross vendor.
+     */
     VULKAN,
+
+    /**
+     * Khronos OpenCL, cross vendor.
+     */
+    OPENCL,
+
+    /**
+     * Microsoft DirectML, cross vendor, windows only.
+     */
     DIRECTML,
-    CANN,
-    HABANA,
-    NEURON,
-    TPU,
-    QNN,
-    XPU,
-    MLU,
-    IPU,
-    VITIS,
+
+    /**
+     * Probing succeeded and no gpu compute runtime is available on this machine.
+     * This is a positive answer, as opposed to {@link #UNKNOWN}.
+     */
+    NONE,
+
+    /**
+     * The available runtime could not be determined, either because probing was
+     * not possible or because a parsed value was not recognized. This is an
+     * absence of information, as opposed to {@link #NONE}.
+     */
     UNKNOWN;
 
+    /**
+     * Directories holding shared libraries on linux. The layout varies across
+     * distributions, openSUSE and Fedora use {@code /usr/lib64}, Debian a
+     * multiarch directory, Arch {@code /usr/lib}, so the whole list is stat'ed
+     * rather than trusting any single one. {@code ldconfig} is deliberately not
+     * used, it has been observed failing to report libraries present on disk.
+     */
+    private static final String[] LINUX_LIBRARY_DIRS = {
+            "/usr/lib64",
+            "/usr/lib/x86_64-linux-gnu",
+            "/usr/lib/aarch64-linux-gnu",
+            "/usr/lib",
+            "/usr/local/lib64",
+            "/usr/local/lib"
+    };
+
+    /**
+     * Well known cuda toolkit locations on linux. The nvidia installer uses
+     * {@code /usr/local/cuda}, Arch packages {@code /opt/cuda}, Debian
+     * {@code /usr/lib/cuda}.
+     */
+    private static final String[] LINUX_CUDA_TOOLKIT_DIRS = {
+            "/usr/local/cuda",
+            "/opt/cuda",
+            "/usr/lib/cuda"
+    };
+
     private static final NParallelProcessorFamily _curr = _resolveCurrent();
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NParallelProcessorFamily() {
@@ -38,35 +147,77 @@ public enum NParallelProcessorFamily implements NEnum {
     }
 
     private static NParallelProcessorFamily _resolveCurrent() {
+        if (!_canProbe()) return UNKNOWN;
+        // vendor native stacks first, they are the most specific
         if (_hasCuda())     return CUDA;
         if (_hasRocm())     return ROCM;
         if (_hasOneApi())   return ONEAPI;
-        if (_hasCann())     return CANN;
-        if (_hasHabana())   return HABANA;
-        if (_hasNeuron())   return NEURON;
-        if (_hasTpu())      return TPU;
-        if (_hasQnn())      return QNN;
-        if (_hasXpu())      return XPU;
-        if (_hasMlu())      return MLU;
-        if (_hasIpu())      return IPU;
-        if (_hasVitis())    return VITIS;
         if (_hasMetal())    return METAL;
+        // then cross vendor layers, from most to least capable
         if (_hasDirectMl()) return DIRECTML;
         if (_hasVulkan())   return VULKAN;
         if (_hasOpenCl())   return OPENCL;
-        return UNKNOWN;
+        return NONE;
+    }
+
+    /**
+     * Checks that the environment and filesystem reads the probes rely on are
+     * actually permitted. When they are not, probing cannot tell "absent" from
+     * "unreadable" and {@link #UNKNOWN} has to be reported instead of
+     * {@link #NONE}.
+     */
+    private static boolean _canProbe() {
+        try {
+            System.getenv("PATH");
+            String home = System.getProperty("user.home");
+            if (home != null) {
+                Files.isDirectory(Paths.get(home));
+            }
+            return true;
+        } catch (Exception | LinkageError ignored) {
+            return false;
+        }
     }
 
     private static boolean _hasCuda() {
+        return _hasCudaRuntime() || _hasCudaToolkit();
+    }
+
+    /**
+     * Whether cuda code can be <em>executed</em>. This needs the driver and the
+     * driver api library it ships, never the development toolkit.
+     */
+    private static boolean _hasCudaRuntime() {
         if (NOsFamily.getCurrent() == NOsFamily.MACOS) return false;
         // Most reliable: NVIDIA device file (driver + hardware present)
         if (_deviceExists("/dev/nvidia0")) return true;
+        // Driver api library, its directory varies across distributions
+        if (_anyFileExists(LINUX_LIBRARY_DIRS, "libcuda.so.1")) return true;
         // Driver binary on PATH
         if (_binaryOnPath("nvidia-smi")) return true;
-        // Toolkit directory / env var
+        if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
+            String sysRoot = System.getenv("SystemRoot");
+            if (sysRoot == null) sysRoot = "C:\\Windows";
+            if (_fileExists(sysRoot + "\\System32\\nvcuda.dll")) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Whether cuda code can be <em>compiled</em>. This needs the toolkit, which
+     * is installed separately from the driver and is commonly absent on machines
+     * that run cuda binaries perfectly well.
+     */
+    private static boolean _hasCudaToolkit() {
+        if (NOsFamily.getCurrent() == NOsFamily.MACOS) return false;
+        if (_binaryOnPath("nvcc")) return true;
         if (_envDirExists("CUDA_HOME")) return true;
         if (_envDirExists("CUDA_PATH")) return true;
-        if (NOsFamily.getCurrent() == NOsFamily.LINUX && _dirExists("/usr/local/cuda")) return true;
+        if (NOsFamily.getCurrent() == NOsFamily.LINUX) {
+            for (String d : LINUX_CUDA_TOOLKIT_DIRS) {
+                if (_dirExists(d)) return true;
+            }
+        }
         if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
             String pf = System.getenv("ProgramFiles");
             if (pf != null && _dirExists(pf + "\\NVIDIA GPU Computing Toolkit\\CUDA")) return true;
@@ -75,9 +226,25 @@ public enum NParallelProcessorFamily implements NEnum {
     }
 
     private static boolean _hasRocm() {
-        // Most reliable: KFD (Kernel Fusion Driver) device node
+        return _hasRocmRuntime() || _hasRocmToolkit();
+    }
+
+    /**
+     * Whether rocm code can be executed. The KFD node is the gate, the amdgpu
+     * module alone is not enough.
+     */
+    private static boolean _hasRocmRuntime() {
         if (_deviceExists("/dev/kfd")) return true;
+        if (_anyFileExists(LINUX_LIBRARY_DIRS, "libamdhip64.so")) return true;
         if (_binaryOnPath("rocm-smi")) return true;
+        return false;
+    }
+
+    /**
+     * Whether rocm code can be compiled, which needs the HIP compiler.
+     */
+    private static boolean _hasRocmToolkit() {
+        if (_binaryOnPath("hipcc")) return true;
         if (_envDirExists("ROCM_PATH")) return true;
         if (_envDirExists("HIP_PATH")) return true;
         if (NOsFamily.getCurrent() == NOsFamily.LINUX && _dirExists("/opt/rocm")) return true;
@@ -148,74 +315,6 @@ public enum NParallelProcessorFamily implements NEnum {
         return _fileExists(sysRoot + "\\System32\\DirectML.dll");
     }
 
-    private static boolean _hasCann() {
-        if (_deviceExists("/dev/davinci0")) return true;
-        if (_binaryOnPath("npu-smi")) return true;
-        if (_envDirExists("ASCEND_HOME")) return true;
-        if (_envDirExists("ASCEND_TOOLKIT_HOME")) return true;
-        if (_dirExists("/usr/local/Ascend")) return true;
-        return false;
-    }
-
-    private static boolean _hasHabana() {
-        if (_deviceExists("/dev/hl0")) return true;
-        if (_binaryOnPath("hl-smi")) return true;
-        if (_dirExists("/opt/habanalabs")) return true;
-        // SynapseAI sets this env var when initialized
-        return System.getenv("HABANA_LOGS") != null;
-    }
-
-    private static boolean _hasNeuron() {
-        if (_deviceExists("/dev/neuron0")) return true;
-        if (_binaryOnPath("neuron-ls")) return true;
-        if (_dirExists("/opt/aws/neuron")) return true;
-        return false;
-    }
-
-    private static boolean _hasTpu() {
-        // TPU character device (Google Cloud)
-        if (_deviceExists("/dev/accel0")) return true;
-        String tpuName = System.getenv("TPU_NAME");
-        return tpuName != null && !tpuName.trim().isEmpty();
-    }
-
-    private static boolean _hasQnn() {
-        if (_envDirExists("QNN_SDK_ROOT")) return true;
-        // Qualcomm QNN shared library on Linux/Android
-        if (_fileExists("/usr/lib/libQnnSystem.so")) return true;
-        if (_fileExists("/usr/lib64/libQnnSystem.so")) return true;
-        return false;
-    }
-
-    private static boolean _hasXpu() {
-        if (_envDirExists("XPU_RUNTIME_ROOT")) return true;
-        if (_dirExists("/usr/local/xpu_runtime")) return true;
-        return false;
-    }
-
-    private static boolean _hasMlu() {
-        if (_deviceExists("/dev/cambricon_dev0")) return true;
-        if (_binaryOnPath("cnmon")) return true;
-        if (_dirExists("/usr/local/neuware")) return true;
-        return false;
-    }
-
-    private static boolean _hasIpu() {
-        String poplar = System.getenv("POPLAR_SDK_ENABLED");
-        if (poplar != null && !poplar.trim().isEmpty()) return true;
-        if (_binaryOnPath("gc-info")) return true;
-        if (_dirExists("/opt/gc/poplar")) return true;
-        return false;
-    }
-
-    private static boolean _hasVitis() {
-        if (_deviceExists("/dev/xclmgmt0")) return true;
-        if (_binaryOnPath("xbutil")) return true;
-        if (_envDirExists("XILINX_XRT")) return true;
-        if (_dirExists("/opt/xilinx/xrt")) return true;
-        return false;
-    }
-
     // -------------------------------------------------------------------------
     // Detection helpers — all fail-safe (never throw)
     // -------------------------------------------------------------------------
@@ -267,6 +366,116 @@ public enum NParallelProcessorFamily implements NEnum {
         }
     }
 
+    /**
+     * Looks a file up in several candidate directories, the layout of shared
+     * libraries not being portable across linux distributions.
+     */
+    private static boolean _anyFileExists(String[] dirs, String fileName) {
+        for (String dir : dirs) {
+            try {
+                if (Files.exists(Paths.get(dir, fileName))) return true;
+            } catch (Exception ignored) {
+            }
+        }
+        return false;
+    }
+
+    private static String _firstLine(String path) {
+        try {
+            Path p = Paths.get(path);
+            if (!Files.isReadable(p)) return null;
+            for (String line : Files.readAllLines(p)) {
+                String s = line.trim();
+                if (!s.isEmpty()) return s;
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    /**
+     * Best effort cuda toolkit version. Recent toolkits publish
+     * {@code version.json}, older ones {@code version.txt}, and neither is
+     * guaranteed to be present.
+     */
+    private static String _cudaToolkitVersion() {
+        for (String dir : LINUX_CUDA_TOOLKIT_DIRS) {
+            String txt = _firstLine(dir + "/version.txt");
+            if (txt != null) {
+                // "CUDA Version 11.8.0"
+                int i = txt.lastIndexOf(' ');
+                return i >= 0 ? txt.substring(i + 1) : txt;
+            }
+            String json = _readVersionFromJson(dir + "/version.json");
+            if (json != null) return json;
+        }
+        return null;
+    }
+
+    private static String _readVersionFromJson(String path) {
+        try {
+            Path p = Paths.get(path);
+            if (!Files.isReadable(p)) return null;
+            String content = new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
+            // the cuda block carries the toolkit version, take the first version entry after it
+            int at = content.indexOf("\"cuda\"");
+            int from = at < 0 ? 0 : at;
+            int v = content.indexOf("\"version\"", from);
+            if (v < 0) return null;
+            int q1 = content.indexOf('"', content.indexOf(':', v) + 1);
+            int q2 = q1 < 0 ? -1 : content.indexOf('"', q1 + 1);
+            return (q1 < 0 || q2 < 0) ? null : content.substring(q1 + 1, q2);
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private static String _rocmVersion() {
+        String v = _firstLine("/opt/rocm/.info/version");
+        if (v == null) {
+            v = _firstLine("/opt/rocm/.info/version-dev");
+        }
+        return v;
+    }
+
+    // -------------------------------------------------------------------------
+    // Availability
+    // -------------------------------------------------------------------------
+
+    /**
+     * Detects, for every family, whether code targeting it can be executed and
+     * whether it can be compiled on this machine.
+     * <p>
+     * Families that are neither runnable nor buildable are omitted, so an empty
+     * list means no parallel processing runtime was found at all. Only
+     * {@link #CUDA} and {@link #ROCM} report a distinct toolkit today, the cross
+     * vendor layers expose no development kit that can be detected the same way.
+     *
+     * @return available runtimes, never null
+     * @since 0.8.9
+     */
+    public static List<NParallelProcessorRuntime> detectAvailable() {
+        List<NParallelProcessorRuntime> result = new ArrayList<>();
+        if (!_canProbe()) {
+            return result;
+        }
+        _addIfAny(result, CUDA, _hasCudaRuntime(), _hasCudaToolkit(), _cudaToolkitVersion());
+        _addIfAny(result, ROCM, _hasRocmRuntime(), _hasRocmToolkit(), _rocmVersion());
+        _addIfAny(result, ONEAPI, _hasOneApi(), _hasOneApi(), null);
+        _addIfAny(result, METAL, _hasMetal(), _hasMetal(), null);
+        _addIfAny(result, DIRECTML, _hasDirectMl(), false, null);
+        _addIfAny(result, VULKAN, _hasVulkan(), false, null);
+        _addIfAny(result, OPENCL, _hasOpenCl(), false, null);
+        return result;
+    }
+
+    private static void _addIfAny(List<NParallelProcessorRuntime> result, NParallelProcessorFamily family,
+                                  boolean runtime, boolean toolkit, String version) {
+        if (runtime || toolkit) {
+            result.add(NParallelProcessorRuntime.of(family, runtime, toolkit, version));
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Parse
     // -------------------------------------------------------------------------
@@ -290,6 +499,8 @@ public enum NParallelProcessorFamily implements NEnum {
                 case "LEVEL_ZERO":
                 case "LEVELZERO":
                 case "INTEL_GPU":
+                // industry wide, "xpu" denotes an Intel gpu, it is the pytorch device name
+                case "XPU":
                     return NOptional.of(ONEAPI);
 
                 case "METAL":
@@ -309,55 +520,42 @@ public enum NParallelProcessorFamily implements NEnum {
                 case "DML":
                     return NOptional.of(DIRECTML);
 
+                case "NONE":
+                case "CPU":
+                    return NOptional.of(NONE);
+
+                // dedicated accelerators are not resolution targets, their names
+                // stay parseable so that descriptors degrade instead of failing
                 case "CANN":
                 case "ASCEND":
                 case "HUAWEI":
-                    return NOptional.of(CANN);
-
                 case "HABANA":
                 case "GAUDI":
                 case "SYNAPSE":
                 case "SYNAPSEAI":
                 case "HPU":
-                    return NOptional.of(HABANA);
-
                 case "NEURON":
                 case "TRAINIUM":
                 case "INFERENTIA":
-                    return NOptional.of(NEURON);
-
                 case "TPU":
                 case "XLA":
                 case "GOOGLE_TPU":
-                    return NOptional.of(TPU);
-
                 case "QNN":
                 case "SNPE":
                 case "HEXAGON":
                 case "QUALCOMM":
-                    return NOptional.of(QNN);
-
-                case "XPU":
                 case "KUNLUN":
                 case "BAIDU":
-                    return NOptional.of(XPU);
-
                 case "MLU":
                 case "BANG":
                 case "CAMBRICON":
-                    return NOptional.of(MLU);
-
                 case "IPU":
                 case "POPLAR":
                 case "GRAPHCORE":
-                    return NOptional.of(IPU);
-
                 case "VITIS":
                 case "XRT":
                 case "FPGA":
                 case "XILINX":
-                    return NOptional.of(VITIS);
-
                 case "UNKNOWN":
                     return NOptional.of(UNKNOWN);
             }
@@ -378,128 +576,33 @@ public enum NParallelProcessorFamily implements NEnum {
         return _curr;
     }
 
-    // --- Vendor helpers ---
-
-    /** NVIDIA family: {@link #CUDA} */
-    public boolean isNvidiaFamily() {
-        return this == CUDA;
-    }
-
-    /** AMD family: {@link #ROCM}, {@link #VITIS} */
-    public boolean isAmdFamily() {
-        return this == ROCM || this == VITIS;
-    }
-
-    /** Intel family: {@link #ONEAPI}, {@link #HABANA} */
-    public boolean isIntelFamily() {
-        return this == ONEAPI || this == HABANA;
-    }
-
-    /** Apple family: {@link #METAL} */
-    public boolean isAppleFamily() {
-        return this == METAL;
-    }
-
-    /** Qualcomm family: {@link #QNN} */
-    public boolean isQualcommFamily() {
-        return this == QNN;
-    }
-
-    /** Google family: {@link #TPU} */
-    public boolean isGoogleFamily() {
-        return this == TPU;
-    }
-
-    /** Huawei family: {@link #CANN} */
-    public boolean isHuaweiFamily() {
-        return this == CANN;
-    }
-
-    /** AWS family: {@link #NEURON} */
-    public boolean isAwsFamily() {
-        return this == NEURON;
-    }
-
-    /** Baidu family: {@link #XPU} */
-    public boolean isBaiduFamily() {
-        return this == XPU;
-    }
-
-    /** Cambricon family: {@link #MLU} */
-    public boolean isCambriconFamily() {
-        return this == MLU;
-    }
-
-    /** Graphcore family: {@link #IPU} */
-    public boolean isGraphcoreFamily() {
-        return this == IPU;
-    }
-
     // --- Category helpers ---
 
     /**
-     * Returns true for GPU-based accelerators:
-     * {@link #CUDA}, {@link #ROCM}, {@link #ONEAPI}, {@link #METAL},
-     * {@link #OPENCL}, {@link #VULKAN}, {@link #DIRECTML}.
-     */
-    public boolean isGpu() {
-        switch (this) {
-            case CUDA:
-            case ROCM:
-            case ONEAPI:
-            case METAL:
-            case OPENCL:
-            case VULKAN:
-            case DIRECTML:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Returns true for dedicated AI/ML chips (NPU, TPU, HPU, IPU):
-     * {@link #CANN}, {@link #HABANA}, {@link #NEURON}, {@link #TPU},
-     * {@link #QNN}, {@link #XPU}, {@link #MLU}, {@link #IPU}.
-     */
-    public boolean isNpu() {
-        switch (this) {
-            case CANN:
-            case HABANA:
-            case NEURON:
-            case TPU:
-            case QNN:
-            case XPU:
-            case MLU:
-            case IPU:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /** Returns true for FPGA accelerators: {@link #VITIS}. */
-    public boolean isFpga() {
-        return this == VITIS;
-    }
-
-    /**
-     * Returns true for cross-vendor compute layers that work across multiple
-     * GPU brands: {@link #OPENCL}, {@link #VULKAN}, {@link #DIRECTML}.
+     * Returns true for cross-vendor compute layers that work across multiple gpu
+     * brands: {@link #OPENCL}, {@link #VULKAN}, {@link #DIRECTML}.
+     *
+     * @return true for cross vendor layers
      */
     public boolean isCrossVendor() {
         return this == OPENCL || this == VULKAN || this == DIRECTML;
     }
 
     /**
-     * Returns true for accelerators that are only available inside a specific
-     * cloud provider's infrastructure: {@link #TPU}, {@link #NEURON}.
+     * Returns true only for {@link #NONE}, meaning probing succeeded and found
+     * no gpu compute runtime.
+     *
+     * @return true for {@link #NONE}
      */
-    public boolean isCloudOnly() {
-        return this == TPU || this == NEURON;
+    public boolean isNone() {
+        return this == NONE;
     }
 
-    /** Returns true only for {@link #UNKNOWN}. */
+    /**
+     * Returns true only for {@link #UNKNOWN}.
+     *
+     * @return true for {@link #UNKNOWN}
+     */
     public boolean isUnknown() {
         return this == UNKNOWN;
     }

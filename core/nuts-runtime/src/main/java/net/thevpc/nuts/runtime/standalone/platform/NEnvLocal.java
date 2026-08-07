@@ -12,6 +12,7 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -125,6 +126,21 @@ public class NEnvLocal extends NEnvBase {
     @Override
     public boolean isGraphicalDesktopEnvironment0() {
         return CoreNUtilGui.isGraphicalDesktopEnvironment();
+    }
+
+    @Override
+    protected List<NGpuDevice> getGpuDevices0() {
+        return NLinuxGpuProbe.probe();
+    }
+
+    @Override
+    public long queryGpuFreeMemoryBytes(NGpuDevice device) {
+        return device == null ? -1 : NLinuxGpuProbe.queryFreeMemoryBytes(device.getPciBusId());
+    }
+
+    @Override
+    protected List<NParallelProcessorRuntime> getParallelProcessorRuntimes0() {
+        return NParallelProcessorFamily.detectAvailable();
     }
 
 

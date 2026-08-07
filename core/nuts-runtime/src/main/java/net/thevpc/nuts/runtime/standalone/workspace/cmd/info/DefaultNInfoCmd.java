@@ -452,6 +452,10 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("os-dist", () -> NEnv.of().getOsDist());
         props.put("os-arch", () -> NEnv.of().getArch());
         props.put("os-arch-family", () -> NEnv.of().getArchFamily());
+        props.put("gpu-devices", () -> NEnv.of().getGpuDevices());
+        props.put("gpu-device", () -> NEnv.of().getGpuDevice().orNull());
+        props.put("parallel-processor-family", () -> NEnv.of().getParallelProcessorFamily());
+        props.put("parallel-processor-runtimes", () -> NEnv.of().getParallelProcessorRuntimes());
         props.put("os-desktop", () -> NEnv.of().getDesktopEnvironment());
         props.put("os-desktops", () -> NEnv.of().getDesktopEnvironments());
         props.put("os-desktop-family", () -> NEnv.of().getDesktopEnvironmentFamily());
@@ -666,6 +670,10 @@ public class DefaultNInfoCmd implements NInfoCmd {
         }
         props.put("os-arch", environment.getArch());
         props.put("os-arch-family", environment.getArchFamily());
+        props.put("gpu-devices", environment.getGpuDevices());
+        props.put("gpu-device", environment.getGpuDevice().orNull());
+        props.put("parallel-processor-family", environment.getParallelProcessorFamily());
+        props.put("parallel-processor-runtimes", environment.getParallelProcessorRuntimes());
         props.put("os-desktop", environment.getDesktopEnvironment());
         props.put("os-desktops", environment.getDesktopEnvironments());
         props.put("os-desktop-family", environment.getDesktopEnvironmentFamily());
