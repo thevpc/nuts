@@ -46,7 +46,7 @@ public class NElementStepChild implements NElementStep {
 
     @Override
     public NElement toElement() {
-        return NElement.ofNamedUplet("Child", value);
+        return NElement.ofNamedTuple("Child", value);
     }
 
     @Override

@@ -3,9 +3,9 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.mon.NChronometer;
-import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.util.store.NChunkedStore;
-import net.thevpc.nuts.util.store.NChunkedStoreBuilder;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.collections.NChunkedStore;
+import net.thevpc.nuts.collections.NChunkedStoreBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

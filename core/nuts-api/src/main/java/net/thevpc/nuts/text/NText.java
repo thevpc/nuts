@@ -28,7 +28,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.elem.NElementSimple;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;

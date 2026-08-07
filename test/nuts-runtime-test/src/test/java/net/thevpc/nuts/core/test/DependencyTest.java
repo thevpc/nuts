@@ -11,7 +11,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.collections.NMaps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

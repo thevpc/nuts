@@ -1,16 +1,18 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.collections.NCollections;
+
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class NMultiPattern {
-    LinkedHashMap<String, NPatternInfo> map = new LinkedHashMap<>();
-    boolean fully;
-    Runnable noMatch;
-    Consumer<NStringMatchResult> match;
-    Consumer<NStringMatchResult> fullMatch;
-
-    Consumer<NStringMatchResult> partialMatch;
+    private LinkedHashMap<String, NPatternInfo> map = new LinkedHashMap<>();
+    private boolean fully;
+    private Runnable noMatch;
+    private Consumer<NStringMatchResult> match;
+    private Consumer<NStringMatchResult> fullMatch;
+    private Consumer<NStringMatchResult> partialMatch;
 
     public NMultiPattern onMatch(String pattern, Consumer<NStringMatchResult> action) {
         return on(pattern, true, action, NMatchType.MATCH);
@@ -109,4 +111,23 @@ public class NMultiPattern {
         return this;
     }
 
+    public Runnable noMatch() {
+        return noMatch;
+    }
+
+    public Consumer<NStringMatchResult> match() {
+        return match;
+    }
+
+    public Consumer<NStringMatchResult> fullMatch() {
+        return fullMatch;
+    }
+
+    public Consumer<NStringMatchResult> partialMatch() {
+        return partialMatch;
+    }
+
+    public Map<String, NPatternInfo> map() {
+        return NCollections.unmodifiableMap(map);
+    }
 }

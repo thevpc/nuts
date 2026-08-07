@@ -10,7 +10,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NIndexerNotAccessibleException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIteratorBase;
+import net.thevpc.nuts.pipeline.NIteratorBase;
 
 import java.util.Iterator;
 

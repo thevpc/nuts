@@ -6,7 +6,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.function.Predicate;
 

@@ -2,7 +2,7 @@ package net.thevpc.nuts.util;
 
 import java.util.function.Consumer;
 
-class NPatternInfo implements Comparable<NPatternInfo> {
+public class NPatternInfo implements Comparable<NPatternInfo> {
     private String pattern;
     private Consumer<NStringMatchResult> action;
     private Consumer<NStringMatchResult> fullMatchAction;

@@ -25,7 +25,7 @@ public class NElementStepSubList implements NElementStep {
 
     @Override
     public NElement toElement() {
-        return NElement.ofNamedUplet("SubList", NElement.ofInt(value));
+        return NElement.ofNamedTuple("SubList", NElement.ofInt(value));
     }
 
     @Override

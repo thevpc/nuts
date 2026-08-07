@@ -4,6 +4,7 @@ import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;

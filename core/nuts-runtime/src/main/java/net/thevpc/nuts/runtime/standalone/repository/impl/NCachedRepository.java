@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.artifact.NArtifactNotFoundException;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.NDefinitionFilter;

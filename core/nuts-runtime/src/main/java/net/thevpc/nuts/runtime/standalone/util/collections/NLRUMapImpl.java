@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NLRUMap;
+import net.thevpc.nuts.collections.NLRUMap;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

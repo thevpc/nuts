@@ -33,7 +33,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
-import net.thevpc.nuts.util.NDefaultObservableMap;
+import net.thevpc.nuts.collections.NDefaultObservableMap;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySPI;
@@ -41,6 +41,8 @@ import net.thevpc.nuts.spi.NRepositorySPI;
 import java.util.*;
 
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
+import net.thevpc.nuts.collections.NObservableMap;
+import net.thevpc.nuts.collections.NObservableMapListener;
 
 /**
  * Created by vpc on 1/18/17.

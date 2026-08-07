@@ -17,6 +17,7 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
+import net.thevpc.nuts.collections.NCollections;
 
 import java.util.*;
 import java.util.function.Function;

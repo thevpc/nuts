@@ -11,7 +11,7 @@ import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.collections.NMaps;
 import net.thevpc.nuts.util.NStringMapFormat;
 
 import java.io.*;

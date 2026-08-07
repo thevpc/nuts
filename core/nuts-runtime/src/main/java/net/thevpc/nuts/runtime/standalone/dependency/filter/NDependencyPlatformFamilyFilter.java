@@ -6,7 +6,7 @@ import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;

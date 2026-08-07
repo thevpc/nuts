@@ -33,7 +33,7 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 import java.util.Iterator;
 

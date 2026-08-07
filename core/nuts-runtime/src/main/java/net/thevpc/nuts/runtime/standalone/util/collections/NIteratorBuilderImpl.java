@@ -9,7 +9,11 @@ import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NIteratorErrorHandlerType;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NCollections;
 
 import java.util.Arrays;
 import java.util.Collection;

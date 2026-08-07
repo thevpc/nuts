@@ -41,6 +41,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.collections.NCollections;
 
 import java.util.*;
 import java.util.logging.Level;

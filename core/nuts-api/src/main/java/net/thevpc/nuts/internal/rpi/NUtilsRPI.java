@@ -26,18 +26,16 @@
  */
 package net.thevpc.nuts.internal.rpi;
 
+import net.thevpc.nuts.collections.*;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.pipeline.*;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NMsgType;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.util.store.NBPlusTree;
-import net.thevpc.nuts.util.store.NBPlusTreeStore;
-import net.thevpc.nuts.util.store.NChunkedStoreBuilder;
-import net.thevpc.nuts.util.store.NChunkedStoreFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -172,7 +170,7 @@ public interface NUtilsRPI extends NComponent {
 
     <T> NIteratorBuilder<T> iteratorBuilderOfFlatMap(NIterator<? extends Collection<T>> from);
 
-    NIterator<NIntUplet2> int2Iterator(int a, int b);
+    NIterator<NIntTuple2> int2Iterator(int a, int b);
 
     <K, V> NClassMultiMap<K, V> createClassMultiMap(Class<K> key1Type, Class<V> valueType);
 

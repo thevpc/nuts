@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.elem.steps;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementStep;
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.elem.NListItemElement;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -43,7 +42,7 @@ public class NElementStepParam implements NElementStep {
 
     @Override
     public NElement toElement() {
-        return NElement.ofNamedUplet("Param", value);
+        return NElement.ofNamedTuple("Param", value);
     }
 
     @Override

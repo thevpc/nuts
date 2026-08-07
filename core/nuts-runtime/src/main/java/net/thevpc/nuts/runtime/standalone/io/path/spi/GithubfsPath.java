@@ -7,6 +7,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;

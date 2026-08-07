@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.collections.NMaps;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;

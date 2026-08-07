@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;

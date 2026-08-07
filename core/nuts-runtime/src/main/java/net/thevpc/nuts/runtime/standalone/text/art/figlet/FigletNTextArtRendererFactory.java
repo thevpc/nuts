@@ -9,6 +9,7 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NTextArtRenderer;
 import net.thevpc.nuts.text.NTextArtRendererFactory;
 import net.thevpc.nuts.text.NTextArtTextRenderer;
+import net.thevpc.nuts.collections.NCollections;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -4,7 +4,7 @@ package net.thevpc.nuts.runtime.standalone.repository.index;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBDefaultIndexDefinition;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableDefinition;

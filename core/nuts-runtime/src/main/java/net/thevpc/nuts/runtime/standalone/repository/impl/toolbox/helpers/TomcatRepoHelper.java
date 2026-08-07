@@ -2,29 +2,21 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
-import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.function.Function;
 
 
 public class TomcatRepoHelper implements ToolboxRepoHelper {

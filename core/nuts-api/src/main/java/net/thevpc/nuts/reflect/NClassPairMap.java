@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
-import net.thevpc.nuts.util.NUplet;
+import net.thevpc.nuts.util.NTuple;
 
 import java.util.List;
 import java.util.Set;
@@ -17,13 +17,13 @@ public interface NClassPairMap<A,B,V> {
     }
 
 
-    Set<NUplet<Class>> keySet();
+    Set<NTuple<Class>> keySet();
 
     V put(Class<? extends A> classKey1, Class<? extends B> classKey2, V value);
 
     V remove(Class<? extends A> classKey1, Class<? extends B> classKey2);
 
-    List<NUplet<Class>> getSearchPath(Class<? extends A> classKey1, Class<? extends B> classKey2);
+    List<NTuple<Class>> getSearchPath(Class<? extends A> classKey1, Class<? extends B> classKey2);
 
     V getExact(Class<? extends A> classKey1, Class<? extends B> classKey2);
 

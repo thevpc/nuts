@@ -24,7 +24,7 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.collections.NObservableMapListener;
 import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;

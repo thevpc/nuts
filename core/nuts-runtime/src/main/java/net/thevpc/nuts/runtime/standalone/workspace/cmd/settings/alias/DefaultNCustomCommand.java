@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLog;

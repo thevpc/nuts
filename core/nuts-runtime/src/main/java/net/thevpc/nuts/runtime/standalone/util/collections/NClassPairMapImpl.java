@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.reflect.NClassPairMap;
 import net.thevpc.nuts.reflect.NReflectUtils;
-import net.thevpc.nuts.util.NUplet;
+import net.thevpc.nuts.util.NTuple;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -13,9 +13,9 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
     private final Class<? extends A> baseKey1Type;
     private final Class<? extends B> baseKey2Type;
     private final Class<V> valueType;
-    private final HashMap<NUplet<Class>, V> values = new HashMap<NUplet<Class>, V>();
-    private final HashMap<NUplet<Class>, V[]> cachedValues = new HashMap<NUplet<Class>, V[]>();
-    private final HashMap<NUplet<Class>, NUplet<Class>[]> cachedHierarchy = new HashMap<NUplet<Class>, NUplet<Class>[]>();
+    private final HashMap<NTuple<Class>, V> values = new HashMap<NTuple<Class>, V>();
+    private final HashMap<NTuple<Class>, V[]> cachedValues = new HashMap<NTuple<Class>, V[]>();
+    private final HashMap<NTuple<Class>, NTuple<Class>[]> cachedHierarchy = new HashMap<NTuple<Class>, NTuple<Class>[]>();
 
     public NClassPairMapImpl(Class<? extends A> baseKey1Type, Class<? extends B> baseKey2Type, Class<V> valueType, boolean symmetric) {
         this.baseKey1Type = baseKey1Type;
@@ -25,7 +25,7 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
     }
 
     @Override
-    public Set<NUplet<Class>> keySet() {
+    public Set<NTuple<Class>> keySet() {
         return values.keySet();
     }
 
@@ -54,12 +54,12 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
     }
 
     @Override
-    public List<NUplet<Class>> getSearchPath(Class<? extends A> classKey1, Class<? extends B> classKey2) {
+    public List<NTuple<Class>> getSearchPath(Class<? extends A> classKey1, Class<? extends B> classKey2) {
         return Arrays.asList(getKeys(createKey(classKey1, classKey2)));
     }
 
-    private NUplet<Class>[] getKeys(NUplet<Class> classKey) {
-        NUplet<Class>[] keis = cachedHierarchy.get(classKey);
+    private NTuple<Class>[] getKeys(NTuple<Class> classKey) {
+        NTuple<Class>[] keis = cachedHierarchy.get(classKey);
         if (keis == null) {
             keis = evalHierarchy(classKey);
             cachedHierarchy.put(classKey, keis);
@@ -78,7 +78,7 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
         return get(createKey(classKey1, classKey2));
     }
 
-    private V get(NUplet<Class> key) {
+    private V get(NTuple<Class> key) {
         List<V> found = getAll(key);
         if (!found.isEmpty()) {
             return found.get(0);
@@ -91,12 +91,12 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
         return getAll(createKey(classKey1, classKey2));
     }
 
-    private List<V> getAll(NUplet<Class> classKey) {
+    private List<V> getAll(NTuple<Class> classKey) {
         V[] found = cachedValues.get(classKey);
         if (found == null) {
-            NUplet<Class>[] keis = getKeys(classKey);
+            NTuple<Class>[] keis = getKeys(classKey);
             List<V> all = new ArrayList<V>();
-            for (NUplet<Class> c : keis) {
+            for (NTuple<Class> c : keis) {
                 V u = values.get(c);
                 if (u != null) {
                     all.add(u);
@@ -109,16 +109,16 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
     }
 
 
-    public NUplet<Class>[] evalHierarchy(NUplet<Class> clazz) {
+    public NTuple<Class>[] evalHierarchy(NTuple<Class> clazz) {
         Class[] first = NReflectUtils.findClassHierarchy(clazz.get(0), baseKey1Type).toArray(new Class[0]);
         Class[] second = NReflectUtils.findClassHierarchy(clazz.get(1), baseKey2Type).toArray(new Class[0]);
-        HashSet<NUplet<Class>> seen = new HashSet<NUplet<Class>>();
-        List<IndexComparable<NUplet<Class>>> result = new LinkedList<IndexComparable<NUplet<Class>>>();
+        HashSet<NTuple<Class>> seen = new HashSet<NTuple<Class>>();
+        List<IndexComparable<NTuple<Class>>> result = new LinkedList<IndexComparable<NTuple<Class>>>();
         for (int i1 = 0; i1 < first.length; i1++) {
             Class aClass = first[i1];
             for (int i2 = 0; i2 < second.length; i2++) {
                 Class bClass = second[i2];
-                NUplet<Class> i = createKey(aClass, bClass);
+                NTuple<Class> i = createKey(aClass, bClass);
                 if (!seen.contains(i)) {
                     seen.add(i);
                     result.add(new IndexComparable(i1 + i2, i));
@@ -126,11 +126,11 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
             }
         }
         Collections.sort(result);
-        List<NUplet<Class>> result2 = new ArrayList<NUplet<Class>>(result.size());
-        for (IndexComparable<NUplet<Class>> ic : result) {
+        List<NTuple<Class>> result2 = new ArrayList<NTuple<Class>>(result.size());
+        for (IndexComparable<NTuple<Class>> ic : result) {
             result2.add(ic.v);
         }
-        return result2.toArray(new NUplet[result.size()]);
+        return result2.toArray(new NTuple[result.size()]);
     }
 
     private static class IndexComparable<T> implements Comparable<IndexComparable> {
@@ -148,7 +148,7 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
         }
     }
 
-    protected NUplet<Class> createKey(Class first, Class second) {
+    protected NTuple<Class> createKey(Class first, Class second) {
         if (symmetric) {
             int c = first.getName().compareTo(second.getName());
             if (c > 0) {
@@ -157,7 +157,7 @@ public class NClassPairMapImpl<A, B, V> implements NClassPairMap<A, B, V> {
                 first = p;
             }
         }
-        return NUplet.of(first, second);
+        return NTuple.of(first, second);
     }
 
     @Override

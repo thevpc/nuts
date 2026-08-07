@@ -26,11 +26,14 @@ package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.pipeline.NIterable;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.runtime.standalone.util.CallOnceRunnable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.util.*;
 
@@ -801,7 +804,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NElement.ofNamedUplet("skip", NUtils.firstNonNull(desc, NElement.ofString("?")), NElement.ofLong(n));
+                return NElement.ofNamedTuple("skip", NUtils.firstNonNull(desc, NElement.ofString("?")), NElement.ofLong(n));
             }
         });
     }

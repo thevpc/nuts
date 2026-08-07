@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NEvictingIntQueue;
+import net.thevpc.nuts.collections.NEvictingIntQueue;
 
 import java.util.Arrays;
 

@@ -35,7 +35,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NIteratorBase;
+import net.thevpc.nuts.pipeline.NIteratorBase;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedOperationException;

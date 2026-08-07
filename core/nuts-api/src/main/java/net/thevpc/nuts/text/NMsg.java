@@ -36,6 +36,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.collections.NMaps;
 
 public class NMsg implements NBlankable, NElementSimple {
 

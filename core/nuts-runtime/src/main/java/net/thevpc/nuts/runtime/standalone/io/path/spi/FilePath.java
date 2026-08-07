@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.reflect.NScorable;

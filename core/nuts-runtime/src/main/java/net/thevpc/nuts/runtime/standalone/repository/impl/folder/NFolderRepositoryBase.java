@@ -11,6 +11,8 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;

@@ -10,7 +10,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElementBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.search.AbstractNSearch;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.Iterator;

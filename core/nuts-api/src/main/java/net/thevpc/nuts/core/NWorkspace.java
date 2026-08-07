@@ -42,6 +42,7 @@ import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NObservableMapListener;
 
 import java.io.Closeable;
 import java.net.URL;

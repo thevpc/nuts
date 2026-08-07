@@ -32,7 +32,7 @@ import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.internal.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.concurrent.NCallable;
-import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.collections.NObservableMapListener;
 
 import java.util.List;
 

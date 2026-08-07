@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NListMultiValueMap;
+import net.thevpc.nuts.collections.NListMultiValueMap;
 
 import java.util.*;
 

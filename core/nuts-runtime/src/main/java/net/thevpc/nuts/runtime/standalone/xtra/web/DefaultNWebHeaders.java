@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
-import net.thevpc.nuts.util.NNormalizedStringMap;
+import net.thevpc.nuts.collections.NNormalizedStringMap;
 
 import java.util.ArrayList;
 import java.util.List;

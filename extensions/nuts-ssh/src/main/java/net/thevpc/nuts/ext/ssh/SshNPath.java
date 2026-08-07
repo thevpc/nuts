@@ -5,6 +5,7 @@ import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.spi.NPathSPIAware;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.spi.NObjectWriterSPI;

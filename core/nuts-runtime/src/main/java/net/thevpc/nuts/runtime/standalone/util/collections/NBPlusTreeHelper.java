@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.store.NBPlusTree;
+import net.thevpc.nuts.collections.NBPlusTree;
 
 import java.util.Comparator;
 import java.util.List;

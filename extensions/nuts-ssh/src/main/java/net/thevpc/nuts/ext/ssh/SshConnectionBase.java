@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;

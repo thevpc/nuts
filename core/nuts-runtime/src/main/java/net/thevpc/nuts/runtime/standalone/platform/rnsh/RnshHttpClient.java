@@ -11,6 +11,7 @@ import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NMapBuilder;
 
 import java.io.*;
 import java.util.*;

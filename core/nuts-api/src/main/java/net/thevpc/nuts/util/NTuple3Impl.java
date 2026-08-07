@@ -1,0 +1,130 @@
+package net.thevpc.nuts.util;
+
+import net.thevpc.nuts.reflect.NReflectUtils;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+@NImmutable
+final class NTuple3Impl<A extends T, B extends T, C extends T, T> implements NTuple3<A, B, C, T> {
+    private final A a;
+    private final B b;
+    private final C c;
+
+    public NTuple3Impl(A a, B b, C c) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+
+    @Override
+    public A first() {
+        return a;
+    }
+
+    @Override
+    public B second() {
+        return b;
+    }
+
+    @Override
+    public C third() {
+        return c;
+    }
+
+    @Override
+    public T get(int index) {
+        switch (index) {
+            case 0:
+                return a;
+            case 1:
+                return b;
+            case 2:
+                return c;
+        }
+        throw new ArrayIndexOutOfBoundsException(index);
+    }
+
+
+    @Override
+    public NTuple3<A, B, C, T> set(T newValue, int index) {
+        switch (index) {
+            case 0:
+                return new NTuple3Impl<>((A) newValue, b, c);
+            case 1:
+                return new NTuple3Impl<>(a, (B) newValue, c);
+            case 2:
+                return new NTuple3Impl<>(a, b, (C) newValue);
+        }
+        throw new ArrayIndexOutOfBoundsException(index);
+    }
+
+    @Override
+    public NTuple3<A, B, C, T> setFirst(A t) {
+        return set(t, 0);
+    }
+
+    @Override
+    public NTuple3<A, B, C, T> setSecond(B t) {
+        return set(t, 1);
+    }
+
+    @Override
+    public NTuple3<A, B, C, T> setThird(C t) {
+        return set(t, 2);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return Arrays.asList(a, b, c).iterator();
+    }
+
+    @Override
+    public List<T> toList() {
+        return Arrays.asList(a, b, c);
+    }
+
+    @Override
+    public T[] toArray() {
+        Class ca = a == null ? null : a.getClass();
+        Class cb = b == null ? null : b.getClass();
+        Class cc = c == null ? null : c.getClass();
+        if (ca == null && cb == null && cc == null) {
+            return (T[]) new Object[]{a, b, c};
+        }
+        T[] ts = (T[]) Array.newInstance(NReflectUtils.commonAncestor(ca, cb, cc), 3);
+        ts[0] = a;
+        ts[1] = b;
+        ts[2] = c;
+        return ts;
+    }
+
+    @Override
+    public int size() {
+        return 3;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NTuple3Impl<?, ?, ?, ?> tuple = (NTuple3Impl<?, ?, ?, ?>) o;
+        return Objects.equals(a, tuple.a) && Objects.equals(b, tuple.b) && Objects.equals(c, tuple.c);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(a, b, c);
+    }
+
+    @Override
+    public String toString() {
+        return "(" +
+                a +
+                ", " + b +
+                ", " + c +
+                ')';
+    }
+}

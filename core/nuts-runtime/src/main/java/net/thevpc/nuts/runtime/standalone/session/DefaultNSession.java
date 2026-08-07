@@ -56,6 +56,7 @@ import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NObservableMapListener;
 
 import java.io.InputStream;
 import java.time.Instant;

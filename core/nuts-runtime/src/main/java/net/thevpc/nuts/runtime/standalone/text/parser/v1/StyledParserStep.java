@@ -11,6 +11,7 @@ import net.thevpc.nuts.runtime.standalone.util.NDebugString;
 import net.thevpc.nuts.runtime.standalone.util.collections.NEvictingCharQueueImpl;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.collections.NEvictingCharQueue;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -9,7 +9,7 @@ import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 public class NSimpleRepositoryWrapper extends NCachedRepository {
     private NRepositoryModel base;

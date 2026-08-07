@@ -16,6 +16,7 @@ import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.math.NIndexSelectionStrategy;
 import net.thevpc.nuts.net.NHttpMethod;
+import net.thevpc.nuts.pipeline.NIteratorErrorHandlerType;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;

@@ -4,8 +4,8 @@ import net.thevpc.nuts.command.NInstallListener;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceListener;
 import net.thevpc.nuts.core.NRepositoryListener;
-import net.thevpc.nuts.util.NObservableMap;
-import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.collections.NObservableMap;
+import net.thevpc.nuts.collections.NObservableMapListener;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.platform.rnsh;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;

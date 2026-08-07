@@ -30,6 +30,7 @@ import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.reflect.NClassLoader;

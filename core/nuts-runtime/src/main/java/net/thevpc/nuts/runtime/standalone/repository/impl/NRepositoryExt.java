@@ -17,7 +17,7 @@ import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
 import net.thevpc.nuts.spi.NUndeployRepositoryCmd;
 import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 /**
  *

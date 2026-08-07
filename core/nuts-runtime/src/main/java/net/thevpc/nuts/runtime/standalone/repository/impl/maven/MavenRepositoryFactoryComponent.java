@@ -37,6 +37,7 @@ import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NMaps;
 
 import java.util.ArrayList;
 import java.util.Collections;

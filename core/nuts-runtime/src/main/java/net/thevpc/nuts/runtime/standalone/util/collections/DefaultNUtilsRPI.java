@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
+import net.thevpc.nuts.collections.*;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.pipeline.*;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -14,7 +16,6 @@ import net.thevpc.nuts.text.NMsgType;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.util.store.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -400,7 +401,7 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     }
 
     @Override
-    public NIterator<NIntUplet2> int2Iterator(int a, int b) {
+    public NIterator<NIntTuple2> int2Iterator(int a, int b) {
         return NIterator.of(new NIntUplet2Iterator(a, b));
     }
 

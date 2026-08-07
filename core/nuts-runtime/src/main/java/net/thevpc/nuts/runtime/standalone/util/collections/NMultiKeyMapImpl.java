@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NMultiKeyMap;
+import net.thevpc.nuts.collections.NMultiKeyMap;
 
 import java.util.*;
 

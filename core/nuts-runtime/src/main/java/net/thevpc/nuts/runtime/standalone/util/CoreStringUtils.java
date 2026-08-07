@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.io.NStreamTokenizer;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;

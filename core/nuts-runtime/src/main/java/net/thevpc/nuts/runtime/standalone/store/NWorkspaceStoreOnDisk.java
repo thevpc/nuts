@@ -9,6 +9,8 @@ import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;

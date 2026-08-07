@@ -50,6 +50,9 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalled
 import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendationConnector;
+import net.thevpc.nuts.collections.NDefaultObservableMap;
+import net.thevpc.nuts.collections.NLRUMap;
+import net.thevpc.nuts.collections.NObservableMap;
 
 import java.lang.management.ManagementFactory;
 import java.util.*;

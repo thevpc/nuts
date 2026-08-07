@@ -15,7 +15,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NFormatUtils;
-import net.thevpc.nuts.util.NPropsTransformer;
+import net.thevpc.nuts.io.NPropsTransformer;
 
 /**
  *

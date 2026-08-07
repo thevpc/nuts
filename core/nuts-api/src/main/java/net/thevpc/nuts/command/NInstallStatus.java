@@ -68,10 +68,10 @@ public class NInstallStatus {
         for (int i = 0; i < 32; i++) {
             ALL[i] = new NInstallStatus(
                     (i & 0x1) != 0,
-                    (i & 0x1) != 0,
                     (i & 0x2) != 0,
                     (i & 0x4) != 0,
-                    (i & 0x8) != 0
+                    (i & 0x8) != 0,
+                    (i & 0x10) != 0
             );
         }
         return ALL;

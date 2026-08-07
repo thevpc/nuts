@@ -33,7 +33,7 @@ import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceCurrentConfig;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.platform.NOsFamily;

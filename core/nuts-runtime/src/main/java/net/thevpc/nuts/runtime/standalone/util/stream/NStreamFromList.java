@@ -8,7 +8,7 @@
 //import net.thevpc.nuts.elem.NElementDescribables;
 //import net.thevpc.nuts.elem.NElement;
 //import net.thevpc.nuts.elem.NElementDescribable;
-//import net.thevpc.nuts.util.NIterator;
+//import net.thevpc.nuts.pipeline.NIterator;
 //
 //import java.util.*;
 //import java.util.stream.Stream;

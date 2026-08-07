@@ -36,7 +36,7 @@ import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NAssertException;
 import net.thevpc.nuts.util.NNonCopiableException;
-import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.collections.NObservableMapListener;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Closeable;

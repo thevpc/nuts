@@ -4,6 +4,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NpsType;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.*;
 
 import java.io.BufferedReader;

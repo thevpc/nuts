@@ -3,6 +3,9 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NIteratorErrorHandlerType;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;

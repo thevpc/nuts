@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NIteratorDelegate;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorDelegate;
 
 import java.util.function.Supplier;
 

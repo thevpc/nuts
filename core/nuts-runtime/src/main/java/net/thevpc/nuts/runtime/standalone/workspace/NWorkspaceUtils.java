@@ -17,6 +17,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;

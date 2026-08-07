@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.util.NHex;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.io.*;
 import java.nio.charset.Charset;

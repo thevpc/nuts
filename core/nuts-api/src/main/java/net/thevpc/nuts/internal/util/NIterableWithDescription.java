@@ -1,8 +1,8 @@
 package net.thevpc.nuts.internal.util;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NIterable;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterable;
+import net.thevpc.nuts.pipeline.NIterator;
 
 import java.util.function.Supplier;
 

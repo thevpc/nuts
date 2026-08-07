@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts.artifact;
 
-import net.thevpc.nuts.util.NIterable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NIterable;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.List;
 

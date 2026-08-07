@@ -32,7 +32,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch.MavenSolrSearchCommand;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 /**
  * Created by vpc on 1/15/17.

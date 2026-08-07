@@ -7,7 +7,7 @@ import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NPredicate;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.*;
 import java.util.regex.Pattern;

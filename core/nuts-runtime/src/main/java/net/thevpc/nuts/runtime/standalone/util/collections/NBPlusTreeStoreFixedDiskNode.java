@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.store.NBPlusTree;
+import net.thevpc.nuts.collections.NBPlusTree;
 
 public abstract class NBPlusTreeStoreFixedDiskNode<K extends Comparable<K>, V> implements NBPlusTree.Node<K, V> {
 

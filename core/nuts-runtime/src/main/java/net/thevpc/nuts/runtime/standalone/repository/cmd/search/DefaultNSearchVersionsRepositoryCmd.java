@@ -15,6 +15,7 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
@@ -26,7 +27,7 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
-import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.spi.NSearchVersionsRepositoryCmd;
 

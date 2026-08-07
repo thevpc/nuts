@@ -6,7 +6,7 @@ import net.thevpc.nuts.reflect.NSignatureMap;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NOptionalMap;
+import net.thevpc.nuts.collections.NOptionalMap;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 
 
 import net.thevpc.nuts.core.NStoreKey;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitor;

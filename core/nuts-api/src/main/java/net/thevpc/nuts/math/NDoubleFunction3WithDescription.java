@@ -1,0 +1,45 @@
+package net.thevpc.nuts.math;
+
+import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NImmutable;
+
+import java.util.function.Supplier;
+
+@NImmutable
+public class NDoubleFunction3WithDescription implements NDoubleFunction3{
+    private final NDoubleFunction3 base;
+    private Supplier<NElement> description;
+
+    public NDoubleFunction3WithDescription(NDoubleFunction3 base, Supplier<NElement> description) {
+        this.base = base;
+        this.description = description;
+    }
+
+    @Override
+    public double apply(double x, double y, double z) {
+        return base.apply(x, y,z);
+    }
+
+    @Override
+    public NDoubleFunction3 withDescription(Supplier<NElement> description) {
+        if(description==null){
+            return base;
+        }
+        return new NDoubleFunction3WithDescription(base, description);
+    }
+
+    @Override
+    public String toString() {
+        return "Function{" + base + '}';
+    }
+
+    @Override
+    public NElement describe() {
+        return NDescribables.safeDescribe(
+                description,
+                NDescribables.ofDesc(base),
+                NDescribables.ofLateToString(this)
+        );
+    }
+}

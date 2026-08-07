@@ -9,7 +9,7 @@ import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NpsStatus;
 import net.thevpc.nuts.io.NpsType;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;

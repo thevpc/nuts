@@ -5,8 +5,8 @@
 // */
 //package net.thevpc.nuts.runtime.standalone.util.stream;
 //
-//import net.thevpc.nuts.util.NIterator;
-//import net.thevpc.nuts.util.NIteratorBuilder;
+//import net.thevpc.nuts.pipeline.NIterator;
+//import net.thevpc.nuts.pipeline.NIteratorBuilder;
 //
 //import java.util.*;
 //import java.util.stream.Stream;

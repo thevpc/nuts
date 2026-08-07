@@ -7,6 +7,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTextVisitor;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.collections.NCharQueue;
 
 import java.util.ArrayList;
 import java.util.List;

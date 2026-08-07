@@ -13,6 +13,7 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.expr.NGlob;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;

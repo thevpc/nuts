@@ -37,6 +37,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;

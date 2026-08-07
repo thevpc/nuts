@@ -7,7 +7,7 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.io.util.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.art.tree.DefaultNTextArtTreeRenderer;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.collections.NMaps;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

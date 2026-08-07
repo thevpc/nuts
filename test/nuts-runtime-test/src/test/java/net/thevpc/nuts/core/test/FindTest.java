@@ -15,7 +15,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import java.util.List;
 
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import org.junit.jupiter.api.*;
 
 /**

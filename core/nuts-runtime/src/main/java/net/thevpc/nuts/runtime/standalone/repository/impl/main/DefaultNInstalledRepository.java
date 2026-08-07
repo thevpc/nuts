@@ -29,6 +29,9 @@ import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
@@ -41,7 +44,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
@@ -691,7 +694,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                                 return newId;
                             }
                             return null;
-                        }, NElement.ofNamedUplet("filter",
+                        }, NElement.ofNamedTuple("filter",
                                 NDescribables.describeResolveOrSimplify(filter0)
                         ))).nonNull().iterator();
                 return this;

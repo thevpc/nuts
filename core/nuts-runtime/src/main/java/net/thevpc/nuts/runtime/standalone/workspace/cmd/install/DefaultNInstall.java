@@ -30,6 +30,7 @@ import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
@@ -37,7 +38,6 @@ import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.security.NSecurityManager;
-import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
 import java.util.*;

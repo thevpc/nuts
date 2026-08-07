@@ -144,19 +144,19 @@ public class NJavaSdkUtils {
         return NOptional.ofEmpty(NMsg.ofC("java product : %s", product));
     }
 
-    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NClassLoaderNode[] n, boolean java9) {
+    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NClasspathEntry[] n, boolean java9) {
         List<NClassLoaderNodeExt> list = new ArrayList<>();
-        for (NClassLoaderNode nn : n) {
+        for (NClasspathEntry nn : n) {
             fillNodes(nn, list, java9);
         }
         return list;
     }
 
-    private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9) {
+    private static void fillNodes(NClasspathEntry n, List<NClassLoaderNodeExt> list, boolean java9) {
         NClassLoaderNodeExt k = new NClassLoaderNodeExt();
         k.node = n;
         k.id = n.id();
-        k.path = NPath.of(n.url());
+        k.path = n.path();
         if (java9) {
             k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path);
             if (k.moduleInfo != null) {
@@ -176,9 +176,9 @@ public class NJavaSdkUtils {
                     k.id.groupId().startsWith("org.openjfx");
         }
         list.add(k);
-        for (NClassLoaderNode d : n.dependencies()) {
-            fillNodes(d, list, java9);
-        }
+//        for (NClassLoaderNode d : n.dependencies()) {
+//            fillNodes(d, list, java9);
+//        }
     }
 
     public static boolean isJava(NId id) {

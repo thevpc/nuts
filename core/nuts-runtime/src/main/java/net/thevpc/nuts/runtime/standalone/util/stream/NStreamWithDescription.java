@@ -1,8 +1,8 @@
 //package net.thevpc.nuts.runtime.standalone.util.stream;
 //
 //import net.thevpc.nuts.elem.NElement;
-//import net.thevpc.nuts.util.NIterator;
-//import net.thevpc.nuts.util.NStream;
+//import net.thevpc.nuts.pipeline.NIterator;
+//import net.thevpc.nuts.pipeline.NStream;
 //
 //import java.util.List;
 //import java.util.function.Supplier;

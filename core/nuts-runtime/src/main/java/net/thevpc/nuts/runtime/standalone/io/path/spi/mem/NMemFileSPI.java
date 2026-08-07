@@ -6,10 +6,8 @@ import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NPathType;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStream;
-import org.jetbrains.annotations.NotNull;
+import net.thevpc.nuts.pipeline.NStream;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;

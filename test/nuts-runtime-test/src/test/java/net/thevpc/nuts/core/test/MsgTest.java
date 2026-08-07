@@ -1,13 +1,12 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NMaps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

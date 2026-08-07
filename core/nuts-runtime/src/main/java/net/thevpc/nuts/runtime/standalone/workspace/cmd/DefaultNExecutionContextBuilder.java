@@ -34,7 +34,7 @@ import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 
 import java.util.*;
 

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
-import net.thevpc.nuts.util.NUplet;
+import net.thevpc.nuts.util.NTuple;
 
 import java.util.List;
 import java.util.Set;
@@ -15,7 +15,7 @@ public interface NClassPairMultiMap<A, B, V> {
         return NUtilsRPI.of().classPairMultiMap(key1Type, key2Type, valueType, symmetric);
     }
 
-    Set<NUplet<Class>> keySet();
+    Set<NTuple<Class>> keySet();
 
     void add(Class<? extends A> a, Class<? extends B> b, V value);
 

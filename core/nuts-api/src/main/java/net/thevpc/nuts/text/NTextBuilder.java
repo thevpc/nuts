@@ -25,7 +25,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.Collection;
 import java.util.List;

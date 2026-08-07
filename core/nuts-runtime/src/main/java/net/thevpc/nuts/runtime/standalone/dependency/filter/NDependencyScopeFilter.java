@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 public class NDependencyScopeFilter extends AbstractDependencyFilter {

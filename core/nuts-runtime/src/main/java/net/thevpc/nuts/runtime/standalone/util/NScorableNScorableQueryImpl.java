@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScorableQuery;

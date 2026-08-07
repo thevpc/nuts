@@ -2,7 +2,7 @@ package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.Iterator;
 import java.util.List;

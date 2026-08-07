@@ -9,7 +9,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
 
 import java.util.Arrays;

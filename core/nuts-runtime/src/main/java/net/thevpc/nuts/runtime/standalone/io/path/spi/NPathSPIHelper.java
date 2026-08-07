@@ -6,8 +6,8 @@ import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.util.NIteratorBase;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NIteratorBase;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.*;
 

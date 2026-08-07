@@ -30,7 +30,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NStreamTokenizer;
+import net.thevpc.nuts.io.NStreamTokenizer;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;

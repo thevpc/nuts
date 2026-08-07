@@ -31,7 +31,7 @@ import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 

@@ -6,9 +6,9 @@ import net.thevpc.nuts.artifact.NDefinitionFilters;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.*;
 import java.util.stream.Collectors;

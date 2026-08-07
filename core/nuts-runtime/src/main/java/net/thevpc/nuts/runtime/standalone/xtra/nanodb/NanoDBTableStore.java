@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.*;
 

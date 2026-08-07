@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.collections.NMaps;
 
 import java.util.*;
 import java.util.stream.Collectors;

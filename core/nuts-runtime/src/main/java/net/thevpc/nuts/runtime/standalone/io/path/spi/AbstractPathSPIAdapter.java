@@ -8,7 +8,7 @@ import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.io.InputStream;
 import java.io.OutputStream;

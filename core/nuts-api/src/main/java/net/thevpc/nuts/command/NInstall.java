@@ -33,7 +33,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.Collection;
 import java.util.List;

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.reflect.NClassPairMultiMap;
-import net.thevpc.nuts.util.NUplet;
+import net.thevpc.nuts.util.NTuple;
 
 import java.util.*;
 
@@ -13,7 +13,7 @@ public class NClassPairMultiMapImpl<A, B, V> implements NClassPairMultiMap<A, B,
     }
 
     @Override
-    public Set<NUplet<Class>> keySet() {
+    public Set<NTuple<Class>> keySet() {
         return base.keySet();
     }
 

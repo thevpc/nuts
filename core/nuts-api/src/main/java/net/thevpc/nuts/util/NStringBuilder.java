@@ -1,6 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.io.NStringWriter;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;

@@ -9,8 +9,8 @@ import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIteratorBase;
-import net.thevpc.nuts.util.NIteratorErrorHandlerType;
+import net.thevpc.nuts.pipeline.NIteratorBase;
+import net.thevpc.nuts.pipeline.NIteratorErrorHandlerType;
 
 import java.util.Iterator;
 

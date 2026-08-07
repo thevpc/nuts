@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
+import net.thevpc.nuts.io.NStreamTokenizer;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;

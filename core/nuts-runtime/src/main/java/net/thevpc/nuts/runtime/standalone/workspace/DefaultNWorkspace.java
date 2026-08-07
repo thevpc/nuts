@@ -86,7 +86,7 @@ import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityMode
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContextBuilder;

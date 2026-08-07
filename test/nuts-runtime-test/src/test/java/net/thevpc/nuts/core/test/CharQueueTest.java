@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.util.NCharQueue;
+import net.thevpc.nuts.collections.NCharQueue;
 import net.thevpc.nuts.util.NMatchType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

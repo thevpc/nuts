@@ -14,6 +14,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NMaps;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

@@ -11,7 +11,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NUninstall;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.AbstractNInstall;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;

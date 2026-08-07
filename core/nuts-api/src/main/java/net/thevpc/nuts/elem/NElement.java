@@ -525,7 +525,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
         return NElementFactory.of().ofUplet(name, items);
     }
 
-    static NUpletElement ofNamedUplet(String name, NElement... items) {
+    static NUpletElement ofNamedTuple(String name, NElement... items) {
         return NElementFactory.of().ofNamedUplet(name, items);
     }
 

@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.store.NBPlusTree;
-import net.thevpc.nuts.util.store.NBPlusTreeStore;
+import net.thevpc.nuts.collections.NBPlusTree;
+import net.thevpc.nuts.collections.NBPlusTreeStore;
 
 import java.util.AbstractMap;
 import java.util.Arrays;

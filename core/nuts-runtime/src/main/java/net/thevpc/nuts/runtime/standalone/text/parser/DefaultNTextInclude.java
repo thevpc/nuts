@@ -28,14 +28,11 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.NPrimitiveText;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NTextInclude;
 import net.thevpc.nuts.text.NTextType;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**

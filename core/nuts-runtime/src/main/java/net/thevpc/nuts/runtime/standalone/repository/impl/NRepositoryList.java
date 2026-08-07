@@ -10,10 +10,10 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;

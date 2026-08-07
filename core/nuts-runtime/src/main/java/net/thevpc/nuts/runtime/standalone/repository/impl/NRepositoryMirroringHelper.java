@@ -25,7 +25,7 @@ import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -33,7 +33,7 @@ import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NNoSuchElementException;
 

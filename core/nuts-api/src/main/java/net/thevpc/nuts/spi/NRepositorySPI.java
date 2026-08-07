@@ -31,7 +31,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfigManager;
 import net.thevpc.nuts.core.NRepositoryListener;
 import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.collections.NObservableMapListener;
 import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;

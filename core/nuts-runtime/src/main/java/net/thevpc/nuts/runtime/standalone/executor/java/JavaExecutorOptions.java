@@ -235,7 +235,7 @@ public final class JavaExecutorOptions {
         if (!resolvedCP.isEmpty()) {
             List<NClassLoaderNodeExt> ln =
                     NJavaSdkUtils.loadNutsClassLoaderNodeExts(
-                            resolvedCP.toArray(new NClassLoaderNode[0]),
+                            resolvedCP.toArray(new NClasspathEntry[0]),
                             java9
                     );
             if (java9) {

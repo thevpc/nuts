@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.system;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootCompleteRequest;
-import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExec;
@@ -16,7 +15,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;

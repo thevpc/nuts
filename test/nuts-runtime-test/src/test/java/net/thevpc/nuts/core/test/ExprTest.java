@@ -27,7 +27,7 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.util.NStreamTokenizer;
+import net.thevpc.nuts.io.NStreamTokenizer;
 import org.junit.jupiter.api.*;
 
 import java.io.StringReader;

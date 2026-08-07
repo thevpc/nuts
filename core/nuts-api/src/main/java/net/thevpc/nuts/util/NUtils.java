@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.math.NNumberUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;

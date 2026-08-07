@@ -74,6 +74,7 @@ import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.net.NWebCli;
+import net.thevpc.nuts.collections.NListMultiValueMap;
 
 import java.net.URL;
 import java.util.*;

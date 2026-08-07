@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NToElement;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.*;
 
 public class NTextBuilderPlain implements NTextBuilder {

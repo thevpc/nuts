@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NCollectionDiff;
-import net.thevpc.nuts.util.NCollectionDiffChange;
+import net.thevpc.nuts.collections.NCollectionDiff;
+import net.thevpc.nuts.collections.NCollectionDiffChange;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.*;

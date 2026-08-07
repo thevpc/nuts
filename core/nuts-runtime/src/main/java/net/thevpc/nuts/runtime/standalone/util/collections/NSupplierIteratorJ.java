@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NIteratorBase;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBase;
 
 import java.util.Iterator;
 import java.util.function.Supplier;

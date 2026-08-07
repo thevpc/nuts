@@ -11,7 +11,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
 import net.thevpc.nuts.spi.NSearchVersionsRepositoryCmd;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 
 /**

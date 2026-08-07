@@ -14,12 +14,13 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.core.NIndexerNotAccessibleException;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.util.collections.NIndexFirstIterator;
-import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;

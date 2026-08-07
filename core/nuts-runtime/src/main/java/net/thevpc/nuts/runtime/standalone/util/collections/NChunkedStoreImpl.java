@@ -2,11 +2,14 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.util.store.NChunkedStore;
-import net.thevpc.nuts.util.store.NChunkedStoreFactory;
+import net.thevpc.nuts.collections.NChunkedStore;
+import net.thevpc.nuts.collections.NChunkedStoreFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;

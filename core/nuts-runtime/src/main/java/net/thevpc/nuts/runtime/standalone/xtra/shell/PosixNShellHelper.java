@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.expr.NParseException;
+import net.thevpc.nuts.collections.NMaps;
 
 import java.util.ArrayList;
 import java.util.Arrays;

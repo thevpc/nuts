@@ -6,8 +6,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NStream;
 
 public interface NInstalledRepository extends NRepository {
 

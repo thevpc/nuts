@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringMap;
+import net.thevpc.nuts.collections.NStringMap;
 
 import java.util.*;
 

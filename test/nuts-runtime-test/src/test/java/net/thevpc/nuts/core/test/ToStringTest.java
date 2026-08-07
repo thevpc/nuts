@@ -1,7 +1,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.collections.NMaps;
 import net.thevpc.nuts.util.NToStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

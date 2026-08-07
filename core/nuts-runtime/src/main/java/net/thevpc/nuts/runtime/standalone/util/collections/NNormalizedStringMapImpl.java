@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NNormalizedStringMap;
+import net.thevpc.nuts.collections.NNormalizedStringMap;
 
 import java.util.*;
 import java.util.function.Function;

@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.text.parser.NTextListSimplifier;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 import java.io.ByteArrayOutputStream;

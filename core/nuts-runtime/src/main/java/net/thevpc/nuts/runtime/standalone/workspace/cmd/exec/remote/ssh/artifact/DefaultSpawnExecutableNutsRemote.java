@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.artifac
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootCompleteRequest;
-import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExec;
@@ -20,7 +19,7 @@ import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.net.NConnectionString;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecTargetCommandContext;
 import net.thevpc.nuts.text.NText;

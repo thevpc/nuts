@@ -57,7 +57,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;

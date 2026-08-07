@@ -1,6 +1,6 @@
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.List;
 

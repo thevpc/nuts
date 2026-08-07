@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.spi.NComponentScope;

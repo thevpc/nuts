@@ -28,7 +28,7 @@ package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.util.NSetter;
 
 /**

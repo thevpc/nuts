@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.util.NListMultiValueMap;
+import net.thevpc.nuts.collections.NListMultiValueMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;

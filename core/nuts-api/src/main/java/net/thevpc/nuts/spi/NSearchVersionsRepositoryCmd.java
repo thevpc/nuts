@@ -29,7 +29,7 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 /**
  * @author thevpc

@@ -40,8 +40,8 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenMetada
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
-import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;

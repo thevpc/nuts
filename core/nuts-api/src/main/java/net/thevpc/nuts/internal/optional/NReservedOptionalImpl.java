@@ -1,5 +1,6 @@
 package net.thevpc.nuts.internal.optional;
 
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 

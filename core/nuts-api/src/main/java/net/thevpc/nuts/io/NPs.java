@@ -29,7 +29,7 @@ import net.thevpc.nuts.platform.NConnectionStringAware;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.spi.NComponent;
 
 /**

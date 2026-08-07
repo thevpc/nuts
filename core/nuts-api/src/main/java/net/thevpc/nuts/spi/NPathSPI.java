@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.text.NTreeVisitor;

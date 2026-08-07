@@ -26,7 +26,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.internal.rpi.NIORPI;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.io.*;
 import java.net.URL;

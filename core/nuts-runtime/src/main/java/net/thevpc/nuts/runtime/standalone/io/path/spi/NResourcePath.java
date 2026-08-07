@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;

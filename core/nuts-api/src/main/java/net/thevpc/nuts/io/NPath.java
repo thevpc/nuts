@@ -29,6 +29,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NMsg;

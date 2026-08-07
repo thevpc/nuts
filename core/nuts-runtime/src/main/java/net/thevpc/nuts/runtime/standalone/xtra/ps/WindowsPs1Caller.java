@@ -4,7 +4,7 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.net.NConnectionString;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;

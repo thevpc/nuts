@@ -20,6 +20,8 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.text.NDescriptorWriter;
