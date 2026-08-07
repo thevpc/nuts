@@ -33,9 +33,6 @@ public class NBPlusTreeStoreFixedDiskTest {
 
     @Test
     public void testBasicCrud() throws IOException {
-        if(!_TestConfig.ENABLE_WIP){
-            return;
-        }
         NBPlusTreeStoreFixedDisk.NBSerializer<String> serializer = new NBPlusTreeStoreFixedDisk.NBSerializer<String>() {
             @Override
             public void serialize(String obj, DataOutputStream dos) throws IOException {

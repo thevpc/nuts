@@ -133,13 +133,24 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
     @Override
     public NBPlusTree.LeafNode<K, V> createLeafNode(NBPlusTree.IntermediateNode<K, V> parent) {
         NBPlusTreeStoreFixedDiskLeafNode<K, V> node = new NBPlusTreeStoreFixedDiskLeafNode<>(this, m);
+        try {
+            saveNode(node);
+        } catch (IOException e) {
+            throw new NIOException(e);
+        }
         updateParent(node, parent);
         return node;
     }
 
     @Override
     public NBPlusTree.IntermediateNode<K, V> createInternalNode() {
-        return new NBPlusTreeStoreFixedDiskIntermediateNode<>(this, m);
+        NBPlusTreeStoreFixedDiskIntermediateNode<K, V> node = new NBPlusTreeStoreFixedDiskIntermediateNode<>(this, m);
+        try {
+            saveNode(node);
+        } catch (IOException e) {
+            throw new NIOException(e);
+        }
+        return node;
     }
 
     @Override

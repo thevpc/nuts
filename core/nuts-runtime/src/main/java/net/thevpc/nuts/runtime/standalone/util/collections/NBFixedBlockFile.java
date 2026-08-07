@@ -43,10 +43,7 @@ public class NBFixedBlockFile implements Closeable {
             writeHeader();
         } else {
             readHeader();
-            if (this.blockSize != blockSize) {
-                // If it already exists, we adapt to its block size
-                this.payloadSize = this.blockSize - 8;
-            }
+            this.payloadSize = this.blockSize - 8;
         }
     }
 
