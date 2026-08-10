@@ -6,6 +6,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NVersionFilterDelegate;
 import net.thevpc.nuts.util.NFilter;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class NVersionFilterWithDescription extends NVersionFilterDelegate {
@@ -27,6 +28,19 @@ public class NVersionFilterWithDescription extends NVersionFilterDelegate {
     public NFilter withDescription(Supplier<NElement> description) {
         this.description=description;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NVersionFilterWithDescription that = (NVersionFilterWithDescription) o;
+        return Objects.equals(baseVersionFilter, that.baseVersionFilter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), baseVersionFilter);
     }
 
     @Override

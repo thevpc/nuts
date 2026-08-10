@@ -6,6 +6,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NIdFilterDelegate;
 import net.thevpc.nuts.util.NFilter;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class NIdFilterWithDescriptor extends NIdFilterDelegate {
@@ -32,5 +33,18 @@ public class NIdFilterWithDescriptor extends NIdFilterDelegate {
     @Override
     public NElement describe() {
         return NDescribables.safeDescribeOfBase(description, base);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NIdFilterWithDescriptor that = (NIdFilterWithDescriptor) o;
+        return Objects.equals(base, that.base);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), base);
     }
 }
