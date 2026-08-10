@@ -41,7 +41,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.Manifest;
 
-public abstract class NClassLoaderBase extends URLClassLoader implements NClassLoader {
+public abstract class NClassLoaderBase extends URLClassLoader {
 
     private final String name;
     //    protected Map<String, NClasspathEntry> baseIdsByShortName = new LinkedHashMap<>();
@@ -58,11 +58,7 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
         this.name = NStringUtils.firstNonBlank(name, "nclassloader");
         this.repositoryFilter = repositoryFilter;
         this.dependencyFilter = dependencyFilter == null ? NDependencyFilters.of().byRunnable(true).and(NDependencyFilters.of().byOptional(false)) : dependencyFilter;
-        if (entries != null) {
-            for (NClasspathEntry entry : entries) {
-                add0(entry);
-            }
-        }
+        add(entries);
     }
 
     public List<NClasspathEntry> baseEntries() {
@@ -70,13 +66,11 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
     }
 
     public List<NDefinition> loadedDefinitions() {
-        build();
         return new ArrayList<>(lastDefinitions.values());
     }
 
+
     public boolean isLoaded(NId id) {
-        if (search(id).isPresent()) return true;
-        build();
         if (search(id).isPresent()) return true;
         // try current class loader
         URL s = getResource("META-INF/maven/" + id.groupId() + "/" + id.artifactId() + "/pom.properties");
@@ -125,7 +119,6 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
         if (o != null) {
             return NOptional.of(o.id());
         }
-        build();
         o = lastDefinitions.get(sn);
         if (o != null) {
             return NOptional.of(o.id());
@@ -135,6 +128,47 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
             return ((NClassLoader) p).search(id);
         }
         return NOptional.ofNamedEmpty(NMsg.ofC("%s",id));
+    }
+
+
+    public NDefinition[] add(NDefinition... defs) {
+        if(defs==null){
+            return new NDefinition[0];
+        }
+        return add(Arrays.stream(defs).filter(Objects::nonNull).map(DefaultNClasspathEntry::new).toArray(NClasspathEntry[]::new));
+    }
+
+    public NDefinition[] add(NDependency... defs) {
+        if(defs==null){
+            return new NDefinition[0];
+        }
+        return add(Arrays.stream(defs).filter(Objects::nonNull).map(DefaultNClasspathEntry::new).toArray(NClasspathEntry[]::new));
+    }
+
+    public NDefinition[] add(NId... defs) {
+        if(defs==null){
+            return new NDefinition[0];
+        }
+        return add(Arrays.stream(defs).filter(Objects::nonNull).map(DefaultNClasspathEntry::new).toArray(NClasspathEntry[]::new));
+    }
+
+    public NDefinition[] add(NClasspathEntry... entries) {
+        if(entries==null){
+            return new NDefinition[0];
+        }
+        boolean b = false;
+        for (NClasspathEntry a : entries) {
+            if(a==null){
+                continue;
+            }
+            if(add0(a)){
+                b=true;
+            }
+        }
+        if (b) {
+            return build();
+        }
+        return new NDefinition[0];
     }
 
     public boolean add0(NClasspathEntry entry) {
@@ -210,19 +244,16 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
 
     @Override
     public URL[] getURLs() {
-        build();
         return super.getURLs();
     }
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        build();
         return super.findClass(name);
     }
 
     @Override
     protected Package definePackage(String name, Manifest man, URL url) {
-        build();
         return super.definePackage(name, man, url);
     }
 
@@ -233,25 +264,21 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
 
     @Override
     public Enumeration<URL> findResources(String name) throws IOException {
-        build();
         return super.findResources(name);
     }
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        build();
         return super.loadClass(name);
     }
 
     @Override
     public @Nullable URL getResource(String name) {
-        build();
         return super.getResource(name);
     }
 
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
-        build();
         return super.getResources(name);
     }
 

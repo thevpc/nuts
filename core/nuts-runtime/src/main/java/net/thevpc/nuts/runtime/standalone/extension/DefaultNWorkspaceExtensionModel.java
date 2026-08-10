@@ -840,12 +840,26 @@ public class DefaultNWorkspaceExtensionModel {
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
             CachedNutsURLClassLoaderKey that = (CachedNutsURLClassLoaderKey) o;
-            return Objects.equals(name, that.name) && Objects.equals(parent, that.parent) && Objects.equals(nodes, that.nodes) && Objects.equals(repositoryFilter, that.repositoryFilter) && Objects.equals(dependencyFilter, that.dependencyFilter);
+            return Objects.equals(name, that.name) && Objects.equals(
+                    (parent==null?0:System.identityHashCode(parent))
+                    , (that.parent==null?0:System.identityHashCode(that.parent)))
+                    && Objects.equals(nodes, that.nodes) && Objects.equals(repositoryFilter, that.repositoryFilter) && Objects.equals(dependencyFilter, that.dependencyFilter);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(name, parent, repositoryFilter, dependencyFilter);
+            return Objects.hash(name, parent==null?0:System.identityHashCode(parent), repositoryFilter, dependencyFilter);
+        }
+
+        @Override
+        public String toString() {
+            return "CachedNutsURLClassLoaderKey{" +
+                    "name='" + name + '\'' +
+                    ", nodes=" + nodes +
+                    ", parent=" + parent +
+                    ", repositoryFilter=" + repositoryFilter +
+                    ", dependencyFilter=" + dependencyFilter +
+                    '}';
         }
     }
 
@@ -887,6 +901,13 @@ public class DefaultNWorkspaceExtensionModel {
                 if (nnold != null) {
                     if (Objects.equals(nnold.name(), name)) {
                         return nnold;
+                    }
+                }
+                if(nnold==null && !cachedWorkspaceExtensionsClassLoadersImmutable.isEmpty()){
+                    for (Map.Entry<CachedNutsURLClassLoaderKey, NClassLoader> e : cachedWorkspaceExtensionsClassLoadersImmutable.entrySet()) {
+                        System.out.println(
+                                Objects.equals(e.getKey(),withoutName)+" : "+
+                                e.getKey()+" <> "+withoutName);
                     }
                 }
             }

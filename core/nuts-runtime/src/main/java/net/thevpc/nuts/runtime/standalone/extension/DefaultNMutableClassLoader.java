@@ -46,24 +46,6 @@ public class DefaultNMutableClassLoader extends NClassLoaderBase implements NMut
         super(name, parent, nodes,repositoryFilter,dependencyFilter);
     }
 
-    @Override
-    public NMutableClassLoader add(NDefinition node) {
-        add0(node);
-        return this;
-    }
-
-    @Override
-    public NMutableClassLoader add(NDependency node) {
-        add0(node);
-        return this;
-    }
-
-    @Override
-    public NMutableClassLoader add(NId node) {
-        add0(node);
-        return this;
-    }
-
 
     @Override
     public NClassLoader immutable() {
