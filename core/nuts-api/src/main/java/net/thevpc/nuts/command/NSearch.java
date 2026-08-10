@@ -658,7 +658,7 @@ public interface NSearch extends NWorkspaceCmd {
      *
      * @return result as content paths
      */
-    NStream<String> getResultPaths();
+    NStream<NPath> getResultPaths();
 
     /**
      * return result as content path names
