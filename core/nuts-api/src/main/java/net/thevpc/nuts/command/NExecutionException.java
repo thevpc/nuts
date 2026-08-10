@@ -39,6 +39,9 @@ import net.thevpc.nuts.text.NMsg;
 public class NExecutionException extends NException implements NExceptionWithExitCodeBase {
 
     public static final int SUCCESS = 0;
+    public static final int INTERRUPT = 130;
+    public static final int TERMINATE = 143;
+    public static final int KILL = 137;
     public static final int ERROR_1 = 1;
     public static final int ERROR_2 = 2;
     public static final int ERROR_3 = 3;
