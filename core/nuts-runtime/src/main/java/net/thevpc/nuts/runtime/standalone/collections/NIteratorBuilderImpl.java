@@ -146,7 +146,7 @@ public class NIteratorBuilderImpl<T> implements NIteratorBuilder<T> {
         return of(new NFlatMapIterator<T, V>(it, fun));
     }
 
-    public <V> NIteratorBuilderImpl<V> mapMulti(NFunction<T, List<V>> mapper) {
+    public <V> NIteratorBuilderImpl<V> flatMapList(NFunction<T, List<V>> mapper) {
         return new NIteratorBuilderImpl<>(
                 new NFlatMapIterator<>(it, t -> mapper.apply(t).iterator())
         );
@@ -201,7 +201,7 @@ public class NIteratorBuilderImpl<T> implements NIteratorBuilder<T> {
         return filter(NON_NULL);
     }
 
-    public NIteratorBuilderImpl<String> notBlank() {
+    public NIteratorBuilderImpl<T> notBlank() {
         return this.filter(NON_BLANK);
     }
 

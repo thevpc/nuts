@@ -82,7 +82,7 @@ public interface NIteratorBuilder<T> {
 
     <V> NIteratorBuilder<V> flatMap(Function<? super T, ? extends Iterator<? extends V>> fun);
 
-    <V> NIteratorBuilder<V> mapMulti(NFunction<T, List<V>> mapper);
+    <V> NIteratorBuilder<V> flatMapList(NFunction<T, List<V>> mapper);
 
     <V> NIteratorBuilder<T> sort(NComparator<T> t, boolean removeDuplicates);
 
@@ -103,7 +103,7 @@ public interface NIteratorBuilder<T> {
 
     NIteratorBuilder<T> notNull();
 
-    NIteratorBuilder<String> notBlank();
+    NIteratorBuilder<T> notBlank();
 
     NIterator<T> iterator();
 

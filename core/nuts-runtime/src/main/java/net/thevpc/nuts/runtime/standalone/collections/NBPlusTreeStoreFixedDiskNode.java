@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.collections.NBPlusTree;
 
-public abstract class NBPlusTreeStoreFixedDiskNode<K extends Comparable<K>, V> implements NBPlusTree.Node<K, V> {
+public abstract class NBPlusTreeStoreFixedDiskNode<K, V> implements NBPlusTree.Node<K, V> {
 
     protected long blockId = -1;
     protected long parentId = -1;

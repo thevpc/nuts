@@ -144,27 +144,25 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     /**
      * Constructor
      */
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(int order, boolean allowDuplicates) {
-        return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(order, allowDuplicates));
+    public <K, V> NBPlusTree<K, V> createBtreePlus(int order, boolean allowDuplicates, Comparator<K> comparator) {
+        return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(order, allowDuplicates), NAssert.requireNamedNonNull(comparator, "comparator"));
     }
 
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(int order) {
-        return new NBPlusTreeImpl<>(new NBPlusTreeStoreMem<K, V>(order, false));
-    }
 
     @Override
-    public <K extends Comparable<K>, V> NBPlusTree<K, V> createBtreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
+    public <K, V> NBPlusTree<K, V> createBtreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer, Comparator<K> comparator) {
+        NAssert.requireNamedNonNull(comparator, "comparator");
         try {
             if (order <= 0) {
-                if(store instanceof NPageStoreMem){
-                    order=5;
-                } else if(store instanceof NPageStoreFile){
-                    order=128;
-                }else{
-                    order=128;
+                if (store instanceof NPageStoreMem) {
+                    order = 5;
+                } else if (store instanceof NPageStoreFile) {
+                    order = 128;
+                } else {
+                    order = 128;
                 }
             }
-            return new NBPlusTreeImpl<>(new NBPlusTreeStoreFixedDisk<>(store, order, allowDuplicates, keySerializer, valSerializer));
+            return new NBPlusTreeImpl<>(new NBPlusTreeStoreFixedDisk<>(store, order, allowDuplicates, keySerializer, valSerializer),comparator);
         } catch (IOException e) {
             throw new net.thevpc.nuts.io.NIOException(e);
         }
@@ -172,13 +170,13 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
 
     @Override
     public NPageStore createInMemoryPageStore(int pageSize) {
-        return new NPageStoreMem(pageSize<=0?4096:pageSize);
+        return new NPageStoreMem(pageSize <= 0 ? 4096 : pageSize);
     }
 
     @Override
     public NPageStore createFilePageStore(NPath path, int pageSize) {
         try {
-            return new NPageStoreFile(new java.io.File(path.toString()), pageSize<=0?4096:pageSize);
+            return new NPageStoreFile(new java.io.File(path.toString()), pageSize <= 0 ? 4096 : pageSize);
         } catch (IOException e) {
             throw new net.thevpc.nuts.io.NIOException(e);
         }

@@ -6,7 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class NBPlusTreeStoreFixedDiskIntermediateNode<K extends Comparable<K>, V> extends NBPlusTreeStoreFixedDiskNode<K, V> implements NBPlusTree.IntermediateNode<K, V> {
+public class NBPlusTreeStoreFixedDiskIntermediateNode<K, V> extends NBPlusTreeStoreFixedDiskNode<K, V> implements NBPlusTree.IntermediateNode<K, V> {
 
     protected K firstKey;
     protected long leftSiblingId = -1;

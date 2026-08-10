@@ -26,6 +26,8 @@ package net.thevpc.nuts.runtime.standalone.collections;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.collections.NBPlusTree;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NRef;
+import net.thevpc.nuts.util.NUtils;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -36,22 +38,24 @@ import java.util.function.Function;
  * https://github.com/shandysulen/B-Plus-Tree/blob/master/bplustree.java (MIT)
  * changed to support multiple stores and generic parameters
  */
-public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V> implements NBPlusTree<K, V> {
+public class NBPlusTreeImpl<K, V> extends AbstractMap<K, V> implements NBPlusTree<K, V> {
 
     private final NBPlusTreeStore<K, V> store;
     private final int m;
+    private final Comparator<K> comparator;
 
-    public static <K extends Comparable<K>, V> NBPlusTreeImpl<K, V> of(int order, boolean allowDuplicates) {
-        return new NBPlusTreeImpl<K, V>(new NBPlusTreeStoreMem<>(order, allowDuplicates));
+    public static <K extends Comparable<K>, V> NBPlusTreeImpl<K, V> of(int order, boolean allowDuplicates, Comparator<K> comparator) {
+        return new NBPlusTreeImpl<K, V>(new NBPlusTreeStoreMem<>(order, allowDuplicates), comparator);
     }
 
-    public static <K extends Comparable<K>, V> NBPlusTreeImpl<K, V> of(int order) {
-        return new NBPlusTreeImpl<K, V>(new NBPlusTreeStoreMem<>(order, false));
+    public static <K extends Comparable<K>, V> NBPlusTreeImpl<K, V> of(int order, Comparator<K> comparator) {
+        return new NBPlusTreeImpl<K, V>(new NBPlusTreeStoreMem<>(order, false), comparator);
     }
 
-    public NBPlusTreeImpl(NBPlusTreeStore<K, V> store) {
+    public NBPlusTreeImpl(NBPlusTreeStore<K, V> store, Comparator<K> comparator) {
         this.store = store;
-        m = store.order();
+        this.m = store.order();
+        this.comparator = comparator;
     }
 
     /**
@@ -60,7 +64,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
      * within its dictionary.
      *
      * @param key: the unique key that lies within the dictionary of a LeafNode
-     * object
+     *             object
      * @return the LeafNode object that contains the key within its dictionary
      */
     private LeafNode<K, V> findLeafNode(K key) {
@@ -77,7 +81,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
         int size = node.size();
         for (i = 0; i < size - 1; i++) {
             K key1 = node.key(i + 1);
-            if (NBPlusTreeHelper.compareKey(key, key1) < 0) {
+            if (NUtils.compareObjects(key, key1, comparator) < 0) {
                 break;
             }
         }
@@ -146,7 +150,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
                         store.updateRoot((IntermediateNode<K, V>) in.child(i));
                         store.updateParent(store.root(), null);
                     }
-                    break; 
+                    break;
                 }
             }
         } // Borrow:
@@ -305,14 +309,21 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
         return store.size();
     }
 
+    public V remove(Object obj) {
+        NRef<V> oldValue = NRef.of();
+        remove(obj, oldValue);
+        return oldValue.get();
+    }
+
     /**
      * Given a key, this method will remove the dictionary pair with the
      * corresponding key from the B+ tree.
      *
-     * @param key: an integer key that corresponds with an existing dictionary
-     * pair
+     * @param obj: a key that corresponds with an existing dictionary
+     *             pair
      */
-    public boolean remove(K key) {
+    public boolean remove(Object obj, NRef<V> oldValueOutHolder) {
+        K key = (K) obj;
         if (isEmpty()) {
 
             /* Flow of execution goes here when B+ tree has no dictionary pairs */
@@ -322,12 +333,13 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
             // Get leaf node and attempt to find index of key to delete
             LeafNode<K, V> leafNode = findLeafNode(key);
 
-            int dpIndex = store.indexOfKey(leafNode, key);
+            int dpIndex = store.indexOfKey(leafNode, key, comparator);
 
+            V old;
             if (dpIndex < 0) {
                 return false;
             } else {
-
+                old = leafNode.valueAt(dpIndex);
                 // Successfully delete the dictionary pair
                 store.removeChildAt(leafNode, dpIndex);
                 propagateFirstKey(leafNode);
@@ -372,81 +384,81 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
                             LeafNode<K, V> sibling;
                             IntermediateNode<K, V> parent = nn.parent();
 
-                             // Borrow: First, check the left sibling, then the right sibling
-                             if (ln.leftSibling() != null
-                                     && NBPlusTreeHelper.eq(ln.leftSibling().parent(), ln.parent())
-                                     && NBPlusTreeHelper.isLendable(ln.leftSibling())) {
+                            // Borrow: First, check the left sibling, then the right sibling
+                            if (ln.leftSibling() != null
+                                    && NBPlusTreeHelper.eq(ln.leftSibling().parent(), ln.parent())
+                                    && NBPlusTreeHelper.isLendable(ln.leftSibling())) {
 
-                                 sibling = ln.leftSibling();
-                                 Entry<K, V> borrowedDP = sibling.entryAt(sibling.size() - 1);
+                                sibling = ln.leftSibling();
+                                Entry<K, V> borrowedDP = sibling.entryAt(sibling.size() - 1);
 
                                  /* Insert borrowed dictionary pair, sort dictionary,
  						   and delete dictionary pair from sibling */
-                                 store.addEntry(ln, borrowedDP.getKey(), borrowedDP.getValue());
-                                 store.removeChildAt(sibling, sibling.size() - 1);
-                                 propagateFirstKey(ln);
-                                 propagateFirstKey(sibling);
-                             } else if (ln.rightSibling() != null
-                                     && NBPlusTreeHelper.eq(ln.rightSibling().parent(), ln.parent())
-                                     && NBPlusTreeHelper.isLendable(ln.rightSibling())) {
+                                store.addEntry(ln, borrowedDP.getKey(), borrowedDP.getValue(), comparator);
+                                store.removeChildAt(sibling, sibling.size() - 1);
+                                propagateFirstKey(ln);
+                                propagateFirstKey(sibling);
+                            } else if (ln.rightSibling() != null
+                                    && NBPlusTreeHelper.eq(ln.rightSibling().parent(), ln.parent())
+                                    && NBPlusTreeHelper.isLendable(ln.rightSibling())) {
 
-                                 sibling = ln.rightSibling();
-                                 Entry<K, V> borrowedDP = sibling.entryAt(0);
+                                sibling = ln.rightSibling();
+                                Entry<K, V> borrowedDP = sibling.entryAt(0);
 
                                  /* Insert borrowed dictionary pair, sort dictionary,
  					       and delete dictionary pair from sibling */
-                                 store.addEntry(ln, borrowedDP.getKey(), borrowedDP.getValue());
-                                 store.removeChildAt(sibling, 0);
-                                 propagateFirstKey(ln);
-                                 propagateFirstKey(sibling);
+                                store.addEntry(ln, borrowedDP.getKey(), borrowedDP.getValue(), comparator);
+                                store.removeChildAt(sibling, 0);
+                                propagateFirstKey(ln);
+                                propagateFirstKey(sibling);
 
-                              } // Merge: First, check the left sibling, then the right sibling
-                             else if (ln.leftSibling() != null
-                                     && ln.leftSibling().parent() == ln.parent()
-                                     && NBPlusTreeHelper.isMergeable(ln.leftSibling())) {
+                            } // Merge: First, check the left sibling, then the right sibling
+                            else if (ln.leftSibling() != null
+                                    && ln.leftSibling().parent() == ln.parent()
+                                    && NBPlusTreeHelper.isMergeable(ln.leftSibling())) {
 
-                                 sibling = ln.leftSibling();
-                                 for (int idx = 0; idx < ln.size(); idx++) {
-                                     store.addEntry(sibling, ln.keyAt(idx), ln.valueAt(idx));
-                                 }
-                                 store.removeChildAt(parent, store.findIndexOfChild(parent, ln));
+                                sibling = ln.leftSibling();
+                                for (int idx = 0; idx < ln.size(); idx++) {
+                                    store.addEntry(sibling, ln.keyAt(idx), ln.valueAt(idx), comparator);
+                                }
+                                store.removeChildAt(parent, store.findIndexOfChild(parent, ln));
 
-                                 // Update sibling pointer
-                                 store.updateRightSibling(sibling, ln.rightSibling());
-                                 if (ln.rightSibling() != null) {
-                                     store.updateLeftSibling(ln.rightSibling(), sibling);
-                                 }
-                                 propagateFirstKey(sibling);
-                                 propagateFirstKey(parent);
+                                // Update sibling pointer
+                                store.updateRightSibling(sibling, ln.rightSibling());
+                                if (ln.rightSibling() != null) {
+                                    store.updateLeftSibling(ln.rightSibling(), sibling);
+                                }
+                                propagateFirstKey(sibling);
+                                propagateFirstKey(parent);
 
-                                 // Check for deficiencies in parent
-                                 handleDeficiency(parent);
+                                // Check for deficiencies in parent
+                                handleDeficiency(parent);
 
-                             } else if (ln.rightSibling() != null
-                                     && NBPlusTreeHelper.eq(ln.rightSibling().parent(), ln.parent())
-                                     && NBPlusTreeHelper.isMergeable(ln.rightSibling())) {
+                            } else if (ln.rightSibling() != null
+                                    && NBPlusTreeHelper.eq(ln.rightSibling().parent(), ln.parent())
+                                    && NBPlusTreeHelper.isMergeable(ln.rightSibling())) {
 
-                                 sibling = ln.rightSibling();
-                                 int pointerIndex = store.findIndexOfChild(parent, ln);
-                                 for (int idx = 0; idx < ln.size(); idx++) {
-                                     store.addEntry(sibling, ln.keyAt(idx), ln.valueAt(idx));
-                                 }
+                                sibling = ln.rightSibling();
+                                int pointerIndex = store.findIndexOfChild(parent, ln);
+                                for (int idx = 0; idx < ln.size(); idx++) {
+                                    store.addEntry(sibling, ln.keyAt(idx), ln.valueAt(idx), comparator);
+                                }
 
-                                 // Remove key and child pointer from parent
-                                 store.removeChildAt(parent, pointerIndex);
+                                // Remove key and child pointer from parent
+                                store.removeChildAt(parent, pointerIndex);
 
-                                 // Update sibling pointer
-                                 store.updateLeftSibling(sibling, ln.leftSibling());
-                                 if (ln.leftSibling() != null) {
-                                     store.updateRightSibling(ln.leftSibling(), sibling);
-                                 } else {
-                                     store.updateFirstLeaf(sibling);
-                                 }
-                                 propagateFirstKey(sibling);
-                                 propagateFirstKey(parent);
+                                // Update sibling pointer
+                                store.updateLeftSibling(sibling, ln.leftSibling());
+                                if (ln.leftSibling() != null) {
+                                    store.updateRightSibling(ln.leftSibling(), sibling);
+                                } else {
+                                    store.updateFirstLeaf(sibling);
+                                }
+                                propagateFirstKey(sibling);
+                                propagateFirstKey(parent);
 
-                                 handleDeficiency(parent);
-                             }
+                                handleDeficiency(parent);
+                            }
                         } else {
 
                         }
@@ -466,6 +478,9 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
             }
             store.incSize(-1);
             store.save();
+            if (oldValueOutHolder != null) {
+                oldValueOutHolder.set(old);
+            }
             return true;
         }
     }
@@ -474,7 +489,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
      * Given an integer key and floating point value, this method inserts a
      * dictionary pair accordingly into the B+ tree.
      *
-     * @param key: an integer key to be used in the dictionary pair
+     * @param key:   an integer key to be used in the dictionary pair
      * @param value: a floating point number to be used in the dictionary pair
      */
     public V put(K key, V value) {
@@ -491,7 +506,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
     }
 
     public V computeIfAbsent(K key,
-            Function<? super K, ? extends V> mappingFunction) {
+                             Function<? super K, ? extends V> mappingFunction) {
         NAssert.requireNamedNonNull(mappingFunction);
         NOptional<V> u = getOptional(key);
         if (u.isNotPresent()) {
@@ -524,7 +539,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
             /* Flow of execution goes here only when first insert takes place */
             // Create leaf node as first node in B plus tree (root is null)
             LeafNode<K, V> ln = store.createLeafNode(null);
-            store.addEntry(ln, key, value);
+            store.addEntry(ln, key, value, comparator);
             store.incSize(1);
             // Set as first leaf node (can be used later for in-order leaf traversal)
             store.updateFirstLeaf(ln);
@@ -534,7 +549,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
             // Find leaf node to insert into
             LeafNode<K, V> ln = findLeafNode(key);
             if (!allowDuplicate) {
-                int index = store.indexOfKey(ln, key);
+                int index = store.indexOfKey(ln, key, comparator);
                 if (index >= 0) {
                     V oldValue = store.updateValueAt(ln, index, value);
                     store.save();
@@ -553,8 +568,8 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
                     store.removeChildAt(ln, i);
                 }
                 halfDict[halfDict.length - 1] = new SimpleEntry<>(key, value);
-                Arrays.sort(halfDict, NBPlusTreeHelper::compareEntries);
-                
+                Arrays.sort(halfDict, (o1, o2) -> NBPlusTreeHelper.compareEntries(o1, o2, comparator));
+
                 K k0 = null;
                 if (ln.parent() == null) {
                     /* Flow of execution goes here when there is 1 node in tree */
@@ -572,13 +587,13 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
 
                 // Create new LeafNode that holds the other half
                 LeafNode<K, V> newLeafNode = store.createLeafNode(ln.parent());
-                store.addEntries(newLeafNode, halfDict);
+                store.addEntries(newLeafNode, halfDict, comparator);
 
                 // Update child pointers of parent node
                 int pointerIndex = store.findIndexOfChild(ln.parent(), ln) + 1;
                 store.addChild(ln.parent(), newLeafNode, pointerIndex);
 
-                
+
                 // Make leaf nodes siblings of one another
                 store.updateRightSibling(newLeafNode, ln.rightSibling());
                 if (newLeafNode.rightSibling() != null) {
@@ -596,7 +611,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
 
                     /* If parent is overfull, repeat the process up the tree,
 			   		   until no deficiencies are found */
-                    
+
                     IntermediateNode<K, V> in = ln.parent();
                     while (in != null) {
                         if (NBPlusTreeHelper.isOverfull(in)) {
@@ -610,7 +625,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
                 store.incSize(1);
                 store.save();
             } else {
-                store.addEntry(ln, key, value);
+                store.addEntry(ln, key, value, comparator);
                 store.incSize(1);
                 propagateFirstKey(ln);
                 store.save();
@@ -694,7 +709,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
         }
 
         LeafNode<K, V> ln = findLeafNode(key);
-        int index = store.indexOfKey(ln, key);
+        int index = store.indexOfKey(ln, key, comparator);
 
         if (index < 0) {
             return new ArrayList<>();
@@ -731,8 +746,8 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
         return all;
     }
 
-    public V get(K key) {
-
+    public V get(Object obj) {
+        K key = (K) obj;
         // If B+ tree is completely empty, simply return null
         if (isEmpty()) {
             return null;
@@ -741,7 +756,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
         LeafNode<K, V> ln = findLeafNode(key);
 
         // Perform binary search to find index of key within dictionary
-        int index = store.indexOfKey(ln, key);
+        int index = store.indexOfKey(ln, key, comparator);
 
         // If index negative, the key doesn't exist in B+ tree
         if (index < 0) {
@@ -762,7 +777,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
         LeafNode<K, V> ln = findLeafNode(key);
 
         // Perform binary search to find index of key within dictionary
-        int index = store.indexOfKey(ln, key);
+        int index = store.indexOfKey(ln, key, comparator);
 
         // If index negative, the key doesn't exist in B+ tree
         if (index < 0) {
@@ -803,7 +818,7 @@ public class NBPlusTreeImpl<K extends Comparable<K>, V> extends AbstractMap<K, V
                 }
 
                 // Include value if its key fits within the provided range
-                if (NBPlusTreeHelper.compareKey(lowerBound, dp) <= 0 && NBPlusTreeHelper.compareKey(dp, upperBound) <= 0) {
+                if (NUtils.compareObjects(lowerBound, dp, comparator) <= 0 && NUtils.compareObjects(dp, upperBound, comparator) <= 0) {
                     values.add(currNode.valueAt(i));
                 }
             }

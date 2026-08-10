@@ -5,13 +5,15 @@ import net.thevpc.nuts.collections.NBPlusTree;
 import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.io.NDataSerializer;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NArrays;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NUtils;
 
 import java.io.*;
 import java.util.*;
 
-public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBPlusTreeStore<K, V>, Closeable {
+public class NBPlusTreeStoreFixedDisk<K, V> implements NBPlusTreeStore<K, V>, Closeable {
 
     private NBFixedBlockFile blockFile;
     private int order = -1;
@@ -196,9 +198,9 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
     }
 
     @Override
-    public void addEntry(NBPlusTree.LeafNode<K, V> node, K k, V v) {
+    public void addEntry(NBPlusTree.LeafNode<K, V> node, K k, V v, Comparator<K> comparator) {
         NBPlusTreeStoreFixedDiskLeafNode<K, V> ln = (NBPlusTreeStoreFixedDiskLeafNode<K, V>) node;
-        int index = Arrays.binarySearch(ln.keys, 0, ln.size, k);
+        int index = NArrays.binarySearch(ln.keys, 0, ln.size, k,comparator);
         if (index >= 0) {
             while (index < ln.size && Objects.equals(ln.keys[index], k)) {
                 index++;
@@ -215,7 +217,7 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
     }
 
     @Override
-    public void addEntries(NBPlusTree.LeafNode<K, V> node, NBPlusTree.Entry<K, V>[] orderedElements) {
+    public void addEntries(NBPlusTree.LeafNode<K, V> node, NBPlusTree.Entry<K, V>[] orderedElements, Comparator<K> comparator) {
         NBPlusTreeStoreFixedDiskLeafNode<K, V> ln = (NBPlusTreeStoreFixedDiskLeafNode<K, V>) node;
         if (orderedElements != null && orderedElements.length > 0) {
             K[] arr1Keys = Arrays.copyOf(ln.keys, ln.size);
@@ -226,7 +228,7 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
             while (i < n1 && j < n2) {
                 K key1 = arr1Keys[i];
                 K key2 = orderedElements[j].getKey();
-                if (key1.compareTo(key2) < 0) {
+                if (NUtils.compareObjects(key1,key2,comparator) < 0) {
                     ln.keys[k] = arr1Keys[i];
                     ln.values[k] = arr1Values[i];
                     i++;
@@ -336,9 +338,9 @@ public class NBPlusTreeStoreFixedDisk<K extends Comparable<K>, V> implements NBP
     }
 
     @Override
-    public int indexOfKey(NBPlusTree.LeafNode<K, V> leafNode, K key) {
+    public int indexOfKey(NBPlusTree.LeafNode<K, V> leafNode, K key, Comparator<K> comparator) {
         NBPlusTreeStoreFixedDiskLeafNode<K, V> ln = (NBPlusTreeStoreFixedDiskLeafNode<K, V>) leafNode;
-        return Arrays.binarySearch(ln.keys, 0, ln.size, key);
+        return NArrays.binarySearch(ln.keys, 0, ln.size, key,comparator);
     }
 
     @Override

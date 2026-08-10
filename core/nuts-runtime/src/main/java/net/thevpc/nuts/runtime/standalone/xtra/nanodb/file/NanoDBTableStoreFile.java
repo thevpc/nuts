@@ -284,7 +284,9 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
                 if (data != null) {
                     return data;
                 }
-                NanoDBIndex fi = new NanoDBDefaultIndex(def.getIndexType(), db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()), getIndexFile());
+                NanoDBIndex fi = new NanoDBDefaultIndex(def.getIndexType(), db.getSerializers().findSerializer(def.getIndexType(),
+                        true//def.isNullable()
+                        ), getIndexFile());
                 fi.load();
                 data = fi;
                 return fi;

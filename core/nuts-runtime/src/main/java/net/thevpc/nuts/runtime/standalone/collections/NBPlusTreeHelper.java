@@ -11,20 +11,21 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.collections.NBPlusTree;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -36,7 +37,7 @@ import java.util.Map;
  */
 public class NBPlusTreeHelper {
 
-    public static <K extends Comparable<K>, V> int compareEntries(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+    public static <K, V> int compareEntries(Map.Entry<K, V> o1, Map.Entry<K, V> o2, Comparator<K> comparator) {
         //entry null last
         if (o1 == null && o2 == null) {
             return 0;
@@ -62,19 +63,10 @@ public class NBPlusTreeHelper {
         if (k2 == null) {
             return 1;
         }
-        return k1.compareTo(k2);
-    }
-
-    public static <K extends Comparable<K>> int compareKey(K k1, K k2) {
-        if (k1 == k2) {
-            return 0;
-        } else if (k1 == null) {
-            return -1;
-        } else if (k2 == null) {
-            return 1;
-        } else {
-            return k1.compareTo(k2);
+        if (comparator != null) {
+            return comparator.compare(k1, k2);
         }
+        return ((Comparable<K>)k1).compareTo(k2);
     }
 
     /**
@@ -83,7 +75,7 @@ public class NBPlusTreeHelper {
      *
      * @return a boolean indicating whether or not the LeafNode is deficient
      */
-    public static <K extends Comparable<K>, V> boolean isDeficient(NBPlusTree.Node<K, V> node) {
+    public static <K, V> boolean isDeficient(NBPlusTree.Node<K, V> node) {
         if (node.parent() == null) {
             if (node.isLeaf()) {
                 return false;
@@ -94,7 +86,7 @@ public class NBPlusTreeHelper {
     }
 
 
-    public static <K extends Comparable<K>, V> boolean isEmpty(NBPlusTree.Node<K, V> node) {
+    public static <K, V> boolean isEmpty(NBPlusTree.Node<K, V> node) {
         return node.size() == 0;
     }
 
@@ -104,7 +96,7 @@ public class NBPlusTreeHelper {
      *
      * @return a boolean indicating whether or not the LeafNode is full
      */
-    public static <K extends Comparable<K>, V> boolean isFull(NBPlusTree.LeafNode<K, V> node) {
+    public static <K, V> boolean isFull(NBPlusTree.LeafNode<K, V> node) {
         return node.size() == node.maxSize();
     }
 
@@ -117,7 +109,7 @@ public class NBPlusTreeHelper {
      * @return a boolean indicating whether or not the LeafNode object can give
      * a dictionary pair to a deficient leaf node
      */
-    public static <K extends Comparable<K>, V> boolean isLendable(NBPlusTree.Node<K, V> node) {
+    public static <K, V> boolean isLendable(NBPlusTree.Node<K, V> node) {
         return node.size() > node.minSize();
     }
 
@@ -130,7 +122,7 @@ public class NBPlusTreeHelper {
      * @return a boolean indicating whether or not the LeafNode object can be
      * merged with
      */
-    public static <K extends Comparable<K>, V> boolean isMergeable(NBPlusTree.LeafNode<K, V> node) {
+    public static <K, V> boolean isMergeable(NBPlusTree.LeafNode<K, V> node) {
         return node.size() == node.minSize();
     }
 
@@ -143,7 +135,7 @@ public class NBPlusTreeHelper {
      * @return a boolean indicating whether or not the InternalNode can be
      * merged with
      */
-    public static <K extends Comparable<K>, V> boolean isMergeable(NBPlusTree.IntermediateNode<K, V> node) {
+    public static <K, V> boolean isMergeable(NBPlusTree.IntermediateNode<K, V> node) {
         return node.size() == node.minSize();
     }
 
@@ -154,7 +146,7 @@ public class NBPlusTreeHelper {
      *
      * @return a boolean indicating if the InternalNode is overfull
      */
-    public static <K extends Comparable<K>, V> boolean isOverfull(NBPlusTree.IntermediateNode<K, V> node) {
+    public static <K, V> boolean isOverfull(NBPlusTree.IntermediateNode<K, V> node) {
         return node.size() == node.maxSize() + 1;
     }
 
@@ -168,13 +160,8 @@ public class NBPlusTreeHelper {
         return a.equals(b);
     }
 
-    public static <K extends Comparable<K>> int binarySearchKeys(List<K> a, int numPairs, K key) {
-        Comparator<K> c = new Comparator<K>() {
-            @Override
-            public int compare(K o1, K o2) {
-                return compareKey(o1, o2);
-            }
-        };
+    public static <K> int binarySearchKeys(List<K> a, int numPairs, K key, Comparator<K> comparator) {
+        Comparator<K> c = (o1, o2) -> NUtils.compareObjects(o1, o2, comparator);
         int fromIndex = 0;
         int toIndex = numPairs;
         int low = fromIndex;
@@ -212,4 +199,5 @@ public class NBPlusTreeHelper {
         }
         return -1;
     }
+
 }

@@ -5,7 +5,7 @@ import net.thevpc.nuts.collections.NBPlusTree;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-class NBPlusTreeStoreMemIntermediateNode<K extends Comparable<K>, V> extends NBPlusTreeStoreMemNode<K, V> implements NBPlusTree.IntermediateNode<K, V> {
+class NBPlusTreeStoreMemIntermediateNode<K, V> extends NBPlusTreeStoreMemNode<K, V> implements NBPlusTree.IntermediateNode<K, V> {
 
 //    Comparable[] keys;
     K firstKey;

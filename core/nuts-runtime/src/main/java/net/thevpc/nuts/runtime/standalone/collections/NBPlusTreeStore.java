@@ -2,7 +2,9 @@ package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.collections.NBPlusTree;
 
-public interface NBPlusTreeStore<K extends Comparable<K>, V> extends AutoCloseable {
+import java.util.Comparator;
+
+public interface NBPlusTreeStore<K, V> extends AutoCloseable {
 
     int order();
 
@@ -10,9 +12,9 @@ public interface NBPlusTreeStore<K extends Comparable<K>, V> extends AutoCloseab
 
     NBPlusTree.LeafNode<K, V> createLeafNode(NBPlusTree.IntermediateNode<K, V> parent);
 
-    void addEntry(NBPlusTree.LeafNode<K, V> node, K k, V v);
+    void addEntry(NBPlusTree.LeafNode<K, V> node, K k, V v, Comparator<K> comparator);
 
-    void addEntries(NBPlusTree.LeafNode<K, V> node, NBPlusTree.Entry<K, V>[] dp);
+    void addEntries(NBPlusTree.LeafNode<K, V> node, NBPlusTree.Entry<K, V>[] dp, Comparator<K> comparator);
 
     NBPlusTree.IntermediateNode<K, V> createInternalNode();
 
@@ -54,7 +56,7 @@ public interface NBPlusTreeStore<K extends Comparable<K>, V> extends AutoCloseab
 
     void removeChildAt(NBPlusTree.LeafNode<K, V> node, int index);
 
-    int indexOfKey(NBPlusTree.LeafNode<K, V> leafNode, K key);
+    int indexOfKey(NBPlusTree.LeafNode<K, V> leafNode, K key, Comparator<K> comparator);
 
     void updateFirstKey(NBPlusTree.IntermediateNode<K, V> node, K firstKey);
 

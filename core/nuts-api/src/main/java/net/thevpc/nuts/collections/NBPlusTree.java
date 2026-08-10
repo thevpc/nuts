@@ -28,15 +28,17 @@ import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.io.NDataSerializer;
 import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NRef;
 
 import java.util.*;
 
 /**
  * A self-balancing B+ Tree implementation that extends {@link Map}.
  * <p>
- * This collection is optimized for high-performance retrieval, insert, and delete operations. 
- * It supports both in-memory usage (using standard Java object references) and page-based/file-based 
+ * This collection is optimized for high-performance retrieval, insert, and delete operations.
+ * It supports both in-memory usage (using standard Java object references) and page-based/file-based
  * persistence layouts. It can also configured to either act as a unique-key map or support duplicate keys.
  *
  * @param <K> the type of keys maintained by this map (must implement {@link Comparable})
@@ -44,110 +46,215 @@ import java.util.*;
  * @author vpc
  * @since 0.8.4
  */
-public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V>, AutoCloseable {
+public interface NBPlusTree<K, V> extends Map<K, V>, AutoCloseable {
 
     /**
      * Creates an in-memory B+ Tree instance with a custom order and duplicate configuration.
      *
-     * @param order the maximum number of children for intermediate nodes (must be {@code >= 3})
+     * @param order           the maximum number of children for intermediate nodes (must be {@code >= 3})
      * @param allowDuplicates whether duplicate keys are permitted in the tree
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param <K>             the key type
+     * @param <V>             the value type
      * @return a new in-memory {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int order, boolean allowDuplicates) {
-        return NUtilsRPI.of().createBtreePlus(order, allowDuplicates);
+        return of(order, allowDuplicates, Comparable::compareTo);
+    }
+
+    /**
+     * Creates an in-memory B+ Tree instance with a custom order and duplicate configuration.
+     *
+     * @param order           the maximum number of children for intermediate nodes (must be {@code >= 3})
+     * @param allowDuplicates whether duplicate keys are permitted in the tree
+     * @param <K>             the key type
+     * @param <V>             the value type
+     * @return a new in-memory {@code NBPlusTree}
+     */
+    static <K, V> NBPlusTree<K, V> of(int order, boolean allowDuplicates, Comparator<K> comparator) {
+        return NUtilsRPI.of().createBtreePlus(order, allowDuplicates, comparator);
     }
 
     /**
      * Creates an in-memory B+ Tree instance with a custom order and duplicates disabled.
      *
      * @param order the maximum number of children for intermediate nodes (must be {@code >= 3})
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param <K>   the key type
+     * @param <V>   the value type
      * @return a new in-memory {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int order) {
-        return NUtilsRPI.of().createBtreePlus(order);
+        return NUtilsRPI.of().createBtreePlus(order, false, Comparable::compareTo);
+    }
+
+    /**
+     * Creates an in-memory B+ Tree instance with a custom order and duplicates disabled.
+     *
+     * @param order the maximum number of children for intermediate nodes (must be {@code >= 3})
+     * @param <K>   the key type
+     * @param <V>   the value type
+     * @return a new in-memory {@code NBPlusTree}
+     */
+    static <K, V> NBPlusTree<K, V> of(int order, Comparator<K> comparator) {
+        return NUtilsRPI.of().createBtreePlus(order, false, comparator);
     }
 
     /**
      * Creates a page-based in-memory B+ Tree instance.
      *
-     * @param pageSize the block page size in bytes (e.g., 4096)
-     * @param order the maximum number of children for intermediate nodes (must be {@code >= 3})
+     * @param pageSize        the block page size in bytes (e.g., 4096)
+     * @param order           the maximum number of children for intermediate nodes (must be {@code >= 3})
      * @param allowDuplicates whether duplicate keys are permitted in the tree
-     * @param keySerializer the serializer to encode/decode keys
-     * @param valSerializer the serializer to encode/decode values
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param keySerializer   the serializer to encode/decode keys
+     * @param valSerializer   the serializer to encode/decode values
+     * @param <K>             the key type
+     * @param <V>             the value type
      * @return a new page-based in-memory {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> ofInMemory(int pageSize, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
-        return NUtilsRPI.of().createBtreePlus(NPageStore.ofInMemory(pageSize), order, allowDuplicates, keySerializer, valSerializer);
+        return ofInMemory(pageSize, order, allowDuplicates, keySerializer, valSerializer, Comparable::compareTo);
+    }
+
+    /**
+     * Creates a page-based in-memory B+ Tree instance.
+     *
+     * @param pageSize        the block page size in bytes (e.g., 4096)
+     * @param order           the maximum number of children for intermediate nodes (must be {@code >= 3})
+     * @param allowDuplicates whether duplicate keys are permitted in the tree
+     * @param keySerializer   the serializer to encode/decode keys
+     * @param valSerializer   the serializer to encode/decode values
+     * @param <K>             the key type
+     * @param <V>             the value type
+     * @return a new page-based in-memory {@code NBPlusTree}
+     */
+    static <K, V> NBPlusTree<K, V> ofInMemory(int pageSize, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer, Comparator<K> comparator) {
+        return NUtilsRPI.of().createBtreePlus(NPageStore.ofInMemory(pageSize), order, allowDuplicates, keySerializer, valSerializer, comparator);
     }
 
     /**
      * Creates a file-persistent B+ Tree instance.
      *
-     * @param path the target storage file path
-     * @param pageSize the block page size in bytes (e.g., 4096)
-     * @param order the maximum number of children for intermediate nodes (must be {@code >= 3})
+     * @param path            the target storage file path
+     * @param pageSize        the block page size in bytes (e.g., 4096)
+     * @param order           the maximum number of children for intermediate nodes (must be {@code >= 3})
      * @param allowDuplicates whether duplicate keys are permitted in the tree
-     * @param keySerializer the serializer to encode/decode keys
-     * @param valSerializer the serializer to encode/decode values
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param keySerializer   the serializer to encode/decode keys
+     * @param valSerializer   the serializer to encode/decode values
+     * @param <K>             the key type
+     * @param <V>             the value type
      * @return a new file-persistent {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> ofPath(NPath path, int pageSize, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
-        return NUtilsRPI.of().createBtreePlus(NPageStore.ofFile(path, pageSize), order, allowDuplicates, keySerializer, valSerializer);
+        return NUtilsRPI.of().createBtreePlus(NPageStore.ofFile(path, pageSize), order, allowDuplicates, keySerializer, valSerializer, Comparable::compareTo);
     }
 
     /**
      * Creates a page-based B+ Tree instance using default configuration (order = 128 for file store, allowDuplicates = false).
      *
-     * @param store the underlying page store
+     * @param store         the underlying page store
      * @param keySerializer the serializer to encode/decode keys
      * @param valSerializer the serializer to encode/decode values
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param <K>           the key type
+     * @param <V>           the value type
      * @return a new page-based {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> of(NPageStore store, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
-        return NUtilsRPI.of().createBtreePlus(store, 0, false, keySerializer, valSerializer);
+        return NUtilsRPI.of().createBtreePlus(store, 0, false, keySerializer, valSerializer, Comparable::compareTo);
     }
 
     /**
      * Creates a page-based B+ Tree instance with a custom order and duplicates configuration.
      *
-     * @param store the underlying page store
-     * @param order the maximum number of children for intermediate nodes, or {@code <= 0} to use standard defaults
+     * @param store           the underlying page store
+     * @param order           the maximum number of children for intermediate nodes, or {@code <= 0} to use standard defaults
      * @param allowDuplicates whether duplicate keys are permitted in the tree
-     * @param keySerializer the serializer to encode/decode keys
-     * @param valSerializer the serializer to encode/decode values
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param keySerializer   the serializer to encode/decode keys
+     * @param valSerializer   the serializer to encode/decode values
+     * @param <K>             the key type
+     * @param <V>             the value type
      * @return a new page-based {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> of(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
-        return NUtilsRPI.of().createBtreePlus(store, order, allowDuplicates, keySerializer, valSerializer);
+        return NUtilsRPI.of().createBtreePlus(store, order, allowDuplicates, keySerializer, valSerializer, Comparable::compareTo);
     }
 
     /**
      * Creates a page-based B+ Tree instance with default order and custom duplicates configuration.
      *
-     * @param store the underlying page store
+     * @param store           the underlying page store
      * @param allowDuplicates whether duplicate keys are permitted in the tree
-     * @param keySerializer the serializer to encode/decode keys
-     * @param valSerializer the serializer to encode/decode values
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param keySerializer   the serializer to encode/decode keys
+     * @param valSerializer   the serializer to encode/decode values
+     * @param <K>             the key type
+     * @param <V>             the value type
      * @return a new page-based {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> of(NPageStore store, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
-        return NUtilsRPI.of().createBtreePlus(store, 0, allowDuplicates, keySerializer, valSerializer);
+        return NUtilsRPI.of().createBtreePlus(store, 0, allowDuplicates, keySerializer, valSerializer, Comparable::compareTo);
     }
+
+    /**
+     * Creates a file-persistent B+ Tree instance.
+     *
+     * @param path            the target storage file path
+     * @param pageSize        the block page size in bytes (e.g., 4096)
+     * @param order           the maximum number of children for intermediate nodes (must be {@code >= 3})
+     * @param allowDuplicates whether duplicate keys are permitted in the tree
+     * @param keySerializer   the serializer to encode/decode keys
+     * @param valSerializer   the serializer to encode/decode values
+     * @param <K>             the key type
+     * @param <V>             the value type
+     * @return a new file-persistent {@code NBPlusTree}
+     */
+    static <K, V> NBPlusTree<K, V> ofPath(NPath path, int pageSize, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer,Comparator<K> comparator) {
+        return NUtilsRPI.of().createBtreePlus(NPageStore.ofFile(path, pageSize), order, allowDuplicates, keySerializer, valSerializer, comparator);
+    }
+
+    /**
+     * Creates a page-based B+ Tree instance using default configuration (order = 128 for file store, allowDuplicates = false).
+     *
+     * @param store         the underlying page store
+     * @param keySerializer the serializer to encode/decode keys
+     * @param valSerializer the serializer to encode/decode values
+     * @param <K>           the key type
+     * @param <V>           the value type
+     * @return a new page-based {@code NBPlusTree}
+     */
+    static <K, V> NBPlusTree<K, V> of(NPageStore store, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer,Comparator<K> comparator) {
+        return NUtilsRPI.of().createBtreePlus(store, 0, false, keySerializer, valSerializer, comparator);
+    }
+
+    /**
+     * Creates a page-based B+ Tree instance with a custom order and duplicates configuration.
+     *
+     * @param store           the underlying page store
+     * @param order           the maximum number of children for intermediate nodes, or {@code <= 0} to use standard defaults
+     * @param allowDuplicates whether duplicate keys are permitted in the tree
+     * @param keySerializer   the serializer to encode/decode keys
+     * @param valSerializer   the serializer to encode/decode values
+     * @param <K>             the key type
+     * @param <V>             the value type
+     * @return a new page-based {@code NBPlusTree}
+     */
+    static <K, V> NBPlusTree<K, V> of(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer,Comparator<K> comparator) {
+        return NUtilsRPI.of().createBtreePlus(store, order, allowDuplicates, keySerializer, valSerializer, comparator);
+    }
+
+    /**
+     * Creates a page-based B+ Tree instance with default order and custom duplicates configuration.
+     *
+     * @param store           the underlying page store
+     * @param allowDuplicates whether duplicate keys are permitted in the tree
+     * @param keySerializer   the serializer to encode/decode keys
+     * @param valSerializer   the serializer to encode/decode values
+     * @param <K>             the key type
+     * @param <V>             the value type
+     * @return a new page-based {@code NBPlusTree}
+     */
+    static <K, V> NBPlusTree<K, V> of(NPageStore store, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer,Comparator<K> comparator) {
+        return NUtilsRPI.of().createBtreePlus(store, 0, allowDuplicates, keySerializer, valSerializer, comparator);
+    }
+
+    boolean remove(Object obj, NRef<V> oldValueOutHolder);
 
     /**
      * Returns the size of the B+ Tree as a long value.
@@ -157,18 +264,10 @@ public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V>, AutoC
     long sizeLong();
 
     /**
-     * Removes the key-value pair associated with the given key.
-     *
-     * @param key the key to remove from the tree
-     * @return {@code true} if the key was successfully found and removed, {@code false} otherwise
-     */
-    boolean remove(K key);
-
-    /**
      * Inserts or updates a key-value pair.
      *
-     * @param key the key to insert/update
-     * @param value the associated value
+     * @param key            the key to insert/update
+     * @param value          the associated value
      * @param allowDuplicate whether duplicates are allowed. If {@code false}, existing values are updated.
      *                       If {@code true}, a new duplicate entry is appended.
      * @return the old value associated with the key if duplicates are disabled and it existed, {@code null} otherwise
@@ -199,13 +298,6 @@ public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V>, AutoC
      */
     List<V> search(K key);
 
-    /**
-     * Retrieves the single/first value mapped to the given key.
-     *
-     * @param key the search key
-     * @return the mapped value, or {@code null} if the key is not present
-     */
-    V get(K key);
 
     /**
      * Retrieves the value mapped to the given key wrapped in an {@link NOptional}.
@@ -230,11 +322,11 @@ public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V>, AutoC
      * @param <K> the key type
      * @param <V> the value type
      */
-    interface Visitor<K extends Comparable<K>, V> {
+    interface Visitor<K, V> {
         /**
          * Visits a leaf node in the B+ Tree structure.
          *
-         * @param node the visited leaf node, or {@code null} if empty
+         * @param node  the visited leaf node, or {@code null} if empty
          * @param level the current depth level in the tree (0-indexed)
          */
         void visitLeaf(LeafNode<K, V> node, int level);
@@ -242,7 +334,7 @@ public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V>, AutoC
         /**
          * Visits an intermediate node in the B+ Tree structure.
          *
-         * @param node the visited intermediate node
+         * @param node  the visited intermediate node
          * @param level the current depth level in the tree (0-indexed)
          */
         void visitIntermediate(IntermediateNode<K, V> node, int level);
@@ -267,7 +359,7 @@ public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V>, AutoC
      * @param <K> the key type
      * @param <V> the value type
      */
-    interface Node<K extends Comparable<K>, V> {
+    interface Node<K, V> {
 
         /**
          * Returns the parent node of this node.
@@ -318,7 +410,7 @@ public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V>, AutoC
      * @param <K> the key type
      * @param <V> the value type
      */
-    interface IntermediateNode<K extends Comparable<K>, V> extends Node<K, V> {
+    interface IntermediateNode<K, V> extends Node<K, V> {
 
         /**
          * Retrieves the child node pointer at the specified index.
@@ -357,7 +449,7 @@ public interface NBPlusTree<K extends Comparable<K>, V> extends Map<K, V>, AutoC
      * @param <K> the key type
      * @param <V> the value type
      */
-    interface LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
+    interface LeafNode<K, V> extends Node<K, V> {
 
         /**
          * Returns all keys stored in this leaf node.

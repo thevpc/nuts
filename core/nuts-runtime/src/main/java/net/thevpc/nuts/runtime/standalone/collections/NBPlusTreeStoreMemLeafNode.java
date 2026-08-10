@@ -11,7 +11,7 @@ import java.util.*;
  * by m, the max degree of the B+ tree. The leaf nodes form a doubly linked
  * list that, i.e. each leaf node has a left and right sibling
  */
-public class NBPlusTreeStoreMemLeafNode<K extends Comparable<K>, V> extends NBPlusTreeStoreMemNode<K, V> implements NBPlusTree.LeafNode<K, V> {
+public class NBPlusTreeStoreMemLeafNode<K, V> extends NBPlusTreeStoreMemNode<K, V> implements NBPlusTree.LeafNode<K, V> {
 
     NBPlusTree.LeafNode<K, V> leftSibling;
     NBPlusTree.LeafNode<K, V> rightSibling;

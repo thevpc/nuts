@@ -10,7 +10,7 @@ import java.io.*;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-public class NanoDBDefaultIndex<T extends Comparable<T>> extends NanoDBAbstractIndex<T> implements NanoDBIndex<T>, Closeable {
+public class NanoDBDefaultIndex<T extends Comparable<T>> extends NanoDBAbstractIndex<T> implements Closeable {
     private final File file;
     private final Class<T> keyType;
     private NBPlusTree<T, Long> tree;

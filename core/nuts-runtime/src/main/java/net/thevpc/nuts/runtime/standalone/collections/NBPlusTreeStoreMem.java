@@ -11,30 +11,28 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.collections.NBPlusTree;
+import net.thevpc.nuts.util.NArrays;
 
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author vpc
  */
-public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTreeStore<K, V> {
+public class NBPlusTreeStoreMem<K, V> implements NBPlusTreeStore<K, V> {
 
     protected boolean allowDuplicates;
     protected int order;
@@ -113,35 +111,31 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
 
     public void updateLeftSibling(NBPlusTree.IntermediateNode<K, V> node, NBPlusTree.IntermediateNode<K, V> value) {
         NBPlusTreeStoreMemIntermediateNode<K, V> m = (NBPlusTreeStoreMemIntermediateNode<K, V>) node;
-        m.leftSibling = (NBPlusTreeStoreMemIntermediateNode<K, V>) value;
+        m.leftSibling = value;
     }
 
     public void updateRightSibling(NBPlusTree.IntermediateNode<K, V> node, NBPlusTree.IntermediateNode<K, V> value) {
         NBPlusTreeStoreMemIntermediateNode<K, V> m = (NBPlusTreeStoreMemIntermediateNode<K, V>) node;
-        m.rightSibling = (NBPlusTreeStoreMemIntermediateNode<K, V>) value;
+        m.rightSibling = value;
     }
 
     public void updateLeftSibling(NBPlusTree.LeafNode<K, V> node, NBPlusTree.LeafNode<K, V> value) {
         NBPlusTreeStoreMemLeafNode<K, V> m = (NBPlusTreeStoreMemLeafNode<K, V>) node;
-        m.leftSibling = (NBPlusTreeStoreMemLeafNode<K, V>) value;
+        m.leftSibling = value;
     }
 
     public void updateRightSibling(NBPlusTree.LeafNode<K, V> node, NBPlusTree.LeafNode<K, V> value) {
         NBPlusTreeStoreMemLeafNode<K, V> m = (NBPlusTreeStoreMemLeafNode<K, V>) node;
-        m.rightSibling = (NBPlusTreeStoreMemLeafNode<K, V>) value;
+        m.rightSibling = value;
     }
 
 
     @Override
-    public void addEntry(NBPlusTree.LeafNode<K, V> node, K k, V v) {
+    public void addEntry(NBPlusTree.LeafNode<K, V> node, K k, V v, Comparator<K> comparator) {
         NBPlusTreeStoreMemLeafNode<K, V> nn = (NBPlusTreeStoreMemLeafNode<K, V>) node;
         AbstractMap.SimpleEntry<K, V> nv = new AbstractMap.SimpleEntry<>(k, v);
 
-//        nn.dictionary[nn.size] = nv;
-//        nn.size++;
-//        Arrays.sort(nn.dictionary, BPlusTreeHelper::compareEntries);
-
-        int index = Arrays.binarySearch(nn.dictionary, 0, nn.size, nv, NBPlusTreeHelper::compareEntries);
+        int index = NArrays.binarySearch(nn.dictionary, 0, nn.size, nv, (a, b) -> NBPlusTreeHelper.compareEntries(a, b, comparator));
         if (index >= 0) {
             while (index < nn.size && Objects.equals(nn.dictionary[index].getKey(), k)) {
                 index++;
@@ -152,18 +146,13 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
         System.arraycopy(nn.dictionary, index, nn.dictionary, index + 1, nn.size - index);
         nn.dictionary[index] = nv;
         nn.size++;
-//        check(nn.dictionary, nn.size);
     }
 
     @Override
-    public void addEntries(NBPlusTree.LeafNode<K, V> node, NBPlusTree.Entry<K, V>[] orderedElements) {
+    public void addEntries(NBPlusTree.LeafNode<K, V> node, NBPlusTree.Entry<K, V>[] orderedElements, Comparator<K> comparator) {
         NBPlusTreeStoreMemLeafNode<K, V> nn = (NBPlusTreeStoreMemLeafNode<K, V>) node;
         if (orderedElements != null && orderedElements.length > 0) {
             Map.Entry<K, V> firstNext = orderedElements[0];
-//            int p=Arrays.binarySearch(nn.dictionary,0,nn.size,firstNext,BPlusTreeHelper::compareEntries);
-//            if(p<0){
-//                p=-(p+1);
-//            }
             Map.Entry<K, V>[] arr1 = new Map.Entry[nn.size];
             System.arraycopy(nn.dictionary, 0, arr1, 0, arr1.length);
             Map.Entry<K, V>[] arr2 = orderedElements;
@@ -172,7 +161,7 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
             int n2 = arr2.length;
             // Traverse both array
             while (i < n1 && j < n2) {
-                if (NBPlusTreeHelper.compareEntries(arr1[i], arr2[j]) < 0) {
+                if (NBPlusTreeHelper.compareEntries(arr1[i], arr2[j], comparator) < 0) {
                     nn.dictionary[k++] = arr1[i++];
                 } else {
                     nn.dictionary[k++] = arr2[j++];
@@ -181,27 +170,6 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
             System.arraycopy(arr1, i, nn.dictionary, k, n1 - i);
             System.arraycopy(arr2, j, nn.dictionary, k + n1 - i, n2 - j);
             nn.size += orderedElements.length;
-//            check(nn.dictionary, nn.size);
-//            while (i < n1) {
-//                nn.dictionary[k++] = arr1[i++];
-//            }
-//            while (j < n2) {
-//                nn.dictionary[k++] = arr2[j++];
-//            }
-
-
-//            for (BPlusTree.Entry dp : orderedElements) {
-//                if (dp != null) {
-//                    nn.dictionary[nn.size] = dp;
-//                    nn.size++;
-//                    changed = true;
-//                } else {
-//                    break;
-//                }
-//            }
-//            if (changed) {
-//                Arrays.sort(nn.dictionary, BPlusTreeHelper::compareEntries);
-//            }
         }
     }
 
@@ -222,15 +190,11 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
             index = nn.size;
         }
         System.arraycopy(nn.children, index, nn.children, index + 1, nn.size - index);
-//        for (int i = nn.size - 1; i >= index; i--) {
-//            nn.children[i + 1] = nn.children[i];
-//        }
         nn.children[index] = (NBPlusTreeStoreMemNode<K, V>) pointer;
         nn.size++;
         if (index == 0) {
             nn.firstKey = nn.children[0].firstKey();
         }
-//        check(nn.children, nn.size);
     }
 
     @Override
@@ -260,39 +224,14 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
         System.arraycopy(nn.dictionary, index + 1, nn.dictionary, index, nn.size - index - 1);
         nn.size--;
         nn.dictionary[nn.size] = null;
-//        check(nn.dictionary, nn.size);
-//        // Delete dictionary pair from leaf
-//        nn.dictionary[index] = null;
-//        for (int i = index + 1; i < nn.dictionary.length; i++) {
-//            nn.dictionary[i - 1] = nn.dictionary[i];
-//            if (nn.dictionary[i] == null) {
-//                break;
-//            }
-//        }
-//        // Decrement numPairs
-//        nn.size--;
     }
 
     @Override
-    public int indexOfKey(NBPlusTree.LeafNode<K, V> node, K key) {
+    public int indexOfKey(NBPlusTree.LeafNode<K, V> node, K key, Comparator<K> comparator) {
         NBPlusTreeStoreMemLeafNode<K, V> nn = (NBPlusTreeStoreMemLeafNode<K, V>) node;
         AbstractMap.SimpleEntry e = new AbstractMap.SimpleEntry(key, null);
-        return Arrays.binarySearch(nn.dictionary, 0, nn.size, e, NBPlusTreeHelper::compareEntries);
+        return NArrays.binarySearch(nn.dictionary, 0, nn.size, e,  (a, b) -> NBPlusTreeHelper.compareEntries(a, b, comparator));
     }
-
-    //    private void check(Object[] a, int size) {
-//        for (int i = 0; i < size; i++) {
-//            if (a[i] == null) {
-//                throw new IllegalArgumentException("error");
-//            }
-//        }
-//        for (int i = size; i < a.length; i++) {
-//            if (a[i] != null) {
-//                throw new IllegalArgumentException("error");
-//            }
-//        }
-//    }
-
 
     public void removeChildAt(NBPlusTree.IntermediateNode<K, V> node, int index) {
         NBPlusTreeStoreMemIntermediateNode<K, V> nn = (NBPlusTreeStoreMemIntermediateNode<K, V>) node;
@@ -302,21 +241,6 @@ public class NBPlusTreeStoreMem<K extends Comparable<K>, V> implements NBPlusTre
         if (index == 0) {
             nn.firstKey = nn.children[0] == null ? null : nn.children[0].firstKey();
         }
-//        check(nn.children, nn.size);
-//
-//
-//        BPlusTree.Node old = nn.children[index];
-//        nn.children[index] = null;
-//        for (int i = index + 1; i < nn.children.length; i++) {
-//            nn.children[i - 1] = nn.children[i];
-//            if (nn.children[i] == null) {
-//                break;
-//            }
-//        }
-//        if (index == 0) {
-//            nn.firstKey = nn.children[0] == null ? null : nn.children[0].firstKey();
-//        }
-//        nn.size--;
     }
 
     @Override

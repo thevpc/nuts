@@ -159,7 +159,7 @@ public class NBPlusTreeStoreFixedDiskTest {
         // Delete odd keys
         int removedCount = 0;
         for (int i = 1; i < total; i += 2) {
-            if (tree.remove(i)) {
+            if (tree.remove(i,null)) {
                 removedCount++;
             } else {
                 System.out.println("First disk deletion failure key: " + i);

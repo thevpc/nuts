@@ -6,8 +6,8 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public class NanoDBSerializers {
-    private Map<Class, NanoDBSerializer> config = new HashMap<>();
-    private Map<ClassWithNullable, NanoDBSerializer> cache = new HashMap<>();
+    private final Map<Class, NanoDBSerializer> config = new HashMap<>();
+    private final Map<ClassWithNullable, NanoDBSerializer> cache = new HashMap<>();
 
     public NanoDBSerializers() {
     }
@@ -97,29 +97,57 @@ public class NanoDBSerializers {
         switch (id.getCls().getName()) {
             case "int":
             case "java.lang.Integer": {
-                return new NanoDBSerializerForInteger();
+                NanoDBSerializer a = new NanoDBSerializerForInteger();
+                if (id.nullable) {
+                    a = new NanoDBSerializerForNullable(a);
+                }
+                return a;
             }
             case "long":
             case "java.lang.Long": {
-                return new NanoDBSerializerForLong();
+                NanoDBSerializer a = new NanoDBSerializerForLong();
+                if (id.nullable) {
+                    a = new NanoDBSerializerForNullable(a);
+                }
+                return a;
             }
             case "double":
             case "java.lang.Double": {
-                return new NanoDBSerializerForDouble();
+                NanoDBSerializer a = new NanoDBSerializerForDouble();
+                if (id.nullable) {
+                    a = new NanoDBSerializerForNullable(a);
+                }
+                return a;
             }
             case "boolean":
             case "java.lang.boolean": {
-                return new NanoDBSerializerForBoolean();
+                NanoDBSerializer a = new NanoDBSerializerForBoolean();
+                if (id.nullable) {
+                    a = new NanoDBSerializerForNullable(a);
+                }
+                return a;
             }
             case "java.lang.String": {
-                return new NanoDBSerializerForString();
+                NanoDBSerializer a = new NanoDBSerializerForString();
+                if (id.nullable) {
+                    a = new NanoDBSerializerForNullable(a);
+                }
+                return a;
             }
             case "java.time.Instant": {
-                return new NanoDBSerializerForInstant();
+                NanoDBSerializer a = new NanoDBSerializerForInstant();
+                if (id.nullable) {
+                    a = new NanoDBSerializerForNullable(a);
+                }
+                return a;
             }
         }
         if (id.getCls().isEnum()) {
-            return new NanoDBSerializerForEnumByName();
+            NanoDBSerializer a = new NanoDBSerializerForEnumByName();
+            if (id.nullable) {
+                a = new NanoDBSerializerForNullable(a);
+            }
+            return a;
         }
         return null;
     }

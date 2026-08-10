@@ -142,7 +142,7 @@ public class NBPlusTreeStoreMemTest {
             // Remove odd keys
             int removedCount = 0;
             for (int i = 1; i < total; i += 2) {
-                if (tree.remove(i)) {
+                if (tree.remove(i,null)) {
                     removedCount++;
                 } else {
                     System.out.println("First memory deletion failure key: " + i);

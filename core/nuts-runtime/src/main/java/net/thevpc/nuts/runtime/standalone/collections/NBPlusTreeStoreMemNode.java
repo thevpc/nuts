@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.collections.NBPlusTree;
 
-public abstract class NBPlusTreeStoreMemNode<K extends Comparable<K>, V> implements NBPlusTree.Node<K, V> {
+public abstract class NBPlusTreeStoreMemNode<K, V> implements NBPlusTree.Node<K, V> {
 
     int maxSize;
     int minSize;

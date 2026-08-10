@@ -9,7 +9,7 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.List;
 
-public class NBPlusTreeStoreFixedDiskLeafNode<K extends Comparable<K>, V> extends NBPlusTreeStoreFixedDiskNode<K, V> implements NBPlusTree.LeafNode<K, V> {
+public class NBPlusTreeStoreFixedDiskLeafNode<K, V> extends NBPlusTreeStoreFixedDiskNode<K, V> implements NBPlusTree.LeafNode<K, V> {
 
     protected long leftSiblingId = -1;
     protected long rightSiblingId = -1;
