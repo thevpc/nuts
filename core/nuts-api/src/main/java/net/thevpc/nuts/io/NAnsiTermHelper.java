@@ -38,10 +38,11 @@ import java.util.List;
 public class NAnsiTermHelper {
     private static final int[] FG8 = {30, 31, 32, 33, 34, 35, 36, 37, 90, 91, 92, 93, 94, 95, 96, 97};
     private static final int[] BG8 = {40, 41, 42, 43, 44, 45, 46, 47, 100, 101, 102, 103, 104, 105, 106, 107};
+    private static final NAnsiTermHelper INSTANCE=new NAnsiTermHelper();
 
 
     public static NAnsiTermHelper of() {
-        return new NAnsiTermHelper();
+        return INSTANCE;
     }
 
     public NAnsiTermHelper() {
@@ -49,6 +50,13 @@ public class NAnsiTermHelper {
 
     public String plain() {
         return "\u001B[0m";
+    }
+
+    public String stripAnsi(String text) {
+        if (text == null) {
+            return null;
+        }
+        return text.replaceAll("\u001B(\\[[;\\d]*[A-Za-z]|[^\\[\\]])", "");
     }
 
     public String styled(NTextStyles styles) {
