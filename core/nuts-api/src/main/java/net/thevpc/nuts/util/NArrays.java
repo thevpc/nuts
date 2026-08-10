@@ -4,10 +4,7 @@ import net.thevpc.nuts.math.NIndexSelectionStrategy;
 import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.DoublePredicate;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
@@ -873,4 +870,45 @@ public class NArrays {
         }
         return d;
     }
+
+    static void rangeCheck(int arrayLength, int fromIndex, int toIndex) {
+        if (fromIndex > toIndex) {
+            throw new IllegalArgumentException(
+                    "fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+        }
+        if (fromIndex < 0) {
+            throw new ArrayIndexOutOfBoundsException(fromIndex);
+        }
+        if (toIndex > arrayLength) {
+            throw new ArrayIndexOutOfBoundsException(toIndex);
+        }
+    }
+
+    public static <K> int binarySearch(K[] a, int fromIndex, int toIndex,
+                                       Object key, Comparator<K> comparator) {
+        rangeCheck(a.length, fromIndex, toIndex);
+        return binarySearch0(a, fromIndex, toIndex, key,comparator);
+    }
+
+    // Like public version, but without range checks.
+    private static <K> int binarySearch0(Object[] a, int fromIndex, int toIndex,
+                                     Object key, Comparator<K> comparator) {
+        int low = fromIndex;
+        int high = toIndex - 1;
+
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            int cmp = NUtils.compareObjects(a[mid],key,comparator);
+
+            if (cmp < 0)
+                low = mid + 1;
+            else if (cmp > 0)
+                high = mid - 1;
+            else
+                return mid; // key found
+        }
+        return -(low + 1);  // key not found.
+    }
+
+
 }
