@@ -37,8 +37,6 @@ import net.thevpc.nuts.text.NMsg;
  */
 public class NCancelException extends NExecutionException {
 
-    public static final int DEFAULT_CANCEL_EXIT_CODE = 245;
-
     /**
      * Constructs a new NutsUserCancelException exception
      */
@@ -52,7 +50,7 @@ public class NCancelException extends NExecutionException {
      * @param message message
      */
     public NCancelException(NMsg message) {
-        this(message, DEFAULT_CANCEL_EXIT_CODE);
+        this(message, INTERRUPT);
     }
 
     /**
