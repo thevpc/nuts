@@ -3,6 +3,7 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.math.NNumberUtils;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -72,6 +73,21 @@ public class NUtils {
             }
         }
         return null;
+    }
+
+    public static int compareObjects(Object k1, Object k2, Comparator<?> comparator) {
+        if (k1 == k2) {
+            return 0;
+        } else if (k1 == null) {
+            return -1;
+        } else if (k2 == null) {
+            return 1;
+        } else {
+            if (comparator != null) {
+                return ((Comparator)comparator).compare(k1, k2);
+            }
+            return ((Comparable)k1).compareTo(k2);
+        }
     }
 
     public static int compareObjects(Object a, Object b) {
