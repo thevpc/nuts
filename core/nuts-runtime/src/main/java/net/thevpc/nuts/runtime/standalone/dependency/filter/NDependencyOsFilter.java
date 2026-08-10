@@ -10,10 +10,7 @@ import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -76,5 +73,18 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
     @Override
     public NDependencyFilter simplify() {
         return os.isEmpty() ? NDependencyFilters.of().always() : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyOsFilter that = (NDependencyOsFilter) o;
+        return Objects.equals(os, that.os);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), os);
     }
 }

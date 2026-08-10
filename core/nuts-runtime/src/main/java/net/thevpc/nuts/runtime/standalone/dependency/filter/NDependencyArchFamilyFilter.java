@@ -10,10 +10,7 @@ import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -74,5 +71,18 @@ public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
     @Override
     public NDependencyFilter simplify() {
         return archs.isEmpty() ? NDependencyFilters.of().always() : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyArchFamilyFilter that = (NDependencyArchFamilyFilter) o;
+        return Objects.equals(archs, that.archs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), archs);
     }
 }

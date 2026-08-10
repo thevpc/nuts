@@ -7,6 +7,7 @@ import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractNFilter implements NFilter {
 
@@ -89,5 +90,17 @@ public abstract class AbstractNFilter implements NFilter {
     @Override
     public NElement describe() {
         return NElement.ofString(toString());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractNFilter that = (AbstractNFilter) o;
+        return op == that.op;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(op);
     }
 }

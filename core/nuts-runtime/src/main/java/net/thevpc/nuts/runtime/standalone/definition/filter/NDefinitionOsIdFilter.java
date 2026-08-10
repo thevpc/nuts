@@ -57,4 +57,17 @@ public class NDefinitionOsIdFilter extends AbstractDefinitionFilter {
     public NDefinitionFilter simplify() {
         return accepted.isEmpty() ? NDefinitionFilters.of().always() : this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionOsIdFilter that = (NDefinitionOsIdFilter) o;
+        return Objects.equals(accepted, that.accepted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), accepted);
+    }
 }

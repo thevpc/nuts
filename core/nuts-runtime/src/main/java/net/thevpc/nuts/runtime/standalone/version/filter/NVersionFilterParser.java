@@ -101,15 +101,15 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
             NVersionIntervalsVersionFilter that = (NVersionIntervalsVersionFilter) o;
-            return Objects.equals(version, that.version);
+            return Objects.equals(version, that.version) && Objects.equals(versionComparator, that.versionComparator);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(version);
+            return Objects.hash(super.hashCode(), version, versionComparator);
         }
     }
 }

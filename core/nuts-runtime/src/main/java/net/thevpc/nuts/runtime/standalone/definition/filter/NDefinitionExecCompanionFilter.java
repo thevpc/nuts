@@ -13,6 +13,7 @@ import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -60,4 +61,16 @@ public class NDefinitionExecCompanionFilter extends AbstractDefinitionFilter {
         return "companion("+ apiId.version()+")";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionExecCompanionFilter that = (NDefinitionExecCompanionFilter) o;
+        return Objects.equals(apiId, that.apiId) && Objects.equals(companions, that.companions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), apiId, companions);
+    }
 }

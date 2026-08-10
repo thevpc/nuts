@@ -73,7 +73,7 @@ public class ArtifactsIndexDB {
         return table.findByIndex("id",
                 id.longId()
                         .builder().repository(id.repository())
-                        .build().toDependency()
+                        .build().toDependency().toString()
         ).findAny().orNull() != null;
     }
 }

@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class NDefinitionFilterDelegateWithDescription extends NDefinitionFilterDelegate {
@@ -31,5 +32,18 @@ public class NDefinitionFilterDelegateWithDescription extends NDefinitionFilterD
     @Override
     public NElement describe() {
         return NDescribables.safeDescribeOfBase(description, base);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterDelegateWithDescription that = (NDefinitionFilterDelegateWithDescription) o;
+        return Objects.equals(base, that.base);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), base);
     }
 }

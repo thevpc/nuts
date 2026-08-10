@@ -5,6 +5,8 @@ import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
 
+import java.util.Objects;
+
 public class SafeNDefinitionFilter extends AbstractDefinitionFilter {
     private NDefinitionFilter base;
     private NMsg source;
@@ -33,4 +35,16 @@ public class SafeNDefinitionFilter extends AbstractDefinitionFilter {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        SafeNDefinitionFilter that = (SafeNDefinitionFilter) o;
+        return Objects.equals(base, that.base);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), base);
+    }
 }

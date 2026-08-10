@@ -11,6 +11,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NRepositoryFilterOr extends AbstractRepositoryFilter implements NComplexExpressionString {
@@ -55,15 +56,15 @@ public class NRepositoryFilterOr extends AbstractRepositoryFilter implements NCo
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         NRepositoryFilterOr that = (NRepositoryFilterOr) o;
-        return Arrays.equals(all, that.all);
+        return Objects.deepEquals(all, that.all);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(all);
+        return Objects.hash(super.hashCode(), Arrays.hashCode(all));
     }
 
     public List<NFilter> subFilters() {

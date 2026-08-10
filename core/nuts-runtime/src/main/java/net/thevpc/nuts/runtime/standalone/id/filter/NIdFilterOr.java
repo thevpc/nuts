@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NIdFilterOr extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter>, NExprIdFilter, NComplexExpressionString {
@@ -93,28 +94,16 @@ public class NIdFilterOr extends AbstractIdFilter implements NIdFilter, NSimplif
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 17 * hash + Arrays.deepHashCode(this.children);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NIdFilterOr that = (NIdFilterOr) o;
+        return Objects.deepEquals(children, that.children);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NIdFilterOr other = (NIdFilterOr) obj;
-        if (!Arrays.deepEquals(this.children, other.children)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(children));
     }
 
     public List<NFilter> subFilters() {

@@ -11,6 +11,7 @@ import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NDependencyFilterOr extends AbstractDependencyFilter implements NComplexExpressionString {
@@ -47,28 +48,16 @@ public class NDependencyFilterOr extends AbstractDependencyFilter implements NCo
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Arrays.deepHashCode(this.all);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyFilterOr that = (NDependencyFilterOr) o;
+        return Objects.deepEquals(all, that.all);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDependencyFilterOr other = (NDependencyFilterOr) obj;
-        if (!Arrays.deepEquals(this.all, other.all)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(all));
     }
 
     public List<NFilter> subFilters() {

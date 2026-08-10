@@ -65,35 +65,18 @@ public class NDefinitionFilterArch extends AbstractDefinitionFilter {
         }
         return this;
     }
-//
-//    @Override
-//    public String toJsNutsDefinitionFilterExpr() {
-//        return "descriptor.matchesArch('" + CoreStringUtils.escapeQuoteStrings(arch) + "')";
-//    }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.arch);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterArch that = (NDefinitionFilterArch) o;
+        return Objects.equals(arch, that.arch);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefinitionFilterArch other = (NDefinitionFilterArch) obj;
-        if (!Objects.equals(this.arch, other.arch)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), arch);
     }
 
     @Override

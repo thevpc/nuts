@@ -50,30 +50,17 @@ public class NDefinitionFilterAnd extends AbstractDefinitionFilter implements NC
         return CoreFilterUtils.simplifyFilterAnd(NDefinitionFilter.class, this, all);
     }
 
-
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + Arrays.deepHashCode(this.all);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterAnd that = (NDefinitionFilterAnd) o;
+        return Objects.deepEquals(all, that.all);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefinitionFilterAnd other = (NDefinitionFilterAnd) obj;
-        if (!Arrays.deepEquals(this.all, other.all)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(all));
     }
 
     @Override

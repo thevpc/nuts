@@ -66,27 +66,18 @@ public class NDefinitionFilterPackaging extends AbstractDefinitionFilter {
         return this;
     }
 
-    
+
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.packaging);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterPackaging that = (NDefinitionFilterPackaging) o;
+        return Objects.equals(packaging, that.packaging);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefinitionFilterPackaging other = (NDefinitionFilterPackaging) obj;
-        return Objects.equals(this.packaging, other.packaging);
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), packaging);
     }
 
     @Override

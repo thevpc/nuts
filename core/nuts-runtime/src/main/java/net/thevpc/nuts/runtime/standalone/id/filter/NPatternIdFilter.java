@@ -158,28 +158,16 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.id);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NPatternIdFilter that = (NPatternIdFilter) o;
+        return wildcard == that.wildcard && Objects.equals(id, that.id) && Objects.equals(g, that.g) && Objects.equals(n, that.n) && Objects.equals(v, that.v) && Objects.equals(qm, that.qm) && Objects.equals(q, that.q);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NPatternIdFilter other = (NPatternIdFilter) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, g, n, wildcard, v, qm, q);
     }
 
     @Override

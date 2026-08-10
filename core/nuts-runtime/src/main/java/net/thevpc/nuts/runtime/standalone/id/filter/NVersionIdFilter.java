@@ -38,28 +38,16 @@ public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSi
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.filter);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NVersionIdFilter that = (NVersionIdFilter) o;
+        return Objects.equals(filter, that.filter);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NVersionIdFilter other = (NVersionIdFilter) obj;
-        if (!Objects.equals(this.filter, other.filter)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), filter);
     }
 
     @Override

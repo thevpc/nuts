@@ -134,17 +134,16 @@ public class NInstallStatusDefinitionFilter2 extends AbstractDefinitionFilter {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(mode, value);
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NInstallStatusDefinitionFilter2 that = (NInstallStatusDefinitionFilter2) o;
+        return value == that.value && mode == that.mode;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NInstallStatusDefinitionFilter2 that = (NInstallStatusDefinitionFilter2) o;
-        return value == that.value && Objects.equals(mode, that.mode)
-                ;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), mode, value);
     }
 
     @Override

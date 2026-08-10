@@ -63,32 +63,15 @@ public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
     }
 
     @Override
-    public int hashCode() {
-        int hash = getClass().getName().hashCode();
-        hash = 41 * hash + Objects.hashCode(this.exactRepos);
-        hash = 41 * hash + Objects.hashCode(this.wildcardRepos);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNRepositoryNameFilter that = (DefaultNRepositoryNameFilter) o;
+        return Objects.equals(exactRepos, that.exactRepos) && Objects.equals(wildcardRepos, that.wildcardRepos);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNRepositoryNameFilter other = (DefaultNRepositoryNameFilter) obj;
-        if (!Objects.equals(this.exactRepos, other.exactRepos)) {
-            return false;
-        }
-        if (!Objects.equals(this.wildcardRepos, other.wildcardRepos)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), exactRepos, wildcardRepos);
     }
-
 }

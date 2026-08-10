@@ -60,4 +60,17 @@ public class NDependencyOsDistIdFilter extends AbstractDependencyFilter  {
     public NDependencyFilter simplify() {
         return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyOsDistIdFilter that = (NDependencyOsDistIdFilter) o;
+        return Objects.equals(accepted, that.accepted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), accepted);
+    }
 }

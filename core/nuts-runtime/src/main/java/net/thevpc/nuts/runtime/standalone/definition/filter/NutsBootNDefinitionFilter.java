@@ -6,6 +6,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.List;
+import java.util.Objects;
 
 public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
 
@@ -52,5 +53,18 @@ public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
     @Override
     public NDefinitionFilter simplify() {
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NutsBootNDefinitionFilter that = (NutsBootNDefinitionFilter) o;
+        return Objects.equals(bootVersion, that.bootVersion);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), bootVersion);
     }
 }

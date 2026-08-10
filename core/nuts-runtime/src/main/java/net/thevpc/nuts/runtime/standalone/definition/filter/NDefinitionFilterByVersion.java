@@ -69,28 +69,15 @@ public class NDefinitionFilterByVersion extends AbstractDefinitionFilter {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.versionFilter);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterByVersion that = (NDefinitionFilterByVersion) o;
+        return Objects.equals(versionFilter, that.versionFilter);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefinitionFilterByVersion other = (NDefinitionFilterByVersion) obj;
-        if (!Objects.equals(this.versionFilter, other.versionFilter)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), versionFilter);
     }
-
 }

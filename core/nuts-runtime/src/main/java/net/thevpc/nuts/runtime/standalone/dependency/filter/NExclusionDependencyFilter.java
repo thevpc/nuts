@@ -55,32 +55,16 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 67 * hash + Objects.hashCode(this.base);
-        hash = 67 * hash + Arrays.deepHashCode(this.exclusions);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NExclusionDependencyFilter that = (NExclusionDependencyFilter) o;
+        return Objects.equals(base, that.base) && Objects.deepEquals(exclusions, that.exclusions);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NExclusionDependencyFilter other = (NExclusionDependencyFilter) obj;
-        if (!Objects.equals(this.base, other.base)) {
-            return false;
-        }
-        if (!Arrays.deepEquals(this.exclusions, other.exclusions)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), base, Arrays.hashCode(exclusions));
     }
 
     @Override

@@ -41,28 +41,15 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 67 * hash + Objects.hashCode(this.scopes);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ScopeNDependencyFilter that = (ScopeNDependencyFilter) o;
+        return Objects.equals(scopes, that.scopes);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ScopeNDependencyFilter other = (ScopeNDependencyFilter) obj;
-        if (!Objects.equals(this.scopes, other.scopes)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), scopes);
     }
-
 }

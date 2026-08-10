@@ -146,6 +146,18 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
         public String toString() {
             return "EntryMatches[key='" + key + "',val='" + (NBlankable.isBlank(val) ? "*" : val) + "']";
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            PredicateStaticKey that = (PredicateStaticKey) o;
+            return Objects.equals(key, that.key) && Objects.equals(val, that.val) && Objects.equals(valPattern, that.valPattern);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(key, val, valPattern);
+        }
     }
 
     private static class PredicateWildKey extends AbstractNPredicate<Map<String, String>> {
@@ -174,34 +186,34 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            PredicateWildKey that = (PredicateWildKey) o;
+            return Objects.equals(keyPattern, that.keyPattern) && Objects.equals(valPattern, that.valPattern) && Objects.equals(skey, that.skey) && Objects.equals(sval, that.sval);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(keyPattern, valPattern, skey, sval);
+        }
+
+        @Override
         public String toString() {
             return "EntryMatches[key='" + skey + "',val='" + sval + "']";
         }
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.id);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NPatternDefinitionFilter that = (NPatternDefinitionFilter) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NPatternDefinitionFilter other = (NPatternDefinitionFilter) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id);
     }
 
     @Override

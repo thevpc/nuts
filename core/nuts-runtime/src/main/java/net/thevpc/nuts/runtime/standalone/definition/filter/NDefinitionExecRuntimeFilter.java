@@ -13,6 +13,8 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NLiteral;
 
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -73,4 +75,16 @@ public class NDefinitionExecRuntimeFilter extends AbstractDefinitionFilter {
         return "runtime("+ apiId.version()+")";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionExecRuntimeFilter that = (NDefinitionExecRuntimeFilter) o;
+        return communityRuntime == that.communityRuntime && Objects.equals(apiId, that.apiId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), apiId, communityRuntime);
+    }
 }

@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -69,5 +70,18 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
             return this;
         }
         return new NLockedIdExtensionDefinitionFilter(old1.toArray(new NId[0]));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NLockedIdExtensionDefinitionFilter that = (NLockedIdExtensionDefinitionFilter) o;
+        return Objects.deepEquals(lockedIds, that.lockedIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(lockedIds));
     }
 }

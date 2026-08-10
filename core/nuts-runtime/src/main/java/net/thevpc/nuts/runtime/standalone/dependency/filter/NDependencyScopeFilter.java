@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.artifact.*;
@@ -63,5 +64,18 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
     @Override
     public NDependencyFilter simplify() {
         return scopes.isEmpty()? NDependencyFilters.of().always() : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyScopeFilter that = (NDependencyScopeFilter) o;
+        return Objects.equals(scopes, that.scopes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), scopes);
     }
 }

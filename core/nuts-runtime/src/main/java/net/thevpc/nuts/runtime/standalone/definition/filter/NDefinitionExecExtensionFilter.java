@@ -8,6 +8,8 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.util.NFilterOp;
 
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -51,4 +53,16 @@ public class NDefinitionExecExtensionFilter extends AbstractDefinitionFilter {
         return "extension("+ apiId.version()+")";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionExecExtensionFilter that = (NDefinitionExecExtensionFilter) o;
+        return Objects.equals(apiId, that.apiId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), apiId);
+    }
 }
