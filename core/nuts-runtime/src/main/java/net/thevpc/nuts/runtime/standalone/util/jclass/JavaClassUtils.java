@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.command.NExecutionEntry;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -11,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntr
 
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NRef;
 
 import java.io.BufferedInputStream;
@@ -30,21 +30,21 @@ public class JavaClassUtils {
 //    }
 
     public static List<URL> resolveURLs(Class clazz) {
-        List<URL> all=new ArrayList<>();
+        List<URL> all = new ArrayList<>();
         try {
             final String n = clazz.getName().replace('.', '/').concat(".class");
             ClassLoader classLoader = clazz.getClassLoader();
-            if(classLoader==null){
+            if (classLoader == null) {
                 return null;
             }
             final Enumeration<URL> r = classLoader.getResources(n);
             ArrayList<URL> list = Collections.list(r);
             for (URL url : list) {
                 String s = url.toString();
-                if(s.endsWith(n)){
+                if (s.endsWith(n)) {
                     String substring = s.substring(0, s.length() - n.length());
-                    if(substring.startsWith("jar:") && substring.endsWith("!/")){
-                        substring=substring.substring("jar:".length(),substring.length()-"!/".length());
+                    if (substring.startsWith("jar:") && substring.endsWith("!/")) {
+                        substring = substring.substring("jar:".length(), substring.length() - "!/".length());
                     }
                     all.add(CoreIOUtils.urlOf(substring));
                 }
@@ -66,11 +66,27 @@ public class JavaClassUtils {
 //        return false;
 //    }
 
+    public static NOptional<JClassVersion> resolveJClassVersion(InputStream stream) {
+        final NRef<JClassVersion> mainClassVersion = NRef.ofNull();
+        JavaClassByteCode.Visitor cl = new JavaClassByteCode.Visitor() {
+            @Override
+            public NVisitResult visitVersion(int major, int minor) {
+                mainClassVersion.set(JClassVersion.of(major, minor));
+                return JavaClassByteCode.Visitor.super.visitVersion(major, minor);
+            }
+        };
+        JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(stream), cl);
+        if (mainClassVersion.isSet()) {
+            return NOptional.of(mainClassVersion.get());
+        }
+        return NOptional.ofNamedEmpty("version");
+    }
+
     /**
      * @param stream stream
      * @return main class type for the given
      */
-    public static MainClassType getMainClassType(InputStream stream, NWorkspace workspace) {
+    public static MainClassType getMainClassType(InputStream stream) {
         final NRef<Boolean> mainClass = NRef.ofNull();
         final NRef<Boolean> nutsApp = NRef.ofNull();
         final NRef<String> nutsAppVer = NRef.ofNull();
@@ -84,7 +100,7 @@ public class JavaClassUtils {
                     nutsApp.set(true);
                     nutsAppVer.set("0.8.4");
                     //TODO remove me
-                }else if (superName != null && superName.equals("net/thevpc/nuts/NutsApplication")) {
+                } else if (superName != null && superName.equals("net/thevpc/nuts/NutsApplication")) {
                     nutsApp.set(true);
                     nutsAppVer.set("0.8.0");
                     //TODO remove me
@@ -108,7 +124,7 @@ public class JavaClassUtils {
 
             @Override
             public NVisitResult visitClassAnnotation(JavaClassByteCode.AnnotationInfo annotationInfo) {
-                if(annotationInfo.name.equals("net/thevpc/nuts/NAppDefinition")) {
+                if (annotationInfo.name.equals("net/thevpc/nuts/NAppDefinition")) {
                     nutsApp.set(true);
                     nutsAppVer.set("0.8.7");
                 }
@@ -135,7 +151,7 @@ public class JavaClassUtils {
     public static NExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
         MainClassType mainClass = null;
         try {
-            mainClass = getMainClassType(classStream, NWorkspace.of());
+            mainClass = getMainClassType(classStream);
         } catch (Exception ex) {
             NLog.of(CorePlatformUtils.class)
                     .log(NMsg.ofC("invalid java class file format %s", sourceName).asFineFail(ex));
@@ -174,7 +190,7 @@ public class JavaClassUtils {
 
     public static String classVersionToSourceVersion(int major, int minor) {
         if (major < 45) {
-            throw new NIllegalArgumentException(NMsg.ofC("invalid classVersion %s.%s", major,minor));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid classVersion %s.%s", major, minor));
         }
         if (major == 45) {
             if (minor <= 3) {
@@ -192,7 +208,7 @@ public class JavaClassUtils {
         }
     }
 
-    public static String sourceVersionToClassVersion(String sourceVersion) {
+    public static int[] sourceVersionToClassVersion(String sourceVersion) {
         NVersion v = NVersion.get(sourceVersion).get();
         int major = v.getIntAt(0).orElse(0);
         int minor = v.getIntAt(1).orElse(-1);
@@ -202,9 +218,9 @@ public class JavaClassUtils {
         if (major == 1) {
             switch (minor) {
                 case 0:
-                    return "45.0";
+                    return new int[]{45, 0};
                 case 1:
-                    return "45.4";
+                    return new int[]{45, 4};
                 case 2:
                 case 3:
                 case 4:
@@ -213,13 +229,18 @@ public class JavaClassUtils {
                 case 7:
                 case 8:
                 case 9:
-                    return String.valueOf(46 - minor - 2);
+                    return new int[]{46 - minor - 2, 0};
                 default: {
                     throw new NIllegalArgumentException(NMsg.ofC("invalid sourceVersion %s", sourceVersion));
                 }
             }
         } else {
-            return String.valueOf(46 - major - 2);
+            return new int[]{46 - major - 2, 0};
         }
+    }
+
+    public static String sourceVersionToClassVersionString(String sourceVersion) {
+        int[] s = sourceVersionToClassVersion(sourceVersion);
+        return s[0] + "." + s[1];
     }
 }

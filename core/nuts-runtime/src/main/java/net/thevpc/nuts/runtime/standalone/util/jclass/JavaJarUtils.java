@@ -64,6 +64,41 @@ public class JavaJarUtils {
         return nb;
     }
 
+    public static Map<JClassVersion,List<String>> resolveJarJavaVersionsWithPaths(InputStream jarStream) {
+        if (!(jarStream instanceof BufferedInputStream)) {
+            jarStream = new BufferedInputStream(jarStream);
+        }
+        final Map<JClassVersion,List<String>> versions = new TreeMap<>((o1, o2) -> o2.compareTo(o1));
+        ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
+            if (path.endsWith(".class")) {
+                JClassVersion mainClass = JavaClassUtils.resolveJClassVersion(inputStream).orNull();
+                if (mainClass != null) {
+                    versions.computeIfAbsent(mainClass,a->new ArrayList<>()).add(path);
+                }
+            }
+            return NVisitResult.CONTINUE;
+        });
+        return versions;
+    }
+
+    public static Set<JClassVersion> resolveJarJavaVersions(InputStream jarStream) {
+        if (!(jarStream instanceof BufferedInputStream)) {
+            jarStream = new BufferedInputStream(jarStream);
+        }
+        final TreeSet<JClassVersion> versions = new TreeSet<>((o1, o2) -> o2.compareTo(o1));
+        ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
+            if (path.endsWith(".class")) {
+                JClassVersion mainClass = JavaClassUtils.resolveJClassVersion(inputStream).orNull();
+                if (mainClass != null) {
+                    versions.add(mainClass);
+                }
+            }
+            return NVisitResult.CONTINUE;
+        });
+
+        return versions;
+    }
+
     public static List<NExecutionEntry> parseJarExecutionEntries(InputStream jarStream) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);

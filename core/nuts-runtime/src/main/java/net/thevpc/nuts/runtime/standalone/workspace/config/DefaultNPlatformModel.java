@@ -226,8 +226,8 @@ public class DefaultNPlatformModel {
             NVersion v1 = NVersion.get(best.version()).get();
             NVersion v2 = NVersion.get(a[i].version()).get();
             if (executionEngineType == NExecutionEngineFamily.JAVA) {
-                double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v1.value()));
-                double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v2.value()));
+                double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersionString(v1.value()));
+                double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersionString(v2.value()));
                 if (d1 == d2) {
                     //1.8u100 vs 1.8u101, select 1.8u101
                     if (v1.compareTo(v2) < 0) {

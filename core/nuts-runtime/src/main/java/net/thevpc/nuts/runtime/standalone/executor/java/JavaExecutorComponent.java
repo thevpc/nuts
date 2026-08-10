@@ -435,7 +435,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             NClassLoader classLoader;
             Throwable th = null;
             try {
-                classLoader = NClassLoader.of(
+                classLoader = NClassLoader.ofPreferred(
                         def.id().toString(),
                         null,//getSession().getWorkspace().config().getBootClassLoader(),
                         joptions.getResolvedCP().toArray(new NClasspathEntry[0])

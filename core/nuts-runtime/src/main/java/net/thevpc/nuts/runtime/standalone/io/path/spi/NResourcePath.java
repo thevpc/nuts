@@ -22,6 +22,7 @@ import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -29,25 +30,26 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class NResourcePath implements NPathSPI {
 
     private final List<NId> ids;
-    private String path;
-    private String location;
+    private final String path;
+    private final String location;
     private boolean urlPathLookedUp = false;
-    private URL[] urls = null;
+    private List<NPath> urls = null;
     private NPath urlPath = null;
-    private static String nResourceProtocol = "resource://";
+    private static final String nResourceProtocol = "resource://";
 
     public NResourcePath(String path) {
         this.path = path;
         String idsStr;
-        if (path.startsWith(nResourceProtocol +"(")) {
+        if (path.startsWith(nResourceProtocol + "(")) {
             int x = path.indexOf(')');
             if (x > 0) {
-                idsStr = path.substring((nResourceProtocol+"(").length(), x);
+                idsStr = path.substring((nResourceProtocol + "(").length(), x);
                 location = path.substring(x + 1);
             } else {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid path %s", path));
@@ -94,6 +96,7 @@ public class NResourcePath implements NPathSPI {
         sb.append(location);
         return sb.toString();
     }
+
     protected static NText rebuildURL2(NText location, NId[] ids) {
         NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBuilder();
@@ -124,20 +127,19 @@ public class NResourcePath implements NPathSPI {
             urlPathLookedUp = true;
             try {
                 String loc = location;
-                NClassLoader resultClassLoader = NSearch.of().addIds(
+                urls = NSearch.of().addIds(
                                 this.ids.toArray(new NId[0])
-                        ).latest(true)
+                        ).latest(true).distinct(true).inlineDependencies(true)
                         .dependencyFilter(
                                 NDependencyFilters.of()
                                         .byRunnable()
                         )
-                        .getResultClassLoader();
-                urls = ((NClassLoaderBase) resultClassLoader).getURLs();
+                        .getResultPaths().collect(Collectors.toList());
                 //class loader do not expect leading '/'
                 if (loc.length() > 1 && loc.startsWith("/")) {
                     loc = loc.substring(1);
                 }
-                URL resource = resultClassLoader.getResource(loc);
+                URL resource = resolveResourceInPaths(urls,loc);
                 if (resource != null) {
                     urlPath = NPath.of(resource);
                 }
@@ -147,6 +149,40 @@ public class NResourcePath implements NPathSPI {
             }
         }
         return urlPath;
+    }
+
+    private URL resolveResourceInPaths(List<NPath> paths, String relativeLoc) {
+        for (NPath nPath : paths) {
+            URL a = resolveResourceInPath(nPath, relativeLoc);
+            if (a != null) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    private URL resolveResourceInPath(NPath path, String relativeLoc) {
+        try {
+            // 1. Directory lookup: Direct NIO filesystem check
+            if (path.isDirectory()) {
+                NPath candidate = path.resolve(relativeLoc);
+                if (candidate.exists()) {
+                    return candidate.toURL().get();
+                }
+            }
+            // 2. JAR lookup: Inspect entry table via JarFile
+            else if (path.toFile().isPresent() && path.isRegularFile() && path.toString().toLowerCase().endsWith(".jar")) {
+                try (java.util.jar.JarFile jarFile = new java.util.jar.JarFile(path.toFile().get())) {
+                    if (jarFile.getJarEntry(relativeLoc) != null) {
+                        // Constructs valid jar:file:/path/to/lib.jar!/relativeLoc URL
+                        return new URL("jar:" + path.toURL().get().toString() + "!/" + relativeLoc);
+                    }
+                }
+            }
+        } catch (IOException ignored) {
+            // Skip inaccessible paths
+        }
+        return null;
     }
 
     @Override
@@ -210,7 +246,7 @@ public class NResourcePath implements NPathSPI {
     @Override
     public NPathType getType(NPath basePath) {
         NPath u = toURLPath();
-        if(u!=null){
+        if (u != null) {
             return u.type();
         }
         return NPathType.NOT_FOUND;
@@ -288,7 +324,6 @@ public class NResourcePath implements NPathSPI {
         }
         return up.outputStream();
     }
-
 
 
     @Override
@@ -466,11 +501,12 @@ public class NResourcePath implements NPathSPI {
 
     private static class MyPathFormat implements NObjectWriterSPI {
 
-        private NResourcePath p;
+        private final NResourcePath p;
 
         public MyPathFormat(NResourcePath p) {
             this.p = p;
         }
+
         @Override
         public String name() {
             return "path";
@@ -555,7 +591,7 @@ public class NResourcePath implements NPathSPI {
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
             Object cri = context.criteria();
-            if(!(cri instanceof String)) {
+            if (!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }
             String path = (String) cri;

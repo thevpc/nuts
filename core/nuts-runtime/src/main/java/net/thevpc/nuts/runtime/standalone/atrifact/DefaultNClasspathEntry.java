@@ -48,6 +48,7 @@ public class DefaultNClasspathEntry implements NClasspathEntry {
     public DefaultNClasspathEntry(NId id, NPath path) {
         this.id = id;
         this.path = path;
+        this.type = NClasspathEntryType.DEPENDENCY;
     }
 
     @Override
