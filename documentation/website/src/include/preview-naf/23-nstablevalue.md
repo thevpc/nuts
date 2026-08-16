@@ -9,7 +9,7 @@ contentType: java
 ---
 
 // Example 1: Lazy initialization
-NStableValue&lt;Double> stableRandom = NStableValue.of(Math::random);
+NStableValue<Double> stableRandom = NStableValue.of(Math::random);
 
 // Value is computed on first access
 NOut.println("First value = " + stableRandom.get());

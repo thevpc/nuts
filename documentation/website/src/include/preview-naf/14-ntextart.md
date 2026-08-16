@@ -19,8 +19,8 @@ contentType: java
             return art.tableRenderer().get().render(NTableModel.of().addRow(NText.of(value)));
         }
         @Override
-        public List&lt;NTreeNode> children() {
-            return (value < 3) ? Arrays.&lt;Integer>asList(value + 1, value + 2).stream().map(MyNode::new).collect(Collectors.toList())
+        public List<NTreeNode> children() {
+            return (value < 3) ? Arrays.<Integer>asList(value + 1, value + 2).stream().map(MyNode::new).collect(Collectors.toList())
                     : Collections.emptyList();
         }
     }

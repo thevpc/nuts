@@ -28,6 +28,6 @@ NProgressHandler handler = event -> NOut.println(event);
 NProgressMonitors.of().of(handler).runWith(() -> {
     NProgressMonitor inner = NProgressMonitor.of();
     inner.start();
-    inner.setProgress(0.5, NMsg.ofC("Halfway done"));
+    inner.progress(0.5, NMsg.ofC("Halfway done"));
     inner.complete();
 });

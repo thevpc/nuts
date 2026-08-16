@@ -11,7 +11,7 @@ constants, or resources that should only be initialized once.
 
 ```java
 // Example 1: Lazy initialization
-NOnceValue&lt;Double> onceRandom = NOnceValue.of(Math::random);
+NOnceValue<Double> onceRandom = NOnceValue.of(Math::random);
 
 // Value is computed on first access
 NOut.println("First value = " + stableRandom.get());

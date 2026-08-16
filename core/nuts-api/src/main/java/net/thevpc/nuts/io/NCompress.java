@@ -92,7 +92,7 @@ public interface NCompress extends NComponent {
      */
     List<NInputSource> sources();
 
-    NCompress addSource(NInputSource source);
+    NCompress source(NInputSource source);
 
     /**
      * add source to compress
@@ -101,7 +101,7 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      * @throws NUnsupportedArgumentException if unsupported type
      */
-    NCompress addSource(InputStream source);
+    NCompress source(InputStream source);
 
     /**
      * add source to compress
@@ -110,7 +110,7 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      * @throws NUnsupportedArgumentException if unsupported type
      */
-    NCompress addSource(File source);
+    NCompress source(File source);
 
     /**
      * add source to compress
@@ -119,7 +119,7 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      * @throws NUnsupportedArgumentException if unsupported type
      */
-    NCompress addSource(Path source);
+    NCompress source(Path source);
 
     /**
      * add source to compress
@@ -128,7 +128,7 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      * @throws NUnsupportedArgumentException if unsupported type
      */
-    NCompress addSource(URL source);
+    NCompress source(URL source);
 
     /**
      * add source to compress
@@ -137,7 +137,13 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      * @throws NUnsupportedArgumentException if unsupported type
      */
-    NCompress addSource(NPath source);
+    NCompress source(NPath source);
+
+    /**
+     * clear all sources
+     * @return {@code this} instance
+     */
+    NCompress clearSources();
 
     /**
      * target to compress to

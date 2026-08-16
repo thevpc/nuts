@@ -43,13 +43,13 @@ d.declareFunction("sin", (name, args, ctx) -> {
     return Math.sin(asDouble(a.eval(ctx), rendererContext));
 });
 
-NOptional&lt;NExprNode> ne = d.parse("sin(x*pi)");
+NOptional<NExprNode> ne = d.parse("sin(x*pi)");
 if (ne.isPresent()) {
     NExprNode node = ne.get();
     NDoubleFunction fct = x -> {
-        NOptional&lt;Object> r = node.eval(new NExprEvaluator() {
+        NOptional<Object> r = node.eval(new NExprEvaluator() {
             @Override
-            public NOptional&lt;NExprVar> getVar(String varName, NExprDeclarations ctx) {
+            public NOptional<NExprVar> getVar(String varName, NExprDeclarations ctx) {
                 return "x".equals(varName)
                         ? Optional.of(x)
                         : NOptional.ofNamedEmpty("var " + varName);

@@ -11,7 +11,7 @@ contentType: java
 ---
 
 // Example 1: Cache with expiry
-NCachedValue&lt;Double> cachedRandom = NCachedValue.of(Math::random)
+NCachedValue<Double> cachedRandom = NCachedValue.of(Math::random)
         .setExpiry(Duration.ofSeconds(5));
 
 // First call computes and caches the value

@@ -78,7 +78,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 }
                 NCompress cmp = NCompress.of();
                 for (String s : all) {
-                    cmp.addSource(NPath.of(s));
+                    cmp.source(NPath.of(s));
                 }
                 cmp.to(file).run();
             }

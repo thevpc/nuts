@@ -280,7 +280,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         fullAppFileName
                                 + "-bundle"
                                 + ".jar")).toAbsolute();
-                zip.addSource(rootFolder)
+                zip.source(rootFolder)
                         .skipRoot(true)
                         .target(
                                 target
@@ -304,7 +304,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         fullAppFileName
                                 + "-bundle"
                                 + ".zip")).toAbsolute();
-                zip.addSource(rootFolder)
+                zip.source(rootFolder)
                         .skipRoot(true)
                         .target(target
                         )

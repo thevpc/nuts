@@ -11,9 +11,9 @@ contentType: java
 ---
 
 NCmdLine cmdLine = NApp.of().getCmdLine(); // or from somewhere else
-NRef&lt;Boolean> boolOption = NRef.of(false);
-NRef&lt;String> stringOption = NRef.ofNull();
-List&lt;String> others = new ArrayList&lt;>();
+NRef<Boolean> boolOption = NRef.of(false);
+NRef<String> stringOption = NRef.ofNull();
+List<String> others = new ArrayList<>();
 while (cmdLine.hasNext()) {
     cmdLine.matcher()
             .with("-o", "--option").matchFlag((v) -> boolOption.set(v.booleanValue()))

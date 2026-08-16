@@ -10,13 +10,13 @@ subTitle:  |
 contentType: java
 ---
 
-NWorkspace ws = Nuts.openWorkspace("--workspace="/path/to/ws");
+NWorkspace ws = Nuts.openWorkspace("--workspace=/path/to/ws");
 ws.runWith(() -> {
     NSession.of()
-            .copy()
-            .setDry(true)
-            .setOutputFormat(NContentType.JSON)
-            .runWith(() -> {
-                NOut.println(Map.of("status", "ok"));
-            });
+    .copy()
+    .setDry(true)
+    .setOutputFormat(NContentType.JSON)
+    .runWith(() -> {
+        NOut.println(Map.of("status", "ok"));
+    });
 });

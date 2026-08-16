@@ -86,7 +86,7 @@ public class DefaultNCompress implements NCompress {
         return sources;
     }
 
-    public NCompress addSource(NInputSource source) {
+    public NCompress source(NInputSource source) {
         if (source != null) {
             this.sources.add(source);
         }
@@ -94,7 +94,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress addSource(InputStream source) {
+    public NCompress source(InputStream source) {
         if (source == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
         }
@@ -103,7 +103,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress addSource(File source) {
+    public NCompress source(File source) {
         if (source == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
         }
@@ -112,7 +112,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress addSource(Path source) {
+    public NCompress source(Path source) {
         if (source == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
         }
@@ -121,7 +121,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress addSource(URL source) {
+    public NCompress source(URL source) {
         if (source == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
         }
@@ -130,10 +130,16 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress addSource(NPath source) {
+    public NCompress source(NPath source) {
         if (source != null) {
             this.sources.add(source);
         }
+        return this;
+    }
+
+    @Override
+    public NCompress clearSources() {
+        this.sources.clear();
         return this;
     }
 

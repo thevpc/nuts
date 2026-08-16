@@ -11,7 +11,7 @@ contentType: java
 // Example 2: Cache with retries and fallback
 AtomicInteger counter = new AtomicInteger();
 
-NCachedValue&lt;Integer> cached = NCachedValue.of(() -> {
+NCachedValue<Integer> cached = NCachedValue.of(() -> {
     int attempt = counter.incrementAndGet();
     if (attempt % 2 == 0) {
         throw new RuntimeException("Simulated failure");

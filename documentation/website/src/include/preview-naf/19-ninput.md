@@ -18,9 +18,9 @@ NInputSource src = NInputSource.of(file)
 NInputSource multi = NInputSource.ofMultiRead(src); // reusable input
 
 NInputSourceBuilder b = NInputSourceBuilder.of(stream)
-        .setMetadata(metadata)
-        .setInterruptible(true)
-        .setCloseBase(true);
+        .metadata(metadata)
+        .interruptible(true)
+        .closeBase(true);
 
 InputStream in = b.createInputStream();
 NInputSource source = b.createInputSource();

@@ -13,7 +13,7 @@ You can configure expiry policies to automatically refresh values.
 
 ```java
 // Example 1: Cache with expiry
-NCachedValue&lt;Double> cachedRandom = NCachedValue.of(Math::random)
+NCachedValue<Double> cachedRandom = NCachedValue.of(Math::random)
         .setExpiry(Duration.ofSeconds(5));
 
 // First call computes and caches the value
@@ -38,7 +38,7 @@ This makes it ideal for unstable resources or intermittent network services.
 // Example 2: Cache with retries and fallback
 AtomicInteger counter = new AtomicInteger();
 
-NCachedValue&lt;Integer> cached = NCachedValue.of(() -> {
+NCachedValue<Integer> cached = NCachedValue.of(() -> {
     int attempt = counter.incrementAndGet();
     if (attempt % 2 == 0) {
         throw new RuntimeException("Simulated failure");
