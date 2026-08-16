@@ -38,21 +38,6 @@ public class PsManualTest {
 
     @Test
     public void test1() {
-        NOut.println("Hello ##world##");
-        for (JClassVersion resolveJarJavaVersion : JavaJarUtils.resolveJarJavaVersions(NPath.of("/home/vpc/.m2/repository/org/jline/jline/3.25.0/jline-3.25.0.jar").getInputStream())) {
-            System.out.println(resolveJarJavaVersion);
-        }
-
-        Map<JClassVersion, List<String>> map = JavaJarUtils.resolveJarJavaVersionsWithPaths(NPath.of("/home/vpc/.m2/repository/org/jline/jline/3.25.0/jline-3.25.0.jar").getInputStream());
-        for (Map.Entry<JClassVersion, List<String>> e : map.entrySet()) {
-            System.out.println(e.getKey());
-            for (String s : e.getValue()) {
-                System.out.println("        "+s);
-            }
-        }
-        if (true) {
-            return;
-        }
 //        TestUtils.printf("hello %s","toto");
 //        Logger.getAnonymousLogger().log(Level.INFO, "hello {0}","A");
 
