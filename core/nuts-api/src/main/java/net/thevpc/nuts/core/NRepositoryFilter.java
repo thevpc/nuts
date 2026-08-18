@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.internal.rpi.NRepositoryFilterRPI;
 import net.thevpc.nuts.util.NFilter;
 
 /**
@@ -34,6 +35,76 @@ import net.thevpc.nuts.util.NFilter;
  * @since 0.5.4
  */
 public interface NRepositoryFilter extends NFilter {
+
+
+    //////// COMMON START
+
+    static NRepositoryFilter ofNonnull(NFilter filter){
+        return NRepositoryFilterRPI.of().nonnull(filter);
+    }
+
+    static NRepositoryFilter ofAlways(){
+        return NRepositoryFilterRPI.of().always();
+    }
+
+    static NRepositoryFilter ofNever(){
+        return NRepositoryFilterRPI.of().never();
+    }
+
+    static NRepositoryFilter ofAll(NFilter... others){
+        return NRepositoryFilterRPI.of().all(others);
+    }
+
+    static NRepositoryFilter ofAny(NFilter... others){
+        return NRepositoryFilterRPI.of().any(others);
+    }
+
+    static NRepositoryFilter ofNot(NFilter other){
+        return NRepositoryFilterRPI.of().not(other);
+    }
+
+    static NRepositoryFilter ofNone(NFilter... others){
+        return NRepositoryFilterRPI.of().none(others);
+    }
+
+    static NRepositoryFilter ofFrom(NFilter a){
+        return NRepositoryFilterRPI.of().from(a);
+    }
+
+    static NRepositoryFilter ofAs(NFilter a){
+        return NRepositoryFilterRPI.of().as(a);
+    }
+
+    static NRepositoryFilter of(String expression){
+        return NRepositoryFilterRPI.of().parse(expression);
+    }
+
+
+    //////// COMMON END
+
+    //////// FACTORY START
+
+    static NRepositoryFilter ofSelector(String... names){
+        return NRepositoryFilterRPI.of().bySelector(names);
+    }
+
+    static NRepositoryFilter ofName(String... names){
+        return NRepositoryFilterRPI.of().byName(names);
+    }
+
+    static NRepositoryFilter ofNameSelector(String... names){
+        return NRepositoryFilterRPI.of().byNameSelector(names);
+    }
+
+    static NRepositoryFilter ofUuid(String... uuids){
+        return NRepositoryFilterRPI.of().byUuid(uuids);
+    }
+
+    static NRepositoryFilter ofInstalledRepo(){
+        return NRepositoryFilterRPI.of().installedRepo();
+    }
+
+    //////// FACTORY END
 
     boolean acceptRepository(NRepository repository);
 

@@ -27,6 +27,7 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.internal.rpi.NLogRPI;
 import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
@@ -44,13 +45,50 @@ import java.util.logging.Logger;
 public interface NLog extends NLogger{
 
     static void runInScope(NLogScope context, Runnable runnable) {
-        NLogs.of().runInScope(context, runnable);
+        NLogRPI.of().runInScope(context, runnable);
     }
 
     static <T> T callInScope(NLogScope context, NCallable<T> callable) {
-        return NLogs.of().callInScope(context, callable);
+        return NLogRPI.of().callInScope(context, callable);
     }
 
+    /**
+     * return terminal logger level
+     *
+     * @return terminal logger level
+     */
+    static Level termLevel(){
+        return NLogRPI.of().termLevel();
+    }
+
+    /**
+     * set terminal logger level
+     *
+     * @param level new level
+     * @return this
+     */
+    static NLogRPI termLevel(Level level){
+        return NLogRPI.of().termLevel(level);
+    }
+
+    /**
+     * return file logger level
+     *
+     * @return file logger level
+     */
+    static Level fileLevel(){
+        return NLogRPI.of().fileLevel();
+    }
+
+    /**
+     * set file logger level
+     *
+     * @param level new level
+     * @return this
+     */
+    static void fileLevel(Level level){
+        NLogRPI.of().fileLevel(level);
+    }
 
     /**
      * create an instance of {@link NLog}
@@ -63,11 +101,11 @@ public interface NLog extends NLogger{
     }
 
     static NLog of(Logger logger) {
-        return NLogs.of().getLogger(logger);
+        return NLogRPI.of().getLogger(logger);
     }
 
     static NLog ofNull() {
-        return NLogs.of().nullLogger();
+        return NLogRPI.of().nullLogger();
     }
 
     static NLog ofScoped(Class<?> clazz) {
@@ -81,15 +119,15 @@ public interface NLog extends NLogger{
      * @return new instance of {@link NLog}
      */
     static NLog of(String name) {
-        return NLogs.of().getLogger(name);
+        return NLogRPI.of().getLogger(name);
     }
 
     static NLog of(String name, NLogSPI spi) {
-        return NLogs.of().createCustomLogger(name, spi);
+        return NLogRPI.of().createCustomLogger(name, spi);
     }
 
     static NLog of(NLogSPI spi) {
-        return NLogs.of().createCustomLogger(null, spi);
+        return NLogRPI.of().createCustomLogger(null, spi);
     }
 
     static NLog ofScoped(String name) {

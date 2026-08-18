@@ -31,40 +31,38 @@ import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.core.NWorkspace;
 
 import net.thevpc.nuts.core.NWorkspaceExtension;
-import net.thevpc.nuts.elem.NElementFactory;
-import net.thevpc.nuts.elem.NElementReader;
-import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.internal.rpi.*;
 import net.thevpc.nuts.io.NIO;
-import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementRPI;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader;
 import net.thevpc.nuts.runtime.standalone.extension.*;
+import net.thevpc.nuts.runtime.standalone.log.DefaultNLogRPI;
 import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
 import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.runtime.standalone.collections.NClassClassMap;
 import net.thevpc.nuts.runtime.standalone.collections.NListMultiValueMapImpl;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.internal.rpi.NUtilsRPI;
-import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter;
 import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdWriter;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
-import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
@@ -153,6 +151,13 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         if (supportCriteria instanceof NConnectionString) {
             NExtensionUtils.ensureExtensionLoadedForProtocol((NConnectionString) supportCriteria);
         }
+        NWorkspaceModel model = ((NWorkspaceExt) workspace).getModel();
+        if(supportCriteria==null) {
+            T u = model.createRPI(type);
+            if(u!=null){
+                return NOptional.of(u);
+            }
+        }
         switch (type.getName()) {
             case "net.thevpc.nuts.app.NApp": {
                 return NOptional.of((T) NWorkspaceExt.of().getApp());
@@ -179,14 +184,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
         //fallback needed in bootstrap or if the extensions are broken!
         switch (type.getName()) {
-            case "net.thevpc.nuts.log.NLogs": {
-                NLogs p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNLogs.class, NLogs.class, NScopeType.SESSION, DefaultNLogs::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.text.NTexts": {
-                NTexts p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNTexts.class, NTexts.class, NScopeType.SESSION, DefaultNTexts::new);
-                return NOptional.of((T) p);
-            }
             case "net.thevpc.nuts.text.NObjectObjectWriter": {
                 NObjectObjectWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNObjectObjectWriter.class, NObjectObjectWriter.class, NScopeType.SESSION, DefaultNObjectObjectWriter::new);
                 return NOptional.of((T) p);
@@ -213,14 +210,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
             case "net.thevpc.nuts.io.NDigest": {
                 NDigest p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNDigest.class, NDigest.class, NScopeType.SESSION, DefaultNDigest::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.internal.rpi.NIORPI": {
-                NIORPI p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNIORPI.class, NIORPI.class, NScopeType.SESSION, DefaultNIORPI::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.internal.rpi.NUtilsRPI": {
-                NUtilsRPI p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNUtilsRPI.class, NUtilsRPI.class, NScopeType.SESSION, DefaultNUtilsRPI::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.artifact.NIdWriter": {
@@ -257,9 +246,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
                 return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
             }
-            case "net.thevpc.nuts.internal.rpi.NExprRPI": {
-                return NOptional.of((T) new NExprRPIImpl());
-            }
+
             case "net.thevpc.nuts.spi.NUtilSPI": {
                 return NOptional.of((T) new NUtilSPIImpl());
             }
@@ -269,7 +256,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
             case "net.thevpc.nuts.platform.NEnv": {
                 if (supportCriteria == null) {
-                    NEnvLocal env = ((NWorkspaceExt) workspace).getModel().getEnv();
+                    NEnvLocal env = model.getEnv();
                     return NOptional.of((T) env);
                 }
                 break;

@@ -1,12 +1,18 @@
 package net.thevpc.nuts.mon;
 
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.internal.rpi.NIORPI;
+import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NOptional;
 
+import java.io.PrintStream;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Taha Ben Salah (taha.bensalah@gmail.com)
@@ -15,18 +21,133 @@ import java.util.List;
 public interface NProgressMonitor {
     double INDETERMINATE_PROGRESS = Double.NaN;
 
-    static NOptional<NProgressMonitor> get() {
-        return NProgressMonitors.of().currentMonitor();
-    }
+
 
     static NProgressMonitor of() {
-        NProgressMonitors monitors = NProgressMonitors.of();
-        NOptional<NProgressMonitor> m = monitors.currentMonitor();
+        NOptional<NProgressMonitor> m = get();
         if (m.isPresent()) {
             return m.get();
         }
-        return monitors.ofSilent();
+        return ofSilent();
     }
+
+
+    static NOptional<NProgressMonitor> get(){
+        return NIORPI.of().currentProgressMonitor();
+    }
+
+    static NProgressMonitor ofSilent(){
+        return NIORPI.of().createSilentProgressMonitor();
+    }
+
+    static NProgressMonitor[] ofSilent(int count){
+        return NIORPI.of().createSilentProgressMonitor(count);
+    }
+
+    static boolean isSilent(NProgressMonitor monitor){
+        return NIORPI.of().isSilentProgressMonitor(monitor);
+    }
+
+    static NProgressMonitor ofPrintStream(PrintStream printStream){
+        return NIORPI.of().createPrintStreamProgressMonitor(printStream);
+    }
+
+    static NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, PrintStream printStream){
+        return NIORPI.of().createPrintStreamProgressMonitor(messageFormat, printStream);
+    }
+
+    static NProgressMonitor ofPrintStream(NPrintStream printStream){
+        return NIORPI.of().createPrintStreamProgressMonitor(printStream);
+    }
+
+    static NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, NPrintStream printStream){
+        return NIORPI.of().createPrintStreamProgressMonitor(messageFormat,printStream);
+    }
+
+    static NProgressMonitor ofLogger(NMsgTemplate messageFormat, Logger printStream){
+        return NIORPI.of().createLoggerProgressMonitor(messageFormat,printStream);
+    }
+
+    static NProgressMonitor ofLogger(NMsgTemplate messageFormat, NLog printStream){
+        return NIORPI.of().createLoggerProgressMonitor(messageFormat,printStream);
+    }
+
+    static NProgressMonitor ofLogger(Logger logger){
+        return NIORPI.of().createLoggerProgressMonitor(logger);
+    }
+
+    static NProgressMonitor ofLogger(NLog logger){
+        return NIORPI.of().createLoggerProgressMonitor(logger);
+    }
+
+    static NProgressMonitor ofLogger(long milliseconds){
+        return NIORPI.of().createLoggerProgressMonitor(milliseconds);
+    }
+
+    static NProgressMonitor ofLogger(){
+        return NIORPI.of().createLoggerProgressMonitor();
+    }
+
+    static NProgressMonitor ofOut(NMsgTemplate messageFormat){
+        return NIORPI.of().createOutProgressMonitor(messageFormat);
+    }
+
+    static NProgressMonitor ofSysOut(){
+        return NIORPI.of().createSysOutProgressMonitor();
+    }
+
+    static NProgressMonitor ofSysErr(){
+        return NIORPI.of().createSysErrProgressMonitor();
+    }
+
+    static NProgressMonitor ofSysErr(NMsgTemplate messageFormat){
+        return NIORPI.of().createSysErrProgressMonitor(messageFormat);
+    }
+
+    static NProgressMonitor ofOut(){
+        return NIORPI.of().createOutProgressMonitor();
+    }
+
+    static NProgressMonitor ofErr(){
+        return NIORPI.of().createErrProgressMonitor();
+    }
+
+    static NProgressMonitor ofErr(NMsgTemplate messageFormat){
+        return NIORPI.of().createErrProgressMonitor(messageFormat);
+    }
+
+    static NProgressMonitor ofLogger(NMsgTemplate message, long freq){
+        return NIORPI.of().createLoggerProgressMonitor(message,freq);
+    }
+
+    static NProgressMonitor ofLogger(NMsgTemplate message, long freq, Logger out){
+        return NIORPI.of().createLoggerProgressMonitor(message,freq,out);
+    }
+
+    static NProgressMonitor ofLogger(NMsgTemplate message, long freq, NLog out){
+        return NIORPI.of().createLoggerProgressMonitor(message,freq,out);
+    }
+
+    static NProgressMonitor ofOut(long freq){
+        return NIORPI.of().createOutProgressMonitor(freq);
+    }
+
+    static NProgressMonitor ofOut(NMsgTemplate message, long freq){
+        return NIORPI.of().createOutProgressMonitor(message,freq);
+    }
+
+    static NProgressMonitor ofOut(NMsgTemplate message, long freq, PrintStream out){
+        return NIORPI.of().createOutProgressMonitor(message,freq,out);
+    }
+
+    static NProgressMonitor of(NProgressMonitor monitor){
+        return NIORPI.of().createProgressMonitor(monitor);
+    }
+
+    static NProgressMonitor of(NProgressHandler monitor){
+        return NIORPI.of().createProgressMonitor(monitor);
+    }
+
 
     NProgressMonitor start();
 

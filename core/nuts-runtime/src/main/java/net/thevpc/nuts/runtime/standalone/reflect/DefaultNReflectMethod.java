@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
 import net.thevpc.nuts.reflect.*;
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -53,9 +53,9 @@ public class DefaultNReflectMethod implements NReflectMethod {
         try {
             return method.invoke(instance, args);
         } catch (IllegalAccessException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access (%s) %s",toString(),NExceptions.getErrorMessage(ex)), ex);
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access (%s) %s",toString(),NException.getErrorMessage(ex)), ex);
         } catch (InvocationTargetException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s",toString(),NExceptions.getErrorMessage(ex)), ex);
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s",toString(),NException.getErrorMessage(ex)), ex);
         }
     }
 

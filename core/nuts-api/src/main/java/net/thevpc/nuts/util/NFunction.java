@@ -42,7 +42,7 @@ public interface NFunction<T, V> extends Function<T, V>, NRedescribable<NFunctio
     }
 
     default NElement describe() {
-        return NElements.of().toElement("function");
+        return NElement.of("function");
     }
 
     @Override

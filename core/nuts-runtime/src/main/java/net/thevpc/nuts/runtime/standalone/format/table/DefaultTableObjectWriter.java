@@ -28,7 +28,6 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NPairElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
@@ -112,10 +111,10 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
         }
         if (o instanceof String || o instanceof Number || o instanceof Date || o instanceof Temporal || o instanceof Path || o instanceof File) {
             List<NElement> a = new ArrayList<>();
-            a.add(NElements.of().toElement(o));
-            return createTableModel(NElements.of().toElement(a));
+            a.add(NElement.of(o));
+            return createTableModel(NElement.of(a));
         }
-        o = NElements.of().toSimple(o);
+        o = NElement.simpleOf(o);
         if (o instanceof Collection) {
             return _model2(o);
         }
@@ -146,7 +145,7 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
             return model;
         }
         if (!(o instanceof NElement)) {
-            return createTableModel(NElements.of().toElement(o));
+            return createTableModel(NElement.of(o));
         }
         NElement elem = (NElement) o;
         switch (elem.type()) {
@@ -165,10 +164,10 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
             case NULL: {
                 List<NElement> a = new ArrayList<>();
                 a.add(elem);
-                return createTableModel(NElements.of().toElement(a));
+                return createTableModel(NElement.of(a));
             }
             case OBJECT: {
-                return createTableModel(NElements.of().toElement(elem.asObject().get().children()));
+                return createTableModel(NElement.of(elem.asObject().get().children()));
             }
             case ARRAY: {
 

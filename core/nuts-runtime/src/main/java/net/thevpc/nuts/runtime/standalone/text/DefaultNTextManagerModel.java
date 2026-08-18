@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.core.NBootOptions;
 
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
@@ -39,9 +40,9 @@ import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.json.DefaultJsonElementFormat;
 import net.thevpc.nuts.runtime.standalone.format.tson.DefaultTsonElementFormat;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
-import net.thevpc.nuts.runtime.standalone.text.theme.DefaultNTextFormatTheme;
-import net.thevpc.nuts.runtime.standalone.text.theme.NTextFormatPropertiesTheme;
-import net.thevpc.nuts.runtime.standalone.text.theme.NTextFormatThemeWrapper;
+import net.thevpc.nuts.runtime.standalone.text.theme.DefaultNTextTheme;
+import net.thevpc.nuts.runtime.standalone.text.theme.NTextPropertiesTheme;
+import net.thevpc.nuts.runtime.standalone.text.theme.NTextThemeWrapper;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultXmlNElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -68,14 +69,13 @@ public class DefaultNTextManagerModel {
     private final Map<String, NCodeHighlighter> _cachedHighlighters = new HashMap<>();
     private String styleThemeName;
     //    private NTextFormatTheme styleTheme;
-    private NTextFormatTheme defaultTheme;
+    private NTextTheme defaultTheme;
     private NElementFactoryService elementFactoryService;
     private NElementStreamFormat jsonMan;
     private NElementStreamFormat yamlMan;
     private NElementStreamFormat xmlMan;
     private NElementStreamFormat tsonMan;
-    private Map<String, NTextFormatTheme> cachedThemes = new HashMap<>();
-    public NTexts defaultNTexts;
+    private Map<String, NTextTheme> cachedThemes = new HashMap<>();
     public final Map<String, NMsgCustomFormatter> customFormatters = new HashMap<>();
 
     public DefaultNTextManagerModel(NWorkspace workspace) {
@@ -117,24 +117,24 @@ public class DefaultNTextManagerModel {
     }
 
 
-    public NTextFormatTheme getDefaultTheme() {
+    public NTextTheme getDefaultTheme() {
         if (defaultTheme == null) {
             if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
                 //dark blue and red are very ugly under windows, replace them with green tones !
-                defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
+                defaultTheme = new NTextThemeWrapper(new NTextPropertiesTheme("grass", null, workspace));
             } else {
-                defaultTheme = new DefaultNTextFormatTheme();
+                defaultTheme = new DefaultNTextTheme();
             }
         }
         return defaultTheme;
     }
 
-    public NTextFormatTheme loadTheme(String y) {
+    public NTextTheme loadTheme(String y) {
         y = NStringUtils.strip(y);
         if (NBlankable.isBlank(y)) {
             y = "default";
         }
-        NTextFormatTheme t = cachedThemes.get(y);
+        NTextTheme t = cachedThemes.get(y);
         if (t != null) {
             return t;
         }
@@ -144,13 +144,13 @@ public class DefaultNTextManagerModel {
             cachedThemes.put(y, t);
             return t;
         } else {
-            t = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme(y, null, workspace));
+            t = new NTextThemeWrapper(new NTextPropertiesTheme(y, null, workspace));
             cachedThemes.put(y, t);
             return t;
         }
     }
 
-    public NOptional<NTextFormatTheme> getTheme(String name) {
+    public NOptional<NTextTheme> getTheme(String name) {
         if (NBlankable.isBlank(name)) {
             return NOptional.ofNamedEmpty(NMsg.ofC("theme"));
         }
@@ -171,11 +171,11 @@ public class DefaultNTextManagerModel {
         }
     }
 
-    public NTextFormatTheme getTheme() {
+    public NTextTheme getTheme() {
         return getTheme("").orElse(getDefaultTheme());
     }
 
-    public void setTheme(NTextFormatTheme styleTheme) {
+    public void setTheme(NTextTheme styleTheme) {
         if (styleTheme != null) {
             cachedThemes.put(styleTheme.name(), styleTheme);
             styleThemeName = styleTheme.name();

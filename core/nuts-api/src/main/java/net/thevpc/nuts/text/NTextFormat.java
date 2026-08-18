@@ -1,5 +1,6 @@
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
 
@@ -41,7 +42,7 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     static <T> NOptional<NTextFormat<T>> get(String type, Class<T> expectedType, String pattern) {
-        NTexts texts = NTexts.of();
+        NTextRPI texts = NTextRPI.of();
         NAssert.requireNamedNonNull(type, "type");
         NAssert.requireNamedNonNull(expectedType, "expectedType");
         return texts.createTextFormat(type, pattern, expectedType);

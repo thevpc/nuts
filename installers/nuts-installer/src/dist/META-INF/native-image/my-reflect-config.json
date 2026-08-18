@@ -34914,20 +34914,6 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.xtra.mon.DefaultNProgressMonitors",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
     "name": "net.thevpc.nuts.runtime.standalone.xtra.mon.DefaultProgressMonitor",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -39227,20 +39213,6 @@
   },
   {
     "name": "net.thevpc.nuts.time.NProgressMonitorModel",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.time.NProgressMonitors",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

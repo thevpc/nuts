@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NpsStatus;
 import net.thevpc.nuts.io.NpsType;
@@ -215,14 +214,13 @@ public class WindowsPs1Parser {
 
     private void setCommand(DefaultNPsInfoBuilder v, String line) {
         v.setCmdLine(line);
-        NCmdLines nCmdLines = NCmdLines.of().shellFamily(NShellFamily.WIN_CMD).lenient(true);
         try {
-            v.setCmdLineArgs(nCmdLines.parseCmdLine(line).map(NCmdLine::toStringArray).orElse(null));
+            v.setCmdLineArgs(NCmdLine.parse(line,NShellFamily.WIN_CMD).map(NCmdLine::toStringArray).orElse(null));
         } catch (Exception ex) {
             if (line.indexOf("\"\"") >= 0) {
                 line = line.replace("\"\"", "\"");
                 try {
-                    v.setCmdLineArgs(nCmdLines.parseCmdLine(line).map(NCmdLine::toStringArray).orElse(null));
+                    v.setCmdLineArgs(NCmdLine.parse(line,NShellFamily.WIN_CMD,true).map(NCmdLine::toStringArray).orElse(null));
                 } catch (Exception ex2) {
                     // just ignore
                 }

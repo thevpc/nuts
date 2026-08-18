@@ -3,17 +3,15 @@ package net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore;
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementMapper;
 import net.thevpc.nuts.runtime.standalone.collections.NClassMapImpl;
-import net.thevpc.nuts.util.NIllegalArgumentException;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.DefaultNElementDeserializerBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.reflect.NClassMap;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NNameFormat;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -35,17 +33,13 @@ public class UserElementMapperStore implements NElementMapperStore {
     private final NClassMap<Object, NElementSimplifier> destructors_lvl1_customMappersByType = new NClassMapImpl<>(null, NElementSimplifier.class);
     private final List<NElementKeyResolverEntry> destructors_lvl2_customMappersByKey = new ArrayList<>();
 
-
-    private static class MapHelper {
-
-    }
-
     private List<Predicate<Type>> indestructibleTypesFilters = new ArrayList<>(
             Collections.singletonList(
                     CoreNElementUtils.DEFAULT_INDESTRUCTIBLE
             )
     );//CoreNElementUtils.DEFAULT_INDESTRUCTIBLE;
     private NReflectRepository reflectRepository;
+    private boolean readOnly;
 
     static class NElementKeyResolverEntry<T, V> {
         NElementKeyResolver<T> resolver;
@@ -63,7 +57,18 @@ public class UserElementMapperStore implements NElementMapperStore {
     }
 
     public UserElementMapperStore() {
+        this(false);
+    }
+
+    public UserElementMapperStore(boolean readOnly) {
+        this.readOnly=readOnly;
         this.defaultElementMapperStore = NWorkspaceExt.of().getModel().defaultElementMapperStore;
+    }
+
+    private void checkReadOnly(){
+        if(readOnly){
+            throw new NReadOnlyException(NMsg.ofC("mapper store is readonly"));
+        }
     }
 
     public NReflectRepository getReflectRepository() {
@@ -121,6 +126,7 @@ public class UserElementMapperStore implements NElementMapperStore {
     @Override
     public NElementMapperStore addSimpleTypesFilter(Predicate<Type> destructTypeFilter) {
         if (destructTypeFilter != null && !indestructibleTypesFilters.contains(destructTypeFilter)) {
+            checkReadOnly();
             indestructibleTypesFilters.add(destructTypeFilter);
         }
         return this;
@@ -129,6 +135,7 @@ public class UserElementMapperStore implements NElementMapperStore {
     @Override
     public NElementMapperStore removeSimpleTypesFilter(Predicate<Type> destructTypeFilter) {
         if (destructTypeFilter != null) {
+            checkReadOnly();
             indestructibleTypesFilters.remove(destructTypeFilter);
         }
         return this;
@@ -136,7 +143,10 @@ public class UserElementMapperStore implements NElementMapperStore {
 
     @Override
     public NElementMapperStore removeAllSimpleTypesFilters() {
-        this.indestructibleTypesFilters.clear();
+        if(!indestructibleTypesFilters.isEmpty()) {
+            checkReadOnly();
+            this.indestructibleTypesFilters.clear();
+        }
         return this;
     }
 
@@ -174,280 +184,20 @@ public class UserElementMapperStore implements NElementMapperStore {
         return this;
     }
 
-//    public final UserElementMapperStore setMapper(Type cls, NElementMapper instance) {
-//        if (instance == null) {
-//            lvl1_customMappersByType.remove((Class) cls);
-//        } else {
-//            lvl1_customMappersByType.put((Class) cls, instance);
-//        }
-//        return this;
-//    }
-//
-//    public final <K, T> NElementMapperStore setMapper(NElementKeyResolver<K> resolver, K key, Type type, NElementMapper<T> instance) {
-//        NElementKeyResolverEntry ok = null;
-//        for (NElementKeyResolverEntry e : lvl2_customMappersByKey) {
-//            if (e.resolver.equals(resolver)) {
-//                ok = e;
-//                break;
-//            }
-//        }
-//        if (ok == null) {
-//            ok = new NElementKeyResolverEntry<>(resolver);
-//            lvl2_customMappersByKey.add(ok);
-//        }
-//        if (type instanceof Class) {
-//            lvl1_customMappersByType.put((Class) type, instance);
-//        }
-//        ok.byKey.put(key, instance);
-//        return this;
-//    }
-//
-//    public <T> NElementMapperStore setMapper(NElementType elementType, Type type, NElementMapper<T> instance) {
-//        return setMapper(NELEMENTTYPE_KEY_RESOLVER, elementType, type, instance);
-//    }
-//
-//    public final <T> NElementMapperStore setMapper(NElementType elementType, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance) {
-//        if (nameSelectorStrategy == null) {
-//            nameSelectorStrategy = NNameSelectorStrategy.CASE_SENSITIVE;
-//        }
-//        NElementKeyResolver<NElementTypeAndName> resolver = CASE_SENSITIVE_NAME_RESOLVER;
-//        switch (nameSelectorStrategy) {
-//            case CASE_INSENSITIVE: {
-//                resolver = CASE_INSENSITIVE_NAME_RESOLVER;
-//                break;
-//            }
-//            case FORMAT_INSENSITIVE: {
-//                resolver = FORMAT_INSENSITIVE_NAME_RESOLVER;
-//                break;
-//            }
-//        }
-//        return setMapper(resolver, new NElementTypeAndName(elementType, name), type, instance);
-//    }
-//
-//    public final <T> NElementMapperStore setMapper(NElementType elementType, String name, Type type, NElementMapper<T> instance) {
-//        return setMapper(CASE_SENSITIVE_NAME_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, Type type, NElementMapper<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setMapper(elementType, type, instance);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setMapper(elementType, name, nameSelectorStrategy, type, instance);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, String name, Type type, NElementMapper<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setMapper(elementType, name, type, instance);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, String[] names, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementMapper<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            for (String name : names) {
-//                setMapper(elementType, name, nameSelectorStrategy, type, instance);
-//            }
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setMapper(NElementType[] elementTypes, String[] names, Type type, NElementMapper<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            for (String name : names) {
-//                setMapper(elementType, name, type, instance);
-//            }
-//        }
-//        return this;
-//    }
-//
-//
-//    @Override
-//    public <T> NElementMapper<T> getMapper(NElement element) {
-//        return getMapper(element, false);
-//    }
-//
-//    @Override
-//    public <T> NElementMapper<T> getMapper(Type type) {
-//        return getMapper(type, false);
-//    }
-//
-//    public <T> NElementMapper<T> getMapper(Type type, boolean defaultOnly) {
-//        if (type == null) {
-//            return DefaultElementMapperStore.F_NULL;
-//        }
-//        Class cls = ReflectUtils.getRawClass(type).get();
-//        if (NSession.class.isAssignableFrom(cls)) {
-//            throw new NIllegalArgumentException(NMsg.ofC(
-//                    "%s is not serializable", type
-//            ));
-//        }
-//        if (cls.isArray()) {
-//            NElementMapper f = defaultElementMapperStore.getCoreMappers().getExact(cls);
-//            if (f != null) {
-//                return f;
-//            }
-//            return DefaultElementMapperStore.F_NUTS_ARR;
-//        }
-//        if (!defaultOnly) {
-//            NElementMapper f = lvl1_customMappersByType.get(cls);
-//            if (f != null) {
-//                return f;
-//            }
-//            final NElementMapper r = defaultElementMapperStore.getCoreMappers().get(cls);
-//            if (r != null) {
-//                return r;
-//            }
-//        }
-//        final NElementMapper r = defaultElementMapperStore.getDefaultMappers().get(cls);
-//        if (r != null) {
-//            return r;
-//        }
-//        throw new NIllegalArgumentException(NMsg.ofC(
-//                "unable to find element mapper for type : %s", type
-//        ));
-//    }
-//
-//
-//    public <T> NElementMapper<T> getMapper(NElement element, boolean defaultOnly) {
-//        NAssert.requireNamedNonNull(element, "element");
-//        if (!defaultOnly) {
-//            for (NElementKeyResolverEntry e : lvl2_customMappersByKey) {
-//                Object k = e.resolver.keyOf(element);
-//                if (k != null) {
-//                    NElementMapper u = (NElementMapper) e.byKey.get(k);
-//                    if (u != null) {
-//                        return u;
-//                    }
-//                }
-//            }
-//        }
-//        final NElementMapper r = defaultElementMapperStore.getMapper(element, this);
-//        if (r != null) {
-//            return r;
-//        }
-//        throw new NIllegalArgumentException(NMsg.ofC(
-//                "unable to find element mapper for element type %s. element is : %s", element.type().id(), element
-//        ));
-//    }
-
     /// ////////////////////////////////////////////////////////
 
     @Override
     public final UserElementMapperStore setSerializer(Type cls, NElementSerializer instance) {
+        checkReadOnly();
         if (instance == null) {
-            serializers_lvl1_customMappersByType.remove((Class) cls);
+            if(cls instanceof Class && serializers_lvl1_customMappersByType.containsExactKey((Class<?>) cls)) {
+                serializers_lvl1_customMappersByType.remove((Class) cls);
+            }
         } else {
             serializers_lvl1_customMappersByType.put((Class) cls, instance);
         }
         return this;
     }
-
-//    public final <K, T> NElementMapperStore setSerializer(NElementKeyResolver<K> resolver, K key, Type type, NElementSerializer<T> instance) {
-//        NElementKeyResolverEntry ok = null;
-//        for (NElementKeyResolverEntry e : serializers_lvl2_customMappersByKey) {
-//            if (e.resolver.equals(resolver)) {
-//                ok = e;
-//                break;
-//            }
-//        }
-//        if (ok == null) {
-//            ok = new NElementKeyResolverEntry<>(resolver);
-//            serializers_lvl2_customMappersByKey.add(ok);
-//        }
-//        if (type instanceof Class) {
-//            serializers_lvl1_customMappersByType.put((Class) type, instance);
-//        }
-//        ok.byKey.put(key, instance);
-//        return this;
-//    }
-//
-//    public <T> NElementMapperStore setSerializer(NElementType elementType, Type type, NElementSerializer<T> instance) {
-//        return setSerializer(NELEMENTTYPE_KEY_RESOLVER, elementType, type, instance);
-//    }
-//
-//    public final <T> NElementMapperStore setSerializer(NElementType elementType, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementSerializer<T> instance) {
-//        if (nameSelectorStrategy == null) {
-//            nameSelectorStrategy = NNameSelectorStrategy.CASE_SENSITIVE;
-//        }
-//        NElementKeyResolver<NElementTypeAndName> resolver = CASE_SENSITIVE_NAME_RESOLVER;
-//        switch (nameSelectorStrategy) {
-//            case CASE_INSENSITIVE: {
-//                resolver = CASE_INSENSITIVE_NAME_RESOLVER;
-//                break;
-//            }
-//            case FORMAT_INSENSITIVE: {
-//                resolver = FORMAT_INSENSITIVE_NAME_RESOLVER;
-//                break;
-//            }
-//        }
-//        return setSerializer(resolver, new NElementTypeAndName(elementType, name), type, instance);
-//    }
-
-//    public final <T> NElementMapperStore setSerializer(NElementType elementType, String name, Type type, NElementSerializer<T> instance) {
-//        return setSerializer(CASE_SENSITIVE_NAME_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
-//    }
-
-//    @Override
-//    public <T> NElementMapperStore setSerializer(NElementType[] elementTypes, Type type, NElementSerializer<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setSerializer(elementType, type, instance);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setSerializer(NElementType[] elementTypes, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementSerializer<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setSerializer(elementType, name, nameSelectorStrategy, type, instance);
-//        }
-//        return this;
-//    }
-
-//    @Override
-//    public <T> NElementMapperStore setSerializer(NElementType[] elementTypes, String name, Type type, NElementSerializer<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setSerializer(elementType, name, type, instance);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setSerializer(NElementType[] elementTypes, String[] names, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementSerializer<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            for (String name : names) {
-//                setSerializer(elementType, name, nameSelectorStrategy, type, instance);
-//            }
-//        }
-//        return this;
-//    }
-
-//    @Override
-//    public <T> NElementMapperStore setSerializer(NElementType[] elementTypes, String[] names, Type type, NElementSerializer<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            for (String name : names) {
-//                setSerializer(elementType, name, type, instance);
-//            }
-//        }
-//        return this;
-//    }
-
-
-//    @Override
-//    public <T> NElementSerializer<T> getSerializer(NElement element) {
-//        return getSerializer(element, false);
-//    }
 
     @Override
     public <T> NElementSerializer<T> getSerializer(Type type) {
@@ -491,34 +241,13 @@ public class UserElementMapperStore implements NElementMapperStore {
         ));
     }
 
-
-//    public <T> NElementSerializer<T> getSerializer(NElement element, boolean defaultOnly) {
-//        NAssert.requireNamedNonNull(element, "element");
-//        if (!defaultOnly) {
-//            for (NElementKeyResolverEntry e : serializers_lvl2_customMappersByKey) {
-//                Object k = e.resolver.keyOf(element);
-//                if (k != null) {
-//                    NElementMapper u = (NElementMapper) e.byKey.get(k);
-//                    if (u != null) {
-//                        return u;
-//                    }
-//                }
-//            }
-//        }
-//        final NElementSerializer r = defaultElementMapperStore.getSerializer(element, this);
-//        if (r != null) {
-//            return r;
-//        }
-//        throw new NIllegalArgumentException(NMsg.ofC(
-//                "unable to find element serializer for element type %s. element is : %s", element.type().id(), element
-//        ));
-//    }
     ///////////////////////////////////////
 
     /// ////////////////////////////////////////////////////////
 
     @Override
     public final NElementMapperStore setDeserializer(Type cls, NElementDeserializer instance) {
+        checkReadOnly();
         if (instance == null) {
             deserializers_lvl1_customMappersByType.remove((Class) cls);
         } else {
@@ -529,6 +258,7 @@ public class UserElementMapperStore implements NElementMapperStore {
 
     @Override
     public final <K, T> NElementMapperStore setDeserializer(NElementKeyResolver<K> resolver, K key, Type type, NElementDeserializer<T> instance) {
+        checkReadOnly();
         NElementKeyResolverEntry ok = null;
         for (NElementKeyResolverEntry e : serializers_lvl2_customMappersByKey) {
             if (e.resolver.equals(resolver)) {
@@ -554,6 +284,7 @@ public class UserElementMapperStore implements NElementMapperStore {
 
     @Override
     public final <T> NElementMapperStore setDeserializer(NElementType elementType, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementDeserializer<T> instance) {
+        checkReadOnly();
         if (nameSelectorStrategy == null) {
             nameSelectorStrategy = NNameSelectorStrategy.CASE_SENSITIVE;
         }
@@ -697,6 +428,7 @@ public class UserElementMapperStore implements NElementMapperStore {
 
     @Override
     public final UserElementMapperStore setSimplifier(Type cls, NElementSimplifier instance) {
+        checkReadOnly();
         if (instance == null) {
             destructors_lvl1_customMappersByType.remove((Class) cls);
         } else {
@@ -704,101 +436,6 @@ public class UserElementMapperStore implements NElementMapperStore {
         }
         return this;
     }
-
-//    public final <K, T> NElementMapperStore setDestructor(NElementKeyResolver<K> resolver, K key, Type type, NElementDestructor<T> instance) {
-//        NElementKeyResolverEntry ok = null;
-//        for (NElementKeyResolverEntry e : serializers_lvl2_customMappersByKey) {
-//            if (e.resolver.equals(resolver)) {
-//                ok = e;
-//                break;
-//            }
-//        }
-//        if (ok == null) {
-//            ok = new NElementKeyResolverEntry<>(resolver);
-//            destructors_lvl2_customMappersByKey.add(ok);
-//        }
-//        if (type instanceof Class) {
-//            destructors_lvl1_customMappersByType.put((Class) type, instance);
-//        }
-//        ok.byKey.put(key, instance);
-//        return this;
-//    }
-//
-//    public <T> NElementMapperStore setDestructor(NElementType elementType, Type type, NElementDestructor<T> instance) {
-//        return setDestructor(NELEMENTTYPE_KEY_RESOLVER, elementType, type, instance);
-//    }
-//
-//    public final <T> NElementMapperStore setDestructor(NElementType elementType, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementDestructor<T> instance) {
-//        if (nameSelectorStrategy == null) {
-//            nameSelectorStrategy = NNameSelectorStrategy.CASE_SENSITIVE;
-//        }
-//        NElementKeyResolver<NElementTypeAndName> resolver = CASE_SENSITIVE_NAME_RESOLVER;
-//        switch (nameSelectorStrategy) {
-//            case CASE_INSENSITIVE: {
-//                resolver = CASE_INSENSITIVE_NAME_RESOLVER;
-//                break;
-//            }
-//            case FORMAT_INSENSITIVE: {
-//                resolver = FORMAT_INSENSITIVE_NAME_RESOLVER;
-//                break;
-//            }
-//        }
-//        return setDestructor(resolver, new NElementTypeAndName(elementType, name), type, instance);
-//    }
-//
-//    public final <T> NElementMapperStore setDestructor(NElementType elementType, String name, Type type, NElementDestructor<T> instance) {
-//        return setDestructor(CASE_SENSITIVE_NAME_RESOLVER, new NElementTypeAndName(elementType, name), type, instance);
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setDestructor(NElementType[] elementTypes, Type type, NElementDestructor<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setDestructor(elementType, type, instance);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setDestructor(NElementType[] elementTypes, String name, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementDestructor<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setDestructor(elementType, name, nameSelectorStrategy, type, instance);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setDestructor(NElementType[] elementTypes, String name, Type type, NElementDestructor<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            setDestructor(elementType, name, type, instance);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setDestructor(NElementType[] elementTypes, String[] names, NNameSelectorStrategy nameSelectorStrategy, Type type, NElementDestructor<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            for (String name : names) {
-//                setDestructor(elementType, name, nameSelectorStrategy, type, instance);
-//            }
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public <T> NElementMapperStore setDestructor(NElementType[] elementTypes, String[] names, Type type, NElementDestructor<T> instance) {
-//        for (NElementType elementType : elementTypes) {
-//            for (String name : names) {
-//                setDestructor(elementType, name, type, instance);
-//            }
-//        }
-//        return this;
-//    }
-
-
-//    @Override
-//    public <T> NElementDestructor<T> getDestructor(NElement element) {
-//        return getDestructor(element, false);
-//    }
 
     @Override
     public <T> NElementSimplifier<T> getSimplifier(Type type) {
@@ -841,29 +478,6 @@ public class UserElementMapperStore implements NElementMapperStore {
                 "unable to find element mapper for type : %s", type
         ));
     }
-
-//
-//    public <T> NElementDestructor<T> getDestructor(NElement element, boolean defaultOnly) {
-//        NAssert.requireNamedNonNull(element, "element");
-//        if (!defaultOnly) {
-//            for (NElementKeyResolverEntry e : destructors_lvl2_customMappersByKey) {
-//                Object k = e.resolver.keyOf(element);
-//                if (k != null) {
-//                    NElementMapper u = (NElementMapper) e.byKey.get(k);
-//                    if (u != null) {
-//                        return u;
-//                    }
-//                }
-//            }
-//        }
-//        final NElementDestructor r = defaultElementMapperStore.getDestructor(element, this);
-//        if (r != null) {
-//            return r;
-//        }
-//        throw new NIllegalArgumentException(NMsg.ofC(
-//                "unable to find element serializer for element type %s. element is : %s", element.type().id(), element
-//        ));
-//    }
 
     /// ////////////////////////////////////
 

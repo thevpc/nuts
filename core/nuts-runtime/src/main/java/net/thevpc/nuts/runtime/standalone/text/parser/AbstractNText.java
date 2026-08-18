@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.text.NTextNodeWriterStringer;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
@@ -138,17 +139,17 @@ public abstract class AbstractNText implements NText {
     }
 
     public NNormalizedText normalize() {
-        return NTexts.of().normalize(this);
+        return NTextRPI.of().normalize(this);
     }
 
     @Override
     public NNormalizedText normalize(NTextTransformConfig config) {
-        return NTexts.of().normalize(this, config);
+        return NTextRPI.of().normalize(this, config);
     }
 
     @Override
     public NNormalizedText normalize(NTextTransformer transformer, NTextTransformConfig config) {
-        return NTexts.of().normalize(this, transformer, config);
+        return NTextRPI.of().normalize(this, transformer, config);
     }
 
     @Override

@@ -13,8 +13,8 @@ import java.util.List;
 public class NMsgJFormatHelper extends AbstractNMsgFormatHelper{
     int gParamIndex = 0;
 
-    public NMsgJFormatHelper(NMsg m, NTexts txt) {
-        super(m, txt);
+    public NMsgJFormatHelper(NMsg m) {
+        super(m);
     }
 
     public static NFormattedTextParts parseStyle(String msg) {
@@ -92,15 +92,15 @@ public class NMsgJFormatHelper extends AbstractNMsgFormatHelper{
                     sb.append((String) null);
                 } else if (NTextUtils.isSpecialLiteral(a)) {
                     String sb2 = MessageFormat.format("{0" + formatExt + "}", a);
-                    sb.append(txt.ofStyled(sb2, NTextUtils.getSpecialLiteralType(a)));
+                    sb.append(NText.ofStyled(sb2, NTextUtils.getSpecialLiteralType(a)));
                 } else {
-                    sb.append(MessageFormat.format("{0" + formatExt + "}", txt.of(a)));
+                    sb.append(MessageFormat.format("{0" + formatExt + "}", NText.of(a)));
                 }
                 gParamIndex++;
             } else {
                 sb.append(part.getValue());
             }
         }
-        return txt.of(sb.toString());
+        return NText.of(sb.toString());
     }
 }

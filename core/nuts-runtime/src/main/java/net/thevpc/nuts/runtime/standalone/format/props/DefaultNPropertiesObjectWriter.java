@@ -69,8 +69,7 @@ public class DefaultNPropertiesObjectWriter extends DefaultObjectWriterBase<NPro
     }
 
     public Map buildModel(Object aValue) {
-        NElements e = NElements.of();
-        Object value = e.toSimple(aValue);
+        Object value = NElement.simpleOf(aValue);
         LinkedHashMap<NText, NText> map = new LinkedHashMap<>();
         fillMap(NText.of((rootName==null?"":rootName)), value, map);
         return map;
@@ -225,14 +224,13 @@ public class DefaultNPropertiesObjectWriter extends DefaultObjectWriterBase<NPro
     }
 
     private void printKeyValue(NPrintStream out, NText prefix, int len, String fancySep, NText key, NText value) {
-        NTexts txt = NTexts.of();
         if (prefix == null) {
-            prefix = txt.ofBlank();
+            prefix = NText.ofBlank();
         }
         NText formattedKey = compact ? key
-                : txt.ofBuilder().append(key).append(CoreStringUtils.fillString(' ', len - key.length()));
+                : NTextBuilder.of().append(key).append(CoreStringUtils.fillString(' ', len - key.length()));
         if (fancySep != null) {
-            NText cc = compact ? key : txt.ofPlain(NStringUtils.formatAlign("", len + 3, NPositionType.FIRST));
+            NText cc = compact ? key : NText.ofPlain(NStringUtils.formatAlign("", len + 3, NPositionType.FIRST));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);
@@ -271,7 +269,7 @@ public class DefaultNPropertiesObjectWriter extends DefaultObjectWriterBase<NPro
                     out.print(NConstants.Ntf.SILENT);
                 }
             }
-            out.print(txt.ofStyled(formattedKey, NTextStyle.primary3()));
+            out.print(NText.ofStyled(formattedKey, NTextStyle.primary3()));
             if (separator.isEmpty() || separator.startsWith("#")) {
                 if(out.isNtf()) {
                     out.print(NConstants.Ntf.SILENT);

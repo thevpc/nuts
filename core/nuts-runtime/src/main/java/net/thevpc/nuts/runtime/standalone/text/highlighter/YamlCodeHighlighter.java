@@ -47,12 +47,12 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         String[] lines = text.split("\n", -1);
 
@@ -61,7 +61,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
         int blockScalarIndent = -1;
 
         for (int i = 0; i < lines.length; i++) {
-            if (i > 0) all.add(txt.ofPlain("\n"));
+            if (i > 0) all.add(NText.ofPlain("\n"));
 
             String line = lines[i];
             if (line.isEmpty()) continue;
@@ -70,7 +70,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
             if (blockScalarIndent >= 0) {
                 int lineIndent = leadingSpaces(line);
                 if (lineIndent > blockScalarIndent || line.trim().isEmpty()) {
-                    all.add(txt.ofStyled(line, NTextStyle.string()));
+                    all.add(NText.ofStyled(line, NTextStyle.string()));
                     continue;
                 }
                 // de-indented — exit block scalar mode
@@ -80,14 +80,14 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
             // detect block scalar indicator at end of a value position (| or >)
             int detectedBlockIndent = detectBlockScalar(line);
 
-            highlightLine(line, txt, all);
+            highlightLine(line, all);
 
             if (detectedBlockIndent >= 0) {
                 blockScalarIndent = detectedBlockIndent;
             }
         }
 
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 
     // -------------------------------------------------------------------------
@@ -120,12 +120,12 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
     // Single line highlighting
     // -------------------------------------------------------------------------
 
-    private void highlightLine(String line, NTexts txt, List<NText> all) {
+    private void highlightLine(String line, List<NText> all) {
         StringReaderExt ar = new StringReaderExt(line);
 
         // leading indent — emit as plain
         while (ar.hasNext() && ar.peekChar() == ' ') {
-            all.add(txt.ofPlain(String.valueOf(ar.readChar())));
+            all.add(NText.ofPlain(String.valueOf(ar.readChar())));
         }
         if (!ar.hasNext()) return;
 
@@ -133,24 +133,24 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
 
         // --- Document markers: --- and ...
         if (ar.peekChars("---") || ar.peekChars("...")) {
-            all.add(txt.ofStyled(readToEnd(ar), NTextStyle.keyword()));
+            all.add(NText.ofStyled(readToEnd(ar), NTextStyle.keyword()));
             return;
         }
 
         // --- Comment line
         if (first == '#') {
-            all.add(txt.ofStyled(readToEnd(ar), NTextStyle.comments()));
+            all.add(NText.ofStyled(readToEnd(ar), NTextStyle.comments()));
             return;
         }
 
         // --- List item: starts with "- "
         if (first == '-' && ar.hasNext(1) && (ar.peekChar(1) == ' ' || ar.peekChar(1) == '\n' || !ar.hasNext(1))) {
-            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator())); // '-'
+            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator())); // '-'
             if (ar.hasNext() && ar.peekChar() == ' ') {
-                all.add(txt.ofPlain(String.valueOf(ar.readChar())));
+                all.add(NText.ofPlain(String.valueOf(ar.readChar())));
             }
             // rest of the line is a value (might be a key: value inline)
-            highlightValue(ar, txt, all);
+            highlightValue(ar, all);
             return;
         }
 
@@ -158,17 +158,17 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
         // Key can be: bare word, quoted string, or complex key with '?'
         if (first == '?') {
             // explicit key marker
-            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-            if (ar.hasNext() && ar.peekChar() == ' ') all.add(txt.ofPlain(String.valueOf(ar.readChar())));
-            highlightKey(ar, txt, all);
+            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+            if (ar.hasNext() && ar.peekChar() == ' ') all.add(NText.ofPlain(String.valueOf(ar.readChar())));
+            highlightKey(ar, all);
             return;
         }
 
         // attempt key: value  (key ends at ':' followed by space or EOL)
-        if (tryHighlightKeyValue(ar, txt, all)) return;
+        if (tryHighlightKeyValue(ar, all)) return;
 
         // fallback: treat whole line as a value
-        highlightValue(ar, txt, all);
+        highlightValue(ar, all);
     }
 
     // -------------------------------------------------------------------------
@@ -179,13 +179,13 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
      * Tries to identify a "key: value" pattern.
      * Returns true if it consumed the line as a key-value pair.
      */
-    private boolean tryHighlightKeyValue(StringReaderExt ar, NTexts txt, List<NText> all) {
+    private boolean tryHighlightKeyValue(StringReaderExt ar, List<NText> all) {
         // peek ahead to find ': ' or ':' at EOL
         int colonPos = findKeyColon(ar);
         if (colonPos < 0) return false;
 
         List<NText> keyTokens = new ArrayList<>();
-        highlightKey(ar, txt, keyTokens);
+        highlightKey(ar, keyTokens);
 
         // verify we're now at the colon we found
         if (!ar.hasNext() || ar.peekChar() != ':') {
@@ -195,17 +195,17 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
         }
 
         all.addAll(keyTokens);
-        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator())); // ':'
+        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator())); // ':'
 
         if (!ar.hasNext()) return true;
 
         // optional space after colon
         if (ar.peekChar() == ' ') {
-            all.add(txt.ofPlain(String.valueOf(ar.readChar())));
+            all.add(NText.ofPlain(String.valueOf(ar.readChar())));
         }
 
         if (ar.hasNext()) {
-            highlightValue(ar, txt, all);
+            highlightValue(ar, all);
         }
         return true;
     }
@@ -246,20 +246,20 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
     // Key highlighting
     // -------------------------------------------------------------------------
 
-    private void highlightKey(StringReaderExt ar, NTexts txt, List<NText> all) {
+    private void highlightKey(StringReaderExt ar, List<NText> all) {
         if (!ar.hasNext()) return;
         char c = ar.peekChar();
 
         if (c == '"' || c == '\'') {
             // quoted key
-            List<NText> quoted = readQuotedString(ar, txt);
+            List<NText> quoted = readQuotedString(ar);
             // re-style as keyword (key style) instead of string
             StringBuilder raw = new StringBuilder();
             for (NText t : quoted) {
                 if (t instanceof NTextPlain) raw.append(((NTextPlain) t).value());
                 else if (t instanceof NTextStyled) raw.append(((NTextStyled) t).child()); // approximate
             }
-            all.add(txt.ofStyled(raw.toString(), NTextStyle.keyword()));
+            all.add(NText.ofStyled(raw.toString(), NTextStyle.keyword()));
             return;
         }
 
@@ -268,24 +268,24 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
         while (ar.hasNext() && ar.peekChar() != ':' && ar.peekChar() != '\n') {
             sb.append(ar.readChar());
         }
-        all.add(txt.ofStyled(NStringUtils.stripRight(sb.toString()), NTextStyle.keyword()));
+        all.add(NText.ofStyled(NStringUtils.stripRight(sb.toString()), NTextStyle.keyword()));
     }
 
     // -------------------------------------------------------------------------
     // Value highlighting
     // -------------------------------------------------------------------------
 
-    private void highlightValue(StringReaderExt ar, NTexts txt, List<NText> all) {
+    private void highlightValue(StringReaderExt ar, List<NText> all) {
         if (!ar.hasNext()) return;
 
-        skipSpaces(ar, txt, all);
+        skipSpaces(ar, all);
         if (!ar.hasNext()) return;
 
         char c = ar.peekChar();
 
         // inline comment — nothing else on this line
         if (c == '#') {
-            all.add(txt.ofStyled(readToEnd(ar), NTextStyle.comments()));
+            all.add(NText.ofStyled(readToEnd(ar), NTextStyle.comments()));
             return;
         }
 
@@ -293,8 +293,8 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
         if (c == '&') {
             StringBuilder sb = new StringBuilder();
             while (ar.hasNext() && !Character.isWhitespace(ar.peekChar())) sb.append(ar.readChar());
-            all.add(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
-            skipSpaces(ar, txt, all);
+            all.add(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
+            skipSpaces(ar, all);
             if (!ar.hasNext()) return;
             c = ar.peekChar();
         }
@@ -303,7 +303,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
         if (c == '*') {
             StringBuilder sb = new StringBuilder();
             while (ar.hasNext() && !Character.isWhitespace(ar.peekChar())) sb.append(ar.readChar());
-            all.add(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
+            all.add(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
             return;
         }
 
@@ -311,31 +311,31 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
         if (c == '!') {
             StringBuilder sb = new StringBuilder();
             while (ar.hasNext() && !Character.isWhitespace(ar.peekChar())) sb.append(ar.readChar());
-            all.add(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
-            skipSpaces(ar, txt, all);
+            all.add(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
+            skipSpaces(ar, all);
             if (!ar.hasNext()) return;
             c = ar.peekChar();
         }
 
         // block scalar indicators | and >
         if (c == '|' || c == '>') {
-            all.add(txt.ofStyled(readToEnd(ar), NTextStyle.separator()));
+            all.add(NText.ofStyled(readToEnd(ar), NTextStyle.separator()));
             return;
         }
 
         // flow sequence [ ... ] or flow mapping { ... }
         if (c == '[' || c == '{') {
-            highlightFlowCollection(ar, txt, all);
+            highlightFlowCollection(ar, all);
             return;
         }
 
         // quoted string value
         if (c == '"' || c == '\'') {
-            all.addAll(readQuotedString(ar, txt));
+            all.addAll(readQuotedString(ar));
             // trailing comment after quoted value
-            skipSpaces(ar, txt, all);
+            skipSpaces(ar, all);
             if (ar.hasNext() && ar.peekChar() == '#') {
-                all.add(txt.ofStyled(readToEnd(ar), NTextStyle.comments()));
+                all.add(NText.ofStyled(readToEnd(ar), NTextStyle.comments()));
             }
             return;
         }
@@ -347,37 +347,37 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
             if (ar.peekChar() == '#' && sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ') {
                 // trim trailing space from value, emit comment
                 String val = NStringUtils.stripRight(sb.toString());
-                all.add(styleScalarValue(val, txt));
-                all.add(txt.ofPlain(" "));
-                all.add(txt.ofStyled(readToEnd(ar), NTextStyle.comments()));
+                all.add(styleScalarValue(val));
+                all.add(NText.ofPlain(" "));
+                all.add(NText.ofStyled(readToEnd(ar), NTextStyle.comments()));
                 return;
             }
             sb.append(ar.readChar());
         }
 
         String val = NStringUtils.stripRight(sb.toString());
-        if (!val.isEmpty()) all.add(styleScalarValue(val, txt));
+        if (!val.isEmpty()) all.add(styleScalarValue(val));
     }
 
     /**
      * Style a bare scalar: special values (true/false/null/~) as keyword,
      * numbers as number, everything else as plain.
      */
-    private NText styleScalarValue(String val, NTexts txt) {
+    private NText styleScalarValue(String val) {
         if (SPECIAL_VALUES.contains(val)) {
-            return txt.ofStyled(val, NTextStyle.keyword());
+            return NText.ofStyled(val, NTextStyle.keyword());
         }
         if (isNumber(val)) {
-            return txt.ofStyled(val, NTextStyle.number());
+            return NText.ofStyled(val, NTextStyle.number());
         }
-        return txt.ofPlain(val);
+        return NText.ofPlain(val);
     }
 
     // -------------------------------------------------------------------------
     // Flow collections  [a, b, c]  {k: v, k2: v2}
     // -------------------------------------------------------------------------
 
-    private void highlightFlowCollection(StringReaderExt ar, NTexts txt, List<NText> all) {
+    private void highlightFlowCollection(StringReaderExt ar, List<NText> all) {
         // Simple approach: tokenize as separators, strings, values
         // without full recursive parse (flow collections are rarely deeply nested in practice)
         char open = ar.peekChar();
@@ -389,25 +389,25 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
 
             if (c == open) {
                 depth++;
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 continue;
             }
             if (c == close) {
                 depth--;
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 if (depth == 0) break;
                 continue;
             }
             if (c == ',') {
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 continue;
             }
             if (c == ':') {
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 continue;
             }
             if (c == '#') {
-                all.add(txt.ofStyled(readToEnd(ar), NTextStyle.comments()));
+                all.add(NText.ofStyled(readToEnd(ar), NTextStyle.comments()));
                 return;
             }
             if (c == '&' || c == '*' || c == '!') {
@@ -416,7 +416,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
                         && ar.peekChar() != ',' && ar.peekChar() != ']' && ar.peekChar() != '}') {
                     sb.append(ar.readChar());
                 }
-                all.add(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
+                all.add(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
                 continue;
             }
             if (Character.isWhitespace(c)) {
@@ -424,7 +424,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
                 continue;
             }
             if (c == '"' || c == '\'') {
-                all.addAll(readQuotedString(ar, txt));
+                all.addAll(readQuotedString(ar));
                 continue;
             }
 
@@ -436,13 +436,13 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
                 sb.append(ar.readChar());
             }
             String token = sb.toString();
-            if (!token.isEmpty()) all.add(styleScalarValue(token, txt));
+            if (!token.isEmpty()) all.add(styleScalarValue(token));
         }
 
         // trailing comment
-        skipSpaces(ar, txt, all);
+        skipSpaces(ar, all);
         if (ar.hasNext() && ar.peekChar() == '#') {
-            all.add(txt.ofStyled(readToEnd(ar), NTextStyle.comments()));
+            all.add(NText.ofStyled(readToEnd(ar), NTextStyle.comments()));
         }
     }
 
@@ -452,7 +452,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
     // YAML double-quoted: standard \n \t \ uXXXX etc.
     // -------------------------------------------------------------------------
 
-    private List<NText> readQuotedString(StringReaderExt ar, NTexts txt) {
+    private List<NText> readQuotedString(StringReaderExt ar) {
         char quote = ar.peekChar();
         StringBuilder sb = new StringBuilder();
         sb.append(ar.readChar()); // opening quote
@@ -483,7 +483,7 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
             }
         }
 
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.string()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.string()));
     }
 
     // -------------------------------------------------------------------------
@@ -517,9 +517,9 @@ public class YamlCodeHighlighter implements NCodeHighlighter {
     // Helpers
     // -------------------------------------------------------------------------
 
-    private void skipSpaces(StringReaderExt ar, NTexts txt, List<NText> all) {
+    private void skipSpaces(StringReaderExt ar, List<NText> all) {
         while (ar.hasNext() && ar.peekChar() == ' ') {
-            all.add(txt.ofPlain(String.valueOf(ar.readChar())));
+            all.add(NText.ofPlain(String.valueOf(ar.readChar())));
         }
     }
 

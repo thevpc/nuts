@@ -4,7 +4,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNQueryBaseOptions;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
@@ -84,7 +84,7 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
                 cmdLine.skip();
                 if (enabled) {
                     repositoryFilter(
-                            NRepositoryFilters.of().installedRepo().neg()
+                            NRepositoryFilter.ofInstalledRepo().neg()
                                     .and(this.repositoryFilter())
                     );
                 }
@@ -95,7 +95,7 @@ public abstract class AbstractNFetch extends DefaultNQueryBaseOptions<NFetch> im
                 cmdLine.skip();
                 if (enabled) {
                     repositoryFilter(
-                            NRepositoryFilters.of().installedRepo()
+                            NRepositoryFilter.ofInstalledRepo()
                                     .and(this.repositoryFilter())
                     );
                 }

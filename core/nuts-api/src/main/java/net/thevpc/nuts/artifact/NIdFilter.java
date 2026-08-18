@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.internal.rpi.NIdFilterRPI;
 import net.thevpc.nuts.util.NFilter;
 
 /**
@@ -33,6 +34,66 @@ import net.thevpc.nuts.util.NFilter;
  * @since 0.5.4
  */
 public interface NIdFilter extends NFilter {
+    //////// COMMON START
+
+    static NIdFilter ofNonnull(NFilter filter){
+        return NIdFilterRPI.of().nonnull(filter);
+    }
+
+    static NIdFilter ofAlways(){
+        return NIdFilterRPI.of().always();
+    }
+
+    static NIdFilter ofNever(){
+        return NIdFilterRPI.of().never();
+    }
+
+    static NIdFilter ofAll(NFilter... others){
+        return NIdFilterRPI.of().all(others);
+    }
+
+    static NIdFilter ofAny(NFilter... others){
+        return NIdFilterRPI.of().any(others);
+    }
+
+    static NIdFilter ofNot(NFilter other){
+        return NIdFilterRPI.of().not(other);
+    }
+
+    static NIdFilter ofNone(NFilter... others){
+        return NIdFilterRPI.of().none(others);
+    }
+
+    static NIdFilter ofFrom(NFilter a){
+        return NIdFilterRPI.of().from(a);
+    }
+
+    static NIdFilter ofAs(NFilter a){
+        return NIdFilterRPI.of().as(a);
+    }
+
+    static NIdFilter of(String expression){
+        return NIdFilterRPI.of().parse(expression);
+    }
+
+    //////// COMMON END
+
+    //////// FACTORY START
+
+    static NIdFilter ofValue(NId id){
+        return NIdFilterRPI.of().byValue(id);
+    }
+
+    static NIdFilter ofDefaultVersion(Boolean defaultVersion){
+        return NIdFilterRPI.of().byDefaultVersion(defaultVersion);
+    }
+
+
+    static NIdFilter ofName(String... names){
+        return NIdFilterRPI.of().byName(names);
+    }
+
+    //////// FACTORY END
 
     /**
      * return true when the id is to be accepted

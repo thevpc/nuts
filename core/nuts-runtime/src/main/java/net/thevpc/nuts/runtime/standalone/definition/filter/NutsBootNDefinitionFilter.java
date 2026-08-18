@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
         }
         // check now all transitive
         List<NDependency> allDeps = NFetch.of(definition.id())
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDefinition().dependencies().get()
                 .transitive().toList();
         for (NDependency dependency : allDeps) {

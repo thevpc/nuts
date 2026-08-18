@@ -62,7 +62,7 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
-            return NRepositoryFilters.of().always();
+            return NRepositoryFilter.ofAlways();
         }
         return this;
     }

@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NSimplifiable;
@@ -51,7 +51,7 @@ public class NDefaultVersionDefinitionFilter extends AbstractDefinitionFilter im
     @Override
     public NDefinitionFilter simplify() {
         if (defaultVersion == null) {
-            return NDefinitionFilters.of().always();
+            return NDefinitionFilterRPI.of().always();
         }
         return this;
     }

@@ -6,7 +6,6 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElementBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.search.AbstractNSearch;
 import net.thevpc.nuts.reflect.NScore;
@@ -43,7 +42,7 @@ public class RemoteNSearch extends AbstractNSearch {
                 .set("ids", NElement.ofArrayBuilder().addAll(ids().stream()
                         .map(Object::toString).toArray(String[]::new)).build());
         if (definitionFilter() != null) {
-            eb.set("filter", NElements.of().toElement(definitionFilter()));
+            eb.set("filter", NElement.of(definitionFilter()));
         }
         if (repositoryFilter() != null) {
             eb.set("repositories", NElement.ofString(repositoryFilter().toString()));

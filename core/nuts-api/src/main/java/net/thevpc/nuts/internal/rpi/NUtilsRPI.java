@@ -233,6 +233,8 @@ public interface NUtilsRPI extends NComponent {
 
     NDoubleList createDoubleList(double[] values, int offset, int size);
 
+    NProperties createProperties();
+
     <K, V> NObservableMap<K, V> createObservableMap();
 
     <K, V> NObservableMap<K, V> createObservableMap(Map<K, V> base);

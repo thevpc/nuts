@@ -12,6 +12,6 @@ public interface NFunction3<A, B, C, V> extends NRedescribable<NFunction3<A, B, 
     }
 
     default NElement describe() {
-        return NElements.of().toElement("custom function 3");
+        return NElement.of("custom function 3");
     }
 }

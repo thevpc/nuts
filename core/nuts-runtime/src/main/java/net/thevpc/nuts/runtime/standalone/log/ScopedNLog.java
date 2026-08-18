@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogScope;
-import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgBuilder;
 
@@ -31,7 +30,7 @@ class ScopedNLog implements NLog {
 
     @Override
     public boolean isLoggable(Level level) {
-        NLogScope c = NLogs.of().context();
+        NLogScope c = NLogScope.current();
         NLog s = c.log();
         if (s != null) {
             return s.isLoggable(level);
@@ -41,7 +40,7 @@ class ScopedNLog implements NLog {
 
     @Override
     public void log(Level level, Supplier<NMsg> msgSupplier) {
-        NLogScope c = NLogs.of().context();
+        NLogScope c = NLogScope.current();
         NLog s = c.log();
         if (s != null) {
             s.log(level, () -> prepareMsg(msgSupplier.get(), c));
@@ -52,7 +51,7 @@ class ScopedNLog implements NLog {
 
     @Override
     public void log(NMsg msg) {
-        NLogScope c = NLogs.of().context();
+        NLogScope c = NLogScope.current();
         NLog s = c.log();
         if (s != null) {
             s.log(msg);

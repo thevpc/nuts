@@ -31,6 +31,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.reflect.NScorable;
@@ -292,11 +293,10 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 List<NText> xargs = new ArrayList<>();
                 List<String> args = new ArrayList<>();
 
-                NTexts txt = NTexts.of();
-                xargs.add(txt.ofPlain(joptions.getJavaCommand()));
+                xargs.add(NText.ofPlain(joptions.getJavaCommand()));
                 xargs.addAll(
                         joptions.getJvmArgs().stream()
-                                .map(txt::ofPlain)
+                                .map(NText::ofPlain)
                                 .collect(Collectors.toList())
                 );
 
@@ -323,23 +323,23 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         throw new NIllegalArgumentException(NMsg.ofC("unable to resolve valid debug port %d-%d", port, port + 1000));
                     }
                     String ds = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (jdb.isSuspend() ? 'y' : 'n') + ",address=" + port;
-                    xargs.add(txt.ofPlain(ds));
+                    xargs.add(NText.ofPlain(ds));
                     args.add(ds);
                 }
 
                 if (joptions.isJar()) {
-                    xargs.add(txt.ofPlain("-jar"));
+                    xargs.add(NText.ofPlain("-jar"));
                     xargs.add(NIdWriter.of().format(def.id()));
                     args.add("-jar");
                     args.add(contentFile.toString());
                 } else {
-                    xargs.add(txt.ofPlain("--nuts-path"));
+                    xargs.add(NText.ofPlain("--nuts-path"));
                     xargs.add(
-                            txt.ofBuilder().appendJoined(
+                            NTextBuilder.of().appendJoined(
                                     ";", joptions.getClassPathNidStrings()
                             ).immutable()
                     );
-                    xargs.add(txt.ofPlain(
+                    xargs.add(NText.ofPlain(
                                     joptions.getMainClass()
                             )
                     );
@@ -369,12 +369,12 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
                 xargs.addAll(
                         extraStartWithAppArgs.stream()
-                                .map(txt::ofPlain)
+                                .map(NText::ofPlain)
                                 .collect(Collectors.toList())
                 );
                 xargs.addAll(
                         joptions.getAppArgs().stream()
-                                .map(txt::ofPlain)
+                                .map(NText::ofPlain)
                                 .collect(Collectors.toList())
                 );
 
@@ -409,7 +409,6 @@ public class JavaExecutorComponent implements NExecutorComponent {
         public int exec() {
             NSession session = NSession.of();
             if (executionContext.isDry()) {
-                NTexts text = NTexts.of();
                 List<String> cmdLine = new ArrayList<>();
                 cmdLine.add("embedded-java");
                 cmdLine.add("-cp");
@@ -420,7 +419,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 cmdLine.addAll(joptions.getAppArgs());
 
                 NOut.println(NMsg.ofC("[dry] %s",
-                        text.ofBuilder()
+                        NTextBuilder.of()
                                 .append("exec", NTextStyle.pale())
                                 .append(" ")
                                 .append(NCmdLine.of(cmdLine))

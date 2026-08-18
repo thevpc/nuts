@@ -1,13 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NPrepareCmd;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reflect.NScore;
@@ -54,12 +52,12 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
         deps.add(workspace.runtimeId());
-        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilters.of().byRunnable()).basePackage(true)
+        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilter.ofRunnable()).basePackage(true)
 //                .setDependencies(true)
                 .getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
-                deps.addAll(NSearch.of().addId(id).latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilters.of().byRunnable()).basePackage(true)
+                deps.addAll(NSearch.of().addId(id).latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilter.ofRunnable()).basePackage(true)
 //                        .setDependencies(true)
                         .getResultIds().toList());
             }

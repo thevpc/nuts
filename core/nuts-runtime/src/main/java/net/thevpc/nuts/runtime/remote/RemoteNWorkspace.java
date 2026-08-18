@@ -33,7 +33,6 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
             String wsURL = NWorkspace.of().bootOptions().workspace().orNull();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
             NObjectElement resultObject = NElementReader.ofJson().read(result, NObjectElement.class);
-            NElements prv = NElements.of();
             boolean success = resultObject.getBooleanValue("success").get();
             if (success) {
                 return resultObject.get("body").orNull();

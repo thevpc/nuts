@@ -8,9 +8,10 @@ package net.thevpc.nuts.runtime.standalone.xtra.time;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.mon.NProgressEvent;
 import net.thevpc.nuts.mon.NProgressListener;
 
@@ -70,7 +71,6 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
     public boolean onProgress0(NProgressEvent event, boolean end) {
         double partialSeconds = event.partialDuration().timeAsDoubleSeconds();
         if (event.currentCount() == 0 || partialSeconds > 0.5 || event.currentCount() == event.maxValue()) {
-            NTexts text = NTexts.of();
             out.resetLine();
             double globalSeconds = event.duration().timeAsDoubleSeconds();
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.currentCount() / globalSeconds);
@@ -81,7 +81,7 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
             }
 //            int x = (int) (20.0 / 100.0 * percent);
 
-            NTextBuilder formattedLine = text.ofBuilder();
+            NTextBuilder formattedLine = NTextBuilder.of();
             CProgressBar cp= CProgressBar.of();
 
             formattedLine.append(cp.progress((int)percent));
@@ -95,23 +95,23 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
 //            formattedLine.append("]");
             BytesSizeFormat mf = mf(event);
             DecimalFormat df = df(event);
-            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
-            formattedLine.append(" ").append(text.ofStyled(mf.formatString(partialSpeed), NTextStyle.config())).append("/s");
+            formattedLine.append(" ").append(NText.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
+            formattedLine.append(" ").append(NText.ofStyled(mf.formatString(partialSpeed), NTextStyle.config())).append("/s");
             if (event.maxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(" ( -- )");
                 } else {
-                    formattedLine.append(" (").append(text.ofStyled(mf.formatString(globalSpeed), NTextStyle.info())).append(")");
+                    formattedLine.append(" (").append(NText.ofStyled(mf.formatString(globalSpeed), NTextStyle.info())).append(")");
                 }
             } else {
-                formattedLine.append(" (").append(text.ofStyled(mf.formatString(event.maxValue()), NTextStyle.warn())).append(")");
+                formattedLine.append(" (").append(NText.ofStyled(mf.formatString(event.maxValue()), NTextStyle.warn())).append(")");
             }
             if (event.error() != null) {
-                formattedLine.append(" ").append(text.ofStyled("ERROR", NTextStyle.error())).append(" ");
+                formattedLine.append(" ").append(NText.ofStyled("ERROR", NTextStyle.error())).append(" ");
             }
             formattedLine.append(" ").append(event.message()).append(" ");
             String ff = formattedLine.toString();
-            int length = text.ofBuilder().append(ff).length();
+            int length = NTextBuilder.of().append(ff).length();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

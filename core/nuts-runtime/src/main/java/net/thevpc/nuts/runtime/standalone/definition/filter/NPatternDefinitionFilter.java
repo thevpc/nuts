@@ -7,6 +7,8 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
@@ -110,7 +112,7 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
             NEnvCondition otherCondition = null;
             try {
                 otherCondition = NFetch.of(other)
-                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
                         .getResultDescriptor().condition();
             } catch (Exception ex) {
                 //ignore any error
@@ -229,7 +231,7 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
     @Override
     public NDefinitionFilter simplify() {
         if (any) {
-            return NDefinitionFilters.of().always();
+            return NDefinitionFilterRPI.of().always();
         }
         return this;
     }

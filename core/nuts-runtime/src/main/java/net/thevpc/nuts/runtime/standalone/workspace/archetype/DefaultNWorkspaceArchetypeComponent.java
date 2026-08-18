@@ -26,11 +26,12 @@ package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
 import java.util.*;
 
+import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
@@ -144,7 +145,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
         if (initializeScripts || initializeLaunchers || installCompanions) {
             NId api = NFetch.of().id(workspace.apiId())
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .failFast(false).getResultId();
             if (api != null) {
                 NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();

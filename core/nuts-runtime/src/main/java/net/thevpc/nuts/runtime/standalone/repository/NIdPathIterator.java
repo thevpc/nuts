@@ -91,8 +91,8 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                 .name("ScanPath")
                 .set("repository", repository == null ? null : repository.name())
                 .set("filter", NDescribables.describeResolveOrSimplify(filter))
-                .add(basePath == null ? null : NElement.ofPair("path", NElements.of().toElement(basePath)))
-                .set("root", NElements.of().toElement(rootFolder))
+                .add(basePath == null ? null : NElement.ofPair("path", NElement.of(basePath)))
+                .set("root", NElement.of(rootFolder))
                 .add((maxDepth < 0 || maxDepth == Integer.MAX_VALUE) ? null : NElement.ofPair("maxDepth", maxDepth))
                 .addAll(extraProperties==null?null:extraProperties.children())
                 .build();

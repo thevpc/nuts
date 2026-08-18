@@ -34,6 +34,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NClassLoaderNode;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -81,7 +82,7 @@ public final class NClassLoaderUtils {
         NId id = d.toId();
         try {
             cc = NSearch.of(id)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .repositoryFilter(repositoryFilter)
                     .latest(true)
                     .getResultDefinitions()
@@ -120,7 +121,7 @@ public final class NClassLoaderUtils {
         }
         try {
             cc = NFetch.of(d.dependency().toId())
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .repositoryFilter(repositoryFilter)
                     .getResultContent();
         } catch (NArtifactNotFoundException ex) {

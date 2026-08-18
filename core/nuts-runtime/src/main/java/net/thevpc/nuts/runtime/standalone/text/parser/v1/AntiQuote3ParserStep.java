@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class AntiQuote3ParserStep extends ParserStep {
@@ -162,8 +162,6 @@ public class AntiQuote3ParserStep extends ParserStep {
         char[] dst = new char[value2.length()];
         value2.getChars(0, value2.length(), dst, 0);
 
-        NTexts txt = NTexts.of();
-        DefaultNTexts factory0 = (DefaultNTexts) txt;
         int i = 0;
         int endOffset = -1;
         if (dst.length > 0 && dst[i] == '!') {
@@ -197,26 +195,26 @@ public class AntiQuote3ParserStep extends ParserStep {
             String start2 = this.start.toString() + "!";
             switch (cmd) {
                 case "!anchor": {
-                    return txt.ofAnchor(
+                    return NText.ofAnchor(
                             value,
                             w.length()==0?" ":w.toString()
                     );
                 }
                 case "!link": {
-                    return txt.ofLink(
+                    return NText.ofLink(
                             value,
                             w.length()==0?" ":w.toString()
                     );
                 }
                 case "!include": {
-                    return txt.ofInclude(
+                    return NText.ofInclude(
                             value,
                             w.length()==0?" ":w.toString()
                     );
                 }
             }
             NTerminalCmd ntc = NTerminalCmd.of(cmd0, value);
-            return factory0.createCommand(
+            return ((DefaultNTextRPI)(NTextRPI.of())).createCommand(
                     start2,
                     ntc,
                     w.toString(),
@@ -225,7 +223,7 @@ public class AntiQuote3ParserStep extends ParserStep {
         }
         if (value.isEmpty()) {
             if (w.length() > 0 && cmd.length() > 0) {
-                return factory0.createCode(
+                return ((DefaultNTextRPI)(NTextRPI.of())).createCode(
                         start.toString(),
                         cmd,
                         w.toString(),
@@ -233,7 +231,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                         value
                 );
             }
-            return factory0.createCode(
+            return ((DefaultNTextRPI)(NTextRPI.of())).createCode(
                     start.toString(),
                     "",
                     "",
@@ -241,7 +239,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     cmd + w.toString() + value
             );
         }
-        return factory0.createCode(
+        return ((DefaultNTextRPI)(NTextRPI.of())).createCode(
                 start.toString(),
                 cmd,
                 w.toString(),

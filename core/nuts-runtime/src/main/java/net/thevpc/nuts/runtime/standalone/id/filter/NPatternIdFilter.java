@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.spi.base.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -88,7 +89,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
             NEnvCondition otherCondition = null;
             try {
                 otherCondition = NFetch.of(other)
-                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
                         .getResultDescriptor().condition();
             } catch (Exception ex) {
                 //ignore any error

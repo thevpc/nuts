@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.app;
 
+import net.thevpc.nuts.internal.NReservedApplication;
+
 /**
  * Nuts Application is the Top Level interface to be managed by nuts. By default, NApplication classes :
  * <ul>
@@ -269,6 +271,13 @@ package net.thevpc.nuts.app;
  * @since 0.5.5
  */
 public interface NApplication {
+
+    static boolean isAnnotatedApplicationClass(Class appClass) {
+        return NReservedApplication.isAnnotatedApplicationClass(appClass);
+    }
+    static NApplication createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
+        return NReservedApplication.createApplicationInstanceFromAnnotatedInstance(appInstance);
+    }
 
     /**
      * this method should be overridden to perform specific business when

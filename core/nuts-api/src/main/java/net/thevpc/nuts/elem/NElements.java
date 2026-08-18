@@ -26,7 +26,6 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.Map;
@@ -48,34 +47,12 @@ public interface NElements extends NComponent {
     }
 
 
-    NElement normalize(NElement e, NContentType contentType);
-
-    NElement normalizeJson(NElement e);
-
-    NElement normalizeTson(NElement e);
-
-    NElement normalizeYaml(NElement e);
-
-    NElement normalizeXml(NElement e);
-
+    boolean isNtf();
 
     NElements setNtf(boolean ntf);
 
     /**
-     * compile pathExpression into a valid NutsElementPath that helps filtering
-     * elements tree. JSONPath expressions refer to a JSON structure the same
-     * way as XPath expression are used with XML documents. JSONPath expressions
-     * can use the dot notation and/or bracket notations .store.book[0].title
-     * The trailing root is not necessary : .store.book[0].title You can also
-     * use bracket notation store['book'][0].title for input paths.
      *
-     * @param pathExpression element path expression
-     * @return Element Path filter
-     */
-    NElementSelector compileSelector(String pathExpression);
-
-    /**
-     * /**
      * convert element to the specified object if applicable or throw an
      * exception.
      *
@@ -110,38 +87,4 @@ public interface NElements extends NComponent {
     NElements doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
     NElementMapperStore mapperStore();
-
-    NElementType commonNumberType(NElementType aa, NElementType bb);
-
-    NExprElementReshaper createExprElementReshaper(NExprElementReshaperType type);
-
-    NExprElementReshaperBuilder createExprElementReshaperBuilder(NExprElementReshaperType type);
-
-    NElementFormatterBuilder createElementFormatterBuilder();
-
-    NElementFormatter createElementFormatter(NElementFormatterStyle style);
-
-    NElementPath createRootPath();
-
-    NElementMetadata createElementMetadata();
-
-    NElementMetadata createElementMetadata(Object key, Object value);
-
-    NElementMetadata createElementMetadata(Map<Object, Object> any);
-
-    NElementStep createStepChild(String name);
-
-    NElementStep createStepChild(int index);
-
-    NElementStep createStepParam(String name);
-
-    NElementStep createStepParam(int index);
-
-    NElementStep createStepAnnotationParam(int paramIndex,String name);
-
-    NElementStep createStepAnnotationParam(int paramIndex,int index);
-
-    NElementStep createStepSubList(int index);
-
-    NElementNavigator createRootNavigator(NElement element);
 }

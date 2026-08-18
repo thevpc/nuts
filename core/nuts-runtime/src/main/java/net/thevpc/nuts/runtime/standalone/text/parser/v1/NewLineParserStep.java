@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 
@@ -38,8 +38,8 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public NText toText() {
-        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of();
-        return factory0.ofPlain(start.toString());
+        DefaultNTextRPI factory0 = (DefaultNTextRPI) NTextRPI.of();
+        return factory0.createPlain(start.toString());
     }
 
     @Override

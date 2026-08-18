@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NFetch;
@@ -39,11 +40,11 @@ public class MvnClient {
                     NDefinition ff = NSearch.of()
                             .fetchStrategy(NFetchStrategy.ONLINE)
                             .addId(NET_VPC_APP_NUTS_MVN)
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .inlineDependencies(true).latest(true).getResultDefinitions().findFirst().get();
                     for (NId nutsId : NSearch.of().addId(ff.id()).inlineDependencies(true).getResultIds()) {
                         NFetch.of(nutsId).fetchStrategy(NFetchStrategy.ONLINE)
-                                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                                .dependencyFilter(NDependencyFilter.ofRunnable())
                                 .getResultDefinition();
                     }
                     status = Status.SUCCESS;

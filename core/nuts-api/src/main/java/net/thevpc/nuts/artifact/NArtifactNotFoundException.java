@@ -27,7 +27,6 @@ package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NExceptions;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -104,7 +103,7 @@ public class NArtifactNotFoundException extends NException {
         if(cause==null){
             return NMsg.ofC("artifact not found %s%s", (id == null ? "<null>" : id.longId()), dependenciesToString);
         }
-        return NMsg.ofC("artifact not found %s : %s%s", (id == null ? "<null>" : id.longId()), NExceptions.getErrorMessage(cause), dependenciesToString);
+        return NMsg.ofC("artifact not found %s : %s%s", (id == null ? "<null>" : id.longId()), NException.getErrorMessage(cause), dependenciesToString);
     }
 
     private static NMsg prepareMessage(NId id, NMsg message, Throwable cause) {
@@ -114,7 +113,7 @@ public class NArtifactNotFoundException extends NException {
         if(cause==null){
             return NMsg.ofC("artifact not found %s", (id == null ? "<null>" : id.longId()));
         }
-        return NMsg.ofC("artifact not found %s : %s", (id == null ? "<null>" : id.longId()), NExceptions.getErrorMessage(cause));
+        return NMsg.ofC("artifact not found %s : %s", (id == null ? "<null>" : id.longId()), NException.getErrorMessage(cause));
     }
 
     /**

@@ -88,7 +88,7 @@ public enum NSupportMode implements NEnum {
                         return false;
                     }
                     default: {
-                        throw NExceptions.ofSafeUnsupportedEnumException(request);
+                        throw NException.ofSafeUnsupportedEnumException(request);
                     }
                 }
             }
@@ -102,12 +102,12 @@ public enum NSupportMode implements NEnum {
                         return true;
                     }
                     default: {
-                        throw NExceptions.ofSafeUnsupportedEnumException(request);
+                        throw NException.ofSafeUnsupportedEnumException(request);
                     }
                 }
             }
             default: {
-                throw NExceptions.ofSafeUnsupportedEnumException(this);
+                throw NException.ofSafeUnsupportedEnumException(this);
             }
         }
     }

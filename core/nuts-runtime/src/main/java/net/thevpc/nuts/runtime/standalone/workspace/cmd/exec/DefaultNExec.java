@@ -1,18 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.artifact.NIdLocation;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.core.NRunAs;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -291,7 +289,7 @@ public class DefaultNExec extends AbstractNExec {
                 }
             } catch (Exception ex) {
                 String p = getExtraErrorMessage();
-                int exceptionExitCode = NExceptions.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
+                int exceptionExitCode = NException.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
                 if (exceptionExitCode != NExecutionException.SUCCESS) {
                     if (!NBlankable.isBlank(p)) {
                         resultException = new NExecutionException(
@@ -432,7 +430,7 @@ public class DefaultNExec extends AbstractNExec {
                                     .installInformation(DefaultNInstallInfo.notInstalled(_id));
 
                             NDependencySolver resolver = NDependencySolver.of();
-                            NDependencyFilters ff = NDependencyFilters.of();
+                            NDependencyFilterRPI ff = NDependencyFilterRPI.of();
 
                             resolver
                                     .repositoryFilter(null)
@@ -491,7 +489,7 @@ public class DefaultNExec extends AbstractNExec {
                     NDefinition def2 = NSearch.of()
                             .addId(id)
                             .latest(true)
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .failFast(true)
                             .getResultDefinitions()
                             .findFirst().get();
@@ -655,8 +653,8 @@ public class DefaultNExec extends AbstractNExec {
         }
         NTerminal.of().printProgress(NMsg.ofC("start searching for %s", nid));
         NId ff = NSearch.of(nid)
-                .dependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).failFast(false)
-                .definitionFilter(NDefinitionFilters.of().byDeployed(true))
+                .dependencyFilter(NDependencyFilter.ofRunnable()).latest(true).failFast(false)
+                .definitionFilter(NDefinitionFilter.ofDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.installInformation().get().isDefaultVersion())) // default first
                 .map(NDefinition::id).findFirst().orElse(null);
@@ -679,7 +677,7 @@ public class DefaultNExec extends AbstractNExec {
                 }
                 ff = NSearch.of(nid)
                         .fetchStrategy(NFetchStrategy.OFFLINE)
-                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
                         .failFast(false)
                         .latest(true)
                         .getResultIds().findFirst().orElse(null);
@@ -694,7 +692,7 @@ public class DefaultNExec extends AbstractNExec {
                     }
                     ff = NSearch.of(nid)
                             .fetchStrategy(NFetchStrategy.ONLINE)
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .failFast(false)
                             .latest(true)
                             .getResultIds().findFirst().orElse(null);
@@ -718,8 +716,8 @@ public class DefaultNExec extends AbstractNExec {
         try {
             def = NFetch.of(goodId)
                     .failFast(true)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
-                    .repositoryFilter(NRepositoryFilters.of().installedRepo())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .repositoryFilter(NRepositoryFilter.ofInstalledRepo())
                     .getResultDefinition();
         } catch (Exception ex) {
             //try to find locally
@@ -727,7 +725,7 @@ public class DefaultNExec extends AbstractNExec {
         if (def == null) {
             def = NFetch.of(goodId)
                     .failFast(true)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .getResultDefinition();
         }
         return ws_execDef(def, commandName, appArgs, executorOptions, this.workspaceOptions, env, directory, failFast, executionType, runAs);

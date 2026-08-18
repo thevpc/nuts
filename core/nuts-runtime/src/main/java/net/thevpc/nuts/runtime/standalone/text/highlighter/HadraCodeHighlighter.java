@@ -47,21 +47,21 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
+    public NText tokenToText(String text, String nodeType) {
         String str = String.valueOf(text);
         switch (nodeType.toLowerCase()) {
             case "separator": {
-                return txt.ofStyled(str, NTextStyle.separator());
+                return NText.ofStyled(str, NTextStyle.separator());
             }
             case "keyword": {
-                return txt.ofStyled(str, NTextStyle.keyword());
+                return NText.ofStyled(str, NTextStyle.keyword());
             }
         }
-        return txt.ofPlain(str);
+        return NText.ofPlain(str);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
@@ -83,7 +83,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                 case '>':
                 case '!':
                 case ';': {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -113,7 +113,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -123,7 +123,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                     } else if (ar.peekChars("/*")) {
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -136,18 +136,18 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                             if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).value();
                                 if (reservedWords.contains(txt2)) {
-                                    d[0] = txt.ofStyled(d[0], NTextStyle.keyword());
+                                    d[0] = NText.ofStyled(d[0], NTextStyle.keyword());
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                         }
                     }
                     break;
                 }
             }
         }
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 }

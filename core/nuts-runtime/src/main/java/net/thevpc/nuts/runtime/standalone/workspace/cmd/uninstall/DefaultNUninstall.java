@@ -5,15 +5,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.command.NUninstall;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -55,8 +55,8 @@ public class DefaultNUninstall extends AbstractNUninstall {
             List<NDefinition> resultDefinitions = NSearch.of()
                     .transitive(false)
                     .addId(id)
-                    .definitionFilter(NDefinitionFilters.of().byInstalled(true))
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .definitionFilter(NDefinitionFilter.ofInstalled(true))
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .getResultDefinitions()
                     .distinct()
                     .toList();
@@ -92,13 +92,12 @@ public class DefaultNUninstall extends AbstractNUninstall {
     }
 
     private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
-        if (all.size() > 0) {
+        if (!all.isEmpty()) {
             NSession session = NSession.of();
             if (NOut.isPlain()) {
-                NTexts text = NTexts.of();
-                NText kind = text.ofStyled(skind, NTextStyle.primary2());
+                NText kind = NText.ofStyled(skind, NTextStyle.primary2());
                 NText action =
-                        text.ofStyled(saction,
+                        NText.ofStyled(saction,
                                 saction.equals("set as default") ? NTextStyle.primary3() :
                                         saction.equals("ignored") ? NTextStyle.pale() :
                                         NTextStyle.primary1()

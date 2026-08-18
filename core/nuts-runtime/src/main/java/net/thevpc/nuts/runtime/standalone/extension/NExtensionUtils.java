@@ -38,7 +38,7 @@ public class NExtensionUtils {
         switch (apiType.getName()) {
             //skip logging this to avoid infinite recursion
             case "net.thevpc.nuts.io.NPaths":
-            case "net.thevpc.nuts.text.NTexts":
+            case "net.thevpc.nuts.internal.rpi.NTexts":
             case "net.thevpc.nuts.log.NLogs":
             case "net.thevpc.nuts.log.NLog": {
                 return true;

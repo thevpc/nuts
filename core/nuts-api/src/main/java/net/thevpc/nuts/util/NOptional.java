@@ -29,7 +29,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return default ExceptionFactory
      */
     static ExceptionFactory getDefaultExceptionFactory() {
-        return NExceptions.getDefaultExceptionFactory();
+        return NException.getDefaultExceptionFactory();
     }
 
     /**
@@ -43,7 +43,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return default ExceptionFactory
      */
     static void setDefaultExceptionFactory(ExceptionFactory defaultExceptionFactory) {
-        NExceptions.setDefaultExceptionFactory(defaultExceptionFactory);
+        NException.setDefaultExceptionFactory(defaultExceptionFactory);
     }
 
     static <T> NOptional<T> ofNamedEmpty(String name) {

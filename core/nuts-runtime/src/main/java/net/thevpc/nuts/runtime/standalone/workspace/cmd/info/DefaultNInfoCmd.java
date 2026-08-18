@@ -17,6 +17,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInfoCmd;
 import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NRepository;
@@ -342,7 +343,6 @@ public class DefaultNInfoCmd implements NInfoCmd {
 
         props.put("nuts-runtime-classpath",
                 () -> {
-                    NTexts txt = NTexts.of();
                     List<URL> cl = NWorkspace.of().bootClassWorldURLs();
                     List<NPath> runtimeClassPath = new ArrayList<>();
                     if (cl != null) {
@@ -358,7 +358,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
                             }
                         }
                     }
-                    return txt.ofBuilder().appendJoined(";", runtimeClassPath);
+                    return NTextBuilder.of().appendJoined(";", runtimeClassPath);
                 }
         );
         props.put("nuts-workspace-id", () -> NText.ofStyledPath(stringValue(NWorkspace.of().uuid())));
@@ -421,10 +421,9 @@ public class DefaultNInfoCmd implements NInfoCmd {
                 () -> {
                     String ds = NDependencySolverUtils.resolveSolverName(NWorkspace.of().bootOptions().dependencySolver().orNull());
                     List<String> allDs = NDependencySolver.solverNames();
-                    NTexts txt = NTexts.of();
-                    return txt.ofBuilder().appendJoined(";",
+                    return NTextBuilder.of().appendJoined(";",
                             allDs.stream()
-                                    .map(x -> txt.ofStyled(x, NTextStyle.keyword()))
+                                    .map(x -> NText.ofStyled(x, NTextStyle.keyword()))
                                     .collect(Collectors.toList())
                     );
                 }
@@ -563,11 +562,10 @@ public class DefaultNInfoCmd implements NInfoCmd {
             }
         }
 
-        NTexts txt = NTexts.of();
         props.put("nuts-runtime-classpath",
-                txt.ofBuilder().appendJoined(";", runtimeClassPath)
+                NTextBuilder.of().appendJoined(";", runtimeClassPath)
         );
-        props.put("nuts-workspace-id", txt.ofStyled(stringValue(session.workspace().uuid()), NTextStyle.path()));
+        props.put("nuts-workspace-id", NText.ofStyled(stringValue(session.workspace().uuid()), NTextStyle.path()));
         props.put("nuts-store-layout", workspace.storeLayout());
         props.put("nuts-store-strategy", workspace.storeStrategy());
         props.put("nuts-repo-store-strategy", workspace.repositoryStoreStrategy());
@@ -624,16 +622,16 @@ public class DefaultNInfoCmd implements NInfoCmd {
         String ds = NDependencySolverUtils.resolveSolverName(options.dependencySolver().orNull());
         List<String> allDs = NDependencySolver.solverNames();
         props.put("nuts-solver",
-                txt.ofStyled(
+                NText.ofStyled(
                         ds,
                         allDs.stream().map(NDependencySolverUtils::resolveSolverName)
                                 .anyMatch(x -> x.equals(ds))
                                 ? NTextStyle.keyword() : NTextStyle.error())
         );
         props.put("nuts-solver-list",
-                txt.ofBuilder().appendJoined(";",
+                NTextBuilder.of().appendJoined(";",
                         allDs.stream()
-                                .map(x -> txt.ofStyled(x, NTextStyle.keyword()))
+                                .map(x -> NText.ofStyled(x, NTextStyle.keyword()))
                                 .collect(Collectors.toList())
                 )
 
@@ -648,14 +646,14 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("java-native", environment.isNativeImage());
         props.put("java-executable", NPath.of(NJavaSdkUtils.of().resolveJavaCommandByHome(null)));
         props.put("java-classpath",
-                txt.ofBuilder().appendJoined(";",
+                NTextBuilder.of().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
                                 .map(x -> NPath.of(x))
                                 .collect(Collectors.toList())
                 )
         );
         props.put("java-library-path",
-                txt.ofBuilder().appendJoined(";",
+                NTextBuilder.of().appendJoined(";",
                         Arrays.stream(System.getProperty("java.library.path").split(File.pathSeparator))
                                 .map(x -> NPath.of(x))
                                 .collect(Collectors.toList())

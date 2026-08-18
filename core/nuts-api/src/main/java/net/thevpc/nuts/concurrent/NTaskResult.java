@@ -1,6 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NGetter;
 
 /**
@@ -98,7 +98,7 @@ public class NTaskResult<T> {
     @NGetter
     public T result() {
         if (isError()) {
-            throw NExceptions.ofUncheckedException(exception);
+            throw NException.ofUncheckedException(exception);
         }
         return result;
     }

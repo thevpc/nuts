@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import java.util.EnumSet;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Objects;
@@ -30,7 +31,7 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
     @Override
     public NDependencyFilter simplify() {
         if(scopes.isEmpty()) {
-            return NDependencyFilters.of().always();
+            return NDependencyFilterRPI.of().always();
         }
         return this;
     }

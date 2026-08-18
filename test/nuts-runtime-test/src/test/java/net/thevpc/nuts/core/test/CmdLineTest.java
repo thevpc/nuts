@@ -5,12 +5,12 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.cmdline.DefaultNCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import org.junit.jupiter.api.*;
 
@@ -49,7 +49,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument01() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg(null,null),
                 true,
@@ -66,7 +65,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument02() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("",null),
                 true,
@@ -83,7 +81,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument03() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("hello"),
                 true,
@@ -100,7 +97,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument04() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("!hello"),
                 true,
@@ -117,7 +113,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument05() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("//!hello"),
                 true,
@@ -134,7 +129,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument06() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("/!hello"),
                 true,
@@ -151,7 +145,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument07() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("/!hello=me"),
                 true,
@@ -168,7 +161,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument08() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("--!hello=me"),
                 true,
@@ -185,7 +177,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument09() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("--//!hello=me"),
                 false,
@@ -203,7 +194,6 @@ public class CmdLineTest {
 
     @Test
     public void testArgument10() {
-        NElements elems = NElements.of();
         checkDefaultNArgument(
                 new DefaultNArg("--//="),
                 false,

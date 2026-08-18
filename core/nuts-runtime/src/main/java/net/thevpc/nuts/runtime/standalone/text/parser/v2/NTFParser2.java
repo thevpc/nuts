@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.collections.DefaultNCharQueue;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNTextNodeParser;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTextVisitor;
-import net.thevpc.nuts.text.NTexts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,6 @@ public class NTFParser2 extends AbstractNTextNodeParser {
     }
 
     private final DefaultNCharQueue q = new DefaultNCharQueue();
-    private NTexts txt;
     private boolean wasNewLine = true;
     private Stack<Embedded> stackedStyles = new Stack<>();
 
@@ -62,7 +61,6 @@ public class NTFParser2 extends AbstractNTextNodeParser {
 
     public NTFParser2() {
         super();
-        this.txt = new DefaultNTexts();//NTexts.of(
     }
 
     @Override
@@ -454,21 +452,21 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         Embedded embedded = stackedStyles.peek();
         String b = consumeBuffer();
         stackedStyles.pop();
-        return pushUp(txt.ofCodeOrCommand(b));
+        return pushUp(NText.ofCodeOrCommand(b));
     }
 
     private NText pushUpTitle() {
         Embedded embedded = stackedStyles.peek();
         pushUp(consumeBuffer());
         stackedStyles.pop();
-        return pushUp(txt.ofTitle(txt.ofList(embedded.children), embedded.level));
+        return pushUp(NText.ofTitle(NText.ofList(embedded.children), embedded.level));
     }
 
     private NText pushUpCompositeStyle() {
         Embedded embedded = stackedStyles.peek();
         pushUp(consumeBuffer());
         stackedStyles.pop();
-        return pushUp(txt.ofStyled(txt.ofList(embedded.children).simplify(), embedded.style).simplify());
+        return pushUp(NText.ofStyled(NText.ofList(embedded.children).simplify(), embedded.style).simplify());
     }
 
     private NText pushUpSimpleStyle() {
@@ -476,7 +474,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         wasNewLine = false;
         pushUp(consumeBuffer());
         stackedStyles.pop();
-        return pushUp(txt.ofStyled(txt.ofList(embedded.children).simplify(), embedded.style).simplify());
+        return pushUp(NText.ofStyled(NText.ofList(embedded.children).simplify(), embedded.style).simplify());
     }
 
     private void pushCompositeStyle(NTextStyles style) {
@@ -516,7 +514,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
             return null;
         }
         if (t.length() > 0) {
-            return pushUp(txt.ofPlain(t));
+            return pushUp(NText.ofPlain(t));
         }
         return null;
     }

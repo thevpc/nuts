@@ -27,6 +27,7 @@ import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -76,20 +77,19 @@ public class ProcessBuilder2 {
     private static String formatArg(String s) {
         DefaultNArg a = new DefaultNArg(s);
         StringBuilder sb = new StringBuilder();
-        NTexts factory = NTexts.of();
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.key()), NTextStyle.option()));
+                sb.append(NText.ofStyled(NStringUtils.formatStringLiteral(a.key()), NTextStyle.option()));
                 sb.append("=");
                 sb.append(NStringUtils.formatStringLiteral(a.getStringValue().get()));
             } else {
-                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.key()), NTextStyle.primary4()));
+                sb.append(NText.ofStyled(NStringUtils.formatStringLiteral(a.key()), NTextStyle.primary4()));
                 sb.append("=");
                 sb.append(NStringUtils.formatStringLiteral(a.getStringValue().get()));
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.image()), NTextStyle.option()));
+                sb.append(NText.ofStyled(NStringUtils.formatStringLiteral(a.image()), NTextStyle.option()));
             } else {
                 sb.append(NStringUtils.formatStringLiteral(a.image()));
             }
@@ -857,9 +857,8 @@ public class ProcessBuilder2 {
             }
             fullCommandString.add(s);
         }
-        NTexts txt = NTexts.of();
-        NTextBuilder sb = txt.ofBlank().builder()
-                .append(txt.ofCode("system",
+        NTextBuilder sb = NText.ofBlank().builder()
+                .append(NText.ofCode("system",
                         NShellHelper.of(NShellFamily.current())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
                                         new NCmdLineShellOptions()

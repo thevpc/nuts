@@ -5,7 +5,6 @@ import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 
 public class PlainCodeHighlighter implements NCodeHighlighter {
 
@@ -19,13 +18,13 @@ public class PlainCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText stringToText(String text) {
+        return NText.ofPlain(text);
     }
 
     @NScore

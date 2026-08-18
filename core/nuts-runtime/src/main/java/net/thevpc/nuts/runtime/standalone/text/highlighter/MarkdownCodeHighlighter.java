@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -39,12 +38,12 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         String[] lines = text.split("\n", -1);
 
@@ -52,7 +51,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
         String fenceMarker = null; // "```" or "~~~"
 
         for (int i = 0; i < lines.length; i++) {
-            if (i > 0) all.add(txt.ofPlain("\n"));
+            if (i > 0) all.add(NText.ofPlain("\n"));
 
             String line = lines[i];
 
@@ -62,7 +61,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
                 if (fence != null) {
                     inFencedCode = true;
                     fenceMarker = fence.substring(0, 3); // ``` or ~~~
-                    highlightFenceLine(line, txt, all);
+                    highlightFenceLine(line, all);
                     continue;
                 }
             } else {
@@ -72,10 +71,10 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
                 if (trimmed.startsWith(fenceMarker) && NStringUtils.stripRight(trimmed).chars().allMatch(c -> c == finalFenceMarker.charAt(0))) {
                     inFencedCode = false;
                     fenceMarker = null;
-                    highlightFenceLine(line, txt, all);
+                    highlightFenceLine(line, all);
                 } else {
                     // code content — plain, no inline parsing
-                    all.add(txt.ofPlain(line));
+                    all.add(NText.ofPlain(line));
                 }
                 continue;
             }
@@ -85,23 +84,23 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
                 String next = lines[i + 1].trim();
                 if (!line.trim().isEmpty() && (isSetextH1(next) || isSetextH2(next))) {
                     NTextStyle headingStyle = isSetextH1(next) ? NTextStyle.keyword() : NTextStyle.separator();
-                    all.add(txt.ofStyled(line, headingStyle));
+                    all.add(NText.ofStyled(line, headingStyle));
                     continue;
                 }
             }
 
             // ---- Dispatch by first non-space character ----
-            highlightLine(line, txt, all);
+            highlightLine(line, all);
         }
 
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 
     // -------------------------------------------------------------------------
     // Line-level dispatch
     // -------------------------------------------------------------------------
 
-    private void highlightLine(String line, NTexts txt, List<NText> all) {
+    private void highlightLine(String line, List<NText> all) {
         if (line.isEmpty()) return;
 
         String trimmed = NStringUtils.stripLeft(line);
@@ -109,93 +108,93 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
 
         // indented code block (4 spaces or 1 tab)
         if (indent >= 4 || (line.length() > 0 && line.charAt(0) == '\t')) {
-            all.add(txt.ofPlain(line));
+            all.add(NText.ofPlain(line));
             return;
         }
 
         // emit leading indent
-        if (indent > 0) all.add(txt.ofPlain(line.substring(0, indent)));
+        if (indent > 0) all.add(NText.ofPlain(line.substring(0, indent)));
 
         if (trimmed.isEmpty()) return;
 
         // ATX heading: # ## ### etc.
         if (trimmed.charAt(0) == '#') {
-            highlightHeading(trimmed, txt, all);
+            highlightHeading(trimmed, all);
             return;
         }
 
         // blockquote: > text
         if (trimmed.charAt(0) == '>') {
-            all.add(txt.ofStyled(">", NTextStyle.separator()));
+            all.add(NText.ofStyled(">", NTextStyle.separator()));
             String rest = trimmed.substring(1);
             if (!rest.isEmpty() && rest.charAt(0) == ' ') {
-                all.add(txt.ofPlain(" "));
+                all.add(NText.ofPlain(" "));
                 rest = rest.substring(1);
             }
-            highlightInline(rest, txt, all);
+            highlightInline(rest, all);
             return;
         }
 
         // horizontal rule: ---, ***, ___  (3+ of same char, optional spaces)
         if (isHorizontalRule(trimmed)) {
-            all.add(txt.ofStyled(trimmed, NTextStyle.separator()));
+            all.add(NText.ofStyled(trimmed, NTextStyle.separator()));
             return;
         }
 
         // setext underline lines (=== / ---) that weren't caught by lookahead
         // emit as separator
         if (isSetextH1(trimmed) || isSetextH2(trimmed)) {
-            all.add(txt.ofStyled(trimmed, NTextStyle.separator()));
+            all.add(NText.ofStyled(trimmed, NTextStyle.separator()));
             return;
         }
 
         // table row: | cell | cell |
         if (trimmed.charAt(0) == '|' || (trimmed.contains("|") && looksLikeTableRow(trimmed))) {
-            highlightTableRow(trimmed, txt, all);
+            highlightTableRow(trimmed, all);
             return;
         }
 
         // unordered list item: - / * / + followed by space
         if ((trimmed.charAt(0) == '-' || trimmed.charAt(0) == '*' || trimmed.charAt(0) == '+')
                 && trimmed.length() > 1 && trimmed.charAt(1) == ' ') {
-            all.add(txt.ofStyled(String.valueOf(trimmed.charAt(0)), NTextStyle.separator()));
-            all.add(txt.ofPlain(" "));
-            highlightInline(trimmed.substring(2), txt, all);
+            all.add(NText.ofStyled(String.valueOf(trimmed.charAt(0)), NTextStyle.separator()));
+            all.add(NText.ofPlain(" "));
+            highlightInline(trimmed.substring(2), all);
             return;
         }
 
         // ordered list item: 1. / 2) etc.
         int orderedEnd = detectOrderedListMarker(trimmed);
         if (orderedEnd > 0) {
-            all.add(txt.ofStyled(trimmed.substring(0, orderedEnd), NTextStyle.separator()));
-            all.add(txt.ofPlain(" "));
-            highlightInline(trimmed.substring(orderedEnd + 1), txt, all);
+            all.add(NText.ofStyled(trimmed.substring(0, orderedEnd), NTextStyle.separator()));
+            all.add(NText.ofPlain(" "));
+            highlightInline(trimmed.substring(orderedEnd + 1), all);
             return;
         }
 
         // HTML block: line starts with <tag
         if (trimmed.charAt(0) == '<') {
-            highlightInline(trimmed, txt, all); // inline handles <autolink> and HTML tags
+            highlightInline(trimmed, all); // inline handles <autolink> and HTML tags
             return;
         }
 
         // paragraph / plain text
-        highlightInline(trimmed, txt, all);
+        highlightInline(trimmed, all);
     }
 
     // -------------------------------------------------------------------------
     // ATX Heading:  ### Title text  {optional closing ###}
     // -------------------------------------------------------------------------
 
-    private void highlightHeading(String line, NTexts txt, List<NText> all) {
+    private void highlightHeading(String line, List<NText> all) {
         int level = 0;
         while (level < line.length() && line.charAt(level) == '#') level++;
         // hashes
-        all.add(txt.ofStyled(line.substring(0, level), NTextStyle.keyword()));
+        all.add(NText.ofStyled(line.substring(0, level), NTextStyle.keyword()));
         if (level >= line.length()) return;
         // space after hashes
         if (line.charAt(level) == ' ') {
-            all.add(txt.ofPlain(" "));
+            all.add(NText.ofPlain(" "));
             level++;
         }
         // optional trailing ### — strip for inline parsing
@@ -206,26 +205,26 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
         String trail = NStringUtils.stripLeft(stripped.substring(trailStart));
         String body = trailStart > 0 ? NStringUtils.stripRight(stripped.substring(0, trailStart)) : "";
 
-        if (!body.isEmpty()) highlightInline(body, txt, all);
+        if (!body.isEmpty()) highlightInline(body, all);
         else if (!trail.isEmpty()) {
             // the entire thing after space was hashes — treat as trail
-            all.add(txt.ofStyled(content, NTextStyle.keyword()));
+            all.add(NText.ofStyled(content, NTextStyle.keyword()));
             return;
         }
         if (!trail.isEmpty()) {
-            all.add(txt.ofPlain(" "));
-            all.add(txt.ofStyled(trail, NTextStyle.keyword()));
+            all.add(NText.ofPlain(" "));
+            all.add(NText.ofStyled(trail, NTextStyle.keyword()));
         }
         // trailing spaces after optional closing hashes
         String after = content.substring(stripped.length());
-        if (!after.isEmpty()) all.add(txt.ofPlain(after));
+        if (!after.isEmpty()) all.add(NText.ofPlain(after));
     }
 
     // -------------------------------------------------------------------------
     // Fenced code block opening/closing line:  ```lang  or  ~~~
     // -------------------------------------------------------------------------
 
-    private void highlightFenceLine(String line, NTexts txt, List<NText> all) {
+    private void highlightFenceLine(String line, List<NText> all) {
         StringReaderExt ar = new StringReaderExt(line);
         StringBuilder fence = new StringBuilder();
         // leading spaces
@@ -233,12 +232,12 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
         // fence chars
         char fc = ar.hasNext() ? ar.peekChar() : 0;
         while (ar.hasNext() && ar.peekChar() == fc) fence.append(ar.readChar());
-        all.add(txt.ofStyled(fence.toString(), NTextStyle.separator()));
+        all.add(NText.ofStyled(fence.toString(), NTextStyle.separator()));
         // language tag
         if (ar.hasNext()) {
             StringBuilder lang = new StringBuilder();
             while (ar.hasNext()) lang.append(ar.readChar());
-            all.add(txt.ofStyled(lang.toString(), NTextStyle.keyword()));
+            all.add(NText.ofStyled(lang.toString(), NTextStyle.keyword()));
         }
     }
 
@@ -246,25 +245,25 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     // Table row:  | cell | **bold** | `code` |
     // -------------------------------------------------------------------------
 
-    private void highlightTableRow(String line, NTexts txt, List<NText> all) {
+    private void highlightTableRow(String line, List<NText> all) {
         StringReaderExt ar = new StringReaderExt(line);
         while (ar.hasNext()) {
             char c = ar.peekChar();
             if (c == '|') {
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 continue;
             }
             if (c == '-' || c == ':') {
                 // separator row: |---|:---:|---| — style as separator
                 StringBuilder sb = new StringBuilder();
                 while (ar.hasNext() && ar.peekChar() != '|') sb.append(ar.readChar());
-                all.add(txt.ofStyled(sb.toString(), NTextStyle.separator()));
+                all.add(NText.ofStyled(sb.toString(), NTextStyle.separator()));
                 continue;
             }
             // cell content — collect to next | then inline-parse
             StringBuilder cell = new StringBuilder();
             while (ar.hasNext() && ar.peekChar() != '|') cell.append(ar.readChar());
-            if (cell.length() > 0) highlightInline(cell.toString(), txt, all);
+            if (cell.length() > 0) highlightInline(cell.toString(), all);
         }
     }
 
@@ -274,7 +273,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     //          <autolink> &entity; and plain text
     // -------------------------------------------------------------------------
 
-    private void highlightInline(String text, NTexts txt, List<NText> all) {
+    private void highlightInline(String text, List<NText> all) {
         StringReaderExt ar = new StringReaderExt(text);
 
         while (ar.hasNext()) {
@@ -283,67 +282,67 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
             // ---- Escaped character ----
             if (c == '\\' && ar.hasNext(1)) {
                 ar.readChar(); // backslash
-                all.add(txt.ofStyled("\\" + ar.readChar(), NTextStyle.separator()));
+                all.add(NText.ofStyled("\\" + ar.readChar(), NTextStyle.separator()));
                 continue;
             }
 
             // ---- Inline code: `code` or ``code`` ----
             if (c == '`') {
-                all.addAll(readInlineCode(ar, txt));
+                all.addAll(readInlineCode(ar));
                 continue;
             }
 
             // ---- Bold+italic: *** or ___ ----
             if ((c == '*' || c == '_') && ar.hasNext(2)
                     && ar.peekChar(1) == c && ar.peekChar(2) == c) {
-                List<NText> inner = tryReadSpan(ar, txt, String.valueOf(new char[]{c, c, c}), NTextStyle.bold());
+                List<NText> inner = tryReadSpan(ar, String.valueOf(new char[]{c, c, c}), NTextStyle.bold());
                 if (inner != null) { all.addAll(inner); continue; }
             }
 
             // ---- Bold: ** or __ ----
             if ((c == '*' || c == '_') && ar.hasNext(1) && ar.peekChar(1) == c) {
-                List<NText> inner = tryReadSpan(ar, txt, String.valueOf(new char[]{c, c}), NTextStyle.bold());
+                List<NText> inner = tryReadSpan(ar, String.valueOf(new char[]{c, c}), NTextStyle.bold());
                 if (inner != null) { all.addAll(inner); continue; }
             }
 
             // ---- Italic: * or _ ----
             if (c == '*' || c == '_') {
-                List<NText> inner = tryReadSpan(ar, txt, String.valueOf(c), NTextStyle.italic());
+                List<NText> inner = tryReadSpan(ar, String.valueOf(c), NTextStyle.italic());
                 if (inner != null) { all.addAll(inner); continue; }
             }
 
             // ---- Strikethrough: ~~ ----
             if (c == '~' && ar.hasNext(1) && ar.peekChar(1) == '~') {
-                List<NText> inner = tryReadSpan(ar, txt, "~~", NTextStyle.separator());
+                List<NText> inner = tryReadSpan(ar, "~~", NTextStyle.separator());
                 if (inner != null) { all.addAll(inner); continue; }
             }
 
             // ---- Image: ![alt](url) ----
             if (c == '!' && ar.hasNext(1) && ar.peekChar(1) == '[') {
-                List<NText> link = tryReadLink(ar, txt, true);
+                List<NText> link = tryReadLink(ar, true);
                 if (link != null) { all.addAll(link); continue; }
             }
 
             // ---- Link: [text](url) or [text][ref] ----
             if (c == '[') {
-                List<NText> link = tryReadLink(ar, txt, false);
+                List<NText> link = tryReadLink(ar, false);
                 if (link != null) { all.addAll(link); continue; }
             }
 
             // ---- Autolink / HTML tag: <...> ----
             if (c == '<') {
-                List<NText> tag = tryReadAutolink(ar, txt);
+                List<NText> tag = tryReadAutolink(ar);
                 if (tag != null) { all.addAll(tag); continue; }
             }
 
             // ---- HTML entity: &name; or &#123; ----
             if (c == '&') {
-                List<NText> entity = tryReadEntity(ar, txt);
+                List<NText> entity = tryReadEntity(ar);
                 if (entity != null) { all.addAll(entity); continue; }
             }
 
             // ---- Plain character ----
-            all.add(txt.ofPlain(String.valueOf(ar.readChar())));
+            all.add(NText.ofPlain(String.valueOf(ar.readChar())));
         }
     }
 
@@ -351,7 +350,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     // Inline code  `code`  ``code with ` inside``
     // -------------------------------------------------------------------------
 
-    private List<NText> readInlineCode(StringReaderExt ar, NTexts txt) {
+    private List<NText> readInlineCode(StringReaderExt ar) {
         // count opening backticks
         StringBuilder open = new StringBuilder();
         while (ar.hasNext() && ar.peekChar() == '`') open.append(ar.readChar());
@@ -368,7 +367,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
                 content.append(ar.readChar());
             }
         }
-        return Collections.singletonList(txt.ofStyled(content.toString(), NTextStyle.string()));
+        return Collections.singletonList(NText.ofStyled(content.toString(), NTextStyle.string()));
     }
 
     // -------------------------------------------------------------------------
@@ -376,7 +375,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     // Returns null if no matching closing delimiter found (caller emits plain)
     // -------------------------------------------------------------------------
 
-    private List<NText> tryReadSpan(StringReaderExt ar, NTexts txt, String delim, NTextStyle style) {
+    private List<NText> tryReadSpan(StringReaderExt ar, String delim, NTextStyle style) {
         // peek ahead for closing delimiter
         int delimLen = delim.length();
         int i = delimLen; // skip opening delim
@@ -392,7 +391,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
                 if (match && i > delimLen) { // non-empty content
                     StringBuilder sb = new StringBuilder();
                     for (int j = 0; j < i + delimLen; j++) sb.append(ar.readChar());
-                    return Collections.singletonList(txt.ofStyled(sb.toString(), style));
+                    return Collections.singletonList(NText.ofStyled(sb.toString(), style));
                 }
             }
             i++;
@@ -405,7 +404,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     // Image: ![alt](url)
     // -------------------------------------------------------------------------
 
-    private List<NText> tryReadLink(StringReaderExt ar, NTexts txt, boolean isImage) {
+    private List<NText> tryReadLink(StringReaderExt ar, boolean isImage) {
         List<NText> result = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
@@ -419,19 +418,19 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
         }
         if (!ar.hasNext() || ar.peekChar() != ']') {
             // no closing bracket — emit as plain
-            result.add(txt.ofPlain(sb.toString()));
+            result.add(NText.ofPlain(sb.toString()));
             return result;
         }
         sb.append(ar.readChar()); // ']'
 
         if (!ar.hasNext()) {
-            result.add(txt.ofStyled(sb.toString(), NTextStyle.keyword()));
+            result.add(NText.ofStyled(sb.toString(), NTextStyle.keyword()));
             return result;
         }
 
         if (ar.peekChar() == '(') {
             // inline link: (url "title")
-            result.add(txt.ofStyled(sb.toString(), NTextStyle.keyword())); // [text]
+            result.add(NText.ofStyled(sb.toString(), NTextStyle.keyword())); // [text]
             StringBuilder url = new StringBuilder();
             url.append(ar.readChar()); // '('
             int depth = 1;
@@ -441,18 +440,18 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
                 if (c == '(') depth++;
                 else if (c == ')') depth--;
             }
-            result.add(txt.ofStyled(url.toString(), NTextStyle.string())); // (url)
+            result.add(NText.ofStyled(url.toString(), NTextStyle.string())); // (url)
         } else if (ar.peekChar() == '[') {
             // reference link: [text][ref]
-            result.add(txt.ofStyled(sb.toString(), NTextStyle.keyword()));
+            result.add(NText.ofStyled(sb.toString(), NTextStyle.keyword()));
             StringBuilder ref = new StringBuilder();
             ref.append(ar.readChar()); // '['
             while (ar.hasNext() && ar.peekChar() != ']' && ar.peekChar() != '\n') ref.append(ar.readChar());
             if (ar.hasNext()) ref.append(ar.readChar()); // ']'
-            result.add(txt.ofStyled(ref.toString(), NTextStyle.string()));
+            result.add(NText.ofStyled(ref.toString(), NTextStyle.string()));
         } else {
             // collapsed ref [text]
-            result.add(txt.ofStyled(sb.toString(), NTextStyle.keyword()));
+            result.add(NText.ofStyled(sb.toString(), NTextStyle.keyword()));
         }
 
         return result;
@@ -462,7 +461,7 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
     // Autolink <http://...> or <email@example.com>, and bare HTML tags
     // -------------------------------------------------------------------------
 
-    private List<NText> tryReadAutolink(StringReaderExt ar, NTexts txt) {
+    private List<NText> tryReadAutolink(StringReaderExt ar) {
         // peek to find closing >
         int i = 1;
         while (ar.hasNext(i) && ar.peekChar(i) != '>' && ar.peekChar(i) != '\n') i++;
@@ -470,21 +469,21 @@ public class MarkdownCodeHighlighter implements NCodeHighlighter {
 
         StringBuilder sb = new StringBuilder();
         for (int j = 0; j <= i; j++) sb.append(ar.readChar());
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.string()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.string()));
     }
 
     // -------------------------------------------------------------------------
     // HTML entity  &amp;  &#123;  &#x1F4A9;
     // -------------------------------------------------------------------------
 
-    private List<NText> tryReadEntity(StringReaderExt ar, NTexts txt) {
+    private List<NText> tryReadEntity(StringReaderExt ar) {
         int i = 1;
         while (ar.hasNext(i) && ar.peekChar(i) != ';' && ar.peekChar(i) != ' ' && ar.peekChar(i) != '\n') i++;
         if (!ar.hasNext(i) || ar.peekChar(i) != ';' || i < 2) return null;
 
         StringBuilder sb = new StringBuilder();
         for (int j = 0; j <= i; j++) sb.append(ar.readChar());
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.separator()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.separator()));
     }
 
     // -------------------------------------------------------------------------

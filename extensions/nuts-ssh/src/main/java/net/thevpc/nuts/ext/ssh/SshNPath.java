@@ -11,9 +11,9 @@ import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 
@@ -94,8 +94,7 @@ class SshNPath implements NPathSPI {
                 NTextStyle _path = NTextStyle.path();
                 NTextStyle _nbr = NTextStyle.number();
 //        if(true) {
-                NTexts text = NTexts.of();
-                NTextBuilder sb = text.ofBuilder();
+                NTextBuilder sb = NTextBuilder.of();
                 String user = path.userName();
                 String host = path.host();
                 int port = NLiteral.of(path.port()).asInt().orElse(-1);
@@ -103,37 +102,37 @@ class SshNPath implements NPathSPI {
                 String password = path.password();
                 String keyFile = path.builder().getQueryParam(SshConnection.IDENTITY_FILE).orNull();
 
-                sb.append(text.ofStyled("ssh://", _sep));
+                sb.append(NText.ofStyled("ssh://", _sep));
                 if (!NBlankable.isBlank(user)) {
                     sb.append(user);
                     if (!NBlankable.isBlank(password)) {
-                        sb.append(text.ofStyled(":", _sep));
+                        sb.append(NText.ofStyled(":", _sep));
                         sb.append(password);
                     }
-                    sb.append(text.ofStyled("@", _sep));
+                    sb.append(NText.ofStyled("@", _sep));
                 }
                 sb.append(host);
                 if (port >= 0) {
-                    sb.append(text.ofStyled(":", _sep))
-                            .append(text.ofStyled(String.valueOf(port), _nbr));
+                    sb.append(NText.ofStyled(":", _sep))
+                            .append(NText.ofStyled(String.valueOf(port), _nbr));
                 }
                 if (!path0.startsWith("/")) {
-                    sb.append(text.ofStyled('/' + path0, _path));
+                    sb.append(NText.ofStyled('/' + path0, _path));
                 } else {
-                    sb.append(text.ofStyled(path0, _path));
+                    sb.append(NText.ofStyled(path0, _path));
                 }
                 if (keyFile != null) {
-                    sb.append(text.ofStyled("?", _sep));
+                    sb.append(NText.ofStyled("?", _sep));
                     boolean first = true;
                     if (keyFile != null) {
                         if (first) {
                             first = false;
                         } else {
-                            sb.append(text.ofStyled(",", _sep));
+                            sb.append(NText.ofStyled(",", _sep));
                         }
                         sb
                                 .append(SshConnection.IDENTITY_FILE)
-                                .append(text.ofStyled("=", _sep))
+                                .append(NText.ofStyled("=", _sep))
                                 .append(keyFile);
                     }
                 }

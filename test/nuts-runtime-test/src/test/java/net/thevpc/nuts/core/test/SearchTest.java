@@ -39,7 +39,7 @@ public class SearchTest {
         NSearch q = NSearch.of()
                 .id("org.eclipse.jetty.orbit:javax.mail.glassfish#1.4.1.v201005082020")
 //                .setRepositoryFilter("maven-central")
-//                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
+//                .setRepositoryFilter(NRepositoryFilter.byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
                 .latest(true);
         for (NDefinition d : q.getResultDefinitions().toList()) {
@@ -56,7 +56,7 @@ public class SearchTest {
                 .id("org.eclipse.jetty:jetty-home#9.4.44.v20210927\n")
 //                .setInlineDependencies(true)
 //                .setRepositoryFilter("maven-central")
-//                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
+//                .setRepositoryFilter(NRepositoryFilter.byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
                 .latest(true);
         List<NDefinition> list = q.getResultDefinitions().toList();
@@ -76,7 +76,7 @@ public class SearchTest {
                 .id("net.thevpc.nuts:nuts-ssh")
 //                .setInlineDependencies(true)
 //                .setRepositoryFilter("maven-central")
-//                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
+//                .setRepositoryFilter(NRepositoryFilter.byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
                 ;
         NWorkspace ws = NWorkspace.of();
@@ -84,13 +84,13 @@ public class SearchTest {
         for (NRepository repository : repositories) {
             TestUtils.println(repository);
         }
-//        q.setRepositoryFilter(NRepositoryFilters.of().byName("toolbox"));
-//        q.setRepositoryFilter(NRepositoryFilters.of().byName("system"));
-//        q.setRepositoryFilter(NRepositoryFilters.of().byName("maven"));
-//        q.setRepositoryFilter(NRepositoryFilters.of().byName("nuts-public"));
-//        q.setRepositoryFilter(NRepositoryFilters.of().byName("dev"));
-//        q.setRepositoryFilter(NRepositoryFilters.of().byName("preview"));
-//        q.setRepositoryFilter(NRepositoryFilters.of().byName("local"));
+//        q.setRepositoryFilter(NRepositoryFilter.byName("toolbox"));
+//        q.setRepositoryFilter(NRepositoryFilter.byName("system"));
+//        q.setRepositoryFilter(NRepositoryFilter.byName("maven"));
+//        q.setRepositoryFilter(NRepositoryFilter.byName("nuts-public"));
+//        q.setRepositoryFilter(NRepositoryFilter.byName("dev"));
+//        q.setRepositoryFilter(NRepositoryFilter.byName("preview"));
+//        q.setRepositoryFilter(NRepositoryFilter.byName("local"));
         NOut.println(q.getResultQueryPlan());
         NChronometer cr = NChronometer.of();
         for (NDefinition d : q.getResultDefinitions().toList()) {

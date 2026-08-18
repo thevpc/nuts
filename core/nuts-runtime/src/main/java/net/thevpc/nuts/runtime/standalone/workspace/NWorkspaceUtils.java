@@ -26,7 +26,6 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryAlreadyRegisteredException;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NPrintIterator;
 import net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectRepository;
@@ -37,8 +36,9 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -109,7 +109,7 @@ public class NWorkspaceUtils {
 
     public void checkReadOnly() {
         if (NWorkspace.of().isReadOnly()) {
-            throw new NReadOnlyException(NWorkspace.of().workspaceLocation().toString());
+            throw new NReadOnlyWorkspaceException(NWorkspace.of().workspaceLocation().toString());
         }
     }
 
@@ -142,7 +142,7 @@ public class NWorkspaceUtils {
     }
 
     public List<NRepository> filterRepositoriesDeploy(NId id, NRepositoryFilter repositoryFilter) {
-        NRepositoryFilter f = NRepositoryFilters.of().installedRepo().neg().and(repositoryFilter);
+        NRepositoryFilter f = NRepositoryFilter.ofInstalledRepo().neg().and(repositoryFilter);
         return filterRepositories(NRepositorySupportedAction.DEPLOY, id, f, NFetchMode.LOCAL);
     }
 
@@ -324,7 +324,6 @@ public class NWorkspaceUtils {
 
     public void installCompanions() {
         NSession session = NSession.of();
-        NTexts text = NTexts.of();
         Set<NId> companionIds = NExtensions.of().companionIds();
         if (companionIds.isEmpty()) {
             return;
@@ -332,7 +331,7 @@ public class NWorkspaceUtils {
         if (session.isPlainTrace()) {
             NPrintStream out = session.out();
             out.println(NMsg.ofC("looking for recommended companion tools to install... detected : %s",
-                    text.ofBuilder().appendJoined(text.ofPlain(","),
+                    NTextBuilder.of().appendJoined(NText.ofPlain(","),
                             companionIds
                     ))
             );
@@ -349,9 +348,9 @@ public class NWorkspaceUtils {
                                 + "this happens when none of the following repositories are able to locate them : %s\n",
                         NMsg.ofStyledError("unable to install companion tools"),
                         ex,
-                        text.ofBuilder().appendJoined(text.ofPlain(", "),
+                        NTextBuilder.of().appendJoined(NText.ofPlain(", "),
                                 NWorkspace.of().repositories().stream().map(x
-                                        -> text.ofBuilder().append(x.name(), NTextStyle.primary3())
+                                        -> NTextBuilder.of().append(x.name(), NTextStyle.primary3())
                                 ).collect(Collectors.toList())
                         )
                 ));

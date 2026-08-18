@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NDependencyFilterParser extends NTypedFiltersParser<NDependencyFilter> {
@@ -10,8 +10,8 @@ public class NDependencyFilterParser extends NTypedFiltersParser<NDependencyFilt
     }
 
     @Override
-    protected NDependencyFilters getTManager() {
-        return NDependencyFilters.of();
+    protected NDependencyFilterRPI getTManager() {
+        return NDependencyFilterRPI.of();
     }
 
     protected NDependencyFilter wordToPredicate(String word){

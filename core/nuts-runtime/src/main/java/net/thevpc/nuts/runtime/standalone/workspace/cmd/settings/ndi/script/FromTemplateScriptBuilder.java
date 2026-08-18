@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script;
 
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NStoreKey;
@@ -117,7 +118,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
         try {
             //Path script = getScriptFile(name);
             NDefinition anyIdDef = NSearch.of().addId(getAnyId()).latest(true)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .distinct(true)
                     .getResultDefinitions()
                     .findSingleton().get();

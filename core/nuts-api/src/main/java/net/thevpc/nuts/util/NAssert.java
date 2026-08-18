@@ -27,7 +27,7 @@ public final class NAssert {
 
     public static <T> T requireNonNull(T object, Supplier<NMsg> msg) {
         if (object == null) {
-            throw NExceptions.ofSafeAssertException(createMessage(msg));
+            throw NException.ofSafeAssertException(createMessage(msg));
         }
         return object;
     }
@@ -52,46 +52,46 @@ public final class NAssert {
 
     public static void requireNamedNull(Object object, String name) {
         if (object != null) {
-            throw NExceptions.ofSafeAssertException(NMsg.ofC("%s must be null", createMessage(name)));
+            throw NException.ofSafeAssertException(NMsg.ofC("%s must be null", createMessage(name)));
         }
     }
 
     public static void requireNamedNull(Object object, NMsg name) {
         if (object != null) {
-            throw NExceptions.ofSafeAssertException(NMsg.ofC("%s must be null", createMessage(name)));
+            throw NException.ofSafeAssertException(NMsg.ofC("%s must be null", createMessage(name)));
         }
     }
 
     public static void requireNamedNull(Object object, Supplier<NMsg> name) {
         if (object != null) {
-            throw NExceptions.ofSafeAssertException(NMsg.ofC("%s must be null", createMessage(name)));
+            throw NException.ofSafeAssertException(NMsg.ofC("%s must be null", createMessage(name)));
         }
     }
 
     public static void requireNull(Object object, Supplier<NMsg> message) {
         if (object != null) {
-            throw NExceptions.ofSafeAssertException(createMessage(message));
+            throw NException.ofSafeAssertException(createMessage(message));
         }
     }
 
 
     public static <T> T requireNamedNonBlank(T object, String name) {
         if (NBlankable.isBlank(object)) {
-            throw NExceptions.ofSafeAssertException(NMsg.ofC("%s should not be blank", createMessage(name)));
+            throw NException.ofSafeAssertException(NMsg.ofC("%s should not be blank", createMessage(name)));
         }
         return object;
     }
 
     public static <T> T requireNamedNonBlank(T object, NMsg name) {
         if (NBlankable.isBlank(object)) {
-            throw NExceptions.ofSafeAssertException(NMsg.ofC("%s should not be blank", NUtils.firstNonNull(name, "value")));
+            throw NException.ofSafeAssertException(NMsg.ofC("%s should not be blank", NUtils.firstNonNull(name, "value")));
         }
         return object;
     }
 
     public static <T> T requireNamedNonBlank(T object, Supplier<NMsg> name) {
         if (NBlankable.isBlank(object)) {
-            throw NExceptions.ofSafeAssertException(NMsg.ofC("%s should not be blank", createMessage(name)));
+            throw NException.ofSafeAssertException(NMsg.ofC("%s should not be blank", createMessage(name)));
         }
         return object;
     }
@@ -99,7 +99,7 @@ public final class NAssert {
 
     public static <T> T requireNonBlank(T object, Supplier<NMsg> msg) {
         if (NBlankable.isBlank(object)) {
-            throw NExceptions.ofSafeAssertException(createMessage(msg));
+            throw NException.ofSafeAssertException(createMessage(msg));
         }
         return object;
     }
@@ -123,7 +123,7 @@ public final class NAssert {
 
     public static boolean requireTrue(boolean object, Supplier<NMsg> msg) {
         if (!object) {
-            throw NExceptions.ofSafeAssertException(createMessage(msg));
+            throw NException.ofSafeAssertException(createMessage(msg));
         }
         return object;
     }
@@ -139,14 +139,14 @@ public final class NAssert {
 
     public static boolean requireNamedFalse(boolean object, Supplier<NMsg> msg) {
         if (object) {
-            throw NExceptions.ofSafeAssertException(createMessage(msg));
+            throw NException.ofSafeAssertException(createMessage(msg));
         }
         return object;
     }
 
     public static <T> T requireEquals(T a, T b, Supplier<NMsg> msg) {
         if (!Objects.equals(a, b)) {
-            throw NExceptions.ofSafeAssertException(createMessage(msg));
+            throw NException.ofSafeAssertException(createMessage(msg));
         }
         return a;
     }
@@ -165,7 +165,7 @@ public final class NAssert {
 
     public static <T> T requireNotEquals(T a, T b, Supplier<NMsg> msg) {
         if (Objects.equals(a, b)) {
-            throw NExceptions.ofSafeAssertException(createMessage(msg));
+            throw NException.ofSafeAssertException(createMessage(msg));
         }
         return a;
     }
@@ -185,7 +185,7 @@ public final class NAssert {
 
     public static boolean requireFalse(boolean value, Supplier<NMsg> msg) {
         if (value) {
-            throw NExceptions.ofSafeAssertException(createMessage(msg));
+            throw NException.ofSafeAssertException(createMessage(msg));
         }
         return value;
     }

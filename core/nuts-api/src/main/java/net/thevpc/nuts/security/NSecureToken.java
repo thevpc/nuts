@@ -4,7 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NToElement;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.Serializable;
@@ -24,7 +24,7 @@ public class NSecureToken implements Serializable, NToElement {
         NAssert.requireNamedNonBlank(agentId, "agentId");
         NAssert.requireNamedNonNull(payload, "payload");
         if (agentId.contains(":")) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("agentId must not contain '#' or ':'"));
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("agentId must not contain '#' or ':'"));
         }
         this.agentId = NStringUtils.strip(agentId);
         this.payload = payload;

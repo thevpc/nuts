@@ -9,6 +9,9 @@ import net.thevpc.nuts.command.NExecutionEntry;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.mon.NProgressHandler;
+import net.thevpc.nuts.mon.NProgressMonitor;
+import net.thevpc.nuts.mon.NProgressRunner;
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -31,10 +34,14 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.runtime.standalone.xtra.idresolver.NMetaInfIdResolver;
+import net.thevpc.nuts.runtime.standalone.xtra.mon.*;
+import net.thevpc.nuts.runtime.standalone.xtra.time.NDefaultProgressRunner;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.internal.rpi.NIORPI;
@@ -47,6 +54,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -56,7 +64,7 @@ public class DefaultNIORPI implements NIORPI {
 
     public DefaultNIORPI() {
         this.cmodel = NWorkspaceExt.of().getConfigModel();
-        bootModel = NWorkspaceExt.of().getModel().bootModel;
+        this.bootModel = NWorkspaceExt.of().getModel().bootModel;
     }
 
 
@@ -71,17 +79,17 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public NMemoryPrintStream ofInMemoryPrintStream() {
-        return ofInMemoryPrintStream(null);
+    public NMemoryPrintStream createInMemoryPrintStream() {
+        return createInMemoryPrintStream(null);
     }
 
     @Override
-    public NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode) {
+    public NMemoryPrintStream createInMemoryPrintStream(NTerminalMode mode) {
         return new NByteArrayPrintStream(mode);
     }
 
     @Override
-    public NPrintStream ofPrintStream(OutputStream out, NTerminalMode expectedMode, NSystemTerminalBase term) {
+    public NPrintStream createPrintStream(OutputStream out, NTerminalMode expectedMode, NSystemTerminalBase term) {
         if (out == null) {
             return null;
         }
@@ -126,7 +134,7 @@ public class DefaultNIORPI implements NIORPI {
         throw new NIllegalArgumentException(NMsg.ofC("unsupported mode %s", expectedMode));
     }
     @Override
-    public NPrintStream ofPrintStream(OutputStream out, NTerminalMode expectedMode, NTerminalMode baseMode) {
+    public NPrintStream createPrintStream(OutputStream out, NTerminalMode expectedMode, NTerminalMode baseMode) {
         if (out == null) {
             return null;
         }
@@ -164,7 +172,7 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public NPrintStream ofPrintStream(OutputStream out) {
+    public NPrintStream createPrintStream(OutputStream out) {
         if (out instanceof NPrintStreamAdapter) {
             return ((NPrintStreamAdapter) out).basePrintStream();
         }
@@ -172,16 +180,16 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public NPrintStream ofPrintStream(Writer out, NTerminalMode mode) {
-        return ofPrintStream(out, mode, null);
+    public NPrintStream createPrintStream(Writer out, NTerminalMode mode) {
+        return createPrintStream(out, mode, null);
     }
 
     @Override
-    public NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode) {
-        return ofPrintStream(out, mode, (NSystemTerminalBase) null);
+    public NPrintStream createPrintStream(OutputStream out, NTerminalMode mode) {
+        return createPrintStream(out, mode, (NSystemTerminalBase) null);
     }
 
-    public NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
+    public NPrintStream createPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
         if (mode == null) {
             mode = NTerminalMode.INHERITED;
         }
@@ -192,52 +200,52 @@ public class DefaultNIORPI implements NIORPI {
             return ((NPrintStreamAdapter) out).basePrintStream().terminalMode(mode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal);
-        return ofPrintStream(w, mode, terminal);
+        return createPrintStream(w, mode, terminal);
     }
 
     @Override
-    public NPrintStream ofPrintStream(Writer out) {
-        return ofPrintStream(out, NTerminalMode.INHERITED, null);
+    public NPrintStream createPrintStream(Writer out) {
+        return createPrintStream(out, NTerminalMode.INHERITED, null);
     }
 
     @Override
-    public NPrintStream ofPrintStream(NPath out) {
-        return ofPrintStream(out.outputStream());
+    public NPrintStream createPrintStream(NPath out) {
+        return createPrintStream(out.outputStream());
     }
 
     @Override
-    public NPrintStream ofNullPrintStream() {
+    public NPrintStream createNullPrintStream() {
         return bootModel.nullPrintStream();
     }
 
     @Override
-    public NInputSource ofInputSource(InputStream inputStream) {
-        return ofInputSource(inputStream, null);
+    public NInputSource createInputSource(InputStream inputStream) {
+        return createInputSource(inputStream, null);
     }
 
     @Override
-    public NInputSource ofInputSource(Reader inputStream, NContentMetadata metadata) {
+    public NInputSource createInputSource(Reader inputStream, NContentMetadata metadata) {
         if (inputStream == null) {
             return null;
         }
         if (inputStream instanceof NInputSource) {
             return (NInputSource) inputStream;
         }
-        return ofInputSource(new ReaderInputStream(inputStream, null), metadata);
+        return createInputSource(new ReaderInputStream(inputStream, null), metadata);
     }
 
     @Override
-    public NInputSource ofInputSource(Reader inputStream) {
-        return ofInputSource(inputStream, null);
+    public NInputSource createInputSource(Reader inputStream) {
+        return createInputSource(inputStream, null);
     }
 
     @Override
-    public NInputSource ofInputSource(NInputStreamProvider inputStream) {
-        return ofInputSource(inputStream, null);
+    public NInputSource createInputSource(NInputStreamProvider inputStream) {
+        return createInputSource(inputStream, null);
     }
 
     @Override
-    public NInputSource ofInputSource(NInputStreamProvider inputStreamProvider, NContentMetadata metadata) {
+    public NInputSource createInputSource(NInputStreamProvider inputStreamProvider, NContentMetadata metadata) {
         if (inputStreamProvider == null) {
             return null;
         }
@@ -281,7 +289,7 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public NInputSource ofInputSource(NReaderProvider readerProvider, NContentMetadata metadata) {
+    public NInputSource createInputSource(NReaderProvider readerProvider, NContentMetadata metadata) {
         if (readerProvider == null) {
             return null;
         }
@@ -325,23 +333,23 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public NInputSource ofInputSource(char[] chars) {
+    public NInputSource createInputSource(char[] chars) {
         if (chars == null) {
             return null;
         }
-        return ofInputSource(new CharArrayReader(chars));
+        return createInputSource(new CharArrayReader(chars));
     }
 
     @Override
-    public NInputSource ofInputSource(String stringValue) {
+    public NInputSource createInputSource(String stringValue) {
         if (stringValue == null) {
             return null;
         }
-        return ofInputSource(new StringReader(stringValue));
+        return createInputSource(new StringReader(stringValue));
     }
 
     @Override
-    public NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata) {
+    public NInputSource createInputSource(InputStream inputStream, NContentMetadata metadata) {
         if (inputStream == null) {
             return null;
         }
@@ -365,13 +373,13 @@ public class DefaultNIORPI implements NIORPI {
             metadata = new DefaultNContentMetadata(NMsg.ofNtf(str), contentLength, null, null, null);
         }
 
-        InputStream inputStreamExt = ofInputSourceBuilder(inputStream).metadata(metadata).createInputStream();
+        InputStream inputStreamExt = createInputSourceBuilder(inputStream).metadata(metadata).createInputStream();
         return new NInputStreamSource(inputStreamExt, null);
     }
 
 
     @Override
-    public NInputSource ofMultiRead(NInputSource source) {
+    public NInputSource createMultiRead(NInputSource source) {
         if (source.isMultiRead()) {
             return source;
         }
@@ -387,61 +395,61 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public NInputSource ofInputSource(byte[] bytes) {
-        return ofInputSource(new ByteArrayInputStream(bytes));
+    public NInputSource createInputSource(byte[] bytes) {
+        return createInputSource(new ByteArrayInputStream(bytes));
     }
 
     @Override
-    public NInputSource ofEmptyInputSource() {
-        return ofInputSource(NullInputStream.INSTANCE);
+    public NInputSource createEmptyInputSource() {
+        return createInputSource(NullInputStream.INSTANCE);
     }
 
     @Override
-    public NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata) {
-        return ofInputSource(new ByteArrayInputStream(inputStream), metadata);
+    public NInputSource createInputSource(byte[] inputStream, NContentMetadata metadata) {
+        return createInputSource(new ByteArrayInputStream(inputStream), metadata);
     }
 
     @Override
-    public NOutputTarget ofOutputTarget(OutputStream outputStream) {
-        return ofOutputTarget(outputStream, null);
+    public NOutputTarget createOutputTarget(OutputStream outputStream) {
+        return createOutputTarget(outputStream, null);
     }
 
     @Override
-    public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
+    public NOutputTarget createOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
         return new OutputTargetExt(NOutputStreamBuilder.of(outputStream)
                 .metadata(metadata).createOutputStream(), null);
     }
 
     @Override
-    public NOutputTarget ofOutputTarget(Writer writer, NContentMetadata metadata) {
+    public NOutputTarget createOutputTarget(Writer writer, NContentMetadata metadata) {
         if (writer == null) {
             return null;
         }
         if (writer instanceof NOutputTarget) {
             return (NOutputTarget) writer;
         }
-        return ofOutputTarget(new WriterOutputStream(writer, StandardCharsets.UTF_8), metadata);
+        return createOutputTarget(new WriterOutputStream(writer, StandardCharsets.UTF_8), metadata);
     }
 
     @Override
-    public NOutputTarget ofOutputTarget(Writer writer) {
-        return ofOutputTarget(writer, null);
+    public NOutputTarget createOutputTarget(Writer writer) {
+        return createOutputTarget(writer, null);
     }
 
     @Override
-    public NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base) {
+    public NOutputStreamBuilder createOutputStreamBuilder(OutputStream base) {
         return new DefaultNOutputStreamBuilder().base(base);
     }
 
-    public NNonBlockingInputStream ofNonBlockingInputStream(InputStream base) {
-        return ofInputSourceBuilder(base).createNonBlockingInputStream();
+    public NNonBlockingInputStream createNonBlockingInputStream(InputStream base) {
+        return createInputSourceBuilder(base).createNonBlockingInputStream();
     }
 
-    public NInterruptible<InputStream> ofInterruptible(InputStream base) {
-        return ofInputSourceBuilder(base).createInterruptibleInputStream();
+    public NInterruptible<InputStream> createInterruptible(InputStream base) {
+        return createInputSourceBuilder(base).createInterruptibleInputStream();
     }
 
-    public NInputSourceBuilder ofInputSourceBuilder(InputStream inputStream) {
+    public NInputSourceBuilder createInputSourceBuilder(InputStream inputStream) {
         return new DefaultNInputSourceBuilder().base(inputStream);
     }
 
@@ -523,63 +531,63 @@ public class DefaultNIORPI implements NIORPI {
         return new DefaultNTextCursorTracker(tabSize, maxRewindDepth);
     }
 
-    public NPath ofTempFile(String name) {
+    public NPath createTempFile(String name) {
         return createAnyTempFile(name, false, null);
     }
 
     @Override
-    public NPath ofTempFolder(String name) {
+    public NPath createTempFolder(String name) {
         return createAnyTempFile(name, true, null);
     }
 
     @Override
-    public NPath ofTempFile() {
+    public NPath createTempFile() {
         return createAnyTempFile(null, false, null);
     }
 
     @Override
-    public NPath ofTempFolder() {
+    public NPath createTempFolder() {
         return createAnyTempFile(null, true, null);
     }
 
 
-    public NPath ofTempRepositoryFile(String name, NRepository repository) {
+    public NPath createTempRepositoryFile(String name, NRepository repository) {
         return createAnyTempFile(name, false, resolveRootPath(repository));
     }
 
     @Override
-    public NPath ofTempRepositoryFolder(String name, NRepository repository) {
+    public NPath createTempRepositoryFolder(String name, NRepository repository) {
         return createAnyTempFile(name, true, resolveRootPath(repository));
     }
 
     @Override
-    public NPath ofTempRepositoryFile(NRepository repository) {
+    public NPath createTempRepositoryFile(NRepository repository) {
         return createAnyTempFile(null, false, resolveRootPath(repository));
     }
 
     @Override
-    public NPath ofTempRepositoryFolder(NRepository repository) {
+    public NPath createTempRepositoryFolder(NRepository repository) {
         return createAnyTempFile(null, true, resolveRootPath(repository));
     }
 
 
     @Override
-    public NPath ofTempIdFile(String name, NId repository) {
+    public NPath createTempIdFile(String name, NId repository) {
         return createAnyTempFile(name, false, resolveRootPath(repository));
     }
 
     @Override
-    public NPath ofTempIdFolder(String name, NId repository) {
+    public NPath createTempIdFolder(String name, NId repository) {
         return createAnyTempFile(name, true, resolveRootPath(repository));
     }
 
     @Override
-    public NPath ofTempIdFile(NId repository) {
+    public NPath createTempIdFile(NId repository) {
         return createAnyTempFile(null, false, resolveRootPath(repository));
     }
 
     @Override
-    public NPath ofTempIdFolder(NId repository) {
+    public NPath createTempIdFolder(NId repository) {
         return createAnyTempFile(null, true, resolveRootPath(repository));
     }
 
@@ -726,13 +734,13 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public List<NPath> ofOrigins(Class<?> clazz) {
+    public List<NPath> createOrigins(Class<?> clazz) {
         return JavaClassUtils.resolveURLs(clazz).stream().map(x->NPath.of(x)).collect(Collectors.toList());
     }
 
     @Override
-    public NOptional<NPath> ofOrigin(Class<?> clazz) {
-        List<NPath> c = ofOrigins(clazz);
+    public NOptional<NPath> createOrigin(Class<?> clazz) {
+        List<NPath> c = createOrigins(clazz);
         return c.isEmpty() ?
                 NOptional.ofNamedEmpty("LibPath fo "+clazz)
                 : NOptional.of(c.get(0));
@@ -891,4 +899,180 @@ public class DefaultNIORPI implements NIORPI {
             return inputStreamProvider.reader();
         }
     }
+
+    @Override
+    public NProgressRunner createProgressRunner() {
+        return new NDefaultProgressRunner();
+    }
+
+    @Override
+    public NProgressMonitor createSilentProgressMonitor() {
+        return new DefaultProgressMonitor(null,
+                new SilentProgressHandler(),
+                null
+        );
+    }
+
+    @Override
+    public NOptional<NProgressMonitor> currentProgressMonitor() {
+        NWorkspaceModel m = NWorkspaceExt.of().getModel();
+        return NOptional.of(m.currentProgressMonitors.get());
+    }
+
+    @Override
+    public boolean isSilentProgressMonitor(NProgressMonitor monitor) {
+        return monitor == null || monitor.isSilent();
+    }
+
+
+    @Override
+    public NProgressMonitor[] createSilentProgressMonitor(int count) {
+        NProgressMonitor[] mon = new NProgressMonitor[count];
+        for (int i = 0; i < count; i++) {
+            mon[i] = createSilentProgressMonitor();
+        }
+        return mon;
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor(NMsgTemplate message, long freq) {
+        return createLoggerProgressMonitor(message, (NLog)null).temporize(freq);
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor(NMsgTemplate message, long freq, Logger out) {
+        return createLoggerProgressMonitor(message, out).temporize(freq);
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor(NMsgTemplate message, long freq, NLog out) {
+        return createLoggerProgressMonitor(message, out).temporize(freq);
+    }
+
+    @Override
+    public NProgressMonitor createOutProgressMonitor(long freq) {
+        return createOutProgressMonitor().temporize(freq);
+    }
+
+    @Override
+    public NProgressMonitor createOutProgressMonitor(NMsgTemplate message, long freq) {
+        return createOutProgressMonitor(message).temporize(freq);
+    }
+
+    @Override
+    public NProgressMonitor createOutProgressMonitor(NMsgTemplate message, long freq, PrintStream out) {
+        return createPrintStreamProgressMonitor(message, out).temporize(freq);
+    }
+
+
+    @Override
+    public NProgressMonitor createPrintStreamProgressMonitor(PrintStream printStream) {
+        return createPrintStreamProgressMonitor(null, printStream);
+    }
+
+    @Override
+    public NProgressMonitor createPrintStreamProgressMonitor(NMsgTemplate messageFormat, PrintStream printStream) {
+        return new DefaultProgressMonitor(null,
+                new PrintStreamProgressHandler(messageFormat, printStream),
+                null
+        );
+    }
+
+    @Override
+    public NProgressMonitor createPrintStreamProgressMonitor(NPrintStream printStream) {
+        return createPrintStreamProgressMonitor(null, printStream);
+    }
+
+    @Override
+    public NProgressMonitor createPrintStreamProgressMonitor(NMsgTemplate messageFormat, NPrintStream printStream) {
+        return new DefaultProgressMonitor(null,
+                new NPrintStreamProgressHandler(messageFormat, printStream),
+                null
+        );
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor(NMsgTemplate messageFormat, Logger printStream) {
+        return createLoggerProgressMonitor(messageFormat,printStream==null?null:NLog.of(printStream));
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor(NMsgTemplate messageFormat, NLog log) {
+        return new DefaultProgressMonitor(null,
+                new JLogProgressHandler(messageFormat, log),
+                null
+        );
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor(Logger logger) {
+        return createLoggerProgressMonitor(null, logger);
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor(NLog logger) {
+        return createLoggerProgressMonitor(null, logger);
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor(long milliseconds) {
+        return createLoggerProgressMonitor().temporize(milliseconds);
+    }
+
+    @Override
+    public NProgressMonitor createLoggerProgressMonitor() {
+        return createLoggerProgressMonitor(null, (NLog) null);
+    }
+
+    @Override
+    public NProgressMonitor createOutProgressMonitor(NMsgTemplate messageFormat) {
+        return createPrintStreamProgressMonitor(messageFormat, System.out);
+    }
+
+    @Override
+    public NProgressMonitor createSysOutProgressMonitor() {
+        return createPrintStreamProgressMonitor(null, System.out);
+    }
+
+    @Override
+    public NProgressMonitor createSysErrProgressMonitor() {
+        return createPrintStreamProgressMonitor(null, System.err);
+    }
+
+    @Override
+    public NProgressMonitor createSysErrProgressMonitor(NMsgTemplate messageFormat) {
+        return createPrintStreamProgressMonitor(messageFormat, System.err);
+    }
+
+    @Override
+    public NProgressMonitor createOutProgressMonitor() {
+        return createPrintStreamProgressMonitor(null, NSession.of().out());
+    }
+
+    @Override
+    public NProgressMonitor createErrProgressMonitor() {
+        return createPrintStreamProgressMonitor(null, NSession.of().err());
+    }
+
+    @Override
+    public NProgressMonitor createErrProgressMonitor(NMsgTemplate messageFormat) {
+        return createPrintStreamProgressMonitor(messageFormat, System.err);
+    }
+
+    @Override
+    public NProgressMonitor createProgressMonitor(NProgressHandler monitor) {
+        if (monitor == null) {
+            return createSilentProgressMonitor();
+        }
+        return new DefaultProgressMonitor(null, monitor, null);
+    }
+
+    @Override
+    public NProgressMonitor createProgressMonitor(NProgressMonitor monitor) {
+        if (monitor == null) {
+            return createSilentProgressMonitor();
+        }
+        return monitor;
+    }
+
 }

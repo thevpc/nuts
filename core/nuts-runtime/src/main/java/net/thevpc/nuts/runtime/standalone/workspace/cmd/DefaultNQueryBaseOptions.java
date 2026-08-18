@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NDependencyScopePattern;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -14,7 +14,6 @@ import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyFilterUtils;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.util.NLiteral;
@@ -211,7 +210,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
             }
             case "-r":
             case "--repository": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> addRepositoryFilter(NRepositoryFilters.of().bySelector(v.stringValue()))).anyMatch();
+                return cmdLine.matcher().withAny().matchEntry((v) -> addRepositoryFilter(NRepositoryFilter.ofSelector(v.stringValue()))).anyMatch();
             }
 
             case "--scope": {
@@ -227,7 +226,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 //            }
             case "--optional": {
                 return cmdLine.matcher().withAny().matchEntry((v) ->
-                        this.dependencyFilter(NDependencyFilters.of().nonnull(this.dependencyFilter()).and(NDependencyFilters.of().byOptional(NLiteral.of(v.asString().get()).asBoolean()
+                        this.dependencyFilter(NDependencyFilterRPI.of().nonnull(this.dependencyFilter()).and(NDependencyFilter.ofOptional(NLiteral.of(v.asString().get()).asBoolean()
                                 .orNull())))).anyMatch();
             }
 
@@ -294,7 +293,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 
     //    @Override
     public T dependencyFilter(String filter) {
-        this.dependencyFilter = NDependencyFilters.of().parse(filter);
+        this.dependencyFilter = NDependencyFilterRPI.of().parse(filter);
         return (T) this;
     }
 

@@ -1,12 +1,13 @@
 package net.thevpc.nuts.mon;
 
+import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.function.Consumer;
 
 public interface NProgressRunner {
     static NProgressRunner of() {
-        return NProgressMonitors.of().ofRunner();
+        return  NIORPI.of().createProgressRunner();
     }
 
     void add(Consumer<Context> processor, double weight);

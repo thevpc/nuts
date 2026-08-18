@@ -1,12 +1,13 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 
 public interface NElementPath {
     static NElementPath ofRoot() {
-        return NElements.of().createRootPath();
+        return NElementRPI.of().createRootPath();
     }
 
     int size();

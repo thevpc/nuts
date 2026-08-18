@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
@@ -33,12 +32,12 @@ public class NtfCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
-        return txt.of(text);
+    public NText stringToText(String text) {
+        return NText.of(text);
     }
 
     @Override
-    public NText tokenToText(String text, String tokenType, NTexts txt) {
-        return txt.of(text);
+    public NText tokenToText(String text, String tokenType) {
+        return NText.of(text);
     }
 }

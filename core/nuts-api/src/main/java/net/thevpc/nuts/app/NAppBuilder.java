@@ -5,7 +5,7 @@ import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.time.NClock;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -240,7 +240,7 @@ public class NAppBuilder {
                 });
                 this.preparedWorkspace = ws;
             } catch (Exception e) {
-                throw NExceptions.ofUncheckedException(e);
+                throw NException.ofUncheckedException(e);
             }
         }
         return this;

@@ -43,17 +43,11 @@ public class DefaultNReflectRepository implements NReflectRepository {
     private NReflectConfiguration configuration;
 
     public DefaultNReflectRepository() {
-        this(NReflectConfigurationBuilder.of().build());
+        this(new DefaultNReflectConfiguration());
     }
 
     public DefaultNReflectRepository(NReflectConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    @Override
-    public DefaultNReflectRepository configuration(NReflectConfiguration configuration) {
-        this.configuration = configuration;
-        return this;
     }
 
     @Override

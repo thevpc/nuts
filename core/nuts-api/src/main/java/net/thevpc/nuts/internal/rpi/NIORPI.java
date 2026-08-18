@@ -6,16 +6,22 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.mon.NProgressHandler;
+import net.thevpc.nuts.mon.NProgressMonitor;
+import net.thevpc.nuts.mon.NProgressRunner;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.io.NAsk;
+import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Input/Output Internal Programming Interface
@@ -29,9 +35,9 @@ public interface NIORPI extends NComponent {
 
     <T> NAsk<T> createQuestion(NTerminal terminal);
 
-    NMemoryPrintStream ofInMemoryPrintStream();
+    NMemoryPrintStream createInMemoryPrintStream();
 
-    NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode);
+    NMemoryPrintStream createInMemoryPrintStream(NTerminalMode mode);
 
     /**
      * create print stream that supports the given {@code mode}. If the given
@@ -43,75 +49,75 @@ public interface NIORPI extends NComponent {
      * @param terminal terminal
      * @return {@code mode} supporting PrintStream
      */
-    NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
+    NPrintStream createPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
 
-    NPrintStream ofPrintStream(OutputStream out, NTerminalMode expectedMode, NTerminalMode baseMode);
+    NPrintStream createPrintStream(OutputStream out, NTerminalMode expectedMode, NTerminalMode baseMode);
 
-    NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode);
+    NPrintStream createPrintStream(OutputStream out, NTerminalMode mode);
 
-    NPrintStream ofPrintStream(OutputStream out);
+    NPrintStream createPrintStream(OutputStream out);
 
-    NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
+    NPrintStream createPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
 
-    NPrintStream ofPrintStream(Writer out, NTerminalMode mode);
+    NPrintStream createPrintStream(Writer out, NTerminalMode mode);
 
-    NPrintStream ofPrintStream(NPath out);
+    NPrintStream createPrintStream(NPath out);
 
-    NPrintStream ofPrintStream(Writer out);
+    NPrintStream createPrintStream(Writer out);
 
-    NPrintStream ofNullPrintStream();
+    NPrintStream createNullPrintStream();
 
-    NInputSource ofMultiRead(NInputSource source);
+    NInputSource createMultiRead(NInputSource source);
 
-    NInputSource ofInputSource(InputStream inputStream);
+    NInputSource createInputSource(InputStream inputStream);
 
     /**
      * create input source
      * @param chars chars
      * @return NInputSource
      */
-    NInputSource ofInputSource(char[] chars);
+    NInputSource createInputSource(char[] chars);
 
     /**
      * create input source
      * @param stringValue stringValue
      * @return NInputSource
      */
-    NInputSource ofInputSource(String stringValue);
+    NInputSource createInputSource(String stringValue);
 
-    NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata);
+    NInputSource createInputSource(InputStream inputStream, NContentMetadata metadata);
 
-    NInputSource ofInputSource(NInputStreamProvider inputStream);
+    NInputSource createInputSource(NInputStreamProvider inputStream);
 
-    NInputSource ofInputSource(NInputStreamProvider inputStream, NContentMetadata metadata);
+    NInputSource createInputSource(NInputStreamProvider inputStream, NContentMetadata metadata);
 
-    NInputSource ofInputSource(NReaderProvider inputStream, NContentMetadata metadata);
+    NInputSource createInputSource(NReaderProvider inputStream, NContentMetadata metadata);
 
-    NInputSource ofInputSource(Reader inputStream);
+    NInputSource createInputSource(Reader inputStream);
 
-    NInputSource ofInputSource(Reader inputStream, NContentMetadata metadata);
+    NInputSource createInputSource(Reader inputStream, NContentMetadata metadata);
 
-    NInputSource ofInputSource(byte[] inputStream);
+    NInputSource createInputSource(byte[] inputStream);
 
-    NInputSource ofEmptyInputSource();
+    NInputSource createEmptyInputSource();
 
-    NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata);
+    NInputSource createInputSource(byte[] inputStream, NContentMetadata metadata);
 
-    NOutputTarget ofOutputTarget(OutputStream outputStream);
+    NOutputTarget createOutputTarget(OutputStream outputStream);
 
-    NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata);
+    NOutputTarget createOutputTarget(OutputStream outputStream, NContentMetadata metadata);
 
-    NOutputTarget ofOutputTarget(Writer writer, NContentMetadata metadata);
+    NOutputTarget createOutputTarget(Writer writer, NContentMetadata metadata);
 
-    NOutputTarget ofOutputTarget(Writer writer);
+    NOutputTarget createOutputTarget(Writer writer);
 
-    NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base);
+    NOutputStreamBuilder createOutputStreamBuilder(OutputStream base);
 
-    NNonBlockingInputStream ofNonBlockingInputStream(InputStream base);
+    NNonBlockingInputStream createNonBlockingInputStream(InputStream base);
 
-    NInterruptible<InputStream> ofInterruptible(InputStream base);
+    NInterruptible<InputStream> createInterruptible(InputStream base);
 
-    NInputSourceBuilder ofInputSourceBuilder(InputStream inputStream);
+    NInputSourceBuilder createInputSourceBuilder(InputStream inputStream);
 
     /**
      * return new terminal bound to the given session
@@ -190,14 +196,14 @@ public interface NIORPI extends NComponent {
      * @param name file name
      * @return newly created file path
      */
-    NPath ofTempFile(String name);
+    NPath createTempFile(String name);
 
     /**
      * create temp file in the repositoryId's temp folder
      *
      * @return newly created file path
      */
-    NPath ofTempFile();
+    NPath createTempFile();
 
     /**
      * create temp folder in the workspace's temp folder
@@ -205,14 +211,14 @@ public interface NIORPI extends NComponent {
      * @param name folder name
      * @return newly created temp folder
      */
-    NPath ofTempFolder(String name);
+    NPath createTempFolder(String name);
 
     /**
      * create temp folder in the workspace's temp folder
      *
      * @return newly created temp folder
      */
-    NPath ofTempFolder();
+    NPath createTempFolder();
 
     /**
      * create temp file in the repositoryId's temp folder
@@ -220,14 +226,14 @@ public interface NIORPI extends NComponent {
      * @param name file name
      * @return newly created file path
      */
-    NPath ofTempRepositoryFile(String name, NRepository repository);
+    NPath createTempRepositoryFile(String name, NRepository repository);
 
     /**
      * create temp file in the repositoryId's temp folder
      *
      * @return newly created file path
      */
-    NPath ofTempRepositoryFile(NRepository repository);
+    NPath createTempRepositoryFile(NRepository repository);
 
     /**
      * create temp folder in the repository's temp folder
@@ -235,23 +241,23 @@ public interface NIORPI extends NComponent {
      * @param name folder name
      * @return newly created temp folder
      */
-    NPath ofTempRepositoryFolder(String name, NRepository repository);
+    NPath createTempRepositoryFolder(String name, NRepository repository);
 
     /**
      * create temp folder in the repository's temp folder
      *
      * @return newly created temp folder
      */
-    NPath ofTempRepositoryFolder(NRepository repository);
+    NPath createTempRepositoryFolder(NRepository repository);
 
 
-    NPath ofTempIdFile(String name, NId repository);
+    NPath createTempIdFile(String name, NId repository);
 
-    NPath ofTempIdFolder(String name, NId repository);
+    NPath createTempIdFolder(String name, NId repository);
 
-    NPath ofTempIdFile(NId repository);
+    NPath createTempIdFile(NId repository);
 
-    NPath ofTempIdFolder(NId repository);
+    NPath createTempIdFolder(NId repository);
 
     /**
      * expand path to Workspace Location
@@ -273,9 +279,9 @@ public interface NIORPI extends NComponent {
 
     NPath getStoreLocation(NStoreKey nLocationKey) ;
 
-    List<NPath> ofOrigins(Class<?> clazz);
+    List<NPath> createOrigins(Class<?> clazz);
 
-    NOptional<NPath> ofOrigin(Class<?> clazz);
+    NOptional<NPath> createOrigin(Class<?> clazz);
 
     /**
      * detect nuts id from resources containing the given class
@@ -297,4 +303,65 @@ public interface NIORPI extends NComponent {
     List<NId> resolveIds(Class<?> clazz);
 
     List<NId> resolveIds(NPath path);
+
+
+    NProgressRunner createProgressRunner();
+
+    NProgressMonitor createSilentProgressMonitor();
+
+    NOptional<NProgressMonitor> currentProgressMonitor();
+
+    boolean isSilentProgressMonitor(NProgressMonitor monitor);
+
+    NProgressMonitor[] createSilentProgressMonitor(int count);
+
+    NProgressMonitor createLoggerProgressMonitor(NMsgTemplate message, long freq);
+
+    NProgressMonitor createLoggerProgressMonitor(NMsgTemplate message, long freq, Logger out);
+
+    NProgressMonitor createLoggerProgressMonitor(NMsgTemplate message, long freq, NLog out);
+
+    NProgressMonitor createOutProgressMonitor(long freq);
+
+    NProgressMonitor createOutProgressMonitor(NMsgTemplate message, long freq);
+
+    NProgressMonitor createOutProgressMonitor(NMsgTemplate message, long freq, PrintStream out);
+
+    NProgressMonitor createPrintStreamProgressMonitor(PrintStream printStream);
+
+    NProgressMonitor createPrintStreamProgressMonitor(NMsgTemplate messageFormat, PrintStream printStream);
+
+    NProgressMonitor createPrintStreamProgressMonitor(NPrintStream printStream);
+
+    NProgressMonitor createPrintStreamProgressMonitor(NMsgTemplate messageFormat, NPrintStream printStream);
+
+    NProgressMonitor createLoggerProgressMonitor(NMsgTemplate messageFormat, Logger printStream);
+
+    NProgressMonitor createLoggerProgressMonitor(NMsgTemplate messageFormat, NLog log);
+
+    NProgressMonitor createLoggerProgressMonitor(Logger logger);
+
+    NProgressMonitor createLoggerProgressMonitor(NLog logger);
+
+    NProgressMonitor createLoggerProgressMonitor(long milliseconds);
+
+    NProgressMonitor createLoggerProgressMonitor();
+
+    NProgressMonitor createOutProgressMonitor(NMsgTemplate messageFormat);
+
+    NProgressMonitor createSysOutProgressMonitor();
+
+    NProgressMonitor createSysErrProgressMonitor();
+
+    NProgressMonitor createSysErrProgressMonitor(NMsgTemplate messageFormat);
+
+    NProgressMonitor createOutProgressMonitor();
+
+    NProgressMonitor createErrProgressMonitor();
+
+    NProgressMonitor createErrProgressMonitor(NMsgTemplate messageFormat);
+
+    NProgressMonitor createProgressMonitor(NProgressHandler monitor);
+
+    NProgressMonitor createProgressMonitor(NProgressMonitor monitor);
 }

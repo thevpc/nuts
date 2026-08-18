@@ -1,10 +1,11 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.expr.NOperatorAssociativity;
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 
 public interface NExprElementReshaperBuilder {
     static NExprElementReshaperBuilder of() {
-        return NElements.of().createExprElementReshaperBuilder(NExprElementReshaperType.EMPTY);
+        return NElementRPI.of().createExprElementReshaperBuilder(NExprElementReshaperType.EMPTY);
     }
 
     NExprElementReshaperBuilder addUnaryOperator(NOperatorSymbol op);

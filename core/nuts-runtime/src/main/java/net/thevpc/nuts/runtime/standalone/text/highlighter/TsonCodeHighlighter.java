@@ -21,8 +21,8 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
     @NScore
@@ -42,7 +42,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
@@ -56,17 +56,17 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 case '@':
                 case '^':
                 case ':': {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     break;
                 }
                 case '\'':
                 case '"':
                 case '`': {
-                    all.addAll(Arrays.asList(parseRawString(txt, ar)));
+                    all.addAll(Arrays.asList(parseRawString(ar)));
                     break;
                 }
                 case '¶': {
-                    all.addAll(Arrays.asList(parseOneLineString(txt, ar)));
+                    all.addAll(Arrays.asList(parseOneLineString(ar)));
                     break;
                 }
                 case '0':
@@ -79,17 +79,17 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 case '7':
                 case '8':
                 case '9': {
-                    all.addAll(Arrays.asList(readNumber(txt, ar)));
+                    all.addAll(Arrays.asList(readNumber(ar)));
                     break;
                 }
                 case '.':
                 case '-':
                 case '+': {
-                    NText[] d = readNumber(txt, ar);
+                    NText[] d = readNumber(ar);
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -99,7 +99,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                     } else if (ar.peekChars("/*")) {
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -107,7 +107,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                     if (Character.isWhitespace(ar.peekChar())) {
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
                     } else {
-                        NText[] d = readIdentifier(txt, ar);
+                        NText[] d = readIdentifier(ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).value();
@@ -125,19 +125,19 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                                 NText last = all.isEmpty() ? null : all.get(all.size() - 1);
                                 NTextStyles t = resolveTokenStyle(txt2, next, last);
                                 if (t != null) {
-                                    d[0] = txt.ofStyled(d[0], t);
+                                    d[0] = NText.ofStyled(d[0], t);
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                         }
                     }
                     break;
                 }
             }
         }
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 
 
@@ -242,11 +242,11 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         return sb.toString();
     }
 
-    public static NText[] readNumber(NTexts txt, StringReaderExt ar) {
+    public static NText[] readNumber(StringReaderExt ar) {
         String s = readNumberStr(ar);
         if (s.length() > 0) {
             return new NText[]{
-                    txt.ofStyled(s, NTextStyle.number())
+                    NText.ofStyled(s, NTextStyle.number())
             };
         }
         return new NText[0];
@@ -293,7 +293,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         return Character.isJavaIdentifierPart(c);
     }
 
-    private NText[] readIdentifier(NTexts txt, StringReaderExt ar) {
+    private NText[] readIdentifier(StringReaderExt ar) {
         List<NText> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         if (!ar.hasNext() || !isIdentifierStart(ar.peekChar())) {
@@ -316,35 +316,35 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 break;
             }
         }
-        all.add(txt.ofPlain(sb.toString()));
+        all.add(NText.ofPlain(sb.toString()));
         return all.toArray(new NText[0]);
     }
 
-    public NText[] parseOneLineString(NTexts txt, StringReaderExt chars) {
+    public NText[] parseOneLineString(StringReaderExt chars) {
         List<NText> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        all.add(txt.ofStyled(String.valueOf(chars.readChar()), NTextStyle.string()));
+        all.add(NText.ofStyled(String.valueOf(chars.readChar()), NTextStyle.string()));
         while (chars.hasNext()) {
             char c = chars.readChar();
             if (c == '\n') {
                 if (sb.length() > 0) {
-                    all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                    all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
-                all.add(txt.ofPlain("\n"));
+                all.add(NText.ofPlain("\n"));
                 return all.toArray(new NText[0]);
             } else if (c == '\r') {
                 if (sb.length() > 0) {
-                    all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                    all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
                 if (chars.hasNext()) {
                     char c2 = chars.peekChar();
                     if (c2 == '\n') {
                         chars.readChar();
-                        all.add(txt.ofPlain("\r\n"));
+                        all.add(NText.ofPlain("\r\n"));
                     } else {
-                        all.add(txt.ofPlain("\r"));
+                        all.add(NText.ofPlain("\r"));
                     }
                 }
                 return all.toArray(new NText[0]);
@@ -353,13 +353,13 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
             }
         }
         if (sb.length() > 0) {
-            all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+            all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
         return all.toArray(new NText[0]);
     }
 
-    public NText[] parseRawString(NTexts txt, StringReaderExt chars) {
+    public NText[] parseRawString(StringReaderExt chars) {
         List<NText> all = new ArrayList<>();
         for (String border : new String[]{
                 "\"\"\"",
@@ -370,28 +370,28 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 "`",
         }) {
             if (chars.readString(border)) {
-                all.add(txt.ofStyled(border, NTextStyle.string()));
+                all.add(NText.ofStyled(border, NTextStyle.string()));
                 StringBuilder sb = new StringBuilder();
                 while (chars.hasNext()) {
                     if (chars.readString("\\" + border)) {
                         if (sb.length() > 0) {
-                            all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                            all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                             sb.setLength(0);
                         }
-                        all.add(txt.ofStyled("\\" + border, NTextStyle.separator()));
+                        all.add(NText.ofStyled("\\" + border, NTextStyle.separator()));
                     } else if (chars.readString(border)) {
                         if (sb.length() > 0) {
-                            all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                            all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                             sb.setLength(0);
                         }
-                        all.add(txt.ofStyled(border, NTextStyle.string()));
+                        all.add(NText.ofStyled(border, NTextStyle.string()));
                         break;
                     } else {
                         sb.append(chars.readChar());
                     }
                 }
                 if (sb.length() > 0) {
-                    all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                    all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
                 return all.toArray(new NText[0]);

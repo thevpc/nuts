@@ -28,7 +28,6 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
-import net.thevpc.nuts.artifact.NVersionFilters;
 import net.thevpc.nuts.core.test.borrowed.MavenComparableVersion;
 import net.thevpc.nuts.core.test.borrowed.SpringComparableVersion;
 import net.thevpc.nuts.internal.parser.NReservedVersionIntervalParser;
@@ -123,7 +122,7 @@ public class VersionTest {
     }
 
     private void checkEq(String a, String b) {
-        NVersionFilter u = NVersionFilters.of().parse(a);
+        NVersionFilter u = NVersionFilter.of(a);
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);
         TestUtils.println(a + " ==> " + b);

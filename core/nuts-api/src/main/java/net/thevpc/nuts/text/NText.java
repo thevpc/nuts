@@ -27,6 +27,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.elem.NElementSimple;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NStringUtils;
@@ -43,131 +44,131 @@ import java.util.regex.Pattern;
  */
 public interface NText extends NBlankable, NElementSimple {
     static NText of(String str) {
-        return NTexts.of().of(str);
+        return NTextRPI.of().createText(str);
     }
 
     static NText ofPlain(String str) {
-        return NTexts.of().ofPlain(str);
+        return NTextRPI.of().createPlain(str);
     }
 
     static NText ofNewLine() {
-        return NTexts.of().ofPlain("\n");
+        return ofPlain("\n");
     }
 
     static NText of(Object str) {
-        return NTexts.of().of(str);
+        return NTextRPI.of().createText(str);
     }
 
     static NText of(NMsg str) {
-        return NTexts.of().of(str);
+        return NTextRPI.of().createText(str);
     }
 
     static NText ofBlank() {
-        return NTexts.of().ofBlank();
+        return NTextRPI.of().createBlank();
     }
 
     static NTextList ofList(NText... nodes) {
-        return NTexts.of().ofList(nodes);
+        return NTextRPI.of().createList(nodes);
     }
 
     static NTextList ofList(Collection<NText> nodes) {
-        return NTexts.of().ofList(nodes);
+        return NTextRPI.of().createList(nodes);
     }
 
     static NText ofStyled(String other, NTextStyles styles) {
-        return NTexts.of().ofStyled(other, styles);
+        return NTextRPI.of().createStyled(other, styles);
     }
 
     static NText ofStyled(NMsg other, NTextStyles styles) {
-        return NTexts.of().ofStyled(other, styles);
+        return NTextRPI.of().createStyled(other, styles);
     }
 
     static NText ofStyled(NText other, NTextStyles styles) {
-        return NTexts.of().ofStyled(other, styles);
+        return NTextRPI.of().createStyled(other, styles);
     }
 
     static NText ofStyled(String plainText, NTextStyle style) {
-        return NTexts.of().ofStyled(plainText, style);
+        return NTextRPI.of().createStyled(plainText, style);
     }
 
     static NText ofStyledError(String other) {
-        return NTexts.of().ofStyled(other, NTextStyle.error());
+        return NTextRPI.of().createStyled(other, NTextStyle.error());
     }
 
     static NText ofStyledPath(String plainPath) {
-        return NTexts.of().ofStyled(plainPath, NTextStyle.path());
+        return NTextRPI.of().createStyled(plainPath, NTextStyle.path());
     }
 
     static NText ofStyled(NMsg other, NTextStyle style) {
-        return NTexts.of().ofStyled(other, style);
+        return NTextRPI.of().createStyled(other, style);
     }
 
     static NText ofStyled(NText other, NTextStyle style) {
-        return NTexts.of().ofStyled(other, style);
+        return NTextRPI.of().createStyled(other, style);
     }
 
     static NTextTitle ofTitle(String other, int level) {
-        return NTexts.of().ofTitle(other, level);
+        return NTextRPI.of().createTitle(other, level);
     }
 
     static NTextTitle ofTitle(NText other, int level) {
-        return NTexts.of().ofTitle(other, level);
+        return NTextRPI.of().createTitle(other, level);
     }
 
     static NTextCmd ofCommand(NTerminalCmd command) {
-        return NTexts.of().ofCommand(command);
+        return NTextRPI.of().createCommand(command);
     }
 
     static NTextCode ofCode(String lang, String text, String sep) {
-        return NTexts.of().ofCode(text, lang, sep);
+        return NTextRPI.of().createCode(text, lang, sep);
     }
 
     static NTextCode ofCode(String lang, String text) {
-        return NTexts.of().ofCode(lang, text);
+        return NTextRPI.of().createCode(lang, text);
     }
 
     static NText ofCodeOrCommand(String lang, String text) {
-        return NTexts.of().ofCodeOrCommand(lang, text);
+        return NTextRPI.of().createCodeOrCommand(lang, text);
     }
 
     static NText ofCodeOrCommand(String text) {
-        return NTexts.of().ofCodeOrCommand(text);
+        return NTextRPI.of().createCodeOrCommand(text);
     }
 
     static NText ofCodeOrCommand(String lang, String text, String sep) {
-        return NTexts.of().ofCodeOrCommand(lang, text, sep);
+        return NTextRPI.of().createCodeOrCommand(lang, text, sep);
     }
 
     static NTitleSequence ofNumbering() {
-        return NTexts.of().ofNumbering();
+        return NTextRPI.of().createNumbering();
     }
 
     static NTitleSequence ofNumbering(String pattern) {
-        return NTexts.of().ofNumbering(pattern);
+        return NTextRPI.of().createNumbering(pattern);
     }
 
     static NTextAnchor ofAnchor(String anchorName) {
-        return NTexts.of().ofAnchor(anchorName);
+        return NTextRPI.of().createAnchor(anchorName);
     }
 
     static NTextLink ofLink(String value, String sep) {
-        return NTexts.of().ofLink(value, sep);
+        return NTextRPI.of().createLink(value, sep);
     }
 
     static NTextAnchor ofAnchor(String anchorName, String sep) {
-        return NTexts.of().ofAnchor(anchorName, sep);
+        return NTextRPI.of().createAnchor(anchorName, sep);
     }
 
     static NTextLink ofLink(String value) {
-        return NTexts.of().ofLink(value);
+        return NTextRPI.of().createLink(value);
     }
 
     static NTextInclude ofInclude(String value) {
-        return NTexts.of().ofInclude(value);
+        return NTextRPI.of().createInclude(value);
     }
 
     static NTextInclude ofInclude(String value, String sep) {
-        return NTexts.of().ofInclude(value, sep);
+        return NTextRPI.of().createInclude(value, sep);
     }
 
     static NText ofStyledSuccess(String value) {
@@ -225,6 +226,57 @@ public interface NText extends NBlankable, NElementSimple {
         return ofPlain(NStringUtils.repeat(' ', columns));
     }
 
+    static void traverseDFS(NText text, NTextVisitor visitor) {
+        NTextRPI.of().traverseDFS(text, visitor);
+    }
+
+    static void traverseBFS(NText text, NTextVisitor visitor) {
+        NTextRPI.of().traverseBFS(text, visitor);
+    }
+
+    static NText transform(NText text, NTextTransformConfig config) {
+        return NTextRPI.of().transform(text, config);
+    }
+
+    static NText transform(NText text, NTextTransformer transformer, NTextTransformConfig config) {
+        return NTextRPI.of().transform(text, transformer, config);
+    }
+
+    static NNormalizedText normalize(NText text){
+        return NTextRPI.of().normalize(text);
+    }
+
+    static NNormalizedText normalize(NText text, NTextTransformConfig config){
+        return NTextRPI.of().normalize(text, config);
+    }
+
+    static NNormalizedText normalize(NText text, NTextTransformer transformer, NTextTransformConfig config){
+        return NTextRPI.of().normalize(text, transformer, config);
+    }
+
+    static NText[] stripLeft(NText[] value) {
+        return NTextRPI.stripLeft(value);
+    }
+
+    static NText[] stripRight(NText[] value) {
+        return NTextRPI.stripRight(value);
+    }
+
+    static NText[] strip(NText[] value) {
+        return NTextRPI.strip(value);
+    }
+
+    static NPrimitiveText[] strip(NPrimitiveText[] value) {
+        return NTextRPI.strip(value);
+    }
+
+    static NPrimitiveText[] stripLeft(NPrimitiveText[] value) {
+        return NTextRPI.stripLeft(value);
+    }
+
+    static NPrimitiveText[] stripRight(NPrimitiveText[] value) {
+        return NTextRPI.stripRight(value);
+    }
 
     NTextType type();
 
@@ -269,8 +321,11 @@ public interface NText extends NBlankable, NElementSimple {
     List<NText> split(String separator);
 
     List<NText> split(String separator, boolean returnSeparator);
+
     List<NText> splitLines(boolean returnSeparator);
+
     List<NText> splitLines();
+
     List<NText> split(Pattern separator, boolean returnSeparator);
 
     NPrimitiveText[] toCharArray();

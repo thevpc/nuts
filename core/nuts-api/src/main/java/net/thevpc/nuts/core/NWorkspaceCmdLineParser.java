@@ -1594,7 +1594,7 @@ public final class NWorkspaceCmdLineParser {
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
                 if (!options.skipErrors().orElse(false)) {
-                    throw NExceptions.ofSafeCmdLineException(NMsg.ofPlain(errorMessage.toString()));
+                    throw NException.ofSafeCmdLineException(NMsg.ofPlain(errorMessage.toString()));
                 }
             }
         }
@@ -1610,13 +1610,13 @@ public final class NWorkspaceCmdLineParser {
                     Integer fileSize = NApiUtilsRPI.parseFileSizeInBytes(v, 1024 * 1024).orNull();
                     if (fileSize == null) {
                         if (NBlankable.isBlank(v)) {
-                            throw NExceptions.ofSafeCmdLineException(NMsg.ofC("invalid file size : %s", v));
+                            throw NException.ofSafeCmdLineException(NMsg.ofC("invalid file size : %s", v));
                         }
                     } else {
                         //always in mega
                         fileSize = fileSize / (1024 * 1024);
                         if (fileSize <= 0) {
-                            throw NExceptions.ofSafeCmdLineException(NMsg.ofC("invalid file size : %s < 1Mb", v));
+                            throw NException.ofSafeCmdLineException(NMsg.ofC("invalid file size : %s < 1Mb", v));
                         }
                     }
                     if (fileSize != null) {
@@ -1735,7 +1735,7 @@ public final class NWorkspaceCmdLineParser {
     private static NStoreStrategy parseNutsStoreStrategy(String s) {
         NStoreStrategy m = NStoreStrategy.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
-            throw NExceptions.ofSafeCmdLineException(NMsg.ofC("unable to parse value for NutsStoreStrategy : %s,", s));
+            throw NException.ofSafeCmdLineException(NMsg.ofC("unable to parse value for NutsStoreStrategy : %s,", s));
         }
         return m;
     }
@@ -1743,7 +1743,7 @@ public final class NWorkspaceCmdLineParser {
     private static NOsFamily parseNutsOsFamily(String s) {
         NOsFamily m = NOsFamily.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
-            throw NExceptions.ofSafeCmdLineException(NMsg.ofC("unable to parse value for NutsOsFamily : %s", s));
+            throw NException.ofSafeCmdLineException(NMsg.ofC("unable to parse value for NutsOsFamily : %s", s));
         }
         return m;
     }
@@ -1751,7 +1751,7 @@ public final class NWorkspaceCmdLineParser {
     private static NOpenMode parseNutsOpenMode(String s) {
         NOpenMode m = NOpenMode.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
-            throw NExceptions.ofSafeCmdLineException(NMsg.ofC("unable to parse value for NutsOpenMode : %s", s));
+            throw NException.ofSafeCmdLineException(NMsg.ofC("unable to parse value for NutsOpenMode : %s", s));
         }
         return m;
     }

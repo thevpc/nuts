@@ -9,7 +9,6 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.mon.NProgressEventType;
 import net.thevpc.nuts.mon.NProgressMonitor;
-import net.thevpc.nuts.mon.NProgressMonitors;
 import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,14 +23,14 @@ import java.io.PrintStream;
 public class ProgressTest {
     @BeforeAll
     public static void init() {
-        TestUtils.openNewTestWorkspace();
+        TestUtils.openNewTestWorkspace("-b");
     }
 
     @Test
     public void test01() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(bout);
-        NProgressMonitor m = NProgressMonitors.of().of(event -> {
+        NProgressMonitor m = NProgressMonitor.of(event -> {
             String msg = event.toString();
             TestUtils.println(msg);
             out.println(msg);
@@ -68,7 +67,7 @@ public class ProgressTest {
     public void test02() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(bout);
-        NProgressMonitor m = NProgressMonitors.of().of(event -> {
+        NProgressMonitor m = NProgressMonitor.of(event -> {
             String msg = event.toString();
             TestUtils.println(msg);
             out.println(msg);

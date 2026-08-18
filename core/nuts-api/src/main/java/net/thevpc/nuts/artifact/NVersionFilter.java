@@ -26,6 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NOptional;
 
@@ -65,6 +66,65 @@ import java.util.function.Supplier;
  * @since 0.5.4
  */
 public interface NVersionFilter extends NFilter {
+    //////// COMMON START
+
+    static NVersionFilter ofNonnull(NFilter filter){
+        return NVersionFilterRPI.of().nonnull(filter);
+    }
+
+    static NVersionFilter ofAlways(){
+        return NVersionFilterRPI.of().always();
+    }
+
+    static NVersionFilter ofNever(){
+        return NVersionFilterRPI.of().never();
+    }
+
+    static NVersionFilter ofAll(NFilter... others){
+        return NVersionFilterRPI.of().all(others);
+    }
+
+    static NVersionFilter ofAny(NFilter... others){
+        return NVersionFilterRPI.of().any(others);
+    }
+
+    static NVersionFilter ofNot(NFilter other){
+        return NVersionFilterRPI.of().not(other);
+    }
+
+    static NVersionFilter ofNone(NFilter... others){
+        return NVersionFilterRPI.of().none(others);
+    }
+
+    static NVersionFilter ofFrom(NFilter a){
+        return NVersionFilterRPI.of().from(a);
+    }
+
+    static NVersionFilter ofAs(NFilter a){
+        return NVersionFilterRPI.of().as(a);
+    }
+
+    static NVersionFilter of(String expression){
+        return NVersionFilterRPI.of().parse(expression);
+    }
+
+    //////// COMMON END
+
+
+    //////// FACTORY START
+    static NOptional<NVersionFilter> ofValue(String version){
+        return NVersionFilterRPI.of().byValue(version);
+    }
+
+    static NOptional<NVersionFilter> ofValue(String version, NVersionComparator comparator){
+        return NVersionFilterRPI.of().byValue(version, comparator);
+    }
+
+    static NVersionFilter of(String expression, NVersionComparator versionComparator){
+        return NVersionFilterRPI.of().parse(expression, versionComparator);
+    }
+    //////// FACTORY END
+
 
     /**
      * true if the version is accepted by this instance filter

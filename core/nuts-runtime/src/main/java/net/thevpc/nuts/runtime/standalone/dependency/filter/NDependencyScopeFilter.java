@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
@@ -63,7 +64,7 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     @Override
     public NDependencyFilter simplify() {
-        return scopes.isEmpty()? NDependencyFilters.of().always() : this;
+        return scopes.isEmpty()? NDependencyFilterRPI.of().always() : this;
     }
 
     @Override

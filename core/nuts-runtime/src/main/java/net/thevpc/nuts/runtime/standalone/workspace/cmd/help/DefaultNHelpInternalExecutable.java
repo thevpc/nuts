@@ -15,10 +15,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,8 +72,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
         }
 
         if (helpColors) {
-            NTexts txt = NTexts.of();
-            NText n = txt.parser().parse(NPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf",
+            NText n = NTextParser.of().parse(NPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf",
                     this.getClass().getClassLoader()
             ));
             session.terminal().out().print(

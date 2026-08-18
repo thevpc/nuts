@@ -362,7 +362,6 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             default: {
                 //special object
-                NElements elements = NElements.of();
 //                NObjectElementBuilder obj = elements.ofObject();
 //                NamedNodeMap attrs = element.getAttributes();
 //                for (int i = 0; i < attrs.getLength(); i++) {

@@ -1,10 +1,11 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.util.NOptional;
 
 public interface NElementNavigator {
     static NElementNavigator ofRoot(NElement element) {
-        return NElements.of().createRootNavigator(element);
+        return NElementRPI.of().createRootNavigator(element);
     }
 
     NOptional<NElementNavigator> parent();

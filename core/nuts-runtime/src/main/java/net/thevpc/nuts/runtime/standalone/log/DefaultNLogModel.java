@@ -85,7 +85,7 @@ public class DefaultNLogModel {
                     logConfig, true, logFolder);
             fileHandler.setLevel(logConfig.logFileLevel());
         } catch (Exception ex) {
-            Logger.getLogger(DefaultNLogs.class.getName()).log(Level.FINE, "unable to create file handler", ex);
+            Logger.getLogger(DefaultNLogRPI.class.getName()).log(Level.FINE, "unable to create file handler", ex);
         }
 
 //        out = ((NWorkspaceExt) ws).getModel().bootModel.getSystemTerminal().err();

@@ -9,7 +9,6 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogScope;
-import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.text.NMsg;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,8 +26,7 @@ public class LogTest {
 
     @Test
     public void test() {
-        NLogs.of()
-                .runInScope(
+        NLog.runInScope(
                         NLogScope.of()
                                 .withMessagePrefix(NMsg.ofC("[My Application]"))
                                 .withPlaceholder("module", "Test Module")
@@ -36,8 +34,7 @@ public class LogTest {
                         ,
                         () -> {
                             OtherClass.doThis();
-                            NLogs.of()
-                                    .runInScope(
+                            NLog.runInScope(
                                             NLogScope.of().withMessagePrefix(NMsg.ofC("[Nested] [%s]", NMsg.placeholder("module")))
                                                     .withPlaceholder("action", "computation")
                                                     .withLog(message -> {

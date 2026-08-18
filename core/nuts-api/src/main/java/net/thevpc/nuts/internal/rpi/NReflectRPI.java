@@ -8,6 +8,7 @@ import net.thevpc.nuts.ext.NServiceLoader;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.reflect.NMutableClassLoader;
+import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
 
@@ -19,6 +20,8 @@ public interface NReflectRPI extends NComponent {
     static NOptional<NReflectRPI> get() {
         return NExtensions.get(NReflectRPI.class);
     }
+
+    NReflectRepository getDefaultReflectRepository();
 
     NClassLoader createImmutableClassLoader(String name, ClassLoader parent, NDefinition[] nodes, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter);
 

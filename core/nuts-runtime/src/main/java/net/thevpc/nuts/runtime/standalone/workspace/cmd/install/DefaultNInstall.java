@@ -30,6 +30,7 @@ import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -203,7 +204,7 @@ public class DefaultNInstall extends AbstractNInstall {
             list.emptyCommand = false;
             InstallFlags v = installedInstallFlags.copy();
             v.force = true;
-            for (NId resultId : NSearch.of().definitionFilter(NDefinitionFilters.of().byInstalled(true)).getResultIds()) {
+            for (NId resultId : NSearch.of().definitionFilter(NDefinitionFilter.ofInstalled(true)).getResultIds()) {
                 list.addAsInstalled(resultId, v);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!

@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -93,7 +94,7 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
                     id = id.builder().faceDescriptor().build();
                     d = xrepo.fetchDescriptorImpl(id, fetchMode());
                 } else {
-                    NDefinitionFilters dd = NDefinitionFilters.of();
+                    NDefinitionFilterRPI dd = NDefinitionFilterRPI.of();
                     NDefinitionFilter filter=dd.byEnv(id.properties()).and(dd.byName(id.fullName()));
                     NId a = xrepo.searchLatestVersion(id.builder().version("").build(), filter, fetchMode());
                     if (a == null) {

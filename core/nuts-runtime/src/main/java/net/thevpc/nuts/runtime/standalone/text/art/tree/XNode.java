@@ -247,8 +247,7 @@ public class XNode implements NTreeNode {
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), format));
                 } else {
-                    all.add(entryNode(keyStr, NElements.of()
-                            .toElement(Arrays.asList(map)), format));
+                    all.add(entryNode(keyStr, NElement.of(Arrays.asList(map)), format));
                 }
             }
             return all;
@@ -264,8 +263,7 @@ public class XNode implements NTreeNode {
                     if (map == null) {
                         all.add(entryNode(keyStr, me.value(), format));
                     } else {
-                        all.add(entryNode(keyStr, NElements.of()
-                                .toElement(Arrays.asList(map)), format));
+                        all.add(entryNode(keyStr, NElement.of(Arrays.asList(map)), format));
                     }
                 } else {
                     all.add(node(e, format));

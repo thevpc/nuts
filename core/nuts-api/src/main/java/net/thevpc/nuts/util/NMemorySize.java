@@ -208,7 +208,7 @@ public class NMemorySize implements Serializable{
         if(false) {
             long t = rebuildSizeBytes();
             if (t != bytes) {
-                throw NExceptions.ofSafeAssertException(NMsg.ofC("why"));
+                throw NException.ofSafeAssertException(NMsg.ofC("why"));
             }
         }
     }

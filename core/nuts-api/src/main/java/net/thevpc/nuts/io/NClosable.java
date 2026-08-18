@@ -1,7 +1,6 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.internal.rpi.NIORPI;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 
 import java.io.Closeable;
 import java.util.function.Consumer;
@@ -23,7 +22,7 @@ public interface NClosable extends Closeable {
                     try {
                         ((AutoCloseable)any).close();
                     } catch (Exception e) {
-                        throw NExceptions.ofUncheckedException(e);
+                        throw NException.ofUncheckedException(e);
                     }
                 }
             };

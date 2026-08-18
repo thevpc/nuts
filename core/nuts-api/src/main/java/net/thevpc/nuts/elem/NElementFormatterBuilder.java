@@ -1,12 +1,13 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.text.NNewLineMode;
 
 import java.util.function.Predicate;
 
 public interface NElementFormatterBuilder {
     static NElementFormatterBuilder of() {
-        return NElements.of().createElementFormatterBuilder();
+        return NElementRPI.of().createElementFormatterBuilder();
     }
 
     NElementFormatterBuilder setIndent(int spaces);

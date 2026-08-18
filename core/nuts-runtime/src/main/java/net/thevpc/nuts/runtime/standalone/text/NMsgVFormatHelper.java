@@ -12,8 +12,8 @@ public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
 
     private Function<String, NText> mapper = null;
 
-    public NMsgVFormatHelper(NMsg m, NTexts txt) {
-        super(m, txt);
+    public NMsgVFormatHelper(NMsg m) {
+        super(m);
         Object param = params == null ? (Collections.emptyMap()) : params[0];
         if (param instanceof Map) {
             mapper = x -> {
@@ -21,7 +21,7 @@ public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
                 if (u == null) {
                     return null;
                 }
-                return txt.of(u);
+                return NText.of(u);
             };
         } else {
             Function<String, ?> f = (Function<String, ?>) param;
@@ -34,7 +34,7 @@ public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
                     }
                 }
                 u=resolvePlaceholder(u);
-                return txt.of(u);
+                return NText.of(u);
             };
         }
     }
@@ -42,7 +42,7 @@ public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
 
     protected NText formatPlain(String ss) {
         if (ss == null) {
-            return txt.of("");
+            return NText.ofBlank();
         }
         List<NText> dd = NStringUtils.parseDollarPlaceHolder(ss)
                 .map(t -> {
@@ -56,7 +56,7 @@ public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
                             return x;
                         }
                     }
-                    return txt.ofPlain(t.sval);
+                    return NText.ofPlain(t.sval);
                 }).collect(Collectors.toList());
         NTextBuilder sb = NTextBuilder.of();
         sb.appendAll(dd);

@@ -31,6 +31,7 @@ import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.expr.NParseException;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.platform.NArchFamily;
@@ -552,7 +553,7 @@ public class MavenUtils {
                                             fetchMode == NFetchMode.REMOTE ? NFetchStrategy.ONLINE
                                                     : NFetchStrategy.OFFLINE
                                     )
-                                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                                    .dependencyFilter(NDependencyFilter.ofRunnable())
                                     .getResultDescriptor();
                         } catch (NException ex) {
                             throw ex;
@@ -593,7 +594,7 @@ public class MavenUtils {
                         if (d == null) {
                             try {
                                 d = NFetch.of(pid)
-                                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                                        .dependencyFilter(NDependencyFilter.ofRunnable())
                                         .getResultDescriptor();
                             } catch (NException ex) {
                                 throw ex;

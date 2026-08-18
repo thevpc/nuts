@@ -33,6 +33,7 @@ import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -44,7 +45,6 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -573,7 +573,7 @@ public class CoreNUtils {
 
     public static List<NId> resolveNutsApiIdsFromId(NId id) {
         List<NDependency> deps = NFetch.of(id)
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDefinition()
                 .dependencies().get().transitive().toList();
         return resolveNutsApiIdsFromDependencyList(deps);

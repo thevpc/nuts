@@ -289,7 +289,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempFile(String name) {
-        return NIORPI.of().ofTempFile(name);
+        return NIORPI.of().createTempFile(name);
     }
 
     /**
@@ -298,7 +298,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempFile() {
-        return NIORPI.of().ofTempFile();
+        return NIORPI.of().createTempFile();
     }
 
     /**
@@ -308,7 +308,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempFolder(String name) {
-        return NIORPI.of().ofTempFolder(name);
+        return NIORPI.of().createTempFolder(name);
     }
 
     /**
@@ -317,7 +317,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempFolder() {
-        return NIORPI.of().ofTempFolder();
+        return NIORPI.of().createTempFolder();
     }
 
     /**
@@ -327,7 +327,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempRepositoryFile(String name, NRepository repository) {
-        return NIORPI.of().ofTempRepositoryFile(name, repository);
+        return NIORPI.of().createTempRepositoryFile(name, repository);
     }
 
     /**
@@ -336,7 +336,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempRepositoryFile(NRepository repository) {
-        return NIORPI.of().ofTempRepositoryFile(repository);
+        return NIORPI.of().createTempRepositoryFile(repository);
     }
 
     /**
@@ -346,7 +346,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempRepositoryFolder(String name, NRepository repository) {
-        return NIORPI.of().ofTempRepositoryFolder(name, repository);
+        return NIORPI.of().createTempRepositoryFolder(name, repository);
     }
 
     /**
@@ -355,7 +355,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempRepositoryFolder(NRepository repository) {
-        return NIORPI.of().ofTempRepositoryFolder(repository);
+        return NIORPI.of().createTempRepositoryFolder(repository);
     }
 
 
@@ -366,7 +366,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempIdFile(String name, NId id) {
-        return NIORPI.of().ofTempIdFile(name, id);
+        return NIORPI.of().createTempIdFile(name, id);
     }
 
     /**
@@ -375,7 +375,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created file path
      */
     static NPath ofTempIdFile(NId id) {
-        return NIORPI.of().ofTempIdFile(id);
+        return NIORPI.of().createTempIdFile(id);
     }
 
     /**
@@ -385,7 +385,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempIdFolder(String name, NId id) {
-        return NIORPI.of().ofTempIdFolder(name, id);
+        return NIORPI.of().createTempIdFolder(name, id);
     }
 
     /**
@@ -394,16 +394,16 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return newly created temp folder
      */
     static NPath ofTempIdFolder(NId id) {
-        return NIORPI.of().ofTempIdFolder(id);
+        return NIORPI.of().createTempIdFolder(id);
     }
 
 
     static NOptional<NPath> ofOrigin(Class<?> clazz) {
-        return NIORPI.of().ofOrigin(clazz);
+        return NIORPI.of().createOrigin(clazz);
     }
 
     static List<NPath> ofOrigins(Class<?> clazz) {
-        return NIORPI.of().ofOrigins(clazz);
+        return NIORPI.of().createOrigins(clazz);
     }
 
     /**

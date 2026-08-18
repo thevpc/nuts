@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
@@ -31,6 +32,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementMetadata;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
@@ -62,6 +64,16 @@ public abstract class AbstractNElement implements NElement {
         this.affixes = CoreNUtils.copyAndUnmodifiableList(affixes);
         this.diagnostics = CoreNUtils.copyAndUnmodifiableList(diagnostics);
         this.metadata = metadata == null ? DefaultNElementMetadata.EMPTY : metadata;
+    }
+
+    @Override
+    public NElement normalize(NContentType contentType) {
+        return NWorkspaceExt.of().getModel().textModel.getStreamFormat(contentType == null ? NContentType.JSON : contentType).normalize(this);
+    }
+
+    @Override
+    public <T> T convertTo(Class<T> to) {
+        return NElementRPI.of().createSharedElements().fromElement(this, to);
     }
 
     @Override

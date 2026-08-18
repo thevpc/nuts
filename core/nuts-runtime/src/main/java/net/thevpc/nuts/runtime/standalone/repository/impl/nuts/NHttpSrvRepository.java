@@ -30,6 +30,7 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.net.NWebCli;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
@@ -156,8 +157,8 @@ public class NHttpSrvRepository extends NCachedRepository {
             return NIterator.ofEmpty();
         }
         NIterator<NId> it = new NamedNIdFromStreamIterator(ret);
-        NDefinitionFilter filter2 = NDefinitionFilters.of().nonnull(idFilter).and(
-                NDefinitionFilters.of().byName(id.shortName())
+        NDefinitionFilter filter2 = NDefinitionFilterRPI.of().nonnull(idFilter).and(
+                NDefinitionFilter.ofName(id.shortName())
         );
         if (filter2 != null) {
             it = NIteratorBuilder.of(it).filter(NDefinitionFilterUtils.toIdPredicate(filter2)).iterator();

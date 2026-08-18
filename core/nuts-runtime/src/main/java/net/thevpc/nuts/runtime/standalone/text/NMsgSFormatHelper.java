@@ -4,19 +4,17 @@ import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsgType;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 public class NMsgSFormatHelper extends AbstractNMsgFormatHelper {
     int gParamIndex = 0;
 
-    public NMsgSFormatHelper(NMsg m, NTexts txt) {
-        super(m, txt);
+    public NMsgSFormatHelper(NMsg m) {
+        super(m);
     }
 
     /**
@@ -126,15 +124,15 @@ public class NMsgSFormatHelper extends AbstractNMsgFormatHelper {
                 if (a == null) {
                     sb.append((String) null);
                 } else if (NTextUtils.isSpecialLiteral(a)) {
-                    sb.append(txt.ofStyled(String.valueOf(a), NTextUtils.getSpecialLiteralType(a)));
+                    sb.append(NText.ofStyled(String.valueOf(a), NTextUtils.getSpecialLiteralType(a)));
                 } else {
-                    sb.append(txt.of(a));
+                    sb.append(NText.of(a));
                 }
             } else {
                 sb.append(part.getValue());
             }
         }
-        return txt.of(sb.toString());
+        return NText.of(sb.toString());
     }
 
 }

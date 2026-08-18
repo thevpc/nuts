@@ -27,6 +27,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
@@ -47,7 +48,7 @@ import java.nio.file.Path;
  */
 public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
     static NOptional<NObjectWriter> get(Object any) {
-        return NTexts.of().resolveWriter(any);
+        return NTextRPI.of().createWriter(any);
     }
 
     static NObjectWriter of(Object any) {

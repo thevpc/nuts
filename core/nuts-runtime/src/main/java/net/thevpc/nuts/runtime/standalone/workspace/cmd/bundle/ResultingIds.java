@@ -6,6 +6,7 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;
@@ -59,7 +60,7 @@ class ResultingIds {
                 return this;
             }
             NDefinition imdef = NFetch.of(id)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable(false, true))
+                    .dependencyFilter(NDependencyFilter.ofRunnable(false, true))
                     .getResultDefinition();
             if (!classPath.containsKey(imdef.id().longId())) {
                 NId resultId = imdef.id();
@@ -90,7 +91,7 @@ class ResultingIds {
             List<NDefinition> list = NSearch.of(id)
                     .latest(true)
                     .distinct(true)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable(false, true))
+                    .dependencyFilter(NDependencyFilter.ofRunnable(false, true))
                     .inlineDependencies(true)
                     .ignoreCurrentEnvironment(true)
                     .getResultDefinitions().toList();

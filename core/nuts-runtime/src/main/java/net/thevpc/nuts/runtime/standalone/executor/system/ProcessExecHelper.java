@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -113,7 +114,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
         NPath nutsJarFile = NFetch.ofNutsApi()
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.normalize().toString());
@@ -169,7 +170,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 ) {
                     NDefinition nDefinition;
                     nDefinition = NFetch.ofNutsApp()
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .getResultDefinition();
                     if (nDefinition.content().isPresent()) {
                         return ("<::expand::> " + apply("java") + " -jar " + nDefinition.content());

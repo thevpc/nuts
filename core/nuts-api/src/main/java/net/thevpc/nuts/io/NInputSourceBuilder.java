@@ -12,7 +12,7 @@ import java.io.OutputStream;
 public interface NInputSourceBuilder {
 
     static NInputSourceBuilder of(InputStream is) {
-        return NIORPI.of().ofInputSourceBuilder(is);
+        return NIORPI.of().createInputSourceBuilder(is);
     }
 
     NInputSourceBuilder base(InputStream baseInputStream);

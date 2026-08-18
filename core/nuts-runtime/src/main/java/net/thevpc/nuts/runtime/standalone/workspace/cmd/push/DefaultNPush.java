@@ -25,7 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
@@ -72,7 +73,7 @@ public class DefaultNPush extends AbstractDefaultNPush {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.version()));
             }
             NDefinition file = NFetch.of(id)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .transitive(false).getResultDefinition();
             NAssert.requireNamedNonNull(file, "content to push");
             toProcess.put(id, file);

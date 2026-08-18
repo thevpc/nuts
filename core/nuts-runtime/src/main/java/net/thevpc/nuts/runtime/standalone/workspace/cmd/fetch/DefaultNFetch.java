@@ -10,7 +10,6 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
@@ -200,7 +199,7 @@ public class DefaultNFetch extends AbstractNFetch {
         NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.fetchStrategy().orDefault());
         NRepositoryFilter repositoryFilter = this.repositoryFilter();
         if (!NBlankable.isBlank(id.repository())) {
-            NRepositoryFilter repositoryFilter2 = NRepositoryFilters.of().byName(id.repository());
+            NRepositoryFilter repositoryFilter2 = NRepositoryFilter.ofName(id.repository());
             repositoryFilter = repositoryFilter2.and(repositoryFilter);
         }
         NRepositoryAndFetchModeTracker descTracker = new NRepositoryAndFetchModeTracker(

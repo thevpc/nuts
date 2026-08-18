@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
+
 import java.util.List;
 
 /**
@@ -35,7 +37,7 @@ import java.util.List;
  */
 public interface NElementSelector {
     static NElementSelector of(String any){
-        return NElements.of().compileSelector(any);
+        return NElementRPI.of().compileSelector(any);
     }
 
     /**

@@ -142,10 +142,10 @@ public class NReflectUtils {
                     }
                 }
             } catch (Exception e) {
-                throw NExceptions.ofSafeNoSuchElementException(NMsg.ofC("Failed to resolve @DefaultsTo('%') for %s : %s", valueName, type.getName(), e).asError(e));
+                throw NException.ofSafeNoSuchElementException(NMsg.ofC("Failed to resolve @DefaultsTo('%') for %s : %s", valueName, type.getName(), e).asError(e));
             }
             if (resolved == null) {
-                throw NExceptions.ofSafeNoSuchElementException(NMsg.ofC("Missing value as @DefaultsTo('%') for %s", valueName, type.getName()));
+                throw NException.ofSafeNoSuchElementException(NMsg.ofC("Missing value as @DefaultsTo('%') for %s", valueName, type.getName()));
             }
             // Cache result (even nulls)
             DEFAULTS_CACHE.put(type, resolved);

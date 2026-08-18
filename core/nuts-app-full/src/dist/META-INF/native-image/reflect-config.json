@@ -901,9 +901,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.xtra.mon.DefaultNProgressMonitors"
-},
-{
   "name":"net.thevpc.nuts.runtime.standalone.xtra.ps.DefaultNPs"
 },
 {

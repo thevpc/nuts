@@ -5,7 +5,8 @@ import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterO
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.spi.base.NSystemTerminalBase;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 
 import java.io.IOException;
@@ -34,9 +35,8 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
     }
 
     private String filterThanEscape(String b) throws IOException {
-        NTexts txt = NTexts.of();
-        String filtered = txt.ofBuilder().append(b).filteredText();
-        return txt.ofPlain(filtered).toString();
+        String filtered = NTextBuilder.of().append(b).filteredText();
+        return NText.ofPlain(filtered).toString();
 //        return ws.text().escapeText(
 //                ws.text().filterText(b)
 //        );

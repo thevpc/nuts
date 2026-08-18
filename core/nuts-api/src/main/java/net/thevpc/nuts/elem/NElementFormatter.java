@@ -1,8 +1,10 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
+
 public interface NElementFormatter extends NElementTransform {
     static NElementFormatter of(NElementFormatterStyle style) {
-        return NElements.of().createElementFormatter(style);
+        return NElementRPI.of().createElementFormatter(style);
     }
 
     static NElementFormatter ofPretty() {

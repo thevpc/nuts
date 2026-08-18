@@ -41,6 +41,8 @@ public class DefaultNReflectConfiguration implements NReflectConfiguration {
     private Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy;
     private Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
 
+    public DefaultNReflectConfiguration() {
+    }
     public DefaultNReflectConfiguration(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy, Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy;
         this.propertyDefaultValueStrategy = propertyDefaultValueStrategy;

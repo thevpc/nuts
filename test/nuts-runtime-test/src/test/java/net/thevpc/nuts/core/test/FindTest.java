@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
@@ -32,7 +29,7 @@ public class FindTest {
     public void find1() throws Exception {
         List<NId> def = NSearch.of().addId("nuts").latest(true).failFast(false)
 //                .repository("maven-local")
-                .definitionFilter(NDefinitionFilters.of().byDeployed(true).and(NDefinitionFilters.of().byDefaultVersion(true)))
+                .definitionFilter(NDefinitionFilter.ofDeployed(true).and(NDefinitionFilter.ofDefaultVersion(true)))
                 .getResultIds().toList();
 
         TestUtils.println(def);
@@ -83,7 +80,7 @@ public class FindTest {
 //                "netbeans-launcher#1.1.0"
                 )
                 .dependencyFilter(
-                        NDependencyFilters.of().byOptional(false)
+                        NDependencyFilter.ofOptional(false)
                 )
                 .inlineDependencies(true).failFast(true)
                 .latest(true).getResultDefinitions().findFirst().get();

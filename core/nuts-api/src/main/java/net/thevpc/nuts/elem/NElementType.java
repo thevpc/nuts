@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.util.*;
 
 /**
@@ -155,7 +156,11 @@ public enum NElementType implements NEnum {
 
     NElementType(NElementTypeGroup group) {
         this.id = NNameFormat.ID_NAME.format(name());
-        this.group=group;
+        this.group = group;
+    }
+
+    public static NElementType computeNumber(NElementType firstNumberType, NElementType secondNumberType) {
+        return NElementRPI.of().commonNumberType(firstNumberType, secondNumberType);
     }
 
     public static NOptional<NElementType> parse(String value) {
@@ -354,8 +359,7 @@ public enum NElementType implements NEnum {
             case FULL_ARRAY:
             case NAMED_OBJECT:
             case FULL_OBJECT:
-            case NAMED_UPLET:
-            {
+            case NAMED_UPLET: {
                 return true;
             }
         }
@@ -367,8 +371,7 @@ public enum NElementType implements NEnum {
             case PARAM_ARRAY:
             case FULL_ARRAY:
             case PARAM_OBJECT:
-            case FULL_OBJECT:
-            {
+            case FULL_OBJECT: {
                 return true;
             }
         }

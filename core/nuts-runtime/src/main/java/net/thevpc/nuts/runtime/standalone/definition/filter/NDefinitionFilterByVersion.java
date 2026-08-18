@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.runtime.standalone.version.filter.DefaultNVersionFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -56,9 +57,9 @@ public class NDefinitionFilterByVersion extends AbstractDefinitionFilter {
     public NDefinitionFilter simplify() {
         switch (versionFilter.filterOp()) {
             case TRUE:
-                return NDefinitionFilters.of().always();
+                return NDefinitionFilterRPI.of().always();
             case FALSE:
-                return NDefinitionFilters.of().never();
+                return NDefinitionFilterRPI.of().never();
         }
         return this;
     }

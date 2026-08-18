@@ -1,7 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.app.NApplications;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.core.NExceptionWithExitCodeBase;
@@ -162,7 +162,7 @@ public class NExceptionHandler {
             code(0);
             return this;
         }
-        int errorCode = NExceptions.resolveExitCode(throwable).orElse(204);
+        int errorCode = NException.resolveExitCode(throwable).orElse(204);
         code(errorCode);
         if (errorCode == 0) {
             return this;
@@ -170,7 +170,7 @@ public class NExceptionHandler {
         session(NSessionAwareExceptionBase.resolveSession(throwable).orNull());
         messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable).map(NSessionAwareExceptionBase::formattedMessage)
                 .orNull();
-        messageString = NExceptions.getErrorMessage(throwable);
+        messageString = NException.getErrorMessage(throwable);
         if (out() == null) {
             if (session() != null) {
                 try {
@@ -181,7 +181,7 @@ public class NExceptionHandler {
                         messageFormatted = NMsg.ofStyledError(messageString);
                     }
                 } catch (Exception ex2) {
-                    NLog.of(NApplications.class).log(
+                    NLog.of(NApplication.class).log(
                             NMsg.ofPlain("unable to get system terminal").asFine(ex2)
                     );
                     //
@@ -210,7 +210,7 @@ public class NExceptionHandler {
         if (throwable == null) {
             return this;
         }
-        NOptional<NExceptionWithExitCodeBase> u = NExceptions.resolveWithExitCodeExceptionBase(throwable);
+        NOptional<NExceptionWithExitCodeBase> u = NException.resolveWithExitCodeExceptionBase(throwable);
         if (u.isPresent()) {
             NExceptionWithExitCodeBase o = u.get();
             if (o instanceof RuntimeException) {

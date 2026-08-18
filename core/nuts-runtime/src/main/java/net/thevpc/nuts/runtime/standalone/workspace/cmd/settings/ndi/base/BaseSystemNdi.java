@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.*;
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NDescriptor;
-import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NSearch;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
@@ -23,7 +22,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.From
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.SimpleScriptBuilder;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
@@ -244,18 +242,17 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         options.getLauncher().switchWorkspaceLocation(switchWorkspaceLocation);
         NId nid = NId.get(id).get();
         NPath f = getBinScriptFile(nid.artifactId(), options, getPreferredBinScriptFamily());
-        NTexts factory = NTexts.of();
         if (f.isRegularFile()) {
             if (NIn.ask()
                     .forBoolean(NMsg.ofC("tool %s will be removed. Confirm?",
-                            factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())
+                            NText.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())
                     ))
                     .defaultValue(true)
                     .booleanValue()) {
                 f.delete();
                 NSession session = NSession.of();
                 if (session.isPlainTrace()) {
-                    NOut.println(NMsg.ofC("tool %s removed.", factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())));
+                    NOut.println(NMsg.ofC("tool %s removed.", NText.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())));
                 }
             }
         }
@@ -745,7 +742,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             return getPreferredIconPath(rt);
         }
         NDefinition appDef = NSearch.of(appId)
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .latest(true).distinct(true).getResultDefinitions()
                 .findSingleton().get();
         String descAppIcon = resolveBestIcon(appDef.id(), appDef.descriptor().icons());

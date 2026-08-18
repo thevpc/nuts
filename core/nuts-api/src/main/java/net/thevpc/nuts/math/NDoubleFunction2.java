@@ -16,6 +16,6 @@ public interface NDoubleFunction2 extends NRedescribable<NDoubleFunction2> {
     }
 
     default NElement describe() {
-        return NElements.of().toElement("double function 2");
+        return NElement.of("double function 2");
     }
 }

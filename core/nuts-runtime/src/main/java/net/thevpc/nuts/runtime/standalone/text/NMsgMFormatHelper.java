@@ -4,7 +4,7 @@ import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Collections;
@@ -17,8 +17,8 @@ public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
 
     private Function<String, NText> mapper = null;
 
-    public NMsgMFormatHelper(NMsg m, NTexts txt) {
-        super(m, txt);
+    public NMsgMFormatHelper(NMsg m, NTextRPI txt) {
+        super(m);
         Object param = params == null ? (Collections.emptyMap()) : params[0];
         if (param instanceof Map) {
             mapper = x -> {
@@ -26,7 +26,7 @@ public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
                 if (u == null) {
                     return null;
                 }
-                return txt.of(u);
+                return NText.of(u);
             };
         } else {
             Function<String, ?> f = (Function<String, ?>) param;
@@ -39,7 +39,7 @@ public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
                     }
                 }
                 u=resolvePlaceholder(u);
-                return txt.of(u);
+                return NText.of(u);
             };
         }
     }
@@ -47,7 +47,7 @@ public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
 
     protected NText formatPlain(String ss) {
         if (ss == null) {
-            return txt.of("");
+            return NText.ofBlank();
         }
         List<NText> dd = NStringUtils.parseMoustachePlaceHolder(ss)
                 .map(t -> {
@@ -60,7 +60,7 @@ public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
                             return x;
                         }
                     }
-                    return txt.ofPlain(t.sval);
+                    return NText.ofPlain(t.sval);
                 }).collect(Collectors.toList());
         NTextBuilder sb = NTextBuilder.of();
         sb.appendAll(dd);

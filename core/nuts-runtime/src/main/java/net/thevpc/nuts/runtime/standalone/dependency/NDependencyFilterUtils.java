@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
-import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NDependencyScope;
-import net.thevpc.nuts.artifact.NDependencyScopePattern;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.dependency.filter.NDependencyScopeFilter;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
@@ -72,7 +70,7 @@ public class NDependencyFilterUtils {
 
     public static NDependencyFilter addScope(NDependencyFilter parent, NDependencyScopePattern scope) {
         if (parent == null) {
-            return NDependencyFilters.of().byScope(scope);
+            return NDependencyFilter.ofScope(scope);
         }
         if (scope == null) {
             return parent;
@@ -87,14 +85,14 @@ public class NDependencyFilterUtils {
                     Set<NDependencyScope> li2 = new LinkedHashSet<>(li);
                     li2.addAll(scope.toScopes());
                     if (!li2.equals(li)) {
-                        return NDependencyFilters.of().byScope(li2.toArray(new NDependencyScope[0]));
+                        return NDependencyFilter.ofScope(li2.toArray(new NDependencyScope[0]));
                     }
                 }
                 return old;
             }
         });
         if (!found.get()) {
-            np = np.and(NDependencyFilters.of().byScope(scope));
+            np = np.and(NDependencyFilter.ofScope(scope));
         }
         return np;
     }
@@ -125,7 +123,7 @@ public class NDependencyFilterUtils {
                 }
             }
             if (someChanges) {
-                return NDependencyFilters.of().all(newList.toArray(new NDependencyFilter[0]));
+                return NDependencyFilterRPI.of().all(newList.toArray(new NDependencyFilter[0]));
             }
             return parent;
         }

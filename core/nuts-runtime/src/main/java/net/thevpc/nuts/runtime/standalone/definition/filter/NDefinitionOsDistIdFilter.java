@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
-import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.collections.NCollections;
@@ -55,7 +53,7 @@ public class NDefinitionOsDistIdFilter extends AbstractDefinitionFilter {
 
     @Override
     public NDefinitionFilter simplify() {
-        return accepted.isEmpty() ? NDefinitionFilters.of().always() : this;
+        return accepted.isEmpty() ? NDefinitionFilterRPI.of().always() : this;
     }
 
     @Override

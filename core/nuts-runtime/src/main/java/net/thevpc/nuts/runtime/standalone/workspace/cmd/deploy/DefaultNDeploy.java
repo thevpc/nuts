@@ -2,16 +2,12 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.command.NDeploy;
 import net.thevpc.nuts.command.NSearch;
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.*;
 
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryDisabledException;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NDescriptorWriter;
@@ -122,9 +118,9 @@ public class DefaultNDeploy extends AbstractNDeploy {
         }
         if (!ids.isEmpty()) {
             for (NId nutsId : NSearch.of()
-                    .addIds(ids.toArray(new NId[0])).latest(true).repositoryFilter(NRepositoryFilters.of().bySelector(fromRepository)).getResultIds()) {
+                    .addIds(ids.toArray(new NId[0])).latest(true).repositoryFilter(NRepositoryFilter.ofSelector(fromRepository)).getResultIds()) {
                 NDefinition fetched = NFetch.of(nutsId)
-                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
                         .getResultDefinition();
                 if (fetched.content().isPresent()) {
                     runDeployFile(fetched.content().get(), fetched.descriptor(), null);

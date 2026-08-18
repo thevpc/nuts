@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
-import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.artifact.NDefinitionFilter;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -18,9 +19,10 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.PosixN
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win.WindowsNdi;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
@@ -193,7 +195,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.matcher().withAny().matchTrueFlag((v) -> {
                         session.confirm(NConfirmationMode.YES);
                         for (NId resultId : NSearch.of()
-                                .definitionFilter(NDefinitionFilters.of().byInstalled(true)
+                                .definitionFilter(NDefinitionFilter.ofInstalled(true)
                                 ).getResultIds()) {
                             d.idsToInstall.add(resultId.longName());
                             d.missingAnyArgument = false;
@@ -451,17 +453,16 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             if (session.isPlainTrace()) {
                 int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().name().length()).max().orElse(1);
                 for (PathInfo ndiScriptInfo : result) {
-                    NTexts txt = NTexts.of();
                     NOut.println(NMsg.ofC(
                             "%s script %-" + namesSize + "s for %s"
                                     + " at %s",
                             (ndiScriptInfo.getStatus() == PathInfo.Status.OVERRIDDEN)
-                                    ? txt.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()))
-                                    : txt.ofStyled("install", NTextStyle.success())
+                                    ? NText.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()))
+                                    : NText.ofStyled("install", NTextStyle.success())
                             ,
-                            txt.ofStyled(ndiScriptInfo.getPath().name(), NTextStyle.path()),
+                            NText.ofStyled(ndiScriptInfo.getPath().name(), NTextStyle.path()),
                             ndiScriptInfo.getId(),
-                            txt.ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NTextStyle.path())
+                            NText.ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NTextStyle.path())
                     ));
                 }
 

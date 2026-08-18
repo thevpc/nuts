@@ -1,10 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.definition;
 
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.definition.filter.*;
 import net.thevpc.nuts.util.*;
 
@@ -103,11 +102,11 @@ public class NDefinitionFilterUtils {
                 case INSTALLED:
                 case INSTALLED_OR_REQUIRED:
                 case DEFAULT_VERSION:
-                    return NRepositoryFilters.of().installedRepo();
+                    return NRepositoryFilter.ofInstalledRepo();
                 case OBSOLETE:
-                    return NRepositoryFilters.of().always();
+                    return NRepositoryFilter.ofAlways();
                 case NON_DEPLOYED:
-                    return NRepositoryFilters.of().installedRepo().neg();
+                    return NRepositoryFilter.ofInstalledRepo().neg();
             }
             return null;
         }
@@ -125,7 +124,7 @@ public class NDefinitionFilterUtils {
                 }
             }
             if (result == null) {
-                result = NRepositoryFilters.of().always();
+                result = NRepositoryFilter.ofAlways();
             }
             return result;
         }
@@ -140,21 +139,21 @@ public class NDefinitionFilterUtils {
                 }
             }
             if (result == null) {
-                result = NRepositoryFilters.of().always();
+                result = NRepositoryFilter.ofAlways();
             }
             return result;
         }
-        return NRepositoryFilters.of().always();
+        return NRepositoryFilter.ofAlways();
     }
 
 
     public static NDefinitionFilter[] flattenAnd(NDefinitionFilter any) {
         if (any == null) {
-            return new NDefinitionFilter[]{NDefinitionFilters.of().always()};
+            return new NDefinitionFilter[]{NDefinitionFilterRPI.of().always()};
         }
         any = (NDefinitionFilter) any.simplify();
         if (any == null) {
-            return new NDefinitionFilter[]{NDefinitionFilters.of().always()};
+            return new NDefinitionFilter[]{NDefinitionFilterRPI.of().always()};
         }
         if (any instanceof NDefinitionFilterAnd) {
             return ((NDefinitionFilterAnd) any).getChildren();
@@ -189,7 +188,7 @@ public class NDefinitionFilterUtils {
                 }
             }
             if (someChanges) {
-                return NDefinitionFilters.of().all(newList.toArray(new NDefinitionFilter[0]));
+                return NDefinitionFilterRPI.of().all(newList.toArray(new NDefinitionFilter[0]));
             }
             return parent;
         }
@@ -198,7 +197,7 @@ public class NDefinitionFilterUtils {
 
     public static NDefinitionFilter addLockedIds(NDefinitionFilter parent, NId... ids) {
         if (parent == null) {
-            return NDefinitionFilters.of().byLockedIds(ids);
+            return NDefinitionFilter.ofLockedIds(ids);
         }
         if (ids == null) {
             return parent;
@@ -219,7 +218,7 @@ public class NDefinitionFilterUtils {
             }
         });
         if (!found.get()) {
-            np = np.and(NDefinitionFilters.of().byLockedIds(validIds));
+            np = np.and(NDefinitionFilter.ofLockedIds(validIds));
         }
         return np;
     }

@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.definition;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.concurrent.NOnceValue;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -149,7 +150,7 @@ public class NDefinitionHelper {
                 try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
                     definition = NFetch.of(id)
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .getResultDefinition();
                 } catch (Exception ex) {
                     //suppose we cannot retrieve descriptor

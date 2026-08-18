@@ -5,16 +5,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.artifact;
 
+import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.artifact.NArtifactCall;
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
@@ -105,8 +104,8 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
                 NInstall ii = NInstall.of(def.id());
                 ii.getResultList();
                 NInstallStatus st = NFetch.of(def.id())
-                        .repositoryFilter(NRepositoryFilters.of().installedRepo())
-                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .repositoryFilter(NRepositoryFilter.ofInstalledRepo())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
                         .getResultDefinition().installInformation().get().installStatus();
                 if (!st.isInstalled()) {
                     throw new NUnexpectedException(NMsg.ofC("auto installation of %s failed", def.id()));

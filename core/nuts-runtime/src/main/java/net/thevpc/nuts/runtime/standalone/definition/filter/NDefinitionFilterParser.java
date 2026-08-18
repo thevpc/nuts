@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NDefinitionFilterParser extends NTypedFiltersParser<NDefinitionFilter> {
@@ -10,8 +10,8 @@ public class NDefinitionFilterParser extends NTypedFiltersParser<NDefinitionFilt
     }
 
     @Override
-    protected NDefinitionFilters getTManager() {
-        return NDefinitionFilters.of();
+    protected NDefinitionFilterRPI getTManager() {
+        return NDefinitionFilterRPI.of();
     }
 
     protected NDefinitionFilter wordToPredicate(String word){

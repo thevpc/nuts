@@ -1,7 +1,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.text.NNewLineMode;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 
 import java.io.*;
 
@@ -35,7 +35,7 @@ public class NCharReader extends Reader {
             try {
                 n = in.read(buffer, limit, buffer.length - limit);
             } catch (IOException e) {
-                throw NExceptions.ofSafeIOException(e);
+                throw NException.ofSafeIOException(e);
             }
             if (n < 0) break;
             limit += n;
@@ -104,7 +104,7 @@ public class NCharReader extends Reader {
 
     public char readChar() {
         fill(1);
-        if (pos >= limit) throw NExceptions.ofSafeIOException(new EOFException());
+        if (pos >= limit) throw NException.ofSafeIOException(new EOFException());
         return buffer[pos++];
     }
 
@@ -172,7 +172,7 @@ public class NCharReader extends Reader {
             try {
                 in.close();
             } catch (IOException e) {
-                throw NExceptions.ofSafeIOException(e);
+                throw NException.ofSafeIOException(e);
             }
         }
     }

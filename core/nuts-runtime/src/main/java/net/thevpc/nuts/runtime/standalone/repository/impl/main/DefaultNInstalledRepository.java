@@ -29,6 +29,7 @@ import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.pipeline.NStream;
@@ -237,7 +238,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             _wstore().deleteInstallInfoConfig(id);
             String v = getDefaultVersion(id);
             if (v != null && v.equals(id.version().value())) {
-                Iterator<NId> versions = searchVersions().id(id).filter(NDefinitionFilters.of().byInstalled(true)) //search only in installed, ignore deployed!
+                Iterator<NId> versions = searchVersions().id(id).filter(NDefinitionFilter.ofInstalled(true)) //search only in installed, ignore deployed!
                         .fetchMode(NFetchMode.LOCAL)
                         .getResult();
                 List<NId> nutsIds = NCollections.list(versions == null ? Collections.emptyIterator() : versions);

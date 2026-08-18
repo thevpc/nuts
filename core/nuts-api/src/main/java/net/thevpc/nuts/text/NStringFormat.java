@@ -1,11 +1,12 @@
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
 
 public interface NStringFormat<T> {
     static <T> NOptional<NStringFormat<T>> of(String type, Class<T> expectedType, String pattern) {
-        NTexts texts = NTexts.of();
+        NTextRPI texts = NTextRPI.of();
         NAssert.requireNamedNonNull(type, "type");
         NAssert.requireNamedNonNull(expectedType, "expectedType");
         NAssert.requireNamedNonNull(pattern, "pattern");

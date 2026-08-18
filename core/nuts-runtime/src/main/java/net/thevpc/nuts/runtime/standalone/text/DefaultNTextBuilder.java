@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNText;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextList;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
@@ -16,13 +17,11 @@ import java.util.*;
 public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
 
     private final List<NText> children = new ArrayList<>();
-    private final NTexts txt;
     private NTextStyleGenerator styleGenerator;
     private boolean flattened = true;
 
     public DefaultNTextBuilder() {
         super();
-        txt = NTexts.of();
     }
 
     @Override
@@ -56,13 +55,13 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
 
     @Override
     public NTextBuilder appendCommand(NTerminalCmd command) {
-        append(txt.ofCommand(command));
+        append(NText.ofCommand(command));
         return this;
     }
 
     @Override
     public NTextBuilder appendCode(String lang, String text) {
-        append(txt.ofCode(lang, text));
+        append(NText.ofCode(lang, text));
         return this;
     }
 
@@ -106,7 +105,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
             if (styles.size() == 0) {
                 append(NText.of(text));
             } else {
-                append(txt.ofStyled(NText.of(text), styles));
+                append(NText.ofStyled(NText.of(text), styles));
             }
         }
         return this;
@@ -356,7 +355,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     public NTextBuilder flatten() {
         if (!flattened) {
             NText build = build();
-            NText a = txt.transform(build, new NTextTransformConfig().flatten(true));
+            NText a = NText.transform(build, new NTextTransformConfig().flatten(true));
             this.children.clear();
             fill(a);
             flattened = true;
@@ -374,7 +373,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
                 this.children.add(z);
             } else if (z instanceof NTextStyled) {
                 if (((NTextStyled) z).child() instanceof NTextList) {
-                    NText z2 = txt.transform(z, new NTextTransformConfig().flatten(true));
+                    NText z2 = NText.transform(z, new NTextTransformConfig().flatten(true));
                 }
                 this.children.add(z);
             } else {

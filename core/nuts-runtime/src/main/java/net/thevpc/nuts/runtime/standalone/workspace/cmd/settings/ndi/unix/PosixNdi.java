@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.platform.NEnv;
@@ -14,8 +15,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptIn
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -55,7 +56,6 @@ public class PosixNdi extends BaseSystemNdi {
 
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
-        NTexts factory = NTexts.of();
         NSession session = NSession.of();
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
@@ -79,8 +79,8 @@ public class PosixNdi extends BaseSystemNdi {
                 NLog.of(PosixNdi.class)
                         .log(NMsg.ofC("%s scripts to point to current workspace : %s",
                                 session.isYes() ?
-                                        factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
-                                        factory.ofStyled("force updating", NTextStyle.warn()),
+                                        NText.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
+                                        NText.ofStyled("force updating", NTextStyle.warn()),
                                 Arrays.stream(updatedPaths).map(x -> x.getPath().name()).sorted().collect(Collectors.toList())
                         ).asConfig());
             }
@@ -89,10 +89,10 @@ public class PosixNdi extends BaseSystemNdi {
                     .forBoolean(NMsg.ofC(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                     + "Please type %s if you agree, %s if you need more explanation or %s to cancel updates.",
-                            factory.ofStyled(". ~/" + sysRcName, NTextStyle.path()),
-                            factory.ofStyled("ok", NTextStyle.success()),
-                            factory.ofStyled("why", NTextStyle.warn()),
-                            factory.ofStyled("cancel!", NTextStyle.comments())
+                            NText.ofStyled(". ~/" + sysRcName, NTextStyle.path()),
+                            NText.ofStyled("ok", NTextStyle.success()),
+                            NText.ofStyled("why", NTextStyle.warn()),
+                            NText.ofStyled("cancel!", NTextStyle.comments())
                     ))
                     .hintMessage(NMsg.ofPlain("you must enter your confirmation"))
                     .sparser(new NAskParser<Boolean>() {
@@ -116,12 +116,12 @@ public class PosixNdi extends BaseSystemNdi {
                             }
                             if ("why".equalsIgnoreCase(r)) {
                                 NPrintStream out = session.out();
-                                out.println(NMsg.ofC("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.", factory.ofStyled(sysRcName, NTextStyle.path())));
+                                out.println(NMsg.ofC("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.", NText.ofStyled(sysRcName, NTextStyle.path())));
                                 out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                 out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");
-                                out.println(NMsg.ofC("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :", factory.ofStyled(sysRcName, NTextStyle.path())));
+                                out.println(NMsg.ofC("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :", NText.ofStyled(sysRcName, NTextStyle.path())));
                                 out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                out.println(NMsg.ofC(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)", factory.ofStyled(". ~/" + sysRcName, NTextStyle.path())));
+                                out.println(NMsg.ofC(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)", NText.ofStyled(". ~/" + sysRcName, NTextStyle.path())));
                                 throw new NValidationException(NMsg.ofPlain("Try again..."));
                             } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                 throw new NCancelException();

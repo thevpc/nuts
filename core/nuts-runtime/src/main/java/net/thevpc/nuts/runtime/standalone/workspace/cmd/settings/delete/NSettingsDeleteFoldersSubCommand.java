@@ -12,6 +12,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NStoreType;
@@ -20,7 +21,6 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
@@ -98,12 +98,11 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     private void deleteWorkspaceFolder(NStoreType storeType, boolean force) {
         NPath sstoreLocation = NPath.of(NStoreKey.of(storeType));
         if (sstoreLocation != null) {
-            NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
-                        factory.ofStyled(storeType.id(), NTextStyle.primary1()),
-                        factory.ofStyled(NWorkspace.of().name(), NTextStyle.primary1()),
-                        factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
+                        NText.ofStyled(storeType.id(), NTextStyle.primary1()),
+                        NText.ofStyled(NWorkspace.of().name(), NTextStyle.primary1()),
+                        NText.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
                         .forBoolean(NMsg.ofPlain("force delete?")).defaultValue(false)
@@ -120,12 +119,11 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     private void deleteRepoFolder(NRepository repository, NStoreType storeType, boolean force) {
         NPath sstoreLocation = NPath.of(NStoreKey.of(storeType));
         if (sstoreLocation != null) {
-            NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
-                        factory.ofStyled(storeType.id(), NTextStyle.primary1()),
-                        factory.ofStyled(repository.name(), NTextStyle.primary1()),
-                        factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
+                        NText.ofStyled(storeType.id(), NTextStyle.primary1()),
+                        NText.ofStyled(repository.name(), NTextStyle.primary1()),
+                        NText.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
                         .forBoolean(NMsg.ofPlain("Force Delete?")).defaultValue(false)

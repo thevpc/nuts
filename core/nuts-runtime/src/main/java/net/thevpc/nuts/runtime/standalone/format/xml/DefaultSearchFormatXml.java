@@ -10,14 +10,14 @@ import java.io.PrintWriter;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTexts;
 import org.w3c.dom.Document;
 
 /**
@@ -28,12 +28,10 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private boolean compact;
     private String rootName = "root";
     private NCodeHighlighter codeFormat;
-    NTexts txt;
 
     public DefaultSearchFormatXml(NPrintStream writer, NFetchDisplayOptions options) {
         super(writer, NContentType.XML, options);
-        txt = NTexts.of();
-        codeFormat = NTexts.of().getCodeHighlighter("xml");
+        codeFormat = NCodeHighlighter.of("xml");
     }
 
     public String getRootName() {
@@ -44,23 +42,23 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     public void start() {
         NTextBuilder builder = NTextBuilder.of();
 
-        builder.append(codeFormat.tokenToText("<?", "separator", txt));
-        builder.append(codeFormat.tokenToText("xml", "name", txt));
+        builder.append(codeFormat.tokenToText("<?", "separator"));
+        builder.append(codeFormat.tokenToText("xml", "name"));
 
         builder.append(" ");
-        builder.append(codeFormat.tokenToText("version", "attribute", txt));
-        builder.append(codeFormat.tokenToText("=", "separator", txt));
-        builder.append(codeFormat.tokenToText("\"1.0\"", "string", txt));
+        builder.append(codeFormat.tokenToText("version", "attribute"));
+        builder.append(codeFormat.tokenToText("=", "separator"));
+        builder.append(codeFormat.tokenToText("\"1.0\"", "string"));
 
         builder.append(" ");
-        builder.append(codeFormat.tokenToText("encoding", "attribute", txt));
-        builder.append(codeFormat.tokenToText("=", "separator", txt));
-        builder.append(codeFormat.tokenToText("?>", "separator", txt));
+        builder.append(codeFormat.tokenToText("encoding", "attribute"));
+        builder.append(codeFormat.tokenToText("=", "separator"));
+        builder.append(codeFormat.tokenToText("?>", "separator"));
         builder.append("\n");
 
-        builder.append(codeFormat.tokenToText("<", "separator", txt));
-        builder.append(codeFormat.tokenToText(rootName, "name", txt));
-        builder.append(codeFormat.tokenToText(">", "separator", txt));
+        builder.append(codeFormat.tokenToText("<", "separator"));
+        builder.append(codeFormat.tokenToText(rootName, "name"));
+        builder.append(codeFormat.tokenToText(">", "separator"));
 
         getWriter().println(builder.toString());
     }
@@ -70,23 +68,22 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        XmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
         PrintWriter pw = new PrintWriter(bos);
-        org.w3c.dom.Element xmlElement = NElements.of()
-                .convert(object, org.w3c.dom.Element.class);
+        org.w3c.dom.Element xmlElement = NElement.convertAny(object, org.w3c.dom.Element.class);
         Document doc = XmlUtils.createDocument();
         doc.adoptNode(xmlElement);
         doc.appendChild(xmlElement);
         XmlUtils.writeDocument(doc, new javax.xml.transform.stream.StreamResult(pw), compact, false);
         pw.flush();
-        getWriter().print(codeFormat.stringToText(bos.toString(), txt));
+        getWriter().print(codeFormat.stringToText(bos.toString()));
     }
 
     @Override
     public void complete(long count) {
         NTextBuilder builder = NTextBuilder.of();
 
-        builder.append(codeFormat.tokenToText("</", "separator", txt));
-        builder.append(codeFormat.tokenToText(rootName, "name", txt));
-        builder.append(codeFormat.tokenToText(">", "separator", txt));
+        builder.append(codeFormat.tokenToText("</", "separator"));
+        builder.append(codeFormat.tokenToText(rootName, "name"));
+        builder.append(codeFormat.tokenToText(">", "separator"));
 
         getWriter().println(builder.toString());
         getWriter().flush();

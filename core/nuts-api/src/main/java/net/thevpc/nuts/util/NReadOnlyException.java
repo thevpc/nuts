@@ -40,19 +40,8 @@ import net.thevpc.nuts.text.NTextStyle;
  */
 public class NReadOnlyException extends NException {
 
-    /**
-     * Constructs a new NutsReadOnlyException exception
-     *
-     * @param location location
-     */
-    public NReadOnlyException(String location) {
-        super(NMsg.ofC("cannot update readonly workspace %s", NText.ofStyled(location, NTextStyle.path())));
+    public NReadOnlyException(NMsg msg) {
+        super(msg==null?NMsg.ofC("cannot update readonly"):msg);
     }
 
-    /**
-     * Constructs a new NutsReadOnlyException exception
-     */
-    public NReadOnlyException() {
-        this(NSession.get().isNotPresent()? null : String.valueOf(NWorkspace.of().workspaceLocation()));
-    }
 }

@@ -2,8 +2,9 @@ package net.thevpc.nuts.runtime.standalone.app.gui;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.NText;
 
 import javax.swing.*;
 
@@ -54,13 +55,12 @@ public final class CoreNUtilGui {
 
     public static GuiResult inputString(NMsg message, NMsg title, boolean rememberMe) {
         try {
-            NTexts text = NTexts.of();
             if (title == null) {
                 title = NMsg.ofC("Nuts Package Manager - %s", Nuts.version());
             }
             String line = javax.swing.JOptionPane.showInputDialog(
                     null,
-                    text.of(message).filteredText(), text.of(title).filteredText(), javax.swing.JOptionPane.QUESTION_MESSAGE
+                    NText.of(message).filteredText(), NText.of(title).filteredText(), javax.swing.JOptionPane.QUESTION_MESSAGE
             );
             if (line == null) {
                 line = "";
@@ -82,9 +82,8 @@ public final class CoreNUtilGui {
         if (message == null) {
             message = NMsg.ofPlain("");
         }
-        NTexts text = NTexts.of();
-        String messageString = text.of(message).filteredText();
-        String titleString = text.of(title).filteredText();
+        String messageString = NText.of(message).filteredText();
+        String titleString = NText.of(title).filteredText();
         try {
             javax.swing.JPanel panel = new javax.swing.JPanel();
             javax.swing.JLabel label = new javax.swing.JLabel(messageString);
@@ -114,9 +113,8 @@ public final class CoreNUtilGui {
         if (title == null) {
             title = NMsg.ofC("Nuts Package Manager - %s", Nuts.version());
         }
-        NTexts text = NTexts.of();
-        String messageString = text.of(message == null ? "" : message).filteredText();
-        String titleString = text.of(title).filteredText();
+        String messageString = NText.of(message == null ? "" : message).filteredText();
+        String titleString = NText.of(title).filteredText();
         try {
             javax.swing.JOptionPane.showMessageDialog(null, messageString, titleString, JOptionPane.QUESTION_MESSAGE);
         } catch (UnsatisfiedLinkError e) {

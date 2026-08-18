@@ -26,11 +26,13 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.boot.NBootOptionsInfo;
+import net.thevpc.nuts.boot.core.NExceptionWithExitCodeBase;
 import net.thevpc.nuts.boot.internal.util.NBootUtils;
 import net.thevpc.nuts.boot.core.NAnyBootAwareExceptionBase;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NSessionAwareExceptionBase;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.NReservedExceptions;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 
@@ -45,6 +47,83 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
 
     private final NSession session;
     private final NMsg formattedMessage;
+
+    public static NOptional.ExceptionFactory getDefaultExceptionFactory() {
+        return NReservedExceptions.getDefaultExceptionFactory();
+    }
+
+    public static void setDefaultExceptionFactory(NOptional.ExceptionFactory defaultExceptionFactory) {
+        NReservedExceptions.setDefaultExceptionFactory(defaultExceptionFactory);
+    }
+    public static RuntimeException ofSafeIllegalArgumentException(NMsg message) {
+        return NReservedExceptions.ofSafeIllegalArgumentException(message);
+    }
+
+    public static RuntimeException ofSafeIOException(Throwable th) {
+        return NReservedExceptions.ofSafeIOException(th);
+    }
+
+    public static RuntimeException ofSafeIOException(NMsg message, Throwable th) {
+        return NReservedExceptions.ofSafeIOException(message,th);
+    }
+
+    public static RuntimeException ofSafeIOException(NMsg message) {
+        return NReservedExceptions.ofSafeIOException(message);
+    }
+
+    public static RuntimeException ofSafeIllegalArgumentException(NMsg message, Throwable th) {
+        return NReservedExceptions.ofSafeIllegalArgumentException(message,th);
+    }
+
+    public static RuntimeException ofSafeAssertException(NMsg message) {
+        return NReservedExceptions.ofSafeAssertException(message);
+    }
+
+    public static RuntimeException ofSafeAssertException(NMsg message, Throwable ex) {
+        return NReservedExceptions.ofSafeAssertException(message,ex);
+    }
+
+    public static RuntimeException ofSafeCmdLineException(NMsg message) {
+        return NReservedExceptions.ofSafeCmdLineException(message);
+    }
+
+    public static RuntimeException ofSafeCmdLineException(NMsg message, Throwable ex) {
+        return NReservedExceptions.ofSafeCmdLineException(message,ex);
+    }
+
+    public static RuntimeException ofSafeNoSuchElementException(NMsg message) {
+        return NReservedExceptions.ofSafeNoSuchElementException(message);
+    }
+
+    public static RuntimeException ofSafeUnexpectedException(NMsg message) {
+        return NReservedExceptions.ofSafeUnexpectedException(message);
+    }
+
+    public static RuntimeException ofSafeUnsupportedEnumException(Enum e) {
+        return NReservedExceptions.ofSafeUnsupportedEnumException(e);
+    }
+
+    public static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
+        return NReservedExceptions.resolveExceptionBase(th);
+    }
+
+    public static NOptional<NExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
+        return NReservedExceptions.resolveWithExitCodeExceptionBase(th);
+    }
+
+    public static NOptional<Integer> resolveExitCode(Throwable th) {
+        return NReservedExceptions.resolveExitCode(th);
+    }
+
+    public static String getErrorMessage(Throwable th) {
+        return NReservedExceptions.getErrorMessage(th);
+    }
+
+
+    public static RuntimeException ofUncheckedException(Throwable th) {
+        return NReservedExceptions.ofUncheckedException(th);
+    }
+
 
     /**
      * Constructs a new runtime exception with the specified detail message. The

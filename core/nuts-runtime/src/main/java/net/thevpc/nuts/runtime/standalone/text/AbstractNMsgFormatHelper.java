@@ -15,19 +15,17 @@ import java.util.function.Supplier;
 
 public abstract class AbstractNMsgFormatHelper {
     protected NMsg m;
-    protected NTexts txt;
     protected NText nText;
     protected Locale locale;
     protected NSession session;
     protected String smsg;
     protected Object[] params;
 
-    public AbstractNMsgFormatHelper(NMsg m, NTexts txt) {
+    public AbstractNMsgFormatHelper(NMsg m) {
         this.m = m;
-        this.txt = txt;
         Object msg = m.message();
         smsg = (String) msg;
-        nText = m.isNtf()?txt.of(smsg):txt.ofPlain(smsg); // here using the isNtf flag
+        nText = m.isNtf()?NText.of(smsg):NText.ofPlain(smsg); // here using the isNtf flag
         session = NSession.of();
         String sLocale = session.locale().orDefault();
         locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
@@ -75,7 +73,7 @@ public abstract class AbstractNMsgFormatHelper {
     }
 
     private String convertPlain(String t) {
-        return convertCurrent(txt.ofPlain(t)).filteredText();
+        return convertCurrent(NText.ofPlain(t)).filteredText();
     }
 
     private NText convertCurrent(NText t) {
@@ -86,23 +84,23 @@ public abstract class AbstractNMsgFormatHelper {
             }
             case CODE: {
                 NTextCode c = (NTextCode) t;
-                return txt.ofCode(convertPlain(c.value()), c.qualifier(), c.separator());
+                return NText.ofCode(convertPlain(c.value()), c.qualifier(), c.separator());
             }
             case LINK: {
                 NTextLink c = (NTextLink) t;
-                return txt.ofLink(convertPlain(c.value()), c.separator());
+                return NText.ofLink(convertPlain(c.value()), c.separator());
             }
             case ANCHOR: {
                 NTextAnchor c = (NTextAnchor) t;
-                return txt.ofAnchor(convertPlain(c.value()), c.separator());
+                return NText.ofAnchor(convertPlain(c.value()), c.separator());
             }
             case INCLUDE: {
                 NTextInclude c = (NTextInclude) t;
-                return txt.ofInclude(convertPlain(c.text()), c.separator());
+                return NText.ofInclude(convertPlain(c.text()), c.separator());
             }
             case TITLE: {
                 NTextTitle c = (NTextTitle) t;
-                return txt.ofTitle(convertCurrent(c.child()), c.level());
+                return NText.ofTitle(convertCurrent(c.child()), c.level());
             }
             case COMMAND: {
                 NTextCmd c = (NTextCmd) t;
@@ -111,11 +109,11 @@ public abstract class AbstractNMsgFormatHelper {
                 for (String arg : tc.args()) {
                     newArgs.add(convertPlain(arg));
                 }
-                return txt.ofCommand(NTerminalCmd.of(tc.name(), newArgs.toArray(new String[0])));
+                return NText.ofCommand(NTerminalCmd.of(tc.name(), newArgs.toArray(new String[0])));
             }
             case STYLED: {
                 NTextStyled c = (NTextStyled) t;
-                return txt.ofStyled(convertCurrent(c.child()), c.styles());
+                return NText.ofStyled(convertCurrent(c.child()), c.styles());
             }
             case LIST: {
                 NTextList c = (NTextList) t;
@@ -123,7 +121,7 @@ public abstract class AbstractNMsgFormatHelper {
                 for (NText child : c.children()) {
                     rr.add(convertCurrent(child));
                 }
-                return txt.ofList(rr);
+                return NText.ofList(rr);
             }
             case BUILDER: {
                 NTextBuilder c = (NTextBuilder) t;

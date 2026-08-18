@@ -1789,7 +1789,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     try {
                         numberValue = NBigComplex.of(new BigDecimal(info.baseValue), new BigDecimal(info.imaginaryValue)).numberValue();
                     } catch (Exception ex) {
-                        errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                        errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                         numberValue = (NBigComplex.ZERO).numberValue();
                     }
                     break;
@@ -1801,7 +1801,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     try {
                         numberValue = NFloatComplex.of(Float.parseFloat(info.baseValue), Float.parseFloat(info.imaginaryValue)).numberValue();
                     } catch (Exception ex) {
-                        errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                        errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                         numberValue = NFloatComplex.ZERO.numberValue();
                     }
                     break;
@@ -1812,7 +1812,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     try {
                         numberValue = NDoubleComplex.of(Double.parseDouble(info.baseValue), Double.parseDouble(info.imaginaryValue)).numberValue();
                     } catch (Exception ex) {
-                        errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                        errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                         numberValue = NDoubleComplex.ZERO.numberValue();
                     }
                 }
@@ -1823,7 +1823,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                 try {
                     bi = parseBigInteger(info.baseValue, layout);
                 } catch (Exception ex) {
-                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                    errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                     bi = BigInteger.ZERO;
                 }
                 switch (info.bits) {
@@ -1852,7 +1852,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         try {
                             numberValue = (new BigDecimal(info.baseValue));
                         } catch (Exception ex) {
-                            errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                            errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                             numberValue = (new BigDecimal(0));
                         }
                     } else {
@@ -1860,7 +1860,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         try {
                             numberValue = (new BigInteger(info.baseValue));
                         } catch (Exception ex) {
-                            errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                            errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                             numberValue = (BigInteger.ZERO);
                         }
                     }
@@ -1871,7 +1871,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             try {
                                 numberValue = (Byte.parseByte(info.baseValue));
                             } catch (Exception ex) {
-                                errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                                 numberValue = ((byte) 0);
                             }
                             break;
@@ -1881,7 +1881,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                             try {
                                 numberValue = (Short.parseShort(info.baseValue));
                             } catch (Exception ex) {
-                                errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                                 numberValue = ((short) 0);
                             }
                             break;
@@ -1892,7 +1892,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 try {
                                     numberValue = (Float.parseFloat(info.baseValue));
                                 } catch (Exception ex) {
-                                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                    errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                                     numberValue = (0.0f);
                                 }
 
@@ -1900,7 +1900,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 try {
                                     numberValue = (Integer.parseInt(info.baseValue));
                                 } catch (Exception ex) {
-                                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                    errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                                     numberValue = (0);
                                 }
                             }
@@ -1911,14 +1911,14 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                 try {
                                     numberValue = (Double.parseDouble(info.baseValue));
                                 } catch (Exception ex) {
-                                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                    errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                                     numberValue = (0.0);
                                 }
                             } else {
                                 try {
                                     numberValue = (Long.parseLong(info.baseValue));
                                 } catch (Exception ex) {
-                                    errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                    errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                                     numberValue = (0L);
                                 }
                             }
@@ -1936,7 +1936,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                         numberValue = new BigDecimal(baseValue);
                                         numberElementType = NElementType.BIG_DECIMAL;
                                     } catch (Exception ex2) {
-                                        errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                        errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                                         numberValue = (0.0);
                                     }
                                 }
@@ -1953,7 +1953,7 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                                             numberValue = new BigInteger(baseValue);
                                             numberElementType = NElementType.BIG_INT;
                                         } catch (Exception ex3) {
-                                            errorMessage = NMsg.ofC("%s", NExceptions.getErrorMessage(ex));
+                                            errorMessage = NMsg.ofC("%s", NException.getErrorMessage(ex));
                                             numberValue = (0);
                                         }
                                     }

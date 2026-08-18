@@ -2,10 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementReader;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
@@ -241,13 +238,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     private Object load(NPath p) {
-        NElements elems = NElements.of();
         NElement e = NElementReader.ofJson().read(ref);
         if (e != null) {
             if (e.isArray()) {
-                return NStream.ofArray(elems.convert(e, Info[].class)).toArray(Info[]::new);
+                return NStream.ofArray(NElement.convertAny(e, Info[].class)).toArray(Info[]::new);
             } else if (e.isObject()) {
-                return elems.convert(e, Info.class);
+                return NElement.convertAny(e, Info.class);
             }
         }
         return null;

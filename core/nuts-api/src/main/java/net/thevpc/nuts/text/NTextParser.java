@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NInputSource;
 
 import java.io.File;
@@ -39,7 +40,7 @@ import java.nio.file.Path;
  */
 public interface NTextParser {
     static NTextParser of() {
-        return NTexts.of().parser();
+        return NTextRPI.of().createParser();
     }
 
     long parseIncremental(char buf, NTextVisitor visitor);

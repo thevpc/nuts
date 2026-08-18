@@ -15,6 +15,7 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.ext.NServiceLoader;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reflect.NClassLoader;
@@ -297,7 +298,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     public Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader) {
         URL url = NFetch.of(id)
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader);
     }
@@ -433,7 +434,7 @@ public class DefaultNWorkspaceExtensionModel {
                     //load extension
                     NDefinition def = NSearch.of()
                             .addId(extension).targetApiVersion(workspace.apiVersion())
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .latest(true)
                             .getResultDefinitions().findFirst().orNull();
                     if (def == null || def.content().isNotPresent()) {
@@ -466,7 +467,7 @@ public class DefaultNWorkspaceExtensionModel {
         loadedExtensionURLs.clear();
         for (NDefinition def : NSearch.of().addIds(loadedExtensionIds.toArray(new NId[0]))
                 .targetApiVersion(workspace.apiVersion())
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .latest(true)
                 .getResultDefinitions().toList()) {
             loadedExtensionURLs.add(def.content().flatMap(NPath::toURL).orNull());
@@ -552,7 +553,7 @@ public class DefaultNWorkspaceExtensionModel {
             NDefinition nDefinitions = NSearch.of()
                     .copyFrom(options)
                     .addId(id)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     //
                     .latest(true)
                     .getResultDefinitions().findFirst().get();
@@ -871,10 +872,10 @@ public class DefaultNWorkspaceExtensionModel {
             nodes = Arrays.stream(nodes).filter(Objects::nonNull).toArray(NClasspathEntry[]::new);
         }
         if (repositoryFilter == null) {
-            repositoryFilter = NRepositoryFilters.of().always();
+            repositoryFilter = NRepositoryFilter.ofAlways();
         }
         if (dependencyFilter == null) {
-            dependencyFilter = NDependencyFilters.of().byRunnable(false);
+            dependencyFilter = NDependencyFilter.ofRunnable(false);
         }
         return new DefaultNMutableClassLoader(name, parent, nodes, repositoryFilter, dependencyFilter);
     }
@@ -886,10 +887,10 @@ public class DefaultNWorkspaceExtensionModel {
             nodes = Arrays.stream(nodes).filter(Objects::nonNull).toArray(NClasspathEntry[]::new);
         }
         if (repositoryFilter == null) {
-            repositoryFilter = NRepositoryFilters.of().always();
+            repositoryFilter = NRepositoryFilter.ofAlways();
         }
         if (dependencyFilter == null) {
-            dependencyFilter = NDependencyFilters.of().byRunnable(false);
+            dependencyFilter = NDependencyFilter.ofRunnable(false);
         }
         ClassLoader validParent = parent == null ? workspaceExtensionsClassLoader.asClassLoader() : parent;
         String validName = NStringUtils.firstNonEmpty(name, "nclassloader");

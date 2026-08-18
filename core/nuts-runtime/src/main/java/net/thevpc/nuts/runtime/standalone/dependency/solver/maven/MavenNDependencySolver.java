@@ -5,19 +5,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.artifact.NArtifactNotFoundException;
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencies;
-import net.thevpc.nuts.artifact.NDependency;
-import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NDependencyScope;
-import net.thevpc.nuts.artifact.NDependencyTreeNode;
-import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.artifact.NDependencySolver;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgFormattable;
 import net.thevpc.nuts.text.NText;
@@ -83,7 +75,7 @@ public class MavenNDependencySolver implements NDependencySolver {
     public NDependencies solve() {
         doLog("---- START SOLVE");
         if (getDependencyFilter() == null) {
-            NDependencyFilters filter = NDependencyFilters.of();
+            NDependencyFilterRPI filter = NDependencyFilterRPI.of();
             effDependencyFilter = filter.always();
         } else {
             effDependencyFilter = getDependencyFilter();

@@ -39,18 +39,18 @@ import java.io.Writer;
  */
 public interface NOutputTarget extends NContentMetadataProvider {
     static NOutputTarget of(OutputStream outputStream) {
-        return NIORPI.of().ofOutputTarget(outputStream);
+        return NIORPI.of().createOutputTarget(outputStream);
     }
 
     static NOutputTarget of(OutputStream outputStream, NContentMetadata metadata) {
-        return NIORPI.of().ofOutputTarget(outputStream, metadata);
+        return NIORPI.of().createOutputTarget(outputStream, metadata);
     }
     static NOutputTarget of(Writer writer) {
-        return NIORPI.of().ofOutputTarget(writer);
+        return NIORPI.of().createOutputTarget(writer);
     }
 
     static NOutputTarget of(Writer writer, NContentMetadata metadata) {
-        return NIORPI.of().ofOutputTarget(writer, metadata);
+        return NIORPI.of().createOutputTarget(writer, metadata);
     }
 
     OutputStream outputStream();

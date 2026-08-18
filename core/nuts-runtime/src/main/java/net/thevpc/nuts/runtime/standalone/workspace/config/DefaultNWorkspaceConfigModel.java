@@ -35,6 +35,7 @@ import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
@@ -1240,7 +1241,7 @@ public class DefaultNWorkspaceConfigModel {
 
     public NBootDef fetchBootDef(NId id, boolean content) {
         NDefinition nd = NFetch.of(id)
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .failFast(false).getResultDefinition();
         if (nd != null) {
             if (content && nd.content().isNotPresent()) {

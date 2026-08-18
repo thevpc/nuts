@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.reflect.NBeanContainer;
@@ -601,7 +600,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
             if (doAbort) {
                 context.status(NSagaStatus.FAILED);
                 requireStore.set();
-                throw NExceptions.ofUncheckedException(e);
+                throw NException.ofUncheckedException(e);
             } else {
                 // If we continue after a failed compensation, decide the saga status:
                 if (context.stepsToCompensate().isEmpty()) {

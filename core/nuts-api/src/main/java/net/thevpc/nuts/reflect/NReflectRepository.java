@@ -25,6 +25,7 @@
 package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.internal.rpi.NReflectRPI;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.lang.reflect.Type;
@@ -35,7 +36,11 @@ import java.lang.reflect.Type;
  */
 public interface NReflectRepository extends NComponent {
     static NReflectRepository of() {
-        return NExtensions.of(NReflectRepository.class);
+        return NExtensions.of(NReflectRPI.class).getDefaultReflectRepository();
+    }
+
+    static NReflectRepository of(NReflectConfiguration config) {
+        return NExtensions.of().createSupported(NReflectRepository.class,config).get();
     }
 
     NReflectType getParametrizedType(Type clazz, Type owner, Type[] params);
@@ -43,6 +48,4 @@ public interface NReflectRepository extends NComponent {
     NReflectType getType(Type clazz);
 
     NReflectConfiguration configuration();
-
-    NReflectRepository configuration(NReflectConfiguration config);
 }

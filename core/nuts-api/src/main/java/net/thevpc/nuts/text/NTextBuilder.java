@@ -25,6 +25,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.Collection;
@@ -40,7 +41,7 @@ public interface NTextBuilder extends NText, Iterable<NText> {
         if (s == null) {
             return new NTextBuilderPlain();
         }
-        return NTexts.of().ofBuilder();
+        return NTextRPI.of().createBuilder();
     }
 
     NTextStyleGenerator styleGenerator();

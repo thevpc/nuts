@@ -27,7 +27,6 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NExceptions;
 
 /**
  * Exception Thrown when a locked object is invoked.
@@ -38,7 +37,7 @@ import net.thevpc.nuts.util.NExceptions;
  */
 public class NInterruptedException extends NException {
     public NInterruptedException(Throwable throwable) {
-        super(NMsg.ofC("%s", NExceptions.getErrorMessage(throwable)), throwable);
+        super(NMsg.ofC("%s", NException.getErrorMessage(throwable)), throwable);
     }
 
     public NInterruptedException(NMsg message) {

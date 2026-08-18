@@ -24,7 +24,6 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -855,7 +854,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public void throwError(NMsg message) {
-        throw NExceptions.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlankStripped(commandName, "command"), message));
+        throw NException.ofSafeCmdLineException(NMsg.ofC("%s : %s", NStringUtils.firstNonBlankStripped(commandName, "command"), message));
     }
 
     @Override
@@ -865,7 +864,7 @@ public class DefaultNCmdLine implements NCmdLine {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw NExceptions.ofSafeCmdLineException(NMsg.ofNtf(m.build().toString()));
+        throw NException.ofSafeCmdLineException(NMsg.ofNtf(m.build().toString()));
     }
 
     private NArgCandidate[] resolveRecommendations(NArgType expectValue, String[] names, int autoCompleteCurrentWordIndex) {
@@ -1058,7 +1057,7 @@ public class DefaultNCmdLine implements NCmdLine {
             List<String> parsed = new ArrayList<>();
             for (String line : new NStringBuilder(fileContent).lines().toList()) {
                 if (!NBlankable.isBlank(line) && !NStringUtils.strip(line).startsWith("#")) {
-                    NCmdLine subCmd = NCmdLines.of().shellFamily(s).parseCmdLine(line).get();
+                    NCmdLine subCmd = NCmdLine.parse(line,s).get();
                     subCmd.expandArgumentsFile(false);
                     subCmd.expandArgumentsFile(false);
                     parsed.addAll(subCmd.toStringList());

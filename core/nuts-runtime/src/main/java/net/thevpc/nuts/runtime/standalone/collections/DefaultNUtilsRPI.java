@@ -737,6 +737,11 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     }
 
     @Override
+    public NProperties createProperties() {
+        return new DefaultNProperties();
+    }
+
+    @Override
     public <K, V> NObservableMap<K, V> createObservableMap() {
         return new NDefaultObservableMap<>();
     }

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.NPath;
@@ -108,7 +107,7 @@ public class NPathSPIHelper {
         public NElement describe() {
             return NElement.ofObjectBuilder()
                     .name("ScanPath")
-                    .set("path", NElements.of().toElement(basePath))
+                    .set("path", NElement.of(basePath))
                     .set("maxDepth", maxDepth)
                     .set("sorted", sorted) // Good for Nuts debugging
                     .build();

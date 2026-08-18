@@ -5,20 +5,18 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -260,7 +258,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         HashSet<NId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
             baseRegulars.addAll(NSearch.of()
-                    .definitionFilter(NDefinitionFilters.of().byInstalled(true))
+                    .definitionFilter(NDefinitionFilter.ofInstalled(true))
                     .getResultIds().stream().map(NId::shortId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content but was removed for any reason!
             NWorkspaceExt dws = NWorkspaceExt.of();
@@ -295,7 +293,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
             @Override
             public FixAction apply(NInstallInformation nInstallInformation) {
                 NId id = NSearch.of()
-                        .definitionFilter(NDefinitionFilters.of().byInstalled(true))
+                        .definitionFilter(NDefinitionFilter.ofInstalled(true))
                         .addId(nInstallInformation.id()).getResultIds()
                         .findFirst().orNull();
                 if (id == null) {
@@ -374,26 +372,25 @@ public class DefaultNUpdate extends AbstractNUpdate {
                     widthCol1 = Math.max(widthCol1, update.available() == null ? 0 : update.available().id().shortName().length());
                     widthCol2 = Math.max(widthCol2, update.installed() == null ? 0 : update.installed().id().version().toString().length());
                 }
-                NTexts factory = NTexts.of();
                 for (NUpdateResult update : all) {
                     if (update.installed() == null) {
                         out.println(NMsg.ofC("%s  : %s",
-                                factory.ofStyled(NStringUtils.formatAlign(update.id().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
-                                factory.ofStyled("not installed", NTextStyle.error())));
+                                NText.ofStyled(NStringUtils.formatAlign(update.id().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
+                                NText.ofStyled("not installed", NTextStyle.error())));
                     } else if (update.isUpdateVersionAvailable()) {
                         out.println(NMsg.ofC("%s  : %s => %s",
-                                factory.ofStyled(NStringUtils.formatAlign(update.installed().id().version().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
+                                NText.ofStyled(NStringUtils.formatAlign(update.installed().id().version().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
                                 NStringUtils.formatAlign(update.available().id().shortName(), widthCol1, NPositionType.FIRST),
-                                factory.ofPlain(update.available().id().version().toString())));
+                                NText.ofPlain(update.available().id().version().toString())));
                     } else if (update.isUpdateStatusAvailable()) {
                         out.println(NMsg.ofC("%s  : %s => %s",
-                                factory.ofStyled(NStringUtils.formatAlign(update.installed().id().version().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
+                                NText.ofStyled(NStringUtils.formatAlign(update.installed().id().version().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
                                 NStringUtils.formatAlign(update.available().id().shortName(), widthCol1, NPositionType.FIRST),
-                                factory.ofStyled("set as default", NTextStyle.primary4())));
+                                NText.ofStyled("set as default", NTextStyle.primary4())));
                     } else {
                         out.println(NMsg.ofC("%s  : %s",
-                                factory.ofStyled(NStringUtils.formatAlign(update.installed().id().version().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
-                                factory.ofStyled("up-to-date", NTextStyle.warn())));
+                                NText.ofStyled(NStringUtils.formatAlign(update.installed().id().version().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
+                                NText.ofStyled("up-to-date", NTextStyle.warn())));
                     }
                 }
             }
@@ -439,9 +436,9 @@ public class DefaultNUpdate extends AbstractNUpdate {
 
     private NFetch latestOnlineDependencies() {
         NFetch se = NFetch.of();
-        se.addDependencyFilter(NDependencyFilters.of().byRunnable(isOptional()));
+        se.addDependencyFilter(NDependencyFilter.ofRunnable(isOptional()));
         if (!scopes.isEmpty()) {
-            se.addDependencyFilter(NDependencyFilters.of().byScope(scopes.toArray(new NDependencyScope[0])));
+            se.addDependencyFilter(NDependencyFilter.ofScope(scopes.toArray(new NDependencyScope[0])));
         }
         return se;
     }
@@ -458,8 +455,8 @@ public class DefaultNUpdate extends AbstractNUpdate {
         r.setId(id.shortId());
         boolean shouldUpdateDefault = false;
         NDefinition d0 = NSearch.of().addId(id)
-                .definitionFilter(NDefinitionFilters.of().byDeployed(true))
-                .dependencyFilter(NDependencyFilters.of().byOptional(false))
+                .definitionFilter(NDefinitionFilter.ofDeployed(true))
+                .dependencyFilter(NDependencyFilter.ofOptional(false))
                 .failFast(false)//.setDefaultVersions(true)
                 .sort(DEFAULT_THEN_LATEST_VERSION_FIRST)
                 .getResultDefinitions()
@@ -478,10 +475,10 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 .addId(d0.id().shortId())
                 .failFast(false)
                 .latest(true)
-                .addDefinitionFilter(NDefinitionFilters.of().byLockedIds(lockedIds().toArray(new NId[0])))
-                .addRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
+                .addDefinitionFilter(NDefinitionFilter.ofLockedIds(lockedIds().toArray(new NId[0])))
+                .addRepositoryFilter(NRepositoryFilter.ofInstalledRepo().neg())
 //                .setDependencies(true)
-                .dependencyFilter(NDependencyFilters.of().byOptional(isOptional() ? null : false));
+                .dependencyFilter(NDependencyFilter.ofOptional(isOptional() ? null : false));
         if (updateEvenIfExisting) {
             sc.expireTime(now);
         }
@@ -523,10 +520,10 @@ public class DefaultNUpdate extends AbstractNUpdate {
     }
 
     private NDependencyFilter resolveDependencyFilter() {
-        return NDependencyFilters.of()
+        return NDependencyFilterRPI.of()
                 .byRunnable(isOptional())
                 .and(
-                        NDependencyFilters.of().byScope(scopes.toArray(new NDependencyScope[0]))
+                        NDependencyFilter.ofScope(scopes.toArray(new NDependencyScope[0]))
                 )
                 ;
     }
@@ -647,13 +644,12 @@ public class DefaultNUpdate extends AbstractNUpdate {
 //        final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
         final NId simpleId = d0 != null ? d0.id().shortId() : d1 != null ? d1.id().shortId() : id.shortId();
         final NPrintStream out = session.out();
-        NTexts factory = NTexts.of();
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
                     out.println(NMsg.ofC("%s is %s to latest version %s",
                             simpleId,
-                            factory.ofStyled("updated", NTextStyle.primary3()),
+                            NText.ofStyled("updated", NTextStyle.primary3()),
                             d1 == null ? null : d1.id().version()
                     ));
                 } else if (d1 == null) {
@@ -665,18 +661,18 @@ public class DefaultNUpdate extends AbstractNUpdate {
                         if (v1.compareTo(v0) == 0) {
                             out.println(NMsg.ofC("%s is %s to %s",
                                     simpleId,
-                                    factory.ofStyled("forced", NTextStyle.primary3()),
+                                    NText.ofStyled("forced", NTextStyle.primary3()),
                                     d0.id().version()));
                         } else {
                             out.println(NMsg.ofC("%s is %s from %s to older version %s",
                                     simpleId,
-                                    factory.ofStyled("forced", NTextStyle.primary3()),
+                                    NText.ofStyled("forced", NTextStyle.primary3()),
                                     d0.id().version(), d1.id().version()));
                         }
                     } else {
                         out.println(NMsg.ofC("%s is %s from %s to latest version %s",
                                 simpleId,
-                                factory.ofStyled("updated", NTextStyle.primary3()),
+                                NText.ofStyled("updated", NTextStyle.primary3()),
                                 d0.id().version(), d1.id().version()));
                     }
                 }
@@ -708,7 +704,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                 try {
                     NId finalOldId = oldId;
                     oldFile = session.copy().fetchStrategy(NFetchStrategy.ONLINE).callWith(() -> NFetch.of(finalOldId)
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .getResultDefinition());
                 } catch (NArtifactNotFoundException ex) {
                     //ignore
@@ -743,7 +739,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                         NId finalOldId1 = oldId;
                         oldFile = session.copy().fetchStrategy(NFetchStrategy.ONLINE)
                                 .callWith(() -> NFetch.of().id(finalOldId1)
-                                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                                        .dependencyFilter(NDependencyFilter.ofRunnable())
                                         .getResultDefinition());
                     } catch (NArtifactNotFoundException ex) {
                         _LOG().log(NMsg.ofC("error : %s", ex).asError(ex));
@@ -756,7 +752,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
                             .addId(oldFile != null ? oldFile.id().builder().version("").build().toString() : NConstants.Ids.NUTS_RUNTIME)
                             .runtime(true)
                             .targetApiVersion(bootApiVersion)
-                            .addDefinitionFilter(NDefinitionFilters.of().byLockedIds(lockedIds().toArray(new NId[0])))
+                            .addDefinitionFilter(NDefinitionFilter.ofLockedIds(lockedIds().toArray(new NId[0])))
                             .latest(true)
                             .sort(LATEST_VERSION_FIRST);
                     newId = se.getResultIds()

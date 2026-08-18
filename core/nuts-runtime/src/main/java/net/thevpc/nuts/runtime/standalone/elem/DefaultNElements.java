@@ -7,13 +7,13 @@ import java.util.function.Consumer;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NOperatorAssociativity;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepAnnotationParam;
 import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepChild;
 import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepParam;
 import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepSubList;
-import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMapperStore;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementSelectorFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -26,24 +26,24 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElements implements NElements {
 
-    private final DefaultNTextManagerModel model;
     private UserElementMapperStore userElementMapperStore;
     private boolean ntf;
+    private boolean readOnly;
 
     public DefaultNElements() {
-        this.model = NWorkspaceExt.of().getModel().textModel;
-        this.userElementMapperStore = new UserElementMapperStore();
+        this(false,false);
+    }
+
+    public DefaultNElements(boolean ntf,boolean readOnly) {
+        this.ntf=ntf;
+        this.readOnly=readOnly;
+        this.userElementMapperStore = new UserElementMapperStore(readOnly);
         this.userElementMapperStore.setReflectRepository(NReflectRepository.of());
     }
-
-    @Override
-    public NElementFormatterBuilder createElementFormatterBuilder() {
-        return new DefaultNElementFormatterBuilder();
-    }
-
-    @Override
-    public NElementPath createRootPath() {
-        return DefaultNElementPath.ROOT;
+    private void checkReadOnly(){
+        if(readOnly){
+            throw new NReadOnlyException(NMsg.ofC("mapper store is readonly"));
+        }
     }
 
     public boolean isNtf() {
@@ -52,14 +52,13 @@ public class DefaultNElements implements NElements {
 
     @Override
     public NElements setNtf(boolean ntf) {
-        this.ntf = ntf;
+        if(ntf!=this.ntf) {
+            checkReadOnly();
+            this.ntf = ntf;
+        }
         return this;
     }
 
-    @Override
-    public NElementSelector compileSelector(String pathExpression) {
-        return NElementSelectorFilters.compile(pathExpression);
-    }
 
     @Override
     public <T> T convert(Object any, Class<T> to) {
@@ -77,6 +76,9 @@ public class DefaultNElements implements NElements {
 
     @Override
     public NElement toElement(Object o) {
+        if(o instanceof NElement){
+            return  (NElement) o;
+        }
         return createFactoryContext().toElement(o);
     }
 
@@ -99,31 +101,6 @@ public class DefaultNElements implements NElements {
         return this;
     }
 
-    @Override
-    public NElement normalizeJson(NElement e) {
-        return normalize(e, NContentType.JSON);
-    }
-
-    @Override
-    public NElement normalizeTson(NElement e) {
-        return normalize(e, NContentType.TSON);
-    }
-
-    @Override
-    public NElement normalizeYaml(NElement e) {
-        return normalize(e, NContentType.YAML);
-    }
-
-    @Override
-    public NElement normalizeXml(NElement e) {
-        return normalize(e, NContentType.XML);
-    }
-
-    public NElement normalize(NElement e, NContentType contentType) {
-        return model.getStreamFormat(contentType == null ? NContentType.JSON : contentType).normalize(e == null ? NElement.ofNull() : e);
-    }
-
-
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
         DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(false, reflectRepository, userElementMapperStore);
@@ -135,241 +112,4 @@ public class DefaultNElements implements NElements {
         return createFactoryContext().toObject(o, type);
     }
 
-    public NElementType commonNumberType(NElementType aa, NElementType bb) {
-        if (aa != null) {
-            NAssert.requireNamedEquals(NElementTypeGroup.NUMBER, aa.group(), "aa typeGroup");
-        }
-        if (bb != null) {
-            NAssert.requireNamedEquals(NElementTypeGroup.NUMBER, bb.group(), "bb typeGroup");
-        }
-
-        if (aa == null && bb == null) {
-            return null;
-        }
-        if (aa == null) {
-            return bb;
-        }
-        if (bb == null) {
-            return aa;
-        }
-        if (NElementType.BIG_COMPLEX == aa || NElementType.BIG_COMPLEX.equals(bb)) {
-            return NElementType.BIG_COMPLEX;
-        }
-
-        if (NElementType.DOUBLE_COMPLEX == aa || NElementType.DOUBLE_COMPLEX.equals(bb)) {
-            if (
-                    NElementType.BIG_DECIMAL == aa || NElementType.BIG_DECIMAL.equals(bb)
-                            || NElementType.BIG_INT == aa || NElementType.BIG_INT.equals(bb)
-            ) {
-                return NElementType.BIG_COMPLEX;
-            }
-            return NElementType.DOUBLE_COMPLEX;
-        }
-
-        if (NElementType.FLOAT_COMPLEX == aa || NElementType.FLOAT_COMPLEX.equals(bb)) {
-            if (
-                    NElementType.BIG_DECIMAL == aa || NElementType.BIG_DECIMAL.equals(bb)
-                            || NElementType.BIG_INT == aa || NElementType.BIG_INT.equals(bb)
-            ) {
-                return NElementType.BIG_COMPLEX;
-            }
-            if (
-                    NElementType.DOUBLE == aa || NElementType.DOUBLE == bb
-            ) {
-                return NElementType.DOUBLE_COMPLEX;
-            }
-            return NElementType.FLOAT_COMPLEX;
-        }
-
-
-        if (NElementType.BIG_DECIMAL == aa || NElementType.BIG_DECIMAL.equals(bb)) {
-            return NElementType.BIG_DECIMAL;
-        }
-        if (NElementType.BIG_INT.equals(aa) || NElementType.BIG_INT.equals(bb)) {
-            if (NElementType.DOUBLE.equals(aa) || NElementType.DOUBLE.equals(bb) || NElementType.FLOAT.equals(aa) || NElementType.FLOAT.equals(bb)) {
-                return NElementType.BIG_DECIMAL;
-            }
-            return NElementType.BIG_INT;
-        }
-        if (NElementType.DOUBLE.equals(aa) || NElementType.DOUBLE.equals(bb)) {
-            return NElementType.DOUBLE;
-        }
-        if (NElementType.FLOAT.equals(aa) || NElementType.FLOAT.equals(bb)) {
-            if (NElementType.LONG.equals(aa) || NElementType.LONG.equals(bb)) {
-                return NElementType.DOUBLE;
-            }
-            return NElementType.FLOAT;
-        }
-        if (NElementType.LONG.equals(aa) || NElementType.LONG.equals(bb)) {
-            return NElementType.LONG;
-        }
-        if (NElementType.INT.equals(aa) || NElementType.INT.equals(bb)) {
-            return NElementType.INT;
-        }
-        if (NElementType.SHORT.equals(aa) || NElementType.SHORT.equals(bb)) {
-            return NElementType.SHORT;
-        }
-        if (NElementType.BYTE.equals(aa) || NElementType.BYTE.equals(bb)) {
-            return NElementType.BYTE;
-        }
-        return aa;
-    }
-
-    @Override
-    public NExprElementReshaperBuilder createExprElementReshaperBuilder(NExprElementReshaperType type) {
-        switch (type == null ? NExprElementReshaperType.DEFAULT : type) {
-            case EMPTY:
-                return new DefaultNExprElementReshaperBuilder();
-            case JAVA:
-            case DEFAULT: {
-                return new DefaultNExprElementReshaperBuilder()
-                        // Unary operators (high precedence)
-                        .addUnaryOperator(NOperatorSymbol.NOT)       // !
-                        .addUnaryOperator(NOperatorSymbol.TILDE)     // ~
-                        .addUnaryOperator(NOperatorSymbol.MINUS)     // -x
-                        .addUnaryOperator(NOperatorSymbol.PLUS)      // +x
-                        .addBinaryOperator(NOperatorSymbol.EQ, 0, NOperatorAssociativity.RIGHT) // lowest precedence
-
-                        // Multiplicative
-                        .addBinaryOperator(NOperatorSymbol.MUL, 30, NOperatorAssociativity.LEFT)      // *
-                        .addBinaryOperator(NOperatorSymbol.DIV, 30, NOperatorAssociativity.LEFT)      // /
-                        .addBinaryOperator(NOperatorSymbol.REM, 30, NOperatorAssociativity.LEFT)      // %
-
-                        // Additive
-                        .addBinaryOperator(NOperatorSymbol.PLUS, 20, NOperatorAssociativity.LEFT)     // a + b
-                        .addBinaryOperator(NOperatorSymbol.MINUS, 20, NOperatorAssociativity.LEFT)    // a - b
-
-                        // Relational
-                        .addBinaryOperator(NOperatorSymbol.LT, 10, NOperatorAssociativity.LEFT)
-                        .addBinaryOperator(NOperatorSymbol.GT, 10, NOperatorAssociativity.LEFT)
-                        .addBinaryOperator(NOperatorSymbol.LTE, 10, NOperatorAssociativity.LEFT)
-                        .addBinaryOperator(NOperatorSymbol.GTE, 10, NOperatorAssociativity.LEFT)
-
-                        // Equality
-                        .addBinaryOperator(NOperatorSymbol.EQ2, 5, NOperatorAssociativity.LEFT)        // ==
-                        .addBinaryOperator(NOperatorSymbol.NOT_EQ, 5, NOperatorAssociativity.LEFT) // !=
-
-                        // Logical AND
-                        .addBinaryOperator(NOperatorSymbol.AND2, 3, NOperatorAssociativity.LEFT)       // &&
-
-                        // Logical OR
-                        .addBinaryOperator(NOperatorSymbol.PIPE2, 1, NOperatorAssociativity.LEFT)      // ||
-                        ;
-            }
-            case LEFT_ASSOCIATIVE: {
-                DefaultNExprElementReshaperBuilder r = new DefaultNExprElementReshaperBuilder();
-                // Add all known operators with same precedence
-                for (NOperatorSymbol op : NOperatorSymbol.values()) {
-                    if (op == NOperatorSymbol.NOT || op == NOperatorSymbol.TILDE || op == NOperatorSymbol.MINUS || op == NOperatorSymbol.PLUS) {
-                        r.addUnaryOperator(op);
-                    } else {
-                        r.addBinaryOperator(op, 1, NOperatorAssociativity.LEFT);
-                    }
-                }
-                return r;
-            }
-            case LOGICAL: {
-                DefaultNExprElementReshaperBuilder r = new DefaultNExprElementReshaperBuilder();
-                r.addUnaryOperator(NOperatorSymbol.NOT);
-                r.addBinaryOperator(NOperatorSymbol.AND2, 2, NOperatorAssociativity.LEFT);
-                r.addBinaryOperator(NOperatorSymbol.PIPE2, 1, NOperatorAssociativity.LEFT);
-                r.addBinaryOperator(NOperatorSymbol.EQ2, 0, NOperatorAssociativity.LEFT);
-                r.addBinaryOperator(NOperatorSymbol.NOT_EQ, 0, NOperatorAssociativity.LEFT);
-                return r;
-            }
-        }
-        throw new NIllegalArgumentException(NMsg.ofC("never happens"));
-    }
-
-    @Override
-    public NExprElementReshaper createExprElementReshaper(NExprElementReshaperType type) {
-        NExprElementReshaperType vtype = type == null ? NExprElementReshaperType.DEFAULT : type;
-        return NWorkspace.of().getOrComputeProperty(
-                NExprElementReshaper.class.getName() + "::" + vtype,
-                () -> createExprElementReshaperBuilder(vtype).build()
-        );
-    }
-
-    @Override
-    public NElementFormatter createElementFormatter(NElementFormatterStyle style) {
-        if (style == null) {
-            style = NElementFormatterStyle.PRETTY;
-        }
-        switch (style) {
-            case CUSTOM:
-            case PRETTY:
-                return DefaultNElementFormatter.PRETTY;
-            case COMPACT: {
-                return DefaultNElementFormatter.COMPACT;
-            }
-            case STABLE: {
-                return DefaultNElementFormatter.STABLE;
-            }
-            case SIMPLE: {
-                return DefaultNElementFormatter.SIMPLE;
-            }
-            case VERBATIM: {
-                return DefaultNElementFormatter.VERBATIM;
-            }
-        }
-        return DefaultNElementFormatter.PRETTY;
-    }
-
-
-    @Override
-    public NElementMetadata createElementMetadata() {
-        return DefaultNElementMetadata.EMPTY;
-    }
-
-    @Override
-    public NElementMetadata createElementMetadata(Object key, Object value) {
-        return NElementMetadata.of(key, value);
-    }
-
-    @Override
-    public NElementMetadata createElementMetadata(Map<Object, Object> any) {
-        return NElementMetadata.of(any);
-    }
-
-    @Override
-    public NElementStep createStepChild(String name) {
-        return new NElementStepChild(name);
-    }
-
-    @Override
-    public NElementStep createStepChild(int index) {
-        return new NElementStepChild(index);
-    }
-
-    @Override
-    public NElementStep createStepParam(String name) {
-        return new NElementStepParam(name);
-    }
-
-    @Override
-    public NElementStep createStepParam(int index) {
-        return new NElementStepParam(index);
-    }
-
-    @Override
-    public NElementStep createStepAnnotationParam(int paramIndex, String name) {
-        return new NElementStepAnnotationParam(paramIndex, name);
-    }
-
-    @Override
-    public NElementStep createStepAnnotationParam(int paramIndex, int index) {
-        return new NElementStepAnnotationParam(paramIndex, index);
-    }
-
-    @Override
-    public NElementStep createStepSubList(int index) {
-        return new NElementStepSubList(index);
-    }
-
-    @Override
-    public NElementNavigator createRootNavigator(NElement element) {
-        return new DefaultNElementNavigator(
-                null, element, NElementPath.ofRoot()
-        );
-    }
 }

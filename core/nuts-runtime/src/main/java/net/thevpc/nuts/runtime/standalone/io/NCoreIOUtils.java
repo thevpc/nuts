@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
 import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -52,14 +52,14 @@ public class NCoreIOUtils {
                 try {
                     ((Closeable) o).close();
                 } catch (IOException e) {
-                    throw NExceptions.ofUncheckedException(e);
+                    throw NException.ofUncheckedException(e);
                 }
             }
             if(o instanceof AutoCloseable) {
                 try {
                     ((AutoCloseable) o).close();
                 }catch (Exception e) {
-                    throw NExceptions.ofUncheckedException(e);
+                    throw NException.ofUncheckedException(e);
                 }
             }
         }

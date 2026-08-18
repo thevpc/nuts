@@ -5,7 +5,7 @@ import net.thevpc.nuts.concurrent.NTaskSet;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.mon.NChronometer;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ public class TaskSetTest {
                     } else {
                         // this task could not be called
                         // we will throw the exception
-                        throw NExceptions.ofUncheckedException(x.error());
+                        throw NException.ofUncheckedException(x.error());
                     }
                     return false;
                 }, true);

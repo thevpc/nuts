@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.internal.rpi.NCmdLineRPI;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NText;
@@ -103,10 +104,18 @@ import java.util.function.Predicate;
 public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     static NCmdLine ofArgs(String... args) {
+        NShellFamily current = NShellFamily.current();
         if (NWorkspace.get().isNotPresent()) {
-            return new DefaultNCmdLine(args, NShellFamily.current());
+            return new DefaultNCmdLine(args, current);
         }
-        return NCmdLines.of().of(args);
+        return NCmdLineRPI.of().createCmdLineByArgs(args,current);
+    }
+
+    static NCmdLine ofArgs(NShellFamily family, String... args) {
+        if (NWorkspace.get().isNotPresent()) {
+            return new DefaultNCmdLine(args, family);
+        }
+        return NCmdLineRPI.of().createCmdLineByArgs(args, family);
     }
 
     static NCmdLine of(String[] args) {
@@ -128,23 +137,23 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
             return DefaultNCmdLine.parseDefaultList(line)
                     .map(args -> new DefaultNCmdLine(args, NShellFamily.BASH));
         }
-        return NCmdLines.of().shellFamily(NShellFamily.BASH).parseCmdLine(line);
+        return NCmdLineRPI.of().parseCmdLine(line, NShellFamily.BASH,false);
     }
 
     static NOptional<NCmdLine> parse(String line) {
-        if (NWorkspace.get().isNotPresent()) {
-            return parseDefault(line);
-        }
-        return NCmdLines.of().parseCmdLine(line);
+        return parse(line,NShellFamily.BASH,false);
     }
 
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily) {
+        return parse(line,shellFamily,false);
+    }
+
+    static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily, boolean lenient) {
         if (NWorkspace.get().isNotPresent()) {
             return parseDefault(line);
         }
-        return NCmdLines.of()
-                .shellFamily(shellFamily)
-                .parseCmdLine(line);
+        return NCmdLineRPI.of()
+                .parseCmdLine(line, shellFamily, lenient);
     }
 
     /**

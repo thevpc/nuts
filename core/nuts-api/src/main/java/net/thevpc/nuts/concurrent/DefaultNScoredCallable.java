@@ -6,10 +6,10 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.reflect.NScorableContext;
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 
 import java.util.function.Supplier;
 
@@ -40,7 +40,7 @@ public class DefaultNScoredCallable<T> implements NScoredCallable<T> {
             return value.get();
         } else {
             NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.get());
-            throw NExceptions.ofSafeNoSuchElementException(nMsg);
+            throw NException.ofSafeNoSuchElementException(nMsg);
         }
     }
 

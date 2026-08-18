@@ -8,7 +8,7 @@ import net.thevpc.nuts.elem.NUpletElementBuilder;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NIllegalStateException;
 
 import java.util.function.Supplier;
@@ -250,7 +250,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
 
     private static void throwAsRuntime(Object ex) {
         if (ex instanceof Throwable) {
-            throw NExceptions.ofUncheckedException((Throwable) ex);
+            throw NException.ofUncheckedException((Throwable) ex);
         }
         throw new NIllegalStateException(NMsg.ofC("unexpected exception : %s", ex));
     }

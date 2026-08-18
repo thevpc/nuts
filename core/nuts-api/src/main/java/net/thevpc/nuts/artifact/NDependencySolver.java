@@ -26,6 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.internal.rpi.NDependencySolverRPI;
 
 import java.util.List;
 
@@ -38,15 +39,15 @@ import java.util.List;
 public interface NDependencySolver {
 
     static NDependencySolver of() {
-        return NDependencySolvers.of().createSolver();
+        return NDependencySolverRPI.of().createSolver();
     }
 
     static NDependencySolver of(String solverName) {
-        return NDependencySolvers.of().createSolver(solverName);
+        return NDependencySolverRPI.of().createSolver(solverName);
     }
 
     static List<String> solverNames() {
-        return NDependencySolvers.of().solverNames();
+        return NDependencySolverRPI.of().solverNames();
     }
 
 

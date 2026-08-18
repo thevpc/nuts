@@ -21,8 +21,9 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
 
@@ -66,7 +67,6 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
             }
         }
         NAssert.requireNamedNonBlank(commands, "commands");
-        NTexts factory = NTexts.of();
         for (String arg : commands) {
             NPrintStream out = session.out();
             try {
@@ -75,8 +75,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                         case SYSTEM: {
                             if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s %s",
-                                        factory.ofStyled(arg, NTextStyle.primary4()),
-                                        factory.ofStyled("system command", NTextStyle.primary6())
+                                        NText.ofStyled(arg, NTextStyle.primary4()),
+                                        NText.ofStyled("system command", NTextStyle.primary6())
                                         , p.description()));
 
                             } else {
@@ -93,8 +93,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                         case ALIAS: {
                             if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s (owner %s ) : %s",
-                                        factory.ofStyled(arg, NTextStyle.primary4()),
-                                        factory.ofStyled("nuts alias", NTextStyle.primary6()),
+                                        NText.ofStyled(arg, NTextStyle.primary4()),
+                                        NText.ofStyled("nuts alias", NTextStyle.primary6()),
                                         p.id(),
                                         NCmdLine.of(NWorkspace.of().findCommand(p.name()).command())
                                 ));
@@ -121,8 +121,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             }
                             if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s %s",
-                                        factory.ofStyled(arg, NTextStyle.primary4()),
-                                        factory.ofStyled("artifact", NTextStyle.primary6()),
+                                        NText.ofStyled(arg, NTextStyle.primary4()),
+                                        NText.ofStyled("artifact", NTextStyle.primary6()),
                                         p.id()/*, p.getDescription()*/
                                 ));
                             } else {
@@ -140,8 +140,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                         case INTERNAL: {
                             if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s",
-                                        factory.ofStyled("internal command", NTextStyle.primary6()),
-                                        factory.ofStyled(arg, NTextStyle.primary4())
+                                        NText.ofStyled("internal command", NTextStyle.primary6()),
+                                        NText.ofStyled(arg, NTextStyle.primary4())
                                 ));
                             } else {
                                 NOut.println(
@@ -157,8 +157,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                         case UNKNOWN: {
                             if (NOut.isPlain()) {
                                 out.println(NMsg.ofC("%s : %s",
-                                        factory.ofStyled("unknown command", NTextStyle.primary6()),
-                                        factory.ofStyled(arg, NTextStyle.primary4())
+                                        NText.ofStyled("unknown command", NTextStyle.primary6()),
+                                        NText.ofStyled(arg, NTextStyle.primary4())
                                 ));
                             } else {
                                 NOut.println(
@@ -178,7 +178,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
 //                }
             } catch (NArtifactNotFoundException ex) {
                 if (NOut.isPlain()) {
-                    out.println(NMsg.ofC("%s : %s", factory.ofStyled(arg, NTextStyle.primary4()), factory.ofStyled("not found", NTextStyle.error())));
+                    out.println(NMsg.ofC("%s : %s", NText.ofStyled(arg, NTextStyle.primary4()), NText.ofStyled("not found", NTextStyle.error())));
                 } else {
                     session.eout().add(
                             NElement.ofObjectBuilder()

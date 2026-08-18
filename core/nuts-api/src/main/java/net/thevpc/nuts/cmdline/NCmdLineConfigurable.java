@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 
 import java.util.Arrays;
 
@@ -83,7 +83,7 @@ public interface NCmdLineConfigurable {
                 }
                 String[] after = cmdLine.toStringArray();
                 if (Arrays.equals(before, after)) {
-                    throw NExceptions.ofSafeIllegalArgumentException(
+                    throw NException.ofSafeIllegalArgumentException(
                             NMsg.ofC(
                                     "bad implementation of configureFirst in class %s."
                                     + " cmdLine is not consumed; perhaps missing skip() class."

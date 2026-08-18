@@ -7,12 +7,13 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.log;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.log.NLogs;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstallLogRecord;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
@@ -38,39 +39,39 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.next("verbose", "finest").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.FINEST);
+                    NLog.termLevel(Level.FINEST);
                 }
             } else if (cmdLine.next("fine").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.FINE);
+                    NLog.termLevel(Level.FINE);
                 }
             } else if (cmdLine.next("finer").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.FINER);
+                    NLog.termLevel(Level.FINER);
                 }
             } else if (cmdLine.next("info").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.INFO);
+                    NLog.termLevel(Level.INFO);
                 }
             } else if (cmdLine.next("warning").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.WARNING);
+                    NLog.termLevel(Level.WARNING);
                 }
             } else if (cmdLine.next("severe", "error").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.SEVERE);
+                    NLog.termLevel(Level.SEVERE);
                 }
             } else if (cmdLine.next("config").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.CONFIG);
+                    NLog.termLevel(Level.CONFIG);
                 }
             } else if (cmdLine.next("off").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.OFF);
+                    NLog.termLevel(Level.OFF);
                 }
             } else if (cmdLine.next("all").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogs.of().termLevel(Level.ALL);
+                    NLog.termLevel(Level.ALL);
                 }
             } else {
                 if (cmdLine.isExecMode()) {
@@ -88,16 +89,15 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
             if (cmdLine.isExecMode()) {
                 if(NOut.isPlain()) {
                     for (NInstallLogRecord r : NWorkspaceExt.of().getInstalledRepository().findLog()) {
-                        NTexts txt = NTexts.of();
                         NOut.print(
                                 NMsg.ofC("%s %s %s %s %s %s %s%n",
                                         r.getDate(),
                                         r.getUser(),
                                         r.getAction(),
                                         r.isSucceeded()?
-                                                txt.ofStyled("Succeeded", NTextStyle.success())
+                                                NText.ofStyled("Succeeded", NTextStyle.success())
                                                 :
-                                                txt.ofStyled("Failed", NTextStyle.fail()),
+                                                NText.ofStyled("Failed", NTextStyle.fail()),
                                         r.getId()==null?"":r.getId(),
                                         r.getForId()==null?"":r.getForId(),
                                         NStringUtils.strip(r.getMessage()))

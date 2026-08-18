@@ -24,8 +24,10 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
+
+import java.util.List;
 
 /**
  * Code Format to help formatting (syntax coloring) to NTF some code
@@ -35,9 +37,26 @@ import net.thevpc.nuts.text.NTexts;
  */
 public interface NCodeHighlighter extends NComponent {
 
+    static NCodeHighlighter of(String kind) {
+        return NTextRPI.of().codeHighlighter(kind);
+    }
+
+    static void registerCodeHighlighter(NCodeHighlighter format) {
+        NTextRPI.of().registerCodeHighlighter(format);
+    }
+
+    static void unregisterCodeHighlighter(String id) {
+        NTextRPI.of().unregisterCodeHighlighter(id);
+    }
+
+    static List<NCodeHighlighter> codeHighlighters() {
+        return NTextRPI.of().codeHighlighters();
+    }
+
+
     String id();
 
-    NText stringToText(String text, NTexts txt);
+    NText stringToText(String text);
 
-    NText tokenToText(String text, String tokenType, NTexts txt);
+    NText tokenToText(String text, String tokenType);
 }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
 import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.app.NApplications;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
@@ -47,7 +47,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
         NWorkspaceOptions bbo = bo.build();
         boolean showGui = NApiUtilsRPI.resolveGui(bbo);
         boolean showTrace = NApiUtilsRPI.resolveShowStackTrace(bbo);
-        int errorCode = NExceptions.resolveExitCode(throwable).orElse(204);
+        int errorCode = NException.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
                 .map(NSessionAwareExceptionBase::formattedMessage).orNull();
         String m = throwable.getMessage();
@@ -64,7 +64,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 fm = NMsg.ofStyledError(m);
             }
         } catch (Exception ex2) {
-            NLog.of(NApplications.class).log(
+            NLog.of(NApplication.class).log(
                     NMsg.ofPlain("unable to get system terminal").asFine(ex2)
             );
         }

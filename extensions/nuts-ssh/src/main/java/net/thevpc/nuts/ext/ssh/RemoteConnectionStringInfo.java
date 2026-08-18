@@ -2,7 +2,7 @@ package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NConstants;
@@ -76,7 +76,7 @@ public class RemoteConnectionStringInfo {
 
     public boolean copyId(NId id, NPath remoteRepo, NRef<NPath> remoteJar) {
         NDefinition def = NFetch.of(id)
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDefinition();
         NPath apiLocalPath = def.content().get();
         NPath remoteJarPath = remoteRepo.resolve(id.getMavenPath("jar"));

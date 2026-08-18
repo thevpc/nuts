@@ -11,16 +11,13 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionException;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextTransformConfig;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.text.NMsg;
 
 import java.util.List;
 
@@ -76,13 +73,12 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
 
     @Override
     public NText helpText() {
-        NTexts txt = NTexts.of();
         NPath path = NPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader());
-        NText n = txt.parser().parse(path);
+        NText n = NTextParser.of().parse(path);
         if (n == null) {
             return super.helpText();
         }
-        return txt.transform(n,
+        return NText.transform(n,
                 new NTextTransformConfig()
                         .processAll(true)
                         .rootLevel(1)
@@ -97,10 +93,9 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
             NOut.println("[dry] ==show-help==");
             return;
         }
-        NTexts text = NTexts.of();
         if (NOut.isPlain()) {
             NOut.println(NMsg.ofC("[dry] %s%n",
-                    text.ofBuilder()
+                    NTextBuilder.of()
                             .append("internal", NTextStyle.pale())
                             .append(" ")
                             .append(name(), NTextStyle.primary5())
@@ -110,7 +105,7 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
         } else {
             NOut.println(NMsg.ofC(
                             "[dry] %s",
-                            text.ofBuilder()
+                            NTextBuilder.of()
                                     .append("internal", NTextStyle.pale())
                                     .append(" ")
                                     .append(name(), NTextStyle.primary5())

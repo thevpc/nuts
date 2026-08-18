@@ -25,6 +25,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.elem.NElementSimple;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.*;
 
@@ -97,9 +98,9 @@ public class NMsg implements NBlankable, NElementSimple {
             return NMsg.ofC("invalid %s", valueName);
         }
         if (NBlankable.isBlank(valueName)) {
-            return ofC("invalid value : %s", NExceptions.getErrorMessage(throwable));
+            return ofC("invalid value : %s", NException.getErrorMessage(throwable));
         }
-        return ofC("invalid %s : %s", valueName, NExceptions.getErrorMessage(throwable));
+        return ofC("invalid %s : %s", valueName, NException.getErrorMessage(throwable));
     }
 
     public static NMsg ofInvalidValue(Throwable throwable, NMsg valueName) {
@@ -110,9 +111,9 @@ public class NMsg implements NBlankable, NElementSimple {
             return NMsg.ofC("invalid %s", valueName);
         }
         if (NBlankable.isBlank(valueName)) {
-            return ofC("invalid value : %s", NExceptions.getErrorMessage(throwable));
+            return ofC("invalid value : %s", NException.getErrorMessage(throwable));
         }
-        return ofC("invalid %s : %s", valueName, NExceptions.getErrorMessage(throwable));
+        return ofC("invalid %s : %s", valueName, NException.getErrorMessage(throwable));
     }
 
     private static NMsg of(NMsgType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level, Throwable throwable, NMsgIntent intent, NDuration duration, Function<String, ?> placeholderBindings, String customFormatId, boolean ntf) {
@@ -435,7 +436,7 @@ public class NMsg implements NBlankable, NElementSimple {
         } else if (o instanceof NMsg) {
             o = ((NMsg) o).withPlaceholders(placeholderBindings);
         } else if (o instanceof Throwable) {
-            o = NExceptions.getErrorMessage((Throwable) o);
+            o = NException.getErrorMessage((Throwable) o);
         }
         if (o instanceof NText) {
             if (plain) {
@@ -593,7 +594,7 @@ public class NMsg implements NBlankable, NElementSimple {
 
     private String formatCustom(boolean plain) {
         try {
-            NText t = NTexts.of().of(this);
+            NText t = NTextRPI.of().createText(this);
             if(plain){
                 return t.filteredText();
             }
@@ -1698,7 +1699,7 @@ public class NMsg implements NBlankable, NElementSimple {
                     String e = param.name();
                     NAssert.requireNamedNonNull(e, "param.name");
                     if (content.containsKey(e)) {
-                        throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("duplicate key %s", e));
+                        throw NException.ofSafeIllegalArgumentException(NMsg.ofC("duplicate key %s", e));
                     }
                     content.put(e, param.value());
                 }

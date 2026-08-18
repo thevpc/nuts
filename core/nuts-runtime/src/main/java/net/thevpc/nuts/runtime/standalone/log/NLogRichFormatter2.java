@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NDuration;
@@ -12,12 +13,10 @@ public class NLogRichFormatter2 {
     private long lastMillis = -1;
 
     public String format(NMsg msg, long timestamp, String sourceClassName, boolean filtered) {
-        NTexts tf = NTexts.of();
-
-        NTextBuilder sb = tf.ofBuilder();
+        NTextBuilder sb = NTextBuilder.of();
         String date = CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(timestamp));
 
-        sb.append(tf.ofStyled(date, NTextStyle.pale()));
+        sb.append(NText.ofStyled(date, NTextStyle.pale()));
         boolean verboseLog = false;//read from session or workspace;
         if (verboseLog) {
             sb.append(" ");
@@ -133,9 +132,7 @@ public class NLogRichFormatter2 {
             sb.append(duration);
             sb.append(") ");
         }
-        NText msgStr =
-                NTexts.of()
-                        .of(msg);
+        NText msgStr =NText.of(msg);
         sb.append(msgStr);
         sb.append(NNewLineMode.system().value());
         lastMillis = timestamp;

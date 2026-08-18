@@ -6,21 +6,23 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.ext.NServiceLoader;
 import net.thevpc.nuts.internal.rpi.NReflectRPI;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.reflect.NClassLoader;
-import net.thevpc.nuts.reflect.NMutableClassLoader;
+import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.atrifact.DefaultNClasspathEntry;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNMutableClassLoader;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.reflect.NScorable;
-import net.thevpc.nuts.reflect.NScore;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNReflectRPI implements NReflectRPI {
+    @Override
+    public NReflectRepository getDefaultReflectRepository() {
+        return NWorkspaceExt.of().getModel().getDefaultReflectRepository();
+    }
+
     public NClassLoader createImmutableClassLoader(String name, ClassLoader parent, NDefinition[] nodes, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
         return ((DefaultNExtensions) NExtensions.of()).getModel().createImmutableClassLoader(name,parent,
                 nodes==null?null:Arrays.stream(nodes).map(x->x==null?null:new DefaultNClasspathEntry(x)).filter(Objects::nonNull).toArray(NClasspathEntry[]::new)

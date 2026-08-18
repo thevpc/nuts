@@ -35,7 +35,7 @@ import java.io.InputStream;
 public interface NNonBlockingInputStream extends Closeable {
 
     static NNonBlockingInputStream of(InputStream base) {
-        return NIORPI.of().ofNonBlockingInputStream(base);
+        return NIORPI.of().createNonBlockingInputStream(base);
     }
 
     /**

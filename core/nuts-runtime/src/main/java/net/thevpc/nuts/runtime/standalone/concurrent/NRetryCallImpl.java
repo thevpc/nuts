@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCancelException;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NIllegalStateException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.util.NAssert;
@@ -195,7 +195,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
                                 Thread.sleep(wait.toMillis());
                             } catch (InterruptedException ie) {
                                 Thread.currentThread().interrupt();
-                                throw NExceptions.ofUncheckedException(ie);
+                                throw NException.ofUncheckedException(ie);
                             }
                         }
                     }
@@ -263,7 +263,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
                         return result;
                     }
                     case FAILED: {
-                        throw NExceptions.ofUncheckedException((Throwable) model.error());
+                        throw NException.ofUncheckedException((Throwable) model.error());
                     }
                     case RUNNING: {
                         throw new NIllegalStateException(NMsg.ofC("still running"));

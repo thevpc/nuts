@@ -656,7 +656,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         }
         if (x == null) {
             if (err) {
-                throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("svc var not found : %s",n));
+                throw NException.ofSafeIllegalArgumentException(NMsg.ofC("svc var not found : %s",n));
             } else {
                 x = image;
             }

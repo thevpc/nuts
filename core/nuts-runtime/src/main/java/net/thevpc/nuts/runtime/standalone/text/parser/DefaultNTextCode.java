@@ -27,7 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NImmutable;
@@ -61,10 +62,10 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
 
     @Override
     public NText highlight() {
-        NTexts txt = NTexts.of();
-        NCodeHighlighter t = ((DefaultNTexts) txt)
+        NTextRPI txt = NTextRPI.of();
+        NCodeHighlighter t = ((DefaultNTextRPI) txt)
                 .resolveCodeHighlighter(getKind());
-        return t.stringToText(text, txt);
+        return t.stringToText(text);
     }
 
     @Override

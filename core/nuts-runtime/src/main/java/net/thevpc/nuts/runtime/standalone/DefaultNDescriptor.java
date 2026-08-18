@@ -132,7 +132,7 @@ public class DefaultNDescriptor implements NDescriptor {
         if (properties == null || properties.size() == 0) {
             this.properties = null;
         } else {
-            DefaultNProperties p = new DefaultNProperties();
+            NProperties p = NProperties.of();
             p.addAll(properties);
             this.properties = p.toList();
         }

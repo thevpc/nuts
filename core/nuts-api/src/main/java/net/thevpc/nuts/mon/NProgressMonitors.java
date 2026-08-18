@@ -1,78 +1,78 @@
-package net.thevpc.nuts.mon;
-
-import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.text.NMsgTemplate;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NOptional;
-
-import java.io.PrintStream;
-import java.util.logging.Logger;
-
-public interface NProgressMonitors extends NComponent {
-    static NProgressMonitors of() {
-        return NExtensions.of(NProgressMonitors.class);
-    }
-
-
-    NOptional<NProgressMonitor> currentMonitor();
-
-    NProgressRunner ofRunner();
-
-    NProgressMonitor ofSilent();
-
-    NProgressMonitor[] ofSilent(int count);
-
-    boolean isSilent(NProgressMonitor monitor);
-
-    NProgressMonitor ofPrintStream(PrintStream printStream);
-
-    NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, PrintStream printStream);
-
-    NProgressMonitor ofPrintStream(NPrintStream printStream);
-
-    NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, NPrintStream printStream);
-
-    NProgressMonitor ofLogger(NMsgTemplate messageFormat, Logger printStream);
-
-    NProgressMonitor ofLogger(NMsgTemplate messageFormat, NLog printStream);
-
-    NProgressMonitor ofLogger(Logger logger);
-
-    NProgressMonitor ofLogger(NLog logger);
-
-    NProgressMonitor ofLogger(long milliseconds);
-
-    NProgressMonitor ofLogger();
-
-    NProgressMonitor ofOut(NMsgTemplate messageFormat);
-
-    NProgressMonitor ofSysOut();
-
-    NProgressMonitor ofSysErr();
-
-    NProgressMonitor ofSysErr(NMsgTemplate messageFormat);
-
-    NProgressMonitor ofOut();
-
-    NProgressMonitor ofErr();
-
-    NProgressMonitor ofErr(NMsgTemplate messageFormat);
-
-    NProgressMonitor ofLogger(NMsgTemplate message, long freq);
-
-    NProgressMonitor ofLogger(NMsgTemplate message, long freq, Logger out);
-
-    NProgressMonitor ofLogger(NMsgTemplate message, long freq, NLog out);
-
-    NProgressMonitor ofOut(long freq);
-
-    NProgressMonitor ofOut(NMsgTemplate message, long freq);
-
-    NProgressMonitor ofOut(NMsgTemplate message, long freq, PrintStream out);
-
-    NProgressMonitor of(NProgressMonitor monitor);
-
-    NProgressMonitor of(NProgressHandler monitor);
-}
+//package net.thevpc.nuts.mon;
+//
+//import net.thevpc.nuts.ext.NExtensions;
+//import net.thevpc.nuts.log.NLog;
+//import net.thevpc.nuts.text.NMsgTemplate;
+//import net.thevpc.nuts.io.NPrintStream;
+//import net.thevpc.nuts.spi.NComponent;
+//import net.thevpc.nuts.util.NOptional;
+//
+//import java.io.PrintStream;
+//import java.util.logging.Logger;
+//
+//public interface NProgressMonitors extends NComponent {
+//    static NProgressMonitors createProgressMonitor() {
+//        return NExtensions.of(NProgressMonitors.class);
+//    }
+//
+//
+//    NOptional<NProgressMonitor> currentProgressMonitor();
+//
+//    NProgressRunner ofRunner();
+//
+//    NProgressMonitor ofSilentProgressMonitor();
+//
+//    NProgressMonitor[] ofSilentProgressMonitor(int count);
+//
+//    boolean isSilentProgressMonitor(NProgressMonitor monitor);
+//
+//    NProgressMonitor ofPrintStreamProgressMonitor(PrintStream printStream);
+//
+//    NProgressMonitor ofPrintStreamProgressMonitor(NMsgTemplate messageFormat, PrintStream printStream);
+//
+//    NProgressMonitor ofPrintStreamProgressMonitor(NPrintStream printStream);
+//
+//    NProgressMonitor ofPrintStreamProgressMonitor(NMsgTemplate messageFormat, NPrintStream printStream);
+//
+//    NProgressMonitor ofLoggerProgressMonitor(NMsgTemplate messageFormat, Logger printStream);
+//
+//    NProgressMonitor ofLoggerProgressMonitor(NMsgTemplate messageFormat, NLog printStream);
+//
+//    NProgressMonitor ofLoggerProgressMonitor(Logger logger);
+//
+//    NProgressMonitor ofLoggerProgressMonitor(NLog logger);
+//
+//    NProgressMonitor ofLoggerProgressMonitor(long milliseconds);
+//
+//    NProgressMonitor ofLoggerProgressMonitor();
+//
+//    NProgressMonitor createOutProgressMonitor(NMsgTemplate messageFormat);
+//
+//    NProgressMonitor createSysOutProgressMonitor();
+//
+//    NProgressMonitor createSysErrProgressMonitor();
+//
+//    NProgressMonitor createSysErrProgressMonitor(NMsgTemplate messageFormat);
+//
+//    NProgressMonitor createOutProgressMonitor();
+//
+//    NProgressMonitor createErrProgressMonitor();
+//
+//    NProgressMonitor createErrProgressMonitor(NMsgTemplate messageFormat);
+//
+//    NProgressMonitor ofLoggerProgressMonitor(NMsgTemplate message, long freq);
+//
+//    NProgressMonitor ofLoggerProgressMonitor(NMsgTemplate message, long freq, Logger out);
+//
+//    NProgressMonitor ofLoggerProgressMonitor(NMsgTemplate message, long freq, NLog out);
+//
+//    NProgressMonitor createOutProgressMonitor(long freq);
+//
+//    NProgressMonitor createOutProgressMonitor(NMsgTemplate message, long freq);
+//
+//    NProgressMonitor createOutProgressMonitor(NMsgTemplate message, long freq, PrintStream out);
+//
+//    NProgressMonitor createProgressMonitor(NProgressMonitor monitor);
+//
+//    NProgressMonitor createProgressMonitor(NProgressHandler monitor);
+//}

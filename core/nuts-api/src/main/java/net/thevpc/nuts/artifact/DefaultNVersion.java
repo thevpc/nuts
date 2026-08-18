@@ -26,6 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -255,7 +256,7 @@ public class DefaultNVersion implements NVersion {
     @Override
     public NVersionFilter toFilter(NVersionComparator comparator) {
         // some versions are invalid (in maven pom.xml) they will be supposed empty
-        return NVersionFilters.of().byValue(expression,comparator).orElseGet(()->NVersionFilters.of().always());
+        return NVersionFilter.ofValue(expression,comparator).orElseGet(()-> NVersionFilterRPI.of().always());
     }
 
     @Override

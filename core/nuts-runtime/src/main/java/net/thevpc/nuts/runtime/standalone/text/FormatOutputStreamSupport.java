@@ -29,7 +29,7 @@ public class FormatOutputStreamSupport {
     }
 
     public FormatOutputStreamSupport setParser(NTextParser parser) {
-        this.parser = parser == null ? NTexts.of().parser() : parser;
+        this.parser = parser == null ? NTextParser.of() : parser;
         return this;
     }
 

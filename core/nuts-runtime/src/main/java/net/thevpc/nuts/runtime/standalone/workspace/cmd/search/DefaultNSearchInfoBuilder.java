@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.artifact.NDescriptorFlag;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -87,7 +87,7 @@ public class DefaultNSearchInfoBuilder {
                         )).collect(Collectors.toList())
         );
 
-        NDefinitionFilters d = NDefinitionFilters.of();
+        NDefinitionFilterRPI d = NDefinitionFilterRPI.of();
         NDefinitionFilter _defFilter = d.always().and(defaultNSearchCmd.definitionFilter());
 
         if (defaultNSearchCmd.execType() != null) {
@@ -128,7 +128,7 @@ public class DefaultNSearchInfoBuilder {
         }
         return new DefaultNSearchInfo(
                 regularIds.toArray(new DefaultNSearchInfo.RegularId[0]),
-                NRepositoryFilters.of().always()
+                NRepositoryFilter.ofAlways()
                         .and(defaultNSearchCmd.repositoryFilter())
                         .and(NDefinitionFilterUtils.toRepositoryFilter(_defFilter)),
                 _defFilter
@@ -148,7 +148,7 @@ public class DefaultNSearchInfoBuilder {
                 if (!nutsId.artifactId().contains("*")) {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of()
                             .toRepositorySPI(NWorkspaceExt.of().getInstalledRepository());
-                    NIterator<NId> it = repoSPI.search().fetchMode(NFetchMode.LOCAL).filter(NDefinitionFilters.of().byName(
+                    NIterator<NId> it = repoSPI.search().fetchMode(NFetchMode.LOCAL).filter(NDefinitionFilter.ofName(
                             nutsId.builder().groupId("").build().toString()
                     )).getResult();
                     installedIds = NIteratorUtils.toList(it);

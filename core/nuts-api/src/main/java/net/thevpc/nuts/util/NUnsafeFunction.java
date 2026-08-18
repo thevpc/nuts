@@ -59,6 +59,6 @@ public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NRedescriba
 
     @Override
     default NElement describe() {
-        return NElements.of().toElement("unsafe function");
+        return NElement.of("unsafe function");
     }
 }

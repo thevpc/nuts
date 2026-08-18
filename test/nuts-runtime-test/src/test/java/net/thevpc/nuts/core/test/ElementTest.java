@@ -25,13 +25,11 @@
  */
 package net.thevpc.nuts.core.test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.*;
 
@@ -245,8 +243,6 @@ public class ElementTest {
     @Test
     public void testIndestructibleObjects1() {
         NText styledText = NText.ofStyled("Hello", NTextStyle.success());
-        NElements e = NElements.of();
-
         //create a composite object with a styled element
         Map<String, Object> h = new HashMap<>();
         h.put("a", "13");
@@ -256,7 +252,7 @@ public class ElementTest {
 
         {
             //styled element are destructed to strings
-            q = e.toElement(h);
+            q = NElement.of(h);
             expected = NElement.ofObjectBuilder()
                     .set("a", "13")
                     .set("b", NElement.ofCustom(styledText)).build();
@@ -314,8 +310,19 @@ public class ElementTest {
                     .set("b",
                             NElement.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
                     ).build();
-
+            e.setNtf(false);
             q = e.toElement(b);
+            q=q.transform(new NElementTransform() {
+                @Override
+                public List<NElement> preTransform(NElementTransformContext context) {
+                    NElement ee = context.element();
+                    if(ee instanceof NCustomElement){
+                        Object v = ((NCustomElement) ee).value();
+                        ee=e.toElement(v);
+                    }
+                    return Collections.singletonList(ee);
+                }
+            }).get(0);
             expected = NElement.ofObjectBuilder()
                     .set("a", "13")
                     .set("b", "Hello").build();

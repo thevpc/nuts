@@ -5,6 +5,8 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -223,7 +225,7 @@ public class InstallHelper {
                                     .withIntent(NMsgIntent.ALERT)
                             );
                     failedIdList.add(info.id);
-                    failedErrorList.add(NExceptions.ofUncheckedException(ex));
+                    failedErrorList.add(NException.ofUncheckedException(ex));
                     if (session.isPlainTrace()) {
                         if (!NIO.of().defaultTerminal().ask()
                                 .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
@@ -322,7 +324,7 @@ public class InstallHelper {
 //        // reload def
 //        NFetchCmd fetch2 = NFetchCmd.of(def.getId())
 //                .setDependencyFilter(NDependencyFilters.of().byRunnable())
-//                .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
+//                .setRepositoryFilter(NRepositoryFilter.installedRepo())
 //                .failFast();
 //        if (requireDependencies && def.getDependencies().isPresent()) {
 //            fetch2.setDependencyFilter(def.getDependencies().get().filter());
@@ -361,10 +363,9 @@ public class InstallHelper {
             NWorkspaceUtils wu = NWorkspaceUtils.of();
 
             if (session.isPlainTrace()) {
-                NTexts text = NTexts.of();
                 if (updateMode) {
                     NOut.println(NMsg.ofC("%s %s ...",
-                            text.ofStyled("update", NTextStyle.warn()),
+                            NText.ofStyled("update", NTextStyle.warn()),
                             def.id().longId()
                     ));
                 } else if (info.flags.require) {
@@ -379,12 +380,12 @@ public class InstallHelper {
                     if (reinstall) {
                         session.out().println(NMsg.ofC(
                                 "%s %s ...",
-                                text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
+                                NText.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
                                 def.id().longId()
                         ));
                     } else {
                         session.out().println(NMsg.ofC("%s %s ...",
-                                text.ofStyled("install", NTextStyle.success()),
+                                NText.ofStyled("install", NTextStyle.success()),
                                 def.id().longId()
                         ));
                     }
@@ -456,8 +457,8 @@ public class InstallHelper {
                 }
                 //now should reload definition from install repo
                 NFetch fetch2 = NFetch.of(executionContext.definition().id())
-                        .dependencyFilter(NDependencyFilters.of().byRunnable())
-                        .repositoryFilter(NRepositoryFilters.of().installedRepo())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
+                        .repositoryFilter(NRepositoryFilter.ofInstalledRepo())
                         .failFast(true);
                 if (def.dependencies().isPresent()
                         && def.dependencies().get().filter() != null
@@ -479,7 +480,7 @@ public class InstallHelper {
                     if (installerComponent != null) {
                         try {
                             installerComponent.update(executionContext);
-                        } catch (NReadOnlyException ex) {
+                        } catch (NReadOnlyWorkspaceException ex) {
                             throw ex;
                         } catch (Exception ex) {
                             if (session.isPlainTrace()) {
@@ -503,7 +504,7 @@ public class InstallHelper {
                         RuntimeException updateError = null;
                         try {
                             installerComponent.install(executionContext);
-                        } catch (NReadOnlyException ex) {
+                        } catch (NReadOnlyWorkspaceException ex) {
                             throw ex;
                         } catch (RuntimeException ex) {
                             if (session.isPlainTrace()) {
@@ -559,7 +560,7 @@ public class InstallHelper {
                 NDependencies nDependencies = null;
                 if (!def.dependencies().isPresent()) {
                     nDependencies = NFetch.of(def.id())
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .getResultDefinition().dependencies().get();
                 } else {
                     nDependencies = def.dependencies().get();
@@ -575,9 +576,8 @@ public class InstallHelper {
         }
         if (session.isPlainTrace()) {
             String setAsDefaultString = "";
-            NTexts text = NTexts.of();
             if (info.flags.switchVersion) {
-                setAsDefaultString = " set as " + text.ofBuilder().append("default", NTextStyle.primary1()) + ".";
+                setAsDefaultString = " set as " + NTextBuilder.of().append("default", NTextStyle.primary1()) + ".";
             }
             if (newNInstallInformation != null
                     && (newNInstallInformation.isJustInstalled()
@@ -585,13 +585,13 @@ public class InstallHelper {
                 NText installedString = null;
                 if (newNInstallInformation != null) {
                     if (newNInstallInformation.isJustReInstalled()) {
-                        installedString = text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
+                        installedString = NText.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
                     } else if (newNInstallInformation.isJustInstalled()) {
-                        installedString = text.ofStyled("install", NTextStyle.success());
+                        installedString = NText.ofStyled("install", NTextStyle.success());
                     } else if (newNInstallInformation.isJustReRequired()) {
-                        installedString = text.ofStyled("re-require", NTextStyles.of(NTextStyle.info(), NTextStyle.underlined()));
+                        installedString = NText.ofStyled("re-require", NTextStyles.of(NTextStyle.info(), NTextStyle.underlined()));
                     } else if (newNInstallInformation.isJustRequired()) {
-                        installedString = text.ofStyled("require", NTextStyle.info());
+                        installedString = NText.ofStyled("require", NTextStyle.info());
                     }
                 }
                 if (installedString != null) {
@@ -604,7 +604,7 @@ public class InstallHelper {
                                     def.id().longId(),
                                     remoteRepo ? "remote" : "local",
                                     def.repositoryName(),
-                                    text.of(setAsDefaultString)
+                                    NText.of(setAsDefaultString)
                             ));
                         }
                     } else if (!def.content().get().isUserCache()) {
@@ -616,7 +616,7 @@ public class InstallHelper {
                                         remoteRepo ? "remote" : "local",
                                         def.repositoryName(),
                                         def.content().orNull(),
-                                        text.of(setAsDefaultString)
+                                        NText.of(setAsDefaultString)
                                 ));
                             }
                         } else {
@@ -625,7 +625,7 @@ public class InstallHelper {
                                         def.id().longId(),
                                         remoteRepo ? "remote" : "local",
                                         def.repositoryName(),
-                                        text.of(setAsDefaultString)));
+                                        NText.of(setAsDefaultString)));
                             }
                         }
                     } else {
@@ -637,7 +637,7 @@ public class InstallHelper {
                                         remoteRepo ? "remote" : "local",
                                         def.repositoryName(),
                                         def.content().orNull(),
-                                        text.of(setAsDefaultString)));
+                                        NText.of(setAsDefaultString)));
                             }
                         } else {
                             if (session.isPlainTrace()) {
@@ -646,7 +646,7 @@ public class InstallHelper {
                                         def.id().longId(),
                                         remoteRepo ? "remote" : "local",
                                         def.repositoryName(),
-                                        text.of(setAsDefaultString)
+                                        NText.of(setAsDefaultString)
                                 ));
                             }
                         }
@@ -670,8 +670,8 @@ public class InstallHelper {
                         out.println(NMsg.ofC("%s  %s %s.%s",
                                 installedString,
                                 def.id().longId(),
-                                text.ofStyled("successfully", NTextStyle.success()),
-                                text.of(setAsDefaultString)
+                                NText.ofStyled("successfully", NTextStyle.success()),
+                                NText.of(setAsDefaultString)
                         ));
                     }
                 }
@@ -698,22 +698,22 @@ public class InstallHelper {
             switch (def.descriptor().idType()) {
                 case API: {
                     oldDef = NFetch.of(NId.getApi(Nuts.version()).get())
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .fetchStrategy(NFetchStrategy.ONLINE)
                             .failFast(false).getResultDefinition();
                     break;
                 }
                 case RUNTIME: {
                     oldDef = NFetch.of(ws.runtimeId())
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .fetchStrategy(NFetchStrategy.ONLINE)
                             .failFast(false).getResultDefinition();
                     break;
                 }
                 default: {
                     oldDef = NSearch.of().addId(def.id().shortId())
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
-                            .definitionFilter(NDefinitionFilters.of().byDeployed(true))
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
+                            .definitionFilter(NDefinitionFilter.ofDeployed(true))
                             .failFast(false).getResultDefinitions()
                             .findFirst().orNull();
                     break;
@@ -748,10 +748,9 @@ public class InstallHelper {
         if (!all.isEmpty()) {
             NSession session = NSession.of();
             if (NOut.isPlain()) {
-                NTexts text = NTexts.of();
-                NText kind = text.ofStyled(skind, NTextStyle.primary2());
+                NText kind = NText.ofStyled(skind, NTextStyle.primary2());
                 NText action =
-                        text.ofStyled(saction,
+                        NText.ofStyled(saction,
                                 saction.equals("set as default") ? NTextStyle.primary3() :
                                         saction.equals("ignored") ? NTextStyle.pale() :
                                                 NTextStyle.primary1()

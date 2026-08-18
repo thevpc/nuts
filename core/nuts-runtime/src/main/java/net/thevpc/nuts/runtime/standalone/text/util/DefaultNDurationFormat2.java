@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.text.util;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.mon.NDurationFormatMode;
 import net.thevpc.nuts.util.NStringUtils;
@@ -207,8 +207,8 @@ public class DefaultNDurationFormat2 {
         return sb.build();
     }
 
-    public NText format(NDuration duration, NTexts texts) {
-        NTextBuilder sb = texts.ofBuilder();
+    public NText format(NDuration duration, NTextRPI texts) {
+        NTextBuilder sb = texts.createBuilder();
         print(duration, sb);
         return sb.build();
     }

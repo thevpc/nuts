@@ -350,10 +350,12 @@ public class DefaultNReflectType implements NReflectType {
         if (!cleanInstanceCreated) {
             synchronized (this) {
                 if (!cleanInstanceCreated) {
-                    try {
-                        cleanInstance = newInstance();
-                    } catch (Exception ex) {
-                        //ignore any error...
+                    if (!isPrimitive()) {
+                        try {
+                            cleanInstance = newInstance();
+                        } catch (Exception ex) {
+                            //ignore any error...
+                        }
                     }
                     cleanInstanceCreated = true;
                 }

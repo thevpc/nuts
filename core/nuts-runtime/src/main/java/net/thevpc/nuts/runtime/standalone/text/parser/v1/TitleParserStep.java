@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class TitleParserStep extends ParserStep {
     public NText toText() {
         String s = start.toString();
 //        NTexts text = ws.text();
-        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of();
+        DefaultNTextRPI factory0 = (DefaultNTextRPI) NTextRPI.of();
         String s0=s.trim();
         NText child=null;
         if (children.size() == 1) {

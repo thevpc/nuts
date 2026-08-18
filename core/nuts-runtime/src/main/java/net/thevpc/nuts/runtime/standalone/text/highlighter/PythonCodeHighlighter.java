@@ -4,7 +4,6 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
@@ -69,12 +68,12 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
 
@@ -93,7 +92,7 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
                 while (ar.hasNext() && ar.peekChar() != '\n') {
                     sb.append(ar.readChar());
                 }
-                all.add(txt.ofStyled(sb.toString(), NTextStyle.comments()));
+                all.add(NText.ofStyled(sb.toString(), NTextStyle.comments()));
                 continue;
             }
 
@@ -104,19 +103,19 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
                 while (ar.hasNext() && (Character.isLetterOrDigit(ar.peekChar()) || ar.peekChar() == '_' || ar.peekChar() == '.')) {
                     sb.append(ar.readChar());
                 }
-                all.add(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
+                all.add(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
                 continue;
             }
 
             // --- String literals: f/b/r/u prefixes + triple or single quotes ---
             if (isStringStart(ar)) {
-                all.addAll(readString(ar, txt));
+                all.addAll(readString(ar));
                 continue;
             }
 
             // --- Numbers ---
             if (Character.isDigit(c) || (c == '.' && ar.hasNext(1) && Character.isDigit(ar.peekChar(1)))) {
-                all.addAll(readNumber(ar, txt));
+                all.addAll(readNumber(ar));
                 continue;
             }
 
@@ -128,12 +127,12 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
                 }
                 String word = sb.toString();
                 if (keywords.contains(word)) {
-                    all.add(txt.ofStyled(word, NTextStyle.keyword()));
+                    all.add(NText.ofStyled(word, NTextStyle.keyword()));
                 } else if (builtins.contains(word)) {
                     // use 'option' style to visually separate builtins from user identifiers
-                    all.add(txt.ofStyled(word, NTextStyle.option()));
+                    all.add(NText.ofStyled(word, NTextStyle.option()));
                 } else {
-                    all.add(txt.ofPlain(word));
+                    all.add(NText.ofPlain(word));
                 }
                 continue;
             }
@@ -163,15 +162,15 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
                 case '^':
                 case '~':
                 case '.':
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     break;
                 default:
-                    all.add(txt.ofPlain(String.valueOf(ar.readChar())));
+                    all.add(NText.ofPlain(String.valueOf(ar.readChar())));
                     break;
             }
         }
 
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 
     // -------------------------------------------------------------------------
@@ -204,7 +203,7 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
     // String reading
     // -------------------------------------------------------------------------
 
-    private List<NText> readString(StringReaderExt ar, NTexts txt) {
+    private List<NText> readString(StringReaderExt ar) {
         List<NText> result = new ArrayList<>();
 
         // collect prefix
@@ -222,9 +221,9 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
                 && ar.peekChar(2) == quote;
 
         if (triple) {
-            result.addAll(readTripleString(ar, txt, prefix.toString(), quote, isFString));
+            result.addAll(readTripleString(ar, prefix.toString(), quote, isFString));
         } else {
-            result.addAll(readSingleLineString(ar, txt, prefix.toString(), quote, isFString));
+            result.addAll(readSingleLineString(ar, prefix.toString(), quote, isFString));
         }
         return result;
     }
@@ -233,7 +232,7 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
      * Triple-quoted string: may span multiple lines.
      * f-strings: {expr} blocks are highlighted as plain (expression content is arbitrary).
      */
-    private List<NText> readTripleString(StringReaderExt ar, NTexts txt, String prefix, char quote, boolean isFString) {
+    private List<NText> readTripleString(StringReaderExt ar, String prefix, char quote, boolean isFString) {
         List<NText> result = new ArrayList<>();
         StringBuilder current = new StringBuilder();
 
@@ -265,21 +264,21 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
                     current.append(ar.readChar());
                     continue;
                 }
-                flushString(current, txt, result);
-                result.addAll(readFStringExpr(ar, txt));
+                flushString(current, result);
+                result.addAll(readFStringExpr(ar));
                 continue;
             }
             current.append(ar.readChar());
         }
 
-        flushString(current, txt, result);
+        flushString(current, result);
         return result;
     }
 
     /**
      * Single-line string (single or double quoted, no newline crossing).
      */
-    private List<NText> readSingleLineString(StringReaderExt ar, NTexts txt, String prefix, char quote, boolean isFString) {
+    private List<NText> readSingleLineString(StringReaderExt ar, String prefix, char quote, boolean isFString) {
         List<NText> result = new ArrayList<>();
         StringBuilder current = new StringBuilder();
 
@@ -304,14 +303,14 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
                     current.append(ar.readChar());
                     continue;
                 }
-                flushString(current, txt, result);
-                result.addAll(readFStringExpr(ar, txt));
+                flushString(current, result);
+                result.addAll(readFStringExpr(ar));
                 continue;
             }
             current.append(ar.readChar());
         }
 
-        flushString(current, txt, result);
+        flushString(current, result);
         return result;
     }
 
@@ -320,7 +319,7 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
      * The braces are styled as separator; the content inside as plain
      * (it's arbitrary Python — deep re-parsing would be recursive overkill).
      */
-    private List<NText> readFStringExpr(StringReaderExt ar, NTexts txt) {
+    private List<NText> readFStringExpr(StringReaderExt ar) {
         List<NText> result = new ArrayList<>();
         StringBuilder expr = new StringBuilder();
         expr.append(ar.readChar()); // '{'
@@ -331,13 +330,13 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
             if (c == '{') depth++;
             else if (c == '}') depth--;
         }
-        result.add(txt.ofStyled(expr.toString(), NTextStyle.separator()));
+        result.add(NText.ofStyled(expr.toString(), NTextStyle.separator()));
         return result;
     }
 
-    private void flushString(StringBuilder sb, NTexts txt, List<NText> result) {
+    private void flushString(StringBuilder sb, List<NText> result) {
         if (sb.length() > 0) {
-            result.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+            result.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
     }
@@ -350,7 +349,7 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
      * Handles: integers, floats, hex (0x), octal (0o), binary (0b),
      * underscores as digit separators (1_000_000), and exponents (1.5e-3).
      */
-    private List<NText> readNumber(StringReaderExt ar, NTexts txt) {
+    private List<NText> readNumber(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
 
         if (ar.peekChar() == '0' && ar.hasNext(1)) {
@@ -358,17 +357,17 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
             if (next == 'x' || next == 'X') {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && isHexDigitOrUnderscore(ar.peekChar())) sb.append(ar.readChar());
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
             if (next == 'o' || next == 'O') {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && (isOctalDigit(ar.peekChar()) || ar.peekChar() == '_')) sb.append(ar.readChar());
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
             if (next == 'b' || next == 'B') {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && (ar.peekChar() == '0' || ar.peekChar() == '1' || ar.peekChar() == '_')) sb.append(ar.readChar());
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
         }
 
@@ -393,7 +392,7 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
             sb.append(ar.readChar());
         }
 
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
     }
 
     private boolean isHexDigitOrUnderscore(char c) {

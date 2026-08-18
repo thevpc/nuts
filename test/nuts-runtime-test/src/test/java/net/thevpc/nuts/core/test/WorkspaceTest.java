@@ -13,6 +13,7 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.expr.NGlob;
+import net.thevpc.nuts.internal.rpi.*;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
@@ -254,23 +255,23 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NIdFilters r = NIdFilters.of();
+            NIdFilterRPI r = NIdFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
-            NVersionFilters r = NVersionFilters.of();
+            NVersionFilterRPI r = NVersionFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDependencyFilters r = NDependencyFilters.of();
+            NDependencyFilterRPI r = NDependencyFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDefinitionFilters r = NDefinitionFilters.of();
+            NDefinitionFilterRPI r = NDefinitionFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
-            NRepositoryFilters r = NRepositoryFilters.of();
+            NRepositoryFilterRPI r = NRepositoryFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -302,7 +303,7 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NTexts r = NTexts.of();
+            NTextRPI r = NTextRPI.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -444,11 +445,11 @@ public class WorkspaceTest {
         if (NDI_COMPANIONS > 0) {
             NId nshId = null;
             try {
-                nshId = NSearch.of("nsh").definitionFilter(NDefinitionFilters.of().byInstalled(true))
+                nshId = NSearch.of("nsh").definitionFilter(NDefinitionFilter.ofInstalled(true))
                         .distinct(true).getResultIds()
                         .findSingleton().get();
             } catch (Exception ex) {
-                nshId = NSearch.of("nsh").definitionFilter(NDefinitionFilters.of().byInstalled(true))
+                nshId = NSearch.of("nsh").definitionFilter(NDefinitionFilter.ofInstalled(true))
                         .distinct(true).getResultIds()
                         .findSingleton().get();
             }

@@ -258,7 +258,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
             return validateInfo(info);
         } else {
-            throw NExceptions.ofSafeAssertException(NMsg.ofC("invalid source %s", source));
+            throw NException.ofSafeAssertException(NMsg.ofC("invalid source %s", source));
         }
     }
 

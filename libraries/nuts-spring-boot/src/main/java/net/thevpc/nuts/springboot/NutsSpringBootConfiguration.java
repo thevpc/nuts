@@ -2,12 +2,8 @@ package net.thevpc.nuts.springboot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.app.*;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NIdFilters;
 import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NConcurrent;
 
 import net.thevpc.nuts.concurrent.NScopedStack;
@@ -21,7 +17,6 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.mon.NProgressMonitors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
@@ -75,34 +70,6 @@ public class NutsSpringBootConfiguration {
     }
 
     @Bean
-    public NIdFilters nutsIdFilters(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NIdFilters.of();
-        });
-    }
-
-    @Bean
-    public NDependencyFilters nutsDependencyFilters(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NDependencyFilters.of();
-        });
-    }
-
-    @Bean
-    public NDefinitionFilters nutsDefinitionFilters(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NDefinitionFilters.of();
-        });
-    }
-
-    @Bean
-    public NProgressMonitors nutsProgressMonitors(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NProgressMonitors.of();
-        });
-    }
-
-    @Bean
     public NIO nutsIO(@Autowired ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).callWith(() -> {
             return NIO.of();
@@ -123,20 +90,13 @@ public class NutsSpringBootConfiguration {
         });
     }
 
-    @Bean
-    public NCmdLines nutsCmdLines(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NCmdLines.of();
-        });
-    }
-
     private Object resolveValidSpringBootApplication(NWorkspace workspace, ApplicationArguments applicationArguments) {
         Map<String, Object> bootApps = new HashMap<>();
         for (Map.Entry<String, Object> e : sac.getBeansWithAnnotation(SpringBootApplication.class).entrySet()) {
             Object o = e.getValue();
             if (o instanceof NApplication) {
                 return o;
-            } else if (NApplications.isAnnotatedApplicationClass(o.getClass())) {
+            } else if (NApplication.isAnnotatedApplicationClass(o.getClass())) {
                 return o;
             } else {
                 bootApps.put(e.getKey(), o);
@@ -159,7 +119,7 @@ public class NutsSpringBootConfiguration {
             if (validAppBean instanceof NApplication) {
                 validApp = (NApplication) validAppBean;
             } else {
-                validApp = NApplications.createApplicationInstanceFromAnnotatedInstance(validAppBean);
+                validApp = NApplication.createApplicationInstanceFromAnnotatedInstance(validAppBean);
             }
         }catch (Exception e) {
             NLog.of(NApplication.class).info(NMsg.ofC("Error configuring the application : %s",e));

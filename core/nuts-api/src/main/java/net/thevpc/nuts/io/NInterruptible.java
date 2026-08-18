@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 public interface NInterruptible<T> {
     static NInterruptible<InputStream> ofInputStream(InputStream base) {
-        return NIORPI.of().ofInterruptible(base);
+        return NIORPI.of().createInterruptible(base);
     }
 
     void interrupt() throws NInterruptedException;

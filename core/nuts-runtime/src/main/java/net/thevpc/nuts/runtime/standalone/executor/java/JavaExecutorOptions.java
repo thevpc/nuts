@@ -4,10 +4,12 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
 
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.runtime.standalone.atrifact.DefaultNClasspathEntry;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -18,7 +20,7 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.*;
 
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
@@ -135,8 +137,8 @@ public final class JavaExecutorOptions {
                 })
                 .requireAll();
 
-        dependencyFilter = NDependencyFilters.of().byScope(NDependencyScopePattern.RUN)
-                .and(NDependencyFilters.of().byOptional(acceptOptional));
+        dependencyFilter = NDependencyFilter.ofScope(NDependencyScopePattern.RUN)
+                .and(NDependencyFilter.ofOptional(acceptOptional));
 
         boolean cached = NSession.of().isCached() && NSession.of().fetchStrategy().orNull() != NFetchStrategy.REMOTE;
         NPath cacheFile = null;
@@ -302,11 +304,10 @@ public final class JavaExecutorOptions {
                         ) {
                             throw new NExecutionException(NMsg.ofC("multiple runnable classes detected : %s", possibleClasses), NExecutionException.ERROR_1);
                         }
-                        NTexts text = NTexts.of();
-                        NTextBuilder msgString = text.ofBuilder();
+                        NTextBuilder msgString = NTextBuilder.of();
 
                         msgString.append("multiple runnable classes detected  - actually ")
-                                .append(text.ofStyled("" + possibleClasses.size(), NTextStyle.primary5()))
+                                .append(NText.ofStyled("" + possibleClasses.size(), NTextStyle.primary5()))
                                 .append(" . Select one :\n");
                         int x = ((int) Math.log(possibleClasses.size())) + 2;
                         for (int i = 0; i < possibleClasses.size(); i++) {

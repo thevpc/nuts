@@ -55,7 +55,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     static NInputSource of(byte[] bytes) {
-        return bytes == null ? null : NIORPI.of().ofInputSource(bytes);
+        return bytes == null ? null : NIORPI.of().createInputSource(bytes);
     }
 
     /**
@@ -65,7 +65,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
      * @since 1.0.0
      */
     static NInputSource of(char[] chars) {
-        return chars == null ? null : NIORPI.of().ofInputSource(chars);
+        return chars == null ? null : NIORPI.of().createInputSource(chars);
     }
 
     /**
@@ -75,36 +75,36 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
      * @since 1.0.0
      */
     static NInputSource of(String stringValue) {
-        return stringValue == null ? null : NIORPI.of().ofInputSource(stringValue);
+        return stringValue == null ? null : NIORPI.of().createInputSource(stringValue);
     }
 
     static NInputSource ofEmpty() {
-        return NIORPI.of().ofEmptyInputSource();
+        return NIORPI.of().createEmptyInputSource();
     }
 
     static NInputSource of(InputStream inputSource) {
-        return inputSource == null ? null : NIORPI.of().ofInputSource(inputSource);
+        return inputSource == null ? null : NIORPI.of().createInputSource(inputSource);
     }
 
     static NInputSource ofMultiRead(NInputSource source) {
-        return source == null ? null : NIORPI.of().ofMultiRead(source);
+        return source == null ? null : NIORPI.of().createMultiRead(source);
     }
 
     static NInputSource of(InputStream inputStream, NContentMetadata metadata) {
-        return inputStream == null ? null : NIORPI.of().ofInputSource(inputStream, metadata);
+        return inputStream == null ? null : NIORPI.of().createInputSource(inputStream, metadata);
     }
 
     static NInputSource of(Reader reader, NContentMetadata metadata) {
-        return reader == null ? null : NIORPI.of().ofInputSource(reader, metadata);
+        return reader == null ? null : NIORPI.of().createInputSource(reader, metadata);
     }
 
     static NInputSource of(Reader reader) {
-        return reader == null ? null : NIORPI.of().ofInputSource(reader);
+        return reader == null ? null : NIORPI.of().createInputSource(reader);
     }
 
 
     static NInputSource of(byte[] bytes, NContentMetadata metadata) {
-        return bytes == null ? null : NIORPI.of().ofInputSource(bytes, metadata);
+        return bytes == null ? null : NIORPI.of().createInputSource(bytes, metadata);
     }
 
     static NInputSource of(NInputStreamProvider other) {
@@ -114,7 +114,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     static NInputSource of(NInputStreamProvider other, NContentMetadata metadata) {
         return other == null ? null :
                 (other instanceof NInputSource && metadata == null) ? (NInputSource) other :
-                        NIORPI.of().ofInputSource(other, metadata);
+                        NIORPI.of().createInputSource(other, metadata);
     }
 
     static NInputSource of(NReaderProvider other) {
@@ -124,7 +124,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     static NInputSource of(NReaderProvider other, NContentMetadata metadata) {
         return other == null ? null :
                 (other instanceof NInputSource && metadata == null) ? (NInputSource) other :
-                        NIORPI.of().ofInputSource(other, metadata);
+                        NIORPI.of().createInputSource(other, metadata);
     }
 
     byte[] readBytes();

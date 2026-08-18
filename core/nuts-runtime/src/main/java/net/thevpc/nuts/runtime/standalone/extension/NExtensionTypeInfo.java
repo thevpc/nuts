@@ -115,7 +115,7 @@ public class NExtensionTypeInfo<T> {
                     if (LOG().isLoggable(Level.CONFIG)) {
                         switch (apiType.getName()) {
                             //skip logging for NTexts to avoid infinite recursion
-                            case "net.thevpc.nuts.text.NTexts": {
+                            case "net.thevpc.nuts.internal.rpi.NTexts": {
                                 break;
                             }
                             default: {

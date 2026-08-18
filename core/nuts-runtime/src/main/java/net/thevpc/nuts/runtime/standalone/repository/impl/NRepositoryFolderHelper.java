@@ -19,6 +19,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
@@ -272,9 +273,9 @@ public class NRepositoryFolderHelper {
                             .build()
             ).build();
         }
-        NDefinitionFilter filter2 = NDefinitionFilters.of().all(
+        NDefinitionFilter filter2 = NDefinitionFilterRPI.of().all(
                 filter,
-                NDefinitionFilters.of().byName(id.shortName())
+                NDefinitionFilter.ofName(id.shortName())
         );
         return findInFolder(getRelativeLocalGroupAndArtifactFile(id), filter2,
                 deep ? Integer.MAX_VALUE : 1

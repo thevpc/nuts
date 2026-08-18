@@ -13,8 +13,8 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
     int paramIndex = 0;
     private static Pattern CFORMAT_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
 
-    public NMsgCFormatHelper(NMsg m, NTexts txt) {
-        super(m, txt);
+    public NMsgCFormatHelper(NMsg m) {
+        super(m);
     }
 
 
@@ -73,12 +73,12 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
                     } else if (NTextUtils.isSpecialLiteral(a)) {
                         StringBuilder sb2 = new StringBuilder();
                         new Formatter(sb2, locale).format(part.getValue(), a);
-                        sb.append(txt.ofStyled(sb2.toString(), NTextUtils.getSpecialLiteralType(a)));
+                        sb.append(NText.ofStyled(sb2.toString(), NTextUtils.getSpecialLiteralType(a)));
                     } else {
 //                                StringBuilder sb2 = new StringBuilder();
 //                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
 //                                sb.append(sb2);
-                        NText u = (a instanceof NText) ? (NText) a : txt.of(a);
+                        NText u = (a instanceof NText) ? (NText) a : NText.of(a);
                         if (u.type() == NTextType.PLAIN) {
                             sb.append(NText.ofPlain(doFormatPlain(((NTextPlain) u).value(), part.getValue())));
                         } else if (u.type() == NTextType.STYLED && ((NTextStyled) u).child().type() == NTextType.PLAIN) {

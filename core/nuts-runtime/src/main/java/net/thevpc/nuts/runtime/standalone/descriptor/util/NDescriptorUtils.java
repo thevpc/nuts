@@ -370,7 +370,7 @@ public class NDescriptorUtils {
         String n_desc = CoreNUtils.applyStringProperties(b.description(), map);
         NArtifactCall n_executor = b.executor();
         NArtifactCall n_installer = b.installer();
-        DefaultNProperties n_props = new DefaultNProperties();
+        NProperties n_props = NProperties.of();
         for (NDescriptorProperty property : b.properties()) {
             String v = property.value().asString().get();
             if (CoreStringUtils.containsVars("${")) {
@@ -431,7 +431,7 @@ public class NDescriptorUtils {
         String n_desc = CoreNUtils.applyStringProperties(b.description(), map);
         NArtifactCall n_executor = b.executor();
         NArtifactCall n_installer = b.installer();
-        DefaultNProperties n_props = new DefaultNProperties();
+        NProperties n_props = NProperties.of();
         for (NDescriptorProperty property : b.properties()) {
             String v = property.value().asString().get();
             if (CoreStringUtils.containsVars("${")) {

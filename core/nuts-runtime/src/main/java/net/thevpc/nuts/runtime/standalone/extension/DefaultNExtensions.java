@@ -9,19 +9,21 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.internal.rpi.NReflectRPI;
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
+import net.thevpc.nuts.internal.rpi.NLogRPI;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
 import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
+import net.thevpc.nuts.runtime.standalone.log.DefaultNLogRPI;
+import net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectRPI;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.log.NLogs;
-import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NMsg;
 
 import java.net.URL;
@@ -78,56 +80,12 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     public <T, V> NOptional<T> createSupported(Class<T> serviceType, V criteriaType) {
-        switch (serviceType.getName()) {
-            case "net.thevpc.nuts.log.NLogs": {
-                NLogs t = wsModel.defaultNLogs;
-                if (t == null) {
-                    t = new DefaultNLogs();
-                    wsModel.defaultNLogs = t;
-                }
-                return NOptional.of((T) t);
-            }
-            //log will need Element Factory so...
-            case "net.thevpc.nuts.elem.NElementFactory": {
-                NElementFactory t = wsModel.defaultNElementFactory;
-                if (t == null) {
-                    t = new DefaultNElementFactory();
-                    wsModel.defaultNElementFactory = t;
-                }
-                return NOptional.of((T) t);
-            }
-            //log will need NCollectionsRPI so...
-            case "net.thevpc.nuts.internal.rpi.NUtilsRPI": {
-                NUtilsRPI t = wsModel.defaultNUtilsRPI;
-                if (t == null) {
-                    t = new DefaultNUtilsRPI();
-                    wsModel.defaultNUtilsRPI = t;
-                }
-                return NOptional.of((T) t);
-            }
+        T d = wsModel.createRPI(serviceType);
+        if(d!=null){
+            return NOptional.of((T) d);
         }
         if (wsModel.extensionModel == null) {
-            switch (serviceType.getName()) {
-                case "net.thevpc.nuts.text.NTexts": {
-                    NTexts t = wsModel.textModel.defaultNTexts;
-                    if (t == null) {
-                        t = new DefaultNTexts();
-                        wsModel.textModel.defaultNTexts = t;
-                    }
-                    return NOptional.of((T) t);
-                }
-                case "net.thevpc.nuts.log.NLogs": {
-                    NLogs t = wsModel.defaultNLogs;
-                    if (t == null) {
-                        t = new DefaultNLogs();
-                        wsModel.defaultNLogs = t;
-                    }
-                    return NOptional.of((T) t);
-                }
-                default: {
-                    throw NExceptions.ofSafeUnexpectedException(NMsg.ofC("Workspace is still booting and component container is not yet available. but you asked for %s", serviceType.getName()));
-                }
-            }
+            throw NException.ofSafeUnexpectedException(NMsg.ofC("Workspace is still booting and component container is not yet available. but you asked for %s", serviceType.getName()));
         }
         return wsModel.extensionModel.createSupported(serviceType, criteriaType);
     }

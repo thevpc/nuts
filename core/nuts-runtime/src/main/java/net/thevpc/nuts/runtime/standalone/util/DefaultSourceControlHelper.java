@@ -9,6 +9,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NDeploy;
 import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NIOException;
@@ -55,7 +56,7 @@ public class DefaultSourceControlHelper {
             NDefinition newVersionFound = null;
             try {
                 newVersionFound = NFetch.of(d.id().builder().version(newVersion).build())
-                        .dependencyFilter(NDependencyFilters.of().byRunnable())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
                         .getResultDefinition();
             } catch (NArtifactNotFoundException ex) {
                 _LOG()
@@ -85,7 +86,7 @@ public class DefaultSourceControlHelper {
     public NDefinition checkout(NId id, Path folder) {
         NSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
         NDefinition nutToInstall = NFetch.of(id)
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDefinition();
         if ("zip".equals(nutToInstall.descriptor().packaging())) {
             try {

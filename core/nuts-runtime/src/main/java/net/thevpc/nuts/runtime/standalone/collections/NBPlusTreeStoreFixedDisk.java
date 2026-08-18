@@ -7,7 +7,7 @@ import net.thevpc.nuts.io.NDataSerializer;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NArrays;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NUtils;
 
 import java.io.*;
@@ -446,7 +446,7 @@ public class NBPlusTreeStoreFixedDisk<K, V> implements NBPlusTreeStore<K, V>, Cl
         try {
             blockFile.close();
         } catch (IOException e) {
-            throw NExceptions.ofUncheckedException(e);
+            throw NException.ofUncheckedException(e);
         }
     }
 }

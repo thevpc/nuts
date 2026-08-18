@@ -48,15 +48,15 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
      * @return new in-memory NutsPrintStream implementation
      */
     static NMemoryPrintStream ofMem() {
-        return NIORPI.of().ofInMemoryPrintStream();
+        return NIORPI.of().createInMemoryPrintStream();
     }
 
     static NMemoryPrintStream ofMem(NTerminalMode mode) {
-        return NIORPI.of().ofInMemoryPrintStream(mode);
+        return NIORPI.of().createInMemoryPrintStream(mode);
     }
 
     static NPrintStream of(OutputStream out) {
-        return NIORPI.of().ofPrintStream(out);
+        return NIORPI.of().createPrintStream(out);
     }
 
     /**
@@ -70,7 +70,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
      * @return {@code mode} supporting PrintStream
      */
     static NPrintStream of(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal) {
-        return NIORPI.of().ofPrintStream(out, mode, terminal);
+        return NIORPI.of().createPrintStream(out, mode, terminal);
     }
 
     /**
@@ -81,19 +81,19 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
      * @return new NPrintStream
      */
     static NPrintStream of(OutputStream out, NTerminalMode mode, NTerminalMode baseMode) {
-        return NIORPI.of().ofPrintStream(out, mode, baseMode);
+        return NIORPI.of().createPrintStream(out, mode, baseMode);
     }
 
     static NPrintStream of(OutputStream out, NTerminalMode mode) {
-        return NIORPI.of().ofPrintStream(out, mode);
+        return NIORPI.of().createPrintStream(out, mode);
     }
 
     static NPrintStream of(Writer out) {
-        return NIORPI.of().ofPrintStream(out);
+        return NIORPI.of().createPrintStream(out);
     }
 
     static NPrintStream of(NPath path) {
-        return NIORPI.of().ofPrintStream(path);
+        return NIORPI.of().createPrintStream(path);
     }
 
     NPrintStream flush();

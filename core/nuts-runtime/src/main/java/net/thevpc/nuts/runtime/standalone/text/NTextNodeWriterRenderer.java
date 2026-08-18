@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextCommand;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
@@ -68,12 +69,12 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
         writeNode(NTextStyles.of(), node, ctx, null);
     }
 
-    private void writeNode(NTextStyles formats, NText node, NTextTransformConfig ctx, NTexts txt) {
+    private void writeNode(NTextStyles formats, NText node, NTextTransformConfig ctx, NTextRPI txt) {
         if (formats == null) {
             formats = NTextStyles.of();
         }
         if (txt == null) {
-            txt = NTexts.of();
+            txt = NTextRPI.of();
         }
         switch (node.type()) {
             case PLAIN: {
@@ -98,32 +99,32 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             case STYLED: {
                 DefaultNTextStyled s = (DefaultNTextStyled) node;
                 NTextStyles styles = s.styles();
-                NTextStyles format = txt.theme().toBasicStyles(styles,ctx.isBasicTrueStyles());
+                NTextStyles format = txt.currentTheme().toBasicStyles(styles,ctx.isBasicTrueStyles());
                 NTextStyles s2 = formats.append(format);
                 writeNode(s2, s.child(), ctx, txt);
                 break;
             }
             case TITLE: {
                 DefaultNTextTitle s = (DefaultNTextTitle) node;
-                NTextStyles s2 = formats.append(txt.theme().toBasicStyles(
+                NTextStyles s2 = formats.append(txt.currentTheme().toBasicStyles(
                         NTextStyles.of(NTextStyle.title(s.level())),ctx.isBasicTrueStyles()
                 ));
                 if (ctx.isProcessTitleNumbers()) {
                     NTitleSequence seq = ctx.titleNumberSequence();
                     if (seq == null) {
-                        seq = txt.ofNumbering();
+                        seq = NText.ofNumbering();
                         ctx.titleNumberSequence(seq);
                     }
                     NTitleSequence a = seq.next(s.level());
-                    NText sWithTitle = txt.ofList(
-                            txt.ofPlain(a.toString() + " "),
+                    NText sWithTitle = NText.ofList(
+                            NText.ofPlain(a.toString() + " "),
                             s.child()
                     );
                     writeNode(s2, sWithTitle, ctx, txt);
                     writeRaw("\n");
                 } else {
-                    NText sWithTitle = txt.ofList(
-                            txt.ofPlain(CoreStringUtils.fillString('#', s.level()) + ") "),
+                    NText sWithTitle = NText.ofList(
+                            NText.ofPlain(CoreStringUtils.fillString('#', s.level()) + ") "),
                             s.child()
                     );
                     writeNode(s2, sWithTitle, ctx, txt);
@@ -146,9 +147,9 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             }
             case LINK: {
                 //ignore!!
-                NTextPlain child = txt.ofPlain(((NTextLink) node).value());
+                NText child = NText.ofPlain(((NTextLink) node).value());
                 writeNode(formats,
-                        txt.ofStyled(child,
+                        NText.ofStyled(child,
                                 NTextStyles.of(NTextStyle.underlined())
                         ), ctx, txt);
                 writeRaw(formats, "see: " + ((NTextLink) node).value(), ctx.isFiltered());
@@ -156,11 +157,11 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             }
             case INCLUDE: {
                 //ignore!!
-                NTextPlain child = txt.ofPlain(((NTextInclude) node).text());
+                NText child = NText.ofPlain(((NTextInclude) node).text());
                 writeNode(formats,
-                        txt.ofStyled(
-                                txt.ofList(
-                                        txt.ofPlain("include: "),
+                        NText.ofStyled(
+                                NText.ofList(
+                                        NText.ofPlain("include: "),
                                         child
                                 )
                                 ,

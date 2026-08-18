@@ -5,7 +5,6 @@ import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class CustomStyleCodeHighlighter implements NCodeHighlighter {
@@ -22,13 +21,13 @@ public class CustomStyleCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
-        return txt.ofStyled(text, style);
+    public NText stringToText(String text) {
+        return NText.ofStyled(text, style);
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
 

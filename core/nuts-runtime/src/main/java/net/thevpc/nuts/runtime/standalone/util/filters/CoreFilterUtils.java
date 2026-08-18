@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionInformation;
@@ -93,7 +94,7 @@ public class CoreFilterUtils {
 
     public static NDefinitionFilter createNutsDefinitionFilter(String arch, String os, String osDist, String
             platform, String desktopEnv) {
-        NDefinitionFilters d = NDefinitionFilters.of();
+        NDefinitionFilterRPI d = NDefinitionFilterRPI.of();
         return d.byArch(arch)
                 .and(d.byOs(os))
                 .and(d.byOsDist(osDist))

@@ -1,17 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
 
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceBootConfig;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.platform.NLauncherOptions;
 
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -135,7 +133,7 @@ public class NdiScriptOptions implements Cloneable {
             NId nid = resolveNutsApiId();
             if (getLauncher().switchWorkspaceLocation() == null) {
                 NDefinition apiDef = NSearch.of()
-                        .addId(nid).dependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).getResultDefinitions().findFirst().get();
+                        .addId(nid).dependencyFilter(NDependencyFilter.ofRunnable()).latest(true).getResultDefinitions().findFirst().get();
                 nutsApiJarPath = apiDef.content().orNull();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
@@ -150,7 +148,7 @@ public class NdiScriptOptions implements Cloneable {
             NId nid = resolveNutsAppId();
             if (getLauncher().switchWorkspaceLocation() == null) {
                 NDefinition appDef = NSearch.of()
-                        .addId(nid).dependencyFilter(NDependencyFilters.of().byRunnable()).latest(true).getResultDefinitions().findFirst().get();
+                        .addId(nid).dependencyFilter(NDependencyFilter.ofRunnable()).latest(true).getResultDefinitions().findFirst().get();
                 nutsAppJarPath = appDef.content().get();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
@@ -199,7 +197,7 @@ public class NdiScriptOptions implements Cloneable {
 
     public NDefinition resolveNutsApiDef() {
         return NSearch.of(resolveNutsApiId())
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .latest(true)
                 .failFast(true)
                 .distinct(true)

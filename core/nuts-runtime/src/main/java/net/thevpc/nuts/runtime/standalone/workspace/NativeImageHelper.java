@@ -20,7 +20,7 @@ import net.thevpc.nuts.pipeline.NIteratorErrorHandlerType;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineRPI;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter;
 import net.thevpc.nuts.runtime.standalone.format.NDisplayProperty;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
@@ -39,7 +39,7 @@ import net.thevpc.nuts.util.*;
 public class NativeImageHelper {
     public static void prepare(){
         if(Boolean.getBoolean("EnableGraalVM")){
-            new DefaultNCmdLines();
+            new DefaultNCmdLineRPI();
             new DefaultNObjectObjectWriter();
             //load enums
             NStoreType.parse("");

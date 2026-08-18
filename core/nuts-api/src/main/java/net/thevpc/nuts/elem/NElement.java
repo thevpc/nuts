@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
@@ -44,6 +45,7 @@ import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -58,6 +60,22 @@ import java.util.function.Predicate;
  * @since 0.5.6
  */
 public interface NElement extends NDescribable, NBlankable, NElementSimple {
+
+    static NElement of(Object any) {
+        return NElementRPI.of().createSharedElements().toElement(any);
+    }
+
+    static Object simpleOf(Object any) {
+        return NElementRPI.of().createSharedElements().toSimple(any);
+    }
+
+    static <T> T convertAny(Object any, Class<T> to) {
+        return NElementRPI.of().createSharedElements().convert(any, to);
+    }
+    static NElements doWithMapperStore(Consumer<NElementMapperStore> doWith){
+        return NElementRPI.of().createSharedElements().doWithMapperStore(doWith);
+    }
+
 
     /// ///////////////////////////////////////////////////////////////////////////////////
 
@@ -1284,4 +1302,9 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     NOptional<NCharStreamElement> asCharStream();
 
     boolean isCharStream();
+
+    NElement normalize(NContentType contentType);
+
+    <T> T convertTo(Class<T> to);
+
 }

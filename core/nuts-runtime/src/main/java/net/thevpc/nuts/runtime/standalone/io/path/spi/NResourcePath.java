@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NScoredCallable;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.pipeline.NStream;
-import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.runtime.standalone.extension.NClassLoaderBase;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPath;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPathHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
@@ -30,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class NResourcePath implements NPathSPI {
@@ -98,20 +96,19 @@ public class NResourcePath implements NPathSPI {
     }
 
     protected static NText rebuildURL2(NText location, NId[] ids) {
-        NTexts txt = NTexts.of();
-        NTextBuilder sb = txt.ofBuilder();
+        NTextBuilder sb = NTextBuilder.of();
         sb.append(nResourceProtocol, NTextStyle.path());
         boolean complex = Arrays.stream(ids).map(Object::toString).anyMatch(x -> x.contains(";") || x.contains("/"));
         if (complex) {
             sb.append("(", NTextStyle.separator());
             sb.appendJoined(
-                    txt.ofStyled(";", NTextStyle.separator()),
+                    NText.ofStyled(";", NTextStyle.separator()),
                     Arrays.asList(ids)
             );
             sb.append(")", NTextStyle.separator());
         } else {
             sb.appendJoined(
-                    txt.ofStyled(";", NTextStyle.separator()),
+                    NText.ofStyled(";", NTextStyle.separator()),
                     Arrays.asList(ids)
             );
         }
@@ -131,7 +128,7 @@ public class NResourcePath implements NPathSPI {
                                 this.ids.toArray(new NId[0])
                         ).latest(true).distinct(true).inlineDependencies(true)
                         .dependencyFilter(
-                                NDependencyFilters.of()
+                                NDependencyFilterRPI.of()
                                         .byRunnable()
                         )
                         .getResultPaths().collect(Collectors.toList());
@@ -514,8 +511,7 @@ public class NResourcePath implements NPathSPI {
 
         public NText asFormattedString() {
             String path = p.path;
-            NTexts text = NTexts.of();
-            NTextBuilder tb = text.ofBuilder();
+            NTextBuilder tb = NTextBuilder.of();
             tb.append("resource://", NTextStyle.primary1());
             if (path.startsWith("resource://(")) {
                 tb.append("(", NTextStyle.separator());
@@ -538,7 +534,7 @@ public class NResourcePath implements NPathSPI {
                     tb.append(")", NTextStyle.separator());
                     tb.append(path.substring(x + 1), NTextStyle.path());
                 } else {
-                    return text.of(path);
+                    return NText.of(path);
                 }
             } else if (path.startsWith("resource://")) {
                 int x = path.indexOf('/', "resource://".length());
@@ -552,10 +548,10 @@ public class NResourcePath implements NPathSPI {
                     }
                     tb.append(path.substring(x), NTextStyle.path());
                 } else {
-                    return text.of(path);
+                    return NText.of(path);
                 }
             } else {
-                return text.of(path);
+                return NText.of(path);
             }
             return tb.build();
         }

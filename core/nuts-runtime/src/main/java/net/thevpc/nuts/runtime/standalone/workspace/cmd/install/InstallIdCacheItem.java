@@ -3,8 +3,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.command.NSearch;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
@@ -76,7 +77,7 @@ public class InstallIdCacheItem {
         if (definition == null) {
             definition = NSearch.of(id)
                     .failFast(true)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .latest(true)
                     .getResultDefinitions()
                     .findFirst().get();
@@ -97,8 +98,8 @@ public class InstallIdCacheItem {
                     .cached(false) // disable cache
                     .callWith(()-> NSearch.of(id)
                             .failFast(true)
-                            .repositoryFilter(NRepositoryFilters.of().installedRepo().neg())
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .repositoryFilter(NRepositoryFilter.ofInstalledRepo().neg())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .latest(true)
                             .getResultDefinitions()
                             .findFirst().get());
@@ -106,7 +107,7 @@ public class InstallIdCacheItem {
         }else {
             definition = NSearch.of(id)
                     .failFast(true)
-                    .dependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .latest(true)
                     .getResultDefinitions()
                     .findFirst().get();

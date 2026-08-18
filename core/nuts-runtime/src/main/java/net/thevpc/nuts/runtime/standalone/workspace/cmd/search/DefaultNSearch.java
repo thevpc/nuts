@@ -34,6 +34,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -111,7 +112,7 @@ public class DefaultNSearch extends AbstractNSearch {
                             releaseVersion = true;
                             nutsIdNonLatest = nutsIdNonLatest.builder().version("").build();
                         }
-                        NDefinitionFilters dd = NDefinitionFilters.of();
+                        NDefinitionFilterRPI dd = NDefinitionFilterRPI.of();
                         NDefinitionFilter filter = (
                                 dd.byName(nutsIdNonLatest.fullName())
                                         .and(dd.byEnv(nutsIdNonLatest.properties()))
@@ -148,7 +149,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                             idLookup.add(z);
                                         }
                                     } else {
-                                        NDefinitionFilter restrictedFilter = (NDefinitionFilter) NDefinitionFilters.of().byName(nutsIdNonLatest.toString()).and(filter).simplify();
+                                        NDefinitionFilter restrictedFilter = (NDefinitionFilter) NDefinitionFilter.ofName(nutsIdNonLatest.toString()).and(filter).simplify();
                                         NIterator<NId> baseIter = repoSPI.search().filter(restrictedFilter)
                                                 .fetchMode(repoAndMode.getFetchMode())
                                                 .getResult();

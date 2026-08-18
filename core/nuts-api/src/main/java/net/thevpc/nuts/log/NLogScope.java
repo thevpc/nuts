@@ -1,5 +1,6 @@
 package net.thevpc.nuts.log;
 
+import net.thevpc.nuts.internal.rpi.NLogRPI;
 import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
@@ -10,7 +11,10 @@ import java.util.function.Supplier;
 
 public interface NLogScope extends NBlankable {
     static NLogScope of() {
-        return NLogs.of().newContext();
+        return NLogRPI.of().createScope();
+    }
+    static NLogScope current() {
+        return NLogRPI.of().currentScope();
     }
 
     Map<String, Supplier<?>> placeholders();

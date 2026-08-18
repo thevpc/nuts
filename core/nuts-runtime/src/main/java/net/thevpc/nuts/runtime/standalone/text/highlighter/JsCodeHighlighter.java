@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 import java.util.List;
 import java.util.Set;
@@ -85,12 +84,12 @@ public class JsCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
 
@@ -115,11 +114,11 @@ public class JsCodeHighlighter implements NCodeHighlighter {
                 // Regex literal: only valid after operator/keyword context.
                 // Heuristic: if previous non-space token was an operator or opening bracket, it's a regex.
                 // We approximate by trying to read a regex; fall back to separator if it looks wrong.
-                List<NText> regex = tryReadRegex(ar, txt);
+                List<NText> regex = tryReadRegex(ar);
                 if (regex != null) {
                     all.addAll(regex);
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 }
                 continue;
             }
@@ -131,13 +130,13 @@ public class JsCodeHighlighter implements NCodeHighlighter {
                 while (ar.hasNext() && (Character.isLetterOrDigit(ar.peekChar()) || ar.peekChar() == '_' || ar.peekChar() == '.')) {
                     sb.append(ar.readChar());
                 }
-                all.add(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
+                all.add(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
                 continue;
             }
 
             // Template literal
             if (c == '`') {
-                all.addAll(readTemplateLiteral(ar, txt));
+                all.addAll(readTemplateLiteral(ar));
                 continue;
             }
 
@@ -153,47 +152,47 @@ public class JsCodeHighlighter implements NCodeHighlighter {
 
             // Numbers
             if (Character.isDigit(c) || (c == '.' && ar.hasNext(1) && Character.isDigit(ar.peekChar(1)))) {
-                all.addAll(readNumber(ar, txt));
+                all.addAll(readNumber(ar));
                 continue;
             }
 
             // Identifiers / keywords / builtins
             if (Character.isLetter(c) || c == '_' || c == '$') {
-                all.addAll(readIdentifier(ar, txt));
+                all.addAll(readIdentifier(ar));
                 continue;
             }
 
             // Separators / operators
-            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
         }
 
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 
     // -------------------------------------------------------------------------
     // Identifier
     // -------------------------------------------------------------------------
 
-    protected List<NText> readIdentifier(StringReaderExt ar, NTexts txt) {
+    protected List<NText> readIdentifier(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && (Character.isLetterOrDigit(ar.peekChar()) || ar.peekChar() == '_' || ar.peekChar() == '$')) {
             sb.append(ar.readChar());
         }
         String word = sb.toString();
         if (keywords.contains(word)) {
-            return Collections.singletonList(txt.ofStyled(word, NTextStyle.keyword()));
+            return Collections.singletonList(NText.ofStyled(word, NTextStyle.keyword()));
         }
         if (builtins.contains(word)) {
-            return Collections.singletonList(txt.ofStyled(word, NTextStyle.option()));
+            return Collections.singletonList(NText.ofStyled(word, NTextStyle.option()));
         }
-        return Collections.singletonList(txt.ofPlain(word));
+        return Collections.singletonList(NText.ofPlain(word));
     }
 
     // -------------------------------------------------------------------------
     // Template literal  `hello ${name}!`
     // -------------------------------------------------------------------------
 
-    protected List<NText> readTemplateLiteral(StringReaderExt ar, NTexts txt) {
+    protected List<NText> readTemplateLiteral(StringReaderExt ar) {
         List<NText> result = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         current.append(ar.readChar()); // opening `
@@ -211,14 +210,14 @@ public class JsCodeHighlighter implements NCodeHighlighter {
                 break;
             }
             if (c == '$' && ar.hasNext(1) && ar.peekChar(1) == '{') {
-                flushString(current, txt, result);
-                result.addAll(readTemplateExpr(ar, txt));
+                flushString(current, result);
+                result.addAll(readTemplateExpr(ar));
                 continue;
             }
             current.append(ar.readChar());
         }
 
-        flushString(current, txt, result);
+        flushString(current, result);
         return result;
     }
 
@@ -227,7 +226,7 @@ public class JsCodeHighlighter implements NCodeHighlighter {
      * Braces are styled as separator; inner content is plain
      * (full re-parse would be recursive; not worth the complexity).
      */
-    private List<NText> readTemplateExpr(StringReaderExt ar, NTexts txt) {
+    private List<NText> readTemplateExpr(StringReaderExt ar) {
         StringBuilder expr = new StringBuilder();
         expr.append(ar.readChar()); // '$'
         expr.append(ar.readChar()); // '{'
@@ -238,7 +237,7 @@ public class JsCodeHighlighter implements NCodeHighlighter {
             if (c == '{') depth++;
             else if (c == '}') depth--;
         }
-        return Collections.singletonList(txt.ofStyled(expr.toString(), NTextStyle.separator()));
+        return Collections.singletonList(NText.ofStyled(expr.toString(), NTextStyle.separator()));
     }
 
     // -------------------------------------------------------------------------
@@ -247,7 +246,7 @@ public class JsCodeHighlighter implements NCodeHighlighter {
     // Returns null if it doesn't look like a valid regex (caller emits '/' as separator)
     // -------------------------------------------------------------------------
 
-    protected List<NText> tryReadRegex(StringReaderExt ar, NTexts txt) {
+    protected List<NText> tryReadRegex(StringReaderExt ar) {
         // We need to speculatively read; save state isn't available on StringReaderExt
         // so we commit only if it passes basic validation.
         // Peek ahead manually.
@@ -274,14 +273,14 @@ public class JsCodeHighlighter implements NCodeHighlighter {
         // now commit: consume i characters
         StringBuilder sb = new StringBuilder();
         for (int j = 0; j < i; j++) sb.append(ar.readChar());
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.string()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.string()));
     }
 
     // -------------------------------------------------------------------------
     // Numbers: 0x, 0o, 0b, BigInt (n suffix), floats, exponents
     // -------------------------------------------------------------------------
 
-    protected List<NText> readNumber(StringReaderExt ar, NTexts txt) {
+    protected List<NText> readNumber(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
 
         if (ar.peekChar() == '0' && ar.hasNext(1)) {
@@ -290,19 +289,19 @@ public class JsCodeHighlighter implements NCodeHighlighter {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && isHexOrUnderscore(ar.peekChar())) sb.append(ar.readChar());
                 if (ar.hasNext() && ar.peekChar() == 'n') sb.append(ar.readChar()); // BigInt
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
             if (next == 'o' || next == 'O') {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && (ar.peekChar() >= '0' && ar.peekChar() <= '7' || ar.peekChar() == '_')) sb.append(ar.readChar());
                 if (ar.hasNext() && ar.peekChar() == 'n') sb.append(ar.readChar());
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
             if (next == 'b' || next == 'B') {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && (ar.peekChar() == '0' || ar.peekChar() == '1' || ar.peekChar() == '_')) sb.append(ar.readChar());
                 if (ar.hasNext() && ar.peekChar() == 'n') sb.append(ar.readChar());
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
         }
 
@@ -318,16 +317,16 @@ public class JsCodeHighlighter implements NCodeHighlighter {
         }
         if (ar.hasNext() && ar.peekChar() == 'n') sb.append(ar.readChar()); // BigInt
 
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
     }
 
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
-    protected void flushString(StringBuilder sb, NTexts txt, List<NText> result) {
+    protected void flushString(StringBuilder sb, List<NText> result) {
         if (sb.length() > 0) {
-            result.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+            result.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
     }

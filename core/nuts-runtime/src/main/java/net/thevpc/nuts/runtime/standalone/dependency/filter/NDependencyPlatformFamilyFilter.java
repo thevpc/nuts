@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
@@ -68,7 +68,7 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     @Override
     public NDependencyFilter simplify() {
-        return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
+        return accepted.isEmpty() ? NDependencyFilterRPI.of().always() : this;
     }
 
     @Override

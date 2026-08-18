@@ -30,11 +30,11 @@ import net.thevpc.nuts.internal.rpi.NIORPI;
 
 public interface NMemoryPrintStream extends NPrintStream {
     static NMemoryPrintStream of() {
-        return NIORPI.of().ofInMemoryPrintStream();
+        return NIORPI.of().createInMemoryPrintStream();
     }
 
     static NMemoryPrintStream of(NTerminalMode mode) {
-        return NIORPI.of().ofInMemoryPrintStream(mode);
+        return NIORPI.of().createInMemoryPrintStream(mode);
     }
 
     byte[] bytes();

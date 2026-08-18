@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
@@ -63,12 +63,12 @@ public class RustCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
 
@@ -82,11 +82,11 @@ public class RustCodeHighlighter implements NCodeHighlighter {
 
             // --- Outer attribute  #[...]  or  #![...] ---
             if (c == '#') {
-                List<NText> attr = tryReadAttribute(ar, txt);
+                List<NText> attr = tryReadAttribute(ar);
                 if (attr != null) {
                     all.addAll(attr);
                 } else {
-                    all.add(txt.ofPlain(String.valueOf(ar.readChar())));
+                    all.add(NText.ofPlain(String.valueOf(ar.readChar())));
                 }
                 continue;
             }
@@ -101,7 +101,7 @@ public class RustCodeHighlighter implements NCodeHighlighter {
                     all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
                     continue;
                 }
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 continue;
             }
 
@@ -110,14 +110,14 @@ public class RustCodeHighlighter implements NCodeHighlighter {
                 // distinguish lifetime 'a from char literal 'x'
                 // char literal: 'x' (single char or escape, then closing quote)
                 // lifetime: 'ident not followed by closing quote after identifier
-                List<NText> lt = tryReadLifetimeOrChar(ar, txt);
+                List<NText> lt = tryReadLifetimeOrChar(ar);
                 all.addAll(lt);
                 continue;
             }
 
             // --- Raw strings: r"..." r#"..."# r##"..."## ---
             if (c == 'r' && ar.hasNext(1) && (ar.peekChar(1) == '"' || ar.peekChar(1) == '#')) {
-                List<NText> raw = tryReadRawString(ar, txt);
+                List<NText> raw = tryReadRawString(ar);
                 if (raw != null) {
                     all.addAll(raw);
                     continue;
@@ -128,16 +128,16 @@ public class RustCodeHighlighter implements NCodeHighlighter {
             if (c == 'b' && ar.hasNext(1)) {
                 char next = ar.peekChar(1);
                 if (next == '\'') {
-                    all.addAll(readByteChar(ar, txt));
+                    all.addAll(readByteChar(ar));
                     continue;
                 }
                 if (next == '"') {
-                    all.addAll(readByteString(ar, txt));
+                    all.addAll(readByteString(ar));
                     continue;
                 }
                 // br#"..."# raw byte strings
                 if (next == 'r' && ar.hasNext(2) && (ar.peekChar(2) == '"' || ar.peekChar(2) == '#')) {
-                    List<NText> raw = tryReadRawString(ar, txt); // prefix consumed inside
+                    List<NText> raw = tryReadRawString(ar); // prefix consumed inside
                     if (raw != null) { all.addAll(raw); continue; }
                 }
             }
@@ -150,13 +150,13 @@ public class RustCodeHighlighter implements NCodeHighlighter {
 
             // --- Numbers ---
             if (Character.isDigit(c)) {
-                all.addAll(readNumber(ar, txt));
+                all.addAll(readNumber(ar));
                 continue;
             }
 
             // --- Identifiers, keywords, macros, primitives ---
             if (Character.isLetter(c) || c == '_') {
-                all.addAll(readIdentifier(ar, txt));
+                all.addAll(readIdentifier(ar));
                 continue;
             }
 
@@ -186,22 +186,22 @@ public class RustCodeHighlighter implements NCodeHighlighter {
                 case '?':
                 case '@':
                 case '.':
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     break;
                 default:
-                    all.add(txt.ofPlain(String.valueOf(ar.readChar())));
+                    all.add(NText.ofPlain(String.valueOf(ar.readChar())));
                     break;
             }
         }
 
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 
     // -------------------------------------------------------------------------
     // Attributes  #[derive(Debug, Clone)]  #![allow(unused)]
     // -------------------------------------------------------------------------
 
-    private List<NText> tryReadAttribute(StringReaderExt ar, NTexts txt) {
+    private List<NText> tryReadAttribute(StringReaderExt ar) {
         // Must be # followed by optional ! then [
         int i = 1;
         if (!ar.hasNext(i)) return null;
@@ -220,14 +220,14 @@ public class RustCodeHighlighter implements NCodeHighlighter {
             if (c == '[') depth++;
             else if (c == ']') depth--;
         }
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
     }
 
     // -------------------------------------------------------------------------
     // Lifetime 'a  vs  char literal 'x'
     // -------------------------------------------------------------------------
 
-    private List<NText> tryReadLifetimeOrChar(StringReaderExt ar, NTexts txt) {
+    private List<NText> tryReadLifetimeOrChar(StringReaderExt ar) {
         // Speculatively check: is it a char literal?
         // char literal pattern: ' (char|escape) '
         int i = 1;
@@ -247,7 +247,7 @@ public class RustCodeHighlighter implements NCodeHighlighter {
                 sb.append(ar.readChar());
             }
             if (ar.hasNext() && ar.peekChar() == '\'') sb.append(ar.readChar()); // closing '
-            return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.string()));
+            return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.string()));
         }
 
         // lifetime: 'ident
@@ -256,14 +256,14 @@ public class RustCodeHighlighter implements NCodeHighlighter {
         while (ar.hasNext() && (Character.isLetterOrDigit(ar.peekChar()) || ar.peekChar() == '_')) {
             sb.append(ar.readChar());
         }
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
     }
 
     // -------------------------------------------------------------------------
     // Raw strings  r"..."  r#"..."#  r##"..."##
     // -------------------------------------------------------------------------
 
-    private List<NText> tryReadRawString(StringReaderExt ar, NTexts txt) {
+    private List<NText> tryReadRawString(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
         // optional b prefix
         if (ar.peekChar() == 'b') sb.append(ar.readChar());
@@ -291,14 +291,14 @@ public class RustCodeHighlighter implements NCodeHighlighter {
                 if (h == hashes) break outer;
             }
         }
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.string()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.string()));
     }
 
     // -------------------------------------------------------------------------
     // Byte char  b'x'  and byte string  b"..."
     // -------------------------------------------------------------------------
 
-    private List<NText> readByteChar(StringReaderExt ar, NTexts txt) {
+    private List<NText> readByteChar(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
         sb.append(ar.readChar()); // b
         sb.append(ar.readChar()); // '
@@ -309,10 +309,10 @@ public class RustCodeHighlighter implements NCodeHighlighter {
             sb.append(ar.readChar());
         }
         if (ar.hasNext() && ar.peekChar() == '\'') sb.append(ar.readChar());
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.string()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.string()));
     }
 
-    private List<NText> readByteString(StringReaderExt ar, NTexts txt) {
+    private List<NText> readByteString(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
         sb.append(ar.readChar()); // b
         // now delegate to a simple double-quote reader
@@ -323,14 +323,14 @@ public class RustCodeHighlighter implements NCodeHighlighter {
             sb.append(ar.readChar());
             if (c == '"') break;
         }
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.string()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.string()));
     }
 
     // -------------------------------------------------------------------------
     // Identifiers — including macro invocations  name!
     // -------------------------------------------------------------------------
 
-    private List<NText> readIdentifier(StringReaderExt ar, NTexts txt) {
+    private List<NText> readIdentifier(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && (Character.isLetterOrDigit(ar.peekChar()) || ar.peekChar() == '_')) {
             sb.append(ar.readChar());
@@ -341,23 +341,23 @@ public class RustCodeHighlighter implements NCodeHighlighter {
         if (ar.hasNext() && ar.peekChar() == '!'
                 && !(ar.hasNext(1) && ar.peekChar(1) == '=')) {
             sb.append(ar.readChar()); // '!'
-            return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.annotation()));
+            return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
         }
 
         if (keywords.contains(word)) {
-            return Collections.singletonList(txt.ofStyled(word, NTextStyle.keyword()));
+            return Collections.singletonList(NText.ofStyled(word, NTextStyle.keyword()));
         }
         if (primitives.contains(word)) {
-            return Collections.singletonList(txt.ofStyled(word, NTextStyle.option()));
+            return Collections.singletonList(NText.ofStyled(word, NTextStyle.option()));
         }
-        return Collections.singletonList(txt.ofPlain(word));
+        return Collections.singletonList(NText.ofPlain(word));
     }
 
     // -------------------------------------------------------------------------
     // Numbers: decimal, 0x, 0o, 0b, float, type suffixes (u8, f32, i64 …)
     // -------------------------------------------------------------------------
 
-    private List<NText> readNumber(StringReaderExt ar, NTexts txt) {
+    private List<NText> readNumber(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
 
         if (ar.peekChar() == '0' && ar.hasNext(1)) {
@@ -366,19 +366,19 @@ public class RustCodeHighlighter implements NCodeHighlighter {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && isHexOrUnderscore(ar.peekChar())) sb.append(ar.readChar());
                 readNumericSuffix(ar, sb);
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
             if (next == 'o' || next == 'O') {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && (ar.peekChar() >= '0' && ar.peekChar() <= '7' || ar.peekChar() == '_')) sb.append(ar.readChar());
                 readNumericSuffix(ar, sb);
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
             if (next == 'b' || next == 'B') {
                 sb.append(ar.readChar()).append(ar.readChar());
                 while (ar.hasNext() && (ar.peekChar() == '0' || ar.peekChar() == '1' || ar.peekChar() == '_')) sb.append(ar.readChar());
                 readNumericSuffix(ar, sb);
-                return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+                return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
             }
         }
 
@@ -398,7 +398,7 @@ public class RustCodeHighlighter implements NCodeHighlighter {
         }
 
         readNumericSuffix(ar, sb);
-        return Collections.singletonList(txt.ofStyled(sb.toString(), NTextStyle.number()));
+        return Collections.singletonList(NText.ofStyled(sb.toString(), NTextStyle.number()));
     }
 
     /**

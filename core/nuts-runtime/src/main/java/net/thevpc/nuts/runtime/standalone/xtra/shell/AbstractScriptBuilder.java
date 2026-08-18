@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -67,7 +68,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
     public PathInfo build() {
         //Path script = getScriptFile(name);
         NDefinition anyIdDef = NSearch.of(anyId).latest(true).distinct(true)
-                .dependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDefinitions().findSingleton().get();
         NId anyId = anyIdDef.id();
         String path = NameBuilder.id(anyId,

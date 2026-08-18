@@ -643,7 +643,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
             if (enabledElement) {
                 all[i] = translate(xweight[i], coeffsOffsets[i]);
             } else {
-                all[i] = NProgressMonitors.of().ofSilent();
+                all[i] = NProgressMonitor.ofSilent();
             }
         }
         return all;

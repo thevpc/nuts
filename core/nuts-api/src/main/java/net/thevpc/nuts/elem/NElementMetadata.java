@@ -1,20 +1,21 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Map;
 
 public interface NElementMetadata {
     static NElementMetadata of() {
-        return NElements.of().createElementMetadata();
+        return NElementRPI.of().createElementMetadata();
     }
 
     static NElementMetadata of(Object key, Object value) {
-        return NElements.of().createElementMetadata(key, value);
+        return NElementRPI.of().createElementMetadata(key, value);
     }
 
     static NElementMetadata of(Map<Object, Object> any) {
-        return NElements.of().createElementMetadata(any);
+        return NElementRPI.of().createElementMetadata(any);
     }
 
     NElementMetadata with(Object key, Object value);

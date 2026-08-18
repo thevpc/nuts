@@ -5,9 +5,10 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.concurrent.NConcurrent;
-import net.thevpc.nuts.core.NClassLoaderNode;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
+import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NTrace;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -229,7 +230,7 @@ public class NJavaSdkUtils {
         if (singleVersion != null) {
             requestedJavaVersion = singleVersion;
         }
-        return NVersionFilters.of().byValue(requestedJavaVersion).get();
+        return NVersionFilter.ofValue(requestedJavaVersion).get();
     }
 
     public NVersionFilter createVersionFilter(String requestedJavaVersion) {
@@ -239,7 +240,7 @@ public class NJavaSdkUtils {
         if (singleVersion != null) {
             requestedJavaVersion = "[" + singleVersion + ",[";
         }
-        return NVersionFilters.of().byValue(requestedJavaVersion).get();
+        return NVersionFilter.ofValue(requestedJavaVersion).get();
     }
 
     public NExecutionEngineLocation getHostJvm() {
@@ -536,10 +537,9 @@ public class NJavaSdkUtils {
                                 if (r != null) {
                                     NWorkspace workspace = NWorkspace.of();
                                     synchronized (workspace) {
-                                        NTexts factory = NTexts.of();
                                         workspace.currentSession().terminal().printProgress(
                                                 NMsg.ofC("detected java %s %s at %s", r.product(),
-                                                        factory.ofStyled(r.version(), NTextStyle.version()),
+                                                        NText.ofStyled(r.version(), NTextStyle.version()),
                                                         NCoreLogUtils.forProgressPathString(r.path()))
                                         );
                                     }

@@ -200,7 +200,7 @@ public class DefaultNElementWriter extends DefaultObjectWriterBase<NElementWrite
     }
 
     private void print(Object aValue, NPrintStream out, NElementStreamFormat format) {
-        NElement elem = NElements.of().doWithMapperStore(d -> d.copyFrom(mapperStore())).toElement(aValue);
+        NElement elem = NElement.doWithMapperStore(d -> d.copyFrom(mapperStore())).toElement(aValue);
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
             format.printElement(elem, bos, effectiveFormatter(), createFactoryContext());

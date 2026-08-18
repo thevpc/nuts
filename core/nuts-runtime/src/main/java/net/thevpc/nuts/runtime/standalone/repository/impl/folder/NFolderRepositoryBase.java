@@ -11,6 +11,7 @@ import net.thevpc.nuts.core.NSpeedQualifier;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
@@ -83,8 +84,8 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
-        NDefinitionFilter filter2 = NDefinitionFilters.of().nonnull(idFilter).and(
-                NDefinitionFilters.of().byName(id.shortName())
+        NDefinitionFilter filter2 = NDefinitionFilterRPI.of().nonnull(idFilter).and(
+                NDefinitionFilter.ofName(id.shortName())
         );
         if (id.version().isSingleValue()) {
             return findSingleVersionImpl(id, filter2, fetchMode);

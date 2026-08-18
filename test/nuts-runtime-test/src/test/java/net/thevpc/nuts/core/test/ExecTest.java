@@ -45,7 +45,7 @@ public class ExecTest {
         NSearch q = NSearch.of()
                 .id("net.thevpc.hl:hadra-build-tool#0.1.0")
 //                .setRepositoryFilter("maven-central")
-//                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
+//                .setRepositoryFilter(NRepositoryFilter.byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
                 .latest(true);
         NOut.println(q.getResultQueryPlan());

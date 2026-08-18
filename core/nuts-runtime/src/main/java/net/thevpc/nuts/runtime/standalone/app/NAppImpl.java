@@ -29,7 +29,7 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextTransformConfig;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.*;
 
@@ -171,7 +171,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                     }
                     NAssert.requireNamedNonNull(appClass, "applicationType");
                     source = createInstance(appClass);
-                    application = NApplications.createApplicationInstanceFromAnnotatedInstance(source);
+                    application = NApplication.createApplicationInstanceFromAnnotatedInstance(source);
                 }
             }
         } else {
@@ -194,7 +194,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 }
             }
             if (application == null) {
-                application = NApplications.createApplicationInstanceFromAnnotatedInstance(source);
+                application = NApplication.createApplicationInstanceFromAnnotatedInstance(source);
             }
         }
 //        Class appClass =
@@ -297,7 +297,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         for (NAppResolver r : nAppResolverClassLoader) {
             Object o = r.resolveCurrentApplication();
             if(o!=null) {
-                return NApplications.createApplicationInstanceFromAnnotatedInstance(o);
+                return NApplication.createApplicationInstanceFromAnnotatedInstance(o);
             }
         }
         return null;
@@ -361,7 +361,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             return applicationType == null ? null : applicationType.getConstructor().newInstance();
         } catch (Exception e) {
             nLog.debug(NMsg.ofC("createInstance %s failed : %s", applicationType,e));
-            throw NExceptions.ofUncheckedException(e);
+            throw NException.ofUncheckedException(e);
         }
     }
 
@@ -467,7 +467,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         }
         if (h != null) {
             try {
-                h = NTexts.of().transform(h, new NTextTransformConfig()
+                h = NText.transform(h, new NTextTransformConfig()
                         .processTitleNumbers(true)
                         .normalize(true)
                         .flatten(true)
@@ -483,7 +483,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     @Override
     public void printHelp() {
         NText h = NWorkspaceExt.of().resolveDefaultHelp(sourceType());
-        h = NTexts.of().transform(h, new NTextTransformConfig()
+        h = NText.transform(h, new NTextTransformConfig()
                 .processTitleNumbers(true)
                 .normalize(true)
                 .flatten(true)

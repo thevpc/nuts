@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
@@ -48,8 +48,7 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
     public void next(Object object, long index) {
         Map<String, String> p = new LinkedHashMap<>();
         NFormatUtils.putAllInProps(String.valueOf(index + 1), p,
-                NElements.of()
-                        .toElement(object)
+                NElement.of(object)
         );
         NPropsTransformer.storeProperties(p, getWriter().asPrintStream(), false);
         getWriter().flush();

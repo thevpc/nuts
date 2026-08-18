@@ -154,7 +154,7 @@ public class NChunkedStoreImpl<T> implements NChunkedStore<T> {
                     NCoreIOUtils.closeObject(fw);
                 }
             } catch (IOException e) {
-                throw NExceptions.ofUncheckedException(e);
+                throw NException.ofUncheckedException(e);
             }
             buffer.clear();
             NChunkedStoreUtils.writePointerInfo(ptr, folder, NChunkedStoreUtils.WRITE_PTR_FILE_NAME);

@@ -46,47 +46,46 @@ public class NTFTest {
 
     @Test
     public void test01() {
-        NTexts txt = NTexts.of();
-        NText parsed = txt.of("##:error0:n#01##");
+        NText parsed = NText.of("##:error0:n#01##");
         TestUtils.println(parsed);
     }
 
     @Test
     public void test02() {
-        NTexts txt = NTexts.of();
+
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
-        NText q = txt.ofStyled(txt.of(str), NTextStyle.error());
+        NText q = NText.ofStyled(NText.of(str), NTextStyle.error());
         String qs = q.toString();
-        NText q2 = txt.of(qs);
-        q2 = txt.of(qs);
+        NText q2 = NText.of(qs);
+        q2 = NText.of(qs);
         TestUtils.println(qs);
-        NText parsed = txt.of("##:error0:n#01##");
+        NText parsed = NText.of("##:error0:n#01##");
         TestUtils.println(parsed);
     }
 
     @Test
     public void test03() {
-        NTexts txt = NTexts.of();
+
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
-        NText q = txt.of(str);
-        q = txt.of(str);
+        NText q = NText.of(str);
+        q = NText.of(str);
         TestUtils.println(q);
-        NText parsed = txt.of("##:error0:n#01##");
+        NText parsed = NText.of("##:error0:n#01##");
         TestUtils.println(parsed);
     }
 
     @Test
     public void test04() {
-        NTexts txt = NTexts.of();
+
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         //String str="##{error0:##{error0:not installed : ##:p1:ntomcat##\u001E}}##\u001E}##\u001E";
         String str = "##{error0:##{error0:not installed : ##:p1:ntomcat##\u001E}##\u001E}##\u001E";
-        NText q2 = txt.of(str);
+        NText q2 = NText.of(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
@@ -94,7 +93,7 @@ public class NTFTest {
 
     @Test
     public void test05() {
-        NTexts txt = NTexts.of();
+
 
         String str = "##:separator0:{##\u001E\n" +
                 "  ##:string0:\"id\"##\u001E##:separator0::##\u001E ##:string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"##\u001E##:separator0:,##\u001E\n" +
@@ -137,14 +136,14 @@ public class NTFTest {
                 "  ##:separator0:}##\u001E##:separator0:,##\u001E\n" +
                 "  ##:string0:\"type\"##\u001E##:separator0::##\u001E ##:string0:\"REGULAR\"##\u001E\n" +
                 "##:separator0:}##\u001E";
-        NText q2 = txt.of(str);
+        NText q2 = NText.of(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
 
     @Test
     public void test06() {
-        NTexts txt = NTexts.of();
+
 
         String str = "##:separator0:{##\u001E\n" +
                 "  ##:string0:\"id\"##\u001E##:separator0::##\u001E ##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##\u001E##:separator0:,##\u001E\n" +
@@ -187,18 +186,18 @@ public class NTFTest {
                 "  ##:separator0:}##\u001E##:separator0:,##\u001E\n" +
                 "  ##:string0:\"type\"##\u001E##:separator0::##\u001E ##:string0:\"REGULAR\"##\u001E\n" +
                 "##:separator0:}##\u001E";
-        NText q2 = txt.of(str);
+        NText q2 = NText.of(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
 
     @Test
     public void test07() {
-        NTexts txt = NTexts.of();
+
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
         String str = "##{string:a#b}##";
-        NText q2 = txt.of(str);
+        NText q2 = NText.of(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
@@ -206,19 +205,18 @@ public class NTFTest {
 
     @Test
     public void test08() {
-        NTexts txt = NTexts.of();
+
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
         String str = "##:string:\"a#b\"##";
-        NText q2 = txt.of(str);
+        NText q2 = NText.of(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
 
     @Test
     public void test09() {
-        NTexts text = NTexts.of();
-        NText q = text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
+        NText q = NText.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
         TestUtils.println(q.toString());
     }
 
@@ -917,25 +915,25 @@ public class NTFTest {
 
     @Test
     public void test11() {
-        NTexts text = NTexts.of();
-        NText str = text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
+
+        NText str = NText.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
         TestUtils.println(str.toString());
         Assertions.assertEquals("##{_,success:re-install}##\u001E", str.toString());
     }
 
     @Test
     public void test12() {
-        NTexts text = NTexts.of();
+
         String str = "```system \"C:\\U\\v\" ```";
-        NText t = text.of(str);
+        NText t = NText.of(str);
         Assertions.assertEquals("\"C:\\U\\v\" ", t.filteredText());
     }
 
     @Test
     public void test13() {
-        NTexts text = NTexts.of();
+
         String str = "```system \\``````";
-        NText t = text.of(str);
+        NText t = NText.of(str);
         Assertions.assertEquals("```", t.filteredText());
     }
     //////////////////

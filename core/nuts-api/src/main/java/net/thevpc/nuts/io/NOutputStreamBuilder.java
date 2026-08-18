@@ -6,7 +6,7 @@ import java.io.OutputStream;
 
 public interface NOutputStreamBuilder {
     static NOutputStreamBuilder of(OutputStream outputStream) {
-        return NIORPI.of().ofOutputStreamBuilder(outputStream);
+        return NIORPI.of().createOutputStreamBuilder(outputStream);
     }
 
     OutputStream base();

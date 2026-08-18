@@ -4,7 +4,6 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
@@ -39,32 +38,32 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         String[] lines = text.split("\n", -1);
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i];
             if (i > 0) {
-                all.add(txt.ofPlain("\n"));
+                all.add(NText.ofPlain("\n"));
             }
             if (line.isEmpty()) {
                 continue;
             }
-            highlightLine(line, txt, all);
+            highlightLine(line, all);
         }
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 
-    private void highlightLine(String line, NTexts txt, List<NText> all) {
+    private void highlightLine(String line, List<NText> all) {
         String trimmed = NStringUtils.stripLeft(line);
         int indent = line.length() - trimmed.length();
         if (indent > 0) {
-            all.add(txt.ofPlain(line.substring(0, indent)));
+            all.add(NText.ofPlain(line.substring(0, indent)));
         }
 
         if (trimmed.isEmpty()) {
@@ -75,31 +74,31 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
 
         // Comment line
         if (first == '#') {
-            all.add(txt.ofStyled(trimmed, NTextStyle.comments()));
+            all.add(NText.ofStyled(trimmed, NTextStyle.comments()));
             return;
         }
 
         // Directive line: starts with /
         if (first == '/') {
-            highlightDirectiveLine(trimmed, txt, all);
+            highlightDirectiveLine(trimmed, all);
             return;
         }
 
         // Routine edit line: starts with a digit or '+'
         if (first == '+' || Character.isDigit(first)) {
-            highlightRoutineLine(trimmed, txt, all);
+            highlightRoutineLine(trimmed, all);
             return;
         }
 
         // Plain prompt line: italicize
-        all.add(txt.ofStyled(trimmed, NTextStyle.italic()));
+        all.add(NText.ofStyled(trimmed, NTextStyle.italic()));
     }
 
     /**
      * Directive: /command [args...]
      * Style: keyword for the command word, then args as a command-line
      */
-    private void highlightDirectiveLine(String line, NTexts txt, List<NText> all) {
+    private void highlightDirectiveLine(String line, List<NText> all) {
         StringReaderExt ar = new StringReaderExt(line);
         // leading slash
         ar.readChar(); // consume '/'
@@ -108,11 +107,11 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
         while (ar.hasNext() && !Character.isWhitespace(ar.peekChar())) {
             cmd.append(ar.readChar());
         }
-        all.add(txt.ofStyled(cmd.toString(), NTextStyle.keyword()));
+        all.add(NText.ofStyled(cmd.toString(), NTextStyle.keyword()));
 
         // remainder: treat as command-line args (no $var expansion in directives)
         if (ar.hasNext()) {
-            highlightArgs(ar, txt, all, false);
+            highlightArgs(ar, all, false);
         }
     }
 
@@ -121,23 +120,23 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
      * The line number / '+' is styled as a number/operator,
      * then the rest is a command-line with full $var support.
      */
-    private void highlightRoutineLine(String line, NTexts txt, List<NText> all) {
+    private void highlightRoutineLine(String line, List<NText> all) {
         StringReaderExt ar = new StringReaderExt(line);
 
         // read line number or '+'
         if (ar.peekChar() == '+') {
-            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.operator()));
+            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.operator()));
         } else {
             StringBuilder num = new StringBuilder();
             while (ar.hasNext() && Character.isDigit(ar.peekChar())) {
                 num.append(ar.readChar());
             }
-            all.add(txt.ofStyled(num.toString(), NTextStyle.number()));
+            all.add(NText.ofStyled(num.toString(), NTextStyle.number()));
         }
 
         // space after number
         if (ar.hasNext()) {
-            highlightArgs(ar, txt, all, true);
+            highlightArgs(ar, all, true);
         }
     }
 
@@ -147,7 +146,7 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
      * String literals support $var / ${var} interpolation when allowVars=true.
      * '_' is styled as keyword when allowVars=true.
      */
-    private void highlightArgs(StringReaderExt ar, NTexts txt, List<NText> all, boolean allowVars) {
+    private void highlightArgs(StringReaderExt ar, List<NText> all, boolean allowVars) {
         while (ar.hasNext()) {
             char c = ar.peekChar();
 
@@ -160,7 +159,7 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
             if (c == '#') {
                 StringBuilder rest = new StringBuilder();
                 while (ar.hasNext()) rest.append(ar.readChar());
-                all.add(txt.ofStyled(rest.toString(), NTextStyle.comments()));
+                all.add(NText.ofStyled(rest.toString(), NTextStyle.comments()));
                 return;
             }
 
@@ -171,14 +170,14 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
                 while (ar.hasNext() && !Character.isWhitespace(ar.peekChar())) {
                     opt.append(ar.readChar());
                 }
-                all.add(txt.ofStyled(opt.toString(), NTextStyle.separator()));
+                all.add(NText.ofStyled(opt.toString(), NTextStyle.separator()));
                 continue;
             }
 
             // double-quoted string
             if (c == '"') {
                 if (allowVars) {
-                    highlightDoubleQuotedString(ar, txt, all);
+                    highlightDoubleQuotedString(ar, all);
                 } else {
                     all.addAll(Arrays.asList(StringReaderExtUtils.readJSDoubleQuotesString(ar)));
                 }
@@ -198,9 +197,9 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
             }
             String w = word.toString();
             if (allowVars && w.equals("_")) {
-                all.add(txt.ofStyled(w, NTextStyle.keyword()));
+                all.add(NText.ofStyled(w, NTextStyle.keyword()));
             } else {
-                all.add(txt.ofPlain(w));
+                all.add(NText.ofPlain(w));
             }
         }
     }
@@ -210,7 +209,7 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
      * The surrounding quotes and literal text are styled as string,
      * variable references are styled as keyword.
      */
-    private void highlightDoubleQuotedString(StringReaderExt ar, NTexts txt, List<NText> all) {
+    private void highlightDoubleQuotedString(StringReaderExt ar, List<NText> all) {
         StringBuilder current = new StringBuilder();
         current.append(ar.readChar()); // opening "
 
@@ -231,7 +230,7 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
             if (c == '$') {
                 // flush current string segment
                 if (current.length() > 0) {
-                    all.add(txt.ofStyled(current.toString(), NTextStyle.string()));
+                    all.add(NText.ofStyled(current.toString(), NTextStyle.string()));
                     current = new StringBuilder();
                 }
                 // ${var} or $var
@@ -243,14 +242,14 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
                         varRef.append(ar.readChar());
                     }
                     if (ar.hasNext()) varRef.append(ar.readChar()); // }
-                    all.add(txt.ofStyled(varRef.toString(), NTextStyle.keyword()));
+                    all.add(NText.ofStyled(varRef.toString(), NTextStyle.keyword()));
                 } else {
                     StringBuilder varRef = new StringBuilder();
                     varRef.append(ar.readChar()); // $
                     while (ar.hasNext() && (Character.isLetterOrDigit(ar.peekChar()) || ar.peekChar() == '_')) {
                         varRef.append(ar.readChar());
                     }
-                    all.add(txt.ofStyled(varRef.toString(), NTextStyle.keyword()));
+                    all.add(NText.ofStyled(varRef.toString(), NTextStyle.keyword()));
                 }
                 continue;
             }
@@ -259,7 +258,7 @@ public class NaruCodeHighlighter implements NCodeHighlighter {
         }
 
         if (current.length() > 0) {
-            all.add(txt.ofStyled(current.toString(), NTextStyle.string()));
+            all.add(NText.ofStyled(current.toString(), NTextStyle.string()));
         }
     }
 }

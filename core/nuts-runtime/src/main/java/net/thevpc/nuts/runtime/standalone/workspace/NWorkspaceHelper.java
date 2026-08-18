@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.app.NApplicationHandleMode;
-import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootCompleteCmdlineRequest;
 import net.thevpc.nuts.boot.NBootCompleteResult;
@@ -165,7 +165,7 @@ public class NWorkspaceHelper {
                         appClassName = nApp.source() == null ? null : nApp.source().getClass().getName();
                     }
                     NId appId = nApp.id().orNull();
-                    NLog.of(NApplications.class)
+                    NLog.of(NApplication.class)
                             .log(
                                     NMsg.ofC(
                                             NI18n.of("running application %s: %s (%s) %s"),

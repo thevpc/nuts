@@ -71,7 +71,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     private List<NDependency> standardDependencies = new ArrayList<>(); //defaults to empty;
     private Set<NDescriptorFlag> flags = new LinkedHashSet<>();
     private final List<NDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
-    private transient DefaultNProperties _propertiesBuilder = new DefaultNProperties(); //defaults to empty;
+    private transient NProperties _propertiesBuilder = NProperties.of(); //defaults to empty;
     private List<NDescriptorContributor> contributors = new ArrayList<>(); //defaults to empty;
     private List<NDescriptorContributor> developers = new ArrayList<>(); //defaults to empty;
     private List<NDescriptorLicense> licenses = new ArrayList<>(); //defaults to empty;
@@ -548,7 +548,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             return this;
         }
 
-        DefaultNProperties p = new DefaultNProperties();
+        NProperties p = NProperties.of();
         boolean someUpdate = false;
         for (NDescriptorProperty entry : properties()) {
             if (filter == null || filter.test(entry)) {
@@ -789,7 +789,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     private void _rebuildPropertiesBuilder() {
         if (_propertiesBuilder == null) {
-            _propertiesBuilder = new DefaultNProperties();
+            _propertiesBuilder = NProperties.of();
             _propertiesBuilder.addAll(this.properties);
         }
     }

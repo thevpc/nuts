@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
 import net.thevpc.nuts.text.*;
@@ -24,12 +25,11 @@ public class NLogRichFormatter extends Formatter {
     @Override
     public String format(LogRecord record) {
         NLogRecord wRecord = NLogUtils.toNutsLogRecord(record);
-        NTexts tf = NTexts.of();
 
-        NTextBuilder sb = tf.ofBuilder();
+        NTextBuilder sb = NTextBuilder.of();
         String date = CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
 
-        sb.append(tf.ofStyled(date, NTextStyle.pale()));
+        sb.append(NText.ofStyled(date, NTextStyle.pale()));
         boolean verboseLog = false;//read from session or workspace;
         if (verboseLog) {
             sb.append(" ");
@@ -145,9 +145,7 @@ public class NLogRichFormatter extends Formatter {
             sb.append(") ");
         }
         NMsg message = wRecord.formattedMessage();
-        NText msgStr =
-                NTexts.of()
-                        .of(message);
+        NText msgStr = NText.of(message);
         sb.append(msgStr);
         sb.append(NNewLineMode.system().value());
         lastMillis = wRecord.getMillis();

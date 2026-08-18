@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
@@ -283,8 +285,7 @@ public class NIdFormatHelper {
 
     public NText getSingleColumnRow(NFetchDisplayOptions oo) {
         NDisplayProperty[] a = oo.getDisplayProperties();
-        NTexts txt = NTexts.of();
-        NTextBuilder sb = txt.ofBuilder();
+        NTextBuilder sb = NTextBuilder.of();
         for (int j = 0; j < a.length; j++) {
             NText s = buildMain(oo, a[j]);
             int z = 0;
@@ -306,7 +307,7 @@ public class NIdFormatHelper {
                     break;
                 }
             }
-            int len = txt.ofBuilder().append(s).length();
+            int len = NTextBuilder.of().append(s).length();
             if (j > 0) {
                 sb.append(' ');
             }
@@ -322,7 +323,6 @@ public class NIdFormatHelper {
     }
 
     public NText buildMain(NFetchDisplayOptions oo, NDisplayProperty dp) {
-        NTexts text = NTexts.of();
         if (oo.isRequireDefinition()) {
             buildLong();
         }
@@ -338,69 +338,69 @@ public class NIdFormatHelper {
             }
             case FILE: {
                 if (def != null && def.content().isPresent()) {
-                    return text.of(def.content().orNull());
+                    return NText.of(def.content().orNull());
                 }
-                return text.ofStyled("missing-path", NTextStyle.error());
+                return NText.ofStyled("missing-path", NTextStyle.error());
             }
             case FILE_NAME: {
                 if (def != null && def.content().isPresent()) {
-                    return text.ofPlain(def.content().get().name());
+                    return NText.ofPlain(def.content().get().name());
                 }
-                return text.ofStyled("missing-file-name", NTextStyle.error());
+                return NText.ofStyled("missing-file-name", NTextStyle.error());
             }
             case ARCH: {
                 if (desc != null  && desc.condition().arch().size()>0) {
                     return keywordArr1(desc.condition().arch());
                 }
-                return text.ofStyled("missing-arch", NTextStyle.error());
+                return NText.ofStyled("missing-arch", NTextStyle.error());
             }
             case NAME: {
                 if (desc != null) {
                     return stringValue(desc.name());
                 }
-                return text.ofStyled("missing-name", NTextStyle.error());
+                return NText.ofStyled("missing-name", NTextStyle.error());
             }
             case OS: {
                 if (desc != null  && desc.condition().os().size()>0) {
                     return keywordArr2(desc.condition().os());
                 }
-                return text.ofStyled("missing-os", NTextStyle.error());
+                return NText.ofStyled("missing-os", NTextStyle.error());
             }
             case OSDIST: {
                 if (desc != null && desc.condition().osDist().size()>0) {
                     return keywordArr2(desc.condition().osDist());
                 }
-                return text.ofStyled("missing-osdist", NTextStyle.error());
+                return NText.ofStyled("missing-osdist", NTextStyle.error());
             }
             case PACKAGING: {
                 if (desc != null) {
-                    return text.ofStyled(stringValue(desc.packaging()), NTextStyle.primary3());
+                    return NText.ofStyled(stringValue(desc.packaging()), NTextStyle.primary3());
                 }
-                return text.ofStyled("missing-packaging", NTextStyle.error());
+                return NText.ofStyled("missing-packaging", NTextStyle.error());
             }
             case PLATFORM: {
                 if (desc != null && desc.condition().platform().size()>0) {
                     return keywordArr1(desc.condition().platform());
                 }
-                return text.ofStyled("missing-platform", NTextStyle.error());
+                return NText.ofStyled("missing-platform", NTextStyle.error());
             }
             case PROFILE: {
                 if (desc != null && desc.condition().profiles().size()>0) {
                     return keywordArr1(desc.condition().profiles());
                 }
-                return text.ofStyled("no-profile", NTextStyle.error());
+                return NText.ofStyled("no-profile", NTextStyle.error());
             }
             case DESKTOP_ENVIRONMENT: {
                 if (desc != null && desc.condition().desktopEnvironment().size()>0) {
                     return keywordArr1(desc.condition().desktopEnvironment());
                 }
-                return text.ofStyled("missing-desktop-environment", NTextStyle.error());
+                return NText.ofStyled("missing-desktop-environment", NTextStyle.error());
             }
             case INSTALL_DATE: {
                 if (def != null && def.installInformation().isPresent()) {
                     return stringValue(def.installInformation().get().createdInstant());
                 }
-                return text.ofStyled("<null>", NTextStyle.pale());
+                return NText.ofStyled("<null>", NTextStyle.pale());
             }
             case REPOSITORY: {
                 String rname = null;
@@ -443,54 +443,54 @@ public class NIdFormatHelper {
                     String any = def.installInformation().get().installUser();
                     if(!NBlankable.isBlank(any)) {
                         if(NConstants.Users.ANONYMOUS.equals(any)){
-                            return text.ofStyled(NConstants.Users.ANONYMOUS, NTextStyle.pale());
+                            return NText.ofStyled(NConstants.Users.ANONYMOUS, NTextStyle.pale());
                         }
                         return stringValue(any);
                     }
                 }
-                return text.ofStyled(NConstants.Users.ANONYMOUS, NTextStyle.error());
+                return NText.ofStyled(NConstants.Users.ANONYMOUS, NTextStyle.error());
             }
             case CACHE_FOLDER: {
                 if (def != null) {
                     return stringValue(NPath.of(NStoreKey.ofCache(def.id())));
                 }
-                return text.ofStyled("<null>", NTextStyle.error());
+                return NText.ofStyled("<null>", NTextStyle.error());
             }
             case CONF_FOLDER: {
                 if (def != null) {
                     return stringValue(NPath.of(NStoreKey.ofConf(def.id())));
                 }
-                return text.ofStyled("<null>", NTextStyle.error());
+                return NText.ofStyled("<null>", NTextStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
                     return stringValue(NPath.of(NStoreKey.ofLib(def.id())));
                 }
-                return text.ofStyled("<null>", NTextStyle.error());
+                return NText.ofStyled("<null>", NTextStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
                     return stringValue(NPath.of(NStoreKey.ofLog(def.id())));
                 }
-                return text.ofStyled("<null>", NTextStyle.error());
+                return NText.ofStyled("<null>", NTextStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
                     return stringValue(NPath.of(NStoreKey.ofTemp(def.id())));
                 }
-                return text.ofStyled("<null>", NTextStyle.error());
+                return NText.ofStyled("<null>", NTextStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
                     return stringValue(NPath.of(NStoreKey.ofVar(def.id())));
                 }
-                return text.ofStyled("<null>", NTextStyle.error());
+                return NText.ofStyled("<null>", NTextStyle.error());
             }
             case BIN_FOLDER: {
                 if (def != null) {
                     return stringValue(NPath.of(NStoreKey.ofBin(def.id())));
                 }
-                return text.ofStyled("<null>", NTextStyle.error());
+                return NText.ofStyled("<null>", NTextStyle.error());
             }
             case EXEC_ENTRY: {
                 if (def != null && def.content().isPresent()) {
@@ -498,58 +498,58 @@ public class NIdFormatHelper {
                     for (NExecutionEntry entry : NExecutionEntry.parse(def.content().get())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
-                            results.add(text.ofPlain(entry.name()));
+                            results.add(NText.ofPlain(entry.name()));
                         } else {
-                            results.add(text.ofPlain(entry.name()));
+                            results.add(NText.ofPlain(entry.name()));
                         }
                     }
                     if (results.size() == 1) {
                         return results.get(0);
                     }
-                    return text.ofBuilder().appendJoined(
-                            text.ofPlain(","),
+                    return NTextBuilder.of().appendJoined(
+                            NText.ofPlain(","),
                             results
                     );
                 }
-                return text.ofStyled("<missing-class>", NTextStyle.error());
+                return NText.ofStyled("<missing-class>", NTextStyle.error());
             }
             case INSTALL_FOLDER: {
                 if (def != null && def.installInformation().isPresent()) {
                     return stringValue(def.installInformation().get().installFolder());
                 }
-                return text.ofStyled("<null>", NTextStyle.pale());
+                return NText.ofStyled("<null>", NTextStyle.pale());
             }
             case LONG_STATUS: {
                 List<NText> all = new ArrayList<>();
                 if (def != null && def.descriptor().idType() != null) {
                     switch (def.descriptor().idType()) {
                         case REGULAR: {
-                            all.add(text.ofPlain(def.descriptor().idType().id()));
+                            all.add(NText.ofPlain(def.descriptor().idType().id()));
                             break;
                         }
                         default: {
-                            all.add(text.ofStyled(def.descriptor().idType().id(), NTextStyle.primary1()));
+                            all.add(NText.ofStyled(def.descriptor().idType().id(), NTextStyle.primary1()));
                             break;
                         }
                     }
                 }
                 if (executableApp) {
-                    all.add(text.ofStyled("application", NTextStyle.primary5()));
+                    all.add(NText.ofStyled("application", NTextStyle.primary5()));
                 } else if (executable) {
-                    all.add(text.ofStyled("executable", NTextStyle.primary3()));
+                    all.add(NText.ofStyled("executable", NTextStyle.primary3()));
                 } else {
-                    all.add(text.ofStyled("library", NTextStyle.primary4()));
+                    all.add(NText.ofStyled("library", NTextStyle.primary4()));
                 }
                 if (dep != null) {
                     NDependencyScope ss = CoreEnumUtils.parseEnumString(dep.scope(), NDependencyScope.class, true);
                     if (dep.isOptional()) {
-                        all.add(text.ofStyled("optional", NTextStyle.primary5()));
+                        all.add(NText.ofStyled("optional", NTextStyle.primary5()));
                     }
                     if (ss != null) {
-                        all.add(text.ofStyled(NDependencyScope.API.id(), NTextStyle.primary5()));
+                        all.add(NText.ofStyled(NDependencyScope.API.id(), NTextStyle.primary5()));
                     }
                 }
-                return text.ofBuilder().appendJoined(text.ofStyled(",", NTextStyle.pale()),
+                return NTextBuilder.of().appendJoined(NText.ofStyled(",", NTextStyle.pale()),
                         all).build();
 
             }
@@ -581,7 +581,7 @@ public class NIdFormatHelper {
                 if (this.installStatus.isNonDeployed() || def == null) {
                     this.defFetched = NFetch.of(id)
                             .fetchStrategy(NFetchStrategy.OFFLINE)
-                            .dependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .getResultDefinition();
                     this.fetched = true;
                 } else {
@@ -711,13 +711,12 @@ public class NIdFormatHelper {
     }
 
     public NText getFormattedStatusString() {
-        NTexts text = NTexts.of();
         if (dep != null) {
-            return text.ofStyled("" + status_f
+            return NText.ofStyled("" + status_f
                     //                    + status_obs
                     + status_e + status_i + status_s, NTextStyle.primary3());
         }
-        return text.ofStyled("" + status_f
+        return NText.ofStyled("" + status_f
                 //                + status_obs
                 + status_e + status_i, NTextStyle.primary3());
     }
@@ -742,19 +741,18 @@ public class NIdFormatHelper {
     }
 
     private NText keywordArr0(List<String> any, NTextStyle style) {
-        NTexts txt = NTexts.of();
         if (any == null || any.size() == 0) {
-            return txt.ofBlank();
+            return NText.ofBlank();
         }
         if (any.size() == 1) {
-            return txt.ofBuilder().append(txt.ofStyled(stringValue(any.get(0)), style))
+            return NTextBuilder.of().append(NText.ofStyled(stringValue(any.get(0)), style))
                     .immutable();
         }
-        return txt.ofBuilder()
+        return NTextBuilder.of()
                 .append("[")
                 .appendJoined(
-                        txt.ofPlain(","),
-                        any.stream().map(x -> txt.ofStyled(stringValue(x), style)).collect(Collectors.toList())
+                        NText.ofPlain(","),
+                        any.stream().map(x -> NText.ofStyled(stringValue(x), style)).collect(Collectors.toList())
                 )
                 .append("]").immutable();
     }

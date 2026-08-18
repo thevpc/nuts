@@ -26,9 +26,10 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.internal.NReservedExceptions;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.internal.util.NCallableWithDescription;
+import net.thevpc.nuts.util.NException;
 
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
@@ -45,7 +46,7 @@ import java.util.function.Supplier;
  * <p>
  * This interface also provides exception-safety utilities for wrapping regular
  * {@link Callable} instances so that checked exceptions are rethrown as unchecked
- * using {@link NExceptions#ofUncheckedException(Throwable)}.
+ * using {@link NReservedExceptions#ofUncheckedException(Throwable)}.
  * </p>
  *
  * <p>
@@ -66,7 +67,7 @@ import java.util.function.Supplier;
  * @param <T> the result type returned by this callable
  * @see NRedescribable
  * @see NElement
- * @see NExceptions
+ * @see NReservedExceptions
  * @since 0.8.0
  */
 public interface NCallable<T> extends NRedescribable<NCallable<T>>, Callable<T> {
@@ -79,7 +80,7 @@ public interface NCallable<T> extends NRedescribable<NCallable<T>>, Callable<T> 
      * </p>
      * <p>
      * Checked exceptions thrown by the delegate are automatically rethrown
-     * as unchecked exceptions using {@link NExceptions#ofUncheckedException(Throwable)}.
+     * as unchecked exceptions using {@link NReservedExceptions#ofUncheckedException(Throwable)}.
      * </p>
      *
      * @param other the callable to wrap, may be {@code null}
@@ -99,7 +100,7 @@ public interface NCallable<T> extends NRedescribable<NCallable<T>>, Callable<T> 
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
-                throw NExceptions.ofUncheckedException(e);
+                throw NException.ofUncheckedException(e);
             }
         };
     }

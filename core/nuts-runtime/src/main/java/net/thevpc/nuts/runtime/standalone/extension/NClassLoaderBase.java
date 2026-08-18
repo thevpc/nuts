@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.runtime.standalone.atrifact.DefaultNClasspathEntry;
@@ -57,7 +58,7 @@ public abstract class NClassLoaderBase extends URLClassLoader {
         super(new URL[0], parent);
         this.name = NStringUtils.firstNonBlank(name, "nclassloader");
         this.repositoryFilter = repositoryFilter;
-        this.dependencyFilter = dependencyFilter == null ? NDependencyFilters.of().byRunnable(true).and(NDependencyFilters.of().byOptional(false)) : dependencyFilter;
+        this.dependencyFilter = dependencyFilter == null ? NDependencyFilter.ofRunnable(true).and(NDependencyFilter.ofOptional(false)) : dependencyFilter;
         add(entries);
     }
 

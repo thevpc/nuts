@@ -6,11 +6,11 @@ import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.command.NUndeploy;
+import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NMsg;
@@ -37,10 +37,10 @@ public class DefaultNUndeploy extends AbstractNUndeploy {
             NDefinition p = NSearch.of()
                     .fetchStrategy(isOffline() ? NFetchStrategy.OFFLINE : NFetchStrategy.ONLINE)
                     .addIds(id)
-                    .addRepositoryFilter(NRepositoryFilters.of().byName(repository()))
+                    .addRepositoryFilter(NRepositoryFilter.ofName(repository()))
                     //skip 'installed' repository
                     .repositoryFilter(
-                            NRepositoryFilters.of().installedRepo().neg()
+                            NRepositoryFilter.ofInstalledRepo().neg()
                     )
                     .distinct(true)
                     .failFast(true)

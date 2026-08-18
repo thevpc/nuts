@@ -80,7 +80,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private AttributedString toAttributedString(NText n, NTextStyles styles) {
         switch (n.type()) {
             case PLAIN: {
-                styles = NTexts.of().theme().toBasicStyles(styles, false);
+                styles = NTextTheme.of().toBasicStyles(styles, false);
                 NTextPlain p = (NTextPlain) n;
                 if (styles.isPlain()) {
                     return new AttributedString(p.value());

@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -69,10 +69,7 @@ public class DefaultNTreeObjectWriter extends DefaultObjectWriterBase<NTreeObjec
             NTextBuilder builder = ((NText) tree).builder();
             tree = builder.lines().toArray(Object[]::new);
         }
-        NElements ee = NElements.of();
-        //ee.mapperStore().
-        Object destructredObject = ee
-                .toSimple(tree);
+        Object destructredObject = NElement.simpleOf(tree);
         return XNode.root(destructredObject, rootName, xNodeFormatter);
     }
 

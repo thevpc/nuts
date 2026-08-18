@@ -29,6 +29,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.boot.internal.util.NBootUtils;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
+import net.thevpc.nuts.internal.rpi.NIdFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
@@ -390,7 +391,7 @@ public class DefaultNId implements NId {
 
     @Override
     public NIdFilter toFilter() {
-        return NIdFilters.of().byValue(this);
+        return NIdFilter.ofValue(this);
     }
 
     @Override

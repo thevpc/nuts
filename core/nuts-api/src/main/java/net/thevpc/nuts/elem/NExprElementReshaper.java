@@ -1,13 +1,15 @@
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
+
 public interface NExprElementReshaper {
 
     static NExprElementReshaper ofDefault() {
-        return NElements.of().createExprElementReshaper(NExprElementReshaperType.DEFAULT);
+        return NElementRPI.of().createExprElementReshaper(NExprElementReshaperType.DEFAULT);
     }
 
     static NExprElementReshaper of(NExprElementReshaperType type) {
-        return NElements.of().createExprElementReshaper(type);
+        return NElementRPI.of().createExprElementReshaper(type);
     }
 
     NElement reshape(NFlatExprElement flat);
