@@ -4,7 +4,7 @@ import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.concurrent.NCachedValueModel;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NAssert;
@@ -257,7 +257,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
 
     @Override
     public NElement describe() {
-        NUpletElementBuilder b = NElement.ofUpletBuilder("CachedValue")
+        NTupleElementBuilder b = NElement.ofTupleBuilder("CachedValue")
                 .add("supplier", NDescribables.describeResolveOrSimplify(supplier));
 
         if (model.expiry() != null) {

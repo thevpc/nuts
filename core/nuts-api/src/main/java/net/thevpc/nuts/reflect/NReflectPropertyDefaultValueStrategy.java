@@ -33,7 +33,7 @@ import net.thevpc.nuts.util.NOptional;
  * Defines the strategy for determining if a property value is considered a "default"
  * and should be omitted during serialization to reduce output verbosity.
  * <p>
- * This strategy is used by {@link net.thevpc.nuts.elem.NElementFactory} and {@link NReflectProperty}
+ * This strategy is used by {@link NReflectConfiguration} and {@link NReflectProperty}
  * to decide whether a specific field or method value contributes to the
  * generated {@link net.thevpc.nuts.elem.NElement}.
  * * @author Taha Ben Salah

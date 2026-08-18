@@ -179,16 +179,16 @@ public class NSignatureMapImpl<S extends NSignature<T, ?>, T, V> implements NSig
             }
         }
 
-        public NOptional<V> remove(S uplet) {
-            NOptional<V> r = map.remove(uplet);
+        public NOptional<V> remove(S tuple) {
+            NOptional<V> r = map.remove(tuple);
             if (r.isPresent()) {
                 invalidCache = true;
             }
             return r;
         }
 
-        public void put(S uplet, V value) {
-            NOptional<V> o = map.put(uplet, value);
+        public void put(S tuple, V value) {
+            NOptional<V> o = map.put(tuple, value);
             if (!o.isPresent() || !Objects.equals(o.orNull(), value)) {
                 invalidCache = true;
             }

@@ -20,7 +20,6 @@ import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -232,8 +231,8 @@ public class DefaultElementMapperStore {
             case PARAM_ARRAY:
             case NAMED_ARRAY:
             case FULL_ARRAY:
-            case UPLET:
-            case NAMED_UPLET: {
+            case TUPLE:
+            case NAMED_TUPLE: {
                 return store.getDeserializer(List.class);
             }
             case DOUBLE_QUOTED_STRING:

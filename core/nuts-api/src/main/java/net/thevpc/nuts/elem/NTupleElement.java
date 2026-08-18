@@ -35,9 +35,9 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NUpletElement extends NNamedElement, NListContainerElement, Iterable<NElement> {
-    static NUpletElement ofEmpty() {
-        return NElement.ofUplet();
+public interface NTupleElement extends NNamedElement, NListContainerElement, Iterable<NElement> {
+    static NTupleElement ofEmpty() {
+        return NElement.ofTuple();
     }
 
     List<NElement> params();
@@ -49,5 +49,5 @@ public interface NUpletElement extends NNamedElement, NListContainerElement, Ite
      *
      * @return new builder initialized with this instance
      */
-    NUpletElementBuilder builder();
+    NTupleElementBuilder builder();
 }

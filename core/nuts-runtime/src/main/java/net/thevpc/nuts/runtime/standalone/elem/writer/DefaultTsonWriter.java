@@ -168,9 +168,9 @@ public class DefaultTsonWriter {
                 writeName((NStringElement) element);
                 break;
             }
-            case UPLET:
-            case NAMED_UPLET: {
-                writeUplet((NUpletElement) element);
+            case TUPLE:
+            case NAMED_TUPLE: {
+                writeTuple((NTupleElement) element);
                 break;
             }
             case FRAGMENT: {
@@ -203,7 +203,7 @@ public class DefaultTsonWriter {
         }
     }
 
-    private void writeUplet(NUpletElement a) {
+    private void writeTuple(NTupleElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         String name = a.name().orNull();
         if (name != null) {

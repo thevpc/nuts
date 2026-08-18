@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NAssert;
 
@@ -156,7 +156,7 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
     @Override
     public NElement describe() {
         Boolean errorState = model.errorState();
-        NUpletElementBuilder u = NElement.ofUpletBuilder("OnceValue")
+        NTupleElementBuilder u = NElement.ofTupleBuilder("OnceValue")
                 .add("evaluated", errorState != null);
         if (errorState != null) {
             u.add("success", !errorState);

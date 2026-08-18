@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.elem.builder;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
-import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNUpletElement;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNTupleElement;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
@@ -38,16 +38,16 @@ import java.util.function.Consumer;
 /**
  * @author thevpc
  */
-public class DefaultNUpletElementBuilder extends AbstractNElementBuilder implements NUpletElementBuilder {
+public class DefaultNTupleElementBuilder extends AbstractNElementBuilder implements NTupleElementBuilder {
 
     private List<NElement> params = new ArrayList<>();
     private String name;
 
-    public DefaultNUpletElementBuilder() {
+    public DefaultNTupleElementBuilder() {
     }
 
     @Override
-    public NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con) {
+    public NTupleElementBuilder doWith(Consumer<NTupleElementBuilder> con) {
         if (con != null) {
             con.accept(this);
         }
@@ -55,7 +55,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder remove(String child) {
+    public NTupleElementBuilder remove(String child) {
         CoreNElementUtils.removePairByKey(child,params);
         return this;
     }
@@ -65,19 +65,19 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
         return NOptional.ofNamed(name, name);
     }
 
-    public NUpletElementBuilder name(String name) {
+    public NTupleElementBuilder name(String name) {
         this.name = name;
         return this;
     }
 
 
-    public NUpletElementBuilder addAt(int index, NElement arg) {
+    public NTupleElementBuilder addAt(int index, NElement arg) {
         CoreNElementUtils.addAt(index, arg,params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder removeAt(int index) {
+    public NTupleElementBuilder removeAt(int index) {
         CoreNElementUtils.removeAt(index,params);
         return this;
     }
@@ -89,7 +89,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder setParams(List<NElement> params) {
+    public NTupleElementBuilder setParams(List<NElement> params) {
         this.params.clear();
         CoreNElementUtils.setAll(params,this.params);
         return this;
@@ -109,7 +109,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder copyFrom(NUpletElement value) {
+    public NTupleElementBuilder copyFrom(NTupleElement value) {
         if (value != null) {
             this.addAffixes(value.affixes());
             if (value.isNamed()) {
@@ -124,44 +124,44 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
 
     @Override
-    public NUpletElementBuilder addAll(NElement[] value) {
+    public NTupleElementBuilder addAll(NElement[] value) {
         CoreNElementUtils.addAll(value,this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addAll(Collection<NElement> value) {
+    public NTupleElementBuilder addAll(Collection<NElement> value) {
         CoreNElementUtils.addAll(value,this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder add(NElement value) {
+    public NTupleElementBuilder add(NElement value) {
         CoreNElementUtils.add(value,this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder setAt(int index, NElement element) {
+    public NTupleElementBuilder setAt(int index, NElement element) {
         CoreNElementUtils.setAt(index,element,this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder clear() {
+    public NTupleElementBuilder clear() {
         // should it not clean everything?
         params.clear();
         return this;
     }
 
     @Override
-    public NUpletElementBuilder clearParams() {
+    public NTupleElementBuilder clearParams() {
         params.clear();
         return this;
     }
 
     @Override
-    public NUpletElementBuilder remove(int index) {
+    public NTupleElementBuilder remove(int index) {
         CoreNElementUtils.removeAt(index,this.params);
         params.remove(index);
         return this;
@@ -169,7 +169,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
 
 
     @Override
-    public NUpletElementBuilder addAll(String[] value) {
+    public NTupleElementBuilder addAll(String[] value) {
         for (String b : value) {
             add(b);
         }
@@ -177,7 +177,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder addAll(int[] value) {
+    public NTupleElementBuilder addAll(int[] value) {
         for (int b : value) {
             add(b);
         }
@@ -185,7 +185,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder addAll(double[] value) {
+    public NTupleElementBuilder addAll(double[] value) {
         for (double b : value) {
             add(b);
         }
@@ -193,7 +193,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder addAll(long[] value) {
+    public NTupleElementBuilder addAll(long[] value) {
         for (long b : value) {
             add(b);
         }
@@ -201,7 +201,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder addAll(float[] value) {
+    public NTupleElementBuilder addAll(float[] value) {
         for (float b : value) {
             add(b);
         }
@@ -209,7 +209,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder addAll(boolean[] value) {
+    public NTupleElementBuilder addAll(boolean[] value) {
         for (boolean b : value) {
             add(b);
         }
@@ -217,7 +217,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder addAll(char[] value) {
+    public NTupleElementBuilder addAll(char[] value) {
         for (char b : value) {
             add(b);
         }
@@ -225,7 +225,7 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder addAll(byte[] value) {
+    public NTupleElementBuilder addAll(byte[] value) {
         for (byte b : value) {
             add(b);
         }
@@ -233,194 +233,194 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder add(Integer value) {
+    public NTupleElementBuilder add(Integer value) {
         return add(NElement.ofInt(value));
     }
 
     @Override
-    public NUpletElementBuilder add(Long value) {
+    public NTupleElementBuilder add(Long value) {
         return add(NElement.ofLong(value));
     }
 
     @Override
-    public NUpletElementBuilder add(Double value) {
+    public NTupleElementBuilder add(Double value) {
         return add(NElement.ofDouble(value));
     }
 
     @Override
-    public NUpletElementBuilder add(Float value) {
+    public NTupleElementBuilder add(Float value) {
         return add(NElement.ofFloat(value));
     }
 
     @Override
-    public NUpletElementBuilder add(Byte value) {
+    public NTupleElementBuilder add(Byte value) {
         return add(NElement.ofByte(value));
     }
 
     @Override
-    public NUpletElementBuilder add(Boolean value) {
+    public NTupleElementBuilder add(Boolean value) {
         return add(NElement.ofBoolean(value));
     }
 
     @Override
-    public NUpletElementBuilder add(Character value) {
+    public NTupleElementBuilder add(Character value) {
         return add(NElement.ofString(String.valueOf(value)));
     }
 
     @Override
-    public NUpletElementBuilder add(Number value) {
+    public NTupleElementBuilder add(Number value) {
         return add(NElement.ofNumber(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String value) {
+    public NTupleElementBuilder add(String value) {
         return add(NElement.ofString(value));
     }
 
     @Override
-    public NUpletElement build() {
-        return new DefaultNUpletElement(name, params,
+    public NTupleElement build() {
+        return new DefaultNTupleElement(name, params,
                 affixes(), diagnostics(),metadata());
     }
 
     @Override
     public NElementType type() {
-        return name == null ? NElementType.UPLET
-                : NElementType.NAMED_UPLET;
+        return name == null ? NElementType.TUPLE
+                : NElementType.NAMED_TUPLE;
     }
 
     @Override
-    public NUpletElementBuilder add(String name, NElement value) {
+    public NTupleElementBuilder add(String name, NElement value) {
         CoreNElementUtils.add(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Number value) {
+    public NTupleElementBuilder add(String name, Number value) {
         CoreNElementUtils.add(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder add(NElement name, NElement value) {
+    public NTupleElementBuilder add(NElement name, NElement value) {
         CoreNElementUtils.add(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, NElement value) {
+    public NTupleElementBuilder set(NElement name, NElement value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, NElement value) {
+    public NTupleElementBuilder set(String name, NElement value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, Boolean value) {
+    public NTupleElementBuilder set(String name, Boolean value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, Integer value) {
+    public NTupleElementBuilder set(String name, Integer value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, Double value) {
+    public NTupleElementBuilder set(String name, Double value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, String value) {
+    public NTupleElementBuilder set(String name, String value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, Boolean value) {
+    public NTupleElementBuilder set(NElement name, Boolean value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, Integer value) {
+    public NTupleElementBuilder set(NElement name, Integer value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, Character value) {
+    public NTupleElementBuilder set(NElement name, Character value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, Byte value) {
+    public NTupleElementBuilder set(NElement name, Byte value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, Short value) {
+    public NTupleElementBuilder set(NElement name, Short value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, Long value) {
+    public NTupleElementBuilder set(NElement name, Long value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, Long value) {
+    public NTupleElementBuilder set(String name, Long value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, Float value) {
+    public NTupleElementBuilder set(String name, Float value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, Short value) {
+    public NTupleElementBuilder set(String name, Short value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, Byte value) {
+    public NTupleElementBuilder set(String name, Byte value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(String name, Character value) {
+    public NTupleElementBuilder set(String name, Character value) {
         CoreNElementUtils.setPair(CoreNElementUtils.pair(name,value),this.params);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, Double value) {
+    public NTupleElementBuilder set(NElement name, Double value) {
         return set(name, NElement.ofDouble(value));
     }
 
     @Override
-    public NUpletElementBuilder set(NElement name, String value) {
+    public NTupleElementBuilder set(NElement name, String value) {
         return set(name, NElement.ofString(value));
     }
 
     @Override
-    public NUpletElementBuilder set(NPairElement entry) {
+    public NTupleElementBuilder set(NPairElement entry) {
         if (entry != null) {
             set(entry.key(), entry.value());
         }
@@ -428,52 +428,52 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Boolean value) {
+    public NTupleElementBuilder add(String name, Boolean value) {
         return add(NElement.ofNameOrString(name), NElement.ofBoolean(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Character value) {
+    public NTupleElementBuilder add(String name, Character value) {
         return add(NElement.ofNameOrString(name), NElement.ofChar(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Byte value) {
+    public NTupleElementBuilder add(String name, Byte value) {
         return add(NElement.ofNameOrString(name), NElement.ofByte(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Short value) {
+    public NTupleElementBuilder add(String name, Short value) {
         return add(NElement.ofNameOrString(name), NElement.ofShort(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Long value) {
+    public NTupleElementBuilder add(String name, Long value) {
         return add(NElement.ofNameOrString(name), NElement.ofLong(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Float value) {
+    public NTupleElementBuilder add(String name, Float value) {
         return add(NElement.ofNameOrString(name), NElement.ofFloat(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Integer value) {
+    public NTupleElementBuilder add(String name, Integer value) {
         return add(NElement.ofNameOrString(name), NElement.ofInt(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, Double value) {
+    public NTupleElementBuilder add(String name, Double value) {
         return add(NElement.ofNameOrString(name), NElement.ofDouble(value));
     }
 
     @Override
-    public NUpletElementBuilder add(String name, String value) {
+    public NTupleElementBuilder add(String name, String value) {
         return add(NElement.ofNameOrString(name), NElement.ofString(value));
     }
 
     @Override
-    public NUpletElementBuilder addAll(Map<NElement, NElement> other) {
+    public NTupleElementBuilder addAll(Map<NElement, NElement> other) {
         if (other != null) {
             for (Map.Entry<NElement, NElement> e : other.entrySet()) {
                 add(e.getKey(), e.getValue());
@@ -485,10 +485,10 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     // ------------------------------------------
 
     @Override
-    public NUpletElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
+    public NTupleElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy) {
         super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NUpletElementBuilder) {
-            NUpletElementBuilder b = (NUpletElementBuilder) other;
+        if (other instanceof NTupleElementBuilder) {
+            NTupleElementBuilder b = (NTupleElementBuilder) other;
             if (b.name().isPresent()) {
                 name(b.name().get());
             }
@@ -500,10 +500,10 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     }
 
     @Override
-    public NUpletElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
+    public NTupleElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy) {
         super.copyFrom(other, assignmentPolicy);
-        if (other instanceof NUpletElement) {
-            NUpletElement b = (NUpletElement) other;
+        if (other instanceof NTupleElement) {
+            NTupleElement b = (NTupleElement) other;
             if (b.name().isPresent()) {
                 name(b.name().get());
             }
@@ -519,163 +519,163 @@ public class DefaultNUpletElementBuilder extends AbstractNElementBuilder impleme
     // ------------------------------------------
 
     @Override
-    public NUpletElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
+    public NTupleElementBuilder addAnnotations(List<NElementAnnotation> annotations) {
         super.addAnnotations(annotations);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addAnnotation(String name, NElement... args) {
+    public NTupleElementBuilder addAnnotation(String name, NElement... args) {
         super.addAnnotation(name, args);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addAnnotation(NElementAnnotation annotation) {
+    public NTupleElementBuilder addAnnotation(NElementAnnotation annotation) {
         super.addAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addAffixAt(int index, NBoundAffix affix) {
+    public NTupleElementBuilder addAffixAt(int index, NBoundAffix affix) {
         super.addAffixAt(index, affix);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder removeAffix(int affix) {
+    public NTupleElementBuilder removeAffix(int affix) {
         super.removeAffix(affix);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder clearAnnotations() {
+    public NTupleElementBuilder clearAnnotations() {
         super.clearAnnotations();
         return this;
     }
 
     @Override
-    public NUpletElementBuilder clearAffixes() {
+    public NTupleElementBuilder clearAffixes() {
         super.clearAffixes();
         return this;
     }
 
 
     @Override
-    public NUpletElementBuilder clearComments() {
+    public NTupleElementBuilder clearComments() {
         super.clearComments();
         return this;
     }
 
     @Override
-    public NUpletElementBuilder setAffixAt(int index, NBoundAffix affix) {
+    public NTupleElementBuilder setAffixAt(int index, NBoundAffix affix) {
         super.setAffixAt(index, affix);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder setAffixes(List<NBoundAffix> affixes) {
+    public NTupleElementBuilder setAffixes(List<NBoundAffix> affixes) {
         super.setAffixes(affixes);
         return this;
     }
 
-    public NUpletElementBuilder addAffix(NBoundAffix affix) {
+    public NTupleElementBuilder addAffix(NBoundAffix affix) {
         super.addAffix(affix);
         return this;
     }
 
 
     @Override
-    public NUpletElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+    public NTupleElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
         super.addAffixAt(index, affix, anchor);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
+    public NTupleElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor) {
         super.setAffixAt(index, affix, anchor);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder removeDiagnostic(NElementDiagnostic error) {
+    public NTupleElementBuilder removeDiagnostic(NElementDiagnostic error) {
         super.removeDiagnostic(error);
         return this;
     }
 
-    public NUpletElementBuilder addAffixes(List<NBoundAffix> affixes) {
+    public NTupleElementBuilder addAffixes(List<NBoundAffix> affixes) {
         super.addAffixes(affixes);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addDiagnostic(NElementDiagnostic error) {
+    public NTupleElementBuilder addDiagnostic(NElementDiagnostic error) {
         super.addDiagnostic(error);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
+    public NTupleElementBuilder addAffixes(List<? extends NAffix> affixes, NAffixAnchor anchor) {
         super.addAffixes(affixes, anchor);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
+    public NTupleElementBuilder addAffix(NAffix affix, NAffixAnchor anchor) {
         super.addAffix(affix, anchor);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
+    public NTupleElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor) {
         super.removeAffixes(type, anchor);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addLeadingComment(NElementComment comment) {
+    public NTupleElementBuilder addLeadingComment(NElementComment comment) {
         super.addLeadingComment(comment);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addLeadingComments(NElementComment... comments) {
+    public NTupleElementBuilder addLeadingComments(NElementComment... comments) {
         super.addLeadingComments(comments);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addTrailingComment(NElementComment comment) {
+    public NTupleElementBuilder addTrailingComment(NElementComment comment) {
         super.addTrailingComment(comment);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder addTrailingComments(NElementComment... comments) {
+    public NTupleElementBuilder addTrailingComments(NElementComment... comments) {
         super.addTrailingComments(comments);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder removeAnnotation(NElementAnnotation annotation) {
+    public NTupleElementBuilder removeAnnotation(NElementAnnotation annotation) {
         super.removeAnnotation(annotation);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder copyFrom(NElementBuilder other) {
+    public NTupleElementBuilder copyFrom(NElementBuilder other) {
         super.copyFrom(other);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder copyFrom(NElement other) {
+    public NTupleElementBuilder copyFrom(NElement other) {
         super.copyFrom(other);
         return this;
     }
 
     @Override
-    public NUpletElementBuilder metadata(NElementMetadata metadata) {
+    public NTupleElementBuilder metadata(NElementMetadata metadata) {
         super.metadata(metadata);
         return this;
     }

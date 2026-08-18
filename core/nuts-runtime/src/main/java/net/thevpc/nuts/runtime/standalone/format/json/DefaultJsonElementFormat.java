@@ -490,11 +490,11 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                             .build();
                 }
             }
-            case UPLET:
-            case NAMED_UPLET: {
+            case TUPLE:
+            case NAMED_TUPLE: {
                 List<NElementAnnotation> a = e.annotations();
 
-                NUpletElement p0 = e.asUplet().get();
+                NTupleElement p0 = e.asTuple().get();
                 NArrayElementBuilder p = NElement.ofArrayBuilder()
                         .addAll(p0.children().stream().map(x -> ensureJson(x)).toArray(NElement[]::new));
 

@@ -6,7 +6,7 @@ import net.thevpc.nuts.concurrent.NLockReleaseException;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.platform.NEnv;
@@ -366,7 +366,7 @@ public class DefaultFileNLock extends AbstractNLock {
 
     @Override
     public NElement describe() {
-        NUpletElementBuilder b = NElement.ofUpletBuilder("FileLock");
+        NTupleElementBuilder b = NElement.ofTupleBuilder("FileLock");
         if (path != null) {
             b.add("path", path.toString());
         }

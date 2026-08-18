@@ -117,8 +117,8 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 }
                 break;
             }
-            case NAMED_UPLET: {
-                NUpletElementBuilder eb = (NUpletElementBuilder) b;
+            case NAMED_TUPLE: {
+                NTupleElementBuilder eb = (NTupleElementBuilder) b;
                 if (isCollision(startAffixes, eb.name().orNull())) {
                     eb.addSpaceAffix(" ", NAffixAnchor.START);
                 }
@@ -131,8 +131,8 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 }
                 break;
             }
-            case UPLET: {
-                NUpletElementBuilder eb = (NUpletElementBuilder) b;
+            case TUPLE: {
+                NTupleElementBuilder eb = (NTupleElementBuilder) b;
                 List<NElement> nElements = eb.params();
                 if (nElements != null) {
                     List<NBoundAffix> globalSeps = eb.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.SEP_1).collect(Collectors.toList());
@@ -418,13 +418,13 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
         }
         // there is no affixes
         switch (e.type()) {
-            case UPLET:
+            case TUPLE:
             case PARAM_OBJECT:
             case PARAM_ARRAY: {
                 return "(";
             }
-            case NAMED_UPLET: {
-                return ((NUpletElement) e).name().get();
+            case NAMED_TUPLE: {
+                return ((NTupleElement) e).name().get();
             }
 
             case NAMED_OBJECT:
@@ -660,8 +660,8 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
         }
         // there is no affixes
         switch (e.type()) {
-            case NAMED_UPLET:
-            case UPLET: {
+            case NAMED_TUPLE:
+            case TUPLE: {
                 return ")";
             }
             case FULL_OBJECT:

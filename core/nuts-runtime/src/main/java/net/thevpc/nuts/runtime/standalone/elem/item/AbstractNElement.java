@@ -73,7 +73,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public <T> T convertTo(Class<T> to) {
-        return NElementRPI.of().createSharedElements().fromElement(this, to);
+        return NElementRPI.of().getSharedElements().fromElement(this, to);
     }
 
     @Override
@@ -217,12 +217,12 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isNamedUplet() {
-        return type() == NElementType.NAMED_UPLET;
+    public boolean isNamedTuple() {
+        return type() == NElementType.NAMED_TUPLE;
     }
 
-    public boolean isUplet() {
-        return type() == NElementType.UPLET;
+    public boolean isTuple() {
+        return type() == NElementType.TUPLE;
     }
 
     @Override
@@ -241,8 +241,8 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isNamedUplet(String name) {
-        return type() == NElementType.NAMED_UPLET && Objects.equals(asUplet().get().name().orNull(), name);
+    public boolean isNamedTuple(String name) {
+        return type() == NElementType.NAMED_TUPLE && Objects.equals(asTuple().get().name().orNull(), name);
     }
 
     @Override
@@ -262,7 +262,7 @@ public abstract class AbstractNElement implements NElement {
             case NAMED_OBJECT:
             case FULL_ARRAY:
             case NAMED_ARRAY:
-            case NAMED_UPLET:
+            case NAMED_TUPLE:
                 return true;
         }
         return false;
@@ -470,8 +470,8 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isAnyUplet() {
-        return type().isAnyUplet();
+    public boolean isAnyTuple() {
+        return type().isAnyTuple();
     }
 
     @Override
@@ -524,8 +524,8 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public boolean isNamedUplet(Predicate<String> nameCondition) {
-        return isNamedUplet() && isNamed(nameCondition);
+    public boolean isNamedTuple(Predicate<String> nameCondition) {
+        return isNamedTuple() && isNamed(nameCondition);
     }
 
     @Override
@@ -610,11 +610,11 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<NUpletElement> asUplet() {
-        if (this instanceof NUpletElement) {
-            return NOptional.of((NUpletElement) this);
+    public NOptional<NTupleElement> asTuple() {
+        if (this instanceof NTupleElement) {
+            return NOptional.of((NTupleElement) this);
         }
-        return NOptional.ofError(() -> _expected("uplet"));
+        return NOptional.ofError(() -> _expected("tuple"));
     }
 
     @Override
@@ -1028,7 +1028,7 @@ public abstract class AbstractNElement implements NElement {
             case FULL_ARRAY:
             case NAMED_OBJECT:
             case FULL_OBJECT:
-            case NAMED_UPLET: {
+            case NAMED_TUPLE: {
                 return true;
             }
             case PAIR: {
@@ -1228,8 +1228,8 @@ public abstract class AbstractNElement implements NElement {
                 }
                 break;
             }
-            case NAMED_UPLET: {
-                NUpletElement u = asUplet().orNull();
+            case NAMED_TUPLE: {
+                NTupleElement u = asTuple().orNull();
                 return NOptional.of(NElement.ofPair(u.name().orNull(), u.builder().name(null).build()));
             }
             case NAMED_OBJECT: {
@@ -1251,35 +1251,35 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NOptional<NUpletElement> toNamedUplet() {
+    public NOptional<NTupleElement> toNamedTuple() {
         switch (type) {
             case PAIR: {
                 NPairElement u = asPair().orNull();
                 if (u.isNamed()) {
                     NElement v = u.value();
-                    return NOptional.of(NElement.ofUplet(u.name().orNull(), v));
+                    return NOptional.of(NElement.ofTuple(u.name().orNull(), v));
                 }
                 break;
             }
-            case NAMED_UPLET: {
-                return NOptional.of((NUpletElement) this);
+            case NAMED_TUPLE: {
+                return NOptional.of((NTupleElement) this);
             }
             case NAMED_OBJECT: {
                 NObjectElement u = asObject().orNull();
                 if (!u.isParametrized()) {
-                    return NOptional.of(NElement.ofUplet(u.name().orNull(), u.children().toArray(new NElement[0])));
+                    return NOptional.of(NElement.ofTuple(u.name().orNull(), u.children().toArray(new NElement[0])));
                 }
                 break;
             }
             case NAMED_ARRAY: {
                 NArrayElement u = asArray().orNull();
                 if (!u.isParametrized()) {
-                    return NOptional.of(NElement.ofUplet(u.name().orNull(), u.children().toArray(new NElement[0])));
+                    return NOptional.of(NElement.ofTuple(u.name().orNull(), u.children().toArray(new NElement[0])));
                 }
                 break;
             }
         }
-        return NOptional.ofEmpty(_expected("named uplet"));
+        return NOptional.ofEmpty(_expected("named tuple"));
     }
 
     @Override
@@ -1293,8 +1293,8 @@ public abstract class AbstractNElement implements NElement {
                 }
                 break;
             }
-            case NAMED_UPLET: {
-                NUpletElement u = asUplet().orNull();
+            case NAMED_TUPLE: {
+                NTupleElement u = asTuple().orNull();
                 return NOptional.of(NElement.ofObjectBuilder(u.name().orNull()).addAll(u.children().toArray(new NElement[0])).build());
             }
             case NAMED_OBJECT: {
@@ -1321,8 +1321,8 @@ public abstract class AbstractNElement implements NElement {
                 }
                 break;
             }
-            case NAMED_UPLET: {
-                NUpletElement u = asUplet().orNull();
+            case NAMED_TUPLE: {
+                NTupleElement u = asTuple().orNull();
                 return NOptional.of(NElement.ofArrayBuilder(u.name().orNull()).addAll(u.children().toArray(new NElement[0])).build());
             }
             case NAMED_OBJECT: {
@@ -1349,9 +1349,9 @@ public abstract class AbstractNElement implements NElement {
                 }
                 return NOptional.of(NElement.ofObjectBuilder().add(this).build());
             }
-            case NAMED_UPLET:
-            case UPLET: {
-                NUpletElement u = asUplet().orNull();
+            case NAMED_TUPLE:
+            case TUPLE: {
+                NTupleElement u = asTuple().orNull();
                 return NOptional.of(NElement.ofObjectBuilder()
                         .name(u.name().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
@@ -1398,9 +1398,9 @@ public abstract class AbstractNElement implements NElement {
                 }
                 return NOptional.of(NElement.ofArrayBuilder().add(this).build());
             }
-            case UPLET:
-            case NAMED_UPLET: {
-                NUpletElement u = asUplet().orNull();
+            case TUPLE:
+            case NAMED_TUPLE: {
+                NTupleElement u = asTuple().orNull();
                 return NOptional.of(NElement.ofArrayBuilder()
                         .name(u.name().orNull())
                         .addAll(u.children().toArray(new NElement[0])).build());
@@ -1443,8 +1443,8 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NUpletElement wrapIntoUplet() {
-        return NElement.ofUplet(this);
+    public NTupleElement wrapIntoTuple() {
+        return NElement.ofTuple(this);
     }
 
     @Override
@@ -1458,8 +1458,8 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NUpletElement wrapIntoNamedUplet(String name) {
-        return NElement.ofUpletBuilder(name).add(this).build();
+    public NTupleElement wrapIntoNamedTuple(String name) {
+        return NElement.ofTupleBuilder(name).add(this).build();
     }
 
     @Override

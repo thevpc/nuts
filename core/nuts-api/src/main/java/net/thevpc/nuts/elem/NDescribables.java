@@ -21,7 +21,7 @@ public final class NDescribables {
 
     public static NElement describeWithTransform(String name, Object transformer, NElement... params) {
         NElement t = NDescribables.describeResolveOrSimplify(transformer);
-        return NElement.ofUpletBuilder()
+        return NElement.ofTupleBuilder()
                 .name(name)
                 .add(t)
                 .addAll(params)

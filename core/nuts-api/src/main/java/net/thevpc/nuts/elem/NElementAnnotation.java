@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -41,11 +42,11 @@ import java.util.List;
  */
 public interface NElementAnnotation extends NAffix {
     static NElementAnnotation of(String name, NElement... values) {
-        return NElementFactory.of().ofAnnotation(name, values);
+        return NElementRPI.of().createAnnotation(name, values);
     }
 
     static NElementAnnotation of(String name) {
-        return NElementFactory.of().ofAnnotation(name);
+        return NElementRPI.of().createAnnotation(name);
     }
 
 

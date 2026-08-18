@@ -39,16 +39,16 @@ import java.util.stream.Stream;
 /**
  * @author thevpc
  */
-public class DefaultNUpletElement extends AbstractNListContainerElement
-        implements NUpletElement {
+public class DefaultNTupleElement extends AbstractNListContainerElement
+        implements NTupleElement {
 
     private final List<NElement> params;
     private String name;
 
-    public DefaultNUpletElement(String name, List<NElement> params, List<NBoundAffix> affixes,
-                                List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
-        super(name == null ? NElementType.UPLET
-                        : NElementType.NAMED_UPLET,
+    public DefaultNTupleElement(String name, List<NElement> params, List<NBoundAffix> affixes,
+                                List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        super(name == null ? NElementType.TUPLE
+                        : NElementType.NAMED_TUPLE,
                 affixes, diagnostics,metadata);
         if(name!=null){
             NAssert.requireNamedTrue(NElementUtils.isElementName(name), "valid name : " + name);
@@ -129,8 +129,8 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
 
 
     @Override
-    public NUpletElementBuilder builder() {
-        return NElement.ofUpletBuilder()
+    public NTupleElementBuilder builder() {
+        return NElement.ofTupleBuilder()
                 .copyFrom(this);
     }
 
@@ -144,7 +144,7 @@ public class DefaultNUpletElement extends AbstractNListContainerElement
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        DefaultNUpletElement nElements = (DefaultNUpletElement) o;
+        DefaultNTupleElement nElements = (DefaultNTupleElement) o;
         return Objects.deepEquals(params, nElements.params)
                 && Objects.equals(name, nElements.name().orNull())
                 ;

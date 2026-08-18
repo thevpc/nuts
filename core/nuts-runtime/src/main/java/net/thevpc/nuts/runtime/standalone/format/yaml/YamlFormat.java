@@ -113,8 +113,8 @@ public class YamlFormat {
                 value1.set("$array", NElement.ofArray(value1.children().toArray(new NElement[0])));
                 return value1.build();
             }
-            case UPLET:
-            case NAMED_UPLET: {
+            case TUPLE:
+            case NAMED_TUPLE: {
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
                 List<NElement> children = value1.children();
                 value1.clearChildren();

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Class responsible of manipulating {@link NElement} type. It help parsing
+ * Class responsible for manipulating {@link NElement} type. It helps parsing
  * from, converting to and formatting such types.
  *
  * @author thevpc

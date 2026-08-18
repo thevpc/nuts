@@ -198,7 +198,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             if (lib.isReadEnabled()) {
                 all.add(NIteratorBuilder.of(
                                         lib.searchVersions(id, idFilter, false)
-                                ).named(NElement.ofUplet("searchVersionInLib", NElement.ofString(name())))
+                                ).named(NElement.ofTuple("searchVersionInLib", NElement.ofString(name())))
                                 .build()
 
                 );
@@ -211,7 +211,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                             NIteratorBuilder.of(
                                     cache.searchVersions(id, idFilter, false)
                             )
-                                    .named(NElement.ofUplet("searchVersionInCache", NElement.ofString(name())))
+                                    .named(NElement.ofTuple("searchVersionInCache", NElement.ofString(name())))
                                     .build());
                 }
 //                Iterator<NutsId> p = null;
@@ -234,7 +234,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             if (p != null) {
                 all.add(
                         NIteratorBuilder.of(p)
-                                .named(NElement.ofUplet("searchVersionInCore", NElement.ofString(name())))
+                                .named(NElement.ofTuple("searchVersionInCore", NElement.ofString(name())))
                                 .build());
             }
         } catch (NArtifactNotFoundException ex) {
@@ -253,7 +253,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return NIteratorBuilder.of(
                 mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode)
         )
-                .named(NElement.ofUplet("searchVersion", NElement.ofString(name())))
+                .named(NElement.ofTuple("searchVersion", NElement.ofString(name())))
                 .build();
 
     }

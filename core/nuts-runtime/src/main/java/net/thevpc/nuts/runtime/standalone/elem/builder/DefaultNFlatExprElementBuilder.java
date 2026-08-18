@@ -98,7 +98,7 @@ public class DefaultNFlatExprElementBuilder extends AbstractNElementBuilder impl
                 elems.add((NElement) o);
             } else {
                 List<NElement> li = (List) o;
-                elems.add(NElement.ofUplet(li.toArray(new NElement[0])));
+                elems.add(NElement.ofTuple(li.toArray(new NElement[0])));
             }
         }
         return new DefaultNFlatExprElement(elems,

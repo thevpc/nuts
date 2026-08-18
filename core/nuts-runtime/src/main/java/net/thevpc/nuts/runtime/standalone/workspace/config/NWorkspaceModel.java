@@ -10,7 +10,6 @@ import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.internal.rpi.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.platform.NEnv;
@@ -21,7 +20,6 @@ import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineRPI;
 import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementRPI;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
@@ -82,7 +80,6 @@ public class NWorkspaceModel {
 
     public NExtensionCatalogManager extensionCatalogManager=new NExtensionCatalogManager();
 
-    public NElementFactory defaultNElementFactory;
 
     public NWorkspace workspace;
     public NScopedValue<NSession> sessionScopes = new NScopedValue<>();
@@ -164,14 +161,7 @@ public class NWorkspaceModel {
                 return (T) t;
             }
             //log will need Element Factory so...
-            case "net.thevpc.nuts.elem.NElementFactory": {
-                NElementFactory t = defaultNElementFactory;
-                if (t == null) {
-                    t = new DefaultNElementFactory();
-                    defaultNElementFactory = t;
-                }
-                return (T) t;
-            }
+
             //log will need NCollectionsRPI so...
             case "net.thevpc.nuts.internal.rpi.NUtilsRPI": {
                 NUtilsRPI t = defaultNUtilsRPI;

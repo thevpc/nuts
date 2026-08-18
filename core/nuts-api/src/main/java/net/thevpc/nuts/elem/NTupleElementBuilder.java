@@ -40,20 +40,20 @@ import java.util.function.Consumer;
  * @author thevpc
  * @app.category Elements
  */
-public interface NUpletElementBuilder extends NElementBuilder {
-    static NUpletElementBuilder of() {
-        return NElement.ofUpletBuilder();
+public interface NTupleElementBuilder extends NElementBuilder {
+    static NTupleElementBuilder of() {
+        return NElement.ofTupleBuilder();
     }
 
     NOptional<String> name();
 
-    NUpletElementBuilder name(String name);
+    NTupleElementBuilder name(String name);
 
-    NUpletElementBuilder removeAt(int index);
+    NTupleElementBuilder removeAt(int index);
 
     List<NElement> params();
 
-    NUpletElementBuilder remove(String child);
+    NTupleElementBuilder remove(String child);
 
     /**
      * element count
@@ -77,7 +77,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder copyFrom(NUpletElement value);
+    NTupleElementBuilder copyFrom(NTupleElement value);
 
     /**
      * all all elements in the given array
@@ -85,7 +85,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(NElement[] value);
+    NTupleElementBuilder addAll(NElement[] value);
 
     /**
      * all all elements in the given array
@@ -93,7 +93,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(Collection<NElement> value);
+    NTupleElementBuilder addAll(Collection<NElement> value);
 
     /**
      * all all elements in the given array
@@ -101,7 +101,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(String[] value);
+    NTupleElementBuilder addAll(String[] value);
 
     /**
      * add element to the given array
@@ -109,7 +109,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(Integer value);
+    NTupleElementBuilder add(Integer value);
 
     /**
      * add element to the given array
@@ -117,7 +117,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(Long value);
+    NTupleElementBuilder add(Long value);
 
     /**
      * add element to the given array
@@ -125,7 +125,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(Double value);
+    NTupleElementBuilder add(Double value);
 
     /**
      * add element to the given array
@@ -133,7 +133,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(Float value);
+    NTupleElementBuilder add(Float value);
 
     /**
      * add element to the given array
@@ -141,7 +141,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(Byte value);
+    NTupleElementBuilder add(Byte value);
 
     /**
      * add element to the given array
@@ -149,7 +149,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(Boolean value);
+    NTupleElementBuilder add(Boolean value);
 
     /**
      * add element to the given array
@@ -157,7 +157,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(Character value);
+    NTupleElementBuilder add(Character value);
 
     /**
      * add element to the given array
@@ -165,7 +165,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(Number value);
+    NTupleElementBuilder add(Number value);
 
     /**
      * add element to the given array
@@ -173,7 +173,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder add(String value);
+    NTupleElementBuilder add(String value);
 
     /**
      * all all elements in the given array
@@ -181,7 +181,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(int[] value);
+    NTupleElementBuilder addAll(int[] value);
 
     /**
      * all all elements in the given array
@@ -189,7 +189,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(double[] value);
+    NTupleElementBuilder addAll(double[] value);
 
     /**
      * all all elements in the given array
@@ -197,7 +197,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(long[] value);
+    NTupleElementBuilder addAll(long[] value);
 
     /**
      * all all elements in the given array
@@ -205,7 +205,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(float[] value);
+    NTupleElementBuilder addAll(float[] value);
 
     /**
      * all all elements in the given array
@@ -213,7 +213,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(boolean[] value);
+    NTupleElementBuilder addAll(boolean[] value);
 
     /**
      * all all elements in the given array
@@ -221,7 +221,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(char[] value);
+    NTupleElementBuilder addAll(char[] value);
 
     /**
      * all all elements in the given array
@@ -229,7 +229,7 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @param value value
      * @return {@code this} instance
      */
-    NUpletElementBuilder addAll(byte[] value);
+    NTupleElementBuilder addAll(byte[] value);
 
     /**
      * add new element to the end of the array.
@@ -238,18 +238,18 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @return {@code this} instance
      * @throws NullPointerException if {@code element==null}
      */
-    NUpletElementBuilder add(NElement element);
+    NTupleElementBuilder add(NElement element);
 
-    NUpletElementBuilder setAt(int index, NElement element);
+    NTupleElementBuilder setAt(int index, NElement element);
 
     /**
      * remove all elements from this array.
      *
      * @return {@code this} instance
      */
-    NUpletElementBuilder clear();
+    NTupleElementBuilder clear();
 
-    NUpletElementBuilder clearParams();
+    NTupleElementBuilder clearParams();
 
     /**
      * add new element to the end of the array.
@@ -259,77 +259,77 @@ public interface NUpletElementBuilder extends NElementBuilder {
      * @throws IndexOutOfBoundsException if the index is out of range
      *                                   ({@code index < 0 || index > size()})
      */
-    NUpletElementBuilder remove(int index);
+    NTupleElementBuilder remove(int index);
 
-    NUpletElementBuilder set(String name, NElement value);
+    NTupleElementBuilder set(String name, NElement value);
 
-    NUpletElementBuilder set(String name, Boolean value);
+    NTupleElementBuilder set(String name, Boolean value);
 
-    NUpletElementBuilder set(String name, Integer value);
+    NTupleElementBuilder set(String name, Integer value);
 
-    NUpletElementBuilder set(String name, Character value);
+    NTupleElementBuilder set(String name, Character value);
 
-    NUpletElementBuilder set(String name, Double value);
+    NTupleElementBuilder set(String name, Double value);
 
-    NUpletElementBuilder set(String name, Byte value);
+    NTupleElementBuilder set(String name, Byte value);
 
-    NUpletElementBuilder set(String name, Short value);
+    NTupleElementBuilder set(String name, Short value);
 
-    NUpletElementBuilder set(String name, Float value);
+    NTupleElementBuilder set(String name, Float value);
 
-    NUpletElementBuilder set(String name, Long value);
+    NTupleElementBuilder set(String name, Long value);
 
-    NUpletElementBuilder set(String name, String value);
+    NTupleElementBuilder set(String name, String value);
 
-    NUpletElementBuilder set(NElement name, NElement value);
+    NTupleElementBuilder set(NElement name, NElement value);
 
-    NUpletElementBuilder add(NElement name, NElement value);
+    NTupleElementBuilder add(NElement name, NElement value);
 
-    NUpletElementBuilder add(String name, NElement value);
+    NTupleElementBuilder add(String name, NElement value);
 
-    NUpletElementBuilder add(String name, Number value);
+    NTupleElementBuilder add(String name, Number value);
 
-    NUpletElementBuilder set(NElement name, Boolean value);
+    NTupleElementBuilder set(NElement name, Boolean value);
 
-    NUpletElementBuilder set(NElement name, Integer value);
+    NTupleElementBuilder set(NElement name, Integer value);
 
-    NUpletElementBuilder set(NElement name, Long value);
+    NTupleElementBuilder set(NElement name, Long value);
 
-    NUpletElementBuilder set(NElement name, Short value);
+    NTupleElementBuilder set(NElement name, Short value);
 
-    NUpletElementBuilder set(NElement name, Byte value);
+    NTupleElementBuilder set(NElement name, Byte value);
 
-    NUpletElementBuilder set(NElement name, Character value);
+    NTupleElementBuilder set(NElement name, Character value);
 
-    NUpletElementBuilder set(NElement name, Double value);
+    NTupleElementBuilder set(NElement name, Double value);
 
-    NUpletElementBuilder set(NElement name, String value);
+    NTupleElementBuilder set(NElement name, String value);
 
-    NUpletElementBuilder set(NPairElement entry);
+    NTupleElementBuilder set(NPairElement entry);
 
-    NUpletElementBuilder add(String name, Boolean value);
+    NTupleElementBuilder add(String name, Boolean value);
 
-    NUpletElementBuilder add(String name, Character value);
+    NTupleElementBuilder add(String name, Character value);
 
-    NUpletElementBuilder add(String name, Byte value);
+    NTupleElementBuilder add(String name, Byte value);
 
-    NUpletElementBuilder add(String name, Short value);
+    NTupleElementBuilder add(String name, Short value);
 
-    NUpletElementBuilder add(String name, Integer value);
+    NTupleElementBuilder add(String name, Integer value);
 
-    NUpletElementBuilder add(String name, Long value);
+    NTupleElementBuilder add(String name, Long value);
 
-    NUpletElementBuilder add(String name, Float value);
+    NTupleElementBuilder add(String name, Float value);
 
-    NUpletElementBuilder add(String name, Double value);
+    NTupleElementBuilder add(String name, Double value);
 
-    NUpletElementBuilder add(String name, String value);
+    NTupleElementBuilder add(String name, String value);
 
-    NUpletElementBuilder addAll(Map<NElement, NElement> other);
+    NTupleElementBuilder addAll(Map<NElement, NElement> other);
 
-    NUpletElementBuilder setParams(List<NElement> params);
+    NTupleElementBuilder setParams(List<NElement> params);
 
-    NUpletElementBuilder doWith(Consumer<NUpletElementBuilder> con);
+    NTupleElementBuilder doWith(Consumer<NTupleElementBuilder> con);
 
 
     /**
@@ -337,60 +337,60 @@ public interface NUpletElementBuilder extends NElementBuilder {
      *
      * @return new array instance
      */
-    NUpletElement build();
+    NTupleElement build();
 
     /// ///////////////////////////////////////////////
-    NUpletElementBuilder addAnnotations(List<NElementAnnotation> annotations);
+    NTupleElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
-    NUpletElementBuilder addAnnotation(NElementAnnotation annotation);
+    NTupleElementBuilder addAnnotation(NElementAnnotation annotation);
 
-    NUpletElementBuilder addAnnotation(String name, NElement... args);
+    NTupleElementBuilder addAnnotation(String name, NElement... args);
 
-    NUpletElementBuilder addAffixAt(int index, NBoundAffix affix);
+    NTupleElementBuilder addAffixAt(int index, NBoundAffix affix);
 
-    NUpletElementBuilder setAffixAt(int index, NBoundAffix affix);
+    NTupleElementBuilder setAffixAt(int index, NBoundAffix affix);
 
-    NUpletElementBuilder setAffixes(List<NBoundAffix> affixes);
+    NTupleElementBuilder setAffixes(List<NBoundAffix> affixes);
 
-    NUpletElementBuilder addAffix(NBoundAffix affix);
+    NTupleElementBuilder addAffix(NBoundAffix affix);
 
-    NUpletElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
+    NTupleElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NUpletElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
+    NTupleElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
-    NUpletElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
+    NTupleElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
-    NUpletElementBuilder removeAffix(int affix);
+    NTupleElementBuilder removeAffix(int affix);
 
-    NUpletElementBuilder removeAnnotation(NElementAnnotation annotation);
+    NTupleElementBuilder removeAnnotation(NElementAnnotation annotation);
 
-    NUpletElementBuilder clearAnnotations();
+    NTupleElementBuilder clearAnnotations();
 
-    NUpletElementBuilder clearAffixes();
+    NTupleElementBuilder clearAffixes();
 
-    NUpletElementBuilder addLeadingComment(NElementComment comment);
+    NTupleElementBuilder addLeadingComment(NElementComment comment);
 
-    NUpletElementBuilder addLeadingComments(NElementComment... comments);
+    NTupleElementBuilder addLeadingComments(NElementComment... comments);
 
-    NUpletElementBuilder addTrailingComments(NElementComment... comments);
+    NTupleElementBuilder addTrailingComments(NElementComment... comments);
 
-    NUpletElementBuilder addTrailingComment(NElementComment comment);
+    NTupleElementBuilder addTrailingComment(NElementComment comment);
 
-    NUpletElementBuilder clearComments();
+    NTupleElementBuilder clearComments();
 
-    NUpletElementBuilder copyFrom(NElementBuilder other);
+    NTupleElementBuilder copyFrom(NElementBuilder other);
 
-    NUpletElementBuilder copyFrom(NElement other);
+    NTupleElementBuilder copyFrom(NElement other);
 
-    NUpletElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
+    NTupleElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
-    NUpletElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
+    NTupleElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
-    NUpletElementBuilder addDiagnostic(NElementDiagnostic error);
+    NTupleElementBuilder addDiagnostic(NElementDiagnostic error);
 
-    NUpletElementBuilder removeDiagnostic(NElementDiagnostic error);
+    NTupleElementBuilder removeDiagnostic(NElementDiagnostic error);
 
-    NUpletElementBuilder addAffixes(List<NBoundAffix> affixes);
+    NTupleElementBuilder addAffixes(List<NBoundAffix> affixes);
 
-    NUpletElementBuilder metadata(NElementMetadata metadata);
+    NTupleElementBuilder metadata(NElementMetadata metadata);
 }

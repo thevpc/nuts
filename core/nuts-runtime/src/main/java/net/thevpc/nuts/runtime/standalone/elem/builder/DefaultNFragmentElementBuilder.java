@@ -278,8 +278,8 @@ public class DefaultNFragmentElementBuilder extends AbstractNElementBuilder impl
             add(from.value());
             return this;
         }
-        if (other instanceof NUpletElementBuilder) {
-            NUpletElementBuilder from = (NUpletElementBuilder) other;
+        if (other instanceof NTupleElementBuilder) {
+            NTupleElementBuilder from = (NTupleElementBuilder) other;
             for (int i = 0; i < from.size(); i++) {
                 add(from.get(i).get());
             }
@@ -321,8 +321,8 @@ public class DefaultNFragmentElementBuilder extends AbstractNElementBuilder impl
             add(from.value());
             return this;
         }
-        if (other instanceof NUpletElement) {
-            NUpletElement from = (NUpletElement) other;
+        if (other instanceof NTupleElement) {
+            NTupleElement from = (NTupleElement) other;
             for (int i = 0; i < from.size(); i++) {
                 add(from.get(i).get());
             }

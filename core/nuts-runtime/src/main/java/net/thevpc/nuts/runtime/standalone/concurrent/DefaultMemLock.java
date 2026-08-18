@@ -5,7 +5,7 @@ import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.util.NAssert;
@@ -207,7 +207,7 @@ public class DefaultMemLock extends AbstractNLock {
 
     @Override
     public NElement describe() {
-        NUpletElementBuilder b = NElement.ofUpletBuilder("MemLock");
+        NTupleElementBuilder b = NElement.ofTupleBuilder("MemLock");
         return b.build();
     }
 

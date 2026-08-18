@@ -2,7 +2,7 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.util.NGetter;
 
 import java.io.Serializable;
@@ -135,7 +135,7 @@ public class NRateLimitRuleModel implements Serializable, NDescribable {
 
     @Override
     public NElement describe() {
-        NUpletElementBuilder b = NElement.ofUpletBuilder("Rule")
+        NTupleElementBuilder b = NElement.ofTupleBuilder("Rule")
                 .add("id", id())
                 .add("capacity", capacity())
                 .add("available", available())

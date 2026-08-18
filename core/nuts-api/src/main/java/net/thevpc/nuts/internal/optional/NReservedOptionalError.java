@@ -145,7 +145,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public NElement describe() {
-        return NElement.ofUpletBuilder("Optional")
+        return NElement.ofTupleBuilder("Optional")
                 .add("evaluated", true)
                 .add("empty", false)
                 .add("error", true)

@@ -659,7 +659,7 @@ public class TsonParseTest {
     public void testSpecial0() {
         NElement e = NElementReader.ofTson().read("(*)");
         TestUtils.println(e);
-        NUpletElement u = e.asUplet().get();
+        NTupleElement u = e.asTuple().get();
         Assertions.assertEquals(1, u.size());
         u.get(0).get().asOperatorSymbol(NOperatorSymbol.MUL).get();
     }
@@ -1125,7 +1125,7 @@ public class TsonParseTest {
         String s2 = e.toString();
         TestUtils.println(s2);
         Assertions.assertEquals(expected, s2);
-        Assertions.assertEquals(3, e.asUplet().get().size());
+        Assertions.assertEquals(3, e.asTuple().get().size());
     }
 
     @Test
@@ -1147,7 +1147,7 @@ public class TsonParseTest {
 
     @Test
     public void test35Simple() {
-        NElement parsed = NElement.ofUplet(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
+        NElement parsed = NElement.ofTuple(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
         String s1 = parsed.toString();
         TestUtils.println(s1);
         Assertions.assertEquals("(a,2,3)", s1);
@@ -1155,7 +1155,7 @@ public class TsonParseTest {
 
     @Test
     public void test35Pretty() {
-        NElement parsed = NElement.ofUplet(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
+        NElement parsed = NElement.ofTuple(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
         String s2 = parsed.toPrettyString();
         TestUtils.println(s2);
         Assertions.assertEquals("(a, 2, 3)", s2);
@@ -1163,7 +1163,7 @@ public class TsonParseTest {
 
     @Test
     public void test36Simple() {
-        NElement parsed = NElement.ofUpletBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
+        NElement parsed = NElement.ofTupleBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
                 .addAnnotation("test",NElement.ofNumber(2),NElement.ofNumber(3))
                 .build();
         String s1 = parsed.toString();
@@ -1172,7 +1172,7 @@ public class TsonParseTest {
     }
     @Test
     public void test36Pretty() {
-        NElement parsed = NElement.ofUpletBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
+        NElement parsed = NElement.ofTupleBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
                 .addAnnotation("test",NElement.ofNumber(2),NElement.ofNumber(3))
                 .build();
         String s2 = parsed.toPrettyString();

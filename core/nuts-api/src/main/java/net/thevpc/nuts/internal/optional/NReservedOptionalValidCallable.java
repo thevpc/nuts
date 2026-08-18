@@ -108,7 +108,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
     @Override
     public NElement describe() {
         if (evaluated) {
-            return NElement.ofUpletBuilder("Optional")
+            return NElement.ofTupleBuilder("Optional")
                     .add("evaluated", true)
                     .add("error", result.isError())
                     .add("empty", result.isEmpty())
@@ -116,7 +116,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                     .build()
                     ;
         } else {
-            return NElement.ofUpletBuilder("Optional")
+            return NElement.ofTupleBuilder("Optional")
                     .add("evaluated", false)
                     .add("expression", NDescribables.describeResolveOrSimplify(value))
                     .build()

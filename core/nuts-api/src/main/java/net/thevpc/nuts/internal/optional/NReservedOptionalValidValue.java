@@ -41,7 +41,7 @@ public class NReservedOptionalValidValue<T> extends NReservedOptionalValid<T> im
 
     @Override
     public NElement describe() {
-        return NElement.ofUpletBuilder("Optional")
+        return NElement.ofTupleBuilder("Optional")
                 .add("evaluated", true)
                 .add("empty", false)
                 .add("error", false)

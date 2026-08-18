@@ -40,12 +40,10 @@ import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementRPI;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader;
 import net.thevpc.nuts.runtime.standalone.extension.*;
-import net.thevpc.nuts.runtime.standalone.log.DefaultNLogRPI;
 import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
 import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
@@ -53,18 +51,13 @@ import net.thevpc.nuts.runtime.standalone.collections.NClassClassMap;
 import net.thevpc.nuts.runtime.standalone.collections.NListMultiValueMapImpl;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.*;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter;
 import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdWriter;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
-import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
@@ -202,10 +195,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
             case "net.thevpc.nuts.elem.NElementReader": {
                 NElementReader p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElementReader.class, NElementReader.class, NScopeType.SESSION, DefaultNElementReader::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.elem.NElementFactory": {
-                NElementFactory p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElementFactory.class, NElementFactory.class, NScopeType.SESSION, DefaultNElementFactory::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.io.NDigest": {

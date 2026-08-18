@@ -134,8 +134,8 @@ public enum NElementType implements NEnum {
     PARAM_OBJECT(NElementTypeGroup.CONTAINER),
     FULL_OBJECT(NElementTypeGroup.CONTAINER),
 
-    UPLET(NElementTypeGroup.CONTAINER),
-    NAMED_UPLET(NElementTypeGroup.CONTAINER),
+    TUPLE(NElementTypeGroup.CONTAINER),
+    NAMED_TUPLE(NElementTypeGroup.CONTAINER),
 
     ORDERED_LIST(NElementTypeGroup.CONTAINER),
     UNORDERED_LIST(NElementTypeGroup.CONTAINER),
@@ -359,7 +359,7 @@ public enum NElementType implements NEnum {
             case FULL_ARRAY:
             case NAMED_OBJECT:
             case FULL_OBJECT:
-            case NAMED_UPLET: {
+            case NAMED_TUPLE: {
                 return true;
             }
         }
@@ -469,10 +469,10 @@ public enum NElementType implements NEnum {
         return false;
     }
 
-    public boolean isAnyUplet() {
+    public boolean isAnyTuple() {
         switch (this) {
-            case UPLET:
-            case NAMED_UPLET:
+            case TUPLE:
+            case NAMED_TUPLE:
                 return true;
         }
         return false;
@@ -480,8 +480,8 @@ public enum NElementType implements NEnum {
 
     public boolean isAnyListOrParametrizedContainer() {
         switch (this) {
-            case UPLET:
-            case NAMED_UPLET:
+            case TUPLE:
+            case NAMED_TUPLE:
             case OBJECT:
             case NAMED_OBJECT:
             case PARAM_OBJECT:
@@ -496,8 +496,8 @@ public enum NElementType implements NEnum {
 
     public boolean isAnyListContainer() {
         switch (this) {
-            case UPLET:
-            case NAMED_UPLET:
+            case TUPLE:
+            case NAMED_TUPLE:
             case OBJECT:
             case NAMED_OBJECT:
             case PARAM_OBJECT:

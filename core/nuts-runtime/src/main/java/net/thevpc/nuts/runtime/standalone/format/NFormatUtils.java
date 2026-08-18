@@ -104,19 +104,6 @@ public class NFormatUtils {
                 }
                 break;
             }
-//            case UPLET: {
-//                if (!NBlankable.isBlank(prefix)) {
-//                    prefix += ".";
-//                } else {
-//                    prefix = "";
-//                }
-//                int i = 0;
-//                for (NElement e : value.asUplet().get().items()) {
-//                    putAllInProps(prefix + (i + 1), dest, e);
-//                    i++;
-//                }
-//                break;
-//            }
             case CUSTOM: {
                 throw new NUnsupportedOperationException(NMsg.ofC("unable flatten custom element to properties"));
             }

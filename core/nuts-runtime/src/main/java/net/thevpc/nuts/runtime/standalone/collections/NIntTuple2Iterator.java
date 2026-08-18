@@ -7,16 +7,16 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public class NIntUplet2Iterator implements Iterator<NIntTuple2> {
+public class NIntTuple2Iterator implements Iterator<NIntTuple2> {
     public  static Comparator<NIntTuple2> COMPARATOR = new IntTuple2Comparator();
     private NIntTuple2 current0;
     private NIntTuple2 current;
 
-    public NIntUplet2Iterator() {
+    public NIntTuple2Iterator() {
         this(0, 0);
     }
 
-    public NIntUplet2Iterator(int a, int b) {
+    public NIntTuple2Iterator(int a, int b) {
         this.current0 = new NIntTuple2(a, b);
     }
 

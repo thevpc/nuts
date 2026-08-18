@@ -53,9 +53,9 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
                 applyObjectOrArray(builder, score, context);
                 return;
             }
-            case NAMED_UPLET:
-            case UPLET: {
-                applyUplet(builder, score, context);
+            case NAMED_TUPLE:
+            case TUPLE: {
+                applyTuple(builder, score, context);
                 return;
             }
             case PAIR: {
@@ -134,7 +134,7 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
         }
     }
 
-    private void applyUplet(NElementBuilder builder, Stats score, NElementFormatContext context) {
+    private void applyTuple(NElementBuilder builder, Stats score, NElementFormatContext context) {
         String indent = context.indent();
         NElementFormatOptions options = context.options();
         String unit = getIndentUnit();
@@ -406,11 +406,11 @@ public class TsonFormatPrettyAction implements NElementFormatterAction {
                             }
                             break;
                         }
-                        case UPLET:
-                        case NAMED_UPLET:
+                        case TUPLE:
+                        case NAMED_TUPLE:
                         {
                             s.score += 2;
-                            s.charSize+=2+ element1.asUplet().get().name().orElse("").length();
+                            s.charSize+=2+ element1.asTuple().get().name().orElse("").length();
                             break;
                         }
                         case PAIR:{

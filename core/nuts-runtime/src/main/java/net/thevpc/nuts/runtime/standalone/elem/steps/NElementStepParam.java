@@ -29,11 +29,11 @@ public class NElementStepParam implements NElementStep {
                     return element.asListContainer().get().get(value.asStringValue().get());
                 }
             }
-            if (element.isUplet()) {
+            if (element.isTuple()) {
                 if (value.type() == NElementType.INT) {
-                    return element.asUplet().get().get(value.asIntValue().get());
+                    return element.asTuple().get().get(value.asIntValue().get());
                 } else {
-                    return element.asUplet().get().get(value.asStringValue().get());
+                    return element.asTuple().get().get(value.asStringValue().get());
                 }
             }
         }

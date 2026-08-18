@@ -418,7 +418,7 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
 
     @Override
     public NIterator<NIntTuple2> int2Iterator(int a, int b) {
-        return NIterator.of(new NIntUplet2Iterator(a, b));
+        return NIterator.of(new NIntTuple2Iterator(a, b));
     }
 
     @Override

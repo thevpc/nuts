@@ -7,23 +7,13 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NWorkspaceOptions;
-import net.thevpc.nuts.elem.NElementFactory;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.internal.rpi.NReflectRPI;
-import net.thevpc.nuts.internal.rpi.NUtilsRPI;
-import net.thevpc.nuts.internal.rpi.NLogRPI;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScoredValue;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactory;
-import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
-import net.thevpc.nuts.runtime.standalone.log.DefaultNLogRPI;
-import net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectRPI;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NMsg;
 
 import java.net.URL;

@@ -229,7 +229,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NBootOptions initialBootOptions;
         NBootOptions effectiveBootOptions;
         List<String> bootRepositories;
-        NElementFactory elems;
+//        NElementFactory elems;
         boolean justInstalled;
         NWorkspaceArchetypeComponent justInstalledArchetype;
         NBootConfig cfg;
@@ -350,7 +350,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
 
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
-        data.elems = NElementFactory.of();
         _initLog(data);
         wsModel.securityModel = new DefaultNWorkspaceSecurityModel(this);
 
@@ -484,9 +483,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
                 ));
             } else {
-                session.eout().add(data.elems.ofObjectBuilder()
+                session.eout().add(NElement.ofObjectBuilder()
                         .set("workspace-loaded-in",
-                                data.elems.ofObjectBuilder()
+                                NElement.ofObjectBuilder()
                                         .set("ms", this.creationDuration().toMillis())
                                         .set("text", this.creationDuration().normalize().toString())
                                         .build()

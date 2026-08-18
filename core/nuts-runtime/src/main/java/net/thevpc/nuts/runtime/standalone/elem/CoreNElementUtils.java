@@ -625,7 +625,7 @@ public class CoreNElementUtils {
             if (s == 1) {
                 return f.children().get(0);
             }
-            return NElement.ofUplet(f.children().toArray(new NElement[0]));
+            return NElement.ofTuple(f.children().toArray(new NElement[0]));
         }
         return any;
     }

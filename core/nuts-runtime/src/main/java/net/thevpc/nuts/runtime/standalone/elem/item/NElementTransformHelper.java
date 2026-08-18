@@ -83,10 +83,10 @@ public class NElementTransformHelper {
                 NArrayElement o = item.asArray().get();
                 return transformAfterArray(o, context, transform);
             }
-            case UPLET:
-            case NAMED_UPLET: {
-                NUpletElement o = item.asUplet().get();
-                return transformAfterUplet(o, context, transform);
+            case TUPLE:
+            case NAMED_TUPLE: {
+                NTupleElement o = item.asTuple().get();
+                return transformAfterTuple(o, context, transform);
             }
             case PAIR: {
                 NPairElement o = item.asPair().get();
@@ -270,11 +270,11 @@ public class NElementTransformHelper {
         return transform.postTransform(context.withPath(path).withElement(o));
     }
 
-    private static List<NElement> transformAfterUplet(NUpletElement o, NElementTransformContext context, NElementTransform transform) {
+    private static List<NElement> transformAfterTuple(NTupleElement o, NElementTransformContext context, NElementTransform transform) {
         //none of the children could be the very last element (because ends with ')')
         context = context.withTail(false);
         NElementPath path = context.path();
-        NUpletElementBuilder b = null;
+        NTupleElementBuilder b = null;
         if (!o.params().isEmpty()) {
             if (b == null) {
                 b = o.builder();
@@ -302,7 +302,7 @@ public class NElementTransformHelper {
         if (many.size() == 1) {
             return many.get(0) == null ? NElement.ofNull() : many.get(0);
         }
-        return NElement.ofUplet(many.toArray(new NElement[0]));
+        return NElement.ofTuple(many.toArray(new NElement[0]));
     }
 
     private static List<NElement> transformAfterObject(NObjectElement o, NElementTransformContext context, NElementTransform transform) {

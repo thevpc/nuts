@@ -89,7 +89,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                     }
                 },
                 ()-> NElement
-                        .ofUpletBuilder()
+                        .ofTupleBuilder()
                         .name("SearchIndexVersionsAt")
                         .add(getIndexURL().resolve( NConstants.Folders.ID).resolve( "allVersions").toString())
                         .build()
