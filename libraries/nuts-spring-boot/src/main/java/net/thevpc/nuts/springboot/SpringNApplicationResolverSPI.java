@@ -1,13 +1,12 @@
 package net.thevpc.nuts.springboot;
 
 import net.thevpc.nuts.app.NAppDefinition;
-import net.thevpc.nuts.app.NApplication;
-import net.thevpc.nuts.spi.NAppResolver;
+import net.thevpc.nuts.spi.NAppResolverSPI;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 
-public class SpringNApplicationResolver implements NAppResolver {
+public class SpringNApplicationResolverSPI implements NAppResolverSPI {
     public static ApplicationContext globalApplicationContext;
     @Override
     public Object resolveCurrentApplication() {

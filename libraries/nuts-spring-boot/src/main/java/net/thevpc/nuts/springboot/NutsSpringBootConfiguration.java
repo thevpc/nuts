@@ -142,8 +142,8 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NWorkspace nutsWorkspace(@Autowired ApplicationArguments applicationArguments) {
-        if (SpringNApplicationResolver.globalApplicationContext == null) {
-            SpringNApplicationResolver.globalApplicationContext = sac;
+        if (SpringNApplicationResolverSPI.globalApplicationContext == null) {
+            SpringNApplicationResolverSPI.globalApplicationContext = sac;
         }
         NWorkspace workspace = Nuts.openWorkspace(
                 NBootArguments.of(resolveNutsArgs())
