@@ -75,7 +75,7 @@ REM                         no             disable debug
 REM                         suspend | s     suspend=y
 REM                         !suspend | !s   suspend=n
 REM                         <number>        sets the port
-REM   --                   stop parsing launcher options
+REM   any other option      stop parsing launcher options
 REM
 REM NOTE: nuts itself also defines a "--debug" option, meaning "run the app
 REM that nuts launches in debug mode" - different from debugging the
@@ -98,10 +98,6 @@ set "REST="
 
 :parse_args
 if "%~1"=="" goto do_exec
-if "%~1"=="--" (
-    shift
-    goto collect_rest
-)
 set "_first4=%~1"
 set "_first4=%_first4:~0,4%"
 if "%_first4%"=="--J=" (

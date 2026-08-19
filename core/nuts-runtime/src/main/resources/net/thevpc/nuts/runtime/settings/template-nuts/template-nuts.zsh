@@ -64,7 +64,7 @@ fi
 #                         suspend | s     suspend=y
 #                         !suspend | !s   suspend=n
 #                         <number>        sets the port
-#   --                   stop parsing launcher options
+#   any other option      stop parsing launcher options
 #
 # NOTE: nuts itself also defines a "--debug" option, meaning "run the app
 # that nuts launches in debug mode" - a different thing from debugging the
@@ -112,10 +112,6 @@ while [ $# -gt 0 ]; do
                 NUTS_DEBUG_OPTS=("-agentlib:jdwp=transport=dt_socket,server=y,suspend=$d_suspend,address=$d_port")
             fi
             shift
-            ;;
-        --)
-            shift
-            break
             ;;
         *)
             break

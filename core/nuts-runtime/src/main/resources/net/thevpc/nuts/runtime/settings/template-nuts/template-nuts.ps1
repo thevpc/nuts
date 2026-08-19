@@ -71,7 +71,7 @@ if (-not $major -or -not ($major -match '^\d+$')) {
 #                         suspend | s     suspend=y
 #                         ~suspend | ~s   suspend=n
 #                         <number>        sets the port
-#   --                   stop parsing launcher options
+#   any other option      stop parsing launcher options
 #
 # NOTE: nuts itself also defines a "--debug" option, meaning "run the app
 # that nuts launches in debug mode" - different from debugging the
@@ -96,10 +96,7 @@ $rest = @($args)
 $i = 0
 while ($i -lt $rest.Count) {
     $cur = $rest[$i]
-    if ($cur -eq '--') {
-        $i++
-        break
-    } elseif ($cur -like '--J=*') {
+    if ($cur -like '--J=*') {
         $NUTS_EXTRA_JAVA_OPTS += $cur.Substring(4)
         $i++
         continue
