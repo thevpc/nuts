@@ -1,4 +1,4 @@
-package net.thevpc.nuts.internal.parser;
+package net.thevpc.nuts.internal;
 
 import net.thevpc.nuts.artifact.DefaultNVersionInterval;
 import net.thevpc.nuts.artifact.NVersion;

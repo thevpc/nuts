@@ -30,7 +30,7 @@ import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.core.test.borrowed.MavenComparableVersion;
 import net.thevpc.nuts.core.test.borrowed.SpringComparableVersion;
-import net.thevpc.nuts.internal.parser.NReservedVersionIntervalParser;
+import net.thevpc.nuts.internal.NReservedVersionIntervalParser;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 
