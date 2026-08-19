@@ -23,13 +23,12 @@ import net.thevpc.nuts.reflect.NTypeLoader;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
-import net.thevpc.nuts.spi.NAppResolver;
+import net.thevpc.nuts.spi.NAppResolverSPI;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextTransformConfig;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.*;
 
@@ -293,8 +292,8 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     }
 
     private NApplication resolveApplicationCustomResolver() {
-        ServiceLoader<NAppResolver> nAppResolverClassLoader=ServiceLoader.load(NAppResolver.class);
-        for (NAppResolver r : nAppResolverClassLoader) {
+        ServiceLoader<NAppResolverSPI> nAppResolverClassLoader=ServiceLoader.load(NAppResolverSPI.class);
+        for (NAppResolverSPI r : nAppResolverClassLoader) {
             Object o = r.resolveCurrentApplication();
             if(o!=null) {
                 return NApplication.createApplicationInstanceFromAnnotatedInstance(o);

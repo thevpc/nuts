@@ -299,8 +299,8 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(NPath path) {
-        List<NCharsetResolver> allSupported = NExtensions.of()
-                .createAllSupported(NCharsetResolver.class, path);
+        List<NCharsetResolverSPI> allSupported = NExtensions.of()
+                .createAllSupported(NCharsetResolverSPI.class, path);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeCharset(path)))
                 .best().orNull();
@@ -318,8 +318,8 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(byte[] bytes) {
-        List<NCharsetResolver> allSupported = NExtensions.of()
-                .createAllSupported(NCharsetResolver.class, bytes);
+        List<NCharsetResolverSPI> allSupported = NExtensions.of()
+                .createAllSupported(NCharsetResolverSPI.class, bytes);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeCharset(bytes)))
                 .best().orNull();

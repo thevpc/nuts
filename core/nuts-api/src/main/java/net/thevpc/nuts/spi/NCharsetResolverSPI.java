@@ -34,7 +34,7 @@ import java.io.InputStream;
 /**
  * implementations of this interface provide path/content content charset
  */
-public interface NCharsetResolver extends NComponent {
+public interface NCharsetResolverSPI extends NComponent {
 
     /**
      * probe from path name and extension

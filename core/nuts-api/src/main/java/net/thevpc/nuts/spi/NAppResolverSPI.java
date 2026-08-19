@@ -1,5 +1,5 @@
 package net.thevpc.nuts.spi;
 
-public interface NAppResolver extends NComponent{
+public interface NAppResolverSPI extends NComponent{
     Object resolveCurrentApplication();
 }
