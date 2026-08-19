@@ -8,7 +8,6 @@
     <modules>
         <module>nuts-boot</module>
         <module>nuts-api</module>
-        <module>nuts-lib</module>
         <module>nuts-app</module>
         <module>nuts-bundle-template</module>
         <module>nuts-runtime</module>
