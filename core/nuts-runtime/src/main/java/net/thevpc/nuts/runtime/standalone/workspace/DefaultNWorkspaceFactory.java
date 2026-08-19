@@ -33,7 +33,6 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceExtension;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.internal.rpi.*;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.reflect.NScorable;
@@ -46,7 +45,6 @@ import net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader;
 import net.thevpc.nuts.runtime.standalone.extension.*;
 import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
-import net.thevpc.nuts.runtime.standalone.util.NUtilSPIImpl;
 import net.thevpc.nuts.runtime.standalone.collections.NClassClassMap;
 import net.thevpc.nuts.runtime.standalone.collections.NListMultiValueMapImpl;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
@@ -234,10 +232,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
             case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
                 return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
-            }
-
-            case "net.thevpc.nuts.spi.NUtilSPI": {
-                return NOptional.of((T) new NUtilSPIImpl());
             }
             case "net.thevpc.nuts.concurrent.NConcurrent": {
                 NConcurrent p = NExtensionTypeInfo.getOrComputeCachedBean(NConcurrentImpl.class, NConcurrent.class, NScopeType.WORKSPACE, NConcurrentImpl::new);

@@ -31,6 +31,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableQuery;
 import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.*;
@@ -80,6 +81,7 @@ public interface NExtensions extends NComponent {
      * @return valid instance or null if no extension implementation was found
      */
     <T> NOptional<T> createComponent(Class<T> type);
+    <T extends NScorable> NScorableQuery<T> ofScorableQuery();
 
     /**
      * create supported extension implementation or return null.

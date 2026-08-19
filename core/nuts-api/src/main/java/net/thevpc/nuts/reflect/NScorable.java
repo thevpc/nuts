@@ -1,7 +1,6 @@
 package net.thevpc.nuts.reflect;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.spi.NUtilSPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NAssertException;
 import net.thevpc.nuts.util.NDetachedAssertException;
@@ -95,7 +94,7 @@ public interface NScorable {
      * @return a new scorable query initialized with the provided context
      */
     static <T extends NScorable> NScorableQuery<T> query(NScorableContext context) {
-        return NExtensions.of().createComponent(NUtilSPI.class).get().<T>ofScorableQuery().withContext(context==null?NScorableContext.of():context);
+        return NExtensions.of().<T>ofScorableQuery().withContext(context==null?NScorableContext.of():context);
     }
 
     /**
@@ -109,7 +108,7 @@ public interface NScorable {
      * @return a new scorable query with a default context
      */
     static <T extends NScorable> NScorableQuery<T> query() {
-        return NExtensions.of().createComponent(NUtilSPI.class).get().ofScorableQuery();
+        return NExtensions.of().ofScorableQuery();
     }
 
 }

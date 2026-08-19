@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.artifact;
 
-import net.thevpc.nuts.internal.parser.NReservedVersionIntervalParser;
+import net.thevpc.nuts.internal.NReservedVersionIntervalParser;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;

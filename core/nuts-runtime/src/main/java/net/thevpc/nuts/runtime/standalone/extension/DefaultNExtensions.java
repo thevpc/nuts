@@ -8,10 +8,8 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.reflect.NScorable;
-import net.thevpc.nuts.reflect.NScorableContext;
-import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.reflect.NScoredValue;
+import net.thevpc.nuts.reflect.*;
+import net.thevpc.nuts.runtime.standalone.util.NScorableNScorableQueryImpl;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.text.NMsg;
@@ -209,5 +207,10 @@ public class DefaultNExtensions implements NExtensions {
     @Override
     public boolean isExcludedExtension(String extensionId, NWorkspaceOptions options) {
         return wsModel.configModel.isExcludedExtension(extensionId, options);
+    }
+
+    @Override
+    public <T extends NScorable> NScorableQuery<T> ofScorableQuery() {
+        return new NScorableNScorableQueryImpl<>(NScorableContext.of());
     }
 }
