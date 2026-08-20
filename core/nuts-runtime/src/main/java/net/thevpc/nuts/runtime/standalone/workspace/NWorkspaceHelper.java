@@ -180,7 +180,7 @@ public class NWorkspaceHelper {
                             //both RUN and AUTO_COMPLETE execute the run branch. Later
                             //session.isExecMode()
                             case RUN:
-                            case AUTO_COMPLETE: {
+                            case COMPLETE: {
                                 nApp.application().run();
                                 return;
                             }

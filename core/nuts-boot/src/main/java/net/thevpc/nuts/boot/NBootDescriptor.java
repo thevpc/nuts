@@ -37,55 +37,43 @@ public class NBootDescriptor {
 
     private static final long serialVersionUID = 1L;
 
-    private NBootId id;
-    private List<NBootId> parents = new ArrayList<>();
+    private NBootDependency id;
+    private List<NBootDependency> parents = new ArrayList<>();
     private String packaging;
-    /**
-     * short description
-     */
-    private String name;
-    /**
-     * some longer (but not too long) description
-     */
-    private String description;
-    private NBootEnvCondition condition;
     private List<NBootDependency> dependencies = new ArrayList<>(); //defaults to empty;
-    private List<NBootDependency> standardDependencies = new ArrayList<>(); //defaults to empty;
     private List<NBootDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
     private transient NBootProperties _propertiesBuilder = new NBootProperties(); //defaults to empty;
 
 
     public NBootDescriptor() {
-        condition = new NBootEnvCondition();
     }
 
     public NBootDescriptor(NBootDescriptor other) {
-        condition = new NBootEnvCondition();
         copyFrom(other);
     }
 
-    public NBootId getId() {
+    public NBootDependency getId() {
         return id;
     }
 
 
-    public NBootDescriptor setId(NBootId id) {
+    public NBootDescriptor setId(NBootDependency id) {
         this.id = id;
         return this;
     }
 
 
     public NBootDescriptor setId(String id) {
-        this.id = NBootId.of(id);
+        this.id = NBootDependency.of(id);
         return this;
     }
 
 
-    public List<NBootId> getParents() {
+    public List<NBootDependency> getParents() {
         return parents;
     }
 
-    public NBootDescriptor setParents(List<NBootId> parents) {
+    public NBootDescriptor setParents(List<NBootDependency> parents) {
         this.parents = NBootUtils.uniqueNonBlankList(parents, x->x.isBlank());
         return this;
     }
@@ -98,50 +86,6 @@ public class NBootDescriptor {
 
     public NBootDescriptor setPackaging(String packaging) {
         this.packaging = NBootUtils.trim(packaging);
-        return this;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-
-    public NBootDescriptor setName(String name) {
-        this.name = NBootUtils.trim(name);
-        return this;
-    }
-
-
-    public NBootEnvCondition getCondition() {
-        return condition;
-    }
-
-
-    public NBootDescriptor setCondition(NBootEnvCondition condition) {
-        this.condition.clear().copyFrom(condition);
-        return this;
-    }
-
-
-    public String getDescription() {
-        return description;
-    }
-
-
-    public NBootDescriptor setDescription(String description) {
-        this.description = NBootUtils.trim(description);
-        return this;
-    }
-
-
-    public List<NBootDependency> getStandardDependencies() {
-        return standardDependencies;
-    }
-
-
-    public NBootDescriptor setStandardDependencies(List<NBootDependency> dependencies) {
-        this.standardDependencies = NBootUtils.uniqueNonBlankList(dependencies, x->x.isBlank());
         return this;
     }
 
@@ -194,11 +138,7 @@ public class NBootDescriptor {
             setId(other.getId());
             setPackaging(other.getPackaging());
             setParents(other.getParents());
-            setDescription(other.getDescription());
-            setName(other.getName());
-            setCondition(other.getCondition());
             setDependencies(other.getDependencies());
-            setStandardDependencies(other.getStandardDependencies());
             setProperties(other.getProperties());
         } else {
             clear();
@@ -208,14 +148,10 @@ public class NBootDescriptor {
 
 
     public NBootDescriptor clear() {
-        setId((NBootId) null);
+        setId((NBootDependency) null);
         setPackaging(null);
         setParents(null);
-        setDescription(null);
-        setName(null);
-        setCondition((NBootEnvCondition) null);
         setDependencies(null);
-        setStandardDependencies(null);
         setProperties(null);
         return this;
     }
@@ -243,26 +179,6 @@ public class NBootDescriptor {
 
     public NBootDescriptor addDependencies(List<NBootDependency> dependencies) {
         NBootUtils.addUniqueNonBlankList(this.dependencies, dependencies, x->x.isBlank());
-        return this;
-    }
-
-
-    public NBootDescriptor removeStandardDependency(NBootDependency dependency) {
-        if (this.standardDependencies != null) {
-            this.standardDependencies.remove(dependency);
-        }
-        return this;
-    }
-
-
-    public NBootDescriptor addStandardDependency(NBootDependency dependency) {
-        this.standardDependencies.add(dependency);
-        return this;
-    }
-
-
-    public NBootDescriptor addStandardDependencies(List<NBootDependency> dependencies) {
-        NBootUtils.addUniqueNonBlankList(this.standardDependencies, dependencies, x->x.isBlank());
         return this;
     }
 
@@ -376,8 +292,8 @@ public class NBootDescriptor {
 
 
     public int hashCode() {
-        return Objects.hash(id, packaging, name,
-                description, condition, dependencies, standardDependencies, properties, parents);
+        return Objects.hash(id, packaging,
+                dependencies, properties, parents);
     }
 
 
@@ -388,11 +304,7 @@ public class NBootDescriptor {
         return Objects.equals(id, that.id)
                 && Objects.equals(parents, that.parents)
                 && Objects.equals(packaging, that.packaging)
-                && Objects.equals(name, that.name)
-                && Objects.equals(description, that.description)
-                && Objects.equals(condition, that.condition)
                 && Objects.equals(dependencies, that.dependencies)
-                && Objects.equals(standardDependencies, that.standardDependencies)
                 && Objects.equals(properties, that.properties)
                 ;
     }
@@ -411,34 +323,15 @@ public class NBootDescriptor {
             return false;
         }
         if (parents != null) {
-            for (NBootId parent : parents) {
+            for (NBootDependency parent : parents) {
                 if (parent!=null && !parent.isBlank()) {
                     return false;
                 }
             }
         }
 
-        if (!NBootUtils.isBlank(description)) {
-            return false;
-        }
-
-        if (!NBootUtils.isBlank(name)) {
-            return false;
-        }
-
-        if (condition!=null && !condition.isBlank()) {
-            return false;
-        }
-
         if (this.dependencies != null) {
             for (NBootDependency d : this.dependencies) {
-                if (d!=null && !d.isBlank()) {
-                    return false;
-                }
-            }
-        }
-        if (this.standardDependencies != null) {
-            for (NBootDependency d : this.standardDependencies) {
                 if (d!=null && !d.isBlank()) {
                     return false;
                 }

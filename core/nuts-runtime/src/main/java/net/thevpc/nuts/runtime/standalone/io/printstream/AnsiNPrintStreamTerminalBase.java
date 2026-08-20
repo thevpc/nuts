@@ -4,7 +4,7 @@ import net.thevpc.nuts.io.NTerminalFormatter;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NArgCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NAnsiTermHelper;
@@ -20,7 +20,7 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     private NPrintStream out;
     private NCmdLineHistory history;
     private NTerminalFormatter commandHighlighter;
-    private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
+    private NArgCompleteResolver commandAutoCompleteResolver;
     protected boolean lastWasProgress = false;
 
     public AnsiNPrintStreamTerminalBase(NPrintStream out) {
@@ -62,7 +62,7 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NSystemTerminalBase commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver) {
         this.commandAutoCompleteResolver = autoCompleteResolver;
         return this;
     }
@@ -89,7 +89,7 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
         return this;
     }
 
-    public NCmdLineAutoCompleteResolver autoCompleteResolver() {
+    public NArgCompleteResolver autoCompleteResolver() {
         return commandAutoCompleteResolver;
     }
 

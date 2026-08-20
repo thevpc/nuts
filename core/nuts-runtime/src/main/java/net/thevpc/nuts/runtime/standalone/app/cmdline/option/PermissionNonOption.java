@@ -26,10 +26,10 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
+import net.thevpc.nuts.cmdline.NArgCompleteResult;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
-import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteCandidate;
 import net.thevpc.nuts.security.NUser;
 import net.thevpc.nuts.security.NSecurityManager;
 
@@ -54,16 +54,16 @@ public class PermissionNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
-        List<NArgCandidate> all = new ArrayList<>();
+    public NArgCompleteResult resolveCandidates() {
+        List<NArgCompleteCandidate> all = new ArrayList<>();
         for (String r : NConstants.Permissions.ALL) {
-            all.add(new DefaultNArgCandidate(r));
+            all.add(NArgCompleteCandidate.of(r));
         }
-        Iterator<NArgCandidate> i = all.iterator();
+        Iterator<NArgCompleteCandidate> i = all.iterator();
         NUser info = NSecurityManager.of().getUser(user).orNull();
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : (info.permissions()));
         while (i.hasNext()) {
-            NArgCandidate right = i.next();
+            NArgCompleteCandidate right = i.next();
             if (existing) {
                 if (!rights.contains(right.value())) {
                     i.remove();
@@ -74,6 +74,6 @@ public class PermissionNonOption extends DefaultNonOption {
                 }
             }
         }
-        return all;
+        return NArgCompleteResult.ofCandidates(all);
     }
 }

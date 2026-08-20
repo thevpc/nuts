@@ -26,9 +26,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
-import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteResult;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepository;
 
@@ -48,22 +48,21 @@ public class RepositoryNonOption extends DefaultNonOption {
 
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
-        List<NArgCandidate> all = new ArrayList<>();
-        NRepository repository=context.get(NRepository.class);
+    public NArgCompleteResult resolveCandidates() {
+        List<NArgCompleteCandidate> all = new ArrayList<>();
+        NRepository repository=null;
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
                 for (NRepository repo : repository.config().mirrors()) {
-                    all.add(new DefaultNArgCandidate(repo.name()));
+                    all.add(NArgCompleteCandidate.of(repo.name()));
                 }
             }
         }else{
             for (NRepository repo : NWorkspace.of().repositories()) {
-                all.add(new DefaultNArgCandidate(repo.name()));
+                all.add(NArgCompleteCandidate.of(repo.name()));
             }
-
         }
-        return all;
+        return NArgCompleteResult.ofCandidates(all);
     }
 
 }

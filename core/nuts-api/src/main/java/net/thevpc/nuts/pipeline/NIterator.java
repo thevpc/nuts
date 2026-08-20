@@ -30,7 +30,7 @@ import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.util.NComparator;
-import net.thevpc.nuts.util.NIntTuple2;
+import net.thevpc.nuts.util.NIntPair;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -47,11 +47,11 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
         return NUtilsRPI.of().iteratorToNIterator(o);
     }
 
-    static NIterator<NIntTuple2> ofInt2(int a, int b) {
+    static NIterator<NIntPair> ofInt2(int a, int b) {
         return NUtilsRPI.of().int2Iterator(a, b);
     }
 
-    static NIterator<NIntTuple2> ofInt2() {
+    static NIterator<NIntPair> ofInt2() {
         return NUtilsRPI.of().int2Iterator(0, 0);
     }
 

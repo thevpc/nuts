@@ -583,12 +583,6 @@ public class DefaultNWorkspaceConfigModel {
             if (cConfig.getRuntimeBootDescriptor() == null) {
                 cConfig.setRuntimeBootDescriptor(effOptions.runtimeBootDescriptor().map(x -> new DefaultNDescriptorBuilder().copyFrom(x).build()).orNull());
             }
-            if (cConfig.getExtensionBootDescriptors() == null) {
-                cConfig.setExtensionBootDescriptors(effOptions.extensionBootDescriptors().map(x ->
-                                x.stream().map(y -> y == null ? null : new DefaultNDescriptorBuilder().copyFrom(y).build()).collect(Collectors.toList())
-                        )
-                        .orNull());
-            }
             if (cConfig.getBootRepositories() == null) {
                 cConfig.setBootRepositories(effOptions.bootRepositories().orNull());
             }
@@ -651,7 +645,6 @@ public class DefaultNWorkspaceConfigModel {
                 cConfig.setApiId(NId.getApi(effOptions.apiVersion().orNull()).get());
                 cConfig.setRuntimeId(effOptions.runtimeId().orNull());
                 cConfig.setRuntimeBootDescriptor(NBootHelper.toDescriptor(effOptions.runtimeBootDescriptor().orNull()));
-                cConfig.setExtensionBootDescriptors(NBootHelper.toDescriptorList(effOptions.extensionBootDescriptors().orNull()));
                 cConfig.setBootRepositories(effOptions.bootRepositories().orNull());
             }
             setCurrentConfig(cConfig
@@ -1362,7 +1355,7 @@ public class DefaultNWorkspaceConfigModel {
     private NClassLoaderNode searchBootNode(NId id) {
         List<NClassLoaderNode> all = new ArrayList<>();
         all.add(workspace.bootRuntimeClassLoaderNode());
-        all.addAll(workspace.bootExtensionClassLoaderNodes());
+//        all.addAll(workspace.bootExtensionClassLoaderNodes());
         return searchBootNode(id, all);
     }
 

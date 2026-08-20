@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Objects;
 
 @NImmutable
-final class NTuple3Impl<A extends T, B extends T, C extends T, T> implements NTuple3<A, B, C, T> {
+final class NTripletImpl<A extends T, B extends T, C extends T, T> implements NTriplet<A, B, C, T> {
     private final A a;
     private final B b;
     private final C c;
 
-    public NTuple3Impl(A a, B b, C c) {
+    public NTripletImpl(A a, B b, C c) {
         this.a = a;
         this.b = b;
         this.c = c;
@@ -50,30 +50,30 @@ final class NTuple3Impl<A extends T, B extends T, C extends T, T> implements NTu
 
 
     @Override
-    public NTuple3<A, B, C, T> set(T newValue, int index) {
+    public NTriplet<A, B, C, T> set(T newValue, int index) {
         switch (index) {
             case 0:
-                return new NTuple3Impl<>((A) newValue, b, c);
+                return new NTripletImpl<>((A) newValue, b, c);
             case 1:
-                return new NTuple3Impl<>(a, (B) newValue, c);
+                return new NTripletImpl<>(a, (B) newValue, c);
             case 2:
-                return new NTuple3Impl<>(a, b, (C) newValue);
+                return new NTripletImpl<>(a, b, (C) newValue);
         }
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
     @Override
-    public NTuple3<A, B, C, T> setFirst(A t) {
+    public NTriplet<A, B, C, T> first(A t) {
         return set(t, 0);
     }
 
     @Override
-    public NTuple3<A, B, C, T> setSecond(B t) {
+    public NTriplet<A, B, C, T> second(B t) {
         return set(t, 1);
     }
 
     @Override
-    public NTuple3<A, B, C, T> setThird(C t) {
+    public NTriplet<A, B, C, T> third(C t) {
         return set(t, 2);
     }
 
@@ -110,7 +110,7 @@ final class NTuple3Impl<A extends T, B extends T, C extends T, T> implements NTu
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        NTuple3Impl<?, ?, ?, ?> tuple = (NTuple3Impl<?, ?, ?, ?>) o;
+        NTripletImpl<?, ?, ?, ?> tuple = (NTripletImpl<?, ?, ?, ?>) o;
         return Objects.equals(a, tuple.a) && Objects.equals(b, tuple.b) && Objects.equals(c, tuple.c);
     }
 

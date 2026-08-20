@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot.internal.util;
 
-import net.thevpc.nuts.boot.NBootId;
+import net.thevpc.nuts.boot.NBootDependency;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import java.util.List;
 public class NBootErrorInfoList {
     private final List<NReservedErrorInfo> all = new ArrayList<>();
 
-    public void removeErrorsFor(NBootId nutsId) {
+    public void removeErrorsFor(NBootDependency nutsId) {
         all.removeIf(x -> x.getNutsId().equals(nutsId));
     }
 

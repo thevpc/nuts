@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
-import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NArgCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
@@ -32,7 +32,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     private final InputStream in;
     private NCmdLineHistory history;
     private NTerminalFormatter commandHighlighter;
-    private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
+    private NArgCompleteResolver commandAutoCompleteResolver;
     protected boolean lastWasProgress=false;
 
     public DefaultNSystemTerminalBaseBoot(DefaultNBootModel bootModel) {
@@ -127,7 +127,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NCmdLineAutoCompleteResolver autoCompleteResolver() {
+    public NArgCompleteResolver autoCompleteResolver() {
         return commandAutoCompleteResolver;
     }
 
@@ -137,7 +137,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NSystemTerminalBase commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver) {
         this.commandAutoCompleteResolver = autoCompleteResolver;
         return this;
     }

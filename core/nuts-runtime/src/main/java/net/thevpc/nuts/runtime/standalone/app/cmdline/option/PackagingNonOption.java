@@ -26,9 +26,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
-import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,17 +44,17 @@ public class PackagingNonOption extends DefaultNonOption {
 
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
-        List<NArgCandidate> all = new ArrayList<>();
-        all.add(new DefaultNArgCandidate("jar"));
-        all.add(new DefaultNArgCandidate("war"));
-        all.add(new DefaultNArgCandidate("war"));
-        all.add(new DefaultNArgCandidate("ear"));
-        all.add(new DefaultNArgCandidate("nuts-extension"));
-        all.add(new DefaultNArgCandidate("elf"));
-        all.add(new DefaultNArgCandidate("pe"));
-        all.add(new DefaultNArgCandidate("bin"));
-        return all;
+    public NArgCompleteResult resolveCandidates() {
+        List<NArgCompleteCandidate> all = new ArrayList<>();
+        all.add(NArgCompleteCandidate.of("jar"));
+        all.add(NArgCompleteCandidate.of("war"));
+        all.add(NArgCompleteCandidate.of("war"));
+        all.add(NArgCompleteCandidate.of("ear"));
+        all.add(NArgCompleteCandidate.of("nuts-extension"));
+        all.add(NArgCompleteCandidate.of("elf"));
+        all.add(NArgCompleteCandidate.of("pe"));
+        all.add(NArgCompleteCandidate.of("bin"));
+        return NArgCompleteResult.ofCandidates(all);
     }
 
 }

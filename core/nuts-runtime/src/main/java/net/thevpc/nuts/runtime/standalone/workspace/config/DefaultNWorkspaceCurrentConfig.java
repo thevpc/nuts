@@ -34,7 +34,6 @@ public final class DefaultNWorkspaceCurrentConfig {
     private NId apiId;
     private NId bootRuntime;
     private NDescriptor runtimeBootDescriptor;
-    private List<NDescriptor> extensionBootDescriptors;
     private List<String> bootRepositories;
     private String bootJavaCommand;
     private String bootJavaOptions;
@@ -96,9 +95,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (c.runtimeId().isPresent()) {
             this.bootRuntime = c.runtimeId().get();
         }
-//        this.bootRuntimeDependencies = c.getRuntimeDependencies();
-//        this.bootExtensionDependencies = c.getExtensionDependencies();
-//        this.bootRepositories = c.getBootRepositories();
         if (c.javaCommand().isPresent()) {
             this.bootJavaCommand = c.javaCommand().get();
         }
@@ -140,9 +136,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId();
         }
-//        if (c.getExtensionDependencies() != null) {
-//            this.bootExtensionDependencies = c.getExtensionDependencies();
-//        }
         if (c.getJavaCommand() != null) {
             this.bootJavaCommand = c.getJavaCommand();
         }
@@ -211,9 +204,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (c.getRuntimeBootDescriptor() != null) {
             this.runtimeBootDescriptor = c.getRuntimeBootDescriptor();
         }
-        if (c.getExtensionBootDescriptors() != null) {
-            this.extensionBootDescriptors = c.getExtensionBootDescriptors();
-        }
         if (c.getBootRepositories() != null) {
             this.bootRepositories = c.getBootRepositories();
         }
@@ -247,16 +237,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (this.system == null) {
             this.system = c.isSystem();
         }
-        return this;
-    }
-
-
-    public List<NDescriptor> getExtensionBootDescriptors() {
-        return extensionBootDescriptors;
-    }
-
-    public DefaultNWorkspaceCurrentConfig setExtensionBootDescriptors(List<NDescriptor> extensionBootDescriptors) {
-        this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
 

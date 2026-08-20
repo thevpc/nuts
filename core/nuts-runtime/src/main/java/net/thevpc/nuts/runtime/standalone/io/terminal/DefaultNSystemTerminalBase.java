@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
-import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NArgCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
 import net.thevpc.nuts.concurrent.NCachedValue;
@@ -42,7 +42,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     private InputStream in;
     private NCmdLineHistory history;
     private NTerminalFormatter commandHighlighter;
-    private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
+    private NArgCompleteResolver commandAutoCompleteResolver;
     private Boolean preferConsole;
     protected boolean lastWasProgress=false;
 
@@ -140,7 +140,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NCmdLineAutoCompleteResolver autoCompleteResolver() {
+    public NArgCompleteResolver autoCompleteResolver() {
         return commandAutoCompleteResolver;
     }
 
@@ -150,7 +150,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NSystemTerminalBase commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver) {
         this.commandAutoCompleteResolver = autoCompleteResolver;
         return this;
     }

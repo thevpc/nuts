@@ -320,7 +320,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         data.cfg.setApiVersion(this.wsModel.askedApiVersion);
         data.cfg.setRuntimeId(this.wsModel.askedRuntimeId);
         data.cfg.setRuntimeBootDescriptor(NBootHelper.toDescriptor(data.effectiveBootOptions.runtimeBootDescriptor().orNull()));
-        data.cfg.setExtensionBootDescriptors(NBootHelper.toDescriptorList(data.effectiveBootOptions.extensionBootDescriptors().orNull()));
 
 
         this.wsModel.bootModel.onInitializeWorkspace();
@@ -812,17 +811,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                     .collect(Collectors.toList())
                     )
             ));
-            wsModel.LOG.log(mread.withMsgC("   nuts-extension-dependencies    : %s",
+            wsModel.LOG.log(mread.withMsgC("   nuts-excluded-extensions    : %s",
                     NTextBuilder.of().appendJoined(NText.ofStyled(";", NTextStyle.separator()),
-                            toIds(
-                                    NBootHelper.toDescriptorList(effectiveBootOptions.extensionBootDescriptors().orElseGet(Collections::emptyList))
-                            ).stream()
-                                    .map(x
-                                            -> NId.get(x.toString()).get()
-                                    )
-                                    .collect(Collectors.toList())
+                            effectiveBootOptions.excludedExtensions().orElseGet(Collections::emptyList).stream().map(x->NId.get(x).get()).collect(Collectors.toList()))
                     )
-            ));
+            );
             wsModel.LOG.log(mread.withMsgC("   nuts-workspace                 : %s", NTextUtils.formatLogValue(userBootOptions.workspace().orNull(), effectiveBootOptions.workspace().orNull())));
             wsModel.LOG.log(mread.withMsgC("   nuts-hash-name                 : %s", digestName()));
             wsModel.LOG.log(mread.withMsgC("   nuts-store-bin                 : %s", NTextUtils.formatLogValue(userBootOptions.getStoreType(NStoreType.BIN).orNull(), effectiveBootOptions.getStoreType(NStoreType.BIN).orNull())));
@@ -1170,11 +1163,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if (wsModel.configModel.loadWorkspace()) {
             //extensions already wired... this is needless!
             for (NId extensionId : wsModel.extensions.configExtensions()) {
-                if (wsModel.extensionModel.isExcludedExtension(extensionId)) {
-                    continue;
-                }
                 wsModel.extensionModel.wireExtension(extensionId,
-                        NFetch.of()
+                        NFetch.of(),true
                 );
             }
             NUserConfig adminSecurity = getConfigModel()
@@ -2289,9 +2279,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return getBootModel().getBootUserOptions().runtimeBootDependencyNode().get();
     }
 
-    public List<NClassLoaderNode> bootExtensionClassLoaderNodes() {
-        return getBootModel().getBootUserOptions().extensionBootDependencyNodes().orElseGet(Collections::emptyList);
-    }
 
     @Override
     public NWorkspaceTerminalOptions bootTerminal() {

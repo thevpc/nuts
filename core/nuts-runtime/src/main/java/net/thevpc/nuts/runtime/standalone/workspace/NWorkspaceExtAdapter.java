@@ -673,10 +673,6 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
         return base.bootRuntimeClassLoaderNode();
     }
 
-    @Override
-    public List<NClassLoaderNode> bootExtensionClassLoaderNodes() {
-        return base.bootExtensionClassLoaderNodes();
-    }
 
     @Override
     public NWorkspaceTerminalOptions bootTerminal() {

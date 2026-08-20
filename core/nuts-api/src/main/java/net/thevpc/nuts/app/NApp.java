@@ -2,8 +2,8 @@ package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.cmdline.NArgCompletePos;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
@@ -104,13 +104,13 @@ public interface NApp extends NComponent {
     List<String> modeArguments();
 
     /**
-     * Retrieves the {@code NCmdLineAutoComplete} instance associated with the application.
+     * Retrieves the {@code NArgCompletePos} instance associated with the application.
      * This utility can be used to collect command line argument candidates, manage
      * autocomplete suggestions, and retrieve information about the current command line context.
      *
-     * @return an instance of {@code NCmdLineAutoComplete} providing command line auto-completion features
+     * @return an instance of {@code NArgCompletePos} providing command line auto-completion features
      */
-    NCmdLineAutoComplete autoComplete();
+    NArgCompletePos completePosition();
 
     /**
      * Retrieves the detailed help text associated with this application, providing

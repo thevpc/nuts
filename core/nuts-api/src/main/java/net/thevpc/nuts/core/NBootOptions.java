@@ -35,10 +35,6 @@ public interface NBootOptions {
 
     NOptional<NClassLoaderNode> runtimeBootDependencyNode();
 
-    NOptional<List<NBootDescriptor>> extensionBootDescriptors();
-
-    NOptional<List<NClassLoaderNode>> extensionBootDependencyNodes();
-
     NOptional<NBootWorkspaceFactory> bootWorkspaceFactory();
 
     NOptional<List<URL>> classWorldURLs();
@@ -46,8 +42,6 @@ public interface NBootOptions {
     NOptional<ClassLoader> classWorldLoader();
 
     NOptional<String> uuid();
-
-    NOptional<Set<String>> extensionsSet();
 
     NOptional<NBootDescriptor> runtimeBootDescriptor();
 

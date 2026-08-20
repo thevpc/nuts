@@ -26,7 +26,7 @@
 package net.thevpc.nuts.boot.internal.util;
 
 import net.thevpc.nuts.boot.NBootClassLoaderNode;
-import net.thevpc.nuts.boot.NBootId;
+import net.thevpc.nuts.boot.NBootDependency;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -63,7 +63,7 @@ public class NBootClassLoader extends URLClassLoader {
     }
 
     public NBootClassLoaderNode search(NBootClassLoaderNode node, boolean deep) {
-        NBootId ii = NBootId.of(node.getId());
+        NBootDependency ii = NBootDependency.of(node.getId());
         String sn = ii.getShortName();
         NBootClassLoaderNode o = nodes.get(sn);
         if (o != null) {
@@ -76,7 +76,7 @@ public class NBootClassLoader extends URLClassLoader {
     }
 
     public boolean add(NBootClassLoaderNode node) {
-        NBootId ii = NBootId.of(node.getId());
+        NBootDependency ii = NBootDependency.of(node.getId());
         String sn = ii.getShortName();
         if (!nodes.containsKey(sn)) {
             nodes.put(sn, node);
@@ -87,7 +87,7 @@ public class NBootClassLoader extends URLClassLoader {
 
     protected boolean add(NBootClassLoaderNode node, boolean deep) {
         String s = node.getId();
-        NBootId ii = NBootId.of(s);
+        NBootDependency ii = NBootDependency.of(s);
         String sn = ii.getShortName();
         if (!effective.containsKey(sn)) {
             effective.put(sn, node);

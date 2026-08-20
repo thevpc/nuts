@@ -25,9 +25,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
-import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +43,13 @@ public class ArchitectureNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
-        List<NArgCandidate> all = new ArrayList<>();
-        all.add(new DefaultNArgCandidate("\"linux x86\""));
-        all.add(new DefaultNArgCandidate("\"linux x64\""));
-        all.add(new DefaultNArgCandidate("\"win x86\""));
-        all.add(new DefaultNArgCandidate("\"win x64\""));
-        return all;
+    public NArgCompleteResult resolveCandidates() {
+        List<NArgCompleteCandidate> all = new ArrayList<>();
+        all.add(NArgCompleteCandidate.of("\"linux x86\""));
+        all.add(NArgCompleteCandidate.of("\"linux x64\""));
+        all.add(NArgCompleteCandidate.of("\"win x86\""));
+        all.add(NArgCompleteCandidate.of("\"win x64\""));
+        return NArgCompleteResult.ofCandidates(all);
     }
 
 }

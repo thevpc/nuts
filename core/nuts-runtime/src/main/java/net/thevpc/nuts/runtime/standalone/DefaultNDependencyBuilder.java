@@ -121,7 +121,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
             optional(value.getOptional());
             exclusions(value.getExclusions()==null?null:value.getExclusions().stream().map(x->x==null?null:NId.get(x.toString()).get()).collect(Collectors.toList()));
             classifier(value.getClassifier());
-            condition().copyFrom(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().copyFrom(value.getCondition()));
+            condition().copyFrom(new DefaultNEnvConditionBuilder().copyConditionsFromDependency(value));
             type(value.getType());
             properties(value.getProperties());
         } else {

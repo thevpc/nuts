@@ -545,31 +545,31 @@ public class CoreNUtils {
     }
 
 
-    public static NIdType detectIdType(NId depId) {
-        switch (depId.shortName()) {
-            case NConstants.Ids.NUTS_API: {
-                return NIdType.API;
-            }
-            case NConstants.Ids.NUTS_RUNTIME: {
-                return NIdType.RUNTIME;
-            }
-            default: {
-                String rt = NWorkspace.of().runtimeId().shortName();
-                if (rt.equals(depId.shortName())) {
-                    return NIdType.RUNTIME;
-                } else {
-                    for (NClassLoaderNode n : NWorkspace.of().bootExtensionClassLoaderNodes()) {
-                        if (n.id() != null) {
-                            if (n.id().equalsShortId(depId)) {
-                                return NIdType.EXTENSION;
-                            }
-                        }
-                    }
-                    return NIdType.REGULAR;
-                }
-            }
-        }
-    }
+//    public static NIdType detectIdType(NId depId) {
+//        switch (depId.shortName()) {
+//            case NConstants.Ids.NUTS_API: {
+//                return NIdType.API;
+//            }
+//            case NConstants.Ids.NUTS_RUNTIME: {
+//                return NIdType.RUNTIME;
+//            }
+//            default: {
+//                String rt = NWorkspace.of().runtimeId().shortName();
+//                if (rt.equals(depId.shortName())) {
+//                    return NIdType.RUNTIME;
+//                } else {
+//                    for (NClassLoaderNode n : NWorkspace.of().bootExtensionClassLoaderNodes()) {
+//                        if (n.id() != null) {
+//                            if (n.id().equalsShortId(depId)) {
+//                                return NIdType.EXTENSION;
+//                            }
+//                        }
+//                    }
+//                    return NIdType.REGULAR;
+//                }
+//            }
+//        }
+//    }
 
     public static List<NId> resolveNutsApiIdsFromId(NId id) {
         List<NDependency> deps = NFetch.of(id)

@@ -3,7 +3,7 @@ package net.thevpc.nuts.boot.internal.cmdline;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootLogConfig;
-import net.thevpc.nuts.boot.NBootVersion;
+import net.thevpc.nuts.boot.internal.NBootVersion;
 import net.thevpc.nuts.boot.internal.util.NBootPlatformHome;
 import net.thevpc.nuts.boot.internal.util.NBootUtils;
 

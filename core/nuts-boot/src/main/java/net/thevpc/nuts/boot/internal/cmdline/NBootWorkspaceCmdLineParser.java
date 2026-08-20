@@ -216,7 +216,7 @@ public final class NBootWorkspaceCmdLineParser {
                                 //this is a full id
                                 options.setRuntimeId(br);
                             } else {
-                                NBootId r = NBootId.ofRuntime(br);
+                                NBootDependency r = NBootDependency.ofRuntime(br);
                                 options.setRuntimeId(r == null ? null : r.toString());
                             }
                         }

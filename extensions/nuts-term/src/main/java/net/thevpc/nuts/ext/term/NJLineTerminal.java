@@ -26,7 +26,7 @@ package net.thevpc.nuts.ext.term;
 
 import java.awt.Color;
 
-import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NArgCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
 import net.thevpc.nuts.core.NSession;
@@ -68,7 +68,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private NPrintStream out;
     private NPrintStream err;
     private InputStream in;
-    private NCmdLineAutoCompleteResolver autoCompleteResolver;
+    private NArgCompleteResolver autoCompleteResolver;
     private NCmdLineHistory commandHistory;
     private NTerminalFormatter commandHighlighter;
     protected boolean lastWasProgress = false;
@@ -341,7 +341,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NCmdLineAutoCompleteResolver autoCompleteResolver() {
+    public NArgCompleteResolver autoCompleteResolver() {
         return autoCompleteResolver;
     }
 
@@ -351,7 +351,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NJLineTerminal commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NJLineTerminal commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver) {
         this.autoCompleteResolver = autoCompleteResolver;
         return this;
     }

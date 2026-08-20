@@ -24,9 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
-import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteResult;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUser;
@@ -44,13 +44,12 @@ public class UserNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
-        List<NArgCandidate> all = new ArrayList<>();
-        NRepository repository = context.get(NRepository.class);
+    public NArgCompleteResult resolveCandidates() {
+        List<NArgCompleteCandidate> all = new ArrayList<>();
         for (NUser nutsSecurityEntityConfig : NSecurityManager.of()
                 .users()) {
-            all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.username()));
+            all.add(NArgCompleteCandidate.of(nutsSecurityEntityConfig.username()));
         }
-        return all;
+        return NArgCompleteResult.ofCandidates(all);
     }
 }

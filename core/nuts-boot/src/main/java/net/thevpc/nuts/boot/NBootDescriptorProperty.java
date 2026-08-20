@@ -28,6 +28,11 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.boot.internal.util.NBootUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Descriptor Property Builder
  *
@@ -41,14 +46,18 @@ public class NBootDescriptorProperty {
 
     private String name;
     private String value = null;
-    private NBootEnvCondition condition;
+    private List<String> conditionArch = new ArrayList<>(); //defaults to empty
+    private List<String> conditionOs = new ArrayList<>(); //defaults to empty;
+    private List<String> conditionOsDist = new ArrayList<>(); //defaults to empty;
+    private List<String> conditionPlatform = new ArrayList<>(); //defaults to empty;
+    private List<String> conditionDesktopEnvironment = new ArrayList<>(); //defaults to empty;
+    private List<String> conditionProfiles = new ArrayList<>(); //defaults to empty;
+    private Map<String, String> conditionProperties = new HashMap<>();
 
     public NBootDescriptorProperty() {
-        this.condition = new NBootEnvCondition();
     }
 
     public NBootDescriptorProperty(NBootDescriptorProperty other) {
-        this.condition = new NBootEnvCondition();
         copyFrom(other);
     }
 
@@ -58,16 +67,6 @@ public class NBootDescriptorProperty {
 
     public String getValue() {
         return value;
-    }
-
-
-    public NBootDescriptorProperty setCondition(NBootEnvCondition condition) {
-        this.condition.clear().copyFrom(condition);
-        return this;
-    }
-
-    public NBootEnvCondition getCondition() {
-        return condition;
     }
 
 
@@ -87,11 +86,24 @@ public class NBootDescriptorProperty {
         if (value == null) {
             this.setName(null);
             this.setValue(null);
-            this.setCondition(null);
+            this.setConditionOs(null)
+                    .setConditionOsDist(null)
+                    .setConditionArch(null)
+                    .setConditionPlatform(null)
+                    .setConditionDesktopEnvironment(null)
+                    .setConditionProfile(null)
+                    .setConditionProperties(null);
+
         } else {
             this.setName(value.getName());
             this.setValue(value.getValue());
-            this.setCondition(value.getCondition());
+            this.setConditionOs(value.getConditionOs())
+                    .setConditionOsDist(value.getConditionOsDist())
+                    .setConditionArch(value.getConditionArch())
+                    .setConditionPlatform(value.getConditionPlatform())
+                    .setConditionDesktopEnvironment(value.getConditionDesktopEnvironment())
+                    .setConditionProfile(value.getConditionProfiles())
+                    .setConditionProperties(value.getConditionProperties());
         }
         return this;
     }
@@ -103,11 +115,80 @@ public class NBootDescriptorProperty {
         if (!NBootUtils.isBlank(value)) {
             return false;
         }
-        return condition == null || condition.isBlank();
+        if (conditionArch != null && !conditionArch.isEmpty()) return false;
+        if (conditionOs != null && !conditionOs.isEmpty()) return false;
+        if (conditionOsDist != null && !conditionOsDist.isEmpty()) return false;
+        if (conditionPlatform != null && !conditionPlatform.isEmpty()) return false;
+        if (conditionDesktopEnvironment != null && !conditionDesktopEnvironment.isEmpty()) return false;
+        if (conditionProfiles != null && !conditionProfiles.isEmpty()) return false;
+        if (conditionProperties != null && !conditionProperties.isEmpty()) return false;
+        return true;
     }
 
     public NBootDescriptorProperty copy() {
         return new NBootDescriptorProperty(this);
     }
 
+    public List<String> getConditionArch() {
+        return conditionArch;
+    }
+
+    public List<String> getConditionOs() {
+        return conditionOs;
+    }
+
+    public List<String> getConditionOsDist() {
+        return conditionOsDist;
+    }
+
+    public List<String> getConditionPlatform() {
+        return conditionPlatform;
+    }
+
+    public List<String> getConditionDesktopEnvironment() {
+        return conditionDesktopEnvironment;
+    }
+
+    public List<String> getConditionProfiles() {
+        return conditionProfiles;
+    }
+
+    public Map<String, String> getConditionProperties() {
+        return conditionProperties;
+    }
+
+    public NBootDescriptorProperty setConditionProperties(Map<String, String> conditionProperties) {
+        this.conditionProperties = conditionProperties == null ? null : new HashMap<>(conditionProperties);
+        return this;
+    }
+
+    public NBootDescriptorProperty setConditionDesktopEnvironment(List<String> conditionDesktopEnvironment) {
+        this.conditionDesktopEnvironment = NBootUtils.uniqueNonBlankStringList(conditionDesktopEnvironment);
+        return this;
+    }
+
+    public NBootDescriptorProperty setConditionProfile(List<String> profiles) {
+        this.conditionProfiles = profiles;
+        return this;
+    }
+
+    public NBootDescriptorProperty setConditionPlatform(List<String> conditionPlatform) {
+        this.conditionPlatform = NBootUtils.uniqueNonBlankStringList(conditionPlatform);
+        return this;
+    }
+
+    public NBootDescriptorProperty setConditionOsDist(List<String> conditionOsDist) {
+        this.conditionOsDist = NBootUtils.uniqueNonBlankStringList(conditionOsDist);
+        return this;
+    }
+
+    public NBootDescriptorProperty setConditionOs(List<String> conditionOs) {
+        this.conditionOs = NBootUtils.uniqueNonBlankStringList(conditionOs);
+        return this;
+    }
+
+    public NBootDescriptorProperty setConditionArch(List<String> conditionArch) {
+        this.conditionArch = NBootUtils.uniqueNonBlankStringList(conditionArch);
+        return this;
+    }
 }

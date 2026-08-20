@@ -53,7 +53,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     /**
      * auto complete info for "auto-complete" mode
      */
-    private NCmdLineAutoComplete autoComplete;
+    private NArgCompletePos completePos;
     private NId id;
     private String bundleName;
     private NClock startTime;
@@ -61,12 +61,12 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     private NApplicationMode mode = NApplicationMode.RUN;
     private NAppStoreLocationResolver storeLocationResolver;
     private boolean prepared;
-    private static NTypeLoader springBootType = new NTypeLoaderImpl("org.springframework.boot.web.servlet.support.SpringBootServletInitializer");
-    private static NTypeLoader quarkusAppType = new NTypeLoaderImpl("io.quarkus.runtime.QuarkusApplication");
-    private static NTypeLoader micronautAppType = new NTypeLoaderImpl("io.micronaut.runtime.Micronaut");
-    private static NTypeLoader jServletType = new NTypeLoaderImpl("jakarta.servlet.http.HttpServlet");
-    private static NTypeLoader xServletType = new NTypeLoaderImpl("javax.servlet.http.HttpServlet");
-    private static NTypeLoader osgiType = new NTypeLoaderImpl("org.osgi.framework.BundleActivator");
+    private static final NTypeLoader springBootType = new NTypeLoaderImpl("org.springframework.boot.web.servlet.support.SpringBootServletInitializer");
+    private static final NTypeLoader quarkusAppType = new NTypeLoaderImpl("io.quarkus.runtime.QuarkusApplication");
+    private static final NTypeLoader micronautAppType = new NTypeLoaderImpl("io.micronaut.runtime.Micronaut");
+    private static final NTypeLoader jServletType = new NTypeLoaderImpl("jakarta.servlet.http.HttpServlet");
+    private static final NTypeLoader xServletType = new NTypeLoaderImpl("javax.servlet.http.HttpServlet");
+    private static final NTypeLoader osgiType = new NTypeLoaderImpl("org.osgi.framework.BundleActivator");
     /**
      * previous parse for "update" mode
      */
@@ -100,7 +100,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             NStoreType value = values[i];
             cloned.sharedFolders[i] = this.getSharedFolder(value);
         }
-        cloned.autoComplete = this.autoComplete();
+        cloned.completePos = this.completePosition();
         cloned.startTime = this.startTime();
         cloned.args = this.arguments() == null ? null : new ArrayList<>(this.arguments());
         cloned.mode = this.mode();
@@ -126,7 +126,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             NStoreType value = values[i];
             this.sharedFolders[i] = other.getSharedFolder(value);
         }
-        this.autoComplete = other.autoComplete();
+        this.completePos = other.completePosition();
         this.startTime = other.startTime();
         this.args = other.arguments() == null ? null : new ArrayList<>(other.arguments());
         this.mode = other.mode();
@@ -159,12 +159,12 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 source = application;
                 appClass = application.getClass();
             } else {
-                application=resolveApplicationCustomResolver();
-                if(application!=null) {
-                    appClass= NReflectUtils.unproxyType(application.getClass());
-                    source=application;
-                }else{
-                    appClass=resolveApplicationFromStackTrace();
+                application = resolveApplicationCustomResolver();
+                if (application != null) {
+                    appClass = NReflectUtils.unproxyType(application.getClass());
+                    source = application;
+                } else {
+                    appClass = resolveApplicationFromStackTrace();
                     if (appClass == null) {
                         throw new NIllegalArgumentException(NMsg.ofC("unable to resolve application class from the current stacktrace"));
                     }
@@ -214,17 +214,18 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
         }
         this.startTime = startTime == null ? NClock.now() : startTime;
-        int wordIndex = -1;
+        NArgCompletePos wordIndex = null;
         if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
             NCmdLine execModeCommand = NCmdLine.parseDefault(
                     args.get(0).substring(args.get(0).indexOf('=') + 1)).get();
             if (execModeCommand.hasNext()) {
                 NArg a = execModeCommand.next().get();
                 switch (a.key()) {
-                    case "auto-complete": {
-                        this.mode = NApplicationMode.AUTO_COMPLETE;
+                    case "auto-complete":
+                    case "complete": {
+                        this.mode = NApplicationMode.COMPLETE;
                         if (execModeCommand.hasNext()) {
-                            wordIndex = execModeCommand.next().get().intValue();
+                            wordIndex = NArgCompletePos.of(execModeCommand.next().get().stringValue()).orNull();
                         }
                         this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
@@ -275,16 +276,10 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             this.setFolder(folder, NPath.of(NStoreKey.of(this.id).type(folder)));
             this.setSharedFolder(folder, NPath.of(NStoreKey.ofShared(this.id).type(folder)));
         }
-        if (this.mode == NApplicationMode.AUTO_COMPLETE) {
-            //TODO fix me
-//            this.workspace.term().setSession(session).getSystemTerminal()
-//                    .setMode(NutsTerminalMode.FILTERED);
-            if (wordIndex < 0) {
-                wordIndex = args.size();
-            }
-            this.autoComplete = new AppCmdLineAutoComplete(args, wordIndex);
+        if (this.mode == NApplicationMode.COMPLETE) {
+            this.completePos = wordIndex;
         } else {
-            this.autoComplete = null;
+            this.completePos = null;
         }
         if (bundleName == null) {
             bundleName = resolveAppNameFromClass(this.sourceType, _appId.artifactId());
@@ -292,10 +287,10 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     }
 
     private NApplication resolveApplicationCustomResolver() {
-        ServiceLoader<NAppResolverSPI> nAppResolverClassLoader=ServiceLoader.load(NAppResolverSPI.class);
+        ServiceLoader<NAppResolverSPI> nAppResolverClassLoader = ServiceLoader.load(NAppResolverSPI.class);
         for (NAppResolverSPI r : nAppResolverClassLoader) {
             Object o = r.resolveCurrentApplication();
-            if(o!=null) {
+            if (o != null) {
                 return NApplication.createApplicationInstanceFromAnnotatedInstance(o);
             }
         }
@@ -330,10 +325,10 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 }
                 if ("main".equals(m)) {
                     return type.getDeclaredMethod("main", String[].class).filter(
-                            main->Modifier.isStatic(main.getModifiers()) && Modifier.isPublic(main.getModifiers()))
-                            .isPresent() ?c:null;
+                                    main -> Modifier.isStatic(main.getModifiers()) && Modifier.isPublic(main.getModifiers()))
+                            .isPresent() ? c : null;
                 } else {
-                    if (isAssignableFromAny(c, springBootType, quarkusAppType, micronautAppType, jServletType, xServletType,osgiType)) {
+                    if (isAssignableFromAny(c, springBootType, quarkusAppType, micronautAppType, jServletType, xServletType, osgiType)) {
                         return c;
                     }
                 }
@@ -350,6 +345,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         }
         return false;
     }
+
     /**
      * Creates an application instance by calling a no-argument constructor.
      * Errors are wrapped in RuntimeExceptions for simplicity.
@@ -359,7 +355,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         try {
             return applicationType == null ? null : applicationType.getConstructor().newInstance();
         } catch (Exception e) {
-            nLog.debug(NMsg.ofC("createInstance %s failed : %s", applicationType,e));
+            nLog.debug(NMsg.ofC("createInstance %s failed : %s", applicationType, e));
             throw NException.ofUncheckedException(e);
         }
     }
@@ -452,8 +448,8 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     }
 
     @Override
-    public NCmdLineAutoComplete autoComplete() {
-        return this.autoComplete;
+    public NArgCompletePos completePosition() {
+        return this.completePos;
     }
 
     @Override
@@ -629,9 +625,10 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         if (appArguments == null) {
             return null;
         }
+        NArgCompletePos cp = completePosition();
         return NCmdLine.of(appArguments)
                 .commandName(appId.artifactId())
-                .autoComplete(autoComplete())
+                .complete(cp)
                 ;
     }
 
@@ -649,7 +646,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
 
     @Override
     public boolean isExecMode() {
-        return autoComplete() == null;
+        return completePosition() == null;
     }
 
     @Override
@@ -755,45 +752,4 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         }
     }
 
-    private static class AppCmdLineAutoComplete extends NCmdLineAutoCompleteBase {
-
-        private final ArrayList<String> words;
-        private final int wordIndex;
-
-        public AppCmdLineAutoComplete(List<String> args, int wordIndex) {
-            words = new ArrayList<>(args);
-            this.wordIndex = wordIndex;
-        }
-
-        @Override
-        public String line() {
-            return NCmdLine.of(words()).toString();
-        }
-
-        @Override
-        public List<String> words() {
-            return words;
-        }
-
-        @Override
-        public int currentWordIndex() {
-            return wordIndex;
-        }
-
-        @Override
-        protected NArgCandidate addCandidatesImpl(NArgCandidate value) {
-            NArgCandidate c = super.addCandidatesImpl(value);
-            String v = value.value();
-            if (v == null) {
-                throw new NExecutionException(NMsg.ofPlain("candidate cannot be null"), NExecutionException.ERROR_2);
-            }
-            String d = value.display();
-            if (Objects.equals(v, d) || d == null) {
-                NOut.println(NMsg.ofC("%s", NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v)));
-            } else {
-                NOut.println(NMsg.ofC("%s", NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v) + " " + NCmdLineUtils.escapeArgument(d)));
-            }
-            return c;
-        }
-    }
 }

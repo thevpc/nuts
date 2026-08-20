@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface NTuple<T> extends Iterable<T> {
-    static <A extends T,B extends T,T> NTuple2<A,B,T> of(A a, B b) {
-        return new NTuple2Impl<>(a, b);
+    static <A extends T,B extends T,T> NPair<A,B,T> of(A a, B b) {
+        return new NPairImpl<>(a, b);
     }
 
     static <A extends T,B extends T,C extends T,T> NTuple<T> of(A a, B b, C c) {
-        return new NTuple3Impl<>(a,b,c);
+        return new NTripletImpl<>(a,b,c);
     }
 
     static <T> NTuple<T> of(T... a) {

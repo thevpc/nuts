@@ -26,7 +26,6 @@
 package net.thevpc.nuts.cmdline;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Auto Complete Resolver
@@ -35,7 +34,7 @@ import java.util.Objects;
  * @app.category Command Line
  * @since 0.8.0
  */
-public interface NCmdLineAutoCompleteResolver {
+public interface NArgCompleteResolver {
 
     /**
      * resolve possible candidates
@@ -44,50 +43,6 @@ public interface NCmdLineAutoCompleteResolver {
      * @param pos     cursor position where to complete
      * @return possible candidates
      */
-    List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, Pos pos);
+    NArgCompleteResult resolveCandidates(NCmdLine cmdLine, NArgCompletePos pos);
 
-    class Pos {
-        private final int wordIndex;
-        private final int inWordCursor;
-        private final int inLineCursor;
-
-        public Pos(int wordIndex, int inWordCursor, int inLineCursor) {
-            this.wordIndex = wordIndex;
-            this.inWordCursor = inWordCursor;
-            this.inLineCursor = inLineCursor;
-        }
-
-        public int wordIndex() {
-            return wordIndex;
-        }
-
-        public int inWordCursor() {
-            return inWordCursor;
-        }
-
-        public int inLineCursor() {
-            return inLineCursor;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
-            Pos pos = (Pos) o;
-            return wordIndex == pos.wordIndex && inWordCursor == pos.inWordCursor && inLineCursor == pos.inLineCursor;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(wordIndex, inWordCursor, inLineCursor);
-        }
-
-        @Override
-        public String toString() {
-            return "Pos{" +
-                    "wordIndex=" + wordIndex +
-                    ", inWordCursor=" + inWordCursor +
-                    ", inLineCursor=" + inLineCursor +
-                    '}';
-        }
-    }
 }

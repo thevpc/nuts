@@ -26,10 +26,10 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
+import net.thevpc.nuts.cmdline.NArgCompleteResult;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
-import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteCandidate;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepositorySpec;
@@ -52,7 +52,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
+    public NArgCompleteResult resolveCandidates() {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add(NConstants.RepoTypes.NUTS);
         allValid.add(NConstants.RepoTypes.MAVEN);
@@ -62,10 +62,10 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
                 allValid.add(NStringUtils.strip(t));
             }
         }
-        List<NArgCandidate> all = new ArrayList<>();
+        ArrayList<NArgCompleteCandidate> all = new ArrayList<>();
         for (String v : allValid) {
-            all.add(new DefaultNArgCandidate(v));
+            all.add(NArgCompleteCandidate.of(v));
         }
-        return all;
+        return NArgCompleteResult.ofCandidates(all);
     }
 }

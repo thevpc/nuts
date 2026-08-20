@@ -436,14 +436,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
      * special
      */
     private NClassLoaderNode runtimeBootDependencyNode;
-    /**
-     * special
-     */
-    private List<NBootDescriptor> extensionBootDescriptors;
-    /**
-     * special
-     */
-    private List<NClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -464,11 +456,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
      * special
      */
     private String uuid;
-
-    /**
-     * special
-     */
-    private Set<String> extensionsSet;
 
     /**
      * special
@@ -506,8 +493,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
                 repositoryStoreStrategy().orNull(), fetchStrategy().orNull(),
                 stdin().orNull(), stdout().orNull(), stderr().orNull(),
                 executorService().orNull(), expireTime().orNull(), errors().orNull(), skipErrors().orNull(), locale().orNull(),
-                theme().orNull(), uuid().orNull(), bootRepositories().orNull(), runtimeBootDependencyNode().orNull(), extensionBootDescriptors().orNull(),
-                extensionBootDependencyNodes().orNull(), classWorldURLs().orNull(), extensionsSet().orNull(), bootWorkspaceFactory().orNull(), runtimeBootDescriptor().orNull(), classWorldLoader().orNull(),
+                theme().orNull(), uuid().orNull(), bootRepositories().orNull(), runtimeBootDependencyNode().orNull(),
+                classWorldURLs().orNull(), bootWorkspaceFactory().orNull(), runtimeBootDescriptor().orNull(), classWorldLoader().orNull(),
                 desktopLauncher().orNull(), menuLauncher().orNull(), userLauncher().orNull(), previewRepo().orNull(), sharedInstance().orNull());
     }
 
@@ -680,13 +667,10 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.previewRepo(other.previewRepo().orNull());
         this.bootRepositories(other.bootRepositories().orNull());
         this.runtimeBootDependencyNode(other.runtimeBootDependencyNode().orNull());
-        this.extensionBootDescriptors(other.extensionBootDescriptors().orNull());
-        this.extensionBootDependencyNodes(other.extensionBootDependencyNodes().orNull());
         this.bootWorkspaceFactory(other.bootWorkspaceFactory().orNull());
         this.classWorldURLs(other.classWorldURLs().orNull());
         this.classWorldLoader(other.classWorldLoader().orNull());
         this.uuid(other.uuid().orNull());
-        this.extensionsSet(other.extensionsSet().orNull());
         this.runtimeBootDescriptor(other.runtimeBootDescriptor().orNull());
         return this;
     }
@@ -749,10 +733,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.stdout(other.stdout().orNull());
         this.stderr(other.stderr().orNull());
         this.executorService(other.executorService().orNull());
-//        this.setBootRepositories(other.getBootRepositories());
-
         this.excludedExtensions(other.excludedExtensions().orNull());
-//        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.repositories(other.repositories().orNull());
         this.bootRepositories(other.bootRepositories().orNull());
         this.applicationArguments(other.applicationArguments().orNull());
@@ -774,28 +755,14 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.userLauncher(other.userLauncher().orNull());
         this.sharedInstance(other.sharedInstance().orNull());
         this.previewRepo(other.previewRepo().orNull());
-//        this.setBootRepositories(other.getBootRepositories().orNull());
         this.runtimeBootDependencyNode(other.runtimeBootDependencyNode().orNull());
-        this.extensionBootDescriptors(other.extensionBootDescriptors().orNull());
-        this.extensionBootDependencyNodes(other.extensionBootDependencyNodes().orNull());
         this.bootWorkspaceFactory(other.bootWorkspaceFactory().orNull());
         this.classWorldURLs(other.classWorldURLs().orNull());
         this.classWorldLoader(other.classWorldLoader().orNull());
         this.uuid(other.uuid().orNull());
-        this.extensionsSet(other.extensionsSet().orNull());
         this.runtimeBootDescriptor(other.runtimeBootDescriptor().orNull());
         return this;
     }
-
-//    public NOptional<String> getBootRepositories() {
-//        return NOptional.of(bootRepositories);
-//    }
-//
-//    @Override
-//    public DefaultNBootOptionsBuilder setBootRepositories(String bootRepositories) {
-//        this.bootRepositories = NStringUtils.stripToNull(bootRepositories);
-//        return this;
-//    }
 
     public NOptional<NClassLoaderNode> runtimeBootDependencyNode() {
         return NOptional.of(runtimeBootDependencyNode);
@@ -807,25 +774,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NOptional<List<NBootDescriptor>> extensionBootDescriptors() {
-        return NOptional.of(extensionBootDescriptors);
-    }
-
-    @Override
-    public DefaultNBootOptionsBuilder extensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors) {
-        this.extensionBootDescriptors = NReservedLangUtils.nonNullList(extensionBootDescriptors);
-        return this;
-    }
-
-    public NOptional<List<NClassLoaderNode>> extensionBootDependencyNodes() {
-        return NOptional.of(extensionBootDependencyNodes);
-    }
-
-    @Override
-    public DefaultNBootOptionsBuilder extensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes) {
-        this.extensionBootDependencyNodes = NReservedLangUtils.nonNullList(extensionBootDependencyNodes);
-        return this;
-    }
 
     public NOptional<NBootWorkspaceFactory> bootWorkspaceFactory() {
         return NOptional.of(bootWorkspaceFactory);
@@ -867,15 +815,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NOptional<Set<String>> extensionsSet() {
-        return NOptional.of(extensionsSet);
-    }
-
-    @Override
-    public DefaultNBootOptionsBuilder extensionsSet(Set<String> extensionsSet) {
-        this.extensionsSet = NReservedLangUtils.nonNullSet(extensionsSet);
-        return this;
-    }
 
     public NOptional<NBootDescriptor> runtimeBootDescriptor() {
         return NOptional.of(runtimeBootDescriptor);
@@ -1346,12 +1285,6 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         }
         if (other.runtimeBootDependencyNode().isPresent()) {
             runtimeBootDependencyNode(other.runtimeBootDependencyNode().orNull());
-        }
-        if (other.extensionBootDescriptors().isPresent()) {
-            extensionBootDescriptors(other.extensionBootDescriptors().orNull());
-        }
-        if (other.extensionBootDependencyNodes().isPresent()) {
-            extensionBootDependencyNodes(other.extensionBootDependencyNodes().orNull());
         }
         if (other.bootWorkspaceFactory().isPresent()) {
             bootWorkspaceFactory(other.bootWorkspaceFactory().orNull());
@@ -2648,13 +2581,10 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
 
         this.bootRepositories(other.getBootRepositories());
         this.runtimeBootDependencyNode(convertNode(other.getRuntimeBootDependencyNode()));
-        this.extensionBootDescriptors(other.getExtensionBootDescriptors());
-        this.extensionBootDependencyNodes(convertNodes(other.getExtensionBootDependencyNodes()));
         this.bootWorkspaceFactory(other.getBootWorkspaceFactory());
         this.classWorldURLs(other.getClassWorldURLs());
         this.classWorldLoader(other.getClassWorldLoader());
         this.uuid(other.getUuid());
-        this.extensionsSet(other.getExtensionsSet());
         this.runtimeBootDescriptor(other.getRuntimeBootDescriptor());
 
         return this;

@@ -43,10 +43,6 @@ public interface NBootOptionsBuilder extends NComponent {
 
     NBootOptionsBuilder runtimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode);
 
-    NBootOptionsBuilder extensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors);
-
-    NBootOptionsBuilder extensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes);
-
     NBootOptionsBuilder bootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory);
 
     NBootOptionsBuilder classWorldURLs(List<URL> classWorldURLs);
@@ -54,8 +50,6 @@ public interface NBootOptionsBuilder extends NComponent {
     NBootOptionsBuilder classWorldLoader(ClassLoader classWorldLoader);
 
     NBootOptionsBuilder uuid(String uuid);
-
-    NBootOptionsBuilder extensionsSet(Set<String> extensionsSet);
 
     NBootOptionsBuilder runtimeBootDescriptor(NBootDescriptor runtimeBootDescriptor);
 
@@ -379,10 +373,6 @@ public interface NBootOptionsBuilder extends NComponent {
 
     NOptional<NClassLoaderNode> runtimeBootDependencyNode();
 
-    NOptional<List<NBootDescriptor>> extensionBootDescriptors();
-
-    NOptional<List<NClassLoaderNode>> extensionBootDependencyNodes();
-
     NOptional<NBootWorkspaceFactory> bootWorkspaceFactory();
 
     NOptional<List<URL>> classWorldURLs();
@@ -390,8 +380,6 @@ public interface NBootOptionsBuilder extends NComponent {
     NOptional<ClassLoader> classWorldLoader();
 
     NOptional<String> uuid();
-
-    NOptional<Set<String>> extensionsSet();
 
     NOptional<NBootDescriptor> runtimeBootDescriptor();
 

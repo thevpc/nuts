@@ -557,8 +557,6 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NClassLoaderNode bootRuntimeClassLoaderNode();
 
-    List<NClassLoaderNode> bootExtensionClassLoaderNodes();
-
     NWorkspaceTerminalOptions bootTerminal();
 
     void runApplication(NApplicationHandleMode handleMode);

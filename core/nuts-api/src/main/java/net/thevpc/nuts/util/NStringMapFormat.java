@@ -61,9 +61,9 @@ public class NStringMapFormat {
     private final boolean sort;
     private final Function<String, String> decoder;
     private final Function<String, String> encoder;
-    private boolean doubleQuoteSupported;
-    private boolean simpleQuoteSupported;
-    private boolean acceptNullKeys;
+    private final boolean doubleQuoteSupported;
+    private final boolean simpleQuoteSupported;
+    private final boolean acceptNullKeys;
 
 
     NStringMapFormat(NStringMapFormatBuilder builder) {

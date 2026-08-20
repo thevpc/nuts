@@ -92,7 +92,7 @@ public interface NCmdLineRunner {
      *
      * @param cmdLine cmdLine
      */
-    default void autoComplete(NCmdLine cmdLine) {
+    default void complete(NCmdLine cmdLine) {
 
     }
 

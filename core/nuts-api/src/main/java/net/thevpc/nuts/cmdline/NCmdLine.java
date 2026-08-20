@@ -221,19 +221,19 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     /**
      * autocomplete instance
      *
-     * @return autocomplete instance
+     * @return complete instance
      */
     @NGetter
-    NCmdLineAutoComplete autoComplete();
+    NArgCompleteResult completeResult();
 
     /**
-     * set autocomplete instance
+     * set complete instance
      *
-     * @param autoComplete autocomplete instance
+     * @param completePos autocomplete instance
      * @return {@code this} instance
      */
     @NSetter
-    NCmdLine autoComplete(NCmdLineAutoComplete autoComplete);
+    NCmdLine complete(NArgCompletePos completePos);
 
     /**
      * unregister {@code options} as simple (with simple '-') option. This
@@ -293,7 +293,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      *
      * @return true if auto complete instance is registered (is not null)
      */
-    boolean isAutoCompleteMode();
+    boolean isCompleteMode();
 
     /**
      * @return command name that will be used as an extra info in thrown
@@ -382,7 +382,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      *
      * @param name expected argument name
      * @return next argument
+     * @deprecated use {@link #next(NArgType, String, NArgCompleteValueComplete, String...)} instead
      */
+    @Deprecated
     NOptional<NArg> next(NArgName name);
 
     /**
@@ -487,17 +489,31 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      *
      * @param name argument specification (may be null)
      * @return next argument if it exists and It's a non option
+     * @deprecated use {@link #nextNonOption(String, NArgCompleteValueComplete)} instead
      */
+    @Deprecated
     NOptional<NArg> nextNonOption(NArgName name);
 
+    NOptional<NArg> next(NArgType expectedArgType, String argDisplay, NArgCompleteValueComplete valueComplete, String... names);
+
     /**
-     * next argument if it exists and It's a non option. Return null in all
-     * other cases.
+     * next non-option argument if it exists. Return null in all other cases.
      *
-     * @param name argument specification (may be null)
-     * @return next argument if it exists and It's a non option
+     * @param name argument display name hint (shown in completion)
+     * @return next argument if it exists and it's a non option
      */
     NOptional<NArg> nextNonOption(String name);
+
+    /**
+     * next non-option argument if it exists, providing a display label and
+     * a completion value finder for auto-complete mode. Return empty in all
+     * other cases.
+     *
+     * @param display  display hint shown in completion suggestions
+     * @param finder   supplier of completion candidates for the value
+     * @return next argument if it exists and it's a non option
+     */
+    NOptional<NArg> nextNonOption(String display, NArgCompleteValueComplete finder);
 
     /**
      * consume all words and return consumed count
@@ -758,6 +774,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         Matcher matchFlag(Consumer<NArg> consumer);
 
         MatcherCondition and(Predicate<NCmdLine> condition);
+        MatcherCondition display(String display);
+        MatcherCondition valueComplete(NArgCompleteValueComplete finder);
 
         /**
          * consume next argument with string value and run {@code consumer}

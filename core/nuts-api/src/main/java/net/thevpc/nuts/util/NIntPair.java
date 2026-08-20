@@ -5,15 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public final class NIntTuple2 implements NTuple2<Integer, Integer, Integer> {
+public final class NIntPair implements NPair<Integer, Integer, Integer> {
     private final int a;
     private final int b;
 
-    public static NIntTuple2 of(int a, int b) {
-        return new NIntTuple2(a, b);
+    public static NIntPair of(int a, int b) {
+        return new NIntPair(a, b);
     }
 
-    public NIntTuple2(int a, int b) {
+    public NIntPair(int a, int b) {
         this.a = a;
         this.b = b;
     }
@@ -47,51 +47,51 @@ public final class NIntTuple2 implements NTuple2<Integer, Integer, Integer> {
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
-    public NIntTuple2 set(int newValue, int index) {
+    public NIntPair set(int newValue, int index) {
         switch (index) {
             case 0:
-                return new NIntTuple2(newValue, b);
+                return new NIntPair(newValue, b);
             case 1:
-                return new NIntTuple2(a, newValue);
+                return new NIntPair(a, newValue);
         }
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
     @Override
-    public NTuple2<Integer, Integer, Integer> set(Integer newValue, int index) {
+    public NPair<Integer, Integer, Integer> set(Integer newValue, int index) {
         if (newValue == null) {
             switch (index) {
                 case 0:
-                    return new NIntTuple2(newValue, b);
+                    return new NIntPair(newValue, b);
                 case 1:
-                    return new NIntTuple2(a, newValue);
+                    return new NIntPair(a, newValue);
             }
         } else {
             switch (index) {
                 case 0:
-                    return new NIntTuple2(newValue, b);
+                    return new NIntPair(newValue, b);
                 case 1:
-                    return new NIntTuple2(a, newValue);
+                    return new NIntPair(a, newValue);
             }
         }
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
-    public NIntTuple2 setFirst(int t) {
+    public NIntPair setFirst(int t) {
         return set(t, 0);
     }
 
-    public NIntTuple2 setSecond(int t) {
-        return set(t, 0);
-    }
-
-    @Override
-    public NTuple2<Integer, Integer, Integer> setFirst(Integer t) {
+    public NIntPair setSecond(int t) {
         return set(t, 0);
     }
 
     @Override
-    public NTuple2<Integer, Integer, Integer> setSecond(Integer t) {
+    public NPair<Integer, Integer, Integer> first(Integer t) {
+        return set(t, 0);
+    }
+
+    @Override
+    public NPair<Integer, Integer, Integer> second(Integer t) {
         return set(t, 1);
     }
 
@@ -122,7 +122,7 @@ public final class NIntTuple2 implements NTuple2<Integer, Integer, Integer> {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        NIntTuple2 tuple = (NIntTuple2) o;
+        NIntPair tuple = (NIntPair) o;
         return (a == tuple.a) && (b == tuple.b);
     }
 

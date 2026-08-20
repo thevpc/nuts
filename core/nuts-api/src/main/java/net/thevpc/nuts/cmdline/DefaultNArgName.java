@@ -56,10 +56,10 @@ public class DefaultNArgName implements NArgName {
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
-        List<NArgCandidate> list = new ArrayList<>();
-        list.add(new DefaultNArgCandidate("<" + name() + ">"));
-        return list;
+    public NArgCompleteResult resolveCandidates() {
+        List<NArgCompleteCandidate> list = new ArrayList<>();
+        list.add(NArgCompleteCandidate.of("<" + name() + ">"));
+        return NArgCompleteResult.of(list, null);
     }
 
     @Override

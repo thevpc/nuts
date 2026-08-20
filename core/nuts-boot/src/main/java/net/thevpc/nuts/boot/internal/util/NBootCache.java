@@ -1,6 +1,6 @@
 package net.thevpc.nuts.boot.internal.util;
 
-import net.thevpc.nuts.boot.NBootId;
+import net.thevpc.nuts.boot.NBootDependency;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public class NBootCache {
     final private Map<String, Object> cache = new LinkedHashMap<>();
-    public Map<NBootId, NBootIdCache> fallbackIdMap = new HashMap<>();
+    public Map<NBootDependency, NBootIdCache> fallbackIdMap = new HashMap<>();
 
     public Object get(String key, Function<String, Object> mappingFunction) {
         //cannot use cache.computeIfAbsent because of reentrant calls!

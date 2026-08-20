@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -60,11 +61,12 @@ public class NCollections {
         return StreamSupport.stream(it.spliterator(), false);
     }
 
-    public static <T> Stream<T> stream(Iterator<T> iterator){
+    public static <T> Stream<T> stream(Iterator<T> iterator) {
         return StreamSupport.stream(
                 Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),
                 false);
     }
+
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> distinctMapper) {
         Map<Object, Boolean> visited = new ConcurrentHashMap<>();
         return t -> visited.putIfAbsent(distinctMapper.apply(t), Boolean.TRUE) == null;
@@ -72,18 +74,19 @@ public class NCollections {
 
     public static List<String> toDistinctStrippedNonEmptyList(List<String> values0) {
         Set<String> set = toStrippedNonEmptySet(
-                values0==null?null:values0.toArray(new String[0])
+                values0 == null ? null : values0.toArray(new String[0])
         );
         return new ArrayList<>(set);
     }
+
     public static List<String> toDistinctStrippedNonEmptyList(List<String> values0, List<String>... values) {
         Set<String> set = toStrippedNonEmptySet(
-                values0==null?null:values0.toArray(new String[0])
+                values0 == null ? null : values0.toArray(new String[0])
         );
         if (values != null) {
             for (List<String> value : values) {
                 set.addAll(toStrippedNonEmptySet(
-                        values0==null?null:values0.toArray(new String[0])
+                        values0 == null ? null : values0.toArray(new String[0])
                 ));
             }
         }
@@ -92,11 +95,11 @@ public class NCollections {
 
     public static <T> boolean addAllNonNull(Collection<T> container, Collection<T> newElements) {
         boolean someAdded = false;
-        if(newElements !=null){
+        if (newElements != null) {
             for (T t : newElements) {
-                if(t!=null){
+                if (t != null) {
                     container.add(t);
-                    someAdded=true;
+                    someAdded = true;
                 }
             }
         }
@@ -105,6 +108,42 @@ public class NCollections {
 
     public static <T> List<T> unmodifiableList(Collection<T> other) {
         return other == null ? Collections.emptyList() : Collections.unmodifiableList(nonNullList(other));
+    }
+
+    public static <T> List<T> unmodifiableNonNullList(Collection<T> other) {
+        return unmodifiableList(other, Objects::nonNull);
+    }
+
+    public static <T> List<T> unmodifiableList(Collection<T> other, Predicate<T> filter) {
+        if (other == null) {
+            return Collections.emptyList();
+        }
+        if (filter == null) {
+            return Collections.unmodifiableList(new ArrayList<>(other));
+        }
+        return Collections.unmodifiableList(
+                other.stream()
+                        .filter(filter)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public static <T> Set<T> unmodifiableNonNullSet(Collection<T> other) {
+        return unmodifiableSet(other, Objects::nonNull);
+    }
+
+    public static <T> Set<T> unmodifiableSet(Collection<T> other, Predicate<T> filter) {
+        if (other == null) {
+            return Collections.emptySet();
+        }
+        if (filter == null) {
+            return Collections.unmodifiableSet(new LinkedHashSet<>(other)); // preserve order
+        }
+        return Collections.unmodifiableSet(
+                other.stream()
+                        .filter(filter)
+                        .collect(Collectors.toSet())
+        );
     }
 
     public static <T, V> Map<T, V> nonNullMap(Map<T, V> other) {
@@ -152,7 +191,6 @@ public class NCollections {
     }
 
 
-
     public static <T, V> Map<T, V> unmodifiableMap(Map<T, V> other) {
         return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(nonNullMap(other));
     }
@@ -161,23 +199,22 @@ public class NCollections {
         return nonNullList(Arrays.asList(other));
     }
 
-    public static <T> Stream<T> finiteStream(Supplier<T> supplier){
+    public static <T> Stream<T> finiteStream(Supplier<T> supplier) {
         return stream(supplier, null);
     }
-    public static <T> Stream<T> stream(Supplier<T> supplier, Predicate<T> stopCondition){
-        if(stopCondition==null){
-            stopCondition= Objects::isNull;
+
+    public static <T> Stream<T> stream(Supplier<T> supplier, Predicate<T> stopCondition) {
+        if (stopCondition == null) {
+            stopCondition = Objects::isNull;
         }
         Predicate<T> finalStopCondition = stopCondition;
         return stream(new Iterator<T>() {
             T value;
+
             @Override
             public boolean hasNext() {
                 value = supplier.get();
-                if(finalStopCondition.test(value)){
-                    return false;
-                }
-                return true;
+                return !finalStopCondition.test(value);
             }
 
             @Override
@@ -259,19 +296,6 @@ public class NCollections {
         return ret;
     }
 
-    public static <T> List<T> toList(Iterator<T> it) {
-        List<T> all = new ArrayList<>();
-        while (it.hasNext()) {
-            all.add(it.next());
-        }
-        return all;
-    }
-
-    public static <T> List<T> toList(Iterable<T> it) {
-        return toList(it.iterator());
-    }
-
-
 
 
     public static <V> List<V> unmodifiableList(List<V> list) {
@@ -294,7 +318,7 @@ public class NCollections {
         if (filter == null) {
             throw new NullPointerException("Filter could not be null");
         }
-        for (Iterator<T> i = values.iterator(); i.hasNext();) {
+        for (Iterator<T> i = values.iterator(); i.hasNext(); ) {
             if (!filter.test(i.next())) {
                 i.remove();
             }
@@ -307,14 +331,13 @@ public class NCollections {
         if (filter == null) {
             throw new NullPointerException("Filter could not be null");
         }
-        for (Iterator<T> i = values.iterator(); i.hasNext();) {
+        for (Iterator<T> i = values.iterator(); i.hasNext(); ) {
             if (filter.test(i.next())) {
                 i.remove();
             }
         }
         return values;
     }
-
 
 
     /**
@@ -392,7 +415,6 @@ public class NCollections {
         }
         return set;
     }
-
 
 
 //    public static <K, V> KeyValueList<K, V> unmodifiableMapList(KeyValueList<K, V> list) {

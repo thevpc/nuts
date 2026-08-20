@@ -23,8 +23,9 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.boot;
+package net.thevpc.nuts.boot.internal;
 
+import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.internal.util.NBootConstants;
 import net.thevpc.nuts.boot.internal.util.NBootMsg;
 import net.thevpc.nuts.boot.internal.util.NBootUtils;

@@ -386,13 +386,9 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             id(other.getId() == null ? null : NId.get(other.getId().toString()).get());
             packaging(other.getPackaging());
             parents(other.getParents() == null ? null : other.getParents().stream().map(x -> NId.get(x.toString()).get()).collect(Collectors.toList()));
-            description(other.getDescription());
-            name(other.getName());
-            condition(other.getCondition() == null ? null : new DefaultNEnvConditionBuilder().copyFrom(other.getCondition()).build());
+            condition(other.getId()==null?null:new DefaultNEnvConditionBuilder().copyConditionsFromDependency(other.getId()).build());
             dependencies(other.getDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
-            standardDependencies(other.getStandardDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
             setProperties(other.getProperties() == null ? null : other.getProperties().stream().map(x -> new DefaultNDescriptorPropertyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
-
             idType(null);
             executor(null);
             installer(null);

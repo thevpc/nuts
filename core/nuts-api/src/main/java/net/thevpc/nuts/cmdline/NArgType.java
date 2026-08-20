@@ -44,10 +44,22 @@ public enum NArgType implements NEnum {
      */
     DEFAULT,
     /**
+     * try attached first, then look at the next token's shape and only take it if it doesn't look like an option, otherwise give up quietly.
+     * greedy, but shy of things that look like options (peeks and guesses)
      * argument that accepts a string as value. Either the string is included in
      * the argument itself (--option=value) or succeeds it (--option value).
      */
     ENTRY,
+    /**
+     * try attached first, otherwise the next token — whatever it looks like — is the value; if there's no next token at all, that's an error.
+     * "greedy, no matter what, and mandatory" (never peeks at shape, errors if nothing follows)
+     */
+    REQUIRED_ENTRY,
+    /**
+     * a value only exists if it was attached with =. A separate following token is never, under any circumstance, considered the value — even if it looks perfectly innocent like w.
+     * never greedy — only the = form counts, (never peeks at all)
+     */
+    ATTACHED_ENTRY,
     /**
      * argument that accepts a boolean as value. Either the boolean is not
      * defined (--option), is included in the argument itself (--option=true) or

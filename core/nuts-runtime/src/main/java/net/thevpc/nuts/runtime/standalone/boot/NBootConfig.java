@@ -77,11 +77,6 @@ public final class NBootConfig implements Cloneable, Serializable {
     private NDescriptor runtimeBootDescriptor;
 
     /**
-     *
-     */
-    private List<NDescriptor> extensionBootDescriptors;
-
-    /**
      * bootRepositories list (; separated) where to look for runtime dependencies
      */
     private List<String> bootRepositories;
@@ -151,7 +146,6 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.apiVersion = context.getApiVersion();
             this.runtimeId = context.getRuntimeId();
             this.runtimeBootDescriptor = context.getRuntimeBootDescriptor();
-            this.extensionBootDescriptors = context.getExtensionBootDescriptors();
             this.bootRepositories = context.getBootRepositories();
             this.javaCommand = context.getJavaCommand();
             this.javaOptions = context.getJavaOptions();
@@ -170,7 +164,6 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.apiVersion = other.getApiVersion();
             this.runtimeId = other.getRuntimeId();
             this.runtimeBootDescriptor = other.getRuntimeBootDescriptor();
-            this.extensionBootDescriptors = other.getExtensionBootDescriptors();
             this.bootRepositories = other.getBootRepositories();
             this.javaCommand = other.getJavaCommand();
             this.javaOptions = other.getJavaOptions();
@@ -218,15 +211,6 @@ public final class NBootConfig implements Cloneable, Serializable {
 
     public NBootConfig setRuntimeBootDescriptor(NDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
-        return this;
-    }
-
-    public List<NDescriptor> getExtensionBootDescriptors() {
-        return extensionBootDescriptors;
-    }
-
-    public NBootConfig setExtensionBootDescriptors(List<NDescriptor> extensionBootDescriptors) {
-        this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
 

@@ -26,10 +26,10 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
+import net.thevpc.nuts.cmdline.NArgCompleteResult;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
-import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgCompleteCandidate;
+import net.thevpc.nuts.cmdline.NArgCompleteCandidate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +44,11 @@ public class ExtensionNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context) {
-        List<NArgCandidate> all = new ArrayList<>();
-        all.add(new DefaultNArgCandidate(NConstants.Ids.NUTS_RUNTIME));
+    public NArgCompleteResult resolveCandidates() {
+        List<NArgCompleteCandidate> all = new ArrayList<>();
+        all.add(NArgCompleteCandidate.of(NConstants.Ids.NUTS_RUNTIME));
         //should find all nuts with packaging "nuts-extension"
-        return all;
+        return NArgCompleteResult.ofCandidates(all);
     }
 
 }

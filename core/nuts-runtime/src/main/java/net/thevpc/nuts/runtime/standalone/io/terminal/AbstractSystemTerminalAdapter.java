@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NArgCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
@@ -28,7 +28,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public NCmdLineAutoCompleteResolver autoCompleteResolver() {
+    public NArgCompleteResolver autoCompleteResolver() {
         NSystemTerminalBase p = base();
         if (p != null) {
             return p.autoCompleteResolver();
@@ -41,7 +41,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public NSystemTerminalBase commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver) {
         NSystemTerminalBase p = base();
         if (p != null) {
             p.commandAutoCompleteResolver(autoCompleteResolver);

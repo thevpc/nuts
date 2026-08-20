@@ -8,11 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-final class NTuple2Impl<A extends T, B extends T, T> implements NTuple2<A, B, T> {
+final class NPairImpl<A extends T, B extends T, T> implements NPair<A, B, T> {
     private A a;
     private B b;
 
-    public NTuple2Impl(A a, B b) {
+    public NPairImpl(A a, B b) {
         this.a = a;
         this.b = b;
     }
@@ -39,23 +39,23 @@ final class NTuple2Impl<A extends T, B extends T, T> implements NTuple2<A, B, T>
     }
 
     @Override
-    public NTuple2<A, B, T> set(T newValue, int index) {
+    public NPair<A, B, T> set(T newValue, int index) {
         switch (index) {
             case 0:
-                return new NTuple2Impl<>((A) newValue, b);
+                return new NPairImpl<>((A) newValue, b);
             case 1:
-                return new NTuple2Impl<>(a, (B) newValue);
+                return new NPairImpl<>(a, (B) newValue);
         }
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
     @Override
-    public NTuple2<A, B, T> setFirst(A t) {
+    public NPair<A, B, T> first(A t) {
         return set(t, 0);
     }
 
     @Override
-    public NTuple2<A, B, T> setSecond(B t) {
+    public NPair<A, B, T> second(B t) {
         return set(t, 1);
     }
 
@@ -90,7 +90,7 @@ final class NTuple2Impl<A extends T, B extends T, T> implements NTuple2<A, B, T>
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        NTuple2Impl<?, ?, ?> tuple = (NTuple2Impl<?, ?, ?>) o;
+        NPairImpl<?, ?, ?> tuple = (NPairImpl<?, ?, ?>) o;
         return Objects.equals(a, tuple.a) && Objects.equals(b, tuple.b);
     }
 

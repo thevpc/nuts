@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NArgCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalFormatter;
@@ -55,7 +55,7 @@ public interface NSystemTerminalBase extends NComponent {
 
     NPrintStream err();
 
-    default NCmdLineAutoCompleteResolver autoCompleteResolver() {
+    default NArgCompleteResolver autoCompleteResolver() {
         return null;
     }
 
@@ -63,7 +63,7 @@ public interface NSystemTerminalBase extends NComponent {
         return false;
     }
 
-    NSystemTerminalBase commandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver);
+    NSystemTerminalBase commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver);
 
     /**
      * return History implementation

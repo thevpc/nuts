@@ -265,30 +265,9 @@ public class DefaultNWorkspaceExtensionModel {
                     bootClassLoader
             );
         }
-
-        // discover extensions path
-        for (NClassLoaderNode idurl : bOptions.extensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
-            if (idurl.id() != null) {
-                objectFactory.discoverTypes(
-                        idurl.id(),
-                        idurl.url(),
-                        bootClassLoader
-                );
-            }
-        }
         this.workspaceExtensionsClassLoader = createMutableClassLoader("workspaceExtensionsClassLoader", bootClassLoader, new NClasspathEntry[0], null, null);
     }
 
-    //    public void registerType(RegInfo regInfo) {
-//        if (registerType(regInfo.extensionPointType, regInfo.extensionTypeImpl, session)) {
-//            defaultWiredComponents.add(regInfo.extensionPointType.getName(), ((Class<? extends NutsComponent>) regInfo.extensionTypeImpl).getName());
-//        }
-//    }
-//    public void registerTypes(List<RegInfo> all) {
-//        for (RegInfo regInfo : all) {
-//            registerType(regInfo, session);
-//        }
-//    }
     public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl) {
         if (NComponent.class.isAssignableFrom(extensionPointType)) {
             return registerInstance(extensionPointType, extensionImpl);
@@ -521,7 +500,12 @@ public class DefaultNWorkspaceExtensionModel {
         }
     }
 
-    public NWorkspaceExtension wireExtension(NId id, NFetch options) {
+    public NWorkspaceExtension wireExtension(NId id, NFetch options,boolean ignoreExcluded) {
+        if(ignoreExcluded){
+            if(isExcludedExtension(id)){
+                return null;
+            }
+        }
         NSession session = workspace.currentSession();
         NAssert.requireNamedNonNull(id, "extension id");
         NId wired = CoreNUtils.findNutsIdBySimpleName(id, extensions.keySet());
@@ -842,14 +826,14 @@ public class DefaultNWorkspaceExtensionModel {
             if (o == null || getClass() != o.getClass()) return false;
             CachedNutsURLClassLoaderKey that = (CachedNutsURLClassLoaderKey) o;
             return Objects.equals(name, that.name) && Objects.equals(
-                    (parent==null?0:System.identityHashCode(parent))
-                    , (that.parent==null?0:System.identityHashCode(that.parent)))
+                    (parent == null ? 0 : System.identityHashCode(parent))
+                    , (that.parent == null ? 0 : System.identityHashCode(that.parent)))
                     && Objects.equals(nodes, that.nodes) && Objects.equals(repositoryFilter, that.repositoryFilter) && Objects.equals(dependencyFilter, that.dependencyFilter);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(name, parent==null?0:System.identityHashCode(parent), repositoryFilter, dependencyFilter);
+            return Objects.hash(name, parent == null ? 0 : System.identityHashCode(parent), repositoryFilter, dependencyFilter);
         }
 
         @Override
@@ -904,11 +888,11 @@ public class DefaultNWorkspaceExtensionModel {
                         return nnold;
                     }
                 }
-                if(nnold==null && !cachedWorkspaceExtensionsClassLoadersImmutable.isEmpty()){
+                if (nnold == null && !cachedWorkspaceExtensionsClassLoadersImmutable.isEmpty()) {
                     for (Map.Entry<CachedNutsURLClassLoaderKey, NClassLoader> e : cachedWorkspaceExtensionsClassLoadersImmutable.entrySet()) {
                         System.out.println(
-                                Objects.equals(e.getKey(),withoutName)+" : "+
-                                e.getKey()+" <> "+withoutName);
+                                Objects.equals(e.getKey(), withoutName) + " : " +
+                                        e.getKey() + " <> " + withoutName);
                     }
                 }
             }

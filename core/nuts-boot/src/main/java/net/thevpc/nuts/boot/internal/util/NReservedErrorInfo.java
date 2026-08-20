@@ -26,10 +26,10 @@
  */
 package net.thevpc.nuts.boot.internal.util;
 
-import net.thevpc.nuts.boot.NBootId;
+import net.thevpc.nuts.boot.NBootDependency;
 
 public class NReservedErrorInfo {
-    private final NBootId nutsId;
+    private final NBootDependency nutsId;
     private final String repository;
     private final String url;
     private final NBootMsg message;
@@ -42,7 +42,7 @@ public class NReservedErrorInfo {
         return new NReservedErrorInfo(null,null,null,message,null);
     }
 
-    public NReservedErrorInfo(NBootId nutsId, String repository, String url, NBootMsg message, Throwable throwable) {
+    public NReservedErrorInfo(NBootDependency nutsId, String repository, String url, NBootMsg message, Throwable throwable) {
         this.nutsId = nutsId;
         this.repository = repository;
         this.url = url;
@@ -50,7 +50,7 @@ public class NReservedErrorInfo {
         this.throwable = throwable;
     }
 
-    public NBootId getNutsId() {
+    public NBootDependency getNutsId() {
         return nutsId;
     }
 

@@ -29,7 +29,8 @@ import net.thevpc.nuts.artifact.DefaultNEnvCondition;
 import net.thevpc.nuts.artifact.NEnvCondition;
 import net.thevpc.nuts.artifact.NEnvConditionBuilder;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.boot.NBootEnvCondition;
+import net.thevpc.nuts.boot.NBootDependency;
+import net.thevpc.nuts.boot.NBootDescriptorProperty;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
 import net.thevpc.nuts.reflect.NScorable;
@@ -157,15 +158,27 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
         return this;
     }
 
-    public NEnvConditionBuilder copyFrom(NBootEnvCondition other) {
+    public NEnvConditionBuilder copyConditionsFromDependency(NBootDependency other) {
         if (other != null) {
-            arch(mergeLists(arch(), other.getArch()));
-            os(mergeLists(os(), other.getOs()));
-            osDist(mergeLists(osDist(), other.getOsDist()));
-            platform(mergeLists(platform(), other.getPlatform()));
-            desktopEnvironment(mergeLists(desktopEnvironment(), other.getDesktopEnvironment()));
-            profile(mergeLists(profiles(), other.getProfiles()));
-            setProperties(mergeMaps(properties(), other.getProperties()));
+            arch(mergeLists(arch(), other.getConditionArch()));
+            os(mergeLists(os(), other.getConditionOs()));
+            osDist(mergeLists(osDist(), other.getConditionOsDist()));
+            platform(mergeLists(platform(), other.getConditionPlatform()));
+            desktopEnvironment(mergeLists(desktopEnvironment(), other.getConditionDesktopEnvironment()));
+            profile(mergeLists(profiles(), other.getConditionProfiles()));
+            setProperties(mergeMaps(properties(), other.getConditionProperties()));
+        }
+        return this;
+    }
+    public NEnvConditionBuilder copyConditionsFromProperty(NBootDescriptorProperty other) {
+        if (other != null) {
+            arch(mergeLists(arch(), other.getConditionArch()));
+            os(mergeLists(os(), other.getConditionOs()));
+            osDist(mergeLists(osDist(), other.getConditionOsDist()));
+            platform(mergeLists(platform(), other.getConditionPlatform()));
+            desktopEnvironment(mergeLists(desktopEnvironment(), other.getConditionDesktopEnvironment()));
+            profile(mergeLists(profiles(), other.getConditionProfiles()));
+            setProperties(mergeMaps(properties(), other.getConditionProperties()));
         }
         return this;
     }

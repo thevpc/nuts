@@ -11,9 +11,9 @@ public interface NStringLiteralFormat {
     NStringLiteralFormat JAVA_CHAR = NStringLiteralFormatBuilder.ofJava(NElementType.SINGLE_QUOTED_STRING).build();
     NStringLiteralFormat SH_DOUBLE = NStringLiteralFormatBuilder.ofShell(NElementType.DOUBLE_QUOTED_STRING).build();
     NStringLiteralFormat SH_SINGLE = NStringLiteralFormatBuilder.ofShell(NElementType.SINGLE_QUOTED_STRING).build();
-    public static NStringLiteralFormat SH_BACK = NStringLiteralFormatBuilder.ofShell(NElementType.BACKTICK_STRING).build();
+    NStringLiteralFormat SH_BACK = NStringLiteralFormatBuilder.ofShell(NElementType.BACKTICK_STRING).build();
 
-    public enum Mode {
+    enum Mode {
         /**
          * Boundary char appears in the body encoded by {@code boundaryEscape}.
          * Surrounding quotes are added when {@code condition} requires it.

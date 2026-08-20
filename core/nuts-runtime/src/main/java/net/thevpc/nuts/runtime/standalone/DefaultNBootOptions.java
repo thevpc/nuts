@@ -68,14 +68,6 @@ public class DefaultNBootOptions implements NBootOptions {
      * special
      */
     private final NClassLoaderNode runtimeBootDependencyNode;
-    /**
-     * special
-     */
-    private final List<NBootDescriptor> extensionBootDescriptors;
-    /**
-     * special
-     */
-    private final List<NClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -96,11 +88,6 @@ public class DefaultNBootOptions implements NBootOptions {
      * special
      */
     private final String uuid;
-
-    /**
-     * special
-     */
-    private final Set<String> extensionsSet;
 
     /**
      * special
@@ -482,8 +469,7 @@ public class DefaultNBootOptions implements NBootOptions {
                                PrintStream stdout, PrintStream stderr, ExecutorService executorService,
                                Instant expireTime, List<NMsg> errors, Boolean skipErrors, String locale,
                                String theme, String uuid, List<String> bootRepositories, NClassLoaderNode runtimeBootDependencyNode,
-                               List<NBootDescriptor> extensionBootDescriptors, List<NClassLoaderNode> extensionBootDependencyNodes,
-                               List<URL> classWorldURLs, Set<String> extensionsSet, NBootWorkspaceFactory bootWorkspaceFactory, NBootDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
+                               List<URL> classWorldURLs, NBootWorkspaceFactory bootWorkspaceFactory, NBootDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
                                NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher, Boolean previewRepo, Boolean sharedInstance) {
         ;
         this.outputFormatOptions = NReservedLangUtils.unmodifiableOrNullList(outputFormatOptions);
@@ -564,13 +550,10 @@ public class DefaultNBootOptions implements NBootOptions {
         this.sharedInstance = sharedInstance;
         this.bootRepositories = bootRepositories;
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
-        this.extensionBootDescriptors = NReservedLangUtils.unmodifiableOrNullList(extensionBootDescriptors);
-        this.extensionBootDependencyNodes = NReservedLangUtils.unmodifiableOrNullList(extensionBootDependencyNodes);
         this.bootWorkspaceFactory = bootWorkspaceFactory;
         this.classWorldURLs = NReservedLangUtils.unmodifiableOrNullList(classWorldURLs);
         this.classWorldLoader = classWorldLoader;
         this.uuid = uuid;
-        this.extensionsSet = NReservedLangUtils.unmodifiableOrNullSet(extensionsSet);
         this.runtimeBootDescriptor = runtimeBootDescriptor;
     }
 
@@ -1008,16 +991,6 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<List<NBootDescriptor>> extensionBootDescriptors() {
-        return NOptional.ofNamed(extensionBootDescriptors, "extensionBootDescriptors");
-    }
-
-    @Override
-    public NOptional<List<NClassLoaderNode>> extensionBootDependencyNodes() {
-        return NOptional.ofNamed(extensionBootDependencyNodes, "extensionBootDependencyNodes");
-    }
-
-    @Override
     public NOptional<NBootWorkspaceFactory> bootWorkspaceFactory() {
         return NOptional.ofNamed(bootWorkspaceFactory, "bootWorkspaceFactory");
     }
@@ -1035,11 +1008,6 @@ public class DefaultNBootOptions implements NBootOptions {
     @Override
     public NOptional<String> uuid() {
         return NOptional.ofNamed(uuid, "uuid");
-    }
-
-    @Override
-    public NOptional<Set<String>> extensionsSet() {
-        return NOptional.ofNamed(extensionsSet, "extensionsSet");
     }
 
     @Override
@@ -1168,13 +1136,10 @@ public class DefaultNBootOptions implements NBootOptions {
 
         r.setBootRepositories(this.bootRepositories().orNull());
         r.setRuntimeBootDependencyNode(convertNode(this.runtimeBootDependencyNode().orNull()));
-        r.setExtensionBootDescriptors(this.extensionBootDescriptors().orNull());
-        r.setExtensionBootDependencyNodes(convertNodes(this.extensionBootDependencyNodes().orNull()));
         r.setBootWorkspaceFactory(this.bootWorkspaceFactory().orNull());
         r.setClassWorldURLs(this.classWorldURLs().orNull());
         r.setClassWorldLoader(this.classWorldLoader().orNull());
         r.setUuid(this.uuid().orNull());
-        r.setExtensionsSet(this.extensionsSet().orNull());
         r.setRuntimeBootDescriptor(this.runtimeBootDescriptor().orNull());
 
         return r;

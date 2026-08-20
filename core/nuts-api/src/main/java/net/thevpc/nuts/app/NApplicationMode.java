@@ -52,7 +52,7 @@ public enum NApplicationMode implements NEnum {
      * that "--nuts-exec-mode=auto-complete &lt;WORD-INDEX&gt;" is a SINGLE
      * argument, so spaces must be escaped.
      */
-    AUTO_COMPLETE,
+    COMPLETE,
     /**
      * application execution Mode in install mode in which case application MUST
      * accept FIRST argument in the form of "--nuts-exec-mode=install &lt;ARG&gt;

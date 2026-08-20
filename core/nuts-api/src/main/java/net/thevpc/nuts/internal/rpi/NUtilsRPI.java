@@ -174,7 +174,7 @@ public interface NUtilsRPI extends NComponent {
 
     <T> NIteratorBuilder<T> iteratorBuilderOfFlatMap(NIterator<? extends Collection<T>> from);
 
-    NIterator<NIntTuple2> int2Iterator(int a, int b);
+    NIterator<NIntPair> int2Iterator(int a, int b);
 
     <K, V> NClassMultiMap<K, V> createClassMultiMap(Class<K> key1Type, Class<V> valueType);
 

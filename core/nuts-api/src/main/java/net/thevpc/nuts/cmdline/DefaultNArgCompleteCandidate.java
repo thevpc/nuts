@@ -26,61 +26,70 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.util.NStringUtils;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
- * Base (Abstract) implementation of NutsCommandAutoComplete
+ * Argument Candidate used in Auto Complete.
+ * <p>
  *
  * @author thevpc
  * @app.category Command Line
  * @since 0.5.5
  */
-public abstract class NCmdLineAutoCompleteBase implements NCmdLineAutoComplete {
+public class DefaultNArgCompleteCandidate implements Serializable, NArgCompleteCandidate {
+
+    private final String value;
+    private final String display;
 
     /**
-     * candidates map
+     * @param value value
      */
-    private final LinkedHashMap<String, NArgCandidate> candidates = new LinkedHashMap<>();
+    public DefaultNArgCompleteCandidate(String value) {
+        this.value = value;
+        this.display = value;
+    }
 
-    @Override
-    public <T> T get(Class<T> t) {
-        return null;
+    public DefaultNArgCompleteCandidate(String value, String display) {
+        this.value = value;
+        this.display = display;
     }
 
     /**
-     * possible candidates
+     * argument value
      *
-     * @return possible candidates
-     */
-    @Override
-    public List<NArgCandidate> candidates() {
-        return new ArrayList<>(candidates.values());
-    }
-
-    /**
-     * add candidate
-     *
-     * @param value candidate
+     * @return argument value
      */
     @Override
-    public void addCandidate(NArgCandidate value) {
-        if (value != null && !NStringUtils.strip(value.value()).isEmpty()) {
-            addCandidatesImpl(value);
-        }
+    public String value() {
+        return value;
     }
 
     /**
-     * simple add candidates implementation
+     * human display
      *
-     * @param value candidate
-     * @return {@code this} instance
+     * @return human display
      */
-    protected NArgCandidate addCandidatesImpl(NArgCandidate value) {
-        return candidates.put(value.value(), value);
+    @Override
+    public String display() {
+        return display;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, display);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNArgCompleteCandidate that = (DefaultNArgCompleteCandidate) o;
+        return Objects.equals(value, that.value) && Objects.equals(display, that.display);
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

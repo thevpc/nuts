@@ -28,7 +28,6 @@ package net.thevpc.nuts.cmdline;
 import net.thevpc.nuts.internal.rpi.NCmdLineRPI;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Non Option Argument specification
@@ -57,8 +56,7 @@ public interface NArgName extends Serializable {
     /**
      * argument candidate values
      *
-     * @param context autocomplete
      * @return candidates list
      */
-    List<NArgCandidate> resolveCandidates(NCmdLineAutoComplete context);
+    NArgCompleteResult resolveCandidates();
 }

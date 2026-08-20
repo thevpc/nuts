@@ -12,11 +12,11 @@ public class NToStringBuilder {
     private int rowSize = 60;
     private String indentString = "    ";
 
-    public static final NToStringBuilder of() {
+    public static NToStringBuilder of() {
         return new NToStringBuilder();
     }
 
-    public static final NToStringBuilder of(String name) {
+    public static NToStringBuilder of(String name) {
         return new NToStringBuilder(name);
     }
 
