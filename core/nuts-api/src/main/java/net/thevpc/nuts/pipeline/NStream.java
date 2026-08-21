@@ -162,7 +162,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      *
      * @return result as a java.util.stream.Stream
      */
-    Stream<T> stream();
+    Stream<T> jstream();
 
     NStream<T> skip(long n);
 

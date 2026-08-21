@@ -15,7 +15,6 @@ import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.reflect.NScorable;
@@ -259,7 +258,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         if (isInstalled()) {
             baseRegulars.addAll(NSearch.of()
                     .definitionFilter(NDefinitionFilter.ofInstalled(true))
-                    .getResultIds().stream().map(NId::shortId).collect(Collectors.toList()));
+                    .getResultIds().jstream().map(NId::shortId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content but was removed for any reason!
             NWorkspaceExt dws = NWorkspaceExt.of();
             NInstalledRepository ir = dws.getInstalledRepository();

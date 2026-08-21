@@ -7,7 +7,6 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,6 +40,10 @@ public class CmdLineCompleteTest {
     private static NCmdLine completeAt(int wordIndex, String... tokens) {
         return NCmdLine.of(Arrays.asList(tokens))
                 .complete(NArgCompletePos.of(wordIndex, 0));
+    }
+    private static NCmdLine completeAt(int wordIndex, int offset,String... tokens) {
+        return NCmdLine.of(Arrays.asList(tokens))
+                .complete(NArgCompletePos.of(wordIndex, offset));
     }
 
     private static Set<String> candidateStrings(NArgCompleteResult r) {
@@ -146,8 +149,10 @@ public class CmdLineCompleteTest {
 
     @Test
     public void testEntry_matcherApi() {
-        // Same as testEntry_partialOptionName but using the matcher() fluent API
-        NCmdLine cmd = completeAt(0, "--fil");
+        // Matcher with() uses key-equality (not prefix) for its base condition.
+        // When the option is fully typed, the matchEntry processor is called and
+        // the candidate (exact name) appears in the result.
+        NCmdLine cmd = completeAt(0, "--file");
         cmd.matcher()
                 .with("--file")
                 .display("project file")
@@ -161,11 +166,126 @@ public class CmdLineCompleteTest {
                 /////
                 .requireAll();
         NArgCompleteResult result = cmd.completeResult();
-        NAssert.requireNamedEquals(
-                NArgCompleteResult.ofCandidates(NArgCompleteCandidate.of("--file")),
-                result,
-                "entry-matcher"
-        );
+        Assertions.assertNotNull(result, "completeResult() must not be null in complete mode");
+        Set<String> cands = candidateStrings(result);
+        // "--file" is the exact match; "--folder" does not match "--file" prefix
+        Assertions.assertTrue(cands.contains("--file"),
+                "Expected --file in candidates for exact input '--file': " + cands);
+        Assertions.assertFalse(cands.contains("--folder"),
+                "--folder should not appear, got: " + cands);
+    }
+
+    @Test
+    public void testEntry_matcherApi2() {
+        // Matcher with() uses key-equality (not prefix) for its base condition.
+        // When the option is fully typed, the matchEntry processor is called and
+        // the candidate (exact name) appears in the result.
+        NCmdLine cmd = completeAt(0, "--f");
+        cmd.matcher()
+                .with("--file")
+                .display("project file")
+                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES))
+                .matchEntry(a -> TestUtils.println("found file " + a.value()))
+                /////
+                .with("--folder")
+                .display("project dir")
+                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.DIRNAMES))
+                .matchEntry(a -> TestUtils.println("found folder " + a.value()))
+                /////
+                .requireAll();
+        NArgCompleteResult result = cmd.completeResult();
+        Assertions.assertNotNull(result, "completeResult() must not be null in complete mode");
+        Set<String> cands = candidateStrings(result);
+        // "--file" is the exact match; "--folder" does not match "--file" prefix
+        Assertions.assertTrue(cands.contains("--file"),
+                "Expected --file in candidates for exact input '--f': " + cands);
+        Assertions.assertTrue(cands.contains("--folder"),
+                "Expected --file in candidates for exact input '--f': " + cands);
+    }
+
+    @Test
+    public void testEntry_matcherApi3() {
+        // Matcher with() uses key-equality (not prefix) for its base condition.
+        // When the option is fully typed, the matchEntry processor is called and
+        // the candidate (exact name) appears in the result.
+        NCmdLine cmd = completeAt(0,3, "--fr");
+        cmd.matcher()
+                .with("--file")
+                .display("project file")
+                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES))
+                .matchEntry(a -> TestUtils.println("found file " + a.value()))
+                /////
+                .with("--folder")
+                .display("project dir")
+                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.DIRNAMES))
+                .matchEntry(a -> TestUtils.println("found folder " + a.value()))
+                /////
+                .requireAll();
+        NArgCompleteResult result = cmd.completeResult();
+        Assertions.assertNotNull(result, "completeResult() must not be null in complete mode");
+        Set<String> cands = candidateStrings(result);
+        // "--file" is the exact match; "--folder" does not match "--file" prefix
+        Assertions.assertFalse(cands.contains("--file"),
+                "Expected --file in candidates for exact input '--f': " + cands);
+        Assertions.assertTrue(cands.contains("--folder"),
+                "Expected --file in candidates for exact input '--f': " + cands);
+    }
+
+
+    @Test
+    public void testEntry_loopApi() {
+        NCmdLine cmd = completeAt(0, 3, "--fr");
+
+        while (cmd.hasNext()) {
+            NOptional<NArg> n;
+
+            // 1. First branch: collects "--file" candidates if matching cursor prefix/suffix
+            n = cmd.nextEntry("--file");
+            if (n.isPresent()) {
+                // In exec mode (or on full exact match), process argument
+                continue;
+            }
+
+            // 2. Second branch: collects "--folder" candidates if matching cursor prefix/suffix
+            n = cmd.nextEntry("--folder");
+            if (n.isPresent()) {
+                continue;
+            }
+
+            // 4. Execution mode fall-through: unknown argument error
+            cmd.throwUnexpectedArgument();
+        }
+
+        NArgCompleteResult result = cmd.completeResult();
+        Assertions.assertNotNull(result);
+        Set<String> cands = candidateStrings(result);
+
+        Assertions.assertFalse(cands.contains("--file"), "Expected --file to not match '--fr'");
+        Assertions.assertTrue(cands.contains("--folder"), "Expected --folder to match '--f*r'");
+    }
+
+    @Test
+    public void testEntry_loopApi2() {
+        NCmdLine cmd = completeAt(0, 3, "--fr");
+        String file;
+        String folder;
+        while (cmd.hasNext()) {
+            NArg a;
+            if ((a = cmd.nextEntry("--file").orNull()) != null) {
+                file = a.value();
+            } else if ((a = cmd.nextEntry("--folder").orNull()) != null) {
+                folder = a.value();
+            } else {
+                cmd.throwUnexpectedArgument();
+            }
+        }
+
+        NArgCompleteResult result = cmd.completeResult();
+        Assertions.assertNotNull(result);
+        Set<String> cands = candidateStrings(result);
+
+        Assertions.assertFalse(cands.contains("--file"), "Expected --file to not match '--fr'");
+        Assertions.assertTrue(cands.contains("--folder"), "Expected --folder to match '--f*r'");
     }
 
     // ============================================================ REQUIRED_ENTRY
@@ -251,8 +371,13 @@ public class CmdLineCompleteTest {
         while (cmd.hasNext()) {
             NOptional<NArg> n = cmd.nextNonOption("format",
                     (prefix, suffix) -> NArgCompleteResult.ofCandidates(
-                            NArgCompleteCandidate.of("format"),
+                            NArgCompleteCandidate.of("large"),
                             NArgCompleteCandidate.of("file")));
+            if (n.isPresent()) continue;
+            n = cmd.nextNonOption("font",
+                    (prefix, suffix) -> NArgCompleteResult.ofCandidates(
+                            NArgCompleteCandidate.of("arial"),
+                            NArgCompleteCandidate.of("courrier")));
             if (n.isPresent()) continue;
             if (cmd.isCompleteMode()) { cmd.skip(); continue; }
             cmd.throwUnexpectedArgument();

@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NArgCompleteValueComplete;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
@@ -31,6 +31,9 @@ import java.util.List;
  */
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
+
+    public static final NArgCompleteValueComplete COMPLETE_REPO = NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(() -> NWorkspace.of().repositories().stream().map(NRepository::name));
+
     public NSettingsUserSubCommand() {
     }
 
@@ -46,13 +49,13 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r").isPresent()) {
-                    repository = NWorkspace.of().getRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId"))
+                    repository = NWorkspace.of().getRepository(cmdLine.nextNonOption("RepositoryId", COMPLETE_REPO)
                                     .get().image())
                             .get();
                 }
             }
-            String user = cmdLine.nextNonOption(NArgName.of("Username")).get().image();
-            try (NSecureString ss = NSecureString.ofSecure(cmdLine.nextNonOption(NArgName.of("Password")).get().image().toCharArray())) {
+            String user = cmdLine.nextNonOption("Username",null).get().image();
+            try (NSecureString ss = NSecureString.ofSecure(cmdLine.nextNonOption("Password",null).get().image().toCharArray())) {
                 if (cmdLine.isExecMode()) {
                     NSecurityManager.of().updateUser(
                             NSecurityManager.of().getUser(user)
@@ -65,8 +68,8 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 String mappedUser = null;
                 NSecureString remotePassword = null;
                 if (!cmdLine.isEmpty()) {
-                    mappedUser = cmdLine.nextNonOption(NArgName.of("RemoteId")).get().image();
-                    remotePassword = NSecureString.ofSecure(cmdLine.nextNonOption(NArgName.of("RemotePassword")).get().image().toCharArray());
+                    mappedUser = cmdLine.nextNonOption("RemoteId",null).get().image();
+                    remotePassword = NSecureString.ofSecure(cmdLine.nextNonOption("RemotePassword",null).get().image().toCharArray());
                 }
                 try {
                     if (cmdLine.isExecMode()) {
@@ -98,7 +101,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
                         repository = NWorkspace.of()
                                 .getRepository(
-                                        cmdLine.nextNonOption(NArgName.of("repository"))
+                                        cmdLine.nextNonOption("repository",COMPLETE_REPO)
                                                 .get().image()
                                 ).get();
                     }
@@ -122,7 +125,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
                         repository = NWorkspace.of()
-                                .getRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId")).get().image()
+                                .getRepository(cmdLine.nextNonOption("RepositoryId",COMPLETE_REPO).get().image()
                                 ).get();
                     }
                 }
@@ -133,17 +136,17 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 try {
                     do {
                         if (cmdLine.next("--user").isPresent()) {
-                            user = cmdLine.nextNonOption(NArgName.of("Username")).get().image();
+                            user = cmdLine.nextNonOption("Username",null).get().image();
                         } else if (cmdLine.next("--password").isPresent()) {
                             if (password != null) {
                                 password.destroy();
                             }
-                            password = NSecureString.ofSecure(cmdLine.nextNonOption(NArgName.of("Password")).get().image().toCharArray());
+                            password = NSecureString.ofSecure(cmdLine.nextNonOption("Password",null).get().image().toCharArray());
                         } else if (cmdLine.next("--old-password").isPresent()) {
                             if (oldPassword != null) {
                                 oldPassword.destroy();
                             }
-                            oldPassword = NSecureString.ofSecure(cmdLine.nextNonOption(NArgName.of("OldPassword")).get().image().toCharArray());
+                            oldPassword = NSecureString.ofSecure(cmdLine.nextNonOption("OldPassword",null).get().image().toCharArray());
                         } else {
                             cmdLine.commandName("config password").throwUnexpectedArgument();
                         }
@@ -188,12 +191,12 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
                         repository = NWorkspace.of().getRepository(
-                                cmdLine.nextNonOption(NArgName.of("RepositoryId")).get().image()
+                                cmdLine.nextNonOption("RepositoryId",COMPLETE_REPO).get().image()
                         ).get();
                     }
                 }
 
-                String user = cmdLine.nextNonOption(NArgName.of("Username")).get().image();
+                String user = cmdLine.nextNonOption("Username",null).get().image();
                 if (cmdLine.isExecMode()) {
                     NUser u = null;
                     u = NSecurityManager.of().getUser(user).orNull();
@@ -231,7 +234,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     } else {
                         switch (lastOption) {
                             case "--add-group": {
-                                String a = cmdLine.nextNonOption(NArgName.of("Group")).get().image();
+                                String a = cmdLine.nextNonOption("Group",NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.groups().stream()))).get().image();
                                 if (cmdLine.isExecMode()) {
                                     NSecurityManager.of().updateUser(
                                             NSecurityManager.of().getUser(user)
@@ -242,7 +245,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--remove-group": {
-                                String a = cmdLine.nextNonOption(NArgName.of("Group")).get().image();
+                                String a = cmdLine.nextNonOption("Group",NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.groups().stream()))).get().image();
                                 if (cmdLine.isExecMode()) {
                                     NSecurityManager.of().updateUser(
                                             NSecurityManager.of().getUser(user)
@@ -253,7 +256,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--add-right": {
-                                String a = cmdLine.nextNonOption(NArgName.of("Right")).get().image();
+                                String a = cmdLine.nextNonOption("Right",null).get().image();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         NSecurityManager.of().addRepositoryPermissions(user, repository.uuid(), a);
@@ -268,7 +271,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--remove-right": {
-                                String a = cmdLine.nextNonOption(NArgName.of("Right")).get().image();
+                                String a = cmdLine.nextNonOption("Right",NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.permissions().stream()))).get().image();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         NSecurityManager.of().removeRepositoryPermissions(user, repository.uuid(), a);
@@ -283,12 +286,12 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--remote-user": {
-                                String a = cmdLine.nextNonOption(NArgName.of("RemoteIdentity")).get().image();
+                                String a = cmdLine.nextNonOption("RemoteIdentity",null).get().image();
                                 NOptional<NArg> bb = cmdLine.peek();
                                 if (bb.isPresent() && bb.get().key().equals("--remote-password")) {
                                     NSecureString ss = null;
                                     try {
-                                        ss = NSecureString.ofSecure(cmdLine.nextNonOption(NArgName.of("RemotePassword")).get().image().toCharArray());
+                                        ss = NSecureString.ofSecure(cmdLine.nextNonOption("RemotePassword",null).get().image().toCharArray());
                                         if (cmdLine.isExecMode()) {
                                             if (repository != null) {
                                                 NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().getRepositoryAccess(
@@ -312,8 +315,8 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 NSecureString pwd=null;
                                 NSecureString old=null;
                                 try {
-                                    pwd = NSecureString.ofSecure((cmdLine.nextNonOption(NArgName.of("password", "Password")).get().image()).toCharArray());
-                                    old = NSecureString.ofSecure((cmdLine.nextNonOption(NArgName.of("password", "OldPassword")).get().image()).toCharArray());
+                                    pwd = NSecureString.ofSecure((cmdLine.nextNonOption( "Password",null).get().image()).toCharArray());
+                                    old = NSecureString.ofSecure((cmdLine.nextNonOption("OldPassword",null).get().image()).toCharArray());
                                     if (cmdLine.isExecMode()) {
                                         NSecurityManager.of().updateUser(
                                                 NSecurityManager.of().getUser(user)
@@ -349,7 +352,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
                         repository = NWorkspace.of().getRepository(
-                                cmdLine.nextNonOption(NArgName.of("RepositoryId")).get().image()
+                                cmdLine.nextNonOption("RepositoryId",COMPLETE_REPO).get().image()
                         ).get();
                     }
                 }
@@ -385,7 +388,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     } else {
                         if (cmdLine.next("--repo", "-r").isPresent()) {
                             repository = NWorkspace.of().getRepository(
-                                    cmdLine.nextNonOption(NArgName.of("RepositoryId")).get().image()
+                                    cmdLine.nextNonOption("RepositoryId",COMPLETE_REPO).get().image()
                             ).get();
                         }
                     }

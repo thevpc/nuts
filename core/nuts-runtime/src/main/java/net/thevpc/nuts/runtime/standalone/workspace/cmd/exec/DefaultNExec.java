@@ -6,7 +6,6 @@ import net.thevpc.nuts.artifact.NIdLocation;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -655,7 +654,7 @@ public class DefaultNExec extends AbstractNExec {
         NId ff = NSearch.of(nid)
                 .dependencyFilter(NDependencyFilter.ofRunnable()).latest(true).failFast(false)
                 .definitionFilter(NDefinitionFilter.ofDeployed(true))
-                .getResultDefinitions().stream()
+                .getResultDefinitions().jstream()
                 .sorted(Comparator.comparing(x -> !x.installInformation().get().isDefaultVersion())) // default first
                 .map(NDefinition::id).findFirst().orElse(null);
         if (ff == null) {
@@ -813,7 +812,7 @@ public class DefaultNExec extends AbstractNExec {
                         NStream<NDefinition> q = NSearch.of().addId(eid).latest(true)
                                 .distinct(true)
                                 .getResultDefinitions();
-                        NDefinition[] availableExecutors = q.stream().limit(2).toArray(NDefinition[]::new);
+                        NDefinition[] availableExecutors = q.jstream().limit(2).toArray(NDefinition[]::new);
                         if (availableExecutors.length > 1) {
                             throw new NTooManyElementsException(NMsg.ofC("too many results for executor %s", eid));
                         } else if (availableExecutors.length == 1) {

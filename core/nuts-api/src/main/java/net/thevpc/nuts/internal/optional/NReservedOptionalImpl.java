@@ -4,10 +4,12 @@ import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
     private ExceptionFactory exceptionFactory;
@@ -42,6 +44,14 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NStream<T> stream() {
         return NStream.ofOptional(this);
+    }
+
+    @Override
+    public Stream<T> jstream() {
+        if (!isPresent()) {
+            return Stream.empty();
+        }
+        return Stream.of(get());
     }
 
     @Override

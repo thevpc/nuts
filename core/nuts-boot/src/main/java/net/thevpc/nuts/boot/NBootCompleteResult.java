@@ -146,7 +146,7 @@ public class NBootCompleteResult implements NBootCompleteRequestOrResult{
             String v = candidate.value();
             String s = candidate.description();
             sb.append(escape(v, true));
-            if (!NBootUtils.isBlank(s)) {
+            if (!NBootUtils.isBlank(s) && !Objects.equals(s,v)) {
                 sb.append("\t").append(escape(s, false));
             }
         }

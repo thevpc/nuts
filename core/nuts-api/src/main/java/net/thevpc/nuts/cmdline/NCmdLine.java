@@ -108,7 +108,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         if (NWorkspace.get().isNotPresent()) {
             return new DefaultNCmdLine(args, current);
         }
-        return NCmdLineRPI.of().createCmdLineByArgs(args,current);
+        return NCmdLineRPI.of().createCmdLineByArgs(args, current);
     }
 
     static NCmdLine ofArgs(NShellFamily family, String... args) {
@@ -137,15 +137,15 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
             return DefaultNCmdLine.parseDefaultList(line)
                     .map(args -> new DefaultNCmdLine(args, NShellFamily.BASH));
         }
-        return NCmdLineRPI.of().parseCmdLine(line, NShellFamily.BASH,false);
+        return NCmdLineRPI.of().parseCmdLine(line, NShellFamily.BASH, false);
     }
 
     static NOptional<NCmdLine> parse(String line) {
-        return parse(line,NShellFamily.BASH,false);
+        return parse(line, NShellFamily.BASH, false);
     }
 
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily) {
-        return parse(line,shellFamily,false);
+        return parse(line, shellFamily, false);
     }
 
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily, boolean lenient) {
@@ -225,6 +225,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     @NGetter
     NArgCompleteResult completeResult();
+
+    NArgCompleteResult printCompleteResult();
 
     /**
      * set complete instance
@@ -375,27 +377,16 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     NOptional<String> nextString();
 
-    /**
-     * consume (remove) the first argument and return it while adding a hint to
-     * Auto Complete about expected argument candidates return null if not
-     * argument is left
-     *
-     * @param name expected argument name
-     * @return next argument
-     * @deprecated use {@link #next(NArgType, String, NArgCompleteValueComplete, String...)} instead
-     */
-    @Deprecated
-    NOptional<NArg> next(NArgName name);
 
-    /**
-     * consume (remove) the first option and return it while adding a hint to
-     * Auto Complete about expected argument candidates return null if not
-     * argument is left
-     *
-     * @param option expected option name
-     * @return next argument
-     */
-    NOptional<NArg> nextOption(String option);
+//    /**
+//     * consume (remove) the first option and return it while adding a hint to
+//     * Auto Complete about expected argument candidates return null if not
+//     * argument is left
+//     *
+//     * @param option expected option name
+//     * @return next argument
+//     */
+//    NOptional<NArg> nextOption(String option);
 
     /**
      * the first argument to consume without removing/consuming it or null if
@@ -450,6 +441,14 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     Matcher matcher();
 
+    NOptional<NArg> nextAttachedEntry(String... names);
+
+    NOptional<NArg> nextRequiredEntry(String... names);
+
+    NOptional<NArg> nextAttachedEntry();
+
+    NOptional<NArg> nextRequiredEntry();
+
     /**
      * next argument as entry (key=value). equivalent to next(NArgType.ENTRY,{})
      *
@@ -475,6 +474,8 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> next(NArgType expectValue, String... names);
 
+    NArgCompletePos currentPos();
+
     /**
      * next argument if it exists and It's a non option. Return null in all
      * other cases.
@@ -482,17 +483,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return next argument if it exists and It's a non option
      */
     NOptional<NArg> nextNonOption();
-
-    /**
-     * next argument if it exists and It's a non option. Return null in all
-     * other cases.
-     *
-     * @param name argument specification (may be null)
-     * @return next argument if it exists and It's a non option
-     * @deprecated use {@link #nextNonOption(String, NArgCompleteValueComplete)} instead
-     */
-    @Deprecated
-    NOptional<NArg> nextNonOption(NArgName name);
 
     NOptional<NArg> next(NArgType expectedArgType, String argDisplay, NArgCompleteValueComplete valueComplete, String... names);
 
@@ -510,10 +500,10 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * other cases.
      *
      * @param display  display hint shown in completion suggestions
-     * @param finder   supplier of completion candidates for the value
+     * @param complete supplier of completion candidates for the value
      * @return next argument if it exists and it's a non option
      */
-    NOptional<NArg> nextNonOption(String display, NArgCompleteValueComplete finder);
+    NOptional<NArg> nextNonOption(String display, NArgCompleteValueComplete complete);
 
     /**
      * consume all words and return consumed count
@@ -774,7 +764,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         Matcher matchFlag(Consumer<NArg> consumer);
 
         MatcherCondition and(Predicate<NCmdLine> condition);
+
         MatcherCondition display(String display);
+
         MatcherCondition valueComplete(NArgCompleteValueComplete finder);
 
         /**
@@ -783,6 +775,10 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
          * @return true if active
          */
         Matcher matchEntry(Consumer<NArg> consumer);
+
+        Matcher matchAttachedEntry(Consumer<NArg> consumer);
+
+        Matcher matchRequiredEntry(Consumer<NArg> consumer);
 
         Matcher matchAny(Consumer<NArg> consumer);
 

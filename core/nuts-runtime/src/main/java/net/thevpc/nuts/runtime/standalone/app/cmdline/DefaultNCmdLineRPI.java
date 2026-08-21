@@ -1,13 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
 import net.thevpc.nuts.cmdline.DefaultNCmdLine;
-import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.internal.rpi.NCmdLineRPI;
 
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
@@ -44,63 +42,6 @@ public class DefaultNCmdLineRPI implements NCmdLineRPI {
             f = NShellFamily.current();
         }
         return NShellHelper.of(f).parseCmdLineArr(line, lenient);
-    }
-
-    @Override
-    public NArgName createName(String type, String label) {
-        return Factory.createName0(type, label);
-    }
-
-    @Override
-    public NArgName createName(String type) {
-        return createName(type, type);
-    }
-
-    public static class Factory {
-
-        public static NArgName createName0(String type, String label) {
-            if (type == null) {
-                type = "";
-            }
-            if (label == null) {
-                label = type;
-            }
-            switch (type) {
-                case "arch": {
-                    return new ArchitectureNonOption(label);
-                }
-                case "packaging": {
-                    return new PackagingNonOption(label);
-                }
-                case "extension": {
-                    return new ExtensionNonOption(type);
-                }
-                case "file": {
-                    return new FileNonOption(type);
-                }
-                case "boolean": {
-                    return new ValueNonOption(type, "true", "false");
-                }
-                case "repository": {
-                    return new RepositoryNonOption(label);
-                }
-                case "repository-type": {
-                    return new RepositoryTypeNonOption(label);
-                }
-                case "right": {
-                    return new PermissionNonOption(label, null, false);
-                }
-                case "user": {
-                    return new UserNonOption(label);
-                }
-                case "group": {
-                    return new GroupNonOption(label);
-                }
-                default: {
-                    return new DefaultNonOption(label);
-                }
-            }
-        }
     }
 
 }

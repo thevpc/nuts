@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.internal.rpi;
 
-import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -47,24 +46,5 @@ public interface NCmdLineRPI extends NComponent {
 
     NCmdLine createCmdLineByArgs(String[] args, NShellFamily family);
 
-
-    /**
-     * create argument name
-     *
-     * @param type create argument type
-     * @return argument name
-     */
-    default NArgName createName(String type) {
-        return createName(type, type);
-    }
-
-    /**
-     * create argument name
-     *
-     * @param type  argument type
-     * @param label argument label
-     * @return argument name
-     */
-    NArgName createName(String type, String label);
 
 }

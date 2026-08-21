@@ -5,15 +5,17 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.imports;
 
+import net.thevpc.nuts.cmdline.NArgCompleteResult;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.NWorkspace;
 
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
+
+import java.util.stream.Collectors;
 
 /**
  *
@@ -27,7 +29,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        if (cmdLine.next("list imports","list import","import list", "li").isPresent()) {
+        if (cmdLine.next("list imports", "list import", "import list", "li").isPresent()) {
             cmdLine.commandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (NWorkspace.of().allImports())) {
@@ -44,10 +46,10 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
             return true;
         } else if (cmdLine.next("import", "ia").isPresent()) {
             do {
-                String a = cmdLine.nextNonOption(NArgName.of("import")).get()
+                String a = cmdLine.nextNonOption("import", null).get()
                         .asString().get();
                 if (cmdLine.isExecMode()) {
-                    NWorkspace.of().addImports(new String[]{a});
+                    NWorkspace.of().addImports(a);
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
@@ -56,10 +58,13 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
             return true;
         } else if (cmdLine.next("unimport", "ir").isPresent()) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.nextNonOption(NArgName.of("import")).get()
+                String ii = cmdLine.nextNonOption("import", (prefix, suffix) -> NArgCompleteResult.ofSimpleCandidates(
+                        NWorkspace.of().allImports().stream().filter(x -> x.startsWith(prefix)
+                                && x.endsWith(suffix)).collect(Collectors.toList())
+                )).get()
                         .asString().get();
                 if (cmdLine.isExecMode()) {
-                    NWorkspace.of().removeImports(new String[]{ii});
+                    NWorkspace.of().removeImports(ii);
                 }
             }
             if (cmdLine.isExecMode()) {

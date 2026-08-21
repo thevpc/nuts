@@ -34,7 +34,6 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NClassLoaderNode;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -62,7 +61,7 @@ public final class NClassLoaderUtils {
                 def.content().flatMap(NPath::toURL).orNull(),
                 true,
                 true,
-                def.dependencies().get().transitiveWithSource().stream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter))
+                def.dependencies().get().transitiveWithSource().jstream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter))
                         .filter(Objects::nonNull)
                         .toArray(NClassLoaderNode[]::new)
         );

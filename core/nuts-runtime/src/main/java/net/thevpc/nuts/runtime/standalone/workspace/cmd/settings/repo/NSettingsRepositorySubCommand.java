@@ -5,9 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.repo;
 
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.*;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
@@ -25,12 +23,15 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
  */
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
+
     public NSettingsRepositorySubCommand() {
         super();
     }
@@ -107,10 +108,10 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             enableRepo(cmdLine, autoSave, session, false);
             return true;
         } else if (cmdLine.next("edit repo", "er").isPresent()) {
-            String repoId = cmdLine.nextNonOption(NArgName.of("RepositoryName")).flatMap(NArg::asString).get();
+            String repoId = cmdLine.nextNonOption("RepositoryName",NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(()->workspace.repositories().stream().map(NRepository::name))).flatMap(NArg::asString).get();
             if (cmdLine.next("add repo", "ar").isPresent()) {
-                String repositoryName = cmdLine.nextNonOption(NArgName.of("NewRepositoryName")).flatMap(NArg::asString).get();
-                String location = cmdLine.nextNonOption(NArgName.of("folder")).flatMap(NArg::asString).get();
+                String repositoryName = cmdLine.nextNonOption("NewRepositoryName",null).flatMap(NArg::asString).get();
+                String location = cmdLine.nextNonOption("folder",NArgCompleteValueComplete.ofFlags(NArgCompleteFlag.DIRNAMES)).flatMap(NArg::asString).get();
 
                 NRepository editedRepo = workspace.getRepository(repoId).get();
                 NRepository repo = editedRepo.config().addMirror(
@@ -122,7 +123,9 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 workspace.saveConfig();
 
             } else if (cmdLine.next("remove repo", "rr").isPresent()) {
-                String location = cmdLine.nextNonOption(NArgName.of("RepositoryName")).flatMap(NArg::asString).get();
+                String location = cmdLine.nextNonOption("RepositoryName",
+                        (p,s)->NArgCompleteResult.ofSimpleCandidates(workspace.repositories().stream().map(x->x.name()).filter(x->x.startsWith(p)&&x.endsWith(s)).collect(Collectors.toList())))
+                        .flatMap(NArg::asString).get();
                 NRepository editedRepo = workspace.getRepository(repoId).get();
                 editedRepo.config().removeMirror(location);
                 workspace.saveConfig();

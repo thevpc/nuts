@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.concurrent.NConcurrent;
@@ -52,7 +51,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                 } else if (cmdLine.isNextOption()) {
                     session.configureLast(cmdLine);
                 } else {
-                    server = cmdLine.nextNonOption(NArgName.of("ServerAddress")).flatMap(NArg::asString).get();
+                    server = cmdLine.nextNonOption("ServerAddress",null).flatMap(NArg::asString).get();
                     cmdLine.commandName("settings connect").throwUnexpectedArgument();
                 }
             }

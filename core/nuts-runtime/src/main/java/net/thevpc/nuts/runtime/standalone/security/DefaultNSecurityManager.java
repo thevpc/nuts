@@ -298,7 +298,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
     public List<NRepositoryAccess> getRepositoryAccessListByRepository(String repository) {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
-        return users().stream().flatMap(x -> getRepositoryAccess(x.username(), repository1.name()).stream().stream()).collect(Collectors.toList());
+        return users().stream().flatMap(x -> getRepositoryAccess(x.username(), repository1.name()).stream().jstream()).collect(Collectors.toList());
     }
 
     @Override
@@ -306,7 +306,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NUser user1 = securityModel().findUser(user).get();
         return Arrays.asList(wse.getRepositoryModel().getRepositories()).stream()
-                .flatMap(x -> getRepositoryAccess(user1.username(), x.uuid()).stream().stream()).collect(Collectors.toList());
+                .flatMap(x -> getRepositoryAccess(user1.username(), x.uuid()).stream().jstream()).collect(Collectors.toList());
     }
 
     @Override
