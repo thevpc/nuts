@@ -6,12 +6,12 @@ import net.thevpc.nuts.util.*;
 import java.util.List;
 import java.util.Objects;
 
-public class NArgCompletePos {
+public class NArgCompletePosition {
     private final int wordIndex;
     private final int wordOffset;
     private final int lineCursor;
 
-    public static NOptional<NArgCompletePos> of(String str) {
+    public static NOptional<NArgCompletePosition> of(String str) {
         if (NBlankable.isBlank(str)) {
             return NOptional.ofNamedEmpty("complete");
         }
@@ -30,15 +30,15 @@ public class NArgCompletePos {
         return NOptional.ofError(NMsg.ofC("invalid complete : '%s'", str));
     }
 
-    public static NArgCompletePos of(int wordIndex, int wordOffset, int lineCursor) {
-        return new NArgCompletePos(wordIndex, wordOffset, lineCursor);
+    public static NArgCompletePosition of(int wordIndex, int wordOffset, int lineCursor) {
+        return new NArgCompletePosition(wordIndex, wordOffset, lineCursor);
     }
 
-    public static NArgCompletePos of(int wordIndex, int wordOffset) {
-        return new NArgCompletePos(wordIndex, wordOffset, -1);
+    public static NArgCompletePosition of(int wordIndex, int wordOffset) {
+        return new NArgCompletePosition(wordIndex, wordOffset, -1);
     }
 
-    public NArgCompletePos(int wordIndex, int wordOffset, int lineCursor) {
+    public NArgCompletePosition(int wordIndex, int wordOffset, int lineCursor) {
         this.wordIndex = Math.max(wordIndex, -1);
         this.wordOffset = Math.max(wordOffset, -1);
         this.lineCursor = Math.max(lineCursor, -1);
@@ -48,7 +48,7 @@ public class NArgCompletePos {
         return wordIndex;
     }
 
-    public int wordCursor() {
+    public int wordOffset() {
         return wordOffset;
     }
 
@@ -59,7 +59,7 @@ public class NArgCompletePos {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        NArgCompletePos pos = (NArgCompletePos) o;
+        NArgCompletePosition pos = (NArgCompletePosition) o;
         return wordIndex == pos.wordIndex && wordOffset == pos.wordOffset && lineCursor == pos.lineCursor;
     }
 

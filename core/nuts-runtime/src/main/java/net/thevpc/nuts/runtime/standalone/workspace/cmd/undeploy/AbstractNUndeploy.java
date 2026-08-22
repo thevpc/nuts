@@ -147,12 +147,12 @@ public abstract class AbstractNUndeploy extends NWorkspaceCmdBase<NUndeploy> imp
         }
         switch (aa.key()) {
             case "--offline": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> offline(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> offline(v.booleanValue())).anyMatch();
             }
             case "-r":
             case "-repository":
             case "--from": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> repository(v.stringValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> repository(v.stringValue())).anyMatch();
             }
 
             default: {

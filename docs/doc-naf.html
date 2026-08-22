@@ -682,7 +682,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#Ud3b64dbb6e73e081475e0144553016d5b9f79eb3">
+                    <a class="nav-link" href="#U7caeb87f38afbd4786c392d9fe6681baa18ed206">
                         <span class="nav-num">14</span>
                         Workspace & Package Context
                     </a>
@@ -691,16 +691,37 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ub2392930024def605d5dbbf0af8ffd087dcfbee1">
-                                14.1 NWorkspace
+                            <a class="nav-link" href="#Uf09d5e97ce8fd3f20493bdf1a160241aadbef7e0">
+                                14.1 Extensions
+                            </a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="#U718cee73c83cf9dea527d7908e903bdf034b6ca3">
+                        <span class="nav-num">15</span>
+                        Workspace & Package Context
+                    </a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="#Ub0bde938e08f00f8625c0980d40c1e8a5d25f2ae">
+                                15.1 NWorkspace
                             </a>
                             
                             
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U4f99afbf576c875fb6dd707dcecc3cb917e809ff">
-                                14.2 NSession
+                            <a class="nav-link" href="#Udc2f6e3faeafecb678a1adf34280a10a6e5af509">
+                                15.2 NSession
                             </a>
                             
                             
@@ -1035,65 +1056,131 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
                         </h3>
 
                         <div class="text-card">
-                            <H4 class="md-title-2">Using CommandLine, The recommended way...</H4>NCmdLine has a versatile parsing API. One way to use it is as follows :<pre class="md-code md-code-``` java"><code class="java">NCmdLine cmdLine = NApp.of().getCmdLine(); // or from somewhere else
-    NRef&lt;Boolean&gt; boolOption = NRef.of(false);
-    NRef&lt;String&gt; stringOption = NRef.ofNull();
-    List&lt;String&gt; others = new ArrayList&lt;&gt;();
-    while (cmdLine.hasNext()) {
-        cmdLine.matcher()
-                .with("-o", "--option").matchFlag((v) -&gt; boolOption.set(v.booleanValue()))
-                .with("-n", "--name").matchEntry((v) -&gt; stringOption.set(v.stringValue()))
-                .withNonOption().matchAny((v) -&gt; stringOption.set(v.image()))
-                .requireDefaults()
-        ;
-    }
-    // test if application is running in exec mode
-    // (and not in autoComplete mode)
-    if (cmdLine.isExecMode()) {
-        //do the good staff here
-        NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
-    }
+                            <H4 class="md-title-2">Using CommandLine, The recommended way...</H4><p class="md-phrase"><mark class="md-code md-code-` ">NCmdLine</mark> has a versatile parsing API. The <b class="md-bold">Matcher</b> is the recommended entry point: it lets you declare, in a single fluent chain, how each option or positional argument should be recognized (<code class="md-code md-code-` ">when*</code>), how a match should be interpreted (<code class="md-code md-code-` ">as*</code>), and how the overall pass should behave once every token has been considered (<mark class="md-code md-code-` ">require</mark>/<mark class="md-code md-code-` ">requireAll</mark>/<mark class="md-code md-code-` ">anyMatch</mark>/<mark class="md-code md-code-` ">noMatch</mark>).</p><pre class="md-code md-code-``` java"><code class="java">NCmdLine cmdLine = NApp.of().getCmdLine(); // or from somewhere else
+NRef&lt;Boolean&gt; boolOption = NRef.of(false);
+NRef&lt;String&gt; stringOption = NRef.ofNull();
+List&lt;String&gt; others = new ArrayList&lt;&gt;();
 
-</code></pre><H4 class="md-title-2">Using CommandLine, The simple and legacy way...</H4><pre class="md-code md-code-``` java"><code class="java">NCmdLine cmdLine = NApp.of().getCmdLine();
+cmdLine.matcher()
+        .when("-o", "--option").asFlag(v -&gt; boolOption.set(v.booleanValue()))
+        .when("-n", "--name").asEntry(v -&gt; stringOption.set(v.stringValue()))
+        .whenNonOption().asArg(v -&gt; others.add(v.image()))
+        .withDefaults()
+        .requireAll();
+
+// test if application is running in exec mode
+// (and not in autoComplete mode)
+if (cmdLine.isCompleteMode()) {
+        cmd.printCompleteResult();
+    return;
+}
+//do the good stuff here
+NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+</code></pre><H4 class="md-title-3"><p class="md-phrase">The <code class="md-code md-code-` ">when*</code> family — declaring what to match</p></H4><table class="table table-bordered table-striped"><tr><th>Method</th><th>Matches</th><th>Notes</th></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">when(String... names)</code>                  </p></td><td>One or more named options or positional keywords.</td><td><p class="md-phrase"> The common case. Supports multi-patterns and multi-word sequences, e.g., <code class="md-code md-code-` ">when("install package", "install-package")</code>. </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">whenOption()</code>                           </p></td><td><p class="md-phrase"> any token that looks like an option (<mark class="md-code md-code-` ">-x</mark>, <mark class="md-code md-code-` ">--xxx</mark>)     </p></td><td>no name filtering</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">whenNonOption()</code>                        </p></td><td><p class="md-phrase"> any token that does <b class="md-bold">not</b> look like an option         </p></td><td>typically used to collect positional arguments</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">whenArg(Predicate&lt;NArg&gt; predicate)</code>     </p></td><td>the single peeked token, filtered by your own predicate</td><td><p class="md-phrase"> general-purpose replacement for <mark class="md-code md-code-` ">whenOption</mark>/<mark class="md-code md-code-` ">whenNonOption</mark> when their fixed shapes aren't enough; safe on an empty cmdline                         </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">whenRaw(Predicate&lt;NCmdLine&gt; predicate)</code> </p></td><td>arbitrary, multi-token lookahead</td><td><p class="md-phrase"> the full escape hatch — inspect several upcoming tokens before deciding; <b class="md-bold"><p class="md-phrase">you are responsible for checking <code class="md-code md-code-` ">hasNext()</code>/<code class="md-code md-code-` ">peek()</code> presence yourself</p></b> </p></td></tr></table><H4 class="md-title-3"><p class="md-phrase">The <code class="md-code md-code-` ">as*</code> family — interpreting a match</p></H4><table class="table table-bordered table-striped"><tr><th>Method</th><th>Consumer receives</th><th>Value rule</th></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">asFlag(Consumer&lt;NArg&gt;)</code>          </p></td><td><p class="md-phrase"> matched <mark class="md-code md-code-` ">NArg</mark>       </p></td><td><p class="md-phrase"> boolean toggle; never consumes a following token; honors negation (<code class="md-code md-code-` ">--!k</code>)                                                                                                                                       </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">asTrueFlag(Consumer&lt;NArg&gt;)</code>      </p></td><td><p class="md-phrase"> matched <mark class="md-code md-code-` ">NArg</mark>       </p></td><td><p class="md-phrase"> like <mark class="md-code md-code-` ">asFlag</mark>, but the consumer only fires when the flag resolves to <mark class="md-code md-code-` ">true</mark>                                                                                                                                      </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">asEntry(Consumer&lt;NArg&gt;)</code>         </p></td><td><p class="md-phrase"> matched <mark class="md-code md-code-` ">NArg</mark>       </p></td><td><p class="md-phrase"> value via <code class="md-code md-code-` ">--k=v</code>, or via a following token — <b class="md-bold">unless</b> that token looks like an option, in which case it's left untouched (never errors if absent)                                                             </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">asAttachedEntry(Consumer&lt;NArg&gt;)</code> </p></td><td><p class="md-phrase"> matched <mark class="md-code md-code-` ">NArg</mark>       </p></td><td><p class="md-phrase"> value <b class="md-bold">only</b> via <code class="md-code md-code-` ">--k=v</code>; never inspects or consumes a following token (never errors if absent)                                                                                                                </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">asRequiredEntry(Consumer&lt;NArg&gt;)</code> </p></td><td><p class="md-phrase"> matched <mark class="md-code md-code-` ">NArg</mark>       </p></td><td><p class="md-phrase"> value via <code class="md-code md-code-` ">--k=v</code>, or <b class="md-bold">unconditionally</b> grabs the following token regardless of its shape (so values that start with <mark class="md-code md-code-` ">-</mark>, like JVM options, are handled correctly); <b class="md-bold">throws</b> if no value can be found at all </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">asArg(Consumer&lt;NArg&gt;)</code>           </p></td><td><p class="md-phrase"> matched <mark class="md-code md-code-` ">NArg</mark>       </p></td><td><p class="md-phrase"> no value contract — hands back whatever matched, as-is (typically paired with <code class="md-code md-code-` ">whenNonOption()</code> or <code class="md-code md-code-` ">whenArg(...)</code>)                                                                                               </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">asRaw(Consumer&lt;NCmdLine&gt;)</code>       </p></td><td><p class="md-phrase"> the whole <mark class="md-code md-code-` ">NCmdLine</mark> </p></td><td><p class="md-phrase"> full manual control — use for <mark class="md-code md-code-` ">--help</mark>-style unconditional termination, or conditional termination based on your own runtime check; you decide whether/how much to consume (e.g. <code class="md-code md-code-` ">skipAll()</code>)                    </p></td></tr></table><H4 class="md-title-3"><p class="md-phrase">Supplying a raw processor: <code class="md-code md-code-` ">with(...)</code> and <code class="md-code md-code-` ">withDefaults()</code></p></H4><p class="md-phrase"><code class="md-code md-code-` ">with(NCmdLineProcessor processor)</code> registers a processor directly, bypassing the declarative <mark class="md-code md-code-` ">when</mark>/<mark class="md-code md-code-` ">as</mark> vocabulary entirely. It's useful for two different situations:</p><p class="md-phrase"><b class="md-bold">1. Falling back to session-level default handling</b> for anything the declarative rules above didn't match:</p><pre class="md-code md-code-``` java"><code class="java">cmdLine.matcher()
+        .when("-o", "--option").asFlag(v -&gt; boolOption.set(v.booleanValue()))
+        .withDefaults()   // delegates unmatched tokens to NSession defaults
+        .requireAll();
+</code></pre><p class="md-phrase"><b class="md-bold">2. Mutually-exclusive top-level command dispatch</b>, where each processor decides for itself whether it applies (returns <mark class="md-code md-code-` ">true</mark>) or declines (returns <mark class="md-code md-code-` ">false</mark>), and the first one that applies wins:</p><pre class="md-code md-code-``` java"><code class="java">boolean handled = cmdLine.matcher()
+        .when(cl -&gt; doVersion(cl))
+        .when(cl -&gt; doInstall(cl))
+        .when(cl -&gt; doUninstall(cl))
+        .anyMatch();
+
+if (!handled) {
+    NOut.println(NMsg.ofPlain("unrecognized command"));
+}
+
+// ...
+
+private boolean doInstall(NCmdLine cl) {
+    if (!cl.next("install").isPresent()) {
+        return false; // not our command — let the next processor try
+    }
+    String pkg = cl.next().map(NArg::image).orElse("");
+    NOut.println(NMsg.ofC("installing %s", pkg));
+    return true;
+}
+</code></pre><H4 class="md-title-3"><p class="md-phrase">Finishing the pass: <mark class="md-code md-code-` ">require</mark>, <mark class="md-code md-code-` ">requireAll</mark>, <mark class="md-code md-code-` ">anyMatch</mark>, <mark class="md-code md-code-` ">noMatch</mark></p></H4><table class="table table-bordered table-striped"><tr><th>Method</th><th>Returns</th><th>Behavior</th></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">require()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-` ">void</mark> </p></td><td><p class="md-phrase"> tries to match <b class="md-bold">one</b> token against every registered rule; <b class="md-bold">throws</b> if nothing matched </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">requireAll()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-` ">void</mark> </p></td><td><p class="md-phrase"> equivalent to <code class="md-code md-code-` ">while (cmdLine.hasNext()) { require(); }</code> — <b class="md-bold">throws</b> on the first unmatched token </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">anyMatch()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-` ">boolean</mark> </p></td><td><p class="md-phrase"> tries every registered rule once against the current token; <mark class="md-code md-code-` ">true</mark> if one matched, never throws </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-` ">noMatch()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-` ">boolean</mark> </p></td><td><p class="md-phrase"> <code class="md-code md-code-` ">!anyMatch()</code> </p></td></tr></table><p class="md-phrase">Use <mark class="md-code md-code-` ">require</mark>/<mark class="md-code md-code-` ">requireAll</mark> when an unrecognized token should be a hard error (the common case for a leaf command). Use <mark class="md-code md-code-` ">anyMatch</mark>/<mark class="md-code md-code-` ">noMatch</mark> when you want to decide yourself what happens on failure — e.g. printing help instead of throwing.</p><H4 class="md-title-3">A more complete example</H4><pre class="md-code md-code-``` java"><code class="java">NCmdLine cmdLine = NApp.of().getCmdLine();
+Opts o = new Opts();
+
+cmdLine.matcher()
+        .when("--help").asRaw(cl -&gt; {
+            showHelp();
+            cl.skipAll(); // everything after --help is discarded
+        })
+        .when("-f", "--full").asFlag(v -&gt; o.full = v.booleanValue())
+        .when("-e", "--example").asEntry(v -&gt; o.example = v.stringValue())
+        .when("--color").asAttachedEntry(v -&gt; o.color = v.stringValue())
+        .when("-J", "--java-options").asRequiredEntry(v -&gt; o.javaOptions = v.stringValue())
+        .whenArg(a -&gt; !a.isOption() &amp;&amp; a.isNonOption()
+                &amp;&amp; (a.image().startsWith("./") || a.image().startsWith("../")))
+                .asArg(v -&gt; o.paths.add(v.image()))
+        .whenNonOption().asArg(v -&gt; o.positionals.add(v.image()))
+        .withDefaults()
+        .requireAll();
+
+
+if (cmdLine.isCompleteMode()) {
+        cmd.printCompleteResult();
+    return;
+}
+
+            //do the good stuff here
+            NOut.println(NMsg.ofC("options=%s", o));
+</code></pre><H4 class="md-title-2">Using CommandLine, The low-level way...</H4><p class="md-phrase">The matcher is built entirely on top of <mark class="md-code md-code-` ">NCmdLine</mark>'s pull API — <code class="md-code md-code-` ">next(...)</code>,<code class="md-code md-code-` ">peek()</code>, <code class="md-code md-code-` ">skip()</code> — and you can always drop down to that API directly for full manual control. This is also the form autocomplete support is easiest to reason about explicitly, since each <code class="md-code md-code-` ">next(...)</code> call can carry its own display label and value-completion hint right at the call site, instead of those being attached separately through a matcher chain.</p><pre class="md-code md-code-``` java"><code class="java">NCmdLine cmd = NApp.of().getCmdLine();
 boolean boolOption = false;
 String stringOption = null;
 List&lt;String&gt; others = new ArrayList&lt;&gt;();
-NArg a;
-while (cmdLine.hasNext()) {
-    a = cmdLine.peek().get();
-    if (a.isOption()) {
-        switch (a.key()) {
-            case "-o":
-            case "--option": {
-                a = cmdLine.nextFlag().get();
-                if (a.isUncommented()) {
-                    boolOption = a.getValue().asBoolean().get();
-                }
-                break;
-            }
-            case "-n":
-            case "--name": {
-                a = cmdLine.nextEntry().get();
-                if (a.isUncommented()) {
-                    stringOption = a.getValue().asString().get();
-                }
-                break;
-            }
-            default: {
-                NSession.of().configureLast(cmdLine);
-            }
-        }
-    } else {
-        others.add(cmdLine.next().get().image());
+
+while (cmd.hasNext()) {
+    NOptional&lt;NArg&gt; option = cmd.next(NArgType.FLAG, "toggle option", "-o", "--option");
+    if (option.isPresent()) {
+        boolOption = option.get().booleanValue();
+        continue;
     }
+
+    NOptional&lt;NArg&gt; entry = cmd.next(NArgType.ENTRY, "name",
+            NArgValueComplete.ofFlags(NArgCompleteFlag.NONE),
+            "-n", "--name");
+    if (entry.isPresent()) {
+        stringOption = entry.get().stringValue();
+        continue;
+    }
+
+    NOptional&lt;NArg&gt; file = cmd.next(NArgType.ENTRY, "file path",
+            NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES),
+            "--file");
+    if (file.isPresent()) {
+        others.add(file.get().stringValue());
+        continue;
+    }
+
+    NOptional&lt;NArg&gt; nonOption = cmd.nextNonOption();
+    if (nonOption.isPresent()) {
+        others.add(nonOption.get().image());
+        continue;
+    }
+
+    if (cmd.isCompleteMode()) {
+        // still under autocomplete: nothing else matched this word,
+        // skip it silently instead of failing the whole completion pass
+        cmd.skip();
+        continue;
+    }
+
+    cmd.throwUnexpectedArgument();
 }
+
 // test if application is running in exec mode
 // (and not in autoComplete mode)
-if (cmdLine.isExecMode()) {
-    //do the good staff here
+if (cmd.isExecMode()) {
+    //do the good stuff here
     NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+}else{
+    cmd.printCompleteResult();
+    return;
 }
-</code></pre>
+</code></pre><p class="md-phrase">Each branch follows the same shape: try one <code class="md-code md-code-` ">next(...)</code> call, and if it's present, consume it and <mark class="md-code md-code-` ">continue</mark> the loop; if every branch declines, the final fallback either silently <code class="md-code md-code-` ">skip()</code>s (when completing — an incomplete word shouldn't abort the whole completion pass) or <code class="md-code md-code-` ">throwUnexpectedArgument()</code></p>(when actually executing — an unrecognized token really is an error).<p class="md-phrase">This is exactly the same decision tree the matcher expresses more declaratively via <code class="md-code md-code-` ">when(...)</code>/<code class="md-code md-code-` ">as*(...)</code> — the difference is purely how the per-option display label and completion hint are supplied: inline as arguments to <code class="md-code md-code-` ">next(...)</code> here, versus attached through the fluent chain there. Both forms feed the same underlying autocomplete machinery, which is covered next.</p><H4 class="md-title-2">The Unified Model: Parsing is Completion</H4>One of the most powerful features of NCmdLine is that you do not write separate logic for auto-completion. The same matcher() chain that executes your command also generates shell completions.<H4 class="md-title-3">Why do we "process each time"?</H4>When a user presses null
                         </div>
 
                         
@@ -1127,7 +1214,7 @@ if (cmdLine.isExecMode()) {
                         </h3>
 
                         <div class="text-card">
-                            NMsg supports multiple placeholder formats for dynamic message generation:<ul class="md-ul"><li class="md-uli"><p class="md-phrase">C-style (<mark class="md-code md-code-` ">ofC</mark>) – like <mark class="md-code md-code-` ">printf</mark> in C (<code class="md-code md-code-` ">%s</code>, <code class="md-code md-code-` ">%d</code>, etc.)</p></li><li class="md-uli"><p class="md-phrase">Java / SLF4J style (<mark class="md-code md-code-` ">ofJ</mark>) – <code class="md-code md-code-` ">{}</code> or <code class="md-code md-code-` ">{0}</code>, <code class="md-code md-code-` ">{1}</code></p></li><li class="md-uli"><p class="md-phrase">Variable substitution (<mark class="md-code md-code-` ">ofV</mark>) – named placeholders using <code class="md-code md-code-` ">$name</code> or <code class="md-code md-code-` ">${name}</code></p></li></ul>Examples<pre class="md-code md-code-``` java"><code class="java">// C-style formatting
+                            NMsg supports multiple placeholder formats for dynamic message generation:<ul class="md-ul"><li class="md-uli"><p class="md-phrase">C-style (<mark class="md-code md-code-` ">ofC</mark>) – like <mark class="md-code md-code-` ">printf</mark> in C (<code class="md-code md-code-` ">%s</code>, <code class="md-code md-code-` ">%d</code>, etc.)</p></li><li class="md-uli"><p class="md-phrase">Java / SLF4J style (<mark class="md-code md-code-` ">ofJ</mark>) – <code class="md-code md-code-` ">{}</code> or <code class="md-code md-code-` ">{0}</code>, <code class="md-code md-code-` ">{1}</code></p></li><li class="md-uli"><p class="md-phrase">Variable substitution (<mark class="md-code md-code-` ">ofV</mark>) – named placeholders using <code class="md-code md-code-` ">$name</code> or <code class="md-code md-code-` ">${name}</code></p></li><li class="md-uli"><p class="md-phrase">Moustache substitution (<mark class="md-code md-code-` ">ofM</mark>) – named placeholders using <code class="md-code md-code-` "></code></p></li><li class="md-uli"><p class="md-phrase">Sql substitution (<mark class="md-code md-code-` ">ofS</mark>) – positional and named placeholders using <code class="md-code md-code-` ">?</code> or <code class="md-code md-code-` ">:name</code></p></li><li class="md-uli"><p class="md-phrase">Custom substitution (<mark class="md-code md-code-` ">ofCustom</mark>) – user defined format by implementing <mark class="md-code md-code-` ">NMsgCustomFormatter</mark></p></li></ul>Examples<pre class="md-code md-code-``` java"><code class="java">// C-style formatting
 NMsg.ofC("Hello %s, you have %d new notifications", "Alice", 5);
 
 // Java formatting
@@ -1146,19 +1233,68 @@ NMsg.ofV("Threshold=$th, Date=$date", name -&gt; switch (name) {
     default     -&gt; null;
 });
 
+
+// SQL-style positional formatting
+// Beware you are responsible for escaping the strings
+NMsg.ofS("SELECT * FROM users WHERE status = ? AND age &gt;= ?", "\"ACTIVE\"", 21);
+
+// SQL substitution from function
+// Beware you are responsible for escaping the strings
+NMsg.ofV("Select a from Table where a.column=:value", name -&gt; switch (name) {
+        case "value"   -&gt; 0.85;
+default     -&gt; null;
+        });
+   
+        
 // Variable substitution from function (with mustache)
 NMsg.ofM("Threshold=, Date=", name -&gt; switch (name) {
     case "th"   -&gt; 0.85;
     case "date" -&gt; LocalDate.now();
     default     -&gt; null;
 });
+
+// Custom registered formatter
+NMsg.ofCustom("upper", "hello world");
 </code></pre>Notes:<ul class="md-ul"><li class="md-uli">Avoid mixing styles in a single message.</li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">${}</code> syntax is safer for complex strings (e.g., <code class="md-code md-code-` ">$val123text</code> vs <code class="md-code md-code-` ">${val}123text</code>).</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">{ { } }</code> syntax is safer when '$' has specific meanings in your context.</p></li></ul><H4 class="md-title-3"><p class="md-phrase">C-style Formatting (<mark class="md-code md-code-` ">ofC</mark>)</p></H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofC</mark> to create messages using standard <code class="md-code md-code-` ">String.format()</code>-style syntax:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofC("Hello %s", "world"));
 </code></pre><p class="md-phrase">Placeholders like <code class="md-code md-code-` ">%s</code>, <code class="md-code md-code-` ">%d</code>, etc., behave as expected. Useful for simple messages with positional arguments.</p><H4 class="md-title-3">Java MessageFormat (ofJ)</H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofJ</mark> for Java-style formatting with <code class="md-code md-code-` ">{0}</code>, <code class="md-code md-code-` ">{1}</code> placeholders:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofJ("Hello {0}", "world"));
 NOut.println(NMsg.ofJ("Hello {}", "world"));      // SLF4J-style
 </code></pre>Both formats are supported, and will be filled using the provided arguments in order (but should not be mixed).<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">{}</code> placeholders are matched sequentially, like in SLF4J.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">{0}</code>, <code class="md-code md-code-` ">{1}</code>, etc. allow for specific argument reordering or reuse.</p></li></ul><H4 class="md-title-2">Variable-based Formatting (ofV)</H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofV</mark> to format messages using named variables:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofV("Hello $v", NMaps.of("v", "world")));
 NOut.println(NMsg.ofV("Hello ${v}", NMaps.of("v", "world")));
 </code></pre><p class="md-phrase">Both <code class="md-code md-code-` ">$v</code> and <code class="md-code md-code-` ">${v}</code> syntaxes are supported.</p>Variables are replaced by name using the $ prefix. This is useful for dynamically named arguments or template-based rendering, particularly when formatting messages from dynamic key-value maps (e.g., for templates or localization).<ul class="md-ul"><li class="md-uli">$v is simple and concise.</li><li class="md-uli"><p class="md-phrase">${v} is safer when followed by alphanumeric characters (e.g., <code class="md-code md-code-` ">$val123text</code> vs <code class="md-code md-code-` ">${val}123text</code>).</p></li></ul>Missing variables are left as-is or replaced with a placeholder, depending on context or configuration.<H4 class="md-title-2">Variable-based Moustache Formatting (ofM)</H4><p class="md-phrase">Use <mark class="md-code md-code-` ">ofM</mark> to format messages using named variables with Mustache-style placeholders:</p><pre class="md-code md-code-``` java"><code class="java">NOut.println(NMsg.ofV("Hello ", NMaps.of("v", "world")));
-</code></pre>Variables are replaced by name using Mustache-style. This is useful for dynamically named arguments or template-based rendering, particularly when formatting messages from dynamic key-value maps (e.g., for templates or localization).Missing variables are left as-is or replaced with a placeholder, depending on context or configuration.
+</code></pre>Variables are replaced by name using Mustache-style. This is useful for dynamically named arguments or template-based rendering, particularly when formatting messages from dynamic key-value maps (e.g., for templates or localization). This isolates variables completely from string payloads that might natively use the $ character. Missing variables are left as-is or replaced with a placeholder, depending on context or configuration.<H4 class="md-title-2">SQL-style Formatting (ofS)</H4>Use ofS for SQL-style queries using ? positional placeholders:<pre class="md-code md-code-``` java"><code class="java">// SQL-style positional formatting
+// Beware: you are responsible for escaping the strings
+NMsg.ofS("SELECT * FROM users WHERE status = ? AND age &gt;= ?", "\"ACTIVE\"", 21);
+
+// SQL variable substitution from function
+// Beware: you are responsible for escaping the strings
+NMsg.ofV("Select a from Table where a.column=:value", name -&gt; switch (name) {
+        case "value"   -&gt; 0.85;
+default     -&gt; null;
+        });
+
+        
+</code></pre>Because NMsg builds an abstract AST (NText) rather than interacting directly with a JDBC driver, parameter values are inserted literally into the node tree. Callers must handle any required SQL escaping or quoting manually.<H4 class="md-title-2">Custom Formatting (ofCustom)</H4>You can extend NMsg by registering a custom implementation of NMsgCustomFormatter.<p class="md-phrase">Custom formatters can be registered dynamically at runtime via NExtensions or auto-discovered using standard Java SPI  (<code class="md-code md-code-` ">META-INF/services/net.thevpc.nuts.spi.NComponent</code>) paired with <code class="md-code md-code-` ">@NScore</code> for priority ordering (when needed).</p><pre class="md-code md-code-``` java"><code class="java">// Register custom formatter dynamically
+NExtensions.of().registerInstance(NMsgCustomFormatter.class, new NMsgCustomFormatter() {
+    @Override
+    public String id() {
+        return "upper";
+    }
+
+    @Override
+    public NText format(NMsg msg) {
+        String m = (String) msg.message();
+        return NText.ofPlain(m.toUpperCase());
+    }
+
+    @Override
+    public List&lt;String&gt; extractParams(String message) {
+        return Collections.emptyList();
+    }
+});
+
+// Execute custom formatter by ID
+NMsg msg = NMsg.ofCustom("upper", "hello");
+</code></pre>
                         </div>
 
                         
@@ -1429,13 +1565,13 @@ d.declareFunction("sin", (name, args, ctx) -&gt; {
     return Math.sin(asDouble(a.eval(ctx), rendererContext));
 });
 
-NOptional&amp;lt;NExprNode&gt; ne = d.parse("sin(x*pi)");
+NOptional&lt;NExprNode&gt; ne = d.parse("sin(x*pi)");
 if (ne.isPresent()) {
     NExprNode node = ne.get();
     NDoubleFunction fct = x -&gt; {
-        NOptional&amp;lt;Object&gt; r = node.eval(new NExprEvaluator() {
+        NOptional&lt;Object&gt; r = node.eval(new NExprEvaluator() {
             @Override
-            public NOptional&amp;lt;NExprVar&gt; getVar(String varName, NExprDeclarations ctx) {
+            public NOptional&lt;NExprVar&gt; getVar(String varName, NExprDeclarations ctx) {
                 return "x".equals(varName)
                         ? Optional.of(x)
                         : NOptional.ofNamedEmpty("var " + varName);
@@ -1873,54 +2009,206 @@ remote
                         </h3>
 
                         <div class="text-card">
-                            NPath is a powerful abstraction introduced by nuts to handle paths in a uniform way, similar to Java's URL, but with extended capabilities, built-in protocol support, and a fluent, intuitive API.<H4 class="md-title-1">Key Features</H4><ul class="md-ul"><li class="md-uli">Unified path abstraction for local files, URLs, classpath resources, and artifacts.</li><li class="md-uli">Protocol-aware: supports file, http(s), classpath, and resource URLs.</li><li class="md-uli">Stream access, input/output helpers, and file tree navigation.</li><li class="md-uli">Support for creating temporary files/folders and content manipulation.</li></ul><H4 class="md-title-2">Supported Protocols</H4><ul class="md-ul"><li class="md-uli">File paths: "/path/to/resource", "C:\path\to\resource"</li><li class="md-uli">File URLs: "file:/path/to/resource", "file:C:/path/to/resource"</li><li class="md-uli">HTTP/HTTPS URLs: "http://...", "https://..."</li><li class="md-uli">Ssh URLs: "ssh://user@server/path/to/resource"</li><li class="md-uli">Classpath: "classpath:/path/to/resource" (requires classloader)</li><li class="md-uli">Resource paths: "resource://group:artifact#version/path/to/resource"</li></ul><H4 class="md-title-2">Creating an NPath</H4><pre class="md-code md-code-``` java"><code class="java">NPath localFile = NPath.of("C:/path/to/resource");
-</code></pre><H4 class="md-title-2">Other creation methods include:</H4><pre class="md-code md-code-``` java"><code class="java">NPath.of(URL url);
-NPath.of(File file);
-NPath.of(Path path);
-NPath.of(String path, ClassLoader cl);
-NPath.of(NConnexionString connection);
-</code></pre><H4 class="md-title-2">Special Locations</H4><pre class="md-code md-code-``` java"><code class="java">NPath.ofUserHome();         // User home directory
-NPath.ofUserDirectory();    // Current working directory
-NPath.ofUserStore(type);    // User store path
-NPath.ofSystemStore(type);  // System store path
-</code></pre><H4 class="md-title-2">NPath.ofUserStore(NStoreType storeType)</H4>Returns the path to the user-specific store folder of the given storeType.This method is used to access various predefined storage locations that conform to standard OS conventions (such as XDG Base Directory Specification on Linux). These locations are used to store user-specific data in structured, OS-compliant folders.Example:<pre class="md-code md-code-``` java"><code class="java">NPath configFolder = NPath.ofUserStore(NStoreType.CONF);
-System.out.println("User config path: " + configFolder);
-</code></pre><H4 class="md-title-3"><p class="md-phrase">Supported <mark class="md-code md-code-` ">NStoreType</mark>s</p></H4><p class="md-phrase">Each <mark class="md-code md-code-` ">NStoreType</mark> corresponds to a logical category of user data:</p><table class="table table-bordered table-striped"><tr><th>StoreType</th><th>Purpose</th><th>Typical Usage</th><th>Linux Equivalent</th></tr><tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">BIN</mark>     </p></td><td>Stores user-specific executable binaries (non-modifiable).</td><td>Custom installed commands/tools.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">$HOME/.local/bin</code> </p></td></tr><tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">CONF</mark>    </p></td><td>Stores user-specific configuration files.</td><td>App or tool settings, preferences.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_CONFIG_HOME</code> or <code class="md-code md-code-` ">$HOME/.config</code> </p></td></tr><tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">VAR</mark>     </p></td><td>Stores user-specific modifiable data.</td><td>Data files, downloaded content.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_DATA_HOME</code> or <code class="md-code md-code-` ">$HOME/.local/share</code> </p></td></tr><tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">LOG</mark>     </p></td><td>Stores log files.</td><td>Runtime logs, audit trails.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_LOG_HOME</code> or <code class="md-code md-code-` ">$HOME/.local/log</code> </p></td></tr><tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">TEMP</mark>    </p></td><td>Stores temporary files.</td><td>Temp input/output files.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">$TMPDIR</code>, <code class="md-code md-code-` ">/tmp</code>, or equivalent </p></td></tr><tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">CACHE</mark>   </p></td><td>Stores non-essential cache files.</td><td>Cached packages, resources.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_CACHE_HOME</code> or <code class="md-code md-code-` ">$HOME/.cache</code> </p></td></tr><tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">LIB</mark>     </p></td><td>Stores user-specific non-executable binaries.</td><td>Local libraries and dependencies.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">$HOME/.local/lib</code> </p></td></tr><tr><td><p class="md-phrase"> <mark class="md-code md-code-` ">RUN</mark>     </p></td><td>Stores runtime file system entries.</td><td>Sockets, pipes, PID files.</td><td><p class="md-phrase"> <code class="md-code md-code-` ">$XDG_RUNTIME_DIR</code> or <code class="md-code md-code-` ">/run/user/&lt;uid&gt;</code> </p></td></tr></table><H4 class="md-title-3">Why Use ofUserStore()?</H4>This method ensures:<ul class="md-ul"><li class="md-uli">Cross-platform compatibility: Automatically maps to platform-appropriate folders.</li><li class="md-uli">Correct file placement: Keeps your workspace clean and organized.</li><li class="md-uli">Portable behavior: Works reliably across Linux, Windows, and macOS.</li></ul><H4 class="md-title-3">Advanced Example: Write to User Log Folder</H4><pre class="md-code md-code-``` java"><code class="java">NPath logFile = NPath.ofUserStore(NStoreType.LOG).resolve("myapp.log");
-logFile.writeString("This is a log entry.\n", StandardCharsets.UTF_8);
-</code></pre><div class="alert alert-success mb-4">Notes : You can get the resolved directory path as a string via getLocation() or toString().</div><div class="alert alert-success mb-4">Notes : If you're working in a system context (e.g. root user or shared tools), consider NPath.ofSystemStore(NStoreType).</div><H4 class="md-title-2">Browsing HTML Folders</H4>Supports Apache Tomcat and Apache Httpd directory listings.<pre class="md-code md-code-``` java"><code class="java">NPath httpFolder = NPath.of("htmlfs+https://archive.apache.org/dist/tomcat/");
-try (NStream s = httpFolder.stream()) {
-    List&lt;NPath&gt; matches = s.filter(x -&gt; x.isDirectory() &amp;&amp; x.getName().matches("tomcat-[0-9.]+"))
-                            .toList();
-}
-</code></pre><H4 class="md-title-2">Working with Temp Files and Folders</H4><pre class="md-code md-code-``` java"><code class="java">NPath tempFile = NPath.ofTempFile("example.txt");
-NPath tempFolder = NPath.ofTempFolder("project-workspace");
-</code></pre>Also supports temp locations for repositories and artifact ids:<pre class="md-code md-code-``` java"><code class="java">NPath.ofTempRepositoryFile("temp.txt", repository);
-NPath.ofTempIdFolder(id);
-</code></pre><H4 class="md-title-2">Content I/O</H4>Reading:<pre class="md-code md-code-``` java"><code class="java">byte[] data = path.readBytes();
-String content = path.readString();
-</code></pre>Writing:<pre class="md-code md-code-``` java"><code class="java">path.writeBytes(data);
-path.writeString("Hello World");
-</code></pre>Writing Structured Objects:<pre class="md-code md-code-``` java"><code class="java">path.writeObject(myObject);     // Any serializable
-path.writeMsg(NMsg.ofText("Hi"));
-</code></pre><H4 class="md-title-2">Path Operations</H4><ul class="md-ul"><li class="md-uli">resolve, resolveSibling, normalize, toAbsolute, toRelative</li><li class="md-uli">exists(), isDirectory(), isFile(), delete(), mkdir()</li><li class="md-uli">getName(), getNameCount(), getNames(), getParent()</li></ul><H4 class="md-title-2">File Tree</H4><pre class="md-code md-code-``` java"><code class="java">path.walk();                    // DFS walk
-path.walkGlob();               // Glob walk
-</code></pre><H4 class="md-title-2">Streaming and Navigation</H4><pre class="md-code md-code-``` java"><code class="java">try (NStream&lt;NPath&gt; stream = path.stream()) {
-    stream.forEach(x -&gt; ...);
-}
-</code></pre><H4 class="md-title-2">Permissions & Metadata</H4><pre class="md-code md-code-``` java"><code class="java">Set&lt;NPathPermission&gt; perms = path.getPermissions();
-path.setPermissions(...);
-</code></pre><H4 class="md-title-2">Type & Protocol</H4><pre class="md-code md-code-``` java"><code class="java">String protocol = path.getProtocol();
-boolean isFile = path.isFile();
-boolean isHttp = path.isHttp();
-NPathType type = path.type();
-</code></pre><H4 class="md-title-2">Conversion</H4><pre class="md-code md-code-``` java"><code class="java">URL url = path.toURL().orNull();
-File file = path.toFile().orNull();
-Path nioPath = path.toPath().orNull();
-</code></pre><H4 class="md-title-2">Example: Directory Listing</H4><pre class="md-code md-code-``` java"><code class="java">NPath dir = NPath.of("/my/folder");
-List&lt;NPath&gt; files = dir.stream()
-    .filter(p -&gt; p.getName().endsWith(".txt"))
-    .toList();
-</code></pre><H4 class="md-title-2">Summary</H4>NPath is a versatile and protocol-aware abstraction that unifies file, URL, and resource path handling. Its rich API and Nuts integration make it ideal for building tools that require flexible resource access, remote artifact inspection, or file system utilities.
+                            <H4 class="md-title-1">NPath</H4>NPath is a powerful, protocol-aware abstraction introduced by Nuts to handle resource locations in a uniform way. Similar to Java's URL or Path, but with extended capabilities, built-in protocol support, and a fluent, intuitive API, NPath bridges the gap between local files, remote URLs, classpath resources, and virtual in-memory locations.<H4 class="md-title-2">Key Features</H4><ul class="md-ul"><li class="md-uli">Unified Abstraction: Seamlessly handle local files, HTTP/SSH URLs, classpath resources, in-memory buffers, and artifact repositories with a single API.</li><li class="md-uli">Protocol-Aware: Natively supports file, http, https, ssh, classpath, mem, and custom Nuts protocols (e.g., htmlfs+https://).</li><li class="md-uli">Rich I/O Operations: First-class support for reading/writing bytes, strings, structured objects, and streaming, with automatic parent directory creation.</li><li class="md-uli">Fluent Metadata & Behavior: Dynamically attach content hints (charset, content type, kind) and behavioral flags (cache, temporary) via fluent builders.</li><li class="md-uli">Advanced Navigation: Robust path manipulation including relativize, stripParent, smart extension parsing (nameParts), and glob/DFS tree walking.</li><li class="md-uli">Lifecycle Management: Built-in support for temporary files, auto-cleanup (deleteOnDispose), and OS-compliant user/system store locations.</li></ul><hr class="divider" class="md-hr"/><H4 class="md-title-2">Supported Protocols</H4><table class="table table-bordered table-striped"><tr><th>Protocol</th><th>Example</th><th>Description</th></tr><tr><td>Local File</td><td>/path/to/resource, C:path</td><td>Standard filesystem paths (protocol is implicitly "").</td></tr><tr><td>File URL</td><td>file:/path/to/resource</td><td>Explicit file URL scheme.</td></tr><tr><td>HTTP/HTTPS</td><td><p class="md-phrase"> <a href="https://example.com/data.json" class="md-link">https://example.com/data.json</a> </p></td><td>Remote web resources.</td></tr><tr><td>SSH</td><td>ssh://user@server/path/to/resource</td><td>Secure remote file access.</td></tr><tr><td>Classpath</td><td>classpath:/com/myapp/config.xml</td><td>Resources bundled in JARs or classpath folders.</td></tr><tr><td>In-Memory</td><td>mem://sandbox/data.txt</td><td>Virtual in-memory filesystem. Zero disk I/O, ideal for testing or transient data.</td></tr><tr><td>Nuts Resource</td><td>resource://group:artifact#version/path</td><td>Nuts-specific artifact resolution.</td></tr><tr><td>HTML FS</td><td><p class="md-phrase"> htmlfs+<a href="https://archive.apache.org/dist/" class="md-link">https://archive.apache.org/dist/</a> </p></td><td>Browses Apache-style HTML directory listings as a virtual filesystem.</td></tr></table><hr class="divider" class="md-hr"/><H4 class="md-title-2">Creating an NPath</H4><H4 class="md-title-3">Basic Creation</H4><pre class="md-code md-code-``` java"><code class="java">// From String (local, URL, classpath, or memory)
+    NPath localFile = NPath.of("/path/to/resource.txt");
+    NPath remoteFile = NPath.of("https://example.com/data.json");
+    NPath memFile = NPath.of("mem://sandbox/temp-data.txt");
+
+    // From standard Java types
+    NPath fromUrl = NPath.of(new URL("file:///tmp/test.txt"));
+    NPath fromFile = NPath.of(new File("/tmp/test.txt"));
+    NPath fromNio = NPath.of(Paths.get("/tmp/test.txt"));
+
+    // From a Nuts Connection String
+    NPath fromConn = NPath.of(NConnectionString.of("ssh://user@host/path"));
+</code></pre><H4 class="md-title-3">Classpath & Origins</H4><pre class="md-code md-code-``` java"><code class="java">// Resolve with a specific ClassLoader
+    NPath cpResource = NPath.of("classpath:/config.properties", MyClass.class.getClassLoader());
+
+    // Find where a class was loaded from (e.g., which JAR)
+    NOptional&lt;NPath&gt; origin = NPath.ofOrigin(MyClass.class);
+    List&lt;NPath&gt; allOrigins = NPath.ofOrigins(MyClass.class);
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">Behavioral Flags & Content Metadata</H4>While structural operations (resolve, normalize) return new path instances, NPath provides fluent methods to adjust its behavior and attach content metadata. This is especially useful for virtual paths (mem://), HTTP responses, or when you need to override inferred file characteristics.<H4 class="md-title-3">Behavioral Flags</H4><pre class="md-code md-code-``` java"><code class="java">NPath tempFile = NPath.ofTempFile("report.pdf");
+
+    // Mark this path to be treated as user cache (affects storage/cleanup policies)
+    NPath cachedFile = tempFile.userCache(true);
+
+    // Explicitly mark as temporary (may influence disposal or OS-level temp handling)
+    NPath explicitTemp = cachedFile.userTemporary(true);
+</code></pre><H4 class="md-title-3">Content Metadata (NContentMetadata)</H4>The NContentMetadata interface acts as a fluent builder to attach or override metadata without altering the underlying physical resource. This is heavily utilized when NPath acts as an NInputSource or NOutputTarget.<pre class="md-code md-code-``` java"><code class="java">NPath memResponse = NPath.of("mem://api/response");
+
+    // Build metadata fluently
+    NContentMetadata meta = memResponse.metaData()
+        .name("user-profile.json")          // Override the logical name
+        .contentType("application/json")    // Force content type (bypasses extension guessing)
+        .charset("UTF-8")                   // Explicit charset
+        .kind("api-response")               // Custom semantic kind
+        .message(NMsg.ofInfo("Generated successfully")) // Attach a status/description
+        .contentLength(1024L);              // Pre-declare length if known
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">Special Locations: Stores & Temporary Files</H4><H4 class="md-title-3">User and System Stores</H4>NPath provides OS-compliant storage locations (aligning with XDG Base Directory Specification on Linux). Use NStoreKey to target a specific application (GAV) and store type.<pre class="md-code md-code-``` java"><code class="java">NId appId = NId.of("com.mycompany:myapp");
+    NStoreKey configKey = new NStoreKey(appId, NStoreType.CONF);
+    NPath configFolder = NPath.of(configKey);
+
+    configFolder.mkdirs();
+    configFolder.resolve("settings.json").writeString("{\"theme\": \"dark\"}");
+</code></pre>Supported NStoreTypes:<table class="table table-bordered table-striped"><tr><th>StoreType</th><th>Purpose</th><th>Linux Equivalent</th></tr><tr><td>BIN</td><td>User-specific executable binaries</td><td>$HOME/.local/bin</td></tr><tr><td>CONF</td><td>Configuration files</td><td>$XDG_CONFIG_HOME or $HOME/.config</td></tr><tr><td>VAR</td><td>Modifiable data files</td><td>$XDG_DATA_HOME or $HOME/.local/share</td></tr><tr><td>LOG</td><td>Runtime logs and audit trails</td><td>$XDG_LOG_HOME or $HOME/.local/log</td></tr><tr><td>TEMP</td><td>Temporary files</td><td>$TMPDIR or /tmp</td></tr><tr><td>CACHE</td><td>Non-essential cached data</td><td>$XDG_CACHE_HOME or $HOME/.cache</td></tr><tr><td>LIB</td><td>Non-executable libraries</td><td>$HOME/.local/lib</td></tr><tr><td>RUN</td><td>Runtime files (sockets, PID files)</td><td>$XDG_RUNTIME_DIR</td></tr></table><H4 class="md-title-3">Temporary Files and Folders</H4><pre class="md-code md-code-``` java"><code class="java">// Workspace-level temp file/folder
+    NPath tempFile = NPath.ofTempFile("buffer.bin");
+    NPath tempFolder = NPath.ofTempFolder("project-workspace");
+
+    // Repository-scoped temp file
+    NPath repoTemp = NPath.ofTempRepositoryFile("download.tmp", myRepository);
+
+    // ID-scoped temp folder
+    NPath idTemp = NPath.ofTempIdFolder("build-output", NId.of("com.example:lib:1.0"));
+
+    // AUTO-CLEANUP: Mark a temp path to be deleted when the JVM exits or session ends
+    tempFile.deleteOnDispose(true);
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">Path Manipulation & Navigation</H4><pre class="md-code md-code-``` java"><code class="java">NPath base = NPath.of("/var/log/myapp");
+
+    // Resolve: standard resolution
+    NPath logFile = base.resolve("app.log");
+
+    // ResolveChild: ignores leading slashes in the child (safer for dynamic concatenation)
+    NPath safeChild = base.resolveChild("/app.log");
+
+    // ResolveSibling: replaces the last name element
+    NPath sibling = logFile.resolveSibling("error.log");
+
+    // Normalize and Absolute
+    NPath normalized = NPath.of("/a/b/../c").normalize();
+    NPath absolute = NPath.of("relative.txt").toAbsolute();
+</code></pre><H4 class="md-title-3">Advanced Navigation: relativize vs stripParent</H4><pre class="md-code md-code-``` java"><code class="java">NPath path = NPath.of("/a/b/c");
+
+    // stripParent: Strict prefix removal. Returns empty if not a direct descendant.
+    path.stripParent(NPath.of("/a"));      // Optional["b/c"]
+    path.stripParent(NPath.of("/x"));      // Optional.empty()
+
+    // relativize: Navigational. Calculates the route from origin to this path.
+    path.relativize(NPath.of("/a/b"));     // Optional["c"]
+    NPath.of("/a/c").relativize(NPath.of("/a/b")); // Optional["../b"]
+</code></pre><H4 class="md-title-3">Name Parsing (nameParts)</H4><pre class="md-code md-code-``` java"><code class="java">NPath p = NPath.of("/archive/my.backup.tar.gz");
+
+    // SHORT: splits at the last dot
+    p.nameParts(NPathExtensionType.SHORT); 
+    // base="my.backup.tar", ext=".gz", fullExt=".gz"
+
+    // LONG: splits at the first dot
+    p.nameParts(NPathExtensionType.LONG);  
+    // base="my", ext=".backup.tar.gz", fullExt=".backup.tar.gz"
+
+    // SMART: heuristic-based (e.g., knows about .tar.gz)
+    p.nameParts(NPathExtensionType.SMART); 
+    // base="my.backup", ext=".tar.gz", fullExt=".tar.gz"
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">Content I/O</H4><H4 class="md-title-3">Reading</H4><pre class="md-code md-code-``` java"><code class="java">byte[] data = path.readBytes();
+    String text = path.readString(); // Defaults to UTF-8
+    String textIso = path.readString(StandardCharsets.ISO_8859_1);
+
+    // Streaming
+    try (InputStream is = path.getInputStream()) { /* process */ }
+    try (BufferedReader reader = path.getBufferedReader()) {
+        reader.lines().forEach(System.out::println);
+    }
+</code></pre><H4 class="md-title-3">Writing</H4><pre class="md-code md-code-``` java"><code class="java">path.writeBytes(new byte[]{1, 2, 3});
+    path.writeString("Hello World", StandardCharsets.UTF_8);
+
+    // Write structured objects (uses Nuts formatting/serialization)
+    path.writeObject(myPojo);
+    path.writeText(NText.of("Formatted text"));
+    path.writeMsg(NMsg.ofInfo("Operation completed"));
+</code></pre><H4 class="md-title-3">Copying and Moving</H4><pre class="md-code md-code-``` java"><code class="java">NPath source = NPath.of("/tmp/data.txt");
+    NPath target = NPath.of("/backup/data.txt");
+
+    source.copyTo(target, NPathOption.CREATE_PARENTS);
+    source.moveTo(target, NPathOption.REPLACE_EXISTING);
+
+    // Copy from external streams
+    try (InputStream is = new URL("https://example.com/file").openStream()) {
+        target.copyFromInputStream(is, NPathOption.CREATE_PARENTS);
+    }
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">File & Directory Operations</H4><pre class="md-code md-code-``` java"><code class="java">NPath dir = NPath.of("/tmp/myapp/data");
+
+    // Creation
+    dir.mkdirs();                  // Create directory and all missing parents
+    dir.mkParentDirs();            // Only create parents of the current path
+    dir.ensureEmptyDirectory();    // Creates if missing, or deletes contents if exists
+
+    // Inspection
+    boolean exists = dir.exists();
+    boolean isDir = dir.isDirectory();
+    boolean isRemote = dir.isRemote(); // true for http://, ssh://, mem://, etc.
+
+    // Deletion
+    dir.delete();                  // Delete file or empty directory
+    dir.deleteTree();              // Recursively delete directory and contents
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">File Tree & Searching</H4><pre class="md-code md-code-``` java"><code class="java">NPath dir = NPath.of("/var/log");
+
+    // Simple list
+    List&lt;NPath&gt; files = dir.list();
+    List&lt;NPathInfo&gt; infos = dir.listInfos(); // Includes size, type, etc.
+
+    // Stream with filtering (Lazy evaluation)
+    try (NStream&lt;NPath&gt; stream = dir.stream()) {
+        List&lt;NPath&gt; txtFiles = stream.filter(p -&gt; p.getName().endsWith(".log")).toList();
+    }
+
+    // Glob pattern matching
+    dir.walkGlob("**/*.java").forEach(p -&gt; System.out.println("Found: " + p));
+
+    // Digest and Checksums
+    List&lt;NPathChildStringDigestInfo&gt; digests = dir.listStringDigestInfo("SHA-256");
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">Metadata & Permissions (Filesystem Level)</H4><pre class="md-code md-code-``` java"><code class="java">NPath file = NPath.of("/etc/secure/config.yml");
+
+    // Basic File Metadata
+    NPathInfo info = file.info();
+    long size = file.contentLength();
+    Instant modified = file.lastModifiedInstant();
+
+    // Ownership &amp; Permissions (POSIX)
+    String owner = file.owner();
+    Set&lt;NPathPermission&gt; perms = file.permissions();
+
+    // Modify permissions
+    file.addPermissions(NPathPermission.OWNER_READ, NPathPermission.OWNER_WRITE);
+    file.removePermissions(NPathPermission.OTHERS_EXECUTE);
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">Conversion & Introspection</H4>Convert NPath back to standard Java types when interoperability is required. All return NOptional to safely handle unsupported conversions.<pre class="md-code md-code-``` java"><code class="java">NPath path = NPath.of("/tmp/test.txt");
+
+    // Safe conversions
+    Optional&lt;Path&gt; nioPath = path.toPath().asOptional();
+    Optional&lt;File&gt; javaFile = path.toFile().asOptional();
+    Optional&lt;URL&gt; javaUrl = path.toURL().asOptional();
+
+    // Introspection
+    String protocol = path.protocol();       // "" for local, "https" for web, "mem" for memory
+    String location = path.location();       // The raw string representation
+    NPath compressed = path.toCompressedForm(); // Shortened form (e.g., using ~ for home)
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">Advanced Example: Robust Remote Download with Metadata & In-Memory Staging</H4><pre class="md-code md-code-``` java"><code class="java">public void downloadArtifact(String urlStr, NId artifactId) {
+        NPath remote = NPath.of(urlStr);
+        
+        // 1. Stage the download in memory first (zero disk I/O until verified)
+        NPath memStaging = NPath.of("mem://staging/" + artifactId.getName() + ".tmp")
+            .userTemporary(true); // Explicitly mark as transient
+        
+        // 2. Copy with automatic parent creation
+        remote.copyTo(memStaging, NPathOption.CREATE_PARENTS);
+
+        // 3. Attach rich metadata before further processing
+        NContentMetadata meta = memStaging.metaData()
+            .name(artifactId.getName() + ".jar")
+            .contentType("application/java-archive")
+            .kind("downloaded-artifact");
+
+        // 4. Verify integrity using metadata
+        if (meta.contentLength().orElse(0L) == 0) {
+            throw new IOException("Downloaded payload is empty");
+        }
+
+        // 5. Move to final destination on disk atomically
+        NPath finalDest = NPath.ofUserStore(new NStoreKey(artifactId, NStoreType.CACHE))
+                                .resolve(artifactId.getName() + ".jar");
+        finalDest.mkParentDirs();
+        
+        memStaging.copyTo(finalDest, NPathOption.REPLACE_EXISTING);
+    }
+</code></pre><hr class="divider" class="md-hr"/><H4 class="md-title-2">Summary</H4>NPath is a unified resource locator that goes beyond simple string manipulation. By abstracting away the differences between local disks, remote servers, in-memory buffers (mem://), and virtual repositories, it allows you to write clean, portable, and resilient I/O code. Its fluent API for behavioral flags and NContentMetadata, combined with Nuts-specific features like NStoreKey and deleteOnDispose, makes it the ideal foundation for any tool requiring flexible, context-aware resource access.
                         </div>
 
                         
@@ -2102,7 +2390,7 @@ NWebResponse resilientResponse = NConcurrent.of()
 
                         <div class="text-card">
                             <p class="md-phrase"><mark class="md-code md-code-` ">NOnceValue</mark> stores a value that is computed lazily — the supplier is not invoked until the first call to <code class="md-code md-code-` ">get()</code>. Once evaluated, the value remains stable and is reused for all subsequent accesses. This is perfect for expensive computations, constants, or resources that should only be initialized once.</p><pre class="md-code md-code-``` java"><code class="java">// Example 1: Lazy initialization
-NOnceValue&amp;lt;Double&gt; onceRandom = NOnceValue.of(Math::random);
+NOnceValue&lt;Double&gt; onceRandom = NOnceValue.of(Math::random);
 
 // Value is computed on first access
 NOut.println("First value = " + stableRandom.get());
@@ -2131,7 +2419,7 @@ NOut.println("Valid? " + stableRandom.isValid());
 
                         <div class="text-card">
                             <p class="md-phrase"><mark class="md-code md-code-` ">NCachedValue</mark> helps you cache expensive computations or resources. It evaluates a <mark class="md-code md-code-` ">Supplier</mark> once, stores the result, and reuses it until the cache expires or is invalidated. You can configure expiry policies to automatically refresh values.</p><pre class="md-code md-code-``` java"><code class="java">// Example 1: Cache with expiry
-NCachedValue&amp;lt;Double&gt; cachedRandom = NCachedValue.of(Math::random)
+NCachedValue&lt;Double&gt; cachedRandom = NCachedValue.of(Math::random)
         .setExpiry(Duration.ofSeconds(5));
 
 // First call computes and caches the value
@@ -2147,7 +2435,7 @@ NOut.println("New value after invalidate = " + cachedRandom.get());
 </code></pre><p class="md-phrase">Sometimes a computation may fail (for example, a remote call).<mark class="md-code md-code-` ">NCachedValue</mark> can automatically retry, retain the last good value on failure, and recover gracefully. This makes it ideal for unstable resources or intermittent network services.</p><pre class="md-code md-code-``` java"><code class="java">// Example 2: Cache with retries and fallback
 AtomicInteger counter = new AtomicInteger();
 
-NCachedValue&amp;lt;Integer&gt; cached = NCachedValue.of(() -&gt; {
+NCachedValue&lt;Integer&gt; cached = NCachedValue.of(() -&gt; {
     int attempt = counter.incrementAndGet();
     if (attempt % 2 == 0) {
         throw new RuntimeException("Simulated failure");
@@ -2693,31 +2981,29 @@ if (NPs.of().isSupportedKillProcess()) {
 
                         <div class="text-card">
                             NAF provides a high-level API to execute external commands, whether locally or remotely, in a concise, structured, and cross-platform manner. Using NExec, you can run processes, capture their output, handle errors, and even execute them on remote hosts via SSH—all without the verbosity of the standard Java Process API.<b class="md-bold">Key Features</b><ul class="md-ul"><li class="md-uli">Embedded & Local Execution: Run commands in the current JVM or OS environment.</li><li class="md-uli">Remote Execution: Execute commands on SSH-enabled hosts transparently.</li><li class="md-uli">Automatic Output Capture: Grab stdout and stderr without manually reading streams.</li><li class="md-uli">Run Java Artifacts Directly: Download a JAR and its dependencies from Maven or remote repositories and execute it automatically.</li><li class="md-uli">Fail-Fast Control: Stop execution immediately on errors if desired.</li><li class="md-uli">Minimal Boilerplate: Avoid complex Runtime.exec() and thread-based stream consumption.</li></ul><H4 class="md-title-2">To create a new process</H4><pre class="md-code md-code-``` java"><code class="java">// Simple embedded command execution
-String result = NExec.of("info")
-                .getGrabbedAllString();
+String result = NExec.of("info").grabbedAll();
 NOut.println(result);
-</code></pre><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">.of("info")</code> creates the command to execute.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">.getGrabbedAllString()</code> captures the full output (stdout + stderr) as a string.</p></li><li class="md-uli"><p class="md-phrase">No exceptions are thrown automatically; the caller can inspect result or <code class="md-code md-code-` ">getResultCode()</code> to decide if the execution succeeded.</p></li></ul><H4 class="md-title-2">Example: Executing a shell command with NSH</H4><pre class="md-code md-code-``` java"><code class="java">String result = NExec.of()
-        .addCommand(NConstants.Ids.NSH, "-c", "ls")
-        .grabAll()
-        .failFast()
-        .grabbedOut();
+</code></pre><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">.of("info")</code> creates the command to execute.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">.grabbedAll()</code> captures the full output (stdout + stderr) as a string.</p></li><li class="md-uli"><p class="md-phrase">No exceptions are thrown automatically; the caller can inspect result or <code class="md-code md-code-` ">resultCode()</code> to decide if the execution succeeded.</p></li></ul><H4 class="md-title-2">Example: Executing a shell command with NSH</H4><pre class="md-code md-code-``` java"><code class="java">String result = NExec.of()
+        .ommand(NConstants.Ids.NSH, "-c", "ls")
+        .failFast(true)
+        .grabbedOut(); // implicitly calls .grabOut().run
 
 NOut.println("Result:");
 NOut.println(result);
 </code></pre><ul class="md-ul"><li class="md-uli">Nuts provides embedded shells (NSH) for running commands in a sandboxed environment.</li><li class="md-uli">Output is automatically sanitized to remove terminal formatting unless explicitly requested.</li></ul><H4 class="md-title-2">Special Executor IDs</H4>Nuts can handle commands with special identifiers or remote resources:<pre class="md-code md-code-``` java"><code class="java">String result = NExec.of()
-        .addExecutorOptions("--bot")
-        .addCommand("com.mycompany:my-remote-artifact")
-        .addCommand("list", "-i")
+        .executorOptions("--bot")
+        .command("com.mycompany:my-remote-artifact")
+        .command("list", "-i")
         .grabbedAll();
 
 NOut.println(result);
 </code></pre><ul class="md-ul"><li class="md-uli">Useful for running workspace-bound tools or remote executables.</li><li class="md-uli">Works with Maven coordinates or URLs pointing to executable jars.</li></ul><H4 class="md-title-2">Remote & Structured Command Execution</H4>NExec is not limited to local commands: you can execute processes on remote systems via SSH (or any supported executor) and easily capture stdout/stderr with minimal boilerplate:<pre class="md-code md-code-``` java"><code class="java">NExec u = NExec.of()
         .at("ssh://me@myserver")              // Execute on remote server
-        .setIn(NExecInput.ofNull())           // No stdin input
-        .addCommand("ps", "-eo",             // Command + arguments
+        .in(NExecInput.ofNull())           // No stdin input
+        .command("ps", "-eo",             // Command + arguments
             "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
         .grabErr()                            // Capture stderr
-        .setFailFast(true)                    // Optional: fail immediately on error
+        .failFast(true)                    // Optional: fail immediately on error
         .grabOut();                           // Capture stdout
 
 // Access results
@@ -2727,7 +3013,7 @@ int exitCode = u.getResultCode();
 
 NOut.println("Exit code: " + exitCode);
 NOut.println("Output:\n" + stdout);
-</code></pre>Key points:<ul class="md-ul"><li class="md-uli">at(...) allows specifying a remote target (SSH, etc.).</li><li class="md-uli">grabOut() / grabErr() capture output streams automatically.</li><li class="md-uli">setFailFast(true) ensures that any failure will stop execution immediately.</li><li class="md-uli">No need for Runtime.exec() boilerplate or manual stream handling.</li></ul>This makes NExec a powerful, concise, and cross-platform alternative to the traditional Java Process API.<H4 class="md-title-2">Why NExec is Better than Runtime.exec()</H4>Using Runtime.exec() requires verbose boilerplate to:<ul class="md-ul"><li class="md-uli">manage stdin/stdout/stderr streams,</li><li class="md-uli">handle threading to avoid blocking,</li><li class="md-uli">wait for process completion,</li><li class="md-uli">and manually check exit codes.</li></ul>With NExec, all of this is simplified and made cross-platform, while also supporting structured output handling, remote execution, and direct execution of downloaded Java artifacts transparently.
+</code></pre>Key points:<ul class="md-ul"><li class="md-uli">at(...) allows specifying a remote target (SSH, etc.).</li><li class="md-uli">grabOut() / grabErr() capture output streams automatically.</li><li class="md-uli">failFast(true) ensures that any failure will stop execution immediately.</li><li class="md-uli">No need for Runtime.exec() boilerplate or manual stream handling.</li></ul>This makes NExec a powerful, concise, and cross-platform alternative to the traditional Java Process API.<H4 class="md-title-2">Why NExec is Better than Runtime.exec()</H4>Using Runtime.exec() requires verbose boilerplate to:<ul class="md-ul"><li class="md-uli">manage stdin/stdout/stderr streams,</li><li class="md-uli">handle threading to avoid blocking,</li><li class="md-uli">wait for process completion,</li><li class="md-uli">and manually check exit codes.</li></ul>With NExec, all of this is simplified and made cross-platform, while also supporting structured output handling, remote execution, and direct execution of downloaded Java artifacts transparently.
                         </div>
 
                         
@@ -3556,10 +3842,10 @@ public class LoggingAspect {
                 </section>
                 <hr class="divider">
                 
-                <section id="Ud3b64dbb6e73e081475e0144553016d5b9f79eb3">
+                <section id="U7caeb87f38afbd4786c392d9fe6681baa18ed206">
 
                     <h2 class="main-section1" data-num="14">
-                        <a href="#Ud3b64dbb6e73e081475e0144553016d5b9f79eb3">
+                        <a href="#U7caeb87f38afbd4786c392d9fe6681baa18ed206">
                             14 Workspace & Package Context
                         </a>
                     </h2>
@@ -3569,11 +3855,101 @@ public class LoggingAspect {
                     </div>
 
                     
-                    <section id="Ub2392930024def605d5dbbf0af8ffd087dcfbee1">
+                    <section id="Uf09d5e97ce8fd3f20493bdf1a160241aadbef7e0">
 
                         <h3 class="main-section2">
-                            <a href="#Ub2392930024def605d5dbbf0af8ffd087dcfbee1">
-                                14.1 NWorkspace
+                            <a href="#Uf09d5e97ce8fd3f20493bdf1a160241aadbef7e0">
+                                14.1 Extensions
+                            </a>
+                        </h3>
+
+                        <div class="text-card">
+                            <H4 class="md-title-2">Nuts Extension Mechanism</H4>Nuts provides a dynamic, score-driven Service Provider Interface (SPI) framework. It enables runtime discovery, context-sensitive implementation resolution, and transparent overrides of framework subsystems.<H4 class="md-title-3">1. System Architecture</H4><pre class="md-code md-code-``` "><code class="">+-------------------------------------------------------------------------+
+|                              NWorkspace                                 |
+|                                                                         |
+|  +-------------------------------------------------------------------+  |
+|  |                           NExtensions                             |  |
+|  |  +-------------------------+     +-----------------------------+  |  |
+|  |  | Extension Lifecycle     |     | Component Registry          |  |  |
+|  |  | - loadExtension(NId)    |     | - registerType(...)         |  |  |
+|  |  | - unloadExtension(NId)  |     | - registerInstance(...)     |  |  |
+|  |  +-------------------------+     +-----------------------------+  |  |
+|  |  +-------------------------+     +-----------------------------+  |  |
+|  |  | Scoring Engine          |     | Instantiation &amp; Resolution  |  |  |
+|  |  | - NScore evaluation     |     | - createSupported(...)      |  |  |
+|  |  | - NScoredValue metadata |     | - createAllSupported(...)   |  |  |
+|  |  +-------------------------+     +-----------------------------+  |  |
+|  +-------------------------------------------------------------------+  |
++-------------------------------------------------------------------------+
+</code></pre><H4 class="md-title-4">Key Capabilities & API Methods</H4><ul class="md-ul"><li class="md-uli">Extension Point: Any interface inheriting from net.thevpc.nuts.spi.NComponent.</li><li class="md-uli">SPI Registration: All extensions register via a single service file: META-INF/services/net.thevpc.nuts.spi.NComponent.</li><li class="md-uli">Registration Lifecycle: When a core or plugin JAR is loaded, its extensions are indexed in a one-pass scan into an in-memory registry managed by NExtensions.</li><li class="md-uli">Resolution Engine: Evaluates candidate implementations against an NScorableContext and instantiates the candidate with the highest positive score. Ties default to registration order (first discovered wins).</li></ul><H4 class="md-title-4">Resolution & Factory Queries</H4><ul class="md-ul"><li class="md-uli">Single Best Match: NExtensions.of(NEnv.class) or createSupported(type, criteria) resolves the highest-scoring candidate (score > 0).</li><li class="md-uli">Multi-Match / Chain Execution: createAllSupported(type, criteria) returns a list of all candidates with positive scores, sorted in descending order of precedence.</li><li class="md-uli">Bulk Retrieval: createAll(type) returns instances of all registered types implementing that extension point.</li></ul><H4 class="md-title-4">Dynamic Lifecycle Management</H4><ul class="md-ul"><li class="md-uli">Runtime Loading: loadExtension(NId id) pulls new extensions into the workspace classpath and indexes their types.</li><li class="md-uli">Hot Unloading: unloadExtension(NId id) detaches classes and instances associated with that artifact source.</li></ul><H4 class="md-title-3"><p class="md-phrase">2. Scoring System (<mark class="md-code md-code-` ">NScorable</mark>)</p></H4>Every candidate is evaluated against runtime criteria before instantiation.<table class="table table-bordered table-striped"><tr><th>Score Level</th><th>Constant</th><th>Value</th><th>Role</th></tr><tr><td>Custom</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.CUSTOM_SCORE</code>        </p></td><td>1000+</td><td>User-defined overrides (takes priority)</td></tr><tr><td>Default</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.DEFAULT_SCORE</code>       </p></td><td>10</td><td>Standard built-in implementations</td></tr><tr><td>Unsupported</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.UNSUPPORTED_SCORE</code>   </p></td><td>-1 (<= 0)</td><td>Candidate is discarded for current context</td></tr></table><H4 class="md-title-3"><p class="md-phrase">3. Component Scopes (<mark class="md-code md-code-` ">NScopeType</mark>)</p></H4>Components define their lifecycle using the @NComponentScope annotation:<table class="table table-bordered table-striped"><tr><th>Scope</th><th>Behavior</th><th>Typical Use Case</th></tr><tr><td>WORKSPACE</td><td>One instance per NWorkspace reference.</td><td>Heavy tooling, format executors (ZipExecutorComponent), thread pools.</td></tr><tr><td>SESSION</td><td>One instance per NSession. Isolated to a specific session execution.</td><td>Session-specific caches, localized configuration.</td></tr><tr><td>SHARED_SESSION</td><td>Shared across a session and all sub-sessions/copies derived from it.</td><td>Shared state across child commands or task graphs.</td></tr><tr><td>TRANSITIVE_SESSION</td><td>Copied/cloned when a session is copied.</td><td>Session configurations that start with parent state but isolate child mutations.</td></tr><tr><td>PROTOTYPE (Default)</td><td>A fresh instance is created on every resolution call.</td><td>Stateful command builders, short-lived task processors.</td></tr></table><H4 class="md-title-3">4 KAPI, SPI, & RPI Specification</H4>Nuts unifies all runtime components under the NComponent interface while distinguishing three functional tiers: API, SPI, and RPI.<H4 class="md-title-4">1. The Three Component Tiers</H4><table class="table table-bordered table-striped"><tr><th>Tier</th><th>Name</th><th>Resolution Mechanism</th><th>Role</th><th>Example</th></tr><tr><td>API</td><td>Application Programming Interface</td><td>Static entry points (NEnv.of(), NObjectWriter.get())</td><td>Public contracts consumed by applications and commands.</td><td>NEnv, NObjectWriter, NWorkspace</td></tr><tr><td>SPI</td><td>Service Provider Interface</td><td>Dynamic discovery via manifest & scoring pipeline</td><td>Pluggable strategies, protocol extensions, custom engines.</td><td>NLogFactorySPI, NPathFactorySPI</td></tr><tr><td>RPI</td><td>Reserved Programming Interface</td><td>Fast-path hard-wired resolution in NExtensions</td><td>Essential runtime internals soldered by the core engine. Non-overridable.</td><td>NTextRPI, internal session coordinators</td></tr></table><H4 class="md-title-4">2. Internal Resolution Engine Mechanics</H4>When NExtensions.of(Type.class) or NExtensions.createSupported(Type.class, criteria) is invoked, NExtensions executes one of two paths:<H4 class="md-title-5">Path A: The RPI Fast-Path (Hard-Wired & Scoped)</H4>For core interfaces, the implementation is explicitly wired to avoid reflection and dynamic scanning.<H4 class="md-title-5">Path B: The SPI Dynamic Scoring Pipeline</H4>For pluggable extension points, NExtensions scans registered classes, evaluates support levels, and lazily instantiates the highest-scoring candidate.<H4 class="md-title-4">3. How APIs Consume RPIs</H4>Public API convenience methods use RPIs as internal engines without exposing internal implementation details:<pre class="md-code md-code-``` java"><code class="java">public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
+    
+    // API static factory delegates to RPI singleton in the current session
+    static NOptional&lt;NObjectWriter&gt; get(Object any) {
+        return NTextRPI.of().createWriter(any);
+    }
+}
+</code></pre><H4 class="md-title-3">5. Implementation Declaration Patterns</H4><H4 class="md-title-4">Pattern A: Static Score Annotation (Class-Level)</H4>Best for unconditional singletons, adapters, or service providers.<pre class="md-code md-code-``` java"><code class="java">@NScore(fixed = NScorable.CUSTOM_SCORE)
+public class Slf4JNLogFactorySPI implements NLogFactorySPI {
+
+    public Slf4JNLogFactorySPI() {
+        // Default constructor resolved automatically
+    }
+
+    @Override
+    public NLogSPI getLogSPI(String name) {
+        return new Slf4JNLogSPI(name);
+    }
+}
+</code></pre><H4 class="md-title-4">Pattern B: Dynamic Context Scoring (Method-Level)</H4>Best for transport protocols, OS-specific hooks, or format decoders. Any public static method annotated with @NScore returning int is evaluated.<pre class="md-code md-code-``` java"><code class="java">@NComponentScope(NScopeType.PROTOTYPE)
+public class NEnvSshImpl implements NEnv {
+    public static final String PROTOCOL = "ssh";
+
+    // Priority 1: Context constructor
+    public NEnvSshImpl(NScorableContext context) {
+        NConnectionString conn=context.criteria();
+        //...
+    }
+
+    // Dynamic support evaluation
+    @NScore
+    public static int checkSshSupport(NScorableContext context) {
+        NConnectionString conn = context.criteria(NConnectionString.class);
+        if (conn != null &amp;&amp; PROTOCOL.equalsIgnoreCase(conn.protocol())) {
+            return NScorable.DEFAULT_SCORE;
+        }
+        return NScorable.UNSUPPORTED_SCORE;
+    }
+}
+</code></pre><H4 class="md-title-3">4. Constructor & Method Resolution Rules</H4><ul class="md-ul"><li class="md-uli">Scoring Methods:<ul class="md-ul"><li class="md-uli">Must be public static int null</li></ul></li></ul>
+                        </div>
+
+                        
+
+                    </section>
+                    <hr class="divider">
+                    
+
+                </section>
+                <hr class="divider">
+                
+                <section id="U718cee73c83cf9dea527d7908e903bdf034b6ca3">
+
+                    <h2 class="main-section1" data-num="15">
+                        <a href="#U718cee73c83cf9dea527d7908e903bdf034b6ca3">
+                            15 Workspace & Package Context
+                        </a>
+                    </h2>
+
+                    <div class="text-card">
+                        <p class="md-phrase"><mark class="md-code md-code-` ">NWorkspace</mark> and <mark class="md-code md-code-` ">NSession</mark> are the <b class="md-bold">foundation of Nuts runtime context</b>. Understanding how they work is essential for correctly using all Nuts components.</p><H4 class="md-title-2"><p class="md-phrase">What is a <mark class="md-code md-code-` ">NWorkspace</mark>?</p></H4><p class="md-phrase">A <mark class="md-code md-code-` ">NWorkspace</mark> represents the <b class="md-bold">application context</b> and <b class="md-bold">component container</b> in Nuts. It is:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase">Comparable to a Spring <mark class="md-code md-code-` ">ApplicationContext</mark>,</p></li><li class="md-uli"><p class="md-phrase">A container for all globally or locally scoped Nuts services (like <mark class="md-code md-code-` ">NOut</mark>, <mark class="md-code md-code-` ">NLog</mark>, <mark class="md-code md-code-` ">NWorkspaceService</mark>, etc.),</p></li><li class="md-uli"><p class="md-phrase">Required for all operations using Nuts APIs — at any moment, a Nuts component is always used <b class="md-bold">in the context of a workspace</b>.</p></li></ul><hr class="divider" class="md-hr"/><H4 class="md-title-2"><p class="md-phrase">What is a <mark class="md-code md-code-` ">NSession</mark>?</p></H4><p class="md-phrase">A <mark class="md-code md-code-` ">NSession</mark> is a <b class="md-bold">lightweight, thread-scoped execution context</b> associated with a <mark class="md-code md-code-` ">NWorkspace</mark>. It:</p><ul class="md-ul"><li class="md-uli">Controls options like verbosity, trace mode, output streams, and more,</li><li class="md-uli"><p class="md-phrase">Is <b class="md-bold">thread-local</b> by default and can be inherited by child threads,</p></li><li class="md-uli">Provides runtime configuration for rendering, formatting, user input, log levels, etc.</li></ul><p class="md-phrase">Any Nuts operation (e.g., <code class="md-code md-code-` ">NOut.println(...)</code>) implicitly uses the current <mark class="md-code md-code-` ">NSession</mark>, and therefore accesses the <mark class="md-code md-code-` ">NWorkspace</mark> bound to it.</p><hr class="divider" class="md-hr"/>
+                    </div>
+
+                    
+                    <section id="Ub0bde938e08f00f8625c0980d40c1e8a5d25f2ae">
+
+                        <h3 class="main-section2">
+                            <a href="#Ub0bde938e08f00f8625c0980d40c1e8a5d25f2ae">
+                                15.1 NWorkspace
                             </a>
                         </h3>
 
@@ -3610,11 +3986,11 @@ ws.getDesktopEnvironments(); // List of detected environments
                     </section>
                     <hr class="divider">
                     
-                    <section id="U4f99afbf576c875fb6dd707dcecc3cb917e809ff">
+                    <section id="Udc2f6e3faeafecb678a1adf34280a10a6e5af509">
 
                         <h3 class="main-section2">
-                            <a href="#U4f99afbf576c875fb6dd707dcecc3cb917e809ff">
-                                14.2 NSession
+                            <a href="#Udc2f6e3faeafecb678a1adf34280a10a6e5af509">
+                                15.2 NSession
                             </a>
                         </h3>
 
@@ -3715,7 +4091,7 @@ session.setLogFilter(log -&gt; log.getVerb().equals(NLogIntent.FAIL));
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-18-003244
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-21-185520
         </p>
     </div>
 </footer>

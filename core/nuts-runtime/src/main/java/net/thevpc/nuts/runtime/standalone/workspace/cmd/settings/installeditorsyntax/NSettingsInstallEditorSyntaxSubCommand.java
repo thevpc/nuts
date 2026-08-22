@@ -36,10 +36,10 @@ public class NSettingsInstallEditorSyntaxSubCommand extends AbstractNSettingsSub
                 Set<NSysEditorFamily> editors = new LinkedHashSet<>();
                 while (cmdLine.hasNext()) {
                     cmdLine.matcher()
-                            .with("--force","-f").matchFlag(a -> {
+                            .when("--force","-f").asFlag(a -> {
                                 force.set(a.booleanValue());
                             })
-                            .withNonOption().matchAny(a -> {
+                            .whenNonOption().asArg(a -> {
 
                                 String e = a.asString().get();
                                 if ("all".equalsIgnoreCase(e)) {

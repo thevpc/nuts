@@ -4,7 +4,6 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
 
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.runtime.standalone.atrifact.DefaultNClasspathEntry;
@@ -20,7 +19,6 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.*;
 
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
@@ -93,26 +91,26 @@ public final class JavaExecutorOptions {
         List<NArg> extraMayBeJvmOptions = new ArrayList<>();
 
         cmdLine.matcher()
-                .with("--java-version","-java-version").matchEntry((v) -> javaVersion = v.stringValue())
-                .with("--java-home","-java-home").matchEntry((v) -> javaCommand = v.stringValue())
-                .with("--class-path","-class-path","--classpath","-classpath","--cp","-cp").matchEntry((v) -> addCp(currentCP, v.stringValue()))
-                .with("--nuts-path","-nuts-path","--nutspath","-nutspath","--np","-np").matchEntry((v) -> addNp(currentCP, v.stringValue()))
-                .with("--main-class","-main-class","--class","-class").matchEntry((v) -> mainClass = v.stringValue())
-                .with("--dir","-dir").matchEntry((v) -> this.dir = NPath.of(v.stringValue()))
-                .with("--win","-javaw").matchFlag((v) -> javaw = v.booleanValue())
-                .with("--jar","-jar").matchFlag((v) -> jar = v.booleanValue())
-                .with("--show-command","-show-command").matchFlag((v) -> showCommand = v.booleanValue())
-                .with("--exclude-base","-exclude-base").matchFlag((v) -> excludeBase = v.booleanValue())
-                .with("--add-module","-add-module").matchEntry((v) -> this.j9_addModules.add(v.stringValue()))
-                .with("--m","-m","--module","-module").matchEntry((v) -> this.j9_module = v.stringValue())
-                .with("--module-path","-module-path").matchEntry((v) -> this.j9_modulePath.add(v.stringValue()))
-                .with("--splash","-splash").matchEntry((v) -> this.splash=v.stringValue())
-                .with("--upgrade-module-path","-upgrade-module-path").matchEntry((v) -> this.j9_upgradeModulePath.add(v.stringValue()))
-                .with("--prepend-arg","-prepend-arg").matchEntry((v) -> this.prependArgs.add(v.stringValue()))
-                .with("--prepend-arg","-prepend-arg").matchEntry((v) -> this.prependArgs.add(v.stringValue()))
-                .with("--append-arg","-append-arg").matchEntry((v) -> this.appendArgs.add(v.stringValue()))
-                .with("--optional","-optional").matchFlag((v) -> this.acceptOptional=v.booleanValue())
-                .with("-s").matchFlag((v) -> {
+                .when("--java-version","-java-version").asEntry((v) -> javaVersion = v.stringValue())
+                .when("--java-home","-java-home").asEntry((v) -> javaCommand = v.stringValue())
+                .when("--class-path","-class-path","--classpath","-classpath","--cp","-cp").asEntry((v) -> addCp(currentCP, v.stringValue()))
+                .when("--nuts-path","-nuts-path","--nutspath","-nutspath","--np","-np").asEntry((v) -> addNp(currentCP, v.stringValue()))
+                .when("--main-class","-main-class","--class","-class").asEntry((v) -> mainClass = v.stringValue())
+                .when("--dir","-dir").asEntry((v) -> this.dir = NPath.of(v.stringValue()))
+                .when("--win","-javaw").asFlag((v) -> javaw = v.booleanValue())
+                .when("--jar","-jar").asFlag((v) -> jar = v.booleanValue())
+                .when("--show-command","-show-command").asFlag((v) -> showCommand = v.booleanValue())
+                .when("--exclude-base","-exclude-base").asFlag((v) -> excludeBase = v.booleanValue())
+                .when("--add-module","-add-module").asEntry((v) -> this.j9_addModules.add(v.stringValue()))
+                .when("--m","-m","--module","-module").asEntry((v) -> this.j9_module = v.stringValue())
+                .when("--module-path","-module-path").asEntry((v) -> this.j9_modulePath.add(v.stringValue()))
+                .when("--splash","-splash").asEntry((v) -> this.splash=v.stringValue())
+                .when("--upgrade-module-path","-upgrade-module-path").asEntry((v) -> this.j9_upgradeModulePath.add(v.stringValue()))
+                .when("--prepend-arg","-prepend-arg").asEntry((v) -> this.prependArgs.add(v.stringValue()))
+                .when("--prepend-arg","-prepend-arg").asEntry((v) -> this.prependArgs.add(v.stringValue()))
+                .when("--append-arg","-append-arg").asEntry((v) -> this.appendArgs.add(v.stringValue()))
+                .when("--optional","-optional").asFlag((v) -> this.acceptOptional=v.booleanValue())
+                .when("-s").asFlag((v) -> {
                     getJvmArgs().add("-Dswing.aatext=true");
                     getJvmArgs().add("-Dawt.useSystemAAFontSettings=on");
                     getJvmArgs().add("-Dapple.laf.useScreenMenuBar=true");
@@ -120,7 +118,7 @@ public final class JavaExecutorOptions {
 //                    getJvmArgs().add("-Dsun.java2d.noddraw=true");
 //                    getJvmArgs().add("-Dsun.java2d.dpiaware=true");
                 })
-                .withOption().matchAnyMultiple(v->{
+                .whenOption().asRaw(v->{
                     NArg aa = v.peek().get();
                     List<NArg> nArgs = NWorkspaceCmdLineParser.nextNutsArgument(v, null).orNull();
                     if (nArgs != null) {

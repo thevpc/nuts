@@ -493,15 +493,16 @@ instead of parsing logic.
                     <div class="naf-module__preview">
                         <pre><code class="language-java">
 NCmdLine cmdLine = NApp.of().getCmdLine(); // or from somewhere else
-NRef&amp;lt;Boolean&gt; boolOption = NRef.of(false);
-NRef&amp;lt;String&gt; stringOption = NRef.ofNull();
-List&amp;lt;String&gt; others = new ArrayList&amp;lt;&gt;();
+NRef&lt;Boolean&gt; boolOption = NRef.of(false);
+NRef&lt;String&gt; stringOption = NRef.ofNull();
+List&lt;String&gt; others = new ArrayList&lt;&gt;();
 while (cmdLine.hasNext()) {
     cmdLine.matcher()
-            .with(&quot;-o&quot;, &quot;--option&quot;).matchFlag((v) -&gt; boolOption.set(v.booleanValue()))
-            .with(&quot;-n&quot;, &quot;--name&quot;).matchEntry((v) -&gt; stringOption.set(v.stringValue()))
-            .withNonOption().matchAny((v) -&gt; stringOption.set(v.image()))
-            .requireDefaults()
+            .when(&quot;-o&quot;, &quot;--option&quot;).asFlag((v) -&gt; boolOption.set(v.booleanValue()))
+            .when(&quot;-n&quot;, &quot;--name&quot;).asEntry((v) -&gt; stringOption.set(v.stringValue()))
+            .whenNonOption().asArg((v) -&gt; stringOption.set(v.image()))
+            .withDefaults()
+            .require()
     ;
 }
 NOut.println(NMsg.ofC(&quot;boolOption=%s stringOption=%s others=%s&quot;, boolOption, stringOption, others));
@@ -703,8 +704,8 @@ in the terminal with a clean, readable layout.
             return art.tableRenderer().get().render(NTableModel.of().addRow(NText.of(value)));
         }
         @Override
-        public List&amp;lt;NTreeNode&gt; children() {
-            return (value &lt; 3) ? Arrays.&amp;lt;Integer&gt;asList(value + 1, value + 2).stream().map(MyNode::new).collect(Collectors.toList())
+        public List&lt;NTreeNode&gt; children() {
+            return (value &lt; 3) ? Arrays.&lt;Integer&gt;asList(value + 1, value + 2).stream().map(MyNode::new).collect(Collectors.toList())
                     : Collections.emptyList();
         }
     }
@@ -820,17 +821,17 @@ abstractions.
                         <pre><code class="language-java">
 // --- Compress a file or directory into a ZIP ---
 NCompress.of()
-    .addSource(example)                          // source to compress
-    .setTarget(example.resolveSibling(
+    .source(example)                          // source to compress
+    .target(example.resolveSibling(
         example.getNameParts(NPathExtensionType.SHORT).getBaseName() + &quot;.zip&quot;)) // target zip path
-    .setPackaging(&quot;zip&quot;)                          // compression format
+    .packaging(&quot;zip&quot;)                          // compression format
     .run();                                       // execute compression
 
 // --- Uncompress a ZIP file to a folder ---
 NUncompress.of()
     .from(zipTo)                                 // source zip file
     .to(folderTo)                                // target directory
-    .setSkipRoot(true)                           // optionally skip the root folder in zip
+    .skipRoot(true)                           // optionally skip the root folder in zip
     .progressMonitor(new OpNInputStreamProgressMonitor(
         module.rt().addOperation(&quot;Unzipping &quot; + i))) // progress monitoring
     .run();                                      // execute uncompression
@@ -855,21 +856,21 @@ provided by MessageDigest.
 // Simple SHA256 digest of a file
 String hash = NDigest.of()
         .sha256()
-        .addSource(path)
+        .source(path)
         .computeString();
 
 // Digest multiple sources
 String combined = NDigest.of()
         .sha1()
-        .addSource(file1)
-        .addSource(file2)
-        .addSource(url)
+        .source(file1)
+        .source(file2)
+        .source(url)
         .computeString();
 
 // Digest and get raw bytes
 byte[] bytes = NDigest.of()
         .md5()
-        .addSource(stream)
+        .source(stream)
         .computeBytes();
 </code></pre>
                     </div>
@@ -896,9 +897,9 @@ NInputSource src = NInputSource.of(file)
 NInputSource multi = NInputSource.ofMultiRead(src); // reusable input
 
 NInputSourceBuilder b = NInputSourceBuilder.of(stream)
-        .setMetadata(metadata)
-        .setInterruptible(true)
-        .setCloseBase(true);
+        .metadata(metadata)
+        .interruptible(true)
+        .closeBase(true);
 
 InputStream in = b.createInputStream();
 NInputSource source = b.createInputSource();
@@ -937,7 +938,7 @@ NProgressHandler handler = event -&gt; NOut.println(event);
 NProgressMonitors.of().of(handler).runWith(() -&gt; {
     NProgressMonitor inner = NProgressMonitor.of();
     inner.start();
-    inner.setProgress(0.5, NMsg.ofC(&quot;Halfway done&quot;));
+    inner.progress(0.5, NMsg.ofC(&quot;Halfway done&quot;));
     inner.complete();
 });
 </code></pre>
@@ -1015,7 +1016,7 @@ constants, or resources that should only be initialized once.
                     <div class="naf-module__preview">
                         <pre><code class="language-java">
 // Example 1: Lazy initialization
-NStableValue&amp;lt;Double&gt; stableRandom = NStableValue.of(Math::random);
+NStableValue&lt;Double&gt; stableRandom = NStableValue.of(Math::random);
 
 // Value is computed on first access
 NOut.println(&quot;First value = &quot; + stableRandom.get());
@@ -1044,7 +1045,7 @@ You can configure expiry policies to automatically refresh values.
                     <div class="naf-module__preview">
                         <pre><code class="language-java">
 // Example 1: Cache with expiry
-NCachedValue&amp;lt;Double&gt; cachedRandom = NCachedValue.of(Math::random)
+NCachedValue&lt;Double&gt; cachedRandom = NCachedValue.of(Math::random)
         .setExpiry(Duration.ofSeconds(5));
 
 // First call computes and caches the value
@@ -1074,7 +1075,7 @@ This makes it ideal for unstable resources or intermittent network services.
 // Example 2: Cache with retries and fallback
 AtomicInteger counter = new AtomicInteger();
 
-NCachedValue&amp;lt;Integer&gt; cached = NCachedValue.of(() -&gt; {
+NCachedValue&lt;Integer&gt; cached = NCachedValue.of(() -&gt; {
     int attempt = counter.incrementAndGet();
     if (attempt % 2 == 0) {
         throw new RuntimeException(&quot;Simulated failure&quot;);
@@ -1114,13 +1115,13 @@ d.declareFunction(&quot;sin&quot;, (name, args, ctx) -&gt; {
     return Math.sin(asDouble(a.eval(ctx), rendererContext));
 });
 
-NOptional&amp;lt;NExprNode&gt; ne = d.parse(&quot;sin(x*pi)&quot;);
+NOptional&lt;NExprNode&gt; ne = d.parse(&quot;sin(x*pi)&quot;);
 if (ne.isPresent()) {
     NExprNode node = ne.get();
     NDoubleFunction fct = x -&gt; {
-        NOptional&amp;lt;Object&gt; r = node.eval(new NExprEvaluator() {
+        NOptional&lt;Object&gt; r = node.eval(new NExprEvaluator() {
             @Override
-            public NOptional&amp;lt;NExprVar&gt; getVar(String varName, NExprDeclarations ctx) {
+            public NOptional&lt;NExprVar&gt; getVar(String varName, NExprDeclarations ctx) {
                 return &quot;x&quot;.equals(varName)
                         ? Optional.of(x)
                         : NOptional.ofNamedEmpty(&quot;var &quot; + varName);
@@ -1148,15 +1149,15 @@ and full power for advanced applications.
 </p>
                     <div class="naf-module__preview">
                         <pre><code class="language-java">
-NWorkspace ws = Nuts.openWorkspace(&quot;--workspace=&quot;/path/to/ws&quot;);
+NWorkspace ws = Nuts.openWorkspace(&quot;--workspace=/path/to/ws&quot;);
 ws.runWith(() -&gt; {
     NSession.of()
-            .copy()
-            .setDry(true)
-            .setOutputFormat(NContentType.JSON)
-            .runWith(() -&gt; {
-                NOut.println(Map.of(&quot;status&quot;, &quot;ok&quot;));
-            });
+    .copy()
+    .setDry(true)
+    .setOutputFormat(NContentType.JSON)
+    .runWith(() -&gt; {
+        NOut.println(Map.of(&quot;status&quot;, &quot;ok&quot;));
+    });
 });
 </code></pre>
                     </div>
@@ -1251,7 +1252,7 @@ NOut.println(&quot;Was executed? &quot; + executed);
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-07-18-003244
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-21-185520
         </p>
     </div>
 </footer>

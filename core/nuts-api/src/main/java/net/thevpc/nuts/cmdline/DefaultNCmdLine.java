@@ -40,6 +40,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <pre>
@@ -67,7 +68,7 @@ public class DefaultNCmdLine implements NCmdLine {
     protected Set<String> specialSimpleOptions = new HashSet<>();
     protected String commandName;
     private int wordIndex = 0;
-    private NArgCompletePos completePosition;
+    private NArgCompletePosition completePosition;
     private List<NArgCompleteCandidate> completeCandidates;
     private Set<NArgCompleteFlag> completeFlags;
     private char eq = '=';
@@ -161,7 +162,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLine complete(NArgCompletePos completePosition) {
+    public NCmdLine completePosition(NArgCompletePosition completePosition) {
         this.completePosition = completePosition;
         return this;
     }
@@ -342,19 +343,6 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NOptional<String> nextString() {
-        return next().map(Object::toString);
-    }
-
-//    @Override
-//    public NOptional<NArg> nextOption(String option) {
-//        if (!new DefaultNArg(option, this).isOption()) {
-//            return errorOptionalCformat("%s is not an option", option);
-//        }
-//        return next(new DefaultNArgName(option), true);
-//    }
-
-    @Override
     public boolean isNextOption() {
         return peek().map(NArg::isOption).orElse(false);
     }
@@ -434,16 +422,16 @@ public class DefaultNCmdLine implements NCmdLine {
         return nextFlag(new String[0]);
     }
 
-    public static class MatcherImpl implements Matcher {
+    public static class NCmdLineMatcherImpl implements NCmdLineMatcher {
         private final NCmdLine cmdLine;
         List<NCmdLineProcessor> processors = new ArrayList<>();
 
-        public MatcherImpl(NCmdLine cmdLine) {
+        public NCmdLineMatcherImpl(NCmdLine cmdLine) {
             this.cmdLine = cmdLine;
         }
 
         @Override
-        public Matcher matchAll(NCmdLineProcessor processor) {
+        public NCmdLineMatcher with(NCmdLineProcessor processor) {
             if (processor != null) {
                 processors.add(processor);
             }
@@ -470,13 +458,13 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public MatcherCondition withAny() {
-            return new MyMatcherConditionImpl(this, c -> true);
+        public NCmdLineMatcherCondition whenAny() {
+            return new MyNCmdLineMatcherConditionImpl(this, c -> true);
         }
 
         @Override
-        public MatcherCondition with(String... names) {
-            return new MyMatcherConditionImpl(this, cml -> {
+        public NCmdLineMatcherCondition when(String... names) {
+            return new MyNCmdLineMatcherConditionImpl(this, cml -> {
                 boolean acceptable0 = false;
                 for (String name : names) {
                     String[] nameSeqArray = NStringUtils.split(name, " ").toArray(new String[0]);
@@ -492,22 +480,9 @@ public class DefaultNCmdLine implements NCmdLine {
 
                         // Exact match in execution mode; prefix match in completion mode
                         if (cml.isCompleteMode()) {
-                            NArgCompletePos pos = cml.currentPos();
-                            int offset = pos.wordCursor();
-                            String fullToken = currentKey;
-
-                            String prefix;
-                            String suffix;
-                            if (offset < 0 || offset > fullToken.length()) {
-                                prefix = fullToken;
-                                suffix = "";
-                            } else {
-                                prefix = fullToken.substring(0, offset);
-                                suffix = fullToken.substring(offset);
-                            }
-
-                            // Check if target matches prefix at the start AND suffix at the end
-                            if (!targetKey.startsWith(prefix) || !targetKey.endsWith(suffix)) {
+                            NArgCompletePosition pos = cml.completePosition();
+                            int offset = pos.wordOffset();
+                            if (!new MyContext(currentKey, offset).matches(targetKey)) {
                                 acceptable = false;
                                 break;
                             }
@@ -528,47 +503,35 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public MatcherCondition withCondition(Predicate<NCmdLine> condition) {
-            return new MyMatcherConditionImpl(this, condition);
+        public NCmdLineMatcherCondition whenRaw(Predicate<NCmdLine> condition) {
+            return new MyNCmdLineMatcherConditionImpl(this, condition);
         }
 
         @Override
-        public MatcherCondition withNonOption() {
-            return withCondition((c) -> c.isNextNonOption());
+        public NCmdLineMatcherCondition whenArg(Predicate<NArg> condition) {
+            return whenRaw((c) -> c.hasNext() && (condition == null || condition.test(c.peek().get())));
         }
 
         @Override
-        public MatcherCondition withOption() {
-            return withCondition((c) -> c.isNextOption());
+        public NCmdLineMatcherCondition whenNonOption() {
+            return whenRaw((c) -> c.isNextNonOption());
         }
 
         @Override
-        public Matcher withDefaults() {
-            matchAll(new NCmdLineProcessor() {
+        public NCmdLineMatcherCondition whenOption() {
+            return whenRaw((c) -> c.isNextOption());
+        }
+
+        @Override
+        public NCmdLineMatcher withDefaults() {
+            with(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NCmdLine cmdLine) {
-                    NSession.of().configureLast(cmdLine);
+                    NSession.of().configureFirst(cmdLine);
                     return true;
                 }
             });
             return this;
-        }
-
-        @Override
-        public Matcher withDefaultFirst() {
-            matchAll(new NCmdLineProcessor() {
-                @Override
-                public boolean process(NCmdLine cmdLine) {
-                    return NSession.of().configureFirst(cmdLine);
-                }
-            });
-            return this;
-        }
-
-        @Override
-        public void requireDefaults() {
-            withDefaults();
-            require();
         }
 
         @Override
@@ -588,16 +551,10 @@ public class DefaultNCmdLine implements NCmdLine {
             }
         }
 
-        @Override
-        public void requireAllDefaults() {
-            while (cmdLine.hasNext()) {
-                requireDefaults();
-            }
-        }
     }
 
-    public Matcher matcher() {
-        return new MatcherImpl(this);
+    public NCmdLineMatcher matcher() {
+        return new NCmdLineMatcherImpl(this);
     }
 
     @Override
@@ -610,7 +567,7 @@ public class DefaultNCmdLine implements NCmdLine {
         return next(expectedArgType, null, null, names);
     }
 
-    public NArgCompletePos currentPos() {
+    public NArgCompletePosition completePosition() {
         return completePosition;
     }
 
@@ -633,10 +590,9 @@ public class DefaultNCmdLine implements NCmdLine {
         }
     }
 
-    private void addValueCandidates(NArgCompleteValueComplete valueComplete, String argDisplay) {
+    private void addValueCandidates(NArgValueComplete valueComplete, String argDisplay) {
         if (valueComplete != null) {
-            String[] ps = prefixSuffixAtCompletePos();
-            NArgCompleteResult rvalues = valueComplete.searchValue(ps[0], ps[1]);
+            NArgCompleteResult rvalues = valueComplete.searchValue(createSearchContext());
             if (rvalues != null) {
                 for (NArgCompleteCandidate c : rvalues.candidates()) {
                     addCandidate(c);
@@ -653,26 +609,13 @@ public class DefaultNCmdLine implements NCmdLine {
         }
     }
 
-    /**
-     * Returns [prefix, suffix] by splitting the word at the cursor's wordOffset.
-     * If wordOffset is unknown (-1) or the word is empty the prefix is the full
-     * word value and the suffix is empty.
-     */
-    private String[] prefixSuffixAtCompletePos() {
-        if (completePosition == null) {
-            return new String[]{"", ""};
-        }
+    private NArgValueComplete.Context createSearchContext() {
         NArg word = peek().orNull();
         String wordStr = word == null ? "" : word.asString().orElse("");
-        int offset = completePosition.wordCursor();
-        if (offset < 0 || offset > wordStr.length()) {
-            // offset unknown or out of range — treat whole word as prefix
-            return new String[]{wordStr, ""};
-        }
-        return new String[]{wordStr.substring(0, offset), wordStr.substring(offset)};
+        return new MyContext(wordStr, completePosition);
     }
 
-    public NOptional<NArg> next(NArgType expectedArgType, String argDisplay, NArgCompleteValueComplete valueComplete, String... names) {
+    public NOptional<NArg> next(NArgType expectedArgType, String argDisplay, NArgValueComplete valueComplete, String... names) {
         if (expectedArgType == null) {
             expectedArgType = NArgType.DEFAULT;
         }
@@ -739,7 +682,8 @@ public class DefaultNCmdLine implements NCmdLine {
                             if (p.isKeyValue()) {
                                 return NOptional.of(p);
                             } else {
-                                NArg r2 = peek().orNull();
+                                //get the next arg without expanding any simple option, just take it as is
+                                NArg r2 = isEmpty() ? null : get(0, false, true, false).orNull();
                                 if (r2 != null) {
                                     if (isCompleteMode() && isAtCompletePosition()) {
                                         // cursor is at the value token — invoke valueComplete
@@ -754,6 +698,7 @@ public class DefaultNCmdLine implements NCmdLine {
                                         return NOptional.of(p);
                                     } else {
                                         // should i throw exception?
+                                        throwMissingArgument(NMsg.ofC("option '%s' expects a value that was not provided"));
                                         return NOptional.of(p);
                                     }
                                 }
@@ -808,19 +753,13 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
 
-    private boolean matchesCandidate(String candidateName, NArg currentArg) {
+    private boolean matchesCandidate(NArg currentArg, String expected) {
         if (currentArg == null) {
             return true;
         }
         String token = currentArg.getKey().asString().orElse("");
-        String[] ps = prefixSuffixAtCompletePos();
-        String prefix = ps[0];
-        String suffix = ps[1];
-
-        if (prefix.isEmpty() && suffix.isEmpty()) {
-            return candidateName.startsWith(token);
-        }
-        return candidateName.startsWith(prefix) && candidateName.endsWith(suffix);
+        NArgValueComplete.Context searchContext = new MyContext(token, completePosition == null ? -1 : completePosition.wordOffset());
+        return searchContext.matches(expected);
     }
 
     private <T> NOptional<T> emptyOptionalCformat(String str, Object... args) {
@@ -845,18 +784,16 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
 
-
     @Override
     public NOptional<NArg> nextNonOption(String display) {
         return nextNonOption(display, null);
     }
 
     @Override
-    public NOptional<NArg> nextNonOption(String display, NArgCompleteValueComplete complete) {
+    public NOptional<NArg> nextNonOption(String display, NArgValueComplete complete) {
         if (hasNext() && !isNextOption()) {
             if (isAtCompletePosition()) {
-                String[] ps = prefixSuffixAtCompletePos();
-                NArgCompleteResult rvalues = complete == null ? null : complete.searchValue(ps[0], ps[1]);
+                NArgCompleteResult rvalues = complete == null ? null : complete.searchValue(createSearchContext());
                 if (rvalues == null || (rvalues.candidates().isEmpty() && rvalues.flags().isEmpty())) {
                     addCandidate(NArgCompleteCandidate.of(display == null ? "<value>" : display));
                 } else {
@@ -877,8 +814,7 @@ public class DefaultNCmdLine implements NCmdLine {
         } else {
             if (isCompleteMode()) {
                 if (isAtCompletePosition()) {
-                    String[] ps = prefixSuffixAtCompletePos();
-                    NArgCompleteResult rvalues = complete == null ? null : complete.searchValue(ps[0], ps[1]);
+                    NArgCompleteResult rvalues = complete == null ? null : complete.searchValue(createSearchContext());
                     if (rvalues == null || (rvalues.candidates().isEmpty() && rvalues.flags().isEmpty())) {
                         addCandidate(NArgCompleteCandidate.of(display == null ? "<value>" : display));
                     } else {
@@ -963,6 +899,10 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NOptional<NArg> get(int index) {
+        return get(index, isExpandSimpleOptions(), true, isExpandArgumentsFile());
+    }
+
+    private NOptional<NArg> get(int index, boolean expandSimpleOptions, boolean ignoreExistingExpanded, boolean expandArgumentsFile) {
         if (index < 0) {
             return emptyOptionalCformat("missing argument");
         }
@@ -970,7 +910,7 @@ public class DefaultNCmdLine implements NCmdLine {
             return NOptional.of(lookahead.get(index));
         }
         while (!args.isEmpty() && index >= lookahead.size()) {
-            if (!ensureNext(isExpandSimpleOptions(), true, expandArgumentsFile)) {
+            if (!ensureNext(expandSimpleOptions, ignoreExistingExpanded, expandArgumentsFile)) {
                 break;
             }
         }
@@ -1099,10 +1039,11 @@ public class DefaultNCmdLine implements NCmdLine {
         throw NException.ofSafeCmdLineException(NMsg.ofNtf(m.build().toString()));
     }
 
-    private NArgCompleteCandidate[] resolveRecommendations(NArgType expectedArgType, String argDisplay, NArgCompleteValueComplete finder, String[] names) {
+    private NArgCompleteCandidate[] resolveRecommendations(NArgType expectedArgType, String argDisplay, NArgValueComplete finder, String[] names) {
         int autoCompleteCurrentWordIndex = completePosition.wordIndex();
         //nameSeqArray
         List<NArgCompleteCandidate> candidates = new ArrayList<>();
+        NArgValueComplete.Context searchContext = createSearchContext();
         for (String nameSeq : names) {
             String[] nameSeqArray = NStringUtils.split(nameSeq, " ").toArray(new String[0]);
             if (nameSeqArray.length > 0) {
@@ -1146,7 +1087,7 @@ public class DefaultNCmdLine implements NCmdLine {
                     String name = nameSeqArray[nameSeqArray.length - 1];
                     NArg p = get(nameSeqArray.length - 1).orNull();
                     if (p != null) {
-                        if (matchesCandidate(name, p)) {
+                        if (matchesCandidate(p, name)) {
                             candidates.add(NArgCompleteCandidate.of(name));
                         }
                     } else {
@@ -1356,7 +1297,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     private boolean isAtCompletePosition() {
-        return isCompleteMode() && wordIndex() == currentPos().wordIndex();
+        return isCompleteMode() && wordIndex() == completePosition().wordIndex();
     }
 
     public NCmdLine copy() {
@@ -1693,83 +1634,189 @@ public class DefaultNCmdLine implements NCmdLine {
         return forEachPeek(new NCmdLineProcessor[]{processor});
     }
 
-    private class MyNCmdLineArgProcessor implements NCmdLineArgProcessor {
-        private final boolean finalAcceptable;
-        private final String[] names;
+    private static class MyContext implements NArgValueComplete.Context {
+        private final String prefix;
+        private final String suffix;
 
-        public MyNCmdLineArgProcessor(boolean finalAcceptable, String... names) {
-            this.finalAcceptable = finalAcceptable;
-            this.names = names;
+        public MyContext(String wordStr, NArgCompletePosition completePosition) {
+            if (completePosition == null) {
+                prefix = "";
+                suffix = "";
+            } else {
+                if (wordStr == null) {
+                    wordStr = "";
+                }
+                int offset = completePosition.wordOffset();
+                if (offset < 0 || offset > wordStr.length()) {
+                    // offset unknown or out of range — treat whole word as prefix
+                    prefix = wordStr;
+                    suffix = "";
+                } else {
+                    prefix = wordStr.substring(0, offset);
+                    suffix = wordStr.substring(offset);
+                }
+            }
         }
 
-        public boolean isAcceptable() {
-            return finalAcceptable;
+        public MyContext(String wordStr, int offset) {
+            if (wordStr == null) {
+                wordStr = "";
+            }
+            if (offset < 0 || offset > wordStr.length()) {
+                // offset unknown or out of range — treat whole word as prefix
+                prefix = wordStr;
+                suffix = "";
+            } else {
+                prefix = wordStr.substring(0, offset);
+                suffix = wordStr.substring(offset);
+            }
+        }
+
+        public MyContext(String prefix, String suffix) {
+            this.prefix = prefix == null ? "" : prefix;
+            this.suffix = suffix;
         }
 
         @Override
-        public boolean nextFlag(Consumer<NArg> consumer) {
-            if (!finalAcceptable) {
-                return false;
-            }
-            NOptional<NArg> v = next(NArgType.FLAG, names);
-            if (v.isPresent()) {
-                NArg a = v.get();
-                if (a.isUncommented()) {
-                    consumer.accept(a);
-                    return true;
-                }
-                return true;
-            }
-            return false;
+        public String prefix() {
+            return prefix;
         }
 
         @Override
-        public boolean nextEntry(Consumer<NArg> consumer) {
-            if (!finalAcceptable) {
-                return false;
-            }
-            NOptional<NArg> v = next(NArgType.ENTRY, names);
-            if (v.isPresent()) {
-                NArg a = v.get();
-                if (a.isUncommented()) {
-                    consumer.accept(a);
-                    return true;
-                }
-                return true;
-            }
-            return false;
+        public String suffix() {
+            return suffix;
         }
 
-
         @Override
-        public boolean nextTrueFlag(Consumer<NArg> consumer) {
-            if (!finalAcceptable) {
+        public boolean matches(String word) {
+            if (word == null) {
+                word = "";
+            }
+            if (!word.startsWith(prefix)) {
                 return false;
             }
-            return nextFlag((value) -> {
-                if (value.getBooleanValue().isPresent() && value.booleanValue()) {
-                    consumer.accept(value);
-                }
-            });
+            if (!suffix.isEmpty()) {
+                // Candidate must contain the suffix in the portion AFTER prefix
+                String remainder = word.substring(prefix.length());
+                return remainder.endsWith(suffix) || remainder.contains(suffix);
+            }
+            return true;
+        }
+
+        public boolean matches(NArgCompleteCandidate word) {
+            return matches(word == null ? "" : word.value());
+        }
+
+        @Override
+        public NArgCompleteResult filterValues(Stream<String> values) {
+            if (values == null) {
+                return NArgCompleteResult.ofBlank();
+            }
+            return NArgCompleteResult.ofSimpleCandidates(values.filter(this::matches).collect(Collectors.toList()));
+        }
+
+        @Override
+        public NArgCompleteResult filterValues(Collection<String> values) {
+            if (values == null) {
+                return NArgCompleteResult.ofBlank();
+            }
+            return NArgCompleteResult.ofSimpleCandidates(values.stream().filter(this::matches).collect(Collectors.toList()));
+        }
+
+        @Override
+        public NArgCompleteResult filterCandidates(Stream<NArgCompleteCandidate> values) {
+            if (values == null) {
+                return NArgCompleteResult.ofBlank();
+            }
+            return NArgCompleteResult.ofCandidates(values.filter(this::matches).collect(Collectors.toList()));
+        }
+
+        @Override
+        public NArgCompleteResult filterCandidates(Collection<NArgCompleteCandidate> candidates) {
+            if (candidates == null) {
+                return NArgCompleteResult.ofBlank();
+            }
+            return NArgCompleteResult.ofCandidates(candidates.stream().filter(this::matches).collect(Collectors.toList()));
         }
     }
 
-    private static class MyMatcherConditionImpl implements MatcherCondition {
+//    private class MyNCmdLineArgProcessor implements NCmdLineArgProcessor {
+//        private final boolean finalAcceptable;
+//        private final String[] names;
+//
+//        public MyNCmdLineArgProcessor(boolean finalAcceptable, String... names) {
+//            this.finalAcceptable = finalAcceptable;
+//            this.names = names;
+//        }
+//
+//        public boolean isAcceptable() {
+//            return finalAcceptable;
+//        }
+//
+//        @Override
+//        public boolean nextFlag(Consumer<NArg> consumer) {
+//            if (!finalAcceptable) {
+//                return false;
+//            }
+//            NOptional<NArg> v = next(NArgType.FLAG, names);
+//            if (v.isPresent()) {
+//                NArg a = v.get();
+//                if (a.isUncommented()) {
+//                    consumer.accept(a);
+//                    return true;
+//                }
+//                return true;
+//            }
+//            return false;
+//        }
+//
+//        @Override
+//        public boolean nextEntry(Consumer<NArg> consumer) {
+//            if (!finalAcceptable) {
+//                return false;
+//            }
+//            NOptional<NArg> v = next(NArgType.ENTRY, names);
+//            if (v.isPresent()) {
+//                NArg a = v.get();
+//                if (a.isUncommented()) {
+//                    consumer.accept(a);
+//                    return true;
+//                }
+//                return true;
+//            }
+//            return false;
+//        }
+//
+//
+//        @Override
+//        public boolean nextTrueFlag(Consumer<NArg> consumer) {
+//            if (!finalAcceptable) {
+//                return false;
+//            }
+//            return nextFlag((value) -> {
+//                if (value.getBooleanValue().isPresent() && value.booleanValue()) {
+//                    consumer.accept(value);
+//                }
+//            });
+//        }
+//    }
+
+    private static class MyNCmdLineMatcherConditionImpl implements NCmdLineMatcherCondition {
         private final Predicate<NCmdLine> baseCondition;
         private final String[] names;
-        private final MatcherImpl selector;
+        private final NCmdLineMatcherImpl selector;
         private String display;
-        private NArgCompleteValueComplete complete;
+        private NArgValueComplete complete;
         private final List<Predicate<NCmdLine>> otherConditions = new ArrayList<>();
 
-        public MyMatcherConditionImpl(MatcherImpl selector, Predicate<NCmdLine> baseCondition, String... names) {
+        public MyNCmdLineMatcherConditionImpl(NCmdLineMatcherImpl selector, Predicate<NCmdLine> baseCondition, String... names) {
             this.baseCondition = baseCondition;
             this.names = names;
             this.selector = selector;
         }
 
         @Override
-        public MatcherCondition and(Predicate<NCmdLine> condition) {
+        public NCmdLineMatcherCondition and(Predicate<NCmdLine> condition) {
             if (condition != null) {
                 otherConditions.add(condition);
             }
@@ -1777,13 +1824,13 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public MatcherCondition display(String display) {
+        public NCmdLineMatcherCondition display(String display) {
             this.display = display;
             return this;
         }
 
         @Override
-        public MatcherCondition valueComplete(NArgCompleteValueComplete complete) {
+        public NCmdLineMatcherCondition valueComplete(NArgValueComplete complete) {
             this.complete = complete;
             return this;
         }
@@ -1801,8 +1848,8 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public Matcher matchFlag(Consumer<NArg> consumer) {
-            selector.matchAll(
+        public NCmdLineMatcher asFlag(Consumer<NArg> consumer) {
+            selector.with(
                     new NCmdLineProcessor() {
                         @Override
                         public boolean process(NCmdLine cmdLine) {
@@ -1826,25 +1873,25 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public Matcher matchEntry(Consumer<NArg> consumer) {
-            matchEntry0(NArgType.ENTRY,  consumer);
+        public NCmdLineMatcher asEntry(Consumer<NArg> consumer) {
+            matchEntry0(NArgType.ENTRY, consumer);
             return selector;
         }
 
         @Override
-        public Matcher matchAttachedEntry(Consumer<NArg> consumer) {
-            matchEntry0(NArgType.ATTACHED_ENTRY,  consumer);
+        public NCmdLineMatcher asAttachedEntry(Consumer<NArg> consumer) {
+            matchEntry0(NArgType.ATTACHED_ENTRY, consumer);
             return selector;
         }
 
         @Override
-        public Matcher matchRequiredEntry(Consumer<NArg> consumer) {
-            matchEntry0(NArgType.REQUIRED_ENTRY,  consumer);
+        public NCmdLineMatcher asRequiredEntry(Consumer<NArg> consumer) {
+            matchEntry0(NArgType.REQUIRED_ENTRY, consumer);
             return selector;
         }
 
-        private Matcher matchEntry0(NArgType entryType,Consumer<NArg> consumer) {
-            selector.matchAll(new NCmdLineProcessor() {
+        private NCmdLineMatcher matchEntry0(NArgType entryType, Consumer<NArg> consumer) {
+            selector.with(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NCmdLine cmdLine) {
                     if (!checkCondition(cmdLine)) {
@@ -1867,8 +1914,8 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public Matcher matchAnyMultiple(Consumer<NCmdLine> consumer) {
-            selector.matchAll(new NCmdLineProcessor() {
+        public NCmdLineMatcher asRaw(Consumer<NCmdLine> consumer) {
+            selector.with(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NCmdLine cmdLine) {
                     if (!checkCondition(cmdLine)) {
@@ -1887,8 +1934,8 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public Matcher matchAny(Consumer<NArg> consumer) {
-            selector.matchAll(new NCmdLineProcessor() {
+        public NCmdLineMatcher asArg(Consumer<NArg> consumer) {
+            selector.with(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NCmdLine cmdLine) {
                     if (!checkCondition(cmdLine)) {
@@ -1911,8 +1958,8 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public Matcher skip() {
-            selector.matchAll(new NCmdLineProcessor() {
+        public NCmdLineMatcher skip() {
+            selector.with(new NCmdLineProcessor() {
                 @Override
                 public boolean process(NCmdLine cmdLine) {
                     if (!checkCondition(cmdLine)) {
@@ -1927,8 +1974,8 @@ public class DefaultNCmdLine implements NCmdLine {
         }
 
         @Override
-        public Matcher matchTrueFlag(Consumer<NArg> consumer) {
-            return matchFlag((value) -> {
+        public NCmdLineMatcher asTrueFlag(Consumer<NArg> consumer) {
+            return asFlag((value) -> {
                 if (value.booleanValue()) {
                     consumer.accept(value);
                 }

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.app;
 
-import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.app.*;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
@@ -16,7 +15,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.reflect.NTypeLoader;
@@ -53,7 +51,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     /**
      * auto complete info for "auto-complete" mode
      */
-    private NArgCompletePos completePos;
+    private NArgCompletePosition completePos;
     private NId id;
     private String bundleName;
     private NClock startTime;
@@ -214,7 +212,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
             }
         }
         this.startTime = startTime == null ? NClock.now() : startTime;
-        NArgCompletePos wordIndex = null;
+        NArgCompletePosition wordIndex = null;
         if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
             NCmdLine execModeCommand = NCmdLine.parseDefault(
                     args.get(0).substring(args.get(0).indexOf('=') + 1)).get();
@@ -225,7 +223,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                     case "complete": {
                         this.mode = NApplicationMode.COMPLETE;
                         if (execModeCommand.hasNext()) {
-                            wordIndex = NArgCompletePos.of(execModeCommand.next().get().stringValue()).orNull();
+                            wordIndex = NArgCompletePosition.of(execModeCommand.next().get().stringValue()).orNull();
                         }
                         this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
@@ -448,7 +446,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     }
 
     @Override
-    public NArgCompletePos completePosition() {
+    public NArgCompletePosition completePosition() {
         return this.completePos;
     }
 
@@ -625,10 +623,10 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         if (appArguments == null) {
             return null;
         }
-        NArgCompletePos cp = completePosition();
+        NArgCompletePosition cp = completePosition();
         return NCmdLine.of(appArguments)
                 .commandName(appId.artifactId())
-                .complete(cp)
+                .completePosition(cp)
                 ;
     }
 

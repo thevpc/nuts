@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
@@ -100,10 +99,10 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         }
         switch (a.key()) {
             case "--compact": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> compact = v.booleanValue()).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> compact = v.booleanValue()).anyMatch();
             }
             case "--root-name": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> rootName = v.stringValue()).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> rootName = v.stringValue()).anyMatch();
             }
         }
         return false;

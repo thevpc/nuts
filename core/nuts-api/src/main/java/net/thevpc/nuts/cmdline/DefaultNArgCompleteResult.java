@@ -7,6 +7,7 @@ import net.thevpc.nuts.collections.NCollections;
 import java.util.*;
 
 public class DefaultNArgCompleteResult implements NArgCompleteResult {
+    public static final NArgCompleteResult BLANK=new DefaultNArgCompleteResult(null,null);
     private final List<NArgCompleteCandidate> candidates;
     private final Set<NArgCompleteFlag> flags;
 
@@ -147,5 +148,10 @@ public class DefaultNArgCompleteResult implements NArgCompleteResult {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean isBlank() {
+        return candidates.isEmpty() && flags.isEmpty();
     }
 }

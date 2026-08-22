@@ -323,28 +323,28 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
         switch (aa.key()) {
             case "-c":
             case "--companions": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> this.companions(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.companions(v.booleanValue())).anyMatch();
             }
             case "-i":
             case "--installed": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> this.installed(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.installed(v.booleanValue())).anyMatch();
             }
 //            case "-s":
 //            case "--strategy": {
 //                return cmdLine.matcher().withAny().matchEntry(a->this.setStrategy(NInstallStrategy.parse(a.stringValue()).get())).anyMatch();
 //            }
             case "--reinstall": {
-                return cmdLine.matcher().withAny().matchFlag(a->this.setForce(a.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag(a->this.setForce(a.booleanValue())).anyMatch();
             }
             case "--deploy-only": {
-                return cmdLine.matcher().withAny().matchFlag(a->this.setDeployOnly(a.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag(a->this.setDeployOnly(a.booleanValue())).anyMatch();
             }
             case "--repair": {
-                return cmdLine.matcher().withAny().matchTrueFlag(a->this.setRepair(a.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asTrueFlag(a->this.setRepair(a.booleanValue())).anyMatch();
             }
             case "-g":
             case "--args": {
-                return cmdLine.matcher().withAny().matchAny(a->this.addArgs(cmdLine.nextAllAsStringArray())).anyMatch();
+                return cmdLine.matcher().whenAny().asArg(a->this.addArgs(cmdLine.nextAllAsStringArray())).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {

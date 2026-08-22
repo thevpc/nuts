@@ -2,7 +2,7 @@ package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.cmdline.NArgCompletePos;
+import net.thevpc.nuts.cmdline.NArgCompletePosition;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.ext.NExtensions;
@@ -110,7 +110,7 @@ public interface NApp extends NComponent {
      *
      * @return an instance of {@code NArgCompletePos} providing command line auto-completion features
      */
-    NArgCompletePos completePosition();
+    NArgCompletePosition completePosition();
 
     /**
      * Retrieves the detailed help text associated with this application, providing

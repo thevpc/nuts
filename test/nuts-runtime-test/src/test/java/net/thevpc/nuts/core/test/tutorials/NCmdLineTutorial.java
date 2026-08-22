@@ -61,12 +61,12 @@ public class NCmdLineTutorial {
                     switch (arg.key()) {
                         case "-o":
                         case "--option": {
-                            cmdLine.matcher().withAny().matchFlag((v) -> boolOption.set(v.booleanValue())).require();
+                            cmdLine.matcher().whenAny().asFlag((v) -> boolOption.set(v.booleanValue())).require();
                             return true;
                         }
                         case "-n":
                         case "--name": {
-                            cmdLine.matcher().withAny().matchEntry((v) -> stringOption.set(v.stringValue())).require();
+                            cmdLine.matcher().whenAny().asEntry((v) -> stringOption.set(v.stringValue())).require();
                             return true;
                         }
                     }
@@ -102,12 +102,12 @@ public class NCmdLineTutorial {
                 switch (a.key()) {
                     case "-o":
                     case "--option": {
-                        cmdLine1.matcher().withAny().matchFlag((v) -> boolOption.set(v.booleanValue())).require();
+                        cmdLine1.matcher().whenAny().asFlag((v) -> boolOption.set(v.booleanValue())).require();
                         return true;
                     }
                     case "-n":
                     case "--name": {
-                        cmdLine1.matcher().withAny().matchEntry((v) -> stringOption.set(v.stringValue())).require();
+                        cmdLine1.matcher().whenAny().asEntry((v) -> stringOption.set(v.stringValue())).require();
                         return true;
                     }
                 }
@@ -126,10 +126,12 @@ public class NCmdLineTutorial {
         List<String> nonOptions = new ArrayList<>();
         while (cmdLine.hasNext()) {
             cmdLine.matcher()
-                    .with("-o", "--option").matchFlag((v) -> boolOption.set(v.booleanValue()))
-                    .with("-n", "--name").matchEntry((v) -> stringOption.set(v.stringValue()))
-                    .withNonOption().matchAny(v -> nonOptions.add(v.image()))
-                    .requireDefaults();
+                    .when("-o", "--option").asFlag((v) -> boolOption.set(v.booleanValue()))
+                    .when("-n", "--name").asEntry((v) -> stringOption.set(v.stringValue()))
+                    .whenNonOption().asArg(v -> nonOptions.add(v.image()))
+                    .withDefaults()
+                    .require()
+            ;
         }
     }
 }

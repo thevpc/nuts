@@ -39,11 +39,11 @@ public class CmdLineCompleteTest {
      */
     private static NCmdLine completeAt(int wordIndex, String... tokens) {
         return NCmdLine.of(Arrays.asList(tokens))
-                .complete(NArgCompletePos.of(wordIndex, 0));
+                .completePosition(NArgCompletePosition.of(wordIndex, 0));
     }
     private static NCmdLine completeAt(int wordIndex, int offset,String... tokens) {
         return NCmdLine.of(Arrays.asList(tokens))
-                .complete(NArgCompletePos.of(wordIndex, offset));
+                .completePosition(NArgCompletePosition.of(wordIndex, offset));
     }
 
     private static Set<String> candidateStrings(NArgCompleteResult r) {
@@ -117,7 +117,7 @@ public class CmdLineCompleteTest {
         NCmdLine cmd = completeAt(0, "--fil");
         while (cmd.hasNext()) {
             NOptional<NArg> n = cmd.next(NArgType.ENTRY, "project file",
-                    (prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES),
+                    c -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES),
                     "--file");
             if (n.isPresent()) continue;
             if (cmd.isCompleteMode()) { cmd.skip(); continue; }
@@ -135,7 +135,7 @@ public class CmdLineCompleteTest {
         NCmdLine cmd = completeAt(1, "--file", "");
         while (cmd.hasNext()) {
             NOptional<NArg> n = cmd.next(NArgType.ENTRY, "project file",
-                    (prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES),
+                    c -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES),
                     "--file");
             if (n.isPresent()) continue;
             if (cmd.isCompleteMode()) { cmd.skip(); continue; }
@@ -154,15 +154,15 @@ public class CmdLineCompleteTest {
         // the candidate (exact name) appears in the result.
         NCmdLine cmd = completeAt(0, "--file");
         cmd.matcher()
-                .with("--file")
+                .when("--file")
                 .display("project file")
-                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES))
-                .matchEntry(a -> TestUtils.println("found file " + a.value()))
+                .valueComplete(NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES))
+                .asEntry(a -> TestUtils.println("found file " + a.value()))
                 /////
-                .with("--folder")
+                .when("--folder")
                 .display("project dir")
-                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.DIRNAMES))
-                .matchEntry(a -> TestUtils.println("found folder " + a.value()))
+                .valueComplete(NArgValueComplete.ofFlags(NArgCompleteFlag.DIRNAMES))
+                .asEntry(a -> TestUtils.println("found folder " + a.value()))
                 /////
                 .requireAll();
         NArgCompleteResult result = cmd.completeResult();
@@ -182,15 +182,15 @@ public class CmdLineCompleteTest {
         // the candidate (exact name) appears in the result.
         NCmdLine cmd = completeAt(0, "--f");
         cmd.matcher()
-                .with("--file")
+                .when("--file")
                 .display("project file")
-                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES))
-                .matchEntry(a -> TestUtils.println("found file " + a.value()))
+                .valueComplete(NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES))
+                .asEntry(a -> TestUtils.println("found file " + a.value()))
                 /////
-                .with("--folder")
+                .when("--folder")
                 .display("project dir")
-                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.DIRNAMES))
-                .matchEntry(a -> TestUtils.println("found folder " + a.value()))
+                .valueComplete(NArgValueComplete.ofFlags(NArgCompleteFlag.DIRNAMES))
+                .asEntry(a -> TestUtils.println("found folder " + a.value()))
                 /////
                 .requireAll();
         NArgCompleteResult result = cmd.completeResult();
@@ -210,15 +210,15 @@ public class CmdLineCompleteTest {
         // the candidate (exact name) appears in the result.
         NCmdLine cmd = completeAt(0,3, "--fr");
         cmd.matcher()
-                .with("--file")
+                .when("--file")
                 .display("project file")
-                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES))
-                .matchEntry(a -> TestUtils.println("found file " + a.value()))
+                .valueComplete(NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES))
+                .asEntry(a -> TestUtils.println("found file " + a.value()))
                 /////
-                .with("--folder")
+                .when("--folder")
                 .display("project dir")
-                .valueComplete((prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.DIRNAMES))
-                .matchEntry(a -> TestUtils.println("found folder " + a.value()))
+                .valueComplete(NArgValueComplete.ofFlags(NArgCompleteFlag.DIRNAMES))
+                .asEntry(a -> TestUtils.println("found folder " + a.value()))
                 /////
                 .requireAll();
         NArgCompleteResult result = cmd.completeResult();
@@ -296,7 +296,7 @@ public class CmdLineCompleteTest {
         NCmdLine cmd = completeAt(1, "--out", "");
         while (cmd.hasNext()) {
             NOptional<NArg> n = cmd.next(NArgType.REQUIRED_ENTRY, "output format",
-                    (prefix, suffix) -> NArgCompleteResult.ofCandidates(
+                    c -> NArgCompleteResult.ofCandidates(
                             NArgCompleteCandidate.of("json"),
                             NArgCompleteCandidate.of("xml")),
                     "--out");
@@ -370,14 +370,9 @@ public class CmdLineCompleteTest {
         NCmdLine cmd = completeAt(0, "fo");
         while (cmd.hasNext()) {
             NOptional<NArg> n = cmd.nextNonOption("format",
-                    (prefix, suffix) -> NArgCompleteResult.ofCandidates(
-                            NArgCompleteCandidate.of("large"),
-                            NArgCompleteCandidate.of("file")));
+                    NArgValueComplete.ofSimpleCandidatesList("large","small"));
             if (n.isPresent()) continue;
-            n = cmd.nextNonOption("font",
-                    (prefix, suffix) -> NArgCompleteResult.ofCandidates(
-                            NArgCompleteCandidate.of("arial"),
-                            NArgCompleteCandidate.of("courrier")));
+            n = cmd.nextNonOption("font", NArgValueComplete.ofSimpleCandidatesList("arial","courrier"));
             if (n.isPresent()) continue;
             if (cmd.isCompleteMode()) { cmd.skip(); continue; }
             cmd.throwUnexpectedArgument();
@@ -433,7 +428,7 @@ public class CmdLineCompleteTest {
             NOptional<NArg> sub = cmd.next("sub");
             if (sub.isPresent()) continue;
             NOptional<NArg> entry = cmd.next(NArgType.ENTRY, "file path",
-                    (prefix, suffix) -> NArgCompleteResult.ofFlags(NArgCompleteFlag.FILENAMES),
+                    NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES),
                     "--file");
             if (entry.isPresent()) continue;
             if (cmd.isCompleteMode()) { cmd.skip(); continue; }

@@ -325,13 +325,13 @@ List<String> commands = new ArrayList<>();
 // We create the matcher ONCE. It configures how tokens should be handled.
 cmdLine.matcher()
     // Match boolean flags (-v, --verbose)
-    .with("-v", "--verbose").matchFlag(v -> verbose.set(v.booleanValue()))
+    .when("-v", "--verbose").asFlag(v -> verbose.set(v.booleanValue()))
     // Match valued options (-c, --config)
-    .with("-c", "--config").matchEntry(v -> configPath.set(v.stringValue()))
+    .when("-c", "--config").asEntry(v -> configPath.set(v.stringValue()))
     // Match help flag
-    .with("-h", "--help").matchFlag(v -> showHelp.set(v.booleanValue()))
+    .when("-h", "--help").asFlag(v -> showHelp.set(v.booleanValue()))
     // Match non-option arguments (e.g., "status", "check")
-    .withNonOption().matchAny(v -> commands.add(v.image()))
+    .whenNonOption().asArg(v -> commands.add(v.image()))
     // Handle standard Nuts options (--json, --trace, etc.)
     .withDefaults()
     // 2. Execute the state machine against the entire token stream
@@ -454,9 +454,9 @@ public class NutsAdminCLI {
         // Notice: We DO NOT parse -h/--help here. Nuts handles it automatically 
         // via the com.mycompany.admin.nuts-admin-cli.ntf file!
         cmdLine.matcher()
-            .with("-v", "--verbose").matchFlag(v -> verbose.set(v.booleanValue()))
-            .with("-c", "--config").matchEntry(v -> configPath.set(v.stringValue()))
-            .withNonOption().matchAny(v -> commands.add(v.image()))
+            .when("-v", "--verbose").asFlag(v -> verbose.set(v.booleanValue()))
+            .when("-c", "--config").asEntry(v -> configPath.set(v.stringValue()))
+            .whenNonOption().asAny(v -> commands.add(v.image()))
             .withDefaults() // Handles --json, --trace, and automatically intercepts --help
             .requireAll();
 
@@ -716,9 +716,9 @@ public class NutsAdminCLI {
 
         // State machine for CLI parsing
         cmdLine.matcher()
-            .with("-v", "--verbose").matchFlag(v -> verbose.set(v.booleanValue()))
-            .with("-c", "--config").matchEntry(v -> configPath.set(v.stringValue()))
-            .withNonOption().matchAny(v -> commands.add(v.image()))
+            .when("-v", "--verbose").whenFlag(v -> verbose.set(v.booleanValue()))
+            .when("-c", "--config").whenEntry(v -> configPath.set(v.stringValue()))
+            .whenNonOption().asArg(v -> commands.add(v.image()))
             .withDefaults()
             .requireAll();
 
@@ -993,9 +993,9 @@ public class NutsAdminCLI {
         List<String> commands = new ArrayList<>();
 
         cmdLine.matcher()
-            .with("-v", "--verbose").matchFlag(v -> verbose.set(v.booleanValue()))
-            .with("-c", "--config").matchEntry(v -> configPath.set(v.stringValue()))
-            .withNonOption().matchAny(v -> commands.add(v.image()))
+            .when("-v", "--verbose").asFlag(v -> verbose.set(v.booleanValue()))
+            .when("-c", "--config").asEntry(v -> configPath.set(v.stringValue()))
+            .whenNonOption().asArg(v -> commands.add(v.image()))
             .withDefaults()
             .requireAll();
 
@@ -1244,9 +1244,9 @@ public class NutsAdminCLI {
         List<String> commands = new ArrayList<>();
 
         cmdLine.matcher()
-            .with("-v", "--verbose").matchFlag(v -> verbose.set(v.booleanValue()))
-            .with("-c", "--config").matchEntry(v -> configPath.set(v.stringValue()))
-            .withNonOption().matchAny(v -> commands.add(v.image()))
+            .when("-v", "--verbose").asFlag(v -> verbose.set(v.booleanValue()))
+            .when("-c", "--config").asEntry(v -> configPath.set(v.stringValue()))
+            .whenNonOption().asArg(v -> commands.add(v.image()))
             .withDefaults()
             .requireAll();
 
@@ -1603,9 +1603,9 @@ public class NutsAdminCLI {
         List<String> commands = new ArrayList<>();
 
         cmdLine.matcher()
-            .with("-v", "--verbose").matchFlag(v -> verbose.set(v.booleanValue()))
-            .with("-c", "--config").matchEntry(v -> configPath.set(v.stringValue()))
-            .withNonOption().matchAny(v -> commands.add(v.image()))
+            .when("-v", "--verbose").whenFlag(v -> verbose.set(v.booleanValue()))
+            .when("-c", "--config").whenEntry(v -> configPath.set(v.stringValue()))
+            .whenNonOption().asArg(v -> commands.add(v.image()))
             .withDefaults()
             .requireAll();
 

@@ -1,9 +1,11 @@
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.util.NBlankable;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-public interface NArgCompleteResult {
+public interface NArgCompleteResult extends NBlankable {
     static NArgCompleteResult of(String txt) {
         return DefaultNArgCompleteResult.parse(txt);
     }
@@ -26,6 +28,10 @@ public interface NArgCompleteResult {
 
     static NArgCompleteResult ofSimpleCandidates(Collection<String> candidates) {
         return of(candidates == null ? null : candidates.stream().filter(Objects::nonNull).map(NArgCompleteCandidate::of).collect(Collectors.toList()), null);
+    }
+
+    static NArgCompleteResult ofBlank() {
+        return DefaultNArgCompleteResult.BLANK;
     }
 
     static NArgCompleteResult ofCandidates(Collection<NArgCompleteCandidate> candidates) {

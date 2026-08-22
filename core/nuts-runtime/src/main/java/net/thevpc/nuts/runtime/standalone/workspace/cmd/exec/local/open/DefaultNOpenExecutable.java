@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.open;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootCompleteRequest;
-import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExec;
@@ -44,9 +43,9 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
         this.executorOptions = executorOptions;
 
         NCmdLine.of(this.executorOptions).matcher()
-                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
-                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
-                .withAny().skip()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
                 .requireAll();
 
         switch (NEnv.of().osFamily()) {

@@ -26,7 +26,7 @@ class NJLineCompleter implements Completer {
             if (line.words().size() > 0) {
                 cmdLine.commandName(line.words().get(0));
             }
-            NArgCompleteResult nArgCompleteCandidates2 = autoCompleteResolver.resolveCandidates(cmdLine, new NArgCompletePos(
+            NArgCompleteResult nArgCompleteCandidates2 = autoCompleteResolver.resolveCandidates(cmdLine, new NArgCompletePosition(
                     line.wordIndex(),
                     line.wordCursor(),
                     line.cursor()

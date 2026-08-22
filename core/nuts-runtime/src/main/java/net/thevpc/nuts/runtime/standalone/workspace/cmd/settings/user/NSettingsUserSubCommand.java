@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NArgCompleteValueComplete;
+import net.thevpc.nuts.cmdline.NArgValueComplete;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
@@ -32,7 +32,7 @@ import java.util.List;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
 
-    public static final NArgCompleteValueComplete COMPLETE_REPO = NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(() -> NWorkspace.of().repositories().stream().map(NRepository::name));
+    public static final NArgValueComplete COMPLETE_REPO = NArgValueComplete.ofSimpleCandidatesStreamSupplier(() -> NWorkspace.of().repositories().stream().map(NRepository::name));
 
     public NSettingsUserSubCommand() {
     }
@@ -234,7 +234,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     } else {
                         switch (lastOption) {
                             case "--add-group": {
-                                String a = cmdLine.nextNonOption("Group",NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.groups().stream()))).get().image();
+                                String a = cmdLine.nextNonOption("Group", NArgValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.groups().stream()))).get().image();
                                 if (cmdLine.isExecMode()) {
                                     NSecurityManager.of().updateUser(
                                             NSecurityManager.of().getUser(user)
@@ -245,7 +245,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--remove-group": {
-                                String a = cmdLine.nextNonOption("Group",NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.groups().stream()))).get().image();
+                                String a = cmdLine.nextNonOption("Group", NArgValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.groups().stream()))).get().image();
                                 if (cmdLine.isExecMode()) {
                                     NSecurityManager.of().updateUser(
                                             NSecurityManager.of().getUser(user)
@@ -271,7 +271,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 break;
                             }
                             case "--remove-right": {
-                                String a = cmdLine.nextNonOption("Right",NArgCompleteValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.permissions().stream()))).get().image();
+                                String a = cmdLine.nextNonOption("Right", NArgValueComplete.ofSimpleCandidatesStreamSupplier(()-> NSecurityManager.of().getUser(user).jstream().flatMap(x->x.permissions().stream()))).get().image();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         NSecurityManager.of().removeRepositoryPermissions(user, repository.uuid(), a);

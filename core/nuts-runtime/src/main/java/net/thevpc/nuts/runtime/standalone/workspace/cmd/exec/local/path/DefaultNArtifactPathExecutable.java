@@ -13,7 +13,6 @@ import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
@@ -65,9 +64,9 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
         this.workspaceOptions = workspaceOptions;
         this.executorComponentAndContext = executorComponentAndContext;
         NCmdLine.of(this.executorOptions).matcher()
-                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
-                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
-                .withAny().skip()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
                 .requireAll();
     }
 

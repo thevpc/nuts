@@ -10,7 +10,6 @@ import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.*;
@@ -67,10 +66,10 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         List<String> executorOptionsList = new ArrayList<>();
         this.executorOptions = executorOptionsList;
         NCmdLine.of(this.executorOptions).matcher()
-                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
-                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
-                .with("--nuts-auto-install").matchFlag(a->this.autoInstall = a.booleanValue())
-                .withAny().matchAny(a->executorOptionsList.add(a.image()))
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .when("--nuts-auto-install").asFlag(a->this.autoInstall = a.booleanValue())
+                .whenAny().asArg(a->executorOptionsList.add(a.image()))
                 .requireAll();
 
         this.workspaceOptions = workspaceOptions;

@@ -256,11 +256,11 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
         switch (a.key()) {
             case "-o":
             case "--offline": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> offline(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> offline(v.booleanValue())).anyMatch();
             }
             case "-x":
             case "--freeze": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> {
+                return cmdLine.matcher().whenAny().asEntry((v) -> {
                     for (String id : v.stringValue().split(",")) {
                         addLockedId(id);
                     }
@@ -269,11 +269,11 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
             case "-r":
             case "-repository":
             case "--from": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> repository(v.stringValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> repository(v.stringValue())).anyMatch();
             }
             case "-g":
             case "--args": {
-                return cmdLine.matcher().withAny().matchTrueFlag((v) -> {
+                return cmdLine.matcher().whenAny().asTrueFlag((v) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 }).anyMatch();

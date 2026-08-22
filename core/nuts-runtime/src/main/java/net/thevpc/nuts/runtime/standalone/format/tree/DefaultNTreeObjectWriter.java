@@ -94,7 +94,7 @@ public class DefaultNTreeObjectWriter extends DefaultObjectWriterBase<NTreeObjec
         boolean enabled = aa.isUncommented();
         switch (aa.key()) {
             case "--border": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> {
+                return cmdLine.matcher().whenAny().asEntry((v) -> {
                     switch (NStringUtils.strip(v.stringValue())) {
                         case "simple": {
                             renderer.linkFormat(DefaultNTextArtTreeRenderer.LINK_ASCII_FORMATTER);
@@ -108,10 +108,10 @@ public class DefaultNTreeObjectWriter extends DefaultObjectWriterBase<NTreeObjec
                 }).anyMatch();
             }
             case "--omit-root": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> renderer.omitRoot(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> renderer.omitRoot(v.booleanValue())).anyMatch();
             }
             case "--infinite": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> renderer.infinite((v.booleanValue()))).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> renderer.infinite((v.booleanValue()))).anyMatch();
             }
             case DefaultNPropertiesObjectWriter.OPTION_MULTILINE_PROPERTY: {
                 NArg i = cmdLine.nextEntry().get();

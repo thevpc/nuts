@@ -200,11 +200,11 @@ public class NFetchDisplayOptions {
                 return true;
             }
             case "--dependencies": {
-                cmdLine.matcher().withAny().matchFlag((v) -> this.setDependencies(v.booleanValue())).anyMatch();
+                cmdLine.matcher().whenAny().asFlag((v) -> this.setDependencies(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--content": {
-                cmdLine.matcher().withAny().matchFlag((v) -> this.setContent(v.booleanValue())).anyMatch();
+                cmdLine.matcher().whenAny().asFlag((v) -> this.setContent(v.booleanValue())).anyMatch();
                 return true;
             }
         }

@@ -74,9 +74,9 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     NRef<String> product = NRef.ofNull();
                     cmdLine
                             .matcher()
-                            .with("--version").matchEntry(a -> ver.set(a.stringValue()))
-                            .with("--jdk").matchTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JDK))
-                            .with("--jre").matchTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JRE))
+                            .when("--version").asEntry(a -> ver.set(a.stringValue()))
+                            .when("--jdk").asTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JDK))
+                            .when("--jre").asTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JRE))
                             .require();
                     NExecutionEngineLocation loc = pinstaller.downloadRemoteExecutionEngine(
                             NExecutionEngineFamily.JAVA,

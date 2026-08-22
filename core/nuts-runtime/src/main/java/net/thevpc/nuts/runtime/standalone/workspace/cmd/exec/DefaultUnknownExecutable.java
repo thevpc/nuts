@@ -27,9 +27,9 @@ public class DefaultUnknownExecutable extends AbstractNExecutableInformationExt 
         super(cmd[0], NCmdLine.of(cmd).toString(), NExecutableType.UNKNOWN,execCommand);
         this.executorOptions=executorOptions;
         NCmdLine.of(this.executorOptions).matcher()
-                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
-                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
-                .withAny().skip()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
                 .requireAll();
     }
 

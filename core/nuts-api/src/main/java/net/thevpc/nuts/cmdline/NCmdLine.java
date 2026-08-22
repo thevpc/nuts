@@ -231,11 +231,11 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     /**
      * set complete instance
      *
-     * @param completePos autocomplete instance
+     * @param completePosition autocomplete instance
      * @return {@code this} instance
      */
     @NSetter
-    NCmdLine complete(NArgCompletePos completePos);
+    NCmdLine completePosition(NArgCompletePosition completePosition);
 
     /**
      * unregister {@code options} as simple (with simple '-') option. This
@@ -375,19 +375,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> next();
 
-    NOptional<String> nextString();
-
-
-//    /**
-//     * consume (remove) the first option and return it while adding a hint to
-//     * Auto Complete about expected argument candidates return null if not
-//     * argument is left
-//     *
-//     * @param option expected option name
-//     * @return next argument
-//     */
-//    NOptional<NArg> nextOption(String option);
-
     /**
      * the first argument to consume without removing/consuming it or null if
      * not argument is left
@@ -405,9 +392,9 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     boolean isNextNonOption();
 
     /**
-     * true if there still at least one argument to consume
+     * true if at least one argument remains to be consumed
      *
-     * @return true if there still at least one argument to consume
+     * @return true if at least one argument remains to be consumed
      */
     boolean hasNext();
 
@@ -439,7 +426,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> nextEntry(String... names);
 
-    Matcher matcher();
+    NCmdLineMatcher matcher();
 
     NOptional<NArg> nextAttachedEntry(String... names);
 
@@ -474,7 +461,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> next(NArgType expectValue, String... names);
 
-    NArgCompletePos currentPos();
+    NArgCompletePosition completePosition();
 
     /**
      * next argument if it exists and It's a non option. Return null in all
@@ -484,7 +471,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> nextNonOption();
 
-    NOptional<NArg> next(NArgType expectedArgType, String argDisplay, NArgCompleteValueComplete valueComplete, String... names);
+    NOptional<NArg> next(NArgType expectedArgType, String argDisplay, NArgValueComplete valueComplete, String... names);
 
     /**
      * next non-option argument if it exists. Return null in all other cases.
@@ -503,7 +490,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @param complete supplier of completion candidates for the value
      * @return next argument if it exists and it's a non option
      */
-    NOptional<NArg> nextNonOption(String display, NArgCompleteValueComplete complete);
+    NOptional<NArg> nextNonOption(String display, NArgValueComplete complete);
 
     /**
      * consume all words and return consumed count
@@ -705,88 +692,5 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     @NSetter
     NCmdLine shellFamily(NShellFamily shellFamily);
-
-    interface Matcher {
-        Matcher matchAll(NCmdLineProcessor processor);
-
-        MatcherCondition withAny();
-
-        MatcherCondition with(String... names);
-
-        MatcherCondition withCondition(Predicate<NCmdLine> condition);
-
-        MatcherCondition withNonOption();
-
-        MatcherCondition withOption();
-
-        Matcher withDefaults();
-
-        boolean anyMatch();
-
-        boolean noMatch();
-
-
-        /**
-         * Equivalent to {@code withDefaults().require()} — first registers
-         * the session's built-in options (e.g. --verbose, --debug) as fallback
-         * processors, then throws if still no match.
-         * Prefer this over {@code require()} unless you explicitly want to
-         * exclude session defaults.
-         */
-        void requireDefaults();
-
-        /**
-         * Throws an error if no processor matched the current argument.
-         * Does not apply session defaults.
-         */
-        void require();
-
-        /**
-         * equivalent to {@code while(cmdline.hasMode()){require()} }
-         */
-        void requireAll();
-
-        /**
-         * equivalent to {@code while(cmdline.hasMode()){requireDefaults()} }
-         */
-        void requireAllDefaults();
-
-
-        Matcher withDefaultFirst();
-    }
-
-    interface MatcherCondition {
-        /**
-         * consume next argument with boolean value and run {@code consumer}
-         *
-         * @return true if active
-         */
-        Matcher matchFlag(Consumer<NArg> consumer);
-
-        MatcherCondition and(Predicate<NCmdLine> condition);
-
-        MatcherCondition display(String display);
-
-        MatcherCondition valueComplete(NArgCompleteValueComplete finder);
-
-        /**
-         * consume next argument with string value and run {@code consumer}
-         *
-         * @return true if active
-         */
-        Matcher matchEntry(Consumer<NArg> consumer);
-
-        Matcher matchAttachedEntry(Consumer<NArg> consumer);
-
-        Matcher matchRequiredEntry(Consumer<NArg> consumer);
-
-        Matcher matchAny(Consumer<NArg> consumer);
-
-        Matcher skip();
-
-        Matcher matchAnyMultiple(Consumer<NCmdLine> consumer);
-
-        Matcher matchTrueFlag(Consumer<NArg> consumer);
-    }
 
 }

@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.imports;
 
-import net.thevpc.nuts.cmdline.NArgCompleteResult;
+import net.thevpc.nuts.cmdline.NArgValueComplete;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.NWorkspace;
 
@@ -14,8 +14,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
-
-import java.util.stream.Collectors;
 
 /**
  *
@@ -58,10 +56,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
             return true;
         } else if (cmdLine.next("unimport", "ir").isPresent()) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.nextNonOption("import", (prefix, suffix) -> NArgCompleteResult.ofSimpleCandidates(
-                        NWorkspace.of().allImports().stream().filter(x -> x.startsWith(prefix)
-                                && x.endsWith(suffix)).collect(Collectors.toList())
-                )).get()
+                String ii = cmdLine.nextNonOption("import", NArgValueComplete.ofSimpleCandidatesListSupplier(()->NWorkspace.of().allImports())).get()
                         .asString().get();
                 if (cmdLine.isExecMode()) {
                     NWorkspace.of().removeImports(ii);

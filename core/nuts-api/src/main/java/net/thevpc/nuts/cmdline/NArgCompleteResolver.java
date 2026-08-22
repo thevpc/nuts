@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import java.util.List;
-
 /**
  * Auto Complete Resolver
  *
@@ -43,6 +41,6 @@ public interface NArgCompleteResolver {
      * @param pos     cursor position where to complete
      * @return possible candidates
      */
-    NArgCompleteResult resolveCandidates(NCmdLine cmdLine, NArgCompletePos pos);
+    NArgCompleteResult resolveCandidates(NCmdLine cmdLine, NArgCompletePosition pos);
 
 }

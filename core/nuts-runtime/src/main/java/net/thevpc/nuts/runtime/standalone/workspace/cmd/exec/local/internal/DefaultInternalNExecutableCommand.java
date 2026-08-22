@@ -11,7 +11,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -33,9 +32,9 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
         this.args = args;
         this.executorOptions = executorOptions;
         NCmdLine.of(this.executorOptions).matcher()
-                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
-                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
-                .withAny().skip()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
                 .requireAll();
     }
     public DefaultInternalNExecutableCommand(NInternalCommand impl, String[] args, NExec execCommand, List<String> executorOptions) {
@@ -44,9 +43,9 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
         this.impl = impl;
         this.executorOptions = executorOptions;
         NCmdLine.of(this.executorOptions).matcher()
-                .with("--show-command").matchFlag(a->this.showCommand = (a.booleanValue()))
-                .with("--nuts-exec-mode").matchFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
-                .withAny().skip()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
                 .requireAll();
     }
 

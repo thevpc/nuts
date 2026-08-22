@@ -645,25 +645,25 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             }
             case "--dry":
             case "-d": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> dry(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> dry(v.booleanValue())).anyMatch();
             }
             case "--target": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> this.connectionString(v.stringValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.connectionString(v.stringValue())).anyMatch();
             }
             case "--rerun": {
-                return cmdLine.matcher().withAny().matchFlag((v) -> this.multipleRuns = v.booleanValue()).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.multipleRuns = v.booleanValue()).anyMatch();
             }
             case "--rerun-min-time": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
             }
             case "--rerun-safe-time": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
             }
             case "--rerun-max-count": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> this.multipleRunsMaxCount = NLiteral.of(v).asInt().get()).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsMaxCount = NLiteral.of(v).asInt().get()).anyMatch();
             }
             case "--cron": {
-                return cmdLine.matcher().withAny().matchEntry((v) -> this.multipleRunsCron = v.stringValue()).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsCron = v.stringValue()).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {
