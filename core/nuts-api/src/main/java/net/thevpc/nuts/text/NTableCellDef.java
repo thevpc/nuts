@@ -30,28 +30,27 @@ package net.thevpc.nuts.text;
  * @app.category Format
  * @since 0.5.5
  */
-public interface NTableCell {
-    static NTableCell of(String content) {
-        return NTableCellSpecBuilder.of(content == null ? null : NText.of(content)).build();
-    }
-
-    static NTableCell of(NText content) {
-        return NTableCellSpecBuilder.of(content).build();
-    }
-
-    static NTableCell of(NText content, int colspan, int rowspan) {
-        return NTableCellSpecBuilder.of(content, colspan, rowspan).build();
-    }
-
-    NPositionType verticalAlign();
-
-    NPositionType horizontalAlign();
+public interface NTableCellDef {
 
     int colspan();
 
+    NTableCellDef colspan(int colspan);
+
     int rowspan();
 
+    NTableCellDef rowspan(int rowspan);
+
+    int x();
+
+    int y();
+
     NText content();
+
+    NTableCellDef content(NText content);
+
+    NPositionType horizontalAlign();
+
+    NPositionType verticalAlign();
 
     NTableCellSpecBuilder builder();
 }
