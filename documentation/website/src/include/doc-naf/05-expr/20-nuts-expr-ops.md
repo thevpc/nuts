@@ -1,3 +1,7 @@
+---
+title: Expression Operators
+---
+
 # NExpr — Operators
 
 Part of the NExpr doc set. Covers `NExprOperator`, operator kinds, declaring and removing operators, precedence & associativity, `NExprCommonOp`, and the complete built-in operator table.
@@ -136,7 +140,9 @@ public final class NExprOpPrecedence {
 | `ASSIGN` | 100 | `=` and all compound assigns (`+=`, `-=`, `*=`, `/=`, `%=`, `^=`, `**=`) |
 | `STATEMENT_SEPARATOR` | 50 | `;` |
 
-> **Caveat — the `declareBuiltins()` excerpt vs. the full engine:** the excerpt of `declareBuiltins()` available for this doc registers `&` and `|` as *aliases* of the logical `AND`/`OR` operators (precedence tiers `AND`/`OR`), and registers `==`/`!=`/`%` at the coarser `CMP` tier rather than at `EQ`/`MOD`. Separately, `PIPE` (bitwise `|`), `AMP` (bitwise `&`), `SHIFT` (`<<`/`>>`), and `COALESCE` (`??`) are confirmed to be wired to their own distinct operators elsewhere in the full engine — i.e. NExpr distinguishes a *logical* `&`/`|` from a *bitwise* `&`/`|` (much like the difference is only visible through which tier the parser actually binds to, not through the symbol alone). Only `TERNARY_CMP` (200) is confirmed genuinely unused so far, reserved for a future ternary operator. `COMPLEMENT` (600) has no confirmed operator yet.
+:::info
+**Caveat — the `declareBuiltins()` excerpt vs. the full engine:** the excerpt of `declareBuiltins()` available for this doc registers `&` and `|` as *aliases* of the logical `AND`/`OR` operators (precedence tiers `AND`/`OR`), and registers `==`/`!=`/`%` at the coarser `CMP` tier rather than at `EQ`/`MOD`. Separately, `PIPE` (bitwise `|`), `AMP` (bitwise `&`), `SHIFT` (`<<`/`>>`), and `COALESCE` (`??`) are confirmed to be wired to their own distinct operators elsewhere in the full engine — i.e. NExpr distinguishes a *logical* `&`/`|` from a *bitwise* `&`/`|` (much like the difference is only visible through which tier the parser actually binds to, not through the symbol alone). Only `TERNARY_CMP` (200) is confirmed genuinely unused so far, reserved for a future ternary operator. `COMPLEMENT` (600) has no confirmed operator yet.
+:::
 
 **Associativity, as registered in the shown `declareBuiltins()` excerpt:**
 

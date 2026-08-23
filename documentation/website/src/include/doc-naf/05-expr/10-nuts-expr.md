@@ -1,3 +1,7 @@
+---
+title: Expressions
+---
+
 # NExpr — Expression & Template Engine (Nuts Ecosystem)
 
 NExpr is a lightweight, embeddable expression and templating engine, part of the `thevpc`/Nuts ecosystem. It parses expression strings into an AST (`NExprNode`), evaluates them against a pluggable `NExprContext`, and powers a templating language (`NExprTemplate`) built on the same parser.
@@ -9,10 +13,10 @@ This is the entry point into a small doc set:
 | Doc | Covers |
 |---|---|
 | **NExpr.md** (this file) | Core concepts, quick start, context building, variables, functions/constructs, the AST, `if`/`else`, literal mapping, design notes. |
-| [`NExpr-Operators.md`](./NExpr-Operators.md) | Operator kinds, declaring/removing operators, the full precedence & associativity table, `NExprCommonOp`, the complete built-in operator table. |
-| [`NExpr-Evaluation.md`](./NExpr-Evaluation.md) | The evaluation pipeline, `NExprCallContext`/`NExprCallHandler`/`NExprNodeValue`, custom resolvers, the built-in function table, worked examples. |
-| [`NExpr-Templating.md`](./NExpr-Templating.md) | `NExprTemplate`: Moustache/JSP-style directives, `$`-interpolation, and embedding NExpr's templating in other languages via custom delimiters. |
-| [`NExpr-Tokenizer.md`](./NExpr-Tokenizer.md) | `NStreamTokenizer`, and how/why it differs from `java.io.StreamTokenizer`. |
+| expr-operators | Operator kinds, declaring/removing operators, the full precedence & associativity table, `NExprCommonOp`, the complete built-in operator table. |
+| expr-evaluation | The evaluation pipeline, `NExprCallContext`/`NExprCallHandler`/`NExprNodeValue`, custom resolvers, the built-in function table, worked examples. |
+| expr-templating | `NExprTemplate`: Moustache/JSP-style directives, `$`-interpolation, and embedding NExpr's templating in other languages via custom delimiters. |
+| expr-tokenizer | `NStreamTokenizer`, and how/why it differs from `java.io.StreamTokenizer`. |
 
 ---
 
@@ -26,8 +30,8 @@ This is the entry point into a small doc set:
 | Node | `NExprNode` (and subtypes) | The parsed AST. Has a `nodeType()`, a `name()`, `children()`, and can be `eval(context)`. |
 | Var | `NExprVar` | A named, gettable/settable value (variable or constant) bound into a context. |
 | Function | `NExprFunction` | A named callable, used for both **functions** (`f(args)`) and **constructs** (`new`-like or keyword forms). |
-| Operator | `NExprOperator` | A named callable with an `NExprOpType` (`PREFIX` / `POSTFIX` / `INFIX`), a precedence, and an associativity. See [`NExpr-Operators.md`](./NExpr-Operators.md). |
-| Template | `NExprTemplate` | A text-templating layer built on the same expression engine. See [`NExpr-Templating.md`](./NExpr-Templating.md). |
+| Operator | `NExprOperator` | A named callable with an `NExprOpType` (`PREFIX` / `POSTFIX` / `INFIX`), a precedence, and an associativity. See expr-operators. |
+| Template | `NExprTemplate` | A text-templating layer built on the same expression engine. See expr-templating. |
 
 ### Object graph at a glance
 
@@ -98,15 +102,15 @@ NExprTemplate tpl = NExprContextBuilder.of()
         .declareVars(NExprVarResolver.ofMap(vars))
         .build()
         .ofTemplate()
-        .withMoustacheStyle();
+        .withJspStyle();
 
 String out = tpl.processString(
-    "hello {{:if yellow }} {{world}} {{:else if blue }} my  {{:else}} World {{:end}}"
+    "hello <%:if yellow %> <%world%> <%:else if blue %> my  <%:else%> World <%:end%>"
 );
 // -> "hello  Earth "
 ```
 
-See [`NExpr-Templating.md`](./NExpr-Templating.md) for the full directive set, and [`NExpr-Evaluation.md`](./NExpr-Evaluation.md) for a formula/constraint-evaluation example closer to numeric/engineering use.
+See expr-templating.md for the full directive set, and expr-evaluation for a formula/constraint-evaluation example closer to numeric/engineering use.
 
 ---
 
@@ -120,8 +124,8 @@ Key builder operations:
 |---|---|
 | `declareBuiltins()` | Registers the engine's default operators/functions/constructs (arithmetic, comparison, logical, indexing `[ ]`, grouping `( )`, member access `.`, assignment `=`, `if`, etc.) — see [`NExpr-Operators.md §built-ins`](./NExpr-Operators.md) and [`NExpr-Evaluation.md §built-in functions`](./NExpr-Evaluation.md). |
 | `declareMathConstants()` | Adds `pi`/`PI`/`π` (`Math.PI`) and `E` (`Math.E`). |
-| `declarePhysicsConstants()` | Adds a set of SI physics constants (`C`, `ε0`, `μ0`, `η0`, `h`, `ħ`, `kB`, `NA`, `me`, `mp`, `G`, `g`, `R`, `σ`, …) — see [`NExpr-Evaluation.md`](./NExpr-Evaluation.md) for the full table and a worked example. |
-| `declareMathFunctions()` | Adds standard `java.lang.Math`-backed functions (`sin`, `cos`, `sqrt`, `pow`, `atan2`, …) — full list in [`NExpr-Evaluation.md`](./NExpr-Evaluation.md). |
+| `declarePhysicsConstants()` | Adds a set of SI physics constants (`C`, `ε0`, `μ0`, `η0`, `h`, `ħ`, `kB`, `NA`, `me`, `mp`, `G`, `g`, `R`, `σ`, …) — see expr-evaluation for the full table and a worked example. |
+| `declareMathFunctions()` | Adds standard `java.lang.Math`-backed functions (`sin`, `cos`, `sqrt`, `pow`, `atan2`, …) — full list in expr-evaluation. |
 | `declareVar(NExprVar)` / `declareVars(NExprVarResolver)` | Register a single variable, or a *resolver* that lazily/dynamically resolves variables by name. |
 | `declareFunction(NExprFunction)` / `declareFunctions(NExprFunctionResolver)` | Register a function or a function resolver. |
 | `declareConstruct(NExprFunction)` / `declareConstructs(NExprFunctionResolver)` | Register a "construct" — syntactically function-like, semantically distinct (see §5 below). |
@@ -162,7 +166,7 @@ public interface NExprOperatorResolver {
 - **`NExprResolver`** is a *composite* resolver — a single object that can, at your option, back functions, constructs, operators, **and** variables all at once (every method has a sensible "not found" default via `NOptional.ofEmpty(...)`, so you only override the kinds you actually want to resolve). Registered via `NExprContextBuilder.declareResolver(NExprResolver)`. Useful when one backing source (e.g. a scripting bridge, a bean/reflection adapter, an embedding host object) legitimately supplies more than one kind of symbol.
 - **`NExprOperatorResolver`** is the operator-specific counterpart to `NExprFunctionResolver`/`NExprVarResolver` — a single-method resolver for dynamically supplying `NExprOperator`s by `(name, type)`, registered via `NExprContextBuilder.declareOperators(NExprOperatorResolver)`.
 
-Note the consistent `NOptional.ofEmpty(() -> NMsg.ofC(...))` idiom for "not found" — a lazily-built diagnostic message rather than an eager string, so resolvers that are asked about hundreds of candidate names during lookup chains don't pay message-formatting cost unless the failure message is actually inspected. `NOptional` itself has its own documentation elsewhere in the Nuts ecosystem — briefly, it's a tri-state optional (`present` / `empty` / `error`, vs. Java's two-state `Optional`), which is why resolver methods can distinguish "I don't know this name" (`empty`) from "I tried and it failed" (`error`).
+Note the consistent `NOptional.ofEmpty(() -> NMsg.ofC(...))` idiom for "not found" — a lazily-built diagnostic message rather than an eager string, so resolvers that are asked about hundreds of candidate names during lookup chains don't pay message-formatting cost unless the failure message is actually inspected.
 
 ---
 
@@ -226,7 +230,7 @@ Both are resolved either by direct declaration or via a resolver:
 
 `NExprCallContextType` tags *how* a call is being evaluated: `FUNCTION`, `CONSTRUCT`, or `OPERATOR` (with alias parsing for strings like `"FCT"`, `"NEW"`/`"CONSTRUCTOR"`, `"OP"`).
 
-For how to actually *implement* a function/construct handler (`NExprCallHandler`, `NExprCallContext`, `NExprNodeValue`) and for two worked examples (a reflection-based function resolver and a physics-formula evaluator), see [`NExpr-Evaluation.md`](./NExpr-Evaluation.md). The full built-in function table (`string`, `join`, `format*`, `isBlank`, …) also lives there.
+For how to actually *implement* a function/construct handler (`NExprCallHandler`, `NExprCallContext`, `NExprNodeValue`) and for two worked examples (a reflection-based function resolver and a physics-formula evaluator), see expr-evaluation. The full built-in function table (`string`, `join`, `format*`, `isBlank`, …) also lives there.
 
 ---
 
@@ -265,7 +269,7 @@ public enum NExprNodeType implements NEnum {
 | `OPERATOR` | Any operator application (prefix/postfix/infix, including grouping `(`, indexing `[`, block `{`, and member access `.`) | `a&b`, `(a&&b)`, `a.b` |
 | `LITERAL` | A literal value token (number, quoted string, boolean, `null`) | the `1` in `a.b>1` (`test12`) — see `NExprLiteralNode` / `NExprNode.ofLiteral(Object)` |
 | `FUNCTION` | A function or construct call node, e.g. `f(a, b)` | `printChunk(0)` (`test8`) |
-| `INTERPOLATED_STR` | A `$`-prefixed or Moustache-style interpolated string | `$'something for $v'` (`test10`) — see [`NExpr-Templating.md`](./NExpr-Templating.md) |
+| `INTERPOLATED_STR` | A `$`-prefixed or Moustache-style interpolated string | `$'something for $v'` (`test10`) — see expr-templating |
 | `IF` | An `if [(cond)] then [else]` expression | `if (a) 'hello' else 'hella'` (`test6`) — see §7 below |
 
 ### 6.2 Node subtypes seen in the tests
@@ -273,7 +277,7 @@ public enum NExprNodeType implements NEnum {
 - `NExprWordNode` — a bare word/identifier node (e.g. the `c` operand in `a*b+c`, `test11`). Constructible directly via `NExprNode.ofWord(String)`.
 - `NExprLiteralNode` — a literal value node (numbers, quoted strings, booleans — e.g. the `1` in `a.b>1`, `test12`). Constructible directly via `NExprNode.ofLiteral(Object)`.
 - `NExprInterpolatedStringNode` — produced by `ofDollarInterpolatedString(...)` / `ofMoustacheInterpolatedString(...)`, and by parsing `$'...'` syntax directly (`test10`).
-- `NExprNodeValue extends NExprNode` — the argument-wrapper type passed into every `NExprCallHandler`; see [`NExpr-Evaluation.md`](./NExpr-Evaluation.md).
+- `NExprNodeValue extends NExprNode` — the argument-wrapper type passed into every `NExprCallHandler`; see expr-evaluation.
 
 ### 6.3 Common node API in practice
 
@@ -291,21 +295,20 @@ expr.parse("printChunk(0);;printChunk(0);;printChunk(0)\n");    // test9 — cha
 expr.parse("if (a) 'hello' else {'hella'};x=3");                // test7 — block body `{ ... }`, followed by another statement
 ```
 
-`{ ... }` acts as a block/grouping for statement bodies (as an `if`/`else` branch, per `test7`). `;` itself is a genuine left-associative infix *operator* (not just a parser-level separator) — see the built-ins table in [`NExpr-Operators.md`](./NExpr-Operators.md) for exactly how it chains evaluation.
+`{ ... }` acts as a block/grouping for statement bodies (as an `if`/`else` branch, per `test7`). `;` itself is a genuine left-associative infix *operator* (not just a parser-level separator) — see the built-ins table in expr-operators for exactly how it chains evaluation.
 
 ---
 
 ## 7. `if` / `else` Expressions
 
 ```java
-NExprNode n = expr.parse("if (a) 'hello' else 'hella'").get();
+NExprNode n = expr.parse("if (a) 'hello' else 'hella' end").get();
 // n.nodeType() == NExprNodeType.IF
 ```
 
 Supported forms (from the test suite and the `TemplateTest` doc-comment):
-- `if (cond) thenExpr else elseExpr` — single-line, both branches are expressions.
-- `if (cond) thenExpr else { blockBody }` — a branch can be a `{ }` block of statements.
-- Multi-branch `else if` chains are supported in the **template** layer (`{{:else if ...}}`) — see [`NExpr-Templating.md`](./NExpr-Templating.md).
+- `if cond thenExpr else elseExpr end` — single-line, both branches are expressions.
+- Multi-branch `else if` chains are supported in the **template** layer (`<%:else if ...%>`) — see expr-templating.
 
 ---
 
@@ -313,7 +316,7 @@ Supported forms (from the test suite and the `TemplateTest` doc-comment):
 
 Every context (and builder) exposes a `literalMapper()`. This component is responsible for converting raw literal tokens encountered during parsing (numbers, quoted strings, booleans, etc.) into actual typed Java values used at evaluation time. You can supply a custom mapper via `NExprContextBuilder.literalMapper(NExprLiteralMapper mapper)` — useful if you want, e.g., all integer literals to become `BigDecimal`, or custom date/duration literal formats.
 
-Under the hood, literal *tokenization* (before mapping) is done by `NStreamTokenizer` — see [`NExpr-Tokenizer.md`](./NExpr-Tokenizer.md) for how it decides a token is `TT_INT`/`TT_LONG`/`TT_BIG_INT`/`TT_FLOAT`/`TT_DOUBLE`/`TT_BIG_DECIMAL` in the first place.
+Under the hood, literal *tokenization* (before mapping) is done by `NStreamTokenizer` — see expr-tokenizer for how it decides a token is `TT_INT`/`TT_LONG`/`TT_BIG_INT`/`TT_FLOAT`/`TT_DOUBLE`/`TT_BIG_DECIMAL` in the first place.
 
 ---
 
@@ -334,7 +337,7 @@ Under the hood, literal *tokenization* (before mapping) is done by `NStreamToken
 | `evalInfixOperator/evalPrefixOperator/evalPostfixOperator(...)` | `NOptional<Object>` | Directly invoke a specific operator kind. |
 | `parse(expression)` | `NOptional<NExprNode>` | Parse a full expression string into an AST. |
 | `bindLiteral(Object)` / `bindNode(NExprNode)` | `NExprNodeValue` | Wrap a raw value or an existing node as a call argument. |
-| `findCommonInfixOp/PrefixOp/PostfixOp(...)` | see [`NExpr-Operators.md`](./NExpr-Operators.md) | Type-based operator-overload resolution. |
+| `findCommonInfixOp/PrefixOp/PostfixOp(...)` | see expr-operators | Type-based operator-overload resolution. |
 | `ofDollarInterpolatedString/ofMoustacheInterpolatedString(String)` | `NExprInterpolatedStringNode` | Build interpolated string nodes programmatically. |
 | `ofTemplate()` | `NExprTemplate` | Obtain the templating façade over this context. |
 | `literalMapper()` | `NExprLiteralMapper` | Current literal-to-value mapper. |
@@ -355,8 +358,8 @@ See §3.
 - **Restricted DSLs via operator pruning:** you can start from `declareBuiltins()` and subtract down to exactly the operator surface you want to expose to untrusted or simplified input — see [`NExpr-Operators.md §removing/restricting`](./NExpr-Operators.md). This is a good pattern for CLI query languages (e.g. filter expressions in `nuts` commands) where you don't want full scripting power.
 - **Functions vs. constructs as separate namespaces:** if you're integrating NExpr into a larger framework (e.g. NARU), keep in mind `function` and `construct` calls are resolved independently — a name can be safely reused across both without collision, but that also means declaring a function does *not* make it callable as a construct.
 - **`NExprResolver` for multi-kind backing sources:** if one object naturally backs several symbol kinds at once (e.g. an embedding host exposing both variables and methods), prefer a single `NExprResolver` over separately wiring a `NExprVarResolver` and a `NExprFunctionResolver` that both delegate to the same backing object.
-- **`NExprCommonOp` decouples semantics from spelling:** if you expose custom operator names/aliases to end users but still want generic numeric/string logic to "know" which one is "plus", implement against `NExprCommonOp` + `findCommonInfixOp` rather than hardcoding operator name strings — see [`NExpr-Operators.md`](./NExpr-Operators.md).
-- **Operators that mutate state (`=`, `+=`, `++`, `--`, …) deliberately control *when* their operands get evaluated**, by calling `.eval(context)` on specific `NExprNodeValue` args themselves rather than letting the engine eager-evaluate all arguments up front — see [`NExpr-Evaluation.md`](./NExpr-Evaluation.md).
+- **`NExprCommonOp` decouples semantics from spelling:** if you expose custom operator names/aliases to end users but still want generic numeric/string logic to "know" which one is "plus", implement against `NExprCommonOp` + `findCommonInfixOp` rather than hardcoding operator name strings — see expr-operators.
+- **Operators that mutate state (`=`, `+=`, `++`, `--`, …) deliberately control *when* their operands get evaluated**, by calling `.eval(context)` on specific `NExprNodeValue` args themselves rather than letting the engine eager-evaluate all arguments up front — see expr-evaluation.
 
 ---
 

@@ -136,7 +136,7 @@ ExceptionFactory getExceptionFactory()
 ```
 
 ### Rule of thumb
-- Use `get() when the value must exist (assertion).
+- Use `get()` when the value must exist (assertion).
 - Use `orNull()` / `orElse(...)` when absence is acceptable.
 - Prefer `orDefault()` when a sensible default has been declared with `withDefault(...)`.
 

@@ -3,22 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.format.table;
+package net.thevpc.nuts.runtime.standalone.text.art.table;
 
 import java.util.Arrays;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.text.NContentType;
-import net.thevpc.nuts.text.NMutableTableModel;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextArt;
 
 /**
  *
@@ -65,7 +62,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         getTableModel()
                 .addHeaderRow(
                         Arrays.stream(getDisplayOptions().getDisplayProperties())
-                                .map(x -> NText.of(CoreEnumUtils.getEnumString(x))).toArray(NText[]::new)
+                                .map(x -> NTableCell.of(NText.of(CoreEnumUtils.getEnumString(x)))).toArray(NTableCell[]::new)
                 );
     }
 
@@ -75,13 +72,17 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         if (fid != null) {
             formatElement(fid, index);
         } else {
-            getTableModel().newRow().addCell(NText.of(object));
+            getTableModel().newRow().addCell(NTableCell.of(NText.of(object)));
         }
         getWriter().flush();
     }
 
     public void formatElement(NIdFormatHelper id, long index) {
-        getTableModel().newRow().addCells((NText[]) id.getMultiColumnRow(getDisplayOptions()));
+        getTableModel().newRow().addCells(
+                Arrays.stream(id.getMultiColumnRow(getDisplayOptions()))
+                        .map(x-> NTableCell.of(x))
+                        .toArray(NTableCell[]::new)
+        );
     }
 
     @Override

@@ -9,10 +9,10 @@ Nuts supports multiple types of commands (internal , external), multiple types o
 
 Internal Commands include:
 * `welcome` : this is the default command that simply shows a welcome message and exits
-* `help` : documentation and help command for `nuts` and applications and exits 
+* `help` : documentation and help command for **```nuts```** and applications and exits 
 * `version` : show nuts version and exits
-* `info` : show detailed `nuts` installation information and exits
-* `license` : simply show `nuts` license and exits
+* `info` : show detailed **```nuts```** installation information and exits
+* `license` : simply show **```nuts```** license and exits
 * `search` : search for applications installed/to install
 * `fetch` : download applications (without installing)
 * `which` : resolve the appropriate application (or an internal command) for a given command

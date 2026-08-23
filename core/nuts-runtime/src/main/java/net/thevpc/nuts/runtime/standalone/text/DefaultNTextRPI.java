@@ -27,6 +27,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamTee;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
+import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTableCellSpecBuilder;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.collections.NClassMapImpl;
@@ -62,6 +63,7 @@ import java.time.temporal.TemporalAmount;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.SESSION)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -387,7 +389,7 @@ public class DefaultNTextRPI implements NTextRPI {
                 return ff.format(m);
             }
             case PLAIN: {
-                if(m.isNtf()){
+                if (m.isNtf()) {
                     if (msg instanceof String) {
                         return this.createText((String) msg);
                     }
@@ -421,6 +423,26 @@ public class DefaultNTextRPI implements NTextRPI {
     @Override
     public NTextBuilder createBuilder() {
         return new DefaultNTextBuilder();
+    }
+
+    @Override
+    public NTableCellSpecBuilder createCellSpecBuilder() {
+        return new DefaultNTableCellSpecBuilder();
+    }
+
+    @Override
+    public NTreeNode createTreeNode(NText text, NTreeNode[] children) {
+        return new NTreeNode() {
+            @Override
+            public NText content() {
+                return text == null ? NText.ofBlank():text;
+            }
+
+            @Override
+            public List<NTreeNode> children() {
+                return children == null ? Collections.emptyList() : Arrays.stream(children).filter(x -> x != null).collect(Collectors.toList());
+            }
+        };
     }
 
     @Override

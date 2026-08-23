@@ -107,7 +107,7 @@ public class XNode implements NTreeNode {
     }
 
     @Override
-    public NText value() {
+    public NText content() {
         return toNutsString();
     }
 

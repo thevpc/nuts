@@ -4,7 +4,7 @@ title: Using Docker
 
 
 ## Running nuts in a containerized environment
-If you want to run `nuts` in a containerized docker environment without creating a Dockerfile, you would run the following commands:
+If you want to run **```nuts```** in a containerized docker environment without creating a Dockerfile, you would run the following commands:
 
 on your bash terminal, type :
 ```bash

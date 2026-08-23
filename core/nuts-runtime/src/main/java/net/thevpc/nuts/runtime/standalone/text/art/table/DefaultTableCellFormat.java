@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.format.table;
+package net.thevpc.nuts.runtime.standalone.text.art.table;
 
 import net.thevpc.nuts.text.NTableCellFormat;
 import net.thevpc.nuts.text.NText;

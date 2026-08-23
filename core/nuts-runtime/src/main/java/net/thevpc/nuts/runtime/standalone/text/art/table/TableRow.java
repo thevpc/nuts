@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableRow {
-    List<DefaultCell> cells = new ArrayList<>();
+    List<DefaultCellDef> cells = new ArrayList<>();
     int index;
     int charHeight;
 

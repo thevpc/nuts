@@ -5,19 +5,19 @@ sidebar_label: Automation & DevOps
 ---
 
 
-`nuts` has been designed and implemented with automation, DevOps, and scripting in mind. It empowers users and developers to automate application management, DevOps workflows, and toolchains with a platform-independent, secure, and extensible architecture.
+**```nuts```** has been designed and implemented with automation, DevOps, and scripting in mind. It empowers users and developers to automate application management, DevOps workflows, and toolchains with a platform-independent, secure, and extensible architecture.
 
-The `nuts` Application Framework provides seamless support for process automation with structured input/output, workspace isolation, multi-environment adaptability, and dependency-driven runtime classloading.
+The **```nuts```** Application Framework provides seamless support for process automation with structured input/output, workspace isolation, multi-environment adaptability, and dependency-driven runtime classloading.
 
 You can invoke standard system commands (like ls) and retrieve output directly in structured formats such as JSON, XML, YAML, or TSON. This enables powerful data manipulation using pipes, just as in POSIX shell environments — but enriched with structured data semantics.
 
-Beyond command automation, `nuts` dynamically resolves and loads dependencies at runtime. For example, installing a specific Tomcat version compatible with your current JRE is as simple as one automated call — no manual download or configuration needed.
+Beyond command automation, **```nuts```** dynamically resolves and loads dependencies at runtime. For example, installing a specific Tomcat version compatible with your current JRE is as simple as one automated call — no manual download or configuration needed.
 
 Automation is further reinforced through workspaces, sandboxing, security controls, and environment detection to ensure your automation logic remains portable, secure, and adaptable across diverse platforms and environments.
 
 
 ## Install Automation
-Installation commands in `nuts` are inherently scriptable and suitable for automation pipelines. You can install, update, or remove packages using declarative commands with predictable outputs.
+Installation commands in **```nuts```** are inherently scriptable and suitable for automation pipelines. You can install, update, or remove packages using declarative commands with predictable outputs.
 
 Example:
 
@@ -35,7 +35,7 @@ Using --yes and --bot flags ensures full non-interactive automation.
 
 
 ## Structured Output
-Every command in `nuts` can emit results in multiple structured formats:
+Every command in **```nuts```** can emit results in multiple structured formats:
 
 - `--json`
 - `--yaml`
@@ -53,7 +53,7 @@ This enables powerful pipelines with JSON processors like `jq`, YAML processors 
 
 
 ## Environment Sensitive
-`nuts` detects and adapts to the surrounding environment, including:
+**```nuts```** detects and adapts to the surrounding environment, including:
 
 - Architecture (x86_64, ARM, Itanium, etc.)
 - Operating system (Linux, Windows, macOS)
@@ -66,7 +66,7 @@ This allows you to write portable scripts that behave consistently across platfo
 
 
 ## Multi Platform
-You can run `nuts` on virtually any platform with a Java runtime:
+You can run **```nuts```** on virtually any platform with a Java runtime:
 
 - Linux, macOS, Windows, BSD, etc.
 - Java 8+, fully tested up to Java 24
@@ -76,7 +76,7 @@ Cross-platform consistency ensures your automation logic works the same on a dev
 
 
 ## Workspace Isolation
-Workspaces in `nuts` provide isolated environments with their own:
+Workspaces in **```nuts```** provide isolated environments with their own:
 - Repositories
 - Installed tools
 - Configuration settings
@@ -89,7 +89,7 @@ nuts -w my-workspace install my-tool
 
 
 ## Security Mechanisms
-`nuts` includes several mechanisms to ensure secure automation:
+**```nuts```** includes several mechanisms to ensure secure automation:
 
 - Permission model for restricting access to repositories, settings, and installations
 - Execution contexts that support privilege separation (e.g., user vs system installs)

@@ -25,31 +25,45 @@
  */
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
+
 /**
  * @author thevpc
  * @app.category Format
  * @since 0.5.5
  */
-public interface NTableModel {
-
-    static NMutableTableModel of() {
-        return NMutableTableModel.of();
+public interface NTableCellSpecBuilder {
+    static NTableCellSpecBuilder of() {
+        return NTextRPI.of().createCellSpecBuilder();
     }
 
-    static NTableModel of(NText text) {
-        return NMutableTableModel.of().addRow(NTableCell.of(text));
+    static NTableCellSpecBuilder of(NText content) {
+        return of().content(content);
     }
 
-    int columnsCount();
-
-    int rowsCount();
-
-    NTableCellDef getCell(int row, int column);
-
-    NTableCellDef getHeader(int column);
-
-    default int getHeaderColSpan(int column) {
-        return 1;
+    static NTableCellSpecBuilder of(NText content, int colspan, int rowspan) {
+        return of().content(content).colspan(colspan).rowspan(rowspan);
     }
 
+    NPositionType verticalAlign();
+
+    NPositionType horizontalAlign();
+
+    NTableCellSpecBuilder verticalAlign(NPositionType align);
+
+    NTableCellSpecBuilder horizontalAlign(NPositionType align);
+
+    int colspan();
+
+    NTableCellSpecBuilder colspan(int colspan);
+
+    int rowspan();
+
+    NTableCellSpecBuilder rowspan(int rowspan);
+
+    NText content();
+
+    NTableCellSpecBuilder content(NText content);
+
+    NTableCell build();
 }

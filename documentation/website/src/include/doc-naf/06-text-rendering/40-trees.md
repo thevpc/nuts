@@ -7,13 +7,15 @@ title: Rendering Trees
 For hierarchical data like dependency graphs or process hierarchies:
 
 ```java
-NTreeNode root = new MyNode("Root", List.of(
-    new MyNode("Child 1"),
-    new MyNode("Child 2", List.of(
-        new MyNode("Grandchild A"),
-        new MyNode("Grandchild B")
-    ))
-));
+NTreeNode root = 
+        NTreeNode.of(NText.of("Root"),
+                NTreeNode.of(NText.of("Child 1")),
+                NTreeNode.of(NText.of("Child 2"),
+                        NTreeNode.of(NText.of("Grandchild A")),
+                        NTreeNode.of(NText.of("Grandchild B"))
+                )
+        )
+;
 
 NOut.println(NTextArt.of().treeRenderer().get().render(root));
 ```
@@ -36,7 +38,7 @@ class MyNode implements NTreeNode {
     int value;
     public MyNode(int value) { this.value = value; }
     @Override
-    public NText value() {
+    public NText content() {
         return art.tableRenderer().get().render(
             NTableModel.of().addRow(NText.of(value))
         );
@@ -56,20 +58,20 @@ Result:
 
 ```
 
-   ╭─╮
-   │1│
-   ╰─╯
-   ├── ╭─╮
-   │   │2│
-   │   ╰─╯
-   │   ├── ╭─╮
-   │   │   │3│
-   │   │   ╰─╯
-   │   └── ╭─╮
-   │       │4│
-   │       ╰─╯
-   └── ╭─╮
-       │3│
-       ╰─╯
+╭─╮
+│1│
+╰─╯
+├── ╭─╮
+│   │2│
+│   ╰─╯
+│   ├── ╭─╮
+│   │   │3│
+│   │   ╰─╯
+│   └── ╭─╮
+│       │4│
+│       ╰─╯
+└── ╭─╮
+    │3│
+    ╰─╯
 
 ```

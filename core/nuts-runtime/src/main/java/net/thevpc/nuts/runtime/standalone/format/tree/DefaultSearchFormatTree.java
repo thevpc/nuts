@@ -28,7 +28,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
             if (fid != null) {
                 return fid.getSingleColumnRow(getDisplayOptions());
             } else {
-                return o.value();
+                return o.content();
             }
         }
     };

@@ -4,14 +4,15 @@ title: Exec
 ---
 
 
-**exec** command runs another command and **which** command does a dry run of it.
+`exec` command runs another command and **which** command does a dry run of it.
 
 When one types
-```
+```sh
 nuts netbeans-command
 ```
 It's actually equivalent to
-```
+
+```sh
 nuts exec netbeans-command
 ```
 What is helpful with **exec** is that it permits passing extra parameters to application executors. In **nuts**, an application executor is an artifact that can be used to run other artifacts. For instance **nsh**, which is a **nuts** companion, is an executor for all "*.nsh" artifacts (yest script files are artifacts too). Some executors are specially handled such as "java" executor that is used to run all jars and basically all java based artifacts. Java executor for instance supports all java standard vm option arguments

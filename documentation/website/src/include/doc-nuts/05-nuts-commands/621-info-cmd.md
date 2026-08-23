@@ -4,7 +4,7 @@ title: Info
 ---
 
 
-**info** command is a more verbose command than version. It shows a lot of other **nuts** properties that describe the booted workspace, such as the workspace name, the store locations (artifacts, caches, ....)
+`info` command is a more verbose command than version. It shows a lot of other **nuts** properties that describe the booted workspace, such as the workspace name, the store locations (artifacts, caches, ....)
 ```
 me@linux:~> nuts info
 name                     = default-workspace

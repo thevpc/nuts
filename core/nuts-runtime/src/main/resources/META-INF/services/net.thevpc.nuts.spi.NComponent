@@ -68,8 +68,8 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecWriter
 net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter
 net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter
 net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesObjectWriter
-net.thevpc.nuts.runtime.standalone.format.table.DefaultTableObjectWriter
-net.thevpc.nuts.runtime.standalone.format.table.DefaultNMutableTableModel
+net.thevpc.nuts.runtime.standalone.text.art.table.DefaultTableObjectWriter
+net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNMutableTableModel
 net.thevpc.nuts.runtime.standalone.format.tree.DefaultNTreeObjectWriter
 net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdWriter
 net.thevpc.nuts.runtime.standalone.descriptor.format.DefaultNDescriptorWriter

@@ -693,10 +693,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                     .render(
                                             NTableModel.of()
                                                     .addCell(
+                                                            NTableCell.of(
                                                             NTextBuilder.of()
                                                                     .append(" This is the first time ")
                                                                     .appendCode("sh", "nuts")
                                                                     .append(" is launched for this workspace ")
+                                                            )
                                                     )
                                     )
                     );
@@ -707,10 +709,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .get().render(
                                     NTableModel.of()
                                             .addCell(
+                                                    NTableCell.of(
                                                     NTextBuilder.of()
                                                             .append(" This is the first time ")
                                                             .appendCode("sh", "nuts")
                                                             .append(" is launched as system for this workspace ")
+                                                    )
                                             )
                             ));
                     break;
@@ -720,8 +724,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .get().render(
                                     NTableModel.of()
                                             .addCell(
+                                                    NTableCell.of(
                                                     NTextBuilder.of()
                                                             .append(" This is a confined workspace ")
+                                                    )
                                             )
                             ));
                     break;
@@ -731,8 +737,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .get().render(
                                     NTableModel.of()
                                             .addCell(
+                                                    NTableCell.of(
                                                     NTextBuilder.of()
                                                             .append(" This is a sandbox workspace ")
+                                                    )
                                             )
                             ));
                     break;
@@ -742,8 +750,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .get().render(
                                     NTableModel.of()
                                             .addCell(
+                                                    NTableCell.of(
                                                     NTextBuilder.of()
                                                             .append(" This is an in-memory workspace ")
+                                                    )
                                             )
                             ));
                     break;

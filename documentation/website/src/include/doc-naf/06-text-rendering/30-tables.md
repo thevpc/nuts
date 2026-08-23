@@ -13,9 +13,9 @@ To render a table, create a NMutableTableModel, populate it with rows and option
 
 ```java
 NMutableTableModel table = NTableModel.of()
-.addHeaderRow(NText.of("Name"), NText.of("Status"))
-.addRow(NText.of("adam"), NText.ofStyled("active", NTextStyle.italic()))
-.addRow(NText.of("eve"),  NText.ofStyled("inactive", NTextStyle.success()));
+.addHeaderRow(NTableCell.of(NText.of("Name")), NTableCell.of(NText.of("Status")))
+.addRow(NTableCell.of(NText.of("adam")), NTableCell.of(NText.ofStyled("active", NTextStyle.italic())))
+.addRow(NTableCell.of(NText.of("eve")),  NTableCell.of(NText.ofStyled("inactive", NTextStyle.success())));
 
 NOut.println(NTextArt.of().tableRenderer().get().render(table));
 ```
@@ -41,8 +41,8 @@ Cells can contain multiple lines of text, and the renderer will automatically ad
 
 ```java
 NMutableTableModel table = NTableModel.of()
-    .addRow(NText.of("adam\nwas\nhere"), NText.of("active"))
-    .addRow(NText.of("eve"), NText.of("inactive"));
+    .addRow(NTableCell.of(NText.of("adam\nwas\nhere"), NTableCell.of(NText.of("active")))
+    .addRow(NTableCell.of(NText.of("eve"), NTableCell.of(NText.of("inactive")));
 ```
 
 Output:
@@ -63,9 +63,14 @@ Cells can span across multiple columns, just like in HTML tables:
 
 ```java
 NMutableTableModel table = NTableModel.of()
-    .addRow(NText.of("adam\nwas\nhere"))
+    .addRow(NTableCell.of(NText.of("adam\nwas\nhere"),2,1)) //colspan=2, rowspan=1
     .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"))
-    .setCellColSpan(0, 0, 2); // first cell spans 2 columns
+        ; // first cell spans 2 columns
+
+NMutableTableModel sameTable = NTableModel.of()
+    .addRow(NTableCellBuilder.of(NText.of("adam\nwas\nhere")).colspan(2).horizontalAlign(NPositionType.FIRST)) //colspan=2, align=left
+    .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"))
+        ; // first cell spans 2 columns
 
 ```
 
@@ -88,9 +93,15 @@ Cells can also span vertically across rows:
 
 ```java
 NMutableTableModel table = NTableModel.of()
-    .addRow(NText.of("tall\ncell\nvery\ntall"), NText.of("short"))
+    .addRow(NTableCell.of(NText.of("tall\ncell\nvery\ntall"),1,2), NText.of("short"))
     .addRow(NText.of("another"))
-    .setCellRowSpan(0, 0, 2); // span vertically over 2 rows
+    .setCellRowSpan(0, 0, 2); // span horizontally over 2 rows
+
+NMutableTableModel sameTable = NTableModel.of()
+        .addRow(NTableCellBuilder.of(NText.of("adam\nwas\nhere")).rowpan(2).horizontalAlign(NPositionType.FIRST)) //colspan=2, align=left
+        .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"))
+        ;
+
 ```
 
 ### Mixed Column Counts
@@ -99,7 +110,7 @@ Rows can have different numbers of columns. The renderer handles layout automati
 
 ```java
 NMutableTableModel table = NTableModel.of()
-    .addRow(NText.of("adam\nwas\nhere"))
+    .addRow(NTableCell.of(NText.of("adam\nwas\nhere"),3,1))
     .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"), NText.of(3))
     .setCellColSpan(0, 0, 3);
 ```
@@ -109,8 +120,8 @@ NMutableTableModel table = NTableModel.of()
 Cells can carry formatting information using NTextStyle. This enables bold, italic, color, semantic meaning (e.g., success, error), and more.
 
 ```java
-.addRow(NText.of("adam"), NText.ofStyled("active", NTextStyle.italic()))
-.addRow(NText.of("eve"),  NText.ofStyled("inactive", NTextStyle.success()));
+.addRow(NTableCell.of(NText.of("adam"), NTableCell.of(NText.ofStyled("active", NTextStyle.italic())))
+.addRow(NTableCell.of(NText.of("eve"),  NTableCell.of(NText.ofStyled("inactive", NTextStyle.success())));
 ```
 
 ## Multiple Renderers
@@ -127,7 +138,7 @@ You can also iterate over all registered renderers:
 
 
 ```java
-for (NTextArtTableRenderer renderer : art.getTableRenderers()) {
+for (NTextArtTableRenderer renderer : art.tableRenderers()) {
     NOut.println(renderer.getName() + "::");
     NOut.println(renderer.render(table));
 }
@@ -140,8 +151,6 @@ Rendering tables is efficient, but when dealing with thousands of rows, consider
 Cell layout calculations (especially with spanning) are cached internally to minimize overhead.
 
 ## Why NTextArt Tables Matter
-
-You might ask: why not just use System.out.printf() or format strings manually?
 
 Because NTextArt tables are semantic and structure-aware:
 - They understand cell spanning, multiline content, and style.

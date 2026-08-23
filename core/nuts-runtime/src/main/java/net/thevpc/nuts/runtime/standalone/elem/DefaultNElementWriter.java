@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMap
 import net.thevpc.nuts.runtime.standalone.format.json.DefaultSearchFormatJson;
 import net.thevpc.nuts.runtime.standalone.format.plain.DefaultSearchFormatPlain;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultSearchFormatProps;
-import net.thevpc.nuts.runtime.standalone.format.table.DefaultSearchFormatTable;
+import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultSearchFormatTable;
 import net.thevpc.nuts.runtime.standalone.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.standalone.format.tson.DefaultSearchFormatTson;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;

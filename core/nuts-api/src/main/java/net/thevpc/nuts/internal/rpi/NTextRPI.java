@@ -46,6 +46,8 @@ public interface NTextRPI extends NComponent {
         return NExtensions.of(NTextRPI.class);
     }
 
+    NTableCellSpecBuilder createCellSpecBuilder();
+    NTreeNode createTreeNode(NText text, NTreeNode[] children);
     NTextBuilder createBuilder();
 
     NText createBlank();

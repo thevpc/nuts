@@ -106,7 +106,7 @@ public class MavenNDependencySolver implements NDependencySolver {
             }
 
             @Override
-            public NText value() {
+            public NText content() {
                 return NText.of(toMsg());
             }
 

@@ -21,7 +21,7 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     public final NTreeNodeFormat TO_STRING_FORMATTER = new NTreeNodeFormat() {
         @Override
         public NText format(NTreeNode o, int depth) {
-            return o == null ? NText.ofBlank() : o.value();
+            return o == null ? NText.ofBlank() : o.content();
         }
     };
 
@@ -85,7 +85,7 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
             return true;
         }
         if (omitEmptyRoot) {
-            return NBlankable.isBlank(tree.value());
+            return NBlankable.isBlank(tree.content());
         }
         return false;
     }
@@ -112,10 +112,10 @@ public class DefaultNTextArtTreeRenderer implements NTextArtTreeRenderer, NTextA
     }
 
     private boolean print(NTreeNode node, NText prefix, NPositionType type, NTextBuilder out, boolean hideRoot, int depth, boolean prefixNewLine) {
-        boolean skipNode = !hideRoot && NBlankable.isBlank(node.value());
+        boolean skipNode = !hideRoot && NBlankable.isBlank(node.content());
 
         if (!hideRoot && !skipNode) {
-            List<NText> lines = node.value().split('\n', false);
+            List<NText> lines = node.content().split('\n', false);
 
             for (int i = 0; i < lines.size(); i++) {
                 if (i == 0) {

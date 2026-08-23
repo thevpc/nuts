@@ -92,7 +92,7 @@ public class TextArtTest {
     public void test3() {
         NTextArt art = NTextArt.of();
 
-        NTreeNode tree = new MyNode(1,art);
+        NTreeNode tree = new MyNode(1, art);
         NOut.println(art.treeRenderer().get().render(tree));
 
     }
@@ -108,13 +108,13 @@ public class TextArtTest {
         }
 
         @Override
-        public NText value() {
-            return art.tableRenderer().get().render(NTableModel.of().addRow(NText.of(value)));
+        public NText content() {
+            return art.tableRenderer().get().render(NTableModel.of().addRow(NTableCell.of(NText.of(value))));
         }
 
         @Override
         public List<NTreeNode> children() {
-            return (value < 3) ? Arrays.<Integer>asList(value + 1, value + 2).stream().map(w -> new MyNode(w, art)).collect(Collectors.toList())
+            return (value < 3) ? Arrays.asList(value + 1, value + 2).stream().map(w -> new MyNode(w, art)).collect(Collectors.toList())
                     : Collections.emptyList();
         }
     }
@@ -134,9 +134,9 @@ public class TextArtTest {
         NOut.println("TEST 5 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addHeaderRow(NText.of("Name"), NText.of("Status"))
-                .addRow(NText.of("adam"), NText.ofStyled("active", NTextStyle.italic()))
-                .addRow(NText.of("eve"), NText.ofStyled("inactive", NTextStyle.success()));
+                .addHeaderRow(NTableCell.of(NText.of("Name")), NTableCell.of(NText.of("Status")))
+                .addRow(NTableCell.of(NText.of("adam")), NTableCell.of(NText.ofStyled("active", NTextStyle.italic())))
+                .addRow(NTableCell.of(NText.of("eve")), NTableCell.of(NText.ofStyled("inactive", NTextStyle.success())));
         NOut.println(art.tableRenderer().get().render(table));
 
         NOut.println(art.getTableRenderer("table:spaces").get().render(table));
@@ -147,9 +147,9 @@ public class TextArtTest {
         NOut.println("TEST 6 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addHeaderRow(NText.of("Name"), NText.of("Status"))
-                .addRow(NText.of("adam\nwas\nhere"), NText.ofStyled("active", NTextStyle.italic()))
-                .addRow(NText.of("eve"), NText.ofStyled("inactive", NTextStyle.success()));
+                .addHeaderRow(NTableCell.of(NText.of("Name")), NTableCell.of(NText.of("Status")))
+                .addRow(NTableCell.of(NText.of("adam\nwas\nhere")), NTableCell.of(NText.ofStyled("active", NTextStyle.italic())))
+                .addRow(NTableCell.of(NText.of("eve")), NTableCell.of(NText.ofStyled("inactive", NTextStyle.success())));
         for (NTextArtTableRenderer renderer : art.tableRenderers()) {
             NOut.println(renderer.name() + "::");
 //            NOut.println(art.getDefaultTextRenderer().get().render(NText.of(renderer.getName())));
@@ -162,8 +162,8 @@ public class TextArtTest {
         NOut.println("TEST 7 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addRow(NText.of("adam\nwas\nhere"), NText.of("adam\nwill be\nhere"))
-                .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"));
+                .addRow(NTableCell.of(NText.of("adam\nwas\nhere")), NTableCell.of(NText.of("adam\nwill be\nhere")))
+                .addRow(NTableCell.of(NText.of("adam\nhere")), NTableCell.of(NText.of("adam\nis\nhere")));
         NOut.println(art.tableRenderer().get().render(table));
     }
 
@@ -172,9 +172,8 @@ public class TextArtTest {
         NOut.println("TEST 8 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addRow(NText.of("adam\nwas\nhere"))
-                .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"))
-                .setCellColSpan(0, 0, 2);
+                .addRow(NTableCell.of(NText.of("adam\nwas\nhere"), 2, 1))
+                .addRow(NTableCell.of(NText.of("adam\nhere")), NTableCell.of(NText.of("adam\nis\nhere")));
         NOut.println(art.tableRenderer().get().render(table));
     }
 
@@ -183,9 +182,8 @@ public class TextArtTest {
         NOut.println("TEST 9 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addRow(NText.of("adam\nwas\nhere"))
-                .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"), NText.of(3))
-                .setCellColSpan(0, 0, 3);
+                .addRow(NTableCell.of(NText.of("adam\nwas\nhere"), 3, 1))
+                .addRow(NTableCell.of(NText.of("adam\nhere")), NTableCell.of(NText.of("adam\nis\nhere")), NTableCell.of(NText.of(3)));
         NOut.println(art.tableRenderer().get().render(table));
     }
 
@@ -194,10 +192,8 @@ public class TextArtTest {
         NOut.println("TEST 10 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addRow(NText.of("tall\ncell\nvery\ntall"), NText.of("short"))
-                .addRow(NText.of("another"))
-                .setCellRowSpan(0, 0, 2) // First cell spans 2 rows
-                ;
+                .addRow(NTableCell.of(NText.of("tall\ncell\nvery\ntall"), 2, 1), NTableCell.of(NText.of("short")))
+                .addRow(NTableCell.of(NText.of("another")));
         NOut.println(art.tableRenderer().get().render(table));
     }
 
@@ -206,9 +202,7 @@ public class TextArtTest {
         NOut.println("TEST 11 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addRow(NText.of("tall\ncell\ncell2\ncell3\ncell4"), NText.of("short\ncell"))
-                .setCellRowSpan(0, 0, 2) // First cell spans 2 rows
-                ;
+                .addRow(NTableCell.of(NText.of("tall\ncell\ncell2\ncell3\ncell4"), 1, 2), NTableCell.of(NText.of("short\ncell")));
         NText tableText = art.tableRenderer().get().render(table);
         NOut.println(tableText);
     }
@@ -218,10 +212,8 @@ public class TextArtTest {
         NOut.println("TEST 12 ");
         NTextArt art = NTextArt.of();
         NMutableTableModel table = NTableModel.of()
-                .addRow(NText.of("tall\ncell\ncell2\ncell3\ncell4"))
-                .addRow(NText.of("short\ncell"))
-                .setCellColSpan(0, 0, 2) // First cell spans 2 rows
-                ;
+                .addRow(NTableCell.of(NText.of("tall\ncell\ncell2\ncell3\ncell4"), 2, 1))
+                .addRow(NTableCell.of(NText.of("short\ncell")));
         NText tableText = art.tableRenderer().get().render(table);
         NOut.println(tableText);
     }
@@ -233,9 +225,9 @@ public class TextArtTest {
             NOut.println("TEST 5 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addHeaderRow(NText.of("Name"), NText.of("Status"))
-                    .addRow(NText.of("adam"), NText.ofStyled("active", NTextStyle.italic()))
-                    .addRow(NText.of("eve"), NText.ofStyled("inactive", NTextStyle.success()));
+                    .addHeaderRow(NTableCell.of(NText.of("Name")), NTableCell.of(NText.of("Status")))
+                    .addRow(NTableCell.of(NText.of("adam")), NTableCell.of(NText.ofStyled("active", NTextStyle.italic())))
+                    .addRow(NTableCell.of(NText.of("eve")), NTableCell.of(NText.ofStyled("inactive", NTextStyle.success())));
             NOut.println(art.tableRenderer().get().render(table));
 
             NOut.println(art.getTableRenderer("table:spaces").get().render(table));
@@ -244,9 +236,9 @@ public class TextArtTest {
             NOut.println("TEST 6 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addHeaderRow(NText.of("Name"), NText.of("Status"))
-                    .addRow(NText.of("adam\nwas\nhere"), NText.ofStyled("active", NTextStyle.italic()))
-                    .addRow(NText.of("eve"), NText.ofStyled("inactive", NTextStyle.success()));
+                    .addHeaderRow(NTableCell.of(NText.of("Name")), NTableCell.of(NText.of("Status")))
+                    .addRow(NTableCell.of(NText.of("adam\nwas\nhere")), NTableCell.of(NText.ofStyled("active", NTextStyle.italic())))
+                    .addRow(NTableCell.of(NText.of("eve")), NTableCell.of(NText.ofStyled("inactive", NTextStyle.success())));
             for (NTextArtTableRenderer renderer : art.tableRenderers()) {
                 NOut.println(renderer.name() + "::");
 //            NOut.println(art.getDefaultTextRenderer().get().render(NText.of(renderer.getName())));
@@ -257,17 +249,16 @@ public class TextArtTest {
             NOut.println("TEST 7 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addRow(NText.of("adam\nwas\nhere"), NText.of("adam\nwill be\nhere"))
-                    .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"));
+                    .addRow(NTableCell.of(NText.of("adam\nwas\nhere")), NTableCell.of(NText.of("adam\nwill be\nhere")))
+                    .addRow(NTableCell.of(NText.of("adam\nhere")), NTableCell.of(NText.of("adam\nis\nhere")));
             NOut.println(art.tableRenderer().get().render(table));
         }
         {
             NOut.println("TEST 8 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addRow(NText.of("adam\nwas\nhere"))
-                    .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"))
-                    .setCellColSpan(0, 0, 2);
+                    .addRow(NTableCell.of(NText.of("adam\nwas\nhere"), 2, 1))
+                    .addRow(NTableCell.of(NText.of("adam\nhere")), NTableCell.of(NText.of("adam\nis\nhere")));
             NOut.println(art.tableRenderer().get().render(table));
         }
 
@@ -275,19 +266,16 @@ public class TextArtTest {
             NOut.println("TEST 9 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addRow(NText.of("adam\nwas\nhere"))
-                    .addRow(NText.of("adam\nhere"), NText.of("adam\nis\nhere"), NText.of(3))
-                    .setCellColSpan(0, 0, 3);
+                    .addRow(NTableCell.of(NText.of("adam\nwas\nhere"), 3, 1))
+                    .addRow(NTableCell.of(NText.of("adam\nhere")), NTableCell.of(NText.of("adam\nis\nhere")), NTableCell.of(NText.of(3)));
             NOut.println(art.tableRenderer().get().render(table));
         }
         {
             NOut.println("TEST 10 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addRow(NText.of("tall\ncell\nvery\ntall"), NText.of("short"))
-                    .addRow(NText.of("another"))
-                    .setCellRowSpan(0, 0, 2) // First cell spans 2 rows
-                    ;
+                    .addRow(NTableCell.of(NText.of("tall\ncell\nvery\ntall"), 2, 1), NTableCell.of(NText.of("short")))
+                    .addRow(NTableCell.of(NText.of("another")));
             NOut.println(art.tableRenderer().get().render(table));
         }
 
@@ -295,9 +283,7 @@ public class TextArtTest {
             NOut.println("TEST 11 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addRow(NText.of("tall\ncell\ncell2\ncell3\ncell4"), NText.of("short\ncell"))
-                    .setCellRowSpan(0, 0, 2) // First cell spans 2 rows
-                    ;
+                    .addRow(NTableCell.of(NText.of("tall\ncell\ncell2\ncell3\ncell4"), 2, 1), NTableCell.of(NText.of("short\ncell")));
             NText tableText = art.tableRenderer().get().render(table);
             NOut.println(tableText);
         }
@@ -305,10 +291,8 @@ public class TextArtTest {
             NOut.println("TEST 12 ");
             NTextArt art = NTextArt.of();
             NMutableTableModel table = NTableModel.of()
-                    .addRow(NText.of("tall\ncell\ncell2\ncell3\ncell4"))
-                    .addRow(NText.of("short\ncell"))
-                    .setCellColSpan(0, 0, 2) // First cell spans 2 rows
-                    ;
+                    .addRow(NTableCell.of(NText.of("tall\ncell\ncell2\ncell3\ncell4"), 2, 1))
+                    .addRow(NTableCell.of(NText.of("short\ncell")));
             NText tableText = art.tableRenderer().get().render(table);
             NOut.println(tableText);
         }

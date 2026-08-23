@@ -64,7 +64,7 @@ The table below highlights how NTF compares to other common formats across key c
 | **Styled text**                                   | ✅ Bold, italic, underline, strikethrough                      | ✅ Limited (manual control) | ✅ Bold, italic | ✅ Bold, italic, underline | ✅ Full style control |
 | **Semantic color tags** (e.g. `error`, `warning`) | ✅ Built-in mappings (`##:red:word##`, `##:info:word##`, etc.) | ❌ None | ❌ None | ⚠️ Manual via roles | ✅ Possible via class |
 | **Nested/Combined styles**                                | ✅ Fully supported (e.g. `##{:red:##{:bold:word}##}##`         | ❌ Complex / fragile | ❌ Not supported | ✅ Supported | ✅ Fully supported |
-| **Structured sections** (titles, subtitles)       | ✅ NTF supports semantic headers (`# Title`, `## Subtitle`)    | ❌ None | ✅ Basic headings | ✅ Full document structure | ✅ Rich document structure |
+| **Structured sections** (titles, subtitles)       | ✅ NTF supports semantic headers (`#) Title`, `##) Subtitle`)   | ❌ None | ✅ Basic headings | ✅ Full document structure | ✅ Rich document structure |
 | **Lists (bullet, numbered)**                      | ❌ Not yet                                                     | ❌ None | ✅ Yes | ✅ Yes | ✅ Yes |
 | **Tables**                                        | ❌ Not yet                                                     | ❌ None | ✅ Basic tables | ✅ Rich tables | ✅ Rich tables |
 | **Syntax highlighting** (code snippets)           | ✅ With language tag                                           | ❌ None | ✅ (Limited, via extensions) | ✅ With language tag | ✅ Full, with JS/CSS |

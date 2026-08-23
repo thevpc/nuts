@@ -5,7 +5,7 @@ title: GUI Installation
 
 
 ## GUI Installation
-You can install `nuts` using a gui installer. Multiple targets are available.
+You can install **```nuts```** using a gui installer. Multiple targets are available.
 You may select a portable installer (a jar that you can double click as far as you have a valid java+ runtime installed and configured in your environment).
 You may also want to select a native image for the installer; you only need to download and run.
 
@@ -23,11 +23,11 @@ In the next step, you are asked to accept the OSS licence.
 
 ![install-log-example](assets/images/installer/03-li.png)
 
-`nuts` comes with a dual version, stable and preview. Stable version is recommended in most cases. But if you want to take advantage of new features not yet released you may want to install the preview version.
+**```nuts```** comes with a dual version, stable and preview. Stable version is recommended in most cases. But if you want to take advantage of new features not yet released you may want to install the preview version.
 
 ![install-log-example](assets/images/installer/04-li.png)
 
-The installer will even prompt you for selecting extra java applications you may want to install along with `nuts`. The only recommended apps are already selected and marked as `Companions`. This includes mostly `nsh`, a bash compatible implementation in Java.
+The installer will even prompt you for selecting extra java applications you may want to install along with **```nuts```**. The only recommended apps are already selected and marked as `Companions`. This includes mostly `nsh`, a bash compatible implementation in Java.
 
 ![install-log-example](assets/images/installer/05-li.png)
 

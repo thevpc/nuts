@@ -6,39 +6,24 @@ sidebar_label: Nuts and Maven
 
 
 ## You'd still be Maven, yet you gonna be Nuts
-Is there any package manager for Java(TM) applications? You can google for it and you will find that many have 
-queried this on blogs and forums. In most cases responses point to maven and gradle, the tremendous build tools. However, 
-both maven and gradle are build tools, while helping build packages they lack of deployment features. They bundle every 
-dependency in every package (think of wars, ears and standalone jars). They do not handle installation or upgrading.
-Apache ivy, as well, while competing with maven build tool does not provide more than transitive dependency management.   
-The main idea behind a package manager is the automation of installation, update, configuration and removal of programs 
-or libraries in a coherent manner with the help of a database that manages binaries and metadata. maven, to consider one, 
-sticks to the build process, an goes no further.
+Is there any package manager for Java(TM) applications2? You can google for it and you will find that many have queried this on blogs and forums. In most cases responses point to maven and gradle, the tremendous build tools. However, both maven and gradle are build tools, while helping build packages they lack of deployment features. They bundle every dependency in every package (think of wars, ears and standalone jars). They do not handle installation or upgrading. 
 
 
-You may also ask, "Why ever, do we need a package manager for Java(TM) applications". Okkay, let's take some 
-example of Java(TM) applications. How can we install apache netbeans IDE ? The proper way is to browse to the editor's 
-website, select the proper mirror if applicable, download the archive, uncompress it, chmod the main binary (i'm a linux 
-guy) and adjust PATH environment variable to point to this binary; Quite a pain. What do we do to update it now? Hopefully, the IDE has a solid plugin architecture and an in-app update/upgrade tool that will help the process (in a gui manner of course). The same applies to eclipse and apache tomcat with the exception that apache tomcat does not even bundle an in-app update tool. The same applies too when dealing with other operating systems (Windows, MacOS, ...). Managing Java(TM) applications is far from helpful.
+Apache ivy, as well, while competing with maven build tool does not provide more than transitive dependency management. The main idea behind a package manager is the automation of installation, update, configuration and removal of programs or libraries in a coherent manner with the help of a database that manages binaries and metadata. maven, to consider one, sticks to the build process, an goes no further.
 
-Furthermore, as Java(TM) applications are (usually) not bundled in OS-aware installers, you will end up with a spaguetty 
-home directory with applications installed all over your partitions, which - simply - does not mix up with all the work 
+You may also ask, "Why ever, do we need a package manager for Java(TM) applications". Okkay, let's take some example of Java(TM) applications. How can we install apache netbeans IDE ? The proper way is to browse to the editor's website, select the proper mirror if applicable, download the archive, uncompress it, chmod the main binary (i'm a linux guy) and adjust PATH environment variable to point to this binary; Quite a pain. What do we do to update it now? Hopefully, the IDE has a solid plugin architecture and an in-app update/upgrade tool that will help the process (in a gui manner of course). The same applies to eclipse and apache tomcat with the exception that apache tomcat does not even bundle an in-app update tool. The same applies too when dealing with other operating systems (Windows, MacOS, ...). Managing Java(TM) applications is far from helpful.
+
+Furthermore, as Java(TM) applications are (usually) not bundled in OS-aware installers, you will end up with a spaguetty home directory with applications installed all over your partitions, which - simply - does not mix up with all the work 
+
 OS-developers have done to separate logs from data, from temporary files, from binaries, etc. Each application will handle it's files in a very specific manner that would make it hard to manage own's disk (automatic archive/backup/restore) or roaming applications across machines, etc.
 
-Moreover, in a world of containers and devops, deployments of Java(TM) applications need to be automatable and reproducible 
-with the highest level of simplicity, configurability and integrability. Installing tomcat on a custom port should not not 
-be as painful as using a custom Docker image or a complicated Dockerfile or even a custom apache tomcat bundle. 
+Moreover, in a world of containers and devops, deployments of Java(TM) applications need to be automatable and reproducible with the highest level of simplicity, configurability and integrability. Installing tomcat on a custom port should not not be as painful as using a custom Docker image or a complicated Dockerfile or even a custom apache tomcat bundle. 
 
-When we recall that Java(TM) is the one language that has the more versatile number of libraries, frameworks and tools, 
-I find it annoying not to have a decent package manager to make the leap and provide facilities I find prime in other 
-languages and platforms (```pip```/```python```, ```npm```/```nodejs```/```javascript```) and most of linux distribution (```zypper```/```opensuse```, ```dnf```/```redhat``` 
-```apt-get```/```debian```/```ubuntu```)
+When we recall that Java(TM) is the one language that has the more versatile number of libraries, frameworks and tools, I find it annoying not to have a decent package manager to make the leap and provide facilities I find prime in other 
 
-Hence I'm introducing here a humble attempt to provide a tiny (300ko) yet powerful package manager for Java(TM) 
-applications (but not only) that should handle jar files seamlessly (with little or no modification) and that comes with 
-a set of portable tools that makes this management at a higher level. I'm not talking about redefining the wheel. 
-I'm aware that many tools such as maven, are already very good at what they do, I just needed to make the leap for deployments. 
-You will be able to deploy your applications without bundling all of their dependencies : **```nuts```** will take care of that. 
+languages and platforms (```pip```/```python```, ```npm```/```nodejs```/```javascript```) and most of linux distribution (```zypper```/```opensuse```, ```dnf```/```redhat``` ```apt-get```/```debian```/```ubuntu```)
+
+Hence I'm introducing here a humble attempt to provide a tiny (300ko) yet powerful package manager for Java(TM) applications (but not only) that should handle jar files seamlessly (with little or no modification) and that comes with a set of portable tools that makes this management at a higher level. I'm not talking about redefining the wheel. I'm aware that many tools such as maven, are already very good at what they do, I just needed to make the leap for deployments. You will be able to deploy your applications without bundling all of their dependencies : **```nuts```** will take care of that. 
 
 So you'd still be maven, yet you gonna be **```nuts```**.
   
@@ -53,27 +38,14 @@ So you'd still be maven, yet you gonna be **```nuts```**.
 + sandbox based
 
 ### Transitive dependency resolution manager
-**```nuts```** calculates transitive dependencies of an application to resolve other packages to download at install or 
-update/upgrade time. So typically, deployed applications should no more bundle their dependencies within the deployed archive.
-Thus we avoid the annoying fat jars (using maven plugins like 'maven-assembly-plugin' and 'maven-shade-plugin') and lib folders 
-(using 'maven-dependency-plugin'). It will also reuse dependencies and packages across multiple installed applications 
-and hence save disk space, and network bandwidth.
+**```nuts```** calculates transitive dependencies of an application to resolve other packages to download at install or update/upgrade time. So typically, deployed applications should no more bundle their dependencies within the deployed archive. Thus we avoid the annoying fat jars (using maven plugins like 'maven-assembly-plugin' and 'maven-shade-plugin') and lib folders (using 'maven-dependency-plugin'). It will also reuse dependencies and packages across multiple installed applications and hence save disk space, and network bandwidth.
 
-All what **```nuts```** needs is a descriptor file withing the jar file that defines the immediate dependencies. It then 
-calculates all transitive dependencies automatically. And guess what, all maven built jars already contain that 
-descriptor : the pom.xml file. So basically all maven applications are already **```nuts```** aware applications.
+All what **```nuts```** needs is a descriptor file withing the jar file that defines the immediate dependencies. It then calculates all transitive dependencies automatically. And guess what, all maven built jars already contain that descriptor : the pom.xml file. So basically all maven applications are already **```nuts```** aware applications.
 
 ### Package manager
-**```nuts```** uses this dependency resolution to help install, update, remove and search for applications. To be able to use an 
-application, it has to be installed and configured with all of its dependencies. This is the main goal of **```nuts```**.
-When we ask to install tomcat, for instance, it will search for the best version in registered repositories, download it,
-and configure it to be ready for execution. The best version is not always the the latest one. Actually it would be the 
-latest valid one, thus the latest one that matches some constraints.  
-Constraints include the version of the running java (tomcat 8 works on java 7 but not 6 for instance), the running operating 
-system (windows, linux, ... to help selecting the proper binaries), may be the hardware architecture or even the 
-operating distribution (for linux based systems). Constraints will filter the search result to include the best, the most 
-accurate version to install. Installation also would configure the installed application and even may run another 
-artifact to help this configuration.
+**```nuts```** uses this dependency resolution to help install, update, remove and search for applications. To be able to use an application, it has to be installed and configured with all of its dependencies. This is the main goal of **```nuts```**.
+When we ask to install tomcat, for instance, it will search for the best version in registered repositories, download it, and configure it to be ready for execution. The best version is not always the the latest one. Actually it would be the latest valid one, thus the latest one that matches some constraints.  
+Constraints include the version of the running java (tomcat 8 works on java 7 but not 6 for instance), the running operating system (windows, linux, ... to help selecting the proper binaries), may be the hardware architecture or even the operating distribution (for linux based systems). Constraints will filter the search result to include the best, the most accurate version to install. Installation also would configure the installed application and even may run another artifact to help this configuration.
 
 **```nuts```** also handles search for newer versions and update the installed application at request. Updating a software does not 
 necessarily delete the older version. Both version can coexist and It's up to the user the decide whether or 

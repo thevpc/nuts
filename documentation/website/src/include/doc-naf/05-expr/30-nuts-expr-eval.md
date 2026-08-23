@@ -1,3 +1,7 @@
+---
+title: Expression evaluation
+---
+
 # NExpr — Evaluation
 
 Part of the NExpr doc set. Covers how a parsed `NExprNode` actually gets executed: `NExprCallContext`, `NExprCallHandler`, `NExprNodeValue`, custom function/operator resolvers, the complete built-in function table, and two worked examples.
@@ -24,7 +28,7 @@ NOptional<Object>
 Object   (the actual runtime result: Boolean, Number, String, custom object, …)
 ```
 
-`NOptional<T>` has its own documentation elsewhere in the Nuts ecosystem (it's a tri-state optional — `present` / `empty` / `error` — richer than `java.util.Optional`), so it isn't re-explained here. In NExpr call sites specifically, you'll mostly see:
+In NExpr call sites specifically, you'll mostly see:
 
 | Call | Used for |
 |---|---|

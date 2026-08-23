@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.art.table;
 
-import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableCellFormat;
-import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableHeaderFormat;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegion;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegionImpl;
 import net.thevpc.nuts.text.*;
@@ -24,7 +22,7 @@ class TableModelRenderHelper {
     private static final int NO_BORDER_TOP = 1;
     private static final int NO_BORDER_LEFT = 2;
     NTextRegion[][] grid;
-    DefaultCell[][] gridc;
+    DefaultCellDef[][] gridc;
     int[][] noBorder;
     NTableBordersFormatHelper borderHelper;
 
@@ -44,10 +42,10 @@ class TableModelRenderHelper {
         if (tableRows.length == 0) return;
         computeColumns();
         for (TableRow row : tableRows) {
-            for (DefaultCell cell : row.cells) {
+            for (DefaultCellDef cell : row.cells) {
                 cell.renderedContent = cell.renderedContent.resize(
                         charWidth(cell.x,cell.x+cell.colspan), charHeight(cell.y,cell.y+cell.rowspan),
-                        cell.hAlign, cell.vAlign);
+                        cell.horizontalAlign, cell.verticalAlign);
             }
         }
         computeStartRowIndex();
@@ -82,11 +80,9 @@ class TableModelRenderHelper {
             r.index = rowIndex;
             rows1.add(r);
             for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-                DefaultCell c = new DefaultCell(false);
+                DefaultCellDef c = new DefaultCellDef(false);
                 try {
-                    c.content = model.getCellValue(rowIndex, columnIndex);
-                    c.colspan = model.getCellColSpan(rowIndex, columnIndex);
-                    c.rowspan = model.getCellRowSpan(rowIndex, columnIndex);
+                    c.copyFrom(model.getCell(rowIndex, columnIndex));
                     r.cells.add(c);
                 } catch (Exception ex) {
                     //ignore
@@ -97,11 +93,10 @@ class TableModelRenderHelper {
         TableRow header = new TableRow();
         try {
             for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-                DefaultCell c = new DefaultCell(true);
+                DefaultCellDef c = new DefaultCellDef(true);
                 try {
-                    c.content = model.getHeaderValue(columnIndex);
+                    c.copyFrom(model.getHeader(columnIndex));
                     header.cells.add(c);
-                    c.colspan = model.getHeaderColSpan(columnIndex);
                     //header has no rowspan
                     //c.rowspan = model.getHeaderRowSpan(columnIndex);
                 } catch (Exception ex) {
@@ -119,9 +114,9 @@ class TableModelRenderHelper {
         for (int i = 0; i < rows1.size(); i++) {
             TableRow row = rows1.get(i);
             TableRow r2 = new TableRow();
-            List<DefaultCell> cells = row.cells;
+            List<DefaultCellDef> cells = row.cells;
             for (int i1 = 0; i1 < cells.size(); i1++) {
-                DefaultCell cell = cells.get(i1);
+                DefaultCellDef cell = cells.get(i1);
                 if (isVisibleColumn(i1, p, n)) {
                     r2.cells.add(cell);
                 }
@@ -137,7 +132,7 @@ class TableModelRenderHelper {
                 TableRow tableRow = effectiveRows0[j];
                 //recompute index after visibility applied
                 tableRow.index=j;
-                for (DefaultCell cell : tableRow.cells) {
+                for (DefaultCellDef cell : tableRow.cells) {
                     if (cell.rowspan > 1) {
                         for (int i = 1; i < cell.rowspan; i++) {
                             if (j + i >= effectiveRows.size()) {
@@ -159,7 +154,7 @@ class TableModelRenderHelper {
             int c = 0;
             int cc = 0;
             b.setRowIntervalMinSize(r, r, 0);
-            for (DefaultCell cell : row.cells) {
+            for (DefaultCellDef cell : row.cells) {
                 int r0 = r;
                 int c0 = c;
                 int cr0 = cr;
@@ -178,8 +173,8 @@ class TableModelRenderHelper {
 //                NAssert.requireTrue(cell.y == r, cell.y +"(cell.y) == "+r+"(r)");
                 NTableCellFormat formatter = getTableCellFormat(cell);
                 NText cvalue = cell.content();
-                cell.vAlign = formatter.getVerticalAlign(r0, c0, cvalue);
-                cell.hAlign = formatter.getHorizontalAlign(r0, c0, cvalue);
+                cell.verticalAlign = formatter.getVerticalAlign(r0, c0, cvalue);
+                cell.horizontalAlign = formatter.getHorizontalAlign(r0, c0, cvalue);
                 cell.setRenderedContent(new NTextRegionImpl(
                         formatter.format(r0, c0, cvalue)
                 ));
@@ -199,9 +194,9 @@ class TableModelRenderHelper {
         for (int k = 0; k < effectiveRows.size(); k++) {
             TableRow row = effectiveRows.get(k);
 //            row.index=k;
-            List<DefaultCell> cells = row.cells;
+            List<DefaultCellDef> cells = row.cells;
             for (int j = 0; j < cells.size(); j++) {
-                DefaultCell cell = cells.get(j);
+                DefaultCellDef cell = cells.get(j);
                 int e = (int) Math.ceil(cell.renderedContent.rows() * 1.0 / Math.max(1,cell.rowspan));
                 //int e = cell.rendered.rows();
                 for (int i = 0; i < cell.rowspan; i++) {
@@ -213,7 +208,7 @@ class TableModelRenderHelper {
         tableRows = effectiveRows.toArray(new TableRow[0]);
     }
 
-    private NTableCellFormat getTableCellFormat(DefaultCell dc) {
+    private NTableCellFormat getTableCellFormat(DefaultCellDef dc) {
         return dc.isHeader() ? defaultHeaderFormatter : defaultCellFormatter;
     }
 
@@ -257,7 +252,7 @@ class TableModelRenderHelper {
     private void computeColumns() {
         int totalTableColumns = 0;
         for (TableRow row : tableRows) {
-            for (DefaultCell cell : row.cells) {
+            for (DefaultCellDef cell : row.cells) {
                 totalTableColumns = Math.max(totalTableColumns, cell.x+Math.max(1, cell.colspan));
             }
         }
@@ -267,7 +262,7 @@ class TableModelRenderHelper {
             tableColumns[i].index = i;
         }
         for (TableRow row : tableRows) {
-            for (DefaultCell cell : row.cells) {
+            for (DefaultCellDef cell : row.cells) {
                 int e = (int) Math.ceil(cell.renderedContent.columns() * 1.0 / Math.max(1, cell.colspan));
                 for (int i = 0; i < cell.colspan; i++) {
                     tableColumns[cell.x+i].charWidth = Math.max(tableColumns[cell.x+i].charWidth, e);
@@ -298,19 +293,19 @@ class TableModelRenderHelper {
             tr.dump(out, "   ");
         }
         out.println(prefix + "tableCells  = ");
-        for (DefaultCell cell : allCells()) {
+        for (DefaultCellDef cell : allCells()) {
             cell.dump(out, "   ");
         }
     }
 
-    public DefaultCell[] allCells() {
-        List<DefaultCell> list = new ArrayList<>();
+    public DefaultCellDef[] allCells() {
+        List<DefaultCellDef> list = new ArrayList<>();
         for (TableRow tr : tableRows) {
-            for (DefaultCell cell : tr.cells) {
+            for (DefaultCellDef cell : tr.cells) {
                 list.add(cell);
             }
         }
-        return list.toArray(new DefaultCell[0]);
+        return list.toArray(new DefaultCellDef[0]);
     }
 
 
@@ -322,11 +317,11 @@ class TableModelRenderHelper {
             rows = tableRows.length;
             cols = tableColumns.length;
             grid = new NTextRegion[rows][cols];
-            gridc = new DefaultCell[rows][cols];
+            gridc = new DefaultCellDef[rows][cols];
             noBorder = new int[rows][cols];
 
         // Step 1: Prepare cell regions
-        for (DefaultCell cell : allCells()) {
+        for (DefaultCellDef cell : allCells()) {
             int w = 0;
             for (int i = 0; i < cell.colspan; i++) {
                 int xx = cell.x + i;
@@ -345,7 +340,7 @@ class TableModelRenderHelper {
             }
 
             NTextRegion contentRegion = cell.renderedContent;
-            contentRegion = contentRegion.resize(Math.max(w, contentRegion.columns()), Math.max(h, contentRegion.rows()), cell.hAlign, cell.vAlign);
+            contentRegion = contentRegion.resize(Math.max(w, contentRegion.columns()), Math.max(h, contentRegion.rows()), cell.horizontalAlign, cell.verticalAlign);
             grid[cell.y][cell.x] = contentRegion;
             gridc[cell.y][cell.x] = cell;
         }

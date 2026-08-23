@@ -17,6 +17,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.text.NTableCell;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
 import net.thevpc.nuts.util.NRef;
@@ -123,7 +124,10 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             //        .setVisibleHeader(true);
             NMutableTableModel m = NMutableTableModel.of();
             //t.setValue(m);
-            m.addHeaderRow(NText.ofPlain("Name"), NText.ofPlain("Version"), NText.ofPlain("Path"));
+            m.addHeaderRow(
+                    NTableCell.of(NText.of("Name")),
+                    NTableCell.of(NText.of("Version")),
+                    NTableCell.of(NText.of("Path")));
             while (cmdLine.hasNext()) {
                 //if (!t.configureFirst(cmdLine)) {
                 cmdLine.commandName("config list java").throwUnexpectedArgument();
@@ -150,7 +154,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     }
                 });
                 for (NExecutionEngineLocation jloc : sdks) {
-                    m.addRow(NText.of(jloc.name()), NText.of(jloc.version()), NText.of(jloc.path()));
+                    m.addRow(NTableCell.of(NText.of(jloc.name())), NTableCell.of(NText.of(jloc.version())), NTableCell.of(NText.of(jloc.path())));
                 }
                 out.print(NTextArt.of().tableRenderer().get().render(m));
             }

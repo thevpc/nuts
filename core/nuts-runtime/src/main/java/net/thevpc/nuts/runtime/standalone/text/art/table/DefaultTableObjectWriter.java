@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.format.table;
+package net.thevpc.nuts.runtime.standalone.text.art.table;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -31,7 +31,6 @@ import net.thevpc.nuts.elem.NPairElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
-import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTextArtTableRenderer;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
@@ -125,12 +124,12 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
             columns.add("Value");
 //            resolveColumns(o, columns);
             for (String column : columns) {
-                model.addHeaderCell(NText.of(column));
+                model.addHeaderCell(NTableCell.of(NText.of(column)));
             }
             for (Map.Entry<Object, Object> eoelem2 : ((Map<Object, Object>) o).entrySet()) {
                 model.newRow();
-                model.addCell(formatObject(eoelem2.getKey()));
-                model.addCell(formatObject(eoelem2.getValue()));
+                model.addCell(NTableCell.of(formatObject(eoelem2.getKey())));
+                model.addCell(NTableCell.of(formatObject(eoelem2.getValue())));
             }
             return model;
         }
@@ -141,7 +140,7 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
         ) {
             NMutableTableModel model = NMutableTableModel.of();
             model.newRow();
-            model.addCell(formatObject(o));
+            model.addCell(NTableCell.of(formatObject(o)));
             return model;
         }
         if (!(o instanceof NElement)) {
@@ -197,7 +196,7 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
             }
         }
         for (String column : titles) {
-            model.addHeaderCell(NText.of(column));
+            model.addHeaderCell(NTableCell.of(NText.of(column)));
         }
         for (SimpleRow row : rows) {
             model.newRow();
@@ -209,9 +208,9 @@ public class DefaultTableObjectWriter extends DefaultObjectWriterBase<NTableWrit
                     if (visited[i] == null) {
                         if (Objects.equals(cell.title, title)) {
                             if (cell.value != null) {
-                                model.addCell(formatObject(cell.value));
+                                model.addCell(NTableCell.of(formatObject(cell.value)));
                             } else {
-                                model.addCell(NText.ofBlank());
+                                model.addCell(NTableCell.of(NText.ofBlank()));
                             }
                             visited[i] = true;
                             break;
