@@ -39,6 +39,7 @@ public class NMsgBuilder {
     public NMsgBuilder withMsgNtf(String plain) {
         return withMsg(NMsg.ofNtf(plain));
     }
+
     public NMsgBuilder withMsgC(String plain) {
         return withMsg(NMsg.ofC(plain));
     }
@@ -59,6 +60,35 @@ public class NMsgBuilder {
         return withMsg(NMsg.ofV(message, vars));
     }
 
+
+    public NMsgBuilder withMsgM(String message, NMsgParam... params) {
+        return withMsg(NMsg.ofM(message, params));
+    }
+
+    public NMsgBuilder withMsgM(String message, Map<String, ?> vars) {
+        return withMsg(NMsg.ofM(message, vars));
+    }
+
+    public NMsgBuilder withMsgM(String message, Function<String, ?> vars) {
+        return withMsg(NMsg.ofV(message, vars));
+    }
+
+    public NMsgBuilder withMsgS(String message, Object... params) {
+        return withMsg(NMsg.ofS(message, params));
+    }
+
+    public NMsgBuilder withMsgS(String message, NMsgParam... params) {
+        return withMsg(NMsg.ofS(message, params));
+    }
+
+    public NMsgBuilder withMsgS(String message, Map<String, ?> vars) {
+        return withMsg(NMsg.ofS(message, vars));
+    }
+
+    public NMsgBuilder withMsgS(String message, Function<String, ?> vars) {
+        return withMsg(NMsg.ofS(message, vars));
+    }
+
     public NMsgBuilder withMsgJ(String message, NMsgParam... params) {
         return withMsg(NMsg.ofJ(message, params));
     }
@@ -66,6 +96,7 @@ public class NMsgBuilder {
     public NMsgBuilder withMsgJ(String message, Object... params) {
         return withMsg(NMsg.ofJ(message, params));
     }
+
 
     public NMsgBuilder withMsg(NMsg message) {
         this.msg = message;

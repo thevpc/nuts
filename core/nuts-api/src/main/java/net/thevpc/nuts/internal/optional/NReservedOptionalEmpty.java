@@ -42,7 +42,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get() {
-        throwError(getMessage());
+        throwError(message());
         //never reached!
         return null;
     }
@@ -56,7 +56,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     public <V> NOptional<V> then(Function<T, V> mapper) {
         NAssert.requireNamedNonNull(mapper);
-        return NOptional.ofEmpty(getMessage());
+        return NOptional.ofEmpty(message());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     }
 
     @Override
-    public NOptionalType getType() {
+    public NOptionalType type() {
         return NOptionalType.EMPTY;
     }
 
@@ -116,7 +116,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     protected void throwError(Supplier<NMsg> preferredMessage) {
         if (preferredMessage == null) {
-            preferredMessage = getMessage();
+            preferredMessage = message();
         }
         if (preferredMessage == null) {
             preferredMessage = NMsg::ofMissingValue;
@@ -125,7 +125,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
         NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
         RuntimeException exception = null;
-        ExceptionFactory exceptionFactory = getExceptionFactory();
+        NOptionalExceptionFactory exceptionFactory = getExceptionFactory();
         if (exceptionFactory != null) {
             exception = exceptionFactory.createOptionalEmptyException(m);
         }

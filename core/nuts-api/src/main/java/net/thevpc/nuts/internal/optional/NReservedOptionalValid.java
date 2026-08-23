@@ -20,10 +20,10 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
             try {
                 return NOptional.of(mapper.apply(y));
             } catch (Exception ex) {
-                return NOptional.ofError(getMessage(), ex);
+                return NOptional.ofError(message(), ex);
             }
         } else {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
     }
 
@@ -59,7 +59,7 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
 
     public NOptional<T> onBlankEmpty() {
         if (isBlank()) {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
         return this;
     }
@@ -115,7 +115,7 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
     }
 
     @Override
-    public NOptionalType getType() {
+    public NOptionalType type() {
         return NOptionalType.PRESENT;
     }
 

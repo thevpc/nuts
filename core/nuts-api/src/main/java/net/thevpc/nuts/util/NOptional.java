@@ -29,7 +29,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      *
      * @return default ExceptionFactory
      */
-    static ExceptionFactory getDefaultExceptionFactory() {
+    static NOptionalExceptionFactory getDefaultExceptionFactory() {
         return NException.getDefaultExceptionFactory();
     }
 
@@ -43,7 +43,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      *
      * @return default ExceptionFactory
      */
-    static void setDefaultExceptionFactory(ExceptionFactory defaultExceptionFactory) {
+    static void setDefaultExceptionFactory(NOptionalExceptionFactory defaultExceptionFactory) {
         NException.setDefaultExceptionFactory(defaultExceptionFactory);
     }
 
@@ -798,7 +798,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      *
      * @return the configured {@code ExceptionFactory}
      */
-    ExceptionFactory getExceptionFactory();
+    NOptionalExceptionFactory getExceptionFactory();
 
     /**
      * Returns the contained value, or {@code null} if this optional is empty or an error.
@@ -1075,7 +1075,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      *
      * @return the {@code NOptionalType} representing the state of this optional
      */
-    NOptionalType getType();
+    NOptionalType type();
 
     /**
      * Returns the message associated with this optional.
@@ -1089,7 +1089,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      *
      * @return a {@code Supplier} for the associated {@code NMsg}, or {@code null} if present.
      */
-    Supplier<NMsg> getMessage();
+    Supplier<NMsg> message();
 
     /**
      * Sets a custom error message for this optional.
@@ -1170,7 +1170,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @param exceptionFactory the factory to use for creating exceptions
      * @return a new NOptional instance using the specified factory
      */
-    NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory);
+    NOptional<T> withExceptionFactory(NOptionalExceptionFactory exceptionFactory);
 
     /**
      * Converts this {@code NOptional} to a standard Java {@code Optional<T>}.
@@ -1207,51 +1207,4 @@ public interface NOptional<T> extends NBlankable, NDescribable {
 
     boolean orTrue();
 
-    /**
-     * Factory interface used to customize the creation of exceptions thrown by
-     * {@code NOptional} when terminal methods (like {@link NOptional#get()})
-     * encounter a failure condition (Empty or Error), as well as exceptions
-     * thrown by related utility classes (like assertion helpers).
-     */
-    interface ExceptionFactory {
-
-        /**
-         * Creates a {@code RuntimeException} to be thrown when a value is expected,
-         * but the {@link NOptional} is in the **Empty** state.
-         *
-         * @param message the descriptive message for the empty state
-         * @return the runtime exception to throw (e.g., NEmptyOptionalException)
-         */
-        RuntimeException createOptionalEmptyException(NMsg message);
-
-        /**
-         * Creates a {@code RuntimeException} to be thrown when a terminal method
-         * is called on an optional that is in the **Error** state.
-         *
-         * @param message the descriptive error message
-         * @param e       the underlying throwable that caused the error state, if available (may be null)
-         * @return the runtime exception to throw (e.g., NErrorOptionalException)
-         */
-        RuntimeException createOptionalErrorException(NMsg message, Throwable e);
-
-        /**
-         * Creates a {@code RuntimeException} to be thrown for general **assertion failures**
-         * within the Nuts framework (e.g., by the {@code NAssert} utility).
-         *
-         * @param message the assertion failure message
-         * @param e       the underlying throwable, if available (may be null)
-         * @return the runtime exception to throw
-         */
-        RuntimeException createAssertException(NMsg message, Throwable e);
-
-        /**
-         * Creates a {@code RuntimeException} specifically for **command-line related errors**,
-         * typically encountered during option parsing, validation, or command execution.
-         *
-         * @param message the command-line error message
-         * @param e       the underlying throwable, if available (may be null)
-         * @return the runtime exception to throw
-         */
-        RuntimeException createCmdLineException(NMsg message, Throwable e);
-    }
 }

@@ -612,7 +612,7 @@ public final class NReservedUtils {
             for (String x : o.get()) {
                 NOptional<NId> y = NId.get(x).onBlankEmpty();
                 if (y.isError()) {
-                    return NOptional.ofError(y.getMessage());
+                    return NOptional.ofError(y.message());
                 }
                 if (y.isPresent()) {
                     list.add(y.get());
@@ -621,9 +621,9 @@ public final class NReservedUtils {
             return NOptional.of(list);
         }
         if (o.isError()) {
-            return NOptional.ofError(o.getMessage());
+            return NOptional.ofError(o.message());
         }
-        return NOptional.ofEmpty(o.getMessage());
+        return NOptional.ofEmpty(o.message());
     }
 
     public static Map<String, String> toMap(NEnvCondition condition) {

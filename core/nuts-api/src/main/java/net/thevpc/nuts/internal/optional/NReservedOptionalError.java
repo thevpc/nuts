@@ -42,7 +42,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     }
 
     @Override
-    public NOptionalType getType() {
+    public NOptionalType type() {
         return NOptionalType.ERROR;
     }
 
@@ -53,7 +53,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get() {
-        throwError(getMessage());
+        throwError(message());
         return null;
     }
 
@@ -108,7 +108,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     protected void throwError(Supplier<NMsg> preferredMessage) {
         if (preferredMessage == null) {
-            preferredMessage = getMessage();
+            preferredMessage = message();
         }
         if (preferredMessage == null) {
             preferredMessage = NMsg::ofMissingValue;
@@ -117,7 +117,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
         RuntimeException exception = null;
-        ExceptionFactory exceptionFactory = getExceptionFactory();
+        NOptionalExceptionFactory exceptionFactory = getExceptionFactory();
         if (exceptionFactory != null) {
             exception = exceptionFactory.createOptionalErrorException(m, cause);
         }

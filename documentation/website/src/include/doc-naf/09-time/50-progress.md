@@ -13,11 +13,11 @@ Long-running or multi-step operations benefit from structured progress tracking.
 - Structured Execution – runWith(Runnable) and runWithAll(Runnable...) integrate progress tracking into actual task execution. Each runnable can be associated with a subtask and progress weight.
 - Indeterminate Progress – Supports tasks with unknown total duration using setIndeterminate().
 - Estimated Duration – Automatically calculates elapsed and remaining time via getEstimatedRemainingDuration() and getEstimatedTotalDuration().
-- Convenient Defaults – NProgressMonitors.of().of() returns the current monitor if one exists, or a silent fallback otherwise.
+- Convenient Defaults – NProgressMonitor.of() returns the current monitor if one exists, or a silent fallback otherwise.
 - ANSI-friendly Output – Works seamlessly with NText/NTextStyle for styled terminal output.
 
 ```java
-NProgressMonitor monitor = NProgressMonitors.of().of(event -> {
+NProgressMonitor monitor = NProgressMonitor.of(event -> {
     NOut.println(event);
 });
 monitor.setProgress(0);
@@ -70,15 +70,15 @@ For monitoring IO progress, Nuts provides NInputStreamMonitor, which wraps an in
 ```java
 
 NInputStreamMonitor monitor = NInputStreamMonitor.of()
-        .setSource(new FileInputStream("/some/path"))
-        .setLogProgress(true)
-        .setTraceProgress(false);
+        .source(new FileInputStream("/some/path"))
+        .logProgress(true)
+        .traceProgress(false);
 
 NProgressListener listener= event->NOut.println(NMsg.of("progress : %s",event.getProgress()));
 
 NInputSource monitoredSource = NInputSource.of(
-        monitor.setProgressFactory(()->listener)
-                .setLength(NPath.of("/some/path").length()) //estimated length
+        monitor.progressFactory(()->listener)
+                .length(NPath.of("/some/path").length()) //estimated length
                 .create()
 );
 // Reading the bytes will show progress in the console

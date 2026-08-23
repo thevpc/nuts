@@ -96,7 +96,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                     NOptional<NDescriptor> r = parse(is, defaultDescriptorStyle, true);
                     if (r.isError()) {
                         return NOptional.ofError(() -> NMsg.ofC("unable to parse descriptor from %s : %s", path,
-                                r.getMessage().get()
+                                r.message().get()
                         ));
                     }
                     return r;

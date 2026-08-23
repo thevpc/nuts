@@ -90,6 +90,14 @@ public class ExprOpHelper {
                 }
                 break;
             }
+            case "~": {
+                switch (type) {
+                    case PREFIX: {
+                        return NExprOpPrecedence.COMPLEMENT;
+                    }
+                }
+                break;
+            }
             case "%": {
                 if (type == null) {
                     type = NExprOpType.INFIX;

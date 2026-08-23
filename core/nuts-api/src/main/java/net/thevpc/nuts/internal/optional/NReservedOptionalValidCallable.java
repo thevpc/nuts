@@ -66,15 +66,15 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                     T v = result.get();
                     try {
                         V r = mapper.apply(v);
-                        return NOptional.of(r, getMessage());
+                        return NOptional.of(r, message());
                     } catch (Exception ex) {
-                        return NOptional.ofError(getMessage(), ex);
+                        return NOptional.ofError(message(), ex);
                     }
                 } else {
-                    return (NOptional<V>) result.withMessage(getMessage());
+                    return (NOptional<V>) result.withMessage(message());
                 }
             } else {
-                return NOptional.ofEmpty(getMessage());
+                return NOptional.ofEmpty(message());
             }
         }
         return new NReservedOptionalValidCallable<V>(() -> {
@@ -82,14 +82,14 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                 T y = get();
                 if (y != null) {
                     V v = mapper.apply(y);
-                    return NOptional.of(v, getMessage());
+                    return NOptional.of(v, message());
                 } else {
                     return null;
                 }
             } catch (Exception ex) {
-                return NOptional.ofError(getMessage(), ex);
+                return NOptional.ofError(message(), ex);
             }
-        }, getMessage());
+        }, message());
     }
 
     @Override
@@ -97,7 +97,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
         if (!evaluated) {
             result = value.call();
             if (result == null) {
-                result = NOptional.ofEmpty(getMessage());
+                result = NOptional.ofEmpty(message());
             }
             evaluated = true;
         }

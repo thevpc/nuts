@@ -4,7 +4,6 @@ import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
-import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -12,7 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
-    private ExceptionFactory exceptionFactory;
+    private NOptionalExceptionFactory exceptionFactory;
     private final Supplier<NMsg> message;
 
     public NReservedOptionalImpl(Supplier<NMsg> message) {
@@ -23,7 +22,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     }
 
     @Override
-    public Supplier<NMsg> getMessage() {
+    public Supplier<NMsg> message() {
         return message;
     }
 
@@ -73,7 +72,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (isPresent()) {
             NOptional<V> b = mapper.apply(get());
             if (b == null) {
-                return NOptional.ofEmpty(getMessage());
+                return NOptional.ofEmpty(message());
             }
             return b;
         }
@@ -91,7 +90,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public <V> NOptional<V> mapIfNotBlank(Function<T, V> mapper) {
         if (isBlank()) {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
         return map(mapper);
     }
@@ -99,7 +98,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public <V> NOptional<V> mapIfNotEmpty(Function<T, V> mapper) {
         if (isEmpty()) {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
         return map(mapper);
     }
@@ -107,11 +106,11 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public <V> NOptional<V> mapIfNotNull(Function<T, V> mapper) {
         if (isEmpty()) {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
         T v = get();
         if (v == null) {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
         return map(mapper);
     }
@@ -119,7 +118,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public <V> NOptional<V> mapIfNotError(Function<T, V> mapper) {
         if (isEmpty()) {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
         return map(mapper);
     }
@@ -191,7 +190,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     public <V> NOptional<V> then(Function<T, V> mapper) {
         NAssert.requireNamedNonNull(mapper);
-        switch (getType()) {
+        switch (type()) {
             case PRESENT: {
                 try {
                     T y = get();
@@ -199,24 +198,24 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
                         try {
                             return NOptional.of(mapper.apply(y));
                         } catch (Exception ex) {
-                            return NOptional.ofError(getMessage(), ex);
+                            return NOptional.ofError(message(), ex);
                         }
                     } else {
-                        return NOptional.ofEmpty(getMessage());
+                        return NOptional.ofEmpty(message());
                     }
                 } catch (Exception ex) {
-                    return NOptional.ofError(getMessage(), ex);
+                    return NOptional.ofError(message(), ex);
                 }
             }
             case EMPTY: {
-                return NOptional.ofEmpty(getMessage());
+                return NOptional.ofEmpty(message());
             }
             case ERROR: {
-                return NOptional.ofError(getMessage(), getError());
+                return NOptional.ofError(message(), getError());
             }
         }
         //never
-        return NOptional.ofEmpty(getMessage());
+        return NOptional.ofEmpty(message());
     }
 
     @Override
@@ -317,7 +316,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     public NOptional<T> orElseGetOptionalOf(Supplier<T> other) {
         if (isNotPresent()) {
-            return NOptional.of(NAssert.requireNamedNonNull(other).get(), getMessage());
+            return NOptional.of(NAssert.requireNamedNonNull(other).get(), message());
         }
         return this;
     }
@@ -355,7 +354,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> onNullEmpty() {
         if (isNull()) {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
         return this;
     }
@@ -381,7 +380,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> onBlank(T other) {
         if (isBlank()) {
-            return NOptional.of(other, getMessage());
+            return NOptional.of(other, message());
         }
         return this;
     }
@@ -389,7 +388,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifEmptyNull() {
         if (isEmpty()) {
-            return NOptional.ofNullable(null, getMessage());
+            return NOptional.ofNullable(null, message());
         }
         return this;
     }
@@ -402,7 +401,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> onEmpty(T other) {
         if (isEmpty()) {
-            return NOptional.of(other, getMessage());
+            return NOptional.of(other, message());
         }
         return this;
     }
@@ -410,7 +409,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> onError(T other) {
         if (isError()) {
-            return NOptional.of(other, getMessage());
+            return NOptional.of(other, message());
         }
         return this;
     }
@@ -426,7 +425,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     }
 
     @Override
-    public NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory) {
+    public NOptional<T> withExceptionFactory(NOptionalExceptionFactory exceptionFactory) {
         this.exceptionFactory = exceptionFactory;
         return this;
     }
@@ -437,7 +436,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
             T v = get();
             if (NBlankable.isBlank(v)) {
                 if (emptyMessage == null) {
-                    emptyMessage = getMessage();
+                    emptyMessage = message();
                 }
                 return NOptional.ofEmpty(emptyMessage);
             }
@@ -450,7 +449,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         return onBlankEmpty(null);
     }
 
-    public ExceptionFactory getExceptionFactory() {
+    public NOptionalExceptionFactory getExceptionFactory() {
         return exceptionFactory;
     }
 

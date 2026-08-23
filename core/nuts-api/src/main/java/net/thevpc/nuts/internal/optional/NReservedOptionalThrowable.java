@@ -51,7 +51,7 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
             if (o != null) {
                 return o.orDefaultOptional(); // recursive resolution
             }
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
     }
 
@@ -86,7 +86,7 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
         c.defaultValue = value == null ? null : () -> {
             NOptional<T> i = value.get();
             if (i == null) {
-                return NOptional.ofEmpty(getMessage());
+                return NOptional.ofEmpty(message());
             }
             return this;
         };

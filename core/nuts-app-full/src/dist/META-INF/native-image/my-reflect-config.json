@@ -369,6 +369,20 @@
     "allPublicConstructors": true
   },
   {
+    "name": "java.util.SequencedCollection",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true
+  },
+  {
+    "name": "java.util.SequencedMap",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true
+  },
+  {
     "name": "java.util.Set",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -7040,20 +7054,6 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NAliasName",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
     "name": "net.thevpc.nuts.elem.NArrayElement",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -7545,20 +7545,6 @@
   },
   {
     "name": "net.thevpc.nuts.elem.NElementFormatterStyle",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.elem.NElementHandle",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -8875,20 +8861,6 @@
   },
   {
     "name": "net.thevpc.nuts.expr.NExprOperator",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.expr.NExprOperatorHandler",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -41942,7 +41914,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.util.NOptional$ExceptionFactory",
+    "name": "net.thevpc.nuts.util.NOptionalErrorException",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -41956,7 +41928,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.util.NOptionalErrorException",
+    "name": "net.thevpc.nuts.util.NOptionalExceptionFactory",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

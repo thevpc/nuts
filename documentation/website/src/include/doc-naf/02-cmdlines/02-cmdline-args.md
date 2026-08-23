@@ -36,7 +36,7 @@ Boolean options do not always require a value:
 ```
 --install      # equivalent to true
 +install=true
---install=false  # or --!install-companions / --~install-companions
+--install=false  # or --!install / --~install
 ```
 
 `!` and `~` are treated as negation. This is useful in shells where `!` has special meaning.

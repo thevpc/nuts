@@ -145,6 +145,7 @@ p {
   font-size: clamp(1.2rem, 3vw, 2rem);
   color: rgba(255,255,255,0.95);
   margin: 0 0 12px;
+  text-align: center;
 }
 
 .nuts-hero__sub {

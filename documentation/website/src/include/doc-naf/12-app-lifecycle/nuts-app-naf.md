@@ -66,7 +66,7 @@ public class App implements NApplication {
 
     @Override
     public void run() {
-        NCmdLine cmd = NApp.of().getCmdLine();
+        NCmdLine cmd = NApp.of().cmdLine();
         File file = new File("file.xls");
         while (cmd.hasNext()) {
             switch (cmd.getKey().getString()) {

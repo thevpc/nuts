@@ -48,11 +48,11 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     private final NSession session;
     private final NMsg formattedMessage;
 
-    public static NOptional.ExceptionFactory getDefaultExceptionFactory() {
+    public static NOptionalExceptionFactory getDefaultExceptionFactory() {
         return NReservedExceptions.getDefaultExceptionFactory();
     }
 
-    public static void setDefaultExceptionFactory(NOptional.ExceptionFactory defaultExceptionFactory) {
+    public static void setDefaultExceptionFactory(NOptionalExceptionFactory defaultExceptionFactory) {
         NReservedExceptions.setDefaultExceptionFactory(defaultExceptionFactory);
     }
     public static RuntimeException ofSafeIllegalArgumentException(NMsg message) {
@@ -215,6 +215,11 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     @NGetter
     public NSession session() {
         return session;
+    }
+
+    @NGetter
+    public String message() {
+        return getMessage();
     }
 
 

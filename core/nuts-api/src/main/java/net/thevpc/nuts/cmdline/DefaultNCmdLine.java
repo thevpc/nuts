@@ -624,7 +624,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 NArg peeked = peek().orNull();
                 NOptional<String> string = peeked.getKey().asString();
                 if (string.isError()) {
-                    return NOptional.ofError(string.getMessage());
+                    return NOptional.ofError(string.message());
                 }
                 if (string.isPresent()) {
                     names = new String[]{string.get()};

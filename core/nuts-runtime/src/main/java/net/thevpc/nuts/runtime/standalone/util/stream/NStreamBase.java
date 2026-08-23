@@ -266,11 +266,11 @@ public class NStreamBase<T> implements NStream<T> {
     }
 
     @Override
-    public NStream<T> sorted(NComparator<T> comp) {
+    public NStream<T> sorted(Comparator<T> comp) {
         return transform(new NStreamBaseTransform<T, T>() {
             @Override
             public NIterator<T> transformIterator(NIterator<T> iterator) {
-                return NIteratorUtils.sort(iterator, comp, false);
+                return NIteratorUtils.sort(iterator, comp==null?null:NComparator.<T>of(comp), false);
             }
 
             @Override

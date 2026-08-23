@@ -134,7 +134,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
                 if (y.isPresent()) {
                     set.add((T) y.get());
                 } else {
-                    return NOptional.ofError(y.getMessage());
+                    return NOptional.ofError(y.message());
                 }
             }
         } else {

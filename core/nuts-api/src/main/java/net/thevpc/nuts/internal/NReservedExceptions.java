@@ -16,13 +16,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.NoSuchElementException;
 
 public class NReservedExceptions {
-    public static NOptional.ExceptionFactory defaultExceptionFactory;
+    public static NOptionalExceptionFactory defaultExceptionFactory;
 
-    public static NOptional.ExceptionFactory getDefaultExceptionFactory() {
+    public static NOptionalExceptionFactory getDefaultExceptionFactory() {
         return defaultExceptionFactory;
     }
 
-    public static void setDefaultExceptionFactory(NOptional.ExceptionFactory defaultExceptionFactory) {
+    public static void setDefaultExceptionFactory(NOptionalExceptionFactory defaultExceptionFactory) {
         NReservedExceptions.defaultExceptionFactory = defaultExceptionFactory;
     }
 

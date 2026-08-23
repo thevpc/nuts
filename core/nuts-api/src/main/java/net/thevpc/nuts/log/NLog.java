@@ -160,7 +160,6 @@ public interface NLog extends NLogger{
         log(msg.asWarningAlert());
     }
 
-
     default void error(NMsg msg) {
         log(msg.asError());
     }

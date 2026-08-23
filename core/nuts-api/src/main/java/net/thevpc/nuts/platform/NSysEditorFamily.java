@@ -21,7 +21,7 @@ public enum NSysEditorFamily implements NEnum {
         for (String s : NStringUtils.split(value, ";,", true, true)) {
             NOptional<NSysEditorFamily> u = parse(s);
             if (!u.isPresent()) {
-                return NOptional.ofNamedEmpty(u.getMessage().get());
+                return NOptional.ofNamedEmpty(u.message().get());
             }
             all.add(u.get());
         }

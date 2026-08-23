@@ -55,6 +55,7 @@ NOut.println(art.treeRenderer().get().render(tree));
 Result: 
 
 ```
+
    ╭─╮
    │1│
    ╰─╯

@@ -44,7 +44,16 @@ public interface NComparator<T> extends Comparator<T>, NRedescribable<NComparato
         if (o instanceof NComparator) {
             return (NComparator<T>) o;
         }
-        return new NComparatorFromJavaComparator<>(o);
+        return new NComparatorFromJavaComparator<>(o,null);
+    }
+    static <T> NComparator<T> of(Comparator<T> o,NElement desc) {
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof NComparator) {
+            return (NComparator<T>) o;
+        }
+        return new NComparatorFromJavaComparator<>(o,desc==null?null:()->desc);
     }
 
     @Override

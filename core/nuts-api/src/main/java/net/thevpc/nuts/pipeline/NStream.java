@@ -28,7 +28,6 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NRedescribable;
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
-import net.thevpc.nuts.util.NComparator;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.UnsafeFunction;
 
@@ -196,7 +195,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
 
     NStream<T> sorted();
 
-    NStream<T> sorted(NComparator<T> comp);
+    NStream<T> sorted(Comparator<T> comp);
 
     NStream<T> distinct();
 
