@@ -2026,7 +2026,8 @@ public final class NBootUtils {
                             Files.delete(file);
                         } catch (IOException e) {
                             if(NBootPlatformHome.isWindows()){
-                                // in windows just ignore becau used log files cannot be deleted
+                                // in windows just ignore because used log files cannot be deleted
+                                log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("unable to delete : %s (%s). Ignored!", file, e).asWarning());
                             }else {
                                 throw new UncheckedIOException(e);
                             }
@@ -2050,7 +2051,8 @@ public final class NBootUtils {
                                 //try three times and then exit!
                             } catch (IOException e) {
                                 if(NBootPlatformHome.isWindows()){
-                                    // in windows just ignore becau used log files cannot be deleted
+                                    // in windows just ignore because used log files cannot be deleted
+                                    log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("unable to delete : %s (%s). Ignored!", dir, e).asWarning());
                                 }else {
                                     throw new UncheckedIOException(e);
                                 }
@@ -2068,6 +2070,7 @@ public final class NBootUtils {
                             } catch (IOException e) {
                                 if(NBootPlatformHome.isWindows()){
                                     // in windows just ignore becau used log files cannot be deleted
+                                    log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("unable to delete : %s (%s). Ignored!", dir, e).asWarning());
                                 }else {
                                     throw new UncheckedIOException(e);
                                 }

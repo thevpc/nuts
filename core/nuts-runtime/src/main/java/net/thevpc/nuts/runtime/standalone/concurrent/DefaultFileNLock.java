@@ -333,7 +333,7 @@ public class DefaultFileNLock extends AbstractNLock {
             li.hostname = NEnv.of().hostName();
             li.instant = Instant.now();
             li.maxValidInstant = li.instant.plusSeconds(12 * 3600); // 12 hours TTL
-            li.pid = NWorkspace.of().pid();
+            li.pid = NEnv.of().pid();
 
             Files.write(path, li.serialize().getBytes());
             ownerThread = Thread.currentThread();

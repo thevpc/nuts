@@ -298,8 +298,6 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     <T> T getOrComputeProperty(String property, Supplier<T> supplier);
 
 
-    String pid();
-
     void addLauncher(NLauncherOptions launcher);
 
     List<String> buildEffectiveCommand(String[] cmd,
@@ -481,7 +479,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     boolean updateCommand(NCommandConfig command);
 
     /**
-     * remove command. if the command does not exists a NutsIllegalArgumentException is thrown.
+     * remove command. if the command does not exist a NutsIllegalArgumentException is thrown.
      *
      * @param command command name
      */

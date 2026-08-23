@@ -98,7 +98,7 @@ public class NCachedValueModel implements Cloneable, NCopiable {
     }
 
     @NGetter
-    public Object error() {
+    public Throwable error() {
         return error;
     }
 

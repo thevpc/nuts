@@ -233,7 +233,7 @@ public class NBootPlatformHome {
     /**
      * resolves nuts home folder.Home folder is the root for nuts folders.It
      * depends on folder type and store layout. For instance log folder depends
-     * on on the underlying operating system (linux,windows,...).
+     * on the underlying operating system (Linux,Windows,...).
      * Specifications: XDG Base Directory Specification
      * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
      *

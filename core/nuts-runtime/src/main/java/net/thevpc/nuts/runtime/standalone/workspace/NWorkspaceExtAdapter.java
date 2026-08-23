@@ -344,11 +344,6 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public String pid() {
-        return base.pid();
-    }
-
-    @Override
     public void addLauncher(NLauncherOptions launcher) {
         base.addLauncher(launcher);
     }

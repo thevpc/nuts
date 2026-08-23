@@ -64,6 +64,10 @@ public class NEnvAsCmd extends NEnvBase {
         return NScorable.UNSUPPORTED_SCORE;
     }
 
+    @Override
+    public String pid() {
+        return null;
+    }
 
     private synchronized void update() {
         //test for posix

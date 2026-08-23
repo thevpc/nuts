@@ -57,35 +57,6 @@ You may also customize it before sharing:
 Nuts.openWorkspace("--in-memory", "--color").share();
 ```
 
-## Environment & System Info
-Workspaces provide access to environment metadata:
-
-NWorkspace ws = NWorkspace.current();
-
-
-```java
-ws.getHostName();               // Host name
-ws.getPid();                    // Process ID
-ws.getOsFamily();               // Linux, Windows, Mac, etc.
-ws.getShellFamily();            // bash, cmd, powershell, etc.
-ws.getPlatform();               // Java, Android, etc.
-ws.getOs();                     // Full OS ID
-ws.getOsDist();                 // OS distribution (e.g. Ubuntu)
-ws.getArch();                   // CPU architecture (e.g. amd64)
-ws.getArchFamily();            // Arch family (e.g. x86_64)
-ws.getDesktopEnvironment();     // Gnome, KDE, etc.
-ws.getDesktopEnvironmentFamily(); // Gnome-like, etc.
-ws.isGraphicalDesktopEnvironment(); // true if graphical session
-```
-
-You can also list all available shell families or desktop environments:
-
-
-```java
-ws.getShellFamilies(); // e.g. [BASH, ZSH, CMD]
-ws.getDesktopEnvironments(); // List of detected environments
-```
-
 ## Accessing the Current Workspace
 
 To retrieve the current NWorkspace (i.e., the one bound to the current thread context), you have two options:

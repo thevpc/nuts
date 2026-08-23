@@ -186,4 +186,8 @@ public abstract class NEnvAsCmdBase implements NEnv {
 
     protected abstract String runSystemCommand(String cmd);
 
+    @Override
+    public String pid() {
+        return defEnv.pid();
+    }
 }

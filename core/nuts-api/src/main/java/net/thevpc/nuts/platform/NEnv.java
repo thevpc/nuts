@@ -147,4 +147,6 @@ public interface NEnv extends NComponent {
      * @since 0.8.9
      */
     NEnv refresh();
+
+    String pid();
 }

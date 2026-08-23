@@ -137,7 +137,7 @@ public final class NCachedValueImpl<T> implements NCachedValue<T> {
         if (!canRetry) {
             if (model.isRetainLastOnFailure() && model.lastValidValue() != null)
                 return (T) model.lastValidValue();
-            throwAsRuntime(model.value());
+            throwAsRuntime(model.error());
         }
 
         synchronized (this) {

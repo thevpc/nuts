@@ -75,6 +75,11 @@ public class NEnvLocal extends NEnvBase {
         return new NEnvLocal();
     }
 
+    @Override
+    public String pid() {
+        return NWorkspaceExt.of().getModel().getPid();
+    }
+
     private void init() {
         if (!this.initialized) {
             this.os = NId.get(CorePlatformUtils.getPlatformOs()).get();

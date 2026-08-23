@@ -1787,12 +1787,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return this;
     }
 
-
-    @Override
-    public String pid() {
-        return wsModel.getPid();
-    }
-
     public void addLauncher(NLauncherOptions launcher) {
         //apply isolation!
         NIsolationLevel isolation = this.bootOptions().isolationLevel().orElse(NIsolationLevel.SYSTEM);
