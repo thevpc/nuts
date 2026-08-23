@@ -2,7 +2,7 @@
 title: NAF Spring Boot Integration
 ---
 
-nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation @NAppDefinition to mark your SpringBootApplication.
+nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation `@NAppDefinition` to mark your `SpringBootApplication`.
 
 Add the following dependency to you spring boot project
 ```xml
@@ -24,7 +24,7 @@ public class AppExample {
         SpringApplication.run(AppExample.class, args);
     }
 
-    @NAppRunner // not mandatory
+    @NAppRunner // optional runner
     public void run() {
         NOut.println("Hello ##World##");
     }
@@ -49,7 +49,7 @@ public class MyBean {
 
 Nuts can automatically integrate with Spring's application context. By default, `NBeanContainer` is wired with the Spring context, which allows any object managed by Spring to be referenced in Nuts using `NBeanRef`.
 
-> **Important:** Only the `NBeanRef` itself is serialized or persisted. At runtime, the actual bean is resolved dynamically from the current bean container (e.g., Spring context). This means you can safely serialize or store Nuts objects without worrying about serializing the full bean state.
+:: **Important:** Only the `NBeanRef` itself is serialized or persisted. At runtime, the actual bean is resolved dynamically from the current bean container (e.g., Spring context). This means you can safely serialize or store Nuts objects without worrying about serializing the full bean state.
 
 #### Example: Referencing Spring Beans
 

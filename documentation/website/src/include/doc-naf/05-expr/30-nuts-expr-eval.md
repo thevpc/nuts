@@ -1,6 +1,6 @@
 # NExpr — Evaluation
 
-Part of the [NExpr doc set](./NExpr.md). Covers how a parsed `NExprNode` actually gets executed: `NExprCallContext`, `NExprCallHandler`, `NExprNodeValue`, custom function/operator resolvers, the complete built-in function table, and two worked examples.
+Part of the NExpr doc set. Covers how a parsed `NExprNode` actually gets executed: `NExprCallContext`, `NExprCallHandler`, `NExprNodeValue`, custom function/operator resolvers, the complete built-in function table, and two worked examples.
 
 ---
 

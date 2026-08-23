@@ -1,6 +1,6 @@
 # NExpr — Low-Level Tokenization (`NStreamTokenizer`)
 
-Part of the [NExpr doc set](./NExpr.md). Covers `NStreamTokenizer`, the lexer backing NExpr's parser, and why it exists as a separate class instead of reusing `java.io.StreamTokenizer`.
+Part of the NExpr doc set. Covers `NStreamTokenizer`, the lexer backing NExpr's parser, and why it exists as a separate class instead of reusing `java.io.StreamTokenizer`.
 
 `NStreamTokenizer` is usable standalone for custom lexing needs, independent of the rest of NExpr.
 

@@ -79,6 +79,7 @@ Use NTrace to display less relevant or verbose messages that:
 - Can be safely ignored without impacting the understanding of the main output.
 
 
->> **Note:**  
->> `NTrace` is not a developer logging mechanism.
->> For internal developer-oriented logging, use NLog.
+:::info
+`NTrace` is not a developer logging mechanism.
+For internal developer-oriented logging, use NLog.
+:::

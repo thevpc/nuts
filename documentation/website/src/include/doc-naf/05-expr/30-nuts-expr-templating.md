@@ -23,7 +23,9 @@ NExpr ships more than one delimiter convention, so the same underlying directive
 - **JSP-style** — a delimiter convention in the spirit of JSP/EL-style templating (`<% %>` / `${ }`-flavored), for embedding into contexts where that's the more natural or expected marker syntax (e.g. HTML-adjacent templates, or teams already used to JSP-family tag delimiters).
 - **Custom delimiters** — because the directive *language* is decoupled from the delimiter *syntax*, NExpr's templating is extensible with your own prefix/suffix markers, letting you embed the same `{{:if}}`/`{{:for}}`/interpolation semantics inside essentially any host language or file format (config files, other DSLs, code-generation templates, …) simply by choosing marker characters that don't collide with that host format's own syntax — without having to reimplement the underlying `if`/`for`/expression evaluation logic each time.
 
-> The exact method names/signatures for selecting the JSP-style preset and for supplying fully custom prefix/suffix delimiters weren't part of the sources reviewed for this doc set — only `.withMoustacheStyle()` was directly evidenced. If you can share that part of the `NExprTemplate` API, this section can be filled in with exact usage.
+:::info
+The exact method names/signatures for selecting the JSP-style preset and for supplying fully custom prefix/suffix delimiters weren't part of the sources reviewed for this doc set — only `.withMoustacheStyle()` was directly evidenced. If you can share that part of the `NExprTemplate` API, this section can be filled in with exact usage.
+:::
 
 ## 3. Moustache-style directives
 

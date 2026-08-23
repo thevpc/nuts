@@ -214,7 +214,8 @@ public class DeploymentService {
 
 In Nuts, applications, tools, and extensions execute within workspace sessions. Logger instances resolve their active configuration, log thresholds, and appenders dynamically from the active runtime context.
 
->> Avoid static final Loggers
+:::info
+Avoid static final Loggers
 
 ```java
 // ❌ NOT RECOMMENDED for workspace-aware code:
@@ -236,6 +237,9 @@ public class ServiceRunner {
 }
 
 ```
+
+:::
+
 
 ## 7. Message Formatting Styles (NMsg)
 

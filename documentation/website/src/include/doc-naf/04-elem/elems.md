@@ -88,7 +88,9 @@ String updatedTson = NElementWriter.ofTson()
 // Output will still contain "// Database connection settings" and "/* Feature flags */"
 System.out.println(updatedTson);
 ```
->> Note: The underlying tree retains NElementComment and NElementLine nodes attached to their respective parents, ensuring the roundtrip is lossless regarding human-readable metadata.
+:::info
+Note: The underlying tree retains NElementComment and NElementLine nodes attached to their respective parents, ensuring the roundtrip is lossless regarding human-readable metadata.
+:::
 
 ## 3. Expression Handling & Reshaping (NFlatExprElement)
 
@@ -111,7 +113,9 @@ NElement structuredTree = flatExpr.reshape(NExprElementReshaperType.JAVA);
 // - EMPTY: Returns the flat structure as-is.
 ```
 
->> Note: The API supports a massive NOperatorSymbol enum, including standard math (+, -, *, /), logical (&&, ||), arrows (->, =>), and advanced mathematical Unicode symbols (∫, ∑, ∈, ⊆), complete with lexeme aliases.
+:::info
+Note: The API supports a massive NOperatorSymbol enum, including standard math (+, -, *, /), logical (&&, ||), arrows (->, =>), and advanced mathematical Unicode symbols (∫, ∑, ∈, ⊆), complete with lexeme aliases.
+:::
 
 ## 4. NElement as a Pivot Format
 

@@ -712,8 +712,16 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Udc2f6e3faeafecb678a1adf34280a10a6e5af509">
-                                15.2 NSession
+                            <a class="nav-link" href="#U7c99352d03e199fd5255e44bbc2722fdb8816796">
+                                15.2 NEnv
+                            </a>
+                            
+                            
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="#U9866050480e200266d943bde354af89bbd7f200b">
+                                15.3 NSession
                             </a>
                             
                             
@@ -1477,7 +1485,7 @@ String updatedTson = NElementWriter.ofTson()
 
 // Output will still contain "// Database connection settings" and "/* Feature flags */"
 System.out.println(updatedTson);
-</code></pre>>> Note: The underlying tree retains NElementComment and NElementLine nodes attached to their respective parents, ensuring the roundtrip is lossless regarding human-readable metadata.<H4 class="md-title-2">3. Expression Handling & Reshaping (NFlatExprElement)</H4><p class="md-phrase"><mark class="md-code md-code-` ">NElement</mark> does not wire operator precedence rules by default. When parsing expressions, it initially creates an <mark class="md-code md-code-` ">NFlatExprElement</mark> (a flat list of operands and operators). It is up to the developer to choose how to resolve precedence.</p><p class="md-phrase">This is done via the <mark class="md-code md-code-` ">NExprElementReshaper</mark>, which transforms a flat expression into a structured <mark class="md-code md-code-` ">NOperatorElement</mark> tree.</p><pre class="md-code md-code-``` java"><code class="java">NFlatExprElement flatExpr = /* parsed flat expression: "a + b * c" */;
+</code></pre><div class="alert alert-info mb-4">Note: The underlying tree retains NElementComment and NElementLine nodes attached to their respective parents, ensuring the roundtrip is lossless regarding human-readable metadata.</div><H4 class="md-title-2">3. Expression Handling & Reshaping (NFlatExprElement)</H4><p class="md-phrase"><mark class="md-code md-code-` ">NElement</mark> does not wire operator precedence rules by default. When parsing expressions, it initially creates an <mark class="md-code md-code-` ">NFlatExprElement</mark> (a flat list of operands and operators). It is up to the developer to choose how to resolve precedence.</p><p class="md-phrase">This is done via the <mark class="md-code md-code-` ">NExprElementReshaper</mark>, which transforms a flat expression into a structured <mark class="md-code md-code-` ">NOperatorElement</mark> tree.</p><pre class="md-code md-code-``` java"><code class="java">NFlatExprElement flatExpr = /* parsed flat expression: "a + b * c" */;
 
 // Choose a reshaping strategy
 NElement structuredTree = flatExpr.reshape(NExprElementReshaperType.JAVA); 
@@ -1489,7 +1497,7 @@ NElement structuredTree = flatExpr.reshape(NExprElementReshaperType.JAVA);
 // - LEFT_ASSOCIATIVE: Evaluates strictly left-to-right.
 // - LOGICAL: Prioritizes logical operators (AND, OR).
 // - EMPTY: Returns the flat structure as-is.
-</code></pre><p class="md-phrase">>> Note: The API supports a massive NOperatorSymbol enum, including standard math (+, -, <b class="md-bold">, /), logical (&&, ||), arrows (->, =>), and advanced mathematical Unicode symbols (∫, ∑, ∈, ⊆), complete with lexeme aliases.</b></p><H4 class="md-title-2">4. NElement as a Pivot Format</H4><p class="md-phrase">Because <mark class="md-code md-code-` ">NElement</mark> abstracts the underlying syntax, you can use it to translate between formats. While <mark class="md-code md-code-` ">TSON</mark>/<mark class="md-code md-code-` ">JSON</mark> roundtrip is fully supported today, the model is designed to accommodate <mark class="md-code md-code-` ">XML</mark> and <mark class="md-code md-code-` ">YAML</mark> as they are integrated.</p><pre class="md-code md-code-``` java"><code class="java">// 1. Parse from JSON
+</code></pre><div class="alert alert-info mb-4"><p class="md-phrase">Note: The API supports a massive NOperatorSymbol enum, including standard math (+, -, <b class="md-bold">, /), logical (&&, ||), arrows (->, =>), and advanced mathematical Unicode symbols (∫, ∑, ∈, ⊆), complete with lexeme aliases.</b></p></div><H4 class="md-title-2">4. NElement as a Pivot Format</H4><p class="md-phrase">Because <mark class="md-code md-code-` ">NElement</mark> abstracts the underlying syntax, you can use it to translate between formats. While <mark class="md-code md-code-` ">TSON</mark>/<mark class="md-code md-code-` ">JSON</mark> roundtrip is fully supported today, the model is designed to accommodate <mark class="md-code md-code-` ">XML</mark> and <mark class="md-code md-code-` ">YAML</mark> as they are integrated.</p><pre class="md-code md-code-``` java"><code class="java">// 1. Parse from JSON
 String jsonInput = "{\"name\": \"app\", \"version\": 1}";
 NElement pivot = NElementReader.ofJson().read(jsonInput);
 
@@ -1659,7 +1667,7 @@ NElementWriter.ofNtfTson().format(iterable, NPrintStream.of(System.out));
                         </h3>
 
                         <div class="text-card">
-                            <H4 class="md-title-1">NExpr — Operators</H4><p class="md-phrase">Part of the <a href="./NExpr.md" class="md-link">NExpr doc set</a>. Covers <mark class="md-code md-code-` ">NExprOperator</mark>, operator kinds, declaring and removing operators, precedence & associativity, <mark class="md-code md-code-` ">NExprCommonOp</mark>, and the complete built-in operator table.</p><pre class="md-code md-code-``` java"><code class="java">interface NExprOperator {
+                            <H4 class="md-title-1">NExpr — Operators</H4><p class="md-phrase">Part of the NExpr doc set. Covers <mark class="md-code md-code-` ">NExprOperator</mark>, operator kinds, declaring and removing operators, precedence & associativity, <mark class="md-code md-code-` ">NExprCommonOp</mark>, and the complete built-in operator table.</p><pre class="md-code md-code-``` java"><code class="java">interface NExprOperator {
     static NExprOperator of(String name, NExprOpType operatorType, int operatorPrecedence,
                              NOperatorAssociativity associativity, NExprCallHandler handler);
     NOperatorAssociativity operatorAssociativity();
@@ -1743,7 +1751,7 @@ NOptional&lt;NFunction&lt;A, ?&gt;&gt;     findCommonPostfixOp(NExprCommonOp op,
                         </h3>
 
                         <div class="text-card">
-                            <H4 class="md-title-1">NExpr — Evaluation</H4><p class="md-phrase">Part of the <a href="./NExpr.md" class="md-link">NExpr doc set</a>. Covers how a parsed <mark class="md-code md-code-` ">NExprNode</mark> actually gets executed: <mark class="md-code md-code-` ">NExprCallContext</mark>, <mark class="md-code md-code-` ">NExprCallHandler</mark>, <mark class="md-code md-code-` ">NExprNodeValue</mark>, custom function/operator resolvers, the complete built-in function table, and two worked examples.</p><hr class="divider" class="md-hr"/><H4 class="md-title-2">1. The evaluation pipeline</H4><p class="md-phrase">Parsing (<code class="md-code md-code-` ">context.parse(expr)</code>) only produces an <mark class="md-code md-code-` ">NExprNode</mark>; nothing runs until you call <code class="md-code md-code-` ">eval(...)</code>.</p><pre class="md-code md-code-``` "><code class="">String expression
+                            <H4 class="md-title-1">NExpr — Evaluation</H4><p class="md-phrase">Part of the NExpr doc set. Covers how a parsed <mark class="md-code md-code-` ">NExprNode</mark> actually gets executed: <mark class="md-code md-code-` ">NExprCallContext</mark>, <mark class="md-code md-code-` ">NExprCallHandler</mark>, <mark class="md-code md-code-` ">NExprNodeValue</mark>, custom function/operator resolvers, the complete built-in function table, and two worked examples.</p><hr class="divider" class="md-hr"/><H4 class="md-title-2">1. The evaluation pipeline</H4><p class="md-phrase">Parsing (<code class="md-code md-code-` ">context.parse(expr)</code>) only produces an <mark class="md-code md-code-` ">NExprNode</mark>; nothing runs until you call <code class="md-code md-code-` ">eval(...)</code>.</p><pre class="md-code md-code-``` "><code class="">String expression
    │  context.parse(expression)
    ▼
 NOptional&lt;NExprNode&gt;
@@ -1855,7 +1863,7 @@ double lambda = ((Number) lambdaExpr.eval(ctx).get()).doubleValue();
                         </h3>
 
                         <div class="text-card">
-                            <H4 class="md-title-1"><p class="md-phrase">NExpr — Low-Level Tokenization (<mark class="md-code md-code-` ">NStreamTokenizer</mark>)</p></H4><p class="md-phrase">Part of the <a href="./NExpr.md" class="md-link">NExpr doc set</a>. Covers <mark class="md-code md-code-` ">NStreamTokenizer</mark>, the lexer backing NExpr's parser, and why it exists as a separate class instead of reusing <code class="md-code md-code-` ">java.io.StreamTokenizer</code>.</p><p class="md-phrase"><mark class="md-code md-code-` ">NStreamTokenizer</mark> is usable standalone for custom lexing needs, independent of the rest of NExpr.</p><pre class="md-code md-code-``` java"><code class="java">NStreamTokenizer st = new NStreamTokenizer(new StringReader("8.0.0"));
+                            <H4 class="md-title-1"><p class="md-phrase">NExpr — Low-Level Tokenization (<mark class="md-code md-code-` ">NStreamTokenizer</mark>)</p></H4><p class="md-phrase">Part of the NExpr doc set. Covers <mark class="md-code md-code-` ">NStreamTokenizer</mark>, the lexer backing NExpr's parser, and why it exists as a separate class instead of reusing <code class="md-code md-code-` ">java.io.StreamTokenizer</code>.</p><p class="md-phrase"><mark class="md-code md-code-` ">NStreamTokenizer</mark> is usable standalone for custom lexing needs, independent of the rest of NExpr.</p><pre class="md-code md-code-``` java"><code class="java">NStreamTokenizer st = new NStreamTokenizer(new StringReader("8.0.0"));
 st.xmlComments(true);
 st.parseNumbers(false);
 st.wordChars('0', '9');
@@ -2230,7 +2238,7 @@ nuts --!trace my-app
 
 // This will print only if trace is enabled (default is true)
 NTrace.println("Loading configuration from default path...");
-</code></pre><H4 class="md-title-2">Features (Same as NOut)</H4><p class="md-phrase"><mark class="md-code md-code-` ">NTrace</mark> supports the complete feature set of <mark class="md-code md-code-` ">NOut</mark>, including:</p><ul class="md-ul"><li class="md-uli">NTF formatting for colors and styling,</li><li class="md-uli">Structured rendering (e.g., JSON, YAML, XML, TSON, table, tree),</li><li class="md-uli">Formatted messages using NMsg,</li><li class="md-uli">Integration with the current session’s output configuration.</li></ul><H4 class="md-title-2">Best Practices</H4>Use NTrace to display less relevant or verbose messages that:<ul class="md-ul"><li class="md-uli">Are helpful for end users who want to better understand what the tool is doing,</li><li class="md-uli">Should not appear during normal usage but may provide useful context when verbosity is desired (e.g., progress steps, skipped actions, fallback behavior),</li><li class="md-uli">Can be safely ignored without impacting the understanding of the main output.</li></ul><p class="md-phrase">>> <b class="md-bold">Note:</b>   >> <mark class="md-code md-code-` ">NTrace</mark> is not a developer logging mechanism. >> For internal developer-oriented logging, use NLog.</p>
+</code></pre><H4 class="md-title-2">Features (Same as NOut)</H4><p class="md-phrase"><mark class="md-code md-code-` ">NTrace</mark> supports the complete feature set of <mark class="md-code md-code-` ">NOut</mark>, including:</p><ul class="md-ul"><li class="md-uli">NTF formatting for colors and styling,</li><li class="md-uli">Structured rendering (e.g., JSON, YAML, XML, TSON, table, tree),</li><li class="md-uli">Formatted messages using NMsg,</li><li class="md-uli">Integration with the current session’s output configuration.</li></ul><H4 class="md-title-2">Best Practices</H4>Use NTrace to display less relevant or verbose messages that:<ul class="md-ul"><li class="md-uli">Are helpful for end users who want to better understand what the tool is doing,</li><li class="md-uli">Should not appear during normal usage but may provide useful context when verbosity is desired (e.g., progress steps, skipped actions, fallback behavior),</li><li class="md-uli">Can be safely ignored without impacting the understanding of the main output.</li></ul><div class="alert alert-info mb-4"><p class="md-phrase"><mark class="md-code md-code-` ">NTrace</mark> is not a developer logging mechanism. For internal developer-oriented logging, use NLog.</p></div>
                         </div>
 
                         
@@ -3680,34 +3688,27 @@ public class App implements NApplication {
         // just create an instance and call runAndExit in the main method
         // this method ensures that exist code is well propagated
         // from exceptions to caller processes
-        new App().run(NAppRunOptions.ofExit(args));
+        NApp.builder(args).run();
     }
 
     @Override
     public void run() {
         NCmdLine cmd = NApp.of().cmdLine();
-        File file = new File("file.xls");
-        while (cmd.hasNext()) {
-            switch (cmd.getKey().getString()) {
-                case "--file": {
-                    NArg a = cmd.nextEntry().get();
-                    file = new File(a.getStringValue());
-                    break;
-                }
-                case "--fill": {
-                    // process other options here ...
-                    break;
-                }
-                default: {
-                    s.configureLast(cmd);
-                }
-            }
+        NRef&lt;File&gt; file = NRef.of(new File("file.xls"));
+        cmd.matcher()
+                .when("--file").asEntry(a-&gt;ref.set(a.stringValue()))
+                .when("--fill").asEntry(a-&gt;{}/*process other options here ... */)
+                .withDefaults()
+                .requireAll();
+        if(cmd.isCompleteMode()){
+            cmd.printCompleteResult();
+            return;
         }
         try {
-            WritableWorkbook w = Workbook.createWorkbook(file);
-            s.out().printf("Workbook just created at %s%n", file);
+            WritableWorkbook w = Workbook.createWorkbook(file.get());
+            NOut.printf("Workbook just created at %s%n", file.get());
         } catch (Exception ex) {
-            ex.printStackTrace(s.err());
+            ex.printStackTrace(NErr.err().asPrintStream());
         }
     }
 
@@ -3844,34 +3845,27 @@ public class App {
         // just create an instance and call runAndExit in the main method
         // this method ensures that exist code is well propagated
         // from exceptions to caller processes
-        new App().run(NAppRunOptions.ofExit(args));
+        NApp.builder(args).run();
     }
 
     @NAppRunner
     public void run() {
         NCmdLine cmd = NApp.of().cmdLine();
-        File file = new File("file.xls");
-        while (cmd.hasNext()) {
-            switch (cmd.getKey().getString()) {
-                case "--file": {
-                    NArg a = cmd.nextEntry().get();
-                    file = new File(a.getStringValue());
-                    break;
-                }
-                case "--fill": {
-                    // process other options here ...
-                    break;
-                }
-                default: {
-                    s.configureLast(cmd);
-                }
-            }
+        NRef&lt;File&gt; file = NRef.of(new File("file.xls"));
+        cmd.matcher()
+                .when("--file").asEntry(a-&gt;ref.set(a.stringValue()))
+                .when("--fill").asEntry(a-&gt;{}/*process other options here ... */)
+                .withDefaults()
+                .requireAll();
+        if(cmd.isCompleteMode()){
+            cmd.printCompleteResult();
+            return;
         }
         try {
-            WritableWorkbook w = Workbook.createWorkbook(file);
-            s.out().printf("Workbook just created at %s%n", file);
+            WritableWorkbook w = Workbook.createWorkbook(file.get());
+            NOut.printf("Workbook just created at %s%n", file.get());
         } catch (Exception ex) {
-            ex.printStackTrace(s.err());
+            ex.printStackTrace(NErr.err().asPrintStream());
         }
     }
 
@@ -3910,8 +3904,8 @@ nuts -y uninstall com.mycompany.app:my-app
                         </h3>
 
                         <div class="text-card">
-                            <H4 class="md-title-2">Nuts Application Framework CommandLine</H4><p class="md-phrase">Application Command line can be retrieved via <mark class="md-code md-code-` ">NApp</mark> instance:</p><pre class="md-code md-code-``` java"><code class="java">NCmdLine c1= NApp.of().getCmdine();
-</code></pre><H4 class="md-title-2">Exec / Autocomplete modes</H4><pre class="md-code md-code-``` java"><code class="java">NCmdLine c= NApp.of().getCmdine();
+                            <H4 class="md-title-2">Nuts Application Framework CommandLine</H4><p class="md-phrase">Application Command line can be retrieved via <mark class="md-code md-code-` ">NApp</mark> instance:</p><pre class="md-code md-code-``` java"><code class="java">NCmdLine c1= NApp.of().cmdLine();
+</code></pre><H4 class="md-title-2">Exec / Autocomplete modes</H4><pre class="md-code md-code-``` java"><code class="java">NCmdLine c= NApp.of().cmdLine();
     if(c.isExecMode()){
         ///    
     }
@@ -4033,7 +4027,7 @@ Implementation-Version: 1.2.3
                         </h3>
 
                         <div class="text-card">
-                            nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation @NAppDefinition to mark your SpringBootApplication.Add the following dependency to you spring boot project<pre class="md-code md-code-``` xml"><code class="xml">&lt;dependency&gt;
+                            <p class="md-phrase">nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation <code class="md-code md-code-` ">@NAppDefinition</code> to mark your <mark class="md-code md-code-` ">SpringBootApplication</mark>.</p>Add the following dependency to you spring boot project<pre class="md-code md-code-``` xml"><code class="xml">&lt;dependency&gt;
         &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
         &lt;artifactId&gt;nuts-spring-boot&lt;/artifactId&gt;
         &lt;version&gt;1.0.0.0&lt;/version&gt;
@@ -4046,7 +4040,7 @@ public class AppExample {
         SpringApplication.run(AppExample.class, args);
     }
 
-    @NAppRunner // not mandatory
+    @NAppRunner // optional runner
     public void run() {
         NOut.println("Hello ##World##");
     }
@@ -4060,7 +4054,7 @@ public class MyBean {
     @Autowired NPrintStream out;
 }
 
-</code></pre><H4 class="md-title-3">Using Spring-Managed Beans in Nuts</H4><p class="md-phrase">Nuts can automatically integrate with Spring's application context. By default, <mark class="md-code md-code-` ">NBeanContainer</mark> is wired with the Spring context, which allows any object managed by Spring to be referenced in Nuts using <mark class="md-code md-code-` ">NBeanRef</mark>.</p><p class="md-phrase">> <b class="md-bold">Important:</b> Only the <mark class="md-code md-code-` ">NBeanRef</mark> itself is serialized or persisted. At runtime, the actual bean is resolved dynamically from the current bean container (e.g., Spring context). This means you can safely serialize or store Nuts objects without worrying about serializing the full bean state.</p><H4 class="md-title-4">Example: Referencing Spring Beans</H4><pre class="md-code md-code-``` java"><code class="java">// Assume jdbcStore is an instance of a persistent store
+</code></pre><H4 class="md-title-3">Using Spring-Managed Beans in Nuts</H4><p class="md-phrase">Nuts can automatically integrate with Spring's application context. By default, <mark class="md-code md-code-` ">NBeanContainer</mark> is wired with the Spring context, which allows any object managed by Spring to be referenced in Nuts using <mark class="md-code md-code-` ">NBeanRef</mark>.</p><p class="md-phrase">:: <b class="md-bold">Important:</b> Only the <mark class="md-code md-code-` ">NBeanRef</mark> itself is serialized or persisted. At runtime, the actual bean is resolved dynamically from the current bean container (e.g., Spring context). This means you can safely serialize or store Nuts objects without worrying about serializing the full bean state.</p><H4 class="md-title-4">Example: Referencing Spring Beans</H4><pre class="md-code md-code-``` java"><code class="java">// Assume jdbcStore is an instance of a persistent store
 NRetryCallFactory factory = NConcurrent.of()
         .retryCallFactory()
         .withStore(jdbcStore); // optional persistence
@@ -4306,7 +4300,7 @@ public class LoggingAspect {
 |  |  +-------------------------+     +-----------------------------+  |  |
 |  +-------------------------------------------------------------------+  |
 +-------------------------------------------------------------------------+
-</code></pre><H4 class="md-title-4">Key Capabilities & API Methods</H4><ul class="md-ul"><li class="md-uli">Extension Point: Any interface inheriting from net.thevpc.nuts.spi.NComponent.</li><li class="md-uli">SPI Registration: All extensions register via a single service file: META-INF/services/net.thevpc.nuts.spi.NComponent.</li><li class="md-uli">Registration Lifecycle: When a core or plugin JAR is loaded, its extensions are indexed in a one-pass scan into an in-memory registry managed by NExtensions.</li><li class="md-uli">Resolution Engine: Evaluates candidate implementations against an NScorableContext and instantiates the candidate with the highest positive score. Ties default to registration order (first discovered wins).</li></ul><H4 class="md-title-4">Resolution & Factory Queries</H4><ul class="md-ul"><li class="md-uli">Single Best Match: NExtensions.of(NEnv.class) or createSupported(type, criteria) resolves the highest-scoring candidate (score > 0).</li><li class="md-uli">Multi-Match / Chain Execution: createAllSupported(type, criteria) returns a list of all candidates with positive scores, sorted in descending order of precedence.</li><li class="md-uli">Bulk Retrieval: createAll(type) returns instances of all registered types implementing that extension point.</li></ul><H4 class="md-title-4">Dynamic Lifecycle Management</H4><ul class="md-ul"><li class="md-uli">Runtime Loading: loadExtension(NId id) pulls new extensions into the workspace classpath and indexes their types.</li><li class="md-uli">Hot Unloading: unloadExtension(NId id) detaches classes and instances associated with that artifact source.</li></ul><H4 class="md-title-3"><p class="md-phrase">2. Scoring System (<mark class="md-code md-code-` ">NScorable</mark>)</p></H4>Every candidate is evaluated against runtime criteria before instantiation.<table class="table table-bordered table-striped"><tr><th>Score Level</th><th>Constant</th><th>Value</th><th>Role</th></tr><tr><td>Custom</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.CUSTOM_SCORE</code>        </p></td><td>1000+</td><td>User-defined overrides (takes priority)</td></tr><tr><td>Default</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.DEFAULT_SCORE</code>       </p></td><td>10</td><td>Standard built-in implementations</td></tr><tr><td>Unsupported</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.UNSUPPORTED_SCORE</code>   </p></td><td>-1 (<= 0)</td><td>Candidate is discarded for current context</td></tr></table><H4 class="md-title-3"><p class="md-phrase">3. Component Scopes (<mark class="md-code md-code-` ">NScopeType</mark>)</p></H4>Components define their lifecycle using the @NComponentScope annotation:<table class="table table-bordered table-striped"><tr><th>Scope</th><th>Behavior</th><th>Typical Use Case</th></tr><tr><td>WORKSPACE</td><td>One instance per NWorkspace reference.</td><td>Heavy tooling, format executors (ZipExecutorComponent), thread pools.</td></tr><tr><td>SESSION</td><td>One instance per NSession. Isolated to a specific session execution.</td><td>Session-specific caches, localized configuration.</td></tr><tr><td>SHARED_SESSION</td><td>Shared across a session and all sub-sessions/copies derived from it.</td><td>Shared state across child commands or task graphs.</td></tr><tr><td>TRANSITIVE_SESSION</td><td>Copied/cloned when a session is copied.</td><td>Session configurations that start with parent state but isolate child mutations.</td></tr><tr><td>PROTOTYPE (Default)</td><td>A fresh instance is created on every resolution call.</td><td>Stateful command builders, short-lived task processors.</td></tr></table><H4 class="md-title-3">4 KAPI, SPI, & RPI Specification</H4>Nuts unifies all runtime components under the NComponent interface while distinguishing three functional tiers: API, SPI, and RPI.<H4 class="md-title-4">1. The Three Component Tiers</H4><table class="table table-bordered table-striped"><tr><th>Tier</th><th>Name</th><th>Resolution Mechanism</th><th>Role</th><th>Example</th></tr><tr><td>API</td><td>Application Programming Interface</td><td>Static entry points (NEnv.of(), NObjectWriter.get())</td><td>Public contracts consumed by applications and commands.</td><td>NEnv, NObjectWriter, NWorkspace</td></tr><tr><td>SPI</td><td>Service Provider Interface</td><td>Dynamic discovery via manifest & scoring pipeline</td><td>Pluggable strategies, protocol extensions, custom engines.</td><td>NLogFactorySPI, NPathFactorySPI</td></tr><tr><td>RPI</td><td>Reserved Programming Interface</td><td>Fast-path hard-wired resolution in NExtensions</td><td>Essential runtime internals soldered by the core engine. Non-overridable.</td><td>NTextRPI, internal session coordinators</td></tr></table><H4 class="md-title-4">2. Internal Resolution Engine Mechanics</H4>When NExtensions.of(Type.class) or NExtensions.createSupported(Type.class, criteria) is invoked, NExtensions executes one of two paths:<H4 class="md-title-5">Path A: The RPI Fast-Path (Hard-Wired & Scoped)</H4>For core interfaces, the implementation is explicitly wired to avoid reflection and dynamic scanning.<H4 class="md-title-5">Path B: The SPI Dynamic Scoring Pipeline</H4>For pluggable extension points, NExtensions scans registered classes, evaluates support levels, and lazily instantiates the highest-scoring candidate.<H4 class="md-title-4">3. How APIs Consume RPIs</H4>Public API convenience methods use RPIs as internal engines without exposing internal implementation details:<pre class="md-code md-code-``` java"><code class="java">public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
+</code></pre><H4 class="md-title-4">Key Capabilities & API Methods</H4><ul class="md-ul"><li class="md-uli">Extension Point: Any interface inheriting from net.thevpc.nuts.spi.NComponent.</li><li class="md-uli">SPI Registration: All extensions register via a single service file: META-INF/services/net.thevpc.nuts.spi.NComponent.</li><li class="md-uli">Registration Lifecycle: When a core or plugin JAR is loaded, its extensions are indexed in a one-pass scan into an in-memory registry managed by NExtensions.</li><li class="md-uli">Resolution Engine: Evaluates candidate implementations against an NScorableContext and instantiates the candidate with the highest positive score. Ties default to registration order (first discovered wins).</li></ul><H4 class="md-title-4">Resolution & Factory Queries</H4><ul class="md-ul"><li class="md-uli">Single Best Match: NExtensions.of(NEnv.class) or createSupported(type, criteria) resolves the highest-scoring candidate (score > 0).</li><li class="md-uli">Multi-Match / Chain Execution: createAllSupported(type, criteria) returns a list of all candidates with positive scores, sorted in descending order of precedence.</li><li class="md-uli">Bulk Retrieval: createAll(type) returns instances of all registered types implementing that extension point.</li></ul><H4 class="md-title-4">Dynamic Lifecycle Management</H4><ul class="md-ul"><li class="md-uli">Runtime Loading: loadExtension(NId id) pulls new extensions into the workspace classpath and indexes their types.</li><li class="md-uli">Hot Unloading: unloadExtension(NId id) detaches classes and instances associated with that artifact source.</li></ul><H4 class="md-title-3"><p class="md-phrase">2. Scoring System (<mark class="md-code md-code-` ">NScorable</mark>)</p></H4>Every candidate is evaluated against runtime criteria before instantiation.<table class="table table-bordered table-striped"><tr><th>Score Level</th><th>Constant</th><th>Value</th><th>Role</th></tr><tr><td>Custom</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.CUSTOM_SCORE</code>        </p></td><td>1000+</td><td>User-defined overrides (takes priority)</td></tr><tr><td>Default</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.DEFAULT_SCORE</code>       </p></td><td>10</td><td>Standard built-in implementations</td></tr><tr><td>Unsupported</td><td><p class="md-phrase"> <code class="md-code md-code-` ">NScorable.UNSUPPORTED_SCORE</code>   </p></td><td>-1 (<= 0)</td><td>Candidate is discarded for current context</td></tr></table><H4 class="md-title-3"><p class="md-phrase">3. Component Scopes (<mark class="md-code md-code-` ">NScopeType</mark>)</p></H4>Components define their lifecycle using the @NComponentScope annotation:<table class="table table-bordered table-striped"><tr><th>Scope</th><th>Behavior</th><th>Typical Use Case</th></tr><tr><td>WORKSPACE</td><td>One instance per NWorkspace reference.</td><td>Heavy tooling, format executors (ZipExecutorComponent), thread pools.</td></tr><tr><td>SESSION</td><td>One instance per NSession. Isolated to a specific session execution.</td><td>Session-specific caches, localized configuration.</td></tr><tr><td>SHARED_SESSION</td><td>Shared across a session and all sub-sessions/copies derived from it.</td><td>Shared state across child commands or task graphs.</td></tr><tr><td>TRANSITIVE_SESSION</td><td>Copied/cloned when a session is copied.</td><td>Session configurations that start with parent state but isolate child mutations.</td></tr><tr><td>PROTOTYPE (Default)</td><td>A fresh instance is created on every resolution call.</td><td>Stateful command builders, short-lived task processors.</td></tr></table><H4 class="md-title-3">4 API, SPI, & RPI Specification</H4>Nuts unifies all runtime components under the NComponent interface while distinguishing three functional tiers: API, SPI, and RPI.<H4 class="md-title-4">1. The Three Component Tiers</H4><table class="table table-bordered table-striped"><tr><th>Tier</th><th>Name</th><th>Resolution Mechanism</th><th>Role</th><th>Example</th></tr><tr><td>API</td><td>Application Programming Interface</td><td>Static entry points (NEnv.of(), NEnv.get())</td><td>Public contracts consumed by applications and commands.</td><td>NEnv, NSession, NWorkspace</td></tr><tr><td>SPI</td><td>Service Provider Interface</td><td>Dynamic discovery via manifest & scoring pipeline</td><td>Pluggable strategies, protocol extensions, custom engines.</td><td>NLogFactorySPI, NPathFactorySPI</td></tr><tr><td>RPI</td><td>Reserved Programming Interface</td><td>Fast-path hard-wired resolution in NExtensions</td><td>Essential runtime internals soldered by the core engine. Non-overridable. never used by applications</td><td>NTextRPI, internal session coordinators</td></tr></table><H4 class="md-title-4">2. Internal Resolution Engine Mechanics</H4><p class="md-phrase">When <code class="md-code md-code-` ">NExtensions.of(Type.class)</code> or <code class="md-code md-code-` ">NExtensions.createSupported(Type.class, criteria)</code> is invoked, <mark class="md-code md-code-` ">NExtensions</mark> executes one of two paths:</p><H4 class="md-title-5">Path A: The RPI Fast-Path (Hard-Wired & Scoped)</H4>For core interfaces, the implementation is explicitly wired to avoid reflection and dynamic scanning.<H4 class="md-title-5">Path B: The SPI Dynamic Scoring Pipeline</H4>For pluggable extension points, NExtensions scans registered classes, evaluates support levels, and lazily instantiates the highest-scoring candidate.<H4 class="md-title-4">3. How APIs Consume RPIs</H4>Public API convenience methods use RPIs as internal engines without exposing internal implementation details:<pre class="md-code md-code-``` java"><code class="java">public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
     
     // API static factory delegates to RPI singleton in the current session
     static NOptional&lt;NObjectWriter&gt; get(Object any) {
@@ -4387,20 +4381,6 @@ public class NEnvSshImpl implements NEnv {
         });
 </code></pre><ul class="md-ul"><li class="md-uli">Temporarily hides the global workspace inside the block,</li><li class="md-uli">Scoped workspace is available in current and inherited threads,</li><li class="md-uli">Ideal for frameworks, sandboxing, plugins and testing.</li><li class="md-uli">Nuts.openWorkspace() uses persistent location (across processes) unless --in-memory is passed.</li></ul><H4 class="md-title-2">Sharing workspace globally</H4>To explicitly promote a workspace to global:<pre class="md-code md-code-``` java"><code class="java">Nuts.openWorkspace().share();
 </code></pre>You may also customize it before sharing:<pre class="md-code md-code-``` java"><code class="java">Nuts.openWorkspace("--in-memory", "--color").share();
-</code></pre><H4 class="md-title-2">Environment & System Info</H4>Workspaces provide access to environment metadata:NWorkspace ws = NWorkspace.current();<pre class="md-code md-code-``` java"><code class="java">ws.getHostName();               // Host name
-ws.getPid();                    // Process ID
-ws.getOsFamily();               // Linux, Windows, Mac, etc.
-ws.getShellFamily();            // bash, cmd, powershell, etc.
-ws.getPlatform();               // Java, Android, etc.
-ws.getOs();                     // Full OS ID
-ws.getOsDist();                 // OS distribution (e.g. Ubuntu)
-ws.getArch();                   // CPU architecture (e.g. amd64)
-ws.getArchFamily();            // Arch family (e.g. x86_64)
-ws.getDesktopEnvironment();     // Gnome, KDE, etc.
-ws.getDesktopEnvironmentFamily(); // Gnome-like, etc.
-ws.isGraphicalDesktopEnvironment(); // true if graphical session
-</code></pre>You can also list all available shell families or desktop environments:<pre class="md-code md-code-``` java"><code class="java">ws.getShellFamilies(); // e.g. [BASH, ZSH, CMD]
-ws.getDesktopEnvironments(); // List of detected environments
 </code></pre><H4 class="md-title-2">Accessing the Current Workspace</H4>To retrieve the current NWorkspace (i.e., the one bound to the current thread context), you have two options:<H4 class="md-title-2">Elegant, fail-fast access</H4><pre class="md-code md-code-``` java"><code class="java">NWorkspace ws = NWorkspace.of();
 </code></pre><ul class="md-ul"><li class="md-uli">Returns the current workspace if one is available,</li><li class="md-uli">Throws an exception if no workspace is present,</li><li class="md-uli">Recommended when a workspace is expected to exist.</li><li class="md-uli">Equivalent to NWorkspace.get().get() but more expressive and fails clearly.</li></ul><H4 class="md-title-2">Safe, optional access</H4><pre class="md-code md-code-``` java"><code class="java">Optional&lt;NWorkspace&gt; wsOpt = NWorkspace.get();
 </code></pre><ul class="md-ul"><li class="md-uli">Returns an NOptionalnull</li></ul>
@@ -4411,11 +4391,42 @@ ws.getDesktopEnvironments(); // List of detected environments
                     </section>
                     <hr class="divider">
                     
-                    <section id="Udc2f6e3faeafecb678a1adf34280a10a6e5af509">
+                    <section id="U7c99352d03e199fd5255e44bbc2722fdb8816796">
 
                         <h3 class="main-section2">
-                            <a href="#Udc2f6e3faeafecb678a1adf34280a10a6e5af509">
-                                15.2 NSession
+                            <a href="#U7c99352d03e199fd5255e44bbc2722fdb8816796">
+                                15.2 NEnv
+                            </a>
+                        </h3>
+
+                        <div class="text-card">
+                            <H4 class="md-title-2">Environment & System Info</H4>Environments provide access to environment metadata (bound to the workspace):NEnv env = NEnv.of();<pre class="md-code md-code-``` java"><code class="java">env.hostName();               // Host name
+env.pid();                    // Process ID
+env.osFamily();               // Linux, Windows, Mac, etc.
+env.shellFamily();            // bash, cmd, powershell, etc.
+env.platform();               // Java, Android, etc.
+env.os();                     // Full OS ID
+env.osDist();                 // OS distribution (e.g. Ubuntu)
+env.arch();                   // CPU architecture (e.g. amd64)
+env.archFamily();            // Arch family (e.g. x86_64)
+env.desktopEnvironment();     // Gnome, KDE, etc.
+env.desktopEnvironmentFamily(); // Gnome-like, etc.
+env.graphicalDesktopEnvironment(); // true if graphical session
+</code></pre>You can also list all available shell families or desktop environments:<pre class="md-code md-code-``` java"><code class="java">env.shellFamilies(); // e.g. [BASH, ZSH, CMD]
+env.desktopEnvironments(); // List of detected environments
+</code></pre>
+                        </div>
+
+                        
+
+                    </section>
+                    <hr class="divider">
+                    
+                    <section id="U9866050480e200266d943bde354af89bbd7f200b">
+
+                        <h3 class="main-section2">
+                            <a href="#U9866050480e200266d943bde354af89bbd7f200b">
+                                15.3 NSession
                             </a>
                         </h3>
 
@@ -4433,9 +4444,9 @@ session.tree();     // Tree
 session.xml();      // XML
 session.props();    // Properties
 session.plain();    // Default/plain text
-</code></pre><p class="md-phrase">Output formats affect rendering of <code class="md-code md-code-` ">NOut.println(...)</code>, logging, tables, etc.</p><H4 class="md-title-2">Streams Access</H4>Each session controls its I/O streams (also accessible via NOut, NErr and NIn):<pre class="md-code md-code-``` java"><code class="java">session.out().println("Standard Output");
-session.err().println("Error Output");
-session.in().readLine();
+</code></pre><p class="md-phrase">Output formats affect rendering of <code class="md-code md-code-` ">NOut.println(...)</code>, logging, tables, etc.</p><H4 class="md-title-2">Streams Access</H4>Each session controls its I/O streams (also accessible via NOut, NErr and NIn):<pre class="md-code md-code-``` java"><code class="java">session.out().println("Standard Output"); // equivalent to NOut.println(...)
+session.err().println("Error Output"); // equivalent to NErr.println(...)
+session.in().readLine();  // equivalent to NIn.readLine()
 </code></pre>This enables custom I/O redirection (e.g., GUI, files, remote shells).<H4 class="md-title-2">Trace Modes</H4>Trace mode activates auxiliary output useful for end users (not developers):<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isPlainTrace()</code>: plain-text trace</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isIterableTrace()</code>: structured trace with iterable format</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-` ">isStructuredTrace()</code>: structured trace without iterable mode</p></li></ul><pre class="md-code md-code-``` java"><code class="java">if (session.isTrace()) {
     NOut.println("Tracing enabled...");
 }
@@ -4516,7 +4527,7 @@ session.setLogFilter(log -&gt; log.getVerb().equals(NLogIntent.FAIL));
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-23-120351
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-23-133344
         </p>
     </div>
 </footer>

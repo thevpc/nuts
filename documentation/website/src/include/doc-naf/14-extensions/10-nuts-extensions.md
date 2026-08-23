@@ -68,20 +68,20 @@ Components define their lifecycle using the @NComponentScope annotation:
 | PROTOTYPE (Default) | A fresh instance is created on every resolution call.                | Stateful command builders, short-lived task processors.                          |
 
 
-### 4 KAPI, SPI, & RPI Specification
+### 4 API, SPI, & RPI Specification
 Nuts unifies all runtime components under the NComponent interface while distinguishing three functional tiers: API, SPI, and RPI.
 
 #### 1. The Three Component Tiers
 
-| Tier    | Name                              | Resolution Mechanism                                 | Role                                                                      | Example                                 |
-|:--------|:----------------------------------|:-----------------------------------------------------|---------------------------------------------------------------------------|-----------------------------------------|
-| API     | Application Programming Interface | Static entry points (NEnv.of(), NObjectWriter.get()) | Public contracts consumed by applications and commands.                   | NEnv, NObjectWriter, NWorkspace         | 
-| SPI     | Service Provider Interface        | Dynamic discovery via manifest & scoring pipeline    | Pluggable strategies, protocol extensions, custom engines.                | NLogFactorySPI, NPathFactorySPI         | 
-| RPI     | Reserved Programming Interface    | Fast-path hard-wired resolution in NExtensions       | Essential runtime internals soldered by the core engine. Non-overridable. | NTextRPI, internal session coordinators | 
+| Tier    | Name                              | Resolution Mechanism                              | Role                                                                                                 | Example                                 |
+|:--------|:----------------------------------|:--------------------------------------------------|------------------------------------------------------------------------------------------------------|-----------------------------------------|
+| API     | Application Programming Interface | Static entry points (NEnv.of(), NEnv.get())       | Public contracts consumed by applications and commands.                                              | NEnv, NSession, NWorkspace              | 
+| SPI     | Service Provider Interface        | Dynamic discovery via manifest & scoring pipeline | Pluggable strategies, protocol extensions, custom engines.                                           | NLogFactorySPI, NPathFactorySPI         | 
+| RPI     | Reserved Programming Interface    | Fast-path hard-wired resolution in NExtensions    | Essential runtime internals soldered by the core engine. Non-overridable. never used by applications | NTextRPI, internal session coordinators | 
 
 #### 2. Internal Resolution Engine Mechanics
 
-When NExtensions.of(Type.class) or NExtensions.createSupported(Type.class, criteria) is invoked, NExtensions executes one of two paths:
+When `NExtensions.of(Type.class)` or `NExtensions.createSupported(Type.class, criteria)` is invoked, `NExtensions` executes one of two paths:
 
 ##### Path A: The RPI Fast-Path (Hard-Wired & Scoped)
 For core interfaces, the implementation is explicitly wired to avoid reflection and dynamic scanning.

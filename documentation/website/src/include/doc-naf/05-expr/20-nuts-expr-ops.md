@@ -1,6 +1,6 @@
 # NExpr — Operators
 
-Part of the [NExpr doc set](./NExpr.md). Covers `NExprOperator`, operator kinds, declaring and removing operators, precedence & associativity, `NExprCommonOp`, and the complete built-in operator table.
+Part of the NExpr doc set. Covers `NExprOperator`, operator kinds, declaring and removing operators, precedence & associativity, `NExprCommonOp`, and the complete built-in operator table.
 
 ```java
 interface NExprOperator {

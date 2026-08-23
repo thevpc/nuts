@@ -80,9 +80,9 @@ Output formats affect rendering of `NOut.println(...)`, logging, tables, etc.
 Each session controls its I/O streams (also accessible via NOut, NErr and NIn):
 
 ```java
-session.out().println("Standard Output");
-session.err().println("Error Output");
-session.in().readLine();
+session.out().println("Standard Output"); // equivalent to NOut.println(...)
+session.err().println("Error Output"); // equivalent to NErr.println(...)
+session.in().readLine();  // equivalent to NIn.readLine()
 ```
 
 This enables custom I/O redirection (e.g., GUI, files, remote shells).
