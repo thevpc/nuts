@@ -51,27 +51,66 @@ import java.util.List;
  */
 public interface NSearch extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NSearch of() {
         return NExtensions.of(NSearch.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ids ids
+     * @return of result
+     */
     static NSearch of(String... ids) {
         return NExtensions.of(NSearch.class).addIds(ids);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ids ids
+     * @return of result
+     */
     static NSearch of(NId... ids) {
         return NExtensions.of(NSearch.class).addIds(ids);
     }
 
+    /**
+     * Fetch strategy.
+     *
+     * @return fetch strategy result
+     */
     @NGetter
     NOptional<NFetchStrategy> fetchStrategy();
 
+    /**
+     * Transitive.
+     *
+     * @return transitive result
+     */
     @NGetter
     NOptional<Boolean> transitive();
 
+    /**
+     * Fetch strategy.
+     *
+     * @param fetchStrategy fetch strategy
+     * @return fetch strategy result
+     */
     @NSetter
     NSearch fetchStrategy(NFetchStrategy fetchStrategy);
 
+    /**
+     * Transitive.
+     *
+     * @param transitive transitive
+     * @return transitive result
+     */
     @NSetter
     NSearch transitive(Boolean transitive);
 
@@ -324,6 +363,12 @@ public interface NSearch extends NWorkspaceCmd {
      */
     NSearch ids(String... ids);
 
+    /**
+     * Ids.
+     *
+     * @param ids ids
+     * @return ids result
+     */
     @NSetter
     NSearch ids(List<NId> ids);
 
@@ -406,6 +451,12 @@ public interface NSearch extends NWorkspaceCmd {
     @NSetter
     NSearch repositoryFilter(NRepositoryFilter filter);
 
+    /**
+     * Adds the specified repository filter.
+     *
+     * @param filter filter
+     * @return add repository filter result
+     */
     NSearch addRepositoryFilter(NRepositoryFilter filter);
 
     /**
@@ -424,6 +475,12 @@ public interface NSearch extends NWorkspaceCmd {
      */
     NSearch definitionFilter(NDefinitionFilter filter);
 
+    /**
+     * Adds the specified definition filter.
+     *
+     * @param filter filter
+     * @return add definition filter result
+     */
     NSearch addDefinitionFilter(NDefinitionFilter filter);
 
     ////////////////////////////////////////////////////////
@@ -554,6 +611,11 @@ public interface NSearch extends NWorkspaceCmd {
      */
     NStream<NDefinition> getResultDefinitions();
 
+    /**
+     * Returns the result descriptors.
+     *
+     * @return get result descriptors result
+     */
     NStream<NDescriptor> getResultDescriptors();
 
     /**
@@ -571,6 +633,12 @@ public interface NSearch extends NWorkspaceCmd {
      */
     NClassLoader getResultClassLoader(ClassLoader parent);
 
+    /**
+     * Returns the result mutable class loader.
+     *
+     * @param classLoader class loader
+     * @return get result mutable class loader result
+     */
     NClassLoader getResultMutableClassLoader(NMutableClassLoader classLoader);
 
     ///////////////////////
@@ -629,6 +697,12 @@ public interface NSearch extends NWorkspaceCmd {
     @NSetter
     NSearch inlineDependencies(boolean enable);
 
+    /**
+     * Fail fast.
+     *
+     * @param failFast fail fast
+     * @return fail fast result
+     */
     @NSetter
     NSearch failFast(boolean failFast);
 
@@ -811,10 +885,26 @@ public interface NSearch extends NWorkspaceCmd {
      */
     NSearch id(NId id);
 
+    /**
+     * Returns the result query plan.
+     *
+     * @return get result query plan result
+     */
     NElement getResultQueryPlan();
 
+    /**
+     * Checks if is ignore current environment.
+     *
+     * @return is ignore current environment result
+     */
     boolean isIgnoreCurrentEnvironment();
 
+    /**
+     * Ignore current environment.
+     *
+     * @param ignoreCurrentEnvironment ignore current environment
+     * @return ignore current environment result
+     */
     @NSetter
     NSearch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 }

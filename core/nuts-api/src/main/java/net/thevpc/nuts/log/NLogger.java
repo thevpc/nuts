@@ -5,6 +5,12 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NTrace;
 import net.thevpc.nuts.text.NMsg;
 
+/**
+ * NLogger interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 @FunctionalInterface
 public interface NLogger {
     NLogger NULL = a -> {
@@ -19,5 +25,10 @@ public interface NLogger {
         NTrace.println(a);
     };
 
+    /**
+     * Log.
+     *
+     * @param message message
+     */
     void log(NMsg message);
 }

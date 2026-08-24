@@ -33,11 +33,32 @@ import java.util.List;
  */
 public interface NTextList extends NNormalizedText, Iterable<NText> {
 
+    /**
+     * Size.
+     *
+     * @return size result
+     */
     int size();
 
+    /**
+     * Returns the get.
+     *
+     * @param index index
+     * @return get result
+     */
     NText get(int index);
 
+    /**
+     * Children.
+     *
+     * @return children result
+     */
     List<NText> children();
 
+    /**
+     * Simplify.
+     *
+     * @return simplify result
+     */
     NText simplify();
 }

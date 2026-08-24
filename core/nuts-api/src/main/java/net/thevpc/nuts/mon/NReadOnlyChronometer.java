@@ -8,6 +8,12 @@ import java.time.temporal.ChronoUnit;
 class NReadOnlyChronometer implements NChronometerView{
     private final NChronometer delegate;
 
+    /**
+     * N read only chronometer.
+     *
+     * @param delegate delegate
+     * @return n read only chronometer result
+     */
     public NReadOnlyChronometer(NChronometer delegate) {
         this.delegate = delegate;
     }

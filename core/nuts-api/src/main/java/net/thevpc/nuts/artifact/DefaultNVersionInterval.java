@@ -46,6 +46,16 @@ public class DefaultNVersionInterval implements NVersionInterval, Serializable {
     private final String upperBound;
     private NVersionComparator versionComparator;
 
+    /**
+     * Default n version interval.
+     *
+     * @param inclusiveLowerBoundary inclusive lower boundary
+     * @param inclusiveUpperBoundary inclusive upper boundary
+     * @param min min
+     * @param max max
+     * @param versionComparator version comparator
+     * @return default n version interval result
+     */
     public DefaultNVersionInterval(boolean inclusiveLowerBoundary, boolean inclusiveUpperBoundary, String min, String max,NVersionComparator versionComparator) {
         this.includeLowerBound = inclusiveLowerBoundary;
         this.includeUpperBound = inclusiveUpperBoundary;
@@ -65,6 +75,11 @@ public class DefaultNVersionInterval implements NVersionInterval, Serializable {
         }
         if (!NBlankable.isBlank(upperBound) && !upperBound.equals(NConstants.Versions.LATEST) && !upperBound.equals(NConstants.Versions.RELEASE)) {
             int t = versionComparator.compare(version,NVersion.of(upperBound));
+          /**
+           * Return.
+           *
+           * @param 0 0
+           */
             return (!includeUpperBound || t <= 0) && (includeUpperBound || t < 0);
         }
         return true;

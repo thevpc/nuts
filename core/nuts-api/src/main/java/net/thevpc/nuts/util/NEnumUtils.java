@@ -5,9 +5,27 @@ import net.thevpc.nuts.text.NMsg;
 import java.util.Collection;
 import java.util.function.Function;
 
+/**
+ * NEnumUtils class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NEnumUtils {
+    /**
+     * N enum utils.
+     *
+     * @return n enum utils result
+     */
     private NEnumUtils() {
     }
+    /**
+     * Parse enum.
+     *
+     * @param value value
+     * @param type type
+     * @return parse enum result
+     */
     public static <T extends Enum> NOptional<T> parseEnum(String value, Class<T> type) {
         if (NBlankable.isBlank(value)) {
             return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", type.getSimpleName()));
@@ -20,6 +38,14 @@ public class NEnumUtils {
         }
     }
 
+    /**
+     * Parse enum.
+     *
+     * @param value value
+     * @param type type
+     * @param mapper mapper
+     * @return parse enum result
+     */
     public static <T extends Enum> NOptional<T> parseEnum(String value, Class<T> type, Function<NEnumCandidate, NOptional<T>> mapper) {
         if (NBlankable.isBlank(value)) {
             return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", type.getSimpleName()));
@@ -46,6 +72,15 @@ public class NEnumUtils {
             return NOptional.ofError(() -> NMsg.ofC("%s invalid value : %s", type.getSimpleName(), value), notFound);
         }
     }
+    /**
+     * Parse enum.
+     *
+     * @param value value
+     * @param type type
+     * @param knownValues known values
+     * @param mapper mapper
+     * @return parse enum result
+     */
     public static <T extends NEnum> NOptional<T> parseEnum(String value, Class<T> type, Collection<T> knownValues, Function<NEnumCandidate, NOptional<T>> mapper) {
         if (NBlankable.isBlank(value)) {
             return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", type.getSimpleName()));
@@ -74,17 +109,36 @@ public class NEnumUtils {
         return NOptional.ofError(() -> NMsg.ofC("%s invalid value : %s", type.getSimpleName(), value));
     }
 
+    /**
+     * NEnumCandidate class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static class NEnumCandidate {
         private String value;
         private String normalizedValue;
         private String[] parsedParts;
 
+        /**
+         * N enum candidate.
+         *
+         * @param value value
+         * @param normalizedValue normalized value
+         * @param parsedParts parsed parts
+         * @return n enum candidate result
+         */
         public NEnumCandidate(String value, String normalizedValue, String[] parsedParts) {
             this.value = value;
             this.normalizedValue = normalizedValue;
             this.parsedParts = parsedParts;
         }
 
+        /**
+         * Value.
+         *
+         * @return value result
+         */
         public String value() {
             return value;
         }
@@ -97,6 +151,11 @@ public class NEnumUtils {
             return normalizedValue;
         }
 
+        /**
+         * Parsed parts.
+         *
+         * @return parsed parts result
+         */
         public String[] parsedParts() {
             return parsedParts;
         }

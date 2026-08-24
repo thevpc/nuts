@@ -64,6 +64,13 @@ public final class NWorkspaceCmdLineParser {
     private NWorkspaceCmdLineParser() {
     }
 
+    /**
+     * Next nuts argument.
+     *
+     * @param cmdLine cmd line
+     * @param options options
+     * @return next nuts argument result
+     */
     public static NOptional<List<NArg>> nextNutsArgument(NCmdLine cmdLine, NWorkspaceOptionsBuilder options) {
         while (cmdLine.hasNext()) {
             NArg a = cmdLine.peek().get();
@@ -1600,6 +1607,14 @@ public final class NWorkspaceCmdLineParser {
         }
     }
 
+    /**
+     * Parse log level.
+     *
+     * @param logConfig log config
+     * @param cmdLine cmd line
+     * @param enabled enabled
+     * @return parse log level result
+     */
     private static NOptional<NArg> parseLogLevel(NLogConfig logConfig, NCmdLine cmdLine, boolean enabled) {
         NArg a = cmdLine.peek().get();
         switch (a.key()) {
@@ -1732,6 +1747,12 @@ public final class NWorkspaceCmdLineParser {
         return NOptional.ofNamedEmpty("log option");
     }
 
+    /**
+     * Parse nuts store strategy.
+     *
+     * @param s s
+     * @return parse nuts store strategy result
+     */
     private static NStoreStrategy parseNutsStoreStrategy(String s) {
         NStoreStrategy m = NStoreStrategy.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
@@ -1740,6 +1761,12 @@ public final class NWorkspaceCmdLineParser {
         return m;
     }
 
+    /**
+     * Parse nuts os family.
+     *
+     * @param s s
+     * @return parse nuts os family result
+     */
     private static NOsFamily parseNutsOsFamily(String s) {
         NOsFamily m = NOsFamily.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
@@ -1748,6 +1775,12 @@ public final class NWorkspaceCmdLineParser {
         return m;
     }
 
+    /**
+     * Parse nuts open mode.
+     *
+     * @param s s
+     * @return parse nuts open mode result
+     */
     private static NOpenMode parseNutsOpenMode(String s) {
         NOpenMode m = NOpenMode.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {

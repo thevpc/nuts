@@ -35,21 +35,73 @@ import java.util.Map;
  * @app.category Input Output
  */
 public interface NTerminalSpec extends Serializable {
+    /**
+     * Parent.
+     *
+     * @return parent result
+     */
     NSystemTerminalBase parent();
 
+    /**
+     * Parent.
+     *
+     * @param parent parent
+     * @return parent result
+     */
     NTerminalSpec parent(NSystemTerminalBase parent);
 
+    /**
+     * Auto complete.
+     *
+     * @return auto complete result
+     */
     Boolean autoComplete();
 
+    /**
+     * Auto complete.
+     *
+     * @param autoComplete auto complete
+     * @return auto complete result
+     */
     NTerminalSpec autoComplete(Boolean autoComplete);
 
+    /**
+     * Returns the property.
+     *
+     * @param name name
+     * @return get property result
+     */
     Object getProperty(String name);
 
+    /**
+     * Property.
+     *
+     * @param name name
+     * @param o o
+     * @return property result
+     */
     NTerminalSpec property(String name, Object o);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NTerminalSpec copyFrom(NTerminalSpec other);
 
+    /**
+     * Properties.
+     *
+     * @param other other
+     * @return properties result
+     */
     NTerminalSpec properties(Map<String, Object> other);
 
+    /**
+     * Properties.
+     *
+     * @return properties result
+     */
     Map<String, Object> properties();
 }

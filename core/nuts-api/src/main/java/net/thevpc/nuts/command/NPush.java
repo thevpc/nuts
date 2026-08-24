@@ -44,6 +44,11 @@ import java.util.List;
  */
 public interface NPush extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NPush of() {
         return NExtensions.of(NPush.class);
     }

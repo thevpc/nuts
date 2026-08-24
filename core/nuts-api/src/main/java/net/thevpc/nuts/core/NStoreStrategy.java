@@ -50,10 +50,19 @@ public enum NStoreStrategy implements NEnum {
      */
     private final String id;
 
+  /**
+   * N store strategy.
+   */
     NStoreStrategy() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NStoreStrategy> parse(String value) {
         return NEnumUtils.parseEnum(value, NStoreStrategy.class, s->{
             switch (s.normalizedValue()) {

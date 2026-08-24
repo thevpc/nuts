@@ -36,12 +36,27 @@ import java.util.stream.Stream;
  * @since 0.5.6
  */
 public interface NTupleElement extends NNamedElement, NListContainerElement, Iterable<NElement> {
+    /**
+     * Creates a new instance of of empty.
+     *
+     * @return of empty result
+     */
     static NTupleElement ofEmpty() {
         return NElement.ofTuple();
     }
 
+    /**
+     * Params.
+     *
+     * @return params result
+     */
     List<NElement> params();
 
+    /**
+     * Stream.
+     *
+     * @return stream result
+     */
     Stream<NElement> stream();
 
     /**

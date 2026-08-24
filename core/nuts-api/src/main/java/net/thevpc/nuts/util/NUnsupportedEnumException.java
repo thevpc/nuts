@@ -43,6 +43,12 @@ public class NUnsupportedEnumException extends NException {
      * @param enumValue enumeration instance (cannot be null)
      */
     public NUnsupportedEnumException(Enum enumValue) {
+      /**
+       * This.
+       *
+       * @param null null
+       * @param enumValue enum value
+       */
         this(null, enumValue);
     }
 

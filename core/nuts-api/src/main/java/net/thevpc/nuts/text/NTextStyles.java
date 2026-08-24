@@ -40,10 +40,22 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
 
     private final NTextStyle[] elements;
 
+    /**
+     * N text styles.
+     *
+     * @param elements elements
+     * @return n text styles result
+     */
     private NTextStyles(NTextStyle[] elements) {
         this.elements = Arrays.copyOf(elements, elements.length);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param others others
+     * @return of result
+     */
     public static NTextStyles of(NTextStyle... others) {
         if (others == null || others.length == 0) {
             return PLAIN;
@@ -61,6 +73,12 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         return new NTextStyles(visited.values().toArray(new NTextStyle[0]));
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param other other
+     * @return of result
+     */
     public static NTextStyles of(NTextStyle other) {
         if (other == null || other.type() == NTextStyleType.PLAIN) {
             return PLAIN;
@@ -69,6 +87,12 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
     }
 
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NTextStyles> parse(String value) {
         value = NStringUtils.strip(value);
         if (value.isEmpty()) {
@@ -89,6 +113,12 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         return NOptional.of(of(all.toArray(new NTextStyle[0])));
     }
 
+    /**
+     * Append.
+     *
+     * @param other other
+     * @return append result
+     */
     public NTextStyles append(NTextStyles other) {
         if (other == null || other.isPlain()) {
             return this;
@@ -96,9 +126,21 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         if (this.isPlain()) {
             return other;
         }
+        /**
+         * Append.
+         *
+         * @param other.elements other.elements
+         * @return append result
+         */
         return append(other.elements);
     }
 
+    /**
+     * Append.
+     *
+     * @param others others
+     * @return append result
+     */
     public NTextStyles append(NTextStyle... others) {
         if (others == null || others.length == 0) {
             return this;
@@ -106,9 +148,21 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         List<NTextStyle> all = new ArrayList<NTextStyle>(size() + others.length + 1);
         all.addAll(Arrays.asList(elements));
         all.addAll(Arrays.asList(others));
+        /**
+         * Creates a new instance of of.
+         *
+         * @param NTextStyle[0]) n text style[0])
+         * @return of result
+         */
         return of(all.toArray(new NTextStyle[0]));
     }
 
+    /**
+     * Append.
+     *
+     * @param other other
+     * @return append result
+     */
     public NTextStyles append(NTextStyle other) {
         if (other == null || other.type() == NTextStyleType.PLAIN) {
             return this;
@@ -116,27 +170,66 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         NTextStyle[] elements2 = new NTextStyle[elements.length + 1];
         System.arraycopy(elements, 0, elements2, 0, elements.length);
         elements2[elements.length] = other;
+        /**
+         * Creates a new instance of of.
+         *
+         * @param elements2 elements2
+         * @return of result
+         */
         return of(elements2);
     }
 
+    /**
+     * Removes the specified last.
+     *
+     * @return remove last result
+     */
     public NTextStyles removeLast() {
         if (elements.length <= 0) {
             return this;
         }
+        /**
+         * Creates a new instance of of.
+         *
+         * @param 1) 1)
+         * @return of result
+         */
         return of(Arrays.copyOf(elements, elements.length - 1));
     }
 
+    /**
+     * Removes the specified first.
+     *
+     * @return remove first result
+     */
     public NTextStyles removeFirst() {
         if (elements.length <= 0) {
             return this;
         }
+        /**
+         * Creates a new instance of of.
+         *
+         * @param elements.length) elements.length)
+         * @return of result
+         */
         return of(Arrays.copyOfRange(elements, 1, elements.length));
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param index index
+     * @return get result
+     */
     public NTextStyle get(int index) {
         return elements[index];
     }
 
+    /**
+     * Size.
+     *
+     * @return size result
+     */
     public int size() {
         return elements.length;
     }
@@ -156,9 +249,19 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
 
     @Override
     public String toString() {
+        /**
+         * Id.
+         *
+         * @return id result
+         */
         return id();
     }
 
+    /**
+     * Checks if is plain.
+     *
+     * @return is plain result
+     */
     public boolean isPlain() {
         return elements.length == 0;
     }
@@ -168,10 +271,20 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         return Arrays.asList(elements).iterator();
     }
 
+    /**
+     * Converts to array.
+     *
+     * @return to array result
+     */
     public NTextStyle[] toArray() {
         return Arrays.copyOf(elements, elements.length);
     }
 
+    /**
+     * Converts to list.
+     *
+     * @return to list result
+     */
     public List<NTextStyle> toList() {
         return Collections.unmodifiableList(Arrays.asList(elements));
     }

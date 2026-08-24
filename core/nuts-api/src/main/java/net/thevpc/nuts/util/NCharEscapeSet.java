@@ -60,6 +60,9 @@ public final class NCharEscapeSet {
         UNQUOTED_ONLY;
         private final String id;
 
+      /**
+       * When.
+       */
         When() {
             this.id = NNameFormat.ID_NAME.format(name());
         }
@@ -69,6 +72,12 @@ public final class NCharEscapeSet {
             return id;
         }
 
+        /**
+         * Parse.
+         *
+         * @param value value
+         * @return parse result
+         */
         public static NOptional<When> parse(String value) {
             return NEnumUtils.parseEnum(value, When.class);
         }
@@ -85,6 +94,14 @@ public final class NCharEscapeSet {
         private final When        when;
         private final NCharEscape escape;
 
+        /**
+         * Entry.
+         *
+         * @param chars chars
+         * @param when when
+         * @param escape escape
+         * @return entry result
+         */
         private Entry(char[] chars, When when, NCharEscape escape) {
             this.chars  = sortAndDedup(chars);
             this.when   = when;
@@ -121,11 +138,27 @@ public final class NCharEscapeSet {
             return Arrays.binarySearch(chars, c) >= 0;
         }
 
+        /**
+         * When.
+         *
+         * @return when result
+         */
         public When when()   { return when; }
+        /**
+         * Escape.
+         *
+         * @return escape result
+         */
         public NCharEscape escape() { return escape; }
 
         // ── Helpers ───────────────────────────────────────────────────────────
 
+        /**
+         * Sort and dedup.
+         *
+         * @param raw raw
+         * @return sort and dedup result
+         */
         private static char[] sortAndDedup(char[] raw) {
             if (raw == null || raw.length == 0) return new char[0];
             char[] copy = Arrays.copyOf(raw, raw.length);
@@ -145,6 +178,12 @@ public final class NCharEscapeSet {
 
     private final Entry[] entries;
 
+    /**
+     * N char escape set.
+     *
+     * @param entries entries
+     * @return n char escape set result
+     */
     private NCharEscapeSet(Entry[] entries) {
         this.entries = entries;
     }
@@ -169,6 +208,13 @@ public final class NCharEscapeSet {
 
     /** Returns a new set with {@code extra} appended at the end. */
     public NCharEscapeSet andThen(NCharEscapeSet extra) {
+        /**
+         * Combine.
+         *
+         * @param this this
+         * @param extra extra
+         * @return combine result
+         */
         return combine(this, extra);
     }
 

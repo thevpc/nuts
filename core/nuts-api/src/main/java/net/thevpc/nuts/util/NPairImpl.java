@@ -12,6 +12,13 @@ final class NPairImpl<A extends T, B extends T, T> implements NPair<A, B, T> {
     private A a;
     private B b;
 
+    /**
+     * N pair impl.
+     *
+     * @param a a
+     * @param b b
+     * @return n pair impl result
+     */
     public NPairImpl(A a, B b) {
         this.a = a;
         this.b = b;
@@ -35,6 +42,12 @@ final class NPairImpl<A extends T, B extends T, T> implements NPair<A, B, T> {
             case 1:
                 return b;
         }
+        /**
+         * Array index out of bounds exception.
+         *
+         * @param index index
+         * @return array index out of bounds exception result
+         */
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
@@ -46,16 +59,36 @@ final class NPairImpl<A extends T, B extends T, T> implements NPair<A, B, T> {
             case 1:
                 return new NPairImpl<>(a, (B) newValue);
         }
+        /**
+         * Array index out of bounds exception.
+         *
+         * @param index index
+         * @return array index out of bounds exception result
+         */
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
     @Override
     public NPair<A, B, T> first(A t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 0 0
+         * @return set result
+         */
         return set(t, 0);
     }
 
     @Override
     public NPair<A, B, T> second(B t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 1 1
+         * @return set result
+         */
         return set(t, 1);
     }
 

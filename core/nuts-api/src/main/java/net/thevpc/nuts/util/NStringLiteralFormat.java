@@ -3,6 +3,12 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.elem.NElementUtils;
 
+/**
+ * NStringLiteralFormat interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NStringLiteralFormat {
     NStringLiteralFormat JAVA_STRING = NStringLiteralFormatBuilder.ofJava(NElementType.DOUBLE_QUOTED_STRING).build();
     NStringLiteralFormat JAVA_NAME = text -> NElementUtils.isElementName(text) ? text : JAVA_STRING.format(text);
@@ -34,6 +40,9 @@ public interface NStringLiteralFormat {
         PREFIX;
         private final String id;
 
+      /**
+       * Mode.
+       */
         Mode() {
             this.id = NNameFormat.ID_NAME.format(name());
         }
@@ -43,10 +52,22 @@ public interface NStringLiteralFormat {
             return id;
         }
 
+        /**
+         * Parse.
+         *
+         * @param value value
+         * @return parse result
+         */
         public static NOptional<Mode> parse(String value) {
             return NEnumUtils.parseEnum(value, Mode.class);
         }
     }
 
+    /**
+     * Format.
+     *
+     * @param text text
+     * @return format result
+     */
     String format(String text);
 }

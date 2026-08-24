@@ -128,15 +128,31 @@ public class NApplicationBuilder {
         return this;
     }
 
+    /**
+     * Handle mode.
+     *
+     * @return handle mode result
+     */
     public NApplicationHandleMode handleMode() {
         return handleMode;
     }
 
+    /**
+     * Handle mode.
+     *
+     * @param mode mode
+     * @return handle mode result
+     */
     public NApplicationBuilder handleMode(NApplicationHandleMode mode) {
         this.handleMode = mode;
         return this;
     }
 
+    /**
+     * Instance.
+     *
+     * @return instance result
+     */
     public Object instance() {
         return instance;
     }
@@ -157,12 +173,36 @@ public class NApplicationBuilder {
         try {
             return applicationType == null ? null : applicationType.getConstructor().newInstance();
         } catch (InstantiationException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         } catch (NoSuchMethodException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
@@ -175,6 +215,11 @@ public class NApplicationBuilder {
         return this;
     }
 
+    /**
+     * Nuts args.
+     *
+     * @return nuts args result
+     */
     public String[] nutsArgs() {
         return nutsArgs;
     }
@@ -214,6 +259,11 @@ public class NApplicationBuilder {
         return this;
     }
 
+    /**
+     * Args.
+     *
+     * @return args result
+     */
     public String[] args() {
         return args;
     }
@@ -226,6 +276,11 @@ public class NApplicationBuilder {
         return this;
     }
 
+    /**
+     * Prepare.
+     *
+     * @return prepare result
+     */
     public NApplicationBuilder prepare() {
         if (this.preparedWorkspace == null) {
             try {

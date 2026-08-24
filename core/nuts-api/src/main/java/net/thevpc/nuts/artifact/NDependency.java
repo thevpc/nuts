@@ -42,10 +42,22 @@ import java.util.Map;
  */
 public interface NDependency extends Serializable, NBlankable {
 
+    /**
+     * Returns the get.
+     *
+     * @param value value
+     * @return get result
+     */
     static NOptional<NDependency> get(String value) {
         return NId.get(value).map(NId::toDependency);
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param value value
+     * @return get result
+     */
     static NOptional<NDependency> get(NId value) {
         if (value == null) {
             return NOptional.ofNamedEmpty("id");
@@ -53,11 +65,35 @@ public interface NDependency extends Serializable, NBlankable {
         return NOptional.of(value.toDependency());
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param value value
+     * @return of result
+     */
     static NDependency of(String value) {
+        /**
+         * Returns the get.
+         *
+         * @param value).get( value).get(
+         * @return get result
+         */
         return get(value).get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param value value
+     * @return of result
+     */
     static NDependency of(NId value) {
+        /**
+         * Returns the get.
+         *
+         * @param value).get( value).get(
+         * @return get result
+         */
         return get(value).get();
     }
 
@@ -76,14 +112,39 @@ public interface NDependency extends Serializable, NBlankable {
      */
     boolean isOptional();
 
+    /**
+     * Checks if is any provided.
+     *
+     * @return is any provided result
+     */
     boolean isAnyProvided();
 
+    /**
+     * Checks if is any runtime.
+     *
+     * @return is any runtime result
+     */
     boolean isAnyRuntime();
 
+    /**
+     * Checks if is provided.
+     *
+     * @return is provided result
+     */
     boolean isProvided();
 
+    /**
+     * Checks if is runtime.
+     *
+     * @return is runtime result
+     */
     boolean isRuntime();
 
+    /**
+     * Checks if is any test.
+     *
+     * @return is any test result
+     */
     boolean isAnyTest();
 
     /**
@@ -177,9 +238,19 @@ public interface NDependency extends Serializable, NBlankable {
     @NGetter
     NVersion version();
 
+    /**
+     * Condition.
+     *
+     * @return condition result
+     */
     @NGetter
     NEnvCondition condition();
 
+    /**
+     * Type.
+     *
+     * @return type result
+     */
     @NGetter
     String type();
 

@@ -49,6 +49,12 @@ public class NWorkspaceException extends NException {
                 message == null
                         ? NMsg.ofC("workspace %s has encountered problem", NWorkspace.get().map(x->x.name()).orNull()) : message, ex);
     }
+    /**
+     * N workspace exception.
+     *
+     * @param message message
+     * @return n workspace exception result
+     */
     public NWorkspaceException(NMsg message) {
         super(
                 message == null

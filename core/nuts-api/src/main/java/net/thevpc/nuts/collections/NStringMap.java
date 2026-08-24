@@ -32,45 +32,170 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 
+/**
+ * NStringMap interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NStringMap<V> extends NCopiable {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param map map
+     * @param separator separator
+     * @return of result
+     */
     static <V> NStringMap<V> of(Map<String, V> map, char separator) {
         return NUtilsRPI.of().createStringMap(map, separator);
     }
 
+    /**
+     * Clear.
+     *
+     * @return clear result
+     */
     NStringMap<V> clear();
 
+    /**
+     * Size.
+     *
+     * @return size result
+     */
     int size();
 
+    /**
+     * Separator.
+     *
+     * @return separator result
+     */
     char separator();
 
+    /**
+     * Converts to map.
+     *
+     * @param prefix prefix
+     * @return to map result
+     */
     Map<String, V> toMap(String prefix);
 
+    /**
+     * Converts to map.
+     *
+     * @return to map result
+     */
     Map<String, V> toMap();
 
+    /**
+     * Removes the specified all.
+     *
+     * @param prefix prefix
+     * @return remove all result
+     */
     NStringMap<V> removeAll(String prefix);
 
+    /**
+     * Put all.
+     *
+     * @param values values
+     * @return put all result
+     */
     NStringMap<V> putAll(Map<String, V> values);
 
+    /**
+     * Put.
+     *
+     * @param prefix prefix
+     * @param key key
+     * @param value value
+     * @return put result
+     */
     V put(String prefix, String key, V value);
 
+    /**
+     * Put.
+     *
+     * @param key key
+     * @param value value
+     * @return put result
+     */
     V put(String key, V value);
 
+    /**
+     * Returns the get.
+     *
+     * @param key key
+     * @return get result
+     */
     V get(String key);
 
+    /**
+     * Returns the optional.
+     *
+     * @param prefix prefix
+     * @param key key
+     * @return get optional result
+     */
     NOptional<V> getOptional(String prefix, String key);
 
+    /**
+     * Returns the optional.
+     *
+     * @param key key
+     * @return get optional result
+     */
     NOptional<V> getOptional(String key);
 
+    /**
+     * Sets the set.
+     *
+     * @param prefix prefix
+     * @param key key
+     * @param value value
+     * @return set result
+     */
     V set(String prefix, String key, V value);
 
+    /**
+     * Sets the set.
+     *
+     * @param key key
+     * @param value value
+     * @return set result
+     */
     V set(String key, V value);
 
+    /**
+     * Removes remove.
+     *
+     * @param prefix prefix
+     * @param key key
+     * @return remove result
+     */
     V remove(String prefix, String key);
 
+    /**
+     * Next keys.
+     *
+     * @param prefix prefix
+     * @return next keys result
+     */
     Set<String> nextKeys(String prefix);
 
+    /**
+     * Put all.
+     *
+     * @param prefix prefix
+     * @param values values
+     * @return put all result
+     */
     NStringMap<V> putAll(String prefix, Map<String, V> values);
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NStringMap<V> copy();
 }

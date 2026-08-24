@@ -35,15 +35,38 @@ import net.thevpc.nuts.ext.NExtensions;
  * @app.category Base
  */
 public interface NIdFilterRPI extends NTypedFilters<NIdFilter> {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NIdFilterRPI of() {
        return NExtensions.of(NIdFilterRPI.class);
     }
 
+    /**
+     * By value.
+     *
+     * @param id id
+     * @return by value result
+     */
     NIdFilter byValue(NId id);
 
+    /**
+     * By default version.
+     *
+     * @param defaultVersion default version
+     * @return by default version result
+     */
     NIdFilter byDefaultVersion(Boolean defaultVersion);
 
 
+    /**
+     * By name.
+     *
+     * @param names names
+     * @return by name result
+     */
     NIdFilter byName(String... names);
 
 }

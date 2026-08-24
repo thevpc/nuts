@@ -32,25 +32,83 @@ package net.thevpc.nuts.text;
  */
 public interface NTableCellDef {
 
+    /**
+     * Colspan.
+     *
+     * @return colspan result
+     */
     int colspan();
 
+    /**
+     * Colspan.
+     *
+     * @param colspan colspan
+     * @return colspan result
+     */
     NTableCellDef colspan(int colspan);
 
+    /**
+     * Rowspan.
+     *
+     * @return rowspan result
+     */
     int rowspan();
 
+    /**
+     * Rowspan.
+     *
+     * @param rowspan rowspan
+     * @return rowspan result
+     */
     NTableCellDef rowspan(int rowspan);
 
+    /**
+     * X.
+     *
+     * @return x result
+     */
     int x();
 
+    /**
+     * Y.
+     *
+     * @return y result
+     */
     int y();
 
+    /**
+     * Content.
+     *
+     * @return content result
+     */
     NText content();
 
+    /**
+     * Content.
+     *
+     * @param content content
+     * @return content result
+     */
     NTableCellDef content(NText content);
 
+    /**
+     * Horizontal align.
+     *
+     * @return horizontal align result
+     */
     NPositionType horizontalAlign();
 
+    /**
+     * Vertical align.
+     *
+     * @return vertical align result
+     */
     NPositionType verticalAlign();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NTableCellSpecBuilder builder();
 }

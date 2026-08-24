@@ -41,6 +41,11 @@ public class NRateLimitExceededException extends NException {
      * @param message      message or null
      */
     public NRateLimitExceededException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message == null ? NMsg.ofC("rate limit exceeds"): message);
     }
     /**

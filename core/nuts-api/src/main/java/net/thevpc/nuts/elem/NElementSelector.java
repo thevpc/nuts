@@ -36,6 +36,12 @@ import java.util.List;
  * @app.category Elements
  */
 public interface NElementSelector {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param any any
+     * @return of result
+     */
     static NElementSelector of(String any){
         return NElementRPI.of().compileSelector(any);
     }

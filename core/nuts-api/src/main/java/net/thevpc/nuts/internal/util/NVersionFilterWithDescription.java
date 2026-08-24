@@ -9,11 +9,27 @@ import net.thevpc.nuts.util.NFilter;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+/**
+ * NVersionFilterWithDescription class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NVersionFilterWithDescription extends NVersionFilterDelegate {
     private NVersionFilter baseVersionFilter;
     private Supplier<NElement> description;
 
+    /**
+     * N version filter with description.
+     *
+     * @param baseVersionFilter base version filter
+     * @param description description
+     * @return n version filter with description result
+     */
     public NVersionFilterWithDescription(NVersionFilter baseVersionFilter, Supplier<NElement> description) {
+      /**
+       * Super.
+       */
         super();
         this.baseVersionFilter = baseVersionFilter;
         this.description = description;

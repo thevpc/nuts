@@ -71,10 +71,19 @@ public enum NReflectPropertyDefaultValueStrategy implements NEnum {
     NONE;
     private final String id;
 
+  /**
+   * N reflect property default value strategy.
+   */
     NReflectPropertyDefaultValueStrategy() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NReflectPropertyDefaultValueStrategy> parse(String value) {
         return NEnumUtils.parseEnum(value, NReflectPropertyDefaultValueStrategy.class);
     }

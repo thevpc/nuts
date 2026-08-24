@@ -40,9 +40,20 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
     private String user;
     private String credential;
 
+    /**
+     * N named credential config.
+     *
+     * @return n named credential config result
+     */
     public NNamedCredentialConfig() {
     }
 
+    /**
+     * N named credential config.
+     *
+     * @param other other
+     * @return n named credential config result
+     */
     public NNamedCredentialConfig(NNamedCredentialConfig other) {
         this.user = other.user();
         this.credential = other.credential();
@@ -50,6 +61,15 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
         this.resource = other.resource();
     }
 
+    /**
+     * N named credential config.
+     *
+     * @param name name
+     * @param resource resource
+     * @param user user
+     * @param credential credential
+     * @return n named credential config result
+     */
     public NNamedCredentialConfig(String name, String resource, String user, String credential) {
         this.user = user;
         this.credential = credential;
@@ -57,7 +77,17 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
         this.resource = resource;
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NNamedCredentialConfig copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -67,39 +97,87 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
             NNamedCredentialConfig o =(NNamedCredentialConfig) super.clone();
             return o;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * User.
+     *
+     * @return user result
+     */
     public String user() {
         return user;
     }
 
+    /**
+     * User.
+     *
+     * @param user user
+     */
     public void user(String user) {
         this.user = user;
     }
 
+    /**
+     * Credential.
+     *
+     * @return credential result
+     */
     public String credential() {
         return credential;
     }
 
+    /**
+     * Credential.
+     *
+     * @param credential credential
+     */
     public void credential(String credential) {
         this.credential = credential;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     public String name() {
         return name;
     }
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     public NNamedCredentialConfig name(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Resource.
+     *
+     * @return resource result
+     */
     public String resource() {
         return resource;
     }
 
+    /**
+     * Resource.
+     *
+     * @param resource resource
+     * @return resource result
+     */
     public NNamedCredentialConfig resource(String resource) {
         this.resource = resource;
         return this;

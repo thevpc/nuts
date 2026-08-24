@@ -193,6 +193,14 @@ public interface NTaskSet {
      */
     NTaskSet call(Callable<?> task, ExecutorService executor);
 
+    /**
+     * Call.
+     *
+     * @param taskId task id
+     * @param task task
+     * @param exec exec
+     * @return call result
+     */
     NTaskSet call(String taskId, Callable<?> task, ExecutorService exec);
 
     /**

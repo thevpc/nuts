@@ -2,6 +2,12 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.text.NTreeVisitResult;
 
+/**
+ * NElementVisitor interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NElementVisitor {
     /**
      * Called before visiting children and annotations.

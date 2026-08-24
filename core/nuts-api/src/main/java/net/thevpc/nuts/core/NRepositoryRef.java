@@ -46,9 +46,20 @@ public class NRepositoryRef extends NConfigItem implements Cloneable {
     private boolean failSafe = false;
     private int deployWeight;
 
+    /**
+     * N repository ref.
+     *
+     * @return n repository ref result
+     */
     public NRepositoryRef() {
     }
 
+    /**
+     * N repository ref.
+     *
+     * @param other other
+     * @return n repository ref result
+     */
     public NRepositoryRef(NRepositoryRef other) {
         this.name = other.name();
         this.location = other.location();
@@ -57,6 +68,15 @@ public class NRepositoryRef extends NConfigItem implements Cloneable {
         this.deployWeight = other.deployWeight();
     }
 
+    /**
+     * N repository ref.
+     *
+     * @param name name
+     * @param location location
+     * @param deployPriority deploy priority
+     * @param enabled enabled
+     * @return n repository ref result
+     */
     public NRepositoryRef(String name, String location, int deployPriority, boolean enabled) {
         this.name = name;
         this.location = location;
@@ -64,68 +84,144 @@ public class NRepositoryRef extends NConfigItem implements Cloneable {
         this.enabled = enabled;
     }
 
+    /**
+     * Checks if is enabled.
+     *
+     * @return is enabled result
+     */
     @NGetter
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Enabled.
+     *
+     * @param enabled enabled
+     * @return enabled result
+     */
     @NSetter
     public NRepositoryRef enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
+    /**
+     * Location.
+     *
+     * @return location result
+     */
     @NGetter
     public String location() {
         return location;
     }
 
+    /**
+     * Location.
+     *
+     * @param location location
+     * @return location result
+     */
     @NSetter
     public NRepositoryRef location(String location) {
         this.location = location;
         return this;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     @NGetter
     public String name() {
         return name;
     }
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     @NSetter
     public NRepositoryRef name(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Checks if is fail safe.
+     *
+     * @return is fail safe result
+     */
     @NGetter
     public boolean isFailSafe() {
         return failSafe;
     }
 
+    /**
+     * Fail safe.
+     *
+     * @param failSafe fail safe
+     * @return fail safe result
+     */
     @NSetter
     public NRepositoryRef failSafe(boolean failSafe) {
         this.failSafe = failSafe;
         return this;
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NRepositoryRef copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
     @Override
     protected NRepositoryRef clone() {
         try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
             return (NRepositoryRef) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Deploy weight.
+     *
+     * @return deploy weight result
+     */
     @NGetter
     public int deployWeight() {
         return deployWeight;
     }
 
+    /**
+     * Deploy weight.
+     *
+     * @param deployPriority deploy priority
+     * @return deploy weight result
+     */
     @NSetter
     public NRepositoryRef deployWeight(int deployPriority) {
         this.deployWeight = deployPriority;

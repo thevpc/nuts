@@ -29,34 +29,110 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
+/**
+ * NBootOptions interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NBootOptions {
 
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
     NOptional<List<String>> bootRepositories();
 
+    /**
+     * Runtime boot dependency node.
+     *
+     * @return runtime boot dependency node result
+     */
     NOptional<NClassLoaderNode> runtimeBootDependencyNode();
 
+    /**
+     * Boot workspace factory.
+     *
+     * @return boot workspace factory result
+     */
     NOptional<NBootWorkspaceFactory> bootWorkspaceFactory();
 
+    /**
+     * Class world ur ls.
+     *
+     * @return class world ur ls result
+     */
     NOptional<List<URL>> classWorldURLs();
 
+    /**
+     * Class world loader.
+     *
+     * @return class world loader result
+     */
     NOptional<ClassLoader> classWorldLoader();
 
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
     NOptional<String> uuid();
 
+    /**
+     * Runtime boot descriptor.
+     *
+     * @return runtime boot descriptor result
+     */
     NOptional<NBootDescriptor> runtimeBootDescriptor();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NBootOptionsBuilder builder();
 
+    /**
+     * Converts to read only.
+     *
+     * @return to read only result
+     */
     NBootOptions toReadOnly();
 
+    /**
+     * Desktop launcher.
+     *
+     * @return desktop launcher result
+     */
     NOptional<NSupportMode> desktopLauncher();
 
+    /**
+     * Menu launcher.
+     *
+     * @return menu launcher result
+     */
     NOptional<NSupportMode> menuLauncher();
 
+    /**
+     * User launcher.
+     *
+     * @return user launcher result
+     */
     NOptional<NSupportMode> userLauncher();
 
+    /**
+     * Checks if isolation level.
+     *
+     * @return isolation level result
+     */
     NOptional<NIsolationLevel> isolationLevel();
 
+    /**
+     * Converts to boot options.
+     *
+     * @return to boot options result
+     */
     NBootOptionsInfo toBootOptions();
 
     /**
@@ -185,6 +261,11 @@ public interface NBootOptions {
      */
     NOptional<NExecutionType> executionType();
 
+    /**
+     * Run as.
+     *
+     * @return run as result
+     */
     NOptional<NRunAs> runAs();
 
     /**
@@ -391,6 +472,11 @@ public interface NBootOptions {
      */
     NOptional<String> workspace();
 
+    /**
+     * Debug.
+     *
+     * @return debug result
+     */
     NOptional<String> debug();
 
     /**
@@ -454,12 +540,27 @@ public interface NBootOptions {
 
     NOptional<Boolean> reset();
 
+    /**
+     * Reset hard.
+     *
+     * @return reset hard result
+     */
     NOptional<Boolean> resetHard();
 
 
+    /**
+     * Command version.
+     *
+     * @return command version result
+     */
     NOptional<Boolean> commandVersion();
 
 
+    /**
+     * Command help.
+     *
+     * @return command help result
+     */
     NOptional<Boolean> commandHelp();
 
     /**
@@ -667,18 +768,55 @@ public interface NBootOptions {
      */
     NOptional<Instant> expireTime();
 
+    /**
+     * Skip errors.
+     *
+     * @return skip errors result
+     */
     NOptional<Boolean> skipErrors();
 
+    /**
+     * Switch workspace.
+     *
+     * @return switch workspace result
+     */
     NOptional<Boolean> switchWorkspace();
 
+    /**
+     * Errors.
+     *
+     * @return errors result
+     */
     NOptional<List<NMsg>> errors();
 
+    /**
+     * Custom options.
+     *
+     * @return custom options result
+     */
     NOptional<List<String>> customOptions();
 
+    /**
+     * Custom option arg.
+     *
+     * @param key key
+     * @return custom option arg result
+     */
     NOptional<NArg> customOptionArg(String key);
 
+    /**
+     * Custom option.
+     *
+     * @param key key
+     * @return custom option result
+     */
     NOptional<String> customOption(String key);
 
+    /**
+     * Custom option args.
+     *
+     * @return custom option args result
+     */
     NOptional<List<NArg>> customOptionArgs();
 
     /**
@@ -697,10 +835,26 @@ public interface NBootOptions {
      */
     NOptional<String> theme();
 
+    /**
+     * Converts to cmd line.
+     *
+     * @return to cmd line result
+     */
     NCmdLine toCmdLine();
 
+    /**
+     * Converts to cmd line.
+     *
+     * @param config config
+     * @return to cmd line result
+     */
     NCmdLine toCmdLine(NWorkspaceOptionsConfig config);
 
+    /**
+     * Converts to workspace options.
+     *
+     * @return to workspace options result
+     */
     NWorkspaceOptions toWorkspaceOptions();
 
 }

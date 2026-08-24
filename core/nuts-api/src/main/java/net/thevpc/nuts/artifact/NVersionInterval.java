@@ -41,6 +41,13 @@ import java.util.List;
  */
 public interface NVersionInterval extends Serializable {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param s s
+     * @param versionComparator version comparator
+     * @return of result
+     */
     static NOptional<NVersionInterval> of(String s,NVersionComparator versionComparator) {
         return ofList(s,versionComparator).flatMap(
                 x->{
@@ -54,20 +61,58 @@ public interface NVersionInterval extends Serializable {
                 }
         );
     }
+    /**
+     * Creates a new instance of of list.
+     *
+     * @param s s
+     * @param versionComparator version comparator
+     * @return of list result
+     */
     static NOptional<List<NVersionInterval>> ofList(String s,NVersionComparator versionComparator){
         return new NReservedVersionIntervalParser(versionComparator).parse(s);
     }
+    /**
+     * Accept version.
+     *
+     * @param version version
+     * @return accept version result
+     */
     boolean acceptVersion(NVersion version);
 
+    /**
+     * Checks if is fixed value.
+     *
+     * @return is fixed value result
+     */
     boolean isFixedValue();
 
+    /**
+     * Checks if is include lower bound.
+     *
+     * @return is include lower bound result
+     */
     boolean isIncludeLowerBound();
 
+    /**
+     * Checks if is include upper bound.
+     *
+     * @return is include upper bound result
+     */
     boolean isIncludeUpperBound();
 
+    /**
+     * Lower bound.
+     *
+     * @return lower bound result
+     */
     @NGetter
     String lowerBound();
 
+    /**
+     * Upper bound.
+     *
+     * @return upper bound result
+     */
     @NGetter
     String upperBound();
 }

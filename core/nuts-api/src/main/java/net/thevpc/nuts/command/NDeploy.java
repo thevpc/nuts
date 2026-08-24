@@ -51,6 +51,11 @@ import java.util.List;
  */
 public interface NDeploy extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDeploy of() {
         return NExtensions.of(NDeploy.class);
     }
@@ -320,11 +325,27 @@ public interface NDeploy extends NWorkspaceCmd {
      * @return deploy result
      */
     // not a getter
+    /**
+     * Returns the result.
+     *
+     * @return get result result
+     */
     List<NId> getResult();
 
+    /**
+     * Content.
+     *
+     * @return content result
+     */
     @NGetter
     NInputSource content();
 
+    /**
+     * Content.
+     *
+     * @param content content
+     * @return content result
+     */
     @NSetter
     NDeploy content(NInputSource content);
 }

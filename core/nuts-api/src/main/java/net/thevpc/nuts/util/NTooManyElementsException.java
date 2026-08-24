@@ -39,6 +39,11 @@ public class NTooManyElementsException extends NException {
      * Constructs a new NutsTooManyElementsException exception
      */
     public NTooManyElementsException() {
+      /**
+       * This.
+       *
+       * @param elements") elements")
+       */
         this(NMsg.ofNtf("too many elements"));
     }
 
@@ -48,6 +53,11 @@ public class NTooManyElementsException extends NException {
      * @param message message
      */
     public NTooManyElementsException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -58,6 +68,12 @@ public class NTooManyElementsException extends NException {
      * @param cause   cause
      */
     public NTooManyElementsException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 
@@ -70,6 +86,14 @@ public class NTooManyElementsException extends NException {
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NTooManyElementsException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

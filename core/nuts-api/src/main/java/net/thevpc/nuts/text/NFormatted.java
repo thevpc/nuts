@@ -32,5 +32,10 @@ import net.thevpc.nuts.elem.NElementSimple;
  * @app.category Format
  */
 public interface NFormatted extends NElementSimple {
+    /**
+     * Format.
+     *
+     * @return format result
+     */
     NText format();
 }

@@ -35,7 +35,17 @@ import net.thevpc.nuts.artifact.NDependencySolver;
  */
 public interface NDependencySolverFactory extends NComponent {
 
+    /**
+     * Creates a new instance of create.
+     *
+     * @return create result
+     */
     NDependencySolver create();
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 }

@@ -6,19 +6,60 @@ import java.io.*;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * NPropsTransformer class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NPropsTransformer {
     private Map<String, Function<String, String>> replacements = new LinkedHashMap<>();
     private boolean sort = false;
     private boolean distinct = false;
 
+    /**
+     * N props transformer.
+     *
+     * @return n props transformer result
+     */
     public NPropsTransformer() {
     }
 
+    /**
+     * Encode key.
+     *
+     * @param theString the string
+     * @return encode key result
+     */
     public static String encodeKey(String theString) {
+        /**
+         * Encode string.
+         *
+         * @param theString the string
+         * @param true true
+         * @param true true
+         * @param false false
+         * @return encode string result
+         */
         return encodeString(theString, true, true, false);
     }
 
+    /**
+     * Encode value.
+     *
+     * @param theString the string
+     * @return encode value result
+     */
     public static String encodeValue(String theString) {
+        /**
+         * Encode string.
+         *
+         * @param theString the string
+         * @param false false
+         * @param false false
+         * @param false false
+         * @return encode string result
+         */
         return encodeString(theString, false, false, false);
     }
 
@@ -107,10 +148,31 @@ public class NPropsTransformer {
         return buffer.toString();
     }
 
+    /**
+     * Store properties.
+     *
+     * @param props props
+     * @param out out
+     * @param sort sort
+     */
     public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort) {
+      /**
+       * Store properties.
+       *
+       * @param props props
+       * @param OutputStreamWriter(out) output stream writer(out)
+       * @param sort sort
+       */
         storeProperties(props, new OutputStreamWriter(out), sort);
     }
 
+    /**
+     * Store properties.
+     *
+     * @param props props
+     * @param w w
+     * @param sort sort
+     */
     public static void storeProperties(Map<String, String> props, Writer w, boolean sort) {
         try {
             Set<String> keys = props.keySet();
@@ -127,54 +189,122 @@ public class NPropsTransformer {
             }
             w.flush();
         } catch (IOException ex) {
+            /**
+             * Nio exception.
+             *
+             * @param ex ex
+             * @return nio exception result
+             */
             throw new NIOException(ex);
         }
     }
 
+    /**
+     * Checks if is sort.
+     *
+     * @return is sort result
+     */
     public boolean isSort() {
         return sort;
     }
 
+    /**
+     * Sort.
+     *
+     * @return sort result
+     */
     public NPropsTransformer sort() {
         this.sort = true;
         return this;
     }
 
+    /**
+     * Sort.
+     *
+     * @param sort sort
+     * @return sort result
+     */
     public NPropsTransformer sort(boolean sort) {
         this.sort = sort;
         return this;
     }
 
+    /**
+     * Sets the sort.
+     *
+     * @param sort sort
+     * @return set sort result
+     */
     public NPropsTransformer setSort(boolean sort) {
         this.sort = sort;
         return this;
     }
 
+    /**
+     * Checks if is distinct.
+     *
+     * @return is distinct result
+     */
     public boolean isDistinct() {
         return distinct;
     }
 
+    /**
+     * Distinct.
+     *
+     * @return distinct result
+     */
     public NPropsTransformer distinct() {
         this.distinct = true;
         return this;
     }
 
+    /**
+     * Distinct.
+     *
+     * @param distinct distinct
+     * @return distinct result
+     */
     public NPropsTransformer distinct(boolean distinct) {
         this.distinct = distinct;
         return this;
     }
 
+    /**
+     * Sets the distinct.
+     *
+     * @param distinct distinct
+     * @return set distinct result
+     */
     public NPropsTransformer setDistinct(boolean distinct) {
         this.distinct = distinct;
         return this;
     }
 
+    /**
+     * Removes remove.
+     *
+     * @param varName var name
+     * @return remove result
+     */
     public NPropsTransformer remove(String varName) {
         replacements.put(varName, s -> null);
         return this;
     }
 
+    /**
+     * Replace.
+     *
+     * @param varName var name
+     * @param replacement replacement
+     * @return replace result
+     */
     public NPropsTransformer replace(String varName, String replacement) {
+      /**
+       * Validate key name.
+       *
+       * @param varName var name
+       */
         validateKeyName(varName);
         if (replacement == null) {
             replacements.put(varName, null);
@@ -184,12 +314,30 @@ public class NPropsTransformer {
         return this;
     }
 
+    /**
+     * Unreplace.
+     *
+     * @param varName var name
+     * @return unreplace result
+     */
     public NPropsTransformer unreplace(String varName) {
         replacements.remove(varName);
         return this;
     }
 
+    /**
+     * Replace.
+     *
+     * @param varName var name
+     * @param replacement replacement
+     * @return replace result
+     */
     public NPropsTransformer replace(String varName, Function<String, String> replacement) {
+      /**
+       * Validate key name.
+       *
+       * @param varName var name
+       */
         validateKeyName(varName);
         if (replacement == null) {
             replacements.put(varName, null);
@@ -199,20 +347,50 @@ public class NPropsTransformer {
         return this;
     }
 
+    /**
+     * Validate key name.
+     *
+     * @param varName var name
+     * @return validate key name result
+     */
     private static void validateKeyName(String varName) {
         for (char c : varName.toCharArray()) {
             if (Character.isWhitespace(c)) {
+                /**
+                 * Illegal argument exception.
+                 *
+                 * @param varName var name
+                 * @return illegal argument exception result
+                 */
                 throw new IllegalArgumentException("invalid variable name " + varName);
             }
             if (c == '=') {
+                /**
+                 * Illegal argument exception.
+                 *
+                 * @param varName var name
+                 * @return illegal argument exception result
+                 */
                 throw new IllegalArgumentException("invalid variable name " + varName);
             }
             if (c == ':') {
+                /**
+                 * Illegal argument exception.
+                 *
+                 * @param varName var name
+                 * @return illegal argument exception result
+                 */
                 throw new IllegalArgumentException("invalid variable name " + varName);
             }
         }
     }
 
+    /**
+     * Transform.
+     *
+     * @param reader reader
+     * @param out out
+     */
     public void transform(Reader reader, PrintStream out) {
         BufferedReader bReader = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
         List<Row> rows = new ArrayList<>();
@@ -308,6 +486,12 @@ public class NPropsTransformer {
         out.flush();
     }
 
+    /**
+     * Extract key.
+     *
+     * @param line line
+     * @return extract key result
+     */
     private String extractKey(String line) {
         if (line == null) {
             return null;
@@ -341,6 +525,14 @@ public class NPropsTransformer {
         return sb.toString();
     }
 
+    /**
+     * New key val.
+     *
+     * @param key key
+     * @param value value
+     * @param rows rows
+     * @return new key val result
+     */
     private Row newKeyVal(String key, String value, List<Row> rows) {
         List<Row> comments = new ArrayList<>();
         while (true) {
@@ -360,6 +552,13 @@ public class NPropsTransformer {
         return row;
     }
 
+    /**
+     * Process line.
+     *
+     * @param line line
+     * @param rows rows
+     * @return process line result
+     */
     private boolean processLine(String line, List<Row> rows) {
         for (Map.Entry<String, Function<String, String>> e : replacements.entrySet()) {
             if (replaceVar(e.getKey(), e.getValue(), line, rows)) {
@@ -375,6 +574,9 @@ public class NPropsTransformer {
         COMMENT;
         private final String id;
 
+      /**
+       * Row type.
+       */
         RowType() {
             this.id = NNameFormat.ID_NAME.format(name());
         }
@@ -384,6 +586,12 @@ public class NPropsTransformer {
             return id;
         }
 
+        /**
+         * Parse.
+         *
+         * @param value value
+         * @return parse result
+         */
         public static NOptional<RowType> parse(String value) {
             return NEnumUtils.parseEnum(value, RowType.class);
         }
@@ -396,6 +604,14 @@ public class NPropsTransformer {
         RowType type;
         int index;
 
+        /**
+         * Row.
+         *
+         * @param type type
+         * @param key key
+         * @param row row
+         * @return row result
+         */
         public Row(RowType type, String key, String row) {
             this.type = type;
             this.key = key;
@@ -403,6 +619,15 @@ public class NPropsTransformer {
         }
     }
 
+    /**
+     * Replace var.
+     *
+     * @param varName var name
+     * @param suffix suffix
+     * @param line line
+     * @param rows rows
+     * @return replace var result
+     */
     private boolean replaceVar(String varName, Function<String, String> suffix, String line, List<Row> rows) {
         String lineStripped = NStringUtils.strip(line);
         if (lineStripped.startsWith(varName)) {
@@ -432,6 +657,12 @@ public class NPropsTransformer {
         return false;
     }
 
+    /**
+     * Decode string.
+     *
+     * @param str str
+     * @return decode string result
+     */
     public static String decodeString(String str) {
         int i = 0;
         char[] in = str.toCharArray();
@@ -458,6 +689,12 @@ public class NPropsTransformer {
                         } else if (c >= 'a' && c <= 'f') {
                             nc = (nc << 4) + 10 + c - 97;
                         } else {
+                            /**
+                             * Illegal argument exception.
+                             *
+                             * @param encoding" encoding"
+                             * @return illegal argument exception result
+                             */
                             throw new IllegalArgumentException("Invalid \\uxxxx encoding");
                         }
                     }

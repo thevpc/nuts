@@ -176,6 +176,11 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
                 '}';
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NCommandFactoryConfig copy() {
         try {
             NCommandFactoryConfig cloned = (NCommandFactoryConfig) clone();
@@ -184,6 +189,12 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

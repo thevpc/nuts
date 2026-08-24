@@ -154,15 +154,33 @@ public enum NElementType implements NEnum {
     private final String id;
     private final NElementTypeGroup group;
 
+  /**
+   * N element type.
+   *
+   * @param group group
+   */
     NElementType(NElementTypeGroup group) {
         this.id = NNameFormat.ID_NAME.format(name());
         this.group = group;
     }
 
+    /**
+     * Compute number.
+     *
+     * @param firstNumberType first number type
+     * @param secondNumberType second number type
+     * @return compute number result
+     */
     public static NElementType computeNumber(NElementType firstNumberType, NElementType secondNumberType) {
         return NElementRPI.of().commonNumberType(firstNumberType, secondNumberType);
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NElementType> parse(String value) {
         return NEnumUtils.parseEnum(value, NElementType.class);
     }
@@ -176,6 +194,11 @@ public enum NElementType implements NEnum {
         return id;
     }
 
+    /**
+     * Checks if is any floating number.
+     *
+     * @return is any floating number result
+     */
     public boolean isAnyFloatingNumber() {
         switch (this) {
             case FLOAT:
@@ -189,6 +212,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any ordinal number.
+     *
+     * @return is any ordinal number result
+     */
     public boolean isAnyOrdinalNumber() {
         switch (this) {
             case BYTE:
@@ -205,6 +233,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any number.
+     *
+     * @return is any number result
+     */
     public boolean isAnyNumber() {
         switch (this) {
             case BYTE:
@@ -244,6 +277,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any primitive.
+     *
+     * @return is any primitive result
+     */
     public boolean isAnyPrimitive() {
         switch (this) {
             case BYTE:
@@ -279,6 +317,11 @@ public enum NElementType implements NEnum {
     }
 
 
+    /**
+     * Checks if is any stream.
+     *
+     * @return is any stream result
+     */
     public boolean isAnyStream() {
         switch (this) {
             case BINARY_STREAM:
@@ -288,6 +331,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any string.
+     *
+     * @return is any string result
+     */
     public boolean isAnyString() {
         switch (this) {
             case DOUBLE_QUOTED_STRING:
@@ -303,6 +351,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any string or name.
+     *
+     * @return is any string or name result
+     */
     public boolean isAnyStringOrName() {
         switch (this) {
             case DOUBLE_QUOTED_STRING:
@@ -320,6 +373,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any date.
+     *
+     * @return is any date result
+     */
     public boolean isAnyDate() {
         switch (this) {
             case LOCAL_DATE:
@@ -330,6 +388,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any decimal number.
+     *
+     * @return is any decimal number result
+     */
     public boolean isAnyDecimalNumber() {
         switch (this) {
             case FLOAT:
@@ -341,6 +404,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any big number.
+     *
+     * @return is any big number result
+     */
     public boolean isAnyBigNumber() {
         switch (this) {
             case BIG_DECIMAL:
@@ -352,6 +420,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any named.
+     *
+     * @return is any named result
+     */
     public boolean isAnyNamed() {
         switch (this) {
             case PAIR: // key may be the name
@@ -366,6 +439,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any parametrized.
+     *
+     * @return is any parametrized result
+     */
     public boolean isAnyParametrized() {
         switch (this) {
             case PARAM_ARRAY:
@@ -378,6 +456,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any local temporal.
+     *
+     * @return is any local temporal result
+     */
     public boolean isAnyLocalTemporal() {
         switch (this) {
             case LOCAL_DATE:
@@ -389,6 +472,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any temporal.
+     *
+     * @return is any temporal result
+     */
     public boolean isAnyTemporal() {
         switch (this) {
             case INSTANT:
@@ -401,6 +489,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any complex number.
+     *
+     * @return is any complex number result
+     */
     public boolean isAnyComplexNumber() {
         switch (this) {
             case BIG_COMPLEX:
@@ -412,6 +505,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any named object.
+     *
+     * @return is any named object result
+     */
     public boolean isAnyNamedObject() {
         switch (this) {
             case NAMED_OBJECT:
@@ -421,6 +519,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any named array.
+     *
+     * @return is any named array result
+     */
     public boolean isAnyNamedArray() {
         switch (this) {
             case NAMED_OBJECT:
@@ -430,6 +533,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any param object.
+     *
+     * @return is any param object result
+     */
     public boolean isAnyParamObject() {
         switch (this) {
             case PARAM_OBJECT:
@@ -439,6 +547,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any param array.
+     *
+     * @return is any param array result
+     */
     public boolean isAnyParamArray() {
         switch (this) {
             case PARAM_OBJECT:
@@ -448,6 +561,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any array.
+     *
+     * @return is any array result
+     */
     public boolean isAnyArray() {
         switch (this) {
             case ARRAY:
@@ -458,6 +576,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any object.
+     *
+     * @return is any object result
+     */
     public boolean isAnyObject() {
         switch (this) {
             case OBJECT:
@@ -469,6 +592,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any tuple.
+     *
+     * @return is any tuple result
+     */
     public boolean isAnyTuple() {
         switch (this) {
             case TUPLE:
@@ -478,6 +606,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any list or parametrized container.
+     *
+     * @return is any list or parametrized container result
+     */
     public boolean isAnyListOrParametrizedContainer() {
         switch (this) {
             case TUPLE:
@@ -494,6 +627,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is any list container.
+     *
+     * @return is any list container result
+     */
     public boolean isAnyListContainer() {
         switch (this) {
             case TUPLE:
@@ -510,6 +648,11 @@ public enum NElementType implements NEnum {
         return false;
     }
 
+    /**
+     * Group.
+     *
+     * @return group result
+     */
     public NElementTypeGroup group() {
         return group;
     }

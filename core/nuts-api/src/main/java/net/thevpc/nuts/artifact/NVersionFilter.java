@@ -68,42 +68,100 @@ import java.util.function.Supplier;
 public interface NVersionFilter extends NFilter {
     //////// COMMON START
 
+    /**
+     * Creates a new instance of of nonnull.
+     *
+     * @param filter filter
+     * @return of nonnull result
+     */
     static NVersionFilter ofNonnull(NFilter filter){
         return NVersionFilterRPI.of().nonnull(filter);
     }
 
+    /**
+     * Creates a new instance of of always.
+     *
+     * @return of always result
+     */
     static NVersionFilter ofAlways(){
         return NVersionFilterRPI.of().always();
     }
 
+    /**
+     * Creates a new instance of of never.
+     *
+     * @return of never result
+     */
     static NVersionFilter ofNever(){
         return NVersionFilterRPI.of().never();
     }
 
+    /**
+     * Creates a new instance of of all.
+     *
+     * @param others others
+     * @return of all result
+     */
     static NVersionFilter ofAll(NFilter... others){
         return NVersionFilterRPI.of().all(others);
     }
 
+    /**
+     * Creates a new instance of of any.
+     *
+     * @param others others
+     * @return of any result
+     */
     static NVersionFilter ofAny(NFilter... others){
         return NVersionFilterRPI.of().any(others);
     }
 
+    /**
+     * Creates a new instance of of not.
+     *
+     * @param other other
+     * @return of not result
+     */
     static NVersionFilter ofNot(NFilter other){
         return NVersionFilterRPI.of().not(other);
     }
 
+    /**
+     * Creates a new instance of of none.
+     *
+     * @param others others
+     * @return of none result
+     */
     static NVersionFilter ofNone(NFilter... others){
         return NVersionFilterRPI.of().none(others);
     }
 
+    /**
+     * Creates a new instance of of from.
+     *
+     * @param a a
+     * @return of from result
+     */
     static NVersionFilter ofFrom(NFilter a){
         return NVersionFilterRPI.of().from(a);
     }
 
+    /**
+     * Creates a new instance of of as.
+     *
+     * @param a a
+     * @return of as result
+     */
     static NVersionFilter ofAs(NFilter a){
         return NVersionFilterRPI.of().as(a);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param expression expression
+     * @return of result
+     */
     static NVersionFilter of(String expression){
         return NVersionFilterRPI.of().parse(expression);
     }
@@ -112,14 +170,34 @@ public interface NVersionFilter extends NFilter {
 
 
     //////// FACTORY START
+    /**
+     * Creates a new instance of of value.
+     *
+     * @param version version
+     * @return of value result
+     */
     static NOptional<NVersionFilter> ofValue(String version){
         return NVersionFilterRPI.of().byValue(version);
     }
 
+    /**
+     * Creates a new instance of of value.
+     *
+     * @param version version
+     * @param comparator comparator
+     * @return of value result
+     */
     static NOptional<NVersionFilter> ofValue(String version, NVersionComparator comparator){
         return NVersionFilterRPI.of().byValue(version, comparator);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param expression expression
+     * @param versionComparator version comparator
+     * @return of result
+     */
     static NVersionFilter of(String expression, NVersionComparator versionComparator){
         return NVersionFilterRPI.of().parse(expression, versionComparator);
     }
@@ -134,12 +212,34 @@ public interface NVersionFilter extends NFilter {
      */
     boolean acceptVersion(NVersion version);
 
+    /**
+     * Or.
+     *
+     * @param other other
+     * @return or result
+     */
     NVersionFilter or(NVersionFilter other);
 
+    /**
+     * And.
+     *
+     * @param other other
+     * @return and result
+     */
     NVersionFilter and(NVersionFilter other);
 
+    /**
+     * Neg.
+     *
+     * @return neg result
+     */
     NVersionFilter neg();
 
+    /**
+     * Intervals.
+     *
+     * @return intervals result
+     */
     NOptional<List<NVersionInterval>> intervals();
 
     @Override
@@ -147,5 +247,11 @@ public interface NVersionFilter extends NFilter {
         return NFilter.super.describe();
     }
 
+    /**
+     * With description.
+     *
+     * @param description description
+     * @return with description result
+     */
     NFilter withDescription(Supplier<NElement> description);
 }

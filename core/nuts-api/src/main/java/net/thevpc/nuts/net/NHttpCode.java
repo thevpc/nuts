@@ -4,6 +4,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * NHttpCode class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NHttpCode {
     private static final Map<Integer, NHttpCode> cache = new ConcurrentHashMap<>();
     public static final NHttpCode OK = of(200);
@@ -31,7 +37,18 @@ public class NHttpCode {
     public static final NHttpCode INTERNAL_SERVER_ERROR = of(500);
     private int code;
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param code code
+     * @return of result
+     */
     public static NHttpCode of(int code) {
+      /**
+       * Synchronized.
+       *
+       * @param NHttpCode.cache n http code.cache
+       */
         synchronized (NHttpCode.cache) {
             if (code >= 0 && code < 600) {
                 return cache.computeIfAbsent(code, integer -> new NHttpCode(code));
@@ -40,22 +57,63 @@ public class NHttpCode {
         return new NHttpCode(code);
     }
 
+    /**
+     * N http code.
+     *
+     * @param code code
+     * @return n http code result
+     */
     private NHttpCode(int code) {
         this.code = code;
     }
 
+    /**
+     * Checks if is ok.
+     *
+     * @return is ok result
+     */
     public boolean isOk() {
+      /**
+       * Return.
+       *
+       * @param 300 300
+       */
         return (code >= 200 && code < 300);
     }
 
+    /**
+     * Checks if is client error.
+     *
+     * @return is client error result
+     */
     public boolean isClientError() {
+      /**
+       * Return.
+       *
+       * @param 500 500
+       */
         return (code >= 400 && code < 500);
     }
 
+    /**
+     * Checks if is server error.
+     *
+     * @return is server error result
+     */
     public boolean isServerError() {
+      /**
+       * Return.
+       *
+       * @param 500 500
+       */
         return (code >= 500);
     }
 
+    /**
+     * Code.
+     *
+     * @return code result
+     */
     public int code() {
         return code;
     }

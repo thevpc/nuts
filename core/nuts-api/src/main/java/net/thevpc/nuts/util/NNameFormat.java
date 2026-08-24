@@ -5,6 +5,12 @@ import net.thevpc.nuts.elem.NMapBy;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * NNameFormat class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NNameFormat {
     public static final NNameFormat LOWER_CAMEL_CASE = new NNameFormat(NWordFormat.LOWERCASE, NWordFormat.CAPITALIZED, null);
     public static final NNameFormat UPPER_CAMEL_CASE = new NNameFormat(NWordFormat.CAPITALIZED, NWordFormat.CAPITALIZED, null);
@@ -69,38 +75,113 @@ public class NNameFormat {
         return true;
     }
 
+    /**
+     * Leading.
+     *
+     * @return leading result
+     */
     public NWordFormat leading() {
         return leading;
     }
 
+    /**
+     * Next.
+     *
+     * @return next result
+     */
     public NWordFormat next() {
         return next;
     }
 
+    /**
+     * Step.
+     *
+     * @return step result
+     */
     public String step() {
         return sep;
     }
 
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static String[] parse(CharSequence value) {
+        /**
+         * Parse.
+         *
+         * @param value value
+         * @param false false
+         * @return parse result
+         */
         return parse(value, false);
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @param sep sep
+     * @return parse result
+     */
     public static String[] parse(CharSequence value, boolean sep) {
         if (value == null) {
             return new String[]{""};
         }
+        /**
+         * Parse.
+         *
+         * @param value.toString() value.to string()
+         * @param sep sep
+         * @return parse result
+         */
         return parse(value.toString(), sep);
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static String[] parse(String value) {
+        /**
+         * Parse.
+         *
+         * @param value value
+         * @param false false
+         * @return parse result
+         */
         return parse(value, false);
     }
 
+    /**
+     * Checks if is separator.
+     *
+     * @param c c
+     * @return is separator result
+     */
     public static boolean isSeparator(char c) {
         int t = Character.getType(c);
+        /**
+         * Checks if is separator.
+         *
+         * @param c c
+         * @param t t
+         * @return is separator result
+         */
         return isSeparator(c,t);
     }
+    /**
+     * Checks if is separator.
+     *
+     * @param c c
+     * @param codeType code type
+     * @return is separator result
+     */
     private static boolean isSeparator(char c,int codeType) {
         switch (c) {
             case '-':
@@ -140,6 +221,13 @@ public class NNameFormat {
         return false;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @param sep sep
+     * @return parse result
+     */
     public static String[] parse(String value, boolean sep) {
         if (NBlankable.isBlank(value)) {
             return new String[]{""};
@@ -196,18 +284,43 @@ public class NNameFormat {
         return all.toArray(new String[0]);
     }
 
+    /**
+     * Checks if string a and string b format to the same value.
+     *
+     * @param a first string
+     * @param b second string
+     * @return true if formatted values are equal
+     */
     public boolean equals(String a, String b) {
         return format(a).equals(format(b));
     }
 
+    /**
+     * Format.
+     *
+     * @param value value
+     * @return format result
+     */
     public String format(String value) {
         return format(parse(value));
     }
 
+    /**
+     * Format.
+     *
+     * @param value value
+     * @return format result
+     */
     public String format(CharSequence value) {
         return format(parse(value));
     }
 
+    /**
+     * Format.
+     *
+     * @param value value
+     * @return format result
+     */
     public String format(String[] value) {
         StringBuilder sb = new StringBuilder();
         if (value.length > 0) {

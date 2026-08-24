@@ -77,10 +77,19 @@ public enum NIdType implements NEnum {
      */
     private final String id;
 
+  /**
+   * N id type.
+   */
     NIdType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NIdType> parse(String value) {
         return NEnumUtils.parseEnum(value, NIdType.class);
     }

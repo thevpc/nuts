@@ -44,6 +44,11 @@ import java.util.*;
  */
 public interface NInfoCmd extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NInfoCmd of() {
        return NExtensions.of(NInfoCmd.class);
     }
@@ -60,6 +65,12 @@ public interface NInfoCmd extends NWorkspaceCmd {
     @Override
     NInfoCmd configure(boolean skipUnsupported, String... args);
 
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
     @NSetter
     NInfoCmd ntf(boolean ntf);
 
@@ -116,9 +127,20 @@ public interface NInfoCmd extends NWorkspaceCmd {
 //
 //    NInfoCmd println(NPrintStream w);
 
+    /**
+     * Property values.
+     *
+     * @return property values result
+     */
     @NGetter
     Map<String, Object> propertyValues() ;
 
+    /**
+     * Returns the property value.
+     *
+     * @param propertyName property name
+     * @return get property value result
+     */
     NOptional<Object> getPropertyValue(String propertyName) ;
 
 

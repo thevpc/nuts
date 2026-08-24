@@ -35,11 +35,23 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * NStringMapFormat class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NStringMapFormat {
     public static final Function<String, String> URL_ENCODER = x -> {
         try {
             return URLEncoder.encode(x, "UTF-8");
         } catch (UnsupportedEncodingException e) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param e e
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(e);
         }
     };
@@ -47,6 +59,12 @@ public class NStringMapFormat {
         try {
             return URLDecoder.decode(x, "UTF-8");
         } catch (UnsupportedEncodingException e) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param e e
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(e);
         }
     };
@@ -66,6 +84,11 @@ public class NStringMapFormat {
     private final boolean acceptNullKeys;
 
 
+  /**
+   * N string map format.
+   *
+   * @param builder builder
+   */
     NStringMapFormat(NStringMapFormatBuilder builder) {
         if (builder == null) {
             builder = new NStringMapFormatBuilder();
@@ -76,6 +99,12 @@ public class NStringMapFormat {
         if (builder.equalsChars() != null) {
             for (char c : builder.equalsChars().toCharArray()) {
                 if (isWhitespace(c)) {
+                    /**
+                     * Illegal argument exception.
+                     *
+                     * @param whitespaces" whitespaces"
+                     * @return illegal argument exception result
+                     */
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
@@ -83,6 +112,12 @@ public class NStringMapFormat {
         if (builder.escapeChars() != null) {
             for (char c : builder.escapeChars().toCharArray()) {
                 if (isWhitespace(c)) {
+                    /**
+                     * Illegal argument exception.
+                     *
+                     * @param whitespaces" whitespaces"
+                     * @return illegal argument exception result
+                     */
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
@@ -90,6 +125,12 @@ public class NStringMapFormat {
         if (builder.separatorChars() != null) {
             for (char c : builder.separatorChars().toCharArray()) {
                 if (isWhitespace(c)) {
+                    /**
+                     * Illegal argument exception.
+                     *
+                     * @param whitespaces" whitespaces"
+                     * @return illegal argument exception result
+                     */
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
@@ -110,6 +151,9 @@ public class NStringMapFormat {
         SEP;
         private final String id;
 
+      /**
+       * Token type.
+       */
         TokenType() {
             this.id = NNameFormat.ID_NAME.format(name());
         }
@@ -119,10 +163,21 @@ public class NStringMapFormat {
             return id;
         }
 
+        /**
+         * Parse.
+         *
+         * @param value value
+         * @return parse result
+         */
         public static NOptional<TokenType> parse(String value) {
             return NEnumUtils.parseEnum(value, TokenType.class);
         }
 
+        /**
+         * Checks if is any word.
+         *
+         * @return is any word result
+         */
         boolean isAnyWord() {
             return this == DOUBLE_QUOTED || this == SIMPLE_QUOTED || this == WORD;
         }
@@ -134,10 +189,32 @@ public class NStringMapFormat {
         String value;
         String image;
 
+        /**
+         * Token.
+         *
+         * @param type type
+         * @param value value
+         * @return token result
+         */
         public Token(TokenType type, String value) {
+          /**
+           * This.
+           *
+           * @param type type
+           * @param value value
+           * @param value value
+           */
             this(type, value, value);
         }
 
+        /**
+         * Token.
+         *
+         * @param type type
+         * @param value value
+         * @param image image
+         * @return token result
+         */
         public Token(TokenType type, String value, String image) {
             this.type = type;
             this.value = value;
@@ -154,6 +231,13 @@ public class NStringMapFormat {
         }
     }
 
+    /**
+     * Read token.
+     *
+     * @param reader reader
+     * @param decoder decoder
+     * @return read token result
+     */
     private Token readToken(PushbackReader reader, Function<String, String> decoder) {
         try {
             if (decoder == null) {
@@ -194,6 +278,12 @@ public class NStringMapFormat {
                 while (true) {
                     r = reader.read();
                     if (r == -1) {
+                        /**
+                         * Runtime exception.
+                         *
+                         * @param cr cr
+                         * @return runtime exception result
+                         */
                         throw new RuntimeException("Expected " + cr);
                     }
                     image.append(cr);
@@ -203,6 +293,12 @@ public class NStringMapFormat {
                     if (r == '\\') {
                         r = reader.read();
                         if (r == -1) {
+                            /**
+                             * Runtime exception.
+                             *
+                             * @param cr cr
+                             * @return runtime exception result
+                             */
                             throw new RuntimeException("Expected " + cr);
                         }
                         image.append((char) r);
@@ -297,6 +393,12 @@ public class NStringMapFormat {
                 }
             }
         } catch (IOException e) {
+            /**
+             * Unchecked io exception.
+             *
+             * @param e e
+             * @return unchecked io exception result
+             */
             throw new UncheckedIOException(e);
         }
     }
@@ -353,6 +455,11 @@ public class NStringMapFormat {
             m.computeIfAbsent(null, v -> new ArrayList<>()).add(null);
         }
         while (true) {
+          /**
+           * Skip separator.
+           *
+           * @param tokens tokens
+           */
             skipSeparator(tokens);
             Map.Entry<String, String> u;
             if ((u = readEntry(tokens)) != null) {
@@ -364,6 +471,12 @@ public class NStringMapFormat {
         return NOptional.of(m);
     }
 
+    /**
+     * Skip separator.
+     *
+     * @param tokens tokens
+     * @return skip separator result
+     */
     private boolean skipSeparator(List<Token> tokens) {
         if (!tokens.isEmpty()) {
             if (tokens.get(0).type == TokenType.SEP) {
@@ -374,6 +487,12 @@ public class NStringMapFormat {
         return false;
     }
 
+    /**
+     * Read entry.
+     *
+     * @param tokens tokens
+     * @return read entry result
+     */
     private Map.Entry<String, String> readEntry(List<Token> tokens) {
         boolean acceptNullKeys = this.acceptNullKeys;
         if (!tokens.isEmpty()) {
@@ -427,6 +546,12 @@ public class NStringMapFormat {
         }
     }
 
+    /**
+     * Checks if is whitespace.
+     *
+     * @param c c
+     * @return is whitespace result
+     */
     private static boolean isWhitespace(char c) {
         if (c <= 32) {
             return true;
@@ -434,17 +559,35 @@ public class NStringMapFormat {
         return Character.isWhitespace(c);
     }
 
+    /**
+     * Format.
+     *
+     * @param map map
+     * @return format result
+     */
     public String format(Map<String, String> map) {
         if (map != null) {
             Map<String, List<String>> map2 = new HashMap<>();
             for (Map.Entry<String, String> e : map.entrySet()) {
                 map2.put(e.getKey(), Arrays.asList(e.getValue()));
             }
+            /**
+             * Format duplicates.
+             *
+             * @param map2 map2
+             * @return format duplicates result
+             */
             return formatDuplicates(map2);
         }
         return "";
     }
 
+    /**
+     * Format duplicates.
+     *
+     * @param map map
+     * @return format duplicates result
+     */
     public String formatDuplicates(Map<String, List<String>> map) {
         Function<String, String> encoder = this.encoder == null ? x -> x : this.encoder;
         StringBuilder sb = new StringBuilder();
@@ -503,30 +646,65 @@ public class NStringMapFormat {
         return Objects.hash(equalsChars, separatorChars, escapeChars, sort, decoder, encoder);
     }
 
+    /**
+     * Equals chars.
+     *
+     * @return equals chars result
+     */
     public String equalsChars() {
         return equalsChars;
     }
 
+    /**
+     * Separator chars.
+     *
+     * @return separator chars result
+     */
     public String separatorChars() {
         return separatorChars;
     }
 
+    /**
+     * Escape chars.
+     *
+     * @return escape chars result
+     */
     public String escapeChars() {
         return escapeChars;
     }
 
+    /**
+     * Checks if is sort.
+     *
+     * @return is sort result
+     */
     public boolean isSort() {
         return sort;
     }
 
+    /**
+     * Decoder.
+     *
+     * @return decoder result
+     */
     public Function<String, String> decoder() {
         return decoder;
     }
 
+    /**
+     * Encoder.
+     *
+     * @return encoder result
+     */
     public Function<String, String> encoder() {
         return encoder;
     }
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     public NStringMapFormatBuilder builder() {
         return NStringMapFormatBuilder.of()
                 .copyFrom(this)

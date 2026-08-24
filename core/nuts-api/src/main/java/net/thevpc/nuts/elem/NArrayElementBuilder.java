@@ -42,6 +42,11 @@ import java.util.function.Consumer;
  */
 public interface NArrayElementBuilder extends NElementBuilder {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NArrayElementBuilder of() {
         return NElement.ofArrayBuilder();
     }
@@ -53,6 +58,12 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     List<NElement> children();
 
+    /**
+     * Removes remove.
+     *
+     * @param child child
+     * @return remove result
+     */
     NArrayElementBuilder remove(String child);
 
     /**
@@ -62,6 +73,11 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     int size();
 
+    /**
+     * Clear children.
+     *
+     * @return clear children result
+     */
     NArrayElementBuilder clearChildren();
 
     /**
@@ -261,45 +277,169 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NArrayElementBuilder clear();
 
+    /**
+     * Adds the specified params.
+     *
+     * @param params params
+     * @return add params result
+     */
     NArrayElementBuilder addParams(List<NElement> params);
 
+    /**
+     * Adds the specified param.
+     *
+     * @param param param
+     * @return add param result
+     */
     NArrayElementBuilder addParam(NElement param);
 
+    /**
+     * Adds the specified param at.
+     *
+     * @param index index
+     * @param param param
+     * @return add param at result
+     */
     NArrayElementBuilder addParamAt(int index, NElement param);
 
+    /**
+     * Removes the specified param at.
+     *
+     * @param index index
+     * @return remove param at result
+     */
     NArrayElementBuilder removeParamAt(int index);
 
+    /**
+     * Clear params.
+     *
+     * @return clear params result
+     */
     NArrayElementBuilder clearParams();
 
+    /**
+     * Params.
+     *
+     * @return params result
+     */
     NOptional<List<NElement>> params();
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     NOptional<String> name();
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     NArrayElementBuilder name(String name);
 
+    /**
+     * Checks if is parametrized.
+     *
+     * @return is parametrized result
+     */
     boolean isParametrized();
 
+    /**
+     * Sets the parametrized.
+     *
+     * @param parametrized parametrized
+     * @return set parametrized result
+     */
     NArrayElementBuilder setParametrized(boolean parametrized);
 
+    /**
+     * Adds the specified param.
+     *
+     * @param name name
+     * @param value value
+     * @return add param result
+     */
     NArrayElementBuilder addParam(String name, NElement value);
 
+    /**
+     * Adds the specified param.
+     *
+     * @param name name
+     * @param value value
+     * @return add param result
+     */
     NArrayElementBuilder addParam(String name, String value);
 
+    /**
+     * Adds the specified param.
+     *
+     * @param name name
+     * @param value value
+     * @return add param result
+     */
     NArrayElementBuilder addParam(String name, Integer value);
 
+    /**
+     * Adds the specified param.
+     *
+     * @param name name
+     * @param value value
+     * @return add param result
+     */
     NArrayElementBuilder addParam(String name, Long value);
 
+    /**
+     * Adds the specified param.
+     *
+     * @param name name
+     * @param value value
+     * @return add param result
+     */
     NArrayElementBuilder addParam(String name, Double value);
 
+    /**
+     * Adds the specified param.
+     *
+     * @param name name
+     * @param value value
+     * @return add param result
+     */
     NArrayElementBuilder addParam(String name, Boolean value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param i i
+     * @param element element
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int i, NElement element);
 
+    /**
+     * Sets the params.
+     *
+     * @param params params
+     * @return set params result
+     */
     NArrayElementBuilder setParams(List<NElement> params);
 
+    /**
+     * Sets the children.
+     *
+     * @param params params
+     * @return set children result
+     */
     NArrayElementBuilder setChildren(List<NElement> params);
 
 
+    /**
+     * Do with.
+     *
+     * @param con con
+     * @return do with result
+     */
     NArrayElementBuilder doWith(Consumer<NArrayElementBuilder> con);
 
     /**
@@ -310,58 +450,227 @@ public interface NArrayElementBuilder extends NElementBuilder {
     NArrayElement build();
 
     /// ///////////////////////////////////////////////
+    /**
+     * Adds the specified annotations.
+     *
+     * @param annotations annotations
+     * @return add annotations result
+     */
     NArrayElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    /**
+     * Adds the specified annotation.
+     *
+     * @param annotation annotation
+     * @return add annotation result
+     */
     NArrayElementBuilder addAnnotation(NElementAnnotation annotation);
 
+    /**
+     * Adds the specified annotation.
+     *
+     * @param name name
+     * @param args args
+     * @return add annotation result
+     */
     NArrayElementBuilder addAnnotation(String name, NElement... args);
 
+    /**
+     * Adds the specified affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @return add affix at result
+     */
     NArrayElementBuilder addAffixAt(int index, NBoundAffix affix);
 
+    /**
+     * Sets the affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @return set affix at result
+     */
     NArrayElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    /**
+     * Sets the affixes.
+     *
+     * @param affixes affixes
+     * @return set affixes result
+     */
     NArrayElementBuilder setAffixes(List<NBoundAffix> affixes);
 
+    /**
+     * Adds the specified affix.
+     *
+     * @param affix affix
+     * @return add affix result
+     */
     NArrayElementBuilder addAffix(NBoundAffix affix);
 
+    /**
+     * Adds the specified affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @param anchor anchor
+     * @return add affix at result
+     */
     NArrayElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
+    /**
+     * Sets the affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @param anchor anchor
+     * @return set affix at result
+     */
     NArrayElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
+    /**
+     * Removes the specified affixes.
+     *
+     * @param type type
+     * @param anchor anchor
+     * @return remove affixes result
+     */
     NArrayElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
+    /**
+     * Removes the specified affix.
+     *
+     * @param affix affix
+     * @return remove affix result
+     */
     NArrayElementBuilder removeAffix(int affix);
 
+    /**
+     * Removes the specified annotation.
+     *
+     * @param annotation annotation
+     * @return remove annotation result
+     */
     NArrayElementBuilder removeAnnotation(NElementAnnotation annotation);
 
+    /**
+     * Clear annotations.
+     *
+     * @return clear annotations result
+     */
     NArrayElementBuilder clearAnnotations();
 
+    /**
+     * Clear affixes.
+     *
+     * @return clear affixes result
+     */
     NArrayElementBuilder clearAffixes();
 
+    /**
+     * Adds the specified leading comment.
+     *
+     * @param comment comment
+     * @return add leading comment result
+     */
     NArrayElementBuilder addLeadingComment(NElementComment comment);
 
+    /**
+     * Adds the specified leading comments.
+     *
+     * @param comments comments
+     * @return add leading comments result
+     */
     NArrayElementBuilder addLeadingComments(NElementComment... comments);
 
+    /**
+     * Adds the specified trailing comments.
+     *
+     * @param comments comments
+     * @return add trailing comments result
+     */
     NArrayElementBuilder addTrailingComments(NElementComment... comments);
 
+    /**
+     * Adds the specified trailing comment.
+     *
+     * @param comment comment
+     * @return add trailing comment result
+     */
     NArrayElementBuilder addTrailingComment(NElementComment comment);
 
+    /**
+     * Clear comments.
+     *
+     * @return clear comments result
+     */
     NArrayElementBuilder clearComments();
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NArrayElementBuilder copyFrom(NElementBuilder other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NArrayElementBuilder copyFrom(NElement other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @param assignmentPolicy assignment policy
+     * @return copy from result
+     */
     NArrayElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @param assignmentPolicy assignment policy
+     * @return copy from result
+     */
     NArrayElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
+    /**
+     * Adds the specified diagnostic.
+     *
+     * @param error error
+     * @return add diagnostic result
+     */
     NArrayElementBuilder addDiagnostic(NElementDiagnostic error);
 
+    /**
+     * Removes the specified diagnostic.
+     *
+     * @param error error
+     * @return remove diagnostic result
+     */
     NArrayElementBuilder removeDiagnostic(NElementDiagnostic error);
 
+    /**
+     * Adds the specified affixes.
+     *
+     * @param affixes affixes
+     * @return add affixes result
+     */
     NArrayElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    /**
+     * Metadata.
+     *
+     * @param metadata metadata
+     * @return metadata result
+     */
     NArrayElementBuilder metadata(NElementMetadata metadata);
 
 
@@ -377,68 +686,289 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NArrayElementBuilder set(String name, NElement value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, Boolean value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, Integer value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, Double value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, Float value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, Long value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, Byte value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, Short value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, Character value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(String name, String value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param index index
+     * @param value value
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int index, Boolean value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param index index
+     * @param value value
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int index, Integer value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param index index
+     * @param value value
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int index, Double value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param index index
+     * @param value value
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int index, Long value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param index index
+     * @param value value
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int index, Short value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param index index
+     * @param value value
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int index, Character value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param index index
+     * @param value value
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int index, Byte value);
 
+    /**
+     * Sets the param at.
+     *
+     * @param index index
+     * @param value value
+     * @return set param at result
+     */
     NArrayElementBuilder setParamAt(int index, String value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(NElement name, NElement value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, NElement value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Number value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Boolean value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Byte value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Short value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Integer value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Long value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Float value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Character value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, Double value);
 
+    /**
+     * Adds add.
+     *
+     * @param name name
+     * @param value value
+     * @return add result
+     */
     NArrayElementBuilder add(String name, String value);
 
+    /**
+     * Adds the specified all.
+     *
+     * @param other other
+     * @return add all result
+     */
     NArrayElementBuilder addAll(Map<NElement, NElement> other);
 
+    /**
+     * Adds the specified all.
+     *
+     * @param other other
+     * @return add all result
+     */
     NArrayElementBuilder addAll(List<NElement> other);
 
+    /**
+     * Sets the all.
+     *
+     * @param other other
+     * @return set all result
+     */
     NArrayElementBuilder setAll(Map<NElement, NElement> other);
 
     /**
@@ -449,6 +979,12 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NArrayElementBuilder removePair(String name);
 
+    /**
+     * Removes the specified all pairs.
+     *
+     * @param name name
+     * @return remove all pairs result
+     */
     NArrayElementBuilder removeAllPairs(String name);
 
     /**
@@ -460,9 +996,21 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NOptional<NElement> get(String name);
 
+    /**
+     * Returns the all.
+     *
+     * @param s s
+     * @return get all result
+     */
     List<NElement> getAll(NElement s);
 
 
+    /**
+     * Sets the set.
+     *
+     * @param entry entry
+     * @return set result
+     */
     NArrayElementBuilder set(NPairElement entry);
 
 
@@ -492,31 +1040,118 @@ public interface NArrayElementBuilder extends NElementBuilder {
      */
     NArrayElementBuilder addAt(int index, NElement item);
 
+    /**
+     * Removes the specified all pairs.
+     *
+     * @param name name
+     * @return remove all pairs result
+     */
     NArrayElementBuilder removeAllPairs(NElement name);
 
+    /**
+     * Removes remove.
+     *
+     * @param child child
+     * @return remove result
+     */
     NArrayElementBuilder remove(NElement child);
 
+    /**
+     * Removes the specified all.
+     *
+     * @param child child
+     * @return remove all result
+     */
     NArrayElementBuilder removeAll(NElement child);
 
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, NElement value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, String value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, Boolean value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, Byte value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, Short value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, Character value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, Double value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, Integer value);
 
+    /**
+     * Sets the set.
+     *
+     * @param name name
+     * @param value value
+     * @return set result
+     */
     NArrayElementBuilder set(NElement name, Long value);
 
+    /**
+     * Returns the get.
+     *
+     * @param s s
+     * @return get result
+     */
     NOptional<NElement> get(NElement s);
 
 }

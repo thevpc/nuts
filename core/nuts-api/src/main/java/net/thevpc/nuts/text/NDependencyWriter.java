@@ -41,6 +41,11 @@ import java.util.List;
  */
 public interface NDependencyWriter extends NObjectWriter, NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDependencyWriter of() {
         return NExtensions.of(NDependencyWriter.class);
     }
@@ -203,5 +208,11 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
     NDependencyWriter configure(boolean skipUnsupported, String... args);
 
 
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
     NDependencyWriter ntf(boolean ntf);
 }

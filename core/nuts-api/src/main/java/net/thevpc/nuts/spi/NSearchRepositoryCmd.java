@@ -37,8 +37,19 @@ import net.thevpc.nuts.pipeline.NIterator;
  */
 public interface NSearchRepositoryCmd extends NRepositoryCmd {
 
+    /**
+     * Filter.
+     *
+     * @return filter result
+     */
     NDefinitionFilter filter();
 
+    /**
+     * Filter.
+     *
+     * @param filter filter
+     * @return filter result
+     */
     NSearchRepositoryCmd filter(NDefinitionFilter filter);
 
     /**

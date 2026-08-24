@@ -48,9 +48,20 @@ public class NWorkspaceLocation implements Serializable {
     private String location;
     private boolean enabled = true;
 
+    /**
+     * N workspace location.
+     *
+     * @return n workspace location result
+     */
     public NWorkspaceLocation() {
     }
 
+    /**
+     * N workspace location.
+     *
+     * @param other other
+     * @return n workspace location result
+     */
     public NWorkspaceLocation(NWorkspaceLocation other) {
         this.name = other.uuid;
         this.name = other.name();
@@ -59,50 +70,102 @@ public class NWorkspaceLocation implements Serializable {
         this.uuid = other.uuid();
     }
 
+    /**
+     * N workspace location.
+     *
+     * @param uuid uuid
+     * @param name name
+     * @param location location
+     * @return n workspace location result
+     */
     public NWorkspaceLocation(String uuid, String name, String location) {
         this.uuid = uuid;
         this.name = name;
         this.location = location;
     }
 
+    /**
+     * Checks if is enabled.
+     *
+     * @return is enabled result
+     */
     @NGetter
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Enabled.
+     *
+     * @param enabled enabled
+     * @return enabled result
+     */
     @NSetter
     public NWorkspaceLocation enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     @NGetter
     public String name() {
         return name;
     }
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     @NSetter
     public NWorkspaceLocation name(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Location.
+     *
+     * @return location result
+     */
     @NGetter
     public String location() {
         return location;
     }
 
+    /**
+     * Location.
+     *
+     * @param location location
+     * @return location result
+     */
     @NSetter
     public NWorkspaceLocation location(String location) {
         this.location = location;
         return this;
     }
 
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
     @NGetter
     public String uuid() {
         return uuid;
     }
 
+    /**
+     * Uuid.
+     *
+     * @param uuid uuid
+     * @return uuid result
+     */
     @NSetter
     public NWorkspaceLocation uuid(String uuid) {
         this.uuid = uuid;
@@ -141,6 +204,11 @@ public class NWorkspaceLocation implements Serializable {
                 + '}';
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NWorkspaceLocation copy() {
         return new NWorkspaceLocation(this);
     }

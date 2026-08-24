@@ -3,9 +3,21 @@ package net.thevpc.nuts.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * NonClosableOutputStream class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NonClosableOutputStream extends OutputStream implements OutputStreamDelegate {
     private OutputStream out;
 
+    /**
+     * Non closable output stream.
+     *
+     * @param out out
+     * @return non closable output stream result
+     */
     public NonClosableOutputStream(OutputStream out) {
         this.out = out;
     }

@@ -51,12 +51,32 @@ public interface NRepositoryAccess {
      */
     String repositoryUuid();
 
+    /**
+     * Repository name.
+     *
+     * @return repository name result
+     */
     String repositoryName();
 
+    /**
+     * Remote user name.
+     *
+     * @return remote user name result
+     */
     String remoteUserName();
 
+    /**
+     * Remote credential.
+     *
+     * @return remote credential result
+     */
     NSecureToken remoteCredential();
 
+    /**
+     * Remote auth type.
+     *
+     * @return remote auth type result
+     */
     String remoteAuthType();
 
     /**
@@ -66,6 +86,11 @@ public interface NRepositoryAccess {
      */
     List<String> permissions();
 
+    /**
+     * Converts to spec.
+     *
+     * @return to spec result
+     */
     NRepositoryAccessSpec toSpec();
 
 }

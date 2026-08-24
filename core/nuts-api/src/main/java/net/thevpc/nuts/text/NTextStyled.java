@@ -30,23 +30,61 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextStyled extends NPrimitiveText {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param str str
+     * @param style style
+     * @return of result
+     */
     static NText of(String str, NTextStyle style) {
         return NText.ofStyled(str, style);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param str str
+     * @param style style
+     * @return of result
+     */
     static NText of(NText str, NTextStyle style) {
         return NText.ofStyled(str, style);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param str str
+     * @param styles styles
+     * @return of result
+     */
     static NText of(String str, NTextStyles styles) {
         return NText.ofStyled(str, styles);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param str str
+     * @param styles styles
+     * @return of result
+     */
     static NText of(NText str, NTextStyles styles) {
         return NText.ofStyled(str, styles);
     }
 
+    /**
+     * Child.
+     *
+     * @return child result
+     */
     NText child();
 
+    /**
+     * Styles.
+     *
+     * @return styles result
+     */
     NTextStyles styles();
 }

@@ -85,6 +85,11 @@ public interface NDescriptor extends Serializable, NBlankable{
      */
     boolean isNutsApplication();
 
+    /**
+     * Checks if is platform application.
+     *
+     * @return is platform application result
+     */
     boolean isPlatformApplication();
 
     /**

@@ -5,6 +5,12 @@ import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
+/**
+ * NNumberLayout enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NNumberLayout implements NEnum {
     BINARY,
     DECIMAL,
@@ -16,10 +22,19 @@ public enum NNumberLayout implements NEnum {
      */
     private final String id;
 
+  /**
+   * N number layout.
+   */
     NNumberLayout() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NNumberLayout> parse(String value) {
         return NEnumUtils.parseEnum(value, NNumberLayout.class, ev -> {
             switch (ev.normalizedValue()) {
@@ -42,6 +57,11 @@ public enum NNumberLayout implements NEnum {
     }
 
 
+    /**
+     * Radix.
+     *
+     * @return radix result
+     */
     public int radix() {
         switch (this) {
             case BINARY:
@@ -53,6 +73,12 @@ public enum NNumberLayout implements NEnum {
             case HEXADECIMAL:
                 return 16;
         }
+        /**
+         * Illegal argument exception.
+         *
+         * @param NNumberLayout" n number layout"
+         * @return illegal argument exception result
+         */
         throw new IllegalArgumentException("unexpected NNumberLayout");
     }
 

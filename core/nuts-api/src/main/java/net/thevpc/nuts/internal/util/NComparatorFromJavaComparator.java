@@ -7,10 +7,23 @@ import net.thevpc.nuts.util.NComparator;
 import java.util.Comparator;
 import java.util.function.Supplier;
 
+/**
+ * NComparatorFromJavaComparator class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NComparatorFromJavaComparator<T> implements NComparator<T> {
     private Comparator<T> comparator;
     private Supplier<NElement> desc;
 
+    /**
+     * N comparator from java comparator.
+     *
+     * @param comparator comparator
+     * @param desc desc
+     * @return n comparator from java comparator result
+     */
     public NComparatorFromJavaComparator(Comparator<T> comparator,Supplier<NElement> desc) {
         this.comparator = comparator;
         this.desc = desc;

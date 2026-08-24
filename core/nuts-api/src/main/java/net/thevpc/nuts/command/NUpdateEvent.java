@@ -37,12 +37,32 @@ import net.thevpc.nuts.core.NWorkspace;
  */
 public interface NUpdateEvent extends NSessionProvider {
 
+    /**
+     * Old value.
+     *
+     * @return old value result
+     */
     NDefinition oldValue();
 
+    /**
+     * New value.
+     *
+     * @return new value result
+     */
     NDefinition newValue();
 
+    /**
+     * Workspace.
+     *
+     * @return workspace result
+     */
     NWorkspace workspace();
 
 
+    /**
+     * Checks if is force.
+     *
+     * @return is force result
+     */
     boolean isForce();
 }

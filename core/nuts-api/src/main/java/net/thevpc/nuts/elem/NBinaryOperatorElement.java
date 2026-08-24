@@ -33,9 +33,24 @@ package net.thevpc.nuts.elem;
  * @since 0.5.6
  */
 public interface NBinaryOperatorElement extends NOperatorElement {
+    /**
+     * Operator symbol.
+     *
+     * @return operator symbol result
+     */
     NOperatorSymbol operatorSymbol();
+    /**
+     * First operand.
+     *
+     * @return first operand result
+     */
     NElement firstOperand();
 
+    /**
+     * Second operand.
+     *
+     * @return second operand result
+     */
     NElement secondOperand();
 
 }

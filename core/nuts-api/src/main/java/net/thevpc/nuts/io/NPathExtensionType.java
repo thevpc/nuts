@@ -36,6 +36,9 @@ public enum NPathExtensionType implements NEnum {
     SMART;
     private final String id;
 
+  /**
+   * N path extension type.
+   */
     NPathExtensionType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }

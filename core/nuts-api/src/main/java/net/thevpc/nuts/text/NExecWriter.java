@@ -39,6 +39,11 @@ import java.util.function.Predicate;
  * @since 0.5.4
  */
 public interface NExecWriter extends NObjectWriter {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NExecWriter of() {
        return NExtensions.of(NExecWriter.class);
     }
@@ -149,6 +154,12 @@ public interface NExecWriter extends NObjectWriter {
     NExecWriter envReplacer(Function<EnvEntry, String> replacer);
 
 
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
     NExecWriter ntf(boolean ntf);
 
     /**

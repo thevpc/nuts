@@ -126,10 +126,20 @@ public final class Nuts {
         return version;
     }
 
+    /**
+     * Returns the current Nuts boot version.
+     *
+     * @return current Nuts boot version
+     */
     public static NVersion bootVersion() {
         return bootVersion;
     }
 
+    /**
+     * Returns the Nuts API artifact identifier.
+     *
+     * @return current Nuts API artifact identifier
+     */
     public static NId apiId() {
         return id;
     }

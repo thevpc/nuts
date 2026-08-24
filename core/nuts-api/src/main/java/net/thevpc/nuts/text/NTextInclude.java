@@ -30,6 +30,16 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextInclude extends NText {
+    /**
+     * Text.
+     *
+     * @return text result
+     */
     String text();
+    /**
+     * Separator.
+     *
+     * @return separator result
+     */
     String separator();
 }

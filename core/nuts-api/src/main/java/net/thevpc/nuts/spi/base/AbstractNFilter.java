@@ -9,10 +9,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * AbstractNFilter class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public abstract class AbstractNFilter implements NFilter {
 
     private NFilterOp op;
 
+    /**
+     * Abstract n filter.
+     *
+     * @param op op
+     * @return abstract n filter result
+     */
     public AbstractNFilter(NFilterOp op) {
         this.op = op;
     }
@@ -84,6 +96,12 @@ public abstract class AbstractNFilter implements NFilter {
 
     @Override
     public <T extends NFilter> NFilter simplify(Class<T> type) {
+        /**
+         * Simplify.
+         *
+         * @param ).to(type ).to(type
+         * @return simplify result
+         */
         return simplify().to(type);
     }
 

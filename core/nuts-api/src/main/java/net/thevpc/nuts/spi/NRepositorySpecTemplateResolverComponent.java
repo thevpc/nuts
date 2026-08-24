@@ -38,6 +38,11 @@ import java.util.List;
  */
 public interface NRepositorySpecTemplateResolverComponent extends NComponent {
 
+    /**
+     * Template repository definitions.
+     *
+     * @return template repository definitions result
+     */
     List<NRepositorySpec> templateRepositoryDefinitions();
 
 }

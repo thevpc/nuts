@@ -15,6 +15,13 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
     private NMapSideStrategy source;
     private NMapSideStrategy target;
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param source source
+     * @param target target
+     * @return of result
+     */
     public static NAssignmentPolicy of(NMapSideStrategy source, NMapSideStrategy target) {
         if (source == null) {
             source = NMapSideStrategy.ANY;
@@ -33,6 +40,13 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
         return o;
     }
 
+    /**
+     * N assignment policy simple.
+     *
+     * @param source source
+     * @param target target
+     * @return n assignment policy simple result
+     */
     public NAssignmentPolicySimple(NMapSideStrategy source, NMapSideStrategy target) {
         NAssert.requireNamedNonNull(source, "source");
         NAssert.requireNamedNonNull(target, "target");
@@ -40,10 +54,20 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
         this.target = target;
     }
 
+    /**
+     * Source.
+     *
+     * @return source result
+     */
     public NMapSideStrategy source() {
         return source;
     }
 
+    /**
+     * Target.
+     *
+     * @return target result
+     */
     public NMapSideStrategy target() {
         return target;
     }
@@ -68,10 +92,32 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
                 '}';
     }
 
+    /**
+     * Apply optional value.
+     *
+     * @param sourceGetter source getter
+     * @param targetGetter target getter
+     * @param targetSetter target setter
+     * @return apply optional value result
+     */
     public <T> boolean applyOptionalValue(Supplier<NOptional<T>> sourceGetter, Supplier<NOptional<T>> targetGetter, Consumer<T> targetSetter) {
+        /**
+         * Apply value.
+         *
+         * @param targetSetter target setter
+         * @return apply value result
+         */
         return applyValue(() -> sourceGetter.get().orNull(), () -> targetGetter.get().orNull(), targetSetter);
     }
 
+    /**
+     * Apply value.
+     *
+     * @param sourceGetter source getter
+     * @param targetGetter target getter
+     * @param targetSetter target setter
+     * @return apply value result
+     */
     public <T> boolean applyValue(Supplier<T> sourceGetter, Supplier<T> targetGetter, Consumer<T> targetSetter) {
         return applyMappingValue(sourceGetter, targetGetter, a -> {
             targetSetter.accept(a.sourceValue());
@@ -79,6 +125,14 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
         });
     }
 
+    /**
+     * Apply mapping value.
+     *
+     * @param sourceGetter source getter
+     * @param targetGetter target getter
+     * @param targetSetter target setter
+     * @return apply mapping value result
+     */
     public <T> boolean applyMappingValue(Supplier<T> sourceGetter, Supplier<T> targetGetter, MappingAssigner<T> targetSetter) {
         MappingValueImpl<T> assignableValue = new MappingValueImpl<>(sourceGetter, targetGetter);
         if (doRejectSideStrategy(source, assignableValue::sourceValue)) {
@@ -99,11 +153,23 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
         T target;
         boolean targetSet;
 
+        /**
+         * Mapping value impl.
+         *
+         * @param sourceSupplier source supplier
+         * @param targetSupplier target supplier
+         * @return mapping value impl result
+         */
         public MappingValueImpl(Supplier<T> sourceSupplier, Supplier<T> targetSupplier) {
             this.sourceSupplier = sourceSupplier;
             this.targetSupplier = targetSupplier;
         }
 
+        /**
+         * Source value.
+         *
+         * @return source value result
+         */
         public T sourceValue() {
             if (!sourceSet) {
                 sourceSet = true;
@@ -112,6 +178,11 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
             return source;
         }
 
+        /**
+         * Target value.
+         *
+         * @return target value result
+         */
         public T targetValue() {
             if (!targetSet) {
                 targetSet = true;
@@ -121,6 +192,13 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
         }
     }
 
+    /**
+     * Do reject side strategy.
+     *
+     * @param source source
+     * @param any any
+     * @return do reject side strategy result
+     */
     private <V> boolean doRejectSideStrategy(NMapSideStrategy source, Supplier<V> any) {
         switch (source) {
             case ANY: {

@@ -84,8 +84,20 @@ public interface NDefinitionFilterRPI extends NTypedFilters<NDefinitionFilter> {
      */
     NDefinitionFilter byOsFamily(Collection<NOsFamily> os);
 
+    /**
+     * By os family.
+     *
+     * @param os os
+     * @return by os family result
+     */
     NDefinitionFilter byOsFamily(NOsFamily... os);
 
+    /**
+     * By arch family.
+     *
+     * @param values values
+     * @return by arch family result
+     */
     NDefinitionFilter byArchFamily(NArchFamily... values);
 
 
@@ -142,8 +154,20 @@ public interface NDefinitionFilterRPI extends NTypedFilters<NDefinitionFilter> {
      */
     NDefinitionFilter byDesktopEnvironmentFamily(NDesktopEnvironmentFamily... de);
 
+    /**
+     * By desktop environment.
+     *
+     * @param de de
+     * @return by desktop environment result
+     */
     NDefinitionFilter byDesktopEnvironment(String... de);
 
+    /**
+     * By desktop environment.
+     *
+     * @param de de
+     * @return by desktop environment result
+     */
     NDefinitionFilter byDesktopEnvironment(NId... de);
 
     /**
@@ -169,64 +193,244 @@ public interface NDefinitionFilterRPI extends NTypedFilters<NDefinitionFilter> {
      */
     NDefinitionFilter byDefaultVersion(Boolean defaultVersion);
 
+    /**
+     * By name.
+     *
+     * @param names names
+     * @return by name result
+     */
     NDefinitionFilter byName(String... names);
 
+    /**
+     * By env.
+     *
+     * @param faceMap face map
+     * @return by env result
+     */
     NDefinitionFilter byEnv(Map<String, String> faceMap);
 
+    /**
+     * By packaging.
+     *
+     * @param values values
+     * @return by packaging result
+     */
     NDefinitionFilter byPackaging(String... values);
 
+    /**
+     * By os.
+     *
+     * @param values values
+     * @return by os result
+     */
     NDefinitionFilter byOs(NId... values);
 
+    /**
+     * By platform family.
+     *
+     * @param values values
+     * @return by platform family result
+     */
     NDefinitionFilter byPlatformFamily(NExecutionEngineFamily... values);
 
+    /**
+     * By platform.
+     *
+     * @param values values
+     * @return by platform result
+     */
     NDefinitionFilter byPlatform(NId... values);
 
+    /**
+     * By os.
+     *
+     * @param values values
+     * @return by os result
+     */
     NDefinitionFilter byOs(String... values);
 
 
+    /**
+     * By packaging.
+     *
+     * @param values values
+     * @return by packaging result
+     */
     NDefinitionFilter byPackaging(Collection<String> values);
 
+    /**
+     * By platform.
+     *
+     * @param values values
+     * @return by platform result
+     */
     NDefinitionFilter byPlatform(Collection<String> values);
 
+    /**
+     * By desktop environment.
+     *
+     * @param values values
+     * @return by desktop environment result
+     */
     NDefinitionFilter byDesktopEnvironment(Collection<String> values);
 
+    /**
+     * By flag.
+     *
+     * @param flags flags
+     * @return by flag result
+     */
     NDefinitionFilter byFlag(NDescriptorFlag... flags);
 
+    /**
+     * By flag.
+     *
+     * @param flags flags
+     * @return by flag result
+     */
     NDefinitionFilter byFlag(Collection<NDescriptorFlag> flags);
 
+    /**
+     * By effective flag.
+     *
+     * @param flags flags
+     * @return by effective flag result
+     */
     NDefinitionFilter byEffectiveFlag(NDescriptorFlag... flags);
 
+    /**
+     * By effective flag.
+     *
+     * @param flags flags
+     * @return by effective flag result
+     */
     NDefinitionFilter byEffectiveFlag(Collection<NDescriptorFlag> flags);
 
+    /**
+     * By extension.
+     *
+     * @param apiVersion api version
+     * @return by extension result
+     */
     NDefinitionFilter byExtension(NVersion apiVersion);
 
+    /**
+     * By runtime.
+     *
+     * @param apiVersion api version
+     * @return by runtime result
+     */
     NDefinitionFilter byRuntime(NVersion apiVersion);
 
+    /**
+     * By companion.
+     *
+     * @param apiVersion api version
+     * @return by companion result
+     */
     NDefinitionFilter byCompanion(NVersion apiVersion);
 
+    /**
+     * By api version.
+     *
+     * @param apiVersion api version
+     * @return by api version result
+     */
     NDefinitionFilter byApiVersion(NVersion apiVersion);
 
+    /**
+     * By boot version.
+     *
+     * @param apiVersion api version
+     * @return by boot version result
+     */
     NDefinitionFilter byBootVersion(NVersion apiVersion);
 
+    /**
+     * By locked ids.
+     *
+     * @param ids ids
+     * @return by locked ids result
+     */
     NDefinitionFilter byLockedIds(String... ids);
 
+    /**
+     * By locked ids.
+     *
+     * @param ids ids
+     * @return by locked ids result
+     */
     NDefinitionFilter byLockedIds(NId... ids);
 
+    /**
+     * By version.
+     *
+     * @param version version
+     * @return by version result
+     */
     NDefinitionFilter byVersion(String version);
 
+    /**
+     * By version.
+     *
+     * @param version version
+     * @return by version result
+     */
     NDefinitionFilter byVersion(NVersion version);
 
+    /**
+     * By version.
+     *
+     * @param version version
+     * @return by version result
+     */
     NDefinitionFilter byVersion(NVersionFilter version);
 
+    /**
+     * By installed.
+     *
+     * @param value value
+     * @return by installed result
+     */
     NDefinitionFilter byInstalled(boolean value);
 
+    /**
+     * By installed or required.
+     *
+     * @param value value
+     * @return by installed or required result
+     */
     NDefinitionFilter byInstalledOrRequired(boolean value);
 
+    /**
+     * By required.
+     *
+     * @param value value
+     * @return by required result
+     */
     NDefinitionFilter byRequired(boolean value);
 
+    /**
+     * By default version.
+     *
+     * @param value value
+     * @return by default version result
+     */
     NDefinitionFilter byDefaultVersion(boolean value);
 
+    /**
+     * By obsolete.
+     *
+     * @param value value
+     * @return by obsolete result
+     */
     NDefinitionFilter byObsolete(boolean value);
 
+    /**
+     * By deployed.
+     *
+     * @param value value
+     * @return by deployed result
+     */
     NDefinitionFilter byDeployed(boolean value);
 }

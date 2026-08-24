@@ -4,9 +4,20 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
 
+/**
+ * NullReader class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NullReader extends Reader {
     public static final Reader INSTANCE=new NullReader();
 
+    /**
+     * Null reader.
+     *
+     * @return null reader result
+     */
     private NullReader() {
     }
 

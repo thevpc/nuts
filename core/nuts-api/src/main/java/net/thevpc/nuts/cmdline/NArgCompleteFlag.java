@@ -6,6 +6,12 @@ import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
+/**
+ * NArgCompleteFlag enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NArgCompleteFlag implements NEnum {
     NOSPACE,
     PLUSDIRS,
@@ -16,6 +22,9 @@ public enum NArgCompleteFlag implements NEnum {
     NOFILE,
     ERROR;
     private final String id;
+  /**
+   * N arg complete flag.
+   */
     NArgCompleteFlag() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
@@ -25,6 +34,12 @@ public enum NArgCompleteFlag implements NEnum {
         return id;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NArgCompleteFlag> parse(String value) {
         return NEnumUtils.parseEnum(value, NArgCompleteFlag.class);
     }

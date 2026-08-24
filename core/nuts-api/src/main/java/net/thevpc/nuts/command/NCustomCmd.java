@@ -39,25 +39,69 @@ import java.util.List;
  */
 public interface NCustomCmd {
 
+    /**
+     * Factory id.
+     *
+     * @return factory id result
+     */
     @NGetter
     String factoryId();
 
+    /**
+     * Owner.
+     *
+     * @return owner result
+     */
     @NGetter
     NId owner();
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     @NGetter
     String name();
 
+    /**
+     * Exec.
+     *
+     * @param args args
+     * @param options options
+     * @return exec result
+     * @throws NExecutionException if execution fails
+     */
     int exec(String[] args, NCmdExecOptions options) throws NExecutionException;
 
+    /**
+     * Help text.
+     *
+     * @return help text result
+     * @throws NExecutionException if execution fails
+     */
     @NGetter
     NText helpText() throws NExecutionException;
 
+    /**
+     * Command.
+     *
+     * @return command result
+     */
     @NGetter
     List<String> command();
 
+    /**
+     * Executor options.
+     *
+     * @return executor options result
+     */
     @NGetter
     List<String> executorOptions();
 
+    /**
+     * Converts to command config.
+     *
+     * @return to command config result
+     */
     NCommandConfig toCommandConfig();
 }

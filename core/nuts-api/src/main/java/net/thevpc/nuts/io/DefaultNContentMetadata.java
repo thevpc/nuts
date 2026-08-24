@@ -24,6 +24,12 @@ public class DefaultNContentMetadata implements NContentMetadata {
     private Supplier<String> kind;
     private Supplier<String> charset;
 
+    /**
+     * Default n content metadata.
+     *
+     * @param other other
+     * @return default n content metadata result
+     */
     public DefaultNContentMetadata(NContentMetadata other) {
         if (other != null) {
             this.contentLength = () -> other.contentLength().orNull();
@@ -42,6 +48,11 @@ public class DefaultNContentMetadata implements NContentMetadata {
         }
     }
 
+    /**
+     * Default n content metadata.
+     *
+     * @return default n content metadata result
+     */
     public DefaultNContentMetadata() {
     }
 
@@ -78,6 +89,16 @@ public class DefaultNContentMetadata implements NContentMetadata {
 //    }
 //
 //
+    /**
+     * Default n content metadata.
+     *
+     * @param message message
+     * @param contentLength content length
+     * @param contentType content type
+     * @param charset charset
+     * @param kind kind
+     * @return default n content metadata result
+     */
     public DefaultNContentMetadata(NMsg message, Long contentLength, String contentType, String charset, String kind) {
         this.contentLength = contentLength == null ? null : () -> contentLength;
         this.name = message == null ? null : () -> NText.of(message).filteredText();
@@ -86,6 +107,17 @@ public class DefaultNContentMetadata implements NContentMetadata {
         this.contentType = contentType == null ? null : () -> contentType;
     }
 
+    /**
+     * Default n content metadata.
+     *
+     * @param name name
+     * @param message message
+     * @param contentLength content length
+     * @param contentType content type
+     * @param charset charset
+     * @param kind kind
+     * @return default n content metadata result
+     */
     public DefaultNContentMetadata(String name, NMsg message, Long contentLength, String contentType, String charset, String kind) {
         this.contentLength = contentLength == null ? null : () -> contentLength;
         this.name = name == null ? null : () -> name;
@@ -109,10 +141,20 @@ public class DefaultNContentMetadata implements NContentMetadata {
         return NOptional.ofNamed(name == null ? null : name.get(), "name");
     }
 
+    /**
+     * Kind.
+     *
+     * @return kind result
+     */
     public NOptional<String> kind() {
         return NOptional.ofNamed(kind == null ? null : kind.get(), "kind");
     }
 
+    /**
+     * Message.
+     *
+     * @return message result
+     */
     public NOptional<NMsg> message() {
         return NOptional.ofNamed(message == null ? null : message.get(), "message");
     }
@@ -122,31 +164,67 @@ public class DefaultNContentMetadata implements NContentMetadata {
         return NOptional.ofNamed(charset == null ? null : charset.get(), "encoding");
     }
 
+    /**
+     * Kind.
+     *
+     * @param kind kind
+     * @return kind result
+     */
     public NContentMetadata kind(String kind) {
         this.kind = () -> kind;
         return this;
     }
 
+    /**
+     * Content length.
+     *
+     * @param contentLength content length
+     * @return content length result
+     */
     public NContentMetadata contentLength(Long contentLength) {
         this.contentLength = () -> contentLength;
         return this;
     }
 
+    /**
+     * Message.
+     *
+     * @param message message
+     * @return message result
+     */
     public NContentMetadata message(NMsg message) {
         this.message = () -> message;
         return this;
     }
 
+    /**
+     * Content type.
+     *
+     * @param contentType content type
+     * @return content type result
+     */
     public DefaultNContentMetadata contentType(String contentType) {
         this.contentType = () -> contentType;
         return this;
     }
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     public DefaultNContentMetadata name(String name) {
         this.name = () -> name;
         return this;
     }
 
+    /**
+     * Charset.
+     *
+     * @param charset charset
+     * @return charset result
+     */
     public DefaultNContentMetadata charset(String charset) {
         this.charset = () -> charset;
         return this;

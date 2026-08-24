@@ -48,15 +48,29 @@ public enum NCmdLineFormatStrategy implements NEnum {
      */
     private final String id;
 
+  /**
+   * N cmd line format strategy.
+   */
     NCmdLineFormatStrategy() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Current.
+     *
+     * @return current result
+     */
     public static NCmdLineFormatStrategy current() {
         return SUPPORT_QUOTES;
     }
 
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NCmdLineFormatStrategy> parse(String value) {
         return NEnumUtils.parseEnum(value, NCmdLineFormatStrategy.class);
     }

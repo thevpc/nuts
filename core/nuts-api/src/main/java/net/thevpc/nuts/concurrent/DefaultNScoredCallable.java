@@ -24,17 +24,42 @@ public class DefaultNScoredCallable<T> implements NScoredCallable<T> {
     private final int score;
     private final Supplier<NMsg> emptyMessage;
 
+    /**
+     * Default n scored callable.
+     *
+     * @param value value
+     * @param score score
+     * @param emptyMessage empty message
+     * @return default n scored callable result
+     */
     public DefaultNScoredCallable(Supplier<T> value, int score, Supplier<NMsg> emptyMessage) {
         this.value = value;
         if (this.value == null && score > 0) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param support") support")
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(NI18n.of("null callable requires invalid support"));
         } else if (this.value != null && score <= 0) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param support") support")
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(NI18n.of("non null callable requires valid support"));
         }
         this.score = score;
         this.emptyMessage = emptyMessage == null ? () -> NMsg.ofInvalidValue() : emptyMessage;
     }
 
+    /**
+     * Call.
+     *
+     * @return call result
+     */
     public T call() {
         if (score>0) {
             return value.get();
@@ -44,6 +69,12 @@ public class DefaultNScoredCallable<T> implements NScoredCallable<T> {
         }
     }
 
+    /**
+     * Returns the score.
+     *
+     * @param scorableContext scorable context
+     * @return get score result
+     */
     public int getScore(NScorableContext scorableContext) {
         return score;
     }

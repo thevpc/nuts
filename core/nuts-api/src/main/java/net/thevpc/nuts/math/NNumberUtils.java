@@ -11,9 +11,22 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+/**
+ * NNumberUtils class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NNumberUtils {
     public static ThreadLocal<MathContext> MATH_CONTEXT = new ThreadLocal<>();
 
+    /**
+     * Call with math context.
+     *
+     * @param mc mc
+     * @param c c
+     * @return call with math context result
+     */
     public static <T> T callWithMathContext(MathContext mc, NCallable<T> c) {
         MathContext o = MATH_CONTEXT.get();
         MATH_CONTEXT.set(mc);
@@ -24,18 +37,40 @@ public class NNumberUtils {
         }
     }
 
+    /**
+     * Context math context.
+     *
+     * @param user user
+     * @return context math context result
+     */
     public static MathContext contextMathContext(MathContext user) {
         if (user != null) {
             return user;
         }
+        /**
+         * Context math context.
+         *
+         * @return context math context result
+         */
         return contextMathContext();
     }
 
+    /**
+     * Context math context.
+     *
+     * @return context math context result
+     */
     public static MathContext contextMathContext() {
         MathContext a = MATH_CONTEXT.get();
         return a == null ? MathContext.DECIMAL128 : a;
     }
 
+    /**
+     * Run with math context.
+     *
+     * @param mc mc
+     * @param c c
+     */
     public static void runWithMathContext(MathContext mc, Runnable c) {
         MathContext o = MATH_CONTEXT.get();
         MATH_CONTEXT.set(mc);
@@ -46,6 +81,13 @@ public class NNumberUtils {
         }
     }
 
+    /**
+     * Element number type.
+     *
+     * @param aa aa
+     * @param def def
+     * @return element number type result
+     */
     public static NElementType elementNumberType(Class<? extends Number> aa, NElementType def) {
         if (aa == null) {
             return null;
@@ -86,6 +128,13 @@ public class NNumberUtils {
         return def;
     }
 
+    /**
+     * Xor doubles.
+     *
+     * @param a a
+     * @param b b
+     * @return xor doubles result
+     */
     public static double xorDoubles(double a, double b) {
         long aBits = Double.doubleToRawLongBits(a);
         long bBits = Double.doubleToRawLongBits(b);
@@ -93,6 +142,13 @@ public class NNumberUtils {
         return Double.longBitsToDouble(xorBits);
     }
 
+    /**
+     * Xor floats.
+     *
+     * @param a a
+     * @param b b
+     * @return xor floats result
+     */
     public static float xorFloats(float a, float b) {
         int aBits = Float.floatToRawIntBits(a);
         int bBits = Float.floatToRawIntBits(b);
@@ -100,6 +156,13 @@ public class NNumberUtils {
         return Float.intBitsToFloat(xorBits);
     }
 
+    /**
+     * Xor numbers.
+     *
+     * @param a a
+     * @param b b
+     * @return xor numbers result
+     */
     public static Number xorNumbers(Number a, Number b) {
         Class<? extends Number> at = a.getClass();
         Class<? extends Number> bt = b.getClass();
@@ -109,12 +172,33 @@ public class NNumberUtils {
             case DOUBLE_COMPLEX:
             case FLOAT_COMPLEX:
             case BIG_DECIMAL:
+                /**
+                 * Xor big decimals.
+                 *
+                 * @param NLiteral.of(a).asBigDecimal().get() n literal.of(a).as big decimal().get()
+                 * @param NLiteral.of(b).asBigDecimal().get() n literal.of(b).as big decimal().get()
+                 * @return xor big decimals result
+                 */
                 return xorBigDecimals(NLiteral.of(a).asBigDecimal().get(), NLiteral.of(b).asBigDecimal().get());
             case BIG_INT:
                 return NLiteral.of(a).asBigInt().get().xor(NLiteral.of(b).asBigInt().get());
             case DOUBLE:
+                /**
+                 * Xor doubles.
+                 *
+                 * @param NLiteral.of(a).asDouble().get() n literal.of(a).as double().get()
+                 * @param NLiteral.of(b).asDouble().get() n literal.of(b).as double().get()
+                 * @return xor doubles result
+                 */
                 return xorDoubles(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get());
             case FLOAT:
+                /**
+                 * Xor floats.
+                 *
+                 * @param NLiteral.of(a).asFloat().get() n literal.of(a).as float().get()
+                 * @param NLiteral.of(b).asFloat().get() n literal.of(b).as float().get()
+                 * @return xor floats result
+                 */
                 return xorFloats(NLiteral.of(a).asFloat().get(), NLiteral.of(b).asFloat().get());
             case LONG:
                 return NLiteral.of(a).asLong().get() ^ NLiteral.of(b).asLong().get();
@@ -125,9 +209,22 @@ public class NNumberUtils {
             case BYTE:
                 return NLiteral.of(a).asByte().get() ^ NLiteral.of(b).asByte().get();
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param b) b)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unable to xor numbers %s and %s", a, b));
     }
 
+    /**
+     * Or numbers.
+     *
+     * @param a a
+     * @param b b
+     * @return or numbers result
+     */
     public static Number orNumbers(Number a, Number b) {
         Class<? extends Number> at = a.getClass();
         Class<? extends Number> bt = b.getClass();
@@ -137,12 +234,33 @@ public class NNumberUtils {
             case DOUBLE_COMPLEX:
             case FLOAT_COMPLEX:
             case BIG_DECIMAL:
+                /**
+                 * Or big decimals.
+                 *
+                 * @param NLiteral.of(a).asBigDecimal().get() n literal.of(a).as big decimal().get()
+                 * @param NLiteral.of(b).asBigDecimal().get() n literal.of(b).as big decimal().get()
+                 * @return or big decimals result
+                 */
                 return orBigDecimals(NLiteral.of(a).asBigDecimal().get(), NLiteral.of(b).asBigDecimal().get());
             case BIG_INT:
                 return NLiteral.of(a).asBigInt().get().or(NLiteral.of(b).asBigInt().get());
             case DOUBLE:
+                /**
+                 * Or doubles.
+                 *
+                 * @param NLiteral.of(a).asDouble().get() n literal.of(a).as double().get()
+                 * @param NLiteral.of(b).asDouble().get() n literal.of(b).as double().get()
+                 * @return or doubles result
+                 */
                 return orDoubles(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get());
             case FLOAT:
+                /**
+                 * Or floats.
+                 *
+                 * @param NLiteral.of(a).asFloat().get() n literal.of(a).as float().get()
+                 * @param NLiteral.of(b).asFloat().get() n literal.of(b).as float().get()
+                 * @return or floats result
+                 */
                 return orFloats(NLiteral.of(a).asFloat().get(), NLiteral.of(b).asFloat().get());
             case LONG:
                 return NLiteral.of(a).asLong().get() | NLiteral.of(b).asLong().get();
@@ -153,9 +271,22 @@ public class NNumberUtils {
             case BYTE:
                 return NLiteral.of(a).asByte().get() | NLiteral.of(b).asByte().get();
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param b) b)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unable to or numbers %s and %s", a, b));
     }
 
+    /**
+     * And numbers.
+     *
+     * @param a a
+     * @param b b
+     * @return and numbers result
+     */
     public static Number andNumbers(Number a, Number b) {
         Class<? extends Number> at = a.getClass();
         Class<? extends Number> bt = b.getClass();
@@ -165,12 +296,33 @@ public class NNumberUtils {
             case DOUBLE_COMPLEX:
             case FLOAT_COMPLEX:
             case BIG_DECIMAL:
+                /**
+                 * And big decimals.
+                 *
+                 * @param NLiteral.of(a).asBigDecimal().get() n literal.of(a).as big decimal().get()
+                 * @param NLiteral.of(b).asBigDecimal().get() n literal.of(b).as big decimal().get()
+                 * @return and big decimals result
+                 */
                 return andBigDecimals(NLiteral.of(a).asBigDecimal().get(), NLiteral.of(b).asBigDecimal().get());
             case BIG_INT:
                 return NLiteral.of(a).asBigInt().get().and(NLiteral.of(b).asBigInt().get());
             case DOUBLE:
+                /**
+                 * And doubles.
+                 *
+                 * @param NLiteral.of(a).asDouble().get() n literal.of(a).as double().get()
+                 * @param NLiteral.of(b).asDouble().get() n literal.of(b).as double().get()
+                 * @return and doubles result
+                 */
                 return andDoubles(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get());
             case FLOAT:
+                /**
+                 * And floats.
+                 *
+                 * @param NLiteral.of(a).asFloat().get() n literal.of(a).as float().get()
+                 * @param NLiteral.of(b).asFloat().get() n literal.of(b).as float().get()
+                 * @return and floats result
+                 */
                 return andFloats(NLiteral.of(a).asFloat().get(), NLiteral.of(b).asFloat().get());
             case LONG:
                 return NLiteral.of(a).asLong().get() & NLiteral.of(b).asLong().get();
@@ -181,6 +333,12 @@ public class NNumberUtils {
             case BYTE:
                 return NLiteral.of(a).asByte().get() & NLiteral.of(b).asByte().get();
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param b) b)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unable to 'and' numbers %s and %s", a, b));
     }
 
@@ -209,6 +367,12 @@ public class NNumberUtils {
             case BYTE:
                 return NLiteral.of(a).asByte().get().equals(NLiteral.of(b).asByte().get());
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param b) b)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unable to 'eq'' numbers %s and %s", a, b));
     }
 
@@ -294,9 +458,22 @@ public class NNumberUtils {
             case UBYTE:
                 return NLiteral.of(a).asLong().get().equals(NLiteral.of(b).asLong().get());
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param b) b)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unable to 'like' numbers %s and %s", a, b));
     }
 
+    /**
+     * Compare numbers.
+     *
+     * @param a a
+     * @param b b
+     * @return compare numbers result
+     */
     public static int compareNumbers(Number a, Number b) {
         Class<? extends Number> at = a.getClass();
         Class<? extends Number> bt = b.getClass();
@@ -322,39 +499,100 @@ public class NNumberUtils {
             case BYTE:
                 return NLiteral.of(a).asByte().get().compareTo(NLiteral.of(b).asByte().get());
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param b) b)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unable to 'compare'' numbers %s and %s", a, b));
     }
 
+    /**
+     * Or big decimals.
+     *
+     * @param a a
+     * @param b b
+     * @return or big decimals result
+     */
     public static BigDecimal orBigDecimals(BigDecimal a, BigDecimal b) {
         return new BigDecimal(a.toBigInteger().or(b.toBigInteger()));
     }
 
+    /**
+     * And big decimals.
+     *
+     * @param a a
+     * @param b b
+     * @return and big decimals result
+     */
     public static BigDecimal andBigDecimals(BigDecimal a, BigDecimal b) {
         return new BigDecimal(a.toBigInteger().and(b.toBigInteger()));
     }
 
+    /**
+     * Or doubles.
+     *
+     * @param a a
+     * @param b b
+     * @return or doubles result
+     */
     public static double orDoubles(double a, double b) {
         return Double.longBitsToDouble(
                 Double.doubleToLongBits(a) | Double.doubleToLongBits(b)
         );
     }
 
+    /**
+     * And doubles.
+     *
+     * @param a a
+     * @param b b
+     * @return and doubles result
+     */
     public static double andDoubles(double a, double b) {
         return Double.longBitsToDouble(
                 Double.doubleToLongBits(a) & Double.doubleToLongBits(b)
         );
     }
 
+    /**
+     * Or floats.
+     *
+     * @param a a
+     * @param b b
+     * @return or floats result
+     */
     public static float orFloats(float a, float b) {
         return Float.intBitsToFloat(Float.floatToIntBits(a) | Float.floatToIntBits(b));
     }
 
+    /**
+     * And floats.
+     *
+     * @param a a
+     * @param b b
+     * @return and floats result
+     */
     public static float andFloats(float a, float b) {
         return Float.intBitsToFloat(Float.floatToIntBits(a) & Float.floatToIntBits(b));
     }
 
+    /**
+     * Pow longs.
+     *
+     * @param base base
+     * @param exponent exponent
+     * @return pow longs result
+     */
     public static long powLongs(long base, long exponent) {
         if (exponent < 0) {
+            /**
+             * Arithmetic exception.
+             *
+             * @param long" long"
+             * @return arithmetic exception result
+             */
             throw new ArithmeticException("Negative exponent not supported for long");
         }
         long result = 1;
@@ -369,8 +607,21 @@ public class NNumberUtils {
         return result;
     }
 
+    /**
+     * Pow big ints.
+     *
+     * @param base base
+     * @param exponent exponent
+     * @return pow big ints result
+     */
     public static BigInteger powBigInts(BigInteger base, BigInteger exponent) {
         if (exponent.signum() < 0) {
+            /**
+             * Arithmetic exception.
+             *
+             * @param BigInteger" big integer"
+             * @return arithmetic exception result
+             */
             throw new ArithmeticException("Negative exponent not supported for BigInteger");
         }
         try {
@@ -393,8 +644,21 @@ public class NNumberUtils {
         }
     }
 
+    /**
+     * Pow ints.
+     *
+     * @param base base
+     * @param exponent exponent
+     * @return pow ints result
+     */
     public static int powInts(int base, int exponent) {
         if (exponent < 0) {
+            /**
+             * Arithmetic exception.
+             *
+             * @param int" int"
+             * @return arithmetic exception result
+             */
             throw new ArithmeticException("Negative exponent not supported for int");
         }
         int result = 1;
@@ -409,6 +673,14 @@ public class NNumberUtils {
         return result;
     }
 
+    /**
+     * Pow numbers.
+     *
+     * @param a a
+     * @param b b
+     * @param mc mc
+     * @return pow numbers result
+     */
     public static Number powNumbers(Number a, Number b, MathContext mc) {
         Class<? extends Number> at = a.getClass();
         Class<? extends Number> bt = b.getClass();
@@ -418,25 +690,85 @@ public class NNumberUtils {
             case DOUBLE_COMPLEX:
             case FLOAT_COMPLEX:
             case BIG_DECIMAL:
+                /**
+                 * Pow big decimals.
+                 *
+                 * @param NLiteral.of(a).asBigDecimal().get() n literal.of(a).as big decimal().get()
+                 * @param NLiteral.of(b).asBigDecimal().get() n literal.of(b).as big decimal().get()
+                 * @param mc mc
+                 * @return pow big decimals result
+                 */
                 return powBigDecimals(NLiteral.of(a).asBigDecimal().get(), NLiteral.of(b).asBigDecimal().get(), mc);
             case BIG_INT:
+                /**
+                 * Pow big ints.
+                 *
+                 * @param NLiteral.of(a).asBigInt().get() n literal.of(a).as big int().get()
+                 * @param NLiteral.of(b).asBigInt().get() n literal.of(b).as big int().get()
+                 * @return pow big ints result
+                 */
                 return powBigInts(NLiteral.of(a).asBigInt().get(), NLiteral.of(b).asBigInt().get());
             case DOUBLE:
                 return Math.pow(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get());
             case FLOAT:
+              /**
+               * Return.
+               *
+               * @param Math.pow(NLiteral.of(a).asDouble().get() math.pow(n literal.of(a).as double().get()
+               * @param NLiteral.of(b).asDouble().get() n literal.of(b).as double().get()
+               */
                 return (float) Math.pow(NLiteral.of(a).asDouble().get(), NLiteral.of(b).asDouble().get());
             case LONG:
+                /**
+                 * Pow longs.
+                 *
+                 * @param NLiteral.of(a).asLong().get() n literal.of(a).as long().get()
+                 * @param NLiteral.of(b).asLong().get() n literal.of(b).as long().get()
+                 * @return pow longs result
+                 */
                 return powLongs(NLiteral.of(a).asLong().get(), NLiteral.of(b).asLong().get());
             case INT:
+                /**
+                 * Pow ints.
+                 *
+                 * @param NLiteral.of(a).asInt().get() n literal.of(a).as int().get()
+                 * @param NLiteral.of(b).asInt().get() n literal.of(b).as int().get()
+                 * @return pow ints result
+                 */
                 return powInts(NLiteral.of(a).asInt().get(), NLiteral.of(b).asInt().get());
             case SHORT:
+              /**
+               * Return.
+               *
+               * @param powInts(NLiteral.of(a).asInt().get() pow ints(n literal.of(a).as int().get()
+               * @param NLiteral.of(b).asInt().get() n literal.of(b).as int().get()
+               */
                 return (short) powInts(NLiteral.of(a).asInt().get(), NLiteral.of(b).asInt().get());
             case BYTE:
+              /**
+               * Return.
+               *
+               * @param powInts(NLiteral.of(a).asInt().get() pow ints(n literal.of(a).as int().get()
+               * @param NLiteral.of(b).asInt().get() n literal.of(b).as int().get()
+               */
                 return (byte) powInts(NLiteral.of(a).asInt().get(), NLiteral.of(b).asInt().get());
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param b) b)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unable to xor numbers %s and %s", a, b));
     }
 
+    /**
+     * Xor big decimals.
+     *
+     * @param aa aa
+     * @param bb bb
+     * @return xor big decimals result
+     */
     public static BigDecimal xorBigDecimals(BigDecimal aa, BigDecimal bb) {
         if (aa.scale() <= 0 && bb.scale() <= 0) {
             BigInteger aInt = aa.toBigInteger();
@@ -467,6 +799,14 @@ public class NNumberUtils {
         return new BigDecimal(xorInt).movePointLeft(scale);
     }
 
+    /**
+     * Pow big decimals.
+     *
+     * @param x x
+     * @param y y
+     * @param mc mc
+     * @return pow big decimals result
+     */
     public static BigDecimal powBigDecimals(BigDecimal x, BigDecimal y, MathContext mc) {
         mc = contextMathContext(mc);
 
@@ -485,9 +825,23 @@ public class NNumberUtils {
         // Arbitrary-precision fallback: x^y = exp(y * ln(x))
         BigDecimal lnX = lnBigDecimals(x, mc); // requires BigDecimalMath library
         BigDecimal yLnX = y.multiply(lnX, mc);
+        /**
+         * Exp.
+         *
+         * @param yLnX y ln x
+         * @param mc mc
+         * @return exp result
+         */
         return exp(yLnX, mc);      // requires BigDecimalMath library
     }
 
+    /**
+     * Exp.
+     *
+     * @param x x
+     * @param mc mc
+     * @return exp result
+     */
     public static BigDecimal exp(BigDecimal x, MathContext mc) {
         BigDecimal sum = BigDecimal.ONE;
         BigDecimal term = BigDecimal.ONE;
@@ -502,6 +856,13 @@ public class NNumberUtils {
         return sum;
     }
 
+    /**
+     * Ln big decimals.
+     *
+     * @param x x
+     * @param mc mc
+     * @return ln big decimals result
+     */
     public static BigDecimal lnBigDecimals(BigDecimal x, MathContext mc) {
         if (x.compareTo(BigDecimal.ZERO) <= 0) throw new ArithmeticException("ln(x) undefined for x <= 0");
         mc = contextMathContext(mc);
@@ -522,6 +883,12 @@ public class NNumberUtils {
         return sum.multiply(two, mc);
     }
 
+    /**
+     * Checks if can use double.
+     *
+     * @param bd bd
+     * @return can use double result
+     */
     public static boolean canUseDouble(BigDecimal bd) {
         if (bd.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0) return false;
         if (bd.abs().compareTo(BigDecimal.valueOf(Double.MIN_NORMAL)) < 0 && bd.signum() != 0) return false;
@@ -530,6 +897,13 @@ public class NNumberUtils {
         return digits <= 16;
     }
 
+    /**
+     * Common element number type.
+     *
+     * @param aa aa
+     * @param bb bb
+     * @return common element number type result
+     */
     public static NElementType commonElementNumberType(Class<? extends Number> aa, Class<? extends Number> bb) {
         if (aa == null && bb == null) {
             return null;
@@ -854,6 +1228,12 @@ public class NNumberUtils {
         }
     }
 
+    /**
+     * Number type.
+     *
+     * @param aa aa
+     * @return number type result
+     */
     public static Class<?> numberType(Class<? extends Number> aa) {
         if (aa == null) {
             return Number.class;
@@ -896,6 +1276,13 @@ public class NNumberUtils {
         return aa;
     }
 
+    /**
+     * Common number type.
+     *
+     * @param aa aa
+     * @param bb bb
+     * @return common number type result
+     */
     public static Class<?> commonNumberType(Class<? extends Number> aa, Class<? extends Number> bb) {
         if (aa == null && bb == null) {
             return Number.class;
@@ -998,6 +1385,13 @@ public class NNumberUtils {
 //        return String.valueOf(a).compareTo(String.valueOf(b));
 //    }
 
+    /**
+     * Adds the specified numbers.
+     *
+     * @param a a
+     * @param b b
+     * @return add numbers result
+     */
     public static Number addNumbers(Number a, Number b) {
         if (a == null && b == null) {
             return null;
@@ -1011,9 +1405,19 @@ public class NNumberUtils {
         Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asByte().get() n literal.of(b).as byte().get()
+               */
                 return (byte) (NLiteral.of(a).asByte().get() + NLiteral.of(b).asByte().get());
             }
             case "java.lang.Short": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asShort().get() n literal.of(b).as short().get()
+               */
                 return (short) (NLiteral.of(a).asShort().get() + NLiteral.of(b).asShort().get());
             }
             case "java.lang.Integer": {
@@ -1045,14 +1449,33 @@ public class NNumberUtils {
             }
         }
 
+        /**
+         * N illegal argument exception.
+         *
+         * @param ct) ct)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
     }
 
+    /**
+     * Substruct numbers.
+     *
+     * @param a a
+     * @param b b
+     * @return substruct numbers result
+     */
     public static Number substructNumbers(Number a, Number b) {
         if (a == null && b == null) {
             return null;
         }
         if (a == null) {
+            /**
+             * Negate number.
+             *
+             * @param b b
+             * @return negate number result
+             */
             return negateNumber(b);
         }
         if (b == null) {
@@ -1061,9 +1484,19 @@ public class NNumberUtils {
         Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asByte().get() n literal.of(b).as byte().get()
+               */
                 return (byte) (NLiteral.of(a).asByte().get() - NLiteral.of(b).asByte().get());
             }
             case "java.lang.Short": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asShort().get() n literal.of(b).as short().get()
+               */
                 return (short) (NLiteral.of(a).asShort().get() - NLiteral.of(b).asShort().get());
             }
             case "java.lang.Integer": {
@@ -1094,9 +1527,23 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigComplex().get().subtractBigComplex(NLiteral.of(b).asBigComplex().get()).numberValue();
             }
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param ct) ct)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
     }
 
+    /**
+     * Multiply numbers.
+     *
+     * @param a a
+     * @param b b
+     * @param mc mc
+     * @return multiply numbers result
+     */
     public static Number multiplyNumbers(Number a, Number b, MathContext mc) {
         if (a == null && b == null) {
             return null;
@@ -1110,9 +1557,19 @@ public class NNumberUtils {
         Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asByte().get() n literal.of(b).as byte().get()
+               */
                 return (byte) (NLiteral.of(a).asByte().get() * NLiteral.of(b).asByte().get());
             }
             case "java.lang.Short": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asShort().get() n literal.of(b).as short().get()
+               */
                 return (short) (NLiteral.of(a).asShort().get() * NLiteral.of(b).asShort().get());
             }
             case "java.lang.Integer": {
@@ -1143,9 +1600,23 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigComplex().get().multiplyBigComplex(NLiteral.of(b).asBigComplex().get(), mc).numberValue();
             }
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param ct) ct)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
     }
 
+    /**
+     * Divide numbers.
+     *
+     * @param a a
+     * @param b b
+     * @param mc mc
+     * @return divide numbers result
+     */
     public static Number divideNumbers(Number a, Number b, MathContext mc) {
         if (a == null && b == null) {
             return null;
@@ -1159,9 +1630,19 @@ public class NNumberUtils {
         Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asByte().get() n literal.of(b).as byte().get()
+               */
                 return (byte) (NLiteral.of(a).asByte().get() / NLiteral.of(b).asByte().get());
             }
             case "java.lang.Short": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asShort().get() n literal.of(b).as short().get()
+               */
                 return (short) (NLiteral.of(a).asShort().get() / NLiteral.of(b).asShort().get());
             }
             case "java.lang.Integer": {
@@ -1192,9 +1673,22 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigComplex().get().divideBigComplex(NLiteral.of(b).asBigComplex().get(), mc).numberValue();
             }
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param ct) ct)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
     }
 
+    /**
+     * Reminder numbers.
+     *
+     * @param a a
+     * @param b b
+     * @return reminder numbers result
+     */
     public static Number reminderNumbers(Number a, Number b) {
         if (a == null && b == null) {
             return null;
@@ -1208,9 +1702,19 @@ public class NNumberUtils {
         Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asByte().get() n literal.of(b).as byte().get()
+               */
                 return (byte) (NLiteral.of(a).asByte().get() % NLiteral.of(b).asByte().get());
             }
             case "java.lang.Short": {
+              /**
+               * Return.
+               *
+               * @param NLiteral.of(b).asShort().get() n literal.of(b).as short().get()
+               */
                 return (short) (NLiteral.of(a).asShort().get() % NLiteral.of(b).asShort().get());
             }
             case "java.lang.Integer": {
@@ -1241,9 +1745,23 @@ public class NNumberUtils {
 //                return NLiteral.of(a).asBigComplex().get().remainder(NLiteral.of(b).asBigComplex().get());
 //            }
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param ct) ct)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
     }
 
+    /**
+     * Power numbers.
+     *
+     * @param a a
+     * @param b b
+     * @param mc mc
+     * @return power numbers result
+     */
     public static Number powerNumbers(Number a, Number b, MathContext mc) {
         if (a == null && b == null) {
             return null;
@@ -1257,18 +1775,48 @@ public class NNumberUtils {
         Class<?> ct = commonNumberType(a.getClass(), b.getClass());
         switch (ct.getName()) {
             case "java.lang.Byte": {
+              /**
+               * Return.
+               *
+               * @param Math.pow(NLiteral.of(a).asByte().get() math.pow(n literal.of(a).as byte().get()
+               * @param NLiteral.of(b).asByte().get() n literal.of(b).as byte().get()
+               */
                 return (byte) Math.pow(NLiteral.of(a).asByte().get(), NLiteral.of(b).asByte().get());
             }
             case "java.lang.Short": {
+              /**
+               * Return.
+               *
+               * @param Math.pow(NLiteral.of(a).asShort().get() math.pow(n literal.of(a).as short().get()
+               * @param NLiteral.of(b).asShort().get() n literal.of(b).as short().get()
+               */
                 return (short) Math.pow(NLiteral.of(a).asShort().get(), NLiteral.of(b).asShort().get());
             }
             case "java.lang.Integer": {
+              /**
+               * Return.
+               *
+               * @param Math.pow(NLiteral.of(a).asInt().get() math.pow(n literal.of(a).as int().get()
+               * @param NLiteral.of(b).asInt().get() n literal.of(b).as int().get()
+               */
                 return (int) Math.pow(NLiteral.of(a).asInt().get(), NLiteral.of(b).asInt().get());
             }
             case "java.lang.Long": {
+              /**
+               * Return.
+               *
+               * @param Math.pow(NLiteral.of(a).asLong().get() math.pow(n literal.of(a).as long().get()
+               * @param NLiteral.of(b).asLong().get() n literal.of(b).as long().get()
+               */
                 return (long) Math.pow(NLiteral.of(a).asLong().get(), NLiteral.of(b).asLong().get());
             }
             case "java.lang.Float": {
+              /**
+               * Return.
+               *
+               * @param Math.pow(NLiteral.of(a).asFloat().get() math.pow(n literal.of(a).as float().get()
+               * @param NLiteral.of(b).asFloat().get() n literal.of(b).as float().get()
+               */
                 return (float) Math.pow(NLiteral.of(a).asFloat().get(), NLiteral.of(b).asFloat().get());
             }
             case "java.lang.Double": {
@@ -1290,18 +1838,40 @@ public class NNumberUtils {
 //                return NLiteral.of(a).asBigComplex().get().pow(NLiteral.of(b).asBigComplex().get());
 //            }
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param ct) ct)
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", ct));
     }
 
+    /**
+     * Negate number.
+     *
+     * @param a a
+     * @return negate number result
+     */
     public static Number negateNumber(Number a) {
         if (a == null) {
             return null;
         }
         switch (a.getClass().getName()) {
             case "java.lang.Byte": {
+              /**
+               * Return.
+               *
+               * @param (-NLiteral.of(a).asByte().get() (-n literal.of(a).as byte().get()
+               */
                 return (byte) (-NLiteral.of(a).asByte().get());
             }
             case "java.lang.Short": {
+              /**
+               * Return.
+               *
+               * @param (-NLiteral.of(a).asShort().get() (-n literal.of(a).as short().get()
+               */
                 return (short) (-NLiteral.of(a).asShort().get());
             }
             case "java.lang.Integer": {
@@ -1332,9 +1902,22 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigComplex().get().negateBigComplex().numberValue();
             }
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param a.getClass()) a.get class())
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", a.getClass()));
     }
 
+    /**
+     * Inv number.
+     *
+     * @param a a
+     * @param mc mc
+     * @return inv number result
+     */
     public static Number invNumber(Number a, MathContext mc) {
         if (a == null) {
             return null;
@@ -1376,6 +1959,12 @@ public class NNumberUtils {
                 return NLiteral.of(a).asBigComplex().get().invBigComplex(mc).numberValue();
             }
         }
+        /**
+         * N illegal argument exception.
+         *
+         * @param a.getClass()) a.get class())
+         * @return n illegal argument exception result
+         */
         throw new NIllegalArgumentException(NMsg.ofC("unsupported number type", a.getClass()));
     }
 

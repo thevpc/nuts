@@ -3,10 +3,22 @@ package net.thevpc.nuts.io;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * AutoCloseableInputStream class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class AutoCloseableInputStream extends java.io.InputStream implements AutoCloseable {
     private java.io.InputStream base;
     private boolean closed;
 
+    /**
+     * Auto closeable input stream.
+     *
+     * @param base base
+     * @return auto closeable input stream result
+     */
     public AutoCloseableInputStream(InputStream base) {
         this.base = base;
     }
@@ -21,6 +33,9 @@ public class AutoCloseableInputStream extends java.io.InputStream implements Aut
     public int read(byte[] b) throws IOException {
         int r = super.read(b);
         if (r < 0) {
+          /**
+           * Close.
+           */
             close();
         }
         return r;
@@ -30,6 +45,9 @@ public class AutoCloseableInputStream extends java.io.InputStream implements Aut
     public int read(byte[] b, int off, int len) throws IOException {
         int r = super.read(b, off, len);
         if (r == 0 && len > 0) {
+          /**
+           * Close.
+           */
             close();
         }
         return r;
@@ -39,6 +57,9 @@ public class AutoCloseableInputStream extends java.io.InputStream implements Aut
     public long skip(long n) throws IOException {
         long r = super.skip(n);
         if (r == 0 && n > 0) {
+          /**
+           * Close.
+           */
             close();
         }
         return r;

@@ -51,6 +51,12 @@ public interface NCharsetResolverSPI extends NComponent {
      * @return best probe of {@code NutsSupported.invalid()} (or null)
      */
     NScoredCallable<String> probeCharset(byte[] bytes);
+    /**
+     * Probe charset.
+     *
+     * @param stream stream
+     * @return probe charset result
+     */
     NScoredCallable<String> probeCharset(InputStream stream);
 
 }

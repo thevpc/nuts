@@ -37,14 +37,41 @@ import java.util.List;
  * @since 0.5.6
  */
 public interface NParametrizedContainerElement extends NElement, NListOrParametrizedContainerElement {
+    /**
+     * Checks if is parametrized.
+     *
+     * @return is parametrized result
+     */
     boolean isParametrized();
 
+    /**
+     * Params.
+     *
+     * @return params result
+     */
     NOptional<List<NElement>> params();
 
+    /**
+     * Params count.
+     *
+     * @return params count result
+     */
     int paramsCount();
 
+    /**
+     * Param.
+     *
+     * @param index index
+     * @return param result
+     */
     NElement param(int index);
 
+    /**
+     * Param.
+     *
+     * @param name name
+     * @return param result
+     */
     NOptional<NElement> param(String name);
 
 }

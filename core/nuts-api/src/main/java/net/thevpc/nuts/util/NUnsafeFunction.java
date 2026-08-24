@@ -37,10 +37,30 @@ import java.util.function.Supplier;
  * @param <R> Out
  */
 public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NRedescribable<NUnsafeFunction<T, R>> {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param o o
+     * @return of result
+     */
     static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<T, V> o) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param o o
+         * @param null null
+         * @return of result
+         */
         return of(o, null);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param o o
+     * @param defaultDescription default description
+     * @return of result
+     */
     static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<T, V> o, NElement defaultDescription) {
         NAssert.requireNamedNonNull(o, "function");
         if (o instanceof NUnsafeFunction) {

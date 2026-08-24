@@ -40,22 +40,57 @@ import java.util.List;
  * @since 0.5.5
  */
 public interface NPrepareCmd extends NWorkspaceCmd {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NPrepareCmd of() {
         return NExtensions.of(NPrepareCmd.class);
     }
 
+    /**
+     * Target server.
+     *
+     * @param remoteServer remote server
+     * @return target server result
+     */
     @NSetter
     NPrepareCmd targetServer(String remoteServer);
 
+    /**
+     * User name.
+     *
+     * @param remoteUser remote user
+     * @return user name result
+     */
     @NSetter
     NPrepareCmd userName(String remoteUser);
 
+    /**
+     * Version.
+     *
+     * @param version version
+     * @return version result
+     */
     @NSetter
     NPrepareCmd version(String version);
 
+    /**
+     * Ids.
+     *
+     * @param id id
+     * @return ids result
+     */
     @NSetter
     NPrepareCmd ids(List<NId> id);
 
+    /**
+     * Adds the specified ids.
+     *
+     * @param id id
+     * @return add ids result
+     */
     NPrepareCmd addIds(List<NId> id);
     
     /**

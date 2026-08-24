@@ -29,7 +29,17 @@ package net.thevpc.nuts.reflect;
  * @since 0.8.4
  */
 public interface NReflectParameter {
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 
+    /**
+     * Parameter type.
+     *
+     * @return parameter type result
+     */
     NReflectType parameterType();
 }

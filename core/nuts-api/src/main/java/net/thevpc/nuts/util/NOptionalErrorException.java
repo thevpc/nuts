@@ -45,6 +45,11 @@ public class NOptionalErrorException extends NException {
      *                later retrieval by the {@link #message()} method.
      */
     public NOptionalErrorException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -64,6 +69,12 @@ public class NOptionalErrorException extends NException {
      *                unknown.)
      */
     public NOptionalErrorException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 
@@ -81,6 +92,14 @@ public class NOptionalErrorException extends NException {
      *                           be writable
      */
     public NOptionalErrorException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

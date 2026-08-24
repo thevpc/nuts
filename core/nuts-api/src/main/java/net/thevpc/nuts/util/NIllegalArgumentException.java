@@ -43,6 +43,11 @@ public class NIllegalArgumentException extends NException {
      * @param message message
      */
     public NIllegalArgumentException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -53,6 +58,12 @@ public class NIllegalArgumentException extends NException {
      * @param cause   cause
      */
     public NIllegalArgumentException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 
@@ -67,6 +78,14 @@ public class NIllegalArgumentException extends NException {
      *                           writable
      */
     public NIllegalArgumentException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

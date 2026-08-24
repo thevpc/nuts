@@ -40,6 +40,9 @@ public enum NSagaNodeType implements NEnum {
      */
     private final String id;
 
+  /**
+   * N saga node type.
+   */
     NSagaNodeType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }

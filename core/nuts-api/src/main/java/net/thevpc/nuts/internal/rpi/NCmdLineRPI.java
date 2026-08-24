@@ -38,12 +38,32 @@ import net.thevpc.nuts.util.NOptional;
  * @since 0.8.3
  */
 public interface NCmdLineRPI extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NCmdLineRPI of() {
         return NExtensions.of(NCmdLineRPI.class);
     }
 
+    /**
+     * Parse cmd line.
+     *
+     * @param line line
+     * @param family family
+     * @param lenient lenient
+     * @return parse cmd line result
+     */
     NOptional<NCmdLine> parseCmdLine(String line, NShellFamily family, boolean lenient);
 
+    /**
+     * Creates a new instance of create cmd line by args.
+     *
+     * @param args args
+     * @param family family
+     * @return create cmd line by args result
+     */
     NCmdLine createCmdLineByArgs(String[] args, NShellFamily family);
 
 

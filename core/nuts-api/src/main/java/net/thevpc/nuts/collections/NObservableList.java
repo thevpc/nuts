@@ -33,10 +33,25 @@ import java.util.List;
  */
 public interface NObservableList<V> extends List<V> {
 
+    /**
+     * Adds the specified list listener.
+     *
+     * @param listener listener
+     */
     void addListListener(NObservableListListener<V> listener);
 
+    /**
+     * Removes the specified list listener.
+     *
+     * @param listener listener
+     */
     void removeListListener(NObservableListListener<V> listener);
 
+    /**
+     * List listeners.
+     *
+     * @return list listeners result
+     */
     List<NObservableListListener<V>> listListeners();
 
 }

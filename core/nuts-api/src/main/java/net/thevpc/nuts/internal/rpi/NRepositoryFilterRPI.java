@@ -34,17 +34,51 @@ import net.thevpc.nuts.ext.NExtensions;
  * @app.category Base
  */
 public interface NRepositoryFilterRPI extends NTypedFilters<NRepositoryFilter> {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NRepositoryFilterRPI of() {
         return NExtensions.of(NRepositoryFilterRPI.class);
     }
 
+    /**
+     * By selector.
+     *
+     * @param names names
+     * @return by selector result
+     */
     NRepositoryFilter bySelector(String... names);
 
+    /**
+     * By name.
+     *
+     * @param names names
+     * @return by name result
+     */
     NRepositoryFilter byName(String... names);
 
+    /**
+     * By name selector.
+     *
+     * @param names names
+     * @return by name selector result
+     */
     NRepositoryFilter byNameSelector(String... names);
 
+    /**
+     * By uuid.
+     *
+     * @param uuids uuids
+     * @return by uuid result
+     */
     NRepositoryFilter byUuid(String... uuids);
 
+    /**
+     * Installed repo.
+     *
+     * @return installed repo result
+     */
     NRepositoryFilter installedRepo();
 }

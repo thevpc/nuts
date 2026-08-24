@@ -52,6 +52,12 @@ public class NFetchModeNotSupportedException extends NException {
      * @param cause     cause
      */
     public NFetchModeNotSupportedException(NRepository repo, NFetchMode fetchMode, String id, NMsg message, Exception cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message == null ? NMsg.ofC("unsupported fetch mode %s in repo %s", fetchMode,repo.name()) : message, cause);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.name();
@@ -68,6 +74,11 @@ public class NFetchModeNotSupportedException extends NException {
      * @param message   message
      */
     public NFetchModeNotSupportedException(NRepository repo, NFetchMode fetchMode, String id, NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message == null ? NMsg.ofC("unsupported fetch mode %s in repo %s", fetchMode,repo.name()) : message);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.name();

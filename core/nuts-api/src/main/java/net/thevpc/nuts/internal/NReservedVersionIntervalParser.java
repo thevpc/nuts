@@ -13,6 +13,12 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * NReservedVersionIntervalParser class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NReservedVersionIntervalParser {
 
     final int NEXT = 1;
@@ -29,10 +35,19 @@ public class NReservedVersionIntervalParser {
     String v2 = null;
     List<NVersionInterval> dd = new ArrayList<>();
     NVersionComparator versionComparator;
+    /**
+     * N reserved version interval parser.
+     *
+     * @param versionComparator version comparator
+     * @return n reserved version interval parser result
+     */
     public NReservedVersionIntervalParser(NVersionComparator versionComparator) {
         this.versionComparator=versionComparator;
     }
 
+    /**
+     * Reset.
+     */
     void reset() {
         open = -1;
         close = -1;
@@ -40,6 +55,11 @@ public class NReservedVersionIntervalParser {
         v2 = null;
     }
 
+    /**
+     * Adds the specified next value.
+     *
+     * @param sval sval
+     */
     void addNextValue(String sval) {
         if (sval.endsWith("*")) {
             String min = sval.substring(0, sval.length() - 1);
@@ -54,13 +74,25 @@ public class NReservedVersionIntervalParser {
         }
     }
 
+    /**
+     * Adds the specified next interval.
+     */
     void addNextInterval() {
         boolean inclusiveLowerBoundary = open == '[' && (v1 != null);
         boolean inclusiveUpperBoundary = close == ']' && (v2 != null);
         dd.add(new DefaultNVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, v1, v2,this.versionComparator));
+      /**
+       * Reset.
+       */
         reset();
     }
 
+    /**
+     * Parse.
+     *
+     * @param version version
+     * @return parse result
+     */
     public NOptional<List<NVersionInterval>> parse(String version) {
         StreamTokenizer st = new StreamTokenizer(new StringReader(version));
         st.resetSyntax();
@@ -85,6 +117,11 @@ public class NReservedVersionIntervalParser {
                     case NEXT: {
                         switch (t) {
                             case StreamTokenizer.TT_WORD: {
+                              /**
+                               * Adds the specified next value.
+                               *
+                               * @param st.sval st.sval
+                               */
                                 addNextValue(st.sval);
                                 state = NEXT_COMMA;
                                 break;
@@ -145,6 +182,9 @@ public class NReservedVersionIntervalParser {
                             case ']': {
                                 close = t;
                                 v2 = v1;
+                              /**
+                               * Adds the specified next interval.
+                               */
                                 addNextInterval();
                                 state = NEXT_COMMA;
                                 break;
@@ -153,6 +193,9 @@ public class NReservedVersionIntervalParser {
                             case ')': {
                                 close = t;
                                 v2 = v1; //the same?
+                              /**
+                               * Adds the specified next interval.
+                               */
                                 addNextInterval();
                                 state = NEXT_COMMA;
                                 break;
@@ -174,6 +217,9 @@ public class NReservedVersionIntervalParser {
                             case ']':
                             case ')': {
                                 close = t;
+                              /**
+                               * Adds the specified next interval.
+                               */
                                 addNextInterval();
                                 state = NEXT_COMMA;
                                 break;
@@ -190,6 +236,9 @@ public class NReservedVersionIntervalParser {
                             case ']':
                             case ')': {
                                 close = t;
+                              /**
+                               * Adds the specified next interval.
+                               */
                                 addNextInterval();
                                 state = NEXT_COMMA;
                                 break;

@@ -84,6 +84,9 @@ public enum NReflectPropertyAccessStrategy implements NEnum {
 
     private final String id;
 
+  /**
+   * N reflect property access strategy.
+   */
     NReflectPropertyAccessStrategy() {
         this.id = NNameFormat.ID_NAME.format(name());
     }

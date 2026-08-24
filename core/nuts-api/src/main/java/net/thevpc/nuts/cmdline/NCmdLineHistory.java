@@ -43,35 +43,105 @@ import java.util.ListIterator;
  * @app.category Command Line
  */
 public interface NCmdLineHistory extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NCmdLineHistory of() {
        return NExtensions.of(NCmdLineHistory.class);
     }
 
 
+    /**
+     * Load.
+     */
     void load();
 
+    /**
+     * Save.
+     */
     void save();
 
+    /**
+     * Load.
+     *
+     * @param in in
+     */
     void load(InputStream in);
 
+    /**
+     * Save.
+     *
+     * @param out out
+     */
     void save(OutputStream out);
 
+    /**
+     * Path.
+     *
+     * @return path result
+     */
     NPath path();
 
+    /**
+     * Path.
+     *
+     * @param path path
+     * @return path result
+     */
     NCmdLineHistory path(Path path);
 
+    /**
+     * Path.
+     *
+     * @param path path
+     * @return path result
+     */
     NCmdLineHistory path(File path);
 
+    /**
+     * Path.
+     *
+     * @param path path
+     * @return path result
+     */
     NCmdLineHistory path(NPath path);
 
+    /**
+     * Size.
+     *
+     * @return size result
+     */
     int size();
 
+    /**
+     * Purge.
+     */
     void purge();
 
+    /**
+     * Returns the entry.
+     *
+     * @param index index
+     * @return get entry result
+     */
     NCmdLineHistoryEntry getEntry(int index);
 
+    /**
+     * Iterator.
+     *
+     * @param index index
+     * @return iterator result
+     */
     ListIterator<NCmdLineHistoryEntry> iterator(int index);
 
+    /**
+     * Adds add.
+     *
+     * @param time time
+     * @param line line
+     */
     void add(Instant time, String line);
 
 }

@@ -7,6 +7,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+/**
+ * NExprCommonOp enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NExprCommonOp implements NEnum {
     PLUS("+"), MINUS("-"), MUL("*"), DIV("/"), REM("%"), XOR("^"), POW("**"), OR_BITS("|"), AND_BITS("&"), OR("||"), AND("&&"),
     EQ("=="), NOT("!"), LT("<"), GT(">"), LTE("<="), GTE(">="), NE("!="), DOT("."), ASSIGN("="),
@@ -28,25 +34,56 @@ public enum NExprCommonOp implements NEnum {
                 u.add(NStringUtils.strip(alias.toLowerCase()));
             }
             for (String s : u) {
+              /**
+               * Register.
+               *
+               * @param s s
+               * @param value value
+               */
                 register(s, value);
             }
         }
     }
 
+    /**
+     * Register.
+     *
+     * @param id id
+     * @param value value
+     * @return register result
+     */
     private static void register(String id, NExprCommonOp value) {
         if (byImage.containsKey(id)) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param value.name() value.name()
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("duplicate image: " + value.name());
         } else {
             byImage.put(id, value);
         }
     }
 
+  /**
+   * N expr common op.
+   *
+   * @param image image
+   * @param aliases aliases
+   */
     NExprCommonOp(String image, String... aliases) {
         this.id = NNameFormat.ID_NAME.format(name());
         this.image = image;
         this.aliases = aliases;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NExprCommonOp> parse(String value) {
         return NEnumUtils.parseEnum(value, NExprCommonOp.class, s -> {
             NExprCommonOp u = byImage.get(NStringUtils.strip(value).toLowerCase());
@@ -63,6 +100,11 @@ public enum NExprCommonOp implements NEnum {
         return id;
     }
 
+    /**
+     * Image.
+     *
+     * @return image result
+     */
     public String image() {
         return image;
     }

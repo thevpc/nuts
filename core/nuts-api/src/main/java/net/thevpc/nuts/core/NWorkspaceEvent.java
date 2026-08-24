@@ -35,18 +35,43 @@ import net.thevpc.nuts.util.NGetter;
  */
 public interface NWorkspaceEvent extends NSessionProvider {
 
+    /**
+     * Workspace.
+     *
+     * @return workspace result
+     */
     @NGetter
     NWorkspace workspace();
 
+    /**
+     * Repository.
+     *
+     * @return repository result
+     */
     @NGetter
     NRepository repository();
 
+    /**
+     * Property name.
+     *
+     * @return property name result
+     */
     @NGetter
     String propertyName();
 
+    /**
+     * Property old value.
+     *
+     * @return property old value result
+     */
     @NGetter
     Object propertyOldValue();
 
+    /**
+     * Property value.
+     *
+     * @return property value result
+     */
     @NGetter
     Object propertyValue();
 }

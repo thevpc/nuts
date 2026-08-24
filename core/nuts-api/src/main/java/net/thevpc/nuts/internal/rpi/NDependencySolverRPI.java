@@ -32,15 +32,42 @@ import net.thevpc.nuts.spi.NComponent;
 
 import java.util.List;
 
+/**
+ * NDependencySolverRPI interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NDependencySolverRPI extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDependencySolverRPI of() {
        return NExtensions.of(NDependencySolverRPI.class);
     }
 
+    /**
+     * Creates a new instance of create solver.
+     *
+     * @return create solver result
+     */
     NDependencySolver createSolver();
 
+    /**
+     * Creates a new instance of create solver.
+     *
+     * @param solverName solver name
+     * @return create solver result
+     */
     NDependencySolver createSolver(String solverName);
 
+    /**
+     * Solver names.
+     *
+     * @return solver names result
+     */
     List<String> solverNames();
 
 }

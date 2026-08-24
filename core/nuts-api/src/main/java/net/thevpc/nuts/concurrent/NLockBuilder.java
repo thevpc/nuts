@@ -43,6 +43,11 @@ import java.util.concurrent.locks.Lock;
  * @since 0.5.8
  */
 public interface NLockBuilder extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NLockBuilder of() {
         return NExtensions.of(NLockBuilder.class);
     }
@@ -64,6 +69,12 @@ public interface NLockBuilder extends NComponent {
      */
     Object resource();
 
+    /**
+     * Resource.
+     *
+     * @param source source
+     * @return resource result
+     */
     @NSetter
     NLockBuilder resource(NPath source);
 

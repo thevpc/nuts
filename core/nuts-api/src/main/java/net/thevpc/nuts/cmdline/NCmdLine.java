@@ -103,6 +103,12 @@ import java.util.function.Predicate;
  */
 public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
+    /**
+     * Creates a new instance of of args.
+     *
+     * @param args args
+     * @return of args result
+     */
     static NCmdLine ofArgs(String... args) {
         NShellFamily current = NShellFamily.current();
         if (NWorkspace.get().isNotPresent()) {
@@ -111,6 +117,13 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         return NCmdLineRPI.of().createCmdLineByArgs(args, current);
     }
 
+    /**
+     * Creates a new instance of of args.
+     *
+     * @param family family
+     * @param args args
+     * @return of args result
+     */
     static NCmdLine ofArgs(NShellFamily family, String... args) {
         if (NWorkspace.get().isNotPresent()) {
             return new DefaultNCmdLine(args, family);
@@ -118,11 +131,35 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         return NCmdLineRPI.of().createCmdLineByArgs(args, family);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param args args
+     * @return of result
+     */
     static NCmdLine of(String[] args) {
+        /**
+         * Creates a new instance of of args.
+         *
+         * @param args args
+         * @return of args result
+         */
         return ofArgs(args);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param args args
+     * @return of result
+     */
     static NCmdLine of(List<String> args) {
+        /**
+         * Creates a new instance of of args.
+         *
+         * @param String[0]) string[0])
+         * @return of args result
+         */
         return ofArgs(args == null ? null : args.toArray(new String[0]));
     }
 
@@ -140,16 +177,59 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         return NCmdLineRPI.of().parseCmdLine(line, NShellFamily.BASH, false);
     }
 
+    /**
+     * Parse.
+     *
+     * @param line line
+     * @return parse result
+     */
     static NOptional<NCmdLine> parse(String line) {
+        /**
+         * Parse.
+         *
+         * @param line line
+         * @param NShellFamily.BASH n shell family.bash
+         * @param false false
+         * @return parse result
+         */
         return parse(line, NShellFamily.BASH, false);
     }
 
+    /**
+     * Parse.
+     *
+     * @param line line
+     * @param shellFamily shell family
+     * @return parse result
+     */
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily) {
+        /**
+         * Parse.
+         *
+         * @param line line
+         * @param shellFamily shell family
+         * @param false false
+         * @return parse result
+         */
         return parse(line, shellFamily, false);
     }
 
+    /**
+     * Parse.
+     *
+     * @param line line
+     * @param shellFamily shell family
+     * @param lenient lenient
+     * @return parse result
+     */
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily, boolean lenient) {
         if (NWorkspace.get().isNotPresent()) {
+            /**
+             * Parse default.
+             *
+             * @param line line
+             * @return parse default result
+             */
             return parseDefault(line);
         }
         return NCmdLineRPI.of()
@@ -164,6 +244,13 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return new command line instance
      */
     static NCmdLine of(String line, NShellFamily shellFamily) {
+        /**
+         * Parse.
+         *
+         * @param line line
+         * @param shellFamily).get( shell family).get(
+         * @return parse result
+         */
         return parse(line, shellFamily).get();
     }
 
@@ -174,6 +261,12 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return
      */
     static NCmdLine of(String line) {
+        /**
+         * Parse.
+         *
+         * @param line).get( line).get(
+         * @return parse result
+         */
         return parse(line).get();
     }
 
@@ -184,6 +277,12 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return
      */
     static NCmdLine ofDefault(String line) {
+        /**
+         * Parse default.
+         *
+         * @param line).get( line).get(
+         * @return parse default result
+         */
         return parseDefault(line).get();
     }
 
@@ -207,14 +306,36 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NCmdLine source(Object source);
 
 
+    /**
+     * Configurable.
+     *
+     * @return configurable result
+     */
     @NGetter
     NCmdLineConfigurable configurable();
 
+    /**
+     * Configurable.
+     *
+     * @param configurable configurable
+     * @return configurable result
+     */
     @NSetter
     NCmdLine configurable(NCmdLineConfigurable configurable);
 
+    /**
+     * Checks if is expand arguments file.
+     *
+     * @return is expand arguments file result
+     */
     boolean isExpandArgumentsFile();
 
+    /**
+     * Expand arguments file.
+     *
+     * @param expandArgumentsFile expand arguments file
+     * @return expand arguments file result
+     */
     @NSetter
     NCmdLine expandArgumentsFile(boolean expandArgumentsFile);
 
@@ -226,6 +347,11 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     @NGetter
     NArgCompleteResult completeResult();
 
+    /**
+     * Print complete result.
+     *
+     * @return print complete result result
+     */
     NArgCompleteResult printCompleteResult();
 
     /**
@@ -345,10 +471,27 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NCmdLine throwUnexpectedArgument(NMsg errorMessage);
 
+    /**
+     * Throw missing argument.
+     *
+     * @return throw missing argument result
+     */
     NCmdLine throwMissingArgument();
 
+    /**
+     * Throw missing argument.
+     *
+     * @param errorMessage error message
+     * @return throw missing argument result
+     */
     NCmdLine throwMissingArgument(NMsg errorMessage);
 
+    /**
+     * Throw missing argument.
+     *
+     * @param argumentName argument name
+     * @return throw missing argument result
+     */
     NCmdLine throwMissingArgument(String argumentName);
 
     /**
@@ -383,12 +526,32 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> peek();
 
+    /**
+     * Peek non option.
+     *
+     * @return peek non option result
+     */
     NOptional<NArg> peekNonOption();
 
+    /**
+     * Peek option.
+     *
+     * @return peek option result
+     */
     NOptional<NArg> peekOption();
 
+    /**
+     * Checks if is next option.
+     *
+     * @return is next option result
+     */
     boolean isNextOption();
 
+    /**
+     * Checks if is next non option.
+     *
+     * @return is next non option result
+     */
     boolean isNextNonOption();
 
     /**
@@ -398,8 +561,18 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     boolean hasNext();
 
+    /**
+     * Checks if has next option.
+     *
+     * @return has next option result
+     */
     boolean hasNextOption();
 
+    /**
+     * Checks if has next non option.
+     *
+     * @return has next non option result
+     */
     boolean hasNextNonOption();
 
     /**
@@ -426,14 +599,41 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> nextEntry(String... names);
 
+    /**
+     * Matcher.
+     *
+     * @return matcher result
+     */
     NCmdLineMatcher matcher();
 
+    /**
+     * Next attached entry.
+     *
+     * @param names names
+     * @return next attached entry result
+     */
     NOptional<NArg> nextAttachedEntry(String... names);
 
+    /**
+     * Next required entry.
+     *
+     * @param names names
+     * @return next required entry result
+     */
     NOptional<NArg> nextRequiredEntry(String... names);
 
+    /**
+     * Next attached entry.
+     *
+     * @return next attached entry result
+     */
     NOptional<NArg> nextAttachedEntry();
 
+    /**
+     * Next required entry.
+     *
+     * @return next required entry result
+     */
     NOptional<NArg> nextRequiredEntry();
 
     /**
@@ -461,6 +661,11 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> next(NArgType expectValue, String... names);
 
+    /**
+     * Complete position.
+     *
+     * @return complete position result
+     */
     NArgCompletePosition completePosition();
 
     /**
@@ -471,6 +676,15 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NOptional<NArg> nextNonOption();
 
+    /**
+     * Next.
+     *
+     * @param expectedArgType expected arg type
+     * @param argDisplay arg display
+     * @param valueComplete value complete
+     * @param names names
+     * @return next result
+     */
     NOptional<NArg> next(NArgType expectedArgType, String argDisplay, NArgValueComplete valueComplete, String... names);
 
     /**
@@ -584,14 +798,39 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     String[] toStringArray();
 
+    /**
+     * Converts to string list.
+     *
+     * @return to string list result
+     */
     List<String> toStringList();
 
+    /**
+     * Converts to argument array.
+     *
+     * @return to argument array result
+     */
     NArg[] toArgumentArray();
 
+    /**
+     * Next all as string array.
+     *
+     * @return next all as string array result
+     */
     String[] nextAllAsStringArray();
 
+    /**
+     * Next all as string list.
+     *
+     * @return next all as string list result
+     */
     List<String> nextAllAsStringList();
 
+    /**
+     * Next all as argument array.
+     *
+     * @return next all as argument array result
+     */
     NArg[] nextAllAsArgumentArray();
 
     /**
@@ -648,14 +887,43 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     NCmdLine add(String argument);
 
+    /**
+     * Adds the specified all.
+     *
+     * @param arguments arguments
+     * @return add all result
+     */
     NCmdLine addAll(List<String> arguments);
 
+    /**
+     * Run.
+     *
+     * @param processor processor
+     */
     void run(NCmdLineRunner processor);
 
+    /**
+     * Push back.
+     *
+     * @param args args
+     * @return push back result
+     */
     NCmdLine pushBack(NArg... args);
 
+    /**
+     * Push back.
+     *
+     * @param args args
+     * @return push back result
+     */
     NCmdLine pushBack(String... args);
 
+    /**
+     * Append.
+     *
+     * @param args args
+     * @return append result
+     */
     NCmdLine append(String... args);
 
     /**
@@ -681,15 +949,43 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
         Iterable.super.forEach(action);
     }
 
+    /**
+     * For each peek.
+     *
+     * @param action action
+     * @return for each peek result
+     */
     NCmdLine forEachPeek(NCmdLineProcessor action);
 
+    /**
+     * For each peek.
+     *
+     * @param actions actions
+     * @return for each peek result
+     */
     NCmdLine forEachPeek(NCmdLineProcessor... actions);
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NCmdLine copy();
 
+    /**
+     * Shell family.
+     *
+     * @return shell family result
+     */
     @NGetter
     NShellFamily shellFamily();
 
+    /**
+     * Shell family.
+     *
+     * @param shellFamily shell family
+     * @return shell family result
+     */
     @NSetter
     NCmdLine shellFamily(NShellFamily shellFamily);
 

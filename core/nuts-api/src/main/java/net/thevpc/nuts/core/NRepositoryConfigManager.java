@@ -51,34 +51,90 @@ public interface NRepositoryConfigManager{
     @NGetter
     String globalName();
 
+    /**
+     * Repository ref.
+     *
+     * @return repository ref result
+     */
     @NGetter
     NRepositoryRef repositoryRef();
 
+    /**
+     * Type.
+     *
+     * @return type result
+     */
     @NGetter
     String type();
 
+    /**
+     * Groups.
+     *
+     * @return groups result
+     */
     @NGetter
     String groups();
 
+    /**
+     * Speed.
+     *
+     * @return speed result
+     */
     @NGetter
     NSpeedQualifier speed();
 
+    /**
+     * Checks if is temporary.
+     *
+     * @return is temporary result
+     */
     boolean isTemporary();
 
+    /**
+     * Checks if is preview.
+     *
+     * @return is preview result
+     */
     boolean isPreview();
 
+    /**
+     * Tags.
+     *
+     * @return tags result
+     */
     @NGetter
     Set<String> tags();
 
+    /**
+     * Temporary.
+     *
+     * @param enabled enabled
+     * @return temporary result
+     */
     @NSetter
     NRepositoryConfigManager temporary(boolean enabled);
 
+    /**
+     * Checks if is index subscribed.
+     *
+     * @return is index subscribed result
+     */
     boolean isIndexSubscribed();
 
 
+    /**
+     * Location.
+     *
+     * @return location result
+     */
     @NGetter
     NRepositoryLocation location();
 
+    /**
+     * Location path.
+     *
+     * @return location path result
+     */
     @NGetter
     NPath locationPath();
 
@@ -90,35 +146,107 @@ public interface NRepositoryConfigManager{
     @NGetter
     NPath storeLocation();
 
+    /**
+     * Returns the store location.
+     *
+     * @param folderType folder type
+     * @return get store location result
+     */
     NPath getStoreLocation(NStoreType folderType);
 
+    /**
+     * Checks if is index enabled.
+     *
+     * @return is index enabled result
+     */
     @NGetter
     boolean isIndexEnabled();
 
+    /**
+     * Index enabled.
+     *
+     * @param enabled enabled
+     * @return index enabled result
+     */
     @NSetter
     NRepositoryConfigManager indexEnabled(boolean enabled);
 
+    /**
+     * Sets the mirror enabled.
+     *
+     * @param repoName repo name
+     * @param enabled enabled
+     * @return set mirror enabled result
+     */
     NRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled);
 
+    /**
+     * Deploy weight.
+     *
+     * @return deploy weight result
+     */
     @NGetter
     int deployWeight();
 
+    /**
+     * Checks if is enabled.
+     *
+     * @return is enabled result
+     */
     @NGetter
     boolean isEnabled();
 
+    /**
+     * Enabled.
+     *
+     * @param enabled enabled
+     * @return enabled result
+     */
     @NSetter
     NRepositoryConfigManager enabled(boolean enabled);
 
+    /**
+     * Subscribe index.
+     *
+     * @return subscribe index result
+     */
     NRepositoryConfigManager subscribeIndex();
 
+    /**
+     * Unsubscribe index.
+     *
+     * @return unsubscribe index result
+     */
     NRepositoryConfigManager unsubscribeIndex();
 
+    /**
+     * Checks if is supported mirroring.
+     *
+     * @return is supported mirroring result
+     */
     boolean isSupportedMirroring();
 
+    /**
+     * Finds the find mirror by id.
+     *
+     * @param repositoryNameOrId repository name or id
+     * @return find mirror by id result
+     */
     NRepository findMirrorById(String repositoryNameOrId);
 
+    /**
+     * Finds the find mirror by name.
+     *
+     * @param repositoryNameOrId repository name or id
+     * @return find mirror by name result
+     */
     NRepository findMirrorByName(String repositoryNameOrId);
 
+    /**
+     * Mirrors.
+     *
+     * @return mirrors result
+     */
     @NGetter
     List<NRepository> mirrors();
 
@@ -145,17 +273,53 @@ public interface NRepositoryConfigManager{
      */
     NRepositoryConfigManager removeMirror(String repositoryId);
 
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
     @NGetter
     NStoreStrategy storeStrategy();
 
+    /**
+     * Returns the config map.
+     *
+     * @param inherit inherit
+     * @return get config map result
+     */
     Map<String, String> getConfigMap(boolean inherit);
 
+    /**
+     * Returns the config property.
+     *
+     * @param key key
+     * @param inherit inherit
+     * @return get config property result
+     */
     NOptional<NLiteral> getConfigProperty(String key, boolean inherit);
 
+    /**
+     * Config map.
+     *
+     * @return config map result
+     */
     @NGetter
     Map<String, String> configMap();
 
+    /**
+     * Returns the config property.
+     *
+     * @param property property
+     * @return get config property result
+     */
     NOptional<NLiteral> getConfigProperty(String property);
 
+    /**
+     * Sets the config property.
+     *
+     * @param property property
+     * @param value value
+     * @return set config property result
+     */
     NRepositoryConfigManager setConfigProperty(String property, String value);
 }

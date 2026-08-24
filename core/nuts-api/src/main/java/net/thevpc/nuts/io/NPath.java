@@ -398,10 +398,22 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     }
 
 
+    /**
+     * Creates a new instance of of origin.
+     *
+     * @param clazz clazz
+     * @return of origin result
+     */
     static NOptional<NPath> ofOrigin(Class<?> clazz) {
         return NIORPI.of().createOrigin(clazz);
     }
 
+    /**
+     * Creates a new instance of of origins.
+     *
+     * @param clazz clazz
+     * @return of origins result
+     */
     static List<NPath> ofOrigins(Class<?> clazz) {
         return NIORPI.of().createOrigins(clazz);
     }
@@ -424,14 +436,42 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     String contentType();
 
+    /**
+     * Checks if is user cache.
+     *
+     * @return is user cache result
+     */
     boolean isUserCache();
 
+    /**
+     * User cache.
+     *
+     * @param userCache user cache
+     * @return user cache result
+     */
     NPath userCache(boolean userCache);
 
+    /**
+     * Checks if is user temporary.
+     *
+     * @return is user temporary result
+     */
     boolean isUserTemporary();
 
+    /**
+     * User temporary.
+     *
+     * @param temporary temporary
+     * @return user temporary result
+     */
     NPath userTemporary(boolean temporary);
 
+    /**
+     * Resolve sibling.
+     *
+     * @param renameOptions rename options
+     * @return resolve sibling result
+     */
     NPath resolveSibling(NPathRenameOptions renameOptions);
 
 
@@ -482,10 +522,26 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     NPath rename(Function<NPath, String> newNameResolver, NPathOption... options);
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 
+    /**
+     * Location.
+     *
+     * @return location result
+     */
     String location();
 
+    /**
+     * Resolve.
+     *
+     * @param other other
+     * @return resolve result
+     */
     NPath resolve(String other);
 
     /**
@@ -504,12 +560,36 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     NPath resolveChild(NPath other);
 
+    /**
+     * Resolve.
+     *
+     * @param other other
+     * @return resolve result
+     */
     NPath resolve(NPath other);
 
+    /**
+     * Resolve sibling.
+     *
+     * @param other other
+     * @return resolve sibling result
+     */
     NPath resolveSibling(String other);
 
+    /**
+     * Resolve sibling.
+     *
+     * @param other other
+     * @return resolve sibling result
+     */
     NPath resolveSibling(NPath other);
 
+    /**
+     * Read bytes.
+     *
+     * @param options options
+     * @return read bytes result
+     */
     byte[] readBytes(NPathOption... options);
 
     /**
@@ -529,27 +609,85 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     String readString(Charset cs, NPathOption... options);
 
+    /**
+     * Write bytes.
+     *
+     * @param bytes bytes
+     * @param options options
+     * @return write bytes result
+     */
     NPath writeBytes(byte[] bytes, NPathOption... options);
 
+    /**
+     * Write string.
+     *
+     * @param string string
+     * @param cs cs
+     * @param options options
+     * @return write string result
+     */
     NPath writeString(String string, Charset cs, NPathOption... options);
 
+    /**
+     * Write string.
+     *
+     * @param string string
+     * @param options options
+     * @return write string result
+     */
     NPath writeString(String string, NPathOption... options);
 
+    /**
+     * Write object.
+     *
+     * @param any any
+     * @param options options
+     * @return write object result
+     */
     default NPath writeObject(Object any, NPathOption... options) {
+      /**
+       * Try.
+       *
+       * @param this.getNPrintStream(options) this.get n print stream(options)
+       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }
         return this;
     }
 
+    /**
+     * Write msg.
+     *
+     * @param any any
+     * @param options options
+     * @return write msg result
+     */
     default NPath writeMsg(NMsg any, NPathOption... options) {
+      /**
+       * Try.
+       *
+       * @param this.getNPrintStream(options) this.get n print stream(options)
+       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }
         return this;
     }
 
+    /**
+     * Write text.
+     *
+     * @param any any
+     * @param options options
+     * @return write text result
+     */
     default NPath writeText(NText any, NPathOption... options) {
+      /**
+       * Try.
+       *
+       * @param this.getNPrintStream(options) this.get n print stream(options)
+       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }
@@ -565,8 +703,18 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     String protocol();
 
+    /**
+     * Converts to compressed form.
+     *
+     * @return to compressed form result
+     */
     NPath toCompressedForm();
 
+    /**
+     * Converts to url.
+     *
+     * @return to url result
+     */
     NOptional<URL> toURL();
 
     /**
@@ -583,52 +731,185 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     boolean isFile();
 
+    /**
+     * Converts to path.
+     *
+     * @return to path result
+     */
     NOptional<Path> toPath();
 
+    /**
+     * Converts to file.
+     *
+     * @return to file result
+     */
     NOptional<File> toFile();
 
     String toString();
 
+    /**
+     * Stream.
+     *
+     * @return stream result
+     */
     NStream<NPath> stream();
 
+    /**
+     * List.
+     *
+     * @return list result
+     */
     List<NPath> list();
 
+    /**
+     * List infos.
+     *
+     * @return list infos result
+     */
     List<NPathInfo> listInfos();
 
+    /**
+     * Returns the input stream.
+     *
+     * @param options options
+     * @return get input stream result
+     */
     InputStream getInputStream(NPathOption... options);
 
+    /**
+     * Returns the print stream.
+     *
+     * @return get print stream result
+     */
     PrintStream getPrintStream();
 
+    /**
+     * Returns the print stream.
+     *
+     * @param cs cs
+     * @param options options
+     * @return get print stream result
+     */
     PrintStream getPrintStream(Charset cs, NPathOption... options);
 
+    /**
+     * Returns the print stream.
+     *
+     * @param options options
+     * @return get print stream result
+     */
     PrintStream getPrintStream(NPathOption... options);
 
+    /**
+     * Returns the n print stream.
+     *
+     * @param options options
+     * @return get n print stream result
+     */
     NPrintStream getNPrintStream(NPathOption... options);
 
+    /**
+     * Returns the output stream.
+     *
+     * @param options options
+     * @return get output stream result
+     */
     OutputStream getOutputStream(NPathOption... options);
 
+    /**
+     * Returns the reader.
+     *
+     * @param options options
+     * @return get reader result
+     */
     Reader getReader(NPathOption... options);
 
+    /**
+     * Returns the buffered reader.
+     *
+     * @param options options
+     * @return get buffered reader result
+     */
     BufferedReader getBufferedReader(NPathOption... options);
 
+    /**
+     * Returns the buffered reader.
+     *
+     * @param cs cs
+     * @param options options
+     * @return get buffered reader result
+     */
     BufferedReader getBufferedReader(Charset cs, NPathOption... options);
 
+    /**
+     * Returns the reader.
+     *
+     * @param cs cs
+     * @param options options
+     * @return get reader result
+     */
     Reader getReader(Charset cs, NPathOption... options);
 
+    /**
+     * Returns the writer.
+     *
+     * @return get writer result
+     */
     Writer getWriter();
 
+    /**
+     * Returns the writer.
+     *
+     * @param options options
+     * @return get writer result
+     */
     Writer getWriter(NPathOption... options);
 
+    /**
+     * Returns the writer.
+     *
+     * @param cs cs
+     * @param options options
+     * @return get writer result
+     */
     Writer getWriter(Charset cs, NPathOption... options);
 
+    /**
+     * Returns the buffered writer.
+     *
+     * @return get buffered writer result
+     */
     BufferedWriter getBufferedWriter();
 
+    /**
+     * Returns the buffered writer.
+     *
+     * @param options options
+     * @return get buffered writer result
+     */
     BufferedWriter getBufferedWriter(NPathOption... options);
 
+    /**
+     * Returns the buffered writer.
+     *
+     * @param cs cs
+     * @param options options
+     * @return get buffered writer result
+     */
     BufferedWriter getBufferedWriter(Charset cs, NPathOption... options);
 
+    /**
+     * Delete.
+     *
+     * @return delete result
+     */
     NPath delete();
 
+    /**
+     * Delete tree.
+     *
+     * @return delete tree result
+     */
     NPath deleteTree();
 
     /**
@@ -649,14 +930,42 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     NPath ensureEmptyFile();
 
+    /**
+     * Delete.
+     *
+     * @param recurse recurse
+     * @return delete result
+     */
     NPath delete(boolean recurse);
 
+    /**
+     * Mkdir.
+     *
+     * @param parents parents
+     * @return mkdir result
+     */
     NPath mkdir(boolean parents);
 
+    /**
+     * Mkdirs.
+     *
+     * @return mkdirs result
+     */
     NPath mkdirs();
 
+    /**
+     * Mkdir.
+     *
+     * @return mkdir result
+     */
     NPath mkdir();
 
+    /**
+     * Expand path.
+     *
+     * @param resolver resolver
+     * @return expand path result
+     */
     NPath expandPath(Function<String, String> resolver);
 
     /**
@@ -666,40 +975,132 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     NPath mkParentDirs();
 
+    /**
+     * Checks if is other.
+     *
+     * @return is other result
+     */
     boolean isOther();
 
+    /**
+     * Checks if is symbolic link.
+     *
+     * @return is symbolic link result
+     */
     boolean isSymbolicLink();
 
+    /**
+     * Type.
+     *
+     * @return type result
+     */
     NPathType type();
 
+    /**
+     * Checks if is directory.
+     *
+     * @return is directory result
+     */
     boolean isDirectory();
 
+    /**
+     * Checks if is regular file.
+     *
+     * @return is regular file result
+     */
     boolean isRegularFile();
 
+    /**
+     * Checks if is remote.
+     *
+     * @return is remote result
+     */
     boolean isRemote();
 
+    /**
+     * Checks if is local.
+     *
+     * @return is local result
+     */
     boolean isLocal();
 
+    /**
+     * Exists.
+     *
+     * @return exists result
+     */
     boolean exists();
 
+    /**
+     * Content length.
+     *
+     * @return content length result
+     */
     long contentLength();
 
+    /**
+     * Last modified instant.
+     *
+     * @return last modified instant result
+     */
     Instant lastModifiedInstant();
 
+    /**
+     * Last access instant.
+     *
+     * @return last access instant result
+     */
     Instant lastAccessInstant();
 
+    /**
+     * Creation instant.
+     *
+     * @return creation instant result
+     */
     Instant creationInstant();
 
+    /**
+     * Parent.
+     *
+     * @return parent result
+     */
     NPath parent();
 
+    /**
+     * Checks if is absolute.
+     *
+     * @return is absolute result
+     */
     boolean isAbsolute();
 
+    /**
+     * Normalize.
+     *
+     * @return normalize result
+     */
     NPath normalize();
 
+    /**
+     * Converts to absolute.
+     *
+     * @return to absolute result
+     */
     NPath toAbsolute();
 
+    /**
+     * Converts to absolute.
+     *
+     * @param basePath base path
+     * @return to absolute result
+     */
     NPath toAbsolute(String basePath);
 
+    /**
+     * Converts to absolute.
+     *
+     * @param basePath base path
+     * @return to absolute result
+     */
     NPath toAbsolute(NPath basePath);
 
     /**
@@ -745,16 +1146,49 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     NOptional<String> relativize(NPath origin);
 
+    /**
+     * Owner.
+     *
+     * @return owner result
+     */
     String owner();
 
+    /**
+     * Group.
+     *
+     * @return group result
+     */
     String group();
 
+    /**
+     * Permissions.
+     *
+     * @return permissions result
+     */
     Set<NPathPermission> permissions();
 
+    /**
+     * Permissions.
+     *
+     * @param permissions permissions
+     * @return permissions result
+     */
     NPath permissions(NPathPermission... permissions);
 
+    /**
+     * Adds the specified permissions.
+     *
+     * @param permissions permissions
+     * @return add permissions result
+     */
     NPath addPermissions(NPathPermission... permissions);
 
+    /**
+     * Removes the specified permissions.
+     *
+     * @param permissions permissions
+     * @return remove permissions result
+     */
     NPath removePermissions(NPathPermission... permissions);
 
     /**
@@ -822,42 +1256,161 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     NStream<NPath> walk();
 
+    /**
+     * Subpath.
+     *
+     * @param beginIndex begin index
+     * @param endIndex end index
+     * @return subpath result
+     */
     NPath subpath(int beginIndex, int endIndex);
 
+    /**
+     * Name at.
+     *
+     * @param index index
+     * @return name at result
+     */
     String nameAt(int index);
 
+    /**
+     * Names.
+     *
+     * @return names result
+     */
     List<String> names();
 
+    /**
+     * Move to.
+     *
+     * @param other other
+     * @param options options
+     */
     void moveTo(NPath other, NPathOption... options);
 
+    /**
+     * Copy to.
+     *
+     * @param other other
+     * @param options options
+     */
     void copyTo(NPath other, NPathOption... options);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @param options options
+     */
     void copyFrom(NPath other, NPathOption... options);
 
+    /**
+     * Copy from input stream.
+     *
+     * @param other other
+     * @param options options
+     */
     void copyFromInputStream(InputStream other, NPathOption... options);
 
+    /**
+     * Copy from input stream provider.
+     *
+     * @param other other
+     * @param options options
+     */
     void copyFromInputStreamProvider(NInputStreamProvider other, NPathOption... options);
 
+    /**
+     * Copy from reader.
+     *
+     * @param other other
+     * @param options options
+     */
     void copyFromReader(Reader other, NPathOption... options);
 
+    /**
+     * Copy from reader.
+     *
+     * @param other other
+     * @param charset charset
+     * @param options options
+     */
     void copyFromReader(Reader other, Charset charset, NPathOption... options);
 
+    /**
+     * Copy to output stream.
+     *
+     * @param other other
+     * @param options options
+     */
     void copyToOutputStream(OutputStream other, NPathOption... options);
 
+    /**
+     * Copy to print stream.
+     *
+     * @param other other
+     * @param options options
+     */
     void copyToPrintStream(PrintStream other, NPathOption... options);
 
+    /**
+     * Copy to print stream.
+     *
+     * @param other other
+     * @param cs cs
+     * @param options options
+     */
     void copyToPrintStream(PrintStream other, Charset cs, NPathOption... options);
 
+    /**
+     * Copy to writer.
+     *
+     * @param other other
+     * @param options options
+     */
     void copyToWriter(Writer other, NPathOption... options);
 
+    /**
+     * Copy to writer.
+     *
+     * @param other other
+     * @param cs cs
+     * @param options options
+     */
     void copyToWriter(Writer other, Charset cs, NPathOption... options);
 
+    /**
+     * Root.
+     *
+     * @return root result
+     */
     NPath root();
 
+    /**
+     * Walk dfs.
+     *
+     * @param visitor visitor
+     * @param options options
+     * @return walk dfs result
+     */
     NPath walkDfs(NTreeVisitor<NPath> visitor, NPathOption... options);
 
+    /**
+     * Walk dfs.
+     *
+     * @param visitor visitor
+     * @param maxDepth max depth
+     * @param options options
+     * @return walk dfs result
+     */
     NPath walkDfs(NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options);
 
+    /**
+     * Walk glob.
+     *
+     * @param options options
+     * @return walk glob result
+     */
     NStream<NPath> walkGlob(NPathOption... options);
 
     /**
@@ -867,26 +1420,86 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     boolean isHttp();
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NPath copy();
 
+    /**
+     * Delete on dispose.
+     *
+     * @param deleteOnDispose delete on dispose
+     */
     void deleteOnDispose(boolean deleteOnDispose);
 
+    /**
+     * Checks if is delete on dispose.
+     *
+     * @return is delete on dispose result
+     */
     boolean isDeleteOnDispose();
 
+    /**
+     * Starts with.
+     *
+     * @param other other
+     * @return starts with result
+     */
     boolean startsWith(NPath other);
 
+    /**
+     * Starts with.
+     *
+     * @param other other
+     * @return starts with result
+     */
     boolean startsWith(String other);
 
+    /**
+     * Name count.
+     *
+     * @return name count result
+     */
     int nameCount();
 
+    /**
+     * Compare to.
+     *
+     * @param other other
+     * @return compare to result
+     */
     int compareTo(NPath other);
 
+    /**
+     * List digest info.
+     *
+     * @return list digest info result
+     */
     List<NPathChildDigestInfo> listDigestInfo();
 
+    /**
+     * List digest info.
+     *
+     * @param algo algo
+     * @return list digest info result
+     */
     List<NPathChildDigestInfo> listDigestInfo(String algo);
 
+    /**
+     * List string digest info.
+     *
+     * @return list string digest info result
+     */
     List<NPathChildStringDigestInfo> listStringDigestInfo();
 
+    /**
+     * List string digest info.
+     *
+     * @param algo algo
+     * @return list string digest info result
+     */
     List<NPathChildStringDigestInfo> listStringDigestInfo(String algo);
 
     /**
@@ -895,7 +1508,17 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      */
     NPathInfo info();
 
+    /**
+     * Checks if is hidden.
+     *
+     * @return is hidden result
+     */
     boolean isHidden();
 
+    /**
+     * Checks if is symlink.
+     *
+     * @return is symlink result
+     */
     boolean isSymlink();
 }

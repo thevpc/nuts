@@ -34,10 +34,27 @@ public interface NTitleSequence {
 //    List<NutsTitleNumber> getValue();
 
 
+    /**
+     * Next.
+     *
+     * @param level level
+     * @return next result
+     */
     NTitleSequence next(int level);
 
+    /**
+     * Returns the number.
+     *
+     * @param index index
+     * @return get number result
+     */
     NTitleNumber getNumber(int index);
 
+    /**
+     * Size.
+     *
+     * @return size result
+     */
     int size();
 
     String toString();

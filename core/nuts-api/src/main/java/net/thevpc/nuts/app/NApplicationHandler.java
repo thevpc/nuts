@@ -272,9 +272,21 @@ import net.thevpc.nuts.internal.NReservedApplication;
  */
 public interface NApplicationHandler {
 
+    /**
+     * Checks if is annotated application class.
+     *
+     * @param appClass app class
+     * @return is annotated application class result
+     */
     static boolean isAnnotatedApplicationClass(Class appClass) {
         return NReservedApplication.isAnnotatedApplicationClass(appClass);
     }
+    /**
+     * Creates a new instance of create application instance from annotated instance.
+     *
+     * @param appInstance app instance
+     * @return create application instance from annotated instance result
+     */
     static NApplicationHandler createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
         return NReservedApplication.createApplicationInstanceFromAnnotatedInstance(appInstance);
     }

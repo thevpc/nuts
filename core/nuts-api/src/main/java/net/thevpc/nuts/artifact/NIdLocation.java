@@ -42,6 +42,14 @@ public class NIdLocation implements NBlankable {
     private final String region;
     private final String classifier;
 
+    /**
+     * N id location.
+     *
+     * @param url url
+     * @param region region
+     * @param classifier classifier
+     * @return n id location result
+     */
     public NIdLocation(String url, String region, String classifier) {
         this.url = url;
         this.region = region;

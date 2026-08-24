@@ -34,26 +34,56 @@ package net.thevpc.nuts.core;
  */
 public interface NWorkspaceListener extends NListener {
 
+    /**
+     * On add repository.
+     *
+     * @param event event
+     */
     default void onAddRepository(NWorkspaceEvent event) {
 
     }
 
+    /**
+     * On remove repository.
+     *
+     * @param event event
+     */
     default void onRemoveRepository(NWorkspaceEvent event) {
 
     }
 
+    /**
+     * On reload workspace.
+     *
+     * @param event event
+     */
     default void onReloadWorkspace(NWorkspaceEvent event) {
 
     }
 
+    /**
+     * On create workspace.
+     *
+     * @param event event
+     */
     default void onCreateWorkspace(NWorkspaceEvent event) {
 
     }
 
+    /**
+     * On update property.
+     *
+     * @param event event
+     */
     default void onUpdateProperty(NWorkspaceEvent event) {
 
     }
 
+    /**
+     * On configuration changed.
+     *
+     * @param event event
+     */
     default void onConfigurationChanged(NWorkspaceEvent event) {
 
     }

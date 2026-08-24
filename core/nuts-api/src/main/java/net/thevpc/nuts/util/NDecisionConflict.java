@@ -1,5 +1,11 @@
 package net.thevpc.nuts.util;
 
+/**
+ * NDecisionConflict enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NDecisionConflict implements NEnum{
     ACCEPT_WINS,
     DENY_WINS
@@ -17,6 +23,12 @@ public enum NDecisionConflict implements NEnum{
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NDecisionConflict> parse(String value) {
         return NEnumUtils.parseEnum(value, NDecisionConflict.class);
     }

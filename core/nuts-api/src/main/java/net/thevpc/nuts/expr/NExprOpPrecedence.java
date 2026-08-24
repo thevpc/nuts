@@ -1,6 +1,17 @@
 package net.thevpc.nuts.expr;
 
+/**
+ * NExprOpPrecedence class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public final class NExprOpPrecedence {
+    /**
+     * N expr op precedence.
+     *
+     * @return n expr op precedence result
+     */
     private NExprOpPrecedence() {
     }
 

@@ -1,6 +1,17 @@
 package net.thevpc.nuts.security;
 
+/**
+ * NNamedCredentialBuilder interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NNamedCredentialBuilder {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NNamedCredentialBuilder of() {
         return NSecurityManager.of().createNamedCredentialBuilder();
     }
@@ -17,6 +28,11 @@ public interface NNamedCredentialBuilder {
      */
     String userName();
 
+    /**
+     * Credential id.
+     *
+     * @return credential id result
+     */
     NSecureToken credentialId();
 
     /**
@@ -25,17 +41,57 @@ public interface NNamedCredentialBuilder {
      */
     String resource();
 
+    /**
+     * Resource.
+     *
+     * @param resource resource
+     * @return resource result
+     */
     NNamedCredentialBuilder resource(String resource);
 
+    /**
+     * Credential id.
+     *
+     * @param credentialId credential id
+     * @return credential id result
+     */
     NNamedCredentialBuilder credentialId(NSecureToken credentialId);
 
+    /**
+     * User name.
+     *
+     * @param user user
+     * @return user name result
+     */
     NNamedCredentialBuilder userName(String user);
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     NNamedCredentialBuilder name(String name);
 
+    /**
+     * Auth type.
+     *
+     * @return auth type result
+     */
     String authType();
 
+    /**
+     * Auth type.
+     *
+     * @param authType auth type
+     * @return auth type result
+     */
     NNamedCredentialBuilder authType(String authType);
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NNamedCredential build();
 }

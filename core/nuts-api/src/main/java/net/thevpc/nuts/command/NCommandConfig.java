@@ -146,6 +146,12 @@ public class NCommandConfig extends NConfigItem {
         return this;
     }
 
+    /**
+     * Command.
+     *
+     * @param value value
+     * @return command result
+     */
     @NSetter
     public NCommandConfig command(List<String> value) {
         this.command = NReservedLangUtils.nonNullList(value);
@@ -217,6 +223,12 @@ public class NCommandConfig extends NConfigItem {
         return this;
     }
 
+    /**
+     * Help command.
+     *
+     * @param value value
+     * @return help command result
+     */
     @NSetter
     public NCommandConfig helpCommand(List<String> value) {
         this.helpCommand = NReservedLangUtils.nonNullList(value);

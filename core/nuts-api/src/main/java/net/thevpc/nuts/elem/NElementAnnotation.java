@@ -41,32 +41,98 @@ import java.util.List;
  * @since 0.5.6
  */
 public interface NElementAnnotation extends NAffix {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @param values values
+     * @return of result
+     */
     static NElementAnnotation of(String name, NElement... values) {
         return NElementRPI.of().createAnnotation(name, values);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @return of result
+     */
     static NElementAnnotation of(String name) {
         return NElementRPI.of().createAnnotation(name);
     }
 
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 
+    /**
+     * Affixes.
+     *
+     * @return affixes result
+     */
     List<NBoundAffix> affixes();
 
+    /**
+     * Size.
+     *
+     * @return size result
+     */
     int size();
 
+    /**
+     * Returns the get.
+     *
+     * @param s s
+     * @return get result
+     */
     NOptional<NElement> get(String s);
 
+    /**
+     * Param.
+     *
+     * @param index index
+     * @return param result
+     */
     NOptional<NElement> param(int index);
 
+    /**
+     * Param.
+     *
+     * @param name name
+     * @return param result
+     */
     NOptional<NElement> param(String name);
 
+    /**
+     * Params.
+     *
+     * @return params result
+     */
     NOptional<List<NElement>> params();
 
+    /**
+     * Checks if is parametrized.
+     *
+     * @return is parametrized result
+     */
     boolean isParametrized();
 
+    /**
+     * Checks if is named.
+     *
+     * @return is named result
+     */
     boolean isNamed();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NElementAnnotationBuilder builder();
 }

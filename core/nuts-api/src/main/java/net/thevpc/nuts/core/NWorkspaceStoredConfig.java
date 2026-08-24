@@ -43,12 +43,32 @@ import java.util.Map;
  */
 public interface NWorkspaceStoredConfig {
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
     NStoreStrategy storeStrategy();
 
+    /**
+     * Repository store strategy.
+     *
+     * @return repository store strategy result
+     */
     NStoreStrategy repositoryStoreStrategy();
 
+    /**
+     * Store layout.
+     *
+     * @return store layout result
+     */
     NOsFamily storeLayout();
 
     /**
@@ -67,21 +87,68 @@ public interface NWorkspaceStoredConfig {
      */
     Map<NHomeLocation, String> homeLocations();
 
+    /**
+     * Returns the store location.
+     *
+     * @param folderType folder type
+     * @return get store location result
+     */
     String getStoreLocation(NStoreType folderType);
 
+    /**
+     * Returns the home location.
+     *
+     * @param homeLocation home location
+     * @return get home location result
+     */
     String getHomeLocation(NHomeLocation homeLocation);
 
+    /**
+     * Api id.
+     *
+     * @return api id result
+     */
     NId apiId();
 
+    /**
+     * Runtime id.
+     *
+     * @return runtime id result
+     */
     NId runtimeId();
 
+    /**
+     * Runtime dependencies.
+     *
+     * @return runtime dependencies result
+     */
     String runtimeDependencies();
 
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
     List<String> bootRepositories();
 
+    /**
+     * Java command.
+     *
+     * @return java command result
+     */
     String javaCommand();
 
+    /**
+     * Java options.
+     *
+     * @return java options result
+     */
     String javaOptions();
 
+    /**
+     * Checks if is system.
+     *
+     * @return is system result
+     */
     boolean isSystem();
 }

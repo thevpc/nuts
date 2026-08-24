@@ -36,31 +36,107 @@ import net.thevpc.nuts.util.NFilter;
  * @since 0.8.0
  */
 public interface NFilters extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NFilters of() {
        return NExtensions.of(NFilters.class);
     }
 
 
+    /**
+     * Nonnull.
+     *
+     * @param type type
+     * @param filter filter
+     * @return nonnull result
+     */
     <T extends NFilter> T nonnull(Class<T> type, NFilter filter);
 
+    /**
+     * Always.
+     *
+     * @param type type
+     * @return always result
+     */
     <T extends NFilter> T always(Class<T> type);
 
+    /**
+     * Never.
+     *
+     * @param type type
+     * @return never result
+     */
     <T extends NFilter> T never(Class<T> type);
 
+    /**
+     * All.
+     *
+     * @param type type
+     * @param others others
+     * @return all result
+     */
     <T extends NFilter> T all(Class<T> type, NFilter... others);
 
+    /**
+     * All.
+     *
+     * @param others others
+     * @return all result
+     */
     <T extends NFilter> T all(NFilter... others);
 
+    /**
+     * Any.
+     *
+     * @param type type
+     * @param others others
+     * @return any result
+     */
     <T extends NFilter> T any(Class<T> type, NFilter... others);
 
+    /**
+     * Not.
+     *
+     * @param other other
+     * @return not result
+     */
     <T extends NFilter> T not(NFilter other);
 
+    /**
+     * Not.
+     *
+     * @param type type
+     * @param other other
+     * @return not result
+     */
     <T extends NFilter> T not(Class<T> type, NFilter other);
 
+    /**
+     * Any.
+     *
+     * @param others others
+     * @return any result
+     */
     <T extends NFilter> T any(NFilter... others);
 
+    /**
+     * None.
+     *
+     * @param type type
+     * @param others others
+     * @return none result
+     */
     <T extends NFilter> T none(Class<T> type, NFilter... others);
 
+    /**
+     * None.
+     *
+     * @param others others
+     * @return none result
+     */
     <T extends NFilter> T none(NFilter... others);
 
     /**
@@ -85,5 +161,11 @@ public interface NFilters extends NComponent {
      */
     <T extends NFilter> T as(Class<T> toFilterInterface, NFilter filter);
 
+    /**
+     * Detect type.
+     *
+     * @param nFilter n filter
+     * @return detect type result
+     */
     Class<? extends NFilter> detectType(NFilter nFilter);
 }

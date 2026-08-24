@@ -40,10 +40,26 @@ import net.thevpc.nuts.platform.NShellFamily;
  */
 public interface NCmdLineWriter extends NObjectWriter {
 
+    /**
+     * Creates a new instance of of plain.
+     *
+     * @return of plain result
+     */
     static NCmdLineWriter ofPlain() {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(false ).ntf(false
+         * @return of result
+         */
         return of().ntf(false);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NCmdLineWriter of() {
        return NExtensions.of(NCmdLineWriter.class);
     }
@@ -77,11 +93,32 @@ public interface NCmdLineWriter extends NObjectWriter {
     @Override
     NCmdLineWriter configure(boolean skipUnsupported, String... args);
 
+    /**
+     * Checks if is ntf.
+     *
+     * @return is ntf result
+     */
     boolean isNtf();
 
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
     NCmdLineWriter ntf(boolean ntf);
 
+    /**
+     * Format strategy.
+     *
+     * @return format strategy result
+     */
     NCmdLineFormatStrategy formatStrategy();
 
+    /**
+     * Format strategy.
+     *
+     * @param formatStrategy format strategy
+     */
     void formatStrategy(NCmdLineFormatStrategy formatStrategy);
 }

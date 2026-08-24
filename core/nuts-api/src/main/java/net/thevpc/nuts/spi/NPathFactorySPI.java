@@ -32,5 +32,13 @@ import net.thevpc.nuts.concurrent.NScoredCallable;
  * @app.category Input Output
  */
 public interface NPathFactorySPI extends NComponent{
+    /**
+     * Creates a new instance of create path.
+     *
+     * @param path path
+     * @param protocol protocol
+     * @param classLoader class loader
+     * @return create path result
+     */
     NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader);
 }

@@ -37,10 +37,22 @@ import java.util.function.Supplier;
  * @param <T> Type
  */
 public interface NIterable<T> extends Iterable<T>, NRedescribable<NIterable<T>> {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param o o
+     * @return of result
+     */
     static <T> NIterable<T> of(Iterable<T> o){
         return NUtilsRPI.of().iterableToNIterable(o);
     }
 
+    /**
+     * With description.
+     *
+     * @param description description
+     * @return with description result
+     */
     default NIterable<T> withDescription(Supplier<NElement> description) {
         if(description==null) {
             return this;
@@ -48,5 +60,10 @@ public interface NIterable<T> extends Iterable<T>, NRedescribable<NIterable<T>> 
         return new NIterableWithDescription<>(this, description);
     }
 
+    /**
+     * Iterator.
+     *
+     * @return iterator result
+     */
     NIterator<T> iterator();
 }

@@ -47,6 +47,11 @@ import java.util.function.UnaryOperator;
  */
 public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDescriptorBuilder of() {
         return NExtensions.of(NDescriptorBuilder.class);
     }
@@ -77,6 +82,11 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
     @NGetter
     boolean isNutsApplication();
 
+    /**
+     * Checks if is platform application.
+     *
+     * @return is platform application result
+     */
     @NGetter
     boolean isPlatformApplication();
 
@@ -303,25 +313,72 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
     @NSetter
     NDescriptorBuilder solver(String solver);
 
+    /**
+     * Generic name.
+     *
+     * @return generic name result
+     */
     @NGetter
     String genericName();
 
+    /**
+     * Generic name.
+     *
+     * @param name name
+     * @return generic name result
+     */
     NDescriptorBuilder genericName(String name);
 
+    /**
+     * Icons.
+     *
+     * @param icons icons
+     * @return icons result
+     */
     @NSetter
     NDescriptorBuilder icons(List<String> icons);
 
+    /**
+     * Icons.
+     *
+     * @param icons icons
+     * @return icons result
+     */
     NDescriptorBuilder icons(String... icons);
 
 
+    /**
+     * Categories.
+     *
+     * @param categories categories
+     * @return categories result
+     */
     @NSetter
     NDescriptorBuilder categories(List<String> categories);
 
+    /**
+     * Categories.
+     *
+     * @param categories categories
+     * @return categories result
+     */
     @NSetter
     NDescriptorBuilder categories(String... categories);
 
+    /**
+     * Condition.
+     *
+     * @param condition condition
+     * @return condition result
+     */
     @NSetter
     NDescriptorBuilder condition(NEnvCondition condition);
+    /**
+     * Condition.
+     *
+     * @param condition condition
+     * @return condition result
+     */
     @NSetter
     NDescriptorBuilder condition(NEnvConditionBuilder condition);
 
@@ -343,6 +400,12 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
     @NSetter
     NDescriptorBuilder locations(List<NIdLocation> locations);
 
+    /**
+     * Locations.
+     *
+     * @param locations locations
+     * @return locations result
+     */
     NDescriptorBuilder locations(NIdLocation... locations);
 
 
@@ -566,6 +629,12 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
     @NSetter
     NDescriptorBuilder flags(Set<NDescriptorFlag> flags);
 
+    /**
+     * Flags.
+     *
+     * @param flags flags
+     * @return flags result
+     */
     NDescriptorBuilder flags(NDescriptorFlag... flags);
     /**
      * add flag
@@ -639,20 +708,50 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
     @NSetter
     NDescriptorBuilder idType(NIdType idType);
 
+    /**
+     * Contributors.
+     *
+     * @param contributors contributors
+     * @return contributors result
+     */
     @NSetter
     NDescriptorBuilder contributors(List<NDescriptorContributor> contributors);
 
+    /**
+     * Developers.
+     *
+     * @param developers developers
+     * @return developers result
+     */
     @NSetter
     NDescriptorBuilder developers(List<NDescriptorContributor> developers);
 
 
+    /**
+     * Licenses.
+     *
+     * @param licenses licenses
+     * @return licenses result
+     */
     @NSetter
     NDescriptorBuilder licenses(List<NDescriptorLicense> licenses);
 
 
+    /**
+     * Mailing lists.
+     *
+     * @param mailingLists mailing lists
+     * @return mailing lists result
+     */
     @NSetter
     NDescriptorBuilder mailingLists(List<NDescriptorMailingList> mailingLists);
 
+    /**
+     * Organization.
+     *
+     * @param organization organization
+     * @return organization result
+     */
     @NSetter
     NDescriptorBuilder organization(NDescriptorOrganization organization);
 }

@@ -22,10 +22,21 @@ import java.util.List;
  */
 public interface NApplication extends NComponent {
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     static NApplicationBuilder builder() {
         return new NApplicationBuilder();
     }
 
+    /**
+     * Builder.
+     *
+     * @param args args
+     * @return builder result
+     */
     static NApplicationBuilder builder(String[] args) {
         return new NApplicationBuilder().args(args);
     }
@@ -39,6 +50,11 @@ public interface NApplication extends NComponent {
         return NExtensions.of(NApplication.class);
     }
 
+    /**
+     * Returns the get.
+     *
+     * @return get result
+     */
     static NOptional<NApplication> get() {
         return NExtensions.get().flatMap(x->x.createComponent(NApplication.class));
     }
@@ -50,8 +66,18 @@ public interface NApplication extends NComponent {
      */
     void prepare(NAppInitInfo appInitInfo);
 
+    /**
+     * Handler.
+     *
+     * @return handler result
+     */
     NApplicationHandler handler();
 
+    /**
+     * Source.
+     *
+     * @return source result
+     */
     Object source();
 
     /**

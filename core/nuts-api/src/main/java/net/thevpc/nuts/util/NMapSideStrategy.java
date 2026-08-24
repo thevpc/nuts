@@ -1,5 +1,11 @@
 package net.thevpc.nuts.util;
 
+/**
+ * NMapSideStrategy enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NMapSideStrategy implements NEnum{
     NON_NULL,
     NON_BLANK,
@@ -19,6 +25,12 @@ public enum NMapSideStrategy implements NEnum{
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NMapSideStrategy> parse(String value) {
         return NEnumUtils.parseEnum(value, NMapSideStrategy.class);
     }

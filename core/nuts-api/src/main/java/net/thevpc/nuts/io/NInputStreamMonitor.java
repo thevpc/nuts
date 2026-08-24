@@ -44,6 +44,11 @@ import java.nio.file.Path;
  * @app.category Toolkit
  */
 public interface NInputStreamMonitor extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NInputStreamMonitor of() {
         return NExtensions.of(NInputStreamMonitor.class);
     }
@@ -98,6 +103,12 @@ public interface NInputStreamMonitor extends NComponent {
     @NSetter
     NInputStreamMonitor length(long len);
 
+    /**
+     * Source.
+     *
+     * @param inputSource input source
+     * @return source result
+     */
     NInputStreamMonitor source(NPath inputSource);
 
     /**
@@ -124,6 +135,12 @@ public interface NInputStreamMonitor extends NComponent {
      */
     NInputStreamMonitor source(InputStream path);
 
+    /**
+     * Source.
+     *
+     * @param source source
+     * @return source result
+     */
     NInputStreamMonitor source(NInputSource source);
 
     /**
@@ -133,12 +150,28 @@ public interface NInputStreamMonitor extends NComponent {
      */
     InputStream create();
 
+    /**
+     * Source type name.
+     *
+     * @return source type name result
+     */
     @NGetter
     String sourceTypeName();
 
+    /**
+     * Source.
+     *
+     * @return source result
+     */
     @NGetter
     NInputSource source();
 
+    /**
+     * Source type name.
+     *
+     * @param sourceType source type
+     * @return source type name result
+     */
     @NSetter
     NInputStreamMonitor sourceTypeName(String sourceType);
 

@@ -53,12 +53,27 @@ public interface NPsInfo {
     @NGetter
     String name();
 
+    /**
+     * Status.
+     *
+     * @return status result
+     */
     @NGetter
     NpsStatus status();
 
+    /**
+     * Type.
+     *
+     * @return type result
+     */
     @NGetter
     NpsType type();
 
+    /**
+     * Status flags.
+     *
+     * @return status flags result
+     */
     @NGetter
     Set<String> statusFlags();
 
@@ -86,27 +101,67 @@ public interface NPsInfo {
     @NGetter
     String[] cmdLineArgs();
 
+    /**
+     * User.
+     *
+     * @return user result
+     */
     @NGetter
     String user();
 
+    /**
+     * Percent cpu.
+     *
+     * @return percent cpu result
+     */
     @NGetter
     double percentCpu();
 
+    /**
+     * Percent mem.
+     *
+     * @return percent mem result
+     */
     @NGetter
     double percentMem();
 
+    /**
+     * Virtual memory size.
+     *
+     * @return virtual memory size result
+     */
     @NGetter
     long virtualMemorySize();
 
+    /**
+     * Resident set size.
+     *
+     * @return resident set size result
+     */
     @NGetter
     long residentSetSize();
 
+    /**
+     * Terminal.
+     *
+     * @return terminal result
+     */
     @NGetter
     String terminal();
 
+    /**
+     * Start time.
+     *
+     * @return start time result
+     */
     @NGetter
     Instant startTime();
 
+    /**
+     * Time.
+     *
+     * @return time result
+     */
     @NGetter
     long time();
 }

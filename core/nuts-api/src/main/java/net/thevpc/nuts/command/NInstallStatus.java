@@ -55,6 +55,16 @@ public class NInstallStatus {
     private final boolean obsolete;
     private final boolean defaultVersion;
 
+    /**
+     * N install status.
+     *
+     * @param deployed deployed
+     * @param installed installed
+     * @param required required
+     * @param obsolete obsolete
+     * @param defaultVersion default version
+     * @return n install status result
+     */
     private NInstallStatus(boolean deployed, boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
         this.deployed = deployed;
         this.installed = installed;
@@ -63,6 +73,11 @@ public class NInstallStatus {
         this.defaultVersion = defaultVersion;
     }
 
+    /**
+     * _build nuts install status array.
+     *
+     * @return _build nuts install status array result
+     */
     private static NInstallStatus[] _buildNutsInstallStatusArray() {
         NInstallStatus[] ALL = new NInstallStatus[32];
         for (int i = 0; i < 32; i++) {
@@ -77,6 +92,16 @@ public class NInstallStatus {
         return ALL;
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param deployed deployed
+     * @param installed installed
+     * @param required required
+     * @param obsolete obsolete
+     * @param defaultVersion default version
+     * @return of result
+     */
     public static NInstallStatus of(boolean deployed,boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
         return ALL[
                 (deployed ? 1 : 0) * 1
@@ -87,50 +112,171 @@ public class NInstallStatus {
                 ];
     }
 
+    /**
+     * Checks if is non deployed.
+     *
+     * @return is non deployed result
+     */
     public boolean isNonDeployed() {
         return !isInstalled() && !isRequired();
     }
 
+    /**
+     * Checks if is installed or required.
+     *
+     * @return is installed or required result
+     */
     public boolean isInstalledOrRequired() {
+        /**
+         * Checks if is installed.
+         *
+         * @param isRequired( is required(
+         * @return is installed result
+         */
         return isInstalled() || isRequired();
     }
 
+    /**
+     * Checks if is deployed.
+     *
+     * @return is deployed result
+     */
     public boolean isDeployed() {
         return deployed;
     }
 
+    /**
+     * Checks if is installed.
+     *
+     * @return is installed result
+     */
     public boolean isInstalled() {
         return installed;
     }
 
+    /**
+     * Checks if is required.
+     *
+     * @return is required result
+     */
     public boolean isRequired() {
         return required;
     }
 
+    /**
+     * Checks if is obsolete.
+     *
+     * @return is obsolete result
+     */
     public boolean isObsolete() {
         return obsolete;
     }
 
+    /**
+     * Checks if is default version.
+     *
+     * @return is default version result
+     */
     public boolean isDefaultVersion() {
         return defaultVersion;
     }
 
+    /**
+     * With installed.
+     *
+     * @param installed installed
+     * @return with installed result
+     */
     public NInstallStatus withInstalled(boolean installed) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param deployed deployed
+         * @param installed installed
+         * @param required required
+         * @param obsolete obsolete
+         * @param defaultVersion default version
+         * @return of result
+         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
+    /**
+     * With deployed.
+     *
+     * @param deployed deployed
+     * @return with deployed result
+     */
     public NInstallStatus withDeployed(boolean deployed) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param deployed deployed
+         * @param installed installed
+         * @param required required
+         * @param obsolete obsolete
+         * @param defaultVersion default version
+         * @return of result
+         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
+    /**
+     * With required.
+     *
+     * @param required required
+     * @return with required result
+     */
     public NInstallStatus withRequired(boolean required) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param deployed deployed
+         * @param installed installed
+         * @param required required
+         * @param obsolete obsolete
+         * @param defaultVersion default version
+         * @return of result
+         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
+    /**
+     * With obsolete.
+     *
+     * @param obsolete obsolete
+     * @return with obsolete result
+     */
     public NInstallStatus withObsolete(boolean obsolete) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param deployed deployed
+         * @param installed installed
+         * @param required required
+         * @param obsolete obsolete
+         * @param defaultVersion default version
+         * @return of result
+         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
+    /**
+     * With default version.
+     *
+     * @param defaultVersion default version
+     * @return with default version result
+     */
     public NInstallStatus withDefaultVersion(boolean defaultVersion) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param deployed deployed
+         * @param installed installed
+         * @param required required
+         * @param obsolete obsolete
+         * @param defaultVersion default version
+         * @return of result
+         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
 

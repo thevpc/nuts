@@ -30,6 +30,16 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextAnchor extends NText {
+    /**
+     * Separator.
+     *
+     * @return separator result
+     */
     String separator();
+    /**
+     * Value.
+     *
+     * @return value result
+     */
     String value();
 }

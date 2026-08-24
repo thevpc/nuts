@@ -45,8 +45,18 @@ public interface NDependencyTreeNode extends Serializable {
      */
     NDependency dependency();
 
+    /**
+     * Checks if is optional.
+     *
+     * @return is optional result
+     */
     boolean isOptional();
 
+    /**
+     * Checks if is provided.
+     *
+     * @return is provided result
+     */
     boolean isProvided();
 
     /**

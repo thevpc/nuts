@@ -60,6 +60,11 @@ import java.util.Set;
  * @since 0.5.4
  */
 public interface NCp extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NCp of() {
        return NExtensions.of(NCp.class);
     }
@@ -129,6 +134,12 @@ public interface NCp extends NComponent {
      */
     NCp source(byte[] source);
 
+    /**
+     * From.
+     *
+     * @param source source
+     * @return from result
+     */
     NCp from(NInputSource source);
 
     /**
@@ -244,8 +255,20 @@ public interface NCp extends NComponent {
     NCp target(File target);
 
 
+    /**
+     * Target.
+     *
+     * @param target target
+     * @return target result
+     */
     NCp target(NOutputTarget target);
 
+    /**
+     * Source.
+     *
+     * @param source source
+     * @return source result
+     */
     NCp source(NInputSource source);
 
     /**
@@ -305,12 +328,34 @@ public interface NCp extends NComponent {
      */
     NCp to(NPath target);
 
+    /**
+     * Adds the specified options.
+     *
+     * @param NPathOption...pathOptions n path option...path options
+     * @return add options result
+     */
     NCp addOptions(NPathOption...pathOptions);
 
+    /**
+     * Removes the specified options.
+     *
+     * @param NPathOption...pathOptions n path option...path options
+     * @return remove options result
+     */
     NCp removeOptions(NPathOption...pathOptions);
 
+    /**
+     * Clear options.
+     *
+     * @return clear options result
+     */
     NCp clearOptions();
 
+    /**
+     * Options.
+     *
+     * @return options result
+     */
     Set<NPathOption> options();
 
     /**
@@ -328,12 +373,34 @@ public interface NCp extends NComponent {
      */
     NCp validator(NCpValidator validator);
 
+    /**
+     * Checks if is recursive.
+     *
+     * @return is recursive result
+     */
     boolean isRecursive();
 
+    /**
+     * Sets the recursive.
+     *
+     * @param recursive recursive
+     * @return set recursive result
+     */
     NCp setRecursive(boolean recursive);
 
+    /**
+     * Checks if is mkdirs.
+     *
+     * @return is mkdirs result
+     */
     boolean isMkdirs();
 
+    /**
+     * Mkdirs.
+     *
+     * @param mkdirs mkdirs
+     * @return mkdirs result
+     */
     NCp mkdirs(boolean mkdirs);
 
     /**
@@ -343,6 +410,11 @@ public interface NCp extends NComponent {
      */
     byte[] byteArrayResult();
 
+    /**
+     * String result.
+     *
+     * @return string result result
+     */
     String stringResult();
 
     /**

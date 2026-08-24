@@ -118,16 +118,44 @@ public interface NRepository {
     @NGetter
     Map<String, Object> userProperties();
 
+    /**
+     * Contains tag.
+     *
+     * @param tag tag
+     * @return contains tag result
+     */
     boolean containsTag(String tag);
 
+    /**
+     * Tags.
+     *
+     * @return tags result
+     */
     @NGetter
     Set<String> tags();
 
+    /**
+     * Checks if is preview.
+     *
+     * @return is preview result
+     */
     @NGetter
     boolean isPreview();
 
+    /**
+     * Adds the specified tag.
+     *
+     * @param tag tag
+     * @return add tag result
+     */
     NRepository addTag(String tag);
 
+    /**
+     * Removes the specified tag.
+     *
+     * @param tag tag
+     * @return remove tag result
+     */
     NRepository removeTag(String tag);
 
     /**
@@ -207,12 +235,27 @@ public interface NRepository {
     @NSetter
     NRepository enabled(boolean enabled);
 
+    /**
+     * Checks if is remote.
+     *
+     * @return is remote result
+     */
     @NGetter
     boolean isRemote();
 
+    /**
+     * Boot connection string.
+     *
+     * @return boot connection string result
+     */
     @NGetter
     String bootConnectionString();
 
+    /**
+     * Checks if is temporary.
+     *
+     * @return is temporary result
+     */
     @NGetter
     boolean isTemporary();
 }

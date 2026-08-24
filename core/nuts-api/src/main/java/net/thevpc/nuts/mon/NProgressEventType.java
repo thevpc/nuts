@@ -5,6 +5,12 @@ import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 
+/**
+ * NProgressEventType enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NProgressEventType implements NEnum {
     START,
     SUSPEND,
@@ -21,6 +27,9 @@ public enum NProgressEventType implements NEnum {
     UPDATE;
     private String id;
 
+  /**
+   * N progress event type.
+   */
     NProgressEventType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
@@ -30,6 +39,12 @@ public enum NProgressEventType implements NEnum {
         return id;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NProgressEventType> parse(String value) {
         return NEnumUtils.parseEnum(value, NProgressEventType.class);
     }

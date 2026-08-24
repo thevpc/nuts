@@ -49,6 +49,11 @@ public class DefaultNId implements NId {
     private final String properties;
     private final NEnvCondition condition;
 
+    /**
+     * Default n id.
+     *
+     * @return default n id result
+     */
     public DefaultNId() {
         this.groupId = null;
         this.artifactId = null;
@@ -58,6 +63,14 @@ public class DefaultNId implements NId {
         this.properties = "";
     }
 
+    /**
+     * Default n id.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param version version
+     * @return default n id result
+     */
     public DefaultNId(String groupId, String artifactId, NVersion version) {
         this.groupId = NStringUtils.stripToNull(groupId);
         this.artifactId = NStringUtils.stripToNull(artifactId);
@@ -67,6 +80,17 @@ public class DefaultNId implements NId {
         this.properties = "";
     }
 
+    /**
+     * Default n id.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param classifier classifier
+     * @param version version
+     * @param properties properties
+     * @param condition condition
+     * @return default n id result
+     */
     public DefaultNId(String groupId, String artifactId, String classifier, NVersion version, Map<String, String> properties, NEnvCondition condition) {
         this.groupId = NStringUtils.stripToNull(groupId);
         this.artifactId = NStringUtils.stripToNull(artifactId);
@@ -76,7 +100,28 @@ public class DefaultNId implements NId {
         this.properties = NStringUtils.strip(NStringMapFormat.DEFAULT.format(properties));
     }
 
+    /**
+     * Default n id.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param classifier classifier
+     * @param version version
+     * @param properties properties
+     * @param condition condition
+     * @return default n id result
+     */
     public DefaultNId(String groupId, String artifactId, String classifier, NVersion version, String properties, NEnvCondition condition) {
+      /**
+       * This.
+       *
+       * @param groupId group id
+       * @param artifactId artifact id
+       * @param classifier classifier
+       * @param version version
+       * @param NStringMapFormat.DEFAULT.parse(properties).get() n string map format.default.parse(properties).get()
+       * @param condition condition
+       */
         this(groupId, artifactId, classifier, version, NStringMapFormat.DEFAULT.parse(properties).get(), condition);
     }
 
@@ -90,6 +135,11 @@ public class DefaultNId implements NId {
         return toString().isEmpty();
     }
 
+    /**
+     * Maven folder.
+     *
+     * @return maven folder result
+     */
     public String mavenFolder() {
         StringBuilder sb = new StringBuilder();
         if (!NBootUtils.isBlank(groupId)) {
@@ -156,6 +206,12 @@ public class DefaultNId implements NId {
         if (NBlankable.isBlank(properties)) {
             return true;
         }
+        /**
+         * Properties.
+         *
+         * @param ).isEmpty( ).is empty(
+         * @return properties result
+         */
         return properties().isEmpty();
     }
 
@@ -396,11 +452,23 @@ public class DefaultNId implements NId {
 
     @Override
     public NId toAtLeast() {
+        /**
+         * Builder.
+         *
+         * @param ).version(version().toAtMost()).build( ).version(version().to at most()).build(
+         * @return builder result
+         */
         return builder().version(version().toAtMost()).build();
     }
 
     @Override
     public NId toAtMost() {
+        /**
+         * Builder.
+         *
+         * @param ).version(version().toAtLeast()).build( ).version(version().to at least()).build(
+         * @return builder result
+         */
         return builder().version(version().toAtLeast()).build();
     }
 }

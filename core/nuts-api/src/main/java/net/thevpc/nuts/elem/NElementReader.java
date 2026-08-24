@@ -13,38 +13,126 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
+/**
+ * NElementReader interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NElementReader extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NElementReader of() {
         return NExtensions.of(NElementReader.class);
     }
 
+    /**
+     * Creates a new instance of of json.
+     *
+     * @return of json result
+     */
     static NElementReader ofJson() {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).json( ).json(
+         * @return of result
+         */
         return of().json();
     }
 
+    /**
+     * Creates a new instance of of tson.
+     *
+     * @return of tson result
+     */
     static NElementReader ofTson() {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).tson( ).tson(
+         * @return of result
+         */
         return of().tson();
     }
 
+    /**
+     * Creates a new instance of of yaml.
+     *
+     * @return of yaml result
+     */
     static NElementReader ofYaml() {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).yaml( ).yaml(
+         * @return of result
+         */
         return of().yaml();
     }
 
+    /**
+     * Creates a new instance of of xml.
+     *
+     * @return of xml result
+     */
     static NElementReader ofXml() {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).xml( ).xml(
+         * @return of result
+         */
         return of().xml();
     }
 
 
+    /**
+     * Checks if is ntf.
+     *
+     * @return is ntf result
+     */
     boolean isNtf();
 
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
     NElementReader ntf(boolean ntf);
 
+    /**
+     * Checks if is log progress.
+     *
+     * @return is log progress result
+     */
     boolean isLogProgress();
 
+    /**
+     * Log progress.
+     *
+     * @param logProgress log progress
+     * @return log progress result
+     */
     NElementReader logProgress(boolean logProgress);
 
+    /**
+     * Checks if is trace progress.
+     *
+     * @return is trace progress result
+     */
     boolean isTraceProgress();
 
+    /**
+     * Trace progress.
+     *
+     * @param traceProgress trace progress
+     * @return trace progress result
+     */
     NElementReader traceProgress(boolean traceProgress);
 
     /**
@@ -65,17 +153,48 @@ public interface NElementReader extends NComponent {
      */
     NElementReader contentType(NContentType contentType);
 
+    /**
+     * Json.
+     *
+     * @return json result
+     */
     NElementReader json();
 
+    /**
+     * Yaml.
+     *
+     * @return yaml result
+     */
     NElementReader yaml();
 
+    /**
+     * Tson.
+     *
+     * @return tson result
+     */
     NElementReader tson();
 
+    /**
+     * Xml.
+     *
+     * @return xml result
+     */
     NElementReader xml();
 
 
+    /**
+     * Mapper store.
+     *
+     * @return mapper store result
+     */
     NElementMapperStore mapperStore();
 
+    /**
+     * Do with mapper store.
+     *
+     * @param doWith do with
+     * @return do with mapper store result
+     */
     NElementReader doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
     /*
@@ -108,6 +227,14 @@ public interface NElementReader extends NComponent {
      */
     <T> T read(InputStream inputStream, Class<T> clazz);
 
+    /**
+     * Read with source.
+     *
+     * @param inputStream input stream
+     * @param clazz clazz
+     * @param source source
+     * @return read with source result
+     */
     <T> T readWithSource(InputStream inputStream, Class<T> clazz, Object source);
 
     /**
@@ -120,6 +247,14 @@ public interface NElementReader extends NComponent {
      */
     <T> T read(String string, Class<T> clazz);
 
+    /**
+     * Read with source.
+     *
+     * @param string string
+     * @param clazz clazz
+     * @param source source
+     * @return read with source result
+     */
     <T> T readWithSource(String string, Class<T> clazz, Object source);
 
     /**
@@ -132,6 +267,14 @@ public interface NElementReader extends NComponent {
      */
     <T> T read(byte[] bytes, Class<T> clazz);
 
+    /**
+     * Read with source.
+     *
+     * @param bytes bytes
+     * @param clazz clazz
+     * @param source source
+     * @return read with source result
+     */
     <T> T readWithSource(byte[] bytes, Class<T> clazz, Object source);
 
     /**
@@ -144,6 +287,14 @@ public interface NElementReader extends NComponent {
      */
     <T> T read(Reader reader, Class<T> clazz);
 
+    /**
+     * Read with source.
+     *
+     * @param reader reader
+     * @param clazz clazz
+     * @param source source
+     * @return read with source result
+     */
     <T> T readWithSource(Reader reader, Class<T> clazz, Object source);
 
     /**
@@ -182,6 +333,13 @@ public interface NElementReader extends NComponent {
      */
     NElement read(InputStream inputStream);
 
+    /**
+     * Read with source.
+     *
+     * @param inputStream input stream
+     * @param source source
+     * @return read with source result
+     */
     NElement readWithSource(InputStream inputStream, Object source);
 
     /**
@@ -234,13 +392,45 @@ public interface NElementReader extends NComponent {
     NElement read(NPath file);
 
 
+    /**
+     * Read with source.
+     *
+     * @param string string
+     * @param source source
+     * @return read with source result
+     */
     NElement readWithSource(String string, Object source);
 
+    /**
+     * Read with source.
+     *
+     * @param bytes bytes
+     * @param source source
+     * @return read with source result
+     */
     NElement readWithSource(byte[] bytes, Object source);
 
+    /**
+     * Read with source.
+     *
+     * @param reader reader
+     * @param source source
+     * @return read with source result
+     */
     NElement readWithSource(Reader reader, Object source);
 
+    /**
+     * Progress factory.
+     *
+     * @return progress factory result
+     */
     NProgressFactory progressFactory();
 
+    /**
+     * Progress factory.
+     *
+     * @param progressFactory progress factory
+     * @return progress factory result
+     */
     NElementReader progressFactory(NProgressFactory progressFactory);
 }

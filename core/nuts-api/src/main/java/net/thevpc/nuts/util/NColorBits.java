@@ -1,20 +1,41 @@
 package net.thevpc.nuts.util;
 
+/**
+ * NColorBits enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NColorBits implements NEnum {
     BITS_4(4),
     BITS_8(8),
     BITS_16(16),
     BITS_24(24),
     BITS_32(32),
+  /**
+   * Bits_64.
+   *
+   * @param 64 64
+   */
     BITS_64(64);
     private final int bits;
     private final String id;
 
+  /**
+   * N color bits.
+   *
+   * @param bits bits
+   */
     NColorBits(int bits) {
         this.bits = bits;
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Bits.
+     *
+     * @return bits result
+     */
     public int bits() {
         return bits;
     }
@@ -24,6 +45,12 @@ public enum NColorBits implements NEnum {
         return id;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NColorBits> parse(String value) {
         return NEnumUtils.parseEnum(value, NColorBits.class, enumValue -> {
             switch (enumValue.normalizedValue()) {

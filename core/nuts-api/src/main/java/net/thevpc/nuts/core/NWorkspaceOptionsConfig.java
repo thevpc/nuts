@@ -41,17 +41,34 @@ public class NWorkspaceOptionsConfig {
     private NVersion apiVersion;
 
 
+    /**
+     * Api version.
+     *
+     * @param apiVersion api version
+     * @return api version result
+     */
     @NSetter
     public NWorkspaceOptionsConfig apiVersion(NVersion apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
+    /**
+     * Api version.
+     *
+     * @return api version result
+     */
     @NGetter
     public NVersion apiVersion() {
         return apiVersion;
     }
 
+    /**
+     * Compact.
+     *
+     * @param compact compact
+     * @return compact result
+     */
     @NSetter
     public NWorkspaceOptionsConfig compact(boolean compact) {
         if (compact) {
@@ -66,14 +83,29 @@ public class NWorkspaceOptionsConfig {
         return this;
     }
 
+    /**
+     * Checks if is short options.
+     *
+     * @return is short options result
+     */
     public boolean isShortOptions() {
         return shortOptions;
     }
 
+    /**
+     * Checks if is single arg options.
+     *
+     * @return is single arg options result
+     */
     public boolean isSingleArgOptions() {
         return singleArgOptions;
     }
 
+    /**
+     * Checks if is omit defaults.
+     *
+     * @return is omit defaults result
+     */
     public boolean isOmitDefaults() {
         return omitDefaults;
     }

@@ -38,35 +38,103 @@ import java.util.List;
  */
 public interface NDependencySolver {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDependencySolver of() {
         return NDependencySolverRPI.of().createSolver();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param solverName solver name
+     * @return of result
+     */
     static NDependencySolver of(String solverName) {
         return NDependencySolverRPI.of().createSolver(solverName);
     }
 
+    /**
+     * Solver names.
+     *
+     * @return solver names result
+     */
     static List<String> solverNames() {
         return NDependencySolverRPI.of().solverNames();
     }
 
 
+    /**
+     * Adds add.
+     *
+     * @param def def
+     * @return add result
+     */
     NDependencySolver add(NDefinition def);
 
+    /**
+     * Adds add.
+     *
+     * @param dependency dependency
+     * @return add result
+     */
     NDependencySolver add(NDependency dependency);
 
+    /**
+     * Adds add.
+     *
+     * @param dependency dependency
+     * @param def def
+     * @return add result
+     */
     NDependencySolver add(NDependency dependency, NDefinition def);
 
+    /**
+     * Dependency filter.
+     *
+     * @param dependencyFilter dependency filter
+     * @return dependency filter result
+     */
     NDependencySolver dependencyFilter(NDependencyFilter dependencyFilter);
 
+    /**
+     * Repository filter.
+     *
+     * @param repositoryFilter repository filter
+     * @return repository filter result
+     */
     NDependencySolver repositoryFilter(NRepositoryFilter repositoryFilter);
 
+    /**
+     * Solve.
+     *
+     * @return solve result
+     */
     NDependencies solve();
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 
+    /**
+     * Checks if is ignore current environment.
+     *
+     * @return is ignore current environment result
+     */
     boolean isIgnoreCurrentEnvironment();
 
+    /**
+     * Ignore current environment.
+     *
+     * @param ignoreCurrentEnvironment ignore current environment
+     * @return ignore current environment result
+     */
     NDependencySolver ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 
 }

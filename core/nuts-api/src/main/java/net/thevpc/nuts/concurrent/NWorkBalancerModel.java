@@ -60,57 +60,117 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
      */
     private NWorkBalancerModelContext context = new NWorkBalancerModelContext();
 
+    /**
+     * N work balancer model.
+     *
+     * @return n work balancer model result
+     */
     public NWorkBalancerModel() {
     }
 
+    /**
+     * Strategy.
+     *
+     * @return strategy result
+     */
     @NGetter
     public String strategy() {
         return strategy;
     }
 
+    /**
+     * Strategy.
+     *
+     * @param strategy strategy
+     * @return strategy result
+     */
     public NWorkBalancerModel strategy(String strategy) {
         this.strategy = strategy;
         return this;
     }
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     @NGetter
     public String id() {
         return id;
     }
 
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
     @NGetter
     public NWorkBalancerModel id(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * Options.
+     *
+     * @return options result
+     */
     @NGetter
     public Map<String, NElement> options() {
         return options;
     }
 
+    /**
+     * Options.
+     *
+     * @param options options
+     * @return options result
+     */
     @NSetter
     public NWorkBalancerModel options(Map<String, NElement> options) {
         this.options = options;
         return this;
     }
 
+    /**
+     * Workers.
+     *
+     * @return workers result
+     */
     @NGetter
     public List<NWorkBalancerWorkerModel> workers() {
         return workers;
     }
 
+    /**
+     * Workers.
+     *
+     * @param workers workers
+     * @return workers result
+     */
     @NSetter
     public NWorkBalancerModel workers(List<NWorkBalancerWorkerModel> workers) {
         this.workers = workers;
         return this;
     }
 
+    /**
+     * Context.
+     *
+     * @return context result
+     */
     @NGetter
     public NWorkBalancerModelContext context() {
         return context;
     }
 
+    /**
+     * Context.
+     *
+     * @param context context
+     * @return context result
+     */
     @NSetter
     public NWorkBalancerModel context(NWorkBalancerModelContext context) {
         this.context = context;
@@ -119,6 +179,11 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
 
     @Override
     public NWorkBalancerModel copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -128,6 +193,12 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
         try {
             copy = (NWorkBalancerModel) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
         copy.options = this.options == null ? null : new HashMap<>(this.options);

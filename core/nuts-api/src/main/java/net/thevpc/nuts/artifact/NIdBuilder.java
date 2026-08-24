@@ -43,13 +43,43 @@ import java.util.Map;
  */
 public interface NIdBuilder extends NBlankable, NComponent, Serializable {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param id id
+     * @return of result
+     */
     static NIdBuilder of(NId id) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).copyFrom(id ).copy from(id
+         * @return of result
+         */
         return of().copyFrom(id);
     }
+    /**
+     * Creates a new instance of of.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @return of result
+     */
     static NIdBuilder of(String groupId, String artifactId) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).groupId(groupId).artifactId(artifactId ).group id(group id).artifact id(artifact id
+         * @return of result
+         */
         return of().groupId(groupId).artifactId(artifactId);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NIdBuilder of() {
         return NExtensions.of(NIdBuilder.class);
     }
@@ -63,9 +93,21 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
     @NSetter
     NIdBuilder setFace(String value);
 
+    /**
+     * Condition.
+     *
+     * @param c c
+     * @return condition result
+     */
     @NSetter
     NIdBuilder condition(NEnvCondition c);
 
+    /**
+     * Condition.
+     *
+     * @param c c
+     * @return condition result
+     */
     @NSetter
     NIdBuilder condition(NEnvConditionBuilder c);
 
@@ -238,6 +280,11 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
     @NGetter
     boolean isLongId();
 
+    /**
+     * Checks if is short id.
+     *
+     * @return is short id result
+     */
     @NGetter
     boolean isShortId();
 
@@ -379,8 +426,18 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      */
     NIdBuilder builder();
 
+    /**
+     * Converts to dependency.
+     *
+     * @return to dependency result
+     */
     NDependency toDependency();
 
+    /**
+     * Converts to filter.
+     *
+     * @return to filter result
+     */
     NIdFilter toFilter();
 
     /**
@@ -405,7 +462,17 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      */
     NId compatOlder();
 
+    /**
+     * Checks if is null.
+     *
+     * @return is null result
+     */
     boolean isNull();
 
+    /**
+     * Checks if is blank.
+     *
+     * @return is blank result
+     */
     boolean isBlank();
 }

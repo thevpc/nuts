@@ -1,5 +1,11 @@
 package net.thevpc.nuts.util;
 
+/**
+ * NMatchType enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NMatchType implements NEnum{
     FULL_MATCH,
     MATCH,
@@ -18,6 +24,12 @@ public enum NMatchType implements NEnum{
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NMatchType> parse(String value) {
         return NEnumUtils.parseEnum(value, NMatchType.class);
     }

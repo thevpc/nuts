@@ -48,6 +48,11 @@ public interface NUpdateResult {
     @NGetter
     NId id();
 
+    /**
+     * Checks if is installed.
+     *
+     * @return is installed result
+     */
     @NGetter
     boolean isInstalled();
 

@@ -38,6 +38,9 @@ import java.io.InputStream;
  * @since 0.5.4
  */
 public interface NSystemTerminal extends NSystemTerminalBase {
+    /**
+     * Enable rich term.
+     */
     static void enableRichTerm() {
         NIORPI.of().enableRichTerm();
     }
@@ -94,5 +97,10 @@ public interface NSystemTerminal extends NSystemTerminalBase {
      */
     NSystemTerminal printProgress(float progress, NMsg message);
 
+    /**
+     * Base.
+     *
+     * @return base result
+     */
     NSystemTerminalBase base();
 }

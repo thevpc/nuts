@@ -7,10 +7,23 @@ import net.thevpc.nuts.util.NPredicate;
 
 import java.util.function.Supplier;
 
+/**
+ * NPredicateWithDescription class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NPredicateWithDescription<T> extends NPredicateDelegate<T> {
     private NPredicate<T> base;
     private Supplier<NElement> description;
 
+    /**
+     * N predicate with description.
+     *
+     * @param base base
+     * @param description description
+     * @return n predicate with description result
+     */
     public NPredicateWithDescription(NPredicate<T> base, Supplier<NElement> description) {
         this.base = base;
         this.description = description;

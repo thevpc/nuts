@@ -32,22 +32,62 @@ package net.thevpc.nuts.text;
  */
 public interface NTableModel {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NMutableTableModel of() {
         return NMutableTableModel.of();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param text text
+     * @return of result
+     */
     static NTableModel of(NText text) {
         return NMutableTableModel.of().addRow(NTableCell.of(text));
     }
 
+    /**
+     * Columns count.
+     *
+     * @return columns count result
+     */
     int columnsCount();
 
+    /**
+     * Rows count.
+     *
+     * @return rows count result
+     */
     int rowsCount();
 
+    /**
+     * Returns the cell.
+     *
+     * @param row row
+     * @param column column
+     * @return get cell result
+     */
     NTableCellDef getCell(int row, int column);
 
+    /**
+     * Returns the header.
+     *
+     * @param column column
+     * @return get header result
+     */
     NTableCellDef getHeader(int column);
 
+    /**
+     * Returns the header col span.
+     *
+     * @param column column
+     * @return get header col span result
+     */
     default int getHeaderColSpan(int column) {
         return 1;
     }

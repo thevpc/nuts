@@ -97,126 +97,294 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
      */
     private ClassLoader importClassLoader;
 
+    /**
+     * Theme name.
+     *
+     * @return theme name result
+     */
     public String themeName() {
         return themeName;
     }
 
+    /**
+     * Theme name.
+     *
+     * @param themeName theme name
+     * @return theme name result
+     */
     public NTextTransformConfig themeName(String themeName) {
         this.themeName = themeName;
         return this;
     }
 
+    /**
+     * Checks if is basic true styles.
+     *
+     * @return is basic true styles result
+     */
     public boolean isBasicTrueStyles() {
         return basicTrueStyles;
     }
 
+    /**
+     * Basic true styles.
+     *
+     * @param basicTrueStyles basic true styles
+     * @return basic true styles result
+     */
     public NTextTransformConfig basicTrueStyles(boolean basicTrueStyles) {
         this.basicTrueStyles = basicTrueStyles;
         return this;
     }
 
+    /**
+     * Checks if is apply theme.
+     *
+     * @return is apply theme result
+     */
     public boolean isApplyTheme() {
         return applyTheme;
     }
 
+    /**
+     * Apply theme.
+     *
+     * @param applyTheme apply theme
+     * @return apply theme result
+     */
     public NTextTransformConfig applyTheme(boolean applyTheme) {
         this.applyTheme = applyTheme;
         return this;
     }
 
+    /**
+     * Checks if is process title numbers.
+     *
+     * @return is process title numbers result
+     */
     public boolean isProcessTitleNumbers() {
         return processTitleNumbers;
     }
 
+    /**
+     * Process title numbers.
+     *
+     * @param processTitleNumbers process title numbers
+     * @return process title numbers result
+     */
     public NTextTransformConfig processTitleNumbers(boolean processTitleNumbers) {
         this.processTitleNumbers = processTitleNumbers;
         return this;
     }
 
+    /**
+     * Title number sequence.
+     *
+     * @return title number sequence result
+     */
     public NTitleSequence titleNumberSequence() {
         return titleNumberSequence;
     }
 
+    /**
+     * Title number sequence.
+     *
+     * @param titleNumberSequence title number sequence
+     * @return title number sequence result
+     */
     public NTextTransformConfig titleNumberSequence(NTitleSequence titleNumberSequence) {
         this.titleNumberSequence = titleNumberSequence;
         return this;
     }
 
+    /**
+     * Checks if is filtered.
+     *
+     * @return is filtered result
+     */
     public boolean isFiltered() {
         return filtered;
     }
 
+    /**
+     * Filtered.
+     *
+     * @param filtered filtered
+     * @return filtered result
+     */
     public NTextTransformConfig filtered(boolean filtered) {
         this.filtered = filtered;
         return this;
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NTextTransformConfig copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
     @Override
     protected NTextTransformConfig clone() {
         try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
             return (NTextTransformConfig) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param e e
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(e);
         }
     }
 
+    /**
+     * Checks if is process includes.
+     *
+     * @return is process includes result
+     */
     public boolean isProcessIncludes() {
         return processIncludes;
     }
 
+    /**
+     * Process includes.
+     *
+     * @param processIncludes process includes
+     * @return process includes result
+     */
     public NTextTransformConfig processIncludes(boolean processIncludes) {
         this.processIncludes = processIncludes;
         return this;
     }
 
 
+    /**
+     * Var provider.
+     *
+     * @return var provider result
+     */
     public Function<String, String> varProvider() {
         return varProvider;
     }
 
+    /**
+     * Checks if is process vars.
+     *
+     * @return is process vars result
+     */
     public boolean isProcessVars() {
         return processVars;
     }
 
+    /**
+     * Process vars.
+     *
+     * @param processVars process vars
+     * @return process vars result
+     */
     public NTextTransformConfig processVars(boolean processVars) {
         this.processVars = processVars;
         return this;
     }
 
+    /**
+     * Var provider.
+     *
+     * @param varProvider var provider
+     * @return var provider result
+     */
     public NTextTransformConfig varProvider(Function<String, String> varProvider) {
         this.varProvider = varProvider;
         return this;
     }
 
+    /**
+     * Anchor.
+     *
+     * @return anchor result
+     */
     public String anchor() {
         return anchor;
     }
 
+    /**
+     * Anchor.
+     *
+     * @param anchor anchor
+     * @return anchor result
+     */
     public NTextTransformConfig anchor(String anchor) {
         this.anchor = anchor;
         return this;
     }
 
+    /**
+     * Process all.
+     *
+     * @param enable enable
+     * @return process all result
+     */
     public NTextTransformConfig processAll(boolean enable) {
+      /**
+       * Process title numbers.
+       *
+       * @param enable enable
+       */
         processTitleNumbers(enable);
+      /**
+       * Process vars.
+       *
+       * @param enable enable
+       */
         processVars(enable);
+      /**
+       * Process includes.
+       *
+       * @param enable enable
+       */
         processIncludes(enable);
         return this;
     }
 
+    /**
+     * Root level.
+     *
+     * @return root level result
+     */
     public Integer rootLevel() {
         return rootLevel;
     }
 
+    /**
+     * Root level.
+     *
+     * @param rootLevel root level
+     * @return root level result
+     */
     public NTextTransformConfig rootLevel(Integer rootLevel) {
         this.rootLevel = rootLevel;
         return this;
     }
 
+    /**
+     * Checks if is blank.
+     *
+     * @return is blank result
+     */
     public boolean isBlank() {
         return !filtered
                 && !flatten
@@ -234,38 +402,82 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
     }
 
 
+    /**
+     * Current dir.
+     *
+     * @return current dir result
+     */
     public NPath currentDir() {
         return currentDir;
     }
 
+    /**
+     * Current dir.
+     *
+     * @param currentDir current dir
+     * @return current dir result
+     */
     public NTextTransformConfig currentDir(NPath currentDir) {
         this.currentDir = currentDir;
         return this;
     }
 
 
+    /**
+     * Checks if is flatten.
+     *
+     * @return is flatten result
+     */
     public boolean isFlatten() {
         return flatten;
     }
 
+    /**
+     * Flatten.
+     *
+     * @param flatten flatten
+     * @return flatten result
+     */
     public NTextTransformConfig flatten(boolean flatten) {
         this.flatten = flatten;
         return this;
     }
 
+    /**
+     * Checks if is normalize.
+     *
+     * @return is normalize result
+     */
     public boolean isNormalize() {
         return normalize;
     }
 
+    /**
+     * Normalize.
+     *
+     * @param normalize normalize
+     * @return normalize result
+     */
     public NTextTransformConfig normalize(boolean normalize) {
         this.normalize = normalize;
         return this;
     }
 
+    /**
+     * Import class loader.
+     *
+     * @return import class loader result
+     */
     public ClassLoader importClassLoader() {
         return importClassLoader;
     }
 
+    /**
+     * Import class loader.
+     *
+     * @param importClassLoader import class loader
+     * @return import class loader result
+     */
     public NTextTransformConfig importClassLoader(ClassLoader importClassLoader) {
         this.importClassLoader = importClassLoader;
         return this;

@@ -49,6 +49,11 @@ import java.util.Set;
  * @since 0.5.4
  */
 public interface NCompress extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NCompress of() {
         return NExtensions.of(NCompress.class);
     }
@@ -92,6 +97,12 @@ public interface NCompress extends NComponent {
      */
     List<NInputSource> sources();
 
+    /**
+     * Source.
+     *
+     * @param source source
+     * @return source result
+     */
     NCompress source(NInputSource source);
 
     /**
@@ -168,6 +179,12 @@ public interface NCompress extends NComponent {
      */
     NCompress target(Path target);
 
+    /**
+     * Target.
+     *
+     * @param target target
+     * @return target result
+     */
     NCompress target(NOutputTarget target);
 
     /**
@@ -299,11 +316,33 @@ public interface NCompress extends NComponent {
      */
     NCompress skipRoot(boolean value);
 
+    /**
+     * Options.
+     *
+     * @param pathOptions path options
+     * @return options result
+     */
     NCompress options(NPathOption... pathOptions);
 
+    /**
+     * Removes the specified options.
+     *
+     * @param pathOptions path options
+     * @return remove options result
+     */
     NCompress removeOptions(NPathOption... pathOptions);
 
+    /**
+     * Clear options.
+     *
+     * @return clear options result
+     */
     NCompress clearOptions();
 
+    /**
+     * Options.
+     *
+     * @return options result
+     */
     Set<NPathOption> options();
 }

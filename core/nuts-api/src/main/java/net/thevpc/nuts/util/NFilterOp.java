@@ -41,10 +41,19 @@ public enum NFilterOp implements NEnum {
     NOT;
     private final String id;
 
+  /**
+   * N filter op.
+   */
     NFilterOp() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NFilterOp> parse(String value) {
         return NEnumUtils.parseEnum(value, NFilterOp.class);
     }

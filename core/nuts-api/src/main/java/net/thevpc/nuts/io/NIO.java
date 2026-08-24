@@ -38,21 +38,53 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * NIO interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NIO extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NIO of() {
         return NExtensions.of(NIO.class);
     }
 
+    /**
+     * Creates a new instance of of null raw input stream.
+     *
+     * @return of null raw input stream result
+     */
     static InputStream ofNullRawInputStream() {
         return NullInputStream.INSTANCE;
     }
 
+    /**
+     * Creates a new instance of of null raw output stream.
+     *
+     * @return of null raw output stream result
+     */
     static OutputStream ofNullRawOutputStream() {
         return NullOutputStream.INSTANCE;
     }
 
+    /**
+     * Checks if is stdin.
+     *
+     * @param in in
+     * @return is stdin result
+     */
     boolean isStdin(InputStream in);
 
+    /**
+     * Stdin.
+     *
+     * @return stdin result
+     */
     InputStream stdin();
 
 
@@ -74,6 +106,12 @@ public interface NIO extends NComponent {
      */
     boolean isStdout(OutputStream out);
 
+    /**
+     * Checks if is stdout.
+     *
+     * @param out out
+     * @return is stdout result
+     */
     boolean isStdout(NPrintStream out);
 
     /**
@@ -82,10 +120,26 @@ public interface NIO extends NComponent {
      */
     boolean isStderr(OutputStream out);
 
+    /**
+     * Checks if is stderr.
+     *
+     * @param out out
+     * @return is stderr result
+     */
     boolean isStderr(NPrintStream out);
 
+    /**
+     * Stdout.
+     *
+     * @return stdout result
+     */
     NPrintStream stdout();
 
+    /**
+     * Stderr.
+     *
+     * @return stderr result
+     */
     NPrintStream stderr();
 
     /**
@@ -118,37 +172,133 @@ public interface NIO extends NComponent {
      */
     NIO defaultTerminal(NTerminal terminal);
 
+    /**
+     * Adds the specified path factory.
+     *
+     * @param pathFactory path factory
+     * @return add path factory result
+     */
     NIO addPathFactory(NPathFactorySPI pathFactory);
 
+    /**
+     * Removes the specified path factory.
+     *
+     * @param pathFactory path factory
+     * @return remove path factory result
+     */
     NIO removePathFactory(NPathFactorySPI pathFactory);
 
+    /**
+     * Probe content type.
+     *
+     * @param path path
+     * @return probe content type result
+     */
     String probeContentType(URL path);
 
+    /**
+     * Probe content type.
+     *
+     * @param path path
+     * @return probe content type result
+     */
     String probeContentType(File path);
 
+    /**
+     * Probe content type.
+     *
+     * @param path path
+     * @return probe content type result
+     */
     String probeContentType(Path path);
 
+    /**
+     * Probe content type.
+     *
+     * @param path path
+     * @return probe content type result
+     */
     String probeContentType(NPath path);
 
+    /**
+     * Probe content type.
+     *
+     * @param stream stream
+     * @return probe content type result
+     */
     String probeContentType(InputStream stream);
 
+    /**
+     * Probe content type.
+     *
+     * @param stream stream
+     * @return probe content type result
+     */
     String probeContentType(byte[] stream);
 
     /// /////
+    /**
+     * Probe charset.
+     *
+     * @param path path
+     * @return probe charset result
+     */
     String probeCharset(URL path);
 
+    /**
+     * Probe charset.
+     *
+     * @param path path
+     * @return probe charset result
+     */
     String probeCharset(File path);
 
+    /**
+     * Probe charset.
+     *
+     * @param path path
+     * @return probe charset result
+     */
     String probeCharset(Path path);
 
+    /**
+     * Probe charset.
+     *
+     * @param path path
+     * @return probe charset result
+     */
     String probeCharset(NPath path);
 
+    /**
+     * Probe charset.
+     *
+     * @param stream stream
+     * @return probe charset result
+     */
     String probeCharset(InputStream stream);
 
+    /**
+     * Probe charset.
+     *
+     * @param stream stream
+     * @return probe charset result
+     */
     String probeCharset(byte[] stream);
 
+    /**
+     * Finds the find extensions by content type.
+     *
+     * @param contentType content type
+     * @return find extensions by content type result
+     */
     List<String> findExtensionsByContentType(String contentType);
 
+    /**
+     * Finds the find content types by extension.
+     *
+     * @param extension extension
+     * @return find content types by extension result
+     */
     List<String> findContentTypesByExtension(String extension);
 
     /**

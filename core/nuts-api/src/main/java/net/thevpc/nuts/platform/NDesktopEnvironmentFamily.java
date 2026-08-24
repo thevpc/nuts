@@ -31,6 +31,12 @@ import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
+/**
+ * NDesktopEnvironmentFamily enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NDesktopEnvironmentFamily implements NEnum {
     HEADLESS,
     WINDOWS_SHELL,
@@ -64,10 +70,19 @@ public enum NDesktopEnvironmentFamily implements NEnum {
      */
     private final String id;
 
+  /**
+   * N desktop environment family.
+   */
     NDesktopEnvironmentFamily() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NDesktopEnvironmentFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NDesktopEnvironmentFamily.class, s -> {
             switch (s.normalizedValue()) {

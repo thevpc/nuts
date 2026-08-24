@@ -37,26 +37,80 @@ import java.util.function.Function;
  */
 public interface NReflectConfigurationBuilder extends NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NReflectConfigurationBuilder of() {
         return NExtensions.of(NReflectConfigurationBuilder.class);
     }
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NReflectConfiguration build();
 
+    /**
+     * Property access strategy.
+     *
+     * @return property access strategy result
+     */
     Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy();
 
+    /**
+     * Property default value strategy.
+     *
+     * @return property default value strategy result
+     */
     Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy();
 
+    /**
+     * Property access strategy.
+     *
+     * @param propertyAccessStrategy property access strategy
+     * @return property access strategy result
+     */
     NReflectConfigurationBuilder propertyAccessStrategy(Function<Class, Set<NReflectPropertyAccessStrategy>> propertyAccessStrategy);
 
+    /**
+     * Property access strategy.
+     *
+     * @param propertyAccessStrategy property access strategy
+     * @return property access strategy result
+     */
     NReflectConfigurationBuilder propertyAccessStrategy(Set<NReflectPropertyAccessStrategy> propertyAccessStrategy);
 
+    /**
+     * Property default value strategy.
+     *
+     * @param propertyDefaultValueStrategy property default value strategy
+     * @return property default value strategy result
+     */
     NReflectConfigurationBuilder propertyDefaultValueStrategy(NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy);
     
+    /**
+     * Property default value strategy.
+     *
+     * @param propertyDefaultValueStrategy property default value strategy
+     * @return property default value strategy result
+     */
     NReflectConfigurationBuilder propertyDefaultValueStrategy(Function<Class, NReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy);
 
+    /**
+     * Unset property access strategy.
+     *
+     * @return unset property access strategy result
+     */
     NReflectConfigurationBuilder unsetPropertyAccessStrategy();
 
+    /**
+     * Unset property default value strategy.
+     *
+     * @return unset property default value strategy result
+     */
     NReflectConfigurationBuilder unsetPropertyDefaultValueStrategy();
 
 }

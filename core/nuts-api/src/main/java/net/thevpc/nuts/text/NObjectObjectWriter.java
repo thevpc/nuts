@@ -41,26 +41,82 @@ import java.util.Map;
  */
 public interface NObjectObjectWriter extends NContentTypeWriter {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NObjectObjectWriter of() {
        return NExtensions.of(NObjectObjectWriter.class);
     }
 
+    /**
+     * Format mode.
+     *
+     * @return format mode result
+     */
     String formatMode();
 
+    /**
+     * Format mode.
+     *
+     * @param formatMode format mode
+     * @return format mode result
+     */
     NObjectObjectWriter formatMode(String formatMode);
 
+    /**
+     * Format string.
+     *
+     * @return format string result
+     */
     String formatString();
 
+    /**
+     * Format string.
+     *
+     * @param formatString format string
+     * @return format string result
+     */
     NObjectObjectWriter formatString(String formatString);
 
+    /**
+     * Format params.
+     *
+     * @return format params result
+     */
     Map<String, Object> formatParams();
 
+    /**
+     * Format params.
+     *
+     * @param formatParams format params
+     * @return format params result
+     */
     NObjectObjectWriter formatParams(Map<String, Object> formatParams);
 
+    /**
+     * Format param.
+     *
+     * @param name name
+     * @param value value
+     * @return format param result
+     */
     NObjectObjectWriter formatParam(String name, Object value);
 
+    /**
+     * Output format.
+     *
+     * @return output format result
+     */
     NContentType outputFormat();
 
+    /**
+     * Output format.
+     *
+     * @param outputFormat output format
+     * @return output format result
+     */
     NObjectObjectWriter outputFormat(NContentType outputFormat);
 
     /**
@@ -91,5 +147,11 @@ public interface NObjectObjectWriter extends NContentTypeWriter {
     NObjectObjectWriter compact(boolean compact);
 
 
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
     NObjectObjectWriter ntf(boolean ntf);
 }

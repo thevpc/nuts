@@ -35,7 +35,20 @@ import java.io.InputStream;
  * @since 0.5.8
  */
 public interface NUncompressVisitor {
+    /**
+     * Visit folder.
+     *
+     * @param path path
+     * @return visit folder result
+     */
     boolean visitFolder(String path);
 
+    /**
+     * Visit file.
+     *
+     * @param path path
+     * @param inputStream input stream
+     * @return visit file result
+     */
     boolean visitFile(String path, InputStream inputStream);
 }

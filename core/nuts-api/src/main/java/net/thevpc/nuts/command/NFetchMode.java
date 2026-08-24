@@ -73,10 +73,19 @@ public enum NFetchMode implements NEnum {
      */
     private final String id;
 
+  /**
+   * N fetch mode.
+   */
     NFetchMode() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NFetchMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NFetchMode.class);
     }

@@ -7,6 +7,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * NReservedMavenVersionComparator class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NReservedMavenVersionComparator implements NVersionComparator {
     public static final NVersionComparator INSTANCE = new NReservedMavenVersionComparator();
 
@@ -29,6 +35,13 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
         );
     }
 
+    /**
+     * Compare version parts.
+     *
+     * @param v1 v1
+     * @param v2 v2
+     * @return compare version parts result
+     */
     public int compareVersionParts(List<NVersionPart> v1, List<NVersionPart> v2) {
         int i = 0;
         int j = 0;
@@ -103,6 +116,12 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
         return 0;
     }
 
+    /**
+     * Normalize for comparison.
+     *
+     * @param v1 v1
+     * @return normalize for comparison result
+     */
     private static List<NVersionPart> normalizeForComparison(List<NVersionPart> v1) {
         List<NVersionPart> ret = new ArrayList<>(v1);
         for (int i = ret.size() - 1; i >= 0; i--) {
@@ -127,6 +146,13 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
     }
 
 
+    /**
+     * Compare to.
+     *
+     * @param v1 v1
+     * @param v2 v2
+     * @return compare to result
+     */
     public int compareTo(NVersionPart v1, NVersionPart v2) {
         if (v1.equals(v2)) {
             return 0;
@@ -170,6 +196,12 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
         }
     }
 
+    /**
+     * Returns the known qualifier index.
+     *
+     * @param v1 v1
+     * @return get known qualifier index result
+     */
     private static Integer getKnownQualifierIndex(String v1) {
         switch (v1.toLowerCase()) {
             case "a":

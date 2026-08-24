@@ -34,10 +34,25 @@ import java.time.Instant;
  */
 public interface NCmdLineHistoryEntry {
 
+    /**
+     * Index.
+     *
+     * @return index result
+     */
     int index();
 
+    /**
+     * Time.
+     *
+     * @return time result
+     */
     Instant time();
 
+    /**
+     * Line.
+     *
+     * @return line result
+     */
     String line();
 
 }

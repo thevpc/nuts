@@ -37,6 +37,11 @@ import java.util.Map;
  */
 public interface NVersionWriter extends NObjectWriter, NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NVersionWriter of() {
         return NExtensions.of(NVersionWriter.class);
     }
@@ -45,7 +50,20 @@ public interface NVersionWriter extends NObjectWriter, NComponent {
     @Override
     NVersionWriter ntf(boolean ntf);
 
+    /**
+     * Adds the specified property.
+     *
+     * @param key key
+     * @param value value
+     * @return add property result
+     */
     NVersionWriter addProperty(String key, String value);
 
+    /**
+     * Adds the specified properties.
+     *
+     * @param p p
+     * @return add properties result
+     */
     NVersionWriter addProperties(Map<String, String> p);
 }

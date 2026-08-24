@@ -44,42 +44,100 @@ import java.util.Collection;
 public interface NDependencyFilter extends NFilter {
     //////// COMMON START
 
+    /**
+     * Creates a new instance of of nonnull.
+     *
+     * @param filter filter
+     * @return of nonnull result
+     */
     static NDependencyFilter ofNonnull(NFilter filter){
         return NDependencyFilterRPI.of().nonnull(filter);
     }
 
+    /**
+     * Creates a new instance of of always.
+     *
+     * @return of always result
+     */
     static NDependencyFilter ofAlways(){
         return NDependencyFilterRPI.of().always();
     }
 
+    /**
+     * Creates a new instance of of never.
+     *
+     * @return of never result
+     */
     static NDependencyFilter ofNever(){
         return NDependencyFilterRPI.of().never();
     }
 
+    /**
+     * Creates a new instance of of all.
+     *
+     * @param others others
+     * @return of all result
+     */
     static NDependencyFilter ofAll(NFilter... others){
         return NDependencyFilterRPI.of().all(others);
     }
 
+    /**
+     * Creates a new instance of of any.
+     *
+     * @param others others
+     * @return of any result
+     */
     static NDependencyFilter ofAny(NFilter... others){
         return NDependencyFilterRPI.of().any(others);
     }
 
+    /**
+     * Creates a new instance of of not.
+     *
+     * @param other other
+     * @return of not result
+     */
     static NDependencyFilter ofNot(NFilter other){
         return NDependencyFilterRPI.of().not(other);
     }
 
+    /**
+     * Creates a new instance of of none.
+     *
+     * @param others others
+     * @return of none result
+     */
     static NDependencyFilter ofNone(NFilter... others){
         return NDependencyFilterRPI.of().none(others);
     }
 
+    /**
+     * Creates a new instance of of from.
+     *
+     * @param a a
+     * @return of from result
+     */
     static NDependencyFilter ofFrom(NFilter a){
         return NDependencyFilterRPI.of().from(a);
     }
 
+    /**
+     * Creates a new instance of of as.
+     *
+     * @param a a
+     * @return of as result
+     */
     static NDependencyFilter ofAs(NFilter a){
         return NDependencyFilterRPI.of().as(a);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param expression expression
+     * @return of result
+     */
     static NDependencyFilter of(String expression){
         return NDependencyFilterRPI.of().parse(expression);
     }
@@ -310,6 +368,13 @@ public interface NDependencyFilter extends NFilter {
         return NDependencyFilterRPI.of().byRunnable(optional);
     }
 
+    /**
+     * Creates a new instance of of runnable.
+     *
+     * @param optional optional
+     * @param anyEnv any env
+     * @return of runnable result
+     */
     static NDependencyFilter ofRunnable(boolean optional,boolean anyEnv){
         return NDependencyFilterRPI.of().byRunnable(optional,anyEnv);
     }
@@ -332,6 +397,12 @@ public interface NDependencyFilter extends NFilter {
         return NDependencyFilterRPI.of().byDesktop(de);
     }
 
+    /**
+     * Creates a new instance of of desktop.
+     *
+     * @param de de
+     * @return of desktop result
+     */
     static NDependencyFilter ofDesktop(Collection<NDesktopEnvironmentFamily> de){
         return NDependencyFilterRPI.of().byDesktop(de);
     }
@@ -378,9 +449,26 @@ public interface NDependencyFilter extends NFilter {
      */
     boolean acceptDependency(NDependency dependency, NId from);
 
+    /**
+     * Or.
+     *
+     * @param other other
+     * @return or result
+     */
     NDependencyFilter or(NDependencyFilter other);
 
+    /**
+     * And.
+     *
+     * @param other other
+     * @return and result
+     */
     NDependencyFilter and(NDependencyFilter other);
 
+    /**
+     * Neg.
+     *
+     * @return neg result
+     */
     NDependencyFilter neg();
 }

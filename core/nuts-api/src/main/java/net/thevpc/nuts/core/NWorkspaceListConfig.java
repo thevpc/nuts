@@ -48,46 +48,96 @@ public class NWorkspaceListConfig implements Serializable {
     private String name;
     private List<NWorkspaceLocation> workspaces;
 
+    /**
+     * N workspace list config.
+     *
+     * @return n workspace list config result
+     */
     public NWorkspaceListConfig() {
     }
 
+    /**
+     * N workspace list config.
+     *
+     * @param uuid uuid
+     * @param name name
+     * @return n workspace list config result
+     */
     public NWorkspaceListConfig(String uuid, String name) {
         this.uuid = uuid;
         this.name = name;
     }
 
+    /**
+     * N workspace list config.
+     *
+     * @param other other
+     * @return n workspace list config result
+     */
     public NWorkspaceListConfig(NWorkspaceListConfig other) {
         this.uuid = other.uuid();
         this.name = other.name();
         this.workspaces = other.workspaces() == null ? null : new ArrayList<>(other.workspaces());
     }
 
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
     @NGetter
     public String uuid() {
         return uuid;
     }
 
+    /**
+     * Uuid.
+     *
+     * @param uuid uuid
+     * @return uuid result
+     */
     @NSetter
     public NWorkspaceListConfig uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     @NGetter
     public String name() {
         return name;
     }
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     @NSetter
     public NWorkspaceListConfig name(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Workspaces.
+     *
+     * @return workspaces result
+     */
     public List<NWorkspaceLocation> workspaces() {
         return workspaces;
     }
 
+    /**
+     * Workspaces.
+     *
+     * @param workspaces workspaces
+     */
     public void workspaces(List<NWorkspaceLocation> workspaces) {
         this.workspaces = workspaces;
     }

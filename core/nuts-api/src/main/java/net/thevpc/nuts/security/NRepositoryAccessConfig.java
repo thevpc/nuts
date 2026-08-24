@@ -47,73 +47,170 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
     private String remoteAuthType;
     private List<String> permissions;
 
+    /**
+     * N repository access config.
+     *
+     * @return n repository access config result
+     */
     public NRepositoryAccessConfig() {
     }
 
+    /**
+     * N repository access config.
+     *
+     * @param other other
+     * @return n repository access config result
+     */
     public NRepositoryAccessConfig(NRepositoryAccessConfig other) {
         this.userName = other.userName();
         this.repository = other.repository();
         this.remoteUserName = other.remoteUserName();
         this.remoteCredential = other.remoteCredential();
         this.remoteAuthType = other.remoteAuthType();
+      /**
+       * Permissions.
+       *
+       * @param other.permissions() other.permissions()
+       */
         permissions(other.permissions());
     }
 
+    /**
+     * N repository access config.
+     *
+     * @param userName user name
+     * @param repository repository
+     * @param remoteUserName remote user name
+     * @param remoteCredential remote credential
+     * @param remoteAuthType remote auth type
+     * @param permissions permissions
+     * @return n repository access config result
+     */
     public NRepositoryAccessConfig(String userName, String repository, String remoteUserName, String remoteCredential, String remoteAuthType, List<String> permissions) {
         this.userName = userName;
         this.repository = repository;
         this.remoteUserName = remoteUserName;
         this.remoteCredential = remoteCredential;
         this.remoteAuthType = remoteAuthType;
+      /**
+       * Permissions.
+       *
+       * @param permissions permissions
+       */
         permissions(permissions);
     }
 
+    /**
+     * Remote user name.
+     *
+     * @return remote user name result
+     */
     public String remoteUserName() {
         return remoteUserName;
     }
 
+    /**
+     * Remote user name.
+     *
+     * @param remoteUserName remote user name
+     * @return remote user name result
+     */
     public NRepositoryAccessConfig remoteUserName(String remoteUserName) {
         this.remoteUserName = remoteUserName;
         return this;
     }
 
+    /**
+     * Remote auth type.
+     *
+     * @return remote auth type result
+     */
     public String remoteAuthType() {
         return remoteAuthType;
     }
 
+    /**
+     * Remote auth type.
+     *
+     * @param remoteAuthType remote auth type
+     * @return remote auth type result
+     */
     public NRepositoryAccessConfig remoteAuthType(String remoteAuthType) {
         this.remoteAuthType = remoteAuthType;
         return this;
     }
 
+    /**
+     * Remote credential.
+     *
+     * @return remote credential result
+     */
     public String remoteCredential() {
         return remoteCredential;
     }
 
+    /**
+     * Remote credential.
+     *
+     * @param remoteCredential remote credential
+     * @return remote credential result
+     */
     public NRepositoryAccessConfig remoteCredential(String remoteCredential) {
         this.remoteCredential = remoteCredential;
         return this;
     }
 
+    /**
+     * User name.
+     *
+     * @return user name result
+     */
     public String userName() {
         return userName;
     }
 
+    /**
+     * User name.
+     *
+     * @param userName user name
+     * @return user name result
+     */
     public NRepositoryAccessConfig userName(String userName) {
         this.userName = userName;
         return this;
     }
 
+    /**
+     * Repository.
+     *
+     * @return repository result
+     */
     public String repository() {
         return repository;
     }
 
+    /**
+     * Repository.
+     *
+     * @param repository repository
+     * @return repository result
+     */
     public NRepositoryAccessConfig repository(String repository) {
         this.repository = repository;
         return this;
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NRepositoryAccessConfig copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -126,14 +223,30 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
             }
             return o;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Permissions.
+     *
+     * @return permissions result
+     */
     public List<String> permissions() {
         return permissions;
     }
 
+    /**
+     * Permissions.
+     *
+     * @param permissions permissions
+     */
     public void permissions(List<String> permissions) {
         this.permissions = NReservedLangUtils.nonNullList(permissions);
     }

@@ -63,10 +63,19 @@ public enum NOsFamily implements NEnum {
      */
     private final String id;
 
+  /**
+   * N os family.
+   */
     NOsFamily() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NOsFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NOsFamily.class, s -> {
             String e = s.normalizedValue();
@@ -134,6 +143,11 @@ public enum NOsFamily implements NEnum {
         });
     }
 
+    /**
+     * Checks if is posix.
+     *
+     * @return is posix result
+     */
     public boolean isPosix() {
         switch (this) {
             case LINUX:
@@ -144,6 +158,11 @@ public enum NOsFamily implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is unix.
+     *
+     * @return is unix result
+     */
     public boolean isUnix() {
         switch (this) {
             case LINUX:
@@ -152,6 +171,11 @@ public enum NOsFamily implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is mac os.
+     *
+     * @return is mac os result
+     */
     public boolean isMacOs() {
         switch (this) {
             case MACOS:
@@ -160,6 +184,11 @@ public enum NOsFamily implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is window.
+     *
+     * @return is window result
+     */
     public boolean isWindow() {
         switch (this) {
             case WINDOWS:
@@ -168,6 +197,11 @@ public enum NOsFamily implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is unknown.
+     *
+     * @return is unknown result
+     */
     public boolean isUnknown() {
         switch (this) {
             case UNKNOWN:
@@ -176,6 +210,11 @@ public enum NOsFamily implements NEnum {
         return false;
     }
 
+    /**
+     * Current.
+     *
+     * @return current result
+     */
     public static NOsFamily current() {
         return _curr;
     }

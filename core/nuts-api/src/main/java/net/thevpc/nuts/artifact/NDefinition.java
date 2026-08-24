@@ -56,6 +56,11 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      */
     NDescriptor descriptor();
 
+    /**
+     * Effective flags.
+     *
+     * @return effective flags result
+     */
     NOptional<Set<NDescriptorFlag>> effectiveFlags();
 
     /**
@@ -132,6 +137,11 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      */
     String repositoryName();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NDefinitionBuilder builder();
 
 }

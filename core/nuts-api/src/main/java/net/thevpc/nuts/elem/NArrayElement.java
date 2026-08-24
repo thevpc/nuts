@@ -36,11 +36,26 @@ import java.util.stream.Stream;
  * @since 0.5.6
  */
 public interface NArrayElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, NListOrParametrizedContainerElement, Iterable<NElement> {
+    /**
+     * Creates a new instance of of empty.
+     *
+     * @return of empty result
+     */
     static NArrayElement ofEmpty() {
         return NElement.ofArray();
     }
+    /**
+     * Params or children.
+     *
+     * @return params or children result
+     */
     List<NParamOrChild> paramsOrChildren();
 
+    /**
+     * Stream.
+     *
+     * @return stream result
+     */
     Stream<NElement> stream();
 
     /**

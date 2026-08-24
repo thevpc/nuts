@@ -80,10 +80,19 @@ public enum NMsgType implements NEnum {
     ;
     private final String id;
 
+  /**
+   * N msg type.
+   */
     NMsgType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NMsgType> parse(String value) {
         return NEnumUtils.parseEnum(value, NMsgType.class);
     }

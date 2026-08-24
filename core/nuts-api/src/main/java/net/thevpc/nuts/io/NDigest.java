@@ -45,6 +45,11 @@ import java.util.List;
  * @since 0.5.5
  */
 public interface NDigest extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDigest of() {
         return NExtensions.of(NDigest.class);
     }
@@ -89,6 +94,12 @@ public interface NDigest extends NComponent {
      */
     NDigest source(NPath path);
 
+    /**
+     * Source.
+     *
+     * @param path path
+     * @return source result
+     */
     NDigest source(URL path);
 
     /**
@@ -125,6 +136,11 @@ public interface NDigest extends NComponent {
      */
     String computeString();
 
+    /**
+     * Compute manifest string.
+     *
+     * @return compute manifest string result
+     */
     String computeManifestString();
 
     /**
@@ -179,7 +195,18 @@ public interface NDigest extends NComponent {
      */
     String algorithm();
 
+    /**
+     * Source.
+     *
+     * @param source source
+     * @return source result
+     */
     NDigest source(NInputSource source);
 
+    /**
+     * Source.
+     *
+     * @return source result
+     */
     List<NInputSource> source();
 }

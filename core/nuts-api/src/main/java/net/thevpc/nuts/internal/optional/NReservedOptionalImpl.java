@@ -10,10 +10,22 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * NReservedOptionalImpl class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
     private NOptionalExceptionFactory exceptionFactory;
     private final Supplier<NMsg> message;
 
+    /**
+     * N reserved optional impl.
+     *
+     * @param message message
+     * @return n reserved optional impl result
+     */
     public NReservedOptionalImpl(Supplier<NMsg> message) {
         if (message == null) {
             message = NMsg::ofMissingValue;
@@ -55,18 +67,45 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public boolean orTrue() {
+      /**
+       * Return.
+       *
+       * @param this).orElse(true this).or else(true
+       */
         return ((NOptional<Boolean>) this).orElse(true);
     }
 
     @Override
     public boolean orFalse() {
+      /**
+       * Return.
+       *
+       * @param this).orElse(false this).or else(false
+       */
         return ((NOptional<Boolean>) this).orElse(false);
     }
 
+    /**
+     * Returns the get.
+     *
+     * @return get result
+     */
     public T get() {
+        /**
+         * Returns the get.
+         *
+         * @param null null
+         * @return get result
+         */
         return get(null);
     }
 
+    /**
+     * Flat map.
+     *
+     * @param mapper mapper
+     * @return flat map result
+     */
     public <V> NOptional<V> flatMap(Function<T, NOptional<V>> mapper) {
         NAssert.requireNamedNonNull(mapper);
         if (isPresent()) {
@@ -82,6 +121,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public <V> NOptional<V> mapIfPresent(Function<T, V> mapper) {
         if (isPresent()) {
+            /**
+             * Map.
+             *
+             * @param mapper mapper
+             * @return map result
+             */
             return map(mapper);
         }
         return (NOptional<V>) this;
@@ -92,6 +137,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (isBlank()) {
             return NOptional.ofEmpty(message());
         }
+        /**
+         * Map.
+         *
+         * @param mapper mapper
+         * @return map result
+         */
         return map(mapper);
     }
 
@@ -100,6 +151,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (isEmpty()) {
             return NOptional.ofEmpty(message());
         }
+        /**
+         * Map.
+         *
+         * @param mapper mapper
+         * @return map result
+         */
         return map(mapper);
     }
 
@@ -112,6 +169,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (v == null) {
             return NOptional.ofEmpty(message());
         }
+        /**
+         * Map.
+         *
+         * @param mapper mapper
+         * @return map result
+         */
         return map(mapper);
     }
 
@@ -120,6 +183,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (isEmpty()) {
             return NOptional.ofEmpty(message());
         }
+        /**
+         * Map.
+         *
+         * @param mapper mapper
+         * @return map result
+         */
         return map(mapper);
     }
 
@@ -143,6 +212,11 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         return NOptional.of(ok ? trueExpr.apply(t) : falseExpr.apply(t));
     }
 
+    /**
+     * Checks if is default.
+     *
+     * @return is default result
+     */
     public boolean isDefault() {
         if (isBlank()) {
             return true;
@@ -168,6 +242,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (isDefault()) {
             return this;
         }
+        /**
+         * Map.
+         *
+         * @param mapper mapper
+         * @return map result
+         */
         return map(mapper);
     }
 
@@ -176,6 +256,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (!isDefault()) {
             return this;
         }
+        /**
+         * Map.
+         *
+         * @param mapper mapper
+         * @return map result
+         */
         return map(mapper);
     }
 
@@ -188,6 +274,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         return (NOptional<V>) this;
     }
 
+    /**
+     * Then.
+     *
+     * @param mapper mapper
+     * @return then result
+     */
     public <V> NOptional<V> then(Function<T, V> mapper) {
         NAssert.requireNamedNonNull(mapper);
         switch (type()) {
@@ -240,6 +332,13 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public NOptional<T> filter(Predicate<T> predicate) {
+        /**
+         * Filter.
+         *
+         * @param predicate predicate
+         * @param null null
+         * @return filter result
+         */
         return filter(predicate, null);
     }
 
@@ -271,6 +370,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         return this;
     }
 
+    /**
+     * If error.
+     *
+     * @param action action
+     * @return if error result
+     */
     public NOptional<T> ifError(Consumer<Throwable> action) {
         if (isError()) {
             if (action != null) {
@@ -280,6 +385,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         return this;
     }
 
+    /**
+     * If null.
+     *
+     * @param action action
+     * @return if null result
+     */
     public NOptional<T> ifNull(Runnable action) {
         if (isNull()) {
             if (action != null) {
@@ -292,6 +403,11 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public <R extends Throwable> T orElseThrow(Supplier<? extends R> exceptionSupplier) throws R {
         if (isPresent()) {
+            /**
+             * Returns the get.
+             *
+             * @return get result
+             */
             return get();
         } else {
             throw NAssert.requireNamedNonNull(NAssert.requireNamedNonNull(exceptionSupplier).get());
@@ -311,9 +427,20 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         if (isNotPresent()) {
             return other;
         }
+        /**
+         * Returns the get.
+         *
+         * @return get result
+         */
         return get();
     }
 
+    /**
+     * Or else get optional of.
+     *
+     * @param other other
+     * @return or else get optional of result
+     */
     public NOptional<T> orElseGetOptionalOf(Supplier<T> other) {
         if (isNotPresent()) {
             return NOptional.of(NAssert.requireNamedNonNull(other).get(), message());
@@ -327,6 +454,11 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
             NAssert.requireNamedNonNull(other);
             return other.get();
         }
+        /**
+         * Returns the get.
+         *
+         * @return get result
+         */
         return get();
     }
 
@@ -395,6 +527,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public NOptional<T> onErrorEmpty() {
+        /**
+         * On error.
+         *
+         * @param null null
+         * @return on error result
+         */
         return onError(null);
     }
 
@@ -416,6 +554,12 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public T orNull() {
+        /**
+         * Or else.
+         *
+         * @param null null
+         * @return or else result
+         */
         return orElse(null);
     }
 
@@ -446,9 +590,20 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public NOptional<T> onBlankEmpty() {
+        /**
+         * On blank empty.
+         *
+         * @param null null
+         * @return on blank empty result
+         */
         return onBlankEmpty(null);
     }
 
+    /**
+     * Returns the exception factory.
+     *
+     * @return get exception factory result
+     */
     public NOptionalExceptionFactory getExceptionFactory() {
         return exceptionFactory;
     }

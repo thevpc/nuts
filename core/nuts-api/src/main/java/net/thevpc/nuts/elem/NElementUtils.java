@@ -2,9 +2,27 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.text.NContentType;
 
+/**
+ * NElementUtils class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public final class NElementUtils {
+    /**
+     * N element utils.
+     *
+     * @return n element utils result
+     */
     private NElementUtils(){}
 
+    /**
+     * Checks if is valid element name char.
+     *
+     * @param c c
+     * @param start start
+     * @return is valid element name char result
+     */
     public static boolean isValidElementNameChar(char c, boolean start) {
         if (start) {
             if (!Character.isJavaIdentifierStart(c)
@@ -27,8 +45,23 @@ public final class NElementUtils {
         return true;
     }
 
+    /**
+     * Checks if is valid element name char.
+     *
+     * @param c c
+     * @param start start
+     * @param contentType content type
+     * @return is valid element name char result
+     */
     public static boolean isValidElementNameChar(char c, boolean start, NContentType contentType) {
         if (contentType == null) {
+            /**
+             * Checks if is valid element name char.
+             *
+             * @param c c
+             * @param start start
+             * @return is valid element name char result
+             */
             return isValidElementNameChar(c, start);
         }
         switch (contentType) {
@@ -74,6 +107,12 @@ public final class NElementUtils {
         }
     }
 
+    /**
+     * Checks if is element name.
+     *
+     * @param name name
+     * @return is element name result
+     */
     public static boolean isElementName(String name) {
         if (name == null) {
             return false;
@@ -106,8 +145,21 @@ public final class NElementUtils {
         return true;
     }
 
+    /**
+     * Checks if is element name.
+     *
+     * @param name name
+     * @param contentType content type
+     * @return is element name result
+     */
     public static boolean isElementName(String name, NContentType contentType) {
         if (contentType == null) {
+            /**
+             * Checks if is element name.
+             *
+             * @param name name
+             * @return is element name result
+             */
             return isElementName(name);
         }
         if (name == null) {

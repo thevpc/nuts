@@ -45,24 +45,69 @@ import java.util.Objects;
  * @since 0.5.4
  */
 public interface NSystemTerminalBase extends NComponent {
+    /**
+     * Read line.
+     *
+     * @param out out
+     * @param message message
+     * @return read line result
+     */
     String readLine(NPrintStream out, NMsg message);
 
+    /**
+     * Read password.
+     *
+     * @param out out
+     * @param message message
+     * @return read password result
+     */
     char[] readPassword(NPrintStream out, NMsg message);
 
+    /**
+     * In.
+     *
+     * @return in result
+     */
     InputStream in();
 
+    /**
+     * Out.
+     *
+     * @return out result
+     */
     NPrintStream out();
 
+    /**
+     * Err.
+     *
+     * @return err result
+     */
     NPrintStream err();
 
+    /**
+     * Auto complete resolver.
+     *
+     * @return auto complete resolver result
+     */
     default NArgCompleteResolver autoCompleteResolver() {
         return null;
     }
 
+    /**
+     * Checks if is auto complete supported.
+     *
+     * @return is auto complete supported result
+     */
     default boolean isAutoCompleteSupported() {
         return false;
     }
 
+    /**
+     * Command auto complete resolver.
+     *
+     * @param autoCompleteResolver auto complete resolver
+     * @return command auto complete resolver result
+     */
     NSystemTerminalBase commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver);
 
     /**
@@ -99,35 +144,90 @@ public interface NSystemTerminalBase extends NComponent {
      */
     NSystemTerminalBase commandHighlighter(NTerminalFormatter commandHighlighter);
 
+    /**
+     * Run.
+     *
+     * @param command command
+     * @param printStream print stream
+     * @return run result
+     */
     Object run(NTerminalCmd command, NPrintStream printStream);
 
+    /**
+     * Terminal cursor.
+     *
+     * @return terminal cursor result
+     */
     Cursor terminalCursor();
 
+    /**
+     * Terminal size.
+     *
+     * @return terminal size result
+     */
     Size terminalSize();
 
+    /**
+     * Reset line.
+     *
+     * @return reset line result
+     */
     NSystemTerminalBase resetLine();
 
+    /**
+     * Clear screen.
+     *
+     * @return clear screen result
+     */
     NSystemTerminalBase clearScreen();
 
+    /**
+     * Styles.
+     *
+     * @param styles styles
+     * @param printStream print stream
+     */
     void styles(NTextStyles styles, NPrintStream printStream);
 
     class Cursor implements Serializable {
         private int x;
         private int y;
 
+        /**
+         * Cursor.
+         *
+         * @return cursor result
+         */
         private Cursor() {
             // for serialization purposes
         }
 
+        /**
+         * Cursor.
+         *
+         * @param x x
+         * @param y y
+         * @return cursor result
+         */
         public Cursor(int x, int y) {
             this.x = x;
             this.y = y;
         }
 
+        /**
+         * X.
+         *
+         * @return x result
+         */
         public int x() {
             return x;
         }
 
+        /**
+         * Y.
+         *
+         * @return y result
+         */
         public int y() {
             return y;
         }
@@ -158,19 +258,41 @@ public interface NSystemTerminalBase extends NComponent {
         private int columns;
         private int rows;
 
+        /**
+         * Size.
+         *
+         * @return size result
+         */
         private Size() {
             // for serialization purposes
         }
 
+        /**
+         * Size.
+         *
+         * @param columns columns
+         * @param rows rows
+         * @return size result
+         */
         public Size(int columns, int rows) {
             this.columns = columns;
             this.rows = rows;
         }
 
+        /**
+         * Columns.
+         *
+         * @return columns result
+         */
         public int columns() {
             return columns;
         }
 
+        /**
+         * Rows.
+         *
+         * @return rows result
+         */
         public int rows() {
             return rows;
         }

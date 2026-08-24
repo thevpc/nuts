@@ -42,16 +42,44 @@ import java.util.logging.Logger;
  * @app.category Logging
  */
 public interface NLogRPI extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NLogRPI of() {
         return NExtensions.of(NLogRPI.class);
     }
 
+    /**
+     * Creates a new instance of create scope.
+     *
+     * @return create scope result
+     */
     NLogScope createScope();
 
+    /**
+     * Current scope.
+     *
+     * @return current scope result
+     */
     NLogScope currentScope();
 
+    /**
+     * Run in scope.
+     *
+     * @param context context
+     * @param runnable runnable
+     */
     void runInScope(NLogScope context, Runnable runnable);
 
+    /**
+     * Call in scope.
+     *
+     * @param context context
+     * @param callable callable
+     * @return call in scope result
+     */
     <T> T callInScope(NLogScope context, NCallable<T> callable);
 
     /**
@@ -62,10 +90,28 @@ public interface NLogRPI extends NComponent {
      */
     NLog getLogger(String name);
 
+    /**
+     * Returns the logger.
+     *
+     * @param logger logger
+     * @return get logger result
+     */
     NLog getLogger(Logger logger);
 
+    /**
+     * Null logger.
+     *
+     * @return null logger result
+     */
     NLog nullLogger();
 
+    /**
+     * Creates a new instance of create custom logger.
+     *
+     * @param name name
+     * @param spi spi
+     * @return create custom logger result
+     */
     NLog createCustomLogger(String name, NLogSPI spi);
 
     /**

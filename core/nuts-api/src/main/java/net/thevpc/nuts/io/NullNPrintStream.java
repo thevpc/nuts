@@ -10,6 +10,12 @@ import java.io.Writer;
 import java.time.temporal.Temporal;
 import java.util.Date;
 
+/**
+ * NullNPrintStream class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NullNPrintStream implements NPrintStream {
 
     public static final NStringWriter NULL_STRING_WRITER = new NStringWriter() {
@@ -30,6 +36,11 @@ public class NullNPrintStream implements NPrintStream {
     };
     public static NPrintStream INSTANCE =new NullNPrintStream();
 
+    /**
+     * Null n print stream.
+     *
+     * @return null n print stream result
+     */
     private NullNPrintStream() {
     }
 
@@ -270,6 +281,11 @@ public class NullNPrintStream implements NPrintStream {
 
     @Override
     public NSystemTerminalBase terminal() {
+        /**
+         * Unsupported operation exception.
+         *
+         * @return unsupported operation exception result
+         */
         throw new UnsupportedOperationException();
     }
 
@@ -288,6 +304,11 @@ public class NullNPrintStream implements NPrintStream {
         return this;
     }
 
+    /**
+     * Print null.
+     *
+     * @return print null result
+     */
     public NPrintStream printNull() {
         return this;
     }

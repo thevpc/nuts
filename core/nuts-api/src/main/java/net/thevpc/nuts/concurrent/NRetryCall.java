@@ -159,6 +159,11 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param <T> type of the result
      */
     interface Handler<T> {
+        /**
+         * Handle.
+         *
+         * @param result result
+         */
         void handle(Result<T> result);
     }
 

@@ -65,6 +65,11 @@ public class NScopedValue<T> {
      * Values must then be provided explicitly or via {@link #computeIfAbsent(Supplier)}.
      */
     public NScopedValue() {
+      /**
+       * This.
+       *
+       * @param null null
+       */
         this(null);
     }
 
@@ -115,6 +120,12 @@ public class NScopedValue<T> {
         return h;
     }
 
+    /**
+     * Returns the or else.
+     *
+     * @param other other
+     * @return get or else result
+     */
     public T getOrElse(Supplier<T> other) {
         T h = holder.get();
         if (h != null) {
@@ -129,6 +140,12 @@ public class NScopedValue<T> {
         return h;
     }
 
+    /**
+     * Returns the or compute.
+     *
+     * @param other other
+     * @return get or compute result
+     */
     public T getOrCompute(Supplier<T> other) {
         T h = holder.get();
         if (h != null) {
@@ -150,6 +167,11 @@ public class NScopedValue<T> {
         return h;
     }
 
+    /**
+     * Returns the or compute.
+     *
+     * @return get or compute result
+     */
     public T getOrCompute() {
         T h = holder.get();
         if (h != null) {

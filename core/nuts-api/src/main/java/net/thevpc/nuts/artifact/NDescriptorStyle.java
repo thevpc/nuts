@@ -57,10 +57,19 @@ public enum NDescriptorStyle implements NEnum {
      */
     private final String id;
 
+  /**
+   * N descriptor style.
+   */
     NDescriptorStyle() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NDescriptorStyle> parse(String value) {
         return NEnumUtils.parseEnum(value, NDescriptorStyle.class);
     }

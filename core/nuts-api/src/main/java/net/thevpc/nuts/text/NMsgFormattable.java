@@ -30,5 +30,10 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NMsgFormattable {
+    /**
+     * Converts to msg.
+     *
+     * @return to msg result
+     */
     NMsg toMsg();
 }

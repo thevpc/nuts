@@ -16,13 +16,35 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * NEnv interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NEnv extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NEnv of() {
         return NExtensions.of(NEnv.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param connectionString connection string
+     * @return of result
+     */
     static NEnv of(NConnectionString connectionString) {
         if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.host())) {
+            /**
+             * Creates a new instance of of.
+             *
+             * @return of result
+             */
             return of();
         }
 
@@ -41,10 +63,22 @@ public interface NEnv extends NComponent {
         return cache.computeIfAbsent(normalizedConnectionStringWithoutUse, x -> NExtensions.of().createSupported(NEnv.class, normalizedConnectionStringWithUse).get());
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param connectionString connection string
+     * @return of result
+     */
     static NEnv of(String connectionString) {
         if (NBlankable.isBlank(connectionString)) {
             return NEnv.of();
         }
+        /**
+         * Creates a new instance of of.
+         *
+         * @param NConnectionString.of(connectionString) n connection string.of(connection string)
+         * @return of result
+         */
         return of(NConnectionString.of(connectionString));
     }
 
@@ -57,48 +91,160 @@ public interface NEnv extends NComponent {
      */
     NConnectionString connectionString();
 
+    /**
+     * Os family.
+     *
+     * @return os family result
+     */
     NOsFamily osFamily();
 
+    /**
+     * Shell families.
+     *
+     * @return shell families result
+     */
     Set<NShellFamily> shellFamilies();
 
+    /**
+     * Root user name.
+     *
+     * @return root user name result
+     */
     String rootUserName();
 
+    /**
+     * User name.
+     *
+     * @return user name result
+     */
     String userName();
 
+    /**
+     * User home.
+     *
+     * @return user home result
+     */
     String userHome();
 
+    /**
+     * Shell family.
+     *
+     * @return shell family result
+     */
     NShellFamily shellFamily();
 
+    /**
+     * Shell.
+     *
+     * @return shell result
+     */
     NId shell();
 
+    /**
+     * Desktop environment.
+     *
+     * @return desktop environment result
+     */
     NId desktopEnvironment();
 
+    /**
+     * Desktop environments.
+     *
+     * @return desktop environments result
+     */
     Set<NId> desktopEnvironments();
 
+    /**
+     * Desktop environment family.
+     *
+     * @return desktop environment family result
+     */
     NDesktopEnvironmentFamily desktopEnvironmentFamily();
 
+    /**
+     * Desktop environment families.
+     *
+     * @return desktop environment families result
+     */
     Set<NDesktopEnvironmentFamily> desktopEnvironmentFamilies();
 
+    /**
+     * Checks if is native image.
+     *
+     * @return is native image result
+     */
     boolean isNativeImage();
 
+    /**
+     * Java.
+     *
+     * @return java result
+     */
     NId java();
 
+    /**
+     * Os.
+     *
+     * @return os result
+     */
     NId os();
 
+    /**
+     * Os dist.
+     *
+     * @return os dist result
+     */
     NId osDist();
 
+    /**
+     * Arch.
+     *
+     * @return arch result
+     */
     NId arch();
 
+    /**
+     * Arch family.
+     *
+     * @return arch family result
+     */
     NArchFamily archFamily();
 
+    /**
+     * Checks if is graphical desktop environment.
+     *
+     * @return is graphical desktop environment result
+     */
     boolean isGraphicalDesktopEnvironment();
 
+    /**
+     * Returns the desktop integration support.
+     *
+     * @param target target
+     * @return get desktop integration support result
+     */
     NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target);
 
+    /**
+     * Desktop path.
+     *
+     * @return desktop path result
+     */
     Path desktopPath();
 
+    /**
+     * Returns the env.
+     *
+     * @param name name
+     * @return get env result
+     */
     NOptional<String> getEnv(String name);
 
+    /**
+     * Env.
+     *
+     * @return env result
+     */
     Map<String, String> env();
 
     /**
@@ -148,5 +294,10 @@ public interface NEnv extends NComponent {
      */
     NEnv refresh();
 
+    /**
+     * Pid.
+     *
+     * @return pid result
+     */
     String pid();
 }

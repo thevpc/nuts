@@ -10,21 +10,56 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * NReservedOptionalEmpty class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> implements Cloneable {
 
 
+    /**
+     * N reserved optional empty.
+     *
+     * @param message message
+     * @return n reserved optional empty result
+     */
     public NReservedOptionalEmpty(Supplier<NMsg> message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
+    /**
+     * With message.
+     *
+     * @param message message
+     * @return with message result
+     */
     public NOptional<T> withMessage(Supplier<NMsg> message) {
         return new NReservedOptionalEmpty<>(message);
     }
 
+    /**
+     * With message.
+     *
+     * @param message message
+     * @return with message result
+     */
     public NOptional<T> withMessage(NMsg message) {
         return new NReservedOptionalEmpty<T>(message == null ? (NMsg::ofMissingValue) : () -> message);
     }
 
+    /**
+     * With name.
+     *
+     * @param name name
+     * @return with name result
+     */
     public NOptional<T> withName(NMsg name) {
         return new NReservedOptionalEmpty<T>(name == null ? (NMsg::ofMissingValue) : () -> NMsg.ofMissingValue(name));
     }
@@ -42,6 +77,11 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get() {
+      /**
+       * Throw error.
+       *
+       * @param message() message()
+       */
         throwError(message());
         //never reached!
         return null;
@@ -49,11 +89,22 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get(Supplier<NMsg> message) {
+      /**
+       * Throw error.
+       *
+       * @param message message
+       */
         throwError(message);
         //never reached!
         return null;
     }
 
+    /**
+     * Then.
+     *
+     * @param mapper mapper
+     * @return then result
+     */
     public <V> NOptional<V> then(Function<T, V> mapper) {
         NAssert.requireNamedNonNull(mapper);
         return NOptional.ofEmpty(message());
@@ -114,6 +165,11 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
         return super.clone();
     }
 
+    /**
+     * Throw error.
+     *
+     * @param preferredMessage preferred message
+     */
     protected void throwError(Supplier<NMsg> preferredMessage) {
         if (preferredMessage == null) {
             preferredMessage = message();

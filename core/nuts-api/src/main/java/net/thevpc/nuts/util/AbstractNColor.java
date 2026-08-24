@@ -55,12 +55,25 @@ abstract class AbstractNColor implements NColor {
     }
 
 
+    /**
+     * _reg2.
+     *
+     * @param canonicalName canonical name
+     * @param color color
+     * @return _reg2 result
+     */
     static NColor _reg2(String canonicalName, NColor color) {
         String name = color.name();
         NAssert.requireNamedNonBlank(name, "color name");
         name = normalizeName(name);
         canonicalName = normalizeName(canonicalName);
         if (_ALL_BY_NAME.containsKey(name)) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param name name
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("invalid duplicate name " + name);
         }
         _ALL_REGISTERED.add(color);
@@ -85,41 +98,128 @@ abstract class AbstractNColor implements NColor {
         return li.get(a % li.size());
     }
 
+    /**
+     * _reg.
+     *
+     * @param name name
+     * @param canonicalName canonical name
+     * @param rgb rgb
+     * @return _reg result
+     */
     static NColor _reg(String name, String canonicalName, int rgb) {
+        /**
+         * _reg2.
+         *
+         * @param canonicalName canonical name
+         * @param name) name)
+         * @return _reg2 result
+         */
         return _reg2(canonicalName, NColor.of32(rgb, name));
     }
+    /**
+     * _reg.
+     *
+     * @param name name
+     * @param canonicalName canonical name
+     * @param r r
+     * @param g g
+     * @param b b
+     * @return _reg result
+     */
     static NColor _reg(String name, String canonicalName, int r, int g, int b) {
+        /**
+         * _reg2.
+         *
+         * @param canonicalName canonical name
+         * @param name) name)
+         * @return _reg2 result
+         */
         return _reg2(canonicalName, NColor.of32(r, g, b, name));
     }
 
+    /**
+     * _reg gray.
+     *
+     * @param percent percent
+     * @return _reg gray result
+     */
     static NColor _regGray(int percent) {
         int v = Math.round(percent * 255 / 100f);
+        /**
+         * _reg2.
+         *
+         * @param "Gray" " gray"
+         * @param percent) percent)
+         * @return _reg2 result
+         */
         return _reg2("Gray", NColor.of32(v, v, v, "Gray" + percent));
     }
 
+    /**
+     * Creates a new instance of of4.
+     *
+     * @param color color
+     * @return of4 result
+     */
     public static NColor of4(int color) {
         return new AbstractNColor.NColor4(color);
     }
 
+    /**
+     * Normalize name.
+     *
+     * @param name name
+     * @return normalize name result
+     */
     private static String normalizeName(String name) {
         return name == null ? null : NNameFormat.CLASS_NAME.format(NStringUtils.strip(name)).toLowerCase();
     }
 
 
+    /**
+     * Creates a new instance of of name.
+     *
+     * @param name name
+     * @return of name result
+     */
     public static NOptional<NColor> ofName(String name) {
         return NOptional.ofNamed(BY_NAME.get(normalizeName(name)), "color " + name);
     }
 
+    /**
+     * Creates a new instance of of canonical name.
+     *
+     * @param name name
+     * @return of canonical name result
+     */
     public static NOptional<List<NColor>> ofCanonicalName(String name) {
         return NOptional.ofNamed(_ALL_BY_CANONICAL_NAME.get(normalizeName(name)), "color " + name);
     }
 
+    /**
+     * Converts to html hex.
+     *
+     * @param cl cl
+     * @return to html hex result
+     */
     public static String toHtmlHex(NColor cl) {
         return String.format("#%02X%02X%02X", cl.red(), cl.green(), cl.blue());
     }
 
+    /**
+     * Ansi to color.
+     *
+     * @param index index
+     * @return ansi to color result
+     */
     public static NColor ansiToColor(int index) {
         if (index < 0 || index > 255) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param 255" 255"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("ANSI color index must be between 0 and 255");
         }
 
@@ -147,110 +247,291 @@ abstract class AbstractNColor implements NColor {
     }
 
 
+    /**
+     * Creates a new instance of of4.
+     *
+     * @param color color
+     * @param name name
+     * @return of4 result
+     */
     public static NColor of4(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
+            /**
+             * Creates a new instance of of4.
+             *
+             * @param color color
+             * @return of4 result
+             */
             return of4(color);
         }
         return new AbstractNColor.NColor4Named(color, name);
     }
 
+    /**
+     * Creates a new instance of of8.
+     *
+     * @param color color
+     * @return of8 result
+     */
     public static NColor of8(int color) {
         return new AbstractNColor.NColor8(color);
     }
 
+    /**
+     * Creates a new instance of of8.
+     *
+     * @param color color
+     * @param name name
+     * @return of8 result
+     */
     public static NColor of8(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
+            /**
+             * Creates a new instance of of8.
+             *
+             * @param color color
+             * @return of8 result
+             */
             return of8(color);
         }
         return new AbstractNColor.NColor8Named(color, name);
     }
 
+    /**
+     * Creates a new instance of of16.
+     *
+     * @param color color
+     * @return of16 result
+     */
     public static NColor of16(int color) {
         return new AbstractNColor.NColor16(color);
     }
 
+    /**
+     * Creates a new instance of of16.
+     *
+     * @param color color
+     * @param name name
+     * @return of16 result
+     */
     public static NColor of16(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
+            /**
+             * Creates a new instance of of16.
+             *
+             * @param color color
+             * @return of16 result
+             */
             return of16(color);
         }
         return new AbstractNColor.NColor16Named(color, name);
     }
 
+    /**
+     * Creates a new instance of of24.
+     *
+     * @param color color
+     * @param name name
+     * @return of24 result
+     */
     public static NColor of24(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
+            /**
+             * Creates a new instance of of24.
+             *
+             * @param color color
+             * @return of24 result
+             */
             return of24(color);
         }
         return new AbstractNColor.NColor24Named(color, name);
     }
 
+    /**
+     * Creates a new instance of of24.
+     *
+     * @param color color
+     * @return of24 result
+     */
     public static NColor of24(int color) {
         return new AbstractNColor.NColor24(color);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param r r
+     * @param g g
+     * @param b b
+     * @param name name
+     * @return of32 result
+     */
     public static NColor of32(int r, int g, int b, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
+            /**
+             * Creates a new instance of of32.
+             *
+             * @param r r
+             * @param g g
+             * @param b b
+             * @return of32 result
+             */
             return of32(r, g, b);
         }
         return new AbstractNColor.NColor32Named(r, g, b, name);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param r r
+     * @param g g
+     * @param b b
+     * @return of32 result
+     */
     public static NColor of32(int r, int g, int b) {
         return new AbstractNColor.NColor32(r, g, b);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param r r
+     * @param g g
+     * @param b b
+     * @param a a
+     * @return of32 result
+     */
     public static NColor of32(int r, int g, int b, int a) {
         return new AbstractNColor.NColor32(r, g, b, a);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param r r
+     * @param g g
+     * @param b b
+     * @param a a
+     * @param name name
+     * @return of32 result
+     */
     public static NColor of32(int r, int g, int b, int a, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
+            /**
+             * Creates a new instance of of32.
+             *
+             * @param r r
+             * @param g g
+             * @param b b
+             * @param a a
+             * @return of32 result
+             */
             return of32(r, g, b, a);
         }
         return new AbstractNColor.NColor32Named(r, g, b, a, name);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param color color
+     * @return of32 result
+     */
     public static NColor of32(int color) {
         return new AbstractNColor.NColor32(color);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param color color
+     * @param name name
+     * @return of32 result
+     */
     public static NColor of32(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
+            /**
+             * Creates a new instance of of32.
+             *
+             * @param color color
+             * @return of32 result
+             */
             return of32(color);
         }
         return new AbstractNColor.NColor32Named(color,name);
     }
 
+    /**
+     * Creates a new instance of of64.
+     *
+     * @param color color
+     * @return of64 result
+     */
     public static NColor of64(long color) {
         return new AbstractNColor.NColor64(color);
     }
 
+    /**
+     * Creates a new instance of of64.
+     *
+     * @param color color
+     * @param name name
+     * @return of64 result
+     */
     public static NColor of64(long color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
+            /**
+             * Creates a new instance of of64.
+             *
+             * @param color color
+             * @return of64 result
+             */
             return of64(color);
         }
         return new AbstractNColor.NColor64Named(color, name);
     }
 
+    /**
+     * Red.
+     *
+     * @return red result
+     */
     public int red() {
         return this.rgb() >> 16 & 255;
     }
 
+    /**
+     * Green.
+     *
+     * @return green result
+     */
     public int green() {
         return this.rgb() >> 8 & 255;
     }
 
+    /**
+     * Blue.
+     *
+     * @return blue result
+     */
     public int blue() {
         return this.rgb() >> 0 & 255;
     }
 
+    /**
+     * Alpha.
+     *
+     * @return alpha result
+     */
     public int alpha() {
         return this.rgb() >> 24 & 255;
     }
@@ -258,6 +539,12 @@ abstract class AbstractNColor implements NColor {
     static class NColor4 extends AbstractNColor {
         private final byte color;
 
+        /**
+         * N color4.
+         *
+         * @param color color
+         * @return n color4 result
+         */
         public NColor4(int color) {
             this.color = (byte) (color & 0xF);
         }
@@ -271,6 +558,11 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_16.get(0);
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_4;
         }
@@ -286,6 +578,12 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public int rgb() {
+            /**
+             * Converts to color32.
+             *
+             * @param ).rgb( ).rgb(
+             * @return to color32 result
+             */
             return toColor32().rgb();
         }
 
@@ -299,6 +597,11 @@ abstract class AbstractNColor implements NColor {
             return (long) color;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return null;
         }
@@ -308,6 +611,13 @@ abstract class AbstractNColor implements NColor {
         private final byte color;
         private final String name;
 
+        /**
+         * N color4 named.
+         *
+         * @param color color
+         * @param name name
+         * @return n color4 named result
+         */
         public NColor4Named(int color, String name) {
             this.color = (byte) (color & 0xF);
             this.name = name;
@@ -322,6 +632,11 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_16.get(0).withName(name);
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_4;
         }
@@ -340,6 +655,12 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public int rgb() {
+            /**
+             * Converts to color32.
+             *
+             * @param ).rgb( ).rgb(
+             * @return to color32 result
+             */
             return toColor32().rgb();
         }
 
@@ -353,6 +674,11 @@ abstract class AbstractNColor implements NColor {
             return (long) color;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return name;
         }
@@ -361,6 +687,12 @@ abstract class AbstractNColor implements NColor {
     static class NColor8 extends AbstractNColor {
         private final short color;
 
+        /**
+         * N color8.
+         *
+         * @param color color
+         * @return n color8 result
+         */
         public NColor8(int color) {
             this.color = (short) (color & 0xFF);
         }
@@ -374,6 +706,11 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_256.get(0);
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_8;
         }
@@ -389,6 +726,12 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public int rgb() {
+            /**
+             * Converts to color32.
+             *
+             * @param ).rgb( ).rgb(
+             * @return to color32 result
+             */
             return toColor32().rgb();
         }
 
@@ -402,6 +745,11 @@ abstract class AbstractNColor implements NColor {
             return (long) color;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return null;
         }
@@ -411,6 +759,13 @@ abstract class AbstractNColor implements NColor {
         private final short color;
         private final String name;
 
+        /**
+         * N color8 named.
+         *
+         * @param color color
+         * @param name name
+         * @return n color8 named result
+         */
         public NColor8Named(int color, String name) {
             this.color = (short) (color & 0xFF);
             this.name = name;
@@ -425,6 +780,11 @@ abstract class AbstractNColor implements NColor {
             return ANSI_COLORS_256.get(0).withName(name);
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_8;
         }
@@ -443,6 +803,12 @@ abstract class AbstractNColor implements NColor {
 
         @Override
         public int rgb() {
+            /**
+             * Converts to color32.
+             *
+             * @param ).rgb( ).rgb(
+             * @return to color32 result
+             */
             return toColor32().rgb();
         }
 
@@ -456,6 +822,11 @@ abstract class AbstractNColor implements NColor {
             return (long) color;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return name;
         }
@@ -464,6 +835,12 @@ abstract class AbstractNColor implements NColor {
     static class NColor16 extends AbstractNColor {
         private final int color;
 
+        /**
+         * N color16.
+         *
+         * @param color color
+         * @return n color16 result
+         */
         public NColor16(int color) {
             this.color = color & 0xFFFF;
         }
@@ -474,6 +851,11 @@ abstract class AbstractNColor implements NColor {
         }
 
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_16;
         }
@@ -513,6 +895,11 @@ abstract class AbstractNColor implements NColor {
             return argb32;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return null;
         }
@@ -522,11 +909,23 @@ abstract class AbstractNColor implements NColor {
         private final int color;
         private final String name;
 
+        /**
+         * N color16 named.
+         *
+         * @param color color
+         * @param name name
+         * @return n color16 named result
+         */
         public NColor16Named(int color, String name) {
             this.color = color & 0xFFFF;
             this.name = name;
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_16;
         }
@@ -574,6 +973,11 @@ abstract class AbstractNColor implements NColor {
             return (long) color;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return name;
         }
@@ -582,6 +986,12 @@ abstract class AbstractNColor implements NColor {
     static class NColor24 extends AbstractNColor {
         private final int color;
 
+        /**
+         * N color24.
+         *
+         * @param color color
+         * @return n color24 result
+         */
         public NColor24(int color) {
             this.color = color & 0xFFFFFF;
         }
@@ -595,9 +1005,19 @@ abstract class AbstractNColor implements NColor {
         @Override
         public int rgb() {
             // We take the 24-bit color and OR it with 255 shifted to the Alpha position
+          /**
+           * Return.
+           *
+           * @param 0xFFFFFF 0x ffffff
+           */
             return (255 << 24) | (color & 0xFFFFFF);
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_24;
         }
@@ -622,6 +1042,11 @@ abstract class AbstractNColor implements NColor {
         }
 
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return null;
         }
@@ -631,6 +1056,13 @@ abstract class AbstractNColor implements NColor {
         private final int color;
         private final String name;
 
+        /**
+         * N color24 named.
+         *
+         * @param color color
+         * @param name name
+         * @return n color24 named result
+         */
         public NColor24Named(int color, String name) {
             this.color = color & 0xFFFFFF;
             this.name = name;
@@ -645,9 +1077,19 @@ abstract class AbstractNColor implements NColor {
         @Override
         public int rgb() {
             // We take the 24-bit color and OR it with 255 shifted to the Alpha position
+          /**
+           * Return.
+           *
+           * @param 0xFFFFFF 0x ffffff
+           */
             return (255 << 24) | (color & 0xFFFFFF);
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_24;
         }
@@ -674,6 +1116,11 @@ abstract class AbstractNColor implements NColor {
             return (long) color;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return name;
         }
@@ -682,18 +1129,46 @@ abstract class AbstractNColor implements NColor {
     static class NColor32 extends AbstractNColor {
         private final int color;
 
+        /**
+         * N color32.
+         *
+         * @param color color
+         * @return n color32 result
+         */
         public NColor32(int color) {
             this.color = color;
         }
 
+        /**
+         * N color32.
+         *
+         * @param r r
+         * @param g g
+         * @param b b
+         * @return n color32 result
+         */
         public NColor32(int r, int g, int b) {
             this.color = (255 << 24) | (r & 255) << 16 | (g & 255) << 8 | (b & 255);
         }
 
+        /**
+         * N color32.
+         *
+         * @param r r
+         * @param g g
+         * @param b b
+         * @param a a
+         * @return n color32 result
+         */
         public NColor32(int r, int g, int b, int a) {
             this.color = (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255);
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_32;
         }
@@ -727,6 +1202,11 @@ abstract class AbstractNColor implements NColor {
             return (long) color;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return null;
         }
@@ -736,21 +1216,52 @@ abstract class AbstractNColor implements NColor {
         private final int color;
         private final String name;
 
+        /**
+         * N color32 named.
+         *
+         * @param color color
+         * @param name name
+         * @return n color32 named result
+         */
         public NColor32Named(int color, String name) {
             this.color = color;
             this.name = name;
         }
 
+        /**
+         * N color32 named.
+         *
+         * @param r r
+         * @param g g
+         * @param b b
+         * @param name name
+         * @return n color32 named result
+         */
         public NColor32Named(int r, int g, int b, String name) {
             this.color = (r & 255) << 16 | (g & 255) << 8 | (b & 255) << 0;
             this.name = name;
         }
 
+        /**
+         * N color32 named.
+         *
+         * @param r r
+         * @param g g
+         * @param b b
+         * @param a a
+         * @param name name
+         * @return n color32 named result
+         */
         public NColor32Named(int r, int g, int b, int a, String name) {
             this.color = (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255) << 0;
             this.name = name;
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_32;
         }
@@ -787,6 +1298,11 @@ abstract class AbstractNColor implements NColor {
             return (long) color;
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return name;
         }
@@ -795,10 +1311,21 @@ abstract class AbstractNColor implements NColor {
     static class NColor64 extends AbstractNColor {
         private final long color;
 
+        /**
+         * N color64.
+         *
+         * @param color color
+         * @return n color64 result
+         */
         public NColor64(long color) {
             this.color = color;
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_64;
         }
@@ -836,6 +1363,11 @@ abstract class AbstractNColor implements NColor {
             return NColor.of32(rgb());
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return null;
         }
@@ -845,11 +1377,23 @@ abstract class AbstractNColor implements NColor {
         private final long color;
         private final String name;
 
+        /**
+         * N color64 named.
+         *
+         * @param color color
+         * @param name name
+         * @return n color64 named result
+         */
         public NColor64Named(long color, String name) {
             this.color = color;
             this.name = name;
         }
 
+        /**
+         * Bits.
+         *
+         * @return bits result
+         */
         public NColorBits bits() {
             return NColorBits.BITS_64;
         }
@@ -890,6 +1434,11 @@ abstract class AbstractNColor implements NColor {
             return NColor.of32(rgb(), name);
         }
 
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         public String name() {
             return name;
         }

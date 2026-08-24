@@ -5,9 +5,20 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.CharBuffer;
 
+/**
+ * NullWriter class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NullWriter extends Writer {
     public static final Writer INSTANCE=new NullWriter();
 
+    /**
+     * Null writer.
+     *
+     * @return null writer result
+     */
     private NullWriter() {
     }
 

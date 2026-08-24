@@ -43,30 +43,83 @@ import java.util.List;
  */
 public interface NWorkspaceList extends NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NWorkspaceList of() {
         return NExtensions.of(NWorkspaceList.class);
     }
 
+    /**
+     * Workspaces.
+     *
+     * @return workspaces result
+     */
     @NGetter
     List<NWorkspaceLocation> workspaces();
 
+    /**
+     * Returns the workspace location.
+     *
+     * @param uuid uuid
+     * @return get workspace location result
+     */
     NWorkspaceLocation getWorkspaceLocation(String uuid);
 
+    /**
+     * Config.
+     *
+     * @return config result
+     */
     @NGetter
     NWorkspaceListConfig config();
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     @NGetter
     String name();
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     @NSetter
     NWorkspaceList name(String name);
 
+    /**
+     * Config.
+     *
+     * @param config config
+     * @return config result
+     */
     @NSetter
     NWorkspaceList config(NWorkspaceListConfig config);
 
+    /**
+     * Adds the specified workspace.
+     *
+     * @param path path
+     * @return add workspace result
+     */
     NWorkspace addWorkspace(String path);
 
+    /**
+     * Removes the specified workspace.
+     *
+     * @param name name
+     * @return remove workspace result
+     */
     boolean removeWorkspace(String name);
 
+    /**
+     * Save.
+     */
     void save();
 }

@@ -58,6 +58,11 @@ public class NWorkBalancerModelContext implements NCopiable, Cloneable {
      */
     @Override
     public NWorkBalancerModelContext copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -78,6 +83,12 @@ public class NWorkBalancerModelContext implements NCopiable, Cloneable {
             }
             return copy;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

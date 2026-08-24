@@ -11,6 +11,12 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * NMemoryFormat class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NMemoryFormat {
     private Boolean iec;
     private boolean fixed;
@@ -27,10 +33,23 @@ public class NMemoryFormat {
     private static DecimalFormat F9 = new DecimalFormat("000000000");
     private static DecimalFormat F6 = new DecimalFormat("000000");
 
+    /**
+     * N memory format.
+     *
+     * @param other other
+     * @return n memory format result
+     */
     public NMemoryFormat(NMemoryFormat other) {
         this.iec = other.iec;
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param fixed fixed
+     * @param iec iec
+     * @return of result
+     */
     public static NMemoryFormat of(boolean fixed, Boolean iec) {
         if (fixed) {
             if (iec == null) {
@@ -51,11 +70,26 @@ public class NMemoryFormat {
         }
     }
 
+    /**
+     * N memory format.
+     *
+     * @param iec iec
+     * @param fixed fixed
+     * @return n memory format result
+     */
     public NMemoryFormat(Boolean iec, boolean fixed) {
         this.iec = iec;
         this.fixed = fixed;
     }
 
+    /**
+     * Format unit.
+     *
+     * @param memorySize memory size
+     * @param unit unit
+     * @param processed processed
+     * @param out out
+     */
     public void formatUnit(NMemorySize memorySize, NMemoryUnit unit, Set<NMemoryUnit> processed, NPrintStream out) {
         if (iec != null) {
             memorySize = memorySize.withIEC(iec);
@@ -90,6 +124,13 @@ public class NMemoryFormat {
         }
     }
 
+    /**
+     * Accept.
+     *
+     * @param c c
+     * @param memorySize memory size
+     * @return accept result
+     */
     private boolean accept(NMemoryUnit c, NMemorySize memorySize) {
         if (c.ordinal() < memorySize.smallestUnit().ordinal()) {
             return false;
@@ -97,12 +138,30 @@ public class NMemoryFormat {
         return memorySize.get(c) != 0;
     }
 
+    /**
+     * Format.
+     *
+     * @param memorySize memory size
+     * @return format result
+     */
     public String format(NMemorySize memorySize) {
         NMemoryPrintStream sb = NPrintStream.ofMem(NTerminalMode.FILTERED);
+      /**
+       * Print.
+       *
+       * @param memorySize memory size
+       * @param sb sb
+       */
         print(memorySize, sb);
         return sb.toString();
     }
 
+    /**
+     * Print.
+     *
+     * @param memorySize memory size
+     * @param out out
+     */
     public void print(NMemorySize memorySize, NPrintStream out) {
         if (iec != null) {
             memorySize = memorySize.withIEC(iec);
@@ -114,6 +173,14 @@ public class NMemoryFormat {
             values[i] = values0[values.length - i - 1];
         }
         for (NMemoryUnit chronoUnit : values) {
+          /**
+           * Format unit.
+           *
+           * @param memorySize memory size
+           * @param chronoUnit chrono unit
+           * @param processed processed
+           * @param out out
+           */
             formatUnit(memorySize, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
@@ -128,6 +195,12 @@ public class NMemoryFormat {
     }
 
 
+    /**
+     * Size of.
+     *
+     * @param unit unit
+     * @return size of result
+     */
     private int sizeOf(NMemoryUnit unit) {
         switch (unit) {
             case BIT:
@@ -137,6 +210,13 @@ public class NMemoryFormat {
         }
     }
 
+    /**
+     * Format number.
+     *
+     * @param number number
+     * @param unit unit
+     * @return format number result
+     */
     private String formatNumber(long number, NMemoryUnit unit) {
         int size = sizeOf(unit);
         if (fixed) {
@@ -145,10 +225,20 @@ public class NMemoryFormat {
         return String.valueOf(number);
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NMemoryFormat copy() {
         return new NMemoryFormat(this);
     }
 
+    /**
+     * Freeze.
+     *
+     * @return freeze result
+     */
     public NMemoryFormat freeze() {
         if (!frozen) {
             this.frozen = true;
@@ -156,17 +246,39 @@ public class NMemoryFormat {
         return this;
     }
 
+    /**
+     * Checks if is fixed.
+     *
+     * @return is fixed result
+     */
     public boolean isFixed() {
         return fixed;
     }
 
+    /**
+     * Iec.
+     *
+     * @return iec result
+     */
     public Boolean iec() {
         return iec;
     }
 
+    /**
+     * Iec.
+     *
+     * @param iec iec
+     * @return iec result
+     */
     public NMemoryFormat iec(Boolean iec) {
         if (Objects.equals(this.iec, iec)) {
             if (frozen) {
+                /**
+                 * Illegal argument exception.
+                 *
+                 * @param updated" updated"
+                 * @return illegal argument exception result
+                 */
                 throw new IllegalArgumentException("This instance is immutable and cannot be updated");
             }
             this.iec = iec;
@@ -174,9 +286,21 @@ public class NMemoryFormat {
         return this;
     }
 
+    /**
+     * Fixed.
+     *
+     * @param fixed fixed
+     * @return fixed result
+     */
     public NMemoryFormat fixed(Boolean fixed) {
         if (this.fixed != fixed) {
             if (frozen) {
+                /**
+                 * Illegal argument exception.
+                 *
+                 * @param updated" updated"
+                 * @return illegal argument exception result
+                 */
                 throw new IllegalArgumentException("This instance is immutable and cannot be updated");
             }
             this.fixed = fixed;
@@ -184,11 +308,28 @@ public class NMemoryFormat {
         return this;
     }
 
+    /**
+     * Unit string.
+     *
+     * @param unit unit
+     * @param iec iec
+     * @return unit string result
+     */
     public String unitString(NMemoryUnit unit, boolean iec) {
         switch (unit) {
             case BIT:
+              /**
+               * Return.
+               *
+               * @param "bits" "bits"
+               */
                 return ("bits");
             case BYTE:
+              /**
+               * Return.
+               *
+               * @param "B" "b"
+               */
                 return ("B");
             case KILO_BYTE:
                 return iec ? "KiB" : "KB";

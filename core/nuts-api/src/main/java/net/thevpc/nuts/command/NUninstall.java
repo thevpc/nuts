@@ -42,42 +42,138 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NUninstall extends NWorkspaceCmd {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NUninstall of() {
         return NExtensions.of(NUninstall.class);
     }
 
+    /**
+     * Adds the specified id.
+     *
+     * @param id id
+     * @return add id result
+     */
     NUninstall addId(NId id);
 
+    /**
+     * Removes the specified id.
+     *
+     * @param id id
+     * @return remove id result
+     */
     NUninstall removeId(NId id);
 
+    /**
+     * Adds the specified id.
+     *
+     * @param id id
+     * @return add id result
+     */
     NUninstall addId(String id);
 
+    /**
+     * Removes the specified id.
+     *
+     * @param id id
+     * @return remove id result
+     */
     NUninstall removeId(String id);
 
+    /**
+     * Adds the specified ids.
+     *
+     * @param ids ids
+     * @return add ids result
+     */
     NUninstall addIds(NId... ids);
 
+    /**
+     * Adds the specified ids.
+     *
+     * @param ids ids
+     * @return add ids result
+     */
     NUninstall addIds(String... ids);
 
+    /**
+     * Clear ids.
+     *
+     * @return clear ids result
+     */
     NUninstall clearIds();
 
+    /**
+     * Ids.
+     *
+     * @return ids result
+     */
     @NGetter
     List<NId> ids();
 
+    /**
+     * Adds the specified arg.
+     *
+     * @param arg arg
+     * @return add arg result
+     */
     NUninstall addArg(String arg);
 
+    /**
+     * Args.
+     *
+     * @param args args
+     * @return args result
+     */
     NUninstall args(List<String> args);
 
+    /**
+     * Adds the specified args.
+     *
+     * @param args args
+     * @return add args result
+     */
     NUninstall addArgs(Collection<String> args);
 
+    /**
+     * Adds the specified args.
+     *
+     * @param args args
+     * @return add args result
+     */
     NUninstall addArgs(String... args);
 
+    /**
+     * Clear args.
+     *
+     * @return clear args result
+     */
     NUninstall clearArgs();
 
+    /**
+     * Args.
+     *
+     * @return args result
+     */
     @NGetter
     List<String> args();
 
+    /**
+     * Checks if is erase.
+     *
+     * @return is erase result
+     */
     boolean isErase();
 
+    /**
+     * Erase.
+     *
+     * @param erase erase
+     * @return erase result
+     */
     @NSetter
     NUninstall erase(boolean erase);
 

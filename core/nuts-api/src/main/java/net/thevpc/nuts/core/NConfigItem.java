@@ -41,10 +41,20 @@ public class NConfigItem implements Serializable,Cloneable{
      */
     private NVersion configVersion = null;
 
+    /**
+     * Returns the config version.
+     *
+     * @return get config version result
+     */
     public NVersion getConfigVersion() {
         return configVersion;
     }
 
+    /**
+     * Config version.
+     *
+     * @param configVersion config version
+     */
     public void configVersion(NVersion configVersion) {
         this.configVersion = configVersion;
     }

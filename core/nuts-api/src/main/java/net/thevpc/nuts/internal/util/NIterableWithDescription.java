@@ -6,10 +6,23 @@ import net.thevpc.nuts.pipeline.NIterator;
 
 import java.util.function.Supplier;
 
+/**
+ * NIterableWithDescription class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NIterableWithDescription<T> implements NIterable<T> {
     private final NIterable<T> base;
     private final Supplier<NElement> nfo;
 
+    /**
+     * N iterable with description.
+     *
+     * @param base base
+     * @param nfo nfo
+     * @return n iterable with description result
+     */
     public NIterableWithDescription(NIterable<T> base, Supplier<NElement> nfo) {
         this.base = base;
         this.nfo = nfo;

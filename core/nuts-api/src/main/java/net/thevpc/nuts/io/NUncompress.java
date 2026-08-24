@@ -44,6 +44,11 @@ import java.util.Set;
  * @since 0.5.8
  */
 public interface NUncompress extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NUncompress of() {
         return NExtensions.of(NUncompress.class);
     }
@@ -87,8 +92,20 @@ public interface NUncompress extends NComponent {
      */
     NInputSource source();
 
+    /**
+     * Source.
+     *
+     * @param source source
+     * @return source result
+     */
     NUncompress source(NInputSource source);
 
+    /**
+     * Target.
+     *
+     * @param target target
+     * @return target result
+     */
     NUncompress target(NOutputTarget target);
 
     /**
@@ -163,6 +180,12 @@ public interface NUncompress extends NComponent {
      */
     NUncompress from(URL source);
 
+    /**
+     * Converts to to.
+     *
+     * @param target target
+     * @return to result
+     */
     NUncompress to(NPath target);
 
     /**
@@ -188,6 +211,12 @@ public interface NUncompress extends NComponent {
      */
     NUncompress target(File target);
 
+    /**
+     * Target.
+     *
+     * @param target target
+     * @return target result
+     */
     NUncompress target(NPath target);
 
     /**
@@ -221,6 +250,12 @@ public interface NUncompress extends NComponent {
      */
     NUncompress run();
 
+    /**
+     * Visit.
+     *
+     * @param visitor visitor
+     * @return visit result
+     */
     NUncompress visit(NUncompressVisitor visitor);
 
     /**
@@ -281,12 +316,40 @@ public interface NUncompress extends NComponent {
      */
     NUncompress safe(boolean value);
 
+    /**
+     * Options.
+     *
+     * @param pathOptions path options
+     * @return options result
+     */
     NUncompress options(NPathOption... pathOptions);
+    /**
+     * Adds the specified options.
+     *
+     * @param pathOptions path options
+     * @return add options result
+     */
     NUncompress addOptions(NPathOption... pathOptions);
 
+    /**
+     * Removes the specified options.
+     *
+     * @param pathOptions path options
+     * @return remove options result
+     */
     NUncompress removeOptions(NPathOption... pathOptions);
 
+    /**
+     * Clear options.
+     *
+     * @return clear options result
+     */
     NUncompress clearOptions();
 
+    /**
+     * Options.
+     *
+     * @return options result
+     */
     Set<NPathOption> options();
 }

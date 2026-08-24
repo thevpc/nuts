@@ -75,6 +75,12 @@ public interface NPushRepositoryCmd extends NRepositoryCmd {
      * @return {@code this} instance
      */
     NPushRepositoryCmd args(String[] args);
+    /**
+     * Args.
+     *
+     * @param args args
+     * @return args result
+     */
     NPushRepositoryCmd args(List<String> args);
 
     /**

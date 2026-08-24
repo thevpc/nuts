@@ -54,14 +54,45 @@ public interface NStringElement extends NPrimitiveElement {
      */
     NNewLineMode newLineSuffix();
 
+    /**
+     * String value.
+     *
+     * @return string value result
+     */
     String stringValue();
 
+    /**
+     * Lines.
+     *
+     * @return lines result
+     */
     List<NElementLine> lines();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NPrimitiveElementBuilder builder();
 
+    /**
+     * Literal string.
+     *
+     * @return literal string result
+     */
     String literalString();
 
+    /**
+     * Newline suffix.
+     *
+     * @return newline suffix result
+     */
     NNewLineMode newlineSuffix();
+    /**
+     * With newline suffix.
+     *
+     * @param nNewLineMode n new line mode
+     * @return with newline suffix result
+     */
     NStringElement withNewlineSuffix(NNewLineMode nNewLineMode);
 }

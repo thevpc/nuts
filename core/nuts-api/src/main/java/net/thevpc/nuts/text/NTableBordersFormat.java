@@ -32,5 +32,11 @@ package net.thevpc.nuts.text;
  */
 public interface NTableBordersFormat {
 
+    /**
+     * Format.
+     *
+     * @param s s
+     * @return format result
+     */
     NText format(NTableSeparator s);
 }

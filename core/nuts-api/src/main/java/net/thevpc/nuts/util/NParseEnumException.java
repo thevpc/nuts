@@ -44,6 +44,13 @@ public class NParseEnumException extends NException {
      * @param enumType     java Enum or NutsEnum type (cannot be null)
      */
     public NParseEnumException(String invalidValue, Class<?> enumType) {
+      /**
+       * This.
+       *
+       * @param null null
+       * @param invalidValue invalid value
+       * @param enumType enum type
+       */
         this(null, invalidValue, enumType);
     }
 

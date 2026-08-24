@@ -6,11 +6,23 @@ import net.thevpc.nuts.util.*;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * NArgCompletePosition class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NArgCompletePosition {
     private final int wordIndex;
     private final int wordOffset;
     private final int lineCursor;
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param str str
+     * @return of result
+     */
     public static NOptional<NArgCompletePosition> of(String str) {
         if (NBlankable.isBlank(str)) {
             return NOptional.ofNamedEmpty("complete");
@@ -30,28 +42,66 @@ public class NArgCompletePosition {
         return NOptional.ofError(NMsg.ofC("invalid complete : '%s'", str));
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param wordIndex word index
+     * @param wordOffset word offset
+     * @param lineCursor line cursor
+     * @return of result
+     */
     public static NArgCompletePosition of(int wordIndex, int wordOffset, int lineCursor) {
         return new NArgCompletePosition(wordIndex, wordOffset, lineCursor);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param wordIndex word index
+     * @param wordOffset word offset
+     * @return of result
+     */
     public static NArgCompletePosition of(int wordIndex, int wordOffset) {
         return new NArgCompletePosition(wordIndex, wordOffset, -1);
     }
 
+    /**
+     * N arg complete position.
+     *
+     * @param wordIndex word index
+     * @param wordOffset word offset
+     * @param lineCursor line cursor
+     * @return n arg complete position result
+     */
     public NArgCompletePosition(int wordIndex, int wordOffset, int lineCursor) {
         this.wordIndex = Math.max(wordIndex, -1);
         this.wordOffset = Math.max(wordOffset, -1);
         this.lineCursor = Math.max(lineCursor, -1);
     }
 
+    /**
+     * Word index.
+     *
+     * @return word index result
+     */
     public int wordIndex() {
         return wordIndex;
     }
 
+    /**
+     * Word offset.
+     *
+     * @return word offset result
+     */
     public int wordOffset() {
         return wordOffset;
     }
 
+    /**
+     * Line cursor.
+     *
+     * @return line cursor result
+     */
     public int lineCursor() {
         return lineCursor;
     }

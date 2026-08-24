@@ -33,37 +33,128 @@ import net.thevpc.nuts.internal.rpi.NTextRPI;
  * @since 0.5.5
  */
 public interface NTableCellSpecBuilder {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTableCellSpecBuilder of() {
         return NTextRPI.of().createCellSpecBuilder();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param content content
+     * @return of result
+     */
     static NTableCellSpecBuilder of(NText content) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).content(content ).content(content
+         * @return of result
+         */
         return of().content(content);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param content content
+     * @param colspan colspan
+     * @param rowspan rowspan
+     * @return of result
+     */
     static NTableCellSpecBuilder of(NText content, int colspan, int rowspan) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).content(content).colspan(colspan).rowspan(rowspan ).content(content).colspan(colspan).rowspan(rowspan
+         * @return of result
+         */
         return of().content(content).colspan(colspan).rowspan(rowspan);
     }
 
+    /**
+     * Vertical align.
+     *
+     * @return vertical align result
+     */
     NPositionType verticalAlign();
 
+    /**
+     * Horizontal align.
+     *
+     * @return horizontal align result
+     */
     NPositionType horizontalAlign();
 
+    /**
+     * Vertical align.
+     *
+     * @param align align
+     * @return vertical align result
+     */
     NTableCellSpecBuilder verticalAlign(NPositionType align);
 
+    /**
+     * Horizontal align.
+     *
+     * @param align align
+     * @return horizontal align result
+     */
     NTableCellSpecBuilder horizontalAlign(NPositionType align);
 
+    /**
+     * Colspan.
+     *
+     * @return colspan result
+     */
     int colspan();
 
+    /**
+     * Colspan.
+     *
+     * @param colspan colspan
+     * @return colspan result
+     */
     NTableCellSpecBuilder colspan(int colspan);
 
+    /**
+     * Rowspan.
+     *
+     * @return rowspan result
+     */
     int rowspan();
 
+    /**
+     * Rowspan.
+     *
+     * @param rowspan rowspan
+     * @return rowspan result
+     */
     NTableCellSpecBuilder rowspan(int rowspan);
 
+    /**
+     * Content.
+     *
+     * @return content result
+     */
     NText content();
 
+    /**
+     * Content.
+     *
+     * @param content content
+     * @return content result
+     */
     NTableCellSpecBuilder content(NText content);
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NTableCell build();
 }

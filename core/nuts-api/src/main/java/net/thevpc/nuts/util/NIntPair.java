@@ -5,23 +5,53 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * NIntPair class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public final class NIntPair implements NPair<Integer, Integer, Integer> {
     private final int a;
     private final int b;
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param a a
+     * @param b b
+     * @return of result
+     */
     public static NIntPair of(int a, int b) {
         return new NIntPair(a, b);
     }
 
+    /**
+     * N int pair.
+     *
+     * @param a a
+     * @param b b
+     * @return n int pair result
+     */
     public NIntPair(int a, int b) {
         this.a = a;
         this.b = b;
     }
 
+    /**
+     * First int.
+     *
+     * @return first int result
+     */
     public int firstInt() {
         return a;
     }
 
+    /**
+     * Second int.
+     *
+     * @return second int result
+     */
     public int secondInt() {
         return b;
     }
@@ -44,9 +74,22 @@ public final class NIntPair implements NPair<Integer, Integer, Integer> {
             case 1:
                 return b;
         }
+        /**
+         * Array index out of bounds exception.
+         *
+         * @param index index
+         * @return array index out of bounds exception result
+         */
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
+    /**
+     * Sets the set.
+     *
+     * @param newValue new value
+     * @param index index
+     * @return set result
+     */
     public NIntPair set(int newValue, int index) {
         switch (index) {
             case 0:
@@ -54,6 +97,12 @@ public final class NIntPair implements NPair<Integer, Integer, Integer> {
             case 1:
                 return new NIntPair(a, newValue);
         }
+        /**
+         * Array index out of bounds exception.
+         *
+         * @param index index
+         * @return array index out of bounds exception result
+         */
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
@@ -74,24 +123,70 @@ public final class NIntPair implements NPair<Integer, Integer, Integer> {
                     return new NIntPair(a, newValue);
             }
         }
+        /**
+         * Array index out of bounds exception.
+         *
+         * @param index index
+         * @return array index out of bounds exception result
+         */
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
+    /**
+     * Sets the first.
+     *
+     * @param t t
+     * @return set first result
+     */
     public NIntPair setFirst(int t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 0 0
+         * @return set result
+         */
         return set(t, 0);
     }
 
+    /**
+     * Sets the second.
+     *
+     * @param t t
+     * @return set second result
+     */
     public NIntPair setSecond(int t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 0 0
+         * @return set result
+         */
         return set(t, 0);
     }
 
     @Override
     public NPair<Integer, Integer, Integer> first(Integer t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 0 0
+         * @return set result
+         */
         return set(t, 0);
     }
 
     @Override
     public NPair<Integer, Integer, Integer> second(Integer t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 1 1
+         * @return set result
+         */
         return set(t, 1);
     }
 
@@ -110,6 +205,11 @@ public final class NIntPair implements NPair<Integer, Integer, Integer> {
         return new Integer[]{a, b};
     }
 
+    /**
+     * Converts to int array.
+     *
+     * @return to int array result
+     */
     public int[] toIntArray() {
         return new int[]{a, b};
     }
@@ -123,6 +223,11 @@ public final class NIntPair implements NPair<Integer, Integer, Integer> {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         NIntPair tuple = (NIntPair) o;
+      /**
+       * Return.
+       *
+       * @param tuple.b tuple.b
+       */
         return (a == tuple.a) && (b == tuple.b);
     }
 

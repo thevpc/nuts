@@ -34,10 +34,25 @@ import java.util.Set;
  */
 public interface NObservableSet<V> extends Set<V> {
 
+    /**
+     * Adds the specified set listener.
+     *
+     * @param listener listener
+     */
     void addSetListener(NObservableSetListener<V> listener);
 
+    /**
+     * Removes the specified set listener.
+     *
+     * @param listener listener
+     */
     void removeSetListener(NObservableSetListener<V> listener);
 
+    /**
+     * Listeners.
+     *
+     * @return listeners result
+     */
     List<NObservableSetListener<V>> listeners();
 
 }

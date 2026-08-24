@@ -55,6 +55,13 @@ public class NExecOutput {
         return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null, -1, -1);
     }
 
+    /**
+     * Creates a new instance of of grab mem.
+     *
+     * @param maxBytes max bytes
+     * @param maxLines max lines
+     * @return of grab mem result
+     */
     public static NExecOutput ofGrabMem(int maxBytes, int maxLines) {
         return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null, maxBytes, maxLines);
     }
@@ -157,6 +164,17 @@ public class NExecOutput {
         return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, null, -1, -1);
     }
 
+    /**
+     * N exec output.
+     *
+     * @param type type
+     * @param stream stream
+     * @param path path
+     * @param options options
+     * @param maxBytes max bytes
+     * @param maxLines max lines
+     * @return n exec output result
+     */
     private NExecOutput(NRedirectType type, OutputStream stream, NPath path, NPathOption[] options, long maxBytes, long maxLines) {
         this.type = type;
         this.stream = stream;
@@ -166,18 +184,38 @@ public class NExecOutput {
         this.maxBytes = maxBytes;
     }
 
+    /**
+     * Max lines.
+     *
+     * @return max lines result
+     */
     public long maxLines() {
         return maxLines;
     }
 
+    /**
+     * Max bytes.
+     *
+     * @return max bytes result
+     */
     public long maxBytes() {
         return maxBytes;
     }
 
+    /**
+     * Type.
+     *
+     * @return type result
+     */
     public NRedirectType type() {
         return type;
     }
 
+    /**
+     * Result source.
+     *
+     * @return result source result
+     */
     public NOptional<NInputSource> resultSource() {
         switch (type()) {
             case GRAB_STREAM:
@@ -191,6 +229,11 @@ public class NExecOutput {
         return NOptional.ofEmpty(() -> NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
     }
 
+    /**
+     * Result bytes.
+     *
+     * @return result bytes result
+     */
     public byte[] resultBytes() {
         NInputSource s = null;
         try {
@@ -203,48 +246,103 @@ public class NExecOutput {
         }
     }
 
+    /**
+     * Result string.
+     *
+     * @return result string result
+     */
     public String resultString() {
         return new String(resultBytes());
     }
 
+    /**
+     * Output stream.
+     *
+     * @return output stream result
+     */
     public OutputStream outputStream() {
         return stream;
     }
 
+    /**
+     * Path.
+     *
+     * @return path result
+     */
     public NPath path() {
         return path;
     }
 
+    /**
+     * Options.
+     *
+     * @return options result
+     */
     public List<NPathOption> options() {
         return Arrays.asList(options);
     }
 
+    /**
+     * Type.
+     *
+     * @param type type
+     * @return type result
+     */
     public NExecOutput type(NRedirectType type) {
         this.type = type;
         return this;
     }
 
+    /**
+     * Output stream.
+     *
+     * @param stream stream
+     * @return output stream result
+     */
     @NSetter
     public NExecOutput outputStream(OutputStream stream) {
         this.stream = stream;
         return this;
     }
 
+    /**
+     * Path.
+     *
+     * @param path path
+     * @return path result
+     */
     @NSetter
     public NExecOutput path(NPath path) {
         this.path = path;
         return this;
     }
 
+    /**
+     * Options.
+     *
+     * @param options options
+     * @return options result
+     */
     public NExecOutput options(NPathOption[] options) {
         this.options = options == null ? new NPathOption[0] : Arrays.copyOf(options, options.length);
         return this;
     }
 
+    /**
+     * Result.
+     *
+     * @return result result
+     */
     public NInputSource result() {
         return result;
     }
 
+    /**
+     * Result.
+     *
+     * @param result result
+     * @return result result
+     */
     @NSetter
     public NExecOutput result(NInputSource result) {
         this.result = result;

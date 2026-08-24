@@ -40,6 +40,12 @@ import java.util.function.Supplier;
  */
 public interface NUnsafeCallable<T> extends NRedescribable<NUnsafeCallable<T>> {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param o o
+     * @return of result
+     */
     static <T> NUnsafeCallable<T> of(NCallable<T> o) {
         if (o == null) {
             return null;
@@ -47,6 +53,12 @@ public interface NUnsafeCallable<T> extends NRedescribable<NUnsafeCallable<T>> {
         return new NUnsafeCallableFromCallable<>(o);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param o o
+     * @return of result
+     */
     static <T> NUnsafeCallable<T> of(Callable<T> o) {
         if (o == null) {
             return null;
@@ -54,8 +66,19 @@ public interface NUnsafeCallable<T> extends NRedescribable<NUnsafeCallable<T>> {
         return new NUnsafeCallableBaseFromJavaCallable<T>(o);
     }
 
+    /**
+     * Call.
+     *
+     * @return call result
+     * @throws Exception if execution fails
+     */
     T call() throws Exception;
 
+    /**
+     * Describe.
+     *
+     * @return describe result
+     */
     default NElement describe() {
         return NElement.ofString(toString());
     }

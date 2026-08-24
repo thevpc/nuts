@@ -6,11 +6,24 @@ import net.thevpc.nuts.util.NImmutable;
 
 import java.util.function.Supplier;
 
+/**
+ * NDoubleFunction2WithDescription class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 @NImmutable
 public class NDoubleFunction2WithDescription implements NDoubleFunction2 {
     private final NDoubleFunction2 base;
     private Supplier<NElement> description;
 
+    /**
+     * N double function2 with description.
+     *
+     * @param base base
+     * @param description description
+     * @return n double function2 with description result
+     */
     public NDoubleFunction2WithDescription(NDoubleFunction2 base, Supplier<NElement> description) {
         this.base = base;
         this.description = description;

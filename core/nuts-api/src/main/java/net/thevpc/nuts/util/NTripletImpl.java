@@ -14,6 +14,14 @@ final class NTripletImpl<A extends T, B extends T, C extends T, T> implements NT
     private final B b;
     private final C c;
 
+    /**
+     * N triplet impl.
+     *
+     * @param a a
+     * @param b b
+     * @param c c
+     * @return n triplet impl result
+     */
     public NTripletImpl(A a, B b, C c) {
         this.a = a;
         this.b = b;
@@ -45,6 +53,12 @@ final class NTripletImpl<A extends T, B extends T, C extends T, T> implements NT
             case 2:
                 return c;
         }
+        /**
+         * Array index out of bounds exception.
+         *
+         * @param index index
+         * @return array index out of bounds exception result
+         */
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
@@ -59,21 +73,48 @@ final class NTripletImpl<A extends T, B extends T, C extends T, T> implements NT
             case 2:
                 return new NTripletImpl<>(a, b, (C) newValue);
         }
+        /**
+         * Array index out of bounds exception.
+         *
+         * @param index index
+         * @return array index out of bounds exception result
+         */
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
     @Override
     public NTriplet<A, B, C, T> first(A t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 0 0
+         * @return set result
+         */
         return set(t, 0);
     }
 
     @Override
     public NTriplet<A, B, C, T> second(B t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 1 1
+         * @return set result
+         */
         return set(t, 1);
     }
 
     @Override
     public NTriplet<A, B, C, T> third(C t) {
+        /**
+         * Sets the set.
+         *
+         * @param t t
+         * @param 2 2
+         * @return set result
+         */
         return set(t, 2);
     }
 

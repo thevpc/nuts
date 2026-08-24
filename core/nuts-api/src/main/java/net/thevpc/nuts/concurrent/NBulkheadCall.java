@@ -54,6 +54,13 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable {
      * @return a new {@code NConcurrencyLimiter} instance
      */
     static <T> NBulkheadCall<T> of(NCallable<T> callable) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param null null
+         * @param callable callable
+         * @return of result
+         */
         return of(null,callable);
     }
 

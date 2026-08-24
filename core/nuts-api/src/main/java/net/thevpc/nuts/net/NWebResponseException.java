@@ -5,6 +5,12 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgCode;
 import net.thevpc.nuts.text.NMsgCodeAware;
 
+/**
+ * NWebResponseException class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NWebResponseException extends NException implements NMsgCodeAware {
     public NHttpCode code;
     public NMsg responseMessage;
@@ -19,6 +25,11 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      *                later retrieval by the {@link #message()} method.
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code) {
+      /**
+       * Super.
+       *
+       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
+       */
         super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message);
         this.code = code;
         this.responseMessage = message;
@@ -41,6 +52,12 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      *                unknown.)
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
+       * @param cause cause
+       */
         super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message, cause);
         this.code = code;
         this.responseMessage = message;
@@ -61,12 +78,25 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      *                           be writable
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message, cause, enableSuppression, writableStackTrace);
         this.code = code;
         this.responseMessage = message;
         this.messageCode = messageCode;
     }
 
+    /**
+     * Status code.
+     *
+     * @return status code result
+     */
     public NHttpCode statusCode() {
         return code;
     }
@@ -76,6 +106,11 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
         return messageCode;
     }
 
+    /**
+     * Response message.
+     *
+     * @return response message result
+     */
     public NMsg responseMessage() {
         return responseMessage;
     }

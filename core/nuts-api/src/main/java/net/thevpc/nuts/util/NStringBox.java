@@ -10,6 +10,12 @@ class NStringBox {
     private int cols;
     private int rows;
 
+    /**
+     * N string box.
+     *
+     * @param value value
+     * @return n string box result
+     */
     public NStringBox(String value) {
         this.value = value;
         this.len = value.length();
@@ -22,6 +28,12 @@ class NStringBox {
                 if ((l = br.readLine()) == null) break;
             } catch (IOException e) {
                 //never!!
+                /**
+                 * Runtime exception.
+                 *
+                 * @param e e
+                 * @return runtime exception result
+                 */
                 throw new RuntimeException(e);
             }
             cols = Math.max(cols, l.length());
@@ -31,18 +43,38 @@ class NStringBox {
         this.rows = rows;
     }
 
+    /**
+     * Value.
+     *
+     * @return value result
+     */
     public String value() {
         return value;
     }
 
+    /**
+     * Length.
+     *
+     * @return length result
+     */
     public int length() {
         return len;
     }
 
+    /**
+     * Columns.
+     *
+     * @return columns result
+     */
     public int columns() {
         return cols;
     }
 
+    /**
+     * Rows.
+     *
+     * @return rows result
+     */
     public int rows() {
         return rows;
     }

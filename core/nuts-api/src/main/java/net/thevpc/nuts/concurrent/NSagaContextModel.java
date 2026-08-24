@@ -48,144 +48,294 @@ public class NSagaContextModel implements Serializable, Cloneable {
 
     private Object lastResult;
 
+    /**
+     * N saga context model.
+     *
+     * @return n saga context model result
+     */
     public NSagaContextModel() {
     }
 
+    /**
+     * First fail step id.
+     *
+     * @return first fail step id result
+     */
     @NGetter
     public String firstFailStepId() {
         return firstFailStepId;
     }
 
+    /**
+     * First fail step name.
+     *
+     * @return first fail step name result
+     */
     @NGetter
     public String firstFailStepName() {
         return firstFailStepName;
     }
 
+    /**
+     * First fail step name.
+     *
+     * @param firstFailStepName first fail step name
+     * @return first fail step name result
+     */
     @NSetter
     public NSagaContextModel firstFailStepName(String firstFailStepName) {
         this.firstFailStepName = firstFailStepName;
         return this;
     }
 
+    /**
+     * First fail step id.
+     *
+     * @param firstFailStepId first fail step id
+     * @return first fail step id result
+     */
     @NSetter
     public NSagaContextModel firstFailStepId(String firstFailStepId) {
         this.firstFailStepId = firstFailStepId;
         return this;
     }
 
+    /**
+     * First fail step error.
+     *
+     * @return first fail step error result
+     */
     @NGetter
     public Throwable firstFailStepError() {
         return firstFailStepError;
     }
 
+    /**
+     * First fail step error.
+     *
+     * @param firstFailStepThrowable first fail step throwable
+     * @return first fail step error result
+     */
     @NSetter
     public NSagaContextModel firstFailStepError(Throwable firstFailStepThrowable) {
         this.firstFailStepError = firstFailStepThrowable;
         return this;
     }
 
+    /**
+     * Last result.
+     *
+     * @return last result result
+     */
     @NGetter
     public Object lastResult() {
         return lastResult;
     }
 
+    /**
+     * Last result.
+     *
+     * @param lastResult last result
+     * @return last result result
+     */
     @NSetter
     public NSagaContextModel lastResult(Object lastResult) {
         this.lastResult = lastResult;
         return this;
     }
 
+    /**
+     * Stack step id.
+     *
+     * @return stack step id result
+     */
     @NGetter
     public Deque<String> stackStepId() {
         return stackStepId;
     }
 
+    /**
+     * Stack step id.
+     *
+     * @param stackStepId stack step id
+     * @return stack step id result
+     */
     @NSetter
     public NSagaContextModel stackStepId(Deque<String> stackStepId) {
         this.stackStepId = stackStepId;
         return this;
     }
 
+    /**
+     * Stack step group.
+     *
+     * @return stack step group result
+     */
     @NGetter
     public Deque<String> stackStepGroup() {
         return stackStepGroup;
     }
 
+    /**
+     * Stack step group.
+     *
+     * @param stackStepGroup stack step group
+     * @return stack step group result
+     */
     @NSetter
     public NSagaContextModel stackStepGroup(Deque<String> stackStepGroup) {
         this.stackStepGroup = stackStepGroup;
         return this;
     }
 
+    /**
+     * Stack step index.
+     *
+     * @return stack step index result
+     */
     @NGetter
     public Deque<Integer> stackStepIndex() {
         return stackStepIndex;
     }
 
+    /**
+     * Stack step index.
+     *
+     * @param stackStepIndex stack step index
+     * @return stack step index result
+     */
     @NSetter
     public NSagaContextModel stackStepIndex(Deque<Integer> stackStepIndex) {
         this.stackStepIndex = stackStepIndex;
         return this;
     }
 
+    /**
+     * Status.
+     *
+     * @return status result
+     */
     @NGetter
     public NSagaStatus status() {
         return status;
     }
 
+    /**
+     * Status.
+     *
+     * @param status status
+     * @return status result
+     */
     @NSetter
     public NSagaContextModel status(NSagaStatus status) {
         this.status = status;
         return this;
     }
 
+    /**
+     * Start time.
+     *
+     * @return start time result
+     */
     @NGetter
     public long startTime() {
         return startTime;
     }
 
+    /**
+     * Start time.
+     *
+     * @param startTime start time
+     * @return start time result
+     */
     @NSetter
     public NSagaContextModel startTime(long startTime) {
         this.startTime = startTime;
         return this;
     }
 
+    /**
+     * End time.
+     *
+     * @return end time result
+     */
     @NGetter
     public long endTime() {
         return endTime;
     }
 
+    /**
+     * End time.
+     *
+     * @param endTime end time
+     * @return end time result
+     */
     @NSetter
     public NSagaContextModel endTime(long endTime) {
         this.endTime = endTime;
         return this;
     }
 
+    /**
+     * Values.
+     *
+     * @return values result
+     */
     @NGetter
     public Map<String, Object> values() {
         return values;
     }
 
+    /**
+     * Values.
+     *
+     * @param values values
+     * @return values result
+     */
     @NSetter
     public NSagaContextModel values(Map<String, Object> values) {
         this.values = values;
         return this;
     }
 
+    /**
+     * Put.
+     *
+     * @param key key
+     * @param value value
+     * @return put result
+     */
     public NSagaContextModel put(String key, Object value) {
         this.values.put(key, value);
         return this;
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param key key
+     * @return get result
+     */
     public Object get(String key) {
         return this.values.get(key);
     }
 
+    /**
+     * Steps to compensate.
+     *
+     * @return steps to compensate result
+     */
     @NGetter
     public Deque<String> stepsToCompensate() {
         return stepsToCompensate;
     }
 
+    /**
+     * Steps to compensate.
+     *
+     * @param stepsToCompensate steps to compensate
+     * @return steps to compensate result
+     */
     @NSetter
     public NSagaContextModel stepsToCompensate(Deque<String> stepsToCompensate) {
         this.stepsToCompensate = stepsToCompensate;

@@ -86,10 +86,19 @@ public enum NElementFormatterStyle implements NEnum {
      */
     private final String id;
 
+  /**
+   * N element formatter style.
+   */
     NElementFormatterStyle() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NElementFormatterStyle> parse(String value) {
         return NEnumUtils.parseEnum(value, NElementFormatterStyle.class, s->{
             return null;

@@ -44,10 +44,23 @@ import java.util.logging.Logger;
  */
 public interface NLog extends NLogger{
 
+    /**
+     * Run in scope.
+     *
+     * @param context context
+     * @param runnable runnable
+     */
     static void runInScope(NLogScope context, Runnable runnable) {
         NLogRPI.of().runInScope(context, runnable);
     }
 
+    /**
+     * Call in scope.
+     *
+     * @param context context
+     * @param callable callable
+     * @return call in scope result
+     */
     static <T> T callInScope(NLogScope context, NCallable<T> callable) {
         return NLogRPI.of().callInScope(context, callable);
     }
@@ -97,18 +110,47 @@ public interface NLog extends NLogger{
      * @return new instance of {@link NLog}
      */
     static NLog of(Class<?> clazz) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param "class").getName() "class").get name()
+         * @return of result
+         */
         return of(NAssert.requireNamedNonBlank(clazz, "class").getName());
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param logger logger
+     * @return of result
+     */
     static NLog of(Logger logger) {
         return NLogRPI.of().getLogger(logger);
     }
 
+    /**
+     * Creates a new instance of of null.
+     *
+     * @return of null result
+     */
     static NLog ofNull() {
         return NLogRPI.of().nullLogger();
     }
 
+    /**
+     * Creates a new instance of of scoped.
+     *
+     * @param clazz clazz
+     * @return of scoped result
+     */
     static NLog ofScoped(Class<?> clazz) {
+        /**
+         * Creates a new instance of of scoped.
+         *
+         * @param "class").getName() "class").get name()
+         * @return of scoped result
+         */
         return ofScoped(NAssert.requireNamedNonBlank(clazz, "class").getName());
     }
 
@@ -122,18 +164,48 @@ public interface NLog extends NLogger{
         return NLogRPI.of().getLogger(name);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @param spi spi
+     * @return of result
+     */
     static NLog of(String name, NLogSPI spi) {
         return NLogRPI.of().createCustomLogger(name, spi);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param spi spi
+     * @return of result
+     */
     static NLog of(NLogSPI spi) {
         return NLogRPI.of().createCustomLogger(null, spi);
     }
 
+    /**
+     * Creates a new instance of of scoped.
+     *
+     * @param name name
+     * @return of scoped result
+     */
     static NLog ofScoped(String name) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param name).scoped( name).scoped(
+         * @return of result
+         */
         return of(name).scoped();
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 
     /**
@@ -146,28 +218,89 @@ public interface NLog extends NLogger{
      */
     boolean isLoggable(Level level);
 
+    /**
+     * Scoped.
+     *
+     * @return scoped result
+     */
     NLog scoped();
 
+    /**
+     * Info.
+     *
+     * @param msg msg
+     */
     default void info(NMsg msg) {
+      /**
+       * Log.
+       *
+       * @param msg.asInfo() msg.as info()
+       */
         log(msg.asInfo());
     }
 
+    /**
+     * Debug.
+     *
+     * @param msg msg
+     */
     default void debug(NMsg msg) {
+      /**
+       * Log.
+       *
+       * @param msg.asDebug() msg.as debug()
+       */
         log(msg.asDebug());
     }
 
+    /**
+     * Warn.
+     *
+     * @param msg msg
+     */
     default void warn(NMsg msg) {
+      /**
+       * Log.
+       *
+       * @param msg.asWarningAlert() msg.as warning alert()
+       */
         log(msg.asWarningAlert());
     }
 
+    /**
+     * Error.
+     *
+     * @param msg msg
+     */
     default void error(NMsg msg) {
+      /**
+       * Log.
+       *
+       * @param msg.asError() msg.as error()
+       */
         log(msg.asError());
     }
 
+    /**
+     * Log.
+     *
+     * @param level level
+     * @param msgSupplier msg supplier
+     */
     void log(Level level, Supplier<NMsg> msgSupplier);
 
+    /**
+     * Log.
+     *
+     * @param msg msg
+     */
     void log(NMsg msg);
 
+    /**
+     * Log.
+     *
+     * @param msg msg
+     */
     void log(NMsgBuilder msg);
 
 }

@@ -6,51 +6,109 @@ import net.thevpc.nuts.util.NEqualizer;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * NCollectionDiffBuilder class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NCollectionDiffBuilder<T, K> {
     private Collection<T> oldItems;
     private Collection<T> newItems;
     private Function<T, K> idResolver;
     private NEqualizer<T> equalizer;
 
+  /**
+   * N collection diff builder.
+   */
     NCollectionDiffBuilder() {
     }
 
+    /**
+     * Old items.
+     *
+     * @return old items result
+     */
     public Collection<T> oldItems() {
         return oldItems;
     }
 
+    /**
+     * Old items.
+     *
+     * @param oldItems old items
+     * @return old items result
+     */
     public NCollectionDiffBuilder<T, K> oldItems(Collection<T> oldItems) {
         this.oldItems = oldItems;
         return this;
     }
 
+    /**
+     * New items.
+     *
+     * @return new items result
+     */
     public Collection<T> newItems() {
         return newItems;
     }
 
+    /**
+     * New items.
+     *
+     * @param newItems new items
+     * @return new items result
+     */
     public NCollectionDiffBuilder<T, K> newItems(Collection<T> newItems) {
         this.newItems = newItems;
         return this;
     }
 
+    /**
+     * Id resolver.
+     *
+     * @return id resolver result
+     */
     public Function<T, K> idResolver() {
         return idResolver;
     }
 
+    /**
+     * Id resolver.
+     *
+     * @param idResolver id resolver
+     * @return id resolver result
+     */
     public NCollectionDiffBuilder<T, K> idResolver(Function<T, K> idResolver) {
         this.idResolver = idResolver;
         return this;
     }
 
+    /**
+     * Equalizer.
+     *
+     * @return equalizer result
+     */
     public NEqualizer<T> equalizer() {
         return equalizer;
     }
 
+    /**
+     * Equalizer.
+     *
+     * @param equalize equalize
+     * @return equalizer result
+     */
     public NCollectionDiffBuilder<T, K> equalizer(NEqualizer<T> equalize) {
         this.equalizer = equalize;
         return this;
     }
 
+    /**
+     * Diff.
+     *
+     * @return diff result
+     */
     public NCollectionDiff<T> diff() {
         Function<T, K> id = this.idResolver;
         if (id == null) {

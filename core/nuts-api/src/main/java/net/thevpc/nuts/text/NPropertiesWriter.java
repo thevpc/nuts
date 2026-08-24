@@ -37,6 +37,11 @@ import java.util.Map;
  * @app.category Format
  */
 public interface NPropertiesWriter extends NContentTypeWriter {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NPropertiesWriter of() {
        return NExtensions.of(NPropertiesWriter.class);
     }

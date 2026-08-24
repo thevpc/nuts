@@ -94,11 +94,22 @@ public enum NTextStyleType implements NEnum {
     private final boolean basic;
     private final String id;
 
+  /**
+   * N text style type.
+   *
+   * @param basic basic
+   */
     NTextStyleType(boolean basic) {
         this.basic = basic;
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NTextStyleType> parse(String value) {
         return NEnumUtils.parseEnum(value, NTextStyleType.class, s -> {
             switch (s.normalizedValue()) {
@@ -247,6 +258,12 @@ public enum NTextStyleType implements NEnum {
         return id;
     }
 
+    /**
+     * Checks if is basic.
+     *
+     * @param trueBasic true basic
+     * @return is basic result
+     */
     public boolean isBasic(boolean trueBasic) {
         if (trueBasic) {
             if (basic) {
@@ -264,10 +281,20 @@ public enum NTextStyleType implements NEnum {
         }
     }
 
+    /**
+     * Basic.
+     *
+     * @return basic result
+     */
     public boolean basic() {
         return basic;
     }
 
+    /**
+     * True basic.
+     *
+     * @return true basic result
+     */
     public boolean trueBasic() {
         if (basic) {
             switch (this) {

@@ -32,6 +32,11 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
     /** Provides host load metrics for this worker */
     private NWorkBalancerHostLoadMetricProvider hostLoadMetricsProvider;
 
+    /**
+     * N work balancer worker model.
+     *
+     * @return n work balancer worker model result
+     */
     public NWorkBalancerWorkerModel() {
     }
 
@@ -131,6 +136,11 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
 
     @Override
     public NWorkBalancerWorkerModel copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -140,6 +150,12 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
         try {
             copy = (NWorkBalancerWorkerModel) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
         copy.name = this.name;

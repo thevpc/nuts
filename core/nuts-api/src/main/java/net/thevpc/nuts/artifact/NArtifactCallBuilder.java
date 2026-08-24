@@ -50,12 +50,34 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
        return NExtensions.of(NArtifactCallBuilder.class);
     }
 
+    /**
+     * Script name.
+     *
+     * @return script name result
+     */
     String scriptName();
 
+    /**
+     * Script name.
+     *
+     * @param scriptName script name
+     * @return script name result
+     */
     NArtifactCallBuilder scriptName(String scriptName);
 
+    /**
+     * Script content.
+     *
+     * @return script content result
+     */
     String scriptContent();
 
+    /**
+     * Script content.
+     *
+     * @param scriptContent script content
+     * @return script content result
+     */
     NArtifactCallBuilder scriptContent(String scriptContent);
 
     /**

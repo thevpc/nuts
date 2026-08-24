@@ -40,66 +40,176 @@ import java.util.Map;
  * @app.category Config
  */
 public interface NWorkspaceBootConfig {
+    /**
+     * Checks if is immediate location.
+     *
+     * @return is immediate location result
+     */
     @NGetter
     boolean isImmediateLocation();
 
+    /**
+     * Effective workspace name.
+     *
+     * @return effective workspace name result
+     */
     @NGetter
     String effectiveWorkspaceName();
 
+    /**
+     * Boot path.
+     *
+     * @return boot path result
+     */
     @NGetter
     String bootPath();
 
+    /**
+     * Effective workspace.
+     *
+     * @return effective workspace result
+     */
     @NGetter
     String effectiveWorkspace();
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     @NGetter
     String name();
 
+    /**
+     * Workspace.
+     *
+     * @return workspace result
+     */
     @NGetter
     String workspace();
 
+    /**
+     * Extensions.
+     *
+     * @return extensions result
+     */
     @NGetter
     List<Extension> extensions();
 
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
     @NGetter
     List<String> bootRepositories();
 
+    /**
+     * Store locations.
+     *
+     * @return store locations result
+     */
     @NGetter
     Map<NStoreType, String> storeLocations();
 
+    /**
+     * Home locations.
+     *
+     * @return home locations result
+     */
     @NGetter
     Map<NHomeLocation, String> homeLocations();
 
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
     @NGetter
     NStoreStrategy storeStrategy();
 
+    /**
+     * Store layout.
+     *
+     * @return store layout result
+     */
     @NGetter
     NOsFamily storeLayout();
 
+    /**
+     * Repository store strategy.
+     *
+     * @return repository store strategy result
+     */
     @NGetter
     NStoreStrategy repositoryStoreStrategy();
 
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
     @NGetter
     String uuid();
 
+    /**
+     * Checks if is system.
+     *
+     * @return is system result
+     */
     @NGetter
     boolean isSystem();
 
+    /**
+     * Returns the store location.
+     *
+     * @param id id
+     * @param folderType folder type
+     * @return get store location result
+     */
     String getStoreLocation(NId id, NStoreType folderType);
 
+    /**
+     * Returns the store location.
+     *
+     * @param storeLocation store location
+     * @return get store location result
+     */
     String getStoreLocation(NStoreType storeLocation);
 
+    /**
+     * Returns the home location.
+     *
+     * @param homeLocation home location
+     * @return get home location result
+     */
     String getHomeLocation(NHomeLocation homeLocation);
 
+    /**
+     * Returns the home location.
+     *
+     * @param storeLocation store location
+     * @return get home location result
+     */
     String getHomeLocation(NStoreType storeLocation);
 
     /**
      * @app.category Config
      */
     interface Extension {
+        /**
+         * Id.
+         *
+         * @return id result
+         */
         @NGetter
         NId id();
 
+        /**
+         * Checks if is enabled.
+         *
+         * @return is enabled result
+         */
         boolean isEnabled();
     }
 }

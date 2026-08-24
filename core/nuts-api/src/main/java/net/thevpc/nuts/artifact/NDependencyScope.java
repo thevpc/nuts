@@ -126,6 +126,12 @@ public enum NDependencyScope implements NEnum {
         this.other = id.equals("other") || id.startsWith("other-");
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NDependencyScope> parse(String value) {
         return NEnumUtils.parseEnum(value, NDependencyScope.class, s -> {
             switch (s.normalizedValue()) {
@@ -174,34 +180,74 @@ public enum NDependencyScope implements NEnum {
         });
     }
 
+    /**
+     * Checks if is compile.
+     *
+     * @return is compile result
+     */
     public boolean isCompile() {
         return !test;
     }
 
+    /**
+     * Checks if is api.
+     *
+     * @return is api result
+     */
     public boolean isApi() {
         return api;
     }
 
+    /**
+     * Checks if is implementation.
+     *
+     * @return is implementation result
+     */
     public boolean isImplementation() {
         return implementation;
     }
 
+    /**
+     * Checks if is test.
+     *
+     * @return is test result
+     */
     public boolean isTest() {
         return test;
     }
 
+    /**
+     * Checks if is system.
+     *
+     * @return is system result
+     */
     public boolean isSystem() {
         return system;
     }
 
+    /**
+     * Checks if is runtime.
+     *
+     * @return is runtime result
+     */
     public boolean isRuntime() {
         return runtime;
     }
 
+    /**
+     * Checks if is provided.
+     *
+     * @return is provided result
+     */
     public boolean isProvided() {
         return provided;
     }
 
+    /**
+     * Checks if is other.
+     *
+     * @return is other result
+     */
     public boolean isOther() {
         return other;
     }

@@ -33,9 +33,24 @@ package net.thevpc.nuts.elem;
  * @since 0.5.6
  */
 public interface NTernaryOperatorElement extends NOperatorElement {
+    /**
+     * First operand.
+     *
+     * @return first operand result
+     */
     NElement firstOperand();
 
+    /**
+     * Second operand.
+     *
+     * @return second operand result
+     */
     NElement secondOperand();
+    /**
+     * Third operand.
+     *
+     * @return third operand result
+     */
     NElement thirdOperand();
 
 }

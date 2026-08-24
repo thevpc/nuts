@@ -98,35 +98,73 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
     /** Original caller task associated with this model. */
     private NCallable<?> caller;
 
+    /**
+     * N circuit breaker call model.
+     *
+     * @return n circuit breaker call model result
+     */
     public NCircuitBreakerCallModel() {
     }
 
+    /**
+     * N circuit breaker call model.
+     *
+     * @param id id
+     * @return n circuit breaker call model result
+     */
     public NCircuitBreakerCallModel(String id) {
         this.id = id;
     }
 
+    /**
+     * Status.
+     *
+     * @return status result
+     */
     @NGetter
     public NCircuitBreakerCall.Status status() {
         return status;
     }
 
+    /**
+     * Status.
+     *
+     * @param status status
+     * @return status result
+     */
     public NCircuitBreakerCallModel status(NCircuitBreakerCall.Status status) {
         this.status = status;
         return this;
     }
 
 
+    /**
+     * Caller.
+     *
+     * @return caller result
+     */
     @NGetter
     public NCallable<?> caller() {
         return caller;
     }
 
+    /**
+     * Caller.
+     *
+     * @param caller caller
+     * @return caller result
+     */
     public NCircuitBreakerCallModel caller(NCallable<?> caller) {
         this.caller = caller;
         return this;
     }
 
 
+    /**
+     * Error.
+     *
+     * @return error result
+     */
     @NGetter
     public Object error() {
         return error;
@@ -134,110 +172,241 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
 
 
 
+    /**
+     * Error.
+     *
+     * @param error error
+     * @return error result
+     */
     public NCircuitBreakerCallModel error(Throwable error) {
         this.error = error;
         return this;
     }
 
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     @NGetter
     public String id() {
         return id;
     }
 
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
     public NCircuitBreakerCallModel id(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * Failure threshold.
+     *
+     * @return failure threshold result
+     */
     @NGetter
     public int failureThreshold() {
         return failureThreshold;
     }
 
+    /**
+     * Failure threshold.
+     *
+     * @param failureThreshold failure threshold
+     * @return failure threshold result
+     */
     public NCircuitBreakerCallModel failureThreshold(int failureThreshold) {
         this.failureThreshold = failureThreshold;
         return this;
     }
 
+    /**
+     * Success threshold.
+     *
+     * @return success threshold result
+     */
     @NGetter
     public int successThreshold() {
         return successThreshold;
     }
 
+    /**
+     * Success threshold.
+     *
+     * @param successThreshold success threshold
+     * @return success threshold result
+     */
     public NCircuitBreakerCallModel successThreshold(int successThreshold) {
         this.successThreshold = successThreshold;
         return this;
     }
 
+    /**
+     * Failure count.
+     *
+     * @return failure count result
+     */
     @NGetter
     public int failureCount() {
         return failureCount;
     }
 
+    /**
+     * Failure count.
+     *
+     * @param failureCount failure count
+     * @return failure count result
+     */
     public NCircuitBreakerCallModel failureCount(int failureCount) {
         this.failureCount = failureCount;
         return this;
     }
 
+    /**
+     * Success count.
+     *
+     * @return success count result
+     */
     public int successCount() {
         return successCount;
     }
 
+    /**
+     * Success count.
+     *
+     * @param successCount success count
+     * @return success count result
+     */
     @NGetter
     public NCircuitBreakerCallModel successCount(int successCount) {
         this.successCount = successCount;
         return this;
     }
 
+    /**
+     * Open timestamp.
+     *
+     * @return open timestamp result
+     */
     public long openTimestamp() {
         return openTimestamp;
     }
 
+    /**
+     * Open timestamp.
+     *
+     * @param openTimestamp open timestamp
+     * @return open timestamp result
+     */
     @NGetter
     public NCircuitBreakerCallModel openTimestamp(long openTimestamp) {
         this.openTimestamp = openTimestamp;
         return this;
     }
 
+    /**
+     * Success retry period.
+     *
+     * @return success retry period result
+     */
     public IntFunction<NDuration> successRetryPeriod() {
         return successRetryPeriod;
     }
 
+    /**
+     * Success retry period.
+     *
+     * @param successRetryPeriod success retry period
+     * @return success retry period result
+     */
     @NGetter
     public NCircuitBreakerCallModel successRetryPeriod(IntFunction<NDuration> successRetryPeriod) {
         this.successRetryPeriod = successRetryPeriod;
         return this;
     }
 
+    /**
+     * Failure retry period.
+     *
+     * @return failure retry period result
+     */
     public IntFunction<NDuration> failureRetryPeriod() {
         return failureRetryPeriod;
     }
 
+    /**
+     * Failure retry period.
+     *
+     * @param failureRetryPeriod failure retry period
+     * @return failure retry period result
+     */
     @NGetter
     public NCircuitBreakerCallModel failureRetryPeriod(IntFunction<NDuration> failureRetryPeriod) {
         this.failureRetryPeriod = failureRetryPeriod;
         return this;
     }
 
+    /**
+     * Last valid result.
+     *
+     * @return last valid result result
+     */
     public Object lastValidResult() {
         return lastValidResult;
     }
 
+    /**
+     * Last valid result.
+     *
+     * @param lastValidResult last valid result
+     * @return last valid result result
+     */
     @NGetter
     public NCircuitBreakerCallModel lastValidResult(Object lastValidResult) {
         this.lastValidResult = lastValidResult;
         return this;
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NCircuitBreakerCallModel copy(){
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
+    /**
+     * Clone.
+     *
+     * @return clone result
+     */
     protected NCircuitBreakerCallModel clone(){
         try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
             return (NCircuitBreakerCallModel) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

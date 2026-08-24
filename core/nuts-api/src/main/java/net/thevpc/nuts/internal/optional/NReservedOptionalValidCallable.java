@@ -10,22 +10,52 @@ import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+/**
+ * NReservedOptionalValidCallable class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T> implements Cloneable {
 
     private final NCallable<NOptional<T>> value;
     private NOptional<T> result;
     private boolean evaluated;
 
+    /**
+     * N reserved optional valid callable.
+     *
+     * @param value value
+     * @param msg msg
+     * @return n reserved optional valid callable result
+     */
     public NReservedOptionalValidCallable(NCallable<NOptional<T>> value, Supplier<NMsg> msg) {
+      /**
+       * Super.
+       *
+       * @param msg msg
+       */
         super(msg);
         NAssert.requireNamedNonNull(value, "callable");
         this.value = value;
     }
 
+    /**
+     * With message.
+     *
+     * @param message message
+     * @return with message result
+     */
     public NOptional<T> withMessage(Supplier<NMsg> message) {
         return new NReservedOptionalEmpty<>(message);
     }
 
+    /**
+     * With message.
+     *
+     * @param message message
+     * @return with message result
+     */
     public NOptional<T> withMessage(NMsg message) {
         if (evaluated) {
             if (message == null) {
@@ -36,6 +66,12 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
         return new NReservedOptionalValidCallable<>(value, message == null ? (() -> NMsg.ofMissingValue()) : () -> message);
     }
 
+    /**
+     * With name.
+     *
+     * @param name name
+     * @return with name result
+     */
     public NOptional<T> withName(NMsg name) {
         if (evaluated) {
             if (name == null) {
@@ -71,6 +107,11 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                         return NOptional.ofError(message(), ex);
                     }
                 } else {
+                  /**
+                   * Return.
+                   *
+                   * @param result.withMessage(message() result.with message(message()
+                   */
                     return (NOptional<V>) result.withMessage(message());
                 }
             } else {

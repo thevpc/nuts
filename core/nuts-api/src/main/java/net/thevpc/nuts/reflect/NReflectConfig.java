@@ -6,6 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * NReflectConfig @interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NReflectConfig {

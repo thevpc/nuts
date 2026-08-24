@@ -37,26 +37,65 @@ import java.util.List;
  */
 public interface NCodeHighlighter extends NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param kind kind
+     * @return of result
+     */
     static NCodeHighlighter of(String kind) {
         return NTextRPI.of().codeHighlighter(kind);
     }
 
+    /**
+     * Register code highlighter.
+     *
+     * @param format format
+     */
     static void registerCodeHighlighter(NCodeHighlighter format) {
         NTextRPI.of().registerCodeHighlighter(format);
     }
 
+    /**
+     * Unregister code highlighter.
+     *
+     * @param id id
+     */
     static void unregisterCodeHighlighter(String id) {
         NTextRPI.of().unregisterCodeHighlighter(id);
     }
 
+    /**
+     * Code highlighters.
+     *
+     * @return code highlighters result
+     */
     static List<NCodeHighlighter> codeHighlighters() {
         return NTextRPI.of().codeHighlighters();
     }
 
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     String id();
 
+    /**
+     * String to text.
+     *
+     * @param text text
+     * @return string to text result
+     */
     NText stringToText(String text);
 
+    /**
+     * Converts to en to text.
+     *
+     * @param text text
+     * @param tokenType token type
+     * @return token to text result
+     */
     NText tokenToText(String text, String tokenType);
 }

@@ -180,10 +180,19 @@ public enum NPathStandardOption implements NPathOption, NEnum {
      */
     private final String id;
 
+  /**
+   * N path standard option.
+   */
     NPathStandardOption() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NPathStandardOption> parse(String value) {
         return NEnumUtils.parseEnum(value, NPathStandardOption.class);
     }

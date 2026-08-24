@@ -39,5 +39,10 @@ public interface NCustomElement extends NElement {
      */
     Object value();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NCustomElementBuilder builder();
 }

@@ -50,6 +50,12 @@ import java.util.stream.Collectors;
 public final class NReservedUtils {
 
 
+    /**
+     * Parse complex strings.
+     *
+     * @param complex complex
+     * @return parse complex strings result
+     */
     public static String[] parseComplexStrings(String complex) {
         if (complex == null) {
             complex = "";
@@ -148,6 +154,12 @@ public final class NReservedUtils {
         };
     }
 
+    /**
+     * Resolve java command.
+     *
+     * @param javaHome java home
+     * @return resolve java command result
+     */
     public static String resolveJavaCommand(String javaHome) {
         String exe = NOsFamily.current().equals(NOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
@@ -161,6 +173,12 @@ public final class NReservedUtils {
     }
 
 
+    /**
+     * Desc.
+     *
+     * @param s s
+     * @return desc result
+     */
     public static String desc(Object s) {
         if (s == null) {
             return "<EMPTY>";
@@ -172,16 +190,41 @@ public final class NReservedUtils {
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
+    /**
+     * Coalesce.
+     *
+     * @param all all
+     * @return coalesce result
+     */
     public static String coalesce(Object... all) {
         for (Object object : all) {
             if (object != null) {
+                /**
+                 * Desc.
+                 *
+                 * @param object object
+                 * @return desc result
+                 */
                 return desc(object);
             }
         }
+        /**
+         * Desc.
+         *
+         * @param null null
+         * @return desc result
+         */
         return desc(null);
     }
 
 
+    /**
+     * Returns the sys bool nuts property.
+     *
+     * @param property property
+     * @param defaultValue default value
+     * @return get sys bool nuts property result
+     */
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return
                 NLiteral.of(System.getProperty("nuts." + property)).asBoolean().onEmpty(defaultValue).orElse(false)
@@ -189,6 +232,13 @@ public final class NReservedUtils {
                 ;
     }
 
+    /**
+     * Checks if is infinite loop thread.
+     *
+     * @param className class name
+     * @param methodName method name
+     * @return is infinite loop thread result
+     */
     public static boolean isInfiniteLoopThread(String className, String methodName) {
         Thread thread = Thread.currentThread();
         StackTraceElement[] elements = thread.getStackTrace();
@@ -208,6 +258,13 @@ public final class NReservedUtils {
         return false;
     }
 
+    /**
+     * Returns the home.
+     *
+     * @param storeFolder store folder
+     * @param bOptions b options
+     * @return get home result
+     */
     public static String getHome(NStoreType storeFolder, NBootOptions bOptions) {
         return (bOptions.system().orElse(false) ?
                 NPlatformHome.ofSystem(bOptions.storeLayout().orNull()) :
@@ -220,6 +277,14 @@ public final class NReservedUtils {
     }
 
 
+    /**
+     * Returns the id short name.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param classifier classifier
+     * @return get id short name result
+     */
     public static String getIdShortName(String groupId, String artifactId, String classifier) {
         StringBuilder sb = new StringBuilder();
         if (NBlankable.isBlank(classifier)) {
@@ -239,6 +304,15 @@ public final class NReservedUtils {
         return sb.toString();
     }
 
+    /**
+     * Returns the id long name.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param version version
+     * @param classifier classifier
+     * @return get id long name result
+     */
     public static String getIdLongName(String groupId, String artifactId, NVersion version, String classifier) {
         StringBuilder sb = new StringBuilder();
         if (NBlankable.isBlank(classifier)) {
@@ -262,6 +336,12 @@ public final class NReservedUtils {
         return sb.toString();
     }
 
+    /**
+     * Checks if is accept condition.
+     *
+     * @param cond cond
+     * @return is accept condition result
+     */
     public static boolean isAcceptCondition(NEnvCondition cond) {
         List<String> oss = NReservedLangUtils.uniqueNonBlankList(cond.os());
         List<String> archs = NReservedLangUtils.uniqueNonBlankList(cond.arch());
@@ -300,6 +380,12 @@ public final class NReservedUtils {
     }
 
 
+    /**
+     * Converts to dependency exclusion list string.
+     *
+     * @param exclusions exclusions
+     * @return to dependency exclusion list string result
+     */
     public static String toDependencyExclusionListString(List<NId> exclusions) {
         TreeSet<String> ex = new TreeSet<>();
         for (NId exclusion : exclusions) {
@@ -308,10 +394,23 @@ public final class NReservedUtils {
         return String.join(",", ex);
     }
 
+    /**
+     * Checks if is dependency default scope.
+     *
+     * @param s1 s1
+     * @return is dependency default scope result
+     */
     public static boolean isDependencyDefaultScope(String s1) {
         return NDependencyScope.parse(s1).orElse(NDependencyScope.API) == NDependencyScope.API;
     }
 
+    /**
+     * Accept version.
+     *
+     * @param one one
+     * @param other other
+     * @return accept version result
+     */
     public static boolean acceptVersion(NVersionInterval one, NVersion other) {
         NVersion a = NVersion.of(one.lowerBound());
         if (a.isBlank()) {
@@ -342,6 +441,13 @@ public final class NReservedUtils {
         return true;
     }
 
+    /**
+     * Accept version.
+     *
+     * @param one one
+     * @param other other
+     * @return accept version result
+     */
     public static boolean acceptVersion(NVersion one, NVersion other) {
         if (!other.isSingleValue()) {
             throw NException.ofSafeIllegalArgumentException(NMsg.ofC("expected single value version: %s", other));
@@ -455,6 +561,12 @@ public final class NReservedUtils {
             try {
                 fileContent = new String(Files.readAllBytes(filePath));
             } catch (IOException ex) {
+                /**
+                 * Unchecked io exception.
+                 *
+                 * @param ex ex
+                 * @return unchecked io exception result
+                 */
                 throw new UncheckedIOException(ex);
             }
             String[] fileRows = fileContent.split("\n");
@@ -498,12 +610,27 @@ public final class NReservedUtils {
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
             } catch (IOException ex) {
+                /**
+                 * Unchecked io exception.
+                 *
+                 * @param ex ex
+                 * @return unchecked io exception result
+                 */
                 throw new UncheckedIOException(ex);
             }
         }
         return updatedFile;
     }
 
+    /**
+     * Ndi remove file commented2 lines.
+     *
+     * @param filePath file path
+     * @param commentLine comment line
+     * @param force force
+     * @param bLog b log
+     * @return ndi remove file commented2 lines result
+     */
     static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, NLog bLog) {
         boolean found = false;
         boolean updatedFile = false;
@@ -541,6 +668,12 @@ public final class NReservedUtils {
         }
     }
 
+    /**
+     * Format string id list.
+     *
+     * @param s s
+     * @return format string id list result
+     */
     public static String formatStringIdList(List<String> s) {
         LinkedHashSet<String> allIds = new LinkedHashSet<>();
         if (s != null) {
@@ -555,6 +688,12 @@ public final class NReservedUtils {
     }
 
 
+    /**
+     * Parse string id list.
+     *
+     * @param s s
+     * @return parse string id list result
+     */
     public static NOptional<List<String>> parseStringIdList(String s) {
         if (s == null) {
             return NOptional.of(Collections.emptyList());
@@ -605,6 +744,12 @@ public final class NReservedUtils {
         return NOptional.of(new ArrayList<>(allIds));
     }
 
+    /**
+     * Parse id list.
+     *
+     * @param s s
+     * @return parse id list result
+     */
     public static NOptional<List<NId>> parseIdList(String s) {
         List<NId> list = new ArrayList<>();
         NOptional<List<String>> o = parseStringIdList(s);
@@ -626,6 +771,12 @@ public final class NReservedUtils {
         return NOptional.ofEmpty(o.message());
     }
 
+    /**
+     * Converts to map.
+     *
+     * @param condition condition
+     * @return to map result
+     */
     public static Map<String, String> toMap(NEnvCondition condition) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s;

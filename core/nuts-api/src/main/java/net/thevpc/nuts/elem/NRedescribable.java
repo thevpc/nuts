@@ -31,5 +31,11 @@ import java.util.function.Supplier;
  * like method named @{describe}
  */
 public interface NRedescribable<T> extends NDescribable {
+    /**
+     * With description.
+     *
+     * @param description description
+     * @return with description result
+     */
     T withDescription(Supplier<NElement> description);
 }

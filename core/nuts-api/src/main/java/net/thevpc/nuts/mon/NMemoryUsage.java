@@ -15,19 +15,41 @@ public final class NMemoryUsage implements NTextFormattable {
     private final long freeMemory;
     public static final NMemoryUsage ZERO=new NMemoryUsage(0,0);
 
+    /**
+     * N memory usage.
+     *
+     * @param totalMemory total memory
+     * @param freeMemory free memory
+     * @return n memory usage result
+     */
     public NMemoryUsage(long totalMemory, long freeMemory) {
         this.totalMemory = totalMemory;
         this.freeMemory = freeMemory;
     }
 
+    /**
+     * Converts to al memory.
+     *
+     * @return total memory result
+     */
     public long totalMemory() {
         return totalMemory;
     }
 
+    /**
+     * Free memory.
+     *
+     * @return free memory result
+     */
     public long freeMemory() {
         return freeMemory;
     }
 
+    /**
+     * In use memory.
+     *
+     * @return in use memory result
+     */
     public long inUseMemory() {
         return totalMemory - freeMemory;
     }

@@ -46,6 +46,11 @@ public class NReadOnlyWorkspaceException extends NException {
      * @param location location
      */
     public NReadOnlyWorkspaceException(String location) {
+      /**
+       * Super.
+       *
+       * @param NTextStyle.path())) n text style.path()))
+       */
         super(NMsg.ofC("cannot update readonly workspace %s", NText.ofStyled(location, NTextStyle.path())));
     }
 
@@ -53,6 +58,11 @@ public class NReadOnlyWorkspaceException extends NException {
      * Constructs a new NutsReadOnlyException exception
      */
     public NReadOnlyWorkspaceException() {
+      /**
+       * This.
+       *
+       * @param String.valueOf(NWorkspace.of().workspaceLocation()) string.value of(n workspace.of().workspace location())
+       */
         this(NSession.get().isNotPresent()? null : String.valueOf(NWorkspace.of().workspaceLocation()));
     }
 }

@@ -29,7 +29,17 @@ package net.thevpc.nuts.text;
  */
 public interface NTextTitle extends NText {
 
+    /**
+     * Child.
+     *
+     * @return child result
+     */
     NText child();
 
+    /**
+     * Level.
+     *
+     * @return level result
+     */
     int level();
 }

@@ -39,6 +39,14 @@ import net.thevpc.nuts.time.NDuration;
  */
 public interface NProgressEvent extends NSessionProvider {
 
+    /**
+     * Creates a new instance of of start.
+     *
+     * @param source source
+     * @param message message
+     * @param length length
+     * @return of start result
+     */
     static NProgressEvent ofStart(Object source, NMsg message, long length) {
         return new DefaultNProgressEvent(source, message, 0, 0, null, 0, 0,
                 length, null, NSession.of(), null, NProgressEventType.START);
@@ -116,8 +124,18 @@ public interface NProgressEvent extends NSessionProvider {
      */
     double progress();
 
+    /**
+     * Duration.
+     *
+     * @return duration result
+     */
     NDuration duration();
 
+    /**
+     * Partial duration.
+     *
+     * @return partial duration result
+     */
     NDuration partialDuration();
 
     /**
@@ -127,6 +145,11 @@ public interface NProgressEvent extends NSessionProvider {
      */
     boolean isIndeterminate();
 
+    /**
+     * State.
+     *
+     * @return state result
+     */
     NProgressEventType state();
 
 }

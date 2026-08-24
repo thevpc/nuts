@@ -39,16 +39,42 @@ import java.util.List;
  */
 public interface NWorkspaceCmdFactory {
 
+    /**
+     * Configure.
+     *
+     * @param config config
+     */
     void configure(NCommandFactoryConfig config);
 
+    /**
+     * Priority.
+     *
+     * @return priority result
+     */
     @NGetter
     int priority();
 
+    /**
+     * Factory id.
+     *
+     * @return factory id result
+     */
     @NGetter
     String factoryId();
 
+    /**
+     * Finds the find command.
+     *
+     * @param name name
+     * @return find command result
+     */
     NCommandConfig findCommand(String name);
 
+    /**
+     * Finds the find commands.
+     *
+     * @return find commands result
+     */
     List<NCommandConfig> findCommands();
 
 }

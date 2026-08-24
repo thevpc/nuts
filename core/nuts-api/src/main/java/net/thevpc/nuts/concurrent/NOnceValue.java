@@ -77,8 +77,20 @@ public interface NOnceValue<T> extends Supplier<T>, NDescribable {
      */
     boolean trySupply(Supplier<T> value);
 
+    /**
+     * Or else set.
+     *
+     * @param value value
+     * @return or else set result
+     */
     T orElseSet(Supplier<T> value);
 
+    /**
+     * Or else.
+     *
+     * @param value value
+     * @return or else result
+     */
     T orElse(T value);
 
 }

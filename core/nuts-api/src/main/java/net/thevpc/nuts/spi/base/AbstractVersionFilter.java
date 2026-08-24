@@ -43,17 +43,40 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractVersionFilter extends AbstractNFilter implements NVersionFilter, NSimplifiable<NVersionFilter> {
 
+    /**
+     * Abstract version filter.
+     *
+     * @param op op
+     * @return abstract version filter result
+     */
     public AbstractVersionFilter(NFilterOp op) {
+      /**
+       * Super.
+       *
+       * @param op op
+       */
         super(op);
     }
 
     @Override
     public NVersionFilter or(NVersionFilter other) {
+        /**
+         * Or.
+         *
+         * @param other).to(NVersionFilter.class other).to(n version filter.class
+         * @return or result
+         */
         return or((NFilter) other).to(NVersionFilter.class);
     }
 
     @Override
     public NVersionFilter and(NVersionFilter other) {
+        /**
+         * And.
+         *
+         * @param other).to(NVersionFilter.class other).to(n version filter.class
+         * @return and result
+         */
         return and((NFilter) other).to(NVersionFilter.class);
     }
 

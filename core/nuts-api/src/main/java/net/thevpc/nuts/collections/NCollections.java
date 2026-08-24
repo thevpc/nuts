@@ -13,19 +13,46 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * NCollections class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NCollections {
+    /**
+     * Append.
+     *
+     * @param a1 a1
+     * @param b1 b1
+     * @return append result
+     */
     public static <A> List<A> append(Collection<A> a1, A b1) {
         List<A> li = new ArrayList<>(a1);
         li.add(b1);
         return li;
     }
 
+    /**
+     * Append all.
+     *
+     * @param a1 a1
+     * @param b1 b1
+     * @return append all result
+     */
     public static <A> List<A> appendAll(Collection<A> a1, Collection<A> b1) {
         List<A> li = new ArrayList<>(a1);
         li.addAll(b1);
         return li;
     }
 
+    /**
+     * Prepend.
+     *
+     * @param b1 b1
+     * @param a1 a1
+     * @return prepend result
+     */
     public static <A> List<A> prepend(A b1, Collection<A> a1) {
         List<A> li = new ArrayList<>();
         li.add(b1);
@@ -33,14 +60,38 @@ public class NCollections {
         return li;
     }
 
+    /**
+     * List.
+     *
+     * @param it it
+     * @return list result
+     */
     public static <T> List<T> list(Collection<T> it) {
         return new ArrayList<>(it);
     }
 
+    /**
+     * List.
+     *
+     * @param it it
+     * @return list result
+     */
     public static <T> List<T> list(Iterable<T> it) {
+        /**
+         * List.
+         *
+         * @param it.iterator() it.iterator()
+         * @return list result
+         */
         return list(it.iterator());
     }
 
+    /**
+     * List.
+     *
+     * @param it it
+     * @return list result
+     */
     public static <T> List<T> list(Iterator<T> it) {
         List<T> all = new ArrayList<>();
         while (it.hasNext()) {
@@ -49,6 +100,12 @@ public class NCollections {
         return all;
     }
 
+    /**
+     * List.
+     *
+     * @param it it
+     * @return list result
+     */
     public static <T> List<T> list(Enumeration<T> it) {
         List<T> all = new ArrayList<>();
         while (it.hasMoreElements()) {
@@ -57,21 +114,45 @@ public class NCollections {
         return all;
     }
 
+    /**
+     * Stream.
+     *
+     * @param it it
+     * @return stream result
+     */
     public static <T> Stream<T> stream(Iterable<T> it) {
         return StreamSupport.stream(it.spliterator(), false);
     }
 
+    /**
+     * Stream.
+     *
+     * @param iterator iterator
+     * @return stream result
+     */
     public static <T> Stream<T> stream(Iterator<T> iterator) {
         return StreamSupport.stream(
                 Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),
                 false);
     }
 
+    /**
+     * Distinct by key.
+     *
+     * @param distinctMapper distinct mapper
+     * @return distinct by key result
+     */
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> distinctMapper) {
         Map<Object, Boolean> visited = new ConcurrentHashMap<>();
         return t -> visited.putIfAbsent(distinctMapper.apply(t), Boolean.TRUE) == null;
     }
 
+    /**
+     * Converts to distinct stripped non empty list.
+     *
+     * @param values0 values0
+     * @return to distinct stripped non empty list result
+     */
     public static List<String> toDistinctStrippedNonEmptyList(List<String> values0) {
         Set<String> set = toStrippedNonEmptySet(
                 values0 == null ? null : values0.toArray(new String[0])
@@ -79,6 +160,13 @@ public class NCollections {
         return new ArrayList<>(set);
     }
 
+    /**
+     * Converts to distinct stripped non empty list.
+     *
+     * @param values0 values0
+     * @param values values
+     * @return to distinct stripped non empty list result
+     */
     public static List<String> toDistinctStrippedNonEmptyList(List<String> values0, List<String>... values) {
         Set<String> set = toStrippedNonEmptySet(
                 values0 == null ? null : values0.toArray(new String[0])
@@ -93,6 +181,13 @@ public class NCollections {
         return new ArrayList<>(set);
     }
 
+    /**
+     * Adds the specified all non null.
+     *
+     * @param container container
+     * @param newElements new elements
+     * @return add all non null result
+     */
     public static <T> boolean addAllNonNull(Collection<T> container, Collection<T> newElements) {
         boolean someAdded = false;
         if (newElements != null) {
@@ -106,14 +201,40 @@ public class NCollections {
         return someAdded;
     }
 
+    /**
+     * Unmodifiable list.
+     *
+     * @param other other
+     * @return unmodifiable list result
+     */
     public static <T> List<T> unmodifiableList(Collection<T> other) {
         return other == null ? Collections.emptyList() : Collections.unmodifiableList(nonNullList(other));
     }
 
+    /**
+     * Unmodifiable non null list.
+     *
+     * @param other other
+     * @return unmodifiable non null list result
+     */
     public static <T> List<T> unmodifiableNonNullList(Collection<T> other) {
+        /**
+         * Unmodifiable list.
+         *
+         * @param other other
+         * @param Objects::nonNull objects::non null
+         * @return unmodifiable list result
+         */
         return unmodifiableList(other, Objects::nonNull);
     }
 
+    /**
+     * Unmodifiable list.
+     *
+     * @param other other
+     * @param filter filter
+     * @return unmodifiable list result
+     */
     public static <T> List<T> unmodifiableList(Collection<T> other, Predicate<T> filter) {
         if (other == null) {
             return Collections.emptyList();
@@ -128,10 +249,30 @@ public class NCollections {
         );
     }
 
+    /**
+     * Unmodifiable non null set.
+     *
+     * @param other other
+     * @return unmodifiable non null set result
+     */
     public static <T> Set<T> unmodifiableNonNullSet(Collection<T> other) {
+        /**
+         * Unmodifiable set.
+         *
+         * @param other other
+         * @param Objects::nonNull objects::non null
+         * @return unmodifiable set result
+         */
         return unmodifiableSet(other, Objects::nonNull);
     }
 
+    /**
+     * Unmodifiable set.
+     *
+     * @param other other
+     * @param filter filter
+     * @return unmodifiable set result
+     */
     public static <T> Set<T> unmodifiableSet(Collection<T> other, Predicate<T> filter) {
         if (other == null) {
             return Collections.emptySet();
@@ -146,6 +287,12 @@ public class NCollections {
         );
     }
 
+    /**
+     * Non null map.
+     *
+     * @param other other
+     * @return non null map result
+     */
     public static <T, V> Map<T, V> nonNullMap(Map<T, V> other) {
         if (other == null) {
             return new LinkedHashMap<>();
@@ -154,6 +301,12 @@ public class NCollections {
     }
 
 
+    /**
+     * Non null list.
+     *
+     * @param other other
+     * @return non null list result
+     */
     public static <T> List<T> nonNullList(Collection<T> other) {
         if (other == null) {
             return new ArrayList<>();
@@ -161,6 +314,12 @@ public class NCollections {
         return new ArrayList<>(other);
     }
 
+    /**
+     * Converts to stripped non empty set.
+     *
+     * @param values0 values0
+     * @return to stripped non empty set result
+     */
     public static Set<String> toStrippedNonEmptySet(String[] values0) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {
@@ -174,10 +333,22 @@ public class NCollections {
         return set;
     }
 
+    /**
+     * Converts to distinct stripped non empty list.
+     *
+     * @param values0 values0
+     * @return to distinct stripped non empty list result
+     */
     public static ArrayList<String> toDistinctStrippedNonEmptyList(String[] values0) {
         return new ArrayList<>(toStrippedNonEmptySet(values0));
     }
 
+    /**
+     * Converts to set.
+     *
+     * @param classifierMappings classifier mappings
+     * @return to set result
+     */
     public static Set<NIdLocation> toSet(NIdLocation[] classifierMappings) {
         LinkedHashSet<NIdLocation> set = new LinkedHashSet<>();
         if (classifierMappings != null) {
@@ -191,23 +362,67 @@ public class NCollections {
     }
 
 
+    /**
+     * Unmodifiable map.
+     *
+     * @param other other
+     * @return unmodifiable map result
+     */
     public static <T, V> Map<T, V> unmodifiableMap(Map<T, V> other) {
         return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(nonNullMap(other));
     }
 
+    /**
+     * Non null list from array.
+     *
+     * @param other other
+     * @return non null list from array result
+     */
     public static <T> List<T> nonNullListFromArray(T[] other) {
+        /**
+         * Non null list.
+         *
+         * @param Arrays.asList(other) arrays.as list(other)
+         * @return non null list result
+         */
         return nonNullList(Arrays.asList(other));
     }
 
+    /**
+     * Finite stream.
+     *
+     * @param supplier supplier
+     * @return finite stream result
+     */
     public static <T> Stream<T> finiteStream(Supplier<T> supplier) {
+        /**
+         * Stream.
+         *
+         * @param supplier supplier
+         * @param null null
+         * @return stream result
+         */
         return stream(supplier, null);
     }
 
+    /**
+     * Stream.
+     *
+     * @param supplier supplier
+     * @param stopCondition stop condition
+     * @return stream result
+     */
     public static <T> Stream<T> stream(Supplier<T> supplier, Predicate<T> stopCondition) {
         if (stopCondition == null) {
             stopCondition = Objects::isNull;
         }
         Predicate<T> finalStopCondition = stopCondition;
+        /**
+         * Stream.
+         *
+         * @param Iterator<T>( iterator<t>(
+         * @return stream result
+         */
         return stream(new Iterator<T>() {
             T value;
 
@@ -228,6 +443,13 @@ public class NCollections {
     /// /////////////
 
 
+    /**
+     * Head.
+     *
+     * @param anyList any list
+     * @param maxSize max size
+     * @return head result
+     */
     public static <T> List<T> head(List<T> anyList, int maxSize) {
         if (maxSize < 0) {
             maxSize = anyList.size() + maxSize;
@@ -238,6 +460,13 @@ public class NCollections {
         return anyList;
     }
 
+    /**
+     * Tail.
+     *
+     * @param anyList any list
+     * @param maxSize max size
+     * @return tail result
+     */
     public static <T> List<T> tail(List<T> anyList, int maxSize) {
         if (anyList.size() > maxSize) {
             return anyList.subList(anyList.size() - maxSize, maxSize);
@@ -245,6 +474,13 @@ public class NCollections {
         return anyList;
     }
 
+    /**
+     * Split by.
+     *
+     * @param anyList any list
+     * @param groupSize group size
+     * @return split by result
+     */
     public static <T> List<List<T>> splitBy(Collection<T> anyList, int groupSize) {
         List<List<T>> grouped = new ArrayList<List<T>>();
         for (int i = 0; i < groupSize; i++) {
@@ -260,6 +496,13 @@ public class NCollections {
         return grouped;
     }
 
+    /**
+     * Group by.
+     *
+     * @param anyList any list
+     * @param groupSize group size
+     * @return group by result
+     */
     public static <T> List<List<T>> groupBy(Collection<T> anyList, int groupSize) {
         List<List<T>> grouped = new ArrayList<List<T>>();
         List<T> curr = new ArrayList<T>();
@@ -280,10 +523,24 @@ public class NCollections {
         return grouped;
     }
 
+    /**
+     * Convert.
+     *
+     * @param list list
+     * @param converter converter
+     * @return convert result
+     */
     public static <A, B> List<B> convert(List<A> list, Function<A, B> converter) {
         return new NImmutableConvertedList<A, B>(list, converter);
     }
 
+    /**
+     * Filter.
+     *
+     * @param collection collection
+     * @param filter filter
+     * @return filter result
+     */
     public static <T> List<T> filter(Collection<T> collection, NCollectionFilter<T> filter) {
         ArrayList<T> ret = new ArrayList<T>();
         int i = 0;
@@ -298,24 +555,61 @@ public class NCollections {
 
 
 
+    /**
+     * Unmodifiable list.
+     *
+     * @param list list
+     * @return unmodifiable list result
+     */
     public static <V> List<V> unmodifiableList(List<V> list) {
         return list == null ? Collections.emptyList() : Collections.unmodifiableList(list);
     }
 
+    /**
+     * Unmodifiable list or null.
+     *
+     * @param list list
+     * @return unmodifiable list or null result
+     */
     public static <V> List<V> unmodifiableListOrNull(List<V> list) {
         return list == null ? null : Collections.unmodifiableList(list);
     }
 
+    /**
+     * Unmodifiable collection.
+     *
+     * @param list list
+     * @return unmodifiable collection result
+     */
     public static <V> Collection<V> unmodifiableCollection(Collection<V> list) {
         return list == null ? Collections.emptyList() : Collections.unmodifiableCollection(list);
     }
 
+    /**
+     * Unmodifiable collection or null.
+     *
+     * @param list list
+     * @return unmodifiable collection or null result
+     */
     public static <V> Collection<V> unmodifiableCollectionOrNull(Collection<V> list) {
         return list == null ? null : Collections.unmodifiableCollection(list);
     }
 
+    /**
+     * Retain all.
+     *
+     * @param values values
+     * @param filter filter
+     * @return retain all result
+     */
     public static <T> Collection<T> retainAll(Collection<T> values, Predicate<T> filter) {
         if (filter == null) {
+            /**
+             * Null pointer exception.
+             *
+             * @param null" null"
+             * @return null pointer exception result
+             */
             throw new NullPointerException("Filter could not be null");
         }
         for (Iterator<T> i = values.iterator(); i.hasNext(); ) {
@@ -327,8 +621,21 @@ public class NCollections {
     }
 
 
+    /**
+     * Removes the specified all.
+     *
+     * @param values values
+     * @param filter filter
+     * @return remove all result
+     */
     public static <T> Collection<T> removeAll(Collection<T> values, Predicate<T> filter) {
         if (filter == null) {
+            /**
+             * Null pointer exception.
+             *
+             * @param null" null"
+             * @return null pointer exception result
+             */
             throw new NullPointerException("Filter could not be null");
         }
         for (Iterator<T> i = values.iterator(); i.hasNext(); ) {
@@ -351,6 +658,12 @@ public class NCollections {
      */
     public <F, T> List<T> convertList(final List<F> from, final Function<F, T> converter) {
         if (converter == null) {
+            /**
+             * Null pointer exception.
+             *
+             * @param converter" converter"
+             * @return null pointer exception result
+             */
             throw new NullPointerException("Null converter");
         }
         return new AbstractList<T>() {
@@ -376,6 +689,13 @@ public class NCollections {
         };
     }
 
+    /**
+     * Merge maps.
+     *
+     * @param source source
+     * @param dest dest
+     * @return merge maps result
+     */
     public static <K, V> Map<K, V> mergeMaps(Map<K, V> source, Map<K, V> dest) {
         if (dest == null) {
             dest = new HashMap<>();
@@ -392,6 +712,15 @@ public class NCollections {
         return dest;
     }
 
+    /**
+     * Converts to set.
+     *
+     * @param values0 values0
+     * @param strip strip
+     * @param ignoreEmpty ignore empty
+     * @param ignoreNull ignore null
+     * @return to set result
+     */
     public static Set<String> toSet(String[] values0, boolean strip, boolean ignoreEmpty, boolean ignoreNull) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {

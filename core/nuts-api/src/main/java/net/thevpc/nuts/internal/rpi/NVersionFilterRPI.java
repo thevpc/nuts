@@ -36,13 +36,38 @@ import net.thevpc.nuts.util.NOptional;
  * @app.category Base
  */
 public interface NVersionFilterRPI extends NTypedFilters<NVersionFilter> {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NVersionFilterRPI of() {
         return NExtensions.of(NVersionFilterRPI.class);
     }
 
+    /**
+     * By value.
+     *
+     * @param version version
+     * @return by value result
+     */
     NOptional<NVersionFilter> byValue(String version);
 
+    /**
+     * By value.
+     *
+     * @param version version
+     * @param comparator comparator
+     * @return by value result
+     */
     NOptional<NVersionFilter> byValue(String version, NVersionComparator comparator);
 
+    /**
+     * Parse.
+     *
+     * @param expression expression
+     * @param versionComparator version comparator
+     * @return parse result
+     */
     NVersionFilter parse(String expression, NVersionComparator versionComparator);
 }

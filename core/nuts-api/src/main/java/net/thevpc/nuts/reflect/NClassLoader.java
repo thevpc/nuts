@@ -134,24 +134,78 @@ public interface NClassLoader {
         return NReflectRPI.of().createPreferredImmutableClassLoader(preferredName, parent, entries,repositoryFilter, dependencyFilter);
     }
 
+    /**
+     * As class loader.
+     *
+     * @return as class loader result
+     */
     default ClassLoader asClassLoader() {
         return (ClassLoader) this;
     }
 
+    /**
+     * Contains.
+     *
+     * @param node node
+     * @return contains result
+     */
     boolean contains(NId node);
 
+    /**
+     * Finds the search.
+     *
+     * @param node node
+     * @return search result
+     */
     NOptional<NId> search(NId node);
 
+    /**
+     * Load class.
+     *
+     * @param name name
+     * @return load class result
+     * @throws ClassNotFoundException if execution fails
+     */
     Class<?> loadClass(String name) throws ClassNotFoundException;
 
+    /**
+     * Returns the resource.
+     *
+     * @param name name
+     * @return get resource result
+     */
     URL getResource(String name);
 
+    /**
+     * Returns the resources.
+     *
+     * @param name name
+     * @return get resources result
+     * @throws IOException if execution fails
+     */
     Enumeration<URL> getResources(String name) throws IOException;
 
+    /**
+     * Returns the resource as stream.
+     *
+     * @param name name
+     * @return get resource as stream result
+     */
     InputStream getResourceAsStream(String name);
 
+    /**
+     * Returns the parent.
+     *
+     * @return get parent result
+     */
     ClassLoader getParent();
 
+    /**
+     * Checks if is loaded.
+     *
+     * @param id id
+     * @return is loaded result
+     */
     boolean isLoaded(NId id);
 
     /**

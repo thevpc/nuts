@@ -17,16 +17,47 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NDefinitionFactory extends NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDefinitionFactory of() {
         return NExtensions.of(NDefinitionFactory.class);
     }
 
+    /**
+     * By id.
+     *
+     * @param id id
+     * @return by id result
+     */
     NDefinition byId(NId id);
 
+    /**
+     * By descriptor.
+     *
+     * @param descriptor descriptor
+     * @return by descriptor result
+     */
     NDefinition byDescriptor(Supplier<NDescriptor> descriptor);
 
+    /**
+     * By id.
+     *
+     * @param id id
+     * @param repository repository
+     * @return by id result
+     */
     NDefinition byId(NId id, NRepository repository);
 
+    /**
+     * By id and descriptor.
+     *
+     * @param id id
+     * @param descriptor descriptor
+     * @return by id and descriptor result
+     */
     NDefinition byIdAndDescriptor(NId id, Supplier<NDescriptor> descriptor);
 
 }

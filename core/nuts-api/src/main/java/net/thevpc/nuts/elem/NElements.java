@@ -42,13 +42,29 @@ import java.util.function.Consumer;
 public interface NElements extends NComponent {
 
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NElements of() {
         return NExtensions.of(NElements.class);
     }
 
 
+    /**
+     * Checks if is ntf.
+     *
+     * @return is ntf result
+     */
     boolean isNtf();
 
+    /**
+     * Sets the ntf.
+     *
+     * @param ntf ntf
+     * @return set ntf result
+     */
     NElements setNtf(boolean ntf);
 
     /**
@@ -78,13 +94,37 @@ public interface NElements extends NComponent {
      */
     Object toSimple(Object any);
 
+    /**
+     * Converts to element.
+     *
+     * @param any any
+     * @return to element result
+     */
     NElement toElement(Object any);
 
 
+    /**
+     * From element.
+     *
+     * @param o o
+     * @param to to
+     * @return from element result
+     */
     <T> T fromElement(NElement o, Class<T> to);
 
 
+    /**
+     * Do with mapper store.
+     *
+     * @param doWith do with
+     * @return do with mapper store result
+     */
     NElements doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
+    /**
+     * Mapper store.
+     *
+     * @return mapper store result
+     */
     NElementMapperStore mapperStore();
 }

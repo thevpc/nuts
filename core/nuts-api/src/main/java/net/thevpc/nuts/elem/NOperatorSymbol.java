@@ -8,6 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 // ⨾
+/**
+ * NOperatorSymbol enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NOperatorSymbol implements NEnum {
     PLUS("+"),
     PLUS2("++"),
@@ -826,16 +832,33 @@ public enum NOperatorSymbol implements NEnum {
         BY_LEXEME = Collections.unmodifiableMap(m); // immutable if you like safety
     }
 
+  /**
+   * N operator symbol.
+   *
+   * @param lexeme lexeme
+   * @param aliases aliases
+   */
     NOperatorSymbol(String lexeme, String... aliases) {
         this.id = NNameFormat.ID_NAME.format(name());
         this.lexeme = lexeme;
         this.aliases = aliases;
     }
 
+    /**
+     * Aliases.
+     *
+     * @return aliases result
+     */
     public String[] aliases() {
         return aliases.length == 0 ? null : Arrays.copyOf(aliases, aliases.length);
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NOperatorSymbol> parse(String value) {
         return NEnumUtils.parseEnum(value, NOperatorSymbol.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NOperatorSymbol>>() {
             @Override
@@ -850,6 +873,11 @@ public enum NOperatorSymbol implements NEnum {
         });
     }
 
+    /**
+     * Lexeme.
+     *
+     * @return lexeme result
+     */
     public String lexeme() {
         return lexeme;
     }

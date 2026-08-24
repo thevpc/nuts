@@ -53,9 +53,19 @@ public interface NWorkBalancerJobContext {
     @NGetter
     String workerName();
 
+    /**
+     * Worker index.
+     *
+     * @return worker index result
+     */
     @NGetter
     int workerIndex();
 
+    /**
+     * Workers count.
+     *
+     * @return workers count result
+     */
     @NGetter
     int workersCount();
 

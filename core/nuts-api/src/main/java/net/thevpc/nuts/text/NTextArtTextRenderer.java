@@ -27,13 +27,30 @@ package net.thevpc.nuts.text;
  * @author vpc
  */
 public interface NTextArtTextRenderer extends NTextArtRenderer {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTextArtTextRenderer of() {
         return NTextArt.of().textRenderer().get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @return of result
+     */
     static NTextArtTextRenderer of(String name) {
         return NTextArt.of().getTextRenderer(name).get();
     }
 
+    /**
+     * Render.
+     *
+     * @param text text
+     * @return render result
+     */
     NText render(NText text);
 }

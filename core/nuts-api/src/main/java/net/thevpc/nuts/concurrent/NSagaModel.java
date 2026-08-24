@@ -43,33 +43,66 @@ public class NSagaModel implements Serializable, Cloneable, NCopiable {
     public NSagaModel() {
     }
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     @NGetter
     public String id() {
         return id;
     }
 
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
     @NSetter
     public NSagaModel id(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * Node.
+     *
+     * @return node result
+     */
     @NGetter
     public NSagaNodeModel node() {
         return node;
     }
 
+    /**
+     * Node.
+     *
+     * @param node node
+     * @return node result
+     */
     @NSetter
     public NSagaModel node(NSagaNodeModel node) {
         this.node = node;
         return this;
     }
 
+    /**
+     * Context.
+     *
+     * @return context result
+     */
     @NGetter
     public NSagaContextModel context() {
         return context;
     }
 
+    /**
+     * Context.
+     *
+     * @param context context
+     * @return context result
+     */
     @NSetter
     public NSagaModel context(NSagaContextModel context) {
         this.context = context;
@@ -78,6 +111,11 @@ public class NSagaModel implements Serializable, Cloneable, NCopiable {
 
     @Override
     public NSagaModel copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 

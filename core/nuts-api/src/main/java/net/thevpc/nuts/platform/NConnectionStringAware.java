@@ -2,6 +2,12 @@ package net.thevpc.nuts.platform;
 
 import net.thevpc.nuts.net.NConnectionString;
 
+/**
+ * NConnectionStringAware interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NConnectionStringAware {
     /**
      * Returns the connection string representing the target host for execution.
@@ -20,6 +26,12 @@ public interface NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     default NConnectionStringAware connectionString(String connectionString) {
+        /**
+         * Unsupported operation exception.
+         *
+         * @param interface" interface"
+         * @return unsupported operation exception result
+         */
         throw new UnsupportedOperationException("Override in concrete interface");
     }
 
@@ -30,6 +42,12 @@ public interface NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     default NConnectionStringAware at(String connectionString) {
+        /**
+         * Unsupported operation exception.
+         *
+         * @param interface" interface"
+         * @return unsupported operation exception result
+         */
         throw new UnsupportedOperationException("Override in concrete interface");
     }
 
@@ -40,6 +58,12 @@ public interface NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     default NConnectionStringAware at(NConnectionString connectionString) {
+        /**
+         * Unsupported operation exception.
+         *
+         * @param interface" interface"
+         * @return unsupported operation exception result
+         */
         throw new UnsupportedOperationException("Override in concrete interface");
     }
 
@@ -50,6 +74,12 @@ public interface NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     default NConnectionStringAware connectionString(NConnectionString connectionString) {
+        /**
+         * Unsupported operation exception.
+         *
+         * @param interface" interface"
+         * @return unsupported operation exception result
+         */
         throw new UnsupportedOperationException("Override in concrete interface");
     }
 }

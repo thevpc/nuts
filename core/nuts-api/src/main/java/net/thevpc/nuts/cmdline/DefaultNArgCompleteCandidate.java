@@ -50,6 +50,13 @@ public class DefaultNArgCompleteCandidate implements Serializable, NArgCompleteC
         this.display = value;
     }
 
+    /**
+     * Default n arg complete candidate.
+     *
+     * @param value value
+     * @param display display
+     * @return default n arg complete candidate result
+     */
     public DefaultNArgCompleteCandidate(String value, String display) {
         this.value = value;
         this.display = display;

@@ -101,10 +101,19 @@ public enum NStoreType implements NEnum {
      */
     private final String id;
 
+  /**
+   * N store type.
+   */
     NStoreType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NStoreType> parse(String value) {
         return NEnumUtils.parseEnum(value, NStoreType.class);
     }

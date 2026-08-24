@@ -2,6 +2,12 @@ package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.util.*;
 
+/**
+ * NApplicationHandleMode enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NApplicationHandleMode implements NEnum {
     HANDLE,
     PROPAGATE,
@@ -19,6 +25,12 @@ public enum NApplicationHandleMode implements NEnum {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NApplicationHandleMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NApplicationHandleMode.class);
     }
@@ -33,6 +45,11 @@ public enum NApplicationHandleMode implements NEnum {
     }
 
 
+    /**
+     * Run handled.
+     *
+     * @param preparedWorkspace prepared workspace
+     */
     public void runHandled(Runnable preparedWorkspace) {
         try {
             preparedWorkspace.run();
@@ -60,12 +77,24 @@ public enum NApplicationHandleMode implements NEnum {
                     if (e instanceof RuntimeException) {
                         throw (RuntimeException) e;
                     }
+                    /**
+                     * Runtime exception.
+                     *
+                     * @param e e
+                     * @return runtime exception result
+                     */
                     throw new RuntimeException(e);
                 }
             }
         }
     }
 
+    /**
+     * Run handled.
+     *
+     * @param preparedWorkspace prepared workspace
+     * @param handleMode handle mode
+     */
     public static void runHandled(Runnable preparedWorkspace, NApplicationHandleMode handleMode) {
         NApplicationHandleMode m = NUtils.firstNonNull(handleMode, NApplicationHandleMode.HANDLE);
         m.runHandled(preparedWorkspace);

@@ -72,5 +72,10 @@ public interface NUser {
      */
     List<String> groups();
 
+    /**
+     * Converts to spec.
+     *
+     * @return to spec result
+     */
     NUserSpec toSpec();
 }

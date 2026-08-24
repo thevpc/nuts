@@ -81,26 +81,56 @@ public class DefaultNProgressEvent implements NProgressEvent {
         return state;
     }
 
+    /**
+     * Session.
+     *
+     * @return session result
+     */
     public NSession session() {
         return session;
     }
 
+    /**
+     * Error.
+     *
+     * @return error result
+     */
     public Throwable error() {
         return exception;
     }
 
+    /**
+     * Max value.
+     *
+     * @return max value result
+     */
     public long maxValue() {
         return length;
     }
 
+    /**
+     * Source.
+     *
+     * @return source result
+     */
     public Object source() {
         return source;
     }
 
+    /**
+     * Message.
+     *
+     * @return message result
+     */
     public NMsg message() {
         return message;
     }
 
+    /**
+     * Current count.
+     *
+     * @return current count result
+     */
     public long currentCount() {
         return globalCount;
     }
@@ -115,6 +145,11 @@ public class DefaultNProgressEvent implements NProgressEvent {
         return partialDuration;
     }
 
+    /**
+     * Partial count.
+     *
+     * @return partial count result
+     */
     public long partialCount() {
         return partialCount;
     }

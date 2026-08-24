@@ -53,6 +53,11 @@ public class NSecurityException extends SecurityException implements NSessionAwa
      * @param message the detail message.
      */
     public NSecurityException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param NException.messageToString(message) n exception.message to string(message)
+       */
         super(NException.messageToString(message));
         this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
@@ -66,6 +71,12 @@ public class NSecurityException extends SecurityException implements NSessionAwa
      * @param cause   cause
      */
     public NSecurityException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param NException.messageToString(message) n exception.message to string(message)
+       * @param cause cause
+       */
         super(NException.messageToString(message), cause);
         this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
@@ -85,6 +96,11 @@ public class NSecurityException extends SecurityException implements NSessionAwa
         return session.workspace();
     }
 
+    /**
+     * Session.
+     *
+     * @return session result
+     */
     public NSession session() {
         return session;
     }

@@ -56,10 +56,19 @@ public enum NTableSeparator implements NEnum {
      */
     private final String id;
 
+  /**
+   * N table separator.
+   */
     NTableSeparator() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NTableSeparator> parse(String value) {
         return NEnumUtils.parseEnum(value, NTableSeparator.class);
     }

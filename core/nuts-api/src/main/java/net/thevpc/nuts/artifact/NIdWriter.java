@@ -46,6 +46,11 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NIdWriter extends NObjectWriter, NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NIdWriter of() {
         return NExtensions.of(NIdWriter.class);
     }
@@ -186,13 +191,41 @@ public interface NIdWriter extends NObjectWriter, NComponent {
     NIdWriter configure(boolean skipUnsupported, String... args);
 
 
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
     NIdWriter ntf(boolean ntf);
 
+    /**
+     * Checks if is omit condition.
+     *
+     * @return is omit condition result
+     */
     boolean isOmitCondition();
 
+    /**
+     * Omit condition.
+     *
+     * @param omitCondition omit condition
+     * @return omit condition result
+     */
     NIdWriter omitCondition(boolean omitCondition);
 
+    /**
+     * Checks if is omit exclusion.
+     *
+     * @return is omit exclusion result
+     */
     boolean isOmitExclusion();
 
+    /**
+     * Omit exclusion.
+     *
+     * @param omitExclusion omit exclusion
+     * @return omit exclusion result
+     */
     NIdWriter omitExclusion(boolean omitExclusion);
 }

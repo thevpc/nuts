@@ -49,10 +49,19 @@ public enum NStoreScope implements NEnum {
      */
     private final String id;
 
+  /**
+   * N store scope.
+   */
     NStoreScope() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NStoreScope> parse(String value) {
         return NEnumUtils.parseEnum(value, NStoreScope.class);
     }

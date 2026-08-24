@@ -22,6 +22,12 @@ import net.thevpc.nuts.internal.NReservedLangUtils;
 
 import java.util.logging.Level;
 
+/**
+ * NExceptionHandler class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NExceptionHandler {
     private Throwable throwable;
     private int code;
@@ -35,10 +41,30 @@ public class NExceptionHandler {
     private String messageString;
     private boolean built;
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ex ex
+     * @return of result
+     */
     public static NExceptionHandler of(Throwable ex) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ex ex
+         * @param null null
+         * @return of result
+         */
         return of(ex, null);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ex ex
+     * @param out out
+     * @return of result
+     */
     public static NExceptionHandler of(Throwable ex, NLog out) {
         if (ex == null) {
             return new NExceptionHandler();
@@ -86,87 +112,189 @@ public class NExceptionHandler {
         }
     }
 
+    /**
+     * N exception handler.
+     *
+     * @return n exception handler result
+     */
     public NExceptionHandler() {
     }
 
 
+    /**
+     * Session.
+     *
+     * @return session result
+     */
     public NSession session() {
         return session;
     }
 
+    /**
+     * Session.
+     *
+     * @param session session
+     * @return session result
+     */
     public NExceptionHandler session(NSession session) {
         this.session = session;
         return this;
     }
 
+    /**
+     * Checks if is show message.
+     *
+     * @return is show message result
+     */
     public boolean isShowMessage() {
         return showMessage;
     }
 
+    /**
+     * Show message.
+     *
+     * @param showMessage show message
+     * @return show message result
+     */
     public NExceptionHandler showMessage(boolean showMessage) {
         this.showMessage = showMessage;
         return this;
     }
 
+    /**
+     * Throwable.
+     *
+     * @return throwable result
+     */
     public Throwable throwable() {
         return throwable;
     }
 
+    /**
+     * Throwable.
+     *
+     * @param ex ex
+     * @return throwable result
+     */
     public NExceptionHandler throwable(Throwable ex) {
         this.throwable = ex;
         return this;
     }
 
+    /**
+     * Code.
+     *
+     * @return code result
+     */
     public int code() {
         return code;
     }
 
+    /**
+     * Code.
+     *
+     * @param code code
+     * @return code result
+     */
     public NExceptionHandler code(int code) {
         this.code = code;
         return this;
     }
 
+    /**
+     * Out.
+     *
+     * @return out result
+     */
     public NLog out() {
         return out;
     }
 
+    /**
+     * Out.
+     *
+     * @param out out
+     * @return out result
+     */
     public NExceptionHandler out(NLog out) {
         this.out = out;
         return this;
     }
 
+    /**
+     * Checks if is stacktrace.
+     *
+     * @return is stacktrace result
+     */
     public boolean isStacktrace() {
         return stacktrace;
     }
 
+    /**
+     * Stacktrace.
+     *
+     * @param stacktrace stacktrace
+     * @return stacktrace result
+     */
     public NExceptionHandler stacktrace(boolean stacktrace) {
         this.stacktrace = stacktrace;
         return this;
     }
 
+    /**
+     * Checks if is gui.
+     *
+     * @return is gui result
+     */
     public boolean isGui() {
         return gui;
     }
 
+    /**
+     * Gui.
+     *
+     * @param gui gui
+     * @return gui result
+     */
     public NExceptionHandler gui(boolean gui) {
         this.gui = gui;
         return this;
     }
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     public NExceptionHandler build() {
         if (built) {
             return this;
         }
         built = true;
         if (throwable == null) {
+          /**
+           * Code.
+           *
+           * @param 0 0
+           */
             code(0);
             return this;
         }
         int errorCode = NException.resolveExitCode(throwable).orElse(204);
+      /**
+       * Code.
+       *
+       * @param errorCode error code
+       */
         code(errorCode);
         if (errorCode == 0) {
             return this;
         }
+      /**
+       * Session.
+       *
+       * @param NSessionAwareExceptionBase.resolveSession(throwable).orNull() n session aware exception base.resolve session(throwable).or null()
+       */
         session(NSessionAwareExceptionBase.resolveSession(throwable).orNull());
         messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable).map(NSessionAwareExceptionBase::formattedMessage)
                 .orNull();
@@ -206,6 +334,11 @@ public class NExceptionHandler {
         return this;
     }
 
+    /**
+     * Re throw.
+     *
+     * @return re throw result
+     */
     public NExceptionHandler reThrow() {
         if (throwable == null) {
             return this;
@@ -218,16 +351,42 @@ public class NExceptionHandler {
             }
             if (session != null) {
                 session.runWith(() -> {
+                    /**
+                     * N exception.
+                     *
+                     * @param o.exitCode()) o.exit code())
+                     * @return n exception result
+                     */
                     throw new NException(NMsg.ofC("%s", o.toString(), o.exitCode()));
                 });
             }
+            /**
+             * N boot exception.
+             *
+             * @param o.exitCode()) o.exit code())
+             * @return n boot exception result
+             */
             throw new NBootException(NBootMsg.ofC("%s", o.toString(), o.exitCode()));
         }
+        /**
+         * N boot exception.
+         *
+         * @param 255) 255)
+         * @return n boot exception result
+         */
         throw new NBootException(NBootMsg.ofC("%s", throwable.toString(), 255));
     }
 
 
+    /**
+     * Show error.
+     *
+     * @return show error result
+     */
     public NExceptionHandler showError() {
+      /**
+       * Build.
+       */
         build();
         if (throwable == null) {
             return this;
@@ -343,14 +502,38 @@ public class NExceptionHandler {
         return this;
     }
 
+    /**
+     * Propagate.
+     *
+     * @return propagate result
+     */
     public NExceptionHandler propagate() {
+        /**
+         * Show error.
+         *
+         * @param ).reThrow( ).re throw(
+         * @return show error result
+         */
         return showError().reThrow();
     }
 
+    /**
+     * Handle.
+     *
+     * @return handle result
+     */
     public NExceptionHandler handle() {
+        /**
+         * Show error.
+         *
+         * @return show error result
+         */
         return showError();
     }
 
+    /**
+     * Handle fatal.
+     */
     public void handleFatal() {
         System.exit(showError().code());
     }

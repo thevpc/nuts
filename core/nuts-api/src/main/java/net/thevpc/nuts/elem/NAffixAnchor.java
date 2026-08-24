@@ -7,6 +7,12 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.function.Function;
 
+/**
+ * NAffixAnchor enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NAffixAnchor implements NEnum {
     START,
     PRE_1,
@@ -34,10 +40,19 @@ public enum NAffixAnchor implements NEnum {
      */
     private final String id;
 
+  /**
+   * N affix anchor.
+   */
     NAffixAnchor() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NAffixAnchor> parse(String value) {
         return NEnumUtils.parseEnum(value, NAffixAnchor.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NAffixAnchor>>() {
             @Override

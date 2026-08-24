@@ -43,6 +43,11 @@ public class NNoSuchElementException extends NException {
      * @param message message
      */
     public NNoSuchElementException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -53,6 +58,12 @@ public class NNoSuchElementException extends NException {
      * @param cause   cause
      */
     public NNoSuchElementException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 
@@ -67,6 +78,14 @@ public class NNoSuchElementException extends NException {
      *                           writable
      */
     public NNoSuchElementException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

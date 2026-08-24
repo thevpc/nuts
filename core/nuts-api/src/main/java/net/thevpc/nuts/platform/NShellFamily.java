@@ -82,10 +82,18 @@ public enum NShellFamily implements NEnum {
      */
     private final String id;
 
+  /**
+   * N shell family.
+   */
     NShellFamily() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * _resolve current.
+     *
+     * @return _resolve current result
+     */
     private static NShellFamily _resolveCurrent() {
         switch (NOsFamily.current()) {
             case WINDOWS: {
@@ -93,15 +101,33 @@ public enum NShellFamily implements NEnum {
             }
             case LINUX:
             case UNIX: {
+                /**
+                 * Parse.
+                 *
+                 * @param System.getenv("SHELL")).orElse(BASH system.getenv("shell")).or else(bash
+                 * @return parse result
+                 */
                 return parse(System.getenv("SHELL")).orElse(BASH);
             }
             case MACOS: {
+                /**
+                 * Parse.
+                 *
+                 * @param System.getenv("SHELL")).orElse(ZSH system.getenv("shell")).or else(zsh
+                 * @return parse result
+                 */
                 return parse(System.getenv("SHELL")).orElse(ZSH);
             }
         }
         return UNKNOWN;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NShellFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NShellFamily.class, s -> {
             String n = null;
@@ -148,6 +174,11 @@ public enum NShellFamily implements NEnum {
     }
 
 
+    /**
+     * Current.
+     *
+     * @return current result
+     */
     public static NShellFamily current() {
         return _curr;
     }

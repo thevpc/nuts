@@ -54,119 +54,400 @@ public interface NId extends Comparable<NId>, NBlankable {
     Pattern ARTIFACT_ID_PATTERN = Pattern.compile("^[A-Za-z0-9]+(?:[._-][A-Za-z0-9]+)*$");
     NId BLANK = new DefaultNId();
 
+    /**
+     * Returns the list.
+     *
+     * @param value value
+     * @return get list result
+     */
     static NOptional<List<NId>> getList(String value) {
         return NReservedUtils.parseIdList(value);
     }
 
+    /**
+     * Returns the set.
+     *
+     * @param value value
+     * @return get set result
+     */
     static NOptional<Set<NId>> getSet(String value) {
+        /**
+         * Returns the list.
+         *
+         * @param value).map(LinkedHashSet::new value).map( linked hash set::new
+         * @return get list result
+         */
         return getList(value).map(LinkedHashSet::new);
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @return get result
+     */
     static NOptional<NId> get(String groupId, String artifactId) {
         return NOptional.of(new DefaultNId(groupId, artifactId, null));
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param version version
+     * @return get result
+     */
     static NOptional<NId> get(String groupId, String artifactId, NVersion version) {
         return NOptional.of(new DefaultNId(groupId, artifactId, version));
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param version version
+     * @return get result
+     */
     static NOptional<NId> get(String groupId, String artifactId, String version) {
         return NVersion.get(version).map(x -> new DefaultNId(groupId, artifactId, x));
     }
 
+    /**
+     * Returns the api.
+     *
+     * @param version version
+     * @return get api result
+     */
     static NOptional<NId> getApi(NVersion version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(API_ID);
         }
+        /**
+         * Returns the get.
+         *
+         * @param NConstants.Ids.NUTS_GROUP_ID n constants. ids.nuts_group_id
+         * @param NConstants.Ids.NUTS_API_ARTIFACT_ID n constants. ids.nuts_api_artifact_id
+         * @param version version
+         * @return get result
+         */
         return get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version);
     }
 
+    /**
+     * Returns the runtime.
+     *
+     * @param version version
+     * @return get runtime result
+     */
     static NOptional<NId> getRuntime(NVersion version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(RUNTIME_ID);
         }
+        /**
+         * Returns the get.
+         *
+         * @param NConstants.Ids.NUTS_GROUP_ID n constants. ids.nuts_group_id
+         * @param NConstants.Ids.NUTS_RUNTIME n constants. ids.nuts_runtime
+         * @param version version
+         * @return get result
+         */
         return get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME, version);
     }
 
+    /**
+     * Returns the api.
+     *
+     * @param version version
+     * @return get api result
+     */
     static NOptional<NId> getApi(String version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(API_ID);
         }
+        /**
+         * Returns the get.
+         *
+         * @param NConstants.Ids.NUTS_GROUP_ID n constants. ids.nuts_group_id
+         * @param NConstants.Ids.NUTS_API_ARTIFACT_ID n constants. ids.nuts_api_artifact_id
+         * @param version version
+         * @return get result
+         */
         return get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version);
     }
 
+    /**
+     * Returns the runtime.
+     *
+     * @param version version
+     * @return get runtime result
+     */
     static NOptional<NId> getRuntime(String version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(RUNTIME_ID);
         }
+        /**
+         * Returns the get.
+         *
+         * @param NConstants.Ids.NUTS_GROUP_ID n constants. ids.nuts_group_id
+         * @param NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID n constants. ids.nuts_runtime_artifact_id
+         * @param version version
+         * @return get result
+         */
         return get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, version);
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param value value
+     * @return get result
+     */
     static NOptional<NId> get(String value) {
         return NReservedUtils.parseId(value);
     }
 
+    /**
+     * Returns the for class.
+     *
+     * @param value value
+     * @return get for class result
+     */
     static NOptional<NId> getForClass(Class<?> value) {
         return NIORPI.of().resolveId(value);
     }
 
+    /**
+     * Returns the for path.
+     *
+     * @param value value
+     * @return get for path result
+     */
     static NOptional<NId> getForPath(NPath value) {
         return NIORPI.of().resolveId(value);
     }
 
+    /**
+     * Creates a new instance of of list.
+     *
+     * @param value value
+     * @return of list result
+     */
     static List<NId> ofList(String value) {
+        /**
+         * Returns the list.
+         *
+         * @param value).get( value).get(
+         * @return get list result
+         */
         return getList(value).get();
     }
 
+    /**
+     * Creates a new instance of of set.
+     *
+     * @param value value
+     * @return of set result
+     */
     static Set<NId> ofSet(String value) {
+        /**
+         * Returns the set.
+         *
+         * @param value).get( value).get(
+         * @return get set result
+         */
         return getSet(value).get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @return of result
+     */
     static NId of(String groupId, String artifactId) {
+        /**
+         * Returns the get.
+         *
+         * @param groupId group id
+         * @param artifactId).get( artifact id).get(
+         * @return get result
+         */
         return get(groupId, artifactId).get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param version version
+     * @return of result
+     */
     static NId of(String groupId, String artifactId, NVersion version) {
+        /**
+         * Returns the get.
+         *
+         * @param groupId group id
+         * @param artifactId artifact id
+         * @param version).get( version).get(
+         * @return get result
+         */
         return get(groupId, artifactId, version).get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param version version
+     * @return of result
+     */
     static NId of(String groupId, String artifactId, String version) {
+        /**
+         * Returns the get.
+         *
+         * @param groupId group id
+         * @param artifactId artifact id
+         * @param version).get( version).get(
+         * @return get result
+         */
         return get(groupId, artifactId, version).get();
     }
 
+    /**
+     * Creates a new instance of of api.
+     *
+     * @param version version
+     * @return of api result
+     */
     static NId ofApi(NVersion version) {
+        /**
+         * Returns the api.
+         *
+         * @param version).get( version).get(
+         * @return get api result
+         */
         return getApi(version).get();
     }
 
+    /**
+     * Creates a new instance of of runtime.
+     *
+     * @param version version
+     * @return of runtime result
+     */
     static NId ofRuntime(NVersion version) {
+        /**
+         * Returns the runtime.
+         *
+         * @param version).get( version).get(
+         * @return get runtime result
+         */
         return getRuntime(version).get();
     }
 
+    /**
+     * Creates a new instance of of api.
+     *
+     * @param version version
+     * @return of api result
+     */
     static NId ofApi(String version) {
+        /**
+         * Returns the api.
+         *
+         * @param version).get( version).get(
+         * @return get api result
+         */
         return getApi(version).get();
     }
 
+    /**
+     * Creates a new instance of of runtime.
+     *
+     * @param version version
+     * @return of runtime result
+     */
     static NId ofRuntime(String version) {
+        /**
+         * Returns the runtime.
+         *
+         * @param version).get( version).get(
+         * @return get runtime result
+         */
         return getRuntime(version).get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param value value
+     * @return of result
+     */
     static NId of(String value) {
+        /**
+         * Returns the get.
+         *
+         * @param value).get( value).get(
+         * @return get result
+         */
         return get(value).get();
     }
 
+    /**
+     * Creates a new instance of of class.
+     *
+     * @param value value
+     * @return of class result
+     */
     static NId ofClass(Class<?> value) {
+        /**
+         * Returns the for class.
+         *
+         * @param value).get( value).get(
+         * @return get for class result
+         */
         return getForClass(value).get();
     }
 
+    /**
+     * Creates a new instance of of path.
+     *
+     * @param value value
+     * @return of path result
+     */
     static NId ofPath(NPath value) {
+        /**
+         * Returns the for path.
+         *
+         * @param value).get( value).get(
+         * @return get for path result
+         */
         return getForPath(value).get();
     }
 
 
+    /**
+     * Finds the find by class.
+     *
+     * @param value value
+     * @return find by class result
+     */
     static List<NId> findByClass(Class<?> value) {
         return NIORPI.of().resolveIds(value);
     }
 
+    /**
+     * Finds the find by path.
+     *
+     * @param value value
+     * @return find by path result
+     */
     static List<NId> findByPath(NPath value) {
         return NIORPI.of().resolveIds(value);
     }
@@ -195,6 +476,11 @@ public interface NId extends Comparable<NId>, NBlankable {
     @NGetter
     boolean isLongId();
 
+    /**
+     * Checks if is short id.
+     *
+     * @return is short id result
+     */
     @NGetter
     boolean isShortId();
 
@@ -288,6 +574,11 @@ public interface NId extends Comparable<NId>, NBlankable {
     @NGetter
     NId shortId();
 
+    /**
+     * Shared id.
+     *
+     * @return shared id result
+     */
     @NGetter
     NId sharedId();
 
@@ -339,6 +630,11 @@ public interface NId extends Comparable<NId>, NBlankable {
      */
     NIdBuilder builder();
 
+    /**
+     * Converts to dependency.
+     *
+     * @return to dependency result
+     */
     NDependency toDependency();
 
     /**
@@ -366,8 +662,18 @@ public interface NId extends Comparable<NId>, NBlankable {
      */
     NId toAtMost();
 
+    /**
+     * Checks if is null.
+     *
+     * @return is null result
+     */
     boolean isNull();
 
+    /**
+     * Checks if is blank.
+     *
+     * @return is blank result
+     */
     boolean isBlank();
 
     /**
@@ -378,7 +684,19 @@ public interface NId extends Comparable<NId>, NBlankable {
     @NGetter
     String mavenFolder();
 
+    /**
+     * Returns the maven file name.
+     *
+     * @param extension extension
+     * @return get maven file name result
+     */
     String getMavenFileName(String extension);
 
+    /**
+     * Returns the maven path.
+     *
+     * @param extension extension
+     * @return get maven path result
+     */
     String getMavenPath(String extension);
 }

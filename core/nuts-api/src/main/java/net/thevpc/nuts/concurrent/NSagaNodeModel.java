@@ -51,116 +51,237 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
     private NSagaNodeStatus status = NSagaNodeStatus.PENDING;
     private NCompensationStrategy compensationStrategy = NCompensationStrategy.ABORT;
 
+    /**
+     * N saga node model.
+     *
+     * @return n saga node model result
+     */
     public NSagaNodeModel() {
     }
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     @NGetter
     public String id() {
         return id;
     }
 
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
     public NSagaNodeModel id(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     @NGetter
     public String name() {
         return name;
     }
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     public NSagaNodeModel name(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Type.
+     *
+     * @return type result
+     */
     @NGetter
     public NSagaNodeType type() {
         return type;
     }
 
+    /**
+     * Type.
+     *
+     * @param type type
+     * @return type result
+     */
     @NSetter
     public NSagaNodeModel type(NSagaNodeType type) {
         this.type = type;
         return this;
     }
 
+    /**
+     * Step call.
+     *
+     * @return step call result
+     */
     @NGetter
     public NSagaStep stepCall() {
         return stepCall;
     }
 
+    /**
+     * Step call.
+     *
+     * @param stepCall step call
+     * @return step call result
+     */
     @NSetter
     public NSagaNodeModel stepCall(NSagaStep stepCall) {
         this.stepCall = stepCall;
         return this;
     }
 
+    /**
+     * Step condition.
+     *
+     * @return step condition result
+     */
     @NGetter
     public NSagaCondition stepCondition() {
         return stepCondition;
     }
 
+    /**
+     * Step condition.
+     *
+     * @param stepCondition step condition
+     * @return step condition result
+     */
     @NSetter
     public NSagaNodeModel stepCondition(NSagaCondition stepCondition) {
         this.stepCondition = stepCondition;
         return this;
     }
 
+    /**
+     * Children.
+     *
+     * @return children result
+     */
     @NGetter
     public List<NSagaNodeModel> children() {
         return children;
     }
 
+    /**
+     * Children.
+     *
+     * @param children children
+     * @return children result
+     */
     @NSetter
     public NSagaNodeModel children(List<NSagaNodeModel> children) {
         this.children = children;
         return this;
     }
 
+    /**
+     * Adds the specified child.
+     *
+     * @param child child
+     * @return add child result
+     */
     public NSagaNodeModel addChild(NSagaNodeModel child) {
         this.children.add(child);
         return this;
     }
 
+    /**
+     * Else if branches.
+     *
+     * @return else if branches result
+     */
     @NGetter
     public List<NSagaNodeModel> elseIfBranches() {
         return elseIfBranches;
     }
 
+    /**
+     * Else if branches.
+     *
+     * @param elseIfBranches else if branches
+     * @return else if branches result
+     */
     @NSetter
     public NSagaNodeModel elseIfBranches(List<NSagaNodeModel> elseIfBranches) {
         this.elseIfBranches = elseIfBranches;
         return this;
     }
 
+    /**
+     * Otherwise branch.
+     *
+     * @return otherwise branch result
+     */
     @NGetter
     public List<NSagaNodeModel> otherwiseBranch() {
         return otherwiseBranch;
     }
 
+    /**
+     * Otherwise branch.
+     *
+     * @param otherwiseBranch otherwise branch
+     * @return otherwise branch result
+     */
     @NSetter
     public NSagaNodeModel otherwiseBranch(List<NSagaNodeModel> otherwiseBranch) {
         this.otherwiseBranch = otherwiseBranch;
         return this;
     }
 
+    /**
+     * Status.
+     *
+     * @return status result
+     */
     @NGetter
     public NSagaNodeStatus status() {
         return status;
     }
 
+    /**
+     * Status.
+     *
+     * @param status status
+     * @return status result
+     */
     @NSetter
     public NSagaNodeModel status(NSagaNodeStatus status) {
         this.status = status;
         return this;
     }
 
+    /**
+     * Compensation strategy.
+     *
+     * @return compensation strategy result
+     */
     @NGetter
     public NCompensationStrategy compensationStrategy() {
         return compensationStrategy;
     }
 
+    /**
+     * Compensation strategy.
+     *
+     * @param compensationStrategy compensation strategy
+     * @return compensation strategy result
+     */
     @NSetter
     public NSagaNodeModel compensationStrategy(NCompensationStrategy compensationStrategy) {
         this.compensationStrategy = compensationStrategy;
@@ -169,6 +290,11 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
 
     @Override
     public NSagaNodeModel copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 

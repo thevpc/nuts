@@ -52,27 +52,89 @@ import java.time.Instant;
  */
 public interface NFetch extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NFetch of() {
         return NExtensions.of(NFetch.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param id id
+     * @return of result
+     */
     static NFetch of(NId id) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(id ).id(id
+         * @return of result
+         */
         return of().id(id);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param id id
+     * @return of result
+     */
     static NFetch of(String id) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(id ).id(id
+         * @return of result
+         */
         return of().id(id);
     }
 
+    /**
+     * Creates a new instance of of nuts api.
+     *
+     * @return of nuts api result
+     */
     static NFetch ofNutsApi() {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(NWorkspace.of().apiId() ).id(n workspace.of().api id()
+         * @return of result
+         */
         return of().id(NWorkspace.of().apiId());
     }
 
+    /**
+     * Creates a new instance of of nuts app.
+     *
+     * @return of nuts app result
+     */
     static NFetch ofNutsApp() {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(NWorkspace.of().appId() ).id(n workspace.of().app id()
+         * @return of result
+         */
         return of().id(NWorkspace.of().appId());
     }
 
+    /**
+     * Creates a new instance of of nuts runtime.
+     *
+     * @return of nuts runtime result
+     */
     static NFetch ofNutsRuntime() {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(NWorkspace.of().runtimeId() ).id(n workspace.of().runtime id()
+         * @return of result
+         */
         return of().id(NWorkspace.of().runtimeId());
     }
 
@@ -81,12 +143,34 @@ public interface NFetch extends NWorkspaceCmd {
 
     /// /////////////////////////////////////////////////////
 
+    /**
+     * Fetch strategy.
+     *
+     * @return fetch strategy result
+     */
     NOptional<NFetchStrategy> fetchStrategy();
 
+    /**
+     * Transitive.
+     *
+     * @return transitive result
+     */
     NOptional<Boolean> transitive();
 
+    /**
+     * Fetch strategy.
+     *
+     * @param fetchStrategy fetch strategy
+     * @return fetch strategy result
+     */
     NFetch fetchStrategy(NFetchStrategy fetchStrategy);
 
+    /**
+     * Transitive.
+     *
+     * @param transitive transitive
+     * @return transitive result
+     */
     NFetch transitive(Boolean transitive);
 
     /**
@@ -194,6 +278,11 @@ public interface NFetch extends NWorkspaceCmd {
      */
     NDescriptor getResultDescriptor();
 
+    /**
+     * Returns the result effective descriptor.
+     *
+     * @return get result effective descriptor result
+     */
     NDescriptor getResultEffectiveDescriptor();
 
     /**
@@ -251,6 +340,12 @@ public interface NFetch extends NWorkspaceCmd {
     @NSetter
     NFetch repositoryFilter(NRepositoryFilter filter);
 
+    /**
+     * Adds the specified repository filter.
+     *
+     * @param filter filter
+     * @return add repository filter result
+     */
     NFetch addRepositoryFilter(NRepositoryFilter filter);
 
     /**
@@ -291,6 +386,12 @@ public interface NFetch extends NWorkspaceCmd {
     @NSetter
     NFetch dependencyFilter(NDependencyFilter filter);
 
+    /**
+     * Adds the specified dependency filter.
+     *
+     * @param filter filter
+     * @return add dependency filter result
+     */
     NFetch addDependencyFilter(NDependencyFilter filter);
 
     /**
@@ -301,12 +402,29 @@ public interface NFetch extends NWorkspaceCmd {
      */
     NFetch dependencyFilter(String filter);
 
+    /**
+     * Fail fast.
+     *
+     * @param failFast fail fast
+     * @return fail fast result
+     */
     @NSetter
     NFetch failFast(boolean failFast);
 
+    /**
+     * Checks if is ignore current environment.
+     *
+     * @return is ignore current environment result
+     */
     @NGetter
     boolean isIgnoreCurrentEnvironment();
 
+    /**
+     * Ignore current environment.
+     *
+     * @param ignoreCurrentEnvironment ignore current environment
+     * @return ignore current environment result
+     */
     @NGetter
     NFetch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 

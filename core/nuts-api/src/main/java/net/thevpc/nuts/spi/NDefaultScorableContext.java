@@ -39,6 +39,11 @@ public class NDefaultScorableContext implements NScorableContext {
 
     private final Object criteria;
 
+    /**
+     * N default scorable context.
+     *
+     * @return n default scorable context result
+     */
     public NDefaultScorableContext() {
         this.criteria = null;
     }

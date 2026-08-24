@@ -39,6 +39,11 @@ public class NUnexpectedException extends NException {
      * Constructs a new NutsUnexpectedException exception
      */
     public NUnexpectedException() {
+      /**
+       * This.
+       *
+       * @param null null
+       */
         this(null);
     }
 
@@ -48,6 +53,11 @@ public class NUnexpectedException extends NException {
      * @param message message
      */
     public NUnexpectedException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message == null ? NMsg.ofPlain("unexpected behaviour") : message);
     }
 
@@ -58,6 +68,12 @@ public class NUnexpectedException extends NException {
      * @param cause   cause
      */
     public NUnexpectedException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message == null ? NMsg.ofPlain("unexpected behaviour") : message, cause);
     }
 
@@ -70,6 +86,14 @@ public class NUnexpectedException extends NException {
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NUnexpectedException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message == null ? NMsg.ofPlain("unexpected behaviour") : message, cause, enableSuppression, writableStackTrace);
     }
 

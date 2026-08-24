@@ -28,17 +28,44 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.internal.rpi.NIORPI;
 
+/**
+ * NMemoryPrintStream interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NMemoryPrintStream extends NPrintStream {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NMemoryPrintStream of() {
         return NIORPI.of().createInMemoryPrintStream();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param mode mode
+     * @return of result
+     */
     static NMemoryPrintStream of(NTerminalMode mode) {
         return NIORPI.of().createInMemoryPrintStream(mode);
     }
 
+    /**
+     * Bytes.
+     *
+     * @return bytes result
+     */
     byte[] bytes();
 
+    /**
+     * As input source.
+     *
+     * @return as input source result
+     */
     NInputSource asInputSource();
 
     @Override

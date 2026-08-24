@@ -23,17 +23,40 @@ public class DefaultNScoredRunnable<T> implements NScoredRunnable<T> {
     private final int score;
     private final Supplier<NMsg> emptyMessage;
 
+    /**
+     * Default n scored runnable.
+     *
+     * @param value value
+     * @param score score
+     * @param emptyMessage empty message
+     * @return default n scored runnable result
+     */
     public DefaultNScoredRunnable(Runnable value, int score, Supplier<NMsg> emptyMessage) {
         this.value = value;
         if (this.value == null && score > 0) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param score") score")
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(NI18n.of("null runnable requires invalid score"));
         } else if (this.value != null && score <= 0) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param score") score")
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(NI18n.of("non null runnable requires valid score"));
         }
         this.score = score;
         this.emptyMessage = emptyMessage == null ? () -> NMsg.ofInvalidValue() : emptyMessage;
     }
 
+    /**
+     * Run.
+     */
     public void run() {
         if (score>0) {
             value.run();
@@ -43,6 +66,12 @@ public class DefaultNScoredRunnable<T> implements NScoredRunnable<T> {
         }
     }
 
+    /**
+     * Returns the score.
+     *
+     * @param scorableContext scorable context
+     * @return get score result
+     */
     public int getScore(NScorableContext scorableContext) {
         return score;
     }

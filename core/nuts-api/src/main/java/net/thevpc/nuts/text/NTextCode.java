@@ -44,7 +44,17 @@ public interface NTextCode extends NText {
      */
     String value();
 
+    /**
+     * Qualifier.
+     *
+     * @return qualifier result
+     */
     String qualifier();
 
+    /**
+     * Separator.
+     *
+     * @return separator result
+     */
     String separator();
 }

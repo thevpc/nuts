@@ -49,6 +49,9 @@ public enum NWorkBalancerDefaultStrategy implements NEnum {
      */
     private final String id;
 
+  /**
+   * N work balancer default strategy.
+   */
     NWorkBalancerDefaultStrategy() {
         this.id = NNameFormat.ID_NAME.format(name());
     }

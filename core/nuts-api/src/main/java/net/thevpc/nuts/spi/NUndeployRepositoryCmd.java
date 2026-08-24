@@ -52,19 +52,63 @@ public interface NUndeployRepositoryCmd extends NRepositoryCmd {
     @Override
     NUndeployRepositoryCmd run();
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     NId id();
 
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
     NUndeployRepositoryCmd id(NId id);
 
+    /**
+     * Repository.
+     *
+     * @return repository result
+     */
     String repository();
 
+    /**
+     * Repository.
+     *
+     * @param repository repository
+     * @return repository result
+     */
     NUndeployRepositoryCmd repository(String repository);
 
+    /**
+     * Checks if is transitive.
+     *
+     * @return is transitive result
+     */
     boolean isTransitive();
 
+    /**
+     * Transitive.
+     *
+     * @param transitive transitive
+     * @return transitive result
+     */
     NUndeployRepositoryCmd transitive(boolean transitive);
 
+    /**
+     * Checks if is offline.
+     *
+     * @return is offline result
+     */
     boolean isOffline();
 
+    /**
+     * Creates a new instance of offline.
+     *
+     * @param offline offline
+     * @return offline result
+     */
     NUndeployRepositoryCmd offline(boolean offline);
 }

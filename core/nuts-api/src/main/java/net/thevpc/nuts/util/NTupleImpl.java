@@ -9,6 +9,12 @@ import java.util.Objects;
 final class NTupleImpl<T> implements NTuple<T> {
     private T[] values;
 
+    /**
+     * N tuple impl.
+     *
+     * @param a a
+     * @return n tuple impl result
+     */
     public NTupleImpl(T[] a) {
         this.values = Arrays.copyOf(a, a.length);
     }

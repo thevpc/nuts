@@ -62,6 +62,11 @@ public class NExecutionException extends NException implements NExceptionWithExi
      * @param exitCode exit code
      */
     public NExecutionException(NMsg message, int exitCode) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
         this.exitCode = exitCode;
     }
@@ -73,6 +78,13 @@ public class NExecutionException extends NException implements NExceptionWithExi
      * @param cause   cause
      */
     public NExecutionException(NMsg message, Throwable cause) {
+      /**
+       * This.
+       *
+       * @param message message
+       * @param cause cause
+       * @param ERROR_255 error_255
+       */
         this(message, cause, ERROR_255);
     }
 
@@ -84,6 +96,12 @@ public class NExecutionException extends NException implements NExceptionWithExi
      * @param exitCode exit code
      */
     public NExecutionException(NMsg message, Throwable cause, int exitCode) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
         this.exitCode = exitCode;
     }
@@ -98,6 +116,14 @@ public class NExecutionException extends NException implements NExceptionWithExi
      * @param exitCode           exit code
      */
     public NExecutionException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message, cause, enableSuppression, writableStackTrace);
         this.exitCode = exitCode;
     }

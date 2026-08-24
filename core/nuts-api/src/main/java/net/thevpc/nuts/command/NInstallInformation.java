@@ -55,6 +55,11 @@ public interface NInstallInformation {
     @NGetter
     Instant createdInstant();
 
+    /**
+     * Last modified instant.
+     *
+     * @return last modified instant result
+     */
     @NGetter
     Instant lastModifiedInstant();
 
@@ -75,9 +80,19 @@ public interface NInstallInformation {
     NPath installFolder();
 
 
+    /**
+     * Checks if is was installed.
+     *
+     * @return is was installed result
+     */
     @NGetter
     boolean isWasInstalled();
 
+    /**
+     * Checks if is was required.
+     *
+     * @return is was required result
+     */
     @NGetter
     boolean isWasRequired();
 
@@ -105,21 +120,51 @@ public interface NInstallInformation {
     @NGetter
     boolean isInstalledOrRequired();
 
+    /**
+     * Source repository name.
+     *
+     * @return source repository name result
+     */
     @NGetter
     String sourceRepositoryName();
 
+    /**
+     * Source repository uuid.
+     *
+     * @return source repository uuid result
+     */
     @NGetter
     String sourceRepositoryUUID();
 
+    /**
+     * Checks if is just re installed.
+     *
+     * @return is just re installed result
+     */
     @NGetter
     boolean isJustReInstalled();
 
+    /**
+     * Checks if is just installed.
+     *
+     * @return is just installed result
+     */
     @NGetter
     boolean isJustInstalled();
 
+    /**
+     * Checks if is just re required.
+     *
+     * @return is just re required result
+     */
     @NGetter
     boolean isJustReRequired();
 
+    /**
+     * Checks if is just required.
+     *
+     * @return is just required result
+     */
     @NGetter
     boolean isJustRequired();
 }

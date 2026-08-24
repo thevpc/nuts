@@ -40,11 +40,22 @@ public class NRemoveOptions {
 
     private boolean erase = false;
 
+    /**
+     * Checks if is erase.
+     *
+     * @return is erase result
+     */
     @NGetter
     public boolean isErase() {
         return erase;
     }
 
+    /**
+     * Erase.
+     *
+     * @param erase erase
+     * @return erase result
+     */
     @NSetter
     public NRemoveOptions erase(boolean erase) {
         this.erase = erase;

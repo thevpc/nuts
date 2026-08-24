@@ -36,23 +36,86 @@ import net.thevpc.nuts.text.NMsg;
  * @since 0.8.7
  */
 public class NInterruptedException extends NException {
+    /**
+     * N interrupted exception.
+     *
+     * @param throwable throwable
+     * @return n interrupted exception result
+     */
     public NInterruptedException(Throwable throwable) {
+      /**
+       * Super.
+       *
+       * @param NException.getErrorMessage(throwable)) n exception.get error message(throwable))
+       * @param throwable throwable
+       */
         super(NMsg.ofC("%s", NException.getErrorMessage(throwable)), throwable);
     }
 
+    /**
+     * N interrupted exception.
+     *
+     * @param message message
+     * @return n interrupted exception result
+     */
     public NInterruptedException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
+    /**
+     * N interrupted exception.
+     *
+     * @return n interrupted exception result
+     */
     public NInterruptedException() {
+      /**
+       * Super.
+       *
+       * @param NMsg.ofC("interrupted") n msg.of c("interrupted")
+       */
         super(NMsg.ofC("interrupted"));
     }
 
+    /**
+     * N interrupted exception.
+     *
+     * @param message message
+     * @param cause cause
+     * @return n interrupted exception result
+     */
     public NInterruptedException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 
+    /**
+     * N interrupted exception.
+     *
+     * @param message message
+     * @param cause cause
+     * @param enableSuppression enable suppression
+     * @param writableStackTrace writable stack trace
+     * @return n interrupted exception result
+     */
     public NInterruptedException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

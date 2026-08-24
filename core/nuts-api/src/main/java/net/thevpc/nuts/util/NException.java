@@ -48,78 +48,194 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     private final NSession session;
     private final NMsg formattedMessage;
 
+    /**
+     * Returns the default exception factory.
+     *
+     * @return get default exception factory result
+     */
     public static NOptionalExceptionFactory getDefaultExceptionFactory() {
         return NReservedExceptions.getDefaultExceptionFactory();
     }
 
+    /**
+     * Sets the default exception factory.
+     *
+     * @param defaultExceptionFactory default exception factory
+     */
     public static void setDefaultExceptionFactory(NOptionalExceptionFactory defaultExceptionFactory) {
         NReservedExceptions.setDefaultExceptionFactory(defaultExceptionFactory);
     }
+    /**
+     * Creates a new instance of of safe illegal argument exception.
+     *
+     * @param message message
+     * @return of safe illegal argument exception result
+     */
     public static RuntimeException ofSafeIllegalArgumentException(NMsg message) {
         return NReservedExceptions.ofSafeIllegalArgumentException(message);
     }
 
+    /**
+     * Creates a new instance of of safe io exception.
+     *
+     * @param th th
+     * @return of safe io exception result
+     */
     public static RuntimeException ofSafeIOException(Throwable th) {
         return NReservedExceptions.ofSafeIOException(th);
     }
 
+    /**
+     * Creates a new instance of of safe io exception.
+     *
+     * @param message message
+     * @param th th
+     * @return of safe io exception result
+     */
     public static RuntimeException ofSafeIOException(NMsg message, Throwable th) {
         return NReservedExceptions.ofSafeIOException(message,th);
     }
 
+    /**
+     * Creates a new instance of of safe io exception.
+     *
+     * @param message message
+     * @return of safe io exception result
+     */
     public static RuntimeException ofSafeIOException(NMsg message) {
         return NReservedExceptions.ofSafeIOException(message);
     }
 
+    /**
+     * Creates a new instance of of safe illegal argument exception.
+     *
+     * @param message message
+     * @param th th
+     * @return of safe illegal argument exception result
+     */
     public static RuntimeException ofSafeIllegalArgumentException(NMsg message, Throwable th) {
         return NReservedExceptions.ofSafeIllegalArgumentException(message,th);
     }
 
+    /**
+     * Creates a new instance of of safe assert exception.
+     *
+     * @param message message
+     * @return of safe assert exception result
+     */
     public static RuntimeException ofSafeAssertException(NMsg message) {
         return NReservedExceptions.ofSafeAssertException(message);
     }
 
+    /**
+     * Creates a new instance of of safe assert exception.
+     *
+     * @param message message
+     * @param ex ex
+     * @return of safe assert exception result
+     */
     public static RuntimeException ofSafeAssertException(NMsg message, Throwable ex) {
         return NReservedExceptions.ofSafeAssertException(message,ex);
     }
 
+    /**
+     * Creates a new instance of of safe cmd line exception.
+     *
+     * @param message message
+     * @return of safe cmd line exception result
+     */
     public static RuntimeException ofSafeCmdLineException(NMsg message) {
         return NReservedExceptions.ofSafeCmdLineException(message);
     }
 
+    /**
+     * Creates a new instance of of safe cmd line exception.
+     *
+     * @param message message
+     * @param ex ex
+     * @return of safe cmd line exception result
+     */
     public static RuntimeException ofSafeCmdLineException(NMsg message, Throwable ex) {
         return NReservedExceptions.ofSafeCmdLineException(message,ex);
     }
 
+    /**
+     * Creates a new instance of of safe no such element exception.
+     *
+     * @param message message
+     * @return of safe no such element exception result
+     */
     public static RuntimeException ofSafeNoSuchElementException(NMsg message) {
         return NReservedExceptions.ofSafeNoSuchElementException(message);
     }
 
+    /**
+     * Creates a new instance of of safe unexpected exception.
+     *
+     * @param message message
+     * @return of safe unexpected exception result
+     */
     public static RuntimeException ofSafeUnexpectedException(NMsg message) {
         return NReservedExceptions.ofSafeUnexpectedException(message);
     }
 
+    /**
+     * Creates a new instance of of safe unsupported enum exception.
+     *
+     * @param e e
+     * @return of safe unsupported enum exception result
+     */
     public static RuntimeException ofSafeUnsupportedEnumException(Enum e) {
         return NReservedExceptions.ofSafeUnsupportedEnumException(e);
     }
 
+    /**
+     * Resolve exception base.
+     *
+     * @param th th
+     * @return resolve exception base result
+     */
     public static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
         return NReservedExceptions.resolveExceptionBase(th);
     }
 
+    /**
+     * Resolve with exit code exception base.
+     *
+     * @param th th
+     * @return resolve with exit code exception base result
+     */
     public static NOptional<NExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
         return NReservedExceptions.resolveWithExitCodeExceptionBase(th);
     }
 
+    /**
+     * Resolve exit code.
+     *
+     * @param th th
+     * @return resolve exit code result
+     */
     public static NOptional<Integer> resolveExitCode(Throwable th) {
         return NReservedExceptions.resolveExitCode(th);
     }
 
+    /**
+     * Returns the error message.
+     *
+     * @param th th
+     * @return get error message result
+     */
     public static String getErrorMessage(Throwable th) {
         return NReservedExceptions.getErrorMessage(th);
     }
 
 
+    /**
+     * Creates a new instance of of unchecked exception.
+     *
+     * @param th th
+     * @return of unchecked exception result
+     */
     public static RuntimeException ofUncheckedException(Throwable th) {
         return NReservedExceptions.ofUncheckedException(th);
     }
@@ -134,6 +250,11 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      *                retrieval by the {@link #message()} method.
      */
     public NException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param NException.messageToString(message) n exception.message to string(message)
+       */
         super(NException.messageToString(message));
         this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
@@ -153,6 +274,12 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      *                indicates that the cause is nonexistent or unknown.)
      */
     public NException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param occurred":message.toString() occurred":message.to string()
+       * @param cause cause
+       */
         super(message==null?"error occurred":message.toString(), cause);
         this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
@@ -177,6 +304,12 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 
+    /**
+     * Validate formatted message.
+     *
+     * @param message message
+     * @return validate formatted message result
+     */
     public static NMsg validateFormattedMessage(NMsg message) {
         if (message == null) {
             message = NMsg.ofPlain("error occurred");
@@ -184,14 +317,38 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
         return message;
     }
 
+    /**
+     * Message to formatted string.
+     *
+     * @param message message
+     * @return message to formatted string result
+     */
     public static NText messageToFormattedString(NMsg message) {
         if (NWorkspace.get().isNotPresent()) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param workspace":message.toString() workspace":message.to string()
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(message==null?"missing workspace":message.toString());
         }
         return NText.of(validateFormattedMessage(message));
     }
 
+    /**
+     * Message to string.
+     *
+     * @param message message
+     * @return message to string result
+     */
     public static String messageToString(NMsg message) {
+        /**
+         * Message to formatted string.
+         *
+         * @param message).filteredText( message).filtered text(
+         * @return message to formatted string result
+         */
         return messageToFormattedString(message).filteredText();
     }
 
@@ -212,17 +369,38 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
         return session.workspace();
     }
 
+    /**
+     * Session.
+     *
+     * @return session result
+     */
     @NGetter
     public NSession session() {
         return session;
     }
 
+    /**
+     * Message.
+     *
+     * @return message result
+     */
     @NGetter
     public String message() {
+        /**
+         * Returns the message.
+         *
+         * @return get message result
+         */
         return getMessage();
     }
 
 
+    /**
+     * Process throwable.
+     *
+     * @param options options
+     * @return process throwable result
+     */
     public int processThrowable(NBootOptionsInfo options) {
         if (this.session != null) {
             return this.session.callWith(() -> NExceptionWorkspaceHandler.of().processThrowable(options.getApplicationArguments().toArray(new String[0]), this));

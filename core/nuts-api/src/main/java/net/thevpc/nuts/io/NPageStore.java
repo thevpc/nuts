@@ -20,7 +20,18 @@ public interface NPageStore extends AutoCloseable {
         return net.thevpc.nuts.internal.rpi.NUtilsRPI.of().createInMemoryPageStore(pageSize);
     }
 
+    /**
+     * Creates a new instance of of in memory.
+     *
+     * @return of in memory result
+     */
     static NPageStore ofInMemory() {
+        /**
+         * Creates a new instance of of in memory.
+         *
+         * @param -1 -1
+         * @return of in memory result
+         */
         return ofInMemory(-1); // will pick default size
     }
 
@@ -35,7 +46,20 @@ public interface NPageStore extends AutoCloseable {
         return net.thevpc.nuts.internal.rpi.NUtilsRPI.of().createFilePageStore(path, pageSize);
     }
 
+    /**
+     * Creates a new instance of of file.
+     *
+     * @param path path
+     * @return of file result
+     */
     static NPageStore ofFile(NPath path) {
+        /**
+         * Creates a new instance of of file.
+         *
+         * @param path path
+         * @param -1 -1
+         * @return of file result
+         */
         return ofFile(path, -1); // will pick default size
     }
 

@@ -3,10 +3,26 @@ package net.thevpc.nuts.io;
 import java.io.PrintStream;
 import java.util.Locale;
 
+/**
+ * NullPrintStream class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NullPrintStream extends PrintStream {
     public static final PrintStream INSTANCE=new NullPrintStream();
 
+    /**
+     * Null print stream.
+     *
+     * @return null print stream result
+     */
     private NullPrintStream() {
+      /**
+       * Super.
+       *
+       * @param NullOutputStream.INSTANCE null output stream.instance
+       */
         super(NullOutputStream.INSTANCE);
     }
 

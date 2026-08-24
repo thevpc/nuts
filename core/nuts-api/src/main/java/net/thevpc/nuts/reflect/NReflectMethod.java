@@ -30,17 +30,54 @@ package net.thevpc.nuts.reflect;
  */
 public interface NReflectMethod {
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 
+    /**
+     * Checks if is accessible.
+     *
+     * @return is accessible result
+     */
     boolean isAccessible();
 
+    /**
+     * Parameters.
+     *
+     * @return parameters result
+     */
     NReflectParameter[] parameters();
 
+    /**
+     * Invoke.
+     *
+     * @param instance instance
+     * @param args args
+     * @return invoke result
+     */
     Object invoke(Object instance, Object... args);
 
+    /**
+     * Declaring type.
+     *
+     * @return declaring type result
+     */
     NReflectType declaringType();
 
+    /**
+     * Checks if is var args.
+     *
+     * @return is var args result
+     */
     boolean isVarArgs();
 
+    /**
+     * Signature.
+     *
+     * @return signature result
+     */
     NReflectSignature signature();
 }

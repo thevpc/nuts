@@ -16,9 +16,22 @@ import java.util.function.Supplier;
  * Nuts Element Description
  */
 public final class NDescribables {
+    /**
+     * N describables.
+     *
+     * @return n describables result
+     */
     private NDescribables() {
     }
 
+    /**
+     * Describe with transform.
+     *
+     * @param name name
+     * @param transformer transformer
+     * @param params params
+     * @return describe with transform result
+     */
     public static NElement describeWithTransform(String name, Object transformer, NElement... params) {
         NElement t = NDescribables.describeResolveOrSimplify(transformer);
         return NElement.ofTupleBuilder()
@@ -28,14 +41,37 @@ public final class NDescribables {
                 .build();
     }
 
+    /**
+     * Creates a new instance of of late string.
+     *
+     * @param name name
+     * @return of late string result
+     */
     public static Supplier<NElement> ofLateString(Supplier<String> name) {
         return name == null ? null : () -> NElement.ofString(name.get());
     }
 
+    /**
+     * Creates a new instance of of late to string.
+     *
+     * @param any any
+     * @return of late to string result
+     */
     public static Supplier<NElement> ofLateToString(Object any) {
+      /**
+       * Return.
+       *
+       * @param NElement.ofString(String.valueOf(any) n element.of string( string.value of(any)
+       */
         return () -> NElement.ofString(String.valueOf(any));
     }
 
+    /**
+     * Creates a new instance of of desc.
+     *
+     * @param any any
+     * @return of desc result
+     */
     public static Supplier<NElement> ofDesc(Object any) {
         return () -> {
             if (any == null) {
@@ -49,14 +85,33 @@ public final class NDescribables {
         };
     }
 
+    /**
+     * Creates a new instance of of desc.
+     *
+     * @param name name
+     * @return of desc result
+     */
     public static Supplier<NElement> ofDesc(String name) {
         return name == null ? null : () -> NElement.ofString(name);
     }
 
+    /**
+     * Creates a new instance of of desc.
+     *
+     * @param element element
+     * @return of desc result
+     */
     public static Supplier<NElement> ofDesc(NElement element) {
         return element == null ? null : () -> element;
     }
 
+    /**
+     * Safe describe of base.
+     *
+     * @param description description
+     * @param base base
+     * @return safe describe of base result
+     */
     public static NElement safeDescribeOfBase(Supplier<NElement> description, Object base) {
         return NDescribables.safeDescribe(description
                 , base == null ? null : NDescribables.ofDesc(base)
@@ -64,6 +119,12 @@ public final class NDescribables {
         );
     }
 
+    /**
+     * Safe describe.
+     *
+     * @param descriptions descriptions
+     * @return safe describe result
+     */
     public static NElement safeDescribe(Supplier<NElement>... descriptions) {
         if (descriptions != null) {
             for (Supplier<NElement> description : descriptions) {
@@ -75,13 +136,39 @@ public final class NDescribables {
                 }
             }
         }
+        /**
+         * Creates a new instance of of desc.
+         *
+         * @param "invalid").get( "invalid").get(
+         * @return of desc result
+         */
         return ofDesc("invalid").get();
     }
 
+    /**
+     * Describe resolve or to string.
+     *
+     * @param o o
+     * @return describe resolve or to string result
+     */
     public static NElement describeResolveOrToString(Object o) {
+        /**
+         * Describe resolve or.
+         *
+         * @param o o
+         * @param NElement.ofString(o.toString()) n element.of string(o.to string())
+         * @return describe resolve or result
+         */
         return describeResolveOr(o, () -> NElement.ofString(o.toString()));
     }
 
+    /**
+     * Describe resolve or.
+     *
+     * @param o o
+     * @param d d
+     * @return describe resolve or result
+     */
     public static NElement describeResolveOr(Object o, Supplier<NElement> d) {
         NElement e = describeResolveOrNull(o);
         if (e != null) {
@@ -90,6 +177,12 @@ public final class NDescribables {
         return d == null ? null : d.get();
     }
 
+    /**
+     * Describe resolve or simplify as object.
+     *
+     * @param o o
+     * @return describe resolve or simplify as object result
+     */
     public static NObjectElement describeResolveOrSimplifyAsObject(Object o) {
         NElement e = describeResolveOrSimplify(o);
         if (e instanceof NObjectElement) {
@@ -100,6 +193,12 @@ public final class NDescribables {
                 .build();
     }
 
+    /**
+     * Describe resolve or simplify.
+     *
+     * @param o o
+     * @return describe resolve or simplify result
+     */
     public static NElement describeResolveOrSimplify(Object o) {
         if (o == null) {
             return NElement.ofNull();
@@ -114,6 +213,12 @@ public final class NDescribables {
         return NElement.of(o);
     }
 
+    /**
+     * Checks if is supported.
+     *
+     * @param o o
+     * @return is supported result
+     */
     public static boolean isSupported(Object o) {
         if (o == null) {
             return true;
@@ -121,6 +226,12 @@ public final class NDescribables {
         return o instanceof NDescribable;
     }
 
+    /**
+     * Describe resolve or null.
+     *
+     * @param o o
+     * @return describe resolve or null result
+     */
     public static NElement describeResolveOrNull(Object o) {
         if (o == null) {
             return NElement.ofNull();
@@ -129,6 +240,11 @@ public final class NDescribables {
             return (NElement) o;
         }
         if (o instanceof NDescribable) {
+          /**
+           * Return.
+           *
+           * @param o).describe( o).describe(
+           */
             return ((NDescribable) o).describe();
         }
         if (o instanceof Collection) {

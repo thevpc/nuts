@@ -36,11 +36,21 @@ import java.util.stream.Stream;
  * @since 0.5.6
  */
 public interface NObjectElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, Iterable<NElement> {
+    /**
+     * Creates a new instance of of empty.
+     *
+     * @return of empty result
+     */
     static NObjectElement ofEmpty() {
         return NElement.ofObject();
     }
 
 
+    /**
+     * Stream.
+     *
+     * @return stream result
+     */
     Stream<NElement> stream();
 
     /**

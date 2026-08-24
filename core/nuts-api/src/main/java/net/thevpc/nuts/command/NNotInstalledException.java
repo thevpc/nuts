@@ -43,6 +43,13 @@ public class NNotInstalledException extends NInstallationException {
      * @param id artifact
      */
     public NNotInstalledException(NId id) {
+      /**
+       * This.
+       *
+       * @param id id
+       * @param null null
+       * @param null null
+       */
         this(id, null, null);
     }
 
@@ -54,6 +61,13 @@ public class NNotInstalledException extends NInstallationException {
      * @param ex  exception
      */
     public NNotInstalledException(NId id, NMsg msg, Exception ex) {
+      /**
+       * Super.
+       *
+       * @param id id
+       * @param msg msg
+       * @param ex ex
+       */
         super(id, msg == null ? NMsg.ofC("not installed %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 }

@@ -45,48 +45,161 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NUpdate extends NWorkspaceCmd {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NUpdate of() {
         return NExtensions.of(NUpdate.class);
     }
 
+    /**
+     * Removes the specified id.
+     *
+     * @param id id
+     * @return remove id result
+     */
     NUpdate removeId(NId id);
 
+    /**
+     * Adds the specified id.
+     *
+     * @param id id
+     * @return add id result
+     */
     NUpdate addId(NId id);
 
+    /**
+     * Removes the specified id.
+     *
+     * @param id id
+     * @return remove id result
+     */
     NUpdate removeId(String id);
 
+    /**
+     * Adds the specified id.
+     *
+     * @param id id
+     * @return add id result
+     */
     NUpdate addId(String id);
 
+    /**
+     * Adds the specified ids.
+     *
+     * @param ids ids
+     * @return add ids result
+     */
     NUpdate addIds(NId... ids);
 
+    /**
+     * Adds the specified ids.
+     *
+     * @param ids ids
+     * @return add ids result
+     */
     NUpdate addIds(String... ids);
 
+    /**
+     * Clear ids.
+     *
+     * @return clear ids result
+     */
     NUpdate clearIds();
 
+    /**
+     * Ids.
+     *
+     * @return ids result
+     */
     @NGetter
     List<NId> ids();
 
+    /**
+     * Adds the specified locked id.
+     *
+     * @param id id
+     * @return add locked id result
+     */
     NUpdate addLockedId(NId id);
 
+    /**
+     * Adds the specified locked id.
+     *
+     * @param id id
+     * @return add locked id result
+     */
     NUpdate addLockedId(String id);
 
+    /**
+     * Adds the specified locked ids.
+     *
+     * @param ids ids
+     * @return add locked ids result
+     */
     NUpdate addLockedIds(NId... ids);
 
+    /**
+     * Adds the specified locked ids.
+     *
+     * @param ids ids
+     * @return add locked ids result
+     */
     NUpdate addLockedIds(String... ids);
 
+    /**
+     * Clear locked ids.
+     *
+     * @return clear locked ids result
+     */
     NUpdate clearLockedIds();
 
+    /**
+     * Locked ids.
+     *
+     * @return locked ids result
+     */
     @NGetter
     List<NId> lockedIds();
 
+    /**
+     * Adds the specified arg.
+     *
+     * @param arg arg
+     * @return add arg result
+     */
     NUpdate addArg(String arg);
 
+    /**
+     * Adds the specified args.
+     *
+     * @param args args
+     * @return add args result
+     */
     NUpdate addArgs(Collection<String> args);
 
+    /**
+     * Adds the specified args.
+     *
+     * @param args args
+     * @return add args result
+     */
     NUpdate addArgs(String... args);
 
+    /**
+     * Clear args.
+     *
+     * @return clear args result
+     */
     NUpdate clearArgs();
 
+    /**
+     * Args.
+     *
+     * @return args result
+     */
     @NGetter
     List<String> args();
 
@@ -99,6 +212,12 @@ public interface NUpdate extends NWorkspaceCmd {
     @NGetter
     boolean isEnableInstall();
 
+    /**
+     * Enable install.
+     *
+     * @param enableInstall enable install
+     * @return enable install result
+     */
     @NSetter
     NUpdate enableInstall(boolean enableInstall);
 
@@ -160,6 +279,11 @@ public interface NUpdate extends NWorkspaceCmd {
      */
     NWorkspaceUpdateResult getResult();
 
+    /**
+     * Returns the result count.
+     *
+     * @return get result count result
+     */
     int getResultCount();
 
     /**
@@ -169,16 +293,43 @@ public interface NUpdate extends NWorkspaceCmd {
      */
     NUpdate all();
 
+    /**
+     * Checks if is api.
+     *
+     * @return is api result
+     */
     boolean isApi();
 
+    /**
+     * Api.
+     *
+     * @param enable enable
+     * @return api result
+     */
     @NSetter
     NUpdate api(boolean enable);
 
+    /**
+     * Checks if is extensions.
+     *
+     * @return is extensions result
+     */
     boolean isExtensions();
 
+    /**
+     * Extensions.
+     *
+     * @param enable enable
+     * @return extensions result
+     */
     @NSetter
     NUpdate extensions(boolean enable);
 
+    /**
+     * Checks if is companions.
+     *
+     * @return is companions result
+     */
     boolean isCompanions();
 
     /**
@@ -190,22 +341,67 @@ public interface NUpdate extends NWorkspaceCmd {
     @NSetter
     NUpdate companions(boolean updateCompanions);
 
+    /**
+     * Checks if is runtime.
+     *
+     * @return is runtime result
+     */
     boolean isRuntime();
 
+    /**
+     * Runtime.
+     *
+     * @param enable enable
+     * @return runtime result
+     */
     @NSetter
     NUpdate runtime(boolean enable);
 
+    /**
+     * Checks if is installed.
+     *
+     * @return is installed result
+     */
     boolean isInstalled();
 
+    /**
+     * Installed.
+     *
+     * @param enable enable
+     * @return installed result
+     */
     @NSetter
     NUpdate installed(boolean enable);
 
+    /**
+     * Adds the specified scope.
+     *
+     * @param scope scope
+     * @return add scope result
+     */
     NUpdate addScope(NDependencyScope scope);
 
+    /**
+     * Adds the specified scopes.
+     *
+     * @param scopes scopes
+     * @return add scopes result
+     */
     NUpdate addScopes(Collection<NDependencyScope> scopes);
 
+    /**
+     * Adds the specified scopes.
+     *
+     * @param scopes scopes
+     * @return add scopes result
+     */
     NUpdate addScopes(NDependencyScope... scopes);
 
+    /**
+     * Clear scopes.
+     *
+     * @return clear scopes result
+     */
     NUpdate clearScopes();
 
     /**

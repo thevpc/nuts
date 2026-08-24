@@ -35,9 +35,38 @@ import java.util.stream.Stream;
  */
 public interface NTextArtRendererFactory extends NComponent {
 
+    /**
+     * Load.
+     *
+     * @param path path
+     * @return load result
+     */
     NOptional<NTextArtRenderer> load(NInputSource path);
+    /**
+     * Load.
+     *
+     * @param path path
+     * @return load result
+     */
     NOptional<NTextArtRenderer> load(InputStream path);
+    /**
+     * List renderers.
+     *
+     * @param rendererType renderer type
+     * @return list renderers result
+     */
     Stream<NTextArtRenderer> listRenderers(Class<? extends NTextArtRenderer> rendererType);
+    /**
+     * List renderers.
+     *
+     * @return list renderers result
+     */
     Stream<NTextArtRenderer> listRenderers();
+    /**
+     * Returns the renderer.
+     *
+     * @param fontName font name
+     * @return get renderer result
+     */
     NOptional<NTextArtRenderer> getRenderer(String fontName);
 }

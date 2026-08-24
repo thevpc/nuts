@@ -31,27 +31,77 @@ package net.thevpc.nuts.text;
  * @since 0.5.5
  */
 public interface NTableCell {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param content content
+     * @return of result
+     */
     static NTableCell of(String content) {
         return NTableCellSpecBuilder.of(content == null ? null : NText.of(content)).build();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param content content
+     * @return of result
+     */
     static NTableCell of(NText content) {
         return NTableCellSpecBuilder.of(content).build();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param content content
+     * @param colspan colspan
+     * @param rowspan rowspan
+     * @return of result
+     */
     static NTableCell of(NText content, int colspan, int rowspan) {
         return NTableCellSpecBuilder.of(content, colspan, rowspan).build();
     }
 
+    /**
+     * Vertical align.
+     *
+     * @return vertical align result
+     */
     NPositionType verticalAlign();
 
+    /**
+     * Horizontal align.
+     *
+     * @return horizontal align result
+     */
     NPositionType horizontalAlign();
 
+    /**
+     * Colspan.
+     *
+     * @return colspan result
+     */
     int colspan();
 
+    /**
+     * Rowspan.
+     *
+     * @return rowspan result
+     */
     int rowspan();
 
+    /**
+     * Content.
+     *
+     * @return content result
+     */
     NText content();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NTableCellSpecBuilder builder();
 }

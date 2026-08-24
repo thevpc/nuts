@@ -14,18 +14,48 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * NEnvAsCmdBase class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public abstract class NEnvAsCmdBase implements NEnv {
     private NConnectionString connectionString;
     private NEnv defEnv;
     private String protocol;
 
+    /**
+     * N env as cmd base.
+     *
+     * @param context context
+     * @param protocol protocol
+     * @return n env as cmd base result
+     */
     public NEnvAsCmdBase(NScorableContext context,String protocol) {
         this.protocol=protocol;
+      /**
+       * Init.
+       *
+       * @param context.criteria() context.criteria()
+       */
         init(context.criteria());
     }
 
+    /**
+     * N env as cmd base.
+     *
+     * @param connectionString connection string
+     * @param protocol protocol
+     * @return n env as cmd base result
+     */
     public NEnvAsCmdBase(NConnectionString connectionString,String protocol) {
         this.protocol=protocol;
+      /**
+       * Init.
+       *
+       * @param connectionString connection string
+       */
         init(connectionString);
     }
 
@@ -34,11 +64,23 @@ public abstract class NEnvAsCmdBase implements NEnv {
         return false;
     }
 
+    /**
+     * Init.
+     *
+     * @param connectionString connection string
+     * @return init result
+     */
     private void init(NConnectionString connectionString){
         this.connectionString = connectionString;
         NEnvCmdSPI commander=new NEnvCmdSPI() {
             @Override
             public String exec(String cmd) {
+                /**
+                 * Run system command.
+                 *
+                 * @param cmd cmd
+                 * @return run system command result
+                 */
                 return runSystemCommand(cmd);
             }
 
@@ -170,7 +212,18 @@ public abstract class NEnvAsCmdBase implements NEnv {
         return defEnv.hostName();
     }
 
+    /**
+     * Checks if is supported protocol.
+     *
+     * @param protocol protocol
+     * @return is supported protocol result
+     */
     private boolean isSupportedProtocol(String protocol) {
+      /**
+       * Return.
+       *
+       * @param this.protocol.equals(protocol) this.protocol.equals(protocol)
+       */
         return (this.protocol.equals(protocol));
     }
 
@@ -184,6 +237,12 @@ public abstract class NEnvAsCmdBase implements NEnv {
         return defEnv.gpus();
     }
 
+    /**
+     * Run system command.
+     *
+     * @param cmd cmd
+     * @return run system command result
+     */
     protected abstract String runSystemCommand(String cmd);
 
     @Override

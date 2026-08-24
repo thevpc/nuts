@@ -34,7 +34,21 @@ import java.util.List;
  */
 public interface NAskFormat<T> {
 
+    /**
+     * Format.
+     *
+     * @param value value
+     * @param question question
+     * @return format result
+     */
     String format(Object value, NAsk<T> question);
 
+    /**
+     * Resolve default values.
+     *
+     * @param type type
+     * @param question question
+     * @return resolve default values result
+     */
     List<Object> resolveDefaultValues(Class type, NAsk<T> question);
 }

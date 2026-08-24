@@ -53,10 +53,25 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
     private String authenticationAgent;
     private String[] tags;
 
+    /**
+     * N repository config.
+     *
+     * @return n repository config result
+     */
     public NRepositoryConfig() {
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NRepositoryConfig copy(){
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -81,104 +96,231 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
             }
             return o;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Tags.
+     *
+     * @return tags result
+     */
     public String[] tags() {
         return tags;
     }
 
+    /**
+     * Tags.
+     *
+     * @param tags tags
+     * @return tags result
+     */
     public NRepositoryConfig tags(String[] tags) {
         this.tags = tags;
         return this;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     public String name() {
         return name;
     }
 
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
     public NRepositoryConfig name(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
     public String uuid() {
         return uuid;
     }
 
+    /**
+     * Uuid.
+     *
+     * @param uuid uuid
+     * @return uuid result
+     */
     public NRepositoryConfig uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }
 
+    /**
+     * Location.
+     *
+     * @return location result
+     */
     public NRepositoryLocation location() {
         return location;
     }
 
+    /**
+     * Location.
+     *
+     * @param location location
+     * @return location result
+     */
     public NRepositoryConfig location(NRepositoryLocation location) {
         this.location = location;
         return this;
     }
 
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
     public NStoreStrategy storeStrategy() {
         return storeStrategy;
     }
 
+    /**
+     * Store strategy.
+     *
+     * @param storeStrategy store strategy
+     * @return store strategy result
+     */
     public NRepositoryConfig storeStrategy(NStoreStrategy storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
 
+    /**
+     * Groups.
+     *
+     * @return groups result
+     */
     public String groups() {
         return groups;
     }
 
+    /**
+     * Groups.
+     *
+     * @param groups groups
+     * @return groups result
+     */
     public NRepositoryConfig groups(String groups) {
         this.groups = groups;
         return this;
     }
 
+    /**
+     * Env.
+     *
+     * @return env result
+     */
     public Map<String, String> env() {
         return env;
     }
 
+    /**
+     * Env.
+     *
+     * @param env env
+     * @return env result
+     */
     public NRepositoryConfig env(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
+    /**
+     * Mirrors.
+     *
+     * @return mirrors result
+     */
     public List<NRepositoryRef> mirrors() {
         return mirrors;
     }
 
+    /**
+     * Mirrors.
+     *
+     * @param mirrors mirrors
+     * @return mirrors result
+     */
     public NRepositoryConfig mirrors(List<NRepositoryRef> mirrors) {
         this.mirrors = mirrors;
         return this;
     }
 
+    /**
+     * Checks if is index enabled.
+     *
+     * @return is index enabled result
+     */
     public boolean isIndexEnabled() {
         return indexEnabled;
     }
 
+    /**
+     * Index enabled.
+     *
+     * @param indexEnabled index enabled
+     * @return index enabled result
+     */
     public NRepositoryConfig indexEnabled(boolean indexEnabled) {
         this.indexEnabled = indexEnabled;
         return this;
     }
 
+    /**
+     * Authentication agent.
+     *
+     * @return authentication agent result
+     */
     public String authenticationAgent() {
         return authenticationAgent;
     }
 
+    /**
+     * Authentication agent.
+     *
+     * @param authenticationAgent authentication agent
+     * @return authentication agent result
+     */
     public NRepositoryConfig authenticationAgent(String authenticationAgent) {
         this.authenticationAgent = authenticationAgent;
         return this;
     }
 
+    /**
+     * Store locations.
+     *
+     * @return store locations result
+     */
     public Map<NStoreType, String> storeLocations() {
         return storeLocations;
     }
 
+    /**
+     * Store locations.
+     *
+     * @param storeLocations store locations
+     * @return store locations result
+     */
     public NRepositoryConfig storeLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;

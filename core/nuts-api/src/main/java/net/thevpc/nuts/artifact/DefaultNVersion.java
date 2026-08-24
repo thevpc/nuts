@@ -46,14 +46,44 @@ public class DefaultNVersion implements NVersion {
     protected String expression;
     private VersionParts parts;
 
+    /**
+     * Default n version.
+     *
+     * @param expression expression
+     * @return default n version result
+     */
     public DefaultNVersion(String expression) {
         this.expression = (NStringUtils.strip(expression));
     }
 
+    /**
+     * Inc version.
+     *
+     * @param oldVersion old version
+     * @param level level
+     * @param count count
+     * @return inc version result
+     */
     public static String incVersion(String oldVersion, int level, long count) {
+        /**
+         * Inc version.
+         *
+         * @param oldVersion old version
+         * @param level level
+         * @param BigInteger.valueOf(count) big integer.value of(count)
+         * @return inc version result
+         */
         return incVersion(oldVersion, level, BigInteger.valueOf(count));
     }
 
+    /**
+     * Inc version.
+     *
+     * @param oldVersion old version
+     * @param level level
+     * @param count count
+     * @return inc version result
+     */
     public static String incVersion(String oldVersion, int level, BigInteger count) {
         if (count == null) {
             count = BigInteger.ZERO;
@@ -84,10 +114,21 @@ public class DefaultNVersion implements NVersion {
     }
 
 
+    /**
+     * Parts.
+     *
+     * @return parts result
+     */
     public List<NVersionPart> parts() {
         return new ArrayList<>(splitVersionParts2(NStringUtils.strip(expression)).all);
     }
 
+    /**
+     * Split version parts2.
+     *
+     * @param v1 v1
+     * @return split version parts2 result
+     */
     private static VersionParts splitVersionParts2(String v1) {
         v1 = NStringUtils.strip(v1);
         List<NVersionPart> parts = new ArrayList<>();
@@ -157,11 +198,21 @@ public class DefaultNVersion implements NVersion {
     }
 
 
+    /**
+     * Checks if is latest.
+     *
+     * @return is latest result
+     */
     public boolean isLatest() {
         String s = asSingleValue().orNull();
         return NConstants.Versions.LATEST.equalsIgnoreCase(s);
     }
 
+    /**
+     * Checks if is release.
+     *
+     * @return is release result
+     */
     public boolean isRelease() {
         String s = asSingleValue().orNull();
         return NConstants.Versions.RELEASE.equalsIgnoreCase(s);
@@ -190,24 +241,56 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public int compareTo(String other) {
+        /**
+         * Compare to.
+         *
+         * @param NVersion.of(other) n version.of(other)
+         * @param null null
+         * @return compare to result
+         */
         return compareTo(NVersion.of(other), null);
     }
 
     @Override
     public int compareTo(NVersion other) {
+        /**
+         * Compare to.
+         *
+         * @param other other
+         * @param null null
+         * @return compare to result
+         */
         return compareTo(other, null);
     }
 
     @Override
     public int compareTo(String other, NVersionComparator comparator) {
+        /**
+         * Compare to.
+         *
+         * @param NVersion.of(other) n version.of(other)
+         * @param comparator comparator
+         * @return compare to result
+         */
         return compareTo(other == null ? BLANK : NVersion.of(other), comparator);
     }
 
     @Override
     public int compareTo(NVersion other, NVersionComparator comparator) {
+      /**
+       * Return.
+       *
+       * @param comparator).compare(this comparator).compare(this
+       * @param other other
+       */
         return (comparator == null ? NVersionComparator.of() : comparator).compare(this, other);
     }
 
+    /**
+     * Converts to canonical.
+     *
+     * @return to canonical result
+     */
     public NVersion toCanonical() {
         VersionParts parts = getParts();
         List<NVersionPart> can = new ArrayList<>();
@@ -229,6 +312,11 @@ public class DefaultNVersion implements NVersion {
         return NVersion.of(sb.toString());
     }
 
+    /**
+     * Converts to normalized.
+     *
+     * @return to normalized result
+     */
     public NVersion toNormalized() {
         List<NVersionPart> parts = new ArrayList<>(getParts().all);
         while (!parts.isEmpty()) {
@@ -250,6 +338,12 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public NVersionFilter toFilter() {
+        /**
+         * Converts to filter.
+         *
+         * @param null null
+         * @return to filter result
+         */
         return toFilter(null);
     }
 
@@ -279,6 +373,12 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public NOptional<List<NVersionInterval>> toIntervals() {
+        /**
+         * Converts to intervals.
+         *
+         * @param null null
+         * @return to intervals result
+         */
         return toIntervals(null);
     }
 
@@ -287,6 +387,11 @@ public class DefaultNVersion implements NVersion {
         return NVersionInterval.ofList(expression,comparator);
     }
 
+    /**
+     * As single value.
+     *
+     * @return as single value result
+     */
     public NOptional<String> asSingleValue() {
         if (VERSION_PART_PATTERN.matcher(expression).matches()) {
             return NOptional.of(expression);
@@ -378,6 +483,12 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public boolean isSingleValue() {
+        /**
+         * As single value.
+         *
+         * @param ).isPresent( ).is present(
+         * @return as single value result
+         */
         return asSingleValue().isPresent();
     }
 
@@ -400,11 +511,24 @@ public class DefaultNVersion implements NVersion {
 
     @Override
     public NVersion inc() {
+        /**
+         * Inc.
+         *
+         * @param -1 -1
+         * @return inc result
+         */
         return inc(-1);
     }
 
     @Override
     public NVersion inc(int index) {
+        /**
+         * Inc.
+         *
+         * @param index index
+         * @param 1 1
+         * @return inc result
+         */
         return inc(index, 1);
     }
 
@@ -418,15 +542,38 @@ public class DefaultNVersion implements NVersion {
         return new DefaultNVersion(incVersion(value(), index, amount));
     }
 
+    /**
+     * Part count.
+     *
+     * @return part count result
+     */
     public int partCount() {
+        /**
+         * Returns the parts.
+         *
+         * @param ).size( ).size(
+         * @return get parts result
+         */
         return getParts().size();
     }
 
     @Override
     public int numberCount() {
+        /**
+         * Returns the parts.
+         *
+         * @param ).numberCount( ).number count(
+         * @return get parts result
+         */
         return getParts().numberCount();
     }
 
+    /**
+     * Returns the part at.
+     *
+     * @param index index
+     * @return get part at result
+     */
     public NOptional<NVersionPart> getPartAt(int index) {
         VersionParts parts = getParts();
         int size = parts.size();
@@ -443,6 +590,12 @@ public class DefaultNVersion implements NVersion {
         return NOptional.ofEmpty(() -> NMsg.ofC("version part not found : %s", index));
     }
 
+    /**
+     * Returns the number at.
+     *
+     * @param level level
+     * @return get number at result
+     */
     public NOptional<Number> getNumberAt(int level) {
         VersionParts parts = getParts();
         int size = parts.numberCount();
@@ -462,6 +615,12 @@ public class DefaultNVersion implements NVersion {
         }
     }
 
+    /**
+     * _number.
+     *
+     * @param any any
+     * @return _number result
+     */
     private Number _number(String any){
         try{
             return Integer.parseInt(any);
@@ -481,6 +640,12 @@ public class DefaultNVersion implements NVersion {
         return null;
     }
 
+    /**
+     * _int.
+     *
+     * @param any any
+     * @return _int result
+     */
     private Integer _int(String any){
         try{
             return Integer.parseInt(any);
@@ -490,6 +655,12 @@ public class DefaultNVersion implements NVersion {
         return null;
     }
 
+    /**
+     * _long.
+     *
+     * @param any any
+     * @return _long result
+     */
     private Long _long(String any){
         try{
             return Long.parseLong(any);
@@ -499,6 +670,12 @@ public class DefaultNVersion implements NVersion {
         return null;
     }
 
+    /**
+     * _bigint.
+     *
+     * @param any any
+     * @return _bigint result
+     */
     private BigInteger _bigint(String any){
         try{
             return new BigInteger(any);
@@ -568,6 +745,11 @@ public class DefaultNVersion implements NVersion {
         }
     }
 
+    /**
+     * Converts to explicit single value or null string.
+     *
+     * @return to explicit single value or null string result
+     */
     private String toExplicitSingleValueOrNullString() {
         if (!isBlank() && !isFilter()) {
             return expression;
@@ -575,6 +757,11 @@ public class DefaultNVersion implements NVersion {
         return null;
     }
 
+    /**
+     * Returns the parts.
+     *
+     * @return get parts result
+     */
     private VersionParts getParts() {
         if (parts == null) {
             parts = splitVersionParts2(value());
@@ -611,18 +798,40 @@ public class DefaultNVersion implements NVersion {
 
         List<NVersionPart> all;
 
+        /**
+         * Version parts.
+         *
+         * @param all all
+         * @return version parts result
+         */
         public VersionParts(List<NVersionPart> all) {
             this.all = all;
         }
 
+        /**
+         * Returns the get.
+         *
+         * @param index index
+         * @return get result
+         */
         public NVersionPart get(int index) {
             return all.get(index);
         }
 
+        /**
+         * Size.
+         *
+         * @return size result
+         */
         public int size() {
             return all.size();
         }
 
+        /**
+         * Number count.
+         *
+         * @return number count result
+         */
         public int numberCount() {
             int c = 0;
             for (NVersionPart s : all) {
@@ -633,6 +842,12 @@ public class DefaultNVersion implements NVersion {
             return c;
         }
 
+        /**
+         * Sets the number at.
+         *
+         * @param index index
+         * @param value value
+         */
         public void setNumberAt(int index, BigInteger value) {
             int c = 0;
             for (int i = 0; i < all.size(); i++) {
@@ -647,6 +862,12 @@ public class DefaultNVersion implements NVersion {
             }
         }
 
+        /**
+         * Sets the number at.
+         *
+         * @param index index
+         * @param value value
+         */
         public void setNumberAt(int index, long value) {
             int c = 0;
             for (int i = 0; i < all.size(); i++) {
@@ -661,6 +882,12 @@ public class DefaultNVersion implements NVersion {
             }
         }
 
+        /**
+         * Returns the number at.
+         *
+         * @param index index
+         * @return get number at result
+         */
         public NVersionPart getNumberAt(int index) {
             int c = 0;
             for (NVersionPart s : all) {
@@ -674,6 +901,12 @@ public class DefaultNVersion implements NVersion {
             return null;
         }
 
+        /**
+         * Insert number.
+         *
+         * @param val val
+         * @param sep sep
+         */
         public void insertNumber(long val, String sep) {
             if (all.size() == 0) {
                 all.add(new DefaultNVersionPart(String.valueOf(val), NVersionPartType.NUMBER));
@@ -682,6 +915,12 @@ public class DefaultNVersion implements NVersion {
                     sep = ".";
                 }
                 if (!sep.equals(".") && !sep.equals("-")) {
+                    /**
+                     * Illegal argument exception.
+                     *
+                     * @param separator" separator"
+                     * @return illegal argument exception result
+                     */
                     throw new IllegalArgumentException("illegal separator");
                 }
                 all.add(0, new DefaultNVersionPart(sep, NVersionPartType.SEPARATOR));
@@ -691,6 +930,12 @@ public class DefaultNVersion implements NVersion {
             }
         }
 
+        /**
+         * Adds the specified number.
+         *
+         * @param val val
+         * @param sep sep
+         */
         public void addNumber(BigInteger val, String sep) {
             if (all.size() == 0) {
                 all.add(new DefaultNVersionPart(String.valueOf(val), NVersionPartType.NUMBER));
@@ -699,6 +944,12 @@ public class DefaultNVersion implements NVersion {
                     sep = ".";
                 }
                 if (!sep.equals(".") && !sep.equals("-")) {
+                    /**
+                     * Illegal argument exception.
+                     *
+                     * @param sep).toString() sep).to string()
+                     * @return illegal argument exception result
+                     */
                     throw new IllegalArgumentException(NMsg.ofC(NI18n.of("illegal version number separator %s"), sep).toString());
                 }
                 all.add(new DefaultNVersionPart(sep, NVersionPartType.SEPARATOR));
@@ -708,6 +959,12 @@ public class DefaultNVersion implements NVersion {
             }
         }
 
+        /**
+         * Returns string representation of version parts.
+         *
+         * @return formatted version parts string
+         */
+        @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             for (NVersionPart versionPart : all) {

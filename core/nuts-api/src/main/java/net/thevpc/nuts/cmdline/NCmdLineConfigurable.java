@@ -53,6 +53,12 @@ public interface NCmdLineConfigurable {
      * @return {@code this} instance
      */
     default Object configure(boolean skipUnsupported, String... args) {
+      /**
+       * Configure.
+       *
+       * @param skipUnsupported skip unsupported
+       * @param NCmdLine.of(args) n cmd line.of(args)
+       */
         configure(skipUnsupported, NCmdLine.of(args));
         return this;
     }
@@ -122,6 +128,11 @@ public interface NCmdLineConfigurable {
      */
     boolean configureFirst(NCmdLine cmdLine);
 
+    /**
+     * Configure last.
+     *
+     * @param cmdLine cmd line
+     */
     default void configureLast(NCmdLine cmdLine) {
         if (!configureFirst(cmdLine)) {
             cmdLine.throwUnexpectedArgument();

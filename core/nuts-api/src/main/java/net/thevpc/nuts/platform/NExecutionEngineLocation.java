@@ -82,31 +82,62 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
         this.priority = priority;
     }
 
+    /**
+     * Variant.
+     *
+     * @return variant result
+     */
     @NGetter
     public String variant() {
         return variant;
     }
 
+    /**
+     * Vendor.
+     *
+     * @return vendor result
+     */
     @NGetter
     public String vendor() {
         return vendor;
     }
 
+    /**
+     * Priority.
+     *
+     * @return priority result
+     */
     @NGetter
     public int priority() {
         return priority;
     }
 
+    /**
+     * Priority.
+     *
+     * @param priority priority
+     * @return priority result
+     */
     @NSetter
     public NExecutionEngineLocation priority(int priority) {
         return new NExecutionEngineLocation(id, vendor,product, variant,name, path, version, packaging, priority);
     }
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     @NGetter
     public NId id() {
         return id;
     }
 
+    /**
+     * Execution engine family.
+     *
+     * @return execution engine family result
+     */
     @NGetter
     public NExecutionEngineFamily executionEngineFamily() {
         return executionEngineFamily;
@@ -197,11 +228,22 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
                 '}';
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NExecutionEngineLocation copy() {
         try {
             NExecutionEngineLocation cloned = (NExecutionEngineLocation) clone();
             return cloned;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

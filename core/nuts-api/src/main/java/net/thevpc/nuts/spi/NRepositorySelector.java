@@ -36,6 +36,13 @@ public class NRepositorySelector {
     private NSelectorOp op;
 
 
+    /**
+     * N repository selector.
+     *
+     * @param op op
+     * @param location location
+     * @return n repository selector result
+     */
     public NRepositorySelector(NSelectorOp op, NRepositoryLocation location) {
         NAssert.requireNamedNonNull(op, "operator");
         NAssert.requireNamedNonNull(location, "location");
@@ -57,18 +64,39 @@ public class NRepositorySelector {
         return sb.toString();
     }
 
+    /**
+     * Op.
+     *
+     * @return op result
+     */
     public NSelectorOp op() {
         return op;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     public String name() {
         return location.name();
     }
 
+    /**
+     * Url.
+     *
+     * @return url result
+     */
     public String url() {
         return location.fullLocation();
     }
 
+    /**
+     * Matches.
+     *
+     * @param other other
+     * @return matches result
+     */
     public boolean matches(NRepositoryLocation other) {
         String otherName = other.name();
         String otherURL = other.fullLocation();

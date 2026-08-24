@@ -6,16 +6,35 @@ import net.thevpc.nuts.collections.NCollections;
 
 import java.util.*;
 
+/**
+ * DefaultNArgCompleteResult class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class DefaultNArgCompleteResult implements NArgCompleteResult {
     public static final NArgCompleteResult BLANK=new DefaultNArgCompleteResult(null,null);
     private final List<NArgCompleteCandidate> candidates;
     private final Set<NArgCompleteFlag> flags;
 
+    /**
+     * Default n arg complete result.
+     *
+     * @param candidates candidates
+     * @param flags flags
+     * @return default n arg complete result result
+     */
     public DefaultNArgCompleteResult(Collection<NArgCompleteCandidate> candidates, Collection<NArgCompleteFlag> flags) {
         this.candidates = NCollections.unmodifiableNonNullList(candidates);
         this.flags = NCollections.unmodifiableNonNullSet(flags);
     }
 
+    /**
+     * Parse.
+     *
+     * @param txt txt
+     * @return parse result
+     */
     public static NArgCompleteResult parse(String txt) {
         ArrayList<NArgCompleteCandidate> candidates = new ArrayList<>();
         ArrayList<NArgCompleteFlag> flags = new ArrayList<>();
@@ -89,6 +108,11 @@ public class DefaultNArgCompleteResult implements NArgCompleteResult {
     }
 
 
+    /**
+     * Format.
+     *
+     * @return format result
+     */
     public String format() {
         StringBuilder sb = new StringBuilder();
 
@@ -122,6 +146,13 @@ public class DefaultNArgCompleteResult implements NArgCompleteResult {
         return sb.toString();
     }
 
+    /**
+     * Escape.
+     *
+     * @param any any
+     * @param escapeTab escape tab
+     * @return escape result
+     */
     private static String escape(String any, boolean escapeTab) {
         StringBuilder sb = new StringBuilder();
         for (char c : any.toCharArray()) {

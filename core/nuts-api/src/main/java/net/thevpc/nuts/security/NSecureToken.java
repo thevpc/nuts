@@ -20,6 +20,13 @@ public class NSecureToken implements Serializable, NToElement {
     private final String agentId;   // e.g., "default", "keychain"
     private final String payload;   // encrypted ciphertext (agent-specific format)
 
+    /**
+     * N secure token.
+     *
+     * @param agentId agent id
+     * @param payload payload
+     * @return n secure token result
+     */
     public NSecureToken(String agentId, String payload) {
         NAssert.requireNamedNonBlank(agentId, "agentId");
         NAssert.requireNamedNonNull(payload, "payload");
@@ -30,10 +37,20 @@ public class NSecureToken implements Serializable, NToElement {
         this.payload = payload;
     }
 
+    /**
+     * Agent id.
+     *
+     * @return agent id result
+     */
     public String agentId() {
         return agentId;
     }
 
+    /**
+     * Payload.
+     *
+     * @return payload result
+     */
     public String payload() {
         return payload;
     }
@@ -54,6 +71,12 @@ public class NSecureToken implements Serializable, NToElement {
     public static NSecureToken parse(String s) {
         int colon = s.indexOf(':');
         if (colon <= 0) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param s s
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("Invalid credential ID format: " + s);
         }
         String agentId = s.substring(0, colon);

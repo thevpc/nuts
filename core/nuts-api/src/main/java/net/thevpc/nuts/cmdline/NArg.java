@@ -121,8 +121,18 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      */
     String value();
 
+    /**
+     * Returns the string key.
+     *
+     * @return get string key result
+     */
     NOptional<String> getStringKey();
 
+    /**
+     * Returns the string value.
+     *
+     * @return get string value result
+     */
     NOptional<String> getStringValue();
 
     /**
@@ -236,10 +246,25 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      */
     NLiteral literalValue();
 
+    /**
+     * As literal.
+     *
+     * @return as literal result
+     */
     NLiteral asLiteral();
 
+    /**
+     * Returns the boolean value.
+     *
+     * @return get boolean value result
+     */
     NOptional<Boolean> getBooleanValue();
 
+    /**
+     * Boolean value.
+     *
+     * @return boolean value result
+     */
     boolean booleanValue();
 
     /**
@@ -254,12 +279,32 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      */
     int intValue();
 
+    /**
+     * Returns the byte value.
+     *
+     * @return get byte value result
+     */
     NOptional<Byte> getByteValue();
 
+    /**
+     * Returns the short value.
+     *
+     * @return get short value result
+     */
     NOptional<Short> getShortValue();
 
+    /**
+     * Returns the char value.
+     *
+     * @return get char value result
+     */
     NOptional<Character> getCharValue();
 
+    /**
+     * Returns the number value.
+     *
+     * @return get number value result
+     */
     NOptional<Number> getNumberValue();
 
     /**
@@ -268,12 +313,32 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      */
     NOptional<Long> getLongValue();
 
+    /**
+     * Byte value.
+     *
+     * @return byte value result
+     */
     byte byteValue();
 
+    /**
+     * Short value.
+     *
+     * @return short value result
+     */
     short shortValue();
 
+    /**
+     * Char value.
+     *
+     * @return char value result
+     */
     char charValue();
 
+    /**
+     * Number value.
+     *
+     * @return number value result
+     */
     Number numberValue();
 
     /**
@@ -402,108 +467,377 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      */
     NLiteral getKey();
 
+    /**
+     * Image.
+     *
+     * @return image result
+     */
     String image();
 
+    /**
+     * Checks if is flag option.
+     *
+     * @return is flag option result
+     */
     boolean isFlagOption();
 
+    /**
+     * Checks if is float.
+     *
+     * @return is float result
+     */
     boolean isFloat();
 
+    /**
+     * Checks if is double.
+     *
+     * @return is double result
+     */
     boolean isDouble();
 
+    /**
+     * Checks if is instant.
+     *
+     * @return is instant result
+     */
     boolean isInstant();
 
+    /**
+     * Checks if is empty.
+     *
+     * @return is empty result
+     */
     boolean isEmpty();
 
+    /**
+     * Checks if is number.
+     *
+     * @return is number result
+     */
     boolean isNumber();
 
+    /**
+     * As string.
+     *
+     * @return as string result
+     */
     NOptional<String> asString();
 
+    /**
+     * As instant.
+     *
+     * @return as instant result
+     */
     NOptional<Instant> asInstant();
 
+    /**
+     * As local date.
+     *
+     * @return as local date result
+     */
     NOptional<LocalDate> asLocalDate();
 
+    /**
+     * As local date time.
+     *
+     * @return as local date time result
+     */
     NOptional<LocalDateTime> asLocalDateTime();
 
+    /**
+     * As local time.
+     *
+     * @return as local time result
+     */
     NOptional<LocalTime> asLocalTime();
 
+    /**
+     * As big complex.
+     *
+     * @return as big complex result
+     */
     NOptional<NBigComplex> asBigComplex();
 
+    /**
+     * As double complex.
+     *
+     * @return as double complex result
+     */
     NOptional<NDoubleComplex> asDoubleComplex();
 
+    /**
+     * As float complex.
+     *
+     * @return as float complex result
+     */
     NOptional<NFloatComplex> asFloatComplex();
 
+    /**
+     * As number.
+     *
+     * @return as number result
+     */
     NOptional<Number> asNumber();
 
+    /**
+     * As boolean.
+     *
+     * @return as boolean result
+     */
     NOptional<Boolean> asBoolean();
 
+    /**
+     * As big int.
+     *
+     * @return as big int result
+     */
     NOptional<BigInteger> asBigInt();
 
+    /**
+     * As big decimal.
+     *
+     * @return as big decimal result
+     */
     NOptional<BigDecimal> asBigDecimal();
 
+    /**
+     * Checks if is boolean.
+     *
+     * @return is boolean result
+     */
     boolean isBoolean();
 
+    /**
+     * Checks if is string.
+     *
+     * @return is string result
+     */
     boolean isString();
 
+    /**
+     * Checks if is complex number.
+     *
+     * @return is complex number result
+     */
     boolean isComplexNumber();
 
+    /**
+     * Checks if is temporal.
+     *
+     * @return is temporal result
+     */
     boolean isTemporal();
 
+    /**
+     * Checks if is local temporal.
+     *
+     * @return is local temporal result
+     */
     boolean isLocalTemporal();
 
+    /**
+     * Checks if is null.
+     *
+     * @return is null result
+     */
     boolean isNull();
 
+    /**
+     * Checks if is byte.
+     *
+     * @return is byte result
+     */
     boolean isByte();
 
+    /**
+     * Checks if is decimal number.
+     *
+     * @return is decimal number result
+     */
     boolean isDecimalNumber();
 
+    /**
+     * Checks if is big number.
+     *
+     * @return is big number result
+     */
     boolean isBigNumber();
 
+    /**
+     * Checks if is big decimal.
+     *
+     * @return is big decimal result
+     */
     boolean isBigDecimal();
 
+    /**
+     * Checks if is big int.
+     *
+     * @return is big int result
+     */
     boolean isBigInt();
 
+    /**
+     * Checks if is int.
+     *
+     * @return is int result
+     */
     boolean isInt();
 
+    /**
+     * As double.
+     *
+     * @return as double result
+     */
     NOptional<Double> asDouble();
 
+    /**
+     * As float.
+     *
+     * @return as float result
+     */
     NOptional<Float> asFloat();
 
+    /**
+     * As byte.
+     *
+     * @return as byte result
+     */
     NOptional<Byte> asByte();
 
+    /**
+     * As short.
+     *
+     * @return as short result
+     */
     NOptional<Short> asShort();
 
+    /**
+     * As int.
+     *
+     * @return as int result
+     */
     NOptional<Integer> asInt();
 
+    /**
+     * Checks if is long.
+     *
+     * @return is long result
+     */
     boolean isLong();
 
+    /**
+     * As long.
+     *
+     * @return as long result
+     */
     NOptional<Long> asLong();
 
+    /**
+     * Converts to string literal.
+     *
+     * @return to string literal result
+     */
     String toStringLiteral();
 
+    /**
+     * As char.
+     *
+     * @return as char result
+     */
     NOptional<Character> asChar();
 
+    /**
+     * As type.
+     *
+     * @param expectedType expected type
+     * @return as type result
+     */
     <ET> NOptional<ET> asType(Class<ET> expectedType);
 
+    /**
+     * As type.
+     *
+     * @param expectedType expected type
+     * @return as type result
+     */
     <ET> NOptional<ET> asType(Type expectedType);
 
+    /**
+     * As string at.
+     *
+     * @param index index
+     * @return as string at result
+     */
     NOptional<String> asStringAt(int index);
 
+    /**
+     * As long at.
+     *
+     * @param index index
+     * @return as long at result
+     */
     NOptional<Long> asLongAt(int index);
 
+    /**
+     * As int at.
+     *
+     * @param index index
+     * @return as int at result
+     */
     NOptional<Integer> asIntAt(int index);
 
+    /**
+     * As double at.
+     *
+     * @param index index
+     * @return as double at result
+     */
     NOptional<Double> asDoubleAt(int index);
 
+    /**
+     * Checks if is null at.
+     *
+     * @param index index
+     * @return is null at result
+     */
     boolean isNullAt(int index);
 
+    /**
+     * As literal at.
+     *
+     * @param index index
+     * @return as literal at result
+     */
     NLiteral asLiteralAt(int index);
 
+    /**
+     * As object at.
+     *
+     * @param index index
+     * @return as object at result
+     */
     NOptional<Object> asObjectAt(int index);
 
+    /**
+     * Checks if is stream.
+     *
+     * @return is stream result
+     */
     boolean isStream();
 
+    /**
+     * Checks if is ordinal number.
+     *
+     * @return is ordinal number result
+     */
     boolean isOrdinalNumber();
 
+    /**
+     * Checks if is floating number.
+     *
+     * @return is floating number result
+     */
     boolean isFloatingNumber();
 
     /**

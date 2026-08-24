@@ -5,16 +5,31 @@ import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 
+/**
+ * NFixity enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NFixity implements NEnum {
     INFIX,
     PREFIX,
     POSTFIX;
     private final String id;
 
+  /**
+   * N fixity.
+   */
     NFixity() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NFixity> parse(String value) {
         return NEnumUtils.parseEnum(value, NFixity.class, s -> {
             switch (s.normalizedValue()) {

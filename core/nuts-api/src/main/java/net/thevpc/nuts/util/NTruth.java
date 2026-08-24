@@ -36,6 +36,9 @@ public enum NTruth implements NEnum{
     ;
     private final String id;
 
+  /**
+   * N truth.
+   */
     NTruth() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
@@ -45,6 +48,12 @@ public enum NTruth implements NEnum{
         return id;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NTruth> parse(String value) {
         return NEnumUtils.parseEnum(value, NTruth.class, enumValue -> {
             switch (enumValue.normalizedValue()) {

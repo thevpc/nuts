@@ -46,10 +46,28 @@ import java.util.Map;
  */
 public interface NDependencyBuilder extends NComponent, Serializable, NBlankable {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @return of result
+     */
     static NDependencyBuilder of(String groupId, String artifactId) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).groupId(groupId).artifactId(artifactId ).group id(group id).artifact id(artifact id
+         * @return of result
+         */
         return of().groupId(groupId).artifactId(artifactId);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDependencyBuilder of() {
         return NExtensions.of(NDependencyBuilder.class);
     }
@@ -205,14 +223,45 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      */
     NDependency build();
 
+    /**
+     * Property.
+     *
+     * @param property property
+     * @param value value
+     * @return property result
+     */
     NDependencyBuilder property(String property, String value);
 
+    /**
+     * Properties query.
+     *
+     * @param propertiesQuery properties query
+     * @return properties query result
+     */
     NDependencyBuilder propertiesQuery(String propertiesQuery);
 
+    /**
+     * Properties.
+     *
+     * @param queryMap query map
+     * @return properties result
+     */
     NDependencyBuilder properties(Map<String, String> queryMap);
 
+    /**
+     * Adds the specified properties query.
+     *
+     * @param propertiesQuery properties query
+     * @return add properties query result
+     */
     NDependencyBuilder addPropertiesQuery(String propertiesQuery);
 
+    /**
+     * Adds the specified properties.
+     *
+     * @param queryMap query map
+     * @return add properties result
+     */
     NDependencyBuilder addProperties(Map<String, String> queryMap);
 
     /**
@@ -223,10 +272,26 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      */
     NDependencyBuilder condition(NEnvCondition condition);
 
+    /**
+     * Condition.
+     *
+     * @param condition condition
+     * @return condition result
+     */
     NDependencyBuilder condition(NEnvConditionBuilder condition);
 
+    /**
+     * Removes the specified condition.
+     *
+     * @return remove condition result
+     */
     NDependencyBuilder removeCondition();
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NDependencyBuilder copy();
 
 
@@ -328,9 +393,19 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
     @NGetter
     NVersion version();
 
+    /**
+     * Condition.
+     *
+     * @return condition result
+     */
     @NGetter
     NEnvConditionBuilder condition();
 
+    /**
+     * Type.
+     *
+     * @return type result
+     */
     @NGetter
     String type();
 

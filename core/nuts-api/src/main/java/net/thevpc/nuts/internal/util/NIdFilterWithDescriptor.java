@@ -9,11 +9,27 @@ import net.thevpc.nuts.util.NFilter;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+/**
+ * NIdFilterWithDescriptor class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NIdFilterWithDescriptor extends NIdFilterDelegate {
     private NIdFilter base;
     private Supplier<NElement> description;
 
+    /**
+     * N id filter with descriptor.
+     *
+     * @param base base
+     * @param description description
+     * @return n id filter with descriptor result
+     */
     public NIdFilterWithDescriptor(NIdFilter base, Supplier<NElement> description) {
+      /**
+       * Super.
+       */
         super();
         this.base = base;
         this.description = description;

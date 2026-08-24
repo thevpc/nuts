@@ -228,6 +228,13 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
      */
     NDependencyFilter byRunnable(boolean optional);
 
+    /**
+     * By runnable.
+     *
+     * @param optional optional
+     * @param anyEnv any env
+     * @return by runnable result
+     */
     NDependencyFilter byRunnable(boolean optional,boolean anyEnv);
 
     /**
@@ -244,6 +251,12 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
      */
     NDependencyFilter byDesktop(NDesktopEnvironmentFamily... de);
 
+    /**
+     * By desktop.
+     *
+     * @param de de
+     * @return by desktop result
+     */
     NDependencyFilter byDesktop(Collection<NDesktopEnvironmentFamily> de);
 
     /**

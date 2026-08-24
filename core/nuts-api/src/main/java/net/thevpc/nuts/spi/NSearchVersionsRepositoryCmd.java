@@ -37,12 +37,34 @@ import net.thevpc.nuts.pipeline.NIterator;
  */
 public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
 
+    /**
+     * Returns the filter.
+     *
+     * @return get filter result
+     */
     NDefinitionFilter getFilter();
 
+    /**
+     * Filter.
+     *
+     * @param filter filter
+     * @return filter result
+     */
     NSearchVersionsRepositoryCmd filter(NDefinitionFilter filter);
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     NId id();
 
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
     NSearchVersionsRepositoryCmd id(NId id);
 
     /**
@@ -68,5 +90,10 @@ public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
      */
     NSearchVersionsRepositoryCmd fetchMode(NFetchMode fetchMode);
 
+    /**
+     * Returns the result.
+     *
+     * @return get result result
+     */
     NIterator<NId> getResult();
 }

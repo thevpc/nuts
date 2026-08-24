@@ -41,6 +41,11 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  * @since 0.5.5
  */
 public interface NTreeObjectWriter extends NContentTypeWriter {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTreeObjectWriter of() {
         return NExtensions.of(NTreeObjectWriter.class);
     }
@@ -52,6 +57,12 @@ public interface NTreeObjectWriter extends NContentTypeWriter {
      */
     NTreeNode getModel(Object value);
 
+    /**
+     * Format plain.
+     *
+     * @param value value
+     * @return format plain result
+     */
     String formatPlain(Object value);
 
     /**

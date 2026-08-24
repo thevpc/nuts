@@ -38,10 +38,22 @@ import java.util.List;
  */
 public interface NTreeNode {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param text text
+     * @param children children
+     * @return of result
+     */
     static NTreeNode of(NText text, NTreeNode... children) {
         return NTextRPI.of().createTreeNode(text,children);
     }
 
+    /**
+     * Content.
+     *
+     * @return content result
+     */
     NText content();
 
     /**

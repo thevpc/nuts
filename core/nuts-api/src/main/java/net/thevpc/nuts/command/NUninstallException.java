@@ -44,6 +44,13 @@ public class NUninstallException extends NInstallationException {
      * @param id nuts id
      */
     public NUninstallException(NId id) {
+      /**
+       * This.
+       *
+       * @param id id
+       * @param null null
+       * @param null null
+       */
         this(id, null, null);
     }
 

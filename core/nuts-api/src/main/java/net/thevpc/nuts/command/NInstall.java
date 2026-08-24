@@ -48,14 +48,31 @@ import java.util.function.Predicate;
  * @since 0.5.4
  */
 public interface NInstall extends NWorkspaceCmd {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NInstall of() {
         return NExtensions.of(NInstall.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ids ids
+     * @return of result
+     */
     static NInstall of(String... ids) {
         return NExtensions.of(NInstall.class).addIds(ids);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ids ids
+     * @return of result
+     */
     static NInstall of(NId... ids) {
         return NExtensions.of(NInstall.class).addIds(ids);
     }
@@ -148,6 +165,12 @@ public interface NInstall extends NWorkspaceCmd {
      */
     NInstall ids(NId... ids);
 
+    /**
+     * Ids.
+     *
+     * @param ids ids
+     * @return ids result
+     */
     @NSetter
     NInstall ids(List<NId> ids);
 
@@ -167,6 +190,13 @@ public interface NInstall extends NWorkspaceCmd {
      */
     NInstall addArg(String arg);
 
+    /**
+     * Adds the specified conditional args.
+     *
+     * @param definition definition
+     * @param args args
+     * @return add conditional args result
+     */
     NInstall addConditionalArgs(Predicate<NDefinition> definition, String... args);
 
     /**
@@ -258,6 +288,11 @@ public interface NInstall extends NWorkspaceCmd {
      */
     NStream<NDefinition> getResultStream();
 
+    /**
+     * Returns the result list.
+     *
+     * @return get result list result
+     */
     List<NDefinition> getResultList();
 
     /**
@@ -280,17 +315,49 @@ public interface NInstall extends NWorkspaceCmd {
     @Override
     NInstall run();
 
+    /**
+     * Returns the result failed id reason.
+     *
+     * @param id id
+     * @return get result failed id reason result
+     */
     RuntimeException getResultFailedIdReason(NId id);
 
+    /**
+     * Returns the result successful stream.
+     *
+     * @return get result successful stream result
+     */
     NStream<NDefinition> getResultSuccessfulStream();
 
+    /**
+     * Returns the result successful list.
+     *
+     * @return get result successful list result
+     */
     List<NDefinition> getResultSuccessfulList();
 
+    /**
+     * Returns the result failed list.
+     *
+     * @return get result failed list result
+     */
     List<NId> getResultFailedList();
 
+    /**
+     * Checks if is fail fast.
+     *
+     * @return is fail fast result
+     */
     @NGetter
     boolean isFailFast();
 
+    /**
+     * Fail fast.
+     *
+     * @param failFast fail fast
+     * @return fail fast result
+     */
     @NSetter
     NInstall failFast(boolean failFast);
 }

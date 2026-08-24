@@ -1,5 +1,11 @@
 package net.thevpc.nuts.elem;
 
+/**
+ * NParamOrChild interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NParamOrChild {
     /** the actual element */
     NElement element();

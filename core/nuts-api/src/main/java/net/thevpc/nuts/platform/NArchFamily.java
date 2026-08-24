@@ -64,10 +64,19 @@ public enum NArchFamily implements NEnum {
      */
     private final String id;
 
+  /**
+   * N arch family.
+   */
     NArchFamily() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NArchFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NArchFamily.class, s -> {
             String arch = s.normalizedValue();
@@ -178,10 +187,20 @@ public enum NArchFamily implements NEnum {
         });
     }
 
+    /**
+     * Checks if is64 bit.
+     *
+     * @return is64 bit result
+     */
     public boolean is64Bit() {
         return bits() == 64;
     }
 
+    /**
+     * Checks if is arm.
+     *
+     * @return is arm result
+     */
     public boolean isArm() {
         switch (this) {
             case ARM_64:
@@ -191,6 +210,11 @@ public enum NArchFamily implements NEnum {
         return false;
     }
 
+    /**
+     * Checks if is x86.
+     *
+     * @return is x86 result
+     */
     public boolean isX86() {
         switch (this) {
             case X86_64:
@@ -200,6 +224,11 @@ public enum NArchFamily implements NEnum {
         return false;
     }
 
+    /**
+     * Bits.
+     *
+     * @return bits result
+     */
     public int bits() {
         switch (this) {
             case AARCH_64:
@@ -230,6 +259,11 @@ public enum NArchFamily implements NEnum {
         return -1;
     }
 
+    /**
+     * Current.
+     *
+     * @return current result
+     */
     public static NArchFamily current() {
         return _curr;
     }

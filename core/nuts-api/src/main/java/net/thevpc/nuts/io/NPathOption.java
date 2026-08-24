@@ -154,14 +154,34 @@ public interface NPathOption {
     NPathOption NOSHARE_DELETE = NPathStandardOption.NOSHARE_DELETE;
     NPathOption SORTED = NPathStandardOption.NOSHARE_DELETE;
 
+    /**
+     * Creates a new instance of of credentials.
+     *
+     * @param userName user name
+     * @param secret secret
+     * @return of credentials result
+     */
     static NPathCredentialsOption ofCredentials(String userName, String secret) {
         return NPathCredentialsOption.of(userName, secret);
     }
 
+    /**
+     * Creates a new instance of of http basic credentials.
+     *
+     * @param userName user name
+     * @param secret secret
+     * @return of http basic credentials result
+     */
     static NPathCredentialsOption ofHttpBasicCredentials(String userName, String secret) {
         return NPathCredentialsOption.ofHttpBasic(userName, secret);
     }
 
+    /**
+     * Creates a new instance of of http bearer credentials.
+     *
+     * @param secret secret
+     * @return of http bearer credentials result
+     */
     static NPathCredentialsOption ofHttpBearerCredentials(String secret) {
         return NPathCredentialsOption.ofHttpBearer(secret);
     }

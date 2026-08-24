@@ -104,5 +104,10 @@ public interface NEnvCondition extends NBlankable {
     @NGetter
     Map<String, String> properties();
 
+    /**
+     * Converts to map.
+     *
+     * @return to map result
+     */
     Map<String, String> toMap();
 }

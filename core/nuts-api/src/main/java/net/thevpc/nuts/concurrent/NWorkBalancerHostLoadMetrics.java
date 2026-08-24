@@ -63,6 +63,12 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
         return hostLoadFactor;
     }
 
+    /**
+     * Host load factor.
+     *
+     * @param hostLoadFactor host load factor
+     * @return host load factor result
+     */
     @NSetter
     public NWorkBalancerHostLoadMetrics hostLoadFactor(float hostLoadFactor) {
         this.hostLoadFactor = hostLoadFactor;
@@ -77,6 +83,12 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
         return hostCpuLoad;
     }
 
+    /**
+     * Host cpu load.
+     *
+     * @param hostCpuLoad host cpu load
+     * @return host cpu load result
+     */
     @NSetter
     public NWorkBalancerHostLoadMetrics hostCpuLoad(float hostCpuLoad) {
         this.hostCpuLoad = hostCpuLoad;
@@ -91,6 +103,12 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
         return hostMemoryLoad;
     }
 
+    /**
+     * Host memory load.
+     *
+     * @param hostMemoryLoad host memory load
+     * @return host memory load result
+     */
     @NSetter
     public NWorkBalancerHostLoadMetrics hostMemoryLoad(float hostMemoryLoad) {
         this.hostMemoryLoad = hostMemoryLoad;
@@ -105,6 +123,12 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
         return hostLatency;
     }
 
+    /**
+     * Host latency.
+     *
+     * @param hostLatency host latency
+     * @return host latency result
+     */
     @NSetter
     public NWorkBalancerHostLoadMetrics hostLatency(long hostLatency) {
         this.hostLatency = hostLatency;
@@ -119,6 +143,12 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
         return customMetrics;
     }
 
+    /**
+     * Custom metrics.
+     *
+     * @param customMetrics custom metrics
+     * @return custom metrics result
+     */
     @NSetter
     public NWorkBalancerHostLoadMetrics customMetrics(Map<String, NElement> customMetrics) {
         this.customMetrics = customMetrics;
@@ -127,6 +157,11 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
 
     @Override
     public NWorkBalancerHostLoadMetrics copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -137,6 +172,12 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
             copy.customMetrics = customMetrics == null ? null : new HashMap<>(customMetrics);
             return copy;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

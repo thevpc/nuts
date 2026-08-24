@@ -39,6 +39,11 @@ public class NOnceValueModel implements Cloneable, NCopiable {
      */
     private Supplier<?> supplier;
 
+    /**
+     * N once value model.
+     *
+     * @return n once value model result
+     */
     public NOnceValueModel() {
     }
 
@@ -53,52 +58,107 @@ public class NOnceValueModel implements Cloneable, NCopiable {
         this.supplier = supplier;
     }
 
+    /**
+     * Supplier.
+     *
+     * @return supplier result
+     */
     public Supplier<?> supplier() {
         return supplier;
     }
 
+    /**
+     * Supplier.
+     *
+     * @param supplier supplier
+     * @return supplier result
+     */
     public NOnceValueModel supplier(Supplier<?> supplier) {
         this.supplier = supplier;
         return this;
     }
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     @NGetter
     public String id() {
         return id;
     }
 
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
     public NOnceValueModel id(String id) {
         this.id = id;
         return this;
     }
 
+    /**
+     * Value.
+     *
+     * @return value result
+     */
     @NGetter
     public Object value() {
         return value;
     }
 
+    /**
+     * Value.
+     *
+     * @param value value
+     * @return value result
+     */
     @NSetter
     public NOnceValueModel value(Object value) {
         this.value = value;
         return this;
     }
 
+    /**
+     * Error.
+     *
+     * @return error result
+     */
     @NGetter
     public Throwable error() {
         return error;
     }
 
+    /**
+     * Error.
+     *
+     * @param throwable throwable
+     * @return error result
+     */
     @NSetter
     public NOnceValueModel error(Throwable throwable) {
         this.error = throwable;
         return this;
     }
 
+    /**
+     * Error state.
+     *
+     * @return error state result
+     */
     @NGetter
     public Boolean errorState() {
         return errorState;
     }
 
+    /**
+     * Error state.
+     *
+     * @param errorState error state
+     * @return error state result
+     */
     @NSetter
     public NOnceValueModel errorState(Boolean errorState) {
         this.errorState = errorState;
@@ -111,13 +171,34 @@ public class NOnceValueModel implements Cloneable, NCopiable {
      * @return a cloned instance
      */
     public NOnceValueModel copy(){
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
+    /**
+     * Clone.
+     *
+     * @return clone result
+     */
     protected NOnceValueModel clone(){
         try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
             return (NOnceValueModel) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

@@ -70,24 +70,84 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
         return NExtensions.of(NWorkspaceOptionsBuilder.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param options options
+     * @return of result
+     */
     static NWorkspaceOptionsBuilder of(NWorkspaceOptions options) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).copyFrom(options ).copy from(options
+         * @return of result
+         */
         return of().copyFrom(options);
     }
 
+    /**
+     * Init launchers.
+     *
+     * @param initLaunchers init launchers
+     * @return init launchers result
+     */
     NWorkspaceOptionsBuilder initLaunchers(Boolean initLaunchers);
 
+    /**
+     * Init scripts.
+     *
+     * @param initScripts init scripts
+     * @return init scripts result
+     */
     NWorkspaceOptionsBuilder initScripts(Boolean initScripts);
 
+    /**
+     * Init platforms.
+     *
+     * @param initPlatforms init platforms
+     * @return init platforms result
+     */
     NWorkspaceOptionsBuilder initPlatforms(Boolean initPlatforms);
 
+    /**
+     * Init java.
+     *
+     * @param initJava init java
+     * @return init java result
+     */
     NWorkspaceOptionsBuilder initJava(Boolean initJava);
 
+    /**
+     * Checks if isolation level.
+     *
+     * @param isolationLevel isolation level
+     * @return isolation level result
+     */
     NWorkspaceOptionsBuilder isolationLevel(NIsolationLevel isolationLevel);
 
+    /**
+     * Desktop launcher.
+     *
+     * @param desktopLauncher desktop launcher
+     * @return desktop launcher result
+     */
     NWorkspaceOptionsBuilder desktopLauncher(NSupportMode desktopLauncher);
 
+    /**
+     * Menu launcher.
+     *
+     * @param menuLauncher menu launcher
+     * @return menu launcher result
+     */
     NWorkspaceOptionsBuilder menuLauncher(NSupportMode menuLauncher);
 
+    /**
+     * User launcher.
+     *
+     * @param userLauncher user launcher
+     * @return user launcher result
+     */
     NWorkspaceOptionsBuilder userLauncher(NSupportMode userLauncher);
 
     /**
@@ -97,29 +157,95 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder copy();
 
+    /**
+     * Api version.
+     *
+     * @param apiVersion api version
+     * @return api version result
+     */
     NWorkspaceOptionsBuilder apiVersion(NVersion apiVersion);
 
+    /**
+     * Application arguments.
+     *
+     * @param applicationArguments application arguments
+     * @return application arguments result
+     */
     NWorkspaceOptionsBuilder applicationArguments(List<String> applicationArguments);
 
 
+    /**
+     * Archetype.
+     *
+     * @param archetype archetype
+     * @return archetype result
+     */
     NWorkspaceOptionsBuilder archetype(String archetype);
 
+    /**
+     * Class loader supplier.
+     *
+     * @param provider provider
+     * @return class loader supplier result
+     */
     NWorkspaceOptionsBuilder classLoaderSupplier(Supplier<ClassLoader> provider);
 
 
+    /**
+     * Confirm.
+     *
+     * @param confirm confirm
+     * @return confirm result
+     */
     NWorkspaceOptionsBuilder confirm(NConfirmationMode confirm);
 
+    /**
+     * Dry.
+     *
+     * @param dry dry
+     * @return dry result
+     */
     NWorkspaceOptionsBuilder dry(Boolean dry);
 
+    /**
+     * Show stacktrace.
+     *
+     * @param showStacktrace show stacktrace
+     * @return show stacktrace result
+     */
     NWorkspaceOptionsBuilder showStacktrace(Boolean showStacktrace);
 
+    /**
+     * Creation time.
+     *
+     * @param creationTime creation time
+     * @return creation time result
+     */
     NWorkspaceOptionsBuilder creationTime(Instant creationTime);
 
 
+    /**
+     * Excluded extensions.
+     *
+     * @param excludedExtensions excluded extensions
+     * @return excluded extensions result
+     */
     NWorkspaceOptionsBuilder excludedExtensions(List<String> excludedExtensions);
 
+    /**
+     * Execution type.
+     *
+     * @param executionType execution type
+     * @return execution type result
+     */
     NWorkspaceOptionsBuilder executionType(NExecutionType executionType);
 
+    /**
+     * Shared instance.
+     *
+     * @param sharedInstance shared instance
+     * @return shared instance result
+     */
     NWorkspaceOptionsBuilder sharedInstance(Boolean sharedInstance);
 
     /**
@@ -131,6 +257,12 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder runAs(NRunAs runAs);
 
+    /**
+     * Executor options.
+     *
+     * @param executorOptions executor options
+     * @return executor options result
+     */
     NWorkspaceOptionsBuilder executorOptions(List<String> executorOptions);
 
     /**
@@ -144,36 +276,108 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder homeLocations(Map<NHomeLocation, String> homeLocations);
 
+    /**
+     * Java command.
+     *
+     * @param javaCommand java command
+     * @return java command result
+     */
     NWorkspaceOptionsBuilder javaCommand(String javaCommand);
 
 
+    /**
+     * Java options.
+     *
+     * @param javaOptions java options
+     * @return java options result
+     */
     NWorkspaceOptionsBuilder javaOptions(String javaOptions);
 
 
+    /**
+     * Log config.
+     *
+     * @param logConfig log config
+     * @return log config result
+     */
     NWorkspaceOptionsBuilder logConfig(NLogConfig logConfig);
 
 
+    /**
+     * Name.
+     *
+     * @param workspaceName workspace name
+     * @return name result
+     */
     NWorkspaceOptionsBuilder name(String workspaceName);
 
+    /**
+     * Open mode.
+     *
+     * @param openMode open mode
+     * @return open mode result
+     */
     NWorkspaceOptionsBuilder openMode(NOpenMode openMode);
 
 
+    /**
+     * Output format.
+     *
+     * @param outputFormat output format
+     * @return output format result
+     */
     NWorkspaceOptionsBuilder outputFormat(NContentType outputFormat);
 
 
+    /**
+     * Output format options.
+     *
+     * @param options options
+     * @return output format options result
+     */
     NWorkspaceOptionsBuilder outputFormatOptions(List<String> options);
 
 
+    /**
+     * Credential.
+     *
+     * @param credentials credentials
+     * @return credential result
+     */
     NWorkspaceOptionsBuilder credential(char[] credentials);
 
 
+    /**
+     * Repository store strategy.
+     *
+     * @param repositoryStoreStrategy repository store strategy
+     * @return repository store strategy result
+     */
     NWorkspaceOptionsBuilder repositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy);
 
 
+    /**
+     * Runtime id.
+     *
+     * @param runtimeId runtime id
+     * @return runtime id result
+     */
     NWorkspaceOptionsBuilder runtimeId(NId runtimeId);
 
+    /**
+     * Store layout.
+     *
+     * @param storeLayout store layout
+     * @return store layout result
+     */
     NWorkspaceOptionsBuilder storeLayout(NOsFamily storeLayout);
 
+    /**
+     * Store strategy.
+     *
+     * @param storeStrategy store strategy
+     * @return store strategy result
+     */
     NWorkspaceOptionsBuilder storeStrategy(NStoreStrategy storeStrategy);
 
 
@@ -188,14 +392,44 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder storeLocations(Map<NStoreType, String> storeLocations);
 
+    /**
+     * Terminal mode.
+     *
+     * @param terminalMode terminal mode
+     * @return terminal mode result
+     */
     NWorkspaceOptionsBuilder terminalMode(NTerminalMode terminalMode);
 
+    /**
+     * Boot repositories.
+     *
+     * @param repositories repositories
+     * @return boot repositories result
+     */
     NWorkspaceOptionsBuilder bootRepositories(List<String> repositories);
 
+    /**
+     * Repositories.
+     *
+     * @param transientRepositories transient repositories
+     * @return repositories result
+     */
     NWorkspaceOptionsBuilder repositories(List<String> transientRepositories);
 
+    /**
+     * Workspace.
+     *
+     * @param workspace workspace
+     * @return workspace result
+     */
     NWorkspaceOptionsBuilder workspace(String workspace);
 
+    /**
+     * Debug.
+     *
+     * @param debug debug
+     * @return debug result
+     */
     NWorkspaceOptionsBuilder debug(String debug);
 
     /**
@@ -209,13 +443,37 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder system(Boolean global);
 
+    /**
+     * Gui.
+     *
+     * @param gui gui
+     * @return gui result
+     */
     NWorkspaceOptionsBuilder gui(Boolean gui);
 
+    /**
+     * Inherited.
+     *
+     * @param inherited inherited
+     * @return inherited result
+     */
     NWorkspaceOptionsBuilder inherited(Boolean inherited);
 
 
+    /**
+     * Read only.
+     *
+     * @param readOnly read only
+     * @return read only result
+     */
     NWorkspaceOptionsBuilder readOnly(Boolean readOnly);
 
+    /**
+     * Recover.
+     *
+     * @param recover recover
+     * @return recover result
+     */
     NWorkspaceOptionsBuilder recover(Boolean recover);
 
     /**
@@ -228,14 +486,44 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder reset(Boolean reset);
 
+    /**
+     * Reset hard.
+     *
+     * @param resetHard reset hard
+     * @return reset hard result
+     */
     NWorkspaceOptionsBuilder resetHard(Boolean resetHard);
 
+    /**
+     * Command version.
+     *
+     * @param version version
+     * @return command version result
+     */
     NWorkspaceOptionsBuilder commandVersion(Boolean version);
 
+    /**
+     * Command help.
+     *
+     * @param help help
+     * @return command help result
+     */
     NWorkspaceOptionsBuilder commandHelp(Boolean help);
 
+    /**
+     * Install companions.
+     *
+     * @param skipInstallCompanions skip install companions
+     * @return install companions result
+     */
     NWorkspaceOptionsBuilder installCompanions(Boolean skipInstallCompanions);
 
+    /**
+     * Skip welcome.
+     *
+     * @param skipWelcome skip welcome
+     * @return skip welcome result
+     */
     NWorkspaceOptionsBuilder skipWelcome(Boolean skipWelcome);
 
     /**
@@ -270,22 +558,76 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder skipBoot(Boolean skipBoot);
 
+    /**
+     * Trace.
+     *
+     * @param trace trace
+     * @return trace result
+     */
     NWorkspaceOptionsBuilder trace(Boolean trace);
 
+    /**
+     * Progress options.
+     *
+     * @param progressOptions progress options
+     * @return progress options result
+     */
     NWorkspaceOptionsBuilder progressOptions(String progressOptions);
 
+    /**
+     * Cached.
+     *
+     * @param cached cached
+     * @return cached result
+     */
     NWorkspaceOptionsBuilder cached(Boolean cached);
 
+    /**
+     * Indexed.
+     *
+     * @param indexed indexed
+     * @return indexed result
+     */
     NWorkspaceOptionsBuilder indexed(Boolean indexed);
 
+    /**
+     * Transitive.
+     *
+     * @param transitive transitive
+     * @return transitive result
+     */
     NWorkspaceOptionsBuilder transitive(Boolean transitive);
 
+    /**
+     * Bot.
+     *
+     * @param bot bot
+     * @return bot result
+     */
     NWorkspaceOptionsBuilder bot(Boolean bot);
 
+    /**
+     * Fetch strategy.
+     *
+     * @param fetchStrategy fetch strategy
+     * @return fetch strategy result
+     */
     NWorkspaceOptionsBuilder fetchStrategy(NFetchStrategy fetchStrategy);
 
+    /**
+     * Stdin.
+     *
+     * @param stdin stdin
+     * @return stdin result
+     */
     NWorkspaceOptionsBuilder stdin(InputStream stdin);
 
+    /**
+     * Stdout.
+     *
+     * @param stdout stdout
+     * @return stdout result
+     */
     NWorkspaceOptionsBuilder stdout(PrintStream stdout);
 
     /**
@@ -320,12 +662,36 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder expireTime(Instant value);
 
+    /**
+     * Skip errors.
+     *
+     * @param value value
+     * @return skip errors result
+     */
     NWorkspaceOptionsBuilder skipErrors(Boolean value);
 
+    /**
+     * Switch workspace.
+     *
+     * @param value value
+     * @return switch workspace result
+     */
     NWorkspaceOptionsBuilder switchWorkspace(Boolean value);
 
+    /**
+     * Errors.
+     *
+     * @param errors errors
+     * @return errors result
+     */
     NWorkspaceOptionsBuilder errors(List<NMsg> errors);
 
+    /**
+     * Custom options.
+     *
+     * @param properties properties
+     * @return custom options result
+     */
     NWorkspaceOptionsBuilder customOptions(List<String> properties);
 
     /**
@@ -346,24 +712,86 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder theme(String theme);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptionsBuilder other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @param assignmentPolicy assignment policy
+     * @return copy from result
+     */
     NWorkspaceOptionsBuilder copyFrom(NWorkspaceOptions other, NAssignmentPolicy assignmentPolicy);
 
+    /**
+     * Sets the cmd line.
+     *
+     * @param cmdLine cmd line
+     * @return set cmd line result
+     */
     NWorkspaceOptionsBuilder setCmdLine(String cmdLine);
 
+    /**
+     * Sets the cmd line.
+     *
+     * @param args args
+     * @return set cmd line result
+     */
     NWorkspaceOptionsBuilder setCmdLine(String[] args);
 
+    /**
+     * Sets the user name.
+     *
+     * @param username username
+     * @return set user name result
+     */
     NWorkspaceOptionsBuilder setUserName(String username);
 
+    /**
+     * Sets the store location.
+     *
+     * @param location location
+     * @param value value
+     * @return set store location result
+     */
     NWorkspaceOptionsBuilder setStoreLocation(NStoreType location, String value);
 
+    /**
+     * Sets the home location.
+     *
+     * @param location location
+     * @param value value
+     * @return set home location result
+     */
     NWorkspaceOptionsBuilder setHomeLocation(NHomeLocation location, String value);
 
+    /**
+     * Adds the specified output format options.
+     *
+     * @param options options
+     * @return add output format options result
+     */
     NWorkspaceOptionsBuilder addOutputFormatOptions(String... options);
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NWorkspaceOptions build();
 
     /**
@@ -375,10 +803,25 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder dependencySolver(String dependencySolver);
 
+    /**
+     * Unset runtime options.
+     *
+     * @return unset runtime options result
+     */
     NWorkspaceOptionsBuilder unsetRuntimeOptions();
 
+    /**
+     * Unset creation options.
+     *
+     * @return unset creation options result
+     */
     NWorkspaceOptionsBuilder unsetCreationOptions();
 
+    /**
+     * Unset exported options.
+     *
+     * @return unset exported options result
+     */
     NWorkspaceOptionsBuilder unsetExportedOptions();
 
 
@@ -388,14 +831,39 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NWorkspaceOptionsBuilder previewRepo(Boolean bot);
 
+    /**
+     * Desktop launcher.
+     *
+     * @return desktop launcher result
+     */
     NOptional<NSupportMode> desktopLauncher();
 
+    /**
+     * Menu launcher.
+     *
+     * @return menu launcher result
+     */
     NOptional<NSupportMode> menuLauncher();
 
+    /**
+     * User launcher.
+     *
+     * @return user launcher result
+     */
     NOptional<NSupportMode> userLauncher();
 
+    /**
+     * Checks if isolation level.
+     *
+     * @return isolation level result
+     */
     NOptional<NIsolationLevel> isolationLevel();
 
+    /**
+     * Converts to boot options info.
+     *
+     * @return to boot options info result
+     */
     NBootOptionsInfo toBootOptionsInfo();
 
     /**
@@ -524,6 +992,11 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NOptional<NExecutionType> executionType();
 
+    /**
+     * Run as.
+     *
+     * @return run as result
+     */
     NOptional<NRunAs> runAs();
 
     /**
@@ -736,6 +1209,11 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NOptional<String> workspace();
 
+    /**
+     * Debug.
+     *
+     * @return debug result
+     */
     NOptional<String> debug();
 
     /**
@@ -799,12 +1277,27 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
 
     NOptional<Boolean> reset();
 
+    /**
+     * Reset hard.
+     *
+     * @return reset hard result
+     */
     NOptional<Boolean> resetHard();
 
 
+    /**
+     * Command version.
+     *
+     * @return command version result
+     */
     NOptional<Boolean> commandVersion();
 
 
+    /**
+     * Command help.
+     *
+     * @return command help result
+     */
     NOptional<Boolean> commandHelp();
 
     /**
@@ -1012,12 +1505,32 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NOptional<Instant> expireTime();
 
+    /**
+     * Skip errors.
+     *
+     * @return skip errors result
+     */
     NOptional<Boolean> skipErrors();
 
+    /**
+     * Switch workspace.
+     *
+     * @return switch workspace result
+     */
     NOptional<Boolean> switchWorkspace();
 
+    /**
+     * Errors.
+     *
+     * @return errors result
+     */
     NOptional<List<NMsg>> errors();
 
+    /**
+     * Custom options.
+     *
+     * @return custom options result
+     */
     NOptional<List<String>> customOptions();
 
     /**
@@ -1036,11 +1549,32 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
     NOptional<String> theme();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NWorkspaceOptionsBuilder builder();
 
+    /**
+     * Converts to cmd line.
+     *
+     * @return to cmd line result
+     */
     NCmdLine toCmdLine();
 
+    /**
+     * Converts to cmd line.
+     *
+     * @param config config
+     * @return to cmd line result
+     */
     NCmdLine toCmdLine(NWorkspaceOptionsConfig config);
 
+    /**
+     * Reset options.
+     *
+     * @return reset options result
+     */
     NWorkspaceOptionsBuilder resetOptions();
 }

@@ -91,6 +91,12 @@ public interface NBlankable {
         return NApiUtilsRPI.isBlank(value);
     }
 
+    /**
+     * Checks if is non blank.
+     *
+     * @param value value
+     * @return is non blank result
+     */
     static boolean isNonBlank(Object value) {
         return !NApiUtilsRPI.isBlank(value);
     }
@@ -103,6 +109,13 @@ public interface NBlankable {
     boolean isBlank();
 
 
+    /**
+     * First non blank.
+     *
+     * @param a a
+     * @param b b
+     * @return first non blank result
+     */
     static <T> T firstNonBlank(T a, T b) {
         if (!NBlankable.isBlank(a)) {
             return a;
@@ -113,18 +126,49 @@ public interface NBlankable {
         return null;
     }
 
+    /**
+     * First non blank.
+     *
+     * @param values values
+     * @return first non blank result
+     */
     static <T> T firstNonBlank(T... values) {
+        /**
+         * First non blank.
+         *
+         * @param Arrays.asList(values) arrays.as list(values)
+         * @return first non blank result
+         */
         return firstNonBlank(values == null ? null : Arrays.asList(values));
     }
 
+    /**
+     * First non blank lazy.
+     *
+     * @param first first
+     * @param suppliers suppliers
+     * @return first non blank lazy result
+     */
     static <T> T firstNonBlankLazy(T first, Supplier<T>... suppliers) {
         return NUtils.firstMatchingLazy(NBlankable::isNonBlank, first, suppliers);
     }
 
+    /**
+     * First non blank lazy.
+     *
+     * @param suppliers suppliers
+     * @return first non blank lazy result
+     */
     static <T> T firstNonBlankLazy(Supplier<T>... suppliers) {
         return NUtils.firstMatchingLazy(NBlankable::isNonBlank, suppliers);
     }
 
+    /**
+     * First non blank.
+     *
+     * @param values values
+     * @return first non blank result
+     */
     static <T> T firstNonBlank(List<? extends T> values) {
         if (values != null) {
             for (T value : values) {

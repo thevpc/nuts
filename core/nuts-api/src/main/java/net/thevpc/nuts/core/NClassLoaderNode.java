@@ -38,16 +38,41 @@ import java.util.List;
  */
 public interface NClassLoaderNode {
 
+    /**
+     * Checks if is included in classpath.
+     *
+     * @return is included in classpath result
+     */
     boolean isIncludedInClasspath();
 
+    /**
+     * Checks if is enabled.
+     *
+     * @return is enabled result
+     */
     boolean isEnabled();
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     @NGetter
     NId id();
 
+    /**
+     * Url.
+     *
+     * @return url result
+     */
     @NGetter
     URL url();
 
+    /**
+     * Dependencies.
+     *
+     * @return dependencies result
+     */
     @NGetter
     List<NClassLoaderNode> dependencies();
 }

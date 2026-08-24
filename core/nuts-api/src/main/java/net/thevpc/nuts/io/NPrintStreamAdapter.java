@@ -26,6 +26,17 @@
  */
 package net.thevpc.nuts.io;
 
+/**
+ * NPrintStreamAdapter interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NPrintStreamAdapter {
+    /**
+     * Base print stream.
+     *
+     * @return base print stream result
+     */
     NPrintStream basePrintStream();
 }

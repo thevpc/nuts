@@ -26,32 +26,70 @@ public class DefaultNPathMetadata {
     private boolean userTemporary;
 
     private PathMetadata md = new PathMetadata(this);
+    /**
+     * Default n path metadata.
+     *
+     * @param path path
+     * @return default n path metadata result
+     */
     public DefaultNPathMetadata(NPath path) {
         this.path = path;
     }
 
+    /**
+     * Meta data.
+     *
+     * @return meta data result
+     */
     public NContentMetadata metaData() {
         return md;
     }
 
+    /**
+     * Checks if is user cache.
+     *
+     * @return is user cache result
+     */
     public boolean isUserCache() {
         return userCache;
     }
 
+    /**
+     * User cache.
+     *
+     * @param userCache user cache
+     * @return user cache result
+     */
     public DefaultNPathMetadata userCache(boolean userCache) {
         this.userCache = userCache;
         return this;
     }
 
+    /**
+     * Checks if is user temporary.
+     *
+     * @return is user temporary result
+     */
     public boolean isUserTemporary() {
         return userTemporary;
     }
 
+    /**
+     * User temporary.
+     *
+     * @param userTemporary user temporary
+     * @return user temporary result
+     */
     public DefaultNPathMetadata userTemporary(boolean userTemporary) {
         this.userTemporary = userTemporary;
         return this;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     public NOptional<String> name() {
         if (!NBlankable.isBlank(name)) {
             return NOptional.of(name);
@@ -67,28 +105,53 @@ public class DefaultNPathMetadata {
         return NOptional.ofNamedEmpty("name");
     }
 
+    /**
+     * Message.
+     *
+     * @return message result
+     */
     public NOptional<NMsg> message() {
         return NOptional.ofNamed(message, "message")
                 .orElseGetOptionalOf(() -> NMsg.ofNtf(NObjectWriter.of(path).format(path)))
                 ;
     }
 
+    /**
+     * Kind.
+     *
+     * @return kind result
+     */
     public NOptional<String> kind() {
         return NOptional.ofNamed(kind, "kind");
     }
 
+    /**
+     * Content length.
+     *
+     * @return content length result
+     */
     public NOptional<Long> contentLength() {
         return NOptional.ofNamed(contentLength, "contentLength")
                 .orElseGetOptionalOf(() -> path.contentLength())
                 ;
     }
 
+    /**
+     * Content type.
+     *
+     * @return content type result
+     */
     public NOptional<String> contentType() {
         return NOptional.ofNamed(contentType, "contentType")
                 .orElseGetOptionalOf(() -> path.contentType())
                 ;
     }
 
+    /**
+     * Charset.
+     *
+     * @return charset result
+     */
     public NOptional<String> charset() {
         return NOptional.ofNamed(charset, "charset")
                 .orElseGetOptionalOf(() -> path.charset())
@@ -96,30 +159,65 @@ public class DefaultNPathMetadata {
     }
 
 
+    /**
+     * Message.
+     *
+     * @param message message
+     */
     public void message(NMsg message) {
         this.message = message;
     }
 
+    /**
+     * Kind.
+     *
+     * @param kind kind
+     */
     public void kind(String kind) {
         this.kind = kind;
     }
 
+    /**
+     * Name.
+     *
+     * @param name name
+     */
     public void name(String name) {
         this.name = name;
     }
 
+    /**
+     * Content length.
+     *
+     * @param contentLength content length
+     */
     public void contentLength(Long contentLength) {
         this.contentLength = contentLength;
     }
 
+    /**
+     * Content type.
+     *
+     * @param contentType content type
+     */
     public void contentType(String contentType) {
         this.contentType = contentType;
     }
 
+    /**
+     * Charset.
+     *
+     * @param charset charset
+     */
     public void charset(String charset) {
         this.charset = charset;
     }
 
+    /**
+     * Copy from.
+     *
+     * @param cmd cmd
+     */
     public void copyFrom(NContentMetadata cmd) {
         if(cmd==null){
             return;
@@ -132,6 +230,11 @@ public class DefaultNPathMetadata {
         this.name = cmd.name().orNull();
     }
 
+    /**
+     * Copy from.
+     *
+     * @param cmd cmd
+     */
     public void copyFrom(DefaultNPathMetadata cmd) {
         if(cmd==null){
             return;
@@ -155,6 +258,12 @@ public class DefaultNPathMetadata {
     private class PathMetadata implements NContentMetadata {
         private DefaultNPathMetadata outer;
 
+        /**
+         * Path metadata.
+         *
+         * @param outer outer
+         * @return path metadata result
+         */
         public PathMetadata(DefaultNPathMetadata outer) {
             this.outer = outer;
         }

@@ -145,6 +145,11 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      * @return copied model
      */
     public NBulkheadCallModel copy(){
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -155,8 +160,19 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      */
     protected NBulkheadCallModel clone(){
         try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
             return (NBulkheadCallModel) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

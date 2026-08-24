@@ -61,14 +61,39 @@ import java.util.function.Supplier;
  */
 public interface NWorkspaceOptions extends Serializable {
 
+    /**
+     * Desktop launcher.
+     *
+     * @return desktop launcher result
+     */
     NOptional<NSupportMode> desktopLauncher();
 
+    /**
+     * Menu launcher.
+     *
+     * @return menu launcher result
+     */
     NOptional<NSupportMode> menuLauncher();
 
+    /**
+     * User launcher.
+     *
+     * @return user launcher result
+     */
     NOptional<NSupportMode> userLauncher();
 
+    /**
+     * Checks if isolation level.
+     *
+     * @return isolation level result
+     */
     NOptional<NIsolationLevel> isolationLevel();
 
+    /**
+     * Converts to boot options info.
+     *
+     * @return to boot options info result
+     */
     NBootOptionsInfo toBootOptionsInfo();
 
     /**
@@ -197,6 +222,11 @@ public interface NWorkspaceOptions extends Serializable {
      */
     NOptional<NExecutionType> executionType();
 
+    /**
+     * Run as.
+     *
+     * @return run as result
+     */
     NOptional<NRunAs> runAs();
 
     /**
@@ -383,6 +413,11 @@ public interface NWorkspaceOptions extends Serializable {
      * @return repositories to register temporarily when running the workspace.
      */
     NOptional<List<String>> repositories();
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
     NOptional<List<String>> bootRepositories();
 
     /**
@@ -404,6 +439,11 @@ public interface NWorkspaceOptions extends Serializable {
      */
     NOptional<String> workspace();
 
+    /**
+     * Debug.
+     *
+     * @return debug result
+     */
     NOptional<String> debug();
 
     /**
@@ -467,12 +507,27 @@ public interface NWorkspaceOptions extends Serializable {
 
     NOptional<Boolean> reset();
 
+    /**
+     * Reset hard.
+     *
+     * @return reset hard result
+     */
     NOptional<Boolean> resetHard();
 
 
+    /**
+     * Command version.
+     *
+     * @return command version result
+     */
     NOptional<Boolean> commandVersion();
 
 
+    /**
+     * Command help.
+     *
+     * @return command help result
+     */
     NOptional<Boolean> commandHelp();
 
     /**
@@ -680,12 +735,32 @@ public interface NWorkspaceOptions extends Serializable {
      */
     NOptional<Instant> expireTime();
 
+    /**
+     * Skip errors.
+     *
+     * @return skip errors result
+     */
     NOptional<Boolean> skipErrors();
 
+    /**
+     * Switch workspace.
+     *
+     * @return switch workspace result
+     */
     NOptional<Boolean> switchWorkspace();
 
+    /**
+     * Errors.
+     *
+     * @return errors result
+     */
     NOptional<List<NMsg>> errors();
 
+    /**
+     * Custom options.
+     *
+     * @return custom options result
+     */
     NOptional<List<String>> customOptions();
 
     /**
@@ -704,10 +779,26 @@ public interface NWorkspaceOptions extends Serializable {
      */
     NOptional<String> theme();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NWorkspaceOptionsBuilder builder();
 
+    /**
+     * Converts to cmd line.
+     *
+     * @return to cmd line result
+     */
     NCmdLine toCmdLine();
 
+    /**
+     * Converts to cmd line.
+     *
+     * @param config config
+     * @return to cmd line result
+     */
     NCmdLine toCmdLine(NWorkspaceOptionsConfig config);
 
 

@@ -34,17 +34,43 @@ import java.util.*;
  * Created by vpc on 1/21/17.
  */
 public interface NObservableMap<K, V> extends Map<K, V> {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static <K, V> NObservableMap<K, V> of(){
         return  NUtilsRPI.of().createObservableMap();
     }
+    /**
+     * Creates a new instance of of.
+     *
+     * @param base base
+     * @return of result
+     */
     static <K, V> NObservableMap<K, V> of(Map<K, V> base){
         return  NUtilsRPI.of().createObservableMap(base);
     }
 
+    /**
+     * Adds the specified map listener.
+     *
+     * @param listener listener
+     */
     void addMapListener(NObservableMapListener<K, V> listener);
 
+    /**
+     * Removes the specified map listener.
+     *
+     * @param listener listener
+     */
     void removeMapListener(NObservableMapListener<K, V> listener);
 
+    /**
+     * Map listeners.
+     *
+     * @return map listeners result
+     */
     List<NObservableMapListener<K, V>> mapListeners();
 
 }

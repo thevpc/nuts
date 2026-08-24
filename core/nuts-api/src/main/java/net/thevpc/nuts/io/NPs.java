@@ -40,6 +40,11 @@ import net.thevpc.nuts.spi.NComponent;
  * @since 0.5.8
  */
 public interface NPs extends NComponent, NConnectionStringAware {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NPs of() {
         return NExtensions.of(NPs.class);
     }
@@ -76,8 +81,19 @@ public interface NPs extends NComponent, NConnectionStringAware {
      */
     boolean isFailFast();
 
+    /**
+     * Checks if is supported kill process.
+     *
+     * @return is supported kill process result
+     */
     boolean isSupportedKillProcess();
 
+    /**
+     * Kill process.
+     *
+     * @param processId process id
+     * @return kill process result
+     */
     boolean killProcess(String processId);
 
     /**

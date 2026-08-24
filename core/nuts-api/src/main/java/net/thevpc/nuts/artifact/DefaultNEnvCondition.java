@@ -45,6 +45,12 @@ public class DefaultNEnvCondition implements NEnvCondition {
     private List<String> desktopEnvironment;
     private Map<String, String> properties;
 
+    /**
+     * Default n env condition.
+     *
+     * @param d d
+     * @return default n env condition result
+     */
     public DefaultNEnvCondition(NEnvCondition d) {
         this(
                 d.arch(),
@@ -57,7 +63,23 @@ public class DefaultNEnvCondition implements NEnvCondition {
         );
     }
 
+    /**
+     * Default n env condition.
+     *
+     * @return default n env condition result
+     */
     public DefaultNEnvCondition() {
+      /**
+       * This.
+       *
+       * @param null null
+       * @param null null
+       * @param null null
+       * @param null null
+       * @param null null
+       * @param null null
+       * @param null null
+       */
         this(null, null, null, null, null, null, null);
     }
 
@@ -75,6 +97,11 @@ public class DefaultNEnvCondition implements NEnvCondition {
         this.properties = properties == null ? new HashMap<>() : new HashMap<>(properties);
     }
 
+    /**
+     * Properties.
+     *
+     * @return properties result
+     */
     public Map<String, String> properties() {
         return Collections.unmodifiableMap(properties);
     }
@@ -195,6 +222,13 @@ public class DefaultNEnvCondition implements NEnvCondition {
         return s;
     }
 
+    /**
+     * Ts.
+     *
+     * @param n n
+     * @param vs vs
+     * @return ts result
+     */
     private String ts(String n, List<String> vs) {
         if (vs == null || vs.size() == 0) {
             return "";
@@ -202,6 +236,13 @@ public class DefaultNEnvCondition implements NEnvCondition {
         return n + "=" + String.join(",", vs);
     }
 
+    /**
+     * Ts.
+     *
+     * @param n n
+     * @param properties properties
+     * @return ts result
+     */
     private String ts(String n, Map<String, String> properties) {
         if (properties.isEmpty()) {
             return "";

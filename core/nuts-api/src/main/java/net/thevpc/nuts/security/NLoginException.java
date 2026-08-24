@@ -42,6 +42,11 @@ public class NLoginException extends NException {
      * @param message message
      */
     public NLoginException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -52,6 +57,12 @@ public class NLoginException extends NException {
      * @param cause   cause
      */
     public NLoginException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 
@@ -64,6 +75,14 @@ public class NLoginException extends NException {
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NLoginException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

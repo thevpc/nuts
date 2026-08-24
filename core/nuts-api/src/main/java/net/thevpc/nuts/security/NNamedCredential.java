@@ -1,5 +1,11 @@
 package net.thevpc.nuts.security;
 
+/**
+ * NNamedCredential interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NNamedCredential {
     /**
      * Human-readable name (e.g., "github-personal", "nexus-corp").
@@ -13,6 +19,11 @@ public interface NNamedCredential {
      */
     String userName();
 
+    /**
+     * Auth type.
+     *
+     * @return auth type result
+     */
     String authType();
 
     /**
@@ -37,5 +48,10 @@ public interface NNamedCredential {
      */
     String resource();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NNamedCredentialBuilder builder();
 }

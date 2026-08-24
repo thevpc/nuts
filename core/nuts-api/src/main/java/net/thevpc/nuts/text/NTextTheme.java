@@ -31,26 +31,58 @@ import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NSetter;
 
+/**
+ * NTextTheme interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NTextTheme {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     @NGetter
     static NTextTheme of(){
         return NTextRPI.of().currentTheme();
     }
 
+    /**
+     * Sets the set.
+     *
+     * @param theme theme
+     */
     @NSetter
     static void set(NTextTheme theme){
         NTextRPI.of().setTheme(theme);
     }
 
+    /**
+     * Sets the set.
+     *
+     * @param themeName theme name
+     */
     @NSetter
     static void set(String themeName){
         NTextRPI.of().setTheme(themeName);
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param name name
+     * @return get result
+     */
     static NOptional<NTextTheme> get(String name){
         return NTextRPI.of().getTheme(name);
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
     String name();
 
     /**
@@ -62,6 +94,13 @@ public interface NTextTheme {
      */
     NTextStyles toBasicStyles(NTextStyles style, boolean basicTrueStyles);
 
+    /**
+     * Converts to basic styles.
+     *
+     * @param style style
+     * @param basicTrueStyles basic true styles
+     * @return to basic styles result
+     */
     NTextStyles toBasicStyles(NTextStyle style, boolean basicTrueStyles);
 
 }

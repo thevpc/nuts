@@ -60,22 +60,42 @@ public class NAppInitInfo {
     }
 
 
+    /**
+     * Start time.
+     *
+     * @return start time result
+     */
     @NGetter
     public NClock startTime() {
         return startTime;
     }
 
 
+    /**
+     * Store location supplier.
+     *
+     * @return store location supplier result
+     */
     @NGetter
     public NAppStoreLocationResolver storeLocationSupplier() {
         return storeLocationSupplier;
     }
 
+    /**
+     * Application.
+     *
+     * @return application result
+     */
     @NGetter
     public NApplicationHandler application() {
         return appInstance;
     }
 
+    /**
+     * Source.
+     *
+     * @return source result
+     */
     @NGetter
     public Object source() {
         return source;

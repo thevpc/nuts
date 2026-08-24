@@ -84,18 +84,43 @@ public final class NReservedApplication {
     @Deprecated
     public static <T extends NApplicationHandler> T createApplicationInstance(Class<T> appType) {
         String[] args = null;
+        /**
+         * Creates a new instance of create application instance.
+         *
+         * @param appType app type
+         * @param args args
+         * @return create application instance result
+         */
         return createApplicationInstance(appType, args);
     }
 
+    /**
+     * Resolve application annotation.
+     *
+     * @param appClass app class
+     * @return resolve application annotation result
+     */
     public static NApp resolveApplicationAnnotation(Class appClass) {
         Class<?> validAppClass = NReflectUtils.unproxyType(appClass);
         return validAppClass.getAnnotation(NApp.class);
     }
 
+    /**
+     * Checks if is annotated application class.
+     *
+     * @param appClass app class
+     * @return is annotated application class result
+     */
     public static boolean isAnnotatedApplicationClass(Class appClass) {
         return resolveApplicationAnnotation(appClass) != null;
     }
 
+    /**
+     * Creates a new instance of create application instance from annotated instance.
+     *
+     * @param appInstance app instance
+     * @return create application instance from annotated instance result
+     */
     public static NApplicationHandler createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
         NAssert.requireNamedNonNull(appInstance, "appInstance");
         if (appInstance instanceof NApplicationHandler) {
@@ -104,6 +129,12 @@ public final class NReservedApplication {
         Class<?> appClass = NReflectUtils.unproxyType(appInstance.getClass());
         NApp appAnnotation = appClass.getAnnotation(NApp.class);
         if (appAnnotation == null) {
+            /**
+             * N boot exception.
+             *
+             * @param appClass.getName()) app class.get name())
+             * @return n boot exception result
+             */
             throw new NBootException(NBootMsg.ofC("class %s is missing annotation @" + NApp.class.getSimpleName(), appClass.getName()));
         }
         NAssert.requireNamedNonNull(appAnnotation, "@NApp annotation");
@@ -139,17 +170,59 @@ public final class NReservedApplication {
             }
             try {
                 for (Method m : cc.getDeclaredMethods()) {
+                  /**
+                   * Check allowed method with nuts annotation.
+                   *
+                   * @param m m
+                   * @param NAppRun.class n app run.class
+                   */
                     checkAllowedMethodWithNutsAnnotation(m, NAppRun.class);
+                  /**
+                   * Check allowed method with nuts annotation.
+                   *
+                   * @param m m
+                   * @param NAppInstall.class n app install.class
+                   */
                     checkAllowedMethodWithNutsAnnotation(m, NAppInstall.class);
+                  /**
+                   * Check allowed method with nuts annotation.
+                   *
+                   * @param m m
+                   * @param NAppUninstall.class n app uninstall.class
+                   */
                     checkAllowedMethodWithNutsAnnotation(m, NAppUninstall.class);
+                  /**
+                   * Check allowed method with nuts annotation.
+                   *
+                   * @param m m
+                   * @param NAppUpdate.class n app update.class
+                   */
                     checkAllowedMethodWithNutsAnnotation(m, NAppUpdate.class);
+                  /**
+                   * Check allowed method with nuts annotation.
+                   *
+                   * @param m m
+                   * @param NAppComplete.class n app complete.class
+                   */
                     checkAllowedMethodWithNutsAnnotation(m, NAppComplete.class);
                 }
             } catch (NBootException e) {
                 throw e;
             } catch (RuntimeException e) {
+                /**
+                 * Runtime exception.
+                 *
+                 * @param e e
+                 * @return runtime exception result
+                 */
                 throw new RuntimeException(e);
             } catch (Exception e) {
+                /**
+                 * Runtime exception.
+                 *
+                 * @param e e
+                 * @return runtime exception result
+                 */
                 throw new RuntimeException(e);
             }
             cc = cc.getSuperclass();
@@ -160,13 +233,32 @@ public final class NReservedApplication {
         return new AnnotationClassNApplicationHandler(runMethods, installMethods, updateMethods, uninstallMethods, completeMethods, appInstance);
     }
 
+    /**
+     * Check allowed method with nuts annotation.
+     *
+     * @param m m
+     * @param annClass ann class
+     * @return check allowed method with nuts annotation result
+     */
     private static boolean checkAllowedMethodWithNutsAnnotation(Method m, Class annClass) {
         Annotation u = m.getAnnotation(annClass);
         if (u != null) {
             if (m.getParameterCount() != 0) {
+                /**
+                 * N boot exception.
+                 *
+                 * @param annClass.getName()) ann class.get name())
+                 * @return n boot exception result
+                 */
                 throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should not have parameters", m, annClass.getName()));
             }
             if (!Modifier.isPublic(m.getModifiers())) {
+                /**
+                 * N boot exception.
+                 *
+                 * @param annClass.getName()) ann class.get name())
+                 * @return n boot exception result
+                 */
                 throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should be public", m, annClass.getName()));
             }
             return true;
@@ -208,6 +300,11 @@ public final class NReservedApplication {
             for (Constructor<?> constructor : appType.getConstructors()) {
                 if (constructor.getParameterCount() == 1
                         && constructor.getParameterTypes()[0].equals(String[].class)) {
+                  /**
+                   * Return.
+                   *
+                   * @param args args
+                   */
                     return (T) constructor.newInstance((Object) args);
                 } else if (constructor.getParameterCount() == 0) {
                     dconstructor = (Constructor<T>) constructor;
@@ -239,6 +336,17 @@ public final class NReservedApplication {
         private final List<Method> completeMethods;
         private final Object appInstance;
 
+        /**
+         * Annotation class n application handler.
+         *
+         * @param runMethods run methods
+         * @param installMethods install methods
+         * @param updateMethods update methods
+         * @param uninstallMethods uninstall methods
+         * @param completeMethods complete methods
+         * @param appInstance app instance
+         * @return annotation class n application handler result
+         */
         public AnnotationClassNApplicationHandler(List<Method> runMethods, List<Method> installMethods, List<Method> updateMethods, List<Method> uninstallMethods, List<Method> completeMethods, Object appInstance) {
             this.runMethods = runMethods;
             this.installMethods = installMethods;
@@ -248,6 +356,11 @@ public final class NReservedApplication {
             this.appInstance = appInstance;
         }
 
+        /**
+         * App instance.
+         *
+         * @return app instance result
+         */
         public Object appInstance() {
             return appInstance;
         }
@@ -255,6 +368,11 @@ public final class NReservedApplication {
         @Override
         public void run() {
             for (Method runMethod : runMethods) {
+              /**
+               * Do run this.
+               *
+               * @param runMethod run method
+               */
                 doRunThis(runMethod);
             }
         }
@@ -262,6 +380,11 @@ public final class NReservedApplication {
         @Override
         public void onInstallApplication() {
             for (Method runMethod : installMethods) {
+              /**
+               * Do run this.
+               *
+               * @param runMethod run method
+               */
                 doRunThis(runMethod);
             }
         }
@@ -269,6 +392,11 @@ public final class NReservedApplication {
         @Override
         public void onUpdateApplication() {
             for (Method runMethod : updateMethods) {
+              /**
+               * Do run this.
+               *
+               * @param runMethod run method
+               */
                 doRunThis(runMethod);
             }
         }
@@ -276,6 +404,11 @@ public final class NReservedApplication {
         @Override
         public void onUninstallApplication() {
             for (Method runMethod : uninstallMethods) {
+              /**
+               * Do run this.
+               *
+               * @param runMethod run method
+               */
                 doRunThis(runMethod);
             }
         }
@@ -283,10 +416,21 @@ public final class NReservedApplication {
         @Override
         public void onCompleteApplication() {
             for (Method runMethod : completeMethods) {
+              /**
+               * Do run this.
+               *
+               * @param runMethod run method
+               */
                 doRunThis(runMethod);
             }
         }
 
+        /**
+         * Do run this.
+         *
+         * @param m m
+         * @return do run this result
+         */
         private void doRunThis(Method m) {
             try {
                 if (Modifier.isStatic(m.getModifiers())) {
@@ -295,14 +439,37 @@ public final class NReservedApplication {
                     m.invoke(appInstance);
                 }
             } catch (IllegalAccessException e) {
+                /**
+                 * Runtime exception.
+                 *
+                 * @param e e
+                 * @return runtime exception result
+                 */
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
                 if (e.getTargetException() instanceof RuntimeException) {
+                  /**
+                   * Throw.
+                   *
+                   * @param e.getTargetException( e.get target exception(
+                   */
                     throw (RuntimeException) e.getTargetException();
                 }
                 if (e.getTargetException() != null) {
+                    /**
+                     * Runtime exception.
+                     *
+                     * @param e.getTargetException() e.get target exception()
+                     * @return runtime exception result
+                     */
                     throw new RuntimeException(e.getTargetException());
                 }
+                /**
+                 * Runtime exception.
+                 *
+                 * @param e e
+                 * @return runtime exception result
+                 */
                 throw new RuntimeException(e);
             }
         }
