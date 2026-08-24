@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
@@ -164,8 +165,8 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
         return NElementRPI.of().createUnaryPrefixOperator(op, first);
     }
 
-    static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NExprOpType operatorType, NElement first, NElement second) {
-        return ofExprBuilder().operator(op).fixity(operatorType).first(first).second(second);
+    static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NFixity fixity, NElement first, NElement second) {
+        return ofExprBuilder().operator(op).fixity(fixity).first(first).second(second);
     }
 
     static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first, NElement second) {
