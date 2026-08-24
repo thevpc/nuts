@@ -5,15 +5,15 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 
 public class NElementTokenImpl implements NElementToken {
-    private NElementTokenType type;
-    private String variant;
-    private int level;
-    private String image;
-    private int line;
-    private int col;
-    private long pos;
-    private Object value;
-    private NMsg errorMessage;
+    private final NElementTokenType type;
+    private final String variant;
+    private final int level;
+    private final String image;
+    private final int line;
+    private final int col;
+    private final long pos;
+    private final Object value;
+    private final NMsg errorMessage;
 
     public NElementTokenImpl(String image, NElementTokenType type, String variant, int level, int line, int col, long pos, Object value, NMsg errorMessage) {
         this.type = type;
@@ -49,6 +49,11 @@ public class NElementTokenImpl implements NElementToken {
 
     public String image() {
         return image;
+    }
+
+    @Override
+    public String typeName() {
+        return type==null?"":type.id();
     }
 
     public int line() {
