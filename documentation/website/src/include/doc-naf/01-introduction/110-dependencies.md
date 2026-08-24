@@ -44,3 +44,16 @@ To make use of `NAF`  you need add the dependency  ```net.thevpc.nuts#nuts:{{api
     }
 ```
 
+:::info
+A note on `Nuts.require()` and Workspaces
+
+`Nuts.require()` in the example above is a convenience for demos and single-app mains. It creates an in-memory singleton workspace bound to the current JVM.
+
+In production, Nuts never relies on a global singleton. A workspace is a filesystem-isolated environment (config, apps, cache, log...) selected via `--workspace=path` or programmatically:
+```java
+NWorkspace wsA = Nuts.openWorkspace("-w=/opt/ws-a"); 
+NWorkspace wsB = Nuts.openWorkspace("-w=/opt/ws-b"); 
+wsA.runWith(() -> { // everything inside uses wsA: NOut, NPath, repos, etc. NOut.println("running in A"); });
+```
+Yes, you can create and switch between multiple NWorkspace instances in the same JVM. Isolation is by filesystem root, not by classloader, so it works reliably for multi-tenant services and tests.
+:::
