@@ -591,6 +591,15 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNMutableTableModel",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.text.art.table.DefaultTableObjectWriter"
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.text.art.table.TableNTextArtRendererFactory",
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
