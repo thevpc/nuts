@@ -23,12 +23,7 @@ cmdLine.matcher()
         .withDefaults()
         .requireAll();
 
-// test if application is running in exec mode
-// (and not in autoComplete mode)
-if (cmdLine.isCompleteMode()) {
-        cmd.printCompleteResult();
-    return;
-}
+
 //do the good stuff here
 NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
 ```
@@ -135,13 +130,8 @@ cmdLine.matcher()
         .requireAll();
 
 
-if (cmdLine.isCompleteMode()) {
-        cmd.printCompleteResult();
-    return;
-}
-
-            //do the good stuff here
-            NOut.println(NMsg.ofC("options=%s", o));
+        //do the good stuff here
+        NOut.println(NMsg.ofC("options=%s", o));
 ```
 
 ## Using CommandLine, The low-level way...
@@ -252,10 +242,6 @@ cmdLine.matcher()
             .asEntry(v -> loadFolder(v.stringValue()))
         .requireAll();
 
-if (cmdLine.isCompleteMode()) {
-    cmdLine.printCompleteResult(); // Outputs candidates for "--file" or "--folder"
-    return;
-}
 ```
 
 If the user types `myapp --f<TAB>`, the matcher recognizes `--file` as a valid prefix match, harvests "project file" and `FILENAMES`, and suggests it. No separate completion configuration is needed.
@@ -266,64 +252,33 @@ The Matcher is built entirely on top of NCmdLine's pull API: next(...), peek(), 
 This is also the form where autocomplete support is easiest to reason about explicitly, since each next(...) call can carry its own display label and value-completion hint right at the call site.
 
 ```java
+
 NCmdLine cmd = NApplication.of().cmdLine();
 boolean boolOption = false;
 String stringOption = null;
 List<String> others = new ArrayList<>();
 
 while (cmd.hasNext()) {
-    // 1. Try to match a flag
-    NOptional<NArg> option = cmd.next(NArgType.FLAG, "toggle option", "-o", "--option");
-    if (option.isPresent()) {
-        boolOption = option.get().booleanValue();
-        continue;
+NOptional<NArg> a;
+// 1. Try to match a flag
+    if ((a = cmd.nextFlag("-o", "--option").orNull()) != null) {
+boolOption = a.booleanValue();
+    } else if ((a = cmd.nextEntry("-n", "--name").orNull()) != null) {
+stringOption = a.stringValue();
+    } else if ((a = cmd.next(NArgType.ENTRY, "file path", NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES), "--file")) != null) {
+        others.add(a.stringValue());
+        } else if ((a = cmd.nextNonOption().orNull()) != null) {
+        others.add(a.image());
+        } else {
+        /// Mode-aware: throws in exec mode; in completion mode, does not throw —
+        // it skips all remaining tokens instead, ending the pass gracefully.
+        cmd.throwUnexpectedArgument();
     }
+            }
 
-    // 2. Try to match an entry with a specific completion hint
-    NOptional<NArg> entry = cmd.next(NArgType.ENTRY, "name",
-            NArgValueComplete.ofFlags(NArgCompleteFlag.NONE),
-            "-n", "--name");
-    if (entry.isPresent()) {
-        stringOption = entry.get().stringValue();
-        continue;
-    }
+NOut.println(NMsg.ofC("boolOption=%s, stringOption=%s, others=%s",
+             boolOption, stringOption, others));
 
-    // 3. Try to match a file path
-    NOptional<NArg> file = cmd.next(NArgType.ENTRY, "file path",
-            NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES),
-            "--file");
-    if (file.isPresent()) {
-        others.add(file.get().stringValue());
-        continue;
-    }
-
-    // 4. Try to match a bare positional argument
-    NOptional<NArg> nonOption = cmd.nextNonOption();
-    if (nonOption.isPresent()) {
-        others.add(nonOption.get().image());
-        continue;
-    }
-
-    // 5. Fallback: Unrecognized token
-    if (cmd.isCompleteMode()) {
-        // Still under autocomplete: nothing else matched this word.
-        // Skip it silently instead of failing the whole completion pass.
-        cmd.skip();
-        continue;
-    }
-
-    // Exec mode: an unrecognized token is a hard error.
-    cmd.throwUnexpectedArgument();
-}
-
-// Finalize
-if (cmd.isExecMode()) {
-    NOut.println(NMsg.ofC("boolOption=%s, stringOption=%s, others=%s", 
-        boolOption, stringOption, others));
-} else {
-    cmd.printCompleteResult();
-    return;
-}
 ```
 
 Each branch follows the same shape: try one `next(...)` call, and if it's present, consume it and `continue`. If every branch declines, the final fallback either silently `skip()`s (when completing, because an incomplete word shouldn't abort the pass) or throwUnexpectedArgument() (when executing, because an unrecognized token is a genuine error).
@@ -353,3 +308,88 @@ if (cmd.isCompleteMode()) {
 // 🚀 ACTION PHASE: Only reached if isExecMode() is true
 performDestructiveOrRealAction(); 
 ```
+
+## Completion
+
+Everything above describes parsing a fully-typed, well-formed command line. Shell completion (the user pressing `<TAB>`) runs through the **exact same loop** — nothing about it is a separate feature you implement on the side.
+
+### How a completion request reaches `NCmdLine`
+
+When a user presses `<TAB>`, the shell re-invokes your application with the command line truncated at the cursor, plus a marker telling `nuts` this is a completion pass — e.g. `myapp --nuts-exec-mode=complete,0,6 --fold`, where `0` is the argument index and `6` is the character offset within it. `NCmdLine` is constructed with `isCompleteMode() == true` for the remainder of that invocation. Nothing else changes — the same `nextFlag`, `nextEntry`, `next(...)`, and `nextNonOption()` calls run, in the same order, against the same rules.
+
+### The one place completion mode matters — and you don't write it
+
+```java
+NCmdLine cmd = NApplication.of().cmdLine();
+boolean boolOption = false;
+String stringOption = null;
+List<String> others = new ArrayList<>();
+
+while (cmd.hasNext()) {
+    NOptional<NArg> a;
+    if ((a = cmd.nextFlag("-o", "--option").orNull()) != null) {
+        boolOption = a.booleanValue();
+    } else if ((a = cmd.nextEntry("-n", "--name").orNull()) != null) {
+        stringOption = a.stringValue();
+    } else if ((a = cmd.next(NArgType.ENTRY, "file path", NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES), "--file")) != null) {
+        others.add(a.stringValue());
+    } else if ((a = cmd.nextNonOption().orNull()) != null) {
+        others.add(a.image());
+    } else {
+        // Mode-aware: throws in exec mode; in completion mode, does NOT
+        // throw — it skips all remaining tokens instead, ending the pass
+        // gracefully. No manual isCompleteMode() branch needed here.
+        cmd.throwUnexpectedArgument();
+    }
+}
+```
+
+In exec mode, a token matching nothing is a real error, and `cmd.throwUnexpectedArgument()` throws accordingly. In completion mode, the token under the cursor is expected to be partial, so the same call silently ends the parse pass instead of throwing. The mode-awareness lives inside the `throwXYZ` family itself, exactly the same way it lives inside `next(...)`/the Matcher for harvesting `.display()`/`.valueComplete()` metadata: **you write one loop, for exec; the pull-API and matcher machinery make it behave correctly for completion without you asking.**
+
+The only place *you* still branch on mode explicitly is after the loop, to decide between running real logic and printing candidates:
+
+```java
+if (cmd.isExecMode()) {
+    NOut.println(NMsg.ofC("boolOption=%s, stringOption=%s, others=%s",
+                 boolOption, stringOption, others));
+} else {
+    cmd.printCompleteResult();
+    return;
+}
+```
+
+### Where `.display()` / `.valueComplete()` come from
+
+Each `next(...)` call (or `.when(...)` clause in the Matcher) can carry a display label and a value-completion hint right at the call site:
+
+```java
+cmd.next(NArgType.ENTRY, "file path", NArgValueComplete.ofFlags(NArgCompleteFlag.FILENAMES), "--file")
+```
+
+During exec mode these are inert — ignored entirely. During completion mode, for a token that partially matches, the matcher harvests `"file path"` and `FILENAMES` instead of consuming a value, and that becomes the candidate the shell shows the user. This is why the loop needs no scattered mode checks: the mode-awareness lives inside `next(...)`/the Matcher, not in your code.
+
+### Behavior in the NAF lifecycle
+
+If your app is a NAF application (`@NApp`), you don't write the `isExecMode()`/`printCompleteResult()` dispatch by hand at the top level — NAF does it for you via the annotation split:
+
+```java
+@NAppRun
+public void run() {
+    NCmdLine cmdLine = NApplication.of().cmdLine();
+    Options o = process(cmdLine);   // the loop above, unmodified
+    // ...exec-only work here...
+}
+
+@NAppComplete
+public void complete() {
+    NCmdLine cmdLine = NApplication.of().cmdLine();
+    process(cmdLine);               // same loop, same method
+    cmdLine.printCompleteResult();
+}
+```
+
+`process()` is exactly the loop from this section — no branching between `run()` and `complete()` at the method-body level, because `NCmdLine` already knows its own mode internally. `run()` and `complete()` differ only in what happens *after* parsing: real execution, or printing candidates.
+
+**A caveat worth knowing:** mode-awareness in the fallback and in `.display()`/`.valueComplete()` harvesting only controls *parsing* behavior — what counts as a match, what counts as an error. It does **not** prevent an `as*`/`next(...)` consumer from actually running for tokens that fully match before the cursor — e.g. an `asEntry(v -> loadFile(v.stringValue()))` consumer for an already-typed `--file=foo.txt` genuinely calls `loadFile()` during a completion pass, not just metadata harvesting. If a consumer has real side effects (I/O, network calls, mutating shared state), that side effect fires on every keystroke, not just on final execution.
+
+This is exactly why NAF wraps `@NAppComplete` in an isolated session (`bot(true)`, `confirm(NO)`, `logTermLevel(OFF)`) rather than relying on `NCmdLine` alone to make completion safe: `NCmdLine`'s mode-awareness governs parsing, but it has no way to stop a consumer's body from doing whatever it does. The session isolation is the backstop — it can't stop `loadFile()` from running, but it does stop the *symptoms* (a confirmation prompt with no one to answer it, stray terminal output corrupting the shell's redraw) from reaching the user. If a consumer performs a real side effect, keeping it idempotent and side-effect-light is the developer's responsibility; NAF's isolation limits the blast radius, it doesn't eliminate the trigger.
