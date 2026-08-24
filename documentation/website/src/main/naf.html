@@ -73,16 +73,16 @@
                         <span class="naf-dot naf-dot--green"></span>
                         <span class="naf-code-window__filename">MyApp.java</span>
                     </div>
-                    <pre class="naf-code-window__pre"><code class="language-java">@NAppDefinition
+                    <pre class="naf-code-window__pre"><code class="language-java">@NApp
 public class MyApp {
   public static void main(String[] args) {
     NApp.builder(args).run();
   }
-  @NAppInstaller public void onInstall() {
-        NOut.println(NMsg.ofC("installing the %s app",NApp.of().id()));
+  @NAppInstall public void install() {
+        NOut.println(NMsg.ofC("installing the %s app",NApplication.of().id()));
   }
-  @NAppRunner public void run() {
-        NCmdLine cmdLine = NApp.of().cmdLine();
+  @NAppRun public void run() {
+        NCmdLine cmdLine = NApplication.of().cmdLine();
         NRef&lt;String&gt; name = NRef.ofNull();
         cmdLine.matcher()
                 .with("-n", "--name").matchEntry((v) -> name.set(v.stringValue()))

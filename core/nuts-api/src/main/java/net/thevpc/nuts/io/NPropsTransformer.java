@@ -1,8 +1,6 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.util.NHex;
-import net.thevpc.nuts.util.NStringBuilder;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.util.*;
@@ -371,10 +369,24 @@ public class NPropsTransformer {
         return false;
     }
 
-    private enum RowType {
+    private enum RowType implements NEnum{
         KEY_VAL,
         EMPTY,
-        COMMENT,
+        COMMENT;
+        private final String id;
+
+        RowType() {
+            this.id = NNameFormat.ID_NAME.format(name());
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        public static NOptional<RowType> parse(String value) {
+            return NEnumUtils.parseEnum(value, RowType.class);
+        }
     }
 
     private static class Row {

@@ -17,13 +17,13 @@ public interface NExprMutableContext extends NExprContext {
 
     NExprVar declareVar(NExprVar varImpl);
 
-    NExprOperator declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl);
+    NExprOperator declareOperator(String name, NFixity type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl);
 
     NExprOperator declareOperator(String name, NExprCallHandler impl);
 
     NExprOperator declareOperator(NExprOperator impl);
 
-    NExprOperator declareOperator(String name, NExprOpType type, NExprCallHandler impl);
+    NExprOperator declareOperator(String name, NFixity type, NExprCallHandler impl);
 
     NExprMutableContext setVarValue(String varName, Object value);
 
@@ -52,5 +52,5 @@ public interface NExprMutableContext extends NExprContext {
 
     NExprMutableContext removeConstruct(String name);
 
-    NExprMutableContext removeOperator(String name, NExprOpType type);
+    NExprMutableContext removeOperator(String name, NFixity type);
 }

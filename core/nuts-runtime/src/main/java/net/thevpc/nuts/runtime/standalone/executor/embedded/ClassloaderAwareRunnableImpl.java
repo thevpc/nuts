@@ -6,7 +6,7 @@ import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
-import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
+import net.thevpc.nuts.runtime.standalone.app.NApplicationImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExtNewContext;
 import net.thevpc.nuts.text.NCmdLineWriter;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -40,7 +40,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
     public Object runWithContext() {
         NWorkspaceExt ows = NWorkspaceExt.of();
         Map<String, String> newEnv = ows.getModel().appendEnv(executionContext.env());
-        NAppImpl newApp = new NAppImpl();
+        NApplicationImpl newApp = new NApplicationImpl();
         NWorkspaceExtNewContext wsc = new NWorkspaceExtNewContext(ows, newEnv, newApp);
         return wsc.callWith(() -> {
             NClock now = NClock.now();
@@ -85,7 +85,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 //            NApplication applicationInstance = NApplications.createApplicationInstanceFromAnnotatedInstance(applicationRawInstance);
 
             return sessionCopy.callWith(() -> {
-//                NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, applicationRawInstance, applicationInstance, null, now));
+//                NApplication.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, applicationRawInstance, applicationInstance, null, now));
                 String old_nuts_boot_args=System.getProperty("nuts.boot.args");
                 String old_nuts_args=System.getProperty("nuts.args");
                 try {

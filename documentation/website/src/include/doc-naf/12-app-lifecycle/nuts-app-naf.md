@@ -3,72 +3,45 @@ id: nutsApp
 title: Your first Application using nuts
 ---
 
+# Building Applications with Nuts Application Framework (NAF)
 
-## Running your application with Nuts
+This guide walks through packaging and running a Java application with the `nuts` package manager, then progressively adopting the **Nuts Application Framework (NAF)** to get lifecycle hooks, structured command-line parsing, and shell completion — all from the same codebase.
 
-Lets take, step by step, an example of an application that you will run using ```nuts``` package manager
+---
 
-First we can create the project using your favourite IDE or using simply `mvn` command
+## 1. The problem NAF solves
 
-```
-mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DinteractiveMode=false
-```
+A plain Maven project with runtime dependencies is not directly executable. The usual fixes — `maven-shade-plugin`, `maven-assembly-plugin`, manually editing `META-INF/MANIFEST.MF` — all require baking a specific packaging strategy into the build, and none of them give you application lifecycle hooks (install/update/uninstall) or shell completion for free.
 
-We will have a fully generated java project
+`nuts` sidesteps this: it resolves dependencies and the main class at **run time**, from the artifact's own metadata, so a standard `mvn clean install` output is already runnable.
+
+### 1.1 Generate a project
 
 ```bash
-~/> tree
-.
-└── my-app
-    ├── pom.xml
-    └── src
-        ├── main
-            └── java
-                └── com
-                    └── mycompany
-                        └── app
-                            └── App.java
-
+mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app \
+    -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DinteractiveMode=false
 ```
 
-Now we will add some dependencies to the project. Let's add `jexcelapi:jxl#2.4.2` and update `pom.xml` consequently.
+### 1.2 Add a dependency
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany.app</groupId>
-    <artifactId>my-app</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <dependencies>
-        <dependency>
-            <groupId>jexcelapi</groupId>
-            <artifactId>jxl</artifactId>
-            <version>2.4.2</version>
-        </dependency>
-    </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-</project> 
+<dependency>
+    <groupId>jexcelapi</groupId>
+    <artifactId>jxl</artifactId>
+    <version>2.4.2</version>
+</dependency>
 ```
 
-Now we update the App.java file
+### 1.3 Write the app
 
 ```java
 package com.mycompany.app;
 
 import java.io.File;
-
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
 public class App {
-
     public static void main(String[] args) {
         try {
             WritableWorkbook w = Workbook.createWorkbook(new File("any-file.xls"));
@@ -78,157 +51,238 @@ public class App {
         }
     }
 }
-
 ```
 
-finally we compile the app:
+### 1.4 Build and run — no shading required
 
 ```bash
 mvn clean install
-```
 
-Of course, we won't be able to run the application yet. Would we? For this app to work there are several ways, all of
-them are complicated and require modifying the `pom.xml`  and even modifying the output jar. we can for instance generate an
-output lib directory and update the `META-INF` file using `maven-dependency-plugin`.
-(see https://maven.apache.org/plugins/maven-shade-plugin ; https://www.baeldung.com/executable-jar-with-maven). We
-could also use `maven-assembly-plugin` to include the dependencies into the jar itself ('what the fat' jar!).
-Another alternative is to use an uglier solution with ```maven-shade-plugin``` and blend libraries into the main jar. In
-all cases we need as well to configure `maven-jar-plugin` to specify the main class file.
-
-I am not exposing all solutions here. You can read this article for more
-details (https://www.baeldung.com/executable-jar-with-maven) but trust me, they all stink.
-
-Instead of that we will use `nuts`. In that case, actually we are already done, the app is already OK! We do not need
-to specify the main class neither are we required to bundle `jxl` and its dependencies. We only need to run the app.
-That's it.
-
-Basically, you can install the application using its identifier `com.mycompany.app:my-app`. The latest version will be resolved.
-
-```bash
 nuts install com.mycompany.app:my-app
 nuts my-app
 ```
 
-This will install the application and run it on the fly. Dependencies will be detected, resolved and downloaded. The
-application is installed from local maven repository. It needs to be deployed to a public repository for it to be
-publicly accessible, however.
-
-We can also choose not to install the app and bundle it as a jar. No need for a public repository in that case:
+`nuts` detects, resolves, and downloads dependencies at run time. The app is installed from the local Maven repository; deploy it to a public repository to make it accessible elsewhere. You can also skip installation entirely and run a jar directly:
 
 ```bash
 nuts -y com my-app-1.0.0-SNAPSHOT.jar
 ```
 
-As we can see, `nuts` provides the simplest and the most elegant way to deploy your application.
+If a jar defines multiple `public static void main` classes, `nuts` prompts for which one to run, interactively.
 
-One question though. what happens if we define multiple main methods (in multiple public classes). It's handled as well
-by ```nuts``` seamlessly. It just asks, at runtime, for the appropriate class to run.
+---
 
-# Using Nuts Application Framework
+## 2. Opting into NAF
 
-Using ```nuts``` is transparent as we have seen so far. It's transparent both at build time and runtime.
-However, ```nuts``` can provide our application a set of unique helpful features, such as install and uninstall hooks,
-comprehensive command line support and so on.
-
-To create your first ```NAF``` application, you will need to add nuts as a dependency and change your `pom.xml` as follows:
+NAF adds install/update/uninstall hooks, structured command-line parsing, and shell completion support. Enable it by adding `nuts` as a compile dependency and flagging the artifact:
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany.app</groupId>
-    <artifactId>my-app</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <dependencies>
-        <dependency>
-            <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>{{runtimeVersion}}</version>
-        </dependency>
-        <dependency>
-            <groupId>jexcelapi</groupId>
-            <artifactId>jxl</artifactId>
-            <version>2.4.2</version>
-        </dependency>
-    </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <nuts.application>true</nuts.application>
-    </properties>
-</project> 
+<dependency>
+    <groupId>net.thevpc.nuts</groupId>
+    <artifactId>nuts</artifactId>
+    <version>{{runtimeVersion}}</version>
+</dependency>
 ```
-Please take note that we have added a property `nuts.application=true`. 
-Actually this is not mandatory, but this will help ```nuts``` package manager detect that this application uses NAF before downloading its jar (the information will be available in the ```pom.xml``` descriptor on the remote repository).
 
-Then we will add some cool features to our application. We write a dummy message whenever the application is installed, uninstalled or updated.
-We will also add support to "--file=[path]" argument to specify the workbook path.
+```xml
+<properties>
+    <nuts.application>true</nuts.application>
+</properties>
+```
+
+`nuts.application=true` is optional but recommended: it lets `nuts` recognize a NAF app from the remote POM *before* downloading the jar.
+
+---
+
+## 3. Application lifecycle hooks
+
+NAF dispatches to your class based on the invocation mode. Each mode has a dedicated annotation, all optional except `@NApp` + `@NAppRun`:
+
+| Annotation    | Invoked when…                                              | Required |
+|---------------|--------------------------------------------------------------|:--------:|
+| `@NApp` | Marks the class as a NAF application entry point            | Yes |
+| `@NAppRun`    | Normal execution (`nuts my-app ...`)                         | Yes |
+| `@NAppComplete` | Shell requests completion candidates (Tab press)              | No |
+| `@NAppInstall` | `nuts install ...`                                            | No |
+| `@NAppUpdate` | `nuts update ...`                                              | No |
+| `@NAppUninstall` | `nuts uninstall ...`                                           | No |
+
+Internally, dispatch is a single switch over the resolved mode:
+
+```java
+switch (nApp.mode()) {
+    case RUN:        nApp.application().run();                     return;
+    case COMPLETE:   /* isolated session, see §5 */                 return;
+    case INSTALL:    nApp.application().onInstallApplication();     return;
+    case UPDATE:     nApp.application().onUpdateApplication();      return;
+    case UNINSTALL:  nApp.application().onUninstallApplication();   return;
+}
+```
+
+`RUN` and `INSTALL`/`UPDATE`/`UNINSTALL` all execute under the normal, interactive session — these are user-initiated actions, so confirmation prompts and terminal output are expected and appropriate. `COMPLETE` is different: see §5.
+
+---
+
+## 4. A complete example
 
 ```java
 package com.mycompany.app;
 
 import java.io.File;
-
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
-@NAppDefinition
+@NApp
 public class App {
 
     public static void main(String[] args) {
-        // just create an instance and call runAndExit in the main method
-        // this method ensures that exist code is well propagated
-        // from exceptions to caller processes
+        // NApp.builder(args).run() ensures exit codes propagate
+        // correctly from exceptions to the calling process.
         NApp.builder(args).run();
     }
 
-    @NAppRunner
+    static class Options {
+        File file = new File("file.xls");
+    }
+
+    @NAppRun
     public void run() {
-        NCmdLine cmd = NApp.of().cmdLine();
-        NRef<File> file = NRef.of(new File("file.xls"));
-        cmd.matcher()
-                .when("--file").asEntry(a->ref.set(a.stringValue()))
-                .when("--fill").asEntry(a->{}/*process other options here ... */)
-                .withDefaults()
-                .requireAll();
-        if(cmd.isCompleteMode()){
-            cmd.printCompleteResult();
-            return;
-        }
+        NCmdLine cmdLine = NApplication.of().cmdLine();
+        Options options = process(cmdLine);
         try {
-            WritableWorkbook w = Workbook.createWorkbook(file.get());
-            NOut.printf("Workbook just created at %s%n", file.get());
+            WritableWorkbook w = Workbook.createWorkbook(options.file);
+            NOut.printf("Workbook just created at %s%n", options.file);
         } catch (Exception ex) {
             ex.printStackTrace(NErr.err().asPrintStream());
         }
     }
 
-    @NAppInstall // this method is not required, implement when needed
+    @NAppComplete
+    public void complete() {
+        NCmdLine cmdLine = NApplication.of().cmdLine();
+        process(cmdLine);
+        cmdLine.printCompleteResult();
+    }
+
+    /**
+     * Single command-line walk, shared by run() and complete().
+     * NCmdLine already knows its own mode (cmdLine.isCompleteMode()),
+     * so the matcher calls behave correctly for both callers without
+     * any branching here — this method has no notion of "mode" at all.
+     */
+    private Options process(NCmdLine cmdLine) {
+        Options options = new Options();
+        cmdLine.matcher()
+                .when("--file").asEntry(a -> options.file = new File(a.stringValue()))
+                .when("--fill").asEntry(a -> { /* handle other options here */ })
+                .withDefaults()
+                .requireAll();
+        return options;
+    }
+
+    @NAppInstall
     public void onInstallApplication() {
-        NOut.println(NMsg.ofC("we are installing My Application : %s%n", NApp.of().getId()));
+        NOut.println(NMsg.ofC("installing My Application: %s%n", NApplication.of().getId()));
     }
 
-    @NAppUninstaller // this method is not required, implement when needed
+    @NAppUninstall
     public void onUninstallApplication() {
-        NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApp.of().getId()));
+        NOut.println(NMsg.ofC("uninstalling My Application: %s%n", NApplication.of().getId()));
     }
 
-    @NAppUpdater // this method is not required, implement when needed
+    @NAppUpdate
     public void onUpdateApplication() {
-        NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApp.of().getId()));
+        NOut.println(NMsg.ofC("updating My Application: %s%n", NApplication.of().getId()));
     }
 }
-
 ```
-
-Now we can install or uninstall the application and see the expected messages.
 
 ```bash
 nuts -y install com.mycompany.app:my-app
 nuts -y uninstall com.mycompany.app:my-app
 ```
 
+### 4.1 Why `process()` is shared, not duplicated
 
+Shell completion is not a separate feature bolted onto argument parsing — it *is* the same matcher walk, just consulted for candidates instead of run to completion with side effects. Writing two independent parsing bodies for `run()` and `complete()` guarantees they drift: someone adds a flag to `run()`, forgets `complete()` exists, and tab-completion silently stops reflecting reality.
+
+Keeping one `process()` method means:
+- Every `.when(...)` block is defined exactly once.
+- `run()` and `complete()` differ only in what they do *after* parsing (execute vs. print candidates).
+- New options are automatically completion-aware.
+
+### 4.2 Why `run` stays unprefixed
+
+`run()` is left without an `on*Application` prefix deliberately. The `on*` naming is meant to be distinctive enough that a class implementing NAF's interfaces directly (rather than via annotations) doesn't accidentally collide with unrelated method signatures elsewhere. `run` is common vocabulary and doesn't need that protection, since it isn't trying to avoid collision the way the lifecycle hooks are.
+
+### 4.3 Enforcement level
+
+Mode dispatch (§3) routes `RUN` and `COMPLETE` to separate branches before either handler is invoked, so `run()` never executes under completion — there's no `isCompleteMode()` check to add inside it, since it would always be false there. The real risk is narrower but still real: nothing prevents a developer from leaving `@NAppComplete` unimplemented, or implementing `complete()` with logic that doesn't call the same `process()` as `run()`, in which case completion candidates silently diverge from (or omit) what `run()` actually accepts.
+
+If `@NAppComplete` is not implemented, NAF falls back to a no-op: the shell simply receives no candidates at that point. This is the correct default — the alternative (e.g. having the framework try to automatically reuse `run()`'s logic on the developer's behalf) risks executing real side effects during a non-interactive shell callback, which is exactly what the `COMPLETE` session isolation in §5 exists to prevent. A missing completion handler degrades gracefully to "no suggestions"; it does not degrade to "runs the app."
+
+The shared-`process()` pattern is a **convention**, not a compiler-enforced contract — consistent with the rest of NAF's fluent, annotation-driven style (e.g. the `when*`/`as*`/`require`/`anyMatch` matcher vocabulary is agreed-upon shape, not a declarative spec the framework introspects). Document it as the recommended shape for teams adopting NAF; don't rely on the annotation's existence alone to imply safety.
+
+---
+
+## 5. Session isolation during completion
+
+`COMPLETE` mode is invoked non-interactively by the shell — on every keystroke or Tab press, with no human reading the output. This makes side effects that are perfectly fine in `RUN` mode actively harmful in `COMPLETE` mode: a confirmation prompt has no one to answer it, and stray terminal output can corrupt the shell's own line redraw.
+
+NAF isolates `COMPLETE` mode by running it under a modified session copy:
+
+```java
+case COMPLETE: {
+    NSession s = NSession.of();
+    s.copy()
+            .bot(true)
+            .trace(false)
+            .confirm(NConfirmationMode.NO)
+            .logTermLevel(Level.OFF)
+            .runWith(() -> {
+                nApp.application().onCompleteApplication();
+            });
+    return;
+}
+```
+
+| Setting | Why |
+|---|---|
+| `bot(true)` | Marks the session as non-interactive/automated. |
+| `trace(false)` | Suppresses execution tracing that has no audience. |
+| `confirm(NConfirmationMode.NO)` | Never blocks on a confirmation prompt during a shell-driven invocation. |
+| `logTermLevel(Level.OFF)` | Forces terminal logging off for this session, regardless of any `--log-term-*` the user has configured for their interactive sessions. |
+
+### 5.1 Why terminal logging specifically matters
+
+Shell dynamic-completion mechanisms (bash `complete -C`, zsh, fish) capture **stdout only** and parse it into candidates. **stderr passes straight through to the terminal** — the same file descriptor the shell is using to redraw the prompt and command line. Logging output on stderr during a completion invocation isn't ignored; it can visibly corrupt the terminal mid-keystroke. `logTermLevel(Level.OFF)` is therefore in the same category as `confirm(NO)`: it removes a channel a human isn't watching but the terminal itself depends on.
+
+`nuts` supports both terminal and file logging independently:
+
+```bash
+nuts --log-level-severe my-app   # both term and file
+nuts --log-term-severe my-app    # terminal only
+nuts --log-file-severe my-app    # file only
+nuts --verbose                   # equivalent to --log-finest
+```
+
+Nothing is enabled by default. `logTermLevel(Level.OFF)` in the `COMPLETE` branch is therefore a **defensive floor**, not a fix for an active default problem: it guarantees that a user who has enabled `--log-term-*` for their normal interactive use (e.g. while debugging something) doesn't get that verbosity leaking into every subsequent Tab press. File logging (`--log-file-*`) is left untouched by this override — it's independent of the terminal handler, so a developer debugging "why did completion return zero candidates" can still enable `--log-file-finest` and tail the file without any terminal noise.
+
+### 5.2 A known limitation: the bootstrap window
+
+`logTermLevel(Level.OFF)` is applied inside the `COMPLETE` branch of mode dispatch — but `nuts` bootstrap (workspace initialization, early argument parsing, mode resolution itself) necessarily runs *before* NAF knows which mode it's in. If a user has `--log-term-*` set globally, output emitted during this bootstrap window is not covered by the session override, because the override doesn't exist yet at that point in the lifecycle.
+
+In practice this window is narrow — bootstrap is fast, and high term-verbosity during ordinary use is uncommon — but it's worth documenting explicitly rather than assuming `logTermLevel(OFF)` guarantees silence end-to-end. Closing it properly would mean making mode detection happen early enough in bootstrap that the term log handler can consult it directly, since both are effectively answering the same question ("is this a completion invocation?") at two different layers today.
+
+---
+
+## 6. Summary checklist
+
+- [ ] Add `nuts` as a dependency; set `nuts.application=true`.
+- [ ] Annotate the class with `@NApp`.
+- [ ] Implement `@NAppRun`; delegate parsing to a shared `process()` method.
+- [ ] Implement `@NAppComplete` calling the *same* `process()`, then `cmdLine.printCompleteResult()`.
+- [ ] Implement `@NAppInstall` / `@NAppUpdate` / `@NAppUninstall` only if needed.
+- [ ] Trust NAF's session isolation (`bot`, `confirm(NO)`, `logTermLevel(OFF)`) for `COMPLETE` mode — don't reintroduce interactive prompts or terminal logging inside `onCompleteApplication()`.
+- [ ] Remember file logging (`--log-file-*`) is unaffected by completion-mode term suppression and remains available for debugging.
+- 

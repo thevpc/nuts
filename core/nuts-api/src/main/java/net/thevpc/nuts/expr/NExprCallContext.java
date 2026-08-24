@@ -15,9 +15,9 @@ public interface NExprCallContext {
 
     NExprCallContextType contextType();
 
-    NExprOpType operatorType();
+    NFixity fixity();
 
-    int operatorPrecedence();
+    int precedence();
 
-    NOperatorAssociativity operatorAssociativity();
+    NOperatorAssociativity associativity();
 }

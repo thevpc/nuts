@@ -16,7 +16,7 @@ public class NAppInitInfo {
     private final String[] args;
     private final Class<?> sourceType;
     private final Object source;
-    private final NApplication appInstance;
+    private final NApplicationHandler appInstance;
     private final NClock startTime;
     private final NAppStoreLocationResolver storeLocationSupplier;
 
@@ -29,7 +29,7 @@ public class NAppInitInfo {
      * @param sourceType  The application's main class.
      * @param startTime The start time of the application, represented as an {@code NClock} instance.
      */
-    public NAppInitInfo(String[] args, Class<?> sourceType, Object source, NApplication appInstance, NAppStoreLocationResolver storeLocationSupplier, NClock startTime) {
+    public NAppInitInfo(String[] args, Class<?> sourceType, Object source, NApplicationHandler appInstance, NAppStoreLocationResolver storeLocationSupplier, NClock startTime) {
         this.args = NUtils.firstNonNullLazy(args,()->new String[0]);
         this.sourceType = sourceType;
         this.source = source;
@@ -72,7 +72,7 @@ public class NAppInitInfo {
     }
 
     @NGetter
-    public NApplication application() {
+    public NApplicationHandler application() {
         return appInstance;
     }
 

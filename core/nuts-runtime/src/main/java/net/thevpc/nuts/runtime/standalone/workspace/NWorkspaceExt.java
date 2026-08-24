@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
@@ -84,7 +84,7 @@ public interface NWorkspaceExt {
 
     NSession defaultSession();
 
-    NApp getApp();
+    NApplication getApp();
     NWorkspaceModel getModel();
 
     String getInstallationDigest();

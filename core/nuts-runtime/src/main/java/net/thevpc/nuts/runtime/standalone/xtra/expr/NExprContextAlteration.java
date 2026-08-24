@@ -116,7 +116,7 @@ public class NExprContextAlteration {
         this.autoDeclareVariables = autoDeclareVariables;
     }
 
-    public void removeOperator(String name, NExprOpType type) {
+    public void removeOperator(String name, NFixity type) {
         if (userOperators != null) {
             userOperators.remove(new NExprOpNameAndType(name, type));
         }
@@ -229,9 +229,9 @@ public class NExprContextAlteration {
 
     public NExprOperator declareOperator(NExprOperator impl) {
         NAssert.requireNamedNonBlank(impl.name(), "name");
-        if (impl.operatorType() == null || impl.operatorPrecedence() < 0 || impl.operatorAssociativity() == null) {
+        if (impl.fixity() == null || impl.operatorPrecedence() < 0 || impl.operatorAssociativity() == null) {
             String name = impl.name();
-            NExprOpType type = ExprOpHelper.resolveOpDefaultType(name, impl.operatorType());
+            NFixity type = ExprOpHelper.resolveOpDefaultType(name, impl.fixity());
             int prec = ExprOpHelper.resolveOpPrecedence(name, type, -1);
             NOperatorAssociativity associativity = ExprOpHelper.resolveOpDefaultAssociativity(name, type, impl.operatorAssociativity());
             NExprOperator finalImpl = impl;
@@ -240,20 +240,20 @@ public class NExprContextAlteration {
         if (this.userOperators == null) {
             this.userOperators = new HashMap<>();
         }
-        this.userOperators.put(new NExprOpNameAndType(impl.name(), impl.operatorType()), new DecInfo<>(impl));
+        this.userOperators.put(new NExprOpNameAndType(impl.name(), impl.fixity()), new DecInfo<>(impl));
         return impl;
     }
 
-    public NExprOperator declareOperator(String name, NExprOpType type, NExprCallHandler impl) {
+    public NExprOperator declareOperator(String name, NFixity type, NExprCallHandler impl) {
         type = ExprOpHelper.resolveOpDefaultType(name, type);
         int prec = ExprOpHelper.resolveOpPrecedence(name, type, -1);
         NOperatorAssociativity ass = ExprOpHelper.resolveOpDefaultAssociativity(name, type, null);
         return declareOperator(name, type, prec, ass, impl);
     }
 
-    public NExprOperator declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl) {
+    public NExprOperator declareOperator(String name, NFixity type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl) {
         NAssert.requireNamedNonBlank(name, "name");
-        NExprOpType typeOk = ExprOpHelper.resolveOpDefaultType(name, type);
+        NFixity typeOk = ExprOpHelper.resolveOpDefaultType(name, type);
         if (this.userOperators == null) {
             this.userOperators = new HashMap<>();
         }
@@ -364,7 +364,7 @@ public class NExprContextAlteration {
     }
 
     private NExprOpNameAndType t(NExprOperator member) {
-        return new NExprOpNameAndType(member.name(), member.operatorType());
+        return new NExprOpNameAndType(member.name(), member.fixity());
     }
 
 
@@ -375,7 +375,7 @@ public class NExprContextAlteration {
     /// ///////////////////
 
 
-    public NOptional<NExprOperator> getOperator(NExprContext current, NExprContext parent, String opName, NExprOpType type, NExprNodeValue... nodes) {
+    public NOptional<NExprOperator> getOperator(NExprContext current, NExprContext parent, String opName, NFixity type, NExprNodeValue... nodes) {
         if (userOperators != null) {
             NExprContextAlteration.DecInfo<NExprOperator> f = userOperators.get(new NExprOpNameAndType(opName, type));
             if (f != null) {
@@ -605,7 +605,7 @@ public class NExprContextAlteration {
         }
 
         @Override
-        public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue[] args, NExprContext context) {
+        public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue[] args, NExprContext context) {
             return NExprResolver.super.getOperator(opName, type, args, context);
         }
 
@@ -710,7 +710,7 @@ public class NExprContextAlteration {
         }
 
         @Override
-        public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue[] args, NExprContext context) {
+        public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue[] args, NExprContext context) {
             if (ops != null) {
                 DecInfo<NExprOperator> d = ops.get(new NExprOpNameAndType(opName, type));
                 if (d != null) {

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.NOptional;
@@ -9,12 +10,12 @@ import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNOperatorElementBu
 import java.util.*;
 
 public abstract class AbstractNOperatorElement extends AbstractNElement implements NOperatorElement {
-    private NOperatorPosition position;
+    private NFixity fixity;
     private List<NOperatorSymbol> symbols;
     private List<NElement> operands;
 
-    public AbstractNOperatorElement(List<NOperatorSymbol> symbols, NOperatorPosition position, List<NElement> operands,
-                                    List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
+    public AbstractNOperatorElement(List<NOperatorSymbol> symbols, NFixity fixity, List<NElement> operands,
+                                    List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
         super(operands.size() == 1 ?
                         NElementType.UNARY_OPERATOR
                         : operands.size() == 2 ?
@@ -23,7 +24,7 @@ public abstract class AbstractNOperatorElement extends AbstractNElement implemen
                         NElementType.TERNARY_OPERATOR
                         : NElementType.NARY_OPERATOR
                 , affixes,diagnostics,metadata);
-        this.position = position;
+        this.fixity = fixity;
         this.symbols = CoreNUtils.copyAndUnmodifiableNullableList(symbols);
         this.operands = CoreNUtils.copyAndUnmodifiableList(operands);
     }
@@ -44,8 +45,8 @@ public abstract class AbstractNOperatorElement extends AbstractNElement implemen
     }
 
     @Override
-    public NOperatorPosition position() {
-        return position;
+    public NFixity fixity() {
+        return fixity;
     }
 
     @Override
@@ -69,7 +70,7 @@ public abstract class AbstractNOperatorElement extends AbstractNElement implemen
         return new DefaultNOperatorElementBuilder()
                 .operands(operands.toArray(new NElement[0]))
                 .operators(symbols.toArray(new NOperatorSymbol[0]))
-                .position(position())
+                .fixity(fixity())
                 .addAffixes(affixes())
                 ;
     }

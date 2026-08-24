@@ -1097,7 +1097,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
                         </h3>
 
                         <div class="text-card">
-                            <H4 class="md-title-2">Using CommandLine, The recommended way...</H4><p class="md-phrase"><mark class="md-code md-code-ac1">NCmdLine</mark> has a versatile parsing API. The <b class="md-bold">Matcher</b> is the recommended entry point: it lets you declare, in a single fluent chain, how each option or positional argument should be recognized (<code class="md-code md-code-ac1">when*</code>), how a match should be interpreted (<code class="md-code md-code-ac1">as*</code>), and how the overall pass should behave once every token has been considered (<mark class="md-code md-code-ac1">require</mark>/<mark class="md-code md-code-ac1">requireAll</mark>/<mark class="md-code md-code-ac1">anyMatch</mark>/<mark class="md-code md-code-ac1">noMatch</mark>).</p><pre><code class="language-java">NCmdLine cmdLine = NApp.of().cmdLine(); // or from somewhere else
+                            <H4 class="md-title-2">Using CommandLine, The recommended way...</H4><p class="md-phrase"><mark class="md-code md-code-ac1">NCmdLine</mark> has a versatile parsing API. The <b class="md-bold">Matcher</b> is the recommended entry point: it lets you declare, in a single fluent chain, how each option or positional argument should be recognized (<code class="md-code md-code-ac1">when*</code>), how a match should be interpreted (<code class="md-code md-code-ac1">as*</code>), and how the overall pass should behave once every token has been considered (<mark class="md-code md-code-ac1">require</mark>/<mark class="md-code md-code-ac1">requireAll</mark>/<mark class="md-code md-code-ac1">anyMatch</mark>/<mark class="md-code md-code-ac1">noMatch</mark>).</p><pre><code class="language-java">NCmdLine cmdLine = NApplication.of().cmdLine(); // or from somewhere else
 NRef&lt;Boolean&gt; boolOption = NRef.of(false);
 NRef&lt;String&gt; stringOption = NRef.ofNull();
 List&lt;String&gt; others = new ArrayList&lt;&gt;();
@@ -1141,7 +1141,7 @@ private boolean doInstall(NCmdLine cl) {
     NOut.println(NMsg.ofC(&quot;installing %s&quot;, pkg));
     return true;
 }
-</code></pre><H4 class="md-title-3"><p class="md-phrase">Finishing the pass: <mark class="md-code md-code-ac1">require</mark>, <mark class="md-code md-code-ac1">requireAll</mark>, <mark class="md-code md-code-ac1">anyMatch</mark>, <mark class="md-code md-code-ac1">noMatch</mark></p></H4><table class="table table-bordered table-striped"><tr><th>Method</th><th>Returns</th><th>Behavior</th></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">require()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-ac1">void</mark> </p></td><td><p class="md-phrase"> tries to match <b class="md-bold">one</b> token against every registered rule; <b class="md-bold">throws</b> if nothing matched </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">requireAll()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-ac1">void</mark> </p></td><td><p class="md-phrase"> equivalent to <code class="md-code md-code-ac1">while (cmdLine.hasNext()) { require(); }</code> — <b class="md-bold">throws</b> on the first unmatched token </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">anyMatch()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-ac1">boolean</mark> </p></td><td><p class="md-phrase"> tries every registered rule once against the current token; <mark class="md-code md-code-ac1">true</mark> if one matched, never throws </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">noMatch()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-ac1">boolean</mark> </p></td><td><p class="md-phrase"> <code class="md-code md-code-ac1">!anyMatch()</code> </p></td></tr></table><p class="md-phrase">Use <mark class="md-code md-code-ac1">require</mark>/<mark class="md-code md-code-ac1">requireAll</mark> when an unrecognized token should be a hard error (the common case for a leaf command). Use <mark class="md-code md-code-ac1">anyMatch</mark>/<mark class="md-code md-code-ac1">noMatch</mark> when you want to decide yourself what happens on failure — e.g. printing help instead of throwing.</p><H4 class="md-title-3">A more complete example</H4><pre><code class="language-java">NCmdLine cmdLine = NApp.of().cmdLine();
+</code></pre><H4 class="md-title-3"><p class="md-phrase">Finishing the pass: <mark class="md-code md-code-ac1">require</mark>, <mark class="md-code md-code-ac1">requireAll</mark>, <mark class="md-code md-code-ac1">anyMatch</mark>, <mark class="md-code md-code-ac1">noMatch</mark></p></H4><table class="table table-bordered table-striped"><tr><th>Method</th><th>Returns</th><th>Behavior</th></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">require()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-ac1">void</mark> </p></td><td><p class="md-phrase"> tries to match <b class="md-bold">one</b> token against every registered rule; <b class="md-bold">throws</b> if nothing matched </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">requireAll()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-ac1">void</mark> </p></td><td><p class="md-phrase"> equivalent to <code class="md-code md-code-ac1">while (cmdLine.hasNext()) { require(); }</code> — <b class="md-bold">throws</b> on the first unmatched token </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">anyMatch()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-ac1">boolean</mark> </p></td><td><p class="md-phrase"> tries every registered rule once against the current token; <mark class="md-code md-code-ac1">true</mark> if one matched, never throws </p></td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">noMatch()</code> </p></td><td><p class="md-phrase"> <mark class="md-code md-code-ac1">boolean</mark> </p></td><td><p class="md-phrase"> <code class="md-code md-code-ac1">!anyMatch()</code> </p></td></tr></table><p class="md-phrase">Use <mark class="md-code md-code-ac1">require</mark>/<mark class="md-code md-code-ac1">requireAll</mark> when an unrecognized token should be a hard error (the common case for a leaf command). Use <mark class="md-code md-code-ac1">anyMatch</mark>/<mark class="md-code md-code-ac1">noMatch</mark> when you want to decide yourself what happens on failure — e.g. printing help instead of throwing.</p><H4 class="md-title-3">A more complete example</H4><pre><code class="language-java">NCmdLine cmdLine = NApplication.of().cmdLine();
 Opts o = new Opts();
 
 cmdLine.matcher()
@@ -1168,7 +1168,7 @@ if (cmdLine.isCompleteMode()) {
 
             //do the good stuff here
             NOut.println(NMsg.ofC(&quot;options=%s&quot;, o));
-</code></pre><H4 class="md-title-2">Using CommandLine, The low-level way...</H4><p class="md-phrase">The matcher is built entirely on top of <mark class="md-code md-code-ac1">NCmdLine</mark>'s pull API — <code class="md-code md-code-ac1">next(...)</code>,<code class="md-code md-code-ac1">peek()</code>, <code class="md-code md-code-ac1">skip()</code> — and you can always drop down to that API directly for full manual control. This is also the form autocomplete support is easiest to reason about explicitly, since each <code class="md-code md-code-ac1">next(...)</code> call can carry its own display label and value-completion hint right at the call site, instead of those being attached separately through a matcher chain.</p><pre><code class="language-java">NCmdLine cmd = NApp.of().cmdLine();
+</code></pre><H4 class="md-title-2">Using CommandLine, The low-level way...</H4><p class="md-phrase">The matcher is built entirely on top of <mark class="md-code md-code-ac1">NCmdLine</mark>'s pull API — <code class="md-code md-code-ac1">next(...)</code>,<code class="md-code md-code-ac1">peek()</code>, <code class="md-code md-code-ac1">skip()</code> — and you can always drop down to that API directly for full manual control. This is also the form autocomplete support is easiest to reason about explicitly, since each <code class="md-code md-code-ac1">next(...)</code> call can carry its own display label and value-completion hint right at the call site, instead of those being attached separately through a matcher chain.</p><pre><code class="language-java">NCmdLine cmd = NApplication.of().cmdLine();
 boolean boolOption = false;
 String stringOption = null;
 List&lt;String&gt; others = new ArrayList&lt;&gt;();
@@ -3909,7 +3909,7 @@ public class App implements NApplication {
 
     @Override
     public void run() {
-        NCmdLine cmd = NApp.of().cmdLine();
+        NCmdLine cmd = NApplication.of().cmdLine();
         NRef&lt;File&gt; file = NRef.of(new File(&quot;file.xls&quot;));
         cmd.matcher()
                 .when(&quot;--file&quot;).asEntry(a-&gt;ref.set(a.stringValue()))
@@ -3930,17 +3930,17 @@ public class App implements NApplication {
 
     @Override // this method is not required, implement when needed
     public void onInstallApplication() {
-        NOut.println(NMsg.ofC(&quot;we are installing My Application : %s%n&quot;, NApp.of().getId()));
+        NOut.println(NMsg.ofC(&quot;we are installing My Application : %s%n&quot;, NApplication.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
     public void onUninstallApplication() {
-        NOut.println(NMsg.ofC(&quot;we are uninstalling My Application : %s%n&quot;, NApp.of().getId()));
+        NOut.println(NMsg.ofC(&quot;we are uninstalling My Application : %s%n&quot;, NApplication.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
     public void onUpdateApplication() {
-        NOut.println(NMsg.ofC(&quot;we are updating My Application : %s%n&quot;, NApp.of().getId()));
+        NOut.println(NMsg.ofC(&quot;we are updating My Application : %s%n&quot;, NApplication.of().getId()));
     }
 }
 
@@ -4054,7 +4054,7 @@ import java.io.File;
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
-@NAppDefinition
+@NApp
 public class App {
 
     public static void main(String[] args) {
@@ -4064,9 +4064,9 @@ public class App {
         NApp.builder(args).run();
     }
 
-    @NAppRunner
+    @NAppRun
     public void run() {
-        NCmdLine cmd = NApp.of().cmdLine();
+        NCmdLine cmd = NApplication.of().cmdLine();
         NRef&lt;File&gt; file = NRef.of(new File(&quot;file.xls&quot;));
         cmd.matcher()
                 .when(&quot;--file&quot;).asEntry(a-&gt;ref.set(a.stringValue()))
@@ -4087,17 +4087,17 @@ public class App {
 
     @NAppInstall // this method is not required, implement when needed
     public void onInstallApplication() {
-        NOut.println(NMsg.ofC(&quot;we are installing My Application : %s%n&quot;, NApp.of().getId()));
+        NOut.println(NMsg.ofC(&quot;we are installing My Application : %s%n&quot;, NApplication.of().getId()));
     }
 
-    @NAppUninstaller // this method is not required, implement when needed
+    @NAppUninstall // this method is not required, implement when needed
     public void onUninstallApplication() {
-        NOut.println(NMsg.ofC(&quot;we are uninstalling My Application : %s%n&quot;, NApp.of().getId()));
+        NOut.println(NMsg.ofC(&quot;we are uninstalling My Application : %s%n&quot;, NApplication.of().getId()));
     }
 
-    @NAppUpdater // this method is not required, implement when needed
+    @NAppUpdate // this method is not required, implement when needed
     public void onUpdateApplication() {
-        NOut.println(NMsg.ofC(&quot;we are updating My Application : %s%n&quot;, NApp.of().getId()));
+        NOut.println(NMsg.ofC(&quot;we are updating My Application : %s%n&quot;, NApplication.of().getId()));
     }
 }
 
@@ -4120,8 +4120,8 @@ nuts -y uninstall com.mycompany.app:my-app
                         </h3>
 
                         <div class="text-card">
-                            <H4 class="md-title-2">Nuts Application Framework CommandLine</H4><p class="md-phrase">Application Command line can be retrieved via <mark class="md-code md-code-ac1">NApp</mark> instance:</p><pre><code class="language-java">NCmdLine c1= NApp.of().cmdLine();
-</code></pre><H4 class="md-title-2">Exec / Autocomplete modes</H4><pre><code class="language-java">NCmdLine c= NApp.of().cmdLine();
+                            <H4 class="md-title-2">Nuts Application Framework CommandLine</H4><p class="md-phrase">Application Command line can be retrieved via <mark class="md-code md-code-ac1">NApp</mark> instance:</p><pre><code class="language-java">NCmdLine c1= NApplication.of().cmdLine();
+</code></pre><H4 class="md-title-2">Exec / Autocomplete modes</H4><pre><code class="language-java">NCmdLine c= NApplication.of().cmdLine();
     if(c.isExecMode()){
         ///    
     }
@@ -4243,12 +4243,12 @@ Implementation-Version: 1.2.3
                         </h3>
 
                         <div class="text-card">
-                            <p class="md-phrase">nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation <code class="md-code md-code-ac1">@NAppDefinition</code> to mark your <mark class="md-code md-code-ac1">SpringBootApplication</mark>.</p>Add the following dependency to you spring boot project<pre><code class="language-xml">&lt;dependency&gt;
+                            <p class="md-phrase">nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation <code class="md-code md-code-ac1">@NApp</code> to mark your <mark class="md-code md-code-ac1">SpringBootApplication</mark>.</p>Add the following dependency to you spring boot project<pre><code class="language-xml">&lt;dependency&gt;
         &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
         &lt;artifactId&gt;nuts-spring-boot&lt;/artifactId&gt;
         &lt;version&gt;1.0.0.0&lt;/version&gt;
     &lt;/dependency&gt;
-</code></pre><p class="md-phrase">Add @NAppDefinition in your <mark class="md-code md-code-ac1">SpringBootApplication</mark> top class.</p><pre><code class="language-java">@NAppDefinition
+</code></pre><p class="md-phrase">Add @NApp in your <mark class="md-code md-code-ac1">SpringBootApplication</mark> top class.</p><pre><code class="language-java">@NApp
 @SpringBootApplication
 @Import(NutsSpringBootConfig.class)
 public class AppExample {
@@ -4256,7 +4256,7 @@ public class AppExample {
         SpringApplication.run(AppExample.class, args);
     }
 
-    @NAppRunner // optional runner
+    @NAppRun // optional runner
     public void run() {
         NOut.println(&quot;Hello ##World##&quot;);
     }

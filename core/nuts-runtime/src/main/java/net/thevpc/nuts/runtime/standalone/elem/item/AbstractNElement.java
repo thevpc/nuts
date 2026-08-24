@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
@@ -840,7 +841,7 @@ public abstract class AbstractNElement implements NElement {
             NOptional<NBinaryOperatorElement> o = asBinaryOperator();
             if (o.isPresent()) {
                 NBinaryOperatorElement oo = o.get();
-                if (oo.position() == NOperatorPosition.INFIX) {
+                if (oo.fixity() == NFixity.INFIX) {
                     return oo.operatorSymbol() == symbol;
                 }
             }
@@ -854,7 +855,7 @@ public abstract class AbstractNElement implements NElement {
             NOptional<NOperatorElement> o = asOperator();
             if (o.isPresent()) {
                 NOperatorElement oo = o.get();
-                return oo.position() == NOperatorPosition.INFIX;
+                return oo.fixity() == NFixity.INFIX;
             }
         }
         return false;
@@ -866,7 +867,7 @@ public abstract class AbstractNElement implements NElement {
             NOptional<NOperatorElement> o = asOperator();
             if (o.isPresent()) {
                 NOperatorElement oo = o.get();
-                return oo.position() == NOperatorPosition.PREFIX;
+                return oo.fixity() == NFixity.PREFIX;
             }
         }
         return false;
@@ -878,7 +879,7 @@ public abstract class AbstractNElement implements NElement {
             NOptional<NUnaryOperatorElement> o = asUnaryOperator();
             if (o.isPresent()) {
                 NUnaryOperatorElement oo = o.get();
-                if (oo.position() == NOperatorPosition.PREFIX) {
+                if (oo.fixity() == NFixity.PREFIX) {
                     return oo.operatorSymbol() == symbol;
                 }
             }
@@ -892,7 +893,7 @@ public abstract class AbstractNElement implements NElement {
             NOptional<NUnaryOperatorElement> o = asUnaryOperator();
             if (o.isPresent()) {
                 NUnaryOperatorElement oo = o.get();
-                if (oo.position() == NOperatorPosition.POSTFIX) {
+                if (oo.fixity() == NFixity.POSTFIX) {
                     return oo.operatorSymbol() == symbol;
                 }
             }

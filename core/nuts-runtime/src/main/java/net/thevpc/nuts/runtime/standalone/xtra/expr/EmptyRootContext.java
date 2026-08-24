@@ -24,7 +24,7 @@ public class EmptyRootContext extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... args) {
         return NOptional.ofEmpty(() -> NMsg.ofC("operator not found %s", opName));
     }
 

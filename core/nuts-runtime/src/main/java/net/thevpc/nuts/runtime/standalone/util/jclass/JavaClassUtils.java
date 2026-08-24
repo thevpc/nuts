@@ -112,9 +112,17 @@ public class JavaClassUtils {
                 if (interfaces != null) {
                     for (String anInterface : interfaces) {
                         //v0.8.1
-                        if (anInterface != null && anInterface.equals("net/thevpc/nuts/NutsApplication")) {
-                            nutsApp.set(true);
-                            nutsAppVer.set("0.8.1");
+                        if (anInterface != null) {
+                            if(anInterface.equals("net/thevpc/nuts/NutsApplication")) {
+                                nutsApp.set(true);
+                                nutsAppVer.set("0.8.1");
+                            }else if(anInterface.equals("net/thevpc/nuts/app/NApplication")) {
+                                nutsApp.set(true);
+                                nutsAppVer.set("0.8.8");
+                            }else if(anInterface.equals("net/thevpc/nuts/app/NApplicationHandler")) {
+                                nutsApp.set(true);
+                                nutsAppVer.set("1.0.0");
+                            }
                         }
                     }
                 }
@@ -127,6 +135,14 @@ public class JavaClassUtils {
                 if (annotationInfo.name.equals("net/thevpc/nuts/NAppDefinition")) {
                     nutsApp.set(true);
                     nutsAppVer.set("0.8.7");
+                }
+                if (annotationInfo.name.equals("net/thevpc/nuts/app/NAppDefinition")) {
+                    nutsApp.set(true);
+                    nutsAppVer.set("0.8.8");
+                }
+                if (annotationInfo.name.equals("net/thevpc/nuts/app/NApp")) {
+                    nutsApp.set(true);
+                    nutsAppVer.set("1.0.0");
                 }
                 return NVisitResult.CONTINUE;
             }

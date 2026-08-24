@@ -557,7 +557,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
 
     boolean isLogFileLevel(Level level);
 
-    NSession setLogTermLevel(Level level);
+    NSession logTermLevel(Level level);
 
     boolean isVerboseTerm();
 

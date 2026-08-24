@@ -94,9 +94,9 @@ public class NutsSpringBootConfiguration {
         Map<String, Object> bootApps = new HashMap<>();
         for (Map.Entry<String, Object> e : sac.getBeansWithAnnotation(SpringBootApplication.class).entrySet()) {
             Object o = e.getValue();
-            if (o instanceof NApplication) {
+            if (o instanceof NApplicationHandler) {
                 return o;
-            } else if (NApplication.isAnnotatedApplicationClass(o.getClass())) {
+            } else if (NApplicationHandler.isAnnotatedApplicationClass(o.getClass())) {
                 return o;
             } else {
                 bootApps.put(e.getKey(), o);
@@ -112,18 +112,18 @@ public class NutsSpringBootConfiguration {
     }
 
     @Bean
-    public NApplication nutsApplication(@Autowired NWorkspace workspace, @Autowired ApplicationArguments applicationArguments) {
-        NApplication validApp = null;
+    public NApplicationHandler nutsApplication(@Autowired NWorkspace workspace, @Autowired ApplicationArguments applicationArguments) {
+        NApplicationHandler validApp = null;
         try {
             Object validAppBean = resolveValidSpringBootApplication(workspace, applicationArguments);
-            if (validAppBean instanceof NApplication) {
-                validApp = (NApplication) validAppBean;
+            if (validAppBean instanceof NApplicationHandler) {
+                validApp = (NApplicationHandler) validAppBean;
             } else {
-                validApp = NApplication.createApplicationInstanceFromAnnotatedInstance(validAppBean);
+                validApp = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(validAppBean);
             }
         }catch (Exception e) {
-            NLog.of(NApplication.class).info(NMsg.ofC("Error configuring the application : %s",e));
-            validApp=new NApplication() {
+            NLog.of(NApplicationHandler.class).info(NMsg.ofC("Error configuring the application : %s",e));
+            validApp=new NApplicationHandler() {
                 @Override
                 public void run() {
                     // do nothing
@@ -132,7 +132,7 @@ public class NutsSpringBootConfiguration {
         }
 //        Object finalValidAppBean = validAppBean;
 //        workspace.runWith(() -> {
-//            NApp a = NApp.of();
+//            NApp a = NApplication.of();
 //            a.setArguments(applicationArguments.getSourceArgs());
 //            a.prepare(new NAppInitInfo(applicationArguments.getSourceArgs(), NApplications.unproxyType(finalValidAppBean.getClass()), now));
 //        });
@@ -150,7 +150,7 @@ public class NutsSpringBootConfiguration {
                         .appArgs(applicationArguments.getSourceArgs())
         );
         // prepare app early
-        NApp.builder(applicationArguments.getSourceArgs())
+        NApplication.builder(applicationArguments.getSourceArgs())
                 .instance(nutsApplication(workspace, applicationArguments))
                 .nutsArgs(resolveNutsArgs())
                 .propagateErrors().prepare();

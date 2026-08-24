@@ -3,15 +3,15 @@ package net.thevpc.nuts.expr;
 import net.thevpc.nuts.internal.rpi.NExprRPI;
 
 public interface NExprOperator {
-    static NExprOperator of(String name, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity associativity,NExprCallHandler handler) {
-        return NExprRPI.of().createOperator(name, operatorType, operatorPrecedence, associativity, handler);
+    static NExprOperator of(String name, NFixity operatorFixity, int operatorPrecedence, NOperatorAssociativity associativity, NExprCallHandler handler) {
+        return NExprRPI.of().createOperator(name, operatorFixity, operatorPrecedence, associativity, handler);
     }
 
     NOperatorAssociativity operatorAssociativity();
 
     String name();
 
-    NExprOpType operatorType();
+    NFixity fixity();
 
     int operatorPrecedence();
 

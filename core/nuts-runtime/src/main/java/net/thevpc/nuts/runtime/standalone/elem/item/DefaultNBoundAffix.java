@@ -9,17 +9,17 @@ import java.util.Objects;
 
 public class DefaultNBoundAffix implements NBoundAffix {
     private NAffix affix;
-    private NAffixAnchor position;
+    private NAffixAnchor anchor;
 
-    public static DefaultNBoundAffix of(NAffix affix, NAffixAnchor position) {
+    public static DefaultNBoundAffix of(NAffix affix, NAffixAnchor anchor) {
         NAssert.requireNamedNonNull(affix, "affix");
-        NAssert.requireNamedNonNull(position, "position");
-        return new DefaultNBoundAffix(affix, position);
+        NAssert.requireNamedNonNull(anchor, "anchor");
+        return new DefaultNBoundAffix(affix, anchor);
     }
 
-    private DefaultNBoundAffix(NAffix affix, NAffixAnchor position) {
+    private DefaultNBoundAffix(NAffix affix, NAffixAnchor anchor) {
         this.affix = affix;
-        this.position = position;
+        this.anchor = anchor;
     }
 
     @Override
@@ -29,23 +29,23 @@ public class DefaultNBoundAffix implements NBoundAffix {
 
     @Override
     public NAffixAnchor anchor() {
-        return position;
+        return anchor;
     }
 
     @Override
     public String toString() {
-        return position + "[" + affix + ']';
+        return anchor + "[" + affix + ']';
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNBoundAffix that = (DefaultNBoundAffix) o;
-        return Objects.equals(affix, that.affix) && position == that.position;
+        return Objects.equals(affix, that.affix) && anchor == that.anchor;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(affix, position);
+        return Objects.hash(affix, anchor);
     }
 }

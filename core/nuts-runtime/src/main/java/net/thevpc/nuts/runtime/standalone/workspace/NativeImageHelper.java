@@ -11,7 +11,7 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NExprCommonOp;
 import net.thevpc.nuts.expr.NExprNodeType;
-import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.math.NIndexSelectionStrategy;
@@ -63,7 +63,7 @@ public class NativeImageHelper {
             NMapSideStrategy.parse("");
             NMemoryUnit.parse("");
             NProgressEventType.parse("");
-            NExprOpType.parse("");
+            NFixity.parse("");
             NVisitResult.parse("");
             NFilterOp.parse("");
             NNumberLayout.parse("");
@@ -91,7 +91,7 @@ public class NativeImageHelper {
             NElementType.parse("");
             NDecision.parse("");
             NpsType.parse("");
-            NOperatorPosition.parse("");
+            NFixity.parse("");
             NContentType.parse("");
             NTextType.parse("");
             NOperatorSymbol.parse("");

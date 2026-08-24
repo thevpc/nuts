@@ -10,14 +10,13 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInfoCmd;
 import net.thevpc.nuts.core.*;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NRepository;
@@ -339,7 +338,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("nuts-api-version", () -> NWorkspace.of().apiVersion());
         props.put("nuts-api-id", () -> NWorkspace.of().apiId());
         props.put("nuts-runtime-id", () -> NWorkspace.of().runtimeId());
-        props.put("nuts-app-id", () -> NApp.of().id().orNull());
+        props.put("nuts-app-id", () -> NApplication.of().id().orNull());
 
         props.put("nuts-runtime-classpath",
                 () -> {
@@ -545,7 +544,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
 //        NutsIdFormat idFormat = ws.id().formatter();
         props.put("nuts-api-id", session.workspace().apiId());
         props.put("nuts-runtime-id", session.workspace().runtimeId());
-        props.put("nuts-app-id", NApp.of().id().orNull());
+        props.put("nuts-app-id", NApplication.of().id().orNull());
         List<URL> cl = workspace.bootClassWorldURLs();
         List<NPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {

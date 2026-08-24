@@ -47,7 +47,7 @@ public class NExprChildContextImpl extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... args) {
         return resolver.getOperator(opName, type, args, this)
                 .orElseGetOptionalFrom(() -> parent.getOperator(opName, type, args))
                 ;

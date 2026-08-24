@@ -42,7 +42,7 @@ public class DefaultRootContext extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... args) {
         return NOptional.of(
                 ops.get(new NExprOpNameAndType(opName, type)),
                 () -> NMsg.ofC("operator not found %s", opName)

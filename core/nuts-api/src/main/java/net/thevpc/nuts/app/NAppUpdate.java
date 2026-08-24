@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method as an application updater entry point.
  * <p>
- * Methods annotated with {@code @NAppUpdater} are intended to perform
+ * Methods annotated with {@code @NAppUpdate} are intended to perform
  * update operations for the application, such as downloading new versions,
  * applying patches, or refreshing internal resources.
  * </p>
@@ -25,6 +25,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NAppUpdater {
+public @interface NAppUpdate {
 
 }

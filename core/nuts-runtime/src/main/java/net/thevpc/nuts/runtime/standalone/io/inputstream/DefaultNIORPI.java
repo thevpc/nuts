@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.app.NAppDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.*;
 
@@ -607,7 +607,7 @@ public class DefaultNIORPI implements NIORPI {
         if (rootFolder == null) {
             rootFolder = NPath.of(NStoreKey.ofTemp());
         }
-        NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().runtimeId());
+        NId appId = NApplication.of().id().orElseGet(() -> NWorkspace.of().runtimeId());
         if (appId != null) {
             rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(appId));
         }
@@ -802,7 +802,7 @@ public class DefaultNIORPI implements NIORPI {
     public List<NId> resolveIds(Class<?> clazz) {
         clazz= NReflectUtils.unproxyType(clazz);
         LinkedHashSet<NId> all = new LinkedHashSet<>();
-        NAppDefinition annotation = (NAppDefinition) clazz.getAnnotation(NAppDefinition.class);
+        NApp annotation = (NApp) clazz.getAnnotation(NApp.class);
         if (annotation != null) {
             if (!NBlankable.isBlank(annotation.id())) {
                 all.add(NId.get(annotation.id()).get());

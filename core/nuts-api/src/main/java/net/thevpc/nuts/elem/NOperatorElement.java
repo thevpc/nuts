@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.List;
  */
 public interface NOperatorElement extends NElement {
 
-    NOperatorPosition position();
+    NFixity fixity();
 
     List<NElement> operands();
 

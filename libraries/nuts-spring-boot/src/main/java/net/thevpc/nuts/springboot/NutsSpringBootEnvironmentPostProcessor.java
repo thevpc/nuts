@@ -1,6 +1,6 @@
 package net.thevpc.nuts.springboot;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.util.NOptional;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
@@ -9,7 +9,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 public class NutsSpringBootEnvironmentPostProcessor implements EnvironmentPostProcessor {
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        NOptional<NApp> app = NApp.get();
+        NOptional<NApplication> app = NApplication.get();
 //        if(AppPropsHelper.getAppClass()!=null && AppPropsHelper.getDefaultAppName()!=null) {
 //            File file = new File(AppPropsHelper.getCustomExternalConfigFile("application.properties",
 //                    AppPropsHelper.getAppClass(), AppPropsHelper.getDefaultAppName()));

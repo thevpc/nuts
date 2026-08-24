@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
@@ -64,7 +64,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 fm = NMsg.ofStyledError(m);
             }
         } catch (Exception ex2) {
-            NLog.of(NApplication.class).log(
+            NLog.of(NApplicationHandler.class).log(
                     NMsg.ofPlain("unable to get system terminal").asFine(ex2)
             );
         }
@@ -83,7 +83,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 if (fm != null) {
                     session.out().resetLine();
                     session.eout().add(NElement.ofObjectBuilder()
-                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().id().orNull()))
+                            .set("app-id", NStringUtils.toStringOrEmpty(NApplication.of().id().orNull()))
                             .set("error", NText.of(fm).filteredText())
                             .build()
                     );
@@ -101,7 +101,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 } else {
                     session.out().resetLine();
                     session.eout().add(NElement.ofObjectBuilder()
-                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().id().orNull()))
+                            .set("app-id", NStringUtils.toStringOrEmpty(NApplication.of().id().orNull()))
                             .set("error", m)
                             .build());
                     if (showTrace) {

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootCompleteCmdlineRequest;
@@ -60,7 +60,7 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NApp getApp() {
+    public NApplication getApp() {
         return baseExt.getApp();
     }
 

@@ -102,12 +102,26 @@ public class NStringMapFormat {
         this.acceptNullKeys = builder.isAcceptNullKeys();
     }
 
-    private enum TokenType {
+    private enum TokenType implements NEnum{
         DOUBLE_QUOTED,
         SIMPLE_QUOTED,
         WORD,
         EQ,
         SEP;
+        private final String id;
+
+        TokenType() {
+            this.id = NNameFormat.ID_NAME.format(name());
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        public static NOptional<TokenType> parse(String value) {
+            return NEnumUtils.parseEnum(value, TokenType.class);
+        }
 
         boolean isAnyWord() {
             return this == DOUBLE_QUOTED || this == SIMPLE_QUOTED || this == WORD;

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NSearch;
@@ -330,9 +330,9 @@ public class DefaultNAsk<T> implements NAsk<T> {
         NSession session = NSession.of();
         String ft = NText.of(str).filteredText();
         NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.workspace().apiId().version());
-        if (NApp.of().id().orNull() != null) {
+        if (NApplication.of().id().orNull() != null) {
             try {
-                NDefinition def = NSearch.of().id(NApp.of().id().get())
+                NDefinition def = NSearch.of().id(NApplication.of().id().get())
                         .latest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {

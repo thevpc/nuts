@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.expr.NFixity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -201,7 +202,7 @@ public class NElementTransformHelper {
         for (int i = 0; i < operands.size(); i++) {
             NElement w = builder.operand(i).get();
             builder.addOperand(compressElement(transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(w)
-                            .withTail(context.isTail() && o.position() != NOperatorPosition.POSTFIX && i == operands.size() - 1)
+                            .withTail(context.isTail() && o.fixity() != NFixity.POSTFIX && i == operands.size() - 1)
                     , transform)));
         }
         o = builder.build();
@@ -211,7 +212,7 @@ public class NElementTransformHelper {
     private static List<NElement> transformAfterUnaryOperator(NUnaryOperatorElement o, NElementTransformContext context, NElementTransform transform) {
         NElementPath path = context.path();
         List<NElement> k = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(o.operand())
-                        .withTail(context.isTail() && o.position() != NOperatorPosition.POSTFIX)
+                        .withTail(context.isTail() && o.fixity() != NFixity.POSTFIX)
                 , transform);
         NOperatorElementBuilder b = o.builder();
         b.first(compressElement(k));
@@ -250,7 +251,7 @@ public class NElementTransformHelper {
         NOperatorElementBuilder b = item.builder();
         List<NElement> k = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(item.firstOperand()).withTail(false), transform);
         List<NElement> v = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(1)))).withElement(item.secondOperand())
-                        .withTail(context.isTail() && item.position() != NOperatorPosition.POSTFIX)
+                        .withTail(context.isTail() && item.fixity() != NFixity.POSTFIX)
                 , transform);
         b.first(compressElement(k));
         b.second(compressElement(v));

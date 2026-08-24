@@ -42,11 +42,11 @@ public interface NExprContextBuilder {
 
     NExprContextBuilder declareVar(NExprVar variable);
 
-    NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl);
+    NExprContextBuilder declareOperator(String name, NFixity type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl);
 
     NExprContextBuilder declareOperator(String name, NExprCallHandler impl);
 
-    NExprContextBuilder declareOperator(String name, NExprOpType type, NExprCallHandler impl);
+    NExprContextBuilder declareOperator(String name, NFixity type, NExprCallHandler impl);
 
     NExprContextBuilder removeVar(String name);
 
@@ -54,7 +54,7 @@ public interface NExprContextBuilder {
 
     NExprContextBuilder removeConstruct(String name);
 
-    NExprContextBuilder removeOperator(String name, NExprOpType type);
+    NExprContextBuilder removeOperator(String name, NFixity type);
 
     NExprContextBuilder setAutoDeclareVariables(boolean autoDeclareVariables);
 

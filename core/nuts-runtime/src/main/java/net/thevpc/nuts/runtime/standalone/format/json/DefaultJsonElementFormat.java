@@ -369,7 +369,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 value1.set("op", ope.type().id());
                 value1.set("symbols", NElement.ofEnumArray(ope.operatorSymbols().toArray(new Enum[0])));
                 value1.set("operands", NElement.ofArray(ope.operands().toArray(new NElement[0])));
-                value1.set("position", ope.position().id());
+                value1.set("position", ope.fixity().id());
                 value1.name(null);
                 return value1.build();
             }

@@ -13,10 +13,10 @@ public class DefaultOpNode implements NExprOpNode {
     private final String name;
     private final String uniformName;
     private final List<NExprNode> args;
-    private final NExprOpType opType;
+    private final NFixity opType;
     private final int precedence;
 
-    public DefaultOpNode(String name, String uniformName, NExprOpType type, int precedence, List<NExprNode> args) {
+    public DefaultOpNode(String name, String uniformName, NFixity type, int precedence, List<NExprNode> args) {
         this.opType = type;
         this.name = name;
         this.uniformName = uniformName;

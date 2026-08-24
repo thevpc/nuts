@@ -82,35 +82,36 @@ public final class NReservedApplication {
      * @return new instance
      */
     @Deprecated
-    public static <T extends NApplication> T createApplicationInstance(Class<T> appType) {
+    public static <T extends NApplicationHandler> T createApplicationInstance(Class<T> appType) {
         String[] args = null;
         return createApplicationInstance(appType, args);
     }
 
-    public static NAppDefinition resolveApplicationAnnotation(Class appClass) {
+    public static NApp resolveApplicationAnnotation(Class appClass) {
         Class<?> validAppClass = NReflectUtils.unproxyType(appClass);
-        return validAppClass.getAnnotation(NAppDefinition.class);
+        return validAppClass.getAnnotation(NApp.class);
     }
 
     public static boolean isAnnotatedApplicationClass(Class appClass) {
         return resolveApplicationAnnotation(appClass) != null;
     }
 
-    public static NApplication createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
+    public static NApplicationHandler createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
         NAssert.requireNamedNonNull(appInstance, "appInstance");
-        if (appInstance instanceof NApplication) {
-            return (NApplication) appInstance;
+        if (appInstance instanceof NApplicationHandler) {
+            return (NApplicationHandler) appInstance;
         }
         Class<?> appClass = NReflectUtils.unproxyType(appInstance.getClass());
-        NAppDefinition appAnnotation = appClass.getAnnotation(NAppDefinition.class);
+        NApp appAnnotation = appClass.getAnnotation(NApp.class);
         if (appAnnotation == null) {
-            throw new NBootException(NBootMsg.ofC("class %s is missing annotation @"+NAppDefinition.class.getSimpleName(), appClass.getName()));
+            throw new NBootException(NBootMsg.ofC("class %s is missing annotation @" + NApp.class.getSimpleName(), appClass.getName()));
         }
-        NAssert.requireNamedNonNull(appAnnotation, "@NAppDefinition annotation");
+        NAssert.requireNamedNonNull(appAnnotation, "@NApp annotation");
         List<Method> runMethods = new ArrayList<>();
         List<Method> installMethods = new ArrayList<>();
         List<Method> uninstallMethods = new ArrayList<>();
         List<Method> updateMethods = new ArrayList<>();
+        List<Method> completeMethods = new ArrayList<>();
         Set<String> visited = new HashSet<>();
         Class cc = appClass;
         while (cc != null) {
@@ -118,27 +119,31 @@ public final class NReservedApplication {
                 // only public methods
                 if (m.getParameterCount() == 0) {
                     if (visited.add(m.getName())) {
-                        if (m.getAnnotation(NAppRunner.class) != null) {
+                        if (m.getAnnotation(NAppRun.class) != null) {
                             runMethods.add(m);
                         }
-                        if (m.getAnnotation(NAppUpdater.class) != null) {
+                        if (m.getAnnotation(NAppUpdate.class) != null) {
                             updateMethods.add(m);
                         }
-                        if (m.getAnnotation(NAppInstaller.class) != null) {
+                        if (m.getAnnotation(NAppInstall.class) != null) {
                             installMethods.add(m);
                         }
-                        if (m.getAnnotation(NAppUninstaller.class) != null) {
+                        if (m.getAnnotation(NAppUninstall.class) != null) {
                             uninstallMethods.add(m);
+                        }
+                        if (m.getAnnotation(NAppComplete.class) != null) {
+                            completeMethods.add(m);
                         }
                     }
                 }
             }
             try {
                 for (Method m : cc.getDeclaredMethods()) {
-                    checkAllowedMethodWithNutsAnnotation(m, NAppRunner.class);
-                    checkAllowedMethodWithNutsAnnotation(m, NAppInstaller.class);
-                    checkAllowedMethodWithNutsAnnotation(m, NAppUninstaller.class);
-                    checkAllowedMethodWithNutsAnnotation(m, NAppUpdater.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppRun.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppInstall.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppUninstall.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppUpdate.class);
+                    checkAllowedMethodWithNutsAnnotation(m, NAppComplete.class);
                 }
             } catch (NBootException e) {
                 throw e;
@@ -150,9 +155,9 @@ public final class NReservedApplication {
             cc = cc.getSuperclass();
         }
 //        if (runMethods.isEmpty()) {
-//            throw new NBootException(NBootMsg.ofC("class %s has annotation @NAppDefinition. it should define a public no arg @NAppRunner method", appClass.getName()));
+//            throw new NBootException(NBootMsg.ofC("class %s has annotation @NApp. it should define a public no arg @NAppRun method", appClass.getName()));
 //        }
-        return new AnnotationClassNApplication(runMethods, installMethods, updateMethods, uninstallMethods, appInstance);
+        return new AnnotationClassNApplicationHandler(runMethods, installMethods, updateMethods, uninstallMethods, completeMethods, appInstance);
     }
 
     private static boolean checkAllowedMethodWithNutsAnnotation(Method m, Class annClass) {
@@ -178,7 +183,7 @@ public final class NReservedApplication {
      * @return new instance
      */
     @SuppressWarnings("unchecked")
-    public static <T extends NApplication> T createApplicationInstance(Class<T> appType, String[] args) {
+    public static <T extends NApplicationHandler> T createApplicationInstance(Class<T> appType, String[] args) {
         try {
             for (Method declaredMethod : appType.getDeclaredMethods()) {
                 if (Modifier.isStatic(declaredMethod.getModifiers())) {
@@ -226,18 +231,20 @@ public final class NReservedApplication {
         throw NException.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()"), appType.getName()));
     }
 
-    static class AnnotationClassNApplication implements NApplication {
+    static class AnnotationClassNApplicationHandler implements NApplicationHandler {
         private final List<Method> runMethods;
         private final List<Method> installMethods;
         private final List<Method> updateMethods;
         private final List<Method> uninstallMethods;
+        private final List<Method> completeMethods;
         private final Object appInstance;
 
-        public AnnotationClassNApplication(List<Method> runMethods, List<Method> installMethods, List<Method> updateMethods, List<Method> uninstallMethods, Object appInstance) {
+        public AnnotationClassNApplicationHandler(List<Method> runMethods, List<Method> installMethods, List<Method> updateMethods, List<Method> uninstallMethods, List<Method> completeMethods, Object appInstance) {
             this.runMethods = runMethods;
             this.installMethods = installMethods;
             this.updateMethods = updateMethods;
             this.uninstallMethods = uninstallMethods;
+            this.completeMethods = completeMethods;
             this.appInstance = appInstance;
         }
 
@@ -269,6 +276,13 @@ public final class NReservedApplication {
         @Override
         public void onUninstallApplication() {
             for (Method runMethod : uninstallMethods) {
+                doRunThis(runMethod);
+            }
+        }
+
+        @Override
+        public void onCompleteApplication() {
+            for (Method runMethod : completeMethods) {
                 doRunThis(runMethod);
             }
         }

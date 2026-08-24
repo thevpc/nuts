@@ -8,13 +8,13 @@ title: Command Line Arguments
 Application Command line can be retrieved via `NApp` instance:
 
 ```java
-    NCmdLine c1= NApp.of().cmdLine();
+    NCmdLine c1= NApplication.of().cmdLine();
 ```
 
 ## Exec / Autocomplete modes
 
 ```java
-    NCmdLine c= NApp.of().cmdLine();
+    NCmdLine c= NApplication.of().cmdLine();
     if(c.isExecMode()){
         ///    
     }

@@ -10,7 +10,7 @@ subTitle:  |
 contentType: java
 ---
 
-NCmdLine cmdLine = NApp.of().cmdLine(); // or from somewhere else
+NCmdLine cmdLine = NApplication.of().cmdLine(); // or from somewhere else
 NRef<Boolean> boolOption = NRef.of(false);
 NRef<String> stringOption = NRef.ofNull();
 List<String> others = new ArrayList<>();

@@ -55,9 +55,23 @@ public final class NCharEscapeSet {
      *       When quotes are present the char can appear literally inside them.</li>
      * </ul>
      */
-    public enum When {
+    public enum When implements NEnum{
         ALWAYS,
-        UNQUOTED_ONLY
+        UNQUOTED_ONLY;
+        private final String id;
+
+        When() {
+            this.id = NNameFormat.ID_NAME.format(name());
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        public static NOptional<When> parse(String value) {
+            return NEnumUtils.parseEnum(value, When.class);
+        }
     }
 
     // ── Entry ─────────────────────────────────────────────────────────────────

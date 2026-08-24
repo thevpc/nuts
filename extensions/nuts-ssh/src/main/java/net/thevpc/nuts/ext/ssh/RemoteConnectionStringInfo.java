@@ -1,6 +1,6 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.artifact.NId;
@@ -281,7 +281,7 @@ public class RemoteConnectionStringInfo {
             storeLocationCacheRepo = NPath.of(targetConnection.copy()
                     .path(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
-            NId appId = NApp.of().id().orElseGet(() -> NWorkspace.of().apiId());
+            NId appId = NApplication.of().id().orElseGet(() -> NWorkspace.of().apiId());
             storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.mavenFolder()).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {

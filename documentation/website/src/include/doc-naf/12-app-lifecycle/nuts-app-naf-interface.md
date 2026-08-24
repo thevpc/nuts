@@ -66,7 +66,7 @@ public class App implements NApplication {
 
     @Override
     public void run() {
-        NCmdLine cmd = NApp.of().cmdLine();
+        NCmdLine cmd = NApplication.of().cmdLine();
         NRef<File> file = NRef.of(new File("file.xls"));
         cmd.matcher()
                 .when("--file").asEntry(a->ref.set(a.stringValue()))
@@ -87,17 +87,17 @@ public class App implements NApplication {
 
     @Override // this method is not required, implement when needed
     public void onInstallApplication() {
-        NOut.println(NMsg.ofC("we are installing My Application : %s%n", NApp.of().getId()));
+        NOut.println(NMsg.ofC("we are installing My Application : %s%n", NApplication.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
     public void onUninstallApplication() {
-        NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApp.of().getId()));
+        NOut.println(NMsg.ofC("we are uninstalling My Application : %s%n", NApplication.of().getId()));
     }
 
     @Override // this method is not required, implement when needed
     public void onUpdateApplication() {
-        NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApp.of().getId()));
+        NOut.println(NMsg.ofC("we are updating My Application : %s%n", NApplication.of().getId()));
     }
 }
 

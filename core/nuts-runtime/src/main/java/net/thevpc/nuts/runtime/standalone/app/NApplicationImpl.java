@@ -42,9 +42,9 @@ import java.util.regex.Pattern;
 
 @NComponentScope(NScopeType.SHARED_SESSION)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
-public class NAppImpl implements NApp, Cloneable, NCopiable {
+public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
     private Class sourceType;
-    private NApplication application;
+    private NApplicationHandler application;
     private Object source;
     private final NPath[] folders = new NPath[NStoreType.values().length];
     private final NPath[] sharedFolders = new NPath[NStoreType.values().length];
@@ -71,7 +71,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     private NVersion previousVersion;
     private List<String> modeArgs = new ArrayList<>();
 
-    public NAppImpl() {
+    public NApplicationImpl() {
     }
 
     public void setBundleName(String bundleName) {
@@ -79,15 +79,15 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     }
 
     @Override
-    public NApp copy() {
-        NAppImpl cloned = null;
+    public NApplication copy() {
+        NApplicationImpl cloned = null;
         try {
-            cloned = (NAppImpl) this.clone();
+            cloned = (NApplicationImpl) this.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
         cloned.sourceType = this.sourceType();
-        cloned.application = this.application();
+        cloned.application = this.handler();
         cloned.source = this.source();
         NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
@@ -109,11 +109,11 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     }
 
     @Override
-    public NApp copyFrom(NApp other) {
+    public NApplication copyFrom(NApplication other) {
         //boolean withDefaults = false;
         this.id = other.id().orNull();
         this.sourceType = other.sourceType();
-        this.application = other.application();
+        this.application = other.handler();
         this.source = other.source();
         NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
@@ -139,7 +139,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         return NOptional.ofNamed(this.id, "app-id");
     }
 
-    public NApplication application() {
+    public NApplicationHandler handler() {
         return application;
     }
 
@@ -151,7 +151,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         String[] args0 = appInitInfo.args();
         Class<?> appClass = appInitInfo.sourceType();
         Object source = appInitInfo.source();
-        NApplication application = appInitInfo.application();
+        NApplicationHandler application = appInitInfo.application();
         if (appClass == null && source == null) {
             if (application != null) {
                 source = application;
@@ -168,7 +168,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                     }
                     NAssert.requireNamedNonNull(appClass, "applicationType");
                     source = createInstance(appClass);
-                    application = NApplication.createApplicationInstanceFromAnnotatedInstance(source);
+                    application = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(source);
                 }
             }
         } else {
@@ -191,7 +191,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
                 }
             }
             if (application == null) {
-                application = NApplication.createApplicationInstanceFromAnnotatedInstance(source);
+                application = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(source);
             }
         }
 //        Class appClass =
@@ -284,12 +284,12 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         }
     }
 
-    private NApplication resolveApplicationCustomResolver() {
+    private NApplicationHandler resolveApplicationCustomResolver() {
         ServiceLoader<NAppResolverSPI> nAppResolverClassLoader = ServiceLoader.load(NAppResolverSPI.class);
         for (NAppResolverSPI r : nAppResolverClassLoader) {
             Object o = r.resolveCurrentApplication();
             if (o != null) {
-                return NApplication.createApplicationInstanceFromAnnotatedInstance(o);
+                return NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(o);
             }
         }
         return null;
@@ -349,7 +349,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
      * Errors are wrapped in RuntimeExceptions for simplicity.
      */
     private Object createInstance(Class applicationType) {
-        NLog nLog = NLog.of(NAppImpl.class);
+        NLog nLog = NLog.of(NApplicationImpl.class);
         try {
             return applicationType == null ? null : applicationType.getConstructor().newInstance();
         } catch (Exception e) {
@@ -370,7 +370,7 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
     private static String resolveAppNameFromClass(Class clazz, String defaultName) {
         String n = null;
         String baseFilePath = NOptional.of(clazz.getProtectionDomain()).then(x -> x.getCodeSource()).then(x -> x.getLocation()).then(x -> x.getPath()).orNull();
-        NLog nLog = NLog.of(NAppImpl.class);
+        NLog nLog = NLog.of(NApplicationImpl.class);
         nLog.debug(NMsg.ofC("resolveAppNameFromClass %s (%s) , baseFilePath=%s", clazz, defaultName, baseFilePath));
         if (baseFilePath != null) {
             try {
@@ -652,54 +652,54 @@ public class NAppImpl implements NApp, Cloneable, NCopiable {
         return this.storeLocationResolver;
     }
 
-    public NApp setVersionStoreLocationSupplier(NAppStoreLocationResolver appVersionStoreLocationSupplier) {
+    public NApplication setVersionStoreLocationSupplier(NAppStoreLocationResolver appVersionStoreLocationSupplier) {
         this.storeLocationResolver = appVersionStoreLocationSupplier;
         return this;
     }
 
-    public NApp setMode(NApplicationMode mode) {
+    public NApplication setMode(NApplicationMode mode) {
         this.mode = mode;
         return this;
     }
 
-    public NApp setModeArgs(List<String> modeArgs) {
+    public NApplication setModeArgs(List<String> modeArgs) {
         this.modeArgs = modeArgs;
         return this;
     }
 
-    public NApp setFolder(NStoreType location, NPath folder) {
+    public NApplication setFolder(NStoreType location, NPath folder) {
         this.folders[location.ordinal()] = folder;
         return this;
     }
 
-    public NApp setSharedFolder(NStoreType location, NPath folder) {
+    public NApplication setSharedFolder(NStoreType location, NPath folder) {
         this.sharedFolders[location.ordinal()] = folder;
         return this;
     }
 
     //    @Override
-    public NApp id(NId appId) {
+    public NApplication id(NId appId) {
         this.id = appId;
         return this;
     }
 
     //    @Override
-    public NApp arguments(List<String> args) {
+    public NApplication arguments(List<String> args) {
         this.args = args;
         return this;
     }
 
-    public NApp arguments(String[] args) {
+    public NApplication arguments(String[] args) {
         this.args = new ArrayList<>(Arrays.asList(args));
         return this;
     }
 
-    public NApp startTime(NClock startTime) {
+    public NApplication startTime(NClock startTime) {
         this.startTime = startTime;
         return this;
     }
 
-    public NApp setPreviousVersion(NVersion previousVersion) {
+    public NApplication setPreviousVersion(NVersion previousVersion) {
         this.previousVersion = previousVersion;
         return this;
     }

@@ -13,7 +13,7 @@ Target Application: We will build a unified system administration and diagnostic
 Module 1: Standalone Bootstrapping and Application Lifecycle
 
     Objective: Initialize a pure NAF application and manage its lifecycle without any external DI containers.
-    Core APIs: Nuts, NApplication, NWorkspace, NSession, @NAppDefinition, @NAppRunner.
+    Core APIs: Nuts, NApplication, NWorkspace, NSession, @App, @NAppRun.
     Key Concepts: 
         The standalone nature of NAF (no Spring required).
         Differentiating between NWorkspace (global context) and NSession (thread-local execution).
@@ -159,11 +159,11 @@ package com.mycompany.admin;
 
 import net.thevpc.nuts.*;
 
-@NAppDefinition
+@NApp
 public class NutsAdminCLI {
 
     public static void main(String[] args) {
-        // Bootstraps the NAF runtime and delegates execution to the @NAppRunner method.
+        // Bootstraps the NAF runtime and delegates execution to the @NAppRun method.
         // NAppRunOptions.ofExit ensures that exit codes are properly propagated to the OS.
         new NutsAdminCLI().run(NAppRunOptions.ofExit(args));
     }
@@ -172,13 +172,13 @@ public class NutsAdminCLI {
      * The main execution logic of the application.
      * This is called when the user runs the application normally.
      */
-    @NAppRunner
+    @NAppRun
     public void run() {
         // Retrieve the current thread-local execution session
         NSession session = NSession.of();
         
         // Retrieve the application's unique identifier (GroupId:ArtifactId#Version)
-        NId appId = NApp.of().id();
+        NId appId = NApplication.of().id();
         
         NOut.println(NMsg.ofC("Welcome to NutsAdminCLI. Running version: %s", appId.getVersion()));
         NOut.println("Type '--help' for usage instructions. (We will implement this in Module 2)");
@@ -198,9 +198,9 @@ public class NutsAdminCLI {
      * Triggered when the application is updated to a new version.
      * Use this to migrate configuration files or clean up deprecated caches.
      */
-    @NAppUpdater
+    @NAppUpdate
     public void onUpdateApplication() {
-        NId appId = NApp.of().id();
+        NId appId = NApplication.of().id();
         NOut.println(NMsg.ofStyled(">> Updating NutsAdminCLI to " + appId.getVersion() + "...", NTextStyle.warn()));
     }
 
@@ -208,7 +208,7 @@ public class NutsAdminCLI {
      * Triggered when the application is uninstalled.
      * Use this to clean up temporary files or deregister system hooks.
      */
-    @NAppUninstaller
+    @NAppUninstall
     public void onUninstallApplication() {
         NOut.println(NMsg.ofStyled(">> Uninstalling NutsAdminCLI. Cleaning up resources...", NTextStyle.error()));
     }
@@ -257,7 +257,7 @@ Type '--help' for usage instructions. (We will implement this in Module 2)
 ```
 
 4. Update the application (Simulated):
-If you were to bump the version in your pom.xml to `1.1.0`, run `mvn install`, and then run `nuts update nuts-admin-cli`, Nuts would trigger the `@NAppUpdater` hook, allowing you to safely migrate user data.
+If you were to bump the version in your pom.xml to `1.1.0`, run `mvn install`, and then run `nuts update nuts-admin-cli`, Nuts would trigger the `@NAppUpdate` hook, allowing you to safely migrate user data.
 
 5. Uninstall the application:
 
@@ -298,7 +298,7 @@ Inside a NAF application, you retrieve the parsed command line from the applicat
 
 ```java
 // Retrieve the command line for the current application
-NCmdLine cmdLine = NApp.of().cmdLine();
+NCmdLine cmdLine = NApplication.of().cmdLine();
 
 // Use NRef to hold mutable state that can be updated inside lambdas
 NRef<Boolean> verbose = NRef.of(false);
@@ -313,7 +313,7 @@ We will update our `run()` method to parse a `--verbose` flag, a `--config` opti
 
 ```java
 // Retrieve the command line for the current application
-NCmdLine cmdLine = NApp.of().cmdLine();
+NCmdLine cmdLine = NApplication.of().cmdLine();
 
 // Use NRef to hold mutable state that can be updated inside lambdas
 NRef<Boolean> verbose = NRef.of(false);
@@ -434,17 +434,17 @@ import net.thevpc.nuts.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@NAppDefinition
+@App
 public class NutsAdminCLI {
 
     public static void main(String[] args) {
         new NutsAdminCLI().run(NAppRunOptions.ofExit(args));
     }
 
-    @NAppRunner
+    @NAppRun
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().cmdLine();
+        NCmdLine cmdLine = NApplication.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -488,13 +488,13 @@ public class NutsAdminCLI {
         NOut.println(NMsg.ofStyled(">> Initializing NutsAdminCLI workspace...", NTextStyle.primary1()));
     }
 
-    @NAppUpdater
+    @NAppUpdate
     public void onUpdateApplication() {
-        NId appId = NApp.of().getId();
+        NId appId = NApplication.of().getId();
         NOut.println(NMsg.ofStyled(">> Updating NutsAdminCLI to " + appId.getVersion() + "...", NTextStyle.warn()));
     }
 
-    @NAppUninstaller
+    @NAppUninstall
     public void onUninstallApplication() {
         NOut.println(NMsg.ofStyled(">> Uninstalling NutsAdminCLI. Cleaning up resources...", NTextStyle.error()));
     }
@@ -695,7 +695,7 @@ import net.thevpc.nuts.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@NAppDefinition
+NApp
 public class NutsAdminCLI {
 
     // Initialize the developer logger
@@ -705,10 +705,10 @@ public class NutsAdminCLI {
         new NutsAdminCLI().run(NAppRunOptions.ofExit(args));
     }
 
-    @NAppRunner
+    @NAppRun
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().cmdLine();
+        NCmdLine cmdLine = NApplication.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -799,13 +799,13 @@ public class NutsAdminCLI {
         NOut.println(NMsg.ofStyled(">> Initializing NutsAdminCLI workspace...", NTextStyle.primary1()));
     }
 
-    @NAppUpdater
+    @NAppUpdate
     public void onUpdateApplication() {
-        NId appId = NApp.of().getId();
+        NId appId = NApplication.of().getId();
         NOut.println(NMsg.ofStyled(">> Updating NutsAdminCLI to " + appId.getVersion() + "...", NTextStyle.warn()));
     }
 
-    @NAppUninstaller
+    @NAppUninstall
     public void onUninstallApplication() {
         NOut.println(NMsg.ofStyled(">> Uninstalling NutsAdminCLI. Cleaning up resources...", NTextStyle.error()));
     }
@@ -974,7 +974,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-@NAppDefinition
+NApp
 public class NutsAdminCLI {
 
     private static final NLog log = NLog.ofScoped(NutsAdminCLI.class);
@@ -983,10 +983,10 @@ public class NutsAdminCLI {
         new NutsAdminCLI().run(NAppRunOptions.ofExit(args));
     }
 
-    @NAppRunner
+    @NAppRun
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().cmdLine();
+        NCmdLine cmdLine = NApplication.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -1030,8 +1030,8 @@ public class NutsAdminCLI {
         NOut.println();
 
         // 1. Resolve XDG-compliant directories using NStoreKey for the current user
-        NPath configDir = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApp.of().getId()));
-        NPath cacheDir = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CACHE, NApp.of().getId()));
+        NPath configDir = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApplication.of().getId()));
+        NPath cacheDir = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CACHE, NApplication.of().getId()));
         
         if (!configDir.exists()) configDir.mkdirs();
         if (!cacheDir.exists()) cacheDir.mkdirs();
@@ -1110,13 +1110,13 @@ public class NutsAdminCLI {
         NOut.println(NMsg.ofStyled(">> Initializing NutsAdminCLI workspace...", NTextStyle.primary1()));
     }
 
-    @NAppUpdater
+    @NAppUpdate
     public void onUpdateApplication() {
-        NId appId = NApp.of().getId();
+        NId appId = NApplication.of().getId();
         NOut.println(NMsg.ofStyled(">> Updating NutsAdminCLI to " + appId.getVersion() + "...", NTextStyle.warn()));
     }
 
-    @NAppUninstaller
+    @NAppUninstall
     public void onUninstallApplication() {
         NOut.println(NMsg.ofStyled(">> Uninstalling NutsAdminCLI. Cleaning up resources...", NTextStyle.error()));
     }
@@ -1137,7 +1137,7 @@ To parse a file, we use NElementReader. To build data from scratch, we use the f
 
 ```java
 // 1. Parse an existing JSON file from disk into an NElement
-NPath settingsFile = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApp.of().getId()))
+NPath settingsFile = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApplication.of().getId()))
                           .resolve("settings.json");
 
 // If the file doesn't exist, let's create a default one
@@ -1182,7 +1182,7 @@ Let's say we want to save the configuration back to disk as JSON, but we also wa
 
 ```java
 // 1. READING: Parse an existing JSON file into an NElement
-NPath settingsFile = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApp.of().getId()))
+NPath settingsFile = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApplication.of().getId()))
                           .resolve("settings.json");
 
 // Use NElementReader to read the file
@@ -1225,7 +1225,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-@NAppDefinition
+NApp
 public class NutsAdminCLI {
 
     private static final NLog log = NLog.ofScoped(NutsAdminCLI.class);
@@ -1234,10 +1234,10 @@ public class NutsAdminCLI {
         new NutsAdminCLI().run(NAppRunOptions.ofExit(args));
     }
 
-    @NAppRunner
+    @NAppRun
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().cmdLine();
+        NCmdLine cmdLine = NApplication.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -1284,7 +1284,7 @@ public class NutsAdminCLI {
         NOut.println();
 
         // 1. Resolve the settings file path using NStoreKey
-        NPath configDir = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApp.of().getId()));
+        NPath configDir = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApplication.of().getId()));
         NPath settingsFile = configDir.resolve("settings.json");
 
         if (!configDir.exists()) configDir.mkdirs();
@@ -1345,13 +1345,13 @@ public class NutsAdminCLI {
         NOut.println(NMsg.ofStyled(">> Initializing NutsAdminCLI workspace...", NTextStyle.primary1()));
     }
 
-    @NAppUpdater
+    @NAppUpdate
     public void onUpdateApplication() {
-        NId appId = NApp.of().getId();
+        NId appId = NApplication.of().getId();
         NOut.println(NMsg.ofStyled(">> Updating NutsAdminCLI to " + appId.getVersion() + "...", NTextStyle.warn()));
     }
 
-    @NAppUninstaller
+    @NAppUninstall
     public void onUninstallApplication() {
         NOut.println(NMsg.ofStyled(">> Uninstalling NutsAdminCLI. Cleaning up resources...", NTextStyle.error()));
     }
@@ -1542,7 +1542,7 @@ saga.call();
 To prevent a user from accidentally running nuts-admin-cli sync in two different terminal windows simultaneously (which could corrupt system files), we use NLock. It seamlessly handles both intra-process (memory) and inter-process (file-based) locking.
 
 ```java
-NPath lockFile = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.RUN, NApp.of().getId()))
+NPath lockFile = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.RUN, NApplication.of().getId()))
                       .resolve("sync.lock");
 
 NLock lock = NLock.ofPath(lockFile);
@@ -1565,7 +1565,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-@NAppDefinition
+NApp
 public class NutsAdminCLI {
 
     private static final NLog log = NLog.ofScoped(NutsAdminCLI.class);
@@ -1593,10 +1593,10 @@ public class NutsAdminCLI {
         new NutsAdminCLI().run(NAppRunOptions.ofExit(args));
     }
 
-    @NAppRunner
+    @NAppRun
     public void run() {
         NSession session = NSession.of();
-        NCmdLine cmdLine = NApp.of().cmdLine();
+        NCmdLine cmdLine = NApplication.of().cmdLine();
 
         NRef<Boolean> verbose = NRef.of(false);
         NRef<String> configPath = NRef.ofNull();
@@ -1634,7 +1634,7 @@ public class NutsAdminCLI {
         log.info(NMsg.ofPlain("Initiating synchronization workflow.").withIntent(NLogIntent.START));
 
         // 1. Acquire an inter-process lock
-        NPath lockFile = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.RUN, NApp.of().getId()))
+        NPath lockFile = NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.RUN, NApplication.of().getId()))
                               .resolve("sync.lock");
         NLock lock = NLock.ofPath(lockFile);
 
@@ -1726,8 +1726,8 @@ public class NutsAdminCLI {
     private void executeConfigCommand() { /* ... */ }
 
     @NAppInstall public void onInstallApplication() { /* ... */ }
-    @NAppUpdater public void onUpdateApplication() { /* ... */ }
-    @NAppUninstaller public void onUninstallApplication() { /* ... */ }
+    @NAppUpdate public void onUpdateApplication() { /* ... */ }
+    @NAppUninstall public void onUninstallApplication() { /* ... */ }
 }
 ```
 
@@ -1949,7 +1949,7 @@ import net.thevpc.nuts.*;
 import java.util.List;
 // ... other imports
 
-@NAppDefinition
+NApp
 public class NutsAdminCLI {
     // ... (previous code remains the same)
 
@@ -2200,7 +2200,7 @@ import net.thevpc.nuts.*;
 import java.util.List;
 import java.util.Random;
 
-@NAppDefinition
+NApp
 public class NutsAdminCLI {
     // ... (previous code remains the same)
 
@@ -2555,7 +2555,7 @@ import net.thevpc.nuts.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@NAppDefinition
+NApp
 public class NutsAdminCLI {
     // ... (previous code remains the same)
 
@@ -2768,7 +2768,7 @@ To enable Spring Boot and SLF4J integration, we add the respective NAF bridge mo
 ```
 
 ### Step 10.3: Bootstrapping the Hybrid Application
-To merge the NAF lifecycle with the Spring Boot lifecycle, we annotate our main class with both @SpringBootApplication and @NAppDefinition, and import the NAF Spring configuration.
+To merge the NAF lifecycle with the Spring Boot lifecycle, we annotate our main class with both @SpringBootApplication and NApp, and import the NAF Spring configuration.
 
 ```java
 package com.mycompany.admin.spring;
@@ -2778,7 +2778,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
-@NAppDefinition
+NApp
 @SpringBootApplication
 @Import(NutsSpringBootConfig.class) // Crucial: Wires NAF components into the Spring Context
 public class NutsAdminSpringApp {
@@ -2792,13 +2792,13 @@ public class NutsAdminSpringApp {
      * This NAF lifecycle hook runs AFTER the Spring ApplicationContext is fully initialized.
      * It allows you to execute NAF-specific CLI logic or startup routines within the Spring environment.
      */
-    @NAppRunner
+    @NAppRun
     public void run() {
         NSession session = NSession.of();
         NOut.println(NMsg.ofStyled(">> NAF is running seamlessly inside Spring Boot!", NTextStyle.success()));
         
         // You can still parse CLI arguments passed to the Spring Boot app
-        NCmdLine cmdLine = NApp.of().cmdLine();
+        NCmdLine cmdLine = NApplication.of().cmdLine();
         // ... handle custom NAF flags ...
     }
 }
@@ -2834,7 +2834,7 @@ public class DiagnosticsService {
     
     public String getConfigPath() {
         // Use the injected workspace/session to resolve XDG-compliant paths
-        return NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApp.of().getId()))
+        return NPath.of(NStoreKey.of(NStoreScope.USER, NStoreType.CONFIG, NApplication.of().getId()))
                     .toString();
     }
 }

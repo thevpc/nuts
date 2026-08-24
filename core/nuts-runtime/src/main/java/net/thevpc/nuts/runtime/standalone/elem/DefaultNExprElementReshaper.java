@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.text.NMsg;
 
@@ -141,7 +142,7 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
                 NElement operand = output.pop();
                 return NElement.ofExprBuilder()
                         .operator(op.symbol)
-                        .position(NOperatorPosition.PREFIX)
+                        .fixity(NFixity.PREFIX)
                         .first(operand)
                         .build();
             } else {
@@ -154,7 +155,7 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
                 NElement left = output.pop();
                 return NElement.ofExprBuilder()
                         .operator(op.symbol)
-                        .position(NOperatorPosition.INFIX)
+                        .fixity(NFixity.INFIX)
                         .first(left)
                         .second(right)
                         .build();

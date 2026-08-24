@@ -350,7 +350,7 @@ public class DefaultTsonWriter {
     private void writeAnyOperatorElement(NOperatorElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         List<NOperatorSymbol> operatorSymbols = a.operatorSymbols();
-        switch (a.position()) {
+        switch (a.fixity()) {
             case PREFIX: {
                 for (int i = 0; i < operatorSymbols.size(); i++) {
                     writeBoundedString(a.operatorSymbol(i).get().lexeme(), 1, a.affixes());

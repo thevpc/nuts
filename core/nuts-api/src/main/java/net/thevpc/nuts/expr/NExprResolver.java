@@ -12,7 +12,7 @@ public interface NExprResolver {
         return NOptional.ofEmpty(() -> NMsg.ofC("construct not found %s", constructName));
     }
 
-    default NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue[] args, NExprContext context) {
+    default NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue[] args, NExprContext context) {
         return NOptional.ofEmpty(() -> NMsg.ofC("operator not found %s of type %s", opName,type));
     }
 

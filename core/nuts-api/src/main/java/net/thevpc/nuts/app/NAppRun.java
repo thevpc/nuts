@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method as the main application entry point to be executed.
  * <p>
- * Methods annotated with {@code @NAppRunner} serve as the primary runtime
+ * Methods annotated with {@code @NAppRun} serve as the primary runtime
  * entry for the application logic. This is the method that will be invoked
  * when the application is started through the Nuts framework.
  * </p>
@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  * Common usage:
  * <pre>{@code
  * public class MyApp {
- *     @NAppRunner
+ *     @NAppRun
  *     public static void main(String[] args) {
  *         System.out.println("Application started!");
  *     }
@@ -37,6 +37,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NAppRunner {
+public @interface NAppRun {
 
 }

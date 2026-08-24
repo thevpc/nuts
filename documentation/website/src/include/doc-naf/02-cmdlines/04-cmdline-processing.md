@@ -11,7 +11,7 @@ interpreted (`as*`), and how the overall pass should behave once every token
 has been considered (`require`/`requireAll`/`anyMatch`/`noMatch`).
 
 ```java
-NCmdLine cmdLine = NApp.of().cmdLine(); // or from somewhere else
+NCmdLine cmdLine = NApplication.of().cmdLine(); // or from somewhere else
 NRef<Boolean> boolOption = NRef.of(false);
 NRef<String> stringOption = NRef.ofNull();
 List<String> others = new ArrayList<>();
@@ -115,7 +115,7 @@ throwing.
 ### A more complete example
 
 ```java
-NCmdLine cmdLine = NApp.of().cmdLine();
+NCmdLine cmdLine = NApplication.of().cmdLine();
 Opts o = new Opts();
 
 cmdLine.matcher()
@@ -154,7 +154,7 @@ display label and value-completion hint right at the call site, instead of
 those being attached separately through a matcher chain.
 
 ```java
-NCmdLine cmd = NApp.of().cmdLine();
+NCmdLine cmd = NApplication.of().cmdLine();
 boolean boolOption = false;
 String stringOption = null;
 List<String> others = new ArrayList<>();
@@ -266,7 +266,7 @@ The Matcher is built entirely on top of NCmdLine's pull API: next(...), peek(), 
 This is also the form where autocomplete support is easiest to reason about explicitly, since each next(...) call can carry its own display label and value-completion hint right at the call site.
 
 ```java
-NCmdLine cmd = NApp.of().cmdLine();
+NCmdLine cmd = NApplication.of().cmdLine();
 boolean boolOption = false;
 String stringOption = null;
 List<String> others = new ArrayList<>();

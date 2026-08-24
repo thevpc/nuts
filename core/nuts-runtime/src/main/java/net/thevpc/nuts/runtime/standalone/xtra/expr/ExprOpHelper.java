@@ -2,13 +2,13 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.expr.NExprOpPrecedence;
-import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 
 public class ExprOpHelper {
-    public static NExprOpType resolveOpDefaultType(String name, NExprOpType type) {
+    public static NFixity resolveOpDefaultType(String name, NFixity type) {
         if (type != null) {
             return type;
         }
@@ -37,7 +37,7 @@ public class ExprOpHelper {
             case "||":
             case "|":
             case "??": {
-                return NExprOpType.INFIX;
+                return NFixity.INFIX;
             }
             case "(":
             case "()":
@@ -45,13 +45,13 @@ public class ExprOpHelper {
             case "[]":
             case "{":
             case "{}": {
-                return NExprOpType.POSTFIX;
+                return NFixity.POSTFIX;
             }
         }
         throw new IllegalArgumentException("unsupported operator " + name);
     }
 
-    public static int resolveOpPrecedence(String name, NExprOpType type, int precedence) {
+    public static int resolveOpPrecedence(String name, NFixity type, int precedence) {
         NAssert.requireNamedNonNull(name, "name");
         NAssert.requireNamedNonNull(type, "type");
         if (precedence >= 0) {
@@ -100,7 +100,7 @@ public class ExprOpHelper {
             }
             case "%": {
                 if (type == null) {
-                    type = NExprOpType.INFIX;
+                    type = NFixity.INFIX;
                 }
                 switch (type) {
                     case INFIX: {
@@ -139,7 +139,7 @@ public class ExprOpHelper {
             case ".":
             case "?.": {
                 if (type == null) {
-                    type = NExprOpType.INFIX;
+                    type = NFixity.INFIX;
                 }
                 switch (type) {
                     case INFIX: {
@@ -175,7 +175,7 @@ public class ExprOpHelper {
             case "!=":
             case "<>": {
                 if (type == null) {
-                    type = NExprOpType.INFIX;
+                    type = NFixity.INFIX;
                 }
                 switch (type) {
                     case INFIX: {
@@ -218,7 +218,7 @@ public class ExprOpHelper {
             }
             case "??": {
                 if (type == null) {
-                    type = NExprOpType.INFIX;
+                    type = NFixity.INFIX;
                 }
                 switch (type) {
                     case INFIX: {
@@ -231,7 +231,7 @@ public class ExprOpHelper {
         throw new NIllegalArgumentException(NMsg.ofC("cannot resolve operator precedence for :%s", name));
     }
 
-    public static NOperatorAssociativity resolveOpDefaultAssociativity(String name, NExprOpType type, NOperatorAssociativity associativity) {
+    public static NOperatorAssociativity resolveOpDefaultAssociativity(String name, NFixity type, NOperatorAssociativity associativity) {
         NAssert.requireNamedNonNull(name, "name");
         NAssert.requireNamedNonNull(type, "type");
         if (associativity != null) {

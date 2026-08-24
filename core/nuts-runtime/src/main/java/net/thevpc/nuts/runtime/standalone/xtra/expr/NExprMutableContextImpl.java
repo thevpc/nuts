@@ -89,11 +89,11 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
     @Override
-    public NExprOperator declareOperator(String name, NExprOpType type, NExprCallHandler impl) {
+    public NExprOperator declareOperator(String name, NFixity type, NExprCallHandler impl) {
         return alteration.declareOperator(name, type, impl);
     }
 
-    public NExprOperator declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl) {
+    public NExprOperator declareOperator(String name, NFixity type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl) {
         return alteration.declareOperator(name, type, precedence, associativity, impl);
     }
 
@@ -129,7 +129,7 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
     @Override
-    public NExprMutableContext removeOperator(String name, NExprOpType type) {
+    public NExprMutableContext removeOperator(String name, NFixity type) {
         alteration.removeOperator(name, type);
         return this;
     }
@@ -173,7 +173,7 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
 
     /// ////////////////////////////////////////////////
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... nodes) {
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... nodes) {
         return alteration.getOperator(this, parent, opName, type, nodes);
     }
 
@@ -183,7 +183,7 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
         if (parent != null) {
             for (NExprOperator o : parent.operators()) {
                 if (alteration.userOperators != null) {
-                    NExprContextAlteration.DecInfo<NExprOperator> y = alteration.userOperators.get(new NExprOpNameAndType(o.name(), o.operatorType()));
+                    NExprContextAlteration.DecInfo<NExprOperator> y = alteration.userOperators.get(new NExprOpNameAndType(o.name(), o.fixity()));
                     if (y == null) {
                         all.add(o);
                     }

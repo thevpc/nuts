@@ -45,21 +45,21 @@ public class ExprTest {
     }
 
     private boolean accept(NExprOperator d, String pattern) {
-        NExprOpType f;
+        NFixity f;
         String n;
         if (pattern.startsWith("prefix:")) {
-            f = NExprOpType.PREFIX;
+            f = NFixity.PREFIX;
             n = pattern.substring("prefix:".length());
         } else if (pattern.startsWith("postfix:")) {
-            f = NExprOpType.POSTFIX;
+            f = NFixity.POSTFIX;
             n = pattern.substring("postfix:".length());
         } else if (pattern.startsWith("infix:")) {
-            f = NExprOpType.INFIX;
+            f = NFixity.INFIX;
             n = pattern.substring("infix:".length());
         } else {
             return false;
         }
-        return f.equals(d.operatorType()) && n.equals(d.name());
+        return f.equals(d.fixity()) && n.equals(d.name());
 
     }
 

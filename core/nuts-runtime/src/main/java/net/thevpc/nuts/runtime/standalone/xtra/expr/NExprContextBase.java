@@ -26,26 +26,26 @@ public abstract class NExprContextBase implements NExprContext {
         return getConstruct(constructName, args).flatMap(x -> NOptional.ofNullable(x.eval(c)));
     }
 
-    public NOptional<Object> evalOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<Object> evalOperator(String opName, NFixity type, NExprNodeValue... args) {
 
         return getOperator(opName, type, args).flatMap(x -> NOptional.ofNullable(x.eval(
-                NExprCallContextImpl.ofOperator(x.name(), Arrays.asList(args), this,x.operatorType(),x.operatorPrecedence(),x.operatorAssociativity())
+                NExprCallContextImpl.ofOperator(x.name(), Arrays.asList(args), this,x.fixity(),x.operatorPrecedence(),x.operatorAssociativity())
         )));
     }
 
     @Override
     public NOptional<Object> evalInfixOperator(String opName, NExprNodeValue first, NExprNodeValue second) {
-        return evalOperator(opName, NExprOpType.INFIX, first, second);
+        return evalOperator(opName, NFixity.INFIX, first, second);
     }
 
     @Override
     public NOptional<Object> evalPrefixOperator(String opName, NExprNodeValue arg) {
-        return evalOperator(opName, NExprOpType.PREFIX, arg);
+        return evalOperator(opName, NFixity.PREFIX, arg);
     }
 
     @Override
     public NOptional<Object> evalPostfixOperator(String opName, NExprNodeValue arg) {
-        return evalOperator(opName, NExprOpType.POSTFIX, arg);
+        return evalOperator(opName, NFixity.POSTFIX, arg);
     }
 
 
@@ -104,7 +104,7 @@ public abstract class NExprContextBase implements NExprContext {
     }
 
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... args) {
         return null;
     }
 

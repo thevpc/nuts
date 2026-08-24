@@ -8,7 +8,7 @@ import java.util.List;
 
 public class NMainArgs {
     private NApplicationHandleMode handleMode = NApplicationHandleMode.HANDLE;
-    private NApplication applicationInstance;
+    private NApplicationHandler applicationInstance;
     private String[] nutsArgs;
     private String[] args;
 
@@ -28,19 +28,19 @@ public class NMainArgs {
         return new NMainArgs().args(args).handleMode(NApplicationHandleMode.EXIT);
     }
 
-    public static NMainArgs of(NApplication application, String[] args) {
+    public static NMainArgs of(NApplicationHandler application, String[] args) {
         return new NMainArgs().applicationInstance(application).nutsArgs(args);
     }
 
-    public static NMainArgs ofHandled(NApplication application, String[] args) {
+    public static NMainArgs ofHandled(NApplicationHandler application, String[] args) {
         return new NMainArgs().applicationInstance(application).args(args).handleMode(NApplicationHandleMode.HANDLE);
     }
 
-    public static NMainArgs ofPropagated(NApplication application, String[] args) {
+    public static NMainArgs ofPropagated(NApplicationHandler application, String[] args) {
         return new NMainArgs().applicationInstance(application).args(args).handleMode(NApplicationHandleMode.PROPAGATE);
     }
 
-    public static NMainArgs ofExit(NApplication application, String[] args) {
+    public static NMainArgs ofExit(NApplicationHandler application, String[] args) {
         return new NMainArgs().args(args).applicationInstance(application).handleMode(NApplicationHandleMode.EXIT);
     }
 
@@ -54,11 +54,11 @@ public class NMainArgs {
         return this;
     }
 
-    public NApplication applicationInstance() {
+    public NApplicationHandler applicationInstance() {
         return applicationInstance;
     }
 
-    public NMainArgs applicationInstance(NApplication applicationInstance) {
+    public NMainArgs applicationInstance(NApplicationHandler applicationInstance) {
         this.applicationInstance = applicationInstance;
         return this;
     }

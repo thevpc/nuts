@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.util.NAssignmentPolicy;
 import net.thevpc.nuts.util.NOptional;
 
@@ -75,9 +76,9 @@ public interface NOperatorElementBuilder extends NElementBuilder {
 
     NOperatorElementBuilder operator(NOperatorSymbol value);
 
-    NOperatorElementBuilder position(NOperatorPosition operatorType);
+    NOperatorElementBuilder fixity(NFixity operatorType);
 
-    NOperatorPosition position();
+    NFixity fixity();
 
     NOperatorSymbol operator();
 

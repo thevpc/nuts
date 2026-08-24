@@ -18,7 +18,7 @@ public interface NExprContext {
 
     NOptional<NExprFunction> getConstruct(String constructName, NExprNodeValue... args);
 
-    NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args);
+    NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... args);
 
     List<NExprOperator> operators();
 
@@ -32,7 +32,7 @@ public interface NExprContext {
 
     NOptional<Object> evalConstruct(String constructName, NExprNodeValue... args);
 
-    NOptional<Object> evalOperator(String opName, NExprOpType type, NExprNodeValue... args);
+    NOptional<Object> evalOperator(String opName, NFixity type, NExprNodeValue... args);
 
     NOptional<Object> evalInfixOperator(String opName, NExprNodeValue first, NExprNodeValue second);
 

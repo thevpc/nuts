@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.artifact;
 
-import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NLiteral;
@@ -79,9 +79,9 @@ public interface NDescriptor extends Serializable, NBlankable{
     boolean isExecutable();
 
     /**
-     * true if the artifact is a java executable that implements {@link NApplication} interface.
+     * true if the artifact is a java executable that implements {@link NApplicationHandler} interface.
      *
-     * @return true if the artifact is a java executable that implements {@link NApplication} interface.
+     * @return true if the artifact is a java executable that implements {@link NApplicationHandler} interface.
      */
     boolean isNutsApplication();
 

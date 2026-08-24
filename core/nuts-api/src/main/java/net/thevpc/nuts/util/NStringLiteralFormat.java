@@ -13,7 +13,7 @@ public interface NStringLiteralFormat {
     NStringLiteralFormat SH_SINGLE = NStringLiteralFormatBuilder.ofShell(NElementType.SINGLE_QUOTED_STRING).build();
     NStringLiteralFormat SH_BACK = NStringLiteralFormatBuilder.ofShell(NElementType.BACKTICK_STRING).build();
 
-    enum Mode {
+    enum Mode implements NEnum{
         /**
          * Boundary char appears in the body encoded by {@code boundaryEscape}.
          * Surrounding quotes are added when {@code condition} requires it.
@@ -31,7 +31,21 @@ public interface NStringLiteralFormat {
          * {@code linePrefix + encodedLine + lineSuffix}.  Use empty strings for
          * a plain pass-through that only applies {@code charEscapeSet}.
          */
-        PREFIX
+        PREFIX;
+        private final String id;
+
+        Mode() {
+            this.id = NNameFormat.ID_NAME.format(name());
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        public static NOptional<Mode> parse(String value) {
+            return NEnumUtils.parseEnum(value, Mode.class);
+        }
     }
 
     String format(String text);

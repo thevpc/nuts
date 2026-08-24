@@ -25,14 +25,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
+import net.thevpc.nuts.runtime.standalone.app.NApplicationImpl;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
@@ -137,7 +137,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     /**
      * using currentApp so that we can change NApp when calling embedded apps
      */
-    public NApp currentApp;
+    public NApplication currentApp;
 
     public DefaultNWorkspace(NBootOptionsInfo callerBootOptionsInfo, NBootOptions info) {
         this.callerBootOptionsInfo = callerBootOptionsInfo;
@@ -149,7 +149,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public NApp getApp() {
+    public NApplication getApp() {
         return currentApp;
     }
 
@@ -243,7 +243,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         try {
             this.wsModel = new NWorkspaceModel(this, data.initialBootOptions);
             this.runWith(() -> {
-                currentApp = new NAppImpl();
+                currentApp = new NApplicationImpl();
                 this.wsModel.init();
                 _preloadWorkspace(data);
                 NOpenMode m = data.initialBootOptions.openMode().orElse(NOpenMode.OPEN_OR_CREATE);

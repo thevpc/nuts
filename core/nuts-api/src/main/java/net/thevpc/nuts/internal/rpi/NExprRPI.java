@@ -53,5 +53,5 @@ public interface NExprRPI extends NComponent {
 
     NExprFunction createFunction(String name, NExprCallHandler handler);
 
-    NExprOperator createOperator(String name, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity associativity, NExprCallHandler handler);
+    NExprOperator createOperator(String name, NFixity operatorType, int operatorPrecedence, NOperatorAssociativity associativity, NExprCallHandler handler);
 }

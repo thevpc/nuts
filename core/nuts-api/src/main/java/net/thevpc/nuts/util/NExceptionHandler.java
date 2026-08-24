@@ -1,7 +1,7 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.core.NExceptionWithExitCodeBase;
@@ -181,7 +181,7 @@ public class NExceptionHandler {
                         messageFormatted = NMsg.ofStyledError(messageString);
                     }
                 } catch (Exception ex2) {
-                    NLog.of(NApplication.class).log(
+                    NLog.of(NApplicationHandler.class).log(
                             NMsg.ofPlain("unable to get system terminal").asFine(ex2)
                     );
                     //
@@ -248,7 +248,7 @@ public class NExceptionHandler {
                     } else {
                         if (messageFormatted != null) {
                             session.eout().add(NElement.ofObjectBuilder()
-                                    .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().id().get()))
+                                    .set("app-id", NStringUtils.toStringOrEmpty(NApplication.of().id().get()))
                                     .set("error", NText.of(messageFormatted).filteredText())
                                     .build()
                             );
@@ -265,7 +265,7 @@ public class NExceptionHandler {
                             sessionOut.flush();
                         } else {
                             session.eout().add(NElement.ofObjectBuilder()
-                                    .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().id().get()))
+                                    .set("app-id", NStringUtils.toStringOrEmpty(NApplication.of().id().get()))
                                     .set("error", messageString)
                                     .build());
                             if (stacktrace) {

@@ -164,8 +164,8 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
         return NElementRPI.of().createUnaryPrefixOperator(op, first);
     }
 
-    static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NOperatorPosition operatorType, NElement first, NElement second) {
-        return ofExprBuilder().operator(op).position(operatorType).first(first).second(second);
+    static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NExprOpType operatorType, NElement first, NElement second) {
+        return ofExprBuilder().operator(op).fixity(operatorType).first(first).second(second);
     }
 
     static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first, NElement second) {

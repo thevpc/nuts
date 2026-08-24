@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method as an application uninstaller entry point.
  * <p>
- * Methods annotated with {@code @NAppUninstaller} are intended to perform
+ * Methods annotated with {@code @NAppUninstall} are intended to perform
  * clean-up or removal operations for the application, such as deleting
  * installed files, unregistering resources, or reversing changes applied
  * during installation.
@@ -26,6 +26,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NAppUninstaller {
+public @interface NAppUninstall {
 
 }

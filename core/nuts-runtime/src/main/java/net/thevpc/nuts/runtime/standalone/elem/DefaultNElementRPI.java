@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.internal.rpi.NElementRPI;
 import net.thevpc.nuts.io.NInputStreamProvider;
@@ -401,7 +402,7 @@ public class DefaultNElementRPI implements NElementRPI {
         NAssert.requireNamedNonNull(op, "operator");
         NAssert.requireNamedNonNull(first, "first operand");
         NAssert.requireNamedNonNull(second, "second operand");
-        return createOpBuilder().operator(op).position(NOperatorPosition.INFIX).first(first).second(second).build();
+        return createOpBuilder().operator(op).fixity(NFixity.INFIX).first(first).second(second).build();
     }
 
     @Override
@@ -442,7 +443,7 @@ public class DefaultNElementRPI implements NElementRPI {
     @Override
     public NBoundAffix createBoundAffix(NAffix affix, NAffixAnchor anchor) {
         NAssert.requireNamedNonNull(affix, "affix");
-        NAssert.requireNamedNonNull(anchor, "position");
+        NAssert.requireNamedNonNull(anchor, "anchor");
         return DefaultNBoundAffix.of(affix, anchor);
     }
 
@@ -450,7 +451,7 @@ public class DefaultNElementRPI implements NElementRPI {
     public NOperatorElement createUnaryPrefixOperator(NOperatorSymbol op, NElement operand) {
         NAssert.requireNamedNonNull(op, "operator");
         NAssert.requireNamedNonNull(operand, "operand");
-        return createOpBuilder().operator(op).position(NOperatorPosition.PREFIX).first(operand).build();
+        return createOpBuilder().operator(op).fixity(NFixity.PREFIX).first(operand).build();
     }
 
     @Override

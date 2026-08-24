@@ -2723,7 +2723,7 @@ public class App {
 
     @App.Main
     public void run() {
-        NCmdLine cmd = NApp.of().cmdLine();
+        NCmdLine cmd = NApplication.of().cmdLine();
         File file = new File("file.xls");
         while (cmd.hasNext()) {
             switch (cmd.getKey().getString()) {
@@ -2749,17 +2749,17 @@ public class App {
         }
     }
 
-    @NAppInstaller // this method is not required, implement when needed
+    @NAppInstall // this method is not required, implement when needed
     public void onUninstallApplication() {
         s.out().printf("we are installing My Application : %s%n", s.getAppId());
     }
 
-    @NAppUninstaller // this method is not required, implement when needed
+    @NAppUninstall // this method is not required, implement when needed
     public void onUninstallApplication() {
         s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
     }
 
-    @NAppUpdater // this method is not required, implement when needed
+    @NAppUpdate // this method is not required, implement when needed
     public void onUpdateApplication() {
         s.out().printf("we are updating My Application : %s%n", s.getAppId());
     }

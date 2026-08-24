@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -23,11 +23,11 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootCompleteCmdlineRequest;
@@ -37,10 +37,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NFetchStrategy;
-import net.thevpc.nuts.core.NBootOptions;
-import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
@@ -84,8 +81,8 @@ public class NWorkspaceHelper {
 
     public static void runBootCommand(NWorkspace workspace) {
         workspace.runWith(() -> {
-            NBootOptions info2 = new DefaultNBootOptionsBuilder(((NWorkspaceExt)workspace).getCallerBootOptionsInfo()).build();
-            NApp.of().id(workspace.apiId());
+            NBootOptions info2 = new DefaultNBootOptionsBuilder(((NWorkspaceExt) workspace).getCallerBootOptionsInfo()).build();
+            NApplication.of().id(workspace.apiId());
             NLog LOG = NLog.of(NBootWorkspaceImpl.class);
             LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
                     .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
@@ -113,10 +110,11 @@ public class NWorkspaceHelper {
             execCmd.run();
         });
     }
+
     public static void completeBootCommand(NWorkspace workspace, NBootCompleteCmdlineRequest completeRequest) {
         workspace.runWith(() -> {
-            NBootOptions info2 = new DefaultNBootOptionsBuilder(((NWorkspaceExt)workspace).getCallerBootOptionsInfo()).build();
-            NApp.of().id(workspace.apiId());
+            NBootOptions info2 = new DefaultNBootOptionsBuilder(((NWorkspaceExt) workspace).getCallerBootOptionsInfo()).build();
+            NApplication.of().id(workspace.apiId());
             NLog LOG = NLog.of(NBootWorkspaceImpl.class);
             LOG.log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2))
                     .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
@@ -133,39 +131,39 @@ public class NWorkspaceHelper {
             while (executorOptionsCmdLine.hasNext()) {
                 execCmd.configureLast(executorOptionsCmdLine);
             }
-            if (info2.applicationArguments().get().isEmpty() || completeRequest.request().argIndex()==0) {
+            if (info2.applicationArguments().get().isEmpty() || completeRequest.request().argIndex() == 0) {
                 workspace.bootOptions().stdout().orElse(System.out).println(
                         new NBootCompleteResult(
                                 new ArrayList<>(Arrays.asList(
                                         new NBootCompleteResult.Candidate("welcome")
-                                        ,new NBootCompleteResult.Candidate("install")
-                                        ,new NBootCompleteResult.Candidate("uninstall")
-                                        ,new NBootCompleteResult.Candidate("exec")
+                                        , new NBootCompleteResult.Candidate("install")
+                                        , new NBootCompleteResult.Candidate("uninstall")
+                                        , new NBootCompleteResult.Candidate("exec")
                                 )),
-                                new ArrayList<>(Arrays.asList())
+                                new ArrayList<>(Collections.emptyList())
                         )
                                 .format()
                 );
             } else {
-                execCmd.executorOption("--nuts-exec-mode=complete,"+completeRequest.request().argIndex()+","+completeRequest.request().argOffset());
+                execCmd.executorOption("--nuts-exec-mode=complete," + completeRequest.request().argIndex() + "," + completeRequest.request().argOffset());
                 execCmd.command(info2.applicationArguments().get());
                 execCmd.run();
             }
         });
     }
 
-    public static void runApplication(NWorkspace workspace,NApplicationHandleMode handleMode) {
+    public static void runApplication(NWorkspace workspace, NApplicationHandleMode handleMode) {
         NApplicationHandleMode.runHandled(() ->
                 workspace.runWith(() -> {
                     boolean inherited = NWorkspace.of().bootOptions().inherited().orElse(false);
-                    NApp nApp = NApp.of();
+                    NApplication nApp = NApplication.of();
                     // Resolve the application class name (explicit or fallback)
                     String appClassName = nApp.sourceType() == null ? null : nApp.sourceType().getName();
                     if (appClassName == null) {
                         appClassName = nApp.source() == null ? null : nApp.source().getClass().getName();
                     }
                     NId appId = nApp.id().orNull();
-                    NLog.of(NApplication.class)
+                    NLog.of(NApplicationHandler.class)
                             .log(
                                     NMsg.ofC(
                                             NI18n.of("running application %s: %s (%s) %s"),
@@ -177,23 +175,32 @@ public class NWorkspaceHelper {
                             );
                     try {
                         switch (nApp.mode()) {
-                            //both RUN and AUTO_COMPLETE execute the run branch. Later
-                            //session.isExecMode()
-                            case RUN:
+                            case RUN: {
+                                nApp.handler().run();
+                                return;
+                            }
                             case COMPLETE: {
-                                nApp.application().run();
+                                NSession s = NSession.of();
+                                s.copy()
+                                        .bot(true)
+                                        .trace(false)
+                                        .logTermLevel(Level.OFF)
+                                        .confirm(NConfirmationMode.NO)
+                                        .runWith(() -> {
+                                            nApp.handler().onCompleteApplication();
+                                        });
                                 return;
                             }
                             case INSTALL: {
-                                nApp.application().onInstallApplication();
+                                nApp.handler().onInstallApplication();
                                 return;
                             }
                             case UPDATE: {
-                                nApp.application().onUpdateApplication();
+                                nApp.handler().onUpdateApplication();
                                 return;
                             }
                             case UNINSTALL: {
-                                nApp.application().onUninstallApplication();
+                                nApp.handler().onUninstallApplication();
                                 return;
                             }
                         }

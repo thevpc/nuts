@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Builder used to configure and execute a Nuts {@link NApplication}.
+ * Builder used to configure and execute a Nuts {@link NApplicationHandler}.
  *
  * <p>This class supports:
  * <ul>
@@ -58,7 +58,7 @@ import java.util.List;
  * This builder orchestrates argument parsing, instance preparation, execution mode
  * dispatching, and high-level runtime behavior for Nuts applications.
  */
-public class NAppBuilder {
+public class NApplicationBuilder {
 
     /**
      * Defines how runtime errors should be handled.
@@ -85,21 +85,21 @@ public class NAppBuilder {
     /**
      * Creates a new empty builder.
      */
-    public static NAppBuilder of() {
-        return new NAppBuilder();
+    public static NApplicationBuilder of() {
+        return new NApplicationBuilder();
     }
 
     /**
      * Creates a new builder and sets plain arguments.
      */
-    public static NAppBuilder of(String[] args) {
-        return new NAppBuilder().args(args);
+    public static NApplicationBuilder of(String[] args) {
+        return new NApplicationBuilder().args(args);
     }
 
     /**
      * Errors are handled by Nuts (default behavior).
      */
-    public NAppBuilder handleErrors() {
+    public NApplicationBuilder handleErrors() {
         this.handleMode = NApplicationHandleMode.HANDLE;
         return this;
     }
@@ -107,7 +107,7 @@ public class NAppBuilder {
     /**
      * Errors are propagated to the caller.
      */
-    public NAppBuilder propagateErrors() {
+    public NApplicationBuilder propagateErrors() {
         this.handleMode = NApplicationHandleMode.PROPAGATE;
         return this;
     }
@@ -115,7 +115,7 @@ public class NAppBuilder {
     /**
      * Errors are considered fatal and cause process exit.
      */
-    public NAppBuilder fatalErrors() {
+    public NApplicationBuilder fatalErrors() {
         this.handleMode = NApplicationHandleMode.EXIT;
         return this;
     }
@@ -123,7 +123,7 @@ public class NAppBuilder {
     /**
      * Errors are ignored (no operation).
      */
-    public NAppBuilder ignoreErrors() {
+    public NApplicationBuilder ignoreErrors() {
         this.handleMode = NApplicationHandleMode.NOP;
         return this;
     }
@@ -132,7 +132,7 @@ public class NAppBuilder {
         return handleMode;
     }
 
-    public NAppBuilder handleMode(NApplicationHandleMode mode) {
+    public NApplicationBuilder handleMode(NApplicationHandleMode mode) {
         this.handleMode = mode;
         return this;
     }
@@ -144,7 +144,7 @@ public class NAppBuilder {
     /**
      * Sets the application instance explicitly.
      */
-    public NAppBuilder instance(Object applicationInstance) {
+    public NApplicationBuilder instance(Object applicationInstance) {
         this.instance = applicationInstance;
         return this;
     }
@@ -170,7 +170,7 @@ public class NAppBuilder {
     /**
      * Creates and stores an instance from a class type.
      */
-    public NAppBuilder type(Class applicationType) {
+    public NApplicationBuilder type(Class applicationType) {
         this.instance = applicationType == null ? null : createInstance(applicationType);
         return this;
     }
@@ -182,7 +182,7 @@ public class NAppBuilder {
     /**
      * Sets Nuts bootstrap/WS args explicitly.
      */
-    public NAppBuilder nutsArgs(String... nutsArgs) {
+    public NApplicationBuilder nutsArgs(String... nutsArgs) {
         this.nutsArgs = nutsArgs;
         return this;
     }
@@ -190,7 +190,7 @@ public class NAppBuilder {
     /**
      * Parses a Nuts argument line into structured args.
      */
-    public NAppBuilder nutsArgsLine(String nutsArgs) {
+    public NApplicationBuilder nutsArgsLine(String nutsArgs) {
         this.nutsArgs = NBootCmdLine.parseDefault(nutsArgs);
         return this;
     }
@@ -200,7 +200,7 @@ public class NAppBuilder {
      * Note: Logic seems incorrect—currently re-adds the parsed items instead
      * of merging `extraArgs`. Might be a bug.
      */
-    public NAppBuilder nutsArgsLine(String nutsArgs, String[] extraArgs) {
+    public NApplicationBuilder nutsArgsLine(String nutsArgs, String[] extraArgs) {
         List<String> all = new ArrayList<>();
         all.addAll(Arrays.asList(NBootCmdLine.parseDefault(nutsArgs)));
         if (extraArgs != null) {
@@ -221,12 +221,12 @@ public class NAppBuilder {
     /**
      * Sets plain application arguments.
      */
-    public NAppBuilder args(String[] args) {
+    public NApplicationBuilder args(String[] args) {
         this.args = args;
         return this;
     }
 
-    public NAppBuilder prepare() {
+    public NApplicationBuilder prepare() {
         if (this.preparedWorkspace == null) {
             try {
                 NClock now = NClock.now();
@@ -235,7 +235,7 @@ public class NAppBuilder {
                     ws = Nuts.openWorkspace(NBootArguments.of(this.nutsArgs()).appArgs(args));
                 }
                 ws.runWith(() -> {
-                    NApp a = NApp.of();
+                    NApplication a = NApplication.of();
                     a.prepare(new NAppInitInfo(args, null, null, null, null, now));
                 });
                 this.preparedWorkspace = ws;

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a method as the installer for an application.
  * <p>
- * Methods annotated with {@code @NAppInstaller} are responsible for
+ * Methods annotated with {@code @NAppInstall} are responsible for
  * performing installation tasks, such as setting up required resources,
  * directories, or configuration needed before the application can run.
  * </p>
@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * Example usage:
  * <pre>{@code
  * public class MyApp {
- *     @NAppInstaller
+ *     @NAppInstall
  *     public static void install() {
  *         System.out.println("Installing application resources...");
  *     }
@@ -36,6 +36,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NAppInstaller {
+public @interface NAppInstall {
 
 }

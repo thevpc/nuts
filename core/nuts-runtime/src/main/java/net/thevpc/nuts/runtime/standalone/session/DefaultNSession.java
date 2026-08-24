@@ -24,9 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.session;
 
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.core.*;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NExecutionType;
@@ -165,7 +165,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
      */
     @Override
     public final NSession configure(boolean skipUnsupported, String... args) {
-        NId appId = NApp.of().id().orNull();
+        NId appId = NApplication.of().id().orNull();
         String appName = appId == null ? "app" : appId.artifactId();
         return NCmdLineConfigurable.configure(this, skipUnsupported, args, appName);
     }
@@ -578,7 +578,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     cmdLine.skip();
                     if (enabled) {
                         if (cmdLine.isExecMode()) {
-                            NApp.of().printHelp();
+                            NApplication.of().printHelp();
                         }
                         cmdLine.skipAll();
                         throw new NExecutionException(NMsg.ofPlain("help"), NExecutionException.SUCCESS);
@@ -587,7 +587,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 }
                 case "--skip-event": {
                     boolean enabled = a.isUncommented();
-                    switch (NApp.of().mode()) {
+                    switch (NApplication.of().mode()) {
                         case INSTALL:
                         case UNINSTALL:
                         case UPDATE: {
@@ -1368,7 +1368,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
-    public NSession setLogTermLevel(Level level) {
+    public NSession logTermLevel(Level level) {
         this.logTermLevel = level;
         return this;
     }
@@ -1664,7 +1664,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getKey().asString().get();
-                    this.setLogTermLevel(NLogUtils.parseLogLevel(id.substring("--log-term-".length())).onEmpty(null).get());
+                    this.logTermLevel(NLogUtils.parseLogLevel(id.substring("--log-term-".length())).onEmpty(null).get());
                 }
                 break;
             }
@@ -1674,7 +1674,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             {
                 cmdLine.skip();
                 if (enabled && a.literalValue().asBoolean().orElse(true)) {
-                    this.setLogTermLevel(Level.FINEST);
+                    this.logTermLevel(Level.FINEST);
                     this.logFileLevel(Level.FINEST);
                 }
                 break;
@@ -1693,7 +1693,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 if (enabled) {
                     String id = a.getKey().asString().get();
                     Level lvl = NLogUtils.parseLogLevel(id.substring("--log-".length())).onEmpty(null).get();
-                    this.setLogTermLevel(lvl);
+                    this.logTermLevel(lvl);
                     this.logFileLevel(lvl);
                 }
                 break;

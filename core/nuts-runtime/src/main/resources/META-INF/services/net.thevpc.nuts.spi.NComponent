@@ -59,7 +59,7 @@ net.thevpc.nuts.runtime.standalone.DefaultNIdBuilder
 net.thevpc.nuts.runtime.standalone.DefaultNWorkspaceOptionsBuilder
 
 ##################### Utilities
-net.thevpc.nuts.runtime.standalone.app.NAppImpl
+net.thevpc.nuts.runtime.standalone.app.NApplicationImpl
 net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNGlob
 net.thevpc.nuts.runtime.standalone.io.terminal.history.NCmdLineHistoryImpl
 
