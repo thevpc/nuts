@@ -1,7 +1,0 @@
----
-id: deploy-help
-title: Deploy Cmdline
----
-
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/settings.ntf"}}
-

@@ -1,7 +1,0 @@
----
-id: license-help
-title: License Command Commandline
----
-
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/license.ntf"}}
-

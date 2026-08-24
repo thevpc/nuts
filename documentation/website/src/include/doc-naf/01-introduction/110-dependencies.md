@@ -2,6 +2,8 @@
 title: Hello World
 ---
 
+NAF powers the [Nuts package manager](/doc-nuts).
+To learn about using Nuts as a tool, see the Nuts documentation.
 
 To make use of `NAF`  you need add the dependency  ```net.thevpc.nuts#nuts:{{apiVersion}}``` and provide a hint to maven to point to the right repository ``` https://maven.thevpc.net```
 

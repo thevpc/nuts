@@ -106,23 +106,3 @@ Here after a showcase of available NTF syntax.
 
 ![text-coloring-format](assets/images/console/text-coloring-format-04.png)
 
-# Nuts Text Format Specification
-
-```
-<TOKEN> S10: '##########'
-<TOKEN> S9 : '#########'
-<TOKEN> S8 : '########'
-<TOKEN> S7 : '#######'
-<TOKEN> S6 : '######'
-<TOKEN> S5 : '#####'
-<TOKEN> S4 : '####'
-<TOKEN> S3 : '###'
-<TOKEN> S2 : '##'
-<TOKEN> S1 : '##'
-<TOKEN> A3 : '\```'
-
-<RULE>  S2 ':' KEY ':' ANYTHING S2
-<RULE>  S2 '{:' WORD ANYTHING S2
-<RULE>  13 ANYTHING A3
-
-```
