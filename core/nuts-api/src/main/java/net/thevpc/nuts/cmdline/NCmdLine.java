@@ -896,13 +896,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     NCmdLine addAll(List<String> arguments);
 
     /**
-     * Run.
-     *
-     * @param processor processor
-     */
-    void run(NCmdLineRunner processor);
-
-    /**
      * Push back.
      *
      * @param args args
@@ -948,22 +941,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     default void forEach(Consumer<? super NArg> action) {
         Iterable.super.forEach(action);
     }
-
-    /**
-     * For each peek.
-     *
-     * @param action action
-     * @return for each peek result
-     */
-    NCmdLine forEachPeek(NCmdLineProcessor action);
-
-    /**
-     * For each peek.
-     *
-     * @param actions actions
-     * @return for each peek result
-     */
-    NCmdLine forEachPeek(NCmdLineProcessor... actions);
 
     /**
      * Copy.

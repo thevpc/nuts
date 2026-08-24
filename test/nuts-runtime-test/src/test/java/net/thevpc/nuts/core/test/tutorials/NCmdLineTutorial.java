@@ -54,70 +54,19 @@ public class NCmdLineTutorial {
         NBooleanRef boolOption = NRef.ofBoolean(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> nonOptions = new ArrayList<>();
-        cmdLine.run(new NCmdLineRunner() {
-            @Override
-            public boolean next(NArg arg, NCmdLine cmdLine) {
-                if (arg.isOption()) {
-                    switch (arg.key()) {
-                        case "-o":
-                        case "--option": {
-                            cmdLine.matcher().whenAny().asFlag((v) -> boolOption.set(v.booleanValue())).require();
-                            return true;
-                        }
-                        case "-n":
-                        case "--name": {
-                            cmdLine.matcher().whenAny().asEntry((v) -> stringOption.set(v.stringValue())).require();
-                            return true;
-                        }
-                    }
-                    return false;
-                } else {
-                    nonOptions.add(cmdLine.next().get().toString());
-                    return true;
-                }
-            }
+        cmdLine.matcher()
+                        .when("-o","--option").asFlag(a->boolOption.set(a.booleanValue()))
+                        .when("-n","--name").asEntry(a->stringOption.set(a.stringValue()))
+                        .whenNonOption().asArg(a-> nonOptions.add(a.image()))
+                        .requireAll();
 
-            @Override
-            public void validate(NCmdLine cmdLine) {
-                if (nonOptions.isEmpty()) {
-                    cmdLine.throwMissingArgument();
-                }
-            }
-
-            @Override
-            public void run(NCmdLine cmdLine) {
-                NOut.println(NMsg.ofC("running with nonOptions %s", nonOptions));
-            }
-        });
+        if (nonOptions.isEmpty()) {
+            cmdLine.throwMissingArgument();
+        }
+        NOut.println(NMsg.ofC("running with nonOptions %s", nonOptions));
     }
 
-    public static void cmdLineHelpExample3() {
-        NCmdLine cmdLine = NApplication.of().cmdLine();
-        NBooleanRef boolOption = NRef.ofBoolean(false);
-        NRef<String> stringOption = NRef.ofNull();
-        List<String> nonOptions = new ArrayList<>();
-        cmdLine.forEachPeek((cmdLine1) -> {
-            NArg a = cmdLine1.peek().get();
-            if (a.isOption()) {
-                switch (a.key()) {
-                    case "-o":
-                    case "--option": {
-                        cmdLine1.matcher().whenAny().asFlag((v) -> boolOption.set(v.booleanValue())).require();
-                        return true;
-                    }
-                    case "-n":
-                    case "--name": {
-                        cmdLine1.matcher().whenAny().asEntry((v) -> stringOption.set(v.stringValue())).require();
-                        return true;
-                    }
-                }
-                return false;
-            } else {
-                nonOptions.add(cmdLine1.next().get().toString());
-                return true;
-            }
-        });
-    }
+
 
     public static void cmdLineHelpExample4() {
         NCmdLine cmdLine = NApplication.of().cmdLine();

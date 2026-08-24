@@ -229,6 +229,12 @@
   "name":"net.thevpc.nuts.runtime.standalone.app.NAppImpl"
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.app.NApplicationImpl",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineRPI"
 },
 {

@@ -2260,46 +2260,7 @@ public class DefaultNCmdLine implements NCmdLine {
         return isEmpty();
     }
 
-    @Override
-    public void run(NCmdLineRunner processor) {
-        NCmdLineConfigurable configurable = configurable();
-        NCmdLine cmd = this;
-        NArg a;
-        processor.init(cmd);
-        while (cmd.hasNext()) {
-            a = cmd.peek().get();
-            if (processor.next(a, cmd)) {
-                NArg next = cmd.peek().orNull();
-                //reference equality!
-                if (next == a) {
-                    //was not consumed!
-                    throwError(NMsg.ofC("next must consume the argument: %s",
-                            a));
-                }
-            } else if (configurable != null && configurable.configureFirst(cmd)) {
-                NArg next = cmd.peek().orNull();
-                //reference equality!
-                if (next == a) {
-                    //was not consumed!
-                    throwError(NMsg.ofC("%s must consume the option: %s",
-                            ("configurable.configureFirst(...)"),
-                            a));
-                }
-            } else {
-                cmd.throwUnexpectedArgument();
-            }
-        }
-        processor.validate(cmd);
 
-        // test if application is running in exec mode
-        // (and not in autoComplete mode)
-        if (this.isExecMode()) {
-            //do the good staff here
-            processor.run(cmd);
-        } else if (isCompleteMode()) {
-            processor.complete(this);
-        }
-    }
 
     /**
      * Push back.
@@ -2338,72 +2299,6 @@ public class DefaultNCmdLine implements NCmdLine {
             this.args.addAll(Arrays.stream(args).map(x -> x == null ? "" : x).collect(Collectors.toList()));
         }
         return this;
-    }
-
-    @Override
-    public NCmdLine forEachPeek(NCmdLineProcessor... actions) {
-        NAssert.requireNonNull(actions, () -> NMsg.ofC("missing processors"));
-        NAssert.requireTrue(actions.length > 0, () -> NMsg.ofC("missing processors"));
-        while (hasNext()) {
-            boolean some = false;
-            NArg a = peek().orNull();
-            for (NCmdLineProcessor action : actions) {
-                if (action != null) {
-                    if (action.process(this)) {
-                        some = true;
-                        break;
-                    } else {
-                        NArg b = peek().orNull();
-                        if (b != a) {
-                          /**
-                           * Throw error.
-                           *
-                           * @param a) a)
-                           */
-                            throwError(NMsg.ofC("process(...) returned false but consumed argument: %s", a));
-                        }
-                    }
-                }
-            }
-            if (!some) {
-                if (configurable != null && configurable.configureFirst(this)) {
-                    NArg b = peek().orNull();
-                    if (b == a) {
-                      /**
-                       * Throw error.
-                       *
-                       * @param a) a)
-                       */
-                        throwError(NMsg.ofC("configureFirst(...) returned true but did not consume argument: %s", a));
-                    } else {
-                        this.throwUnexpectedArgument();
-                    }
-                }
-            } else {
-                NArg b = peek().orNull();
-                if (b == a) {
-                  /**
-                   * Throw error.
-                   *
-                   * @param a) a)
-                   */
-                    throwError(NMsg.ofC("process(...) returned true but did not consume argument: %s", a));
-                }
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NCmdLine forEachPeek(NCmdLineProcessor processor) {
-        NAssert.requireNonNull(processor, () -> NMsg.ofC("processor"));
-        /**
-         * For each peek.
-         *
-         * @param NCmdLineProcessor[]{processor} n cmd line processor[]{processor}
-         * @return for each peek result
-         */
-        return forEachPeek(new NCmdLineProcessor[]{processor});
     }
 
     private static class MyContext implements NArgValueComplete.Context {

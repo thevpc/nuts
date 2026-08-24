@@ -488,21 +488,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.app.NAppBuilder",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.app.NAppDefinition",
+    "name": "net.thevpc.nuts.app.NAppComplete",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -530,7 +516,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.app.NAppInstaller",
+    "name": "net.thevpc.nuts.app.NAppInstall",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -544,7 +530,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.app.NAppRunner",
+    "name": "net.thevpc.nuts.app.NAppRun",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -572,7 +558,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.app.NAppUninstaller",
+    "name": "net.thevpc.nuts.app.NAppUninstall",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -586,7 +572,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.app.NAppUpdater",
+    "name": "net.thevpc.nuts.app.NAppUpdate",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -614,7 +600,35 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.app.NApplicationBuilder",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.app.NApplicationHandleMode",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.app.NApplicationHandler",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -3246,20 +3260,6 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.cmdline.NCmdLineArgProcessor",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
     "name": "net.thevpc.nuts.cmdline.NCmdLineConfigurable",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -3359,20 +3359,6 @@
   },
   {
     "name": "net.thevpc.nuts.cmdline.NCmdLineProcessor",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.cmdline.NCmdLineRunner",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -8272,20 +8258,6 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.elem.NOperatorPosition",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
     "name": "net.thevpc.nuts.elem.NOperatorSymbol",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -8846,20 +8818,6 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.expr.NExprOpType",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
     "name": "net.thevpc.nuts.expr.NExprOperator",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -8973,6 +8931,20 @@
   },
   {
     "name": "net.thevpc.nuts.expr.NExprWordNode",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.expr.NFixity",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -9168,7 +9140,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.internal.NReservedApplication$AnnotationClassNApplication",
+    "name": "net.thevpc.nuts.internal.NReservedApplication$AnnotationClassNApplicationHandler",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -13410,7 +13382,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.app.NAppImpl",
+    "name": "net.thevpc.nuts.runtime.standalone.app.NAppPrepUtils",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -13424,7 +13396,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.app.NAppPrepUtils",
+    "name": "net.thevpc.nuts.runtime.standalone.app.NApplicationImpl",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

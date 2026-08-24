@@ -4,7 +4,6 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NArgCompletePosition;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
@@ -324,14 +323,6 @@ public interface NApplication extends NComponent {
      * @return an NCmdLine object representing the command line arguments and options.
      */
     NCmdLine cmdLine();
-
-    /**
-     * Processes the command line arguments using the provided command line runner.
-     *
-     * @param commandLineRunner an instance of NCmdLineRunner responsible for handling the command line input
-     */
-    @Deprecated
-    void runCmdLine(NCmdLineRunner commandLineRunner);
 
     /**
      * Retrieves the folder path associated with the specified storage type location.

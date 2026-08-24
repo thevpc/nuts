@@ -1,6 +1,5 @@
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.io.NPropsTransformer;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;

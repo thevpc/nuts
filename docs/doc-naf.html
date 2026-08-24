@@ -770,7 +770,7 @@
                     </h2>
 
                     <div class="text-card">
-                        Nuts is much more than a package manager — it is a powerful and extensible runtime framework for Java applications. While it provides robust support for dependency resolution and artifact management compatible with Maven repositories, Nuts also delivers a comprehensive suite of libraries and services that turn it into a foundation for building modular, interactive, and automated tools.Whether you're developing a CLI utility, a scripting engine, a DevOps automation tool, or a distributed plugin-based system, Nuts provides the scaffolding to manage dependencies, sessions, input/output, configuration, extensions, and workspace isolation — all in a portable and embeddable way.<p class="md-phrase"><mark class="md-code md-code-ac1">nuts</mark> is a package manager that can be embedded in your application and hence present a solid Application Framework and tooling to make the applicable more robust and more portable.</p><p class="md-phrase"><mark class="md-code md-code-ac1">nuts</mark> as a Framework (or Nuts Application Framework, or even simpler : <mark class="md-code md-code-ac1">NAF</mark>):</p><ul class="md-ul"><li class="md-uli">Adds support for Application Lifecycle (Hooks for install, update, uninstall)</li><li class="md-uli">Adds support for auto update</li><li class="md-uli">Adds support for isolated input/output (via session in/out)</li><li class="md-uli">Adds support for Desktop Integration<ul class="md-ul"><li class="md-uli">Adds Shortcuts, Menus</li><li class="md-uli">Adds Aliases</li></ul></li><li class="md-uli">Adds support for Base Directory API<ul class="md-ul"><li class="md-uli">API to manage per application directories (log, cache, config,...)</li></ul></li><li class="md-uli">Adds support for Base Commandline API<ul class="md-ul"><li class="md-uli">standardized commandline options</li><li class="md-uli">inherit common options (--table, --json, ...)</li></ul></li></ul><H4 class="md-title-2">Dual Role by Design</H4>At its core, Nuts plays two essential roles:<ul class="md-ul"><li class="md-uli">As a package manager, Nuts handles runtime dependency resolution, dynamic execution of artifacts, and integration with Maven-compatible repositories.</li><li class="md-uli">As a framework, Nuts offers a rich set of APIs to handle I/O, configuration, text formatting, command execution, file systems, compressed archives, and more — helping developers write cleaner, more powerful, and portable applications.</li></ul><H4 class="md-title-2">Build, Embed, Automate</H4>Nuts is designed to work in multiple modes of operation:<ul class="md-ul"><li class="md-uli">Run Java programs and tools directly from repositories without downloading or installing them manually.</li><li class="md-uli">Integrate it as a library to give your own application full access to the Nuts runtime capabilities.</li><li class="md-uli">Use it as a DevOps engine to build repeatable scripts, installers, or deployment workflows.</li><li class="md-uli">Use Nuts as a command-line tool to install, run, or deploy applications.</li><li class="md-uli">Build your own ecosystem of versioned components, launchers, and tools powered by Nuts' modular runtime.</li></ul>In short, Nuts is a full-stack developer toolbox — part package manager, part framework, part scripting engine — designed to make modern Java development more dynamic, composable, and automation-friendly.<H4 class="md-title-2">Whether you are:</H4><ul class="md-ul"><li class="md-uli">Building CLI tools that need versioned plugins and extensible command handling,</li><li class="md-uli">Developing DevOps utilities with integrated workspace/session management,</li><li class="md-uli">Creating modular applications that dynamically load artifacts at runtime,</li><li class="md-uli">Writing cross-environment installers, launchers, or monitoring tools,</li><li class="md-uli">Or designing educational platforms, scripting DSLs, or JVM-based OS abstractions,</li></ul>Nuts delivers the foundational infrastructure so you can focus on features, not plumbing. Key CapabilitiesThe NAF framework offers a wide set of features: ✅ Package & Dependency Management<ul class="md-ul"><li class="md-uli">Compatible with Maven repositories and standards</li><li class="md-uli">Supports local, remote, and custom repositories</li><li class="md-uli">Enables runtime dependency resolution and dynamic artifact loading</li></ul>✅ Configurable Workspaces & Sessions<ul class="md-ul"><li class="md-uli">Isolated and shared workspace models with full lifecycle control</li><li class="md-uli">Sessions encapsulate runtime configuration, user preferences, I/O handling, logging, and output styles</li><li class="md-uli">Built-in support for dry-run, trace, confirmation, GUI/headless modes</li></ul>✅ Structured I/O & Logging<ul class="md-ul"><li class="md-uli">Supports semantic console output (NTF format) with colors, styles, and structured messages</li><li class="md-uli">Unified API for stdout/stderr, input, logging, formatting, and piping</li><li class="md-uli">Handles both human-friendly and machine-readable outputs (e.g., JSON, XML, Props, Tree)</li></ul>✅ Filesystem & Networking Utilities<ul class="md-ul"><li class="md-uli">Provides advanced file abstraction via NPath</li><li class="md-uli">Built-in support for streaming, compressing, uncompressing, digesting, and manipulating file trees</li><li class="md-uli">Unified access to HTTP, classpath, resources, and virtual filesystems</li></ul>✅ Extensibility & Integration<ul class="md-ul"><li class="md-uli">Supports modular extension points: listeners, commands, install hooks, and repositories</li><li class="md-uli">Embedded scripting with support for Java source snippets and other languages</li><li class="md-uli">Can be integrated into Spring, JavaFX, Swing, or any plain Java project</li></ul>✅ Developer & DevOps Friendly<ul class="md-ul"><li class="md-uli">Features like NRun, NExec, NShell, and NOps make it ideal for automation</li><li class="md-uli">Cross-platform support: Linux, macOS, Windows</li><li class="md-uli">Zero external runtime dependencies — deploy as a bare JAR, with automatic resolution on first use</li></ul><H4 class="md-title-2">Why Use NAF?</H4><p class="md-phrase">Unlike traditional libraries or shell utilities, <mark class="md-code md-code-ac1">NAF</mark> brings together the flexibility of a modern scripting environment, the structure of a dependency-aware runtime, and the developer convenience of a polished CLI framework — all in one embeddable package. You can think of it as your:</p><ul class="md-ul"><li class="md-uli">Maven-like package manager, but runtime aware</li><li class="md-uli">Command-line framework, but fully pluggable</li><li class="md-uli">Launcher platform, but without installation or configuration hurdles</li><li class="md-uli">Shell scripting toolkit, but type-safe and Java-native</li></ul><p class="md-phrase">With <mark class="md-code md-code-ac1">NAF</mark>, the boundary between development and runtime fades away, letting you write, deploy, and evolve tools without sacrificing portability, maintainability, or developer experience.</p><H4 class="md-title-2">Lightweight, Modular, and Composable</H4><ul class="md-ul"><li class="md-uli">Modular architecture built around workspaces, sessions, and execution contexts.</li><li class="md-uli">Supports multi-repository, multi-version, and multi-runtime setups.</li><li class="md-uli">Helps maintain separation between application logic and environment/runtime logic — a key feature for scripting, testing, and dynamic execution.</li></ul><H4 class="md-title-2">Not Just Tools — Ecosystems</H4><p class="md-phrase"><mark class="md-code md-code-ac1">NAF</mark> encourages composability: it enables you to define reusable, versioned components that can evolve independently and work across environments. It brings a new level of reusability to the Java ecosystem, bridging the gap between packaged applications, scripts, and shared libraries. Whether you're building a command-line tool, a plugin system, a runtime launcher, or a portable enterprise toolkit — Nuts gives you a structured, scalable, and developer-friendly platform to do it all.</p>
+                        Nuts is much more than a package manager — it is a powerful and extensible runtime framework for Java applications. While it provides robust support for dependency resolution and artifact management compatible with Maven repositories, Nuts also delivers a comprehensive suite of libraries and services that turn it into a foundation for building modular, interactive, and automated tools.Whether you're developing a CLI utility, a scripting engine, a DevOps automation tool, or a distributed plugin-based system, Nuts provides the scaffolding to manage dependencies, sessions, input/output, configuration, extensions, and workspace isolation — all in a portable and embeddable way.<p class="md-phrase"><mark class="md-code md-code-ac1">nuts</mark> is a package manager that can be embedded in your application and hence present a solid Application Framework and tooling to make the applicable more robust and more portable.</p><p class="md-phrase"><mark class="md-code md-code-ac1">nuts</mark> as a Framework (or Nuts Application Framework, or even simpler : <mark class="md-code md-code-ac1">NAF</mark>):</p><ul class="md-ul"><li class="md-uli">Adds support for Application Lifecycle (Hooks for install, update, uninstall)</li><li class="md-uli">Adds support for auto update</li><li class="md-uli">Adds support for isolated input/output (via session in/out)</li><li class="md-uli">Adds support for Desktop Integration<ul class="md-ul"><li class="md-uli">Adds Shortcuts, Menus</li><li class="md-uli">Adds Aliases</li></ul></li><li class="md-uli">Adds support for Base Directory API<ul class="md-ul"><li class="md-uli">API to manage per application directories (log, cache, config,...)</li></ul></li><li class="md-uli">Adds support for Base Commandline API<ul class="md-ul"><li class="md-uli">standardized commandline options</li><li class="md-uli">inherit common options (--table, --json, ...)</li></ul></li></ul><H4 class="md-title-2">Dual Role by Design</H4>At its core, Nuts plays two essential roles:<ul class="md-ul"><li class="md-uli">As a package manager, Nuts handles runtime dependency resolution, dynamic execution of artifacts, and integration with Maven-compatible repositories.</li><li class="md-uli">As a framework, Nuts offers a rich set of APIs to handle I/O, configuration, text formatting, command execution, file systems, compressed archives, and more — helping developers write cleaner, more powerful, and portable applications.</li></ul><H4 class="md-title-2">Build, Embed, Automate</H4>Nuts is designed to work in multiple modes of operation:<ul class="md-ul"><li class="md-uli">Run Java programs and tools directly from repositories without downloading or installing them manually.</li><li class="md-uli">Integrate it as a library to give your own application full access to the Nuts runtime capabilities.</li><li class="md-uli">Use it as a DevOps engine to build repeatable scripts, installers, or deployment workflows.</li><li class="md-uli">Use Nuts as a command-line tool to install, run, or deploy applications.</li><li class="md-uli">Build your own ecosystem of versioned components, launchers, and tools powered by Nuts' modular runtime.</li></ul>In short, Nuts is a full-stack developer toolbox — part package manager, part framework, part scripting engine — designed to make modern Java development more dynamic, composable, and automation-friendly.<H4 class="md-title-2">Whether you are:</H4><ul class="md-ul"><li class="md-uli">Building CLI tools that need versioned plugins and extensible command handling,</li><li class="md-uli">Developing DevOps utilities with integrated workspace/session management,</li><li class="md-uli">Creating modular applications that dynamically load artifacts at runtime,</li><li class="md-uli">Writing cross-environment installers, launchers, or monitoring tools,</li><li class="md-uli">Or designing educational platforms, scripting DSLs, or JVM-based OS abstractions,</li></ul>Nuts delivers the foundational infrastructure so you can focus on features, not plumbing. Key CapabilitiesThe NAF framework offers a wide set of features: ✅ Package & Dependency Management<ul class="md-ul"><li class="md-uli">Compatible with Maven repositories and standards</li><li class="md-uli">Supports local, remote, and custom repositories</li><li class="md-uli">Enables runtime dependency resolution and dynamic artifact loading</li></ul>✅ Configurable Workspaces & Sessions<ul class="md-ul"><li class="md-uli">Isolated and shared workspace models with full lifecycle control</li><li class="md-uli">Sessions encapsulate runtime configuration, user preferences, I/O handling, logging, and output styles</li><li class="md-uli">Built-in support for dry-run, trace, confirmation, GUI/headless modes</li></ul>✅ Structured I/O & Logging<ul class="md-ul"><li class="md-uli">Supports semantic console output (NTF format) with colors, styles, and structured messages</li><li class="md-uli">Unified API for stdout/stderr, input, logging, formatting, and piping</li><li class="md-uli">Handles both human-friendly and machine-readable outputs (e.g., JSON, XML, Props, Tree)</li></ul>✅ Filesystem & Networking Utilities<ul class="md-ul"><li class="md-uli">Provides advanced file abstraction via NPath</li><li class="md-uli">Built-in support for streaming, compressing, uncompressing, digesting, and manipulating file trees</li><li class="md-uli">Unified access to HTTP, classpath, resources, and virtual filesystems</li></ul>✅ Extensibility & Integration<ul class="md-ul"><li class="md-uli">Supports modular extension points: listeners, commands, install hooks, and repositories</li><li class="md-uli">Embedded scripting with support for Java source snippets and other languages</li><li class="md-uli">Can be integrated into Spring, JavaFX, Swing, or any plain Java project</li></ul>✅ Developer & DevOps Friendly<ul class="md-ul"><li class="md-uli">Features like NExec, Nsh with ssh support make it ideal for automation</li><li class="md-uli">Cross-platform support: Linux, macOS, Windows</li><li class="md-uli">Zero external runtime dependencies — deploy as a bare JAR, with automatic resolution on first use</li></ul><H4 class="md-title-2">Why Use NAF?</H4><p class="md-phrase">Unlike traditional libraries or shell utilities, <mark class="md-code md-code-ac1">NAF</mark> brings together the flexibility of a modern scripting environment, the structure of a dependency-aware runtime, and the developer convenience of a polished CLI framework — all in one embeddable package. You can think of it as your:</p><ul class="md-ul"><li class="md-uli">Maven-like package manager, but runtime aware</li><li class="md-uli">Command-line framework, but fully pluggable</li><li class="md-uli">Launcher platform, but without installation or configuration hurdles</li><li class="md-uli">Shell scripting toolkit, but type-safe and Java-native</li></ul><p class="md-phrase">With <mark class="md-code md-code-ac1">NAF</mark>, the boundary between development and runtime fades away, letting you write, deploy, and evolve tools without sacrificing portability, maintainability, or developer experience.</p><H4 class="md-title-2">Lightweight, Modular, and Composable</H4><ul class="md-ul"><li class="md-uli">Modular architecture built around workspaces, sessions, and execution contexts.</li><li class="md-uli">Supports multi-repository, multi-version, and multi-runtime setups.</li><li class="md-uli">Helps maintain separation between application logic and environment/runtime logic — a key feature for scripting, testing, and dynamic execution.</li></ul><H4 class="md-title-2">Not Just Tools — Ecosystems</H4><p class="md-phrase"><mark class="md-code md-code-ac1">NAF</mark> encourages composability: it enables you to define reusable, versioned components that can evolve independently and work across environments. It brings a new level of reusability to the Java ecosystem, bridging the gap between packaged applications, scripts, and shared libraries. Whether you're building a command-line tool, a plugin system, a runtime launcher, or a portable enterprise toolkit — Nuts gives you a structured, scalable, and developer-friendly platform to do it all.</p>
                     </div>
 
                     
@@ -925,7 +925,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
   <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.7/compat_report.html" target="_blank">0.8.5→0.8.7 (34.50%)</a></td>
   <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.8/compat_report.html" target="_blank">0.8.5→0.8.8 (34.50%)</a></td>
   <td style="background:#e06550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.9/compat_report.html" target="_blank">0.8.5→0.8.9 (17.70%)</a></td>
-  <td style="background:#e75f50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_1.0.0/compat_report.html" target="_blank">0.8.5→1.0.0 (13.20%)</a></td>
+  <td style="background:#e85f50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_1.0.0/compat_report.html" target="_blank">0.8.5→1.0.0 (13.10%)</a></td>
   </tr>
   <tr>
     <th>0.8.6</th>
@@ -939,7 +939,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.7/compat_report.html" target="_blank">0.8.6→0.8.7 (44.90%)</a></td>
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.8/compat_report.html" target="_blank">0.8.6→0.8.8 (44.90%)</a></td>
   <td style="background:#de6650;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html" target="_blank">0.8.6→0.8.9 (18.50%)</a></td>
-  <td style="background:#e75f50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_1.0.0/compat_report.html" target="_blank">0.8.6→1.0.0 (13.20%)</a></td>
+  <td style="background:#e85f50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_1.0.0/compat_report.html" target="_blank">0.8.6→1.0.0 (13.10%)</a></td>
   </tr>
   <tr>
     <th>0.8.7</th>
@@ -953,7 +953,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
   <td style="background:#50c750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.8/compat_report.html" target="_blank">0.8.7→0.8.8 (99.50%)</a></td>
   <td style="background:#cc7250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.9/compat_report.html" target="_blank">0.8.7→0.8.9 (28.70%)</a></td>
-  <td style="background:#d76a50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_1.0.0/compat_report.html" target="_blank">0.8.7→1.0.0 (22.40%)</a></td>
+  <td style="background:#d86a50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_1.0.0/compat_report.html" target="_blank">0.8.7→1.0.0 (22.20%)</a></td>
   </tr>
   <tr>
     <th>0.8.8</th>
@@ -967,7 +967,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
     <td class="na">-</td>
   <td style="background:#cc7250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_0.8.9/compat_report.html" target="_blank">0.8.8→0.8.9 (28.80%)</a></td>
-  <td style="background:#d76b50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_1.0.0/compat_report.html" target="_blank">0.8.8→1.0.0 (22.50%)</a></td>
+  <td style="background:#d76a50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_1.0.0/compat_report.html" target="_blank">0.8.8→1.0.0 (22.30%)</a></td>
   </tr>
   <tr>
     <th>0.8.9</th>
@@ -981,7 +981,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
     <td class="na">-</td>
     <td class="na">-</td>
     <td class="na">-</td>
-  <td style="background:#909c50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.9_to_1.0.0/compat_report.html" target="_blank">0.8.9→1.0.0 (63.40%)</a></td>
+  <td style="background:#949850;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.9_to_1.0.0/compat_report.html" target="_blank">0.8.9→1.0.0 (60.80%)</a></td>
   </tr>
   <tr>
     <th>1.0.0</th>
@@ -3963,49 +3963,20 @@ nuts -y uninstall com.mycompany.app:my-app
                         </h3>
 
                         <div class="text-card">
-                            <H4 class="md-title-2">Running your application with Nuts</H4><p class="md-phrase">Lets take, step by step, an example of an application that you will run using <mark class="md-code md-code-ac3">nuts</mark> package manager</p><p class="md-phrase">First we can create the project using your favourite IDE or using simply <mark class="md-code md-code-ac1">mvn</mark> command</p><pre><code class="language-">mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DinteractiveMode=false
-</code></pre>We will have a fully generated java project<pre><code class="language-bash">~/&gt; tree
-.
-└── my-app
-    ├── pom.xml
-    └── src
-        ├── main
-            └── java
-                └── com
-                    └── mycompany
-                        └── app
-                            └── App.java
-
-</code></pre><p class="md-phrase">Now we will add some dependencies to the project. Let's add <code class="md-code md-code-ac1">jexcelapi:jxl#2.4.2</code> and update <code class="md-code md-code-ac1">pom.xml</code> consequently.</p><pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-    &lt;groupId&gt;com.mycompany.app&lt;/groupId&gt;
-    &lt;artifactId&gt;my-app&lt;/artifactId&gt;
-    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
-    &lt;packaging&gt;jar&lt;/packaging&gt;
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
-            &lt;artifactId&gt;jxl&lt;/artifactId&gt;
-            &lt;version&gt;2.4.2&lt;/version&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-    &lt;properties&gt;
-        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-        &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
-        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
-    &lt;/properties&gt;
-&lt;/project&gt; 
-</code></pre>Now we update the App.java file<pre><code class="language-java">package com.mycompany.app;
+                            <H4 class="md-title-1">Building Applications with Nuts Application Framework (NAF)</H4><p class="md-phrase">This guide walks through packaging and running a Java application with the <mark class="md-code md-code-ac1">nuts</mark> package manager, then progressively adopting the <b class="md-bold">Nuts Application Framework (NAF)</b> to get lifecycle hooks, structured command-line parsing, and shell completion — all from the same codebase.</p><hr class="divider" class="md-hr"><H4 class="md-title-2">1. The problem NAF solves</H4><p class="md-phrase">A plain Maven project with runtime dependencies is not directly executable. The usual fixes — <mark class="md-code md-code-ac1">maven-shade-plugin</mark>, <mark class="md-code md-code-ac1">maven-assembly-plugin</mark>, manually editing <code class="md-code md-code-ac1">META-INF/MANIFEST.MF</code> — all require baking a specific packaging strategy into the build, and none of them give you application lifecycle hooks (install/update/uninstall) or shell completion for free.</p><p class="md-phrase"><mark class="md-code md-code-ac1">nuts</mark> sidesteps this: it resolves dependencies and the main class at <b class="md-bold">run time</b>, from the artifact's own metadata, so a standard <code class="md-code md-code-ac1">mvn clean install</code> output is already runnable.</p><H4 class="md-title-3">1.1 Generate a project</H4><pre><code class="language-bash">mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app \
+    -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DinteractiveMode=false
+</code></pre><H4 class="md-title-3">1.2 Add a dependency</H4><pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
+    &lt;artifactId&gt;jxl&lt;/artifactId&gt;
+    &lt;version&gt;2.4.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><H4 class="md-title-3">1.3 Write the app</H4><pre><code class="language-java">package com.mycompany.app;
 
 import java.io.File;
-
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
 public class App {
-
     public static void main(String[] args) {
         try {
             WritableWorkbook w = Workbook.createWorkbook(new File(&quot;any-file.xls&quot;));
@@ -4015,42 +3986,29 @@ public class App {
         }
     }
 }
+</code></pre><H4 class="md-title-3">1.4 Build and run — no shading required</H4><pre><code class="language-bash">mvn clean install
 
-</code></pre>finally we compile the app:<pre><code class="language-bash">mvn clean install
-</code></pre><p class="md-phrase">Of course, we won't be able to run the application yet. Would we? For this app to work there are several ways, all of them are complicated and require modifying the <code class="md-code md-code-ac1">pom.xml</code>  and even modifying the output jar. we can for instance generate an output lib directory and update the <mark class="md-code md-code-ac1">META-INF</mark> file using <mark class="md-code md-code-ac1">maven-dependency-plugin</mark>. (see <a href="https://maven.apache.org/plugins/maven-shade-plugin" class="md-link">https://maven.apache.org/plugins/maven-shade-plugin</a> ; <a href="https://www.baeldung.com/executable-jar-with-maven" class="md-link">https://www.baeldung.com/executable-jar-with-maven</a>). We could also use <mark class="md-code md-code-ac1">maven-assembly-plugin</mark> to include the dependencies into the jar itself ('what the fat' jar!). Another alternative is to use an uglier solution with <mark class="md-code md-code-ac3">maven-shade-plugin</mark> and blend libraries into the main jar. In all cases we need as well to configure <mark class="md-code md-code-ac1">maven-jar-plugin</mark> to specify the main class file.</p><p class="md-phrase">I am not exposing all solutions here. You can read this article for more details (<a href="https://www.baeldung.com/executable-jar-with-maven" class="md-link">https://www.baeldung.com/executable-jar-with-maven</a>) but trust me, they all stink.Instead of that we will use <mark class="md-code md-code-ac1">nuts</mark>. In that case, actually we are already done, the app is already OK! We do not need to specify the main class neither are we required to bundle <mark class="md-code md-code-ac1">jxl</mark> and its dependencies. We only need to run the app. That's it.</p><p class="md-phrase">Basically, you can install the application using its identifier <code class="md-code md-code-ac1">com.mycompany.app:my-app</code>. The latest version will be resolved.</p><pre><code class="language-bash">nuts install com.mycompany.app:my-app
+nuts install com.mycompany.app:my-app
 nuts my-app
-</code></pre>This will install the application and run it on the fly. Dependencies will be detected, resolved and downloaded. The application is installed from local maven repository. It needs to be deployed to a public repository for it to be publicly accessible, however.We can also choose not to install the app and bundle it as a jar. No need for a public repository in that case:<pre><code class="language-bash">nuts -y com my-app-1.0.0-SNAPSHOT.jar
-</code></pre><p class="md-phrase">As we can see, <mark class="md-code md-code-ac1">nuts</mark> provides the simplest and the most elegant way to deploy your application.</p><p class="md-phrase">One question though. what happens if we define multiple main methods (in multiple public classes). It's handled as well by <mark class="md-code md-code-ac3">nuts</mark> seamlessly. It just asks, at runtime, for the appropriate class to run.</p><H4 class="md-title-1">Using Nuts Application Framework</H4><p class="md-phrase">Using <mark class="md-code md-code-ac3">nuts</mark> is transparent as we have seen so far. It's transparent both at build time and runtime. However, <mark class="md-code md-code-ac3">nuts</mark> can provide our application a set of unique helpful features, such as install and uninstall hooks, comprehensive command line support and so on.</p><p class="md-phrase">To create your first <mark class="md-code md-code-ac3">NAF</mark> application, you will need to add nuts as a dependency and change your <code class="md-code md-code-ac1">pom.xml</code> as follows:</p><pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-    &lt;groupId&gt;com.mycompany.app&lt;/groupId&gt;
-    &lt;artifactId&gt;my-app&lt;/artifactId&gt;
-    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
-    &lt;packaging&gt;jar&lt;/packaging&gt;
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
-            &lt;artifactId&gt;nuts&lt;/artifactId&gt;
-            &lt;version&gt;1.0.0.0&lt;/version&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;jexcelapi&lt;/groupId&gt;
-            &lt;artifactId&gt;jxl&lt;/artifactId&gt;
-            &lt;version&gt;2.4.2&lt;/version&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-    &lt;properties&gt;
-        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-        &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
-        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
-        &lt;nuts.application&gt;true&lt;/nuts.application&gt;
-    &lt;/properties&gt;
-&lt;/project&gt; 
-</code></pre><p class="md-phrase">Please take note that we have added a property <code class="md-code md-code-ac1">nuts.application=true</code>.  Actually this is not mandatory, but this will help <mark class="md-code md-code-ac3">nuts</mark> package manager detect that this application uses NAF before downloading its jar (the information will be available in the <code class="md-code md-code-ac3">pom.xml</code> descriptor on the remote repository).</p>Then we will add some cool features to our application. We write a dummy message whenever the application is installed, uninstalled or updated. We will also add support to "--file=[path]" argument to specify the workbook path.<pre><code class="language-java">package com.mycompany.app;
+</code></pre><p class="md-phrase"><mark class="md-code md-code-ac1">nuts</mark> detects, resolves, and downloads dependencies at run time. The app is installed from the local Maven repository; deploy it to a public repository to make it accessible elsewhere. You can also skip installation entirely and run a jar directly:</p><pre><code class="language-bash">nuts -y com my-app-1.0.0-SNAPSHOT.jar
+</code></pre><p class="md-phrase">If a jar defines multiple <code class="md-code md-code-ac1">public static void main</code> classes, <mark class="md-code md-code-ac1">nuts</mark> prompts for which one to run, interactively.</p><hr class="divider" class="md-hr"><H4 class="md-title-2">2. Opting into NAF</H4><p class="md-phrase">NAF adds install/update/uninstall hooks, structured command-line parsing, and shell completion support. Enable it by adding <mark class="md-code md-code-ac1">nuts</mark> as a compile dependency and flagging the artifact:</p><pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
+    &lt;artifactId&gt;nuts&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><pre><code class="language-xml">&lt;properties&gt;
+    &lt;nuts.application&gt;true&lt;/nuts.application&gt;
+&lt;/properties&gt;
+</code></pre><p class="md-phrase"><code class="md-code md-code-ac1">nuts.application=true</code> is optional but recommended: it lets <mark class="md-code md-code-ac1">nuts</mark> recognize a NAF app from the remote POM <b class="md-bold">before</b> downloading the jar.</p><hr class="divider" class="md-hr"><H4 class="md-title-2">3. Application lifecycle hooks</H4>NAF dispatches to your class based on the invocation mode. Each mode has a dedicated annotation, all optional except <code class="md-code md-code-ac1">@NApp</code><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-ac1">@NAppRun</code>:</p></li><table class="table table-bordered table-striped"><tr><th>Annotation</th><th>Invoked when…</th><th>Required</th></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">@NApp</code> </p></td><td>Marks the class as a NAF application entry point</td><td>Yes</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">@NAppRun</code>    </p></td><td><p class="md-phrase"> Normal execution (<code class="md-code md-code-ac1">nuts my-app ...</code>)                         </p></td><td>Yes</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">@NAppComplete</code> </p></td><td>Shell requests completion candidates (Tab press)</td><td>No</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">@NAppInstall</code> </p></td><td><p class="md-phrase"> <code class="md-code md-code-ac1">nuts install ...</code>                                            </p></td><td>No</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">@NAppUpdate</code> </p></td><td><p class="md-phrase"> <code class="md-code md-code-ac1">nuts update ...</code>                                              </p></td><td>No</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">@NAppUninstall</code> </p></td><td><p class="md-phrase"> <code class="md-code md-code-ac1">nuts uninstall ...</code>                                           </p></td><td>No</td></tr></table>Internally, dispatch is a single switch over the resolved mode:<pre><code class="language-java">switch (nApp.mode()) {
+    case RUN:        nApp.application().run();                     return;
+    case COMPLETE:   /* isolated session, see §5 */                 return;
+    case INSTALL:    nApp.application().onInstallApplication();     return;
+    case UPDATE:     nApp.application().onUpdateApplication();      return;
+    case UNINSTALL:  nApp.application().onUninstallApplication();   return;
+}
+</code></pre><p class="md-phrase"><mark class="md-code md-code-ac1">RUN</mark> and <mark class="md-code md-code-ac1">INSTALL</mark>/<mark class="md-code md-code-ac1">UPDATE</mark>/<mark class="md-code md-code-ac1">UNINSTALL</mark> all execute under the normal, interactive session — these are user-initiated actions, so confirmation prompts and terminal output are expected and appropriate. <mark class="md-code md-code-ac1">COMPLETE</mark> is different: see §5.</p><hr class="divider" class="md-hr"><H4 class="md-title-2">4. A complete example</H4><pre><code class="language-java">package com.mycompany.app;
 
 import java.io.File;
-
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
@@ -4058,52 +4016,84 @@ import jxl.write.WritableWorkbook;
 public class App {
 
     public static void main(String[] args) {
-        // just create an instance and call runAndExit in the main method
-        // this method ensures that exist code is well propagated
-        // from exceptions to caller processes
+        // NApp.builder(args).run() ensures exit codes propagate
+        // correctly from exceptions to the calling process.
         NApp.builder(args).run();
+    }
+
+    static class Options {
+        File file = new File(&quot;file.xls&quot;);
     }
 
     @NAppRun
     public void run() {
-        NCmdLine cmd = NApplication.of().cmdLine();
-        NRef&lt;File&gt; file = NRef.of(new File(&quot;file.xls&quot;));
-        cmd.matcher()
-                .when(&quot;--file&quot;).asEntry(a-&gt;ref.set(a.stringValue()))
-                .when(&quot;--fill&quot;).asEntry(a-&gt;{}/*process other options here ... */)
-                .withDefaults()
-                .requireAll();
-        if(cmd.isCompleteMode()){
-            cmd.printCompleteResult();
-            return;
-        }
+        NCmdLine cmdLine = NApplication.of().cmdLine();
+        Options options = process(cmdLine);
         try {
-            WritableWorkbook w = Workbook.createWorkbook(file.get());
-            NOut.printf(&quot;Workbook just created at %s%n&quot;, file.get());
+            WritableWorkbook w = Workbook.createWorkbook(options.file);
+            NOut.printf(&quot;Workbook just created at %s%n&quot;, options.file);
         } catch (Exception ex) {
             ex.printStackTrace(NErr.err().asPrintStream());
         }
     }
 
-    @NAppInstall // this method is not required, implement when needed
+    @NAppComplete
+    public void complete() {
+        NCmdLine cmdLine = NApplication.of().cmdLine();
+        process(cmdLine);
+        cmdLine.printCompleteResult();
+    }
+
+    /**
+     * Single command-line walk, shared by run() and complete().
+     * NCmdLine already knows its own mode (cmdLine.isCompleteMode()),
+     * so the matcher calls behave correctly for both callers without
+     * any branching here — this method has no notion of &quot;mode&quot; at all.
+     */
+    private Options process(NCmdLine cmdLine) {
+        Options options = new Options();
+        cmdLine.matcher()
+                .when(&quot;--file&quot;).asEntry(a -&gt; options.file = new File(a.stringValue()))
+                .when(&quot;--fill&quot;).asEntry(a -&gt; { /* handle other options here */ })
+                .withDefaults()
+                .requireAll();
+        return options;
+    }
+
+    @NAppInstall
     public void onInstallApplication() {
-        NOut.println(NMsg.ofC(&quot;we are installing My Application : %s%n&quot;, NApplication.of().getId()));
+        NOut.println(NMsg.ofC(&quot;installing My Application: %s%n&quot;, NApplication.of().getId()));
     }
 
-    @NAppUninstall // this method is not required, implement when needed
+    @NAppUninstall
     public void onUninstallApplication() {
-        NOut.println(NMsg.ofC(&quot;we are uninstalling My Application : %s%n&quot;, NApplication.of().getId()));
+        NOut.println(NMsg.ofC(&quot;uninstalling My Application: %s%n&quot;, NApplication.of().getId()));
     }
 
-    @NAppUpdate // this method is not required, implement when needed
+    @NAppUpdate
     public void onUpdateApplication() {
-        NOut.println(NMsg.ofC(&quot;we are updating My Application : %s%n&quot;, NApplication.of().getId()));
+        NOut.println(NMsg.ofC(&quot;updating My Application: %s%n&quot;, NApplication.of().getId()));
     }
 }
-
-</code></pre>Now we can install or uninstall the application and see the expected messages.<pre><code class="language-bash">nuts -y install com.mycompany.app:my-app
+</code></pre><pre><code class="language-bash">nuts -y install com.mycompany.app:my-app
 nuts -y uninstall com.mycompany.app:my-app
-</code></pre>
+</code></pre><H4 class="md-title-3"><p class="md-phrase">4.1 Why <code class="md-code md-code-ac1">process()</code> is shared, not duplicated</p></H4><p class="md-phrase">Shell completion is not a separate feature bolted onto argument parsing — it <b class="md-bold">is</b> the same matcher walk, just consulted for candidates instead of run to completion with side effects. Writing two independent parsing bodies for <code class="md-code md-code-ac1">run()</code> and <code class="md-code md-code-ac1">complete()</code> guarantees they drift: someone adds a flag to <code class="md-code md-code-ac1">run()</code>, forgets <code class="md-code md-code-ac1">complete()</code> exists, and tab-completion silently stops reflecting reality.</p><p class="md-phrase">Keeping one <code class="md-code md-code-ac1">process()</code> method means:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase">Every <code class="md-code md-code-ac1">.when(...)</code> block is defined exactly once.</p></li><li class="md-uli"><p class="md-phrase"><code class="md-code md-code-ac1">run()</code> and <code class="md-code md-code-ac1">complete()</code> differ only in what they do <b class="md-bold">after</b> parsing (execute vs. print candidates).</p></li><li class="md-uli">New options are automatically completion-aware.</li></ul><H4 class="md-title-3"><p class="md-phrase">4.2 Why <mark class="md-code md-code-ac1">run</mark> stays unprefixed</p></H4><p class="md-phrase"><code class="md-code md-code-ac1">run()</code> is left without an <code class="md-code md-code-ac1">on*Application</code> prefix deliberately. The <code class="md-code md-code-ac1">on*</code> naming is meant to be distinctive enough that a class implementing NAF's interfaces directly (rather than via annotations) doesn't accidentally collide with unrelated method signatures elsewhere. <mark class="md-code md-code-ac1">run</mark> is common vocabulary and doesn't need that protection, since it isn't trying to avoid collision the way the lifecycle hooks are.</p><H4 class="md-title-3">4.3 Enforcement level</H4><p class="md-phrase">Mode dispatch (§3) routes <mark class="md-code md-code-ac1">RUN</mark> and <mark class="md-code md-code-ac1">COMPLETE</mark> to separate branches before either handler is invoked, so <code class="md-code md-code-ac1">run()</code> never executes under completion — there's no <code class="md-code md-code-ac1">isCompleteMode()</code> check to add inside it, since it would always be false there. The real risk is narrower but still real: nothing prevents a developer from leaving <code class="md-code md-code-ac1">@NAppComplete</code> unimplemented, or implementing <code class="md-code md-code-ac1">complete()</code> with logic that doesn't call the same <code class="md-code md-code-ac1">process()</code> as <code class="md-code md-code-ac1">run()</code>, in which case completion candidates silently diverge from (or omit) what <code class="md-code md-code-ac1">run()</code> actually accepts.</p><p class="md-phrase">If <code class="md-code md-code-ac1">@NAppComplete</code> is not implemented, NAF falls back to a no-op: the shell simply receives no candidates at that point. This is the correct default — the alternative (e.g. having the framework try to automatically reuse <code class="md-code md-code-ac1">run()</code>'s logic on the developer's behalf) risks executing real side effects during a non-interactive shell callback, which is exactly what the <mark class="md-code md-code-ac1">COMPLETE</mark> session isolation in §5 exists to prevent. A missing completion handler degrades gracefully to "no suggestions"; it does not degrade to "runs the app."</p><p class="md-phrase">The shared-<code class="md-code md-code-ac1">process()</code> pattern is a <b class="md-bold">convention</b>, not a compiler-enforced contract — consistent with the rest of NAF's fluent, annotation-driven style (e.g. the <code class="md-code md-code-ac1">when*</code>/<code class="md-code md-code-ac1">as*</code>/<mark class="md-code md-code-ac1">require</mark>/<mark class="md-code md-code-ac1">anyMatch</mark> matcher vocabulary is agreed-upon shape, not a declarative spec the framework introspects). Document it as the recommended shape for teams adopting NAF; don't rely on the annotation's existence alone to imply safety.</p><hr class="divider" class="md-hr"><H4 class="md-title-2">5. Session isolation during completion</H4><p class="md-phrase"><mark class="md-code md-code-ac1">COMPLETE</mark> mode is invoked non-interactively by the shell — on every keystroke or Tab press, with no human reading the output. This makes side effects that are perfectly fine in <mark class="md-code md-code-ac1">RUN</mark> mode actively harmful in <mark class="md-code md-code-ac1">COMPLETE</mark> mode: a confirmation prompt has no one to answer it, and stray terminal output can corrupt the shell's own line redraw.</p><p class="md-phrase">NAF isolates <mark class="md-code md-code-ac1">COMPLETE</mark> mode by running it under a modified session copy:</p><pre><code class="language-java">case COMPLETE: {
+    NSession s = NSession.of();
+    s.copy()
+            .bot(true)
+            .trace(false)
+            .confirm(NConfirmationMode.NO)
+            .logTermLevel(Level.OFF)
+            .runWith(() -&gt; {
+                nApp.application().onCompleteApplication();
+            });
+    return;
+}
+</code></pre><table class="table table-bordered table-striped"><tr><th>Setting</th><th>Why</th></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">bot(true)</code> </p></td><td>Marks the session as non-interactive/automated.</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">trace(false)</code> </p></td><td>Suppresses execution tracing that has no audience.</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">confirm(NConfirmationMode.NO)</code> </p></td><td>Never blocks on a confirmation prompt during a shell-driven invocation.</td></tr><tr><td><p class="md-phrase"> <code class="md-code md-code-ac1">logTermLevel(Level.OFF)</code> </p></td><td><p class="md-phrase"> Forces terminal logging off for this session, regardless of any <code class="md-code md-code-ac1">--log-term-*</code> the user has configured for their interactive sessions. </p></td></tr></table><H4 class="md-title-3">5.1 Why terminal logging specifically matters</H4><p class="md-phrase">Shell dynamic-completion mechanisms (bash <code class="md-code md-code-ac1">complete -C</code>, zsh, fish) capture <b class="md-bold">stdout only</b> and parse it into candidates. <b class="md-bold">stderr passes straight through to the terminal</b> — the same file descriptor the shell is using to redraw the prompt and command line. Logging output on stderr during a completion invocation isn't ignored; it can visibly corrupt the terminal mid-keystroke. <code class="md-code md-code-ac1">logTermLevel(Level.OFF)</code> is therefore in the same category as <code class="md-code md-code-ac1">confirm(NO)</code>: it removes a channel a human isn't watching but the terminal itself depends on.</p><p class="md-phrase"><mark class="md-code md-code-ac1">nuts</mark> supports both terminal and file logging independently:</p><pre><code class="language-bash">nuts --log-level-severe my-app   # both term and file
+nuts --log-term-severe my-app    # terminal only
+nuts --log-file-severe my-app    # file only
+nuts --verbose                   # equivalent to --log-finest
+</code></pre><p class="md-phrase">Nothing is enabled by default. <code class="md-code md-code-ac1">logTermLevel(Level.OFF)</code> in the <mark class="md-code md-code-ac1">COMPLETE</mark> branch is therefore a <b class="md-bold">defensive floor</b>, not a fix for an active default problem: it guarantees that a user who has enabled <code class="md-code md-code-ac1">--log-term-*</code> for their normal interactive use (e.g. while debugging something) doesn't get that verbosity leaking into every subsequent Tab press. File logging (<code class="md-code md-code-ac1">--log-file-*</code>) is left untouched by this override — it's independent of the terminal handler, so a developer debugging "why did completion return zero candidates" can still enable <mark class="md-code md-code-ac1">--log-file-finest</mark> and tail the file without any terminal noise.</p><H4 class="md-title-3">5.2 A known limitation: the bootstrap window</H4><p class="md-phrase"><code class="md-code md-code-ac1">logTermLevel(Level.OFF)</code> is applied inside the <mark class="md-code md-code-ac1">COMPLETE</mark> branch of mode dispatch — but <mark class="md-code md-code-ac1">nuts</mark> bootstrap (workspace initialization, early argument parsing, mode resolution itself) necessarily runs <b class="md-bold">before</b> NAF knows which mode it's in. If a user has <code class="md-code md-code-ac1">--log-term-*</code> set globally, output emitted during this bootstrap window is not covered by the session override, because the override doesn't exist yet at that point in the lifecycle.</p><p class="md-phrase">In practice this window is narrow — bootstrap is fast, and high term-verbosity during ordinary use is uncommon — but it's worth documenting explicitly rather than assuming <code class="md-code md-code-ac1">logTermLevel(OFF)</code> guarantees silence end-to-end. Closing it properly would mean making mode detection happen early enough in bootstrap that the term log handler can consult it directly, since both are effectively answering the same question ("is this a completion invocation?") at two different layers today.</p><hr class="divider" class="md-hr"><H4 class="md-title-2">6. Summary checklist</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase">[ ] Add <mark class="md-code md-code-ac1">nuts</mark> as a dependency; set <code class="md-code md-code-ac1">nuts.application=true</code>.</p></li><li class="md-uli"><p class="md-phrase">[ ] Annotate the class with <code class="md-code md-code-ac1">@NApp</code>.</p></li><li class="md-uli"><p class="md-phrase">[ ] Implement <code class="md-code md-code-ac1">@NAppRun</code>; delegate parsing to a shared <code class="md-code md-code-ac1">process()</code> method.</p></li><li class="md-uli"><p class="md-phrase">[ ] Implement <code class="md-code md-code-ac1">@NAppComplete</code> calling the <b class="md-bold">same</b> <code class="md-code md-code-ac1">process()</code>, then <code class="md-code md-code-ac1">cmdLine.printCompleteResult()</code>.</p></li><li class="md-uli"><p class="md-phrase">[ ] Implement <code class="md-code md-code-ac1">@NAppInstall</code> / <code class="md-code md-code-ac1">@NAppUpdate</code> / <code class="md-code md-code-ac1">@NAppUninstall</code> only if needed.</p></li><li class="md-uli"><p class="md-phrase">[ ] Trust NAF's session isolation (<mark class="md-code md-code-ac1">bot</mark>, <code class="md-code md-code-ac1">confirm(NO)</code>, <code class="md-code md-code-ac1">logTermLevel(OFF)</code>) for <mark class="md-code md-code-ac1">COMPLETE</mark> mode — don't reintroduce interactive prompts or terminal logging inside <code class="md-code md-code-ac1">onCompleteApplication()</code>.</p></li><li class="md-uli"><p class="md-phrase">[ ] Remember file logging (<code class="md-code md-code-ac1">--log-file-*</code>) is unaffected by completion-mode term suppression and remains available for debugging.</p></li><li class="md-uli"></li></ul>
                         </div>
 
                         
@@ -4743,7 +4733,7 @@ session.setLogFilter(log -&gt; log.getVerb().equals(NLogIntent.FAIL));
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-24-010559
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-24-140912
         </p>
     </div>
 </footer>

@@ -631,13 +631,6 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
     }
 
     @Override
-    public void runCmdLine(NCmdLineRunner commandLineRunner) {
-        cmdLine()
-                .source(this)
-                .run(commandLineRunner);
-    }
-
-    @Override
     public NPath getFolder(NStoreType location) {
         return this.folders[location.ordinal()];
     }
