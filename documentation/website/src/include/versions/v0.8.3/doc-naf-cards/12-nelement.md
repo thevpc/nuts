@@ -1,0 +1,26 @@
+---
+title: NElement — Structured Data, Any Format
+subTitle:  |
+  With <code>NElement</code>, <code>Nuts</code> lets you build, parse,
+  and format structured data effortlessly. From plain objects to
+  <strong>JSON</strong>, <strong>XML</strong>, or
+  <strong>TSON</strong>, you can read and write files, parse into Java
+  objects, or print with optional <code>NTF</code> color formatting —
+  all in a runtime-friendly way.
+contentType: java
+---
+
+// Build an element
+NElement document = NElement.ofObjectBuilder()
+    .set("app-id", NApplication.of().getId().get())
+    .set("error", messageString)
+    .build();
+
+// Parse JSON into Java object
+Person person = NElementReader.ofJson().read(NPath.of("person.json"), Person.class);
+
+// Format and write XML to file
+NElementWriter.ofPlainXml(document).println(NPath.of("person.xml"));
+
+// Print TSON to terminal with colors
+NElementWriter.ofNtfTson(document).println();

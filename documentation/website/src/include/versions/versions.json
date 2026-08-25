@@ -1,0 +1,16 @@
+[
+  {
+    "id": "v0.8.4",
+    "name": "v0.8.4 (Latest)",
+    "version": "0.8.4",
+    "isLatest": true,
+    "path": "v0.8.4"
+  },
+  {
+    "id": "v0.8.3",
+    "name": "v0.8.3",
+    "version": "0.8.3",
+    "isLatest": false,
+    "path": "v0.8.3"
+  }
+]
