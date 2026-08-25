@@ -545,4 +545,77 @@ hr.divider {
   flex-shrink: 0;
 }
 
+/* ---- Version Selector & Badge Styles ---- */
+.nuts-version-badge {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #e2e8f0 !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  padding: 2px 10px !important;
+  border-radius: 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+.nuts-version-badge:hover, .nuts-version-badge:focus {
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: #ffffff !important;
+}
+
+.nuts-version-dropdown-header .dropdown-menu {
+  background: #1e293b;
+  border: 1px solid #334155;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+  border-radius: 8px;
+  padding: 8px 0;
+}
+
+.nuts-version-dropdown-header .dropdown-item {
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  padding: 6px 16px;
+  transition: all 0.15s ease;
+}
+
+.nuts-version-dropdown-header .dropdown-item:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.nuts-version-dropdown-header .dropdown-item.active {
+  background: #0366d6;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.doc-version-select-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.doc-version-select-input {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  cursor: pointer;
+}
+
+.doc-version-select-input:focus {
+  border-color: #0366d6 !important;
+  box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.12) !important;
+}
+
+.doc-version-banner {
+  border-radius: 8px;
+  font-size: 0.9rem;
+  padding: 12px 18px;
+  border-left: 4px solid #d97706;
+}
+
 /* navbar styles are in stylesheet-navbar.css */

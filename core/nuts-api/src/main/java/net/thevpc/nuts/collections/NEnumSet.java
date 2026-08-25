@@ -436,7 +436,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public static <T extends Enum<T>> NOptional<NEnumSet<T>> parseType(NFunction2<Set<T>, Class<T>, NEnumSet<T>> setType, String value, Class<T> type) {
         if (value == null) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("null enum set"));
+            return NOptional.ofEmpty(() -> NMsg.ofP("null enum set"));
         }
         List<String> z = NStringUtils.split(value, ",;|+", true, true);
         if (z.size() == 1) {
@@ -461,7 +461,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
                     T t = Enum.valueOf(type, s);
                     set.add(t);
                 } catch (Exception e) {
-                    return NOptional.ofError(() -> NMsg.ofPlain(e.getMessage()));
+                    return NOptional.ofError(() -> NMsg.ofP(e.getMessage()));
                 }
             }
         }

@@ -195,7 +195,7 @@ public class MyApp {
             <p class="naf-section__intro">A coherent set of components built with the same philosophy and patterns. Learn one, understand all.</p>
 
             <div class="naf-modules">
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/doc-naf-cards')}}
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/docs/' + either(docVersion,'v0.8.4') + '/doc-naf-cards')}}
                 <div class="naf-module">
                     <div class="naf-module__header">
                         <span class="naf-module__name">{{pageLevel1.title}}</span>

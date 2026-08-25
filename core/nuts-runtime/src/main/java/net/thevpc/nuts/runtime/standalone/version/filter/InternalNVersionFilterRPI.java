@@ -58,7 +58,7 @@ public class InternalNVersionFilterRPI extends InternalNTypedFilters<NVersionFil
         }
         NVersionFilter t = as(a);
         if (t == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("not a VersionFilter"));
+            throw new NIllegalArgumentException(NMsg.ofP("not a VersionFilter"));
         }
         return t;
     }

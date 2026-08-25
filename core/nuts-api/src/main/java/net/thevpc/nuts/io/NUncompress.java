@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public interface NUncompress extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @return of result
      */

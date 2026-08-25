@@ -184,7 +184,7 @@ public final class JavaExecutorOptions {
                     }
                 }
                 if (this.excludeBase) {
-                    throw new NIllegalArgumentException(NMsg.ofPlain("cannot exclude base with jar modifier"));
+                    throw new NIllegalArgumentException(NMsg.ofP("cannot exclude base with jar modifier"));
                 }
             } else {
                 resolveMainClassFromPath(path);

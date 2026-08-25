@@ -360,7 +360,7 @@ public class NCoreIOUtils {
                                 inputStream.close();
                             } catch (Exception ex) {
                                 if (bLog != null) {
-                                    bLog.log(NMsg.ofPlain("unable to close stream").asFine(ex).withIntent(NMsgIntent.FAIL));
+                                    bLog.log(NMsg.ofP("unable to close stream").asFine(ex).withIntent(NMsgIntent.FAIL));
                                 }
                                 //
                             }

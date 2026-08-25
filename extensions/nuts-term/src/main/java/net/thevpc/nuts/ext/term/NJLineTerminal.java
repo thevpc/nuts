@@ -283,7 +283,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             //prepare();
         } catch (Exception ex) {
             NLog.of(NJLineTerminal.class)
-                    .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored.").asFinestFail(ex));
+                    .log(NMsg.ofP("unable to create NutsJLineTerminal. ignored.").asFinestFail(ex));
             return NScorable.UNSUPPORTED_SCORE;
         }
         return NScorable.DEFAULT_SCORE + 1;

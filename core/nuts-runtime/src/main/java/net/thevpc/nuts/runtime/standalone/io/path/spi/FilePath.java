@@ -36,7 +36,7 @@ public class FilePath implements NPathSPI {
 
     public FilePath(Path value) {
         if (value == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("invalid null value"));
+            throw new NIllegalArgumentException(NMsg.ofP("invalid null value"));
         }
         this.value = value;
     }

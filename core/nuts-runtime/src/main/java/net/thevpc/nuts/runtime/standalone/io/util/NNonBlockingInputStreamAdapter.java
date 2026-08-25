@@ -66,7 +66,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         if (sourceName == null) {
             String m2 = this.md.name().orElse(null);
             if (m2 != null) {
-                sourceName = NMsg.ofPlain(m2);
+                sourceName = NMsg.ofP(m2);
             }
         }
         this.sourceName = sourceName;
@@ -107,7 +107,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(NMsg.ofPlain("stream is interrupted"));
+            throw new NIOException(NMsg.ofP("stream is interrupted"));
         }
     }
 

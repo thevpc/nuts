@@ -5,7 +5,6 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NPrepareCmd;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reflect.NScore;
@@ -47,7 +46,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         }
         NPath javaPath = remoteJavaCommand(apiId.version());
         if (javaPath == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("missing java"));
+            throw new NIllegalArgumentException(NMsg.ofP("missing java"));
         }
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();

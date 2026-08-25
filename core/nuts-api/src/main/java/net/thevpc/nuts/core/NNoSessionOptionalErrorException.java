@@ -47,7 +47,7 @@ public class NNoSessionOptionalErrorException extends NNoSessionException {
        *
        * @param error") error")
        */
-        super(NMsg.ofPlain("optional error"));
+        super(NMsg.ofP("optional error"));
     }
 
     /**

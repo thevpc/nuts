@@ -282,7 +282,7 @@ public class DefaultNIORPI implements NIORPI {
             };
         }
         if (metadata == null) {
-            DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofPlain("Provider"), null, null, null, null);
+            DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofP("Provider"), null, null, null, null);
             return new InputStreamProviderToNInputSourceAdapter(metadata2, inputStreamProvider);
         }
         return new InputStreamProviderToNInputSourceAdapter(metadata, inputStreamProvider);
@@ -326,7 +326,7 @@ public class DefaultNIORPI implements NIORPI {
             };
         }
         if (metadata == null) {
-            DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofPlain("Provider"), null, null, null, null);
+            DefaultNContentMetadata metadata2 = new DefaultNContentMetadata(NMsg.ofP("Provider"), null, null, null, null);
             return new ReaderProviderToNInputSourceAdapter(metadata2, readerProvider);
         }
         return new ReaderProviderToNInputSourceAdapter(metadata, readerProvider);

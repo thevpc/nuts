@@ -28,7 +28,7 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
         Path lrPath = null;
         if (lr == null) {
             if (s == null) {
-                throw new NLockException(NMsg.ofPlain("unsupported lock for null"), null, null);
+                throw new NLockException(NMsg.ofP("unsupported lock for null"), null, null);
             }
             Path p = toPath(s);
             if (p == null) {

@@ -58,7 +58,7 @@ public class NUnexpectedException extends NException {
        *
        * @param message message
        */
-        super(message == null ? NMsg.ofPlain("unexpected behaviour") : message);
+        super(message == null ? NMsg.ofP("unexpected behaviour") : message);
     }
 
     /**
@@ -74,7 +74,7 @@ public class NUnexpectedException extends NException {
        * @param message message
        * @param cause cause
        */
-        super(message == null ? NMsg.ofPlain("unexpected behaviour") : message, cause);
+        super(message == null ? NMsg.ofP("unexpected behaviour") : message, cause);
     }
 
     /**
@@ -94,7 +94,7 @@ public class NUnexpectedException extends NException {
        * @param enableSuppression enable suppression
        * @param writableStackTrace writable stack trace
        */
-        super(message == null ? NMsg.ofPlain("unexpected behaviour") : message, cause, enableSuppression, writableStackTrace);
+        super(message == null ? NMsg.ofP("unexpected behaviour") : message, cause, enableSuppression, writableStackTrace);
     }
 
 }

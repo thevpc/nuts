@@ -602,7 +602,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of nanos.
+     * Creates a new instance of nanos.
      *
      * @param durationNanos duration nanos
      * @param smallestUnit smallest unit
@@ -616,14 +616,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of nanos only.
+     * Creates a new instance of nanos only.
      *
      * @param durationNanos duration nanos
      * @return of nanos only result
      */
     public static NDuration ofNanosOnly(long durationNanos) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationNanos duration nanos
          * @param ChronoUnit.MILLIS chrono unit.millis
@@ -633,14 +633,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of millis only.
+     * Creates a new instance of millis only.
      *
      * @param durationMillis duration millis
      * @return of millis only result
      */
     public static NDuration ofMillisOnly(long durationMillis) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationMillis duration millis
          * @param ChronoUnit.MILLIS chrono unit.millis
@@ -650,14 +650,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of seconds only.
+     * Creates a new instance of seconds only.
      *
      * @param durationSeconds duration seconds
      * @return of seconds only result
      */
     public static NDuration ofSecondsOnly(long durationSeconds) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationSeconds duration seconds
          * @param ChronoUnit.SECONDS chrono unit.seconds
@@ -667,14 +667,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of minutes only.
+     * Creates a new instance of minutes only.
      *
      * @param durationMinutes duration minutes
      * @return of minutes only result
      */
     public static NDuration ofMinutesOnly(long durationMinutes) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationMinutes duration minutes
          * @param ChronoUnit.MINUTES chrono unit.minutes
@@ -684,14 +684,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of hours only.
+     * Creates a new instance of hours only.
      *
      * @param durationHours duration hours
      * @return of hours only result
      */
     public static NDuration ofHoursOnly(long durationHours) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationHours duration hours
          * @param ChronoUnit.HOURS chrono unit.hours
@@ -701,14 +701,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of days only.
+     * Creates a new instance of days only.
      *
      * @param durationDays duration days
      * @return of days only result
      */
     public static NDuration ofDaysOnly(long durationDays) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationDays duration days
          * @param ChronoUnit.DAYS chrono unit.days
@@ -718,14 +718,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of weeks only.
+     * Creates a new instance of weeks only.
      *
      * @param durationWeeks duration weeks
      * @return of weeks only result
      */
     public static NDuration ofWeeksOnly(long durationWeeks) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationWeeks duration weeks
          * @param ChronoUnit.WEEKS chrono unit.weeks
@@ -735,14 +735,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of month only.
+     * Creates a new instance of month only.
      *
      * @param durationMonths duration months
      * @return of month only result
      */
     public static NDuration ofMonthOnly(long durationMonths) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationMonths duration months
          * @param ChronoUnit.MONTHS chrono unit.months
@@ -752,14 +752,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of years only.
+     * Creates a new instance of years only.
      *
      * @param durationYears duration years
      * @return of years only result
      */
     public static NDuration ofYearsOnly(long durationYears) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationYears duration years
          * @param ChronoUnit.YEARS chrono unit.years
@@ -769,14 +769,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of seconds.
+     * Creates a new instance of seconds.
      *
      * @param durationSeconds duration seconds
      * @return of seconds result
      */
     public static NDuration ofSeconds(long durationSeconds) {
         /**
-         * Creates a new instance of of unit.
+         * Creates a new instance of unit.
          *
          * @param durationSeconds duration seconds
          * @param ChronoUnit.SECONDS chrono unit.seconds
@@ -786,14 +786,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of minutes.
+     * Creates a new instance of minutes.
      *
      * @param durationMinutes duration minutes
      * @return of minutes result
      */
     public static NDuration ofMinutes(long durationMinutes) {
         /**
-         * Creates a new instance of of unit.
+         * Creates a new instance of unit.
          *
          * @param durationMinutes duration minutes
          * @param ChronoUnit.MINUTES chrono unit.minutes
@@ -803,14 +803,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of hours.
+     * Creates a new instance of hours.
      *
      * @param durationHours duration hours
      * @return of hours result
      */
     public static NDuration ofHours(long durationHours) {
         /**
-         * Creates a new instance of of unit.
+         * Creates a new instance of unit.
          *
          * @param durationHours duration hours
          * @param ChronoUnit.HOURS chrono unit.hours
@@ -820,14 +820,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of days.
+     * Creates a new instance of days.
      *
      * @param durationDays duration days
      * @return of days result
      */
     public static NDuration ofDays(long durationDays) {
         /**
-         * Creates a new instance of of unit.
+         * Creates a new instance of unit.
          *
          * @param durationDays duration days
          * @param ChronoUnit.DAYS chrono unit.days
@@ -837,14 +837,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of weeks.
+     * Creates a new instance of weeks.
      *
      * @param durationWeeks duration weeks
      * @return of weeks result
      */
     public static NDuration ofWeeks(long durationWeeks) {
         /**
-         * Creates a new instance of of unit.
+         * Creates a new instance of unit.
          *
          * @param durationWeeks duration weeks
          * @param ChronoUnit.WEEKS chrono unit.weeks
@@ -854,14 +854,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of month.
+     * Creates a new instance of month.
      *
      * @param durationMonths duration months
      * @return of month result
      */
     public static NDuration ofMonth(long durationMonths) {
         /**
-         * Creates a new instance of of unit.
+         * Creates a new instance of unit.
          *
          * @param durationMonths duration months
          * @param ChronoUnit.MONTHS chrono unit.months
@@ -871,14 +871,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of years.
+     * Creates a new instance of years.
      *
      * @param durationYears duration years
      * @return of years result
      */
     public static NDuration ofYears(long durationYears) {
         /**
-         * Creates a new instance of of unit.
+         * Creates a new instance of unit.
          *
          * @param durationYears duration years
          * @param ChronoUnit.YEARS chrono unit.years
@@ -888,7 +888,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of unit only.
+     * Creates a new instance of unit only.
      *
      * @param durationInUnit duration in unit
      * @param unit unit
@@ -901,7 +901,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of unit.
+     * Creates a new instance of unit.
      *
      * @param durationInUnit duration in unit
      * @param unit unit
@@ -909,7 +909,7 @@ public class NDuration implements Serializable, NElementSimple {
      */
     public static NDuration ofUnit(long durationInUnit, ChronoUnit unit) {
         /**
-         * Creates a new instance of of unit only.
+         * Creates a new instance of unit only.
          *
          * @param durationInUnit duration in unit
          * @param unit).normalize( unit).normalize(
@@ -919,7 +919,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of millis.
+     * Creates a new instance of millis.
      *
      * @param durationMillis duration millis
      * @return of millis result
@@ -929,7 +929,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of millis.
+     * Creates a new instance of millis.
      *
      * @param durationMillis duration millis
      * @param smallestUnit smallest unit
@@ -941,7 +941,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of duration.
+     * Creates a new instance of duration.
      *
      * @param duration duration
      * @return of duration result
@@ -954,7 +954,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of millis and nanos.
+     * Creates a new instance of millis and nanos.
      *
      * @param durationMillis duration millis
      * @param nanos nanos
@@ -965,7 +965,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param values values
      * @param smallestUnit smallest unit
@@ -977,14 +977,14 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param values values
      * @return of result
      */
     public static NDuration of(long[] values) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance of.
          *
          * @param values values
          * @param null null
@@ -995,7 +995,7 @@ public class NDuration implements Serializable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of seconds and nanos.
+     * Creates a new instance of seconds and nanos.
      *
      * @param durationSeconds duration seconds
      * @param nanos nanos
@@ -1005,7 +1005,7 @@ public class NDuration implements Serializable, NElementSimple {
         long millis = durationSeconds * 1000 + nanos / 1000000;
         int ns = (int) (nanos % 1000000);
         /**
-         * Creates a new instance of of millis and nanos.
+         * Creates a new instance of millis and nanos.
          *
          * @param millis millis
          * @param ns ns
@@ -1680,7 +1680,7 @@ public class NDuration implements Serializable, NElementSimple {
             a[i] = -a[i];
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance of.
          *
          * @param a a
          * @param smallestUnit smallest unit
@@ -1719,7 +1719,7 @@ public class NDuration implements Serializable, NElementSimple {
         long msL = (long) (timeMillis * other);
         long ns = (long) (timeNanos * other + (ms - msL) * 1000000);
         /**
-         * Creates a new instance of of millis and nanos.
+         * Creates a new instance of millis and nanos.
          *
          * @param msL ms l
          * @param ns).withUnits(smallestUnit ns).with units(smallest unit
@@ -1741,7 +1741,7 @@ public class NDuration implements Serializable, NElementSimple {
             a[i] *= other;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance of.
          *
          * @param a a
          * @param smallestUnit smallest unit

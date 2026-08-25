@@ -494,7 +494,7 @@ public class DefaultNWebCli implements NWebCli {
                 }
                 NWebResponse httpResponse = new NWebResponseImpl(
                         rCode,
-                        NMsg.ofPlain(rm),
+                        NMsg.ofP(rm),
                         uc.getHeaderFields(),
                         () -> {
                             NInputSource bytes = null;

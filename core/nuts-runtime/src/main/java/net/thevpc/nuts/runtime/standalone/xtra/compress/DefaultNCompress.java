@@ -96,7 +96,7 @@ public class DefaultNCompress implements NCompress {
     @Override
     public NCompress source(InputStream source) {
         if (source == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofP("null source"));
         }
         this.sources.add(NInputSource.of(source));
         return this;
@@ -105,7 +105,7 @@ public class DefaultNCompress implements NCompress {
     @Override
     public NCompress source(File source) {
         if (source == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofP("null source"));
         }
         this.sources.add(NPath.of(source));
         return this;
@@ -114,7 +114,7 @@ public class DefaultNCompress implements NCompress {
     @Override
     public NCompress source(Path source) {
         if (source == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofP("null source"));
         }
         this.sources.add(NPath.of(source));
         return this;
@@ -123,7 +123,7 @@ public class DefaultNCompress implements NCompress {
     @Override
     public NCompress source(URL source) {
         if (source == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofP("null source"));
         }
         this.sources.add(NPath.of(source));
         return this;

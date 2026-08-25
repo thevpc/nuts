@@ -7,8 +7,6 @@ import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
-import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NTrace;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -561,7 +559,7 @@ public class NJavaSdkUtils {
                 }
             }
             //just reset the line!
-            NSession.of().terminal().printProgress(NMsg.ofPlain(""));
+            NSession.of().terminal().printProgress(NMsg.ofP(""));
             return locs.toArray(new NExecutionEngineLocation[0]);
         });
     }

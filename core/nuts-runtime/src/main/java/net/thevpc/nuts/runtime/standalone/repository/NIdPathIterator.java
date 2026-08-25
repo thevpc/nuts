@@ -70,7 +70,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         this.model = model;
         this.maxDepth = maxDepth;
         if (rootFolder == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("could not iterate over null rootFolder"));
+            throw new NIllegalArgumentException(NMsg.ofP("could not iterate over null rootFolder"));
         }
         this.basePath = basePath;
         this.rootFolder = rootFolder;
@@ -164,7 +164,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         if (last != null) {
             model.undeploy(last);
         }
-        throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported Remove"));
+        throw new NUnsupportedOperationException(NMsg.ofP("unsupported Remove"));
     }
 
     public long getVisitedFoldersCount() {

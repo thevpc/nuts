@@ -443,7 +443,7 @@ public class NStringMapFormat {
             try {
                 r = readToken(reader, decoder);
             } catch (UncheckedIOException | NIOException e) {
-                return NOptional.ofError(() -> NMsg.ofPlain("failed to read token"), e);
+                return NOptional.ofError(() -> NMsg.ofP("failed to read token"), e);
             }
             if (r != null) {
                 tokens.add(r);

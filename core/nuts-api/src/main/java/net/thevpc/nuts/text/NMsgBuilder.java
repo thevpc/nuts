@@ -73,7 +73,7 @@ public class NMsgBuilder {
          * @param NMsg.ofPlain(plain) n msg.of plain(plain)
          * @return with msg result
          */
-        return withMsg(NMsg.ofPlain(plain));
+        return withMsg(NMsg.ofP(plain));
     }
 
     /**
@@ -410,7 +410,7 @@ public class NMsgBuilder {
         }
         NMsg newMsg = msgOk;
         if (newMsg == null) {
-            newMsg = NMsg.ofPlain("");
+            newMsg = NMsg.ofP("");
         }
         if (this.intent != null) {
             newMsg = newMsg.withIntent(intent);

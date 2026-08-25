@@ -36,7 +36,7 @@ import net.thevpc.nuts.internal.rpi.NIORPI;
  */
 public interface NMemoryPrintStream extends NPrintStream {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @return of result
      */
@@ -45,7 +45,7 @@ public interface NMemoryPrintStream extends NPrintStream {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param mode mode
      * @return of result

@@ -12,7 +12,7 @@ import java.io.OutputStream;
  */
 public interface NOutputStreamBuilder {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param outputStream output stream
      * @return of result

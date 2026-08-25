@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {{:: pageId='doc-nuts'}}
+    {{:: pageId='doc-nuts'; docVersion=either(docVersion,'v0.8.4'); assetPrefix=''}}
     {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
     <title>User Documentation — Nuts Package Manager</title>
     <!-- Doc-specific overrides -->
@@ -27,11 +27,18 @@
 
         <!-- ===================== SIDEBAR ===================== -->
         <div class="idocs-navigation">
+            <div class="doc-version-select-box mb-3 px-2">
+                <label for="doc-version-select" class="form-label text-muted small font-weight-bold mb-1 d-block">VERSION</label>
+                <select id="doc-version-select" class="form-control form-control-sm doc-version-select-input" onchange="window.location.href=this.value;">
+                    <option value="doc-nuts.html" {{ if(!docVersion || docVersion=='v0.8.4') 'selected' else '' }}>v0.8.4 (Latest)</option>
+                    <option value="versions/v0.8.3/doc-nuts.html" {{ if(docVersion=='v0.8.3') 'selected' else '' }}>v0.8.3</option>
+                </select>
+            </div>
             <div class="nav-search">
                 <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
             </div>
             <ul class="nav flex-column">
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/versions/' + docVersion + '/' + pageId)}}
                 <li class="nav-item">
                     <a class="nav-link" href="#{{pageLevel1.id}}">
                         <span class="nav-num">{{pageLevel1Index+1}}</span>
@@ -71,12 +78,21 @@
             <div class="container">
 
                 <section id="doc-title-section">
-                    <h1>User Documentation</h1>
+                    {{:if (docVersion && docVersion != 'v0.8.4')}}
+                    <div class="alert alert-warning doc-version-banner d-flex align-items-center mb-4" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <div>
+                            You are viewing documentation for version <strong>{{docVersion}}</strong>. 
+                            <a href="doc-nuts.html" class="alert-link">Switch to latest version (v0.8.4) &rarr;</a>
+                        </div>
+                    </div>
+                    {{:end}}
+                    <h1>User Documentation <span class="badge badge-secondary font-weight-normal small ml-2">{{docVersion}}</span></h1>
                     <p class="lead">Everything you need to know about installing, configuring, and using Nuts Package Manager.</p>
                     <hr class="divider">
                 </section>
 
-                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
+                {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/versions/' + docVersion + '/' + pageId)}}
                 <section id="{{pageLevel1.id}}">
 
                     <h2 class="main-section1" data-num="{{pageLevel1Index+1}}">

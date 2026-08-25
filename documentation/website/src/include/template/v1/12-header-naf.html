@@ -7,12 +7,23 @@
                 <span></span><span class="w-75"></span><span class="w-50"></span>
             </button>
 
-            <!-- Brand -->
-            <a class="nuts-brand" href="naf.html" title="NAF — Nuts Application Framework">
-                <img src="assets/images/nuts-icon.png" alt="NAF" width="28"/>
-                <span class="nuts-brand__name">NAF</span>
-                <span class="nuts-brand__version">v1.0.0</span>
-            </a>
+            <!-- Brand + version dropdown -->
+            <div class="nuts-brand-wrapper d-inline-flex align-items-center">
+                <a class="nuts-brand" href="{{either(assetPrefix,'')}}naf.html" title="NAF — Nuts Application Framework">
+                    <img src="{{either(assetPrefix,'')}}assets/images/nuts-icon.png" alt="NAF" width="28"/>
+                    <span class="nuts-brand__name">NAF</span>
+                </a>
+                <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
+                    <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerNafVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{if (docVersion) docVersion else 'v0.8.4'}}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerNafVersionDropdown">
+                        <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
+                        <a class="dropdown-item {{if (!docVersion || docVersion=='v0.8.4') 'active' else ''}}" href="{{either(assetPrefix,'')}}doc-naf.html">v0.8.4 (Latest)</a>
+                        <a class="dropdown-item {{if (docVersion=='v0.8.3') 'active' else ''}}" href="{{either(assetPrefix,'')}}versions/v0.8.3/doc-naf.html">v0.8.3</a>
+                    </div>
+                </div>
+            </div>
 
             <button class="navbar-toggler ml-auto" type="button"
                     data-toggle="collapse" data-target="#header-nav">
@@ -26,11 +37,11 @@
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {{ if(pageId=='doc-naf') 'not-active' else '' }}"
-                                   href="doc-naf.html">Developer Documentation</a></li>
+                                   href="{{either(assetPrefix,'')}}doc-naf.html">Developer Documentation</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='contrib') 'not-active' else '' }}"
-                                   href="contrib.html">Contributing</a></li>
+                                   href="{{either(assetPrefix,'')}}contrib.html">Contributing</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='faq') 'not-active' else '' }}"
-                                   href="faq.html">FAQ</a></li>
+                                   href="{{either(assetPrefix,'')}}faq.html">FAQ</a></li>
                         </ul>
                     </li>
 
@@ -38,7 +49,7 @@
                            class="nuts-nav__github"><i class="fab fa-github"></i></a></li>
 
                     <!-- Back to Nuts -->
-                    <li><a href="index.html" class="nuts-nav__back-nuts">
+                    <li><a href="{{either(assetPrefix,'')}}index.html" class="nuts-nav__back-nuts">
                         &larr; Nuts Package Manager
                     </a></li>
 

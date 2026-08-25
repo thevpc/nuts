@@ -310,7 +310,7 @@ public class NExceptionHandler {
                     }
                 } catch (Exception ex2) {
                     NLog.of(NApplicationHandler.class).log(
-                            NMsg.ofPlain("unable to get system terminal").asFine(ex2)
+                            NMsg.ofP("unable to get system terminal").asFine(ex2)
                     );
                     //
                 }
@@ -448,7 +448,7 @@ public class NExceptionHandler {
                     if (messageFormatted != null) {
                         out.log(msgBuilder.withMsg(messageFormatted));
                     } else {
-                        out.log(msgBuilder.withMsg(NMsg.ofPlain(messageString)));
+                        out.log(msgBuilder.withMsg(NMsg.ofP(messageString)));
                     }
                     if (stacktrace) {
                         out.log(msgBuilder.withMsgPlain("---------------"));
@@ -462,13 +462,13 @@ public class NExceptionHandler {
                     if (messageFormatted != null) {
                         System.err.println(messageFormatted);
                     } else {
-                        System.err.println(NMsg.ofPlain(messageString));
+                        System.err.println(NMsg.ofP(messageString));
                     }
                     if (stacktrace) {
-                        System.err.println(NMsg.ofPlain("---------------"));
-                        System.err.println(NMsg.ofPlain(">  STACKTRACE :"));
-                        System.err.println(NMsg.ofPlain("---------------"));
-                        System.err.println(NMsg.ofPlain(
+                        System.err.println(NMsg.ofP("---------------"));
+                        System.err.println(NMsg.ofP(">  STACKTRACE :"));
+                        System.err.println(NMsg.ofP("---------------"));
+                        System.err.println(NMsg.ofP(
                                 NStringUtils.stacktrace(throwable)
                         ));
                     }
@@ -494,9 +494,9 @@ public class NExceptionHandler {
             }
             if (session != null) {
                 //TODO should we delegate to the workspace implementation?
-                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
+                NReservedLangUtils.showMessage(NMsg.ofP(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
             } else {
-                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
+                NReservedLangUtils.showMessage(NMsg.ofP(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
             }
         }
         return this;

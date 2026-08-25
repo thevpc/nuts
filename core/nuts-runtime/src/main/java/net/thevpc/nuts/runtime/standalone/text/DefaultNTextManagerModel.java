@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.core.NBootOptions;
 
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
@@ -243,7 +242,7 @@ public class DefaultNTextManagerModel {
         if (h != null) {
             return h;
         }
-        throw new NIllegalArgumentException(NMsg.ofPlain("not found plain highlighter"));
+        throw new NIllegalArgumentException(NMsg.ofP("not found plain highlighter"));
     }
 
     private String expandAlias(String ss) {

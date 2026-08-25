@@ -99,7 +99,7 @@ public class DefaultNLog implements NLog {
 
         NMsg msg = msgSupplier.get();
         if (msg == null) {
-            msg = prepareMsg(NMsg.ofPlain("").withLevel(level));
+            msg = prepareMsg(NMsg.ofP("").withLevel(level));
         } else {
             msg = prepareMsg(msg.withLevel(level));
         }

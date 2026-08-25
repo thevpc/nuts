@@ -15,7 +15,7 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface NClosable extends Closeable {
     /**
-     * Creates a new instance of of any.
+     * Creates a new instance of any.
      *
      * @param any any
      * @return of any result

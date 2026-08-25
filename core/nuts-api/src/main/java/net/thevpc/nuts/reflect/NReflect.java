@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
  */
 public interface NReflect extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @return of result
      */
@@ -68,7 +68,7 @@ public interface NReflect extends NComponent {
     NTypeLoader createTypeLoader(String name);
 
     /**
-     * Creates a new instance of of platform signature.
+     * Creates a new instance of platform signature.
      *
      * @param types types
      * @return of platform signature result
@@ -76,7 +76,7 @@ public interface NReflect extends NComponent {
     NPlatformSignature ofPlatformSignature(Type... types);
 
     /**
-     * Creates a new instance of of var args platform signature.
+     * Creates a new instance of var args platform signature.
      *
      * @param types types
      * @return of var args platform signature result
@@ -84,7 +84,7 @@ public interface NReflect extends NComponent {
     NPlatformSignature ofVarArgsPlatformSignature(Type... types);
 
     /**
-     * Creates a new instance of of platform signature.
+     * Creates a new instance of platform signature.
      *
      * @param name name
      * @param types types
@@ -93,7 +93,7 @@ public interface NReflect extends NComponent {
     NPlatformSignature ofPlatformSignature(String name, Type... types);
 
     /**
-     * Creates a new instance of of var args platform signature.
+     * Creates a new instance of var args platform signature.
      *
      * @param name name
      * @param types types
@@ -102,7 +102,7 @@ public interface NReflect extends NComponent {
     NPlatformSignature ofVarArgsPlatformSignature(String name, Type... types);
 
     /**
-     * Creates a new instance of of type name signature.
+     * Creates a new instance of type name signature.
      *
      * @param domain domain
      * @param types types
@@ -111,7 +111,7 @@ public interface NReflect extends NComponent {
     NTypeNameSignature ofTypeNameSignature(NTypeNameDomain domain, NTypeName... types);
 
     /**
-     * Creates a new instance of of var args type name signature.
+     * Creates a new instance of var args type name signature.
      *
      * @param domain domain
      * @param types types
@@ -120,7 +120,7 @@ public interface NReflect extends NComponent {
     NTypeNameSignature ofVarArgsTypeNameSignature(NTypeNameDomain domain, NTypeName... types);
 
     /**
-     * Creates a new instance of of type name signature.
+     * Creates a new instance of type name signature.
      *
      * @param domain domain
      * @param name name
@@ -130,7 +130,7 @@ public interface NReflect extends NComponent {
     NTypeNameSignature ofTypeNameSignature(NTypeNameDomain domain, String name, NTypeName... types);
 
     /**
-     * Creates a new instance of of var args type name signature.
+     * Creates a new instance of var args type name signature.
      *
      * @param domain domain
      * @param name name
@@ -140,7 +140,7 @@ public interface NReflect extends NComponent {
     NTypeNameSignature ofVarArgsTypeNameSignature(NTypeNameDomain domain, String name, NTypeName... types);
 
     /**
-     * Creates a new instance of of reflect signature.
+     * Creates a new instance of reflect signature.
      *
      * @param types types
      * @return of reflect signature result
@@ -148,7 +148,7 @@ public interface NReflect extends NComponent {
     NReflectSignature ofReflectSignature(NReflectType... types);
 
     /**
-     * Creates a new instance of of var args reflect signature.
+     * Creates a new instance of var args reflect signature.
      *
      * @param types types
      * @return of var args reflect signature result
@@ -156,7 +156,7 @@ public interface NReflect extends NComponent {
     NReflectSignature ofVarArgsReflectSignature(NReflectType... types);
 
     /**
-     * Creates a new instance of of reflect signature.
+     * Creates a new instance of reflect signature.
      *
      * @param name name
      * @param types types
@@ -165,7 +165,7 @@ public interface NReflect extends NComponent {
     NReflectSignature ofReflectSignature(String name, NReflectType... types);
 
     /**
-     * Creates a new instance of of var args reflect signature.
+     * Creates a new instance of var args reflect signature.
      *
      * @param name name
      * @param types types
@@ -174,7 +174,7 @@ public interface NReflect extends NComponent {
     NReflectSignature ofVarArgsReflectSignature(String name, NReflectType... types);
 
     /**
-     * Creates a new instance of of signature map.
+     * Creates a new instance of signature map.
      *
      * @param domain domain
      * @return of signature map result
@@ -182,7 +182,7 @@ public interface NReflect extends NComponent {
     <S extends NSignature<T, ?>, T, V> NSignatureMap<S, T, V> ofSignatureMap(NSignatureDomain<T> domain);
 
     /**
-     * Creates a new instance of of platform signature map.
+     * Creates a new instance of platform signature map.
      *
      * @param domain domain
      * @return of platform signature map result
@@ -190,21 +190,21 @@ public interface NReflect extends NComponent {
     <V> NSignatureMap<NPlatformSignature, Type, V> ofPlatformSignatureMap(NSignatureDomain<Type> domain);
 
     /**
-     * Creates a new instance of of platform signature map.
+     * Creates a new instance of platform signature map.
      *
      * @return of platform signature map result
      */
     <V> NSignatureMap<NPlatformSignature, Type, V> ofPlatformSignatureMap();
 
     /**
-     * Creates a new instance of of reflect signature map.
+     * Creates a new instance of reflect signature map.
      *
      * @return of reflect signature map result
      */
     <V> NSignatureMap<NReflectSignature, NReflectType, V> ofReflectSignatureMap();
 
     /**
-     * Creates a new instance of of t ype name signature map.
+     * Creates a new instance of t ype name signature map.
      *
      * @param domain domain
      * @return of t ype name signature map result

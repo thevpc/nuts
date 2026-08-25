@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DefaultNExprsCommonOps {
-    private final Map<NExprCommonOpAndType, NSignatureMap<NPlatformSignature,Type,Object>> commonOps = new HashMap<>();
+    private final Map<NExprCommonOpAndType, NSignatureMap<NPlatformSignature, Type, Object>> commonOps = new HashMap<>();
 
     public DefaultNExprsCommonOps() {
         declareEq();
@@ -64,6 +64,7 @@ public class DefaultNExprsCommonOps {
                 }
         );
     }
+
     private void declareGlob() {
         declare2(NExprCommonOp.LIKE, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
@@ -76,9 +77,9 @@ public class DefaultNExprsCommonOps {
                             return false;
                         }
                         if (a instanceof Number && b instanceof Number) {
-                            return NNumberUtils.equals((Number) a, (Number) b,1E-9);
+                            return NNumberUtils.equals((Number) a, (Number) b, 1E-9);
                         }
-                        if(Objects.equals(a, b)){
+                        if (Objects.equals(a, b)) {
                             return true;
                         }
                         return NGlob.of().toPattern(String.valueOf(b)).matcher(String.valueOf(a)).matches();
@@ -101,7 +102,7 @@ public class DefaultNExprsCommonOps {
                         if (a instanceof Number && b instanceof Number) {
                             return NNumberUtils.equals((Number) a, (Number) b);
                         }
-                        if(Objects.equals(a, b)){
+                        if (Objects.equals(a, b)) {
                             return true;
                         }
                         return Pattern.compile(String.valueOf(b)).matcher(String.valueOf(a)).matches();
@@ -195,7 +196,7 @@ public class DefaultNExprsCommonOps {
                             return NNumberUtils.addNumbers(aa.asNumber().get(), bb.asNumber().get());
                         }
                         if (aa.isString() || bb.isString()) {
-                            return String.valueOf(a) + String.valueOf(b);
+                            return String.valueOf(a) + b;
                         }
                         throw new NIllegalArgumentException(NMsg.ofC("unable to operate '+' operator for %s %s", a, b));
                     }
@@ -371,7 +372,7 @@ public class DefaultNExprsCommonOps {
                         if (a instanceof CharSequence) {
                             return ((CharSequence) a).length() == 0;
                         }
-                        return a != null;
+                        return NBlankable.isBlank(a);
                     }
                 }
         );
@@ -392,12 +393,29 @@ public class DefaultNExprsCommonOps {
                             return a;
                         }
                         if (a instanceof Number && b instanceof Number) {
-                            return NNumberUtils.andNumbers((Number) a, (Number) b);
+                            try {
+                                return NNumberUtils.andNumbers((Number) a, (Number) b);
+                            } catch (NIllegalArgumentException e) {
+                                if (!(a instanceof Boolean)) {
+                                    a = !NBlankable.isBlank(a);
+                                }
+                                if (!(b instanceof Boolean)) {
+                                    b = !NBlankable.isBlank(b);
+                                }
+                                return (Boolean) a && (Boolean) b;
+                            }
                         }
                         if (a instanceof Boolean && b instanceof Boolean) {
                             return (Boolean) a & (Boolean) b;
                         }
-                        throw new NIllegalArgumentException(NMsg.ofC("unable to operate '&' operator for %s %s", a, b));
+                        if (!(a instanceof Boolean)) {
+                            a = !NBlankable.isBlank(a);
+                        }
+                        if (!(b instanceof Boolean)) {
+                            b = !NBlankable.isBlank(b);
+                        }
+                        return (Boolean) a & (Boolean) b;
+                        //throw new NIllegalArgumentException(NMsg.ofC("unable to operate '&' operator for %s %s", a, b));
                     }
                 }
         );
@@ -418,12 +436,29 @@ public class DefaultNExprsCommonOps {
                             return a;
                         }
                         if (a instanceof Number && b instanceof Number) {
-                            return NNumberUtils.orNumbers((Number) a, (Number) b);
+                            try {
+                                return NNumberUtils.orNumbers((Number) a, (Number) b);
+                            } catch (NIllegalArgumentException e) {
+                                if (!(a instanceof Boolean)) {
+                                    a = !NBlankable.isBlank(a);
+                                }
+                                if (!(b instanceof Boolean)) {
+                                    b = !NBlankable.isBlank(b);
+                                }
+                                return (Boolean) a || (Boolean) b;
+                            }
                         }
                         if (a instanceof Boolean && b instanceof Boolean) {
-                            return (Boolean) a | (Boolean) b;
+                            return (Boolean) a || (Boolean) b;
                         }
-                        throw new NIllegalArgumentException(NMsg.ofC("unable to operate '|' operator for %s %s", a, b));
+                        if (!(a instanceof Boolean)) {
+                            a = !NBlankable.isBlank(a);
+                        }
+                        if (!(b instanceof Boolean)) {
+                            b = !NBlankable.isBlank(b);
+                        }
+                        return (Boolean) a || (Boolean) b;
+                        //throw new NIllegalArgumentException(NMsg.ofC("unable to operate '|' operator for %s %s", a, b));
                     }
                 }
         );
@@ -463,21 +498,21 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declare2(NExprCommonOp op, NFixity type, NPlatformSignature sig, NFunction2<?, ?, ?> value, NPlatformSignature... sigs) {
-        NSignatureMap<NPlatformSignature,Type,Object> sigMap = commonOps.computeIfAbsent(new NExprCommonOpAndType(op, type), r -> new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN));
+        NSignatureMap<NPlatformSignature, Type, Object> sigMap = commonOps.computeIfAbsent(new NExprCommonOpAndType(op, type), r -> new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN));
         sigMap.putMulti(sig.toUnnamed(), value, sigs);
     }
 
     private void declare1(NExprCommonOp op, NFixity type, NPlatformSignature sig, NFunction<?, ?> value, NPlatformSignature... sigs) {
-        NSignatureMap<NPlatformSignature,Type,Object> sigMap = commonOps.computeIfAbsent(new NExprCommonOpAndType(op, type), r -> new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN));
+        NSignatureMap<NPlatformSignature, Type, Object> sigMap = commonOps.computeIfAbsent(new NExprCommonOpAndType(op, type), r -> new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN));
         sigMap.putMulti(sig.toUnnamed(), value, sigs);
     }
 
     public NOptional<NFunction2<?, ?, ?>> findFunction2(NExprCommonOp op, NFixity type, NPlatformSignature sig0) {
-        NPlatformSignature sig=sig0.toUnnamed();
+        NPlatformSignature sig = sig0.toUnnamed();
         NAssert.requireNamedTrue(sig.size() == 2, "sig size");
         if (sig.getType(0) == null || sig.getType(1) == null) {
             List<Object> acceptable = commonOps.entrySet().stream().filter(x -> x.getKey().getType() == type && x.getKey().getOp() == op)
-                    .flatMap(x -> x.getValue().toMap().entrySet().stream().filter(y -> y.getKey().matches(sig)).map(y->y.getValue()))
+                    .flatMap(x -> x.getValue().toMap().entrySet().stream().filter(y -> y.getKey().matches(sig)).map(y -> y.getValue()))
                     .collect(Collectors.toList());
             if (acceptable.size() == 1) {
                 return NOptional.of((NFunction2) acceptable.get(0));
@@ -488,7 +523,7 @@ public class DefaultNExprsCommonOps {
             return NOptional.of((NFunction2) acceptable.get(0));
         }
 
-        NSignatureMap<NPlatformSignature,Type,Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
+        NSignatureMap<NPlatformSignature, Type, Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
         if (sm != null) {
             NOptional<Object> v = sm.get(sig);
             if (v.isPresent() && v.get() instanceof NFunction2) {
@@ -499,7 +534,7 @@ public class DefaultNExprsCommonOps {
     }
 
     public NOptional<NFunction<?, ?>> findFunction1(NExprCommonOp op, NFixity type, NPlatformSignature sig0) {
-        NPlatformSignature sig=sig0.toUnnamed();
+        NPlatformSignature sig = sig0.toUnnamed();
         NAssert.requireNamedTrue(sig.size() == 1, "sig size");
         Type t = sig.getType(0);
         if (t == null) {
@@ -514,7 +549,7 @@ public class DefaultNExprsCommonOps {
             }
             return NOptional.of((NFunction) acceptable.get(0));
         }
-        NSignatureMap<NPlatformSignature,Type,Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
+        NSignatureMap<NPlatformSignature, Type, Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
         if (sm != null) {
             NOptional<Object> v = sm.get(sig);
             if (v.isPresent() && v.get() instanceof NFunction) {

@@ -52,10 +52,10 @@ public interface NVersionInterval extends Serializable {
         return ofList(s,versionComparator).flatMap(
                 x->{
                     if(x.isEmpty()){
-                        return NOptional.ofEmpty(()-> NMsg.ofPlain("empty interval"));
+                        return NOptional.ofEmpty(()-> NMsg.ofP("empty interval"));
                     }
                     if(x.size()>1){
-                        return NOptional.ofError(()-> NMsg.ofPlain("too many intervals"));
+                        return NOptional.ofError(()-> NMsg.ofP("too many intervals"));
                     }
                     return NOptional.of(x.get(0));
                 }

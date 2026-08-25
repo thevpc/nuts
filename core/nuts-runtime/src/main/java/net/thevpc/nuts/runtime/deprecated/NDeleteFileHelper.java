@@ -41,7 +41,7 @@ public class NDeleteFileHelper {
         if (confirm == NConfirmationMode.ASK
                 && o.outputFormat().orElse(NContentType.PLAIN) != NContentType.PLAIN) {
             throw new NExecutionException(
-                    NMsg.ofPlain("unable to switch to interactive mode for non plain text output format. "
+                    NMsg.ofP("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), NExecutionException.ERROR_255);
         }
@@ -59,8 +59,8 @@ public class NDeleteFileHelper {
             }
             case NO:
             case ERROR: {
-                bLog.log(NMsg.ofPlain("reset cancelled (applied '--no' argument)").asWarningAlert());
-                throw new NNoSessionCancelException(NMsg.ofPlain("cancel delete folder"));
+                bLog.log(NMsg.ofP("reset cancelled (applied '--no' argument)").asWarningAlert());
+                throw new NNoSessionCancelException(NMsg.ofP("cancel delete folder"));
             }
         }
         List<Path> folders = new ArrayList<>();
@@ -142,7 +142,7 @@ public class NDeleteFileHelper {
                         if (bOptions.confirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES) {
                             line = "y";
                         } else {
-                            throw new NIllegalArgumentException(NMsg.ofPlain("failed to delete files in --bot mode without auto confirmation"));
+                            throw new NIllegalArgumentException(NMsg.ofP("failed to delete files in --bot mode without auto confirmation"));
                         }
                     } else {
                         if (bOptions.gui().orElse(false)) {
@@ -162,7 +162,7 @@ public class NDeleteFileHelper {
                                     break;
                                 }
                                 case ERROR: {
-                                    throw new NIllegalArgumentException(NMsg.ofPlain("error response"));
+                                    throw new NIllegalArgumentException(NMsg.ofP("error response"));
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases

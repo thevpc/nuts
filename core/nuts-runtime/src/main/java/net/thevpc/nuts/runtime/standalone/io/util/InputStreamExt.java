@@ -80,7 +80,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
         if (sourceName == null) {
             String m2 = this.md.name().orElse(null);
             if (m2 != null) {
-                sourceName = NMsg.ofPlain(m2);
+                sourceName = NMsg.ofP(m2);
             }
         }
         this.sourceName = sourceName;
@@ -203,7 +203,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
             try {
                 base.close();
             } catch (IOException e) {
-                throw new NIOException(NMsg.ofPlain("error closing base stream"), e);
+                throw new NIOException(NMsg.ofP("error closing base stream"), e);
             }
         }
         if (onClose != null) {
@@ -281,7 +281,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(NMsg.ofPlain("stream is interrupted"));
+            throw new NIOException(NMsg.ofP("stream is interrupted"));
         }
     }
 

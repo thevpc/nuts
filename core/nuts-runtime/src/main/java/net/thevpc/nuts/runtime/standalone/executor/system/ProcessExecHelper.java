@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -93,7 +92,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 NOut.println(NText.ofCode("system", pb.getCommandString()));
             } else {
                 NOut.print("exec ");
-                NOut.println(NMsg.ofPlain(pb.getCommandString()));
+                NOut.println(NMsg.ofP(pb.getCommandString()));
             }
         }
         return new ProcessExecHelper(definition, pb, NSession.of().out(), in, out, err, dry);
@@ -123,7 +122,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         map.put("nuts.file", nutMainFile.content().flatMap(NPath::toPath).map(Object::toString).orNull());
         String defaultJavaCommand = NJavaSdkUtils.of().resolveJavaCommandByVersion("", false,jdk,true,true).orNull();
         if (defaultJavaCommand == null) {
-            throw new NExecutionException(NMsg.ofPlain("no java version was found"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofP("no java version was found"), NExecutionException.ERROR_1);
         }
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -227,7 +226,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 trace.println(pb.getFormattedCommandString());
             } else {
                 trace.print("[dry] exec ");
-                trace.println(NMsg.ofPlain(pb.getCommandString()));
+                trace.println(NMsg.ofP(pb.getCommandString()));
             }
             return NExecutionException.SUCCESS;
         } else {
@@ -268,7 +267,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             if (ex instanceof RuntimeException) {
                 throw (RuntimeException) err;
             }
-            throw new NExecutionException(NMsg.ofPlain("error executing process"), err);
+            throw new NExecutionException(NMsg.ofP("error executing process"), err);
         } finally {
             if (err != null) {
                 if (definition != null) {

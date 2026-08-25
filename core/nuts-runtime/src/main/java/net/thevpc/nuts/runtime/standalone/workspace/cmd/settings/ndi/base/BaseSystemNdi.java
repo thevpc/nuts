@@ -4,8 +4,6 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NSearch;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -649,7 +647,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         } else if (nDesktopIntegrationItem == NDesktopIntegrationItem.USER) {
             results.addAll(Arrays.asList(ww.writeShortcut(shortcut, path == null ? null : NPath.of(path), true, id)));
         } else {
-            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported"));
+            throw new NIllegalArgumentException(NMsg.ofP("unsupported"));
         }
         return results.toArray(new PathInfo[0]);
     }

@@ -129,7 +129,7 @@ public class InternalNRepositoryFilterRPI extends InternalNTypedFilters<NReposit
         }
         NRepositoryFilter t = as(a);
         if (t == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("not a RepositoryFilter"));
+            throw new NIllegalArgumentException(NMsg.ofP("not a RepositoryFilter"));
         }
         return t;
     }

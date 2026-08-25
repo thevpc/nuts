@@ -12,7 +12,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.NStoreType;
@@ -47,7 +46,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         , s));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("force delete?")).defaultValue(false)
+                        .forBoolean(NMsg.ofP("force delete?")).defaultValue(false)
                         .booleanValue()) {
                     s.delete();
                 }
@@ -105,7 +104,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         NText.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("force delete?")).defaultValue(false)
+                        .forBoolean(NMsg.ofP("force delete?")).defaultValue(false)
                         .booleanValue()) {
                     sstoreLocation.delete();
                 }
@@ -126,7 +125,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         NText.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("Force Delete?")).defaultValue(false)
+                        .forBoolean(NMsg.ofP("Force Delete?")).defaultValue(false)
                         .booleanValue()) {
                     sstoreLocation.delete();
                 }

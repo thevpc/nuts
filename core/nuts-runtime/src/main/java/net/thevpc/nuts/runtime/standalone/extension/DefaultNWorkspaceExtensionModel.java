@@ -15,7 +15,6 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.ext.NServiceLoader;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.reflect.NClassLoader;
@@ -500,9 +499,9 @@ public class DefaultNWorkspaceExtensionModel {
         }
     }
 
-    public NWorkspaceExtension wireExtension(NId id, NFetch options,boolean ignoreExcluded) {
-        if(ignoreExcluded){
-            if(isExcludedExtension(id)){
+    public NWorkspaceExtension wireExtension(NId id, NFetch options, boolean ignoreExcluded) {
+        if (ignoreExcluded) {
+            if (isExcludedExtension(id)) {
                 return null;
             }
         }
@@ -890,9 +889,12 @@ public class DefaultNWorkspaceExtensionModel {
                 }
                 if (nnold == null && !cachedWorkspaceExtensionsClassLoadersImmutable.isEmpty()) {
                     for (Map.Entry<CachedNutsURLClassLoaderKey, NClassLoader> e : cachedWorkspaceExtensionsClassLoadersImmutable.entrySet()) {
-                        System.out.println(
-                                Objects.equals(e.getKey(), withoutName) + " : " +
-                                        e.getKey() + " <> " + withoutName);
+                        _LOG().warn(
+                                NMsg.ofP(Objects.equals(e.getKey(), withoutName) + " : "
+                                        + "\n  " + e.getKey()
+                                        + "\n   <> "
+                                        + "\n  " + withoutName)
+                        );
                     }
                 }
             }

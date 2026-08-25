@@ -8,7 +8,7 @@ package net.thevpc.nuts.reflect;
  */
 public interface NTypeNamePlatformDomain extends NTypeNameDomain {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @return of result
      */

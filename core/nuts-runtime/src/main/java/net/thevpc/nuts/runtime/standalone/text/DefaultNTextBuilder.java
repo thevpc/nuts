@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNText;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextList;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
@@ -377,7 +376,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
                 }
                 this.children.add(z);
             } else {
-                throw new NUnsupportedOperationException(NMsg.ofPlain("expected plain or styled nodes"));
+                throw new NUnsupportedOperationException(NMsg.ofP("expected plain or styled nodes"));
             }
         }
     }

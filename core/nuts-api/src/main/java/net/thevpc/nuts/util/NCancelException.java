@@ -77,6 +77,6 @@ public class NCancelException extends NExecutionException {
        * @param message message
        * @param exitCode exit code
        */
-        super((message == null) ? NMsg.ofPlain(NI18n.of("operation cancelled")) : message, exitCode);
+        super((message == null) ? NMsg.ofP(NI18n.of("operation cancelled")) : message, exitCode);
     }
 }

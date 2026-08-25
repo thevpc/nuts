@@ -261,7 +261,7 @@ public class NSysExecUtils {
                 return cc;
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofPlain("cannot run as admin/root on unknown system OS family"));
+        throw new NIllegalArgumentException(NMsg.ofP("cannot run as admin/root on unknown system OS family"));
     }
 
     private static NOptional<String[]> guiWindowsSudo(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {

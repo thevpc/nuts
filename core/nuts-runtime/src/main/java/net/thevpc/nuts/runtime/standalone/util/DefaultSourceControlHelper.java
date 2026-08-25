@@ -9,7 +9,6 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NDeploy;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NIOException;
@@ -73,7 +72,7 @@ public class DefaultSourceControlHelper {
             NIOUtils.delete(folder);
             return newId;
         } else {
-            throw new NUnsupportedOperationException(NMsg.ofPlain("commit not supported"));
+            throw new NUnsupportedOperationException(NMsg.ofP("commit not supported"));
         }
     }
 
@@ -114,7 +113,7 @@ public class DefaultSourceControlHelper {
                     .build()
             ;
         } else {
-            throw new NUnsupportedOperationException(NMsg.ofPlain("checkout not supported"));
+            throw new NUnsupportedOperationException(NMsg.ofP("checkout not supported"));
         }
     }
 }

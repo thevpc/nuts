@@ -366,7 +366,7 @@ public class NRepositoryFolderHelper {
 
     public NDescriptor deploy(NDeployRepositoryCmd deployment, NConfirmationMode writeType) {
         if (!isWriteEnabled()) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("read-only repository"));
+            throw new NIllegalArgumentException(NMsg.ofP("read-only repository"));
         }
         NDescriptor descriptor = deployment.descriptor();
         NId id = deployment.id();
@@ -428,7 +428,7 @@ public class NRepositoryFolderHelper {
 
     public NPath deployDescriptor(NId id, NDescriptor desc, NConfirmationMode writeType) {
         if (!isWriteEnabled()) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("read only repository"));
+            throw new NIllegalArgumentException(NMsg.ofP("read only repository"));
         }
         CoreNIdUtils.checkLongId(id);
         NPath descFile = getLongIdLocalFile(id.builder().faceDescriptor().build());

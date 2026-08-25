@@ -154,7 +154,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         if (last != null) {
             model.remove(last, lastPath);
         } else {
-            throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported remove"));
+            throw new NUnsupportedOperationException(NMsg.ofP("unsupported remove"));
         }
     }
 

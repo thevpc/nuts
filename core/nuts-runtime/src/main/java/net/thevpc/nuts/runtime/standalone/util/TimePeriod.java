@@ -21,7 +21,7 @@ public class TimePeriod {
 
     public static NOptional<TimePeriod> parse(String str, TimeUnit defaultUnit) {
         if (NBlankable.isBlank(str)) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain(TimePeriod.class.getSimpleName() + " is empty"));
+            return NOptional.ofEmpty(() -> NMsg.ofP(TimePeriod.class.getSimpleName() + " is empty"));
         }
         if (defaultUnit == null) {
             defaultUnit = TimeUnit.MILLISECONDS;

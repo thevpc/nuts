@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.util.NException;
-import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 
@@ -156,7 +155,7 @@ public class CoreSecurityUtilsV1 {
         } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("encryption failed"), ex);
+            throw new NIllegalArgumentException(NMsg.ofP("encryption failed"), ex);
         }
     }
 
@@ -180,7 +179,7 @@ public class CoreSecurityUtilsV1 {
         } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("decryption failed"), ex);
+            throw new NIllegalArgumentException(NMsg.ofP("decryption failed"), ex);
         }
     }
 
@@ -202,7 +201,7 @@ public class CoreSecurityUtilsV1 {
             k.key = sha.digest(k.key);
             k.secretKey = new SecretKeySpec(k.key, "AES");
         } catch (NoSuchAlgorithmException ex) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("encryption key building failed"), ex);
+            throw new NIllegalArgumentException(NMsg.ofP("encryption key building failed"), ex);
         }
         return k;
     }

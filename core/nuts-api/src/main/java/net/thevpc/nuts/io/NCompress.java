@@ -50,7 +50,7 @@ import java.util.Set;
  */
 public interface NCompress extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @return of result
      */

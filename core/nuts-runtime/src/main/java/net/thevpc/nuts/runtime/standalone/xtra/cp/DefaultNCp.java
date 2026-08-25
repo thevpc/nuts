@@ -745,11 +745,11 @@ public class DefaultNCp implements NCp {
         if (checker != null && _target2.jpath == null && !safe) {
             throw new NIllegalArgumentException(NMsg.ofNtf("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
-        NMsg loggedSrc = _source2.source.metaData().message().orElse(NMsg.ofPlain("unknown-source"));
-        NMsg loggedTarget = target.metaData().message().orElse(NMsg.ofPlain("unknown-target"));
+        NMsg loggedSrc = _source2.source.metaData().message().orElse(NMsg.ofP("unknown-source"));
+        NMsg loggedTarget = target.metaData().message().orElse(NMsg.ofP("unknown-target"));
         NMsg m = actionMessage();
         if (m == null) {
-            m = NMsg.ofPlain("copy");
+            m = NMsg.ofP("copy");
         }
         if (options.contains(NPathOption.LOG)) {
             session.terminal().printProgress(NMsg.ofC("%-14s %s to %s", m, loggedSrc, loggedTarget));
@@ -898,7 +898,7 @@ public class DefaultNCp implements NCp {
             } catch (NCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NCpValidatorException(NMsg.ofPlain("validate file failed"), ex);
+                throw new NCpValidatorException(NMsg.ofP("validate file failed"), ex);
             }
         }
     }

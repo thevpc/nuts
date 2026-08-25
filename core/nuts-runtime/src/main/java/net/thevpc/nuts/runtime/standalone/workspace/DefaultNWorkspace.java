@@ -425,7 +425,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     password = Arrays.copyOf(password, password.length);
                 }
                 if (NBlankable.isBlank(new String(password))) {
-                    password = data.terminals.defaultTerminal().readPassword(NMsg.ofPlain("Password : "));
+                    password = data.terminals.defaultTerminal().readPassword(NMsg.ofP("Password : "));
                 }
                 try (NSecureString s = NSecureString.ofSecure(password)) {
                     NSecurityManager.of().login(data.effectiveBootOptions.userName().get(), s);
@@ -523,7 +523,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         if (repositories().isEmpty()) {
             wsModel.LOG
-                    .log(NMsg.ofPlain("workspace has no repositories. Will re-create defaults")
+                    .log(NMsg.ofP("workspace has no repositories. Will re-create defaults")
                             .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
                     );
             data.justInstalledArchetype = initializeWorkspace(effectiveBootOptions.archetype().orNull());
@@ -2060,7 +2060,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
                 _ws = configLoaded.getWorkspace();
                 if (i >= maxDepth - 1) {
-                    throw new NIllegalArgumentException(NMsg.ofPlain("cyclic workspace resolution"));
+                    throw new NIllegalArgumentException(NMsg.ofP("cyclic workspace resolution"));
                 }
             }
             if (lastConfigLoaded == null) {

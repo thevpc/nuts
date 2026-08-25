@@ -43,7 +43,7 @@ public class DefaultNFilterModel {
 
     public NTypedFilters resolveNutsTypedFilters(Class type) {
         if (type == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
+            throw new NIllegalArgumentException(NMsg.ofP("unable to detected Filter type"));
         }
         switch (type.getName()) {
             case "net.thevpc.nuts.artifact.NDependencyFilter": {
@@ -80,7 +80,7 @@ public class DefaultNFilterModel {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NFilter[0]));
             if (type == null) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
+                throw new NIllegalArgumentException(NMsg.ofP("unable to detected Filter type"));
             }
         }
         return (T) resolveNutsTypedFilters(type).all(others);
@@ -97,7 +97,7 @@ public class DefaultNFilterModel {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NFilter[0]));
             if (type == null) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
+                throw new NIllegalArgumentException(NMsg.ofP("unable to detected Filter type"));
             }
         }
         return (T) resolveNutsTypedFilters(type).any(others);
@@ -111,7 +111,7 @@ public class DefaultNFilterModel {
         if (type == null || type.equals(NFilter.class)) {
             type = (Class<T>) detectType(other);
             if (type == null) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
+                throw new NIllegalArgumentException(NMsg.ofP("unable to detected Filter type"));
             }
         }
         return (T) resolveNutsTypedFilters(type).not(other);
@@ -128,7 +128,7 @@ public class DefaultNFilterModel {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NFilter[0]));
             if (type == null) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
+                throw new NIllegalArgumentException(NMsg.ofP("unable to detected Filter type"));
             }
         }
         switch (type.getName()) {

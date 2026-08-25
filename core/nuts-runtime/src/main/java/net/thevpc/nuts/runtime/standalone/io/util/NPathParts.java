@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
@@ -88,7 +87,7 @@ public class NPathParts {
                 break;
             }
             default: {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported NutsPathParts"));
+                throw new NIllegalArgumentException(NMsg.ofP("unsupported NutsPathParts"));
             }
         }
     }

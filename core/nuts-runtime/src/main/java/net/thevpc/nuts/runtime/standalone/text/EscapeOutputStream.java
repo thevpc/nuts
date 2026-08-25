@@ -22,7 +22,7 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
         this.term = term;
         NTerminalModeOp t = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NTerminalMode.FORMATTED && t.in() != NTerminalMode.FILTERED) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("illegal Formatted"));
+            throw new NIllegalArgumentException(NMsg.ofP("illegal Formatted"));
         }
     }
 

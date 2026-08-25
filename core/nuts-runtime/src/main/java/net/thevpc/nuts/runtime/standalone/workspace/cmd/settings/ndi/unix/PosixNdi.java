@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.platform.NEnv;
@@ -94,7 +93,7 @@ public class PosixNdi extends BaseSystemNdi {
                             NText.ofStyled("why", NTextStyle.warn()),
                             NText.ofStyled("cancel!", NTextStyle.comments())
                     ))
-                    .hintMessage(NMsg.ofPlain("you must enter your confirmation"))
+                    .hintMessage(NMsg.ofP("you must enter your confirmation"))
                     .sparser(new NAskParser<Boolean>() {
                         @Override
                         public Boolean parse(NAskParseContext<Boolean> context) {
@@ -108,7 +107,7 @@ public class PosixNdi extends BaseSystemNdi {
                                 response = defaultValue;
                             }
                             if (response == null) {
-                                throw new NValidationException(NMsg.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                                throw new NValidationException(NMsg.ofP("sorry... but you need to type 'ok', 'why' or 'cancel'"));
                             }
                             String r = response.toString();
                             if ("ok".equalsIgnoreCase(r)) {
@@ -122,11 +121,11 @@ public class PosixNdi extends BaseSystemNdi {
                                 out.println(NMsg.ofC("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :", NText.ofStyled(sysRcName, NTextStyle.path())));
                                 out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
                                 out.println(NMsg.ofC(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)", NText.ofStyled(". ~/" + sysRcName, NTextStyle.path())));
-                                throw new NValidationException(NMsg.ofPlain("Try again..."));
+                                throw new NValidationException(NMsg.ofP("Try again..."));
                             } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                 throw new NCancelException();
                             } else {
-                                throw new NValidationException(NMsg.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                                throw new NValidationException(NMsg.ofP("sorry... but you need to type 'ok', 'why' or 'cancel'"));
                             }
                         }
                     })

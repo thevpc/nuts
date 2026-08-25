@@ -481,7 +481,7 @@ public class DefaultNExec extends AbstractNExec {
                     NAssert.requireNamedNonBlank(command, "command");
                     List<String> ts = new ArrayList<>(command);
                     if (ts.isEmpty()) {
-                        throw new NUnsupportedArgumentException(NMsg.ofPlain("missing command"));
+                        throw new NUnsupportedArgumentException(NMsg.ofP("missing command"));
                     }
                     String id = ts.get(0);
                     ts.remove(0);
@@ -896,7 +896,7 @@ public class DefaultNExec extends AbstractNExec {
                         c.setContentFile(zipFilePath);
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NIllegalArgumentException(NMsg.ofPlain("invalid nuts folder source. expected 'zip' ext in descriptor"));
+                        throw new NIllegalArgumentException(NMsg.ofP("invalid nuts folder source. expected 'zip' ext in descriptor"));
                     }
                 }
             } else if (Files.isRegularFile(fileSource)) {

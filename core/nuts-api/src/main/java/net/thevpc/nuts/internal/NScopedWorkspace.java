@@ -62,7 +62,7 @@ public class NScopedWorkspace {
             if(shw !=null){
                 return NOptional.of(shw);
             }
-            NMsg emptyMessage = NMsg.ofPlain("missing workspace in the current context. If not sure what does this mean, just call 'Nuts.require()'");
+            NMsg emptyMessage = NMsg.ofP("missing workspace in the current context. If not sure what does this mean, just call 'Nuts.require()'");
             return NOptional.ofEmpty(emptyMessage);
         }
         return NOptional.of(ws);

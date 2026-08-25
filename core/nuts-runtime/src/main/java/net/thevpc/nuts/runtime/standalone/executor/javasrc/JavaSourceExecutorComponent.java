@@ -110,7 +110,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     .ofTempFolder("jj").toPath().get();
             int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
             if (res != NExecutionException.SUCCESS) {
-                throw new NExecutionException(NMsg.ofPlain("compilation failed"), res);
+                throw new NExecutionException(NMsg.ofP("compilation failed"), res);
             }
             JavaExecutorComponent cc = new JavaExecutorComponent();
             NDefinitionBuilder d = executionContext.definition().builder();

@@ -50,7 +50,7 @@ public class NNoSessionException extends RuntimeException implements NExceptionB
        *
        * @param session") session")
        */
-        this(NMsg.ofPlain("missing session"));
+        this(NMsg.ofP("missing session"));
     }
 
     /**

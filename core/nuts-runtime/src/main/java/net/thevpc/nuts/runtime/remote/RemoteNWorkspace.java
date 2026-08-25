@@ -114,7 +114,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
 //    }
 //
     public <T> T remoteCall(NElement call, Class<T> expectedType) {
-        throw new NUnsupportedOperationException(NMsg.ofPlain("not yet supported remoteCall"));
+        throw new NUnsupportedOperationException(NMsg.ofP("not yet supported remoteCall"));
     }
 
 }

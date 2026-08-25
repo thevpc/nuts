@@ -78,7 +78,7 @@ public class DefaultNUpdateStats extends AbstractNUpdateStats {
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
                     new NRepositoryFolderHelper(null, NPath.of(repositoryPath), false,"stats",null).reindexFolder();
                 } else {
-                    throw new NIllegalArgumentException(NMsg.ofPlain("unsupported repository folder"));
+                    throw new NIllegalArgumentException(NMsg.ofP("unsupported repository folder"));
                 }
                 if (session.isPlainTrace()) {
                     NOut.println(NMsg.ofC("[%s] updated stats %s", NWorkspace.of().workspaceLocation(), repositoryPath));

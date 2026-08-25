@@ -29,7 +29,7 @@ public class DefaultNPathInfo implements NPathInfo {
     private String group;
 
     /**
-     * Creates a new instance of of not found.
+     * Creates a new instance of not found.
      *
      * @param path path
      * @return of not found result

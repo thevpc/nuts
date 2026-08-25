@@ -822,7 +822,7 @@ public class NPlatformHome {
             for (Map.Entry<NStoreType, String> e : baseLocations.entrySet()) {
                 NStoreType loc = e.getKey();
                 if (loc == null) {
-                    throw NException.ofSafeIllegalArgumentException(NMsg.ofPlain(NI18n.of("null location")));
+                    throw NException.ofSafeIllegalArgumentException(NMsg.ofP(NI18n.of("null location")));
                 }
                 storeLocations.put(loc, e.getValue());
             }

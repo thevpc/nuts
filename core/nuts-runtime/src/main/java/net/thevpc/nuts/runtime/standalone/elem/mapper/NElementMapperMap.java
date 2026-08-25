@@ -88,7 +88,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
             elemType2 = pt.getActualTypeArguments()[1];
         }
         if (cls == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("class is null"));
+            throw new NIllegalArgumentException(NMsg.ofP("class is null"));
         }
         switch (cls.getName()) {
             case "java.util.Map":

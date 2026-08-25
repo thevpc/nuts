@@ -177,7 +177,7 @@ public class NStreamBase<T> implements NStream<T> {
             }
             return NOptional.ofEmpty(()
                     -> name == null
-                    ? NMsg.ofPlain("missing last")
+                    ? NMsg.ofP("missing last")
                     : NMsg.ofC("missing last %s", name)
             );
         } finally {
@@ -201,7 +201,7 @@ public class NStreamBase<T> implements NStream<T> {
             } else {
                 return NOptional.ofEmpty(()
                         -> name == null
-                        ? NMsg.ofPlain("missing")
+                        ? NMsg.ofP("missing")
                         : NMsg.ofC("missing %s", name)
                 );
             }
@@ -675,7 +675,7 @@ public class NStreamBase<T> implements NStream<T> {
             }
             return NOptional.ofEmpty(()
                     -> name == null
-                    ? NMsg.ofPlain("missing first")
+                    ? NMsg.ofP("missing first")
                     : NMsg.ofC("missing first %s", name)
             );
         } finally {

@@ -11,7 +11,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NDigestName extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @return of result
      */

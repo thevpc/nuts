@@ -45,7 +45,7 @@ import java.nio.file.Path;
  */
 public interface NInputStreamMonitor extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @return of result
      */

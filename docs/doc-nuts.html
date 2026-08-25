@@ -71,12 +71,23 @@
                 <span></span><span class="w-75"></span><span class="w-50"></span>
             </button>
 
-            <!-- Logo + brand -->
-            <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
-                <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
-                <span class="nuts-brand__name">Nuts</span>
-                <span class="nuts-brand__version">v1.0.0.0</span>
-            </a>
+            <!-- Logo + brand + version dropdown -->
+            <div class="nuts-brand-wrapper d-inline-flex align-items-center">
+                <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
+                    <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
+                    <span class="nuts-brand__name">Nuts</span>
+                </a>
+                <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
+                    <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        v0.8.3
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
+                        <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
+                        <a class="dropdown-item " href="doc-nuts.html">v0.8.4 (Latest)</a>
+                        <a class="dropdown-item active" href="versions/v0.8.3/doc-nuts.html">v0.8.3</a>
+                    </div>
+                </div>
+            </div>
 
             <!-- Mobile collapse toggler -->
             <button class="navbar-toggler ml-auto" type="button"
@@ -116,7 +127,7 @@
                         <i class="fab fa-github"></i>
                     </a></li>
 
-                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers →</a></li>
+                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers &rarr;</a></li>
 
                 </ul>
             </div>
@@ -131,13 +142,20 @@
 
         <!-- ===================== SIDEBAR ===================== -->
         <div class="idocs-navigation">
+            <div class="doc-version-select-box mb-3 px-2">
+                <label for="doc-version-select" class="form-label text-muted small font-weight-bold mb-1 d-block">VERSION</label>
+                <select id="doc-version-select" class="form-control form-control-sm doc-version-select-input" onchange="window.location.href=this.value;">
+                    <option value="doc-nuts.html" >v0.8.4 (Latest)</option>
+                    <option value="versions/v0.8.3/doc-nuts.html" selected>v0.8.3</option>
+                </select>
+            </div>
             <div class="nav-search">
                 <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
             </div>
             <ul class="nav flex-column">
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U04492397e872f20d9fb43a6b6828ad062f604f08">
+                    <a class="nav-link" href="#Ud7b88b63350bfd616ef7b154e799c56849121627">
                         <span class="nav-num">1</span>
                         Introducing Nuts
                     </a>
@@ -182,7 +200,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U9e995aba46a5f1d54af4cc01765449dbb1d39a4b">
+                    <a class="nav-link" href="#U6c209a684beede635e276537d302427dc337ece3">
                         <span class="nav-num">2</span>
                         Tutorials
                     </a>
@@ -199,7 +217,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U35a6aaedc6f977813296f6fda9f61958c3f21676">
+                            <a class="nav-link" href="#Uefa8821416cb17afb32cc57335151a9835cb2a4f">
                                 2.2 Versions
                             </a>
                             
@@ -207,7 +225,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U01bb5e2e99638c2c3a6600898f25050a8a7014d7">
+                            <a class="nav-link" href="#Uacb5dc52e10166f118a4cb309d87a48d7b89a27d">
                                 2.3 Workspace
                             </a>
                             
@@ -223,7 +241,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ud33edcd42ced16d72b42aaab92aa26c4654ddc2e">
+                            <a class="nav-link" href="#U4aac8671d2775a66f5c781e003e60f754f980556">
                                 2.5 Repositories
                             </a>
                             
@@ -231,7 +249,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Uceb8597526f56a91020adc95b1953e54599d6502">
+                            <a class="nav-link" href="#U660e9d561290fa92c53f62bea1d8ff37b4cc11d7">
                                 2.6 Structured Output
                             </a>
                             
@@ -243,7 +261,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U4f5b7c4bcf1433d4d982555d4ca40a832774fdf6">
+                    <a class="nav-link" href="#U885cdef833531de18775367155acb0c0bc554ebb">
                         <span class="nav-num">3</span>
                         How-To Guides
                     </a>
@@ -252,7 +270,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U8cca8a8522ff6c6261ca070114f3b997a7d3ee93">
+                            <a class="nav-link" href="#U42a72dbd9599f3ccf1b659194439faed2a191648">
                                 3.1 Provision JDK
                             </a>
                             
@@ -260,7 +278,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ub105e8f204448d9bb95e9543fd1b6f3d475dd960">
+                            <a class="nav-link" href="#U00e3e58c5a0ad8935035b862ff9c5a8d892f6ec9">
                                 3.2 Create Bundles
                             </a>
                             
@@ -268,7 +286,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U5b916753cb3e3c392883cd66960ab6d0e8fd25ac">
+                            <a class="nav-link" href="#U53c1fd13eff3131430746cb5304db4fa52f310fd">
                                 3.3 Remote Execution
                             </a>
                             
@@ -276,7 +294,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Uddb5660ffc73aa17c82185729a7aede61ac0261e">
+                            <a class="nav-link" href="#U8f4072b63fa31df0ac1021b7b3a09ffffebd7b35">
                                 3.4 Using Docker
                             </a>
                             
@@ -284,7 +302,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U235280557407a72f501355676c3399dddb813ad6">
+                            <a class="nav-link" href="#Ub4cb184b4273dad34c61d4d0df993ace77b7a4f1">
                                 3.5 CI/CD Integration
                             </a>
                             
@@ -304,7 +322,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U7845eced8ca4047e71b0e33eb83fff14ab4af41d">
+                    <a class="nav-link" href="#U7bb86cb13a3366e1afb2a660089f9e16dc7b7566">
                         <span class="nav-num">4</span>
                         Concepts & Architecture
                     </a>
@@ -313,7 +331,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ud7cd8ae8b7dece2d265902fa804249c051aa962a">
+                            <a class="nav-link" href="#Uf0ce7567c66815dcacf8ef6faa96354d366ebf68">
                                 4.1 Architecture & Design
                             </a>
                             
@@ -329,7 +347,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ua50f3c8e2b1846b5525aed06b4cbaaae80969081">
+                            <a class="nav-link" href="#U761083640cc0ce1024a1d2e73fa40a238d1e8aca">
                                 4.3 Workspace
                             </a>
                             
@@ -345,7 +363,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U715bcb41aea9359a11eb7c788334ba8af6b80fc4">
+                            <a class="nav-link" href="#Uad551c99846b10a7a8a7b7eee9009d33020f917d">
                                 4.5 Security Model
                             </a>
                             
@@ -373,7 +391,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U6e049eba05477512ad812b27b1f88f3847b3aee9">
+                    <a class="nav-link" href="#U927903b66c64f3545ea611d0b2f504e75b4e005c">
                         <span class="nav-num">5</span>
                         Nuts Commands
                     </a>
@@ -545,16 +563,25 @@
             <div class="container">
 
                 <section id="doc-title-section">
-                    <h1>User Documentation</h1>
+                    
+                    <div class="alert alert-warning doc-version-banner d-flex align-items-center mb-4" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <div>
+                            You are viewing documentation for version <strong>v0.8.3</strong>. 
+                            <a href="doc-nuts.html" class="alert-link">Switch to latest version (v0.8.4) &rarr;</a>
+                        </div>
+                    </div>
+                    
+                    <h1>User Documentation <span class="badge badge-secondary font-weight-normal small ml-2">v0.8.3</span></h1>
                     <p class="lead">Everything you need to know about installing, configuring, and using Nuts Package Manager.</p>
                     <hr class="divider">
                 </section>
 
                 
-                <section id="U04492397e872f20d9fb43a6b6828ad062f604f08">
+                <section id="Ud7b88b63350bfd616ef7b154e799c56849121627">
 
                     <h2 class="main-section1" data-num="1">
-                        <a href="#U04492397e872f20d9fb43a6b6828ad062f604f08">
+                        <a href="#Ud7b88b63350bfd616ef7b154e799c56849121627">
                             1 Introducing Nuts
                         </a>
                     </h2>
@@ -622,14 +649,14 @@ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 openjdk version &quot;24.0.1&quot; 2025-04-15
 OpenJDK Runtime Environment (build 24.0.1+9-suse-1.1-x8664)
 OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
-</code></pre><H4 class="md-title-2">Installation</H4><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi10-tab" data-toggle="tab" href="#idi10" role="tab" aria-controls="idi10" aria-selected="false">windows</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi11-tab" data-toggle="tab" href="#idi11" role="tab" aria-controls="idi11" aria-selected="true">linux</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi12-tab" data-toggle="tab" href="#idi12" role="tab" aria-controls="idi12" aria-selected="false">macos</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi13-tab" data-toggle="tab" href="#idi13" role="tab" aria-controls="idi13" aria-selected="false">wget</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi14-tab" data-toggle="tab" href="#idi14" role="tab" aria-controls="idi14" aria-selected="false">curl</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi10" role="tabpanel" aria-labelledby="idi10-tab"><p class="md-phrase">Download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar" class="md-link">nuts-app-1.0.0.jar</a></p><pre><code class="language-bash">java -jar nuts-app-1.0.0.jar -Zy
-</code></pre>On Windows systems, the first launch will create a new <b class="md-bold">nuts</b> menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal:- <b class="md-bold">nuts-cmd-1.0.0</b>: Opens a configured command terminal. The <b class="md-bold">nuts</b> command will be available, as well as several companion tools installed by default.- <b class="md-bold">nuts-cmd</b>: Points to the last installed <b class="md-bold">nuts</b> version (here, 1.0.0).Any of these shortcuts will launch a <b class="md-bold">nuts</b>-aware terminal. Supported systems include Windows 7 and later.<div class="alert alert-success mb-4">Any of the created shortcuts for Windows is a nuts-aware terminal.</div></div><div class="tab-pane fade show active" id="idi11" role="tabpanel" aria-labelledby="idi11-tab"><pre><code class="language-bash">$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
+</code></pre><H4 class="md-title-2">Installation</H4><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link " id="idi20-tab" data-toggle="tab" href="#idi20" role="tab" aria-controls="idi20" aria-selected="false">windows</a></li><li class="nav-item" role="presentation"><a class="nav-link active" id="idi21-tab" data-toggle="tab" href="#idi21" role="tab" aria-controls="idi21" aria-selected="true">linux</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi22-tab" data-toggle="tab" href="#idi22" role="tab" aria-controls="idi22" aria-selected="false">macos</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi23-tab" data-toggle="tab" href="#idi23" role="tab" aria-controls="idi23" aria-selected="false">wget</a></li><li class="nav-item" role="presentation"><a class="nav-link " id="idi24-tab" data-toggle="tab" href="#idi24" role="tab" aria-controls="idi24" aria-selected="false">curl</a></li></ul><div class="tab-content my-3"><div class="tab-pane fade show " id="idi20" role="tabpanel" aria-labelledby="idi20-tab"><p class="md-phrase">Download <a href="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar" class="md-link">nuts-app-1.0.0.jar</a></p><pre><code class="language-bash">java -jar nuts-app-1.0.0.jar -Zy
+</code></pre>On Windows systems, the first launch will create a new <b class="md-bold">nuts</b> menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal:- <b class="md-bold">nuts-cmd-1.0.0</b>: Opens a configured command terminal. The <b class="md-bold">nuts</b> command will be available, as well as several companion tools installed by default.- <b class="md-bold">nuts-cmd</b>: Points to the last installed <b class="md-bold">nuts</b> version (here, 1.0.0).Any of these shortcuts will launch a <b class="md-bold">nuts</b>-aware terminal. Supported systems include Windows 7 and later.<div class="alert alert-success mb-4">Any of the created shortcuts for Windows is a nuts-aware terminal.</div></div><div class="tab-pane fade show active" id="idi21" role="tabpanel" aria-labelledby="idi21-tab"><pre><code class="language-bash">$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
-</code></pre>Linux installation relies on the bash shell. The first launch configures <code class="md-code md-code-ac1">~/.bashrc</code> so that <b class="md-bold">nuts</b> and its companion tools are immediately available in future terminal sessions. Using <b class="md-bold">nuts</b> on a UNIX-like system is seamless. A standard bash terminal (GNOME Terminal, KDE Konsole, etc.) automatically becomes a <b class="md-bold">nuts</b>-aware terminal. A graphical system (X11/Wayland) is only required if you plan to run GUI applications via <b class="md-bold">nuts</b>.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div><div class="tab-pane fade show " id="idi12" role="tabpanel" aria-labelledby="idi12-tab"><pre><code class="language-bash">$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
+</code></pre>Linux installation relies on the bash shell. The first launch configures <code class="md-code md-code-ac1">~/.bashrc</code> so that <b class="md-bold">nuts</b> and its companion tools are immediately available in future terminal sessions. Using <b class="md-bold">nuts</b> on a UNIX-like system is seamless. A standard bash terminal (GNOME Terminal, KDE Konsole, etc.) automatically becomes a <b class="md-bold">nuts</b>-aware terminal. A graphical system (X11/Wayland) is only required if you plan to run GUI applications via <b class="md-bold">nuts</b>.<div class="alert alert-success mb-4">Any bash terminal application is a nuts-aware terminal.</div></div><div class="tab-pane fade show " id="idi22" role="tabpanel" aria-labelledby="idi22-tab"><pre><code class="language-bash">$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
-</code></pre>macOS installation leverages the <mark class="md-code md-code-ac1">zsh</mark> shell. The first launch configures <code class="md-code md-code-ac1">~/.zshrc</code> so that <b class="md-bold">nuts</b> and its companion commands are available in all future terminal instances. A standard terminal (like the macOS Terminal App) automatically acts as a <b class="md-bold">nuts</b>-aware terminal.<div class="alert alert-success mb-4">Any terminal application is a nuts-aware terminal.</div></div><div class="tab-pane fade show " id="idi13" role="tabpanel" aria-labelledby="idi13-tab"><pre><code class="language-bash">$ wget -qO- https://thevpc.net/nuts/install-latest.sh | bash
+</code></pre>macOS installation leverages the <mark class="md-code md-code-ac1">zsh</mark> shell. The first launch configures <code class="md-code md-code-ac1">~/.zshrc</code> so that <b class="md-bold">nuts</b> and its companion commands are available in all future terminal instances. A standard terminal (like the macOS Terminal App) automatically acts as a <b class="md-bold">nuts</b>-aware terminal.<div class="alert alert-success mb-4">Any terminal application is a nuts-aware terminal.</div></div><div class="tab-pane fade show " id="idi23" role="tabpanel" aria-labelledby="idi23-tab"><pre><code class="language-bash">$ wget -qO- https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
-</code></pre></div><div class="tab-pane fade show " id="idi14" role="tabpanel" aria-labelledby="idi14-tab"><pre><code class="language-bash">$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
+</code></pre></div><div class="tab-pane fade show " id="idi24" role="tabpanel" aria-labelledby="idi24-tab"><pre><code class="language-bash">$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
 </code></pre></div></div>You should then see log output resembling the following:<p><img src="assets/images/console/install-log-example.png" class="md-img img-fluid border" alt="install-log-example"></img></p><p class="md-phrase">As shown, the initial installation also triggers the setup of helpful optional programs called "companion tools." A highly recommended tool is <b class="md-bold">nsh</b> (Nuts Shell), a portable bash-compatible shell that runs uniformly across Linux, macOS, and Windows.</p><div class="alert alert-success mb-4">After installation, you must restart your terminal application for the environment configurations to take effect.</div><H4 class="md-title-2">Test Installation</H4>To verify your installation, open a new terminal and type:<pre><code class="language-bash">nuts --version
 </code></pre><p class="md-phrase">It should return the version string in the format <code class="md-code md-code-ac1">nuts-api-version/nuts-impl-version</code>:</p><pre><code class="language-bash">1.0.0/1.0.0.0
@@ -671,10 +698,10 @@ $ exit
                 </section>
                 <hr class="divider">
                 
-                <section id="U9e995aba46a5f1d54af4cc01765449dbb1d39a4b">
+                <section id="U6c209a684beede635e276537d302427dc337ece3">
 
                     <h2 class="main-section1" data-num="2">
-                        <a href="#U9e995aba46a5f1d54af4cc01765449dbb1d39a4b">
+                        <a href="#U6c209a684beede635e276537d302427dc337ece3">
                             2 Tutorials
                         </a>
                     </h2>
@@ -713,10 +740,10 @@ i-X 2024-03-15 14:28:05 anonymous vpc-public-maven net.thevpc.app:netbeans-launc
                     </section>
                     <hr class="divider">
                     
-                    <section id="U35a6aaedc6f977813296f6fda9f61958c3f21676">
+                    <section id="Uefa8821416cb17afb32cc57335151a9835cb2a4f">
 
                         <h3 class="main-section2">
-                            <a href="#U35a6aaedc6f977813296f6fda9f61958c3f21676">
+                            <a href="#Uefa8821416cb17afb32cc57335151a9835cb2a4f">
                                 2.2 Versions
                             </a>
                         </h3>
@@ -741,10 +768,10 @@ nuts netbeans-launcher#1.2.0 &amp;
                     </section>
                     <hr class="divider">
                     
-                    <section id="U01bb5e2e99638c2c3a6600898f25050a8a7014d7">
+                    <section id="Uacb5dc52e10166f118a4cb309d87a48d7b89a27d">
 
                         <h3 class="main-section2">
-                            <a href="#U01bb5e2e99638c2c3a6600898f25050a8a7014d7">
+                            <a href="#Uacb5dc52e10166f118a4cb309d87a48d7b89a27d">
                                 2.3 Workspace
                             </a>
                         </h3>
@@ -797,10 +824,10 @@ nuts settings remove alias ll
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ud33edcd42ced16d72b42aaab92aa26c4654ddc2e">
+                    <section id="U4aac8671d2775a66f5c781e003e60f754f980556">
 
                         <h3 class="main-section2">
-                            <a href="#Ud33edcd42ced16d72b42aaab92aa26c4654ddc2e">
+                            <a href="#U4aac8671d2775a66f5c781e003e60f754f980556">
                                 2.5 Repositories
                             </a>
                         </h3>
@@ -823,10 +850,10 @@ nuts security add credentials --repo private-nexus --username myuser --password 
                     </section>
                     <hr class="divider">
                     
-                    <section id="Uceb8597526f56a91020adc95b1953e54599d6502">
+                    <section id="U660e9d561290fa92c53f62bea1d8ff37b4cc11d7">
 
                         <h3 class="main-section2">
-                            <a href="#Uceb8597526f56a91020adc95b1953e54599d6502">
+                            <a href="#U660e9d561290fa92c53f62bea1d8ff37b4cc11d7">
                                 2.6 Structured Output
                             </a>
                         </h3>
@@ -866,10 +893,10 @@ net.thevpc.app:netbeans-launcher        1.2.2    installed
                 </section>
                 <hr class="divider">
                 
-                <section id="U4f5b7c4bcf1433d4d982555d4ca40a832774fdf6">
+                <section id="U885cdef833531de18775367155acb0c0bc554ebb">
 
                     <h2 class="main-section1" data-num="3">
-                        <a href="#U4f5b7c4bcf1433d4d982555d4ca40a832774fdf6">
+                        <a href="#U885cdef833531de18775367155acb0c0bc554ebb">
                             3 How-To Guides
                         </a>
                     </h2>
@@ -879,10 +906,10 @@ net.thevpc.app:netbeans-launcher        1.2.2    installed
                     </div>
 
                     
-                    <section id="U8cca8a8522ff6c6261ca070114f3b997a7d3ee93">
+                    <section id="U42a72dbd9599f3ccf1b659194439faed2a191648">
 
                         <h3 class="main-section2">
-                            <a href="#U8cca8a8522ff6c6261ca070114f3b997a7d3ee93">
+                            <a href="#U42a72dbd9599f3ccf1b659194439faed2a191648">
                                 3.1 Provision JDK
                             </a>
                         </h3>
@@ -902,10 +929,10 @@ net.thevpc.app:netbeans-launcher        1.2.2    installed
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ub105e8f204448d9bb95e9543fd1b6f3d475dd960">
+                    <section id="U00e3e58c5a0ad8935035b862ff9c5a8d892f6ec9">
 
                         <h3 class="main-section2">
-                            <a href="#Ub105e8f204448d9bb95e9543fd1b6f3d475dd960">
+                            <a href="#U00e3e58c5a0ad8935035b862ff9c5a8d892f6ec9">
                                 3.2 Create Bundles
                             </a>
                         </h3>
@@ -922,10 +949,10 @@ net.thevpc.app:netbeans-launcher        1.2.2    installed
                     </section>
                     <hr class="divider">
                     
-                    <section id="U5b916753cb3e3c392883cd66960ab6d0e8fd25ac">
+                    <section id="U53c1fd13eff3131430746cb5304db4fa52f310fd">
 
                         <h3 class="main-section2">
-                            <a href="#U5b916753cb3e3c392883cd66960ab6d0e8fd25ac">
+                            <a href="#U53c1fd13eff3131430746cb5304db4fa52f310fd">
                                 3.3 Remote Execution
                             </a>
                         </h3>
@@ -941,10 +968,10 @@ net.thevpc.app:netbeans-launcher        1.2.2    installed
                     </section>
                     <hr class="divider">
                     
-                    <section id="Uddb5660ffc73aa17c82185729a7aede61ac0261e">
+                    <section id="U8f4072b63fa31df0ac1021b7b3a09ffffebd7b35">
 
                         <h3 class="main-section2">
-                            <a href="#Uddb5660ffc73aa17c82185729a7aede61ac0261e">
+                            <a href="#U8f4072b63fa31df0ac1021b7b3a09ffffebd7b35">
                                 3.4 Using Docker
                             </a>
                         </h3>
@@ -994,10 +1021,10 @@ volumes:
                     </section>
                     <hr class="divider">
                     
-                    <section id="U235280557407a72f501355676c3399dddb813ad6">
+                    <section id="Ub4cb184b4273dad34c61d4d0df993ace77b7a4f1">
 
                         <h3 class="main-section2">
-                            <a href="#U235280557407a72f501355676c3399dddb813ad6">
+                            <a href="#Ub4cb184b4273dad34c61d4d0df993ace77b7a4f1">
                                 3.5 CI/CD Integration
                             </a>
                         </h3>
@@ -1027,7 +1054,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.nuts
-          key: $-nuts-$
+          key: $-nuts-$4400442f1173272fd6799bc3c508ab071aca486dfd27b58b28736db448a525ed
           restore-keys: |
             $-nuts-
             
@@ -1116,10 +1143,10 @@ nuts info my.group:my-tool --json
                 </section>
                 <hr class="divider">
                 
-                <section id="U7845eced8ca4047e71b0e33eb83fff14ab4af41d">
+                <section id="U7bb86cb13a3366e1afb2a660089f9e16dc7b7566">
 
                     <h2 class="main-section1" data-num="4">
-                        <a href="#U7845eced8ca4047e71b0e33eb83fff14ab4af41d">
+                        <a href="#U7bb86cb13a3366e1afb2a660089f9e16dc7b7566">
                             4 Concepts & Architecture
                         </a>
                     </h2>
@@ -1129,10 +1156,10 @@ nuts info my.group:my-tool --json
                     </div>
 
                     
-                    <section id="Ud7cd8ae8b7dece2d265902fa804249c051aa962a">
+                    <section id="Uf0ce7567c66815dcacf8ef6faa96354d366ebf68">
 
                         <h3 class="main-section2">
-                            <a href="#Ud7cd8ae8b7dece2d265902fa804249c051aa962a">
+                            <a href="#Uf0ce7567c66815dcacf8ef6faa96354d366ebf68">
                                 4.1 Architecture & Design
                             </a>
                         </h3>
@@ -1177,10 +1204,10 @@ nuts info my.group:my-tool --json
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ua50f3c8e2b1846b5525aed06b4cbaaae80969081">
+                    <section id="U761083640cc0ce1024a1d2e73fa40a238d1e8aca">
 
                         <h3 class="main-section2">
-                            <a href="#Ua50f3c8e2b1846b5525aed06b4cbaaae80969081">
+                            <a href="#U761083640cc0ce1024a1d2e73fa40a238d1e8aca">
                                 4.3 Workspace
                             </a>
                         </h3>
@@ -1224,10 +1251,10 @@ nuts --~bot
                     </section>
                     <hr class="divider">
                     
-                    <section id="U715bcb41aea9359a11eb7c788334ba8af6b80fc4">
+                    <section id="Uad551c99846b10a7a8a7b7eee9009d33020f917d">
 
                         <h3 class="main-section2">
-                            <a href="#U715bcb41aea9359a11eb7c788334ba8af6b80fc4">
+                            <a href="#Uad551c99846b10a7a8a7b7eee9009d33020f917d">
                                 4.5 Security Model
                             </a>
                         </h3>
@@ -1333,10 +1360,10 @@ nuts -w my-workspace --standalone
                 </section>
                 <hr class="divider">
                 
-                <section id="U6e049eba05477512ad812b27b1f88f3847b3aee9">
+                <section id="U927903b66c64f3545ea611d0b2f504e75b4e005c">
 
                     <h2 class="main-section1" data-num="5">
-                        <a href="#U6e049eba05477512ad812b27b1f88f3847b3aee9">
+                        <a href="#U927903b66c64f3545ea611d0b2f504e75b4e005c">
                             5 Nuts Commands
                         </a>
                     </h2>
@@ -1907,7 +1934,7 @@ nuts -v
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-122049
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-142347
         </p>
     </div>
 </footer>

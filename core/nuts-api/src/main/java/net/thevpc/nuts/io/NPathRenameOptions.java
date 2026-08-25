@@ -28,7 +28,7 @@ public class NPathRenameOptions {
     }
 
     /**
-     * Creates a new instance of of extension.
+     * Creates a new instance of extension.
      *
      * @param ext ext
      * @return of extension result

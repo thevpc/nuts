@@ -223,7 +223,7 @@ public class NRepositoryUtils {
         String name = null;
         String url = null;
         if (locationString == null) {
-            return NOptional.<NRepositoryLocation>ofEmpty(() -> NMsg.ofPlain("repository location"));
+            return NOptional.<NRepositoryLocation>ofEmpty(() -> NMsg.ofP("repository location"));
         }
         locationString = locationString.trim();
         if (locationString.startsWith("-")
@@ -263,7 +263,7 @@ public class NRepositoryUtils {
         if (url.length() > 0) {
             return NOptional.of(NRepositoryLocation.of(name, url));
         }
-        return NOptional.<NRepositoryLocation>ofEmpty(() -> NMsg.ofPlain("repository location"));
+        return NOptional.<NRepositoryLocation>ofEmpty(() -> NMsg.ofP("repository location"));
     }
 
 

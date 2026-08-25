@@ -53,7 +53,7 @@ public class RemoteNExec extends AbstractNExec {
                         NMsg.ofC("execution failed with code %d and message : %s", NExecutionException.ERROR_255, p),
                         ex, NExecutionException.ERROR_255);
             } else {
-                resultException = new NExecutionException(NMsg.ofPlain("remote command failed"), ex, NExecutionException.ERROR_255);
+                resultException = new NExecutionException(NMsg.ofP("remote command failed"), ex, NExecutionException.ERROR_255);
             }
         }
         executed = true;

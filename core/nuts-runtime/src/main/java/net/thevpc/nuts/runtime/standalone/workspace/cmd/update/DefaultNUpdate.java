@@ -563,7 +563,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         NSession validWorkspaceSession = session;
         final NPrintStream out = validWorkspaceSession.out();
         boolean accept = NIO.of().defaultTerminal().ask()
-                .forBoolean(NMsg.ofPlain("would you like to apply updates?")).defaultValue(true)
+                .forBoolean(NMsg.ofP("would you like to apply updates?")).defaultValue(true)
                 .value();
         if (validWorkspaceSession.isAsk() && !accept) {
             throw new NCancelException();
@@ -623,7 +623,7 @@ public class DefaultNUpdate extends AbstractNUpdate {
         if (NWorkspace.of().saveConfig(requireSave)) {
             if (_LOG().isLoggable(Level.INFO)) {
                 _LOG()
-                        .log(NMsg.ofPlain("workspace is updated. Nuts should be restarted for changes to take effect.")
+                        .log(NMsg.ofP("workspace is updated. Nuts should be restarted for changes to take effect.")
                                 .withLevel(Level.INFO).withIntent(NMsgIntent.ALERT)
                         );
             }

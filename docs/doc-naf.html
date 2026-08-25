@@ -44,7 +44,7 @@
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
-    <title>Developer Documentation — Nuts Application Frmaework</title>
+    <title>Developer Documentation — Nuts Application Framework</title>
     <!-- Doc-specific overrides -->
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
 </head>
@@ -61,62 +61,60 @@
 
 <div id="main-wrapper" class="documentation-main-wrapper">
 
-    <!-- Header -->
+    <!-- Header NAF -->
 <header id="header" class="sticky-top">
     <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
         <div class="container-fluid">
 
-            <!-- Mobile sidebar toggler -->
             <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button">
                 <span></span><span class="w-75"></span><span class="w-50"></span>
             </button>
 
-            <!-- Logo + brand -->
-            <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
-                <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
-                <span class="nuts-brand__name">Nuts</span>
-                <span class="nuts-brand__version">v1.0.0.0</span>
-            </a>
+            <!-- Brand + version dropdown -->
+            <div class="nuts-brand-wrapper d-inline-flex align-items-center">
+                <a class="nuts-brand" href="naf.html" title="NAF — Nuts Application Framework">
+                    <img src="assets/images/nuts-icon.png" alt="NAF" width="28"/>
+                    <span class="nuts-brand__name">NAF</span>
+                </a>
+                <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
+                    <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerNafVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        v0.8.3
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerNafVersionDropdown">
+                        <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
+                        <a class="dropdown-item " href="doc-naf.html">v0.8.4 (Latest)</a>
+                        <a class="dropdown-item active" href="versions/v0.8.3/doc-naf.html">v0.8.3</a>
+                    </div>
+                </div>
+            </div>
 
-            <!-- Mobile collapse toggler -->
             <button class="navbar-toggler ml-auto" type="button"
                     data-toggle="collapse" data-target="#header-nav">
                 <span></span><span></span><span></span>
             </button>
 
-            <!-- Nav links -->
             <div id="header-nav" class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav nuts-nav">
 
                     <li class="dropdown">
-                        <a class="dropdown-toggle" href="#">Docs</a>
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">Docs</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item "
-                                   href="doc-nuts.html">User Documentation</a></li>
                             <li><a class="dropdown-item not-active"
                                    href="doc-naf.html">Developer Documentation</a></li>
                             <li><a class="dropdown-item "
-                                   href="faq.html">FAQ</a></li>
-                            <li><a class="dropdown-item "
                                    href="contrib.html">Contributing</a></li>
+                            <li><a class="dropdown-item "
+                                   href="faq.html">FAQ</a></li>
                         </ul>
                     </li>
 
-                    <li><a href="blog.html"
-                           class="">Blog</a></li>
-
-                    <li><a href="apps.html"
-                           class="">Apps</a></li>
-
-                    <li><a href="download.html"
-                           class="">Download</a></li>
-
                     <li><a href="https://github.com/thevpc/nuts" target="_blank"
-                           class="nuts-nav__github">
-                        <i class="fab fa-github"></i>
-                    </a></li>
+                           class="nuts-nav__github"><i class="fab fa-github"></i></a></li>
 
-                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers →</a></li>
+                    <!-- Back to Nuts -->
+                    <li><a href="index.html" class="nuts-nav__back-nuts">
+                        &larr; Nuts Package Manager
+                    </a></li>
 
                 </ul>
             </div>
@@ -124,20 +122,27 @@
         </div>
     </nav>
 </header>
-<!-- Header End -->
+<!-- Header NAF End -->
 
     <!-- Content -->
     <div id="content" role="main">
 
         <!-- ===================== SIDEBAR ===================== -->
         <div class="idocs-navigation">
+            <div class="doc-version-select-box mb-3 px-2">
+                <label for="doc-version-select" class="form-label text-muted small font-weight-bold mb-1 d-block">VERSION</label>
+                <select id="doc-version-select" class="form-control form-control-sm doc-version-select-input" onchange="window.location.href=this.value;">
+                    <option value="doc-naf.html" >v0.8.4 (Latest)</option>
+                    <option value="versions/v0.8.3/doc-naf.html" selected>v0.8.3</option>
+                </select>
+            </div>
             <div class="nav-search">
                 <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
             </div>
             <ul class="nav flex-column">
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#Ub3e3bcd2cbeb8025f027ce4249ebad5bd32ea817">
+                    <a class="nav-link" href="#U02faecea1dbce6385a29a798dc1cd1feb7a30ee0">
                         <span class="nav-num">1</span>
                         Nuts Application Framework
                     </a>
@@ -146,7 +151,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ue1da83f7adef997558e2ba966c3a4fa154d756fc">
+                            <a class="nav-link" href="#U1680711c7532eefe67b4a6cf4561c68bf197929b">
                                 1.1 Hello World
                             </a>
                             
@@ -154,7 +159,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U2becdca45c9a8e7d18f898f90a5f32e69f9865e1">
+                            <a class="nav-link" href="#Uba13044c5ea16660131d5b634f1c4c2d821fc452">
                                 1.2 Nuts API Compatibility Matrix
                             </a>
                             
@@ -166,7 +171,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#Ubd255aa9f691aeb9fb302ea11518197f3386d7eb">
+                    <a class="nav-link" href="#Uaff8397738a32242f8faa6024a8c577f26a9d489">
                         <span class="nav-num">2</span>
                         Command Line Processing
                     </a>
@@ -175,7 +180,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U252e1fbf31eccb718cb6a72fad38695f0e8fb53e">
+                            <a class="nav-link" href="#Ue33284d28b3f264de57a831941b1b8345b860939">
                                 2.1 Creating NCmdLine instance
                             </a>
                             
@@ -183,7 +188,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ue93ea604d339798f7e2383fed9e98d26ae947c7d">
+                            <a class="nav-link" href="#U539f19cb60cbe8205aa44d5b6e951fb4824225f8">
                                 2.2 Command Line Elements
                             </a>
                             
@@ -191,7 +196,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U4fd1c4f1ab553412bbb28e798f73edc482b9a397">
+                            <a class="nav-link" href="#U35065545db058ea1620f99ea4654ed54c0a5f190">
                                 2.3 Customizing CmdLine parsing
                             </a>
                             
@@ -199,7 +204,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U6a1e5a96749f3b346458555e75dee8c42ffa7c0d">
+                            <a class="nav-link" href="#Uc18d63acd1c7a131db6cc014a5a3a583ff90c6e0">
                                 2.4 Processing the commandline
                             </a>
                             
@@ -211,7 +216,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U2288f421ea2be3916ce1b5f9a638b8f72cef14ec">
+                    <a class="nav-link" href="#U410bffbb498bc0f2129680846f7ccf84b278775b">
                         <span class="nav-num">3</span>
                         Structured Messaging
                     </a>
@@ -220,7 +225,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U5b7985656ae3f3f5663a2c6f4b9fd280a5dbed93">
+                            <a class="nav-link" href="#Uff9578c949c0a2b2a8be8d350dc4a5150f9d921a">
                                 3.1 Placeholder Formats
                             </a>
                             
@@ -228,7 +233,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U27b34777e43d49c28903ef9321d8ef36525d569e">
+                            <a class="nav-link" href="#Uca5ce20ccfaa3b205ae4862450eb8c7bc961f671">
                                 3.2 Styling Messages
                             </a>
                             
@@ -236,7 +241,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ufe959fde237b3b6fa45b379f98f650059e542c85">
+                            <a class="nav-link" href="#U56e1df503042e1a008e5d46e7c95bd0821c86232">
                                 3.3 Nested Messages
                             </a>
                             
@@ -244,7 +249,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U93ed6af4203b8b67f1759a6bbaa4529229a2a483">
+                            <a class="nav-link" href="#U68d229440c54130607cd243cb820f79ddeb69cd8">
                                 3.4 Text Rendering Formats
                             </a>
                             
@@ -256,7 +261,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U082c7713a2f645deae990e4f4399934d94a35b64">
+                    <a class="nav-link" href="#U2023b277987990d2a423c8f35b0ab3ce4e64032d">
                         <span class="nav-num">4</span>
                         Structured Elements
                     </a>
@@ -265,7 +270,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U366132a40d523d678c42d62ec8c5a48bfa1c094e">
+                            <a class="nav-link" href="#Uc9868aacaa5e95d784369bdc0c1d5bd76d6022d1">
                                 4.1 NElement API Documentation
                             </a>
                             
@@ -277,7 +282,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#Ud5ab4c8de577211801315f91f1f13bf95f23fae2">
+                    <a class="nav-link" href="#U2f804dfa3d5141e1378524ffd7d3381899c07b06">
                         <span class="nav-num">5</span>
                         Expressions & Templates
                     </a>
@@ -286,7 +291,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Uf0bf07cfed08e635d607d2786cbb3734b2bd4993">
+                            <a class="nav-link" href="#Ub3a204b74501234c28ae92e82b90d9f617145a23">
                                 5.1 Expressions
                             </a>
                             
@@ -294,7 +299,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ud0492a5cf47d24b8ccacfcfae9e0c8587634fb72">
+                            <a class="nav-link" href="#Ua0f5aa15bb8808add9cd598887ae78e1523988e4">
                                 5.2 Expression Operators
                             </a>
                             
@@ -302,7 +307,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U366b7f6af30d8f8c872b8a1a0e2ceb17e25098e7">
+                            <a class="nav-link" href="#Ua5be2ac505060f0dfadd2de2afa4c21bd2248b9d">
                                 5.3 Expression evaluation
                             </a>
                             
@@ -310,7 +315,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U3190a818282fb93715afdab226a7a2372c39cdee">
+                            <a class="nav-link" href="#Ucd234d8105052ec0d9b2cd4ab5252b5115a05ffd">
                                 5.4 Expression Templating
                             </a>
                             
@@ -318,7 +323,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U83790e0c4e36cebda243296b2d848c7529198f95">
+                            <a class="nav-link" href="#U5c202830d88d047dffd36d5d626bf315e2662eda">
                                 5.5 40-nuts-expr-tokenizer.md
                             </a>
                             
@@ -330,7 +335,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#Ue96fdc9d5d2424a605a5185bf9fcc0ec0ff00ae1">
+                    <a class="nav-link" href="#Ufb9dce050af461a426ec200d51c54d55c7875187">
                         <span class="nav-num">6</span>
                         Text Rendering & Models
                     </a>
@@ -339,7 +344,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U05e96ce4b40ee286fe9cdf6fe65f26a2b07137e3">
+                            <a class="nav-link" href="#Uff69f3f5911d7854770d11da9a470271b43a0900">
                                 6.1 Nuts Text Format
                             </a>
                             
@@ -347,7 +352,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U7006c3252a3013c9f564a0d965ce5a63af0a0e1e">
+                            <a class="nav-link" href="#U48a06e495f53c5e4e718d595ee7292652209bd13">
                                 6.2 Rendering Text
                             </a>
                             
@@ -355,7 +360,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U4cb3a42d36540b68e76fc2496e13537a897c27e0">
+                            <a class="nav-link" href="#Uaba19e42eee1086a031e10f3211fa4329e4fcca1">
                                 6.3 Rendering Tables
                             </a>
                             
@@ -363,7 +368,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U1b0751e87a168077c7ad2ea24cdcdb0e389a2760">
+                            <a class="nav-link" href="#U698cbba111f5645a120da9906c35e5af5e6c9c6f">
                                 6.4 Rendering Trees
                             </a>
                             
@@ -375,7 +380,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U6413499fae4672c548d930b297101fd249f37a66">
+                    <a class="nav-link" href="#Uff363ec5e1391e63c991a897a72a47b02db42208">
                         <span class="nav-num">7</span>
                         IO & Filesystem Abstractions
                     </a>
@@ -384,7 +389,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U5d5ea461aaec2a796a8b29738bef329e9089e4aa">
+                            <a class="nav-link" href="#U8ede04ddbfc24130ad5d593857bac59c8f62d8c7">
                                 7.1 NOut Standard output
                             </a>
                             
@@ -392,7 +397,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U14773eed826c7f775ffc3ac22946d7176c5821fa">
+                            <a class="nav-link" href="#U5215bb6cb986bc5716bcedee2c64fe0e340456b3">
                                 7.2 NErr Standard Error
                             </a>
                             
@@ -400,7 +405,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U67f14c6eba817c7cf85892d4705b3a0b1cf87ac7">
+                            <a class="nav-link" href="#Ua5e8c48d2124151c36dc7e32eacff981684c8c0f">
                                 7.3 NTrace, the output companion
                             </a>
                             
@@ -408,7 +413,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U29fb0d0a31ce9674406e73e82856adb8135219b8">
+                            <a class="nav-link" href="#U80ff3c557bff6bf60259872d4c15aa1a1d277271">
                                 7.4 NIn for simplified Input
                             </a>
                             
@@ -416,7 +421,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U118074a157abaed5aa71630879517a9ae9e884bd">
+                            <a class="nav-link" href="#U2e8eaac17ba4cabe7ab1508a2a59b5a3bc7ba041">
                                 7.5 NPath
                             </a>
                             
@@ -424,7 +429,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U64e310658dae165f6dfc160d4950adf4f2ec344f">
+                            <a class="nav-link" href="#Ua75b3f549678ae559e9b9bf6b4d132eef3055f49">
                                 7.6 IO: Working with files
                             </a>
                             
@@ -432,7 +437,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U3100fad96ae912458ac0ffb7b8713efe4f1b9839">
+                            <a class="nav-link" href="#U69a0d7e503b6238ad9d0895235840374e45c4f07">
                                 7.7 HTTP Web Client (NWebCli)
                             </a>
                             
@@ -452,7 +457,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U2971a11a6de6df60d9db661e4ab607d5913b755f">
+                    <a class="nav-link" href="#U298ca24e77cccf944393a9212a0f74dbfe82f24d">
                         <span class="nav-num">8</span>
                         Concurrency & Stability
                     </a>
@@ -461,7 +466,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U45c4a77f2c3d5a7610243b8a99963ce0050d5c44">
+                            <a class="nav-link" href="#Ub06bfa5f1a6059c405a97642c38eb9f303919c4b">
                                 8.1 Once Value
                             </a>
                             
@@ -469,7 +474,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U014fee51d2551a72350df8c77f8dbdc5413bebb4">
+                            <a class="nav-link" href="#U8516101a6bd8e7df55e604f08dd1d811cd56fad8">
                                 8.2 Cached Value
                             </a>
                             
@@ -477,7 +482,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U5d9fcc33eac31fbcb0744c865becc169e60fd863">
+                            <a class="nav-link" href="#Ucefa97880787b18388375f4fb969efbca92b2ccb">
                                 8.3 Task Set
                             </a>
                             
@@ -485,7 +490,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ua62104f0f35a316127610c86944df948bf62d157">
+                            <a class="nav-link" href="#U813aa8b699c86701906d34b97786046db53bef50">
                                 8.4 Rate Limit Value
                             </a>
                             
@@ -493,7 +498,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U58b14bba40477a9345f362cde755292dffc91516">
+                            <a class="nav-link" href="#U1d0d1f7d76b4fdf96a64a8b24bf98ad3fa0b1cf9">
                                 8.5 NRetryCall
                             </a>
                             
@@ -501,7 +506,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Uac6fea5509a64e3240b2bf470d096e0bd035dc55">
+                            <a class="nav-link" href="#Ua3da3df4564f105541f0d6ab193d9066a4279988">
                                 8.6 Load Balancer
                             </a>
                             
@@ -509,7 +514,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ub0927d4e11e5d8865bc6ee913da40d68576e9c1c">
+                            <a class="nav-link" href="#Ufa71ad9d82f8cf286183ac0f919760de91814913">
                                 8.7 Saga
                             </a>
                             
@@ -517,7 +522,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ub7a296f7508ca18ef8aba4c916e015c0978f080a">
+                            <a class="nav-link" href="#U591d0177e5ff74775bfc3de60d4cda3ef6e34cb4">
                                 8.8 Persistent Locks
                             </a>
                             
@@ -529,7 +534,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U148ec87d63caa8ee8ce2d8ad652d29627f15e06e">
+                    <a class="nav-link" href="#Ufbf0257338bfef40e3bc3ab99a8c3f76d4f8bada">
                         <span class="nav-num">9</span>
                         Time Tracking
                     </a>
@@ -538,7 +543,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U20acb35c5e52c6dee9628757ba48cb56d2ef95d0">
+                            <a class="nav-link" href="#U12a2f0df68dab8a3f28974087b1479ec650aecf1">
                                 9.1 Progress Monitoring
                             </a>
                             
@@ -550,7 +555,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#Uf607e04a21f6cc18faf3f0ccd0ed3c00235ee0c4">
+                    <a class="nav-link" href="#U24bccd0e39438079006f9e09931c9338d8eff8f9">
                         <span class="nav-num">10</span>
                         External Commands & Processes
                     </a>
@@ -559,7 +564,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ue54c3e4a702eaddfb37d915c1fbdbb67e6e35f75">
+                            <a class="nav-link" href="#Ufae8cbba14a1d90223f729f1f2b095f339a23203">
                                 10.1 Process Discovery and Management
                             </a>
                             
@@ -567,7 +572,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Uc0c655e3c1098ee9112bb8ce134ce8acbbbf50e9">
+                            <a class="nav-link" href="#Ucd5cf4b2d727f3f6564af3b0f0e6aa6a28c3c038">
                                 10.2 Executing External Commands
                             </a>
                             
@@ -579,7 +584,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U24d047ea41968e86f27c992438efbfed55667047">
+                    <a class="nav-link" href="#U00f700590ecc1de80da7e87389990abbf88a9b8b">
                         <span class="nav-num">11</span>
                         Utilities and Support
                     </a>
@@ -588,7 +593,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Uc20e92687bdf44e6bd01145018725302b8a7e85c">
+                            <a class="nav-link" href="#Uddb21198fb13bb83f15377053bedb4fe8fcf8563">
                                 11.1 NLog for elegant Logging
                             </a>
                             
@@ -616,7 +621,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#Udbf09c432800db907472008aca0762cc9f6f9cd2">
+                    <a class="nav-link" href="#U366886895be0e67f719728b7d66f63dde88e1415">
                         <span class="nav-num">12</span>
                         Application Lifecycle
                     </a>
@@ -641,7 +646,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ue132b18d0e0f8db231fa577f8e5c9f381ce5bb30">
+                            <a class="nav-link" href="#Uc8f909cc47a215911b29b06400177a8757652a07">
                                 12.3 Command Line Arguments
                             </a>
                             
@@ -649,7 +654,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U2cb7c87c8d5bade0da84bd6060abca64efd621c5">
+                            <a class="nav-link" href="#U8fa587dd2affbaf2bd24cef53dce67db5b7a496c">
                                 12.4 Nuts Descriptor Integration
                             </a>
                             
@@ -661,7 +666,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#Udc5147345b8c70262cacf7d3d45e088ff0cbc4bf">
+                    <a class="nav-link" href="#Ub0cbc02460035e7d35a0cf918b789482e44b5126">
                         <span class="nav-num">13</span>
                         Integration & Interoperability
                     </a>
@@ -670,7 +675,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Uc7c29e2524049b030fe9b20b1db326d271ee14fd">
+                            <a class="nav-link" href="#U20798814b6c627c2a58df109f5dd07b76ba7670f">
                                 13.1 NAF Spring Boot Integration
                             </a>
                             
@@ -678,7 +683,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ud2cada0f2ef5441f2fe7c07dc429e0919ec823f8">
+                            <a class="nav-link" href="#Ud2128fa14722269efb7be602828afa4abc217150">
                                 13.2 NAF SLF4J Integration
                             </a>
                             
@@ -690,7 +695,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U7caeb87f38afbd4786c392d9fe6681baa18ed206">
+                    <a class="nav-link" href="#U3ec22963c142982eddb3832bcb748e135946953c">
                         <span class="nav-num">14</span>
                         Workspace & Package Context
                     </a>
@@ -699,7 +704,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Uf09d5e97ce8fd3f20493bdf1a160241aadbef7e0">
+                            <a class="nav-link" href="#U09b4a600790ba3a235f267565276e6d008b669ad">
                                 14.1 Extensions
                             </a>
                             
@@ -711,7 +716,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="#U718cee73c83cf9dea527d7908e903bdf034b6ca3">
+                    <a class="nav-link" href="#Ucd14bc0672141ea15863ba5c70c761ca1ab044ba">
                         <span class="nav-num">15</span>
                         Workspace & Package Context
                     </a>
@@ -720,7 +725,7 @@
                     <ul class="nav flex-column">
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#Ub0bde938e08f00f8625c0980d40c1e8a5d25f2ae">
+                            <a class="nav-link" href="#Uacba38702a65e9bec203875d667a7fbc0f690afc">
                                 15.1 NWorkspace
                             </a>
                             
@@ -728,7 +733,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U7c99352d03e199fd5255e44bbc2722fdb8816796">
+                            <a class="nav-link" href="#Uacfbbc7418d457a89dae4fbb3e10adf860b48b65">
                                 15.2 NEnv
                             </a>
                             
@@ -736,7 +741,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U9866050480e200266d943bde354af89bbd7f200b">
+                            <a class="nav-link" href="#U427dec094cac2f9421afa1ec32acc37be78a179c">
                                 15.3 NSession
                             </a>
                             
@@ -755,16 +760,25 @@
             <div class="container">
 
                 <section id="doc-title-section">
-                    <h1>Developer Documentation</h1>
+                    
+                    <div class="alert alert-warning doc-version-banner d-flex align-items-center mb-4" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <div>
+                            You are viewing developer documentation for version <strong>v0.8.3</strong>. 
+                            <a href="doc-naf.html" class="alert-link">Switch to latest version (v0.8.4) &rarr;</a>
+                        </div>
+                    </div>
+                    
+                    <h1>Developer Documentation <span class="badge badge-secondary font-weight-normal small ml-2">v0.8.3</span></h1>
                     <p class="lead">Everything you need to know about embedding Nuts Application Framework in your application.</p>
                     <hr class="divider">
                 </section>
 
                 
-                <section id="Ub3e3bcd2cbeb8025f027ce4249ebad5bd32ea817">
+                <section id="U02faecea1dbce6385a29a798dc1cd1feb7a30ee0">
 
                     <h2 class="main-section1" data-num="1">
-                        <a href="#Ub3e3bcd2cbeb8025f027ce4249ebad5bd32ea817">
+                        <a href="#U02faecea1dbce6385a29a798dc1cd1feb7a30ee0">
                             1 Nuts Application Framework
                         </a>
                     </h2>
@@ -774,10 +788,10 @@
                     </div>
 
                     
-                    <section id="Ue1da83f7adef997558e2ba966c3a4fa154d756fc">
+                    <section id="U1680711c7532eefe67b4a6cf4561c68bf197929b">
 
                         <h3 class="main-section2">
-                            <a href="#Ue1da83f7adef997558e2ba966c3a4fa154d756fc">
+                            <a href="#U1680711c7532eefe67b4a6cf4561c68bf197929b">
                                 1.1 Hello World
                             </a>
                         </h3>
@@ -818,10 +832,10 @@ wsA.runWith(() -&gt; { // everything inside uses wsA: NOut, NPath, repos, etc. N
                     </section>
                     <hr class="divider">
                     
-                    <section id="U2becdca45c9a8e7d18f898f90a5f32e69f9865e1">
+                    <section id="Uba13044c5ea16660131d5b634f1c4c2d821fc452">
 
                         <h3 class="main-section2">
-                            <a href="#U2becdca45c9a8e7d18f898f90a5f32e69f9865e1">
+                            <a href="#Uba13044c5ea16660131d5b634f1c4c2d821fc452">
                                 1.2 Nuts API Compatibility Matrix
                             </a>
                         </h3>
@@ -1013,10 +1027,10 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
                 </section>
                 <hr class="divider">
                 
-                <section id="Ubd255aa9f691aeb9fb302ea11518197f3386d7eb">
+                <section id="Uaff8397738a32242f8faa6024a8c577f26a9d489">
 
                     <h2 class="main-section1" data-num="2">
-                        <a href="#Ubd255aa9f691aeb9fb302ea11518197f3386d7eb">
+                        <a href="#Uaff8397738a32242f8faa6024a8c577f26a9d489">
                             2 Command Line Processing
                         </a>
                     </h2>
@@ -1027,10 +1041,10 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
                     </div>
 
                     
-                    <section id="U252e1fbf31eccb718cb6a72fad38695f0e8fb53e">
+                    <section id="Ue33284d28b3f264de57a831941b1b8345b860939">
 
                         <h3 class="main-section2">
-                            <a href="#U252e1fbf31eccb718cb6a72fad38695f0e8fb53e">
+                            <a href="#Ue33284d28b3f264de57a831941b1b8345b860939">
                                 2.1 Creating NCmdLine instance
                             </a>
                         </h3>
@@ -1048,10 +1062,10 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ue93ea604d339798f7e2383fed9e98d26ae947c7d">
+                    <section id="U539f19cb60cbe8205aa44d5b6e951fb4824225f8">
 
                         <h3 class="main-section2">
-                            <a href="#Ue93ea604d339798f7e2383fed9e98d26ae947c7d">
+                            <a href="#U539f19cb60cbe8205aa44d5b6e951fb4824225f8">
                                 2.2 Command Line Elements
                             </a>
                         </h3>
@@ -1074,10 +1088,10 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
                     </section>
                     <hr class="divider">
                     
-                    <section id="U4fd1c4f1ab553412bbb28e798f73edc482b9a397">
+                    <section id="U35065545db058ea1620f99ea4654ed54c0a5f190">
 
                         <h3 class="main-section2">
-                            <a href="#U4fd1c4f1ab553412bbb28e798f73edc482b9a397">
+                            <a href="#U35065545db058ea1620f99ea4654ed54c0a5f190">
                                 2.3 Customizing CmdLine parsing
                             </a>
                         </h3>
@@ -1091,10 +1105,10 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
                     </section>
                     <hr class="divider">
                     
-                    <section id="U6a1e5a96749f3b346458555e75dee8c42ffa7c0d">
+                    <section id="Uc18d63acd1c7a131db6cc014a5a3a583ff90c6e0">
 
                         <h3 class="main-section2">
-                            <a href="#U6a1e5a96749f3b346458555e75dee8c42ffa7c0d">
+                            <a href="#Uc18d63acd1c7a131db6cc014a5a3a583ff90c6e0">
                                 2.4 Processing the commandline
                             </a>
                         </h3>
@@ -1226,10 +1240,10 @@ if (cmd.isExecMode()) {
                 </section>
                 <hr class="divider">
                 
-                <section id="U2288f421ea2be3916ce1b5f9a638b8f72cef14ec">
+                <section id="U410bffbb498bc0f2129680846f7ccf84b278775b">
 
                     <h2 class="main-section1" data-num="3">
-                        <a href="#U2288f421ea2be3916ce1b5f9a638b8f72cef14ec">
+                        <a href="#U410bffbb498bc0f2129680846f7ccf84b278775b">
                             3 Structured Messaging
                         </a>
                     </h2>
@@ -1239,10 +1253,10 @@ if (cmd.isExecMode()) {
                     </div>
 
                     
-                    <section id="U5b7985656ae3f3f5663a2c6f4b9fd280a5dbed93">
+                    <section id="Uff9578c949c0a2b2a8be8d350dc4a5150f9d921a">
 
                         <h3 class="main-section2">
-                            <a href="#U5b7985656ae3f3f5663a2c6f4b9fd280a5dbed93">
+                            <a href="#Uff9578c949c0a2b2a8be8d350dc4a5150f9d921a">
                                 3.1 Placeholder Formats
                             </a>
                         </h3>
@@ -1336,10 +1350,10 @@ NMsg msg = NMsg.ofCustom(&quot;upper&quot;, &quot;hello&quot;);
                     </section>
                     <hr class="divider">
                     
-                    <section id="U27b34777e43d49c28903ef9321d8ef36525d569e">
+                    <section id="Uca5ce20ccfaa3b205ae4862450eb8c7bc961f671">
 
                         <h3 class="main-section2">
-                            <a href="#U27b34777e43d49c28903ef9321d8ef36525d569e">
+                            <a href="#Uca5ce20ccfaa3b205ae4862450eb8c7bc961f671">
                                 3.2 Styling Messages
                             </a>
                         </h3>
@@ -1381,10 +1395,10 @@ NMsg.ofStyledError(&quot;error&quot;);
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ufe959fde237b3b6fa45b379f98f650059e542c85">
+                    <section id="U56e1df503042e1a008e5d46e7c95bd0821c86232">
 
                         <h3 class="main-section2">
-                            <a href="#Ufe959fde237b3b6fa45b379f98f650059e542c85">
+                            <a href="#U56e1df503042e1a008e5d46e7c95bd0821c86232">
                                 3.3 Nested Messages
                             </a>
                         </h3>
@@ -1411,10 +1425,10 @@ NMsg.ofV(&quot;User $user completed ${task}&quot;,
                     </section>
                     <hr class="divider">
                     
-                    <section id="U93ed6af4203b8b67f1759a6bbaa4529229a2a483">
+                    <section id="U68d229440c54130607cd243cb820f79ddeb69cd8">
 
                         <h3 class="main-section2">
-                            <a href="#U93ed6af4203b8b67f1759a6bbaa4529229a2a483">
+                            <a href="#U68d229440c54130607cd243cb820f79ddeb69cd8">
                                 3.4 Text Rendering Formats
                             </a>
                         </h3>
@@ -1435,10 +1449,10 @@ NMsg.ofCode(&quot;java&quot;, &quot;System.out.println(\&quot;Hello NAF\&quot;);
                 </section>
                 <hr class="divider">
                 
-                <section id="U082c7713a2f645deae990e4f4399934d94a35b64">
+                <section id="U2023b277987990d2a423c8f35b0ab3ce4e64032d">
 
                     <h2 class="main-section1" data-num="4">
-                        <a href="#U082c7713a2f645deae990e4f4399934d94a35b64">
+                        <a href="#U2023b277987990d2a423c8f35b0ab3ce4e64032d">
                             4 Structured Elements
                         </a>
                     </h2>
@@ -1448,10 +1462,10 @@ NMsg.ofCode(&quot;java&quot;, &quot;System.out.println(\&quot;Hello NAF\&quot;);
                     </div>
 
                     
-                    <section id="U366132a40d523d678c42d62ec8c5a48bfa1c094e">
+                    <section id="Uc9868aacaa5e95d784369bdc0c1d5bd76d6022d1">
 
                         <h3 class="main-section2">
-                            <a href="#U366132a40d523d678c42d62ec8c5a48bfa1c094e">
+                            <a href="#Uc9868aacaa5e95d784369bdc0c1d5bd76d6022d1">
                                 4.1 NElement API Documentation
                             </a>
                         </h3>
@@ -1654,10 +1668,10 @@ NElementWriter.ofNtfTson().format(iterable, NPrintStream.of(System.out));
                 </section>
                 <hr class="divider">
                 
-                <section id="Ud5ab4c8de577211801315f91f1f13bf95f23fae2">
+                <section id="U2f804dfa3d5141e1378524ffd7d3381899c07b06">
 
                     <h2 class="main-section1" data-num="5">
-                        <a href="#Ud5ab4c8de577211801315f91f1f13bf95f23fae2">
+                        <a href="#U2f804dfa3d5141e1378524ffd7d3381899c07b06">
                             5 Expressions & Templates
                         </a>
                     </h2>
@@ -1667,10 +1681,10 @@ NElementWriter.ofNtfTson().format(iterable, NPrintStream.of(System.out));
                     </div>
 
                     
-                    <section id="Uf0bf07cfed08e635d607d2786cbb3734b2bd4993">
+                    <section id="Ub3a204b74501234c28ae92e82b90d9f617145a23">
 
                         <h3 class="main-section2">
-                            <a href="#Uf0bf07cfed08e635d607d2786cbb3734b2bd4993">
+                            <a href="#Ub3a204b74501234c28ae92e82b90d9f617145a23">
                                 5.1 Expressions
                             </a>
                         </h3>
@@ -1783,10 +1797,10 @@ expr.parse(&quot;if (a) &#39;hello&#39; else {&#39;hella&#39;};x=3&quot;);      
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ud0492a5cf47d24b8ccacfcfae9e0c8587634fb72">
+                    <section id="Ua0f5aa15bb8808add9cd598887ae78e1523988e4">
 
                         <h3 class="main-section2">
-                            <a href="#Ud0492a5cf47d24b8ccacfcfae9e0c8587634fb72">
+                            <a href="#Ua0f5aa15bb8808add9cd598887ae78e1523988e4">
                                 5.2 Expression Operators
                             </a>
                         </h3>
@@ -1867,10 +1881,10 @@ NOptional&lt;NFunction&lt;A, ?&gt;&gt;     findCommonPostfixOp(NExprCommonOp op,
                     </section>
                     <hr class="divider">
                     
-                    <section id="U366b7f6af30d8f8c872b8a1a0e2ceb17e25098e7">
+                    <section id="Ua5be2ac505060f0dfadd2de2afa4c21bd2248b9d">
 
                         <h3 class="main-section2">
-                            <a href="#U366b7f6af30d8f8c872b8a1a0e2ceb17e25098e7">
+                            <a href="#Ua5be2ac505060f0dfadd2de2afa4c21bd2248b9d">
                                 5.3 Expression evaluation
                             </a>
                         </h3>
@@ -1979,10 +1993,10 @@ double lambda = ((Number) lambdaExpr.eval(ctx).get()).doubleValue();
                     </section>
                     <hr class="divider">
                     
-                    <section id="U3190a818282fb93715afdab226a7a2372c39cdee">
+                    <section id="Ucd234d8105052ec0d9b2cd4ab5252b5115a05ffd">
 
                         <h3 class="main-section2">
-                            <a href="#U3190a818282fb93715afdab226a7a2372c39cdee">
+                            <a href="#Ucd234d8105052ec0d9b2cd4ab5252b5115a05ffd">
                                 5.4 Expression Templating
                             </a>
                         </h3>
@@ -2029,10 +2043,10 @@ NExprInterpolatedStringNode ofMoustacheInterpolatedString(String a);
                     </section>
                     <hr class="divider">
                     
-                    <section id="U83790e0c4e36cebda243296b2d848c7529198f95">
+                    <section id="U5c202830d88d047dffd36d5d626bf315e2662eda">
 
                         <h3 class="main-section2">
-                            <a href="#U83790e0c4e36cebda243296b2d848c7529198f95">
+                            <a href="#U5c202830d88d047dffd36d5d626bf315e2662eda">
                                 5.5 40-nuts-expr-tokenizer.md
                             </a>
                         </h3>
@@ -2080,10 +2094,10 @@ while ((tokenType = st.nextToken()) != NToken.TT_EOF) {
                 </section>
                 <hr class="divider">
                 
-                <section id="Ue96fdc9d5d2424a605a5185bf9fcc0ec0ff00ae1">
+                <section id="Ufb9dce050af461a426ec200d51c54d55c7875187">
 
                     <h2 class="main-section1" data-num="6">
-                        <a href="#Ue96fdc9d5d2424a605a5185bf9fcc0ec0ff00ae1">
+                        <a href="#Ufb9dce050af461a426ec200d51c54d55c7875187">
                             6 Text Rendering & Models
                         </a>
                     </h2>
@@ -2093,10 +2107,10 @@ while ((tokenType = st.nextToken()) != NToken.TT_EOF) {
                     </div>
 
                     
-                    <section id="U05e96ce4b40ee286fe9cdf6fe65f26a2b07137e3">
+                    <section id="Uff69f3f5911d7854770d11da9a470271b43a0900">
 
                         <h3 class="main-section2">
-                            <a href="#U05e96ce4b40ee286fe9cdf6fe65f26a2b07137e3">
+                            <a href="#Uff69f3f5911d7854770d11da9a470271b43a0900">
                                 6.1 Nuts Text Format
                             </a>
                         </h3>
@@ -2110,10 +2124,10 @@ while ((tokenType = st.nextToken()) != NToken.TT_EOF) {
                     </section>
                     <hr class="divider">
                     
-                    <section id="U7006c3252a3013c9f564a0d965ce5a63af0a0e1e">
+                    <section id="U48a06e495f53c5e4e718d595ee7292652209bd13">
 
                         <h3 class="main-section2">
-                            <a href="#U7006c3252a3013c9f564a0d965ce5a63af0a0e1e">
+                            <a href="#U48a06e495f53c5e4e718d595ee7292652209bd13">
                                 6.2 Rendering Text
                             </a>
                         </h3>
@@ -2148,10 +2162,10 @@ NText text = NText.of(&quot;hello world&quot;);
                     </section>
                     <hr class="divider">
                     
-                    <section id="U4cb3a42d36540b68e76fc2496e13537a897c27e0">
+                    <section id="Uaba19e42eee1086a031e10f3211fa4329e4fcca1">
 
                         <h3 class="main-section2">
-                            <a href="#U4cb3a42d36540b68e76fc2496e13537a897c27e0">
+                            <a href="#Uaba19e42eee1086a031e10f3211fa4329e4fcca1">
                                 6.3 Rendering Tables
                             </a>
                         </h3>
@@ -2228,10 +2242,10 @@ NMutableTableModel sameTable = NTableModel.of()
                     </section>
                     <hr class="divider">
                     
-                    <section id="U1b0751e87a168077c7ad2ea24cdcdb0e389a2760">
+                    <section id="U698cbba111f5645a120da9906c35e5af5e6c9c6f">
 
                         <h3 class="main-section2">
-                            <a href="#U1b0751e87a168077c7ad2ea24cdcdb0e389a2760">
+                            <a href="#U698cbba111f5645a120da9906c35e5af5e6c9c6f">
                                 6.4 Rendering Trees
                             </a>
                         </h3>
@@ -2298,10 +2312,10 @@ NOut.println(art.treeRenderer().get().render(tree));
                 </section>
                 <hr class="divider">
                 
-                <section id="U6413499fae4672c548d930b297101fd249f37a66">
+                <section id="Uff363ec5e1391e63c991a897a72a47b02db42208">
 
                     <h2 class="main-section1" data-num="7">
-                        <a href="#U6413499fae4672c548d930b297101fd249f37a66">
+                        <a href="#Uff363ec5e1391e63c991a897a72a47b02db42208">
                             7 IO & Filesystem Abstractions
                         </a>
                     </h2>
@@ -2311,10 +2325,10 @@ NOut.println(art.treeRenderer().get().render(tree));
                     </div>
 
                     
-                    <section id="U5d5ea461aaec2a796a8b29738bef329e9089e4aa">
+                    <section id="U8ede04ddbfc24130ad5d593857bac59c8f62d8c7">
 
                         <h3 class="main-section2">
-                            <a href="#U5d5ea461aaec2a796a8b29738bef329e9089e4aa">
+                            <a href="#U8ede04ddbfc24130ad5d593857bac59c8f62d8c7">
                                 7.1 NOut Standard output
                             </a>
                         </h3>
@@ -2367,10 +2381,10 @@ NOut.println(art.treeRenderer().get().render(tree));
                     </section>
                     <hr class="divider">
                     
-                    <section id="U14773eed826c7f775ffc3ac22946d7176c5821fa">
+                    <section id="U5215bb6cb986bc5716bcedee2c64fe0e340456b3">
 
                         <h3 class="main-section2">
-                            <a href="#U14773eed826c7f775ffc3ac22946d7176c5821fa">
+                            <a href="#U5215bb6cb986bc5716bcedee2c64fe0e340456b3">
                                 7.2 NErr Standard Error
                             </a>
                         </h3>
@@ -2394,10 +2408,10 @@ NErr.println(errorList);
                     </section>
                     <hr class="divider">
                     
-                    <section id="U67f14c6eba817c7cf85892d4705b3a0b1cf87ac7">
+                    <section id="Ua5e8c48d2124151c36dc7e32eacff981684c8c0f">
 
                         <h3 class="main-section2">
-                            <a href="#U67f14c6eba817c7cf85892d4705b3a0b1cf87ac7">
+                            <a href="#Ua5e8c48d2124151c36dc7e32eacff981684c8c0f">
                                 7.3 NTrace, the output companion
                             </a>
                         </h3>
@@ -2418,10 +2432,10 @@ NTrace.println(&quot;Loading configuration from default path...&quot;);
                     </section>
                     <hr class="divider">
                     
-                    <section id="U29fb0d0a31ce9674406e73e82856adb8135219b8">
+                    <section id="U80ff3c557bff6bf60259872d4c15aa1a1d277271">
 
                         <h3 class="main-section2">
-                            <a href="#U29fb0d0a31ce9674406e73e82856adb8135219b8">
+                            <a href="#U80ff3c557bff6bf60259872d4c15aa1a1d277271">
                                 7.4 NIn for simplified Input
                             </a>
                         </h3>
@@ -2483,10 +2497,10 @@ remote
                     </section>
                     <hr class="divider">
                     
-                    <section id="U118074a157abaed5aa71630879517a9ae9e884bd">
+                    <section id="U2e8eaac17ba4cabe7ab1508a2a59b5a3bc7ba041">
 
                         <h3 class="main-section2">
-                            <a href="#U118074a157abaed5aa71630879517a9ae9e884bd">
+                            <a href="#U2e8eaac17ba4cabe7ab1508a2a59b5a3bc7ba041">
                                 7.5 NPath
                             </a>
                         </h3>
@@ -2699,10 +2713,10 @@ remote
                     </section>
                     <hr class="divider">
                     
-                    <section id="U64e310658dae165f6dfc160d4950adf4f2ec344f">
+                    <section id="Ua75b3f549678ae559e9b9bf6b4d132eef3055f49">
 
                         <h3 class="main-section2">
-                            <a href="#U64e310658dae165f6dfc160d4950adf4f2ec344f">
+                            <a href="#Ua75b3f549678ae559e9b9bf6b4d132eef3055f49">
                                 7.6 IO: Working with files
                             </a>
                         </h3>
@@ -2754,10 +2768,10 @@ remote
                     </section>
                     <hr class="divider">
                     
-                    <section id="U3100fad96ae912458ac0ffb7b8713efe4f1b9839">
+                    <section id="U69a0d7e503b6238ad9d0895235840374e45c4f07">
 
                         <h3 class="main-section2">
-                            <a href="#U3100fad96ae912458ac0ffb7b8713efe4f1b9839">
+                            <a href="#U69a0d7e503b6238ad9d0895235840374e45c4f07">
                                 7.7 HTTP Web Client (NWebCli)
                             </a>
                         </h3>
@@ -2850,10 +2864,10 @@ NWebResponse resilientResponse = NConcurrent.of()
                 </section>
                 <hr class="divider">
                 
-                <section id="U2971a11a6de6df60d9db661e4ab607d5913b755f">
+                <section id="U298ca24e77cccf944393a9212a0f74dbfe82f24d">
 
                     <h2 class="main-section1" data-num="8">
-                        <a href="#U2971a11a6de6df60d9db661e4ab607d5913b755f">
+                        <a href="#U298ca24e77cccf944393a9212a0f74dbfe82f24d">
                             8 Concurrency & Stability
                         </a>
                     </h2>
@@ -2863,10 +2877,10 @@ NWebResponse resilientResponse = NConcurrent.of()
                     </div>
 
                     
-                    <section id="U45c4a77f2c3d5a7610243b8a99963ce0050d5c44">
+                    <section id="Ub06bfa5f1a6059c405a97642c38eb9f303919c4b">
 
                         <h3 class="main-section2">
-                            <a href="#U45c4a77f2c3d5a7610243b8a99963ce0050d5c44">
+                            <a href="#Ub06bfa5f1a6059c405a97642c38eb9f303919c4b">
                                 8.1 Once Value
                             </a>
                         </h3>
@@ -2892,10 +2906,10 @@ NOut.println(&quot;Valid? &quot; + stableRandom.isValid());
                     </section>
                     <hr class="divider">
                     
-                    <section id="U014fee51d2551a72350df8c77f8dbdc5413bebb4">
+                    <section id="U8516101a6bd8e7df55e604f08dd1d811cd56fad8">
 
                         <h3 class="main-section2">
-                            <a href="#U014fee51d2551a72350df8c77f8dbdc5413bebb4">
+                            <a href="#U8516101a6bd8e7df55e604f08dd1d811cd56fad8">
                                 8.2 Cached Value
                             </a>
                         </h3>
@@ -2942,10 +2956,10 @@ NOut.println(&quot;Resilient value = &quot; + cached.get());
                     </section>
                     <hr class="divider">
                     
-                    <section id="U5d9fcc33eac31fbcb0744c865becc169e60fd863">
+                    <section id="Ucefa97880787b18388375f4fb969efbca92b2ccb">
 
                         <h3 class="main-section2">
-                            <a href="#U5d9fcc33eac31fbcb0744c865becc169e60fd863">
+                            <a href="#Ucefa97880787b18388375f4fb969efbca92b2ccb">
                                 8.3 Task Set
                             </a>
                         </h3>
@@ -2981,10 +2995,10 @@ NOut.println(&quot;Some tasks failed&quot;);
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ua62104f0f35a316127610c86944df948bf62d157">
+                    <section id="U813aa8b699c86701906d34b97786046db53bef50">
 
                         <h3 class="main-section2">
-                            <a href="#Ua62104f0f35a316127610c86944df948bf62d157">
+                            <a href="#U813aa8b699c86701906d34b97786046db53bef50">
                                 8.4 Rate Limit Value
                             </a>
                         </h3>
@@ -3028,10 +3042,10 @@ limiter2.claimAndRun(() -&gt; {
                     </section>
                     <hr class="divider">
                     
-                    <section id="U58b14bba40477a9345f362cde755292dffc91516">
+                    <section id="U1d0d1f7d76b4fdf96a64a8b24bf98ad3fa0b1cf9">
 
                         <h3 class="main-section2">
-                            <a href="#U58b14bba40477a9345f362cde755292dffc91516">
+                            <a href="#U1d0d1f7d76b4fdf96a64a8b24bf98ad3fa0b1cf9">
                                 8.5 NRetryCall
                             </a>
                         </h3>
@@ -3099,10 +3113,10 @@ retryCallWithId.setMaxRetries(3)
                     </section>
                     <hr class="divider">
                     
-                    <section id="Uac6fea5509a64e3240b2bf470d096e0bd035dc55">
+                    <section id="Ua3da3df4564f105541f0d6ab193d9066a4279988">
 
                         <h3 class="main-section2">
-                            <a href="#Uac6fea5509a64e3240b2bf470d096e0bd035dc55">
+                            <a href="#Ua3da3df4564f105541f0d6ab193d9066a4279988">
                                 8.6 Load Balancer
                             </a>
                         </h3>
@@ -3180,10 +3194,10 @@ NWorkBalancer&lt;MyResult&gt; balancer2 = factory.ofBuilder(&quot;callId&quot;)
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ub0927d4e11e5d8865bc6ee913da40d68576e9c1c">
+                    <section id="Ufa71ad9d82f8cf286183ac0f919760de91814913">
 
                         <h3 class="main-section2">
-                            <a href="#Ub0927d4e11e5d8865bc6ee913da40d68576e9c1c">
+                            <a href="#Ufa71ad9d82f8cf286183ac0f919760de91814913">
                                 8.7 Saga
                             </a>
                         </h3>
@@ -3277,10 +3291,10 @@ loopSaga.call();
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ub7a296f7508ca18ef8aba4c916e015c0978f080a">
+                    <section id="U591d0177e5ff74775bfc3de60d4cda3ef6e34cb4">
 
                         <h3 class="main-section2">
-                            <a href="#Ub7a296f7508ca18ef8aba4c916e015c0978f080a">
+                            <a href="#U591d0177e5ff74775bfc3de60d4cda3ef6e34cb4">
                                 8.8 Persistent Locks
                             </a>
                         </h3>
@@ -3330,10 +3344,10 @@ NOut.println(&quot;Was executed? &quot; + executed);
                 </section>
                 <hr class="divider">
                 
-                <section id="U148ec87d63caa8ee8ce2d8ad652d29627f15e06e">
+                <section id="Ufbf0257338bfef40e3bc3ab99a8c3f76d4f8bada">
 
                     <h2 class="main-section1" data-num="9">
-                        <a href="#U148ec87d63caa8ee8ce2d8ad652d29627f15e06e">
+                        <a href="#Ufbf0257338bfef40e3bc3ab99a8c3f76d4f8bada">
                             9 Time Tracking
                         </a>
                     </h2>
@@ -3343,10 +3357,10 @@ NOut.println(&quot;Was executed? &quot; + executed);
                     </div>
 
                     
-                    <section id="U20acb35c5e52c6dee9628757ba48cb56d2ef95d0">
+                    <section id="U12a2f0df68dab8a3f28974087b1479ec650aecf1">
 
                         <h3 class="main-section2">
-                            <a href="#U20acb35c5e52c6dee9628757ba48cb56d2ef95d0">
+                            <a href="#U12a2f0df68dab8a3f28974087b1479ec650aecf1">
                                 9.1 Progress Monitoring
                             </a>
                         </h3>
@@ -3402,10 +3416,10 @@ byte[] bytes=monitoredSource.readBytes();
                 </section>
                 <hr class="divider">
                 
-                <section id="Uf607e04a21f6cc18faf3f0ccd0ed3c00235ee0c4">
+                <section id="U24bccd0e39438079006f9e09931c9338d8eff8f9">
 
                     <h2 class="main-section1" data-num="10">
-                        <a href="#Uf607e04a21f6cc18faf3f0ccd0ed3c00235ee0c4">
+                        <a href="#U24bccd0e39438079006f9e09931c9338d8eff8f9">
                             10 External Commands & Processes
                         </a>
                     </h2>
@@ -3415,10 +3429,10 @@ byte[] bytes=monitoredSource.readBytes();
                     </div>
 
                     
-                    <section id="Ue54c3e4a702eaddfb37d915c1fbdbb67e6e35f75">
+                    <section id="Ufae8cbba14a1d90223f729f1f2b095f339a23203">
 
                         <h3 class="main-section2">
-                            <a href="#Ue54c3e4a702eaddfb37d915c1fbdbb67e6e35f75">
+                            <a href="#Ufae8cbba14a1d90223f729f1f2b095f339a23203">
                                 10.1 Process Discovery and Management
                             </a>
                         </h3>
@@ -3454,10 +3468,10 @@ if (NPs.of().isSupportedKillProcess()) {
                     </section>
                     <hr class="divider">
                     
-                    <section id="Uc0c655e3c1098ee9112bb8ce134ce8acbbbf50e9">
+                    <section id="Ucd5cf4b2d727f3f6564af3b0f0e6aa6a28c3c038">
 
                         <h3 class="main-section2">
-                            <a href="#Uc0c655e3c1098ee9112bb8ce134ce8acbbbf50e9">
+                            <a href="#Ucd5cf4b2d727f3f6564af3b0f0e6aa6a28c3c038">
                                 10.2 Executing External Commands
                             </a>
                         </h3>
@@ -3508,10 +3522,10 @@ NOut.println(&quot;Output:\n&quot; + stdout);
                 </section>
                 <hr class="divider">
                 
-                <section id="U24d047ea41968e86f27c992438efbfed55667047">
+                <section id="U00f700590ecc1de80da7e87389990abbf88a9b8b">
 
                     <h2 class="main-section1" data-num="11">
-                        <a href="#U24d047ea41968e86f27c992438efbfed55667047">
+                        <a href="#U00f700590ecc1de80da7e87389990abbf88a9b8b">
                             11 Utilities and Support
                         </a>
                     </h2>
@@ -3521,10 +3535,10 @@ NOut.println(&quot;Output:\n&quot; + stdout);
                     </div>
 
                     
-                    <section id="Uc20e92687bdf44e6bd01145018725302b8a7e85c">
+                    <section id="Uddb21198fb13bb83f15377053bedb4fe8fcf8563">
 
                         <h3 class="main-section2">
-                            <a href="#Uc20e92687bdf44e6bd01145018725302b8a7e85c">
+                            <a href="#Uddb21198fb13bb83f15377053bedb4fe8fcf8563">
                                 11.1 NLog for elegant Logging
                             </a>
                         </h3>
@@ -3819,10 +3833,10 @@ NOut.println(description);
                 </section>
                 <hr class="divider">
                 
-                <section id="Udbf09c432800db907472008aca0762cc9f6f9cd2">
+                <section id="U366886895be0e67f719728b7d66f63dde88e1415">
 
                     <h2 class="main-section1" data-num="12">
-                        <a href="#Udbf09c432800db907472008aca0762cc9f6f9cd2">
+                        <a href="#U366886895be0e67f719728b7d66f63dde88e1415">
                             12 Application Lifecycle
                         </a>
                     </h2>
@@ -4078,10 +4092,10 @@ nuts --verbose                   # equivalent to --log-finest
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ue132b18d0e0f8db231fa577f8e5c9f381ce5bb30">
+                    <section id="Uc8f909cc47a215911b29b06400177a8757652a07">
 
                         <h3 class="main-section2">
-                            <a href="#Ue132b18d0e0f8db231fa577f8e5c9f381ce5bb30">
+                            <a href="#Uc8f909cc47a215911b29b06400177a8757652a07">
                                 12.3 Command Line Arguments
                             </a>
                         </h3>
@@ -4100,10 +4114,10 @@ nuts --verbose                   # equivalent to --log-finest
                     </section>
                     <hr class="divider">
                     
-                    <section id="U2cb7c87c8d5bade0da84bd6060abca64efd621c5">
+                    <section id="U8fa587dd2affbaf2bd24cef53dce67db5b7a496c">
 
                         <h3 class="main-section2">
-                            <a href="#U2cb7c87c8d5bade0da84bd6060abca64efd621c5">
+                            <a href="#U8fa587dd2affbaf2bd24cef53dce67db5b7a496c">
                                 12.4 Nuts Descriptor Integration
                             </a>
                         </h3>
@@ -4188,10 +4202,10 @@ Implementation-Version: 1.2.3
                 </section>
                 <hr class="divider">
                 
-                <section id="Udc5147345b8c70262cacf7d3d45e088ff0cbc4bf">
+                <section id="Ub0cbc02460035e7d35a0cf918b789482e44b5126">
 
                     <h2 class="main-section1" data-num="13">
-                        <a href="#Udc5147345b8c70262cacf7d3d45e088ff0cbc4bf">
+                        <a href="#Ub0cbc02460035e7d35a0cf918b789482e44b5126">
                             13 Integration & Interoperability
                         </a>
                     </h2>
@@ -4201,10 +4215,10 @@ Implementation-Version: 1.2.3
                     </div>
 
                     
-                    <section id="Uc7c29e2524049b030fe9b20b1db326d271ee14fd">
+                    <section id="U20798814b6c627c2a58df109f5dd07b76ba7670f">
 
                         <h3 class="main-section2">
-                            <a href="#Uc7c29e2524049b030fe9b20b1db326d271ee14fd">
+                            <a href="#U20798814b6c627c2a58df109f5dd07b76ba7670f">
                                 13.1 NAF Spring Boot Integration
                             </a>
                         </h3>
@@ -4273,10 +4287,10 @@ NBeanRef.of(&quot;nonExistentBean&quot;).as(SomeInterface.class).someMethod(); /
                     </section>
                     <hr class="divider">
                     
-                    <section id="Ud2cada0f2ef5441f2fe7c07dc429e0919ec823f8">
+                    <section id="Ud2128fa14722269efb7be602828afa4abc217150">
 
                         <h3 class="main-section2">
-                            <a href="#Ud2cada0f2ef5441f2fe7c07dc429e0919ec823f8">
+                            <a href="#Ud2128fa14722269efb7be602828afa4abc217150">
                                 13.2 NAF SLF4J Integration
                             </a>
                         </h3>
@@ -4444,10 +4458,10 @@ public class LoggingAspect {
                 </section>
                 <hr class="divider">
                 
-                <section id="U7caeb87f38afbd4786c392d9fe6681baa18ed206">
+                <section id="U3ec22963c142982eddb3832bcb748e135946953c">
 
                     <h2 class="main-section1" data-num="14">
-                        <a href="#U7caeb87f38afbd4786c392d9fe6681baa18ed206">
+                        <a href="#U3ec22963c142982eddb3832bcb748e135946953c">
                             14 Workspace & Package Context
                         </a>
                     </h2>
@@ -4457,10 +4471,10 @@ public class LoggingAspect {
                     </div>
 
                     
-                    <section id="Uf09d5e97ce8fd3f20493bdf1a160241aadbef7e0">
+                    <section id="U09b4a600790ba3a235f267565276e6d008b669ad">
 
                         <h3 class="main-section2">
-                            <a href="#Uf09d5e97ce8fd3f20493bdf1a160241aadbef7e0">
+                            <a href="#U09b4a600790ba3a235f267565276e6d008b669ad">
                                 14.1 Extensions
                             </a>
                         </h3>
@@ -4534,10 +4548,10 @@ public class NEnvSshImpl implements NEnv {
                 </section>
                 <hr class="divider">
                 
-                <section id="U718cee73c83cf9dea527d7908e903bdf034b6ca3">
+                <section id="Ucd14bc0672141ea15863ba5c70c761ca1ab044ba">
 
                     <h2 class="main-section1" data-num="15">
-                        <a href="#U718cee73c83cf9dea527d7908e903bdf034b6ca3">
+                        <a href="#Ucd14bc0672141ea15863ba5c70c761ca1ab044ba">
                             15 Workspace & Package Context
                         </a>
                     </h2>
@@ -4547,10 +4561,10 @@ public class NEnvSshImpl implements NEnv {
                     </div>
 
                     
-                    <section id="Ub0bde938e08f00f8625c0980d40c1e8a5d25f2ae">
+                    <section id="Uacba38702a65e9bec203875d667a7fbc0f690afc">
 
                         <h3 class="main-section2">
-                            <a href="#Ub0bde938e08f00f8625c0980d40c1e8a5d25f2ae">
+                            <a href="#Uacba38702a65e9bec203875d667a7fbc0f690afc">
                                 15.1 NWorkspace
                             </a>
                         </h3>
@@ -4574,10 +4588,10 @@ public class NEnvSshImpl implements NEnv {
                     </section>
                     <hr class="divider">
                     
-                    <section id="U7c99352d03e199fd5255e44bbc2722fdb8816796">
+                    <section id="Uacfbbc7418d457a89dae4fbb3e10adf860b48b65">
 
                         <h3 class="main-section2">
-                            <a href="#U7c99352d03e199fd5255e44bbc2722fdb8816796">
+                            <a href="#Uacfbbc7418d457a89dae4fbb3e10adf860b48b65">
                                 15.2 NEnv
                             </a>
                         </h3>
@@ -4605,10 +4619,10 @@ env.desktopEnvironments(); // List of detected environments
                     </section>
                     <hr class="divider">
                     
-                    <section id="U9866050480e200266d943bde354af89bbd7f200b">
+                    <section id="U427dec094cac2f9421afa1ec32acc37be78a179c">
 
                         <h3 class="main-section2">
-                            <a href="#U9866050480e200266d943bde354af89bbd7f200b">
+                            <a href="#U427dec094cac2f9421afa1ec32acc37be78a179c">
                                 15.3 NSession
                             </a>
                         </h3>
@@ -4710,7 +4724,7 @@ session.setLogFilter(log -&gt; log.getVerb().equals(NLogIntent.FAIL));
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-122049
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-142347
         </p>
     </div>
 </footer>

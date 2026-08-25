@@ -488,7 +488,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NException(NMsg.ofPlain("run with loader failed"), ex);
+                throw new NException(NMsg.ofP("run with loader failed"), ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -496,7 +496,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NException(NMsg.ofPlain("run with loader failed"), ex);
+            throw new NException(NMsg.ofP("run with loader failed"), ex);
         }
         return ref.get();
     }

@@ -39,7 +39,7 @@ import java.io.Writer;
  */
 public interface NOutputTarget extends NContentMetadataProvider {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param outputStream output stream
      * @return of result

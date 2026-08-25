@@ -5,8 +5,6 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -250,7 +248,7 @@ public class InstallHelper {
             failedReasons = failedErrorList.toArray(new RuntimeException[0]);
         }
         if (list.emptyCommand) {
-            throw new NExecutionException(NMsg.ofPlain("missing packages to install"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofP("missing packages to install"), NExecutionException.ERROR_1);
         }
     }
 

@@ -119,7 +119,7 @@ public class DefaultNWorkspaceSecurityModel {
             char[] credentials = NDigestUtils.evalSHA1(cc);
             if (Arrays.equals(credentials, cc)) {
                 Arrays.fill(credentials, '\0');
-                throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
+                throw new NSecurityException(NMsg.ofP("invalid credentials"));
             }
             Arrays.fill(credentials, '\0');
             boolean activated = false;
@@ -141,7 +141,7 @@ public class DefaultNWorkspaceSecurityModel {
             boolean passwordAccepted = Arrays.equals(credentials, cc);
             Arrays.fill(credentials, '\0');
             if (!passwordAccepted) {
-                throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
+                throw new NSecurityException(NMsg.ofP("invalid credentials"));
             }
             DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of(workspace).getConfigModel();
             if (!configModel.isSecure()) {
@@ -155,7 +155,7 @@ public class DefaultNWorkspaceSecurityModel {
 
     public void requiredAdminOrUser(String user) {
         if (!isAdminOrUser(user)) {
-            throw new NSecurityException(NMsg.ofPlain("admin privileges required"));
+            throw new NSecurityException(NMsg.ofP("admin privileges required"));
         }
     }
 
@@ -181,7 +181,7 @@ public class DefaultNWorkspaceSecurityModel {
     public void logout() {
         Stack<DefaultNLoginContext> r = loginContextStack.get();
         if (r == null || r.isEmpty()) {
-            throw new NLoginException(NMsg.ofPlain("not logged in"));
+            throw new NLoginException(NMsg.ofP("not logged in"));
         }
         r.pop();
     }

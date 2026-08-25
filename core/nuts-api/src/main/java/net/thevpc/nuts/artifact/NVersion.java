@@ -70,7 +70,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param version version
      * @return of result

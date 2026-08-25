@@ -126,7 +126,7 @@ public class MavenRepositoryFolderHelper {
 
             @Override
             public void undeploy(NId id) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported undeploy"));
+                throw new NIllegalArgumentException(NMsg.ofP("unsupported undeploy"));
             }
 
             @Override

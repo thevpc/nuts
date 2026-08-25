@@ -18,7 +18,7 @@ import java.io.OutputStream;
 public interface NInputSourceBuilder {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param is is
      * @return of result

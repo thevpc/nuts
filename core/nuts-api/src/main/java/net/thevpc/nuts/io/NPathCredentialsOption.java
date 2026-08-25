@@ -19,7 +19,7 @@ public class NPathCredentialsOption implements NPathOption {
     private final Map<String, String> attributes;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param userName user name
      * @param secret secret
@@ -30,7 +30,7 @@ public class NPathCredentialsOption implements NPathOption {
     }
 
     /**
-     * Creates a new instance of of http basic.
+     * Creates a new instance of http basic.
      *
      * @param userName user name
      * @param secret secret

@@ -56,7 +56,7 @@ public class NExecOutput {
     }
 
     /**
-     * Creates a new instance of of grab mem.
+     * Creates a new instance of grab mem.
      *
      * @param maxBytes max bytes
      * @param maxLines max lines
@@ -223,10 +223,10 @@ public class NExecOutput {
                 if (result != null) {
                     return NOptional.of(result);
                 }
-                return NOptional.ofEmpty(() -> NMsg.ofPlain("grabbed result is not available"));
+                return NOptional.ofEmpty(() -> NMsg.ofP("grabbed result is not available"));
             }
         }
-        return NOptional.ofEmpty(() -> NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
+        return NOptional.ofEmpty(() -> NMsg.ofP("no buffer was configured; should call setGrabOutString"));
     }
 
     /**

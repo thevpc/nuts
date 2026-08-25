@@ -7,7 +7,6 @@ import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NDescriptorWriter;
@@ -88,7 +87,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                         c.setContentStreamOrPath(NPath.of(zipFilePath));
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NIllegalArgumentException(NMsg.ofPlain("invalid Nut Folder source. expected 'zip' ext in descriptor"));
+                        throw new NIllegalArgumentException(NMsg.ofP("invalid Nut Folder source. expected 'zip' ext in descriptor"));
                     }
                 }
             } else if (Files.isRegularFile(c.getBaseFile())) {
@@ -211,7 +210,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                             contentFile = zipFilePath;
                             tempFile2 = contentFile;
                         } else {
-                            throw new NIllegalArgumentException(NMsg.ofPlain("invalid nuts folder source; expected 'zip' ext in descriptor"));
+                            throw new NIllegalArgumentException(NMsg.ofP("invalid nuts folder source; expected 'zip' ext in descriptor"));
                         }
                     }
                 } else {
@@ -291,7 +290,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
         if (descriptor instanceof NDescriptor) {
             mdescriptor = (NDescriptor) descriptor;
             if (descSHA1 != null && !NDigest.of().sha1().source(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("invalid content Hash"));
+                throw new NIllegalArgumentException(NMsg.ofP("invalid content Hash"));
             }
             return mdescriptor;
         } else {
@@ -303,7 +302,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     if (descSHA1 != null) {
                         try (InputStream is = d.inputStream()) {
                             if (!NDigest.of().sha1().source(is).computeString().equalsIgnoreCase(descSHA1)) {
-                                throw new NIllegalArgumentException(NMsg.ofPlain("invalid content Hash"));
+                                throw new NIllegalArgumentException(NMsg.ofP("invalid content Hash"));
                             }
                         } catch (IOException ex) {
                             throw new NIOException(ex);

@@ -42,7 +42,7 @@ public class NDescriptorUtils {
                 if (NBlankable.isBlank(property.condition())) {
                     m.put(property.name(), property.value().asString().orNull());
                 } else {
-                    throw new NIllegalArgumentException(NMsg.ofPlain("unexpected properties with conditions. probably a bug"));
+                    throw new NIllegalArgumentException(NMsg.ofP("unexpected properties with conditions. probably a bug"));
                 }
             }
         }
@@ -61,24 +61,24 @@ public class NDescriptorUtils {
                 case ERROR: {
                     if (groupId == null) {
                         groupId = NIn.ask()
-                                .forString(NMsg.ofPlain("group id"))
+                                .forString(NMsg.ofP("group id"))
                                 .defaultValue(groupId)
-                                .hintMessage(NBlankable.isBlank(groupId) ? null : NMsg.ofPlain(groupId))
+                                .hintMessage(NBlankable.isBlank(groupId) ? null : NMsg.ofP(groupId))
                                 .value();
                     }
                     if (artifactId == null) {
                         artifactId = NIn.ask()
-                                .forString(NMsg.ofPlain("artifact id"))
+                                .forString(NMsg.ofP("artifact id"))
                                 .defaultValue(artifactId)
-                                .hintMessage(NBlankable.isBlank(artifactId) ? null : NMsg.ofPlain(artifactId))
+                                .hintMessage(NBlankable.isBlank(artifactId) ? null : NMsg.ofP(artifactId))
                                 .value();
                     }
                     if (NBlankable.isBlank(version)) {
                         String ov = version == null ? null : version.value();
                         String v = NIn.ask()
-                                .forString(NMsg.ofPlain("version"))
+                                .forString(NMsg.ofP("version"))
                                 .defaultValue(ov)
-                                .hintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofPlain(ov))
+                                .hintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofP(ov))
                                 .value();
                         version = NVersion.get(v).get();
                     }

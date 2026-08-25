@@ -60,12 +60,23 @@
                 <span></span><span class="w-75"></span><span class="w-50"></span>
             </button>
 
-            <!-- Logo + brand -->
-            <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
-                <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
-                <span class="nuts-brand__name">Nuts</span>
-                <span class="nuts-brand__version">v1.0.0.0</span>
-            </a>
+            <!-- Logo + brand + version dropdown -->
+            <div class="nuts-brand-wrapper d-inline-flex align-items-center">
+                <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
+                    <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
+                    <span class="nuts-brand__name">Nuts</span>
+                </a>
+                <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
+                    <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        v0.8.3
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
+                        <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
+                        <a class="dropdown-item " href="doc-nuts.html">v0.8.4 (Latest)</a>
+                        <a class="dropdown-item active" href="versions/v0.8.3/doc-nuts.html">v0.8.3</a>
+                    </div>
+                </div>
+            </div>
 
             <!-- Mobile collapse toggler -->
             <button class="navbar-toggler ml-auto" type="button"
@@ -105,7 +116,7 @@
                         <i class="fab fa-github"></i>
                     </a></li>
 
-                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers →</a></li>
+                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers &rarr;</a></li>
 
                 </ul>
             </div>
@@ -364,7 +375,7 @@
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-122049
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-142347
         </p>
     </div>
 </footer>

@@ -76,7 +76,7 @@ public class NIOException extends NException {
                 cause == null ? null
                         : (cause instanceof NExceptionBase) ?
                         ((NExceptionBase) cause).formattedMessage()
-                        : NMsg.ofPlain(cause.getMessage() == null ? "error" : cause.getMessage()),
+                        : NMsg.ofP(cause.getMessage() == null ? "error" : cause.getMessage()),
                 cause);
     }
 }

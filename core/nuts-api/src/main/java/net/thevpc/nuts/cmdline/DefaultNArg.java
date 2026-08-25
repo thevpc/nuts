@@ -558,7 +558,7 @@ public class DefaultNArg implements NArg {
     @Override
     public NArg required() {
         if (image == null) {
-            throw NException.ofSafeNoSuchElementException(NMsg.ofPlain("missing value"));
+            throw NException.ofSafeNoSuchElementException(NMsg.ofP("missing value"));
         }
         return this;
     }

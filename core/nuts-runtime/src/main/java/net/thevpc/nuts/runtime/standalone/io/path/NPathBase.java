@@ -70,7 +70,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         try {
             return new PrintStream(out, false, nonNullCharset(cs).name());
         } catch (UnsupportedEncodingException e) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported encoding"), e);
+            throw new NIllegalArgumentException(NMsg.ofP("unsupported encoding"), e);
         }
     }
 

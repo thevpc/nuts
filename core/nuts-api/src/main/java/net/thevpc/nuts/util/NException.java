@@ -312,7 +312,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      */
     public static NMsg validateFormattedMessage(NMsg message) {
         if (message == null) {
-            message = NMsg.ofPlain("error occurred");
+            message = NMsg.ofP("error occurred");
         }
         return message;
     }

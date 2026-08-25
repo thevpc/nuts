@@ -356,7 +356,7 @@ public class DefaultNCmdLine implements NCmdLine {
            *
            * @param argument") argument")
            */
-            throwError(NMsg.ofPlain("missing argument"));
+            throwError(NMsg.ofP("missing argument"));
         }
         return this;
     }
@@ -2186,7 +2186,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 break;
             }
             case IN_QUOTED_WORD: {
-                return NOptional.ofError(() -> NMsg.ofPlain("expected quote"));
+                return NOptional.ofError(() -> NMsg.ofP("expected quote"));
             }
         }
         return NOptional.of(args.toArray(new String[0]));

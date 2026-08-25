@@ -175,10 +175,10 @@ public class SyntaxParser {
     private NOptional<NExprNode> nextNonTerminalIf() {
         NToken t = peekSkipSpace();
         if (t == null) {
-            return NOptional.ofError(() -> NMsg.ofPlain("expected if"));
+            return NOptional.ofError(() -> NMsg.ofP("expected if"));
         }
         if (!isNonTerminalIf(t)) {
-            return NOptional.ofError(() -> NMsg.ofPlain("expected if"));
+            return NOptional.ofError(() -> NMsg.ofP("expected if"));
         }
         NToken startPar = tokens.next();
         NOptional<NExprNode> cond = nextExpr();
@@ -205,7 +205,7 @@ public class SyntaxParser {
                     )));
                 }
             } else {
-                return NOptional.ofError(() -> NMsg.ofPlain("expected else statement"));
+                return NOptional.ofError(() -> NMsg.ofP("expected else statement"));
             }
         } else {
             return NOptional.of(resolveNode(new DefaultIfNode(
@@ -235,7 +235,7 @@ public class SyntaxParser {
     private NOptional<NExprNode> nextTerminalOrStmt() {
         NToken t = peekSkipSpace();
         if (t == null) {
-            return NOptional.ofError(() -> NMsg.ofPlain("expected non terminal"));
+            return NOptional.ofError(() -> NMsg.ofP("expected non terminal"));
         }
         if (isNonTerminalIf(t)) {
             return nextNonTerminalIf();
@@ -249,7 +249,7 @@ public class SyntaxParser {
             NToken p2 = peekSkipSpace();
             if (p2 == null) {
                 NToken finalT = t;
-                return NOptional.ofError(() -> NMsg.ofPlain("expected closing " + finalT.sval));
+                return NOptional.ofError(() -> NMsg.ofP("expected closing " + finalT.sval));
             }
             if (isCloseParStart(p2, t.ttype)) {
                 tokens.next();
@@ -265,7 +265,7 @@ public class SyntaxParser {
                 p2 = peekSkipSpace();
                 if (p2 == null) {
                     NToken finalT = t;
-                    return NOptional.ofError(() -> NMsg.ofPlain("expected closing " + finalT.sval));
+                    return NOptional.ofError(() -> NMsg.ofP("expected closing " + finalT.sval));
                 } else if (isCloseParStart(p2, t.ttype)) {
                     tokens.next();
                     return NOptional.of(resolveNode(new DefaultOpNode(t.sval, t.sval + p2.sval, NFixity.PREFIX, -1, args)));
@@ -277,7 +277,7 @@ public class SyntaxParser {
                     }
                     args.add(e.get());
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofPlain("expected ','"));
+                    return NOptional.ofError(() -> NMsg.ofP("expected ','"));
                 }
             }
         }
@@ -290,7 +290,7 @@ public class SyntaxParser {
             tokens.next();
             NOptional<NExprNode> q = nextNonTerminal(precedence);
             if (q.isEmpty()) {
-                return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                return NOptional.ofError(() -> NMsg.ofP("expected expression"));
             }
             if (q.isError()) {
                 return q;
@@ -360,7 +360,7 @@ public class SyntaxParser {
 //        }
         NToken t = peekSkipSpace();
         if (t == null) {
-            return NOptional.ofError(() -> NMsg.ofPlain("expected non terminal"));
+            return NOptional.ofError(() -> NMsg.ofP("expected non terminal"));
         }
         NOptional<NExprNode> first = null;
         if (precedence == 0) {
@@ -369,7 +369,7 @@ public class SyntaxParser {
                 first = v;
                 if (first != null) {
                     if (first.isEmpty()) {
-                        return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                        return NOptional.ofError(() -> NMsg.ofP("expected expression"));
                     }
                     if (first.isError()) {
                         return first;
@@ -381,7 +381,7 @@ public class SyntaxParser {
         if (first == null) {
             first = _nextPrefixOp(t, precedence);
             if (first.isEmpty()) {
-                return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                return NOptional.ofError(() -> NMsg.ofP("expected expression"));
             }
             if (first.isError()) {
                 return first;
@@ -410,7 +410,7 @@ public class SyntaxParser {
                 if (p2 != null && !isCloseParStart(p2, t.ttype)) {
                     NOptional<NExprNode> idx = nextExpr();
                     if (idx.isError()) return idx;
-                    if (idx.isEmpty()) return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                    if (idx.isEmpty()) return NOptional.ofError(() -> NMsg.ofP("expected expression"));
                     args.add(idx.get());
                     while (true) {
                         p2 = peekSkipSpace();
@@ -420,16 +420,16 @@ public class SyntaxParser {
                             tokens.next();
                             idx = nextExpr();
                             if (idx.isError()) return idx;
-                            if (idx.isEmpty()) return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                            if (idx.isEmpty()) return NOptional.ofError(() -> NMsg.ofP("expected expression"));
                             args.add(idx.get());
                         } else {
-                            return NOptional.ofError(() -> NMsg.ofPlain("expected ',' or closing bracket"));
+                            return NOptional.ofError(() -> NMsg.ofP("expected ',' or closing bracket"));
                         }
                     }
                 }
                 p2 = peekSkipSpace();
                 if (p2 == null || !isCloseParStart(p2, t.ttype)) {
-                    return NOptional.ofError(() -> NMsg.ofPlain("expected closing bracket"));
+                    return NOptional.ofError(() -> NMsg.ofP("expected closing bracket"));
                 }
                 tokens.next(); // consume closing bracket
                 NToken finalT = t;
@@ -461,7 +461,7 @@ public class SyntaxParser {
                     } else if (isOpAcceptsMissingSecondOperand(t, NFixity.INFIX)) {
                         first = NOptional.of(createInfixOpNodeOrCombine(t.sval, opName(t), infixOp.operatorPrecedence(), first.get(), null));
                     } else {
-                        return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                        return NOptional.ofError(() -> NMsg.ofP("expected expression"));
                     }
                 } else if (q.isError()) {
                     if (isOpIgnoresMissingSecondOperand(t, NFixity.INFIX)) {
@@ -508,7 +508,7 @@ public class SyntaxParser {
                 } else if (isOpAcceptsMissingSecondOperand(infixOp, NFixity.INFIX)) {
                     first = NOptional.of(createInfixOpNodeOrCombine(infixOp.sval, opName(infixOp), op.operatorPrecedence(), first.get(), null));
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                    return NOptional.ofError(() -> NMsg.ofP("expected expression"));
                 }
             } else if (q.isError()) {
                 if (isOpIgnoresMissingSecondOperand(infixOp, NFixity.INFIX)) {
@@ -549,7 +549,7 @@ public class SyntaxParser {
     private NOptional<NExprNode> nextTerminal() {
         NToken t = peekSkipSpace();
         if (t == null) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("expected terminal"));
+            return NOptional.ofEmpty(() -> NMsg.ofP("expected terminal"));
         }
         switch (t.ttype) {
             case '(': {
@@ -563,7 +563,7 @@ public class SyntaxParser {
                     while (true) {
                         NOptional<NExprNode> e = nextExpr();
                         if (e.isEmpty()) {
-                            return NOptional.ofError(() -> NMsg.ofPlain("empty expression"));
+                            return NOptional.ofError(() -> NMsg.ofP("empty expression"));
                         }
                         all.add(e.get());
                         t = peekSkipSpace();
@@ -573,7 +573,7 @@ public class SyntaxParser {
                         } else if (t.ttype == ',') {
                             tokens.next();
                         } else {
-                            return NOptional.ofError(() -> NMsg.ofPlain("expected ',' or ')'"));
+                            return NOptional.ofError(() -> NMsg.ofP("expected ',' or ')'"));
                         }
                     }
                 }
@@ -597,7 +597,7 @@ public class SyntaxParser {
                     while (true) {
                         NOptional<NExprNode> e = nextExpr();
                         if (e.isEmpty()) {
-                            return NOptional.ofError(() -> NMsg.ofPlain("empty expression"));
+                            return NOptional.ofError(() -> NMsg.ofP("empty expression"));
                         }
                         all.add(e.get());
                         t = peekSkipSpace();
@@ -607,7 +607,7 @@ public class SyntaxParser {
                         } else if (t.ttype == ',') {
                             tokens.next();
                         } else {
-                            return NOptional.ofError(() -> NMsg.ofPlain("expected ',' or ']'"));
+                            return NOptional.ofError(() -> NMsg.ofP("expected ',' or ']'"));
                         }
                     }
                 }
@@ -630,7 +630,7 @@ public class SyntaxParser {
                     while (true) {
                         NOptional<NExprNode> e = nextExpr();
                         if (e.isEmpty()) {
-                            return NOptional.ofError(() -> NMsg.ofPlain("empty expression"));
+                            return NOptional.ofError(() -> NMsg.ofP("empty expression"));
                         }
                         all.add(e.get());
                         t = peekSkipSpace();
@@ -640,7 +640,7 @@ public class SyntaxParser {
                         } else if (t.ttype == ',') {
                             tokens.next();
                         } else {
-                            return NOptional.ofError(() -> NMsg.ofPlain("expected ',' or '}'"));
+                            return NOptional.ofError(() -> NMsg.ofP("expected ',' or '}'"));
                         }
                     }
                 }
@@ -667,7 +667,7 @@ public class SyntaxParser {
                     } else {
                         NOptional<NExprNode> e = nextExpr();
                         if (e.isEmpty()) {
-                            return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                            return NOptional.ofError(() -> NMsg.ofP("expected expression"));
                         }
                         if (e.isError()) {
                             return e;
@@ -686,14 +686,14 @@ public class SyntaxParser {
                                 tokens.next();
                                 e = nextExpr();
                                 if (e.isEmpty()) {
-                                    return NOptional.ofError(() -> NMsg.ofPlain("expected expression"));
+                                    return NOptional.ofError(() -> NMsg.ofP("expected expression"));
                                 }
                                 if (e.isError()) {
                                     return e;
                                 }
                                 functionParams.add(e.get());
                             } else {
-                                return NOptional.ofError(() -> NMsg.ofPlain("expected ',' or ')'"));
+                                return NOptional.ofError(() -> NMsg.ofP("expected ',' or ')'"));
                             }
                         }
                     }

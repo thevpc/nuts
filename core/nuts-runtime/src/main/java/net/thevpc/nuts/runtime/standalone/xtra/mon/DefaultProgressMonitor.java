@@ -14,7 +14,7 @@ import net.thevpc.nuts.time.*;
 import java.util.*;
 
 public class DefaultProgressMonitor implements NProgressMonitor {
-    public static final NMsg EMPTY_MESSAGE = NMsg.ofPlain("");
+    public static final NMsg EMPTY_MESSAGE = NMsg.ofP("");
     private List<NProgressListener> listeners = new ArrayList<>();
     private DefaultNProgressMonitorModel model = new DefaultNProgressMonitorModel();
     private boolean strictComputationMonitor = true;

@@ -581,7 +581,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                             NApplication.of().printHelp();
                         }
                         cmdLine.skipAll();
-                        throw new NExecutionException(NMsg.ofPlain("help"), NExecutionException.SUCCESS);
+                        throw new NExecutionException(NMsg.ofP("help"), NExecutionException.SUCCESS);
                     }
                     return true;
                 }
@@ -593,7 +593,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                         case UPDATE: {
                             if (enabled) {
                                 cmdLine.skip();
-                                throw new NExecutionException(NMsg.ofPlain("skip-event"), NExecutionException.SUCCESS);
+                                throw new NExecutionException(NMsg.ofP("skip-event"), NExecutionException.SUCCESS);
                             }
                         }
                     }
@@ -607,7 +607,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                             out().println(NId.getForClass(getClass()).get().version());
                             cmdLine.skipAll();
                         }
-                        throw new NExecutionException(NMsg.ofPlain("version"), NExecutionException.SUCCESS);
+                        throw new NExecutionException(NMsg.ofP("version"), NExecutionException.SUCCESS);
                     }
                     return true;
                 }

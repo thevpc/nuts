@@ -131,7 +131,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
             }
             case IN_DBQUOTED_WORD: {
                 if(!lenient) {
-                    throw new NParseException(NMsg.ofPlain("expected \""));
+                    throw new NParseException(NMsg.ofP("expected \""));
                 }
                 args.add(sb.toString());
                 sb.delete(0, sb.length());
@@ -237,7 +237,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofP("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -275,7 +275,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofP("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -300,7 +300,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofP("unsupported new line in arguments"));
                         }
                         default:
                         {

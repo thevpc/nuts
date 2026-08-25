@@ -65,7 +65,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
             }
         } catch (Exception ex2) {
             NLog.of(NApplicationHandler.class).log(
-                    NMsg.ofPlain("unable to get system terminal").asFine(ex2)
+                    NMsg.ofP("unable to get system terminal").asFine(ex2)
             );
         }
         if (fout != null) {
@@ -145,7 +145,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
             }
             String title = "Nuts Package Manager - Error";
             try {
-                javax.swing.JOptionPane.showMessageDialog(null, NMsg.ofPlain(sb.toString()).toString());
+                javax.swing.JOptionPane.showMessageDialog(null, NMsg.ofP(sb.toString()).toString());
             } catch (UnsatisfiedLinkError e) {
                 //exception may occur if the sdk is built in headless mode
                 NFailSafeHelper.log(err->err.printf("[Graphical Environment Unsupported] %s%n", title));

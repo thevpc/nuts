@@ -354,7 +354,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             run();
         }
         if (out() == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("no buffer was configured; should call grabOut"));
+            throw new NIllegalArgumentException(NMsg.ofP("no buffer was configured; should call grabOut"));
         }
         if (out().resultSource().isNotPresent()) {
             if (out().type() == NRedirectType.GRAB_FILE || out().type() == NRedirectType.GRAB_STREAM) {
@@ -375,7 +375,7 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
             run();
         }
         if (err() == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("no buffer was configured; should call grabErr"));
+            throw new NIllegalArgumentException(NMsg.ofP("no buffer was configured; should call grabErr"));
         }
         if (err().type() == NRedirectType.REDIRECT) {
             return grabbedOutBytes();

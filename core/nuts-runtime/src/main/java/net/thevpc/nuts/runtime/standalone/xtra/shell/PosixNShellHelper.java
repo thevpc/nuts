@@ -245,7 +245,7 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
             }
             case IN_QUOTED_WORD: {
                 if(!lenient) {
-                    throw new NParseException(NMsg.ofPlain("expected '"));
+                    throw new NParseException(NMsg.ofP("expected '"));
                 }
                 break;
             }
@@ -364,7 +364,7 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofP("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -398,7 +398,7 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofP("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -425,7 +425,7 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
                         case '\r':
                         {
                             throw new NIllegalArgumentException(
-                                    NMsg.ofPlain("unsupported new line in arguments"));
+                                    NMsg.ofP("unsupported new line in arguments"));
                         }
                         default:
                         {

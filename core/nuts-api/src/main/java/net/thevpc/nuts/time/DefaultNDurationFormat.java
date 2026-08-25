@@ -45,7 +45,7 @@ public class DefaultNDurationFormat {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param mode mode
      * @return of result

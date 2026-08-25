@@ -44,7 +44,7 @@ public class NUnsupportedOperationException extends NException {
        *
        * @param operation") operation")
        */
-        super(NMsg.ofPlain("unsupported operation"));
+        super(NMsg.ofP("unsupported operation"));
     }
 
     /**

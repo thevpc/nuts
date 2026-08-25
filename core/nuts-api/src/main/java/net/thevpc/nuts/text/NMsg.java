@@ -95,7 +95,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofMissingValue(String valueName) {
         if (NBlankable.isBlank(valueName)) {
-            return NMsg.ofPlain("missing value");
+            return NMsg.ofP("missing value");
         }
         return NMsg.ofC("missing %s", valueName);
     }
@@ -108,7 +108,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofMissingValue(NMsg valueName) {
         if (NBlankable.isBlank(valueName)) {
-            return NMsg.ofPlain("missing value");
+            return NMsg.ofP("missing value");
         }
         return NMsg.ofC("missing %s", valueName);
     }
@@ -173,7 +173,7 @@ public class NMsg implements NBlankable, NElementSimple {
     public static NMsg ofInvalidValue(Throwable throwable, String valueName) {
         if (throwable == null) {
             if (NBlankable.isBlank(valueName)) {
-                return NMsg.ofPlain("invalid value");
+                return NMsg.ofP("invalid value");
             }
             return NMsg.ofC("invalid %s", valueName);
         }
@@ -208,7 +208,7 @@ public class NMsg implements NBlankable, NElementSimple {
     public static NMsg ofInvalidValue(Throwable throwable, NMsg valueName) {
         if (throwable == null) {
             if (NBlankable.isBlank(valueName)) {
-                return NMsg.ofPlain("invalid value");
+                return NMsg.ofP("invalid value");
             }
             return NMsg.ofC("invalid %s", valueName);
         }
@@ -635,7 +635,7 @@ public class NMsg implements NBlankable, NElementSimple {
      * @param message message
      * @return of plain result
      */
-    public static NMsg ofPlain(String message) {
+    public static NMsg ofP(String message) {
         /**
          * Creates a new instance of of.
          *

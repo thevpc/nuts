@@ -1601,7 +1601,7 @@ public final class NWorkspaceCmdLineParser {
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
                 if (!options.skipErrors().orElse(false)) {
-                    throw NException.ofSafeCmdLineException(NMsg.ofPlain(errorMessage.toString()));
+                    throw NException.ofSafeCmdLineException(NMsg.ofP(errorMessage.toString()));
                 }
             }
         }

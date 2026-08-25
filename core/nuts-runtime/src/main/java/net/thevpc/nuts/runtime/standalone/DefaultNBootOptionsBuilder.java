@@ -2560,7 +2560,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.applicationArguments(other.getApplicationArguments());
         this.customOptions(other.getCustomOptions());
         this.expireTime(other.getExpireTime());
-        this.errors(other.getErrors() == null ? new ArrayList<>() : other.getErrors().stream().map(x -> NMsg.ofPlain(x)).collect(Collectors.toList()));
+        this.errors(other.getErrors() == null ? new ArrayList<>() : other.getErrors().stream().map(x -> NMsg.ofP(x)).collect(Collectors.toList()));
         this.skipErrors(other.getSkipErrors());
         this.switchWorkspace(other.getSwitchWorkspace());
         this.locale(other.getLocale());

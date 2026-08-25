@@ -27,7 +27,6 @@ import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -257,7 +256,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 start() throws IOException {
         if (proc != null) {
-            throw new NIllegalStateException(NMsg.ofPlain("already started"));
+            throw new NIllegalStateException(NMsg.ofP("already started"));
         }
         NLog.of(ProcessBuilder2.class).log(
                 NMsg.ofNtf(NText.ofCode("system", getCommandString())).asFinest().withIntent(NMsgIntent.START)
@@ -601,7 +600,7 @@ public class ProcessBuilder2 {
             try {
                 pipes.awaitTermination(5, TimeUnit.MINUTES);
             } catch (InterruptedException e) {
-                throw new NUnexpectedException(NMsg.ofPlain("unable to await termination"));
+                throw new NUnexpectedException(NMsg.ofP("unable to await termination"));
             }
         }
         proc.getInputStream().close();
@@ -684,7 +683,7 @@ public class ProcessBuilder2 {
 
     private NNonBlockingInputStream createNonBlockingInput(InputStream proc, String pname, boolean closeFast) {
         return NInputSourceBuilder.of(proc)
-                .metadata(new DefaultNContentMetadata().message(NMsg.ofPlain(pname)))
+                .metadata(new DefaultNContentMetadata().message(NMsg.ofP(pname)))
                 .createNonBlockingInputStream();
     }
 

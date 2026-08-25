@@ -48,12 +48,12 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
 
     @Override
     public void addMirror(NRepository repo) {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : addMirror"));
+        throw new NIllegalArgumentException(NMsg.ofP("not supported : addMirror"));
     }
 
     @Override
     public NRepository addMirror(NRepositorySpec options) {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : addMirror"));
+        throw new NIllegalArgumentException(NMsg.ofP("not supported : addMirror"));
     }
 
     @Override
@@ -177,7 +177,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
 
     @Override
     public void removeMirror(String repositoryId) {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : removeMirror"));
+        throw new NIllegalArgumentException(NMsg.ofP("not supported : removeMirror"));
     }
 
     @Override
@@ -217,17 +217,17 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
 
     @Override
     public NRepositoryConfig getStoredConfig() {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : getStoredConfig"));
+        throw new NIllegalArgumentException(NMsg.ofP("not supported : getStoredConfig"));
     }
 
     @Override
     public void fireConfigurationChanged(String configName) {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : fireConfigurationChanged"));
+        throw new NIllegalArgumentException(NMsg.ofP("not supported : fireConfigurationChanged"));
     }
 
     @Override
     public NRepositoryConfig getConfig() {
-        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : getConfig"));
+        throw new NIllegalArgumentException(NMsg.ofP("not supported : getConfig"));
     }
 
     @Override

@@ -15,7 +15,7 @@ public class FormatOutputStream extends RenderedOutputStream implements Extended
         super(out, term, false);
         NTerminalModeOp op = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (op != NTerminalModeOp.NOP) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("expected Raw"));
+            throw new NIllegalArgumentException(NMsg.ofP("expected Raw"));
         }
     }
 

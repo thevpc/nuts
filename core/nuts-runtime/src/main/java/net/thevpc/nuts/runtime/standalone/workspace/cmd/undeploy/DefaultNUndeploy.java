@@ -31,7 +31,7 @@ public class DefaultNUndeploy extends AbstractNUndeploy {
         NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();
         nWorkspaceUtils.checkReadOnly();
         if (ids.isEmpty()) {
-            throw new NExecutionException(NMsg.ofPlain("no package to undeploy"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofP("no package to undeploy"), NExecutionException.ERROR_1);
         }
         for (NId id : ids) {
             NDefinition p = NSearch.of()

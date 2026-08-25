@@ -225,7 +225,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                         }
                         always=v0!=null && v0.isRememberMe();
                     } else {
-                        v = terminal.readPassword(NMsg.ofPlain(" "));
+                        v = terminal.readPassword(NMsg.ofP(" "));
                     }
                 }
                 if (Arrays.equals("cancel!".toCharArray(), v)) {
@@ -279,7 +279,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                             responseStr = ((String)v0.getValue());
                         }
                     } else {
-                        responseStr = terminal.readLine(NMsg.ofPlain(" ? : "));
+                        responseStr = terminal.readLine(NMsg.ofP(" ? : "));
                     }
                     if (responseStr != null) {
                         CoreNUtilGui.GuiResult n = parseGuiResult(responseStr);

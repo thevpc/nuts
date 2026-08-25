@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.app.gui;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 
@@ -70,7 +69,7 @@ public final class CoreNUtilGui {
             //exception may occur if the sdk is built in headless mode
             NSession session = NSession.of();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
-            String line = session.terminal().readLine(NMsg.ofPlain(message.toString()));
+            String line = session.terminal().readLine(NMsg.ofP(message.toString()));
             return new GuiResult(line, rememberMe && false);
         }
     }
@@ -80,7 +79,7 @@ public final class CoreNUtilGui {
             title = NMsg.ofC("Nuts Package Manager - %s", Nuts.version());
         }
         if (message == null) {
-            message = NMsg.ofPlain("");
+            message = NMsg.ofP("");
         }
         String messageString = NText.of(message).filteredText();
         String titleString = NText.of(title).filteredText();
@@ -103,7 +102,7 @@ public final class CoreNUtilGui {
             NSession session = NSession.of();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
             return new GuiResult(
-                    session.terminal().readLine(NMsg.ofPlain(message.toString())),
+                    session.terminal().readLine(NMsg.ofP(message.toString())),
                     rememberMe && false
             );
         }

@@ -43,7 +43,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe illegal argument exception.
+     * Creates a new instance of safe illegal argument exception.
      *
      * @param e e
      * @return of safe illegal argument exception result
@@ -56,7 +56,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe io exception.
+     * Creates a new instance of safe io exception.
      *
      * @param e e
      * @return of safe io exception result
@@ -78,7 +78,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe io exception.
+     * Creates a new instance of safe io exception.
      *
      * @param msg msg
      * @param e e
@@ -107,7 +107,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe io exception.
+     * Creates a new instance of safe io exception.
      *
      * @param e e
      * @return of safe io exception result
@@ -120,7 +120,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe illegal argument exception.
+     * Creates a new instance of safe illegal argument exception.
      *
      * @param message message
      * @param ex ex
@@ -134,14 +134,14 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe assert exception.
+     * Creates a new instance of safe assert exception.
      *
      * @param msg msg
      * @return of safe assert exception result
      */
     public static RuntimeException ofSafeAssertException(NMsg msg) {
         /**
-         * Creates a new instance of of safe assert exception.
+         * Creates a new instance of safe assert exception.
          *
          * @param msg msg
          * @param null null
@@ -151,7 +151,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe assert exception.
+     * Creates a new instance of safe assert exception.
      *
      * @param msg msg
      * @param ex ex
@@ -171,14 +171,14 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe cmd line exception.
+     * Creates a new instance of safe cmd line exception.
      *
      * @param msg msg
      * @return of safe cmd line exception result
      */
     public static RuntimeException ofSafeCmdLineException(NMsg msg) {
         /**
-         * Creates a new instance of of safe cmd line exception.
+         * Creates a new instance of safe cmd line exception.
          *
          * @param msg msg
          * @param null null
@@ -188,7 +188,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe cmd line exception.
+     * Creates a new instance of safe cmd line exception.
      *
      * @param msg msg
      * @param ex ex
@@ -208,7 +208,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe no such element exception.
+     * Creates a new instance of safe no such element exception.
      *
      * @param message message
      * @return of safe no such element exception result
@@ -221,7 +221,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe unexpected exception.
+     * Creates a new instance of safe unexpected exception.
      *
      * @param message message
      * @return of safe unexpected exception result
@@ -234,7 +234,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of safe unsupported enum exception.
+     * Creates a new instance of safe unsupported enum exception.
      *
      * @param e e
      * @return of safe unsupported enum exception result
@@ -326,7 +326,7 @@ public class NReservedExceptions {
     }
 
     /**
-     * Creates a new instance of of unchecked exception.
+     * Creates a new instance of unchecked exception.
      *
      * @param e e
      * @return of unchecked exception result
@@ -342,7 +342,7 @@ public class NReservedExceptions {
             Throwable c = e.getCause();
             if (c != null) {
                 /**
-                 * Creates a new instance of of unchecked exception.
+                 * Creates a new instance of unchecked exception.
                  *
                  * @param c c
                  * @return of unchecked exception result

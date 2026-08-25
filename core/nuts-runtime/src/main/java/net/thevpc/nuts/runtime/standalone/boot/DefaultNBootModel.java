@@ -269,21 +269,21 @@ public class DefaultNBootModel implements NBootModel {
                 setSystemTerminal(systemTerminal);
                 if (getSystemTerminal().isAutoCompleteSupported()) {
                     _LOG()
-                            .log(NMsg.ofPlain("enable rich terminal").asFine().withIntent(NMsgIntent.SUCCESS));
+                            .log(NMsg.ofP("enable rich terminal").asFine().withIntent(NMsgIntent.SUCCESS));
                 } else {
                     _LOG()
-                            .log(NMsg.ofPlain("unable to enable rich terminal").asFineFail());
+                            .log(NMsg.ofP("unable to enable rich terminal").asFineFail());
                 }
             } else {
                 _LOG()
-                        .log(NMsg.ofPlain("enableRichTerm discarded; nuts-term is excluded.").asFineAlert());
+                        .log(NMsg.ofP("enableRichTerm discarded; nuts-term is excluded.").asFineAlert());
             }
         }
     }
 
     private NSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NSystemTerminalBase terminal) {
         if (terminal == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("missing terminal"));
+            throw new NIllegalArgumentException(NMsg.ofP("missing terminal"));
         }
         NSystemTerminal syst;
         if ((terminal instanceof NSystemTerminal)) {

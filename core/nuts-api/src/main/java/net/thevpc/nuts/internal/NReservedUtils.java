@@ -663,7 +663,7 @@ public final class NReservedUtils {
             }
             return updatedFile;
         } catch (IOException ex) {
-            bLog.log(NMsg.ofPlain("unable to update update " + filePath).asWarningAlert(ex));
+            bLog.log(NMsg.ofP("unable to update update " + filePath).asWarningAlert(ex));
             return false;
         }
     }

@@ -711,7 +711,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> ofFirst(Collection<T> collection, Supplier<NMsg> emptyMessage) {
         if (emptyMessage == null) {
-            emptyMessage = () -> NMsg.ofPlain("missing element");
+            emptyMessage = () -> NMsg.ofP("missing element");
         }
         if (collection == null || collection.isEmpty()) {
             /**

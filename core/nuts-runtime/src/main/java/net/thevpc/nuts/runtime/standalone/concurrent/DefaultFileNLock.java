@@ -351,7 +351,7 @@ public class DefaultFileNLock extends AbstractNLock {
 
     @Override
     public Condition newCondition() {
-        throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported Lock.newCondition"));
+        throw new NUnsupportedOperationException(NMsg.ofP("unsupported Lock.newCondition"));
     }
 
     @Override

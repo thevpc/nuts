@@ -37,7 +37,7 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
         ArrayList<String> cmd = new ArrayList<>();
         switch (executionType) {
             case OPEN: {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported remote open execution type"));
+                throw new NIllegalArgumentException(NMsg.ofP("unsupported remote open execution type"));
             }
             case EMBEDDED:
             case SPAWN: {

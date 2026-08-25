@@ -105,7 +105,7 @@ public final class NReservedLangUtils {
      */
     public static NOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
         if (NBlankable.isBlank(value)) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty size"));
+            return NOptional.ofEmpty(() -> NMsg.ofP("empty size"));
         }
         value = NStringUtils.strip(value);
         Integer i = NLiteral.of(value).asInt().orNull();

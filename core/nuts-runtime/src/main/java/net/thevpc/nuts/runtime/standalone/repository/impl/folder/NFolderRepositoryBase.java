@@ -153,17 +153,17 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
                              @Override
                              public NTreeVisitResult visitFile(NPath file) {
-                                 throw new NIOException(NMsg.ofPlain("updateStatistics Not supported."));
+                                 throw new NIOException(NMsg.ofP("updateStatistics Not supported."));
                              }
 
                              @Override
                              public NTreeVisitResult visitFileFailed(NPath file, Exception exc) {
-                                 throw new NIOException(NMsg.ofPlain("updateStatistics Not supported."));
+                                 throw new NIOException(NMsg.ofP("updateStatistics Not supported."));
                              }
 
                              @Override
                              public NTreeVisitResult postVisitDirectory(NPath dir, Exception exc) {
-                                 throw new NIOException(NMsg.ofPlain("updateStatistics Not supported."));
+                                 throw new NIOException(NMsg.ofP("updateStatistics Not supported."));
                              }
                          }
                 );
