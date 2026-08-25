@@ -66,30 +66,55 @@ Sometimes you need to temporarily disable an option in a script or pass explanat
 Options processed by the core **nuts** engine fall into specific behavioral categories.
 
 ### Create Options
-These options define configuration when a workspace is newly initialized. If the workspace already exists, these options are ignored. They are not inherited by sub-processes.
+These options define configuration when a workspace is newly initialized. If the workspace already exists, these options are ignored.
 | Option | Example | Description |
 |---|---|---|
-| `--archetype` | `--archetype=server` | Sets the initial workspace template |
-| `--store-strategy` | `--store-strategy=standalone` | Defines the file system layout |
-| `--install-companions`| `--install-companions` | Installs tools like nmvn and nsh |
+| `--archetype` | `--archetype=server` | Sets the initial workspace template (`default`, `minimal`, `server`) |
+| `--store-strategy` | `--store-strategy=standalone` | Defines the file system layout (`exploded`, `standalone`) |
+| `--install-companions`| `--install-companions` | Installs tools like `nmvn` and `nsh` |
+| `--java-home` | `--java-home=/path/to/jdk` | Specifies the Java installation path to run the workspace |
+| `--solver` | `--solver=maven` | Configures dependency solver (`maven`, `gradle`, `descriptor`, `maven-first`, `gradle-first`) |
 
-### Runtime Options
-These control the execution environment of the current command but are not passed down to child processes.
+### Isolation Levels
+Isolation options define the workspace boundary and disk persistence behavior.
 | Option | Example | Description |
 |---|---|---|
-| `--reset` | `nuts --reset run app` | Clears cache before running |
-| `--recover` | `nuts --recover run app` | Disables network, relies on cache |
-| `--dry` | `nuts --dry install app` | Simulates the command without side effects |
-| `--version` | `nuts --version` | Prints the runtime version |
+| `--sandbox` | `--sandbox` | Runs in a temporary location with a fresh instance each time. No disk persistence on exit. |
+| `--in-memory` | `--in-memory` | Runs the workspace entirely in memory without creating any disk configuration. Only temporary downloads folder used. |
+| `--confined` | `--confined` | Runs in a specific location as regular user without modifying global shortcuts, `.bashrc`, or user environment. |
+| `--isolation-level` | `--isolation-level=user` | Explicitly sets workspace isolation level (`system`, `user`, `confined`, `sandbox`, `memory`) |
+
+### Open Modes
+Open mode flags control workspace creation vs opening behavior.
+| Option | Example | Description |
+|---|---|---|
+| `--open-or-create` | `--open-or-create` | Default mode: opens existing workspace or creates a new one if missing |
+| `--open` | `--open` | Opens existing workspace; throws an error if workspace does not exist |
+| `--create` | `--create` | Creates a new workspace; throws an error if workspace already exists |
+| `--open-or-null` | `--open-or-null` | Opens existing workspace; exits quietly without error if workspace does not exist |
+
+### Runtime & Execution Options
+These control the execution environment of the current command.
+| Option | Example | Description |
+|---|---|---|
+| `--reset` / `-Z` | `nuts -Z install app` | Clears cache and re-bootstraps workspace before running |
+| `--reset-hard` | `nuts --reset-hard` | Wipes all workspace directories and configuration files |
+| `--reset-options` | `nuts --reset-options` | Resets all previously supplied option flags to default values |
+| `--recover` / `-z` | `nuts -z install app` | Recovers corrupted workspace by ignoring cache and re-resolving |
+| `--read-only` / `-R` | `nuts -R exec app` | Runs workspace in read-only mode; changes are not saved to disk |
+| `--offline` / `-F` | `nuts -F search app` | Disables remote repository access during execution |
+| `--dry` / `-D` | `nuts -D install app` | Simulates the command without performing side effects |
+| `--stacktrace` / `-d`| `nuts -d exec app` | Prints full Java stacktrace on errors |
+| `--debug` | `nuts --debug exec app` | Enables JDWP debugging for current process and spawned child processes |
 
 ### Exported Options
 These options affect both the current process and any sub-processes spawned by **nuts** (such as running `nsh` or an application).
 | Option | Example | Description |
 |---|---|---|
-| `--workspace` | `-w my-workspace` | Targets a specific workspace |
-| `--bot` | `--bot` | Enables non-interactive automation mode |
-| `--color` | `--color=always` | Forces colored output down the process tree |
-| `--global` | `--global` | Runs in global system context |
+| `--workspace` / `-w` | `-w my-workspace` | Targets a specific workspace location or name |
+| `--bot` / `-B` | `--bot` | Enables non-interactive automation mode with structured output |
+| `--color` / `-c` | `--color=always` | Forces colored output down the process tree |
+| `--global` / `-g` | `--global` | Runs in global system-wide context (`/opt/nuts`) |
 
 ### Executor Options
 These are intercepted and passed directly to the underlying package executor (usually the Java Virtual Machine).

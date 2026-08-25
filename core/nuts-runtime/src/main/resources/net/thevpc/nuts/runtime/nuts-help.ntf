@@ -97,9 +97,11 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --sandbox=true|false ``` (default is ```kw false``` )
       when creating the workspace, generate a random workspace, for testing purposes.
       sandbox mode will be propagated/exported as ```kw --confined```
+  ```sh --in-memory ``` (default is ```kw false``` )
+      run the workspace entirely in memory without disk persistence.
  ```sh --confined=true|false ``` (default is ```kw false``` )
       use a confined workspace that does not allow user wide or system wide alteration
- ```sh --isolation=system|user|confined|sandbox ``` (default is ```kw system``` )
+ ```sh --isolation-level=system|user|confined|sandbox|memory ``` (default is ```kw system``` )
       use the level of isolation for the workspace
 
  ```sh --boot-runtime <runtime-id-or-version> ``` (default is ```kw ""``` and points to the latest compatible nuts-runtime artifact)
@@ -353,17 +355,28 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --no-color```
       disable formatted (colorful) terminal (```kw filtered``` terminal).
 
- ```sh --trace``` (default is true)
- ```sh -t```
-      apply trace mode which allows a more verbose output
+  ```sh --trace``` (default is true)
+  ```sh -t```
+       apply trace mode which allows a more verbose output
 
- ```sh --transitive``` (default is true)
+  ```sh --bot``` (default is false)
+  ```sh -B```
+       enable bot/automation mode (non-interactive, structured output)
+
+  ```sh --stacktrace``` (default is false)
+  ```sh -d```
+       show Java stacktrace on error
+
+  ```sh --reset-options```
+       reset options to default values
+
+  ```sh --transitive``` (default is true)
       consider transitive repositories
 
- ```sh --index``` (default is true)
+  ```sh --indexed``` (default is true)
       search into indexes
 
- ```sh --cached```  (default is true)
+  ```sh --cached```  (default is true)
       use cache whenever possible
 
  ```sh --progress[=<options>]```
@@ -576,10 +589,10 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --reset  or -Z``` (defaults to ```bool false```)
       reset (delete) ```sh nuts``` workspace folder before starting the workspace. All user configuration will not be deleted.
 
- ```sh --hard-reset``` (defaults to ```bool false```)
-      hard reset (delete) all of ```sh nuts``` workspaces and any configuration file. All user configuration will not be deleted.
-      a common usage is to hard-reset nuts and exit using ```sh -Qy --hard-reset``` which will silently hard-reset configuration and exit.
-      if ```sh -Q``` is not used, after resetting, a new workspace will be bootstrapping
+  ```sh --reset-hard``` or ```sh --hard-reset``` (defaults to ```bool false```)
+       hard reset (delete) all of ```sh nuts``` workspaces and any configuration file. All user configuration will not be deleted.
+       a common usage is to hard-reset nuts and exit using ```sh -Qy --reset-hard``` which will silently hard-reset configuration and exit.
+       if ```sh -Q``` is not used, after resetting, a new workspace will be bootstrapping
 
  ```sh --skip-boot  or -Q``` (defaults to ```bool false```)
       do not load workspace. This is helpful when used with ```sh --reset  or -Z```, aka ```sh -QZ```,  in which case,

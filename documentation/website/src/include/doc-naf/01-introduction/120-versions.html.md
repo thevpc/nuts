@@ -116,7 +116,7 @@ This makes it easy to assess upgrade paths and understand how APIs evolve over t
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.7/compat_report.html" target="_blank">0.8.6→0.8.7 (44.90%)</a></td>
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.8/compat_report.html" target="_blank">0.8.6→0.8.8 (44.90%)</a></td>
   <td style="background:#de6650;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html" target="_blank">0.8.6→0.8.9 (18.50%)</a></td>
-  <td style="background:#e85f50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_1.0.0/compat_report.html" target="_blank">0.8.6→1.0.0 (13.10%)</a></td>
+  <td style="background:#e75f50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_1.0.0/compat_report.html" target="_blank">0.8.6→1.0.0 (13.20%)</a></td>
   </tr>
   <tr>
     <th>0.8.7</th>

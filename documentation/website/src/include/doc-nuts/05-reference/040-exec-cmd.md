@@ -58,14 +58,65 @@ nuts --spawn ls
 ### Embedded
 The command runs within the current JVM process, avoiding the overhead of spawning a new process (applicable only to Java commands).
 ```bash
-nuts --embedded ls
+nuts --embedded nsh -c ls
 ```
 
-### Syscall
-The command execution is delegated directly to the underlying operating system.
+### System
+The command execution is delegated directly to the underlying operating system shell.
 ```bash
-nuts --syscall ls
+nuts --system ls
 ```
+
+## Rerun & Cron Scheduling
+
+The `exec` command supports repeated execution loops and cron scheduling:
+
+| Option | Description |
+|---|---|
+| `--rerun` | Runs the command continuously in a loop |
+| `--cron=<pattern>` | Schedules application execution using standard cron expression format |
+| `--rerun-min-time=<duration>` | Minimum runtime threshold; if app crashes/stops before this time, the loop terminates |
+| `--rerun-safe-time=<duration>` | Sleep duration to wait between consecutive loop iterations |
+| `--rerun-max-count=<int>` | Maximum number of iterations before exiting the rerun loop |
+
+```bash
+# Rerun app with a 5 second safe delay between runs
+nuts exec --rerun --rerun-safe-time=5s myapp
+
+# Run on a cron schedule
+nuts exec --cron="0 0 * * *" my-daily-job
+```
+
+## Remote Execution
+
+Execute commands on remote hosts via SSH connection strings:
+```bash
+nuts exec --target=ssh://user:pass@remote-host:22 myapp
+```
+
+## Privilege Modes
+
+| Option | Description |
+|---|---|
+| `--current-user` | Runs with current user privileges (default) |
+| `--as-root` | Runs with system root privileges (prompts for root password if required) |
+| `--sudo` | Runs with elevated privileges via `sudo` |
+| `--as-user=<username>` | Runs under specified system user identity |
+
+## Java Executor Options
+
+When executing Java artifacts, **nuts** provides specialized executor flags:
+
+| Option | Description |
+|---|---|
+| `--java-version=<v>` | Specify required Java version (e.g. `11`, `17`, `21`) |
+| `--java-home=<path>` | Explicit JDK/JRE installation home directory |
+| `--main-class=<class>` | Specify main class to execute (name or candidate index) |
+| `--class-path=<cp>` | Custom classpath entries |
+| `--nuts-path=<ids>` | Additional nuts artifact IDs to append to classpath |
+| `--dir=<path>` | Working directory for process execution |
+| `--win` / `--javaw` | Use windowless `javaw` executable for GUI applications |
+| `--show-command` | Prints the full resolved Java command line prior to launch |
 
 ## Execution Modes
 

@@ -6,174 +6,127 @@ configure ```sh nuts```
 
 ###) alias:
     ```sh settings list aliases [<name-or-expr>]```
-        ...
+        list registered aliases
 
     ```sh settings add alias <name>=<cmd>...```
-        ...
+        create or update an alias
 
     ```sh settings remove alias <name>...```
-        ...
+        remove an alias
 
-###) alias:
+###) imports:
     ```sh settings list imports [<name-or-expr>]```
-        ...
+        list registered group imports
 
     ```sh settings (import|ia) <name>...```
-        ...
+        add a group import
 
     ```sh settings (unimport|ir) <name>...```
-        ...
+        remove a group import
 
 ###) archetype:
     ```sh settings (list archetypes|la)```
-        ...
+        list available workspace archetypes
 
 ###) backup/restore:
     ```sh settings backup (--file|-f)=<file>```
     ```sh settings backup <file>```
-        ...
+        create a workspace configuration backup
 
     ```sh settings restore (--file|-f)=<file>```
     ```sh settings restore <file>```
-        ...
+        restore workspace configuration from backup
 
 ###) cli-id:
     ```sh settings cli-id```
     ```sh settings get cli-id```
+        get active CLI ID
 
     ```sh settings cli-id=<value>```
     ```sh settings set cli-id <value>```
-        ...
-
-    ```sh settings restore (--file|-f)=<file>```
-    ```sh settings restore <file>```
-        ...
+        set active CLI ID
 
 ###) connect:
     ```sh settings connect --password=<password> <user>@<host>:port```
-        telnet a remote tcp server
-        ...
+        connect to a remote tcp/ssh server
 
 ###) delete:
     ```sh settings delete bin|conf|var|log|temp|cache|run ...```
-        delete workspace folder
+        delete specific workspace directory
 
 ###) update stats:
     ```sh settings update stats ...```
-        update repository stats
+        update repository statistics and index
 
 ###) java:
     ```sh settings add java --search```
-        deploys an id from registered repository to another
+        automatically search system for installed JDK/JREs
 
     ```sh settings add java <folder>...```
-        deploys an id from registered repository to another
+        register JDK/JRE from specified folder
 
     ```sh settings remove java <name>...```
-        deploys an id from registered repository to another
+        remove registered JDK/JRE
 
 ###) repository:
     ```sh settings list repos...```
-        ...
+        list registered repositories
+
     ```sh settings add repo <repo>...```
-        ...
+        add a repository
 
     ```sh settings remove repo <name>...```
-        ...
+        remove a repository
+
     ```sh settings enable repo <name>...```
-        ...
+        enable a repository
+
     ```sh settings disable repo <name>...```
-        ...
+        disable a repository
+
     ```sh settings edit repo <name> <repo-command>...```
-        ...
+        configure repository settings
 
 ###) user:
     ```sh settings list users...```
-        ...
+        list registered users
+
     ```sh settings add user <user>...```
-        ...
+        add a user
 
     ```sh settings remove user <name>...```
-        ...
+        remove a user
+
     ```sh settings enable user <name>...```
-        ...
+        enable a user account
+
     ```sh settings disable user <name>...```
-        ...
+        disable a user account
+
     ```sh settings edit user <name> <user-command>...```
-        ...
+        configure user permissions
+
     ```sh settings password...```
-        ...
+        change user password
 
 ###) log:
     ```sh settings (set log level|sll) verbose|finest|fine|finer|info|warning|severe|error|config|off|all```
-        ...
+        set logging level
 
     ```sh settings (log level|get log level)```
-        ...
-
-    ```sh settings install log```
-        ...
+        get current logging level
 
 ###) ndi (nuts desktop integration):
     ```sh settings ndi [<option>...] <package>...```
-        ...
-    OPTIONS:
-    ```sh --fetch|-t...```
-        ...
-    ```sh (--workdir|-d)=<path>...```
-        ...
-    ```sh --icon=<path>...```
-        ...
-    ```sh --menu=(supported|never|always|preferred)...```
-        ...
-    ```sh --menu-category=<path>...```
-        ...
-    ```sh --menu-name=<name>...```
-        ...
-    ```sh --shortcut-name=<name>...```
-        ...
-    ```sh --shortcut-path=<path>...```
-        ...
-    ```sh --desktop=(supported|never|always|preferred)...```
-        ...
-    ```sh --desktop-name=<name>...```
-        ...
-    ```sh --spawn|--external|-x...```
-        ...
-    ```sh --embedded|-b...```
-        ...
-    ```sh --terminal...```
-        ...
-    ```sh --env|e...```
-        ...
-    ```sh --system...```
-        ...
-    ```sh --current-user...```
-        ...
-    ```sh --as-root...```
-        ...
-    ```sh --run-as=<user>...```
-        ...
-    ```sh (--exec-options|-X)=<options>...```
-        ...
-    ```sh (--installed|-i)...```
-        ...
-    ```sh (--companions|-c)...```
-        ...
-    ```sh (--switch)...```
-        ...
-    ```sh (--ignore-unsupported-os)...```
-        ...
-    ```sh (--workspace|-w)=<ws>...```
-        ...
-    ```sh (--name|-n)=<name>...```
-        ...
-
+        create desktop integration / application launchers
 
 ##) EXAMPLES:
 
-    ```sh settings --file myjar.jar```
-        settings the myjar.jar file to default local repository
+    ```sh nuts settings list repos```
+        list all repositories in current workspace
 
-    ```sh deploy --id example:some-thing --to system```
-        settings the latest version of example:some-thing to system repository
+    ```sh nuts settings add alias ll='search -l'```
+        create an alias named ll
+
+    ```sh nuts settings add java --search```
+        auto-detect installed JDKs on system

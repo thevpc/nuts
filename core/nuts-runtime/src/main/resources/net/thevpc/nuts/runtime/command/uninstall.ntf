@@ -11,8 +11,11 @@ uninstall ```sh nuts``` package <nuts-artifact>
     ```sh -e | --erase```
         enable erase mode to delete all of artifact's config data as well
 
-    ```sh <args> ...```
-        provide arguments to pass to uninstaller
+    ```sh --all-versions```
+        uninstall all installed versions of the specified artifact
+
+    ```sh -g | --args <args> ...```
+        pass the given args to the uninstaller executor
 
 ```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
