@@ -4,95 +4,139 @@ title: Running Nuts
 sidebar_label: Running Nuts
 ---
 
-In this section we will consider the simplest usage of `nuts` package manager.
+:::tip What You'll Learn
+In this section, you will learn the fundamentals of using the **nuts** package manager to run Java applications. We will cover:
+* Running remote and deployed artifacts seamlessly.
+* Understanding and using artifact long IDs (Maven coordinates).
+* Installing applications before running them.
+* Searching your workspace for installed artifacts.
+* Executing local JAR files with auto-provisioned dependencies.
+* Using different execution modes (spawn, embedded, system).
+:::
 
-## Running a deployed artifact
-You can run any jar using **```nuts```** as far as the jar is accessible from one of the supported repositories.
-By default, **```nuts```** supports:
- + maven central
- + local maven folder (~/.m2)
+In this section, we will explore the core usage of the **nuts** package manager: running applications. Because **nuts** is designed to act as a runtime package manager for Java, it handles dependencies, classpaths, and JVM arguments dynamically.
 
-You can configure other repositories or even implement your own if you need to.
+## Running a Deployed Artifact
 
-The jar will be parsed to check form maven descriptor so that dependencies will be resolved and downloaded on the fly.
-Then, all executable classes (public with static void main method) are enumerated. You can actually run any of them when prompted. Any jar built using maven should be well described and can be run using its artifact long id.
+You can run any JAR using **nuts**, provided the JAR is accessible from one of your configured repositories. By default, **nuts** supports:
+* Maven Central
+* Local Maven folder (`~/.m2/repository`)
 
-## Artifact Long Ids
-**```nuts```** long ids are a string representation of a unique identifier of the artifact. It has the following form :
+You can also configure additional repositories (like Nexus or Artifactory) or implement your own if you need to. 
+
+When you run an artifact, the JAR is parsed to check its Maven descriptor (`pom.xml` properties). **nuts** will resolve and download all necessary dependencies on the fly. After resolving dependencies, all executable classes (classes containing a `public static void main` method) are enumerated. If there are multiple entry points, you can choose which one to run when prompted. 
+
+Any standard JAR built with Maven or Gradle can be executed by referencing its artifact ID.
+
+## Artifact Long IDs
+
+**nuts** uses "Long IDs" to uniquely identify artifacts. These strings follow the standard Maven coordinate format:
 
 ```bash
 groupId:artifactId#version
 ```
 
-for instance, to install (and run) ```netbeans-launcher``` (which is a simple UI helping launch of multiple instances of netbeans), you can issue
+For instance, to install and run `netbeans-launcher` (a simple UI utility that helps launch multiple instances of NetBeans), you can execute:
 
 ```bash
-  nuts net.thevpc.app:netbeans-launcher#1.2.2
+nuts net.thevpc.app:netbeans-launcher#1.2.2
 ```
 
-You do agree that this can be of some cumbersome to type. So you can simplify it to :
+Typing out the full `groupId` and `version` every time can be cumbersome. To simplify this, you can omit them when running commands:
 
 ```bash
-  nuts netbeans-launcher
+nuts netbeans-launcher
 ```
 
-In this form, **```nuts```** will auto-detect both the ```groupId``` and the ```version```. The group id is detected if It's already **imported** (we will see later how to import a groupId). 
-By default, there is a couple of groupIds that are automatically imported :
+When you use this short form, **nuts** auto-detects both the `groupId` and the `version`. The group ID is resolved if it matches an **imported** prefix (we will cover imports in detail later). By default, several group IDs are automatically imported:
 
-  + ```net.thevpc``` (contains various applications of the author)
-  + ```net.thevpc.nuts.toolbox``` (contains various companion tools of **```nuts```**, such as ```nsh```, ...)
+* `net.thevpc` (contains various core applications)
+* `net.thevpc.nuts.toolbox` (contains companion tools like `nsh`, `ndb`, etc.)
 
-And it turns out, hopefully, that netbeans-launcher belongs to an imported groupId, so we can omit it.
-Besides, if no version is provided, **```nuts```** will also auto-detect the best version to execute. If the application is already installed, the version you choose to install will be resolved. If you have not installed any, the most recent version, obviously, will be detected for you.
+Because `netbeans-launcher` belongs to an imported group ID, the prefix can be safely omitted. Additionally, if no version is provided, **nuts** automatically selects the best version to execute. If you already have one or more versions installed, the default installed version will be used. If you have not installed it yet, the most recent stable version will be resolved and fetched for you.
 
 ## Artifact Installation
-Any java application can run using **```nuts```** but it has to be installed first. If you try to run the application before installing it, you will be prompted to confirm installation.
-To install our favorite application here we could have issued :
+
+Any Java application can run using **nuts**, but it must be downloaded and installed first. If you attempt to run an application that is not yet installed in your local workspace, you will be prompted to confirm the installation.
+
+To explicitly install an application without immediately running it, use the `install` command:
+
 ```bash
-  nuts install netbeans-launcher
+nuts install netbeans-launcher
 ```
-But as we have tried to run the application first, it has been installed for us (after confirmation).
 
-## Searching artifacts
-Now let's take a look at installed artifacts. We will type :
+If you try to run the application directly via `nuts netbeans-launcher`, the installation happens automatically (after you confirm the prompt).
+
+## Searching Artifacts
+
+To view the artifacts currently installed in your workspace, use the `search` command:
+
 ```bash
-  nuts search --installed
+nuts search --installed
 ```
-This will list all installed artifacts. We can get a better listing using long format :
+
+This lists all installed artifacts. For a more detailed view, you can use the long format flag `-l`:
+
 ```bash
-  nuts search --installed -l
-```
-you will see something like
-
-```
-I-X 2019-08-21 04:54:22.951 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.0
-i-X 2019-08-21 04:54:05.196 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.2
+nuts search --installed -l
 ```
 
-The first column here is a the artifact status that helps getting zipped information of the artifact. the 'I' stands for 'installed and default' whereas, 'i' is simply 'installed'. The 'X' stands for 'executable application', where 'x' is simply 'executable'. Roughly said, executable applications are executables aware of (or depends on) **nuts**, as they provide a special api that helps nuts to get more information and more features for the application. As an example, executable applications have special OnInstall and OnUninstall hooks called by nuts.
-The second and the third columns are date and time of installation. The fourth column points to the installation user. When Secure mode has not been enabled (which is the default), you are running nuts as 'anonymous'.
-The fifth column shows the repository from which the package was installed. And the last column depicts the artifact long id.
+The output will look similar to this:
 
-## Running local jar file with its dependencies
-Let's suppose that my-app.jar is a maven created jar (contains META-INF/maven files) with a number of dependencies. **```nuts```** is able to download on the fly needed dependencies, detect the Main class (no need for MANIFEST.MF) and run the 
-application. If a Main-Class Attribute was detected in a valid MANIFEST.MF, il will be considered.
-If more than one class is detected with a main method, **```nuts```** will ask for the current class to run.
+```text
+I-X 2024-03-15 14:30:22 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.0
+i-X 2024-03-15 14:28:05 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.2
+```
 
-When you run a local file, **```nuts```** will behave as if the app is installed (in the given path, an no need to invoke install command). Local files are detected if they are denoted by a valid path (containing '/' or '\' depending on the underlying operating system).
-Dependencies will be downloaded as well (and cached in the workspace)
+Here is how to interpret the output columns:
+* **Status Flags (Column 1)**: The first column provides compact status information. 
+  * `I` (uppercase) means "installed and default".
+  * `i` (lowercase) means "installed".
+  * `X` (uppercase) stands for "executable application aware of nuts" (meaning it uses the nuts API for features like `OnInstall` or `OnUninstall` hooks).
+  * `x` (lowercase) simply means "executable" (a standard Java application with a main method).
+* **Date and Time (Columns 2 & 3)**: When the artifact was installed.
+* **User (Column 4)**: The user who performed the installation. If secure mode is disabled (the default), this shows as `anonymous`.
+* **Repository (Column 5)**: The source repository from which the package was fetched.
+* **Long ID (Column 6)**: The full artifact identifier.
+
+## Running Local JAR Files
+
+Let's suppose you have a file named `my-app.jar` built with Maven. Even if it is just a local file, **nuts** is capable of reading its embedded `META-INF/maven` files, resolving its external dependencies on the fly, and running it.
+
+If a `Main-Class` attribute is present in a valid `MANIFEST.MF`, it will be executed. If multiple classes have a `main` method and no primary class is specified, **nuts** will list them and ask which one you want to run.
+
+To run a local file, simply provide the path (which must contain a `/` or `\` to be recognized as a file path rather than an artifact ID):
 
 ```bash
 nuts ./my-app.jar some-argument-of-my-app
 ```
 
-If you need to pass JVM arguments you have to prefix them with "--exec". So if you want to fix maximum heap size use 
+Dependencies defined in the JAR's internal POM will be downloaded and cached in your workspace automatically.
+
+### Passing JVM Arguments
+
+If you need to pass JVM arguments (such as memory limits or system properties), you must prefix them with the `exec` command. For instance, to set the initial and maximum heap size:
 
 ```bash
 nuts exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
 ```
 
-You can also select a specific version of the jdk to use. 
+You can also use this syntax to dynamically provision and select a specific Java version for the execution:
 
 ```bash
-nuts exec --java-version=11 --verbose kifkif
+nuts exec --java-version=17 ./my-app.jar
+```
+
+## Execution Modes
+
+When running applications, **nuts** supports different execution modes to control how the process is launched. These can be specified using flags:
+
+* `--spawn` (Default): Launches the application in a completely new JVM process. This provides maximum isolation and ensures the application's environment variables and memory space are separate from the **nuts** process itself.
+* `--embedded`: Runs the application within the same JVM process as **nuts**. This is faster since it avoids the overhead of starting a new JVM, but it provides less isolation. It is useful for trusted plugins or small utilities.
+* `--system`: Delegates the execution directly to the underlying operating system. This is typically used when running native commands or system scripts rather than Java applications.
+
+For example, to force an application to run in embedded mode:
+
+```bash
+nuts --embedded netbeans-launcher
 ```

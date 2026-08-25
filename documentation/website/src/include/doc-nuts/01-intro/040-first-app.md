@@ -3,61 +3,86 @@ id: start_here
 title: First App
 ---
 
-## Let's start the journey
+## Let's Start the Journey
 
-Get started by **running your first application**.
-Nuts is not a build tool (like `maven` and `gradle`). Nuts is more likely to be compared with nodejs `npm` or python's `pip`
-It consists mainly of a commandline application that is used to install, uninstall and run other java applications in a smooth elegant way.
+Get started by **running your first application**. 
 
-### What you'll need
+Remember, **nuts** is not a build tool (like Maven or Gradle). Instead, think of it as the Java equivalent to Node's `npm` or Python's `pip`. It provides a seamless CLI experience to install, manage, and execute Java applications without dealing with classpath configurations or downloading JARs manually.
 
-- `java`  compatible operating system including [Linux],[Windows] and [MacOS]
-- [java](https://www.java.com) version 1.8 or above. JRE is sufficient, JDK allows you to do more with `nuts`
+### What You'll Need
 
-Let's check that java is installed :
+- A compatible operating system (Linux, macOS, or Windows).
+- [Java](https://www.java.com) version 1.8 or above. A JRE is sufficient to run applications, though a JDK unlocks additional development features.
+
+Verify your Java installation:
+
+```bash
+java -version
 ```
-java --version
-```
 
-But in the following example, I am assuming you are using a Linux distribution et MacOS.
-If you are using Windows please refer to the [installation](#Installation) section.
+*Note: The following examples assume a Linux or macOS environment. If you are on Windows, refer to the [Installation](030-installation.md) page for exact commands.*
 
 ### Installing and Running Nuts
 
-We start by opening a new terminal (term, konsole or whatever you prefer) then download **```nuts```** using this command :
-On linux/MacOS system we issue :
+Open a new terminal and download **nuts**. We will use the direct JAR download method to demonstrate the standard initial setup:
 
-```
+```bash
 curl -sL {{stableJarLocation}} -o nuts.jar && java -jar nuts.jar -Zy
 ```
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+We used the flags `-y` to automatically answer "yes" to prompts and `-z` to ignore cached binaries, ensuring a fresh installation. This process may take a minute as it fetches required core dependencies and companion tools.
 
-We used the flags ```-y``` to auto-confirm and ```-z``` to ignore cached binaries (combined here as ```-zy```).
-These flags are optional and are used here to demonstrate some of Nuts' available options.
-The installation process may take several minutes, as it involves downloading all required dependencies, companions, and tools.
+Once finished, you should see a success message indicating **nuts** is installed. **Restart your terminal** to ensure your `PATH` is updated.
 
-You should then see this message
+### Installing a GUI Application
 
-```
-Welcome to nuts. Yeah, It's working...
-```
-
-**```nuts```** is well installed, just restart your terminal.
-
-Now we will install `jedit`, a tremendous underrated text editor. So in your terminal type:
+Let's install `jedit`, a mature and feature-rich text editor. In your terminal, type:
 
 ```bash
 nuts install org.jedit:jedit
 ```
 
-Let's run jedit now
-```
+Once installed, simply run it:
+
+```bash
 nuts jedit
 ```
 
-As you can see, simple commands are all you need to download, install, configure and run `jedit` or any java application that is deployed in the maven repository.
+**nuts** resolves the Maven dependencies, provisions the environment, and launches the application automatically.
 
-So please visit ```nuts``` [website](https://thevpc.github.io/nuts) or [github repository](https://github.com/thevpc/nuts) for more information.
+### Installing a CLI Tool
 
+**nuts** also excels at managing command-line tools. Let's install `nsh` (Nuts Shell), a portable bash-compatible shell:
 
+```bash
+nuts install net.thevpc.nuts.toolbox:nsh
+```
+
+Run it by typing:
+
+```bash
+nuts nsh
+```
+
+You are now inside the Nuts Shell. Type `exit` to return to your normal terminal.
+
+### Managing Your Packages
+
+You can easily see everything you have installed in your current workspace:
+
+```bash
+nuts search --installed
+```
+
+If you no longer need an application, you can uninstall it cleanly:
+
+```bash
+nuts uninstall org.jedit:jedit
+```
+
+### Next Steps
+
+You've successfully installed **nuts**, provisioned a GUI application, ran a CLI tool, and managed your packages. To learn more advanced workflows:
+
+* Explore the [Tutorials](../02-tutorial/) to dive deeper into workspace management, alias creation, and deployment.
+* Visit the [How-To Guides](../03-how-to/) for practical, goal-oriented solutions.

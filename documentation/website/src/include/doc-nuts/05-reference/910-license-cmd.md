@@ -3,17 +3,25 @@ id: license-cmd
 title: License
 ---
 
+## Synopsis
 
-**license** command shows license of **nuts** and exits. **nuts** adopts GNU General Public License v3 which is quite permissive.
+```sh
+nuts license
 ```
-me@linux:~> nuts license
+
+## Description
+
+The `license` command displays the open-source license for **nuts** and exits. 
+
+**nuts** is proudly open-source and is distributed under the GNU General Public License v3 (GPL-3.0), which guarantees end users the freedom to run, study, share, and modify the software.
+
+```text
     _   __      __       
    / | / /_  __/ /______   Network Updatable Things Services
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
     version 
-
 
 
  Is a new Open Source Package Manager to help install packages
@@ -32,5 +40,5 @@ me@linux:~> nuts license
 ```
 
 ``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/license.ntf"}}
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/license.ntf")}}
 ``````

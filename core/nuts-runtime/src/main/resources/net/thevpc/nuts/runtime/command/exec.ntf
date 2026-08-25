@@ -45,6 +45,19 @@ execute a command
     ```sh --open-file```
         the path to execute will not be executed. Instead it will be opened with assigned editor. System bindings are most likely to be considered.
 
+    ```sh --rerun```
+        command multiple times or forever
+
+    ```sh --cron=<cron-pattern>```
+        launch application as specified in the cron format
+
+    ```sh --rerun-min-time=<duration>```
+        when in rerun or cron mode, if the app stops before min time (aka crashes), wont be rerun
+
+    ```sh --rerun-safe-time=<duration>```
+        when in rerun or cron mode, when application stops, wait for 'safe duration' time
+
+
 ```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES

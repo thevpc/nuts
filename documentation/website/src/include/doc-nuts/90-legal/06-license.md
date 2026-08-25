@@ -4,6 +4,9 @@ title: License
 sidebar_label: License
 ---
 
+## GNU General Public License v3
+
+**Nuts** is released under the **GNU General Public License v3 (GPLv3)**.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -19,5 +22,10 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-Copyright (C) 2016-2022 thevpc
+## Copyright
 
+Copyright © 2016–2026 thevpc
+
+## Full License Text
+
+The complete license text is available at [gnu.org/licenses/gpl-3.0](https://www.gnu.org/licenses/gpl-3.0.html).

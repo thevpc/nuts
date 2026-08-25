@@ -4,27 +4,56 @@ title: Nuts Commands
 sidebar_label: Nuts Commands
 ---
 
+**nuts** provides a rich set of commands to manage artifacts, repositories, and workspace configurations. Commands are categorized into internal commands (built into the runtime) and external commands (provided by downloaded artifacts).
 
-Nuts supports multiple types of commands (internal , external), multiple types of execution (embedded, spawn, and system execution) and multiple modes of execution (effective, dry).
+## Command Categories
 
-Internal Commands include:
-* `welcome` : this is the default command that simply shows a welcome message and exits
-* `help` : documentation and help command for **```nuts```** and applications and exits 
-* `version` : show nuts version and exits
-* `info` : show detailed **```nuts```** installation information and exits
-* `license` : simply show **```nuts```** license and exits
-* `search` : search for applications installed/to install
-* `fetch` : download applications (without installing)
-* `which` : resolve the appropriate application (or an internal command) for a given command
-* `exec` : execute c(or an internal command)
-* `install` : installs an application 
-* `uninstall` : uninstalls an application
-* `update` : updates an installed application
-* `reinstall` : reinstall an existing application
-* `check-updates` : checks for updates of an application (do not perform the update)
-* `deploy` : deploys a local application (and its descriptors) to a local repository
-* `push` : syncronizes the local repositry to it's remote peer and hence, deploy to a remote repository.
-* `bundle` : creates a standalone bundle as a complete nuts workspace that serve a single application
-* `settings` : this is main settings/configuration commands to manage nuts workspaces, apps, security, etc.
+### Package Management
+* `install`: Installs an artifact and its dependencies into the workspace.
+* `uninstall`: Removes an installed artifact.
+* `reinstall`: Reinstalls an existing artifact, re-resolving dependencies.
+* `update`: Checks for and applies updates to installed artifacts.
+* `check-updates`: Checks for newer versions without applying them.
 
+### Artifact Transfer
+* `fetch`: Downloads and caches artifacts without installing them.
+* `deploy`: Deploys a local artifact into a local repository.
+* `undeploy`: Removes an artifact from a local repository.
+* `push`: Synchronizes a local repository to its remote peer.
+* `bundle`: Creates an air-gapped standalone bundle containing a complete workspace.
 
+### Discovery & Execution
+* `search`: Searches for artifacts across local and remote repositories.
+* `which`: Resolves the appropriate application or command for execution.
+* `exec`: Executes an artifact or internal command.
+
+### Configuration
+* `settings`: Main configuration command to manage workspace settings, repositories, aliases, launchers, and security.
+
+### Information
+* `info`: Displays detailed workspace and installation information.
+* `version`: Shows the nuts API and runtime versions.
+* `help`: Provides documentation and usage instructions.
+* `license`: Displays the nuts open-source license.
+* `welcome`: Bootstraps the workspace and shows a welcome message.
+
+## Execution Modes
+
+Nuts supports multiple ways to invoke external commands:
+
+* **Spawn** (`--spawn`): The default mode. Spawns a new operating system process for the command.
+* **Embedded** (`--embedded`): Executes Java-based commands within the current JVM process to avoid startup overhead.
+* **System** (`--syscall`): Delegates the execution directly to the underlying operating system.
+
+Additionally, commands can be run in **dry mode** using the `--dry` flag. This simulates the execution without applying any side effects, allowing you to preview actions before committing.
+
+## Common Global Options
+
+Many commands accept global options to modify their behavior:
+* `-y` or `--yes`: Automatically confirms all interactive prompts. Ideal for CI/CD environments.
+* `-n` or `--no`: Automatically rejects all interactive prompts.
+* `--bot`: Enables bot mode, formatting output for automated processing and suppressing interactive prompts.
+* `--json`: Formats the output as structured JSON.
+* `--workspace=<path>`: Specifies an alternative workspace directory.
+* `--trace`: Enables detailed tracing for debugging.
+* `--dry`: Simulates the command without side effects.

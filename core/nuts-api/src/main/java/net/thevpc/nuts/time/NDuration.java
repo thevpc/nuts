@@ -2116,7 +2116,7 @@ public class NDuration implements Serializable, NElementSimple {
      * @param any any
      * @return parse result
      */
-    public static NOptional<NDuration> parse(String any) {
+    public static NOptional<NDuration> of(String any) {
         if (NStringUtils.isBlank(any)) {
             return NOptional.ofEmpty();
         }

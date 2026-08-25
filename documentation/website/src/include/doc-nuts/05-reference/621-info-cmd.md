@@ -3,10 +3,20 @@ id: info-cmd
 title: Info
 ---
 
+## Synopsis
 
-`info` command is a more verbose command than version. It shows a lot of other **nuts** properties that describe the booted workspace, such as the workspace name, the store locations (artifacts, caches, ....)
+```sh
+nuts info [options]
 ```
-me@linux:~> nuts info
+
+## Description
+
+The `info` command provides detailed diagnostic information about the booted **nuts** workspace. While `version` gives you basic API and runtime versions, `info` displays the complete operational context, including configuration variables, storage locations, security flags, and the Java environment running the workspace.
+
+## Example Output
+
+```bash
+$ nuts info
 name                     = default-workspace
 nuts-api-version         = {{apiVersion}}
 nuts-api-id              = net.thevpc.app.nuts:nuts#{{apiVersion}}
@@ -61,7 +71,8 @@ creation-within          = 320ms
 repositories-count       = 5
 ```
 
+This structured output is highly valuable when submitting bug reports, debugging XDG-compliant folder layouts, or verifying that your execution environment is correctly configured.
 
 ``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/info.ntf"}}
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/info.ntf")}}
 ``````

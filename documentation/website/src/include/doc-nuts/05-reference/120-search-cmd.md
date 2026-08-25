@@ -3,77 +3,87 @@ id: search-cmd
 title: Search
 ---
 
+## Synopsis
 
-Artifact can be in multiple states. they can be
-+ 'unavailable' if no registered repository can serve that artifact
-+ 'available' if there is at least one repository that can serve that artifact
-+ 'fetched' if there is a repository that can serve the artifact from local machine. This happens either if the repository is a local one (for instance a folder repository) or the repository has already downloaded and cached the artifact
-+ 'installed' if the artifact is fetched and installed in the the machine.
-+ 'installed default' if the artifact is installed and marked as default
-
-To search for these artifacts status you will use the appropriate option flag with an artifact query.
-An artifact query is a generalization of an artifact id where you may use wild cards and version intervals in it.
-These are some examples of artifact queries.
+```sh
+nuts search [options] <query>
 ```
-# all artifacts that start with netbeans, whatever groupId they belong to
-# nuts search netbeans*
 
-# all artifacts that start with netbeans, whatever groupId they belong to. same as the latter.
-# nuts search *:netbeans*
+## Description
 
-# all artifacts in the net.thevpc.app groupId
-# nuts search net.thevpc.*:*
+The `search` command queries available repositories to find artifacts.
 
-# all artifacts in the net.thevpc.* groupId which includes all of net.thevpc.app and net.thevpc.app.example for instance.
-# nuts search net.thevpc.*:*
+Artifacts can be in several states:
+* `unavailable`: No registered repository can serve the artifact.
+* `available`: At least one repository can serve the artifact.
+* `fetched`: The artifact is cached locally.
+* `installed`: The artifact is fetched and fully installed in the workspace.
+* `installed default`: The artifact is installed and marked as the default version.
 
-# all artifacts that start with netbeans and is available for windows operating system in x86_64 architecture
-# nuts search netbeans*?os=windows&arch=x86_64
+### Artifact Queries
 
-# all netbeans launcher version that are greater than 1.2.0 (excluding 1.2.0)
-# nuts search netbeans-launcher#]1.2.0,[
+An artifact query is a generalized artifact ID that supports wildcards and version intervals.
 
-# all netbeans launcher version that are greater than 1.2.0 (including 1.2.0)
-# nuts search netbeans-launcher#[1.2.0,[
+Examples of artifact queries:
+```bash
+# All artifacts that start with netbeans, regardless of groupId
+nuts search "netbeans*"
+nuts search "*:netbeans*"
 
+# All artifacts in the net.thevpc.app groupId
+nuts search "net.thevpc.app:*"
+
+# All artifacts in any net.thevpc.* sub-group
+nuts search "net.thevpc.*:*"
+
+# Artifacts filtered by OS and architecture
+nuts search "netbeans*?os=windows&arch=x86_64"
+
+# Version greater than 1.2.0 (excluding 1.2.0)
+nuts search "netbeans-launcher#]1.2.0,["
+
+# Version greater than or equal to 1.2.0
+nuts search "netbeans-launcher#[1.2.0,["
 ```
-You can then use the these flags to tighten your search :
-+ --installed (or -i) : search only for installed artifacts
-+ --local     : search only for fetched artifacts
-+ --remote    : search only for non fetched artifacts
-+ --online    : search in installed then in local then in remote, stop when you first find a result.
-+ --anywhere  (or -a) : search in installed and local and remote, return all results.
 
-You can also change the output layout using --long (or -l) flag
-```
-me@linux:~> nuts search -i -l
+## Options
+
+You can filter search results by status:
+* `-i`, `--installed`: Search only for installed artifacts.
+* `--local`: Search only for locally fetched/cached artifacts.
+* `--remote`: Search only for non-fetched, remote artifacts.
+* `--online`: Search in installed, then local, then remote. Stops when the first match is found.
+* `-a`, `--anywhere`: Search everywhere and return all results.
+
+### Output Formatting
+
+The `search` command supports structured output, making it highly useful for scripting. Use the `-l` or `--long` flag for verbose listings.
+
+```bash
+$ nuts search -i -l
 I-X 2019-08-26 09:53:53.141 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.1
 IcX 2019-08-24 11:05:49.591 admin     maven-local      net.thevpc.app.nuts.toolbox:nsh#
 I-x 2019-08-26 09:50:03.423 anonymous vpc-public-maven net.thevpc.app:kifkif#1.3.3
 ```
-you can even change the output format
-```
-me@linux:~> nuts search -i -l --json
+
+You can change the output format using global flags: `--plain`, `--json`, `--xml`, `--table`, or `--tree`.
+
+```bash
+$ nuts search -i -l --json
 ```
 ```json
 [
-{
-  "id": "vpc-public-maven://net.thevpc.app:netbeans-launcher#1.2.1",
-  "descriptor": {
-    "id": "net.thevpc.app:netbeans-launcher#1.2.1",
-    "parents": [],
-    "packaging": "jar",
-    "executable": true,
-    ...
+  {
+    "id": "vpc-public-maven://net.thevpc.app:netbeans-launcher#1.2.1",
+    "descriptor": {
+      "id": "net.thevpc.app:netbeans-launcher#1.2.1",
+      "packaging": "jar",
+      "executable": true
+    }
   }
- }
 ]
 ```
-Indeed, all of **nuts** commands support the following formats : **plain**, **json**, **xml**, **table** and **tree** because **nuts** adds support to multi format output by default. You can switch to any of them for any command by adding the right option in **nuts** (typically --plain, --json, --xml, --table and --tree). I know this is awesome!.
-
-**search** is a very versatile command, you are welcome to run "nuts search --help" to get more information.
-
 
 ``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/search.ntf"}}
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/search.ntf")}}
 ``````

@@ -20,37 +20,35 @@ title: Installation
 
 ## Quick Install
 
-For most users:
+For most users, this is the recommended installation method. If you want the most rock-solid, production-ready release, use the LTS (Stable) channel. For the newest features and recent bug fixes, use the Preview (Latest) channel.
 
 ```bash
-# Linux/macOS
+# Linux/macOS (LTS / Stable)
 curl -s https://thevpc.net/nuts/install-stable.sh | bash
+
+# Linux/macOS (Preview / Latest)
+curl -s https://thevpc.net/nuts/install-latest.sh | bash
 
 # Windows
 # Download the installer from the interactive page below
 ```
 
-
-This is mostly the recommanded installation mode if you are not sure what mode suits you the best. Preview mode helps you using the most uptodate/bug free version and with newest features as well.
-Installation of `nuts` for preview/test/evaluation or simply for personal use is based on a rolling `nuts` binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.
-
 ## System Requirements
 
-Here are all **```nuts```** requirements :
+**nuts** is lightweight and designed to run practically anywhere:
 
-- **Java** : **```nuts```** requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above to execute (tested against java **25**). Please note that you need to update your 1.8 version to the latest update (update 150+)
-- **System Memory**: **```nuts```** memory footprint is very little and has no minimum RAM requirements.
-- **Disk**: 5Mo on the disk are required for the **```nuts```** installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.
-- **Operating System**: **```nuts```** is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.
+- **Java**: Requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above (tested against Java **25**). Note that Java 1.8 requires update 150+. 
+- **Memory**: Minimal footprint; no strict RAM requirements.
+- **Disk Space**: ~5MB for the **nuts** binary itself. Additional space is used for your local workspace cache (expect ~500MB depending on usage).
+- **Operating System**: Runs on any OS with Java support, including all recent versions of Linux, macOS, and Windows.
 
-To check if you have a valid java installation type
+To verify your Java installation, run:
 
 ```bash
 java -version
 ```
 
-The result would be equivalent to the following. Just be sure the version is 1.8 or over. In this example,
-the java version is 24.0.1
+You should see output similar to this (ensure the version is 1.8 or higher):
 
 ```bash
 $ java -version
@@ -59,9 +57,7 @@ OpenJDK Runtime Environment (build 24.0.1+9-suse-1.1-x8664)
 OpenJDK 64-Bit Server VM (build 24.0.1+9-suse-1.1-x8664, mixed mode, sharing)
 ```
 
-
 ## Installation
-
 
 <Tabs
 defaultValue="linux"
@@ -71,42 +67,38 @@ values={[
 { label: 'Windows', value: 'windows', },
 { label: '*NIX wget', value: 'wget', },
 { label: '*NIX curl', value: 'curl', }
-]
-}>
+]}
+>
 <TabItem value="windows">
 
-download [nuts-app-{{apiVersion}}.jar]({{latestJarLocation}})
-```
+Download [nuts-app-{{apiVersion}}.jar]({{latestJarLocation}})
+```bash
 java -jar nuts-app-{{apiVersion}}.jar -Zy
 ```
 
-On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-- **nuts-cmd-{{apiVersion}}** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
-- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here {{apiVersion}}
+On Windows systems, the first launch will create a new **nuts** menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal:
+- **nuts-cmd-{{apiVersion}}**: Opens a configured command terminal. The **nuts** command will be available, as well as several companion tools installed by default.
+- **nuts-cmd**: Points to the last installed **nuts** version (here, {{apiVersion}}).
 
-Any of these shortcuts will launch a nuts-aware terminal.
-
-Supported Windows systems include Window 7 and later.
+Any of these shortcuts will launch a **nuts**-aware terminal. Supported systems include Windows 7 and later.
 
 :::tip
 
-Any of the created shortcuts for windows is a nuts-aware terminal.
+Any of the created shortcuts for Windows is a nuts-aware terminal.
 
 :::
 
 </TabItem>
 <TabItem value="linux">
 
-```
+```bash
 $ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
 ```
 
-Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
-Using **```nuts```** on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
+Linux installation relies on the bash shell. The first launch configures `~/.bashrc` so that **nuts** and its companion tools are immediately available in future terminal sessions. 
 
-All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using **nuts**.
-All tests where performed on OpenSuse Tumbleweed.
+Using **nuts** on a UNIX-like system is seamless. A standard bash terminal (GNOME Terminal, KDE Konsole, etc.) automatically becomes a **nuts**-aware terminal. A graphical system (X11/Wayland) is only required if you plan to run GUI applications via **nuts**.
 
 :::tip
 
@@ -117,70 +109,90 @@ Any bash terminal application is a nuts-aware terminal.
 </TabItem>
 <TabItem value="macos">
 
-```
+```bash
 $ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 $ exit
 ```
 
-MacOS Systems installation is based on **zsh** shell. First launch will configure "~/.zshrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
-Using **```nuts```** on MacOS system should be seamless. A simple bash terminal (MacOs Terminal App) is already a nuts-aware terminal.
+macOS installation leverages the `zsh` shell. The first launch configures `~/.zshrc` so that **nuts** and its companion commands are available in all future terminal instances. 
+
+A standard terminal (like the macOS Terminal App) automatically acts as a **nuts**-aware terminal.
 
 :::tip
 
-Any bash terminal application is a nuts-aware terminal.
+Any terminal application is a nuts-aware terminal.
 
 :::
 
 </TabItem>
+<TabItem value="wget">
+
+```bash
+$ wget -qO- https://thevpc.net/nuts/install-latest.sh | bash
+$ exit
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```bash
+$ curl -s https://thevpc.net/nuts/install-latest.sh | bash
+$ exit
+```
+
+</TabItem>
 </Tabs>
 
-
-Yous should then see some log like the following :
+You should then see log output resembling the following:
 
 ![install-log-example](assets/images/console/install-log-example.png)
 
-As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools".
-The main recommended helpful is **nsh**  (stands for __Nuts Shell__), is a bash compatible shell implementation application that will run equally on linux and windows systems.
+As shown, the initial installation also triggers the setup of helpful optional programs called "companion tools." A highly recommended tool is **nsh** (Nuts Shell), a portable bash-compatible shell that runs uniformly across Linux, macOS, and Windows.
 
 :::important
 
-After installation, you need to restart the terminal application for the configuration to take effect.
+After installation, you must restart your terminal application for the environment configurations to take effect.
 
 :::
 
-
 ## Test Installation
-To test installation the simplest way is to open a nuts-aware terminal and type :
 
-```
+To verify your installation, open a new terminal and type:
+
+```bash
 nuts --version
 ```
 
-It should show a result in the format : nuts-api-version/nuts-impl-version
+It should return the version string in the format `nuts-api-version/nuts-impl-version`:
 
-```
+```bash
 {{apiVersion}}/{{runtimeVersion}}
 ```
 
-## Run a command
+## Run a Command
 
-To run a command using **nuts** just type
+To run a command using **nuts**, just type:
 
-```
+```bash
 nuts <command>
 ```
 
-Several commands are available, and you can always manually run any java and non java application.
-
+You can seamlessly run **nuts** built-ins as well as any packaged Java CLI application.
 
 ## GUI Installer
 
-Prefer a graphical installer? Nuts provides native installers for Windows, macOS, and Linux.
+Prefer a graphical installer? **nuts** provides native installers for Windows, macOS, and Linux.
 
 [→ Download the GUI installer](/download.html)
 
-The installer lets you choose:
+The installer lets you easily choose:
 - Stable or Preview channel
-- Whether to reset the workspace
+- Whether to reset your workspace
 - Companion tools to pre-install
-- Light or dark theme
+- Light or dark display themes
+
+## Next Steps
+
+Now that you have **nuts** installed, explore what you can do with it:
+* Check out the [First App](/doc-nuts/01-intro/040-first-app.md) guide to install and run your first package.
+* Dive into the [Tutorials](/doc-nuts/02-tutorial/) section for in-depth workflows.

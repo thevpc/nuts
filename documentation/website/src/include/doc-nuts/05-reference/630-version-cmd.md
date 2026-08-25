@@ -3,16 +3,29 @@ id: version-cmd
 title: Version
 ---
 
+## Synopsis
 
-This command will show **nuts** version. It's helpful to note that **nuts** has a couple of components : api and impl.
-api is the **nuts** bootstrap jar (actually nuts-*.jar, ~500Ko of size) that contains only the minimum code to use nuts and to download the full implementation (3Mo of size) : impl component. Usually, the implementation version starts with the api version but this should be no rule.
+```sh
+nuts version
 ```
-me@linux:~> nuts version
-{{apiVersion}}/
-```
-Here the **version** command show api version ({{apiVersion}}) and the impl version ()
 
+## Description
+
+The `version` command displays the current version of the **nuts** runtime.
+
+**nuts** uses a decoupled architecture consisting of a bootstrap API and a runtime implementation. 
+* The API (the `nuts-*.jar` file, ~500KB) contains only the minimum logic required to bootstrap the environment and fetch the runtime.
+* The Implementation (the full runtime, ~3MB) contains the actual logic for dependency resolution, package management, and execution.
+
+Generally, the implementation version tracks the API version, but they can evolve independently.
+
+```bash
+$ nuts version
+{{apiVersion}}/{{runtimeVersion}}
+```
+
+Here, the `version` command displays both the API version (`{{apiVersion}}`) and the implementation version.
 
 ``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/version.ntf"}}
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/version.ntf")}}
 ``````

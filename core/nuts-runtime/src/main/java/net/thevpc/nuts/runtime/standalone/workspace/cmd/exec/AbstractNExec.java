@@ -654,10 +654,10 @@ public abstract class AbstractNExec extends NWorkspaceCmdBase<NExec> implements 
                 return cmdLine.matcher().whenAny().asFlag((v) -> this.multipleRuns = v.booleanValue()).anyMatch();
             }
             case "--rerun-min-time": {
-                return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsMinTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsMinTimeMs = NDuration.of(NLiteral.of(v).asString().get()).map(NDuration::toMillis).orElse(0L)).anyMatch();
             }
             case "--rerun-safe-time": {
-                return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsSafeTimeMs = NLiteral.of(v).asLong().get()).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsSafeTimeMs = NDuration.of(NLiteral.of(v).asString().get()).map(NDuration::toMillis).orElse(0L)).anyMatch();
             }
             case "--rerun-max-count": {
                 return cmdLine.matcher().whenAny().asEntry((v) -> this.multipleRunsMaxCount = NLiteral.of(v).asInt().get()).anyMatch();

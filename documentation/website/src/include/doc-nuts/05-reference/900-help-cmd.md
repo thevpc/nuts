@@ -1,14 +1,24 @@
-
 ---
 id: help-cmd
 title: Help Command
 sidebar_label: Help Command
 ---
 
+## Synopsis
 
-This command, as you should have guessed, show. help manual of your favorite command or of nuts it self.
+```sh
+nuts help [<command>]
 ```
-me@linux:~> nuts help version
+
+## Description
+
+The `help` command displays the manual and usage instructions for **nuts** itself or for specific commands.
+
+To view the help manual for a specific command, pass the command name as an argument:
+
+```bash
+$ nuts help version
+
 version :
 nuts version
 nuts --version
@@ -17,10 +27,15 @@ nuts -v
       show version and exit
 ...
 ```
-will show help of the **version** command.
 
-Usually, all nuts commands support the '--help' option command that should also show this very same help.
-So the latter command is equivalent to
+Alternatively, all **nuts** commands inherently support the `--help` flag, which produces the exact same output. The following command is entirely equivalent:
+
+```bash
+$ nuts version --help
 ```
-me@linux:~> nuts version --help
-```
+
+You can use `nuts help` without arguments to view the general system manual and a list of available commands.
+
+``````ntf
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/help.ntf")}}
+``````

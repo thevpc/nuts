@@ -3,9 +3,11 @@ id: welcome-cmd
 title: Welcome
 ---
 
+## Description
 
-This command does absolutely nothing but showing this message
-```
+The `welcome` command simply bootstraps the **nuts** workspace and displays a welcome message. It does not perform any structural changes or execute other artifacts.
+
+```text
     _   __      __       
    / | / /_  __/ /______   Network Updatable Things Services
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
@@ -20,7 +22,6 @@ nuts [<options>]... <command> <args> ...
 For Help, type nuts help
 ```
 
-
 ``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/welcome.ntf"}}
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/welcome.ntf")}}
 ``````

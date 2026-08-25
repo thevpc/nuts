@@ -4,110 +4,122 @@ title: File system
 sidebar_label: File system
 ---
 
+**nuts** is capable of managing multiple independent workspaces on a single machine. The default workspace is located at `~/.config/nuts` (where `~` is the user's home directory). 
 
-**```nuts```** manages multiple workspaces. It has a default one located at ~/.config/nuts (~ is the user home directory). Each workspace handles a database and files related to the installed applications. The workspace has a specific layout to store different types of files relatives to your applications. **nuts** is largely inspired by [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) and hence defines several  store locations for each file type. Such organization of folders is called Layout and is dependent on the current operating system, the layout strategy and any custom configuration.
+Each workspace manages an internal database and strict directory layouts for configurations, applications, and logs. To ensure standard behavior across environments, **nuts** implements file system strategies heavily inspired by the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
 
 ## Store Locations
-Supported Store Locations are : 
-**```nuts```** File System defines the following folders :
-* **config** : defines the base directory relative to which application specific configuration files should be stored.
-* **apps** : defines the base directory relative to which application executable binaries should be stored 
-* **lib** : defines the base directory relative to which application non executable binaries should be stored 
-* **var** : defines the base directory relative to which application specific data files (other than config) should be stored
-* **log** : defines the base directory relative to which application specific log and trace files should be stored
-* **temp** : defines the base directory relative to which application specific temporary files should be stored
-* **cache** : defines the base directory relative to which application non-essential data and binary files should be stored to optimize bandwidth or performance
-* **run** : defines the base directory relative to which application-specific non-essential runtime files and other file objects (such as sockets, named pipes, ...) should be stored
 
-**```nuts```** defines such distinct folders (named Store Locations) for storing different types of application data according to your operating system.
+The **nuts** file system divides workspace data into specific functional categories, known as **Store Locations**:
 
-On Windows Systems the default locations are :
+| Store Location | Description |
+|---|---|
+| **config** | Base directory for application-specific configuration files (XML, properties, YAML). |
+| **apps** | Base directory for executable application binaries and native wrappers. |
+| **lib** | Central cache for non-executable binaries (JARs, POMs, shared libraries). |
+| **var** | Persistent application data files (embedded databases, indices). |
+| **log** | Centralized directory for application and system trace/log files. |
+| **temp** | Ephemeral application-specific temporary files. |
+| **cache** | Download caches and non-essential binary data used to optimize network bandwidth. |
+| **run** | Runtime files, sockets, and named pipes (often cleared on reboot). |
 
-        * apps     : "$HOME/AppData/Roaming/nuts/apps"
-        * lib      : "$HOME/AppData/Roaming/nuts/lib"
-        * config   : "$HOME/AppData/Roaming/nuts/config"
-        * var      : "$HOME/AppData/Roaming/nuts/var"
-        * log      : "$HOME/AppData/Roaming/nuts/log"
-        * temp     : "$HOME/AppData/Local/nuts/temp"
-        * cache    : "$HOME/AppData/Local/nuts/cache"
-        * run      : "$HOME/AppData/Local/nuts/run"
+## Path Construction
 
-On Linux, Unix, MacOS and any POSIX System the default locations are :
+Within these store locations, **nuts** structures files predictably using the artifact's Maven coordinates. Paths are constructed by expanding the `groupId` into directory segments, followed by the `artifactId` and `version`.
 
-        * config   : "$HOME/.config/nuts"
-        * apps     : "$HOME/.local/share/nuts/apps"
-        * lib      : "$HOME/.local/share/nuts/lib"
-        * var      : "$HOME/.local/share/nuts/var"
-        * log      : "$HOME/.local/log/nuts"
-        * cache    : "$HOME/.cache/nuts"
-        * temp     : "$java.io.tmpdir/$username/nuts"
-        * run      : "/run/user/$USER_ID/nuts"
+Format: `<Store-Location>/id/<group-id-path>/<artifact-id>/<version>/`
 
-As an example, the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
+For example, the configuration folder for the artifact `net.thevpc.app:netbeans-launcher#1.2.4` is constructed as:
+`<Config-Store>/id/net/vpc/app/netbeans-launcher/1.2.4/`
 
-```
-home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/
-```
+## Platform Default Paths
 
-And the log file "app.log" for the same artifact in the workspace named "personal" in a Windows environment is located at
+**nuts** adapts its Store Locations automatically based on the host operating system conventions.
 
-```
-C:/Users/me/AppData/Roaming/nuts/log/nuts/personal/config/id/net/vpc/app/netbeans-launcher/1.2.4/app.log
+### Linux, Unix, macOS, and POSIX
+| Store  | Default Path                     |
+|--------|----------------------------------|
+| config | `$HOME/.config/nuts`             |
+| bin      | `$HOME/.local/share/nuts/bin`    |
+| lib    | `$HOME/.local/share/nuts/lib`    |
+| var    | `$HOME/.local/share/nuts/var`    |
+| log    | `$HOME/.local/log/nuts`          |
+| cache  | `$HOME/.cache/nuts`              |
+| temp   | `$java.io.tmpdir/$username/nuts` |
+| run    | `/run/user/$USER_ID/nuts`        |
+
+### Windows
+| Store  | Default Path                                |
+|--------|---------------------------------------------|
+| bin    | `%USERPROFILE%\AppData\Roaming\nuts\bin`    |
+| lib    | `%USERPROFILE%\AppData\Roaming\nuts\lib`    |
+| config | `%USERPROFILE%\AppData\Roaming\nuts\config` |
+| var    | `%USERPROFILE%\AppData\Roaming\nuts\var`    |
+| log    | `%USERPROFILE%\AppData\Roaming\nuts\log`    |
+| temp   | `%USERPROFILE%\AppData\Local\nuts\temp`     |
+| cache  | `%USERPROFILE%\AppData\Local\nuts\cache`    |
+| run    | `%USERPROFILE%\AppData\Local\nuts\run`      |
+
+## Visual Directory Tree
+
+A standard Exploded workspace on a Linux machine roughly visualizes as:
+
+```text
+~ (Home Directory)
+├── .config/
+│   └── nuts/
+│       └── default-workspace/
+│           └── config/id/net/vpc/app/... (Configurations)
+├── .local/
+│   ├── share/nuts/bin/ws/default-workspace/id/...       (Binaries & Launchers)
+│   ├── share/nuts/lib/ws/default-workspace/id/...       (JARs and dependencies)
+│   ├── share/nuts/var/ws/default-workspace/id/...       (Application Data)
+│   └── log/nuts/ws/default-workspace/id/...             (Application Logs)
+└── .cache/nuts/ws/default-workspace/
+    └──id/...  (Downloads & Indexes)
+    └──repos/... (Repos Downloads & Indexes)
 ```
 
 ## Store Location Strategies
-When you install any application using the **```nuts```** command a set of specific folders for the presented Store Locations are created. For that, 
-two strategies exist : **Exploded strategy** (the default) and **Standalone strategy**.  
 
-In **Exploded strategy**  **```nuts```** defines top level folders (in linux ~/.config for config Store Location etc), and then creates withing each top level Store Location a sub folder for the given application (or application version to be more specific). This helps putting all your config files in a SSD partition for instance and make **nuts** run faster. However if you are interested in the backup or roaming of your workspace, this may be not the best approach.
+When you initialize a workspace, you can define how these Store Locations are mapped to the file system using two strategies:
 
-The **Standalone strategy**   is indeed provided mainly for Roaming workspaces that can be shared, copied, moved to other locations. A single root folder will contain all of the Store Locations.
+### 1. Exploded Strategy (Default)
+In the Exploded strategy, **nuts** scatters the top-level folders across the host system according to XDG/AppData specifications (as shown above). 
 
-As an example, in "Standalone Strategy", the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
+*Advantage:* This optimizes performance by aligning with OS expectations. For example, `.cache` can be excluded from cloud backups, and `.local/share` can reside on a high-speed SSD partition.
 
-```
-home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/
-```
+### 2. Standalone Strategy
+In the Standalone strategy, the entire workspace is contained within a single root folder. 
 
-And the log file "app.log" for the same artifact in the workspace named "personal" in the same Linux environment is located at
+*Advantage:* Ideal for portability. You can create a roaming workspace on a USB thumb drive or easily mount it as a Docker volume. 
 
-```
-/home/me/.config/nuts/default-workspace/log/id/net/vpc/app/netbeans-launcher/1.2.4/
-```
+Example path for a log file in a Standalone workspace:
+`/home/me/.config/nuts/default-workspace/log/id/net/vpc/app/netbeans-launcher/1.2.4/app.log`
 
-You can see here that the following folder will contain ALL the data files of the workspace.
-
-```
-/home/me/.config/nuts/default-workspace
-```
-
-whereas in the **Exploded strategy** the Store Location are "exploded" into multiple root folders.
+Notice that the `log` folder resides *inside* the `default-workspace` directory, rather than being mapped to `.local/log`.
 
 ## Custom Store Locations
-Of course, you are able to configure separately each Store Location to meet your needs.
 
-### Selecting strategies
-The following command will create an exploded workspace
+You can override the default layouts to meet specialized infrastructure requirements.
 
-```
+**Selecting Strategies:**
+```bash
+# Create an exploded workspace (Default)
 nuts -w my-workspace --exploded
-```
 
-The following command will create a standalone workspace
-
-```
+# Create a standalone workspace
 nuts -w my-workspace --standalone
 ```
 
-### Finer Customization
-The following command will create an exploded workspace and moves all config files to the SSD partition folder /myssd/myconfig
+**Finer Customization:**
+You can individually remap specific stores. For instance, to keep an exploded workspace but map configurations to a dedicated mounted SSD:
 
-```
-nuts -w my-workspace --system-conf-home=/myssd/myconfig
+```bash
+nuts -w my-workspace --system-conf-home=/mnt/fast-ssd/configs
 ```
 
-You can type help for more details.
-
-```
+To see all available store customization arguments, consult the built-in help:
+```bash
 nuts help
 ```
