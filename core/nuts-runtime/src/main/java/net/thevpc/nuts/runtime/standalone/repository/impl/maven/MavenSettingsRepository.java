@@ -32,9 +32,11 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryList;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
@@ -47,10 +49,11 @@ import java.util.List;
 public class MavenSettingsRepository extends NRepositoryList {
 
     private NMavenSettings settings;
+    private NLog LOG;
 
     public MavenSettingsRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, new NRepository[0], parentRepository, null, false, NConstants.RepoTypes.MAVEN, false);
-        NLog LOG = NLog.of(MavenSettingsRepository.class);
+        LOG = NLog.of(MavenSettingsRepository.class);
         this.settings = new NMavenSettingsLoader(LOG).loadSettingsRepos();
         List<NRepository> base = new ArrayList<>();
 
@@ -82,7 +85,11 @@ public class MavenSettingsRepository extends NRepositoryList {
             case "https": {
                 if("maven-extra".equals(type)){
                     NPath nr = NPath.of(url).resolve(".nuts-repository");
+                    LOG.log(NMsg.ofC("check repository metadata at %s",nr).asDebug());
+                    NChronometer c = NChronometer.of();
                     if(nr.exists()) {
+                        c.stop();
+                        LOG.log(NMsg.ofC("check repository metadata at %s took %s",nr,c.duration()).asDebug());
                         NElement e=null;
                         String repositoryType = null;
                         String repositoryName = null;
@@ -106,6 +113,8 @@ public class MavenSettingsRepository extends NRepositoryList {
 //                        }
                         mavenChild = new MavenFolderRepository(options, null);
                     }else{
+                        c.stop();
+                        LOG.log(NMsg.ofC("check repository metadata at %s took %s",nr,c.duration()).asDebug());
                         mavenChild = new MavenRemoteXmlRepository(options, null);
                     }
                 }else {
