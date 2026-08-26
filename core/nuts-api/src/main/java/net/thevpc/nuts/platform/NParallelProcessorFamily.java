@@ -454,6 +454,21 @@ public enum NParallelProcessorFamily implements NEnum {
      * @return available runtimes, never null
      * @since 0.8.9
      */
+    /**
+     * Whether the environment and filesystem reads the probes rely on are
+     * permitted at all, hence whether an empty {@link #detectAvailable()} means
+     * "no runtime is installed" rather than "nothing could be read".
+     * <p>
+     * This is what lets a caller tell {@link #NONE} from {@link #UNKNOWN}, the
+     * two being a positive answer and an absence of information respectively.
+     *
+     * @return true when probing is possible
+     * @since 1.0.0
+     */
+    public static boolean canDetect() {
+        return _canProbe();
+    }
+
     public static List<NParallelProcessorRuntime> detectAvailable() {
         List<NParallelProcessorRuntime> result = new ArrayList<>();
         if (!_canProbe()) {

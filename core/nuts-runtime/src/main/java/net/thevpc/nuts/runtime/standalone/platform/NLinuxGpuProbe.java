@@ -48,6 +48,18 @@ public class NLinuxGpuProbe {
 
     private static final long NVIDIA_SMI_TIMEOUT_SECONDS = 5;
 
+    /**
+     * Upper bound on the output kept from a vendor tool. The queries issued here
+     * yield one short line per device, so anything beyond this is a runaway tool
+     * rather than a reading worth parsing.
+     */
+    private static final int MAX_OUTPUT_BYTES = 1024 * 1024;
+
+    /**
+     * Null device to discard a tool's stderr into. Detection only ever runs on
+     * linux, where this path always exists.
+     */
+    private static final String NULL_DEVICE = "/dev/null";
 
     private static List<NGpuDevice> cached;
 
@@ -338,6 +350,13 @@ public class NLinuxGpuProbe {
     /**
      * Runs a vendor tool, bounded in time so that a wedged driver cannot hang
      * the caller.
+     * <p>
+     * impl-note: stderr is redirected to the null device rather than left
+     * unread. An unread stderr is not merely noise : once the tool fills the
+     * pipe buffer it blocks on write and never closes stdout, so the read below
+     * would never return and the timeout, which can only be applied after it,
+     * would never be reached. Discarding at the os level also keeps stderr out
+     * of the parsed output, which merging the two streams would not.
      *
      * @return standard output, or null when the tool is missing, fails or times out
      */
@@ -345,14 +364,21 @@ public class NLinuxGpuProbe {
         Process process = null;
         try {
             ProcessBuilder pb = new ProcessBuilder(command);
-            pb.redirectErrorStream(false);
+            pb.redirectError(new File(NULL_DEVICE));
             process = pb.start();
+            // nothing is ever written to the tool, closing spares it a wait
+            process.getOutputStream().close();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             try (InputStream in = process.getInputStream()) {
                 byte[] buffer = new byte[4096];
                 int count;
                 while ((count = in.read(buffer)) > 0) {
                     bos.write(buffer, 0, count);
+                    if (bos.size() > MAX_OUTPUT_BYTES) {
+                        // a tool this talkative is not the one we are parsing
+                        process.destroyForcibly();
+                        return null;
+                    }
                 }
             }
             if (!process.waitFor(NVIDIA_SMI_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {

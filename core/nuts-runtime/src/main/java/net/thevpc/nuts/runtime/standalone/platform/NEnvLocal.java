@@ -302,6 +302,11 @@ public class NEnvLocal extends NEnvBase {
         return NParallelProcessorFamily.detectAvailable();
     }
 
+    @Override
+    protected boolean isParallelProcessorDetectionSupported() {
+        return NParallelProcessorFamily.canDetect();
+    }
+
 
     @Override
     public NOptional<String> getEnv(String name) {

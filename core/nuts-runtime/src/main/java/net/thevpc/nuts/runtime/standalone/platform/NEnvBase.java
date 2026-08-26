@@ -135,11 +135,30 @@ public abstract class NEnvBase implements NEnv {
         return parallelProcessorRuntimes;
     }
 
+    /**
+     * Whether probing this environment for parallel processing runtimes is
+     * possible at all.
+     * <p>
+     * An empty {@link #parallelProcessorRuntimes()} is ambiguous on its own : it
+     * is reported both by a machine that has no runtime installed and by an
+     * environment that could not be inspected. This hook separates the two, so
+     * that the former answers {@link NParallelProcessorFamily#NONE} and the
+     * latter {@link NParallelProcessorFamily#UNKNOWN}. Implementations unable to
+     * inspect their target leave it false.
+     *
+     * @return true when an empty runtime list means "none is installed"
+     */
+    protected boolean isParallelProcessorDetectionSupported() {
+        return false;
+    }
+
     @Override
     public NParallelProcessorFamily parallelProcessorFamily() {
         List<NParallelProcessorRuntime> runtimes = parallelProcessorRuntimes();
         if (runtimes.isEmpty()) {
-            return NParallelProcessorFamily.UNKNOWN;
+            return isParallelProcessorDetectionSupported()
+                    ? NParallelProcessorFamily.NONE
+                    : NParallelProcessorFamily.UNKNOWN;
         }
         // detectAvailable() already yields vendor native stacks before cross
         // vendor layers, so the first runnable entry is the most specific one
