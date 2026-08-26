@@ -304,7 +304,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.extensionModel = new DefaultNWorkspaceExtensionModel(this, bootFactory,
                 data.effectiveBootOptions.excludedExtensions().orElse(Collections.emptyList()));
         this.wsModel.filtersModel = new DefaultNFilterModel(this);
-        this.wsModel.installedRepository = new DefaultNInstalledRepository(data.effectiveBootOptions);
         this.wsModel.sdkModel = new DefaultNPlatformModel(this.wsModel);
         this.wsModel.location = data.effectiveBootOptions.workspace().orNull();
         this.wsModel.locationsModel = new DefaultNWorkspaceLocationModel(this,
@@ -315,6 +314,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 NExtensions.of().createSupported(NLogFactorySPI.class, null).orElse(this.wsModel.logModel.getFactorySPI())
         );
         this.wsModel.textModel.loadExtensions();
+        this.wsModel.installedRepository = new DefaultNInstalledRepository(data.effectiveBootOptions);
         data.cfg = new NBootConfig();
         data.cfg.setWorkspace(workspaceLocation);
         data.cfg.setApiVersion(this.wsModel.askedApiVersion);

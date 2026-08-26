@@ -877,8 +877,55 @@ public class DefaultNWorkspaceExtensionModel {
         }
         ClassLoader validParent = parent == null ? workspaceExtensionsClassLoader.asClassLoader() : parent;
         String validName = NStringUtils.firstNonEmpty(name, "nclassloader");
-        CachedNutsURLClassLoaderKey withName = new CachedNutsURLClassLoaderKey(validName, validParent, Arrays.stream(nodes).map(x -> x.id().longId()).toArray(NId[]::new), repositoryFilter, dependencyFilter);
-        CachedNutsURLClassLoaderKey withoutName = new CachedNutsURLClassLoaderKey("", validParent, Arrays.stream(nodes).map(x -> x.id().longId()).toArray(NId[]::new), repositoryFilter, dependencyFilter);
+
+        // ---- Step 1: Fully resolve the input nodes to a concrete classpath. ----
+        // This expands transitive dependencies using NClasspathBuilder, just as the
+        // mutable build() used to do. After this step, each NClasspathEntry in
+        // 'resolved' has a concrete path() and/or id() we can feed to the registry.
+        List<NClasspathEntry> resolved;
+        {
+            NClasspathBuilder cb = NClasspathBuilder.of()
+                    .repositoryFilter(repositoryFilter)
+                    .dependencyFilter(dependencyFilter);
+            for (NClasspathEntry n : nodes) {
+                cb.add(n);
+            }
+            if (cb.isEmpty()) {
+                resolved = Collections.emptyList();
+            } else {
+                resolved = cb.resolve();
+            }
+        }
+
+        // ---- Step 2: Build a stable cache key from the *resolved* list. ----
+        // For id-backed entries we use the full longId (GAV+version). For path-only
+        // entries we fall back to absolute path string. This is a correction from the
+        // previous code which blindly called x.id().longId() and would NPE on PATHs.
+        List<String> cacheKeys = new ArrayList<>(resolved.size());
+        for (NClasspathEntry e : resolved) {
+            if (e.id() != null) {
+                cacheKeys.add(e.id().longName());
+            } else if (e.path() != null) {
+                try {
+                    cacheKeys.add("path:" + e.path().toAbsolute());
+                } catch (Exception ex) {
+                    cacheKeys.add("path:" + e.path());
+                }
+            } else if (e.definition() != null && e.definition().id() != null) {
+                cacheKeys.add(e.definition().id().longName());
+            } else {
+                cacheKeys.add(String.valueOf(e));
+            }
+        }
+        // Convert cache keys to pseudo-NIds for CachedNutsURLClassLoaderKey (which expects NId[] nodes).
+        // We don't need true NIds here; the cache key is based on their list equality.
+        NId[] keyNodes = cacheKeys.stream()
+                .map(s -> NId.get(s).orNull())
+                .filter(Objects::nonNull)
+                .toArray(NId[]::new);
+
+        CachedNutsURLClassLoaderKey withName = new CachedNutsURLClassLoaderKey(validName, validParent, keyNodes, repositoryFilter, dependencyFilter);
+        CachedNutsURLClassLoaderKey withoutName = new CachedNutsURLClassLoaderKey("", validParent, keyNodes, repositoryFilter, dependencyFilter);
         synchronized (cachedWorkspaceExtensionsClassLoadersImmutable) {
             NClassLoader nnold = cachedWorkspaceExtensionsClassLoadersImmutable.get(withoutName);
             if (usePreferred) {
@@ -902,7 +949,55 @@ public class DefaultNWorkspaceExtensionModel {
             if (wnold != null) {
                 return wnold;
             }
-            DefaultImmutableNClassLoader i = new DefaultImmutableNClassLoader(validName, validParent, nodes, repositoryFilter, dependencyFilter);
+
+            // ---- Step 3: Build the ordered list of children (shared leaves). ----
+            // Mirror de-dup and cross-workspace sharing happen inside the registry.
+            List<NClassLoader> leaves = new ArrayList<>(resolved.size());
+            Set<String> seenLongNames = new LinkedHashSet<>();
+            Set<Object> seenRawLeafIdentities = new LinkedHashSet<>();
+            for (NClasspathEntry e : resolved) {
+                DefaultNLeafClassLoader leaf = null;
+                NClasspathEntryType t = e.type();
+                if (t == NClasspathEntryType.PATH) {
+                    NPath p = e.path();
+                    if (p != null) {
+                        leaf = NIdClassLoaderRegistry.getOrCreate(p);
+                    }
+                } else {
+                    NDefinition def = e.definition();
+                    NId eid = e.id();
+                    NPath p = e.path();
+                    if (p == null && def != null) {
+                        p = def.content().orNull();
+                    }
+                    if (eid != null && p != null) {
+                        leaf = NIdClassLoaderRegistry.getOrCreate(eid, p);
+                    } else if (def != null) {
+                        leaf = NIdClassLoaderRegistry.getOrCreate(def);
+                    } else if (p != null) {
+                        leaf = NIdClassLoaderRegistry.getOrCreate(p);
+                    }
+                }
+                if (leaf == null) {
+                    continue;
+                }
+                // Dedup inside this composite (same longId or same leaf object should appear once)
+                NId lid = leaf.id();
+                if (lid != null) {
+                    String ln = lid.longName();
+                    if (!seenLongNames.add(ln)) {
+                        continue;
+                    }
+                } else {
+                    if (!seenRawLeafIdentities.add(leaf)) {
+                        continue;
+                    }
+                }
+                leaves.add(leaf);
+            }
+
+            // ---- Step 4: Wrap leaves in an immutable composite. ----
+            DefaultNCompositeClassLoader i = new DefaultNCompositeClassLoader(validName, validParent, leaves);
             if (nnold == null) {
                 cachedWorkspaceExtensionsClassLoadersImmutable.put(withoutName, i);
             }
