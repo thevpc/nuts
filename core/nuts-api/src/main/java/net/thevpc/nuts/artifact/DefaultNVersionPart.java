@@ -2,11 +2,24 @@ package net.thevpc.nuts.artifact;
 
 import java.util.Objects;
 
+/**
+ * DefaultNVersionPart class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class DefaultNVersionPart implements NVersionPart {
 
     String string;
     NVersionPartType type;
 
+    /**
+     * Default n version part.
+     *
+     * @param string string
+     * @param type type
+     * @return default n version part result
+     */
     public DefaultNVersionPart(String string, NVersionPartType type) {
         this.string = string;
         this.type = type;

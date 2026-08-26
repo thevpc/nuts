@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.repository.filter;
 
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilterOp;
@@ -37,12 +36,12 @@ public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
             return true;
         }
-        if(exactRepos.contains(repository.getUuid())
-                || exactRepos.contains(repository.getName())){
+        if(exactRepos.contains(repository.uuid())
+                || exactRepos.contains(repository.name())){
             return true;
         }
         for (Pattern wildcardRepo : wildcardRepos) {
-            if(wildcardRepo.matcher(repository.getName()).matches()){
+            if(wildcardRepo.matcher(repository.name()).matches()){
                 return true;
             }
         }
@@ -52,7 +51,7 @@ public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
-            return NRepositoryFilters.of().always();
+            return NRepositoryFilter.ofAlways();
         }
         return this;
     }
@@ -63,32 +62,15 @@ public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
     }
 
     @Override
-    public int hashCode() {
-        int hash = getClass().getName().hashCode();
-        hash = 41 * hash + Objects.hashCode(this.exactRepos);
-        hash = 41 * hash + Objects.hashCode(this.wildcardRepos);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNRepositoryNameFilter that = (DefaultNRepositoryNameFilter) o;
+        return Objects.equals(exactRepos, that.exactRepos) && Objects.equals(wildcardRepos, that.wildcardRepos);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNRepositoryNameFilter other = (DefaultNRepositoryNameFilter) obj;
-        if (!Objects.equals(this.exactRepos, other.exactRepos)) {
-            return false;
-        }
-        if (!Objects.equals(this.wildcardRepos, other.wildcardRepos)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), exactRepos, wildcardRepos);
     }
-
 }

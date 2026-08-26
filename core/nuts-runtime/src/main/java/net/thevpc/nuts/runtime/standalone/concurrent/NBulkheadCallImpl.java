@@ -18,33 +18,33 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
         this.model = new NBulkheadCallModel(id);
         this.store = store;
         this.backend = backend;
-        this.model.setCaller(callable);
+        this.model.caller(callable);
         reload();
     }
 
     public void reload() {
         synchronized (this) {
-            String oldId = model.getId();
-            NCallable<?> oldCaller = model.getCaller();
+            String oldId = model.id();
+            NCallable<?> oldCaller = model.caller();
 
 
             NBulkheadCallModel m = store.load(oldId);
             if (m == null) {
                 NAssert.requireNamedNonNull(oldCaller, "caller");
                 m = new NBulkheadCallModel(oldId);
-                m.setMaxConcurrent(1);
-                m.setCaller(oldCaller);
+                m.maxConcurrent(1);
+                m.caller(oldCaller);
                 store.save(m);
             } else {
                 if (oldCaller != null) {
-                    m.setCaller(oldCaller);
-                    if(m.getMaxConcurrent()<=0){
-                        m.setMaxConcurrent(1);
+                    m.caller(oldCaller);
+                    if(m.maxConcurrent()<=0){
+                        m.maxConcurrent(1);
                     }
                     store.save(m);
                 }else{
-                    if(m.getMaxConcurrent()<=0){
-                        m.setMaxConcurrent(1);
+                    if(m.maxConcurrent()<=0){
+                        m.maxConcurrent(1);
                         store.save(m);
                     }
                 }
@@ -54,44 +54,44 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
     }
 
     @Override
-    public NBulkheadCall<T> setMaxConcurrent(int maxConcurrent) {
+    public NBulkheadCall<T> maxConcurrent(int maxConcurrent) {
         maxConcurrent=Math.max(1, maxConcurrent);
-        int old = model.getMaxConcurrent();
+        int old = model.maxConcurrent();
         if(old!=maxConcurrent) {
-            model.setMaxConcurrent(maxConcurrent);
+            model.maxConcurrent(maxConcurrent);
             store.save(model);
         }
         return this;
     }
 
     @Override
-    public NBulkheadCall<T> setPermitExpiry(NDuration expiry) {
-        NDuration old = model.getPermitExpiry();
+    public NBulkheadCall<T> permitExpiry(NDuration expiry) {
+        NDuration old = model.permitExpiry();
         if(Objects.equals(old,expiry)){
-            model.setPermitExpiry(expiry);
+            model.permitExpiry(expiry);
             store.save(model);
         }
         return this;
     }
 
     @Override
-    public int getMaxConcurrent() {
-        return model.getMaxConcurrent();
+    public int maxConcurrent() {
+        return model.maxConcurrent();
     }
 
     @Override
-    public int getActiveCalls() {
-        return backend.getMetrics(model.getId()).getActiveCalls();
+    public int activeCalls() {
+        return backend.getMetrics(model.id()).activeCalls();
     }
 
     @Override
-    public int getAvailableSlots() {
-        return backend.getMetrics(model.getId()).getAvailableSlots();
+    public int availableSlots() {
+        return backend.getMetrics(model.id()).availableSlots();
     }
 
     @Override
     public boolean isFull() {
-        return backend.getMetrics(model.getId()).isFull();
+        return backend.getMetrics(model.id()).isFull();
     }
 
     // ==================== Core Execution Methods ====================
@@ -100,7 +100,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
     public NOptional<T> tryCall() {
         // Step 1: Try to acquire a permit from the backend
         NOptional<NBulkheadCallBackend.NBulkheadPermit> permitOpt =
-                backend.tryAcquire(model.getId(), Math.max(1,model.getMaxConcurrent()));
+                backend.tryAcquire(model.id(), Math.max(1,model.maxConcurrent()));
 
         // Step 2: If no permit available, return empty (rejected)
         if (permitOpt.isEmpty()) {
@@ -110,7 +110,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
         // Step 3: We got a permit! Execute the callable
         NBulkheadCallBackend.NBulkheadPermit permit = permitOpt.get();
         try {
-            T result = ((NCallable<T>)model.getCaller()).call();
+            T result = ((NCallable<T>)model.caller()).call();
             return NOptional.of(result);
         } finally {
             // Step 4: Always release the permit
@@ -133,7 +133,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
         // Step 1: Acquire permit, waiting indefinitely
         // Note: tryAcquire with null timeout = wait forever
         NOptional<NBulkheadCallBackend.NBulkheadPermit> permitOpt =
-                backend.tryAcquire(model.getId(), model.getMaxConcurrent(), null);
+                backend.tryAcquire(model.id(), model.maxConcurrent(), null);
 
         if (permitOpt.isEmpty()) {
             throw new NInterruptedException(NMsg.ofC("Failed to acquire bulkhead permit"));
@@ -142,7 +142,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
         // Step 2: Execute with permit
         NBulkheadCallBackend.NBulkheadPermit permit = permitOpt.get();
         try {
-            return ((NCallable<T>)model.getCaller()).call();
+            return ((NCallable<T>)model.caller()).call();
         } finally {
             backend.release(permit);
         }
@@ -160,7 +160,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
     public T callBlocking(NDuration timeout) throws NInterruptedException {
         // Step 1: Try to acquire permit with timeout
         NOptional<NBulkheadCallBackend.NBulkheadPermit> permitOpt =
-                backend.tryAcquire(model.getId(), model.getMaxConcurrent(), timeout);
+                backend.tryAcquire(model.id(), model.maxConcurrent(), timeout);
 
         // Step 2: If timeout expired, throw exception
         if (permitOpt.isEmpty()) {
@@ -170,7 +170,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
         // Step 3: Execute with permit
         NBulkheadCallBackend.NBulkheadPermit permit = permitOpt.get();
         try {
-            return ((NCallable<T>)model.getCaller()).call();
+            return ((NCallable<T>)model.caller()).call();
         } finally {
             backend.release(permit);
         }
@@ -179,7 +179,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
     @Override
     public T callOrElse(NDuration timeout, NCallable<T> fallback) throws NInterruptedException {
         NOptional<NBulkheadCallBackend.NBulkheadPermit> permitOpt =
-                backend.tryAcquire(model.getId(), model.getMaxConcurrent(), timeout);
+                backend.tryAcquire(model.id(), model.maxConcurrent(), timeout);
 
         if (permitOpt.isEmpty()) {
             // Timeout expired, use fallback
@@ -188,7 +188,7 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
 
         NBulkheadCallBackend.NBulkheadPermit permit = permitOpt.get();
         try {
-            return ((NCallable<T>)model.getCaller()).call();
+            return ((NCallable<T>)model.caller()).call();
         } finally {
             backend.release(permit);
         }
@@ -199,10 +199,10 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
     public NElement describe() {
         return NElement.ofObjectBuilder()
                 .set("type", "NBulkheadCall")
-                .set("id", model.getId())
-                .set("maxConcurrent", model.getMaxConcurrent())
+                .set("id", model.id())
+                .set("maxConcurrent", model.maxConcurrent())
                 .set("backend", backend.getClass().getSimpleName())
-                .set("metrics", backend.getMetrics(model.getId()).describe())
+                .set("metrics", backend.getMetrics(model.id()).describe())
                 .build();
     }
 }

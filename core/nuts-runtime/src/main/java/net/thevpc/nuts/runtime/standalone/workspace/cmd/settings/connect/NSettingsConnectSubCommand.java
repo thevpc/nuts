@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.concurrent.NConcurrent;
@@ -14,6 +13,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.DefaultNContentMetadata;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -46,12 +47,12 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
             NArg a;
             while (cmdLine.hasNext()) {
                 if ((a = cmdLine.nextEntry("--password").orNull()) != null) {
-                    password = a.getValue().asString().orElse("").toCharArray();
+                    password = a.literalValue().asString().orElse("").toCharArray();
                 } else if (cmdLine.isNextOption()) {
                     session.configureLast(cmdLine);
                 } else {
-                    server = cmdLine.nextNonOption(NArgName.of("ServerAddress")).flatMap(NArg::asString).get();
-                    cmdLine.setCommandName("settings connect").throwUnexpectedArgument();
+                    server = cmdLine.nextNonOption("ServerAddress",null).flatMap(NArg::asString).get();
+                    cmdLine.commandName("settings connect").throwUnexpectedArgument();
                 }
             }
             if (!cmdLine.isExecMode()) {
@@ -69,7 +70,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                 server = server.substring(0, server.indexOf(":"));
             }
             if (!NBlankable.isBlank(login) && NBlankable.isBlank(password)) {
-                password = session.getTerminal().readPassword(NMsg.ofPlain("Password:"));
+                password = session.terminal().readPassword(NMsg.ofP("Password:"));
             }
             Socket socket = null;
             try {
@@ -79,7 +80,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     PipeRunnable rr = NSysExecUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
                             cmd0, "connect-socket",
                             NInputSourceBuilder.of(socket.getInputStream())
-                                    .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s", server, validPort)))
+                                    .metadata(new DefaultNContentMetadata().message(NMsg.ofC("pipe-out-socket-%s:%s", server, validPort)))
                                     .createNonBlockingInputStream(), NOut.asPrintStream());
                     NConcurrent.of().executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());
@@ -87,7 +88,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                         out.printf("connect ==%s %s== %n", login, new String(password));
                     }
                     while (true) {
-                        String line = session.getTerminal().readLine(NMsg.ofPlain(""));
+                        String line = session.terminal().readLine(NMsg.ofP(""));
                         if (line == null) {
                             break;
                         }
@@ -104,7 +105,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
             } catch (Exception ex) {
-                throw new NExecutionException(NMsg.ofPlain("settings connect failed"), ex, NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofP("settings connect failed"), ex, NExecutionException.ERROR_2);
             }
             return true;
         }

@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.*;
-import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.reflect.NPlatformSignatureImpl;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -120,17 +122,17 @@ public class NExprRPIImpl implements NExprRPI {
 
     @Override
     public <A, B> NOptional<NFunction2<A, B, ?>> findCommonInfixOp(NExprCommonOp op, Class<? extends A> firstArgType, Class<? extends B> secondArgType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction2(op, NExprOpType.INFIX, NPlatformSignatureImpl.of(firstArgType, secondArgType));
+        return (NOptional) defaultNExprsCommonOps.findFunction2(op, NFixity.INFIX, NPlatformSignatureImpl.of(firstArgType, secondArgType));
     }
 
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPrefixOp(NExprCommonOp op, Class<? extends A> argType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.PREFIX, NPlatformSignatureImpl.of(argType));
+        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NFixity.PREFIX, NPlatformSignatureImpl.of(argType));
     }
 
     @Override
     public <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType) {
-        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NExprOpType.POSTFIX, NPlatformSignatureImpl.of(argType));
+        return (NOptional) defaultNExprsCommonOps.findFunction1(op, NFixity.POSTFIX, NPlatformSignatureImpl.of(argType));
     }
 
     @Override
@@ -149,9 +151,9 @@ public class NExprRPIImpl implements NExprRPI {
     }
 
     @Override
-    public NExprOperator createOperator(String name, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity associativity,NExprCallHandler handler) {
-        String nameOk=NAssert.requireNamedNonNull(NStringUtils.trimToNull(name),"name");
-        NExprOpType typeOk = ExprOpHelper.resolveOpDefaultType(name, operatorType);
+    public NExprOperator createOperator(String name, NFixity operatorType, int operatorPrecedence, NOperatorAssociativity associativity, NExprCallHandler handler) {
+        String nameOk=NAssert.requireNamedNonNull(NStringUtils.stripToNull(name),"name");
+        NFixity typeOk = ExprOpHelper.resolveOpDefaultType(name, operatorType);
         NOperatorAssociativity assOk = ExprOpHelper.resolveOpDefaultAssociativity(name, typeOk,associativity);
         int precOk = ExprOpHelper.resolveOpPrecedence(name, typeOk,operatorPrecedence);
         return new DefaultNExprOpDeclaration(nameOk,typeOk, precOk, assOk, handler);

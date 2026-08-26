@@ -29,40 +29,110 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
+/**
+ * NBootOptions interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NBootOptions {
 
-    NOptional<List<String>> getBootRepositories();
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
+    NOptional<List<String>> bootRepositories();
 
-    NOptional<NClassLoaderNode> getRuntimeBootDependencyNode();
+    /**
+     * Runtime boot dependency node.
+     *
+     * @return runtime boot dependency node result
+     */
+    NOptional<NClassLoaderNode> runtimeBootDependencyNode();
 
-    NOptional<List<NBootDescriptor>> getExtensionBootDescriptors();
+    /**
+     * Boot workspace factory.
+     *
+     * @return boot workspace factory result
+     */
+    NOptional<NBootWorkspaceFactory> bootWorkspaceFactory();
 
-    NOptional<List<NClassLoaderNode>> getExtensionBootDependencyNodes();
+    /**
+     * Class world ur ls.
+     *
+     * @return class world ur ls result
+     */
+    NOptional<List<URL>> classWorldURLs();
 
-    NOptional<NBootWorkspaceFactory> getBootWorkspaceFactory();
+    /**
+     * Class world loader.
+     *
+     * @return class world loader result
+     */
+    NOptional<ClassLoader> classWorldLoader();
 
-    NOptional<List<URL>> getClassWorldURLs();
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
+    NOptional<String> uuid();
 
-    NOptional<ClassLoader> getClassWorldLoader();
+    /**
+     * Runtime boot descriptor.
+     *
+     * @return runtime boot descriptor result
+     */
+    NOptional<NBootDescriptor> runtimeBootDescriptor();
 
-    NOptional<String> getUuid();
-
-    NOptional<Set<String>> getExtensionsSet();
-
-    NOptional<NBootDescriptor> getRuntimeBootDescriptor();
-
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NBootOptionsBuilder builder();
 
-    NBootOptions readOnly();
+    /**
+     * Converts to read only.
+     *
+     * @return to read only result
+     */
+    NBootOptions toReadOnly();
 
-    NOptional<NSupportMode> getDesktopLauncher();
+    /**
+     * Desktop launcher.
+     *
+     * @return desktop launcher result
+     */
+    NOptional<NSupportMode> desktopLauncher();
 
-    NOptional<NSupportMode> getMenuLauncher();
+    /**
+     * Menu launcher.
+     *
+     * @return menu launcher result
+     */
+    NOptional<NSupportMode> menuLauncher();
 
-    NOptional<NSupportMode> getUserLauncher();
+    /**
+     * User launcher.
+     *
+     * @return user launcher result
+     */
+    NOptional<NSupportMode> userLauncher();
 
-    NOptional<NIsolationLevel> getIsolationLevel();
+    /**
+     * Checks if isolation level.
+     *
+     * @return isolation level result
+     */
+    NOptional<NIsolationLevel> isolationLevel();
 
+    /**
+     * Converts to boot options.
+     *
+     * @return to boot options result
+     */
     NBootOptionsInfo toBootOptions();
 
     /**
@@ -71,7 +141,7 @@ public interface NBootOptions {
      * @return init launcher
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitLaunchers();
+    NOptional<Boolean> initLaunchers();
 
     /**
      * init scripts
@@ -79,7 +149,7 @@ public interface NBootOptions {
      * @return init scripts
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitScripts();
+    NOptional<Boolean> initScripts();
 
     /**
      * init platforms
@@ -87,7 +157,7 @@ public interface NBootOptions {
      * @return init platforms
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitPlatforms();
+    NOptional<Boolean> initPlatforms();
 
     /**
      * init java
@@ -95,7 +165,7 @@ public interface NBootOptions {
      * @return init java
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitJava();
+    NOptional<Boolean> initJava();
 
     /**
      * nuts api version to boot.
@@ -105,7 +175,7 @@ public interface NBootOptions {
      *
      * @return nuts api version to boot.
      */
-    NOptional<NVersion> getApiVersion();
+    NOptional<NVersion> apiVersion();
 
     /**
      * application arguments.
@@ -114,7 +184,7 @@ public interface NBootOptions {
      *
      * @return application arguments.
      */
-    NOptional<List<String>> getApplicationArguments();
+    NOptional<List<String>> applicationArguments();
 
     /**
      * workspace archetype to consider when creating a new workspace.
@@ -124,7 +194,7 @@ public interface NBootOptions {
      *
      * @return workspace archetype to consider when creating a new workspace.
      */
-    NOptional<String> getArchetype();
+    NOptional<String> archetype();
 
     /**
      * class loader supplier.
@@ -133,7 +203,7 @@ public interface NBootOptions {
      *
      * @return class loader supplier.
      */
-    NOptional<Supplier<ClassLoader>> getClassLoaderSupplier();
+    NOptional<Supplier<ClassLoader>> classLoaderSupplier();
 
     /**
      * confirm mode.
@@ -142,7 +212,7 @@ public interface NBootOptions {
      *
      * @return confirm mode.
      */
-    NOptional<NConfirmationMode> getConfirm();
+    NOptional<NConfirmationMode> confirm();
 
     /**
      * if true no real execution, with dry exec (execute without side effect).
@@ -152,7 +222,7 @@ public interface NBootOptions {
      * @return if true no real execution, with dry exec (execute without side effect).
      */
 
-    NOptional<Boolean> getDry();
+    NOptional<Boolean> dry();
 
     /**
      * if true, show exception stacktrace when error.
@@ -162,7 +232,7 @@ public interface NBootOptions {
      * @return if true, show stacktrace when error.
      */
 
-    NOptional<Boolean> getShowStacktrace();
+    NOptional<Boolean> showStacktrace();
 
     /**
      * workspace creation evaluated time.
@@ -171,7 +241,7 @@ public interface NBootOptions {
      *
      * @return workspace creation evaluated time.
      */
-    NOptional<Instant> getCreationTime();
+    NOptional<Instant> creationTime();
 
     /**
      * extensions to be excluded when opening the workspace.
@@ -180,7 +250,7 @@ public interface NBootOptions {
      *
      * @return extensions to be excluded when opening the workspace.
      */
-    NOptional<List<String>> getExcludedExtensions();
+    NOptional<List<String>> excludedExtensions();
 
     /**
      * execution type.
@@ -189,9 +259,14 @@ public interface NBootOptions {
      *
      * @return execution type.
      */
-    NOptional<NExecutionType> getExecutionType();
+    NOptional<NExecutionType> executionType();
 
-    NOptional<NRunAs> getRunAs();
+    /**
+     * Run as.
+     *
+     * @return run as result
+     */
+    NOptional<NRunAs> runAs();
 
     /**
      * extra executor options.
@@ -200,7 +275,7 @@ public interface NBootOptions {
      *
      * @return extra executor options.
      */
-    NOptional<List<String>> getExecutorOptions();
+    NOptional<List<String>> executorOptions();
 
     /**
      * return home location.
@@ -221,7 +296,7 @@ public interface NBootOptions {
      *
      * @return home locations
      */
-    NOptional<Map<NHomeLocation, String>> getHomeLocations();
+    NOptional<Map<NHomeLocation, String>> homeLocations();
 
     /**
      * java command (or java home) used to run workspace.
@@ -230,7 +305,7 @@ public interface NBootOptions {
      *
      * @return java command (or java home) used to run workspace.
      */
-    NOptional<String> getJavaCommand();
+    NOptional<String> javaCommand();
 
     /**
      * java options used to run workspace.
@@ -239,7 +314,7 @@ public interface NBootOptions {
      *
      * @return java options used to run workspace.
      */
-    NOptional<String> getJavaOptions();
+    NOptional<String> javaOptions();
 
     /**
      * workspace log configuration.
@@ -248,7 +323,7 @@ public interface NBootOptions {
      *
      * @return workspace log configuration.
      */
-    NOptional<NLogConfig> getLogConfig();
+    NOptional<NLogConfig> logConfig();
 
     /**
      * user friendly workspace name.
@@ -258,7 +333,7 @@ public interface NBootOptions {
      *
      * @return user friendly workspace name.
      */
-    NOptional<String> getName();
+    NOptional<String> name();
 
     /**
      * mode used to open workspace.
@@ -267,7 +342,7 @@ public interface NBootOptions {
      *
      * @return mode used to open workspace.
      */
-    NOptional<NOpenMode> getOpenMode();
+    NOptional<NOpenMode> openMode();
 
     /**
      * default output format type.
@@ -276,7 +351,7 @@ public interface NBootOptions {
      *
      * @return default output format type.
      */
-    NOptional<NContentType> getOutputFormat();
+    NOptional<NContentType> outputFormat();
 
     /**
      * default output formation options.
@@ -285,7 +360,7 @@ public interface NBootOptions {
      *
      * @return default output formation options.
      */
-    NOptional<List<String>> getOutputFormatOptions();
+    NOptional<List<String>> outputFormatOptions();
 
     /**
      * credential needed to log into workspace.
@@ -294,7 +369,7 @@ public interface NBootOptions {
      *
      * @return credential needed to log into workspace.
      */
-    NOptional<char[]> getCredential();
+    NOptional<char[]> credential();
 
     /**
      * repository store location strategy to consider when creating new repositories
@@ -306,7 +381,7 @@ public interface NBootOptions {
      * @return repository store location strategy to consider when creating new repositories
      * for a new workspace.
      */
-    NOptional<NStoreStrategy> getRepositoryStoreStrategy();
+    NOptional<NStoreStrategy> repositoryStoreStrategy();
 
     /**
      * nuts runtime id (or version) to boot.
@@ -316,7 +391,7 @@ public interface NBootOptions {
      *
      * @return nuts runtime id (or version) to boot.
      */
-    NOptional<NId> getRuntimeId();
+    NOptional<NId> runtimeId();
 
     /**
      * store location for the given folder.
@@ -338,7 +413,7 @@ public interface NBootOptions {
      *
      * @return store location layout to consider when creating a new workspace.
      */
-    NOptional<NOsFamily> getStoreLayout();
+    NOptional<NOsFamily> storeLayout();
 
     /**
      * store location strategy for creating a new workspace.
@@ -348,7 +423,7 @@ public interface NBootOptions {
      *
      * @return store location strategy for creating a new workspace.
      */
-    NOptional<NStoreStrategy> getStoreStrategy();
+    NOptional<NStoreStrategy> storeStrategy();
 
     /**
      * store locations map to consider when creating a new workspace.
@@ -358,7 +433,7 @@ public interface NBootOptions {
      *
      * @return store locations map to consider when creating a new workspace.
      */
-    NOptional<Map<NStoreType, String>> getStoreLocations();
+    NOptional<Map<NStoreType, String>> storeLocations();
 
     /**
      * terminal mode (inherited, formatted, filtered) to use.
@@ -367,7 +442,7 @@ public interface NBootOptions {
      *
      * @return terminal mode (inherited, formatted, filtered) to use.
      */
-    NOptional<NTerminalMode> getTerminalMode();
+    NOptional<NTerminalMode> terminalMode();
 
     /**
      * repositories to register temporarily when running the workspace.
@@ -376,7 +451,7 @@ public interface NBootOptions {
      *
      * @return repositories to register temporarily when running the workspace.
      */
-    NOptional<List<String>> getRepositories();
+    NOptional<List<String>> repositories();
 
     /**
      * username to log into when running workspace.
@@ -385,7 +460,7 @@ public interface NBootOptions {
      *
      * @return username to log into when running workspace.
      */
-    NOptional<String> getUserName();
+    NOptional<String> userName();
 
     /**
      * workspace folder location path.
@@ -395,9 +470,14 @@ public interface NBootOptions {
      *
      * @return workspace folder location path.
      */
-    NOptional<String> getWorkspace();
+    NOptional<String> workspace();
 
-    NOptional<String> getDebug();
+    /**
+     * Debug.
+     *
+     * @return debug result
+     */
+    NOptional<String> debug();
 
     /**
      * if true consider system repository
@@ -407,7 +487,7 @@ public interface NBootOptions {
      * @return if true consider system repository
      */
 
-    NOptional<Boolean> getSystem();
+    NOptional<Boolean> system();
 
     /**
      * if true consider GUI/Swing mode
@@ -417,7 +497,7 @@ public interface NBootOptions {
      * @return if true consider GUI/Swing mode
      */
 
-    NOptional<Boolean> getGui();
+    NOptional<Boolean> gui();
 
     /**
      * if true, workspace were invoked from parent process and hence inherits its options.
@@ -427,7 +507,7 @@ public interface NBootOptions {
      * @return if true, workspace were invoked from parent process and hence inherits its options.
      */
 
-    NOptional<Boolean> getInherited();
+    NOptional<Boolean> inherited();
 
     /**
      * if true, workspace configuration are non modifiable.
@@ -438,7 +518,7 @@ public interface NBootOptions {
      * @return if true, workspace configuration are non modifiable.
      */
 
-    NOptional<Boolean> getReadOnly();
+    NOptional<Boolean> readOnly();
 
     /**
      * if true, boot, cache and temp folder are deleted.
@@ -448,7 +528,7 @@ public interface NBootOptions {
      * @return if true, boot, cache and temp folder are deleted.
      */
 
-    NOptional<Boolean> getRecover();
+    NOptional<Boolean> recover();
 
     /**
      * if true, workspace will be reset (all configuration and runtime files deleted).
@@ -458,15 +538,30 @@ public interface NBootOptions {
      * @return if true, workspace will be reset (all configuration and runtime files deleted).
      */
 
-    NOptional<Boolean> getReset();
+    NOptional<Boolean> reset();
 
-    NOptional<Boolean> getResetHard();
+    /**
+     * Reset hard.
+     *
+     * @return reset hard result
+     */
+    NOptional<Boolean> resetHard();
 
 
-    NOptional<Boolean> getCommandVersion();
+    /**
+     * Command version.
+     *
+     * @return command version result
+     */
+    NOptional<Boolean> commandVersion();
 
 
-    NOptional<Boolean> getCommandHelp();
+    /**
+     * Command help.
+     *
+     * @return command help result
+     */
+    NOptional<Boolean> commandHelp();
 
     /**
      * if true, do not install nuts companion tools upon workspace creation.
@@ -476,7 +571,7 @@ public interface NBootOptions {
      * @return if true, do not install nuts companion tools upon workspace creation.
      */
 
-    NOptional<Boolean> getInstallCompanions();
+    NOptional<Boolean> installCompanions();
 
     /**
      * if true, do not run welcome when no application arguments were resolved.
@@ -489,7 +584,7 @@ public interface NBootOptions {
      * @since 0.5.5
      */
 
-    NOptional<Boolean> getSkipWelcome();
+    NOptional<Boolean> skipWelcome();
 
 
     /**
@@ -502,7 +597,7 @@ public interface NBootOptions {
      * @return out line prefix
      * @since 0.8.0
      */
-    NOptional<String> getOutLinePrefix();
+    NOptional<String> outLinePrefix();
 
     /**
      * if not null ant not empty, this prefix will be prefixed to error stream
@@ -514,7 +609,7 @@ public interface NBootOptions {
      * @return err line prefix
      * @since 0.8.0
      */
-    NOptional<String> getErrLinePrefix();
+    NOptional<String> errLinePrefix();
 
     /**
      * if true, do not bootstrap workspace after reset/recover.
@@ -528,7 +623,7 @@ public interface NBootOptions {
      * @since 0.6.0
      */
 
-    NOptional<Boolean> getSkipBoot();
+    NOptional<Boolean> skipBoot();
 
     /**
      * when true, extra trace user-friendly information is written to standard output.
@@ -538,7 +633,7 @@ public interface NBootOptions {
      * @return when true, extra trace user-friendly information is written to standard output.
      */
 
-    NOptional<Boolean> getTrace();
+    NOptional<Boolean> trace();
 
     /**
      * return progress options string.
@@ -549,7 +644,7 @@ public interface NBootOptions {
      *
      * @return when true, extra trace user-friendly information is written to standard output.
      */
-    NOptional<String> getProgressOptions();
+    NOptional<String> progressOptions();
 
     /**
      * return dependency solver Name
@@ -557,7 +652,7 @@ public interface NBootOptions {
      * @return dependency solver Name
      * @since 0.8.3
      */
-    NOptional<String> getDependencySolver();
+    NOptional<String> dependencySolver();
 
     /**
      * when true, use cache
@@ -567,7 +662,7 @@ public interface NBootOptions {
      * @return use cache when true
      */
 
-    NOptional<Boolean> getCached();
+    NOptional<Boolean> cached();
 
     /**
      * when true, use index
@@ -576,7 +671,7 @@ public interface NBootOptions {
      *
      * @return use index when true
      */
-    NOptional<Boolean> getIndexed();
+    NOptional<Boolean> indexed();
 
     /**
      * when true, use transitive repositories
@@ -586,7 +681,7 @@ public interface NBootOptions {
      * @return use transitive repositories when true
      */
 
-    NOptional<Boolean> getTransitive();
+    NOptional<Boolean> transitive();
 
     /**
      * when true, application is running in bot (robot) mode. No interaction or trace is allowed.
@@ -596,19 +691,19 @@ public interface NBootOptions {
      * @return application is running in bot (robot) mode. No interaction or trace is allowed.
      */
 
-    NOptional<Boolean> getBot();
+    NOptional<Boolean> bot();
 
     /**
      * @return application is running in preview mode (using preview repositories)
      * @since 0.8.5
      */
-    NOptional<Boolean> getPreviewRepo();
+    NOptional<Boolean> previewRepo();
 
     /**
      * @return workspace is running as shared Workspace instance (Singleton)
      * @since 0.8.5
      */
-    NOptional<Boolean> getSharedInstance();
+    NOptional<Boolean> sharedInstance();
 
     /**
      * default fetch strategy
@@ -617,7 +712,7 @@ public interface NBootOptions {
      *
      * @return use transitive repositories when true
      */
-    NOptional<NFetchStrategy> getFetchStrategy();
+    NOptional<NFetchStrategy> fetchStrategy();
 
 
     /**
@@ -629,7 +724,7 @@ public interface NBootOptions {
      *
      * @return default standard input or null
      */
-    NOptional<InputStream> getStdin();
+    NOptional<InputStream> stdin();
 
     /**
      * default standard output. when null, use {@code System.out}
@@ -640,7 +735,7 @@ public interface NBootOptions {
      *
      * @return default standard output or null
      */
-    NOptional<PrintStream> getStdout();
+    NOptional<PrintStream> stdout();
 
     /**
      * default standard error. when null, use {@code System.err}
@@ -651,7 +746,7 @@ public interface NBootOptions {
      *
      * @return default standard error or null
      */
-    NOptional<PrintStream> getStderr();
+    NOptional<PrintStream> stderr();
 
     /**
      * executor service used to create worker threads. when null, use default.
@@ -662,7 +757,7 @@ public interface NBootOptions {
      *
      * @return executor service used to create worker threads. when null, use default.
      */
-    NOptional<ExecutorService> getExecutorService();
+    NOptional<ExecutorService> executorService();
 
     /**
      * return expired date/time or zero if not set.
@@ -671,21 +766,58 @@ public interface NBootOptions {
      * @return expired date/time or zero
      * @since 0.8.0
      */
-    NOptional<Instant> getExpireTime();
+    NOptional<Instant> expireTime();
 
-    NOptional<Boolean> getSkipErrors();
+    /**
+     * Skip errors.
+     *
+     * @return skip errors result
+     */
+    NOptional<Boolean> skipErrors();
 
-    NOptional<Boolean> getSwitchWorkspace();
+    /**
+     * Switch workspace.
+     *
+     * @return switch workspace result
+     */
+    NOptional<Boolean> switchWorkspace();
 
-    NOptional<List<NMsg>> getErrors();
+    /**
+     * Errors.
+     *
+     * @return errors result
+     */
+    NOptional<List<NMsg>> errors();
 
-    NOptional<List<String>> getCustomOptions();
+    /**
+     * Custom options.
+     *
+     * @return custom options result
+     */
+    NOptional<List<String>> customOptions();
 
-    NOptional<NArg> getCustomOptionArg(String key);
+    /**
+     * Custom option arg.
+     *
+     * @param key key
+     * @return custom option arg result
+     */
+    NOptional<NArg> customOptionArg(String key);
 
-    NOptional<String> getCustomOption(String key);
+    /**
+     * Custom option.
+     *
+     * @param key key
+     * @return custom option result
+     */
+    NOptional<String> customOption(String key);
 
-    NOptional<List<NArg>> getCustomOptionArgs();
+    /**
+     * Custom option args.
+     *
+     * @return custom option args result
+     */
+    NOptional<List<NArg>> customOptionArgs();
 
     /**
      * locale
@@ -693,7 +825,7 @@ public interface NBootOptions {
      * @return session locale
      * @since 0.8.1
      */
-    NOptional<String> getLocale();
+    NOptional<String> locale();
 
     /**
      * theme
@@ -701,12 +833,28 @@ public interface NBootOptions {
      * @return session locale
      * @since 0.8.1
      */
-    NOptional<String> getTheme();
+    NOptional<String> theme();
 
+    /**
+     * Converts to cmd line.
+     *
+     * @return to cmd line result
+     */
     NCmdLine toCmdLine();
 
+    /**
+     * Converts to cmd line.
+     *
+     * @param config config
+     * @return to cmd line result
+     */
     NCmdLine toCmdLine(NWorkspaceOptionsConfig config);
 
+    /**
+     * Converts to workspace options.
+     *
+     * @return to workspace options result
+     */
     NWorkspaceOptions toWorkspaceOptions();
 
 }

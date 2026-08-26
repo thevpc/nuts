@@ -2,7 +2,13 @@ package net.thevpc.nuts.util;
 
 import java.util.function.Consumer;
 
-class NPatternInfo implements Comparable<NPatternInfo> {
+/**
+ * NPatternInfo class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
+public class NPatternInfo implements Comparable<NPatternInfo> {
     private String pattern;
     private Consumer<NStringMatchResult> action;
     private Consumer<NStringMatchResult> fullMatchAction;
@@ -10,55 +16,121 @@ class NPatternInfo implements Comparable<NPatternInfo> {
     private Consumer<NStringMatchResult> partialMatchAction;
     private NStringMatchResult result;
 
+    /**
+     * N pattern info.
+     *
+     * @param pattern pattern
+     * @return n pattern info result
+     */
     public NPatternInfo(String pattern) {
         this.pattern = pattern;
     }
 
-    public String getPattern() {
+    /**
+     * Pattern.
+     *
+     * @return pattern result
+     */
+    public String pattern() {
         return pattern;
     }
 
-    public void setPattern(String pattern) {
+    /**
+     * Pattern.
+     *
+     * @param pattern pattern
+     */
+    public void pattern(String pattern) {
         this.pattern = pattern;
     }
 
-    public Consumer<NStringMatchResult> getAction() {
+    /**
+     * Action.
+     *
+     * @return action result
+     */
+    public Consumer<NStringMatchResult> action() {
         return action;
     }
 
-    public void setAction(Consumer<NStringMatchResult> action) {
+    /**
+     * Action.
+     *
+     * @param action action
+     */
+    public void action(Consumer<NStringMatchResult> action) {
         this.action = action;
     }
 
-    public Consumer<NStringMatchResult> getFullMatchAction() {
+    /**
+     * Full match action.
+     *
+     * @return full match action result
+     */
+    public Consumer<NStringMatchResult> fullMatchAction() {
         return fullMatchAction;
     }
 
-    public void setFullMatchAction(Consumer<NStringMatchResult> fullMatchAction) {
+    /**
+     * Full match action.
+     *
+     * @param fullMatchAction full match action
+     */
+    public void fullMatchAction(Consumer<NStringMatchResult> fullMatchAction) {
         this.fullMatchAction = fullMatchAction;
     }
 
-    public Consumer<NStringMatchResult> getMatchAction() {
+    /**
+     * Match action.
+     *
+     * @return match action result
+     */
+    public Consumer<NStringMatchResult> matchAction() {
         return matchAction;
     }
 
-    public void setMatchAction(Consumer<NStringMatchResult> matchAction) {
+    /**
+     * Match action.
+     *
+     * @param matchAction match action
+     */
+    public void matchAction(Consumer<NStringMatchResult> matchAction) {
         this.matchAction = matchAction;
     }
 
-    public Consumer<NStringMatchResult> getPartialMatchAction() {
+    /**
+     * Partial match action.
+     *
+     * @return partial match action result
+     */
+    public Consumer<NStringMatchResult> partialMatchAction() {
         return partialMatchAction;
     }
 
-    public void setPartialMatchAction(Consumer<NStringMatchResult> partialMatchAction) {
+    /**
+     * Partial match action.
+     *
+     * @param partialMatchAction partial match action
+     */
+    public void partialMatchAction(Consumer<NStringMatchResult> partialMatchAction) {
         this.partialMatchAction = partialMatchAction;
     }
 
-    public NStringMatchResult getResult() {
+    /**
+     * Result.
+     *
+     * @return result result
+     */
+    public NStringMatchResult result() {
         return result;
     }
 
-    public void setResult(NStringMatchResult result) {
+    /**
+     * Result.
+     *
+     * @param result result
+     */
+    public void result(NStringMatchResult result) {
         this.result = result;
     }
 

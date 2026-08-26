@@ -5,11 +5,24 @@ import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Supplier;
 
+/**
+ * NFunctionWithDescription class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 @NImmutable
 public class NFunctionWithDescription<T, V> implements NFunction<T, V>{
     private final NFunction<T, V> base;
     private Supplier<NElement> description;
 
+    /**
+     * N function with description.
+     *
+     * @param base base
+     * @param description description
+     * @return n function with description result
+     */
     public NFunctionWithDescription(NFunction<T, V> base, Supplier<NElement> description) {
         this.base = base;
         this.description = description;

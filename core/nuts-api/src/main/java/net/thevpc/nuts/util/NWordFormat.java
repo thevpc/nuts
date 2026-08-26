@@ -1,5 +1,11 @@
 package net.thevpc.nuts.util;
 
+/**
+ * NWordFormat enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NWordFormat implements NEnum {
     CAPITALIZED,
     UPPERCASE,
@@ -20,6 +26,12 @@ public enum NWordFormat implements NEnum {
         this.id = name().toLowerCase();
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NWordFormat> parse(String value) {
         return NEnumUtils.parseEnum(value, NWordFormat.class);
     }
@@ -33,6 +45,12 @@ public enum NWordFormat implements NEnum {
         return id;
     }
 
+    /**
+     * Format word.
+     *
+     * @param value value
+     * @return format word result
+     */
     public String formatWord(String value) {
         if (value != null) {
             switch (this) {
@@ -61,6 +79,11 @@ public enum NWordFormat implements NEnum {
                 }
             }
         }
+        /**
+         * Unsupported operation exception.
+         *
+         * @return unsupported operation exception result
+         */
         throw new UnsupportedOperationException();
     }
 }

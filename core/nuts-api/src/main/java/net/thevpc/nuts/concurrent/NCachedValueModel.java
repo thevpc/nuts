@@ -2,6 +2,9 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 /**
  * Internal data model representing the persisted state of a cached value.
  * <p>
@@ -44,7 +47,7 @@ public class NCachedValueModel implements Cloneable, NCopiable {
     private Object value;
 
     /** The last thrown exception during value computation, if any. */
-    private Throwable throwable;
+    private Throwable error;
 
     /** Indicates whether the cache entry has been explicitly invalidated. */
     private boolean invalidated;
@@ -83,122 +86,304 @@ public class NCachedValueModel implements Cloneable, NCopiable {
     }
 
     // ---- Getters / Setters ----
+    /**
+     * Checks if is invalidated.
+     *
+     * @return is invalidated result
+     */
+    @NGetter
     public boolean isInvalidated() {
         return invalidated;
     }
 
-    public NCachedValueModel setInvalidated(boolean invalidated) {
+    /**
+     * Invalidated.
+     *
+     * @param invalidated invalidated
+     * @return invalidated result
+     */
+    @NSetter
+    public NCachedValueModel invalidated(boolean invalidated) {
         this.invalidated = invalidated;
         return this;
     }
 
-    public Object getThrowable() {
-        return throwable;
+    /**
+     * Error.
+     *
+     * @return error result
+     */
+    @NGetter
+    public Throwable error() {
+        return error;
     }
 
-    public NCachedValueModel setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    /**
+     * Error.
+     *
+     * @param throwable throwable
+     * @return error result
+     */
+    @NSetter
+    public NCachedValueModel error(Throwable throwable) {
+        this.error = throwable;
         return this;
     }
 
-    public String getId() {
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NCachedValueModel setId(String id) {
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
+    @NSetter
+    public NCachedValueModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public Object getValue() {
+    /**
+     * Value.
+     *
+     * @return value result
+     */
+    @NGetter
+    public Object value() {
         return value;
     }
 
-    public NCachedValueModel setValue(Object value) {
+    /**
+     * Value.
+     *
+     * @param value value
+     * @return value result
+     */
+    @NSetter
+    public NCachedValueModel value(Object value) {
         this.value = value;
         return this;
     }
 
-    public Boolean getErrorState() {
+    /**
+     * Error state.
+     *
+     * @return error state result
+     */
+    @NGetter
+    public Boolean errorState() {
         return errorState;
     }
 
-    public NCachedValueModel setErrorState(Boolean errorState) {
+    /**
+     * Error state.
+     *
+     * @param errorState error state
+     * @return error state result
+     */
+    @NSetter
+    public NCachedValueModel errorState(Boolean errorState) {
         this.errorState = errorState;
         return this;
     }
 
-    public Object getLastValidValue() {
+    /**
+     * Last valid value.
+     *
+     * @return last valid value result
+     */
+    @NGetter
+    public Object lastValidValue() {
         return lastValidValue;
     }
 
-    public NCachedValueModel setLastValidValue(Object lastValidValue) {
+    /**
+     * Last valid value.
+     *
+     * @param lastValidValue last valid value
+     * @return last valid value result
+     */
+    @NSetter
+    public NCachedValueModel lastValidValue(Object lastValidValue) {
         this.lastValidValue = lastValidValue;
         return this;
     }
 
-    public long getLastEvalTimestamp() {
+    /**
+     * Last eval timestamp.
+     *
+     * @return last eval timestamp result
+     */
+    @NGetter
+    public long lastEvalTimestamp() {
         return lastEvalTimestamp;
     }
 
-    public NCachedValueModel setLastEvalTimestamp(long lastEvalTimestamp) {
+    /**
+     * Last eval timestamp.
+     *
+     * @param lastEvalTimestamp last eval timestamp
+     * @return last eval timestamp result
+     */
+    @NSetter
+    public NCachedValueModel lastEvalTimestamp(long lastEvalTimestamp) {
         this.lastEvalTimestamp = lastEvalTimestamp;
         return this;
     }
 
-    public int getFailedAttempts() {
+    /**
+     * Failed attempts.
+     *
+     * @return failed attempts result
+     */
+    @NGetter
+    public int failedAttempts() {
         return failedAttempts;
     }
 
-    public NCachedValueModel setFailedAttempts(int failedAttempts) {
+    /**
+     * Failed attempts.
+     *
+     * @param failedAttempts failed attempts
+     * @return failed attempts result
+     */
+    @NSetter
+    public NCachedValueModel failedAttempts(int failedAttempts) {
         this.failedAttempts = failedAttempts;
         return this;
     }
 
-    public NDuration getExpiry() {
+    /**
+     * Expiry.
+     *
+     * @return expiry result
+     */
+    @NGetter
+    public NDuration expiry() {
         return expiry;
     }
 
-    public NCachedValueModel setExpiry(NDuration expiry) {
+    /**
+     * Expiry.
+     *
+     * @param expiry expiry
+     * @return expiry result
+     */
+    @NSetter
+    public NCachedValueModel expiry(NDuration expiry) {
         this.expiry = expiry;
         return this;
     }
 
-    public NDuration getRetryPeriod() {
+    /**
+     * Retry period.
+     *
+     * @return retry period result
+     */
+    @NGetter
+    public NDuration retryPeriod() {
         return retryPeriod;
     }
 
-    public NCachedValueModel setRetryPeriod(NDuration retryPeriod) {
+    /**
+     * Retry period.
+     *
+     * @param retryPeriod retry period
+     * @return retry period result
+     */
+    @NSetter
+    public NCachedValueModel retryPeriod(NDuration retryPeriod) {
         this.retryPeriod = retryPeriod;
         return this;
     }
 
-    public int getMaxRetries() {
+    /**
+     * Max retries.
+     *
+     * @return max retries result
+     */
+    @NGetter
+    public int maxRetries() {
         return maxRetries;
     }
 
-    public NCachedValueModel setMaxRetries(int maxRetries) {
+    /**
+     * Max retries.
+     *
+     * @param maxRetries max retries
+     * @return max retries result
+     */
+    @NSetter
+    public NCachedValueModel maxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
         return this;
     }
 
+    /**
+     * Checks if is retain last on failure.
+     *
+     * @return is retain last on failure result
+     */
+    @NGetter
     public boolean isRetainLastOnFailure() {
         return retainLastOnFailure;
     }
 
-    public NCachedValueModel setRetainLastOnFailure(boolean retainLastOnFailure) {
+    /**
+     * Retain last on failure.
+     *
+     * @param retainLastOnFailure retain last on failure
+     * @return retain last on failure result
+     */
+    @NSetter
+    public NCachedValueModel retainLastOnFailure(boolean retainLastOnFailure) {
         this.retainLastOnFailure = retainLastOnFailure;
         return this;
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NCachedValueModel copy(){
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
+    /**
+     * Clone.
+     *
+     * @return clone result
+     */
     protected NCachedValueModel clone(){
         try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
             return (NCachedValueModel) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

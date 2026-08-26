@@ -77,5 +77,10 @@ public interface NEnum {
         return r;
     }
 
+    /**
+     * Id.
+     *
+     * @return id result
+     */
     String id();
 }

@@ -3,19 +3,17 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.expr.*;
 
-import java.util.List;
-
 public class DefaultNExprOpDeclaration implements NExprOperator {
     private final String name;
-    private final NExprOpType operatorType;
+    private final NFixity fixity;
     private final int operatorPrecedence;
     private final NOperatorAssociativity associativity;
     private final NExprCallHandler op;
 
 
-    public DefaultNExprOpDeclaration(String name, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity associativity, NExprCallHandler op) {
+    public DefaultNExprOpDeclaration(String name, NFixity fixity, int operatorPrecedence, NOperatorAssociativity associativity, NExprCallHandler op) {
         this.name = name;
-        this.operatorType = operatorType;
+        this.fixity = fixity;
         this.operatorPrecedence = operatorPrecedence;
         this.associativity = associativity;
         this.op = op;
@@ -37,8 +35,8 @@ public class DefaultNExprOpDeclaration implements NExprOperator {
     }
 
     @Override
-    public NExprOpType operatorType() {
-        return operatorType;
+    public NFixity fixity() {
+        return fixity;
     }
 
     @Override

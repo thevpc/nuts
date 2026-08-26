@@ -43,13 +43,33 @@ import java.util.Map;
  */
 public interface NWorkspaceStoredConfig {
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    String name();
 
-    NStoreStrategy getStoreStrategy();
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
+    NStoreStrategy storeStrategy();
 
-    NStoreStrategy getRepositoryStoreStrategy();
+    /**
+     * Repository store strategy.
+     *
+     * @return repository store strategy result
+     */
+    NStoreStrategy repositoryStoreStrategy();
 
-    NOsFamily getStoreLayout();
+    /**
+     * Store layout.
+     *
+     * @return store layout result
+     */
+    NOsFamily storeLayout();
 
     /**
      * all home locations key/value map where keys are in the form "location"
@@ -57,7 +77,7 @@ public interface NWorkspaceStoredConfig {
      *
      * @return home locations mapping
      */
-    Map<NStoreType, String> getStoreLocations();
+    Map<NStoreType, String> storeLocations();
 
     /**
      * all home locations key/value map where keys are in the form
@@ -65,23 +85,70 @@ public interface NWorkspaceStoredConfig {
      *
      * @return home locations mapping
      */
-    Map<NHomeLocation, String> getHomeLocations();
+    Map<NHomeLocation, String> homeLocations();
 
+    /**
+     * Returns the store location.
+     *
+     * @param folderType folder type
+     * @return get store location result
+     */
     String getStoreLocation(NStoreType folderType);
 
+    /**
+     * Returns the home location.
+     *
+     * @param homeLocation home location
+     * @return get home location result
+     */
     String getHomeLocation(NHomeLocation homeLocation);
 
-    NId getApiId();
+    /**
+     * Api id.
+     *
+     * @return api id result
+     */
+    NId apiId();
 
-    NId getRuntimeId();
+    /**
+     * Runtime id.
+     *
+     * @return runtime id result
+     */
+    NId runtimeId();
 
-    String getRuntimeDependencies();
+    /**
+     * Runtime dependencies.
+     *
+     * @return runtime dependencies result
+     */
+    String runtimeDependencies();
 
-    List<String> getBootRepositories();
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
+    List<String> bootRepositories();
 
-    String getJavaCommand();
+    /**
+     * Java command.
+     *
+     * @return java command result
+     */
+    String javaCommand();
 
-    String getJavaOptions();
+    /**
+     * Java options.
+     *
+     * @return java options result
+     */
+    String javaOptions();
 
+    /**
+     * Checks if is system.
+     *
+     * @return is system result
+     */
     boolean isSystem();
 }

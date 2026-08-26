@@ -43,12 +43,12 @@ public abstract class NRepositoryCmdBase<T extends NRepositoryCmd> implements NR
 
     }
 
-    public NFetchMode getFetchMode() {
+    public NFetchMode fetchMode() {
         return fetchMode;
     }
 
 //    @Override
-    public T setFetchMode(NFetchMode fetchMode) {
+    public T fetchMode(NFetchMode fetchMode) {
         this.fetchMode = fetchMode;
         return (T) this;
     }

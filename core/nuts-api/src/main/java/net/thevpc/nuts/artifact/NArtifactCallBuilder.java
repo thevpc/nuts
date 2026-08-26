@@ -50,20 +50,42 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
        return NExtensions.of(NArtifactCallBuilder.class);
     }
 
-    String getScriptName();
+    /**
+     * Script name.
+     *
+     * @return script name result
+     */
+    String scriptName();
 
-    NArtifactCallBuilder setScriptName(String scriptName);
+    /**
+     * Script name.
+     *
+     * @param scriptName script name
+     * @return script name result
+     */
+    NArtifactCallBuilder scriptName(String scriptName);
 
-    String getScriptContent();
+    /**
+     * Script content.
+     *
+     * @return script content result
+     */
+    String scriptContent();
 
-    NArtifactCallBuilder setScriptContent(String scriptContent);
+    /**
+     * Script content.
+     *
+     * @param scriptContent script content
+     * @return script content result
+     */
+    NArtifactCallBuilder scriptContent(String scriptContent);
 
     /**
      * return artifact id
      *
      * @return artifact id
      */
-    NId getId();
+    NId id();
 
     /**
      * update artifact id
@@ -71,14 +93,14 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
      * @param value artifact id
      * @return {@code this} instance
      */
-    NArtifactCallBuilder setId(NId value);
+    NArtifactCallBuilder id(NId value);
 
     /**
      * return call arguments
      *
      * @return call arguments
      */
-    List<String> getArguments();
+    List<String> arguments();
 
     /**
      * update arguments
@@ -86,7 +108,7 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
      * @param value arguments
      * @return {@code this} instance
      */
-    NArtifactCallBuilder setArguments(String... value);
+    NArtifactCallBuilder arguments(String... value);
 
     /**
      * Updates the call arguments with the provided list of values.
@@ -94,7 +116,7 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
      * @param value the list of arguments to set
      * @return {@code this} instance
      */
-    NArtifactCallBuilder setArguments(List<String> value);
+    NArtifactCallBuilder arguments(List<String> value);
 
     /**
      * initialize this instance from the given value

@@ -26,6 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
@@ -41,10 +42,22 @@ import java.util.Map;
  */
 public interface NDependency extends Serializable, NBlankable {
 
+    /**
+     * Returns the get.
+     *
+     * @param value value
+     * @return get result
+     */
     static NOptional<NDependency> get(String value) {
         return NId.get(value).map(NId::toDependency);
     }
 
+    /**
+     * Returns the get.
+     *
+     * @param value value
+     * @return get result
+     */
     static NOptional<NDependency> get(NId value) {
         if (value == null) {
             return NOptional.ofNamedEmpty("id");
@@ -52,11 +65,35 @@ public interface NDependency extends Serializable, NBlankable {
         return NOptional.of(value.toDependency());
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param value value
+     * @return of result
+     */
     static NDependency of(String value) {
+        /**
+         * Returns the get.
+         *
+         * @param value).get( value).get(
+         * @return get result
+         */
         return get(value).get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param value value
+     * @return of result
+     */
     static NDependency of(NId value) {
+        /**
+         * Returns the get.
+         *
+         * @param value).get( value).get(
+         * @return get result
+         */
         return get(value).get();
     }
 
@@ -75,14 +112,39 @@ public interface NDependency extends Serializable, NBlankable {
      */
     boolean isOptional();
 
+    /**
+     * Checks if is any provided.
+     *
+     * @return is any provided result
+     */
     boolean isAnyProvided();
 
+    /**
+     * Checks if is any runtime.
+     *
+     * @return is any runtime result
+     */
     boolean isAnyRuntime();
 
+    /**
+     * Checks if is provided.
+     *
+     * @return is provided result
+     */
     boolean isProvided();
 
+    /**
+     * Checks if is runtime.
+     *
+     * @return is runtime result
+     */
     boolean isRuntime();
 
+    /**
+     * Checks if is any test.
+     *
+     * @return is any test result
+     */
     boolean isAnyTest();
 
     /**
@@ -90,21 +152,24 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return string representation (or $ var) that can be evaluated as 'true'
      */
-    String getOptional();
+    @NGetter
+    String optional();
 
     /**
      * get scope string value (may be $ var).
      *
      * @return scope string value (may be $ var)
      */
-    String getScope();
+    @NGetter
+    String scope();
 
     /**
      * get classifier string value (may be $ var)
      *
      * @return classifier string
      */
-    String getClassifier();
+    @NGetter
+    String classifier();
 
     /**
      * convert to NutsId
@@ -118,7 +183,8 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return repository
      */
-    String getRepository();
+    @NGetter
+    String repository();
 
 
     /**
@@ -126,14 +192,16 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return artifact group id (aka groupId in maven)
      */
-    String getGroupId();
+    @NGetter
+    String groupId();
 
     /**
      * return artifact id (aka artifactId)
      *
      * @return artifact id (aka artifactId in maven)
      */
-    String getArtifactId();
+    @NGetter
+    String artifactId();
 
     /**
      * return dependency full name in the form
@@ -141,7 +209,8 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return return dependency short name
      */
-    String getShortName();
+    @NGetter
+    String shortName();
 
     /**
      * return dependency full name in the form
@@ -149,7 +218,8 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return return dependency long name
      */
-    String getLongName();
+    @NGetter
+    String longName();
 
     /**
      * return dependency full name in the form
@@ -157,25 +227,40 @@ public interface NDependency extends Serializable, NBlankable {
      *
      * @return return dependency full name
      */
-    String getFullName();
+    @NGetter
+    String fullName();
 
     /**
      * return dependency version
      *
      * @return return dependency version
      */
-    NVersion getVersion();
+    @NGetter
+    NVersion version();
 
-    NEnvCondition getCondition();
+    /**
+     * Condition.
+     *
+     * @return condition result
+     */
+    @NGetter
+    NEnvCondition condition();
 
-    String getType();
+    /**
+     * Type.
+     *
+     * @return type result
+     */
+    @NGetter
+    String type();
 
     /**
      * dependency exclusions
      *
      * @return dependency exclusions
      */
-    List<NId> getExclusions();
+    @NGetter
+    List<NId> exclusions();
 
     /**
      * properties in the URL query form
@@ -183,7 +268,8 @@ public interface NDependency extends Serializable, NBlankable {
      * @return properties in the URL query form.
      * @since 0.5.7
      */
-    String getPropertiesQuery();
+    @NGetter
+    String propertiesQuery();
 
     /**
      * properties in the URL query form
@@ -191,6 +277,6 @@ public interface NDependency extends Serializable, NBlankable {
      * @return properties in the URL query form.
      * @since 0.5.7
      */
-    Map<String, String> getProperties();
+    Map<String, String> properties();
 
 }

@@ -3,6 +3,12 @@ package net.thevpc.nuts.expr;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.util.NStringUtils;
 
+/**
+ * NToken class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NToken {
 
     /***
@@ -95,6 +101,7 @@ public class NToken {
     public static final int TT_DOLLAR = -85;
     public static final int TT_DOLLAR_BRACE = -86;
     public static final int TT_VAR = -87;
+    public static final int TT_MOUSTACHE_START = -88;
 
     public static final int TT_DEFAULT = Integer.MIN_VALUE;
 
@@ -122,6 +129,14 @@ public class NToken {
     public String ttypeString;
     public Number nval;
 
+    /**
+     * Creates a new instance of of special.
+     *
+     * @param ttype ttype
+     * @param sval sval
+     * @param lineno lineno
+     * @return of special result
+     */
     public static NToken ofSpecial(int ttype, String sval,int lineno) {
         String ttypeString;
         switch (ttype){
@@ -143,18 +158,56 @@ public class NToken {
         }
         return new NToken(ttype, sval, 0, lineno, sval, ttypeString);
     }
+    /**
+     * Creates a new instance of of char.
+     *
+     * @param ttype ttype
+     * @param lineno lineno
+     * @return of char result
+     */
     public static NToken ofChar(char ttype, int lineno) {
         String sval = String.valueOf((char) ttype);
         return new NToken(ttype, sval, 0, lineno, sval, "'" + sval + "'");
     }
+    /**
+     * Creates a new instance of of str.
+     *
+     * @param ttype ttype
+     * @param sval sval
+     * @param ttypeString ttype string
+     * @param lineno lineno
+     * @return of str result
+     */
     public static NToken ofStr(int ttype, String sval,String ttypeString,int lineno) {
         return new NToken(ttype, sval, 0, lineno, sval, ttypeString);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ttype ttype
+     * @param sval sval
+     * @param nval nval
+     * @param lineno lineno
+     * @param image image
+     * @param ttypeString ttype string
+     * @return of result
+     */
     public static NToken of(int ttype, String sval, Number nval, int lineno, String image, String ttypeString) {
         return new NToken(ttype, sval, nval, lineno, image, ttypeString);
     }
 
+    /**
+     * N token.
+     *
+     * @param ttype ttype
+     * @param sval sval
+     * @param nval nval
+     * @param lineno lineno
+     * @param image image
+     * @param ttypeString ttype string
+     * @return n token result
+     */
     public NToken(int ttype, String sval, Number nval, int lineno, String image, String ttypeString) {
         this.ttype = ttype;
         this.sval = sval;
@@ -165,6 +218,12 @@ public class NToken {
     }
 
 
+    /**
+     * Type string.
+     *
+     * @param ttype ttype
+     * @return type string result
+     */
     public static String typeString(int ttype) {
         switch (ttype) {
             case TT_EOF:
@@ -267,6 +326,8 @@ public class NToken {
                 return "TT_DOLLAR";
             case TT_DOLLAR_BRACE:
                 return "DOLLAR_BRACE";
+            case TT_MOUSTACHE_START:
+                return "MOUSTACHE_START";
             case TT_VAR:
                 return "VAR";
             case TT_COMMENTS:
@@ -286,6 +347,12 @@ public class NToken {
         return String.valueOf(ttype);
     }
 
+    /**
+     * Returns string representation of this token.
+     *
+     * @return formatted token string
+     */
+    @Override
     public String toString() {
         String ts=ttypeString==null?typeString(ttype):ttypeString;
         return "NToken{" +

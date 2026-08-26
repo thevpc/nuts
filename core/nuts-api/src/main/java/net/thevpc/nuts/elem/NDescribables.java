@@ -1,7 +1,7 @@
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NException;
 
 import java.lang.reflect.Array;
 import java.time.Instant;
@@ -15,25 +15,64 @@ import java.util.function.Supplier;
 /**
  * Nuts Element Description
  */
-public interface NDescribables {
-    static NElement describeWithTransform(String name, Object transformer, NElement... params) {
+public final class NDescribables {
+    /**
+     * N describables.
+     *
+     * @return n describables result
+     */
+    private NDescribables() {
+    }
+
+    /**
+     * Describe with transform.
+     *
+     * @param name name
+     * @param transformer transformer
+     * @param params params
+     * @return describe with transform result
+     */
+    public static NElement describeWithTransform(String name, Object transformer, NElement... params) {
         NElement t = NDescribables.describeResolveOrSimplify(transformer);
-        return NElement.ofUpletBuilder()
+        return NElement.ofTupleBuilder()
                 .name(name)
                 .add(t)
                 .addAll(params)
                 .build();
     }
 
-    static Supplier<NElement> ofLateString(Supplier<String> name) {
+    /**
+     * Creates a new instance of of late string.
+     *
+     * @param name name
+     * @return of late string result
+     */
+    public static Supplier<NElement> ofLateString(Supplier<String> name) {
         return name == null ? null : () -> NElement.ofString(name.get());
     }
 
-    static Supplier<NElement> ofLateToString(Object any) {
+    /**
+     * Creates a new instance of of late to string.
+     *
+     * @param any any
+     * @return of late to string result
+     */
+    public static Supplier<NElement> ofLateToString(Object any) {
+      /**
+       * Return.
+       *
+       * @param NElement.ofString(String.valueOf(any) n element.of string( string.value of(any)
+       */
         return () -> NElement.ofString(String.valueOf(any));
     }
 
-    static Supplier<NElement> ofDesc(Object any) {
+    /**
+     * Creates a new instance of of desc.
+     *
+     * @param any any
+     * @return of desc result
+     */
+    public static Supplier<NElement> ofDesc(Object any) {
         return () -> {
             if (any == null) {
                 return null;
@@ -46,22 +85,47 @@ public interface NDescribables {
         };
     }
 
-    static Supplier<NElement> ofDesc(String name) {
+    /**
+     * Creates a new instance of of desc.
+     *
+     * @param name name
+     * @return of desc result
+     */
+    public static Supplier<NElement> ofDesc(String name) {
         return name == null ? null : () -> NElement.ofString(name);
     }
 
-    static Supplier<NElement> ofDesc(NElement element) {
+    /**
+     * Creates a new instance of of desc.
+     *
+     * @param element element
+     * @return of desc result
+     */
+    public static Supplier<NElement> ofDesc(NElement element) {
         return element == null ? null : () -> element;
     }
 
-    static NElement safeDescribeOfBase(Supplier<NElement> description, Object base) {
+    /**
+     * Safe describe of base.
+     *
+     * @param description description
+     * @param base base
+     * @return safe describe of base result
+     */
+    public static NElement safeDescribeOfBase(Supplier<NElement> description, Object base) {
         return NDescribables.safeDescribe(description
                 , base == null ? null : NDescribables.ofDesc(base)
                 , base == null ? null : NDescribables.ofLateToString(base)
         );
     }
 
-    static NElement safeDescribe(Supplier<NElement>... descriptions) {
+    /**
+     * Safe describe.
+     *
+     * @param descriptions descriptions
+     * @return safe describe result
+     */
+    public static NElement safeDescribe(Supplier<NElement>... descriptions) {
         if (descriptions != null) {
             for (Supplier<NElement> description : descriptions) {
                 if (description != null) {
@@ -72,14 +136,40 @@ public interface NDescribables {
                 }
             }
         }
+        /**
+         * Creates a new instance of of desc.
+         *
+         * @param "invalid").get( "invalid").get(
+         * @return of desc result
+         */
         return ofDesc("invalid").get();
     }
 
-    static NElement describeResolveOrToString(Object o) {
+    /**
+     * Describe resolve or to string.
+     *
+     * @param o o
+     * @return describe resolve or to string result
+     */
+    public static NElement describeResolveOrToString(Object o) {
+        /**
+         * Describe resolve or.
+         *
+         * @param o o
+         * @param NElement.ofString(o.toString()) n element.of string(o.to string())
+         * @return describe resolve or result
+         */
         return describeResolveOr(o, () -> NElement.ofString(o.toString()));
     }
 
-    static NElement describeResolveOr(Object o, Supplier<NElement> d) {
+    /**
+     * Describe resolve or.
+     *
+     * @param o o
+     * @param d d
+     * @return describe resolve or result
+     */
+    public static NElement describeResolveOr(Object o, Supplier<NElement> d) {
         NElement e = describeResolveOrNull(o);
         if (e != null) {
             return e;
@@ -87,7 +177,13 @@ public interface NDescribables {
         return d == null ? null : d.get();
     }
 
-    static NObjectElement describeResolveOrSimplifyAsObject(Object o) {
+    /**
+     * Describe resolve or simplify as object.
+     *
+     * @param o o
+     * @return describe resolve or simplify as object result
+     */
+    public static NObjectElement describeResolveOrSimplifyAsObject(Object o) {
         NElement e = describeResolveOrSimplify(o);
         if (e instanceof NObjectElement) {
             return (NObjectElement) e;
@@ -97,7 +193,13 @@ public interface NDescribables {
                 .build();
     }
 
-    static NElement describeResolveOrSimplify(Object o) {
+    /**
+     * Describe resolve or simplify.
+     *
+     * @param o o
+     * @return describe resolve or simplify result
+     */
+    public static NElement describeResolveOrSimplify(Object o) {
         if (o == null) {
             return NElement.ofNull();
         }
@@ -108,17 +210,29 @@ public interface NDescribables {
         if(o.getClass().isSynthetic()) {
             return NElement.ofName("Synthetic");
         }
-        return NElements.of().toElement(o);
+        return NElement.of(o);
     }
 
-    static boolean isSupported(Object o) {
+    /**
+     * Checks if is supported.
+     *
+     * @param o o
+     * @return is supported result
+     */
+    public static boolean isSupported(Object o) {
         if (o == null) {
             return true;
         }
         return o instanceof NDescribable;
     }
 
-    static NElement describeResolveOrNull(Object o) {
+    /**
+     * Describe resolve or null.
+     *
+     * @param o o
+     * @return describe resolve or null result
+     */
+    public static NElement describeResolveOrNull(Object o) {
         if (o == null) {
             return NElement.ofNull();
         }
@@ -126,6 +240,11 @@ public interface NDescribables {
             return (NElement) o;
         }
         if (o instanceof NDescribable) {
+          /**
+           * Return.
+           *
+           * @param o).describe( o).describe(
+           */
             return ((NDescribable) o).describe();
         }
         if (o instanceof Collection) {
@@ -159,7 +278,7 @@ public interface NDescribables {
             return NElement.ofName(((Enum) o).name());
         }
         if (o instanceof Throwable) {
-            return NElement.ofString(NExceptions.getErrorMessage(((Throwable) o)));
+            return NElement.ofString(NException.getErrorMessage(((Throwable) o)));
         }
         if (o.getClass().isArray()) {
             int length = Array.getLength(o);

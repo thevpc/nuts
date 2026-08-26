@@ -31,11 +31,10 @@ import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NInstall;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -96,7 +95,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
         return failFast;
     }
 
-    public NInstall setFailFast(boolean failFast) {
+    public NInstall failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }
@@ -134,22 +133,27 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public NInstall setId(NId id) {
+    public NInstall id(NId id) {
         return clearIds().addId(id);
     }
 
     @Override
-    public NInstall setId(String id) {
+    public NInstall id(String id) {
         return clearIds().addId(id);
     }
 
     @Override
-    public NInstall setIds(NId... ids) {
+    public NInstall ids(NId... ids) {
         return clearIds().addIds(ids);
     }
 
     @Override
-    public NInstall setIds(String... ids) {
+    public NInstall ids(List<NId> ids) {
+        return clearArgs().ids(ids==null?null:ids.toArray(new NId[0]));
+    }
+
+    @Override
+    public NInstall ids(String... ids) {
         return clearIds().addIds(ids);
     }
 
@@ -173,8 +177,10 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
 
     @Override
     public NInstall addIds(NId... ids) {
-        for (NId id : ids) {
-            addId(id);
+        if(ids!=null){
+            for (NId id : ids) {
+                addId(id);
+            }
         }
         return this;
     }
@@ -208,7 +214,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> args() {
         return NCollections.unmodifiableList(args);
     }
 
@@ -250,7 +256,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return NCollections.unmodifiableList(ids == null ? null : ids.keySet());
     }
 
@@ -265,7 +271,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public NInstall setCompanions(boolean value) {
+    public NInstall companions(boolean value) {
         this.companionsInstallFlags = value ? currentInstallFlags.copy() : null;
         return this;
     }
@@ -276,7 +282,7 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public NInstall setInstalled(boolean value) {
+    public NInstall installed(boolean value) {
         this.installedInstallFlags = value ? currentInstallFlags.copy() : null;
         return this;
     }
@@ -287,30 +293,11 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
     }
 
     @Override
-    public NInstall setDefaultVersion(boolean defaultVersion) {
+    public NInstall defaultVersion(boolean defaultVersion) {
         this.defaultVersion = defaultVersion;
         return this;
     }
 
-    @Override
-    public NInstall defaultVersion(boolean defaultVersion) {
-        return setDefaultVersion(defaultVersion);
-    }
-
-    @Override
-    public NInstall defaultVersion() {
-        return defaultVersion(true);
-    }
-
-    @Override
-    public NInstall companions(boolean value) {
-        return setCompanions(value);
-    }
-
-    @Override
-    public NInstall companions() {
-        return companions(true);
-    }
 
 //    @Override
 //    public NInstallCmd setStrategy(NInstallStrategy value) {
@@ -336,28 +323,28 @@ public abstract class AbstractNInstall extends NWorkspaceCmdBase<NInstall> imple
         switch (aa.key()) {
             case "-c":
             case "--companions": {
-                return cmdLine.matcher().matchFlag((v) -> this.setCompanions(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.companions(v.booleanValue())).anyMatch();
             }
             case "-i":
             case "--installed": {
-                return cmdLine.matcher().matchFlag((v) -> this.setInstalled(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.installed(v.booleanValue())).anyMatch();
             }
 //            case "-s":
 //            case "--strategy": {
-//                return cmdLine.matcher().matchEntry(a->this.setStrategy(NInstallStrategy.parse(a.stringValue()).get())).anyMatch();
+//                return cmdLine.matcher().withAny().matchEntry(a->this.setStrategy(NInstallStrategy.parse(a.stringValue()).get())).anyMatch();
 //            }
             case "--reinstall": {
-                return cmdLine.matcher().matchFlag(a->this.setForce(a.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag(a->this.setForce(a.booleanValue())).anyMatch();
             }
             case "--deploy-only": {
-                return cmdLine.matcher().matchFlag(a->this.setDeployOnly(a.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag(a->this.setDeployOnly(a.booleanValue())).anyMatch();
             }
             case "--repair": {
-                return cmdLine.matcher().matchTrueFlag(a->this.setRepair(a.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asTrueFlag(a->this.setRepair(a.booleanValue())).anyMatch();
             }
             case "-g":
             case "--args": {
-                return cmdLine.matcher().matchAny(a->this.addArgs(cmdLine.nextAllAsStringArray())).anyMatch();
+                return cmdLine.matcher().whenAny().asArg(a->this.addArgs(cmdLine.nextAllAsStringArray())).anyMatch();
             }
             default: {
                 if (super.configureFirst(cmdLine)) {

@@ -36,6 +36,11 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NMutableTableModel extends NTableModel, NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NMutableTableModel of() {
         return NExtensions.of(NMutableTableModel.class);
     }
@@ -60,7 +65,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param values cells
      * @return {@code this} instance
      */
-    NMutableTableModel addHeaderRow(NText... values);
+    NMutableTableModel addHeaderRow(NTableCell... values);
 
     /**
      * add header cell
@@ -68,7 +73,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param value cell
      * @return {@code this} instance
      */
-    NMutableTableModel addHeaderCell(NText value);
+    NMutableTableModel addHeaderCell(NTableCell value);
 
     /**
      * add row cells
@@ -76,7 +81,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param values row cells
      * @return {@code this} instance
      */
-    NMutableTableModel addRow(NText... values);
+    NMutableTableModel addRow(NTableCell... values);
 
     /**
      * add row cells
@@ -84,7 +89,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param values row cells
      * @return {@code this} instance
      */
-    NMutableTableModel addCells(NText... values);
+    NMutableTableModel addCells(NTableCell... values);
 
     /**
      * add row cell
@@ -92,7 +97,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param value cell
      * @return {@code this} instance
      */
-    NMutableTableModel addCell(NText value);
+    NMutableTableModel addCell(NTableCell value);
 
     /**
      * update cell at the given position
@@ -102,27 +107,7 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param value  cell value
      * @return {@code this} instance
      */
-    NMutableTableModel setCellValue(int column, int row, NText value);
-
-    /**
-     * update cell colspan
-     *
-     * @param column column index
-     * @param row    row index
-     * @param value  new value
-     * @return {@code this} instance
-     */
-    NMutableTableModel setCellColSpan(int column, int row, int value);
-
-    /**
-     * update cell rowspan
-     *
-     * @param column column index
-     * @param row    row index
-     * @param value  new value
-     * @return {@code this} instance
-     */
-    NMutableTableModel setCellRowSpan(int column, int row, int value);
+    NMutableTableModel setCell(int column, int row, NTableCell value);
 
     /**
      * update header value
@@ -131,15 +116,6 @@ public interface NMutableTableModel extends NTableModel, NComponent {
      * @param value  new value
      * @return {@code this} instance
      */
-    NMutableTableModel setHeaderValue(int column, NText value);
-
-    /**
-     * update header colspan
-     *
-     * @param column new value
-     * @param value  new value
-     * @return {@code this} instance
-     */
-    NMutableTableModel setHeaderColSpan(int column, int value);
+    NMutableTableModel setHeader(int column, NTableCell value);
 
 }

@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 import java.io.Serializable;
 
 /**
@@ -45,55 +48,126 @@ public class NWorkspaceLocation implements Serializable {
     private String location;
     private boolean enabled = true;
 
+    /**
+     * N workspace location.
+     *
+     * @return n workspace location result
+     */
     public NWorkspaceLocation() {
     }
 
+    /**
+     * N workspace location.
+     *
+     * @param other other
+     * @return n workspace location result
+     */
     public NWorkspaceLocation(NWorkspaceLocation other) {
         this.name = other.uuid;
-        this.name = other.getName();
-        this.location = other.getLocation();
+        this.name = other.name();
+        this.location = other.location();
         this.enabled = other.isEnabled();
-        this.uuid = other.getUuid();
+        this.uuid = other.uuid();
     }
 
+    /**
+     * N workspace location.
+     *
+     * @param uuid uuid
+     * @param name name
+     * @param location location
+     * @return n workspace location result
+     */
     public NWorkspaceLocation(String uuid, String name, String location) {
         this.uuid = uuid;
         this.name = name;
         this.location = location;
     }
 
+    /**
+     * Checks if is enabled.
+     *
+     * @return is enabled result
+     */
+    @NGetter
     public boolean isEnabled() {
         return enabled;
     }
 
-    public NWorkspaceLocation setEnabled(boolean enabled) {
+    /**
+     * Enabled.
+     *
+     * @param enabled enabled
+     * @return enabled result
+     */
+    @NSetter
+    public NWorkspaceLocation enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
-    public String getName() {
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NWorkspaceLocation setName(String name) {
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    @NSetter
+    public NWorkspaceLocation name(String name) {
         this.name = name;
         return this;
     }
 
-    public String getLocation() {
+    /**
+     * Location.
+     *
+     * @return location result
+     */
+    @NGetter
+    public String location() {
         return location;
     }
 
-    public NWorkspaceLocation setLocation(String location) {
+    /**
+     * Location.
+     *
+     * @param location location
+     * @return location result
+     */
+    @NSetter
+    public NWorkspaceLocation location(String location) {
         this.location = location;
         return this;
     }
 
-    public String getUuid() {
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
+    @NGetter
+    public String uuid() {
         return uuid;
     }
 
-    public NWorkspaceLocation setUuid(String uuid) {
+    /**
+     * Uuid.
+     *
+     * @param uuid uuid
+     * @return uuid result
+     */
+    @NSetter
+    public NWorkspaceLocation uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }
@@ -130,6 +204,11 @@ public class NWorkspaceLocation implements Serializable {
                 + '}';
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NWorkspaceLocation copy() {
         return new NWorkspaceLocation(this);
     }

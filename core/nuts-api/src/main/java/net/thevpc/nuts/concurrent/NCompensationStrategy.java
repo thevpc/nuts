@@ -40,6 +40,9 @@ public enum NCompensationStrategy implements NEnum {
      */
     private final String id;
 
+  /**
+   * N compensation strategy.
+   */
     NCompensationStrategy() {
         this.id = NNameFormat.ID_NAME.format(name());
     }

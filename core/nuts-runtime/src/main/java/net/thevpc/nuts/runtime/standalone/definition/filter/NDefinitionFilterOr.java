@@ -55,7 +55,20 @@ public class NDefinitionFilterOr extends AbstractDefinitionFilter implements NCo
         return CoreStringUtils.trueOrOr(Arrays.stream(all).map(NComplexExpressionString::toString).collect(Collectors.toList()));
     }
 
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterOr that = (NDefinitionFilterOr) o;
+        return Objects.deepEquals(all, that.all);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(all));
     }
 }

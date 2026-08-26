@@ -6,13 +6,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.installeditorsyntax;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NSysEditorFamily;
+import net.thevpc.nuts.platform.NSysEditorFamily;
 import net.thevpc.nuts.command.NSysEditorSupportCmd;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NBooleanRef;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -36,10 +36,10 @@ public class NSettingsInstallEditorSyntaxSubCommand extends AbstractNSettingsSub
                 Set<NSysEditorFamily> editors = new LinkedHashSet<>();
                 while (cmdLine.hasNext()) {
                     cmdLine.matcher()
-                            .with("--force","-f").matchFlag(a -> {
+                            .when("--force","-f").asFlag(a -> {
                                 force.set(a.booleanValue());
                             })
-                            .withNonOption().matchAny(a -> {
+                            .whenNonOption().asArg(a -> {
 
                                 String e = a.asString().get();
                                 if ("all".equalsIgnoreCase(e)) {
@@ -66,12 +66,12 @@ public class NSettingsInstallEditorSyntaxSubCommand extends AbstractNSettingsSub
                         }
                     }
                     NSysEditorSupportCmd.of()
-                            .setSource(NPath.of("https://github.com/thevpc/nuts/raw/refs/heads/master/documentation/integration/" + mode + "-support"))
-                            .setLanguageId(mode)
-                            .setLanguageName(title)
-                            .setLanguageVersion("1.0.0")
-                            .setFileExtension(mode)
-                            .setFileName("*." + mode)
+                            .source(NPath.of("https://github.com/thevpc/nuts/raw/refs/heads/master/documentation/integration/" + mode + "-support"))
+                            .languageId(mode)
+                            .languageName(title)
+                            .languageVersion("1.0.0")
+                            .fileExtension(mode)
+                            .fileName("*." + mode)
                             .addEditorFamilies(editors.toArray(new NSysEditorFamily[0]))
                             .run();
                 }

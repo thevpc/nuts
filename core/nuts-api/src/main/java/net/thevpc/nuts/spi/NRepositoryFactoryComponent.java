@@ -36,6 +36,12 @@ import net.thevpc.nuts.core.NRepository;
  */
 public interface NRepositoryFactoryComponent extends NComponent {
 
+    /**
+     * Creates a new instance of create repository.
+     *
+     * @param context context
+     * @return create repository result
+     */
     NRepository createRepository(NRepositoryFactoryContext context);
 
 }

@@ -15,7 +15,7 @@ public class DefaultNAskFormat<T> implements NAskFormat<T> {
     }
 
     @Override
-    public List<Object> getDefaultValues(Class type, NAsk<T> question) {
+    public List<Object> resolveDefaultValues(Class type, NAsk<T> question) {
         if (type.isEnum()) {
             return Arrays.asList(type.getEnumConstants());
         }

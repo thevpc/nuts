@@ -6,15 +6,16 @@
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.time.NProgressFactory;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
@@ -42,7 +43,7 @@ public class DefaultNCompress implements NCompress {
     private NProgressFactory progressFactory;
     private String packaging = "zip";
     private NCompressPackaging packagingImpl;
-    private Set<NPathOption> options = new LinkedHashSet<>();
+    private final Set<NPathOption> options = new LinkedHashSet<>();
 
     public DefaultNCompress(NWorkspace ws) {
         this.ws = ws;
@@ -56,36 +57,36 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress setFormatOption(String option, Object value) {
+    public NCompress formatOption(String option, Object value) {
         return this;
     }
 
     @Override
-    public Object getFormatOption(String option) {
+    public Object formatOption(String option) {
         return null;
     }
 
     @Override
-    public String getPackaging() {
+    public String packaging() {
         return packaging;
     }
 
     @Override
-    public NCompress setPackaging(String packaging) {
+    public NCompress packaging(String packaging) {
         if (NBlankable.isBlank(packaging)) {
             packaging = "zip";
         }
         this.packaging = packaging;
-        this.packagingImpl = NExtensions.of().createSupported(NCompressPackaging.class, this).get();
+        this.packagingImpl = NWorkspaceExt.of().getModel().extensionCatalogManager.createSupported(NCompressPackaging.class, packaging,"net.thevpc.nuts.spi.compression", packaging.toLowerCase()).get();
         return this;
     }
 
     @Override
-    public List<NInputSource> getSources() {
+    public List<NInputSource> sources() {
         return sources;
     }
 
-    public NCompress addSource(NInputSource source) {
+    public NCompress source(NInputSource source) {
         if (source != null) {
             this.sources.add(source);
         }
@@ -93,43 +94,43 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress addSource(InputStream source) {
+    public NCompress source(InputStream source) {
         if (source == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofP("null source"));
         }
         this.sources.add(NInputSource.of(source));
         return this;
     }
 
     @Override
-    public NCompress addSource(File source) {
+    public NCompress source(File source) {
         if (source == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofP("null source"));
         }
         this.sources.add(NPath.of(source));
         return this;
     }
 
     @Override
-    public NCompress addSource(Path source) {
+    public NCompress source(Path source) {
         if (source == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofP("null source"));
         }
         this.sources.add(NPath.of(source));
         return this;
     }
 
     @Override
-    public NCompress addSource(URL source) {
+    public NCompress source(URL source) {
         if (source == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofP("null source"));
         }
         this.sources.add(NPath.of(source));
         return this;
     }
 
     @Override
-    public NCompress addSource(NPath source) {
+    public NCompress source(NPath source) {
         if (source != null) {
             this.sources.add(source);
         }
@@ -137,12 +138,18 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NOutputTarget getTarget() {
+    public NCompress clearSources() {
+        this.sources.clear();
+        return this;
+    }
+
+    @Override
+    public NOutputTarget target() {
         return target;
     }
 
     @Override
-    public NCompress setTarget(OutputStream target) {
+    public NCompress target(OutputStream target) {
         if (target == null) {
             this.target = null;
         } else {
@@ -152,13 +159,13 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress setTarget(NOutputTarget target) {
+    public NCompress target(NOutputTarget target) {
         this.target = target;
         return this;
     }
 
     @Override
-    public NCompress setTarget(Path target) {
+    public NCompress target(Path target) {
         if (target == null) {
             this.target = null;
         } else {
@@ -168,7 +175,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress setTarget(File target) {
+    public NCompress target(File target) {
         if (target == null) {
             this.target = null;
         } else {
@@ -178,7 +185,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress setTarget(String target) {
+    public NCompress target(String target) {
         if (target == null) {
             this.target = null;
         } else {
@@ -188,40 +195,40 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress setTarget(NPath target) {
+    public NCompress target(NPath target) {
         this.target = target;
         return this;
     }
 
     @Override
     public NCompress to(NPath target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NCompress to(OutputStream target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NCompress to(String target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NCompress to(Path target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NCompress to(File target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NCompress run() {
         if (packagingImpl == null) {
-            this.packagingImpl = NExtensions.of().createSupported(NCompressPackaging.class, this).get();
+            packaging("");
         }
         packagingImpl.compressPackage(this);
         return this;
@@ -234,7 +241,7 @@ public class DefaultNCompress implements NCompress {
      * @since 0.5.8
      */
     @Override
-    public NProgressFactory getProgressFactory() {
+    public NProgressFactory progressFactory() {
         return progressFactory;
     }
 
@@ -246,7 +253,7 @@ public class DefaultNCompress implements NCompress {
      * @since 0.5.8
      */
     @Override
-    public NCompress setProgressFactory(NProgressFactory value) {
+    public NCompress progressFactory(NProgressFactory value) {
         this.progressFactory = value;
         return this;
     }
@@ -259,7 +266,7 @@ public class DefaultNCompress implements NCompress {
      * @since 0.5.8
      */
     @Override
-    public NCompress setProgressMonitor(NProgressListener value) {
+    public NCompress progressMonitor(NProgressListener value) {
         this.progressFactory = value == null ? null : new SingletonNInputStreamProgressFactory(value);
         return this;
     }
@@ -279,7 +286,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress setSafe(boolean value) {
+    public NCompress safe(boolean value) {
         this.safe = value;
         return this;
     }
@@ -290,64 +297,13 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NCompress setSkipRoot(boolean value) {
+    public NCompress skipRoot(boolean value) {
         this.skipRoot = value;
         return this;
     }
 
-    public static class Item {
-
-        private final NInputSource inSource;
-        private final NCompress c;
-
-        public Item(NInputSource value, NCompress c) {
-            this.inSource = value;
-            this.c = c;
-        }
-
-        public boolean isSourcePath() {
-            return ((inSource instanceof NPath));
-        }
-
-        public boolean isSourceDirectory() {
-            return isSourcePath() && ((NPath) inSource).isDirectory();
-        }
-
-        public Item[] list() {
-            if (isSourcePath()) {
-                NPath p = (NPath) inSource;
-                return p.stream().map(
-                                NFunction.of(
-                                        (NPath x) -> new Item(x, c)
-                                ).withDescription(NDescribables.ofDesc("NutsStreamOrPath::of"))
-                        )
-                        .toArray(Item[]::new);
-            }
-            return new Item[0];
-        }
-
-        public InputStream open() {
-            if (c.getOptions().contains(NPathOption.LOG)
-                    || c.getOptions().contains(NPathOption.TRACE)
-                    || c.getProgressFactory() != null) {
-                NInputStreamMonitor monitor = NInputStreamMonitor.of();
-                monitor.setOrigin(inSource);
-                monitor.setLogProgress(c.getOptions().contains(NPathOption.LOG));
-                monitor.setTraceProgress(c.getOptions().contains(NPathOption.TRACE));
-                monitor.setProgressFactory(c.getProgressFactory());
-                monitor.setSource(inSource);
-                return monitor.create();
-            }
-            return inSource.getInputStream();
-        }
-
-        public String getName() {
-            return inSource.getMetaData().getName().orElse(inSource.toString());
-        }
-    }
-
     @Override
-    public NCompress addOptions(NPathOption... pathOptions) {
+    public NCompress options(NPathOption... pathOptions) {
         if (pathOptions != null) {
             for (NPathOption o : pathOptions) {
                 if (o != null) {
@@ -377,7 +333,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public Set<NPathOption> getOptions() {
+    public Set<NPathOption> options() {
         return new LinkedHashSet<>(options);
     }
 

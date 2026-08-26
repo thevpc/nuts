@@ -29,11 +29,11 @@ public class NElementStepChild implements NElementStep {
                 } else {
                     return element.asListContainer().get().get(value.asStringValue().get());
                 }
-            }if(element.isUplet()){
+            }if(element.isTuple()){
                 if (value.type() == NElementType.INT) {
-                    return element.asUplet().get().get(value.asIntValue().get());
+                    return element.asTuple().get().get(value.asIntValue().get());
                 } else {
-                    return element.asUplet().get().get(value.asStringValue().get());
+                    return element.asTuple().get().get(value.asStringValue().get());
                 }
             }if(element.isList()){
                 if (value.type() == NElementType.INT) {
@@ -46,7 +46,7 @@ public class NElementStepChild implements NElementStep {
 
     @Override
     public NElement toElement() {
-        return NElement.ofNamedUplet("Child", value);
+        return NElement.ofNamedTuple("Child", value);
     }
 
     @Override

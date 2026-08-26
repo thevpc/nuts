@@ -2,10 +2,36 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.text.NNewLineMode;
 
+/**
+ * NElementFormatOptions interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NElementFormatOptions {
-    int getComplexityThreshold() ;
-    int getIndent() ;
-    int getColumnLimit();
+    /**
+     * Complexity threshold.
+     *
+     * @return complexity threshold result
+     */
+    int complexityThreshold() ;
+    /**
+     * Indent.
+     *
+     * @return indent result
+     */
+    int indent() ;
+    /**
+     * Column limit.
+     *
+     * @return column limit result
+     */
+    int columnLimit();
 
-    NNewLineMode getNewLineMode();
+    /**
+     * New line mode.
+     *
+     * @return new line mode result
+     */
+    NNewLineMode newLineMode();
 }

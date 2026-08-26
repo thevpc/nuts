@@ -16,7 +16,7 @@ public class InstallIdInfo implements NCopiable, Cloneable {
     public Set<NId> forIds = new HashSet<>();
     public InstallIdCacheItem cacheItem;
     public List<NId> requiredForIds;
-    public boolean resolveInstaller;
+//    public boolean resolveInstaller;
     public boolean loaded;
     public NDependencyScope scope;
     public NDefinition oldDef;

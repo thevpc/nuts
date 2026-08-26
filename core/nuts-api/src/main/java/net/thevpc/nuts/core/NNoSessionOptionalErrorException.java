@@ -42,7 +42,12 @@ public class NNoSessionOptionalErrorException extends NNoSessionException {
      * Constructs a 'missing session' exception
      */
     public NNoSessionOptionalErrorException() {
-        super(NMsg.ofPlain("optional error"));
+      /**
+       * Super.
+       *
+       * @param error") error")
+       */
+        super(NMsg.ofP("optional error"));
     }
 
     /**
@@ -51,9 +56,14 @@ public class NNoSessionOptionalErrorException extends NNoSessionException {
      * call to {@link #initCause}.
      *
      * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     *                later retrieval by the {@link #message()} method.
      */
     public NNoSessionOptionalErrorException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -66,13 +76,19 @@ public class NNoSessionOptionalErrorException extends NNoSessionException {
      * this runtime exception's detail message.
      *
      * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
+     *                by the {@link #message()} method).
      * @param cause   the cause (which is saved for later retrieval by the
      *                {@link #getCause()} method).  (A {@code null} value is
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
     public NNoSessionOptionalErrorException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 }

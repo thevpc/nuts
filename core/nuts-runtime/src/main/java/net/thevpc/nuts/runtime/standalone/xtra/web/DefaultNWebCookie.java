@@ -26,25 +26,25 @@ public class DefaultNWebCookie implements NWebCookie {
 
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public String getValue() {
+    public String value() {
         return value;
     }
 
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
     @Override
-    public String getDomain() {
+    public String domain() {
         return properties.get("path");
     }
 
     public static String formatCookie(NWebCookie cookie) {
-        return NHttpUrlEncoder.encode(cookie.getName()) + "=" + NHttpUrlEncoder.encode(cookie.getValue());
+        return NHttpUrlEncoder.encode(cookie.name()) + "=" + NHttpUrlEncoder.encode(cookie.value());
     }
 }

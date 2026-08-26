@@ -11,6 +11,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NRepositoryFilterNone extends AbstractRepositoryFilter {
@@ -50,15 +51,15 @@ public class NRepositoryFilterNone extends AbstractRepositoryFilter {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         NRepositoryFilterNone that = (NRepositoryFilterNone) o;
-        return Arrays.equals(all, that.all);
+        return Objects.deepEquals(all, that.all);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(all);
+        return Objects.hash(super.hashCode(), Arrays.hashCode(all));
     }
 
     @Override
@@ -67,10 +68,10 @@ public class NRepositoryFilterNone extends AbstractRepositoryFilter {
     }
 
     @Override
-    public NFilterOp getFilterOp() {
+    public NFilterOp filterOp() {
         return NFilterOp.NOT;
     }
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
     }
 }

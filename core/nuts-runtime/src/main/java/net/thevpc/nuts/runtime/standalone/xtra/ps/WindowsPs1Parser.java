@@ -2,14 +2,12 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLines;
-import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NpsStatus;
 import net.thevpc.nuts.io.NpsType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
@@ -114,7 +112,7 @@ public class WindowsPs1Parser {
                             break;
                         }
                         case "STAT": {
-                            switch (NStringUtils.trim(value).toLowerCase()) {
+                            switch (NStringUtils.strip(value).toLowerCase()) {
                                 case "suspended": {
                                     v.setStatus(NpsStatus.SUSPENDED);
                                     break;
@@ -216,14 +214,13 @@ public class WindowsPs1Parser {
 
     private void setCommand(DefaultNPsInfoBuilder v, String line) {
         v.setCmdLine(line);
-        NCmdLines nCmdLines = NCmdLines.of().setShellFamily(NShellFamily.WIN_CMD).setLenient(true);
         try {
-            v.setCmdLineArgs(nCmdLines.parseCmdLine(line).map(NCmdLine::toStringArray).orElse(null));
+            v.setCmdLineArgs(NCmdLine.parse(line,NShellFamily.WIN_CMD).map(NCmdLine::toStringArray).orElse(null));
         } catch (Exception ex) {
             if (line.indexOf("\"\"") >= 0) {
                 line = line.replace("\"\"", "\"");
                 try {
-                    v.setCmdLineArgs(nCmdLines.parseCmdLine(line).map(NCmdLine::toStringArray).orElse(null));
+                    v.setCmdLineArgs(NCmdLine.parse(line,NShellFamily.WIN_CMD,true).map(NCmdLine::toStringArray).orElse(null));
                 } catch (Exception ex2) {
                     // just ignore
                 }
@@ -234,17 +231,17 @@ public class WindowsPs1Parser {
             if (a.length > 0) {
                 int x = Math.max(a[0].lastIndexOf("/"), a[0].lastIndexOf("\\"));
                 if (x >= 0) {
-                    v.setName(NStringUtils.trimToNull(a[0].substring(x + 1)));
+                    v.setName(NStringUtils.stripToNull(a[0].substring(x + 1)));
                 } else {
-                    v.setName(NStringUtils.trimToNull(a[0]));
+                    v.setName(NStringUtils.stripToNull(a[0]));
                 }
             }
         } else {
             int x = Math.max(v.getCmdLine().lastIndexOf("/"), v.getCmdLine().lastIndexOf("\\"));
             if (x >= 0) {
-                v.setName(NStringUtils.trimToNull(v.getCmdLine().substring(x + 1)));
+                v.setName(NStringUtils.stripToNull(v.getCmdLine().substring(x + 1)));
             } else {
-                v.setName(NStringUtils.trimToNull(v.getCmdLine()));
+                v.setName(NStringUtils.stripToNull(v.getCmdLine()));
             }
         }
     }

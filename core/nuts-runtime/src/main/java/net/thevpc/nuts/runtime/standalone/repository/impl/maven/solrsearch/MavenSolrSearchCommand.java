@@ -10,9 +10,9 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.io.UnsupportedEncodingException;
@@ -52,8 +52,8 @@ public class MavenSolrSearchCommand {
                 NPath solrSearchUrl = getSolrSearchUrl();
                 for (NId baseId : baseIds) {
                     MavenSolrSearchRequest r = new MavenSolrSearchRequest(
-                            baseId.getGroupId(),
-                            baseId.getArtifactId()
+                            baseId.groupId(),
+                            baseId.artifactId()
                     );
                     Iterator<NId> ii = this.search(r, solrSearchUrl, filter);
                     if (ii != null) {
@@ -101,7 +101,7 @@ public class MavenSolrSearchCommand {
                     index++;
                 }
                 NPath query = NPath.of(q2.toString());
-                SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("solr repo %s",repo.getName()));
+                SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("solr repo %s",repo.name()));
                 NIteratorBuilder<NId> it = NIteratorBuilder.ofSupplier(new Supplier<Iterator<NId>>() {
                     @Override
                     public Iterator<NId> get() {
@@ -113,7 +113,7 @@ public class MavenSolrSearchCommand {
                             public boolean hasNext() {
                                 if (arr == null) {
                                     NElement e = NElementReader.ofJson()
-                                            .setLogProgress(true)
+                                            .logProgress(true)
                                             .read(query);
                                     if (e.isObject()) {
                                         NObjectElement o = e.asObject().get();
@@ -135,7 +135,7 @@ public class MavenSolrSearchCommand {
                                         String a = d.getStringValue("a").orElse("");
                                         String v = d.getStringValue("v").orElse("");
                                         index++;
-                                        return NIdBuilder.of(g, a).setVersion(v).build();
+                                        return NIdBuilder.of(g, a).version(v).build();
                                     }
                                 }
                                 return null;

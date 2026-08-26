@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.NFixity;
 
 import java.util.Objects;
 
 public final class NExprOpNameAndType {
     private final String name;
-    private final NExprOpType type;
+    private final NFixity type;
 
-    public NExprOpNameAndType(String name, NExprOpType type) {
+    public NExprOpNameAndType(String name, NFixity type) {
         this.name = name;
         this.type = type;
     }
@@ -17,7 +17,7 @@ public final class NExprOpNameAndType {
         return name;
     }
 
-    public NExprOpType getType() {
+    public NFixity getType() {
         return type;
     }
 

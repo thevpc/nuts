@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.definition;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.concurrent.NOnceValue;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -23,7 +24,7 @@ public class NDefinitionHelper {
 
     public static NDefinition ofIdOnlyFromRepo(NId id, NRepository repo, String callerName) {
         NRepositorySPI repoSPI = NWorkspaceUtils.of().toRepositorySPI(repo);
-        return ofIdAndLazyDescriptor(id,()->repoSPI.fetchDescriptor().setId(id).getResult(),callerName);
+        return ofIdAndLazyDescriptor(id,()->repoSPI.fetchDescriptor().id(id).getResult(),callerName);
     }
 
 //    public static NDefinition ofIdOnly(NId id, String callerName) {
@@ -39,7 +40,7 @@ public class NDefinitionHelper {
     }
 
     public static NDefinition ofDescriptorOnly(NDescriptor descriptor) {
-        return new DefinitionForIdAndDescriptor(descriptor.getId(), descriptor);
+        return new DefinitionForIdAndDescriptor(descriptor.id(), descriptor);
     }
 
     private static class DefinitionForIdAndDescriptor extends NDefinitionDelegate {
@@ -57,23 +58,23 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
 
         @Override
-        public NDescriptor getDescriptor() {
+        public NDescriptor descriptor() {
             return descriptor;
         }
 
         @Override
-        public NOptional<NDescriptor> getEffectiveDescriptor() {
-            return NOptional.of(getDescriptor());
+        public NOptional<NDescriptor> effectiveDescriptor() {
+            return NOptional.of(descriptor());
         }
 
         @Override
-        public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
-            return getEffectiveDescriptor().map(x -> x.getFlags());
+        public NOptional<Set<NDescriptorFlag>> effectiveFlags() {
+            return effectiveDescriptor().map(x -> x.flags());
         }
     }
 
@@ -92,7 +93,7 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
     }
@@ -109,7 +110,7 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NDescriptor getDescriptor() {
+        public NDescriptor descriptor() {
             return descriptor.get();
         }
 
@@ -119,7 +120,7 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
     }
@@ -136,7 +137,7 @@ public class NDefinitionHelper {
         }
 
         @Override
-        public NId getId() {
+        public NId id() {
             return id;
         }
 
@@ -149,7 +150,7 @@ public class NDefinitionHelper {
                 try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
                     definition = NFetch.of(id)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
                             .getResultDefinition();
                 } catch (Exception ex) {
                     //suppose we cannot retrieve descriptor

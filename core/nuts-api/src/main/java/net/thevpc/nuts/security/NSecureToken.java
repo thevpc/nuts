@@ -4,7 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NToElement;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.Serializable;
@@ -20,21 +20,38 @@ public class NSecureToken implements Serializable, NToElement {
     private final String agentId;   // e.g., "default", "keychain"
     private final String payload;   // encrypted ciphertext (agent-specific format)
 
+    /**
+     * N secure token.
+     *
+     * @param agentId agent id
+     * @param payload payload
+     * @return n secure token result
+     */
     public NSecureToken(String agentId, String payload) {
         NAssert.requireNamedNonBlank(agentId, "agentId");
         NAssert.requireNamedNonNull(payload, "payload");
         if (agentId.contains(":")) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("agentId must not contain '#' or ':'"));
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("agentId must not contain '#' or ':'"));
         }
-        this.agentId = NStringUtils.trim(agentId);
+        this.agentId = NStringUtils.strip(agentId);
         this.payload = payload;
     }
 
-    public String getAgentId() {
+    /**
+     * Agent id.
+     *
+     * @return agent id result
+     */
+    public String agentId() {
         return agentId;
     }
 
-    public String getPayload() {
+    /**
+     * Payload.
+     *
+     * @return payload result
+     */
+    public String payload() {
         return payload;
     }
 
@@ -54,6 +71,12 @@ public class NSecureToken implements Serializable, NToElement {
     public static NSecureToken parse(String s) {
         int colon = s.indexOf(':');
         if (colon <= 0) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param s s
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("Invalid credential ID format: " + s);
         }
         String agentId = s.substring(0, colon);

@@ -25,7 +25,7 @@ public class LuceneIndexImporter {
         String tempFolder = NPath.ofTempFolder("lucene-repository").toString();
         NUncompress.of().from(NPath.of(tempGzFile)).to(
                 NPath.of(tempFolder)
-        ).setPackaging("gz").run();
+        ).packaging("gz").run();
         try {
             long[] ref=new long[1];
             Files.list(Paths.get(tempFolder)).forEach(
@@ -45,7 +45,7 @@ public class LuceneIndexImporter {
         int allCount=0;
         try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath))) {
             while (p.hasNext()) {
-                NId id = NId.get(p.next()).get().builder().setRepository(repository).build();
+                NId id = NId.get(p.next()).get().builder().repository(repository).build();
                 if (!adb.contains(id)) {
                     addedCount++;
                     adb.add(id);

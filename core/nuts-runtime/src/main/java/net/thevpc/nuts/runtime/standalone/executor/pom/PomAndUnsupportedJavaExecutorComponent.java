@@ -34,9 +34,9 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -49,7 +49,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
     public static NId ID=NId.get("net.thevpc.nuts.exec:java-unsupported").get();
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
@@ -58,9 +58,9 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
         if(true){
             return NScorable.UNSUPPORTED_SCORE;
         }
-        NDefinition def = context.getCriteria(NDefinition.class);
+        NDefinition def = context.criteria(NDefinition.class);
         if (def != null) {
-            switch (NStringUtils.trim(def.getDescriptor().getPackaging())){
+            switch (NStringUtils.strip(def.descriptor().packaging())){
                 case "jar":
                 case "war":
                 case "zip":
@@ -86,8 +86,8 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
             @Override
             public int exec() {
                 throw new NIOException(NMsg.ofC("unsupported execution of %s with packaging %s",
-                        executionContext.getDefinition().getId(),
-                        executionContext.getDefinition().getDescriptor().getPackaging()
+                        executionContext.definition().id(),
+                        executionContext.definition().descriptor().packaging()
                 ));
             }
         };

@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.path;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecutableType;
 import net.thevpc.nuts.command.NExecutionType;
@@ -32,7 +33,6 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
 
     String cmdName;
     String[] args;
-    List<String> executorOptions;
     List<String> workspaceOptions;
     NExecutionType executionType;
     NRunAs runAs;
@@ -63,11 +63,16 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
         this.executorOptions = executorOptions;
         this.workspaceOptions = workspaceOptions;
         this.executorComponentAndContext = executorComponentAndContext;
+        NCmdLine.of(this.executorOptions).matcher()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
+                .requireAll();
     }
 
     @Override
-    public NId getId() {
-        return this.nutToRun.getId();
+    public NId id() {
+        return this.nutToRun.id();
     }
 
     @Override
@@ -76,6 +81,9 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     }
 
     public int executeHelper() {
+        if(completeRequest!=null){
+            return 0;
+        }
         try {
             return executorComponentAndContext.getComponent().exec(executorComponentAndContext.getExecutionContext());
         } finally {

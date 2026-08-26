@@ -11,6 +11,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -39,7 +41,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
         return omitCondition;
     }
 
-    public NIdWriter setOmitCondition(boolean omitCondition) {
+    public NIdWriter omitCondition(boolean omitCondition) {
         this.omitCondition = omitCondition;
         return this;
     }
@@ -48,13 +50,13 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
         return omitExclusion;
     }
 
-    public NIdWriter setOmitExclusion(boolean omitExclusion) {
+    public NIdWriter omitExclusion(boolean omitExclusion) {
         this.omitExclusion = omitExclusion;
         return this;
     }
 
-    public NIdWriter setNtf(boolean ntf) {
-        super.setNtf(ntf);
+    public NIdWriter ntf(boolean ntf) {
+        super.ntf(ntf);
         return this;
     }
 
@@ -64,7 +66,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
     }
 
     @Override
-    public NIdWriter setOmitRepository(boolean value) {
+    public NIdWriter omitRepository(boolean value) {
         this.omitRepository = value;
         return this;
     }
@@ -76,7 +78,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
     }
 
     @Override
-    public NIdWriter setOmitGroupId(boolean value) {
+    public NIdWriter omitGroupId(boolean value) {
         this.omitGroup = value;
         return this;
     }
@@ -87,7 +89,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
     }
 
     @Override
-    public NIdWriter setOmitImportedGroupId(boolean value) {
+    public NIdWriter omitImportedGroupId(boolean value) {
         this.omitImportedGroup = value;
         return this;
     }
@@ -99,7 +101,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
     }
 
     @Override
-    public NIdWriter setOmitOtherProperties(boolean value) {
+    public NIdWriter omitOtherProperties(boolean value) {
         this.omitProperties = value;
         return this;
     }
@@ -111,7 +113,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
     }
 
     @Override
-    public NIdWriter setOmitFace(boolean value) {
+    public NIdWriter omitFace(boolean value) {
         return setOmitProperty(NConstants.IdProperties.FACE, value);
     }
 
@@ -121,13 +123,13 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
     }
 
     @Override
-    public NIdWriter setHighlightImportedGroupId(boolean value) {
+    public NIdWriter highlightImportedGroupId(boolean value) {
         this.highlightImportedGroup = value;
         return this;
     }
 
     @Override
-    public List<String> getOmitProperties() {
+    public List<String> omitProperties() {
         return new ArrayList<>(omittedProperties);
     }
 
@@ -155,17 +157,17 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
                     ;
         }
         NId id=(NId)aValue;
-        Map<String, String> queryMap = id.getProperties();
+        Map<String, String> queryMap = id.properties();
         String scope = queryMap.remove(NConstants.IdProperties.SCOPE);
         String optional = queryMap.remove(NConstants.IdProperties.OPTIONAL);
-        String classifier = id.getClassifier();
-        NEnvCondition condition = id.getCondition();
+        String classifier = id.classifier();
+        NEnvCondition condition = id.condition();
         String exclusions = queryMap.remove(NConstants.IdProperties.EXCLUSIONS);
         String repo = queryMap.remove(NConstants.IdProperties.REPO);
         NIdBuilder idBuilder = id.builder();
         if (isOmitOtherProperties()) {
             idBuilder.clearProperties();
-            idBuilder.setCondition(NEnvCondition.BLANK);
+            idBuilder.condition(NEnvCondition.BLANK);
         }else if (isOmitFace()) {
             idBuilder.setProperty(NConstants.IdProperties.FACE, null);
         }
@@ -173,44 +175,44 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
         NTextBuilder sb = NTextBuilder.of();
         if (NBlankable.isBlank(classifier)) {
             if (!isOmitGroupId()) {
-                if (!NBlankable.isBlank(id.getGroupId())) {
-                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.getGroupId());
+                if (!NBlankable.isBlank(id.groupId())) {
+                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.groupId());
+                    boolean importedGroup = NWorkspace.of().allImports().contains(id.groupId());
                     if (!(importedGroup && isOmitImportedGroupId())) {
                         if (importedGroup || importedGroup2) {
-                            sb.append(id.getGroupId(), NTextStyle.pale());
+                            sb.append(id.groupId(), NTextStyle.pale());
                         } else {
-                            sb.append(id.getGroupId());
+                            sb.append(id.groupId());
                         }
                         sb.append(":", NTextStyle.separator());
                     }
                 }
             }
-            sb.append(id.getArtifactId(), NTextStyle.primary1());
+            sb.append(id.artifactId(), NTextStyle.primary1());
         } else {
             if (!isOmitGroupId()) {
-                if (!NBlankable.isBlank(id.getGroupId())) {
-                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                    boolean importedGroup = NWorkspace.of().getAllImports().contains(id.getGroupId());
+                if (!NBlankable.isBlank(id.groupId())) {
+                    boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.groupId());
+                    boolean importedGroup = NWorkspace.of().allImports().contains(id.groupId());
                     if (!(importedGroup && isOmitImportedGroupId())) {
                         if (importedGroup || importedGroup2) {
-                            sb.append(id.getGroupId(), NTextStyle.pale());
+                            sb.append(id.groupId(), NTextStyle.pale());
                         } else {
-                            sb.append(id.getGroupId());
+                            sb.append(id.groupId());
                         }
                     }
                 }
             }
             sb.append(":", NTextStyle.separator());
-            sb.append(id.getArtifactId(), NTextStyle.primary1());
+            sb.append(id.artifactId(), NTextStyle.primary1());
             sb.append(":", NTextStyle.separator());
-            sb.append(id.getClassifier(), NTextStyle.primary2());
+            sb.append(id.classifier(), NTextStyle.primary2());
         }
 
 
-        if (!NBlankable.isBlank(id.getVersion().getValue())) {
+        if (!NBlankable.isBlank(id.version().value())) {
             sb.append("#", NTextStyle.separator());
-            sb.append(id.getVersion());
+            sb.append(id.version());
         }
         boolean firstQ = true;
 
@@ -235,7 +237,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
             sb.append(_encodeKey(optional));
         }
         if (!isOmitRepository()) {
-            if (!NBlankable.isBlank(id.getRepository())) {
+            if (!NBlankable.isBlank(id.repository())) {
                 if (firstQ) {
                     sb.append("?", NTextStyle.separator());
                     firstQ = false;
@@ -243,7 +245,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
                     sb.append("&", NTextStyle.separator());
                 }
                 sb.append("repo", NTextStyle.keyword(2)).append("=", NTextStyle.separator());
-                sb.append(_encodeKey(id.getRepository()), NTextStyle.pale());
+                sb.append(_encodeKey(id.repository()), NTextStyle.pale());
             }
         }
         if(!isOmitCondition()) {
@@ -272,7 +274,7 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
                 sb.append(_encodeKey(exclusions), NTextStyle.warn());
             }
         }
-        if (!NBlankable.isBlank(id.getPropertiesQuery())) {
+        if (!NBlankable.isBlank(id.propertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
             for (String k : otherKeys) {
                 String v2 = queryMap.get(k);
@@ -331,22 +333,22 @@ public class DefaultNIdWriter extends DefaultObjectWriterBase<NIdWriter> impleme
         }
         switch (aa.key()) {
             case "--omit-env": {
-                return cmdLine.matcher().matchFlag((v) -> this.setOmitOtherProperties(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.omitOtherProperties(v.booleanValue())).anyMatch();
             }
             case "--omit-face": {
-                return cmdLine.matcher().matchFlag((v) -> this.setOmitFace(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.omitFace(v.booleanValue())).anyMatch();
             }
             case "--omit-group": {
-                return cmdLine.matcher().matchFlag((v) -> this.setOmitGroupId(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.omitGroupId(v.booleanValue())).anyMatch();
             }
             case "--omit-imported-group": {
-                return cmdLine.matcher().matchFlag((v) -> this.setOmitImportedGroupId(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.omitImportedGroupId(v.booleanValue())).anyMatch();
             }
             case "--omit-repo": {
-                return cmdLine.matcher().matchFlag((v) -> this.setOmitRepository(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.omitRepository(v.booleanValue())).anyMatch();
             }
             case "--highlight-imported-group": {
-                return cmdLine.matcher().matchFlag((v) -> this.setHighlightImportedGroupId(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.highlightImportedGroupId(v.booleanValue())).anyMatch();
             }
         }
         return false;

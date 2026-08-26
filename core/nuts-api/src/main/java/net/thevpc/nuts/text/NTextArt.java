@@ -35,51 +35,172 @@ import net.thevpc.nuts.util.NOptional;
  */
 public interface NTextArt extends NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTextArt of() {
         return NExtensions.of(NTextArt.class);
     }
 
-    List<NTextArtTableRenderer> getTableRenderers();
+    /**
+     * Table renderers.
+     *
+     * @return table renderers result
+     */
+    List<NTextArtTableRenderer> tableRenderers();
 
-    List<NTextArtTreeRenderer> getTreeRenderers();
+    /**
+     * Tree renderers.
+     *
+     * @return tree renderers result
+     */
+    List<NTextArtTreeRenderer> treeRenderers();
 
-    List<NTextArtTextRenderer> getTextRenderers();
+    /**
+     * Text renderers.
+     *
+     * @return text renderers result
+     */
+    List<NTextArtTextRenderer> textRenderers();
 
-    List<NTextArtImageRenderer> getImageRenderers();
+    /**
+     * Image renderers.
+     *
+     * @return image renderers result
+     */
+    List<NTextArtImageRenderer> imageRenderers();
 
+    /**
+     * Returns the renderers.
+     *
+     * @param rendererType renderer type
+     * @return get renderers result
+     */
     <T extends NTextArtRenderer> List<NTextArtRenderer> getRenderers(Class<T> rendererType);
 
-    List<NTextArtRenderer> getRenderers();
+    /**
+     * Renderers.
+     *
+     * @return renderers result
+     */
+    List<NTextArtRenderer> renderers();
 
+    /**
+     * Load renderer.
+     *
+     * @param path path
+     * @return load renderer result
+     */
     NOptional<NTextArtRenderer> loadRenderer(NPath path);
 
-    NOptional<NTextArtRenderer> getDefaultRenderer();
+    /**
+     * Default renderer.
+     *
+     * @return default renderer result
+     */
+    NOptional<NTextArtRenderer> defaultRenderer();
 
+    /**
+     * Returns the renderer.
+     *
+     * @param rendererName renderer name
+     * @return get renderer result
+     */
     NOptional<NTextArtRenderer> getRenderer(String rendererName);
 
+    /**
+     * Load tree renderer.
+     *
+     * @param path path
+     * @return load tree renderer result
+     */
     NOptional<NTextArtTreeRenderer> loadTreeRenderer(NPath path);
 
+    /**
+     * Load table renderer.
+     *
+     * @param path path
+     * @return load table renderer result
+     */
     NOptional<NTextArtTableRenderer> loadTableRenderer(NPath path);
 
+    /**
+     * Load text renderer.
+     *
+     * @param path path
+     * @return load text renderer result
+     */
     NOptional<NTextArtTextRenderer> loadTextRenderer(NPath path);
 
+    /**
+     * Load image renderer.
+     *
+     * @param path path
+     * @return load image renderer result
+     */
     NOptional<NTextArtImageRenderer> loadImageRenderer(NPath path);
 
 
+    /**
+     * Returns the image renderer.
+     *
+     * @param rendererName renderer name
+     * @return get image renderer result
+     */
     NOptional<NTextArtImageRenderer> getImageRenderer(String rendererName);
 
+    /**
+     * Returns the text renderer.
+     *
+     * @param rendererName renderer name
+     * @return get text renderer result
+     */
     NOptional<NTextArtTextRenderer> getTextRenderer(String rendererName);
 
+    /**
+     * Returns the table renderer.
+     *
+     * @param rendererName renderer name
+     * @return get table renderer result
+     */
     NOptional<NTextArtTableRenderer> getTableRenderer(String rendererName);
 
+    /**
+     * Returns the tree renderer.
+     *
+     * @param rendererName renderer name
+     * @return get tree renderer result
+     */
     NOptional<NTextArtTreeRenderer> getTreeRenderer(String rendererName);
 
-    NOptional<NTextArtTextRenderer> getTextRenderer();
+    /**
+     * Text renderer.
+     *
+     * @return text renderer result
+     */
+    NOptional<NTextArtTextRenderer> textRenderer();
 
-    NOptional<NTextArtImageRenderer> getImageRenderer();
+    /**
+     * Image renderer.
+     *
+     * @return image renderer result
+     */
+    NOptional<NTextArtImageRenderer> imageRenderer();
 
-    NOptional<NTextArtTableRenderer> getTableRenderer();
+    /**
+     * Table renderer.
+     *
+     * @return table renderer result
+     */
+    NOptional<NTextArtTableRenderer> tableRenderer();
 
-    NOptional<NTextArtTreeRenderer> getTreeRenderer();
+    /**
+     * Tree renderer.
+     *
+     * @return tree renderer result
+     */
+    NOptional<NTextArtTreeRenderer> treeRenderer();
 
 }

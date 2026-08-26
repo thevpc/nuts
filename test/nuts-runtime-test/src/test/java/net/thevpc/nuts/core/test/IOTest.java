@@ -21,7 +21,7 @@ public class IOTest {
         NNonBlockingInputStream s = NInputSourceBuilder.of(bis).createNonBlockingInputStream();
         try {
             int e = s.readNonBlocking(new byte[16], 0, 16,10000);
-            System.out.println(e);
+            TestUtils.println(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -38,13 +38,13 @@ public class IOTest {
                 try {
                     int count = nbs.readNonBlocking(buffer, 500);
                     if (count > 0) {
-                        System.out.println("read " + count);
+                        TestUtils.println("read " + count);
                     }
                 } catch (Exception ex) {
-                    System.out.println("error");
+                    TestUtils.println("error");
                 }
             } else {
-                System.out.println("end");
+                TestUtils.println("end");
                 break;
             }
         }

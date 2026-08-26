@@ -5,10 +5,21 @@ import net.thevpc.nuts.elem.NMapBy;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * NClock class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NClock {
     private final long timeMillis;
     private final long nanos;
 
+    /**
+     * Now.
+     *
+     * @return now result
+     */
     public static NClock now() {
         return new NClock(
                 System.currentTimeMillis(),
@@ -24,19 +35,40 @@ public class NClock {
         this.nanos = nanos;
     }
 
+    /**
+     * Minus.
+     *
+     * @param o o
+     * @return minus result
+     */
     public NDuration minus(NClock o) {
         return NDuration.ofNanos(nanos - o.nanos);
     }
 
-    public Instant getInstant() {
+    /**
+     * Instant.
+     *
+     * @return instant result
+     */
+    public Instant instant() {
         return Instant.ofEpochMilli(timeMillis);
     }
 
-    public long getTimeMillis() {
+    /**
+     * Time millis.
+     *
+     * @return time millis result
+     */
+    public long timeMillis() {
         return timeMillis;
     }
 
-    public long getTimeNanos() {
+    /**
+     * Time nanos.
+     *
+     * @return time nanos result
+     */
+    public long timeNanos() {
         return nanos;
     }
 

@@ -48,6 +48,7 @@ public class NLinuxGpuProbe {
 
     private static final long NVIDIA_SMI_TIMEOUT_SECONDS = 5;
 
+
     private static List<NGpuDevice> cached;
 
     private NLinuxGpuProbe() {
@@ -76,7 +77,7 @@ public class NLinuxGpuProbe {
 
     private static List<NGpuDevice> probe0() {
         List<NGpuDevice> all = new ArrayList<>();
-        if (NOsFamily.getCurrent() != NOsFamily.LINUX) {
+        if (NOsFamily.current() != NOsFamily.LINUX) {
             return all;
         }
         List<String[]> pciDevices = scanPciDisplayDevices();
@@ -130,7 +131,7 @@ public class NLinuxGpuProbe {
      * @return free memory in bytes, negative when unknown
      */
     public static long queryFreeMemoryBytes(String pciBusId) {
-        if (pciBusId == null || NOsFamily.getCurrent() != NOsFamily.LINUX) {
+        if (pciBusId == null || NOsFamily.current() != NOsFamily.LINUX) {
             return -1;
         }
         String out = exec("nvidia-smi", "--query-gpu=pci.bus_id,memory.free", "--format=csv,noheader,nounits");

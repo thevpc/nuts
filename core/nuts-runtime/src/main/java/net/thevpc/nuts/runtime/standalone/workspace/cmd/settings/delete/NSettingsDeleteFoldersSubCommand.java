@@ -14,17 +14,15 @@ import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,21 +39,21 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     private static void deleteRepoCache(NRepository repository, boolean force) {
         NPath s = repository.config().getStoreLocation(NStoreType.CACHE);
         if (s != null) {
-            NSession session = repository.getWorkspace().currentSession();
+            NSession session = repository.workspace().currentSession();
             if (s.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s folder %s ...",
                         NText.ofStyledPrimary1("cache")
                         , s));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
-                        .getBooleanValue()) {
+                        .forBoolean(NMsg.ofP("force delete?")).defaultValue(false)
+                        .booleanValue()) {
                     s.delete();
                 }
             }
         }
         if (repository.config().isSupportedMirroring()) {
-            for (NRepository mirror : repository.config().getMirrors()) {
+            for (NRepository mirror : repository.config().mirrors()) {
                 deleteRepoCache(mirror, force);
             }
         }
@@ -65,7 +63,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         for (NStoreType value : NStoreType.values()) {
             String cmdName = "delete " + value.id();
-            cmdLine.setCommandName("settings " + cmdName);
+            cmdLine.commandName("settings " + cmdName);
             if (cmdLine.next(cmdName).isPresent()) {
                 boolean force = false;
                 Set<NStoreType> locationsToDelete = new HashSet<>();
@@ -99,21 +97,20 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     private void deleteWorkspaceFolder(NStoreType storeType, boolean force) {
         NPath sstoreLocation = NPath.of(NStoreKey.of(storeType));
         if (sstoreLocation != null) {
-            NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
-                        factory.ofStyled(storeType.id(), NTextStyle.primary1()),
-                        factory.ofStyled(NWorkspace.of().getName(), NTextStyle.primary1()),
-                        factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
+                        NText.ofStyled(storeType.id(), NTextStyle.primary1()),
+                        NText.ofStyled(NWorkspace.of().name(), NTextStyle.primary1()),
+                        NText.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
-                        .getBooleanValue()) {
+                        .forBoolean(NMsg.ofP("force delete?")).defaultValue(false)
+                        .booleanValue()) {
                     sstoreLocation.delete();
                 }
             }
         }
-        for (NRepository repository : NWorkspace.of().getRepositories()) {
+        for (NRepository repository : NWorkspace.of().repositories()) {
             deleteRepoFolder(repository, storeType, force);
         }
     }
@@ -121,22 +118,21 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     private void deleteRepoFolder(NRepository repository, NStoreType storeType, boolean force) {
         NPath sstoreLocation = NPath.of(NStoreKey.of(storeType));
         if (sstoreLocation != null) {
-            NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
                 NOut.println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
-                        factory.ofStyled(storeType.id(), NTextStyle.primary1()),
-                        factory.ofStyled(repository.getName(), NTextStyle.primary1()),
-                        factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
+                        NText.ofStyled(storeType.id(), NTextStyle.primary1()),
+                        NText.ofStyled(repository.name(), NTextStyle.primary1()),
+                        NText.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || NIn.ask()
-                        .forBoolean(NMsg.ofPlain("Force Delete?")).setDefaultValue(false)
-                        .getBooleanValue()) {
+                        .forBoolean(NMsg.ofP("Force Delete?")).defaultValue(false)
+                        .booleanValue()) {
                     sstoreLocation.delete();
                 }
             }
         }
         if (repository.config().isSupportedMirroring()) {
-            for (NRepository subRepository : repository.config().getMirrors()) {
+            for (NRepository subRepository : repository.config().mirrors()) {
                 deleteRepoCache(subRepository, force);
             }
         }
@@ -149,7 +145,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             if (sstoreLocation.exists()) {
                 sstoreLocation.delete();
             }
-            for (NRepository repository : NWorkspace.of().getRepositories()) {
+            for (NRepository repository : NWorkspace.of().repositories()) {
                 deleteRepoCache(repository, force);
             }
         }

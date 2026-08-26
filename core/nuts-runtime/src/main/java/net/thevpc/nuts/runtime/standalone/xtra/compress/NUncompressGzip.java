@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.log.NLog;
@@ -22,12 +25,12 @@ public class NUncompressGzip implements NUncompressPackaging {
     @Override
     public void visitPackage(NUncompress uncompress, NInputSource source, NUncompressVisitor visitor) {
         try {
-            String baseName = source.getMetaData().getName().orElse("no-name");
+            String baseName = source.metaData().name().orElse("no-name");
             //get the zip file content
-            InputStream _in = source.getInputStream();
+            InputStream _in = source.inputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n = NPath.of(baseName).getName();
+                    String n = NPath.of(baseName).name();
                     if (n.endsWith(".gz")) {
                         n = n.substring(0, n.length() - 3);
                     }
@@ -58,7 +61,7 @@ public class NUncompressGzip implements NUncompressPackaging {
         } catch (IOException ex) {
             _LOG()
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", source,
-                            uncompress.getTarget(), ex).asConfig().withIntent(NMsgIntent.FAIL));
+                            uncompress.target(), ex).asConfig().withIntent(NMsgIntent.FAIL));
             throw new NIOException(ex);
         }
     }
@@ -69,7 +72,7 @@ public class NUncompressGzip implements NUncompressPackaging {
 
     @Override
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {
-        NOutputTarget target = uncompress.getTarget();
+        NOutputTarget target = uncompress.target();
         try {
             NPath _target = asValidTargetPath(target);
             if (_target == null) {
@@ -78,14 +81,14 @@ public class NUncompressGzip implements NUncompressPackaging {
             Path folder = _target.toPath().get();
             NPath.of(folder).mkdirs();
 
-            String baseName = source.getMetaData().getName().orElse("no-name");
+            String baseName = source.metaData().name().orElse("no-name");
             byte[] buffer = new byte[1024];
 
             //get the zip file content
-            InputStream _in = source.getInputStream();
+            InputStream _in = source.inputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n = NPath.of(baseName).getName();
+                    String n = NPath.of(baseName).name();
                     if (n.endsWith(".gz")) {
                         n = n.substring(0, n.length() - 3);
                     }
@@ -134,8 +137,7 @@ public class NUncompressGzip implements NUncompressPackaging {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NUncompress c = context.getCriteria(NUncompress.class);
-        String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
+        String z = NStringUtils.strip(context.criteria(String.class)).toLowerCase();
         if (
                 z.equals("gzip")
                         || z.equals("gz")

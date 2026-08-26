@@ -47,6 +47,12 @@ public final class NConstants {
     private NConstants() {
     }
 
+    /**
+     * Apps class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static final class Apps {
         public static final String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
     }

@@ -29,10 +29,9 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextBuilder;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,11 +67,11 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
         return start;
     }
 
-    public NText getChild() {
+    public NText child() {
         return child;
     }
 
-    public int getLevel() {
+    public int level() {
         return level;
     }
 
@@ -144,32 +143,28 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
         return prerender().substring(start, end);
     }
 
-    public List<NText> split(String chars, boolean returnSeparator) {
-        return prerender().split(chars, returnSeparator);
-    }
-
     private NText prerender() {
         NTextBuilder sb = new DefaultNTextBuilder();
-        sb.append(new DefaultNTextStyled(getChild(), NTextStyles.of(NTextStyle.primary(level))));
+        sb.append(new DefaultNTextStyled(child(), NTextStyles.of(NTextStyle.primary(level))));
         sb.append("\n");
         return sb.build();
     }
 
     @Override
-    public NText trimLeft() {
-        NText c = getChild().trimLeft();
+    public NText stripLeft() {
+        NText c = child().stripLeft();
         return new DefaultNTextTitle(start, level, c);
     }
 
     @Override
-    public NText trimRight() {
-        NText c = getChild().trimRight();
+    public NText stripRight() {
+        NText c = child().stripRight();
         return new DefaultNTextTitle(start, level, c);
     }
 
     @Override
-    public NText trim() {
-        NText c = getChild().trim();
+    public NText strip() {
+        NText c = child().strip();
         return new DefaultNTextTitle(start, level, c);
     }
 

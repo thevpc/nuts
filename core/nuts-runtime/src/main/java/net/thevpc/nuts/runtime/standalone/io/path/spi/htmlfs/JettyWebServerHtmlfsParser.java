@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -23,17 +24,17 @@ public class JettyWebServerHtmlfsParser extends AbstractHtmlfsParser {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                if(line.trim().equals("<table class=\"listing\">")){
+                if(NStringUtils.strip(line).equals("<table class=\"listing\">")){
                     break;
                 }
             }
             while ((line = br.readLine()) != null) {
-                if(line.trim().equals("</table>")){
+                if(NStringUtils.strip(line).equals("</table>")){
                     break;
                 }
                 Matcher m = pattern.matcher(line);
                 if(m.find()){
-                    found.add(XmlEscaper.escapeToUnicode(m.group("title").trim()).trim());
+                    found.add(NStringUtils.strip(XmlEscaper.escapeToUnicode(NStringUtils.strip(m.group("title")))));
                 }
             }
         } catch (Exception e) {

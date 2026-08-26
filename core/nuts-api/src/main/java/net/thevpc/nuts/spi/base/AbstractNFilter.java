@@ -7,22 +7,35 @@ import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * AbstractNFilter class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public abstract class AbstractNFilter implements NFilter {
 
     private NFilterOp op;
 
+    /**
+     * Abstract n filter.
+     *
+     * @param op op
+     * @return abstract n filter result
+     */
     public AbstractNFilter(NFilterOp op) {
         this.op = op;
     }
 
     @Override
-    public NFilterOp getFilterOp() {
+    public NFilterOp filterOp() {
         return op;
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Collections.emptyList();
     }
 
@@ -31,13 +44,13 @@ public abstract class AbstractNFilter implements NFilter {
         if (other == null) {
             return this;
         }
-        switch (other.getFilterOp()) {
+        switch (other.filterOp()) {
             case TRUE:
                 return other;
             case FALSE:
                 return this;
         }
-        switch (getFilterOp()) {
+        switch (filterOp()) {
             case TRUE:
                 return other;
             case FALSE:
@@ -51,13 +64,13 @@ public abstract class AbstractNFilter implements NFilter {
         if (other == null) {
             return this;
         }
-        switch (other.getFilterOp()) {
+        switch (other.filterOp()) {
             case TRUE:
                 return this;
             case FALSE:
                 return other;//false
         }
-        switch (getFilterOp()) {
+        switch (filterOp()) {
             case TRUE:
                 return other;
             case FALSE:
@@ -77,17 +90,35 @@ public abstract class AbstractNFilter implements NFilter {
     }
 
     @Override
-    public Class<? extends NFilter> getFilterType() {
+    public Class<? extends NFilter> filterType() {
         return NFilters.of().detectType(this);
     }
 
     @Override
     public <T extends NFilter> NFilter simplify(Class<T> type) {
+        /**
+         * Simplify.
+         *
+         * @param ).to(type ).to(type
+         * @return simplify result
+         */
         return simplify().to(type);
     }
 
     @Override
     public NElement describe() {
         return NElement.ofString(toString());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractNFilter that = (AbstractNFilter) o;
+        return op == that.op;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(op);
     }
 }

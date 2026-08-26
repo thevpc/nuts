@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.text.util;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.time.NDurationFormatMode;
+import net.thevpc.nuts.mon.NDurationFormatMode;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.text.DecimalFormat;
@@ -89,8 +89,8 @@ public class DefaultNDurationFormat2 {
                 }
             }
         }
-        if (uordinal > duration.getLargestUnit().ordinal()
-                || uordinal < duration.getSmallestUnit().ordinal()
+        if (uordinal > duration.largestUnit().ordinal()
+                || uordinal < duration.smallestUnit().ordinal()
         ) {
             return;
         }
@@ -188,7 +188,7 @@ public class DefaultNDurationFormat2 {
     }
 
     private boolean accept(ChronoUnit c, NDuration duration) {
-        if (c.ordinal() < duration.getSmallestUnit().ordinal()) {
+        if (c.ordinal() < duration.smallestUnit().ordinal()) {
             return false;
         }
         switch (mode) {
@@ -207,8 +207,8 @@ public class DefaultNDurationFormat2 {
         return sb.build();
     }
 
-    public NText format(NDuration duration, NTexts texts) {
-        NTextBuilder sb = texts.ofBuilder();
+    public NText format(NDuration duration, NTextRPI texts) {
+        NTextBuilder sb = texts.createBuilder();
         print(duration, sb);
         return sb.build();
     }
@@ -223,8 +223,8 @@ public class DefaultNDurationFormat2 {
             formatUnit(duration, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
-            out.append(formatNumber(0, duration.getSmallestUnit()), NTextStyle.number());
-            out.append(unitString(duration.getSmallestUnit()), NTextStyle.info());
+            out.append(formatNumber(0, duration.smallestUnit()), NTextStyle.number());
+            out.append(unitString(duration.smallestUnit()), NTextStyle.info());
         } else if (mode == NDurationFormatMode.CLOCK) {
             if (processed.contains(ChronoUnit.MILLIS)) {
                 processed.add(ChronoUnit.SECONDS);

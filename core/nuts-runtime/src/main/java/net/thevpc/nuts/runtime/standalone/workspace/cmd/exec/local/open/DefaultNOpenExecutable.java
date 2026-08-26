@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.open;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExec;
@@ -30,32 +30,25 @@ import java.util.List;
 public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     String[] cmd;
-    String[] executorOptions;
     private boolean showCommand = false;
     private String[] effectiveOpenExecutable;
 
     public DefaultNOpenExecutable(String[] cmd,
-                                  String[] executorOptions, NExec execCommand
+                                  List<String> executorOptions, NExec execCommand
     ) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
-        this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
-        NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get();
-            switch (aa.key()) {
-                case "--show-command": {
-                    cmdLine.matcher().matchFlag((v) -> this.showCommand = (v.booleanValue())).anyMatch();
-                    break;
-                }
-                default: {
-                    cmdLine.skip();
-                }
-            }
-        }
-        switch (NEnv.of().getOsFamily()) {
+        this.executorOptions = executorOptions;
+
+        NCmdLine.of(this.executorOptions).matcher()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
+                .requireAll();
+
+        switch (NEnv.of().osFamily()) {
             case LINUX: {
                 Path execPath = NSysExecUtils.sysWhich("xdg-open");
                 if (execPath != null) {
@@ -86,10 +79,11 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
                 break;
             }
         }
+
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return null;
     }
 
@@ -101,23 +95,26 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
         cc.system();
         List<String> ss = new ArrayList<>(Arrays.asList(effectiveOpenExecutable));
         ss.addAll(Arrays.asList(cmd));
-        cc.setCommand(ss);
+        cc.command(ss);
         return cc;
     }
 
     @Override
     public int execute() {
-        return resolveExecHelper().run().getResultCode();
+        if(completeRequest!=null){
+            return 0;
+        }
+        return resolveExecHelper().run().exitCode();
     }
 
     @Override
-    public NText getHelpText() {
-        switch (NEnv.of().getOsFamily()) {
+    public NText helpText() {
+        switch (NEnv.of().osFamily()) {
             case WINDOWS: {
-                return NText.ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
+                return NText.ofStyled("No help available. Try " + name() + " /help", NTextStyle.error());
             }
             default: {
-                return NText.ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'", NTextStyle.error());
+                return NText.ofStyled("No help available. Try 'man " + name() + "' or '" + name() + " --help'", NTextStyle.error());
             }
         }
     }

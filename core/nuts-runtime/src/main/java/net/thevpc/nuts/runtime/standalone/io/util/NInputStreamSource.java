@@ -17,33 +17,33 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
     }
 
     @Override
-    public long getContentLength() {
-        return this.md.getContentLength().orElse(-1L);
+    public long contentLength() {
+        return this.md.contentLength().orElse(-1L);
     }
 
     @Override
-    public InputStream getInputStream() {
+    public InputStream inputStream() {
         return inputStream;
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
     @Override
-    public String getName() {
-        return getMetaData().getName().orNull();
+    public String name() {
+        return metaData().name().orNull();
     }
 
     @Override
-    public String getContentType() {
-        return getMetaData().getContentType().orNull();
+    public String contentType() {
+        return metaData().contentType().orNull();
     }
 
     @Override
-    public String getCharset() {
-        return getMetaData().getCharset().orNull();
+    public String charset() {
+        return metaData().charset().orNull();
     }
 
     @Override

@@ -1,23 +1,55 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NGetter;
+
+/**
+ * NPathChildDigestInfo class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NPathChildDigestInfo {
     private String name;
     private byte[] digest;
 
-    public String getName() {
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NPathChildDigestInfo setName(String name) {
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    public NPathChildDigestInfo name(String name) {
         this.name = name;
         return this;
     }
 
-    public byte[] getDigest() {
+    /**
+     * Digest.
+     *
+     * @return digest result
+     */
+    @NGetter
+    public byte[] digest() {
         return digest;
     }
 
-    public NPathChildDigestInfo setDigest(byte[] digest) {
+    /**
+     * Digest.
+     *
+     * @param digest digest
+     * @return digest result
+     */
+    public NPathChildDigestInfo digest(byte[] digest) {
         this.digest = digest;
         return this;
     }

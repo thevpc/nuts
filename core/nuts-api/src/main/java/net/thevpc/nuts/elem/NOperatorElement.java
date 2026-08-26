@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -38,10 +39,25 @@ import java.util.List;
  */
 public interface NOperatorElement extends NElement {
 
-    NOperatorPosition position();
+    /**
+     * Fixity.
+     *
+     * @return fixity result
+     */
+    NFixity fixity();
 
+    /**
+     * Operands.
+     *
+     * @return operands result
+     */
     List<NElement> operands();
 
+    /**
+     * Operator symbols.
+     *
+     * @return operator symbols result
+     */
     List<NOperatorSymbol> operatorSymbols();
 
     /**
@@ -51,7 +67,19 @@ public interface NOperatorElement extends NElement {
      */
     NOperatorElementBuilder builder();
 
+    /**
+     * Operand.
+     *
+     * @param index index
+     * @return operand result
+     */
     NOptional<NElement> operand(int index);
 
+    /**
+     * Operator symbol.
+     *
+     * @param index index
+     * @return operator symbol result
+     */
     NOptional<NOperatorSymbol> operatorSymbol(int index);
 }

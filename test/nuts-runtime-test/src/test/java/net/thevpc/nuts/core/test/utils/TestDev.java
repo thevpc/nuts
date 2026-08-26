@@ -17,6 +17,6 @@ public class TestDev {
         NText s = NText.of(NMsg.ofC("%s", "Hello"));
 
         NOut.println(NMsg.ofC("%s", "Hello"));
-        NOut.println(NMsg.ofC("%s", NMsg.ofPlain("Hello")));
+        NOut.println(NMsg.ofC("%s", NMsg.ofP("Hello")));
     }
 }

@@ -36,23 +36,81 @@ import net.thevpc.nuts.util.NFilter;
  * @since 0.8.0
  */
 public interface NTypedFilters<T extends NFilter> extends NComponent {
+    /**
+     * Nonnull.
+     *
+     * @param filter filter
+     * @return nonnull result
+     */
     T nonnull(NFilter filter);
 
+    /**
+     * Always.
+     *
+     * @return always result
+     */
     T always();
 
+    /**
+     * Never.
+     *
+     * @return never result
+     */
     T never();
 
+    /**
+     * All.
+     *
+     * @param others others
+     * @return all result
+     */
     T all(NFilter... others);
 
+    /**
+     * Any.
+     *
+     * @param others others
+     * @return any result
+     */
     T any(NFilter... others);
 
+    /**
+     * Not.
+     *
+     * @param other other
+     * @return not result
+     */
     T not(NFilter other);
 
+    /**
+     * None.
+     *
+     * @param others others
+     * @return none result
+     */
     T none(NFilter... others);
 
+    /**
+     * From.
+     *
+     * @param a a
+     * @return from result
+     */
     T from(NFilter a);
 
+    /**
+     * As.
+     *
+     * @param a a
+     * @return as result
+     */
     T as(NFilter a);
 
+    /**
+     * Parse.
+     *
+     * @param expression expression
+     * @return parse result
+     */
     T parse(String expression);
 }

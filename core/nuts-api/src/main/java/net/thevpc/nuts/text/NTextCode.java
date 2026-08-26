@@ -42,9 +42,19 @@ public interface NTextCode extends NText {
      *
      * @return text
      */
-    String getValue();
+    String value();
 
-    String getQualifier();
+    /**
+     * Qualifier.
+     *
+     * @return qualifier result
+     */
+    String qualifier();
 
-    String getSeparator();
+    /**
+     * Separator.
+     *
+     * @return separator result
+     */
+    String separator();
 }

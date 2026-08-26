@@ -1,35 +1,132 @@
 package net.thevpc.nuts.net;
 
 import net.thevpc.nuts.io.NInputSource;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
+/**
+ * NWebRequestBody interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NWebRequestBody {
-    NInputSource getBody();
+    /**
+     * Body.
+     *
+     * @return body result
+     */
+    @NGetter
+    NInputSource body();
 
-    String getContentType();
+    /**
+     * Content type.
+     *
+     * @return content type result
+     */
+    @NGetter
+    String contentType();
 
-    String getEncoding();
+    /**
+     * Encoding.
+     *
+     * @return encoding result
+     */
+    @NGetter
+    String encoding();
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    String name();
 
-    String getFileName();
+    /**
+     * File name.
+     *
+     * @return file name result
+     */
+    @NGetter
+    String fileName();
 
-    String getStringValue();
+    /**
+     * String value.
+     *
+     * @return string value result
+     */
+    @NGetter
+    String stringValue();
 
-    String getContentDisposition();
+    /**
+     * Content disposition.
+     *
+     * @return content disposition result
+     */
+    @NGetter
+    String contentDisposition();
 
-    NWebRequestBody setStringValue(String source);
+    /**
+     * String value.
+     *
+     * @param source source
+     * @return string value result
+     */
+    @NSetter
+    NWebRequestBody stringValue(String source);
 
-    NWebRequestBody setBody(NInputSource source);
+    /**
+     * Body.
+     *
+     * @param source source
+     * @return body result
+     */
+    @NSetter
+    NWebRequestBody body(NInputSource source);
 
-    NWebRequestBody setContentType(String contentType);
+    /**
+     * Content type.
+     *
+     * @param contentType content type
+     * @return content type result
+     */
+    @NSetter
+    NWebRequestBody contentType(String contentType);
 
-    NWebRequestBody setEncoding(String encoding);
+    /**
+     * Encoding.
+     *
+     * @param encoding encoding
+     * @return encoding result
+     */
+    @NSetter
+    NWebRequestBody encoding(String encoding);
 
-    NWebRequestBody setName(String name);
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    @NSetter
+    NWebRequestBody name(String name);
 
-    NWebRequestBody setFileName(String fileName);
+    /**
+     * File name.
+     *
+     * @param fileName file name
+     * @return file name result
+     */
+    @NSetter
+    NWebRequestBody fileName(String fileName);
 
     //return parent NWebRequest
+    /**
+     * End.
+     *
+     * @return end result
+     */
     NWebRequest end();
 
 }

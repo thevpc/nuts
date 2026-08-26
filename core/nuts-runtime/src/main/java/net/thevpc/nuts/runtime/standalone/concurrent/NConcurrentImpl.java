@@ -5,8 +5,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.concurrent.NCallable;
 
 import java.time.Duration;
@@ -43,7 +43,7 @@ public class NConcurrentImpl implements NConcurrent {
     private NBulkheadCallFactory bulkheadCallFactory;
 
     @Override
-    public NConcurrent setCachedValueFactory(NCachedValueFactory cachedValueFactory) {
+    public NConcurrent cachedValueFactory(NCachedValueFactory cachedValueFactory) {
         this.cachedValueFactory = cachedValueFactory;
         return this;
     }
@@ -87,7 +87,7 @@ public class NConcurrentImpl implements NConcurrent {
 
 
     @Override
-    public NConcurrent setOnceValueFactory(NOnceValueFactory onceValueFactory) {
+    public NConcurrent onceValueFactory(NOnceValueFactory onceValueFactory) {
         this.onceValueFactory = onceValueFactory;
         return this;
     }
@@ -129,7 +129,7 @@ public class NConcurrentImpl implements NConcurrent {
     }
 
     @Override
-    public NConcurrent setRateLimitValueFactory(NRateLimitValueFactory factory) {
+    public NConcurrent rateLimitValueFactory(NRateLimitValueFactory factory) {
         this.rateLimitValueFactory = factory;
         return this;
     }
@@ -187,7 +187,7 @@ public class NConcurrentImpl implements NConcurrent {
     }
 
     @Override
-    public NConcurrent setCircuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory) {
+    public NConcurrent circuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory) {
         this.circuitBreakerCallFactory = circuitBreakerCallFactory;
         return this;
     }
@@ -233,7 +233,7 @@ public class NConcurrentImpl implements NConcurrent {
     }
 
     @Override
-    public NConcurrent setWorkBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory) {
+    public NConcurrent workBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory) {
         this.workBalancerCallFactory = workBalancerCallFactory;
         return this;
     }
@@ -325,7 +325,7 @@ public class NConcurrentImpl implements NConcurrent {
     }
 
     @Override
-    public NConcurrent setBulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory) {
+    public NConcurrent bulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory) {
         this.bulkheadCallFactory = bulkheadCallFactory;
         return this;
     }

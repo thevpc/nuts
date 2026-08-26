@@ -48,6 +48,12 @@ public class NNotExecutableException extends NExecutionException {
      * @param id artifact id
      */
     public NNotExecutableException(NId id) {
+      /**
+       * Super.
+       *
+       * @param id)) id))
+       * @param NExecutionException.ERROR_255 n execution exception.error_255
+       */
         super(NMsg.ofC("not executable %s", (id == null ? "<null>" : id)), NExecutionException.ERROR_255);
         this.id = id;
     }
@@ -57,7 +63,7 @@ public class NNotExecutableException extends NExecutionException {
      *
      * @return artifact id
      */
-    public NId getId() {
+    public NId id() {
         return id;
     }
 }

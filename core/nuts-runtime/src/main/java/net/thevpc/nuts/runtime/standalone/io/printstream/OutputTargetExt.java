@@ -21,12 +21,12 @@ public class OutputTargetExt implements NOutputTarget {
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return base;
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
@@ -37,7 +37,7 @@ public class OutputTargetExt implements NOutputTarget {
     @Override
     public String toString() {
         NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
-        NOptional<NMsg> m = getMetaData().getMessage();
+        NOptional<NMsg> m = metaData().message();
         if (m.isPresent()) {
             out.print(m.get());
         } else if (sourceName != null) {

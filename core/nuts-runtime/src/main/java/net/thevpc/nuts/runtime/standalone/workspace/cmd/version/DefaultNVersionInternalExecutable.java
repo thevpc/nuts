@@ -15,20 +15,22 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExec execCommand) {
-        super("version", args, execCommand);
+    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExec execCommand, List<String> executorOptions) {
+        super("version", args, execCommand,executorOptions);
     }
 
     @Override
     public int execute() {
         NSession session = NSession.of();
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;
@@ -38,7 +40,7 @@ public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutabl
             return NExecutionException.SUCCESS;
         }
         NPrintStream out = session.out();
-        NVersionWriter.of().configure(false, args).println(NWorkspace.of().getRuntimeId().getVersion(), out);
+        NVersionWriter.of().configure(false, args).println(NWorkspace.of().runtimeId().version(), out);
         return NExecutionException.SUCCESS;
     }
 

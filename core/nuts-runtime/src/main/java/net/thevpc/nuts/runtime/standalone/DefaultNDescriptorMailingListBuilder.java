@@ -25,8 +25,8 @@ public class DefaultNDescriptorMailingListBuilder implements NDescriptorMailingL
     }
 
     public DefaultNDescriptorMailingListBuilder(NDescriptorMailingList other) {
-        this(other.getId(), other.getName(), other.getSubscribe(), other.getUnsubscribe(), other.getPost(), other.getArchive(),
-                other.getOtherArchives(), other.getProperties(), other.getComments()
+        this(other.id(), other.name(), other.subscribe(), other.unsubscribe(), other.post(), other.archive(),
+                other.otherArchives(), other.properties(), other.comments()
         );
     }
 
@@ -43,100 +43,100 @@ public class DefaultNDescriptorMailingListBuilder implements NDescriptorMailingL
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setId(String id) {
+    public NDescriptorMailingListBuilder id(String id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setName(String name) {
+    public NDescriptorMailingListBuilder name(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public String getSubscribe() {
+    public String subscribe() {
         return subscribe;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setSubscribe(String subscribe) {
+    public NDescriptorMailingListBuilder subscribe(String subscribe) {
         this.subscribe = subscribe;
         return this;
     }
 
     @Override
-    public String getUnsubscribe() {
+    public String unsubscribe() {
         return unsubscribe;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setUnsubscribe(String unsubscribe) {
+    public NDescriptorMailingListBuilder unsubscribe(String unsubscribe) {
         this.unsubscribe = unsubscribe;
         return this;
     }
 
     @Override
-    public String getPost() {
+    public String post() {
         return post;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setPost(String post) {
+    public NDescriptorMailingListBuilder post(String post) {
         this.post = post;
         return this;
     }
 
     @Override
-    public String getArchive() {
+    public String archive() {
         return archive;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setArchive(String archive) {
+    public NDescriptorMailingListBuilder archive(String archive) {
         this.archive = archive;
         return this;
     }
 
     @Override
-    public List<String> getOtherArchives() {
+    public List<String> otherArchives() {
         return otherArchives;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setOtherArchives(List<String> otherArchives) {
+    public NDescriptorMailingListBuilder otherArchives(List<String> otherArchives) {
         this.otherArchives = otherArchives;
         return this;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setProperties(Map<String, String> properties) {
+    public NDescriptorMailingListBuilder properties(Map<String, String> properties) {
         this.properties = properties;
         return this;
     }
 
     @Override
-    public String getComments() {
+    public String comments() {
         return comments;
     }
 
     @Override
-    public NDescriptorMailingListBuilder setComments(String comments) {
+    public NDescriptorMailingListBuilder comments(String comments) {
         this.comments = comments;
         return this;
     }

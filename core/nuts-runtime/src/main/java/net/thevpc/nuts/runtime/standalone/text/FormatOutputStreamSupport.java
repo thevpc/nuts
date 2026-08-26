@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNTextNodeParserDefaults;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 
 public class FormatOutputStreamSupport {
@@ -20,8 +20,8 @@ public class FormatOutputStreamSupport {
     public FormatOutputStreamSupport(NPrintStream rawOutput, NSystemTerminalBase term, boolean filtered) {
         this.parser = AbstractNTextNodeParserDefaults.createDefault();
         this.nodeWriter = new NTextNodeWriterRenderer(rawOutput, term)
-                .setWriteConfiguration(writeConfiguration.setFiltered(false));
-        this.writeConfiguration.setFiltered(filtered);
+                .setWriteConfiguration(writeConfiguration.filtered(false));
+        this.writeConfiguration.filtered(filtered);
     }
 
     public NTextParser getParser() {
@@ -29,7 +29,7 @@ public class FormatOutputStreamSupport {
     }
 
     public FormatOutputStreamSupport setParser(NTextParser parser) {
-        this.parser = parser == null ? NTexts.of().parser() : parser;
+        this.parser = parser == null ? NTextParser.of() : parser;
         return this;
     }
 
@@ -39,7 +39,7 @@ public class FormatOutputStreamSupport {
 
     public FormatOutputStreamSupport setFormatEnabled(boolean formatEnabled) {
         this.formatEnabled = formatEnabled;
-        writeConfiguration.setFiltered(!formatEnabled);
+        writeConfiguration.filtered(!formatEnabled);
         return this;
     }
 

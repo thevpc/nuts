@@ -34,22 +34,22 @@ class ReaderInputSource extends AbstractNInputSource {
     }
 
     @Override
-    public long getContentLength() {
+    public long contentLength() {
         return -1;
     }
 
     @Override
-    public InputStream getInputStream() {
+    public InputStream inputStream() {
         return in;
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
     @Override
-    public Reader getReader() {
+    public Reader asReader() {
         return reader;
     }
 

@@ -27,8 +27,8 @@
 //import net.thevpc.nuts.core.NWorkspace;
 //import net.thevpc.nuts.ext.NExtensions;
 //import net.thevpc.nuts.platform.*;
-//import net.thevpc.nuts.util.NDefaultObservableMap;
-//import net.thevpc.nuts.util.NObservableMap;
+//import net.thevpc.nuts.util.collections.NDefaultObservableMap;
+//import net.thevpc.nuts.util.collections.NObservableMap;
 //import net.thevpc.nuts.util.*;
 //
 //import java.lang.management.ManagementFactory;

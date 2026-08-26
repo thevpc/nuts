@@ -48,8 +48,8 @@ public class MutableNDependencyTreeNode implements NDependencyTreeNode {
     }
     
     public MutableNDependencyTreeNode(NDependencyTreeNode n) {
-        this.dependency=n.getDependency();
-        this.children=new ArrayList<>(n.getChildren());
+        this.dependency=n.dependency();
+        this.children=new ArrayList<>(n.children());
         this.partial=n.isPartial();
     }
 
@@ -86,12 +86,12 @@ public class MutableNDependencyTreeNode implements NDependencyTreeNode {
     }
 
     @Override
-    public NDependency getDependency() {
+    public NDependency dependency() {
         return dependency;
     }
 
     @Override
-    public List<NDependencyTreeNode> getChildren() {
+    public List<NDependencyTreeNode> children() {
         return children;
     }
 

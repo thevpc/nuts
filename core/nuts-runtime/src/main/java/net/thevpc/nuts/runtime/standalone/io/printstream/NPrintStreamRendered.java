@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
-import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
+import net.thevpc.nuts.spi.base.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyled;
@@ -15,21 +15,21 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
     protected NPrintStreamBase base;
 
     public NPrintStreamRendered(NPrintStreamBase base, NTerminalMode mode, Bindings bindings) {
-        super(true, mode, bindings, base.getTerminal());
+        super(true, mode, bindings, base.terminal());
         this.base = base;
-        this.support = new FormatOutputStreamSupport(base, base.getTerminal(),
+        this.support = new FormatOutputStreamSupport(base, base.terminal(),
                 (mode != NTerminalMode.ANSI && mode != NTerminalMode.FORMATTED)
         );
     }
 
     public void flushTransientLine(){
-        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.getTerminal();
-        if(terminal.isLastWasProgress()){
+        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.terminal();
+        if(terminal!=null && terminal.isLastWasProgress()){
             support.flush();
             support.pushNode(NText.ofCommand(NTerminalCmd.CLEAR_LINE));
             support.pushNode(NText.ofCommand(NTerminalCmd.MOVE_LINE_START));
             support.flush();
-            terminal.setLastWasProgress(false);
+            terminal.lastWasProgress(false);
         }
     }
 
@@ -82,9 +82,9 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
 
     @Override
     public NPrintStream printProgressLine(NText b) {
-        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.getTerminal();
+        NSystemTerminalBaseImpl terminal = (NSystemTerminalBaseImpl) base.terminal();
         if(!terminal.isLastWasProgress()) {
-            terminal.setLastWasProgress(true);
+            terminal.lastWasProgress(true);
             support.flush();
         }
         for (NText line : b.split("\n\r")) {
@@ -104,7 +104,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                         break;
                     }
                     case STYLED: {
-                        printParsed0(((NTextStyled) line).getChild());
+                        printParsed0(((NTextStyled) line).child());
                         break;
                     }
                     default: {
@@ -133,7 +133,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                     break;
                 }
                 case STYLED: {
-                    printParsed(((NTextStyled) b).getChild());
+                    printParsed(((NTextStyled) b).child());
                     break;
                 }
                 default: {
@@ -157,7 +157,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                     break;
                 }
                 case STYLED: {
-                    printParsed0(((NTextStyled) b).getChild());
+                    printParsed0(((NTextStyled) b).child());
                     break;
                 }
                 default: {
@@ -175,7 +175,7 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
                 return new NPrintStreamFiltered(base, bindings);
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", terminalMode(), other));
     }
 
 }

@@ -1,5 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
+import net.thevpc.nuts.concurrent.NConcurrent;
+import net.thevpc.nuts.concurrent.NInterruptedException;
+import net.thevpc.nuts.concurrent.NTimeoutException;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.boot.internal.util.NBootLog;
 import net.thevpc.nuts.io.NCp;
@@ -9,9 +12,12 @@ import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
 
@@ -25,58 +31,62 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWebCli implements NWebCli {
+    private Executor executor;
 
     public static URLConnection prepareGlobalConnection(URLConnection c) {
-        int connectionTimout = getGlobalConnectionTimeoutOrDefault();
-        int readTimout = getGlobalReadConnectionTimeoutOrDefault();
-        c.setConnectTimeout(Math.max(connectionTimout, 0));
-        c.setReadTimeout(Math.max(readTimout, 0));
+        NDuration connectionTimeout = getGlobalConnectionTimeoutOrDefault();
+        NDuration readTimeout = getGlobalReadConnectionTimeoutOrDefault();
+        c.setConnectTimeout(connectionTimeout == null ? 0 : asMs(connectionTimeout.toMillis()));
+        c.setReadTimeout(readTimeout == null ? 0 : asMs(readTimeout.toMillis()));
         return c;
     }
 
-    public static int getGlobalConnectionTimeoutOrDefault() {
-        Integer v = getGlobalConnectionTimeout();
+    public static NDuration getGlobalConnectionTimeoutOrDefault() {
+        NDuration v = getGlobalConnectionTimeout();
         if (v == null) {
-            return 30000;
+            return NDuration.ofSeconds(30);
         }
         return v;
     }
 
-    public static Integer getGlobalReadConnectionTimeoutOrDefault() {
-        Integer v = getGlobalReadTimeout();
+    public static NDuration getGlobalReadConnectionTimeoutOrDefault() {
+        NDuration v = getGlobalReadTimeout();
         if (v == null) {
 //            return getGlobalConnectionTimeoutOrDefault();
-            return 30000;
+            return NDuration.ofSeconds(30);
         }
         return v;
     }
 
-    public static Integer getGlobalConnectionTimeout() {
-        return NWorkspace.of().getBootOptions()
-                .getCustomOptionArg("---connection-timeout").flatMap(y -> y.getValue().asInt())
+    public static NDuration getGlobalConnectionTimeout() {
+        return NWorkspace.of().bootOptions()
+                .customOptionArg("---connection-timeout").flatMap(y -> NDuration.of(y.stringValue()))
                 .orElse(null);
     }
 
-    public static Integer getGlobalReadTimeout() {
-        return NWorkspace.of().getBootOptions()
-                .getCustomOptionArg("---connection-read-timeout").flatMap(y -> y.getValue().asInt())
+    public static NDuration getGlobalReadTimeout() {
+        return NWorkspace.of().bootOptions()
+                .customOptionArg("---connection-read-timeout").flatMap(y -> NDuration.of(y.stringValue()))
                 .orElse(null);
     }
 
     public static NBootLog log;
     private String prefix;
     private Function<NWebResponse, NWebResponse> responsePostProcessor;
-    private Integer readTimeout;
-    private Integer connectTimeout;
-    private DefaultNWebHeaders headers = new DefaultNWebHeaders();
+    private NDuration readTimeout;
+    private NDuration connectTimeout;
+    private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
     public DefaultNWebCli() {
-        headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().getRuntimeId().getVersion(), DefaultNWebHeaders.Mode.ALWAYS);
+        headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().runtimeId().version(), DefaultNWebHeaders.Mode.ALWAYS);
     }
 
     public static InputStream prepareGlobalOpenStream(URL url) throws IOException {
@@ -86,10 +96,19 @@ public class DefaultNWebCli implements NWebCli {
         return c.getInputStream();
     }
 
+    public Executor executor() {
+        return executor;
+    }
+
+    public NWebCli executor(Executor executor) {
+        this.executor = executor;
+        return this;
+    }
+
     @Override
-    public NWebCookie[] getCookies() {
+    public List<NWebCookie> cookies() {
         List<String> li = headers.getOrEmpty("Cookie");
-        return li.stream().map(x -> new DefaultNWebCookie(x)).toArray(NWebCookie[]::new);
+        return li.stream().map(x -> new DefaultNWebCookie(x)).collect(Collectors.toList());
     }
 
     @Override
@@ -99,7 +118,7 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli setHeader(String name, String value) {
+    public NWebCli header(String name, String value) {
         headers.addHeader(name, value, DefaultNWebHeaders.Mode.REPLACE);
         return this;
     }
@@ -124,10 +143,10 @@ public class DefaultNWebCli implements NWebCli {
     @Override
     public boolean containsCookie(String cookieName) {
         List<String> li = headers.getOrEmpty("Cookie");
-        return li.stream().map(x -> new DefaultNWebCookie(x)).anyMatch(x -> Objects.equals(x.getName(), cookieName));
+        return li.stream().map(x -> new DefaultNWebCookie(x)).anyMatch(x -> Objects.equals(x.name(), cookieName));
     }
 
-    public Map<String, List<String>> getHeaders() {
+    public Map<String, List<String>> headers() {
         return headers.toMap();
     }
 
@@ -154,7 +173,7 @@ public class DefaultNWebCli implements NWebCli {
     public NWebCli removeCookie(NWebCookie cookie) {
         if (cookie != null) {
             for (String s : headers.getOrEmpty("Cookie")) {
-                if (Objects.equals(new DefaultNWebCookie(s).getName(), cookie.getName())) {
+                if (Objects.equals(new DefaultNWebCookie(s).name(), cookie.name())) {
                     headers.removeHeader("Cookie", s);
                 }
             }
@@ -165,7 +184,7 @@ public class DefaultNWebCli implements NWebCli {
     public NWebCli removeCookie(String cookieName) {
         if (cookieName != null) {
             for (String s : headers.getOrEmpty("Cookie")) {
-                if (Objects.equals(new DefaultNWebCookie(s).getName(), cookieName)) {
+                if (Objects.equals(new DefaultNWebCookie(s).name(), cookieName)) {
                     headers.removeHeader("Cookie", s);
                 }
             }
@@ -177,7 +196,7 @@ public class DefaultNWebCli implements NWebCli {
     public NWebCli addCookie(NWebCookie cookie) {
         if (cookie != null) {
             for (String s : headers.getOrEmpty("Cookie")) {
-                if (Objects.equals(new DefaultNWebCookie(s).getName(), cookie.getName())) {
+                if (Objects.equals(new DefaultNWebCookie(s).name(), cookie.name())) {
                     headers.removeHeader("Cookie", s);
                 }
             }
@@ -187,7 +206,7 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli addCookies(NWebCookie[] cookies) {
+    public NWebCli addCookies(NWebCookie... cookies) {
         if (cookies != null) {
             for (NWebCookie cookie : cookies) {
                 addCookie(cookie);
@@ -197,30 +216,25 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public Function<NWebResponse, NWebResponse> getResponsePostProcessor() {
+    public Function<NWebResponse, NWebResponse> responsePostProcessor() {
         return responsePostProcessor;
     }
 
     @Override
-    public NWebCli setResponsePostProcessor(Function<NWebResponse, NWebResponse> responsePostProcessor) {
+    public NWebCli responsePostProcessor(Function<NWebResponse, NWebResponse> responsePostProcessor) {
         this.responsePostProcessor = responsePostProcessor;
         return this;
     }
 
     @Override
-    public String getPrefix() {
+    public String baseUri() {
         return prefix;
     }
 
     @Override
-    public NWebCli setPrefix(String prefix) {
+    public NWebCli baseUri(String prefix) {
         this.prefix = prefix;
         return this;
-    }
-
-    @Override
-    public NWebRequest req() {
-        return new NWebRequestImpl(this, NHttpMethod.GET);
     }
 
     @Override
@@ -230,96 +244,96 @@ public class DefaultNWebCli implements NWebCli {
 
     @Override
     public NWebRequest GET() {
-        return req().GET();
+        return req(NHttpMethod.GET);
     }
 
     @Override
     public NWebRequest POST() {
-        return req().POST();
+        return req(NHttpMethod.POST);
     }
 
     @Override
     public NWebRequest PUT() {
-        return req().PUT();
+        return req(NHttpMethod.PUT);
     }
 
     @Override
     public NWebRequest DELETE() {
-        return req().DELETE();
+        return req(NHttpMethod.DELETE);
     }
 
     @Override
     public NWebRequest PATCH() {
-        return req().PATCH();
+        return req(NHttpMethod.PATCH);
     }
 
     @Override
     public NWebRequest OPTIONS() {
-        return req().OPTIONS();
+        return req(NHttpMethod.OPTIONS).OPTIONS();
     }
 
     @Override
     public NWebRequest HEAD() {
-        return req().HEAD();
+        return req(NHttpMethod.HEAD).HEAD();
     }
 
     @Override
     public NWebRequest CONNECT() {
-        return req().CONNECT();
+        return req(NHttpMethod.CONNECT).CONNECT();
     }
 
     @Override
     public NWebRequest TRACE() {
-        return req().TRACE();
+        return req(NHttpMethod.TRACE).TRACE();
     }
 
     @Override
     public NWebRequest GET(String path) {
-        return req().GET(path);
+        return req(NHttpMethod.GET).GET(path);
     }
 
     @Override
     public NWebRequest POST(String path) {
-        return req().POST(path);
+        return req(NHttpMethod.POST).POST(path);
     }
 
     @Override
     public NWebRequest PUT(String path) {
-        return req().PUT(path);
+        return req(NHttpMethod.PUT).PUT(path);
     }
 
     @Override
     public NWebRequest DELETE(String path) {
-        return req().DELETE(path);
+        return req(NHttpMethod.DELETE).DELETE(path);
     }
 
     @Override
     public NWebRequest PATCH(String path) {
-        return req().PATCH(path);
+        return req(NHttpMethod.PATCH).PATCH(path);
     }
 
     @Override
     public NWebRequest OPTIONS(String path) {
-        return req().OPTIONS(path);
+        return req(NHttpMethod.OPTIONS).OPTIONS(path);
     }
 
     @Override
     public NWebRequest HEAD(String path) {
-        return req().HEAD(path);
+        return req(NHttpMethod.HEAD).HEAD(path);
     }
 
     @Override
     public NWebRequest CONNECT(String path) {
-        return req().CONNECT(path);
+        return req(NHttpMethod.CONNECT).CONNECT(path);
     }
 
     @Override
     public NWebRequest TRACE(String path) {
-        return req().TRACE(path);
+        return req(NHttpMethod.TRACE).TRACE(path);
     }
 
     public String formatURL(NWebRequest r, boolean safe) {
-        String p = r.getUrl();
+        String p = r.uri();
         StringBuilder u = new StringBuilder();
         if (prefix == null || p.startsWith("http:") || p.startsWith("https:")) {
             u.append(p);
@@ -334,7 +348,7 @@ public class DefaultNWebCli implements NWebCli {
                 }
             }
         }
-        String bu = u.toString().trim();
+        String bu = NStringUtils.strip(u.toString());
         if (bu.isEmpty() || bu.equals("/")) {
             if (!safe) {
                 throw new IllegalArgumentException("missing url : " + bu);
@@ -347,9 +361,9 @@ public class DefaultNWebCli implements NWebCli {
             }
         }
 
-        if (r.getParameters() != null && r.getParameters().size() > 0) {
+        if (r.parameters() != null && r.parameters().size() > 0) {
             StringBuilder sb = new StringBuilder();
-            for (Map.Entry<String, List<String>> e : r.getParameters().entrySet()) {
+            for (Map.Entry<String, List<String>> e : r.parameters().entrySet()) {
                 String k = e.getKey();
                 List<String> values = e.getValue();
                 if (values != null && values.size() > 0) {
@@ -374,10 +388,20 @@ public class DefaultNWebCli implements NWebCli {
         return u.toString();
     }
 
+    public CompletableFuture<NWebResponse> runAsync(NWebRequest r, Executor executor) {
+        if (executor == null) {
+            executor = this.executor;
+            if (executor == null) {
+                executor = NConcurrent.of().executorService();
+            }
+        }
+        return CompletableFuture.supplyAsync(() -> run(r), executor);
+    }
+
     public NWebResponse run(NWebRequest r) {
         NAssert.requireNamedNonNull(r, "request");
-        NAssert.requireNamedNonNull(r.getMethod(), "method");
-        NHttpMethod method = r.getMethod();
+        NAssert.requireNamedNonNull(r.method(), "method");
+        NHttpMethod method = r.method();
         String spec = null;
         try {
             spec = formatURL(r, false);
@@ -386,33 +410,37 @@ public class DefaultNWebCli implements NWebCli {
             try {
                 uc = (HttpURLConnection) h.openConnection();
 
-                Integer readTimeout1 = r.getReadTimeout();
+                NDuration readTimeout1 = r.readTimeout();
                 if (readTimeout1 == null) {
-                    readTimeout1 = getReadTimeout();
+                    readTimeout1 = readTimeout();
                 }
                 if (readTimeout1 == null) {
                     readTimeout1 = getGlobalReadConnectionTimeoutOrDefault();
                 }
                 if (readTimeout1 != null) {
-                    uc.setReadTimeout(Math.max(readTimeout1, 0));
+                    uc.setReadTimeout(
+                            asMs(readTimeout1.toMillis())
+                    );
                 }
 
-                Integer connectTimeout1 = r.getConnectTimeout();
+                NDuration connectTimeout1 = r.connectTimeout();
                 if (connectTimeout1 == null) {
-                    connectTimeout1 = getConnectTimeout();
+                    connectTimeout1 = connectTimeout();
                 }
                 if (connectTimeout1 == null) {
                     connectTimeout1 = getGlobalConnectionTimeoutOrDefault();
                 }
                 if (connectTimeout1 != null) {
-                    uc.setConnectTimeout(Math.max(connectTimeout1, 0));
+                    uc.setConnectTimeout(
+                            asMs(connectTimeout1.toMillis())
+                    );
                 }
                 DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
                 //must be called before writing headers!
-                NInputSource requestBody = r.getRequestBody();
+                NInputSource requestBody = r.requestBody();
 
-                headers.addHeadersMulti(r.getHeaders(), DefaultNWebHeaders.Mode.ALWAYS);
+                headers.addHeadersMulti(r.headers(), DefaultNWebHeaders.Mode.ALWAYS);
                 headers.addHeadersMulti(this.headers.toMap(), DefaultNWebHeaders.Mode.IF_EMPTY);
 
                 for (Map.Entry<String, List<String>> e : headers.toMap().entrySet()) {
@@ -421,8 +449,8 @@ public class DefaultNWebCli implements NWebCli {
                 uc.setRequestMethod(method.toString());
                 uc.setUseCaches(false);
 
-                long bodyLength = requestBody == null ? -1 : requestBody.getContentLength();
-                boolean someBody = requestBody != null && bodyLength > 0;
+                long bodyLength = requestBody == null || requestBody.isKnownContentLength() ? -1 : requestBody.contentLength();
+                boolean someBody = requestBody != null;
 
                 uc.setDoInput(!r.isOneWay());
                 uc.setDoOutput(someBody);
@@ -433,7 +461,9 @@ public class DefaultNWebCli implements NWebCli {
 
                 try {
                     if (someBody) {
-                        uc.setRequestProperty("Content-Length", String.valueOf(bodyLength));
+                        if (requestBody.isKnownContentLength()) {
+                            uc.setFixedLengthStreamingMode(bodyLength);
+                        }
                         NCp.of().from(requestBody).to(uc.getOutputStream()).run();
                     }
                     rCode = NHttpCode.of(uc.getResponseCode());
@@ -458,13 +488,13 @@ public class DefaultNWebCli implements NWebCli {
                     throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, seenError), seenError);
                 }
 
-                String rm = NStringUtils.trim(uc.getResponseMessage());
-                if(rCode!=null && !rCode.isOk() && rm.isEmpty()){
-                    rm="Error "+rCode;
+                String rm = NStringUtils.strip(uc.getResponseMessage());
+                if (rCode != null && !rCode.isOk() && rm.isEmpty()) {
+                    rm = "Error " + rCode;
                 }
                 NWebResponse httpResponse = new NWebResponseImpl(
                         rCode,
-                        NMsg.ofPlain(rm),
+                        NMsg.ofP(rm),
                         uc.getHeaderFields(),
                         () -> {
                             NInputSource bytes = null;
@@ -472,7 +502,7 @@ public class DefaultNWebCli implements NWebCli {
                                 //TODO change me with a smart copy input source!
                                 HttpURLConnection uc2 = finalUc;
                                 try {
-                                    bytes = NInputSourceBuilder.of(finalUc.getInputStream()).setCloseAction(() -> {
+                                    bytes = NInputSourceBuilder.of(finalUc.getInputStream()).closeAction(() -> {
                                                 // close connection when fully read!
                                                 if (uc2 != null) {
                                                     try {
@@ -483,6 +513,7 @@ public class DefaultNWebCli implements NWebCli {
                                                 }
                                             }
                                     ).createInputSource();
+
                                 } catch (IOException e) {
                                     throw new NIOException(e);
                                 }
@@ -490,7 +521,7 @@ public class DefaultNWebCli implements NWebCli {
 //                    bytes = NIO.of().ofInputSource(byteArrayResult);
                                 long contentLength = finalUc.getContentLengthLong();
                                 if (contentLength >= 0) {
-                                    bytes.getMetaData().setContentLength(contentLength);
+                                    bytes.metaData().contentLength(contentLength);
                                 }
                             }
                             return bytes;
@@ -502,7 +533,7 @@ public class DefaultNWebCli implements NWebCli {
                         httpResponse = newResp;
                     }
                 }
-                addCookies(httpResponse.getCookies());
+                addCookies(httpResponse.cookies().toArray(new NWebCookie[0]));
                 return httpResponse;
             } finally {
                 if (r.isOneWay()) {
@@ -517,14 +548,22 @@ public class DefaultNWebCli implements NWebCli {
                 }
             }
         } catch (SocketTimeoutException ex) {
-            throw new UncheckedIOException("timed out loading " + spec + " (" + ex.getMessage() + ")", ex);
+            throw new NTimeoutException(NMsg.ofC("timed out loading %s (%s)", spec, ex), ex);
         } catch (InterruptedByTimeoutException | InterruptedIOException ex) {
-            throw new UncheckedIOException("interrupt loading " + spec + " (" + ex.getMessage() + ")", ex);
-        } catch (UncheckedIOException ex) {
-            throw new UncheckedIOException(new IOException("error loading " + spec + " (" + ex.getMessage() + ")"));
-        } catch (IOException ex) {
-            throw new UncheckedIOException("error loading " + spec + " (" + ex.getMessage() + ")", ex);
+            throw new NInterruptedException(NMsg.ofC("interrupt out loading %s (%s)", spec, ex), ex);
+        } catch (UncheckedIOException | IOException ex) {
+            throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, ex), ex);
         }
+    }
+
+    private static int asMs(long a) {
+        if (a < 0) {
+            return 0;
+        }
+        if (a > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+        return (int) a;
     }
 
     private void _writeHeader(HttpURLConnection uc, String name, List<String> values) {
@@ -539,7 +578,7 @@ public class DefaultNWebCli implements NWebCli {
         //
         switch (name.toUpperCase()) {
             case "COOKIE": {
-                uc.setRequestProperty(name, String.join(" ; ", values));
+                uc.setRequestProperty(name, String.join("; ", values));
                 return;
             }
         }
@@ -550,29 +589,36 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public Integer getReadTimeout() {
+    public NDuration readTimeout() {
         return readTimeout;
     }
 
     @Override
-    public NWebCli setReadTimeout(Integer readTimeout) {
+    public NWebCli readTimeout(NDuration readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
 
     @Override
-    public Integer getConnectTimeout() {
+    public NDuration connectTimeout() {
         return connectTimeout;
     }
 
     @Override
-    public NWebCli setConnectTimeout(Integer connectTimeout) {
+    public NWebCli connectTimeout(NDuration connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
     }
 
+    @Override
+    public NWebCli timeout(NDuration timeout) {
+        this.readTimeout = timeout;
+        this.connectTimeout = timeout;
+        return this;
+    }
+
     public static String UNIFORM_HEADER(String h) {
-        return NStringUtils.trim(h).toUpperCase();
+        return NStringUtils.strip(h).toUpperCase();
     }
 
 }

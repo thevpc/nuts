@@ -26,14 +26,13 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Class responsible of manipulating {@link NElement} type. It help parsing
+ * Class responsible for manipulating {@link NElement} type. It helps parsing
  * from, converting to and formatting such types.
  *
  * @author thevpc
@@ -43,39 +42,33 @@ import java.util.function.Consumer;
 public interface NElements extends NComponent {
 
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NElements of() {
         return NExtensions.of(NElements.class);
     }
 
 
-    NElement normalize(NElement e, NContentType contentType);
+    /**
+     * Checks if is ntf.
+     *
+     * @return is ntf result
+     */
+    boolean isNtf();
 
-    NElement normalizeJson(NElement e);
-
-    NElement normalizeTson(NElement e);
-
-    NElement normalizeYaml(NElement e);
-
-    NElement normalizeXml(NElement e);
-
-
+    /**
+     * Sets the ntf.
+     *
+     * @param ntf ntf
+     * @return set ntf result
+     */
     NElements setNtf(boolean ntf);
 
     /**
-     * compile pathExpression into a valid NutsElementPath that helps filtering
-     * elements tree. JSONPath expressions refer to a JSON structure the same
-     * way as XPath expression are used with XML documents. JSONPath expressions
-     * can use the dot notation and/or bracket notations .store.book[0].title
-     * The trailing root is not necessary : .store.book[0].title You can also
-     * use bracket notation store['book'][0].title for input paths.
      *
-     * @param pathExpression element path expression
-     * @return Element Path filter
-     */
-    NElementSelector compileSelector(String pathExpression);
-
-    /**
-     * /**
      * convert element to the specified object if applicable or throw an
      * exception.
      *
@@ -101,47 +94,37 @@ public interface NElements extends NComponent {
      */
     Object toSimple(Object any);
 
+    /**
+     * Converts to element.
+     *
+     * @param any any
+     * @return to element result
+     */
     NElement toElement(Object any);
 
 
+    /**
+     * From element.
+     *
+     * @param o o
+     * @param to to
+     * @return from element result
+     */
     <T> T fromElement(NElement o, Class<T> to);
 
 
+    /**
+     * Do with mapper store.
+     *
+     * @param doWith do with
+     * @return do with mapper store result
+     */
     NElements doWithMapperStore(Consumer<NElementMapperStore> doWith);
 
+    /**
+     * Mapper store.
+     *
+     * @return mapper store result
+     */
     NElementMapperStore mapperStore();
-
-    NElementType commonNumberType(NElementType aa, NElementType bb);
-
-    NExprElementReshaper createExprElementReshaper(NExprElementReshaperType type);
-
-    NExprElementReshaperBuilder createExprElementReshaperBuilder(NExprElementReshaperType type);
-
-    NElementFormatterBuilder createElementFormatterBuilder();
-
-    NElementFormatter createElementFormatter(NElementFormatterStyle style);
-
-    NElementPath createRootPath();
-
-    NElementMetadata createElementMetadata();
-
-    NElementMetadata createElementMetadata(Object key, Object value);
-
-    NElementMetadata createElementMetadata(Map<Object, Object> any);
-
-    NElementStep createStepChild(String name);
-
-    NElementStep createStepChild(int index);
-
-    NElementStep createStepParam(String name);
-
-    NElementStep createStepParam(int index);
-
-    NElementStep createStepAnnotationParam(int paramIndex,String name);
-
-    NElementStep createStepAnnotationParam(int paramIndex,int index);
-
-    NElementStep createStepSubList(int index);
-
-    NElementNavigator createRootNavigator(NElement element);
 }

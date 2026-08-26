@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.template.NExprTemplateImpl;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NFunction2;
@@ -26,26 +26,26 @@ public abstract class NExprContextBase implements NExprContext {
         return getConstruct(constructName, args).flatMap(x -> NOptional.ofNullable(x.eval(c)));
     }
 
-    public NOptional<Object> evalOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<Object> evalOperator(String opName, NFixity type, NExprNodeValue... args) {
 
         return getOperator(opName, type, args).flatMap(x -> NOptional.ofNullable(x.eval(
-                NExprCallContextImpl.ofOperator(x.name(), Arrays.asList(args), this,x.operatorType(),x.operatorPrecedence(),x.operatorAssociativity())
+                NExprCallContextImpl.ofOperator(x.name(), Arrays.asList(args), this,x.fixity(),x.operatorPrecedence(),x.operatorAssociativity())
         )));
     }
 
     @Override
     public NOptional<Object> evalInfixOperator(String opName, NExprNodeValue first, NExprNodeValue second) {
-        return evalOperator(opName, NExprOpType.INFIX, first, second);
+        return evalOperator(opName, NFixity.INFIX, first, second);
     }
 
     @Override
     public NOptional<Object> evalPrefixOperator(String opName, NExprNodeValue arg) {
-        return evalOperator(opName, NExprOpType.PREFIX, arg);
+        return evalOperator(opName, NFixity.PREFIX, arg);
     }
 
     @Override
     public NOptional<Object> evalPostfixOperator(String opName, NExprNodeValue arg) {
-        return evalOperator(opName, NExprOpType.POSTFIX, arg);
+        return evalOperator(opName, NFixity.POSTFIX, arg);
     }
 
 
@@ -104,12 +104,12 @@ public abstract class NExprContextBase implements NExprContext {
     }
 
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... args) {
         return null;
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
+    public List<NExprOperator> operators() {
         return Collections.emptyList();
     }
 
@@ -120,8 +120,13 @@ public abstract class NExprContextBase implements NExprContext {
 
 
     @Override
-    public NExprInterpolatedStrNode ofInterpolatedStr(String a) {
-        return new DefaultNExprInterpolatedStrNode(a);
+    public NExprInterpolatedStringNode ofDollarInterpolatedString(String a) {
+        return new DefaultNExprDollarInterpolatedStringNode(a);
+    }
+
+    @Override
+    public NExprInterpolatedStringNode ofMoustacheInterpolatedString(String a) {
+        return new DefaultNExprMoustacheInterpolatedStringNode(a);
     }
 
     @Override

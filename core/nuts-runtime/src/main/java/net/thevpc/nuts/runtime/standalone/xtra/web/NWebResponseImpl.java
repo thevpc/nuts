@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
 import net.thevpc.nuts.concurrent.NOnceValue;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NInputSource;
@@ -19,12 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class NWebResponseImpl implements NWebResponse {
-    private NHttpCode httpCode;
-    private NMsg msg;
-    private DefaultNWebHeaders headers = new DefaultNWebHeaders();
-    private NOnceValue<NInputSource> content;
+    private final NHttpCode httpCode;
+    private final NMsg msg;
+    private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
+    private final NOnceValue<NInputSource> content;
     private NMsgCode msgCode;
 
     public NWebResponseImpl(NHttpCode code, NMsg msg, Map<String, List<String>> headers, Supplier<NInputSource> content) {
@@ -35,26 +37,26 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public NOptional<String> getHeader(String name) {
-        return NOptional.ofNamedFirst(getHeaders(name), name);
+    public NOptional<String> header(String name) {
+        return NOptional.ofNamedFirst(headers(name), name);
     }
 
     @Override
-    public int getIntCode() {
-        return httpCode.getCode();
+    public int intStatusCode() {
+        return httpCode.code();
     }
 
-    public NHttpCode getCode() {
+    public NHttpCode statusCode() {
         return httpCode;
     }
 
     @Override
-    public NMsg getMsg() {
+    public NMsg statusMessage() {
         return msg;
     }
 
     @Override
-    public List<String> getHeaders(String name) {
+    public List<String> headers(String name) {
         List<String> u = headers.getOrEmpty(name);
         if (u == null) {
             return new ArrayList<>();
@@ -64,40 +66,45 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public Map<String, List<String>> getHeaders() {
+    public Map<String, List<String>> headers() {
         return headers.toMap();
     }
 
     @Override
-    public NInputSource getContent() {
+    public Map<String, String> firstHeaders() {
+        return headers.toFirstMap();
+    }
+
+    @Override
+    public NInputSource content() {
         return content.get();
     }
 
     @Override
-    public <K, V> Map<K, V> getContentMapAsJson() {
-        return getContentAsJson(Map.class);
+    public <K, V> Map<K, V> contentMapAsJson() {
+        return contentAsJson(Map.class);
     }
 
     @Override
-    public <K> List<K> getContentListAsJson() {
-        return getContentAsJson(List.class);
+    public <K> List<K> contentListAsJson() {
+        return contentAsJson(List.class);
     }
 
     @Override
-    public <T> List<T> getContentArrayAsJson() {
-        return getContentAsJson(List.class);
+    public <T> List<T> contentArrayAsJson() {
+        return contentAsJson(List.class);
     }
 
     @Override
-    public <T> T getContentAs(Class<T> clz, NContentType type) {
+    public <T> T contentAs(Class<T> clz, NContentType type) {
         if (content == null) {
             return null;
         }
-        NInputSource content1 = getContent();
+        NInputSource content1 = content();
         if (content1 == null) {
             return null;
         }
-        try (InputStream in = content1.getInputStream()) {
+        try (InputStream in = content1.inputStream()) {
             return NElementReader.ofJson().read(in, clz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -105,15 +112,20 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public <T> T getContentAsJson(Class<T> clz) {
+    public NElement contentAsJson() {
+        return contentAs(NElement.class, NContentType.JSON);
+    }
+
+    @Override
+    public <T> T contentAsJson(Class<T> clz) {
         if (content == null) {
             return null;
         }
-        NInputSource content1 = getContent();
+        NInputSource content1 = content();
         if (content1 == null) {
             return null;
         }
-        try (InputStream in = content1.getInputStream()) {
+        try (InputStream in = content1.inputStream()) {
             return NElementReader.ofJson().read(in, clz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -121,21 +133,21 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public Map<?, ?> getContentAsJsonMap() {
-        return getContentAsJson(Map.class);
+    public Map<?, ?> contentAsJsonMap() {
+        return contentAsJson(Map.class);
     }
 
     @Override
-    public List<?> getContentAsJsonList() {
-        return getContentAsJson(List.class);
+    public List<?> contentAsJsonList() {
+        return contentAsJson(List.class);
     }
 
     @Override
-    public String getContentAsString() {
+    public String contentAsString() {
         if (content == null) {
             return null;
         }
-        NInputSource content1 = getContent();
+        NInputSource content1 = content();
         if (content1 == null) {
             return null;
         }
@@ -143,29 +155,29 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public byte[] getContentAsBytes() {
+    public byte[] contentAsBytes() {
         if (content == null) {
             return null;
         }
-        NInputSource content1 = getContent();
+        NInputSource content1 = content();
         if (content1 == null) {
             return null;
         }
         return content1.readBytes();
     }
 
-    public NWebCookie[] getCookies() {
-        return getHeaders("Set-Cookie").stream().map(DefaultNWebCookie::new).toArray(NWebCookie[]::new);
+    public List<NWebCookie> cookies() {
+        return headers("Set-Cookie").stream().map(DefaultNWebCookie::new).collect(Collectors.toList());
     }
 
     @Override
     public boolean isError() {
-        return httpCode.getCode() >= 400;
+        return httpCode.code() >= 400;
     }
 
     @Override
     public boolean isOk() {
-        int ic = httpCode.getCode();
+        int ic = httpCode.code();
         return
                 ic >= 200
                         && ic < 300
@@ -173,24 +185,40 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public NWebResponse failFast() {
+    public NWebResponse ifErrorThrow() {
         if (isError()) {
             throw new NWebResponseException(msg, msgCode, httpCode);
         }
         return this;
     }
 
-    public NMsgCode getMsgCode() {
+    public boolean isClientError() {
+        int code = httpCode.code();
+
+        return code >= 400 && code < 500;
+    }
+
+    public boolean isServerError() {
+        int code = httpCode.code();
+        return code >= 500;
+    }
+
+    public boolean isRedirect() {
+        int code = httpCode.code();
+        return code >= 300 && code < 400;
+    }
+
+    public NMsgCode userMessage() {
         return msgCode;
     }
 
-    public NWebResponse setMsgCode(NMsgCode msgCode) {
+    public NWebResponse userMessage(NMsgCode msgCode) {
         this.msgCode = msgCode;
         return this;
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         if (headers != null) {
             List<String> list = headers.getOrEmpty("Content-Type");
             for (String s : list) {

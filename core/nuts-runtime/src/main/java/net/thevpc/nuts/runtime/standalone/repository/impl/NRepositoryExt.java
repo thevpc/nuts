@@ -15,8 +15,9 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
-import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.spi.NUndeployRepositoryCmd;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.pipeline.NIterator;
 
 /**
  *
@@ -28,13 +29,14 @@ public interface NRepositoryExt extends NRepositoryExt0 {
         return (NRepositoryExt) repo;
     }
 
-    NIndexStore getIndexStore();
+    @NGetter
+    NIndexStore indexStore();
 
     void pushImpl(NPushRepositoryCmd command);
 
     NDescriptor deployImpl(NDeployRepositoryCmd command);
 
-    void undeployImpl(NRepositoryUndeployCmd command);
+    void undeployImpl(NUndeployRepositoryCmd command);
 
     void checkAllowedFetch(NId id);
 

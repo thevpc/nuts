@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NIdFilterNone extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter>, NExprIdFilter {
@@ -91,31 +92,19 @@ public class NIdFilterNone extends AbstractIdFilter implements NIdFilter, NSimpl
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 11 * hash + Arrays.deepHashCode(this.children);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NIdFilterNone that = (NIdFilterNone) o;
+        return Objects.deepEquals(children, that.children);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NIdFilterNone other = (NIdFilterNone) obj;
-        if (!Arrays.deepEquals(this.children, other.children)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(children));
     }
 
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(children);
     }
 }

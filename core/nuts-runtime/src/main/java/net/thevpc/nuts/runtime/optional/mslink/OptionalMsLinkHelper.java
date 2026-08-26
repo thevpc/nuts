@@ -3,11 +3,13 @@ package net.thevpc.nuts.runtime.optional.mslink;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.reflect.NTypeLoader;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -19,12 +21,12 @@ import java.util.Iterator;
 
 public class OptionalMsLinkHelper {
     private static final NTypeLoader mslinksShellLink = new NTypeLoaderImpl("mslinks.ShellLink");
-    private final String command;
+    private final String[] command;
     private final String wd;
     private final String icon;
     private final String filePath;
 
-    public OptionalMsLinkHelper(String command, String wd, String icon, String filePath) {
+    public OptionalMsLinkHelper(String[] command, String wd, String icon, String filePath) {
         this.command = command;
         this.wd = wd;
         this.icon = icon;
@@ -32,7 +34,7 @@ public class OptionalMsLinkHelper {
     }
 
     public static boolean isSupported() {
-        if(!mslinksShellLink.getType().isPresent()){
+        if(!mslinksShellLink.type().isPresent()){
             return false;
         }
         try {
@@ -58,7 +60,7 @@ public class OptionalMsLinkHelper {
             //
         }
         byte[] oldContent=CoreIOUtils.loadFileContentLenient(outputFile);
-        String[] cmd = NCmdLine.parseDefault(command).get().setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = command;
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
                 .setCMDArgs(NCmdLine.of(
@@ -69,7 +71,7 @@ public class OptionalMsLinkHelper {
             se.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
             se.getHeader().setIconIndex(148);
         } else {
-            se.setIconLocation(icon.trim());
+            se.setIconLocation(NStringUtils.strip(icon));
         }
         se.getConsoleData()
                 .setFont(mslinks.extra.ConsoleData.Font.Consolas);

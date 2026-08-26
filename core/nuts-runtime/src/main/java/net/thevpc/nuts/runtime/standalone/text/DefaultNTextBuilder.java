@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.text.parser.NTextListSimplifier;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 
 import java.io.ByteArrayOutputStream;
@@ -16,18 +16,16 @@ import java.util.*;
 public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
 
     private final List<NText> children = new ArrayList<>();
-    private final NTexts txt;
     private NTextStyleGenerator styleGenerator;
     private boolean flattened = true;
 
     public DefaultNTextBuilder() {
         super();
-        txt = NTexts.of();
     }
 
     @Override
     public Iterator<NText> iterator() {
-        return Collections.unmodifiableList(getChildren()).iterator();
+        return Collections.unmodifiableList(children()).iterator();
     }
 
     @Override
@@ -36,7 +34,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public NTextStyleGenerator getStyleGenerator() {
+    public NTextStyleGenerator styleGenerator() {
         if (styleGenerator == null) {
             styleGenerator = new DefaultNTextStyleGenerator();
         }
@@ -49,20 +47,20 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public DefaultNTextBuilder setStyleGenerator(NTextStyleGenerator styleGenerator) {
+    public DefaultNTextBuilder styleGenerator(NTextStyleGenerator styleGenerator) {
         this.styleGenerator = styleGenerator;
         return this;
     }
 
     @Override
     public NTextBuilder appendCommand(NTerminalCmd command) {
-        append(txt.ofCommand(command));
+        append(NText.ofCommand(command));
         return this;
     }
 
     @Override
     public NTextBuilder appendCode(String lang, String text) {
-        append(txt.ofCode(lang, text));
+        append(NText.ofCode(lang, text));
         return this;
     }
 
@@ -81,7 +79,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         if (text == null) {
             return this;
         }
-        return append(text, getStyleGenerator().random());
+        return append(text, styleGenerator().random());
     }
 
     @Override
@@ -92,7 +90,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         if (hash == null) {
             hash = text;
         }
-        return append(text, getStyleGenerator().hash(hash));
+        return append(text, styleGenerator().hash(hash));
     }
 
     @Override
@@ -106,7 +104,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
             if (styles.size() == 0) {
                 append(NText.of(text));
             } else {
-                append(txt.ofStyled(NText.of(text), styles));
+                append(NText.ofStyled(NText.of(text), styles));
             }
         }
         return this;
@@ -140,7 +138,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         }
         DefaultNTextBuilder result = new DefaultNTextBuilder();
         int pos = 0;
-        for (NText child : getChildren()) {
+        for (NText child : children()) {
             int childLen = child.filteredText().length();
             int childStart = pos;
             int childEnd = pos + childLen;
@@ -246,14 +244,11 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
         if (all.size() == 1) {
             return all.get(0);
         }
-        if (!all.equals(children)) {
-            return new DefaultNTextList(all.toArray(new NText[0]));
-        }
-        return this;
+        return new DefaultNTextList(all.toArray(new NText[0]));
     }
 
     @Override
-    public List<NText> getChildren() {
+    public List<NText> children() {
         return new ArrayList<>(children);
     }
 
@@ -359,7 +354,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     public NTextBuilder flatten() {
         if (!flattened) {
             NText build = build();
-            NText a = txt.transform(build, new NTextTransformConfig().setFlatten(true));
+            NText a = NText.transform(build, new NTextTransformConfig().flatten(true));
             this.children.clear();
             fill(a);
             flattened = true;
@@ -370,18 +365,18 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     private void fill(NText z) {
         if (z != null) {
             if (z instanceof NTextList) {
-                for (NText c : ((NTextList) z).getChildren()) {
+                for (NText c : ((NTextList) z).children()) {
                     fill(c);
                 }
             } else if (z instanceof NTextPlain) {
                 this.children.add(z);
             } else if (z instanceof NTextStyled) {
-                if (((NTextStyled) z).getChild() instanceof NTextList) {
-                    NText z2 = txt.transform(z, new NTextTransformConfig().setFlatten(true));
+                if (((NTextStyled) z).child() instanceof NTextList) {
+                    NText z2 = NText.transform(z, new NTextTransformConfig().flatten(true));
                 }
                 this.children.add(z);
             } else {
-                throw new NUnsupportedOperationException(NMsg.ofPlain("expected plain or styled nodes"));
+                throw new NUnsupportedOperationException(NMsg.ofP("expected plain or styled nodes"));
             }
         }
     }
@@ -443,7 +438,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
 
     private boolean isNewLine(NText t) {
         if (t.type() == NTextType.PLAIN) {
-            String txt = ((NTextPlain) t).getValue();
+            String txt = ((NTextPlain) t).value();
             return (txt.equals("\n") || txt.equals("\r\n"));
         }
         return false;
@@ -539,37 +534,9 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public List<NText> split(String separators, boolean keepSeparators) {
-        List<NText> result = new ArrayList<>();
-        NTextBuilder current = NTextBuilder.of();
-
-        for (NText child : getChildren()) {
-            List<NText> parts = child.split(separators, keepSeparators); // recursively split child
-            for (NText part : parts) {
-                String s = part.filteredText();
-                if (keepSeparators && s.length() == 1 && separators.indexOf(s.charAt(0)) >= 0) {
-                    if (current.length() > 0) {
-                        result.add(current.build());
-                        current = NTextBuilder.of();
-                    }
-                    result.add(part); // separator as own element
-                } else {
-                    current.append(part); // normal text
-                }
-            }
-        }
-
-        if (current.length() > 0) {
-            result.add(current.build());
-        }
-
-        return result;
-    }
-
-    @Override
-    public NTextBuilder trimLeft() {
+    public NTextBuilder stripLeft() {
         for (int i = 0; i < children.size(); i++) {
-            NText c = children.get(i).trimLeft();
+            NText c = children.get(i).stripLeft();
             int l = c.length();
             if (l > 0) {
                 children.set(i, c);
@@ -583,9 +550,9 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder trimRight() {
+    public NTextBuilder stripRight() {
         for (int i = children.size() - 1; i >= 0; i--) {
-            NText c = children.get(i).trimRight();  // delegate to child
+            NText c = children.get(i).stripRight();  // delegate to child
             int l = c.length();
             if (l > 0) {
                 children.set(i, c);
@@ -630,9 +597,9 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder trim() {
-        trimLeft();
-        trimRight();
+    public NTextBuilder strip() {
+        stripLeft();
+        stripRight();
         return this;
     }
 }

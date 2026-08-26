@@ -26,21 +26,26 @@ package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
 import java.util.*;
 
+import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositorySpec;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -58,74 +63,78 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "default";
     }
 
     private String defaultRepoDiscriminator(NRepositorySpec d) {
         NPath repositoriesRoot = NWorkspaceExt.of().getConfigModel().getRepositoriesRoot();
-        if (!NBlankable.isBlank(d.getSourceLocation())) {
-            return NPath.of(d.getSourceLocation().getPath()).toAbsolute(repositoriesRoot).toString();
-        } else if (!NBlankable.isBlank(d.getLocation())) {
-            return NPath.of(d.getLocation()).toAbsolute(repositoriesRoot).toString();
-        } else if (!NBlankable.isBlank(d.getName())) {
-            return NPath.of(d.getName()).toAbsolute(repositoriesRoot).toString();
-        } else if (d.getSourceModel() != null) {
+        if (!NBlankable.isBlank(d.sourceLocation())) {
+            return NPath.of(d.sourceLocation().path()).toAbsolute(repositoriesRoot).toString();
+        } else if (!NBlankable.isBlank(d.location())) {
+            return NPath.of(d.location()).toAbsolute(repositoriesRoot).toString();
+        } else if (!NBlankable.isBlank(d.name())) {
+            return NPath.of(d.name()).toAbsolute(repositoriesRoot).toString();
+        } else if (d.sourceModel() != null) {
             String n = NAssert.requireNamedNonBlank(
-                    NStringUtils.firstNonBlank(d.getSourceModel().getName(), d.getSourceModel().getUuid()),
+                    NStringUtils.firstNonBlank(d.sourceModel().name(), d.sourceModel().uuid()),
                     "RepositoryModel name"
             );
             return NPath.of(n).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString();
         } else {
-            throw new NIllegalArgumentException(NMsg.ofC("unable to load default repository location: %s", d.getLocation()));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to load default repository location: %s", d.location()));
         }
     }
 
     @Override
     public void initializeWorkspace() {
         NWorkspace workspace = NWorkspace.of();
-        List<NRepositorySpec> defaults =new ArrayList<>(workspace.getDefaultRepositories());
+        List<NRepositorySpec> defaults =new ArrayList<>(workspace.defaultRepositories());
         NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.of().isPreviewRepo());
         NWorkspaceExt.of().getModel().configModel.invalidateStoreModelMain();
-        defaults.add(new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)));
+        defaults.add(new NRepositorySpec().sourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)));
         NRepositorySpec[] br = NRepositoryUtils.resolve(NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList(),defaults.toArray(new NRepositorySpec[0]));
         for (NRepositorySpec oo : br) {
             workspace.addRepository(oo);
         }
         workspace.addImports("net.thevpc");
 
-        //has read rights
-        try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
-            NSecurityManager.of().addUser(
-                    NUserSpec.of("user")
-                            .setCredential(ss)
-                            .setPermissions(
-                                    Arrays.asList(
-                                            NConstants.Permissions.FETCH_DESC,
-                                            NConstants.Permissions.FETCH_CONTENT,
-                                            NConstants.Permissions.DEPLOY,
-                                            NConstants.Permissions.UNDEPLOY,
-                                            NConstants.Permissions.PUSH,
-                                            NConstants.Permissions.SAVE
-                                    )
-                            )
-            );
+        DefaultNWorkspaceConfigModel c = NWorkspaceExt.of().getConfigModel();
+        NUserConfig u = c.getUser("user");
+        if(u==null) {
+            //has read rights
+            try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
+                NSecurityManager.of().addUser(
+                        NUserSpec.of("user")
+                                .credential(ss)
+                                .permissions(
+                                        Arrays.asList(
+                                                NConstants.Permissions.FETCH_DESC,
+                                                NConstants.Permissions.FETCH_CONTENT,
+                                                NConstants.Permissions.DEPLOY,
+                                                NConstants.Permissions.UNDEPLOY,
+                                                NConstants.Permissions.PUSH,
+                                                NConstants.Permissions.SAVE
+                                        )
+                                )
+                );
+            }
         }
     }
 
     @Override
     public void startWorkspace() {
         NWorkspace workspace = NWorkspace.of();
-        NIsolationLevel nIsolationLevel = workspace.getBootOptions().getIsolationLevel().orNull();
+        NIsolationLevel nIsolationLevel = workspace.bootOptions().isolationLevel().orNull();
         if (nIsolationLevel == NIsolationLevel.MEMORY) {
             return;
         }
         boolean isolated = nIsolationLevel != null && nIsolationLevel.ordinal() >= NIsolationLevel.CONFINED.ordinal();
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
-        boolean initializeScripts = workspace.getBootOptions().getInitScripts().orElse(!isolated);
-        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().orElse(!isolated);
-        boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
+        boolean initializeScripts = workspace.bootOptions().initScripts().orElse(!isolated);
+        boolean initializeLaunchers = workspace.bootOptions().initLaunchers().orElse(!isolated);
+        boolean installCompanions = workspace.bootOptions().installCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of().installAllJVM();
@@ -135,9 +144,9 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        }
 
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetch.of().setId(workspace.getApiId())
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setFailFast(false).getResultId();
+            NId api = NFetch.of().id(workspace.apiId())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .failFast(false).getResultId();
             if (api != null) {
                 NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();
                 if (initializeScripts || initializeLaunchers) {

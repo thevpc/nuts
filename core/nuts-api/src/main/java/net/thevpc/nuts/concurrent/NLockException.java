@@ -53,6 +53,13 @@ public class NLockException extends NException {
      * @param lockObject   lock Object
      */
     public NLockException(Object lockedObject, Object lockObject) {
+      /**
+       * This.
+       *
+       * @param null null
+       * @param lockedObject locked object
+       * @param lockObject lock object
+       */
         this(null, lockedObject, lockObject);
     }
 
@@ -94,7 +101,7 @@ public class NLockException extends NException {
      *
      * @return locked object
      */
-    public Object getLockedObject() {
+    public Object lockedObject() {
         return lockedObject;
     }
 
@@ -103,7 +110,7 @@ public class NLockException extends NException {
      *
      * @return lock object
      */
-    public Object getLockObject() {
+    public Object lockObject() {
         return lockObject;
     }
 }

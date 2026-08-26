@@ -87,7 +87,7 @@ public class NPathParts {
                 break;
             }
             default: {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported NutsPathParts"));
+                throw new NIllegalArgumentException(NMsg.ofP("unsupported NutsPathParts"));
             }
         }
     }
@@ -309,8 +309,7 @@ public class NPathParts {
     }
 
     public static NText toNutsString(NText protocol, NText authority, NText path, NText query, NText ref) {
-        NTexts txt = NTexts.of();
-        NTextBuilder result = txt.ofBuilder();
+        NTextBuilder result = NTextBuilder.of();
         result.append(protocol);
         if (authority != null && authority.length() > 0) {
             result.append("://", NTextStyle.path());
@@ -363,27 +362,26 @@ public class NPathParts {
     }
 
     public static NText compressPath(String path, int left, int right) {
-        NTexts txt = NTexts.of();
         NPathParts p = new NPathParts(path);
         switch (p.getType()) {
             case FILE_URL:
             case URL: {
                 return NPathParts.toNutsString(
-                        txt.ofStyled(p.getProtocol(), NTextStyle.path()),
-                        NBlankable.isBlank(p.getAuthority()) ? null : txt.ofStyled(p.getAuthority(), NTextStyle.path()),
-                        NBlankable.isBlank(p.getFile()) ? null : txt.ofStyled(NPathParts.compressLocalPath(p.getFile(), 0, 2), NTextStyle.path()),
-                        NBlankable.isBlank(p.getQuery()) ? null : txt.ofStyled("...", NTextStyle.path()),
-                        NBlankable.isBlank(p.getRef()) ? null : txt.ofStyled("...", NTextStyle.path())
+                        NText.ofStyled(p.getProtocol(), NTextStyle.path()),
+                        NBlankable.isBlank(p.getAuthority()) ? null : NText.ofStyled(p.getAuthority(), NTextStyle.path()),
+                        NBlankable.isBlank(p.getFile()) ? null : NText.ofStyled(NPathParts.compressLocalPath(p.getFile(), 0, 2), NTextStyle.path()),
+                        NBlankable.isBlank(p.getQuery()) ? null : NText.ofStyled("...", NTextStyle.path()),
+                        NBlankable.isBlank(p.getRef()) ? null : NText.ofStyled("...", NTextStyle.path())
                 );
             }
             case REF: {
-                return NBlankable.isBlank(p.getRef()) ? null : txt.ofStyled("...", NTextStyle.path());
+                return NBlankable.isBlank(p.getRef()) ? null : NText.ofStyled("...", NTextStyle.path());
             }
             case FILE: {
-                return txt.ofStyled(NPathParts.compressLocalPath(p.getFile(), 2, 2), NTextStyle.path());
+                return NText.ofStyled(NPathParts.compressLocalPath(p.getFile(), 2, 2), NTextStyle.path());
             }
             case EMPTY:
-                return txt.ofBlank();
+                return NText.ofBlank();
         }
         throw new NUnsupportedEnumException(p.getType());
     }

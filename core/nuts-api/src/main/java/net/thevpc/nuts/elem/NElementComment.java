@@ -4,6 +4,12 @@ import net.thevpc.nuts.text.NNewLineMode;
 
 import java.util.List;
 
+/**
+ * NElementComment interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NElementComment extends /*Comparable<NElementComment>, */NAffix {
 
     /**
@@ -14,6 +20,12 @@ public interface NElementComment extends /*Comparable<NElementComment>, */NAffix
      * @since 0.8.9
      */
     static NElementComment of(String text) {
+        /**
+         * Creates a new instance of of bloc comment.
+         *
+         * @param text text
+         * @return of bloc comment result
+         */
         return ofBlocComment(text);
     }
 
@@ -39,22 +51,60 @@ public interface NElementComment extends /*Comparable<NElementComment>, */NAffix
         return NElement.ofLineComment(text);
     }
 
+    /**
+     * Creates a new instance of of line comment.
+     *
+     * @param text text
+     * @return of line comment result
+     */
     static NElementComment ofLineComment(NElementLine... text) {
         return NElement.ofLineComment(text);
     }
 
+    /**
+     * Creates a new instance of of bloc comment.
+     *
+     * @param text text
+     * @return of bloc comment result
+     */
     static NElementComment ofBlocComment(NElementLine... text) {
         return NElement.ofBlocComment(text);
     }
 
 
+    /**
+     * Newline suffix.
+     *
+     * @return newline suffix result
+     */
     NNewLineMode newlineSuffix();
 
+    /**
+     * Lines.
+     *
+     * @return lines result
+     */
     List<NElementLine> lines();
 
+    /**
+     * Text.
+     *
+     * @return text result
+     */
     String text();
 
+    /**
+     * Raw.
+     *
+     * @return raw result
+     */
     String raw();
 
+    /**
+     * With newline suffix.
+     *
+     * @param nNewLineMode n new line mode
+     * @return with newline suffix result
+     */
     NElementComment withNewlineSuffix(NNewLineMode nNewLineMode);
 }

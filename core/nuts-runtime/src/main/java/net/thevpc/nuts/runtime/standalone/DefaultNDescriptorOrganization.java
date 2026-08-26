@@ -14,7 +14,7 @@ public class DefaultNDescriptorOrganization implements NDescriptorOrganization {
     private final Map<String, String> properties;
 
     public DefaultNDescriptorOrganization(NDescriptorOrganization other) {
-        this(other.getId(), other.getName(), other.getUrl(), other.getComments(), other.getProperties());
+        this(other.id(), other.name(), other.url(), other.comments(), other.properties());
     }
 
     public DefaultNDescriptorOrganization(String id, String name, String url, String comments, Map<String, String> properties) {
@@ -26,27 +26,27 @@ public class DefaultNDescriptorOrganization implements NDescriptorOrganization {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public String getUrl() {
+    public String url() {
         return url;
     }
 
     @Override
-    public String getComments() {
+    public String comments() {
         return comments;
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 

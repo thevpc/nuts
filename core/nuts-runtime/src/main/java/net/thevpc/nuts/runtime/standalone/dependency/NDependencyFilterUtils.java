@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
-import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NDependencyScope;
-import net.thevpc.nuts.artifact.NDependencyScopePattern;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.dependency.filter.NDependencyScopeFilter;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
@@ -18,9 +16,9 @@ public class NDependencyFilterUtils {
         if (filter instanceof NDependencyScopeFilter) {
             return new LinkedHashSet<>(((NDependencyScopeFilter) filter).getScopes());
         }
-        if (filter.getFilterOp() == NFilterOp.AND) {
+        if (filter.filterOp() == NFilterOp.AND) {
             Set<NDependencyScope> a = null;
-            for (NFilter subFilter : filter.getSubFilters()) {
+            for (NFilter subFilter : filter.subFilters()) {
                 Set<NDependencyScope> r = toScopeFilterPossibilities((NDependencyFilter) subFilter);
                 if (r == null) {
                     return null;
@@ -36,9 +34,9 @@ public class NDependencyFilterUtils {
             }
             return a;
         }
-        if (filter.getFilterOp() == NFilterOp.OR) {
+        if (filter.filterOp() == NFilterOp.OR) {
             Set<NDependencyScope> a = null;
-            for (NFilter subFilter : filter.getSubFilters()) {
+            for (NFilter subFilter : filter.subFilters()) {
                 Set<NDependencyScope> r = toScopeFilterPossibilities((NDependencyFilter) subFilter);
                 if (r == null) {
                     return null;
@@ -61,18 +59,18 @@ public class NDependencyFilterUtils {
         if (filter instanceof NDependencyScopeFilter) {
             return true;
         }
-        if (filter.getFilterOp() == NFilterOp.AND) {
-            return filter.getSubFilters().stream().allMatch(x -> isScopeFilter((NDependencyFilter) x));
+        if (filter.filterOp() == NFilterOp.AND) {
+            return filter.subFilters().stream().allMatch(x -> isScopeFilter((NDependencyFilter) x));
         }
-        if (filter.getFilterOp() == NFilterOp.OR) {
-            return filter.getSubFilters().stream().allMatch(x -> isScopeFilter((NDependencyFilter) x));
+        if (filter.filterOp() == NFilterOp.OR) {
+            return filter.subFilters().stream().allMatch(x -> isScopeFilter((NDependencyFilter) x));
         }
         return false;
     }
 
     public static NDependencyFilter addScope(NDependencyFilter parent, NDependencyScopePattern scope) {
         if (parent == null) {
-            return NDependencyFilters.of().byScope(scope);
+            return NDependencyFilter.ofScope(scope);
         }
         if (scope == null) {
             return parent;
@@ -87,14 +85,14 @@ public class NDependencyFilterUtils {
                     Set<NDependencyScope> li2 = new LinkedHashSet<>(li);
                     li2.addAll(scope.toScopes());
                     if (!li2.equals(li)) {
-                        return NDependencyFilters.of().byScope(li2.toArray(new NDependencyScope[0]));
+                        return NDependencyFilter.ofScope(li2.toArray(new NDependencyScope[0]));
                     }
                 }
                 return old;
             }
         });
         if (!found.get()) {
-            np = np.and(NDependencyFilters.of().byScope(scope));
+            np = np.and(NDependencyFilter.ofScope(scope));
         }
         return np;
     }
@@ -110,10 +108,10 @@ public class NDependencyFilterUtils {
         if (n != parent) {
             return n;
         }
-        if (parent.getFilterOp() == NFilterOp.AND) {
+        if (parent.filterOp() == NFilterOp.AND) {
             List<NDependencyFilter> newList = new ArrayList<>();
             boolean someChanges = false;
-            for (NFilter subFilter : parent.getSubFilters()) {
+            for (NFilter subFilter : parent.subFilters()) {
                 n = replacer.apply((NDependencyFilter) subFilter);
                 if (n == null) {
                     someChanges = true;
@@ -125,7 +123,7 @@ public class NDependencyFilterUtils {
                 }
             }
             if (someChanges) {
-                return NDependencyFilters.of().all(newList.toArray(new NDependencyFilter[0]));
+                return NDependencyFilterRPI.of().all(newList.toArray(new NDependencyFilter[0]));
             }
             return parent;
         }

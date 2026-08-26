@@ -16,13 +16,13 @@ public class NDescriptorInputSourceWriterSPI implements NObjectWriterSPI {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "input-stream";
     }
 
     @Override
     public void print(NPrintStream out) {
-        NOptional<NMsg> m = value.getMetaData().getMessage();
+        NOptional<NMsg> m = value.metaData().message();
         if (m.isPresent()) {
             out.print(m.get());
         } else {

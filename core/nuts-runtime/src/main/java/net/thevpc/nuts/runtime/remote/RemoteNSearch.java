@@ -6,12 +6,11 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElementBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.search.AbstractNSearch;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.Iterator;
 import java.util.List;
@@ -38,15 +37,15 @@ public class RemoteNSearch extends AbstractNSearch {
     @Override
     protected NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
         NObjectElementBuilder eb = NElement.ofObjectBuilder()
-                .set("execType", getExecType().id())
-                .set("targetApiVersion", getTargetApiVersion().toString())
-                .set("ids", NElement.ofArrayBuilder().addAll(getIds().stream()
+                .set("execType", execType().id())
+                .set("targetApiVersion", targetApiVersion().toString())
+                .set("ids", NElement.ofArrayBuilder().addAll(ids().stream()
                         .map(Object::toString).toArray(String[]::new)).build());
-        if (getDefinitionFilter() != null) {
-            eb.set("filter", NElements.of().toElement(getDefinitionFilter()));
+        if (definitionFilter() != null) {
+            eb.set("filter", NElement.of(definitionFilter()));
         }
-        if (getRepositoryFilter() != null) {
-            eb.set("repositories", NElement.ofString(getRepositoryFilter().toString()));
+        if (repositoryFilter() != null) {
+            eb.set("repositories", NElement.ofString(repositoryFilter().toString()));
         }
 
         RemoteNWorkspace ws=(RemoteNWorkspace) NWorkspace.get();

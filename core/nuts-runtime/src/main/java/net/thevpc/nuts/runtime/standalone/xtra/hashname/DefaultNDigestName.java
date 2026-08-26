@@ -4,6 +4,8 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NDigestName;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -41,7 +43,7 @@ public class DefaultNDigestName implements NDigestName {
 
 
     @Override
-    public String getDigestName(Object source) {
+    public String digestName(Object source) {
         if (source == null) {
             return "default";
         } else if (source instanceof String) {
@@ -49,13 +51,13 @@ public class DefaultNDigestName implements NDigestName {
         } else if (source instanceof NPath) {
             return getDigestNameString(source.toString());
         } else if (source instanceof NWorkspace) {
-            NPath location = ((NWorkspace) source).getLocation();
+            NPath location = ((NWorkspace) source).location();
             if(location==null){
                 return getDigestNameString("default");
             }
             return getDigestNameString(location.toString());
         } else if (source instanceof NSession) {
-            NPath location = ((NSession) source).getWorkspace().getLocation();
+            NPath location = ((NSession) source).workspace().location();
             if(location==null){
                 return getDigestNameString("default");
             }

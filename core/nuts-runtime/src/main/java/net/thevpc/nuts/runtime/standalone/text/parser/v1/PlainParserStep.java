@@ -42,7 +42,7 @@ public class PlainParserStep extends ParserStep {
         this.lineStart = state.isLineStart();
         if(preParsed){
             value.append(s);
-            last = value.getLast();
+            last = value.last();
 //            _COUNT++;
             state.setLineStart(s.indexOf('\n')>=0);
         }else {

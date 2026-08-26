@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 
@@ -11,14 +11,26 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NExprChildContextImpl extends NExprContextBase {
     private NExprResolver resolver;
     private NExprContext parent;
+    private NExprLiteralMapper literalMapper;
     private Map<String,NExprVar> varToDeclaration=new ConcurrentHashMap<>();
 
-    public NExprChildContextImpl(NExprRPI nExprRPI, NExprResolver resolver, NExprContext parent) {
+    public NExprChildContextImpl(NExprRPI nExprRPI, NExprResolver resolver, NExprLiteralMapper literalMapper,NExprContext parent) {
         super(nExprRPI);
         this.resolver = resolver;
         this.parent = parent;
+        this.literalMapper = literalMapper;
     }
 
+    @Override
+    public NExprLiteralMapper literalMapper() {
+        if (literalMapper != null) {
+            return literalMapper;
+        }
+        if (parent != null) {
+            return parent.literalMapper();
+        }
+        return (x,c)->x;
+    }
 
     @Override
     public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args) {
@@ -35,7 +47,7 @@ public class NExprChildContextImpl extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... args) {
         return resolver.getOperator(opName, type, args, this)
                 .orElseGetOptionalFrom(() -> parent.getOperator(opName, type, args))
                 ;
@@ -57,7 +69,7 @@ public class NExprChildContextImpl extends NExprContextBase {
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
-        return parent.getOperators();
+    public List<NExprOperator> operators() {
+        return parent.operators();
     }
 }

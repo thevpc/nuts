@@ -38,12 +38,30 @@ import net.thevpc.nuts.util.NOptional;
  * @since 0.5.4
  */
 public interface NSessionAwareExceptionBase extends NExceptionBase, NSessionProvider {
+    /**
+     * Resolve session aware exception base.
+     *
+     * @param th th
+     * @return resolve session aware exception base result
+     */
     static NOptional<NSessionAwareExceptionBase> resolveSessionAwareExceptionBase(Throwable th) {
         return NReservedLangUtils.findThrowable(th, NSessionAwareExceptionBase.class, null);
     }
 
+    /**
+     * Resolve session.
+     *
+     * @param th th
+     * @return resolve session result
+     */
     static NOptional<NSession> resolveSession(Throwable th) {
-        return resolveSessionAwareExceptionBase(th).map(NSessionAwareExceptionBase::getSession).orElseGetOptionalFrom(()->NSession.get());
+        /**
+         * Resolve session aware exception base.
+         *
+         * @param th).map(NSessionAwareExceptionBase::session).orElseGetOptionalFrom(()->NSession.get() th).map(n session aware exception base::session).or else get optional from(()->n session.get()
+         * @return resolve session aware exception base result
+         */
+        return resolveSessionAwareExceptionBase(th).map(NSessionAwareExceptionBase::session).orElseGetOptionalFrom(()->NSession.get());
     }
 
     /**
@@ -51,5 +69,5 @@ public interface NSessionAwareExceptionBase extends NExceptionBase, NSessionProv
      *
      * @return current workspace
      */
-    NWorkspace getWorkspace();
+    NWorkspace workspace();
 }

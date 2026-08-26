@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.boot.NBootCompleteCmdlineRequest;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.command.*;
@@ -17,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.artifact.NDependencySolver;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.text.NText;
@@ -59,7 +60,7 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NApp getApp() {
+    public NApplication getApp() {
         return baseExt.getApp();
     }
 
@@ -204,48 +205,48 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
 
 
     @Override
-    public String getUuid() {
-        return base.getUuid();
+    public String uuid() {
+        return base.uuid();
     }
 
     @Override
-    public String getName() {
-        return base.getName();
+    public String name() {
+        return base.name();
     }
 
     @Override
-    public String getDigestName() {
-        return base.getDigestName();
+    public String digestName() {
+        return base.digestName();
     }
 
     @Override
-    public NVersion getApiVersion() {
-        return base.getApiVersion();
+    public NVersion apiVersion() {
+        return base.apiVersion();
     }
 
     @Override
-    public NVersion getBootVersion() {
-        return base.getBootVersion();
+    public NVersion bootVersion() {
+        return base.bootVersion();
     }
 
     @Override
-    public NId getApiId() {
-        return base.getApiId();
+    public NId apiId() {
+        return base.apiId();
     }
 
     @Override
-    public NId getAppId() {
-        return base.getAppId();
+    public NId appId() {
+        return base.appId();
     }
 
     @Override
-    public NId getRuntimeId() {
-        return base.getRuntimeId();
+    public NId runtimeId() {
+        return base.runtimeId();
     }
 
     @Override
-    public NPath getLocation() {
-        return base.getLocation();
+    public NPath location() {
+        return base.location();
     }
 
     @Override
@@ -303,8 +304,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public List<NRepository> getRepositories() {
-        return base.getRepositories();
+    public List<NRepository> repositories() {
+        return base.repositories();
     }
 
     @Override
@@ -313,8 +314,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public Map<String, Object> getProperties() {
-        return base.getProperties();
+    public Map<String, Object> properties() {
+        return base.properties();
     }
 
     @Override
@@ -343,11 +344,6 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public String getPid() {
-        return base.getPid();
-    }
-
-    @Override
     public void addLauncher(NLauncherOptions launcher) {
         base.addLauncher(launcher);
     }
@@ -363,33 +359,33 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NStoreStrategy getStoreStrategy() {
-        return base.getStoreStrategy();
+    public NStoreStrategy storeStrategy() {
+        return base.storeStrategy();
     }
 
     @Override
-    public NWorkspace setStoreStrategy(NStoreStrategy strategy) {
-        return base.setStoreStrategy(strategy);
+    public NWorkspace storeStrategy(NStoreStrategy strategy) {
+        return base.storeStrategy(strategy);
     }
 
     @Override
-    public NStoreStrategy getRepositoryStoreStrategy() {
-        return base.getRepositoryStoreStrategy();
+    public NStoreStrategy repositoryStoreStrategy() {
+        return base.repositoryStoreStrategy();
     }
 
     @Override
-    public NOsFamily getStoreLayout() {
-        return base.getStoreLayout();
+    public NOsFamily storeLayout() {
+        return base.storeLayout();
     }
 
     @Override
-    public NWorkspace setStoreLayout(NOsFamily storeLayout) {
-        return base.setStoreLayout(storeLayout);
+    public NWorkspace storeLayout(NOsFamily storeLayout) {
+        return base.storeLayout(storeLayout);
     }
 
     @Override
-    public Map<NStoreType, String> getStoreLocations() {
-        return base.getStoreLocations();
+    public Map<NStoreType, String> storeLocations() {
+        return base.storeLocations();
     }
 
     @Override
@@ -413,8 +409,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public Map<NHomeLocation, String> getHomeLocations() {
-        return base.getHomeLocations();
+    public Map<NHomeLocation, String> homeLocations() {
+        return base.homeLocations();
     }
 
     @Override
@@ -423,8 +419,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NPath getWorkspaceLocation() {
-        return base.getWorkspaceLocation();
+    public NPath workspaceLocation() {
+        return base.workspaceLocation();
     }
 
     @Override
@@ -463,8 +459,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public Set<String> getAllImports() {
-        return base.getAllImports();
+    public Set<String> allImports() {
+        return base.allImports();
     }
 
     @Override
@@ -473,8 +469,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NWorkspaceStoredConfig getStoredConfig() {
-        return base.getStoredConfig();
+    public NWorkspaceStoredConfig storedConfig() {
+        return base.storedConfig();
     }
 
     @Override
@@ -503,13 +499,13 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public List<NRepositorySpec> getDefaultRepositories() {
-        return base.getDefaultRepositories();
+    public List<NRepositorySpec> defaultRepositories() {
+        return base.defaultRepositories();
     }
 
     @Override
-    public Set<String> getAvailableArchetypes() {
-        return base.getAvailableArchetypes();
+    public Set<String> availableArchetypes() {
+        return base.availableArchetypes();
     }
 
     @Override
@@ -518,18 +514,18 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NIndexStoreFactory getIndexStoreClientFactory() {
-        return base.getIndexStoreClientFactory();
+    public NIndexStoreFactory indexStoreClientFactory() {
+        return base.indexStoreClientFactory();
     }
 
     @Override
-    public String getJavaCommand() {
-        return base.getJavaCommand();
+    public String javaCommand() {
+        return base.javaCommand();
     }
 
     @Override
-    public String getJavaOptions() {
-        return base.getJavaOptions();
+    public String javaOptions() {
+        return base.javaOptions();
     }
 
     @Override
@@ -538,8 +534,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public Map<String, String> getConfigMap() {
-        return base.getConfigMap();
+    public Map<String, String> configMap() {
+        return base.configMap();
     }
 
     @Override
@@ -553,8 +549,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public List<NCommandFactoryConfig> getCommandFactories() {
-        return base.getCommandFactories();
+    public List<NCommandFactoryConfig> commandFactories() {
+        return base.commandFactories();
     }
 
     @Override
@@ -633,57 +629,58 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NBootOptions getBootOptions() {
-        return base.getBootOptions();
+    public NBootOptions bootOptions() {
+        return base.bootOptions();
     }
 
     @Override
-    public ClassLoader getBootClassLoader() {
-        return base.getBootClassLoader();
+    public ClassLoader bootClassLoader() {
+        return base.bootClassLoader();
     }
 
     @Override
-    public List<URL> getBootClassWorldURLs() {
-        return base.getBootClassWorldURLs();
+    public List<URL> bootClassWorldURLs() {
+        return base.bootClassWorldURLs();
     }
 
     @Override
-    public List<String> getBootRepositories() {
-        return base.getBootRepositories();
+    public List<String> bootRepositories() {
+        return base.bootRepositories();
     }
 
     @Override
-    public Instant getCreationStartTime() {
-        return base.getCreationStartTime();
+    public Instant creationStartTime() {
+        return base.creationStartTime();
     }
 
     @Override
-    public Instant getCreationFinishTime() {
-        return base.getCreationFinishTime();
+    public Instant creationFinishTime() {
+        return base.creationFinishTime();
     }
 
     @Override
-    public NDuration getCreationDuration() {
-        return base.getCreationDuration();
+    public NDuration creationDuration() {
+        return base.creationDuration();
     }
 
     @Override
-    public NClassLoaderNode getBootRuntimeClassLoaderNode() {
-        return base.getBootRuntimeClassLoaderNode();
+    public NClassLoaderNode bootRuntimeClassLoaderNode() {
+        return base.bootRuntimeClassLoaderNode();
     }
 
-    @Override
-    public List<NClassLoaderNode> getBootExtensionClassLoaderNodes() {
-        return base.getBootExtensionClassLoaderNodes();
-    }
 
     @Override
-    public NWorkspaceTerminalOptions getBootTerminal() {
-        return base.getBootTerminal();
+    public NWorkspaceTerminalOptions bootTerminal() {
+        return base.bootTerminal();
     }
 
     @Override
     public void runBootCommand() {
         NWorkspaceHelper.runBootCommand(this);
+    }
+
+    @Override
+    public void completeBootCommand(NBootCompleteCmdlineRequest completeRequest) {
+        NWorkspaceHelper.completeBootCommand(this,completeRequest);
     }
 }

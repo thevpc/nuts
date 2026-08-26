@@ -4,7 +4,6 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import net.thevpc.nuts.ext.ssh.SshConnection;
-import net.thevpc.nuts.ext.ssh.SshConnectionAdapter;
 import net.thevpc.nuts.ext.ssh.SshConnectionPool;
 import net.thevpc.nuts.net.NConnectionString;
 
@@ -25,7 +24,7 @@ public class JCshFileOutputStreamSftp extends OutputStream {
 
     public JCshFileOutputStreamSftp(NConnectionString path, boolean mkdirs, boolean closeConnection) {
         this.connection = SshConnectionPool.of().acquire(path);
-        this.remotePath = path.getPath();
+        this.remotePath = path.path();
         this.mkdirs = mkdirs;
         this.closeConnection = closeConnection;
     }

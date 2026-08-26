@@ -11,8 +11,8 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
 import net.thevpc.nuts.text.NVersionWriter;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 
@@ -46,7 +46,7 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
         switch (aa.key()) {
             case "-a":
             case "--all": {
-                cmdLine.matcher().matchFlag((v) -> this.all = v.booleanValue()).anyMatch();
+                cmdLine.matcher().whenAny().asFlag((v) -> this.all = v.booleanValue()).anyMatch();
                 return true;
             }
             case "--add": {
@@ -99,7 +99,7 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
                     )
             );
         }else{
-            out = out.setTerminalMode(NTerminalMode.FILTERED);
+            out = out.terminalMode(NTerminalMode.FILTERED);
             out.print(aValue.toString());
         }
     }
@@ -111,12 +111,12 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
             extraKeys = new TreeSet(extraProperties.keySet());
         }
         NWorkspace workspace = NWorkspace.of();
-        props.put("nuts-api-version", workspace.getApiVersion().toString());
-        props.put("nuts-runtime-version", workspace.getRuntimeId().getVersion().toString());
+        props.put("nuts-api-version", workspace.apiVersion().toString());
+        props.put("nuts-runtime-version", workspace.runtimeId().version().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
             NEnv environment = NEnv.of();
-            props.put("os-version", environment.getOs().getVersion().toString());
+            props.put("os-version", environment.os().version().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

@@ -27,7 +27,7 @@ public interface NShellHelper {
             case WIN_POWER_SHELL:
                 return WinPowerShellNShellHelper.WIN_POWER_SHELL;
             default: {
-                switch (NOsFamily.getCurrent()) {
+                switch (NOsFamily.current()) {
                     case WINDOWS:
                         return of(NShellFamily.WIN_CMD);
                     default:
@@ -45,7 +45,7 @@ public interface NShellHelper {
 
     String getSetVarStaticCommand(String name, String value);
 
-    String getCallScriptCommand(String path, String... args);
+    String getCallScriptCommand(String VAR_NAME, String path, String... args);
 
     boolean isComments(String line);
 

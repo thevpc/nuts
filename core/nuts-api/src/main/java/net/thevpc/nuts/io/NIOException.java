@@ -42,6 +42,11 @@ public class NIOException extends NException {
      * @param message message
      */
     public NIOException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -52,6 +57,12 @@ public class NIOException extends NException {
      * @param cause   cause
      */
     public NIOException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 
@@ -64,8 +75,8 @@ public class NIOException extends NException {
         super(
                 cause == null ? null
                         : (cause instanceof NExceptionBase) ?
-                        ((NExceptionBase) cause).getFormattedMessage()
-                        : NMsg.ofPlain(cause.getMessage() == null ? "error" : cause.getMessage()),
+                        ((NExceptionBase) cause).formattedMessage()
+                        : NMsg.ofP(cause.getMessage() == null ? "error" : cause.getMessage()),
                 cause);
     }
 }

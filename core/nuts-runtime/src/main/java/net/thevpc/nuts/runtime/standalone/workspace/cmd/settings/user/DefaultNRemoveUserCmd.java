@@ -8,8 +8,8 @@
 //import net.thevpc.nuts.security.NRemoveUserCmd;
 //import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 //import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-//import net.thevpc.nuts.util.NScore;
-//import net.thevpc.nuts.util.NScorable;
+//import net.thevpc.nuts.reflect.NScore;
+//import net.thevpc.nuts.reflect.NScorable;
 //
 ///**
 // *

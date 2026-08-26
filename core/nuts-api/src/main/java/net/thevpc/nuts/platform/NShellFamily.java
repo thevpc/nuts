@@ -82,31 +82,57 @@ public enum NShellFamily implements NEnum {
      */
     private final String id;
 
+  /**
+   * N shell family.
+   */
     NShellFamily() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * _resolve current.
+     *
+     * @return _resolve current result
+     */
     private static NShellFamily _resolveCurrent() {
-        switch (NOsFamily.getCurrent()) {
+        switch (NOsFamily.current()) {
             case WINDOWS: {
                 return WIN_CMD;
             }
             case LINUX:
             case UNIX: {
+                /**
+                 * Parse.
+                 *
+                 * @param System.getenv("SHELL")).orElse(BASH system.getenv("shell")).or else(bash
+                 * @return parse result
+                 */
                 return parse(System.getenv("SHELL")).orElse(BASH);
             }
             case MACOS: {
+                /**
+                 * Parse.
+                 *
+                 * @param System.getenv("SHELL")).orElse(ZSH system.getenv("shell")).or else(zsh
+                 * @return parse result
+                 */
                 return parse(System.getenv("SHELL")).orElse(ZSH);
             }
         }
         return UNKNOWN;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NShellFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NShellFamily.class, s -> {
             String n = null;
             if (s.value().contains("/")) {
-                List<String> parts = NStringUtils.split(s.value().trim().toUpperCase(), "/",true,true);
+                List<String> parts = NStringUtils.split(s.value().toUpperCase(), "/",true,true);
                 if (parts.size() > 0) {
                     n = parts.get(parts.size() - 1);
                 } else {
@@ -148,7 +174,12 @@ public enum NShellFamily implements NEnum {
     }
 
 
-    public static NShellFamily getCurrent() {
+    /**
+     * Current.
+     *
+     * @return current result
+     */
+    public static NShellFamily current() {
         return _curr;
     }
 

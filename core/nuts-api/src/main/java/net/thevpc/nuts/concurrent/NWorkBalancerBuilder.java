@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NSetter;
 
 /**
  * Builder for creating a {@link NWorkBalancer}.
@@ -32,7 +33,7 @@ public interface NWorkBalancerBuilder<T> {
      * @param strategy strategy name (must be registered in the factory)
      * @return this builder
      */
-    NWorkBalancerBuilder<T> setStrategy(String strategy);
+    NWorkBalancerBuilder<T> strategy(String strategy);
 
     /**
      * Sets a default strategy implementation.
@@ -40,7 +41,8 @@ public interface NWorkBalancerBuilder<T> {
      * @param strategy default strategy object
      * @return this builder
      */
-    NWorkBalancerBuilder<T> setStrategy(NWorkBalancerDefaultStrategy strategy);
+    @NSetter
+    NWorkBalancerBuilder<T> strategy(NWorkBalancerDefaultStrategy strategy);
 
 
     /**
@@ -56,8 +58,21 @@ public interface NWorkBalancerBuilder<T> {
      * Worker-specific configuration builder.
      */
     interface WorkerBuilder<T> {
+        /**
+         * With option.
+         *
+         * @param optionName option name
+         * @param optionValue option value
+         * @return with option result
+         */
         WorkerBuilder<T> withOption(String optionName, NElement optionValue);
 
+        /**
+         * With weight.
+         *
+         * @param weight weight
+         * @return with weight result
+         */
         WorkerBuilder<T> withWeight(float weight);
 
         /**
@@ -75,8 +90,19 @@ public interface NWorkBalancerBuilder<T> {
          * @return main call builder
          */
         NWorkBalancerBuilder<T> then();
+        /**
+         * Adds the specified worker.
+         *
+         * @param workerName worker name
+         * @return add worker result
+         */
         WorkerBuilder<T> addWorker(String workerName);
 
+        /**
+         * Build.
+         *
+         * @return build result
+         */
         NWorkBalancer<T> build();
     }
 

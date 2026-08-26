@@ -23,7 +23,7 @@ public class NOnceValueFactoryImpl implements NOnceValueFactory {
     }
 
     @Override
-    public NOnceValueStore getStore() {
+    public NOnceValueStore store() {
         return store;
     }
 

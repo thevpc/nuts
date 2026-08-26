@@ -29,6 +29,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,6 +44,11 @@ import java.util.List;
  */
 public interface NPush extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NPush of() {
         return NExtensions.of(NPush.class);
     }
@@ -105,7 +112,8 @@ public interface NPush extends NWorkspaceCmd {
      *
      * @return ids to push for
      */
-    List<NId> getIds();
+    @NGetter
+    List<NId> ids();
 
     /**
      * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
@@ -167,7 +175,8 @@ public interface NPush extends NWorkspaceCmd {
      *
      * @return locked ids
      */
-    List<NId> getLockedIds();
+    @NGetter
+    List<NId> lockedIds();
 
     /**
      * add argument to pass to the push command
@@ -213,7 +222,8 @@ public interface NPush extends NWorkspaceCmd {
      *
      * @return all arguments to pass to the push command
      */
-    List<String> getArgs();
+    @NGetter
+    List<String> args();
 
     /**
      * true when offline mode
@@ -228,14 +238,16 @@ public interface NPush extends NWorkspaceCmd {
      * @param offline enable offline mode
      * @return {@code this} instance
      */
-    NPush setOffline(boolean offline);
+    @NSetter
+    NPush offline(boolean offline);
 
     /**
      * repository to push from
      *
      * @return repository to push from
      */
-    String getRepository();
+    @NGetter
+    String repository();
 
     /**
      * repository to push from
@@ -243,7 +255,8 @@ public interface NPush extends NWorkspaceCmd {
      * @param repository repository to push from
      * @return {@code this} instance
      */
-    NPush setRepository(String repository);
+    @NSetter
+    NPush repository(String repository);
 
     /**
      * configure the current command with the given arguments. This is an

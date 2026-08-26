@@ -11,6 +11,7 @@ import net.thevpc.nuts.artifact.NDescriptorFlag;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,14 +36,14 @@ public class NDefinitionFlagsIdFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        Set<NDescriptorFlag> available = other.getDescriptor().getFlags();
+        Set<NDescriptorFlag> available = other.descriptor().flags();
         if (effectiveFlag) {
             for (NDescriptorFlag flag : this.flags) {
                 if (!available.contains(flag)) {
                     return false;
                 }
             }
-            Set<NDescriptorFlag> af = other.getEffectiveFlags().get();
+            Set<NDescriptorFlag> af = other.effectiveFlags().get();
             for (NDescriptorFlag flag : this.flags) {
                 if (!af.contains(flag)) {
                     return false;
@@ -88,4 +89,16 @@ public class NDefinitionFlagsIdFilter extends AbstractDefinitionFilter {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFlagsIdFilter that = (NDefinitionFlagsIdFilter) o;
+        return effectiveFlag == that.effectiveFlag && Objects.equals(flags, that.flags);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), flags, effectiveFlag);
+    }
 }

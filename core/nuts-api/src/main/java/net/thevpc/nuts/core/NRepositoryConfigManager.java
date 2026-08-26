@@ -27,8 +27,10 @@ package net.thevpc.nuts.core;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -46,63 +48,207 @@ public interface NRepositoryConfigManager{
      *
      * @return repository global (workspace independent) name
      */
-    String getGlobalName();
+    @NGetter
+    String globalName();
 
-    NRepositoryRef getRepositoryRef();
+    /**
+     * Repository ref.
+     *
+     * @return repository ref result
+     */
+    @NGetter
+    NRepositoryRef repositoryRef();
 
-    String getType();
+    /**
+     * Type.
+     *
+     * @return type result
+     */
+    @NGetter
+    String type();
 
-    String getGroups();
+    /**
+     * Groups.
+     *
+     * @return groups result
+     */
+    @NGetter
+    String groups();
 
-    NSpeedQualifier getSpeed();
+    /**
+     * Speed.
+     *
+     * @return speed result
+     */
+    @NGetter
+    NSpeedQualifier speed();
 
+    /**
+     * Checks if is temporary.
+     *
+     * @return is temporary result
+     */
     boolean isTemporary();
 
+    /**
+     * Checks if is preview.
+     *
+     * @return is preview result
+     */
     boolean isPreview();
 
-    Set<String> getTags();
+    /**
+     * Tags.
+     *
+     * @return tags result
+     */
+    @NGetter
+    Set<String> tags();
 
-    NRepositoryConfigManager setTemporary(boolean enabled);
+    /**
+     * Temporary.
+     *
+     * @param enabled enabled
+     * @return temporary result
+     */
+    @NSetter
+    NRepositoryConfigManager temporary(boolean enabled);
 
+    /**
+     * Checks if is index subscribed.
+     *
+     * @return is index subscribed result
+     */
     boolean isIndexSubscribed();
 
 
-    NRepositoryLocation getLocation();
+    /**
+     * Location.
+     *
+     * @return location result
+     */
+    @NGetter
+    NRepositoryLocation location();
 
-    NPath getLocationPath();
+    /**
+     * Location path.
+     *
+     * @return location path result
+     */
+    @NGetter
+    NPath locationPath();
 
     /**
      * return repository configured location as string
      *
      * @return repository location path
      */
-    NPath getStoreLocation();
+    @NGetter
+    NPath storeLocation();
 
+    /**
+     * Returns the store location.
+     *
+     * @param folderType folder type
+     * @return get store location result
+     */
     NPath getStoreLocation(NStoreType folderType);
 
+    /**
+     * Checks if is index enabled.
+     *
+     * @return is index enabled result
+     */
+    @NGetter
     boolean isIndexEnabled();
 
-    NRepositoryConfigManager setIndexEnabled(boolean enabled);
+    /**
+     * Index enabled.
+     *
+     * @param enabled enabled
+     * @return index enabled result
+     */
+    @NSetter
+    NRepositoryConfigManager indexEnabled(boolean enabled);
 
+    /**
+     * Sets the mirror enabled.
+     *
+     * @param repoName repo name
+     * @param enabled enabled
+     * @return set mirror enabled result
+     */
     NRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled);
 
-    int getDeployWeight();
+    /**
+     * Deploy weight.
+     *
+     * @return deploy weight result
+     */
+    @NGetter
+    int deployWeight();
 
+    /**
+     * Checks if is enabled.
+     *
+     * @return is enabled result
+     */
+    @NGetter
     boolean isEnabled();
 
-    NRepositoryConfigManager setEnabled(boolean enabled);
+    /**
+     * Enabled.
+     *
+     * @param enabled enabled
+     * @return enabled result
+     */
+    @NSetter
+    NRepositoryConfigManager enabled(boolean enabled);
 
+    /**
+     * Subscribe index.
+     *
+     * @return subscribe index result
+     */
     NRepositoryConfigManager subscribeIndex();
 
+    /**
+     * Unsubscribe index.
+     *
+     * @return unsubscribe index result
+     */
     NRepositoryConfigManager unsubscribeIndex();
 
+    /**
+     * Checks if is supported mirroring.
+     *
+     * @return is supported mirroring result
+     */
     boolean isSupportedMirroring();
 
+    /**
+     * Finds the find mirror by id.
+     *
+     * @param repositoryNameOrId repository name or id
+     * @return find mirror by id result
+     */
     NRepository findMirrorById(String repositoryNameOrId);
 
+    /**
+     * Finds the find mirror by name.
+     *
+     * @param repositoryNameOrId repository name or id
+     * @return find mirror by name result
+     */
     NRepository findMirrorByName(String repositoryNameOrId);
 
-    List<NRepository> getMirrors();
+    /**
+     * Mirrors.
+     *
+     * @return mirrors result
+     */
+    @NGetter
+    List<NRepository> mirrors();
 
     /**
      * search for (or throw error) a repository with the given repository name
@@ -127,15 +273,53 @@ public interface NRepositoryConfigManager{
      */
     NRepositoryConfigManager removeMirror(String repositoryId);
 
-    NStoreStrategy getStoreStrategy();
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
+    @NGetter
+    NStoreStrategy storeStrategy();
 
+    /**
+     * Returns the config map.
+     *
+     * @param inherit inherit
+     * @return get config map result
+     */
     Map<String, String> getConfigMap(boolean inherit);
 
+    /**
+     * Returns the config property.
+     *
+     * @param key key
+     * @param inherit inherit
+     * @return get config property result
+     */
     NOptional<NLiteral> getConfigProperty(String key, boolean inherit);
 
-    Map<String, String> getConfigMap();
+    /**
+     * Config map.
+     *
+     * @return config map result
+     */
+    @NGetter
+    Map<String, String> configMap();
 
+    /**
+     * Returns the config property.
+     *
+     * @param property property
+     * @return get config property result
+     */
     NOptional<NLiteral> getConfigProperty(String property);
 
+    /**
+     * Sets the config property.
+     *
+     * @param property property
+     * @param value value
+     * @return set config property result
+     */
     NRepositoryConfigManager setConfigProperty(String property, String value);
 }

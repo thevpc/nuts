@@ -4,26 +4,87 @@ import net.thevpc.nuts.internal.rpi.NIORPI;
 
 import java.io.OutputStream;
 
+/**
+ * NOutputStreamBuilder interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NOutputStreamBuilder {
+    /**
+     * Creates a new instance of.
+     *
+     * @param outputStream output stream
+     * @return of result
+     */
     static NOutputStreamBuilder of(OutputStream outputStream) {
-        return NIORPI.of().ofOutputStreamBuilder(outputStream);
+        return NIORPI.of().createOutputStreamBuilder(outputStream);
     }
 
-    OutputStream getBase();
+    /**
+     * Base.
+     *
+     * @return base result
+     */
+    OutputStream base();
 
-    NOutputStreamBuilder setBase(OutputStream base);
+    /**
+     * Base.
+     *
+     * @param base base
+     * @return base result
+     */
+    NOutputStreamBuilder base(OutputStream base);
 
-    NContentMetadata getMetadata();
+    /**
+     * Metadata.
+     *
+     * @return metadata result
+     */
+    NContentMetadata metadata();
 
-    NOutputStreamBuilder setMetadata(NContentMetadata metadata);
+    /**
+     * Metadata.
+     *
+     * @param metadata metadata
+     * @return metadata result
+     */
+    NOutputStreamBuilder metadata(NContentMetadata metadata);
 
+    /**
+     * Checks if is close base.
+     *
+     * @return is close base result
+     */
     boolean isCloseBase();
 
-    NOutputStreamBuilder setCloseBase(boolean closeBase);
+    /**
+     * Close base.
+     *
+     * @param closeBase close base
+     * @return close base result
+     */
+    NOutputStreamBuilder closeBase(boolean closeBase);
 
-    Runnable getCloseAction();
+    /**
+     * Close action.
+     *
+     * @return close action result
+     */
+    Runnable closeAction();
 
-    NOutputStreamBuilder setCloseAction(Runnable closeAction);
+    /**
+     * Close action.
+     *
+     * @param closeAction close action
+     * @return close action result
+     */
+    NOutputStreamBuilder closeAction(Runnable closeAction);
 
+    /**
+     * Creates a new instance of create output stream.
+     *
+     * @return create output stream result
+     */
     OutputStream createOutputStream();
 }

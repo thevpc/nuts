@@ -25,9 +25,9 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                         context.defaultToSimple(p.value(), NElement.class)
                 );
             }
-            case UPLET:
-            case NAMED_UPLET: {
-                return src.asUplet().get().params().stream().map(x -> context.toSimple(x, null)).collect(Collectors.toList());
+            case TUPLE:
+            case NAMED_TUPLE: {
+                return src.asTuple().get().params().stream().map(x -> context.toSimple(x, null)).collect(Collectors.toList());
             }
             case ARRAY:
             case FULL_ARRAY:
@@ -101,14 +101,14 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 }
                 return p;
             }
-            case UPLET:
-            case NAMED_UPLET: {
-                NUpletElement arr = src.asUplet().get();
+            case TUPLE:
+            case NAMED_TUPLE: {
+                NTupleElement arr = src.asTuple().get();
                 NBooleanRef someChange = NRef.ofBoolean(false);
                 List<NElement> params = convertList_objectToElement(arr.params(), src, typeOfSrc, context, someChange);
                 List<NElementAnnotation> anns = convertAnn_objectToElement(arr.annotations(), src, typeOfSrc, context, someChange);
                 if (someChange.get()) {
-                    NUpletElementBuilder obj2 = NElement.ofUpletBuilder();
+                    NTupleElementBuilder obj2 = NElement.ofTupleBuilder();
                     obj2.addAll(params.toArray(new NElement[0]));
                     obj2.name(arr.name().orNull());
                     obj2.addAffixes(arr.affixes());

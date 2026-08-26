@@ -27,6 +27,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
@@ -46,11 +47,29 @@ import java.nio.file.Path;
  * @since 0.5.5
  */
 public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
+    /**
+     * Returns the get.
+     *
+     * @param any any
+     * @return get result
+     */
     static NOptional<NObjectWriter> get(Object any) {
-        return NTexts.of().resolveWriter(any);
+        return NTextRPI.of().createWriter(any);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param any any
+     * @return of result
+     */
     static NObjectWriter of(Object any) {
+        /**
+         * Returns the get.
+         *
+         * @param any).get( any).get(
+         * @return get result
+         */
         return get(any).get();
     }
 
@@ -74,9 +93,20 @@ public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
     default String formatPlain(Object aValue) {
         boolean ntf = isNtf();
         try {
+            /**
+             * Format.
+             *
+             * @param aValue).filteredText( a value).filtered text(
+             * @return format result
+             */
             return format(aValue).filteredText();
         } finally {
-            setNtf(ntf);
+          /**
+           * Ntf.
+           *
+           * @param ntf ntf
+           */
+            ntf(ntf);
         }
     }
 
@@ -364,5 +394,11 @@ public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
      */
     boolean isNtf();
 
-    NObjectWriter setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    NObjectWriter ntf(boolean ntf);
 }

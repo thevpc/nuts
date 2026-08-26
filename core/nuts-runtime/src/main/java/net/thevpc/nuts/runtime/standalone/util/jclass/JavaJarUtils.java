@@ -64,6 +64,41 @@ public class JavaJarUtils {
         return nb;
     }
 
+    public static Map<JClassVersion,List<String>> resolveJarJavaVersionsWithPaths(InputStream jarStream) {
+        if (!(jarStream instanceof BufferedInputStream)) {
+            jarStream = new BufferedInputStream(jarStream);
+        }
+        final Map<JClassVersion,List<String>> versions = new TreeMap<>((o1, o2) -> o2.compareTo(o1));
+        ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
+            if (path.endsWith(".class")) {
+                JClassVersion mainClass = JavaClassUtils.resolveJClassVersion(inputStream).orNull();
+                if (mainClass != null) {
+                    versions.computeIfAbsent(mainClass,a->new ArrayList<>()).add(path);
+                }
+            }
+            return NVisitResult.CONTINUE;
+        });
+        return versions;
+    }
+
+    public static Set<JClassVersion> resolveJarJavaVersions(InputStream jarStream) {
+        if (!(jarStream instanceof BufferedInputStream)) {
+            jarStream = new BufferedInputStream(jarStream);
+        }
+        final TreeSet<JClassVersion> versions = new TreeSet<>((o1, o2) -> o2.compareTo(o1));
+        ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
+            if (path.endsWith(".class")) {
+                JClassVersion mainClass = JavaClassUtils.resolveJClassVersion(inputStream).orNull();
+                if (mainClass != null) {
+                    versions.add(mainClass);
+                }
+            }
+            return NVisitResult.CONTINUE;
+        });
+
+        return versions;
+    }
+
     public static List<NExecutionEntry> parseJarExecutionEntries(InputStream jarStream) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
@@ -81,7 +116,7 @@ public class JavaJarUtils {
                 if (a != null) {
                     String v = a.getValue("Main-Class");
                     if (!NBlankable.isBlank(v)) {
-                        v = NStringUtils.trim(v);
+                        v = NStringUtils.strip(v);
                         classes.add(new DefaultNExecutionEntry(v, true, false));
                     }
                 }
@@ -89,7 +124,7 @@ public class JavaJarUtils {
                 NPom pom = new NPomXmlParser().parse(inputStream);
                 final Element ee = pom.getXml().getDocumentElement();
                 if (pom.getParent() != null && pom.getParent().getArtifactId().equals("spring-boot-starter-parent")) {
-                    String springStartClass = NStringUtils.trim(pom.getProperties().get("start-class"));
+                    String springStartClass = NStringUtils.strip(pom.getProperties().get("start-class"));
                     if (springStartClass.length() > 0) {
                         classes.add(new DefaultNExecutionEntry(springStartClass, true, false));
                     }
@@ -103,10 +138,10 @@ public class JavaJarUtils {
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
                             if (
-                                    pluginId.getShortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
-                                            || pluginId.getShortName().equals("org.apache.maven.plugins:maven-jar-plugin")
+                                    pluginId.shortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
+                                            || pluginId.shortName().equals("org.apache.maven.plugins:maven-jar-plugin")
                             ) {
-                                String s = NStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.strip(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
                                     classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -117,11 +152,11 @@ public class JavaJarUtils {
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
                             if (
-                                    pluginId.getArtifactId().equals("onejar-maven-plugin")
-                                            || pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")
-                                            || pluginId.getShortName().equals("org.openjfx:javafx-maven-plugin")
+                                    pluginId.artifactId().equals("onejar-maven-plugin")
+                                            || pluginId.shortName().equals("org.springframework.boot:spring-boot-maven-plugin")
+                                            || pluginId.shortName().equals("org.openjfx:javafx-maven-plugin")
                             ) {
-                                String s = NStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.strip(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
                                     classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -133,8 +168,8 @@ public class JavaJarUtils {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
-                            if (pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
-                                String s = NStringUtils.trim(e.getTextContent());
+                            if (pluginId.shortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
+                                String s = NStringUtils.strip(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
                                     classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -145,9 +180,9 @@ public class JavaJarUtils {
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode().getParentNode().getParentNode();
                             NId pluginId = parseMavenPluginElement(plugin);
                             if (
-                                    pluginId.getShortName().equals("org.apache.maven.plugins:maven-shade-plugin")
+                                    pluginId.shortName().equals("org.apache.maven.plugins:maven-shade-plugin")
                             ) {
-                                String s = NStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.strip(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
                                     classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -160,9 +195,9 @@ public class JavaJarUtils {
                 });
             } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json") || path.equals("META-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME)) {
                 NDescriptor descriptor = NDescriptorParser.of().parse(inputStream).get();
-                NArtifactCall executor = descriptor.getExecutor();
+                NArtifactCall executor = descriptor.executor();
                 if (executor != null) {
-                    List<String> arguments = executor.getArguments();
+                    List<String> arguments = executor.arguments();
                     for (int i = 0; i < arguments.size(); i++) {
                         String a = arguments.get(i);
                         if (a != null) {
@@ -179,7 +214,7 @@ public class JavaJarUtils {
                 }
                 NDescriptorProperty mc = descriptor.getProperty("nuts.mainClass").orNull();
                 if (mc != null) {
-                    String s = NStringUtils.trim(mc.getValue().asString().get());
+                    String s = NStringUtils.strip(mc.value().asString().get());
                     if (!s.isEmpty()) {
                         s = resolveMainClassString(s, descriptor);
                         classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -191,7 +226,7 @@ public class JavaJarUtils {
 
         Map<String, NExecutionEntry> found = new LinkedHashMap<>();
         for (NExecutionEntry entry : classes) {
-            String cn = entry.getName();
+            String cn = entry.name();
             NExecutionEntry a = found.get(cn);
             if (a == null) {
                 found.put(cn, entry);
@@ -219,7 +254,7 @@ public class JavaJarUtils {
                 if (x != 0) {
                     return x;
                 }
-                return o1.getName().compareTo(o2.getName());
+                return o1.name().compareTo(o2.name());
             }
         });
         return ee;
@@ -252,15 +287,15 @@ public class JavaJarUtils {
             if (ne != null) {
                 switch (ne.getNodeName()) {
                     case "groupId": {
-                        ib.setGroupId(NStringUtils.trim(ne.getTextContent()));
+                        ib.groupId(NStringUtils.strip(ne.getTextContent()));
                         break;
                     }
                     case "artifactId": {
-                        ib.setArtifactId(NStringUtils.trim(ne.getTextContent()));
+                        ib.artifactId(NStringUtils.strip(ne.getTextContent()));
                         break;
                     }
                     case "version": {
-                        ib.setVersion(NStringUtils.trim(ne.getTextContent()));
+                        ib.version(NStringUtils.strip(ne.getTextContent()));
                         break;
                     }
                 }
@@ -270,7 +305,7 @@ public class JavaJarUtils {
     }
 
     public static NVersion parseJarClassVersion(NPath path) {
-        try (InputStream is = path.getInputStream()) {
+        try (InputStream is = path.inputStream()) {
             return parseJarClassVersion(is);
         } catch (IOException ex) {
             throw new NIOException(ex);
@@ -278,7 +313,7 @@ public class JavaJarUtils {
     }
 
     public static String parseDefaultModuleName(NPath jarStream) {
-        try (InputStream is = jarStream.getInputStream()) {
+        try (InputStream is = jarStream.inputStream()) {
             return parseDefaultModuleName(is);
         } catch (IOException ex) {
             throw new NIOException(ex);
@@ -295,7 +330,7 @@ public class JavaJarUtils {
                     for (Object o : attrs.keySet()) {
                         Attributes.Name attrName = (Attributes.Name) o;
                         if ("Automatic-Module-Name".equals(attrName.toString())) {
-                            automaticModuleName.setNonNull(NStringUtils.trimToNull(attrs.getValue(attrName)));
+                            automaticModuleName.setNonNull(NStringUtils.stripToNull(attrs.getValue(attrName)));
                             return NVisitResult.TERMINATE;
                         }
                     }
@@ -310,7 +345,7 @@ public class JavaJarUtils {
     }
 
     public static JavaClassByteCode.ModuleInfo parseModuleInfo(NPath jar) {
-        try (InputStream is = jar.getInputStream()) {
+        try (InputStream is = jar.inputStream()) {
             return parseModuleInfo(is);
         } catch (IOException ex) {
             throw new NIOException(ex);

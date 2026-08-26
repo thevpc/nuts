@@ -2,7 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.elem.NTupleElementBuilder;
+import net.thevpc.nuts.util.NGetter;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -63,37 +64,44 @@ public class NRateLimitRuleModel implements Serializable, NDescribable {
     }
 
     /** Returns a defensive copy of the serialized configuration. */
-    public byte[] getConfig() {
+    @NGetter
+    public byte[] config() {
         return config == null ? new byte[0] : Arrays.copyOf(config, config.length);
     }
 
     /** Returns the rule identifier. */
-    public String getId() {
+    @NGetter
+    public String id() {
         return id;
     }
 
     /** Returns the strategy name. */
-    public String getStrategy() {
+    @NGetter
+    public String strategy() {
         return strategy;
     }
 
     /** Returns the capacity (maximum token count). */
-    public int getCapacity() {
+    @NGetter
+    public int capacity() {
         return capacity;
     }
 
     /** Returns the duration (refill period in milliseconds). */
-    public long getDuration() {
+    @NGetter
+    public long duration() {
         return duration;
     }
 
     /** Returns the number of currently available tokens. */
-    public double getAvailable() {
+    @NGetter
+    public double available() {
         return available;
     }
 
     /** Returns the timestamp of the last refill event (ms since epoch). */
-    public long getLastRefill() {
+    @NGetter
+    public long lastRefill() {
         return lastRefill;
     }
 
@@ -127,10 +135,10 @@ public class NRateLimitRuleModel implements Serializable, NDescribable {
 
     @Override
     public NElement describe() {
-        NUpletElementBuilder b = NElement.ofUpletBuilder("Rule")
-                .add("id", getId())
-                .add("capacity", getCapacity())
-                .add("available", getAvailable())
+        NTupleElementBuilder b = NElement.ofTupleBuilder("Rule")
+                .add("id", id())
+                .add("capacity", capacity())
+                .add("available", available())
                 .add("duration", duration)
                 .add("strategy", strategy);
         if (lastRefill > 0) {

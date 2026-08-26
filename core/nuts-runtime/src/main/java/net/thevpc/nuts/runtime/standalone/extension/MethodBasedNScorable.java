@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 
 import java.lang.reflect.Method;
 
@@ -13,7 +13,6 @@ class MethodBasedNScorable<T> implements NScorable {
     public MethodBasedNScorable(NExtensionTypeInfo<T> nExtensionTypeInfo, Method declaredMethod) {
         this.nExtensionTypeInfo = nExtensionTypeInfo;
         this.declaredMethod = declaredMethod;
-        declaredMethod.setAccessible(true);
     }
 
     @Override

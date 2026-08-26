@@ -50,7 +50,7 @@ public class DefaultNBinaryStreamElement extends AbstractNElement implements NBi
     public DefaultNBinaryStreamElement(NInputStreamProvider value, String blocIdentifier, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
         super(NElementType.BINARY_STREAM, affixes, diagnostics,metadata);
         this.value = value;
-        this.blocIdentifier = NStringUtils.trim(blocIdentifier);
+        this.blocIdentifier = NStringUtils.strip(blocIdentifier);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DefaultNBinaryStreamElement extends AbstractNElement implements NBi
 
     @Override
     public NOptional<NElement> resolve(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
             return NOptional.of(this);
         }
@@ -69,7 +69,7 @@ public class DefaultNBinaryStreamElement extends AbstractNElement implements NBi
 
     @Override
     public List<NElement> resolveAll(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
             return new ArrayList<>(Arrays.asList(this));
         }

@@ -70,10 +70,19 @@ public enum NOpenMode implements NEnum {
      */
     private final String id;
 
+  /**
+   * N open mode.
+   */
     NOpenMode() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NOpenMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NOpenMode.class, s->{
             switch (s.normalizedValue()) {

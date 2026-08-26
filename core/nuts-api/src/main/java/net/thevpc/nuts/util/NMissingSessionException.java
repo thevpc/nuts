@@ -39,14 +39,43 @@ import net.thevpc.nuts.text.NMsg;
  */
 public class NMissingSessionException extends NNoSessionException {
 
+    /**
+     * N missing session exception.
+     *
+     * @return n missing session exception result
+     */
     public NMissingSessionException() {
     }
 
+    /**
+     * N missing session exception.
+     *
+     * @param message message
+     * @return n missing session exception result
+     */
     public NMissingSessionException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
+    /**
+     * N missing session exception.
+     *
+     * @param message message
+     * @param cause cause
+     * @return n missing session exception result
+     */
     public NMissingSessionException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 }

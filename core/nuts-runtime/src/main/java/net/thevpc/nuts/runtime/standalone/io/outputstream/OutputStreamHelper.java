@@ -28,7 +28,7 @@ public class OutputStreamHelper implements OutputHelper {
             loopGard--;
         }
         if (rawOutput0 instanceof NOutputStreamTransparentAdapter) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("invalid rawOutput"));
+            throw new NIllegalArgumentException(NMsg.ofP("invalid rawOutput"));
         }
     }
 

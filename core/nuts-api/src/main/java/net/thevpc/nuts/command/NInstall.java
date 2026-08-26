@@ -31,7 +31,9 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,14 +48,31 @@ import java.util.function.Predicate;
  * @since 0.5.4
  */
 public interface NInstall extends NWorkspaceCmd {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NInstall of() {
         return NExtensions.of(NInstall.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ids ids
+     * @return of result
+     */
     static NInstall of(String... ids) {
         return NExtensions.of(NInstall.class).addIds(ids);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ids ids
+     * @return of result
+     */
     static NInstall of(NId... ids) {
         return NExtensions.of(NInstall.class).addIds(ids);
     }
@@ -108,12 +127,12 @@ public interface NInstall extends NWorkspaceCmd {
 
 
     /**
-     * add artifact id to install
+     * set artifact id to install
      *
      * @param id id to install
      * @return {@code this} instance
      */
-    NInstall setId(NId id);
+    NInstall id(NId id);
 
     /**
      * add artifact id to install
@@ -121,7 +140,7 @@ public interface NInstall extends NWorkspaceCmd {
      * @param id id to install
      * @return {@code this} instance
      */
-    NInstall setId(String id);
+    NInstall id(String id);
 
     /**
      * clear ids to install
@@ -135,7 +154,8 @@ public interface NInstall extends NWorkspaceCmd {
      *
      * @return all ids to install
      */
-    List<NId> getIds();
+    @NGetter
+    List<NId> ids();
 
     /**
      * add artifact ids to install
@@ -143,7 +163,16 @@ public interface NInstall extends NWorkspaceCmd {
      * @param ids ids to install
      * @return {@code this} instance
      */
-    NInstall setIds(NId... ids);
+    NInstall ids(NId... ids);
+
+    /**
+     * Ids.
+     *
+     * @param ids ids
+     * @return ids result
+     */
+    @NSetter
+    NInstall ids(List<NId> ids);
 
     /**
      * add artifact ids to install
@@ -151,7 +180,7 @@ public interface NInstall extends NWorkspaceCmd {
      * @param ids ids to install
      * @return {@code this} instance
      */
-    NInstall setIds(String... ids);
+    NInstall ids(String... ids);
 
     /**
      * add argument to pass to the install command
@@ -161,6 +190,13 @@ public interface NInstall extends NWorkspaceCmd {
      */
     NInstall addArg(String arg);
 
+    /**
+     * Adds the specified conditional args.
+     *
+     * @param definition definition
+     * @param args args
+     * @return add conditional args result
+     */
     NInstall addConditionalArgs(Predicate<NDefinition> definition, String... args);
 
     /**
@@ -191,23 +227,9 @@ public interface NInstall extends NWorkspaceCmd {
      *
      * @return all arguments to pass to the install command
      */
-    List<String> getArgs();
+    @NGetter
+    List<String> args();
 
-    /**
-     * set default version flag. the installed version will be defined as default.
-     *
-     * @return {@code this} instance
-     */
-    NInstall defaultVersion();
-
-    /**
-     * set default version flag. when true, the installed version will be defined as default
-     *
-     * @param defaultVersion when true, the installed version will be defined as
-     *                       default
-     * @return {@code this} instance
-     */
-    NInstall defaultVersion(boolean defaultVersion);
 
     /**
      * return true if the installer will update the default version
@@ -223,7 +245,7 @@ public interface NInstall extends NWorkspaceCmd {
      *                       default
      * @return {@code this} instance
      */
-    NInstall setDefaultVersion(boolean defaultVersion);
+    NInstall defaultVersion(boolean defaultVersion);
 
     /**
      * return true companions should be installed as well
@@ -232,12 +254,7 @@ public interface NInstall extends NWorkspaceCmd {
      */
     boolean isCompanions();
 
-    /**
-     * update companions
-     *
-     * @return return {@code this} instance
-     */
-    NInstall companions();
+
 
     /**
      * if true update companions
@@ -245,15 +262,8 @@ public interface NInstall extends NWorkspaceCmd {
      * @param value flag
      * @return return {@code this} instance
      */
+    @NSetter
     NInstall companions(boolean value);
-
-    /**
-     * if true update companions
-     *
-     * @param value flag
-     * @return return {@code this} instance
-     */
-    NInstall setCompanions(boolean value);
 
     /**
      * return true installed artifacts should be re-installed as well
@@ -268,7 +278,8 @@ public interface NInstall extends NWorkspaceCmd {
      * @param value flag
      * @return {@code this} instance
      */
-    NInstall setInstalled(boolean value);
+    @NSetter
+    NInstall installed(boolean value);
 
     /**
      * execute installation and return result.
@@ -277,6 +288,11 @@ public interface NInstall extends NWorkspaceCmd {
      */
     NStream<NDefinition> getResultStream();
 
+    /**
+     * Returns the result list.
+     *
+     * @return get result list result
+     */
     List<NDefinition> getResultList();
 
     /**
@@ -299,15 +315,49 @@ public interface NInstall extends NWorkspaceCmd {
     @Override
     NInstall run();
 
-    RuntimeException getFailedIdReason(NId id);
+    /**
+     * Returns the result failed id reason.
+     *
+     * @param id id
+     * @return get result failed id reason result
+     */
+    RuntimeException getResultFailedIdReason(NId id);
 
-    NStream<NDefinition> getSuccessfulResultStream();
+    /**
+     * Returns the result successful stream.
+     *
+     * @return get result successful stream result
+     */
+    NStream<NDefinition> getResultSuccessfulStream();
 
-    List<NDefinition> getSuccessfulResultList();
+    /**
+     * Returns the result successful list.
+     *
+     * @return get result successful list result
+     */
+    List<NDefinition> getResultSuccessfulList();
 
-    List<NId> getFailedResultList();
+    /**
+     * Returns the result failed list.
+     *
+     * @return get result failed list result
+     */
+    List<NId> getResultFailedList();
 
+    /**
+     * Checks if is fail fast.
+     *
+     * @return is fail fast result
+     */
+    @NGetter
     boolean isFailFast();
 
-    NInstall setFailFast(boolean failFast);
+    /**
+     * Fail fast.
+     *
+     * @param failFast fail fast
+     * @return fail fast result
+     */
+    @NSetter
+    NInstall failFast(boolean failFast);
 }

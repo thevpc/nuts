@@ -10,23 +10,23 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.util.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 public class NWebRequestImpl implements NWebRequest {
-    private String url;
+    private String uri;
     private NHttpMethod method;
     private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
     private Map<String, List<String>> parameters;
     private NInputSource requestBody;
     private boolean oneWay;
-    private Integer readTimeout;
-    private Integer connectTimeout;
+    private NDuration readTimeout;
+    private NDuration connectTimeout;
     private final List<NWebRequestBody> parts = new ArrayList<>();
     private final DefaultNWebCli cli;
     private Map<String, Object> formData;
@@ -37,6 +37,7 @@ public class NWebRequestImpl implements NWebRequest {
         NONE,
         BODY,
         FORM_DATA,
+        MULTIPART,
         URLENCODED,
     }
 
@@ -58,6 +59,12 @@ public class NWebRequestImpl implements NWebRequest {
             }
             case BODY: {
                 //body=null;
+                formData = null;
+                urlEncoded = null;
+                break;
+            }
+            case MULTIPART: {
+                requestBody = null;
                 formData = null;
                 urlEncoded = null;
                 break;
@@ -84,18 +91,18 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setOneWay(boolean oneWay) {
+    public NWebRequest oneWay(boolean oneWay) {
         this.oneWay = oneWay;
         return this;
     }
 
     @Override
-    public String getUrl() {
-        return url;
+    public String uri() {
+        return uri;
     }
 
     @Override
-    public NWebRequestImpl setUrl(String url, Object... vars) {
+    public NWebRequestImpl uri(String url, Object... vars) {
         NAssert.requireNamedNonNull(url, "url");
         NAssert.requireNamedNonNull(vars, "vars");
         NStringBuilder sb = new NStringBuilder();
@@ -205,7 +212,7 @@ public class NWebRequestImpl implements NWebRequest {
                 }
             }
         }
-        this.url = sb.toString();
+        this.uri = sb.toString();
         return this;
     }
 
@@ -220,135 +227,135 @@ public class NWebRequestImpl implements NWebRequest {
 
     public NWebRequest addCookie(NWebCookie cookie) {
         if (cookie != null) {
-            addHeader("Cookie", cookie.getName() + "=" + cookie.getValue());
+            addHeader("Cookie", cookie.name() + "=" + cookie.value());
         }
         return this;
     }
 
     @Override
-    public NWebRequest setUrl(String url) {
-        this.url = url;
+    public NWebRequest uri(String url) {
+        this.uri = url;
         return this;
     }
 
     @Override
-    public NHttpMethod getMethod() {
+    public NHttpMethod method() {
         return method;
     }
 
     @Override
-    public NWebRequestImpl setMethod(NHttpMethod method) {
+    public NWebRequestImpl method(NHttpMethod method) {
         this.method = method == null ? NHttpMethod.GET : method;
         return this;
     }
 
     @Override
     public NWebRequest GET() {
-        return setMethod(NHttpMethod.GET);
+        return method(NHttpMethod.GET);
     }
 
     @Override
     public NWebRequest POST() {
-        return setMethod(NHttpMethod.POST);
+        return method(NHttpMethod.POST);
     }
 
     @Override
     public NWebRequest PATCH() {
-        return setMethod(NHttpMethod.PATCH);
+        return method(NHttpMethod.PATCH);
     }
 
     @Override
     public NWebRequest OPTIONS() {
-        return setMethod(NHttpMethod.OPTIONS);
+        return method(NHttpMethod.OPTIONS);
     }
 
     @Override
     public NWebRequest HEAD() {
-        return setMethod(NHttpMethod.HEAD);
+        return method(NHttpMethod.HEAD);
     }
 
     @Override
     public NWebRequest TRACE() {
-        return setMethod(NHttpMethod.TRACE);
+        return method(NHttpMethod.TRACE);
     }
 
     @Override
     public NWebRequest TRACE(String url) {
-        return TRACE().setUrl(url);
+        return TRACE().uri(url);
     }
 
     @Override
     public NWebRequest CONNECT() {
-        return setMethod(NHttpMethod.CONNECT);
+        return method(NHttpMethod.CONNECT);
     }
 
     @Override
     public NWebRequest PUT() {
-        return setMethod(NHttpMethod.PUT);
+        return method(NHttpMethod.PUT);
     }
 
     @Override
     public NWebRequest DELETE() {
-        return setMethod(NHttpMethod.DELETE);
+        return method(NHttpMethod.DELETE);
     }
 
     @Override
     public NWebRequest GET(String url) {
-        return GET().setUrl(url);
+        return GET().uri(url);
     }
 
     @Override
     public NWebRequest POST(String url) {
-        return POST().setUrl(url);
+        return POST().uri(url);
     }
 
     @Override
     public NWebRequest PATCH(String url) {
-        return PATCH().setUrl(url);
+        return PATCH().uri(url);
     }
 
     @Override
     public NWebRequest OPTIONS(String url) {
-        return OPTIONS().setUrl(url);
+        return OPTIONS().uri(url);
     }
 
     @Override
     public NWebRequest HEAD(String url) {
-        return HEAD().setUrl(url);
+        return HEAD().uri(url);
     }
 
     @Override
     public NWebRequest CONNECT(String url) {
-        return CONNECT().setUrl(url);
+        return CONNECT().uri(url);
     }
 
     @Override
     public NWebRequest PUT(String url) {
-        return PUT().setUrl(url);
+        return PUT().uri(url);
     }
 
     @Override
     public NWebRequest DELETE(String url) {
-        return DELETE().setUrl(url);
+        return DELETE().uri(url);
     }
 
     @Override
-    public String getHeader(String name) {
+    public String header(String name) {
         return headers.getFirst(name);
     }
 
     @Override
-    public List<String> getHeaders(String name) {
+    public List<String> headers(String name) {
         return headers.getOrEmpty(name);
     }
 
     @Override
-    public Map<String, List<String>> getHeaders() {
+    public Map<String, List<String>> headers() {
         return headers.toMap();
     }
 
     @Override
-    public NWebRequest setHeaders(Map<String, List<String>> headers) {
+    public NWebRequest headers(Map<String, List<String>> headers) {
         this.headers.clear();
         return this;
     }
@@ -384,8 +391,8 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setPropsFileHeaders(NPath path) {
-        setHeaders(_mapFromPropsFile(path));
+    public NWebRequest propsFileHeaders(NPath path) {
+        headers(_mapFromPropsFile(path));
         return this;
     }
 
@@ -403,14 +410,14 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setJsonFileHeaders(NPath path) {
-        setHeaders(_mapFromJsonFile(path));
+    public NWebRequest jsonFileHeaders(NPath path) {
+        headers(_mapFromJsonFile(path));
         return this;
     }
 
     @Override
-    public NWebRequest setPropsFileParameters(NPath path) {
-        setParameters(_mapFromPropsFile(path));
+    public NWebRequest propsFileParameters(NPath path) {
+        parameters(_mapFromPropsFile(path));
         return this;
     }
 
@@ -428,15 +435,15 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setJsonFileParameters(NPath path) {
-        setParameters(_mapFromJsonFile(path));
+    public NWebRequest psonFileParameters(NPath path) {
+        parameters(_mapFromJsonFile(path));
         return this;
     }
 
     private static Map<String, List<String>> _mapFromPropsFile(NPath path) {
         Map<String, List<String>> m = new LinkedHashMap<>();
         path.lines().forEach(x -> {
-            x = x.trim();
+            x = NStringUtils.strip(x);
             if (!x.startsWith("#")) {
                 NArg a = NArg.of(x);
                 m.computeIfAbsent(a.key(), r -> new ArrayList<>()).add(String.valueOf(a.key()));
@@ -446,7 +453,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     private Map<String, List<String>> _mapFromJsonFile(NPath path) {
-        Map<String, Object> map = NElementReader.ofJson().read(path.getReader(), Map.class);
+        Map<String, Object> map = NElementReader.ofJson().read(path.asReader(), Map.class);
         Map<String, List<String>> newHeaders = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : map.entrySet()) {
             String k = e.getKey();
@@ -466,15 +473,7 @@ public class NWebRequestImpl implements NWebRequest {
         return newHeaders;
     }
 
-
-    @Override
-    public NWebRequestImpl addHeader(String name, String value) {
-        this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
-        return this;
-    }
-
-    @Override
-    public NWebRequestImpl setHeader(String name, String value) {
+    public NWebRequestImpl header(String name, String value) {
         if (name != null) {
             if (value != null) {
                 this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
@@ -485,14 +484,20 @@ public class NWebRequestImpl implements NWebRequest {
         return this;
     }
 
+    @Override
+    public NWebRequestImpl addHeader(String name, String value) {
+        this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
+        return this;
+    }
+
 
     @Override
-    public Map<String, List<String>> getParameters() {
+    public Map<String, List<String>> parameters() {
         return parameters;
     }
 
     @Override
-    public NWebRequest setParameters(Map<String, List<String>> parameters) {
+    public NWebRequest parameters(Map<String, List<String>> parameters) {
         this.parameters = parameters == null ? new LinkedHashMap<>() : parameters;
         return this;
     }
@@ -517,7 +522,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setParameter(String name, String value) {
+    public NWebRequest parameter(String name, String value) {
         if (value != null) {
             if (this.parameters == null) {
                 this.parameters = new LinkedHashMap<>();
@@ -535,12 +540,12 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NInputSource getRequestBody() {
+    public NInputSource requestBody() {
         switch (mode) {
             case BODY:
                 return requestBody;
             case URLENCODED: {
-                setContentType("application/x-www-form-urlencoded");
+                contentType("application/x-www-form-urlencoded");
                 StringBuilder sb = new StringBuilder();
                 boolean first = true;
                 for (Map.Entry<String, String> e : urlEncoded.entrySet()) {
@@ -551,9 +556,9 @@ public class NWebRequestImpl implements NWebRequest {
                     }
                     try {
                         sb
-                                .append(URLEncoder.encode(NStringUtils.trim(e.getKey()), "UTF-8"))
+                                .append(URLEncoder.encode(NStringUtils.strip(e.getKey()), "UTF-8"))
                                 .append("=")
-                                .append(URLEncoder.encode(NStringUtils.trim(e.getValue()), "UTF-8"))
+                                .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
                         ;
                     } catch (UnsupportedEncodingException ex) {
                         throw new RuntimeException(ex);
@@ -561,40 +566,62 @@ public class NWebRequestImpl implements NWebRequest {
                 }
                 return NInputSource.of(sb.toString().getBytes());
             }
-            case FORM_DATA: {
+            case FORM_DATA:
+            case MULTIPART: {
                 //setContentTypeFormUrlEncoded();
                 SimpleWriter sw = new SimpleWriter(NIO.of().ofTempOutputStream());
-                if (formData != null && !formData.isEmpty()) {
-                    String boundary = "-------------------------------" + UUID.randomUUID();
-                    setContentType("multipart/form-data; boundary=" + boundary);
-                    try {
-                        sw.println(boundary);
-                        for (Map.Entry<String, Object> e : formData.entrySet()) {
-                            if (e.getValue() instanceof String) {
-                                sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral());
-                                sw.println();
-                                sw.println(e.getValue().toString());
-
-                            } else if (e.getValue() instanceof NInputContentProvider) {
-                                NInputContentProvider npath = (NInputContentProvider) e.getValue();
-                                sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral()
-                                        + " ; filename=" + NLiteral.of(npath.getName()).toStringLiteral());
-                                sw.println(("Content-Type: " + NStringUtils.firstNonBlank(npath.getContentType(), "application/octet-stream")));
-                                sw.println();
-                                if (npath instanceof NPath) {
-                                    ((NPath) npath).copyToOutputStream(sw.tos);
-                                } else {
-                                    try (InputStream tis = npath.getInputStream()) {
-                                        NIOUtils.copy(tis, sw.tos);
+                String boundary = "-------------------------------" + UUID.randomUUID();
+                contentType("multipart/form-data; boundary=" + boundary);
+                try {
+                    if (mode == Mode.FORM_DATA) {
+                        if (formData != null && !formData.isEmpty()) {
+                            for (Map.Entry<String, Object> e : formData.entrySet()) {
+                                sw.println("--" + boundary);
+                                if (e.getValue() instanceof String) {
+                                    sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral());
+                                    sw.println();
+                                    sw.println(e.getValue().toString());
+                                } else if (e.getValue() instanceof NInputContentProvider) {
+                                    NInputContentProvider npath = (NInputContentProvider) e.getValue();
+                                    sw.println("Content-Disposition: form-data; name=" + NLiteral.of(e.getKey()).toStringLiteral()
+                                            + "; filename=" + NLiteral.of(npath.name()).toStringLiteral());
+                                    sw.println(("Content-Type: " + NStringUtils.firstNonBlank(npath.contentType(), "application/octet-stream")));
+                                    sw.println();
+                                    if (npath instanceof NPath) {
+                                        ((NPath) npath).copyToOutputStream(sw.tos);
+                                    } else {
+                                        try (InputStream tis = npath.inputStream()) {
+                                            NIOUtils.copy(tis, sw.tos);
+                                        }
                                     }
                                 }
+                                sw.println();
                             }
-                            sw.println();
-                            sw.println(boundary);
                         }
-                    } catch (IOException ex) {
-                        throw new NIOException(ex);
+                    } else {
+                        if (parts != null && !parts.isEmpty()) {
+                            for (NWebRequestBody part : parts) {
+                                sw.println("--" + boundary);
+                                sw.println("Content-Disposition: " + part.contentDisposition());
+                                if (!NBlankable.isBlank(part.contentType())) {
+                                    sw.println("Content-Type: " + part.contentType());
+                                }
+                                sw.println();
+                                if (part.body() != null) {
+                                    try (InputStream tis = part.body().inputStream()) {
+                                        NIOUtils.copy(tis, sw.tos);
+                                    }
+                                } else if (part.stringValue() != null) {
+                                    sw.println(part.stringValue());
+                                }
+                                sw.println();
+                            }
+                        }
                     }
+                    sw.println("--" + boundary + "--");
+                    sw.tos.close();
+                } catch (IOException ex) {
+                    throw new NIOException(ex);
                 }
                 return sw.tos;
             }
@@ -628,7 +655,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequestImpl setJsonRequestBody(Object body) {
+    public NWebRequestImpl jsonRequestBody(Object body) {
         if (body == null) {
             this.requestBody = null;
             setMode(Mode.NONE);
@@ -636,48 +663,48 @@ public class NWebRequestImpl implements NWebRequest {
             this.requestBody = NInputSource.of(NElementWriter.ofJson().formatPlain(body).getBytes());
             setMode(Mode.BODY);
         }
-        setContentType("application/json");
+        contentType("application/json");
         return this;
     }
 
     @Override
-    public NWebRequest setRequestBody(byte[] body) {
+    public NWebRequest requestBody(byte[] body) {
         this.requestBody = body == null ? null : NInputSource.of(body);
         setMode(body == null ? Mode.NONE : Mode.BODY);
         return this;
     }
 
     @Override
-    public NWebRequest setRequestBody(String body) {
+    public NWebRequest requestBody(String body) {
         this.requestBody = body == null ? null : NInputSource.of(new StringReader(body));
         setMode(body == null ? Mode.NONE : Mode.BODY);
         return null;
     }
 
     @Override
-    public NWebRequest setRequestBody(NInputSource body) {
+    public NWebRequest requestBody(NInputSource body) {
         this.requestBody = body;
         setMode(Mode.BODY);
         return this;
     }
 
     @Override
-    public NWebRequestImpl setContentLanguage(String contentLanguage) {
-        return setHeader("Content-Language", contentLanguage);
+    public NWebRequest contentLanguage(String contentLanguage) {
+        return header("Content-Language", contentLanguage);
     }
 
     @Override
-    public NWebRequestImpl setAuthorizationBearer(String authorizationBearer) {
-        authorizationBearer = NStringUtils.trimToNull(authorizationBearer);
+    public NWebRequest authorizationBearer(String authorizationBearer) {
+        authorizationBearer = NStringUtils.stripToNull(authorizationBearer);
         if (authorizationBearer != null) {
             authorizationBearer = "Bearer " + authorizationBearer;
         }
-        return setAuthorization(authorizationBearer);
+        return authorization(authorizationBearer);
     }
 
     @Override
-    public NWebRequest setAuthorizationBasic(String username, String password) {
-        return setAuthorization("Basic "
+    public NWebRequest authorizationBasic(String username, String password) {
+        return authorization("Basic "
                 + Base64.getEncoder()
                 .encodeToString(
                         (NStringUtils.firstNonNull(username, "")
@@ -689,37 +716,37 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequestImpl setAuthorization(String authorization) {
-        return setHeader("Authorization", NStringUtils.trimToNull(authorization));
+    public NWebRequest authorization(String authorization) {
+        return header("Authorization", NStringUtils.stripToNull(authorization));
     }
 
     @Override
-    public String getAuthorization() {
-        return getHeader("Authorization");
+    public String authorization() {
+        return header("Authorization");
     }
 
     @Override
-    public String getAuthorizationBearer() {
-        String b = getHeader("Authorization");
+    public String authorizationBearer() {
+        String b = header("Authorization");
         if (b != null && b.toLowerCase().startsWith("bearer ")) {
-            return b.substring("bearer ".length()).trim();
+            return NStringUtils.strip(b.substring("bearer ".length()));
         }
         return b;
     }
 
     @Override
-    public String getContentLanguage() {
-        return getHeader("Content-Language");
+    public String contentLanguage() {
+        return header("Content-Language");
     }
 
     @Override
-    public String getContentType() {
-        return getHeader("Content-Type");
+    public String contentType() {
+        return header("Content-Type");
     }
 
     @Override
-    public NWebRequest setContentTypeFormUrlEncoded() {
-        return setContentType("application/x-www-form-urlencoded");
+    public NWebRequest contentTypeFormUrlEncoded() {
+        return contentType("application/x-www-form-urlencoded");
     }
 
 
@@ -750,7 +777,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest addFormData(String key, NInputContentProvider value) {
+    public NWebRequest formData(String key, NInputContentProvider value) {
         if (value == null) {
             return this;
         }
@@ -763,7 +790,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest addFormData(String key, String value) {
+    public NWebRequest formData(String key, String value) {
         if (value == null) {
             return this;
         }
@@ -775,19 +802,10 @@ public class NWebRequestImpl implements NWebRequest {
         return this;
     }
 
-    @Override
-    public NWebRequest setFormData(String key, NInputContentProvider value) {
-        return addFormData(key, value);
-    }
 
     @Override
-    public NWebRequest setFormData(String key, String value) {
-        return addFormData(key, value);
-    }
-
-    @Override
-    public NWebRequest setFormUrlEncoded(Map<String, String> m) {
-        setContentTypeFormUrlEncoded();
+    public NWebRequest formUrlEncoded(Map<String, String> m) {
+        contentTypeFormUrlEncoded();
         StringBuilder sb = new StringBuilder();
         if (m != null) {
             boolean first = true;
@@ -799,66 +817,62 @@ public class NWebRequestImpl implements NWebRequest {
                 }
                 try {
                     sb
-                            .append(URLEncoder.encode(NStringUtils.trim(e.getKey()), "UTF-8"))
+                            .append(URLEncoder.encode(NStringUtils.strip(e.getKey()), "UTF-8"))
                             .append("=")
-                            .append(URLEncoder.encode(NStringUtils.trim(e.getValue()), "UTF-8"))
+                            .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
                     ;
                 } catch (UnsupportedEncodingException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         }
-        setRequestBody(sb.toString().getBytes());
+        requestBody(sb.toString().getBytes());
         return this;
     }
 
     @Override
-    public NWebRequest setContentType(String contentType) {
-        return setHeader("Content-Type", contentType);
+    public NWebRequest contentType(String contentType) {
+        return header("Content-Type", contentType);
     }
 
     @Override
-    public Integer getReadTimeout() {
+    public NDuration readTimeout() {
         return readTimeout;
     }
 
     @Override
-    public NWebRequest setReadTimeout(Integer readTimeout) {
+    public NWebRequest readTimeout(NDuration readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
 
     @Override
-    public NWebRequest setReadTimeout(NDuration duration) {
-        this.readTimeout = duration == null ? null : (int) duration.toMillis();
+    public NWebRequest timeout(NDuration timeout) {
+        this.readTimeout = timeout;
+        this.connectTimeout = timeout;
         return this;
     }
 
     @Override
-    public Integer getConnectTimeout() {
+    public NDuration connectTimeout() {
         return connectTimeout;
     }
 
     @Override
-    public NWebRequest setConnectTimeout(Integer connectTimeout) {
-        this.connectTimeout = connectTimeout;
+    public NWebRequest connectTimeout(NDuration duration) {
+        this.connectTimeout = duration;
         return this;
     }
 
     @Override
-    public NWebRequest setConnectTimeout(NDuration duration) {
-        this.connectTimeout = duration == null ? null : (int) duration.toMillis();
-        return this;
-    }
-
-    @Override
-    public List<NWebRequestBody> getParts() {
+    public List<NWebRequestBody> parts() {
         return parts;
     }
 
     @Override
     public NWebRequest addPart(NWebRequestBody body) {
         parts.add(body);
+        setMode(Mode.MULTIPART);
         return this;
     }
 
@@ -871,17 +885,44 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequestBody addPart(String name) {
-        return addPart().setName(name);
+        return addPart().name(name);
     }
 
     @Override
     public NWebRequest addPart(String name, String value) {
-        return addPart().setName(name).setStringValue(value).end();
+        return addPart().name(name).stringValue(value).end();
     }
 
     @Override
     public NWebRequest addPart(String name, String fileName, String contentType, NInputSource body) {
-        return addPart().setName(name).setContentType(contentType).setBody(body).end();
+        return addPart().name(name).contentType(contentType).body(body).end();
+    }
+
+    public NWebRequest addPart(String name, File file) {
+        return addPart(name, file == null ? null : file.getName(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(String name, Path file) {
+        return addPart(name, file == null ? null : file.getFileName().toString(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(String name, NPath file) {
+        return addPart(name, file == null ? null : file.name(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(File file) {
+        NAssert.requireNamedNonNull(file, "file");
+        return addPart(file.getName(), file.getName(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(Path file) {
+        NAssert.requireNamedNonNull(file, "file");
+        return addPart(file.getFileName().toString(), file.getFileName().toString(), null, NInputSource.of(file));
+    }
+
+    public NWebRequest addPart(NPath file) {
+        NAssert.requireNamedNonNull(file, "file");
+        return addPart(file.name(), file.name(), null, NInputSource.of(file));
     }
 
     @Override
@@ -889,20 +930,30 @@ public class NWebRequestImpl implements NWebRequest {
         return cli.run(this);
     }
 
-    public String getEffectiveUrl() {
+    @Override
+    public CompletableFuture<NWebResponse> runAsync() {
+        return runAsync(null);
+    }
+
+    @Override
+    public CompletableFuture<NWebResponse> runAsync(Executor executor) {
+        return cli.runAsync(this,executor);
+    }
+
+    public String effectiveUri() {
         return cli.formatURL(this, true);
     }
 
     @Override
     public String toString() {
-        return getEffectiveUrl();
+        return effectiveUri();
     }
 
     @Override
     public NMsg toMsg() {
         return NMsg.ofC("%s %s",
                 method == null ? NHttpMethod.GET : method,
-                NMsg.ofStyledPath(getEffectiveUrl())
+                NMsg.ofStyledPath(effectiveUri())
         );
     }
 }

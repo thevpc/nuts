@@ -30,6 +30,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.List;
 import java.util.Map;
@@ -39,50 +40,176 @@ import java.util.Map;
  * @app.category Config
  */
 public interface NWorkspaceBootConfig {
+    /**
+     * Checks if is immediate location.
+     *
+     * @return is immediate location result
+     */
+    @NGetter
     boolean isImmediateLocation();
 
-    String getEffectiveWorkspaceName();
+    /**
+     * Effective workspace name.
+     *
+     * @return effective workspace name result
+     */
+    @NGetter
+    String effectiveWorkspaceName();
 
-    String getBootPath();
+    /**
+     * Boot path.
+     *
+     * @return boot path result
+     */
+    @NGetter
+    String bootPath();
 
-    String getEffectiveWorkspace();
+    /**
+     * Effective workspace.
+     *
+     * @return effective workspace result
+     */
+    @NGetter
+    String effectiveWorkspace();
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    String name();
 
-    String getWorkspace();
+    /**
+     * Workspace.
+     *
+     * @return workspace result
+     */
+    @NGetter
+    String workspace();
 
-    List<Extension> getExtensions();
+    /**
+     * Extensions.
+     *
+     * @return extensions result
+     */
+    @NGetter
+    List<Extension> extensions();
 
-    List<String> getBootRepositories();
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
+    @NGetter
+    List<String> bootRepositories();
 
-    Map<NStoreType, String> getStoreLocations();
+    /**
+     * Store locations.
+     *
+     * @return store locations result
+     */
+    @NGetter
+    Map<NStoreType, String> storeLocations();
 
-    Map<NHomeLocation, String> getHomeLocations();
+    /**
+     * Home locations.
+     *
+     * @return home locations result
+     */
+    @NGetter
+    Map<NHomeLocation, String> homeLocations();
 
-    NStoreStrategy getStoreStrategy();
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
+    @NGetter
+    NStoreStrategy storeStrategy();
 
-    NOsFamily getStoreLayout();
+    /**
+     * Store layout.
+     *
+     * @return store layout result
+     */
+    @NGetter
+    NOsFamily storeLayout();
 
-    NStoreStrategy getRepositoryStoreStrategy();
+    /**
+     * Repository store strategy.
+     *
+     * @return repository store strategy result
+     */
+    @NGetter
+    NStoreStrategy repositoryStoreStrategy();
 
-    String getUuid();
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
+    @NGetter
+    String uuid();
 
+    /**
+     * Checks if is system.
+     *
+     * @return is system result
+     */
+    @NGetter
     boolean isSystem();
 
+    /**
+     * Returns the store location.
+     *
+     * @param id id
+     * @param folderType folder type
+     * @return get store location result
+     */
     String getStoreLocation(NId id, NStoreType folderType);
 
+    /**
+     * Returns the store location.
+     *
+     * @param storeLocation store location
+     * @return get store location result
+     */
     String getStoreLocation(NStoreType storeLocation);
 
+    /**
+     * Returns the home location.
+     *
+     * @param homeLocation home location
+     * @return get home location result
+     */
     String getHomeLocation(NHomeLocation homeLocation);
 
+    /**
+     * Returns the home location.
+     *
+     * @param storeLocation store location
+     * @return get home location result
+     */
     String getHomeLocation(NStoreType storeLocation);
 
     /**
      * @app.category Config
      */
     interface Extension {
-        NId getId();
+        /**
+         * Id.
+         *
+         * @return id result
+         */
+        @NGetter
+        NId id();
 
+        /**
+         * Checks if is enabled.
+         *
+         * @return is enabled result
+         */
         boolean isEnabled();
     }
 }

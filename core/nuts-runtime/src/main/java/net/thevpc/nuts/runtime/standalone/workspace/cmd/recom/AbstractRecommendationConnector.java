@@ -5,6 +5,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
@@ -34,7 +35,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         validateRequest(ri);
         NId id = NId.get(ri.q.getId()).onBlankEmpty().get();
         String name = phase.name().toLowerCase() + (failure ? "-failure" : "") + "-recommendations.json";
-        String url = "/repo/" + id.getMavenFolder() + '/' + name;
+        String url = "/repo/" + id.mavenFolder() + '/' + name;
         return post(url, ri, Map.class);
     }
 
@@ -58,35 +59,35 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         }
         RequestAgent agent = ri.q.getAgent();
         if (agent.getApiVersion() == null) {
-            agent.setApiVersion(workspace.getApiVersion().toString());
+            agent.setApiVersion(workspace.apiVersion().toString());
         }
         if (agent.getRuntimeId() == null) {
-            agent.setRuntimeId(workspace.getRuntimeId().toString());
+            agent.setRuntimeId(workspace.runtimeId().toString());
         }
         NEnv environment = NEnv.of();
         if (agent.getArch() == null) {
-            agent.setArch(environment.getArch().toString());
+            agent.setArch(environment.arch().toString());
         }
         if (agent.getOs() == null) {
-            agent.setOs(environment.getOs().toString());
+            agent.setOs(environment.os().toString());
         }
         if (agent.getOsDist() == null) {
-            agent.setOsDist(environment.getOsDist().toString());
+            agent.setOsDist(environment.osDist().toString());
         }
         if (agent.getDesktop() == null) {
-            agent.setDesktop(environment.getDesktopEnvironment().toString());
+            agent.setDesktop(environment.desktopEnvironment().toString());
         }
         if (agent.getPlatform() == null) {
-            agent.setPlatform(environment.getJava().toString());
+            agent.setPlatform(environment.java().toString());
         }
         if (agent.getShell() == null) {
-            agent.setShell(environment.getShellFamily().toString());
+            agent.setShell(environment.shellFamily().toString());
         }
         if (agent.getUserDigest() == null) {
             agent.setUserDigest(getLocalUserUUID());
         }
         if (agent.getUserLocale() == null) {
-            String loc = session.getLocale().orDefault();
+            String loc = session.locale().orDefault();
             if (loc == null) {
                 loc = Locale.getDefault().toString();
             }
@@ -98,7 +99,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     }
 
     private String resolveDefaultEndpointURL() {
-        String p = NStringUtils.trim(System.getProperty("nuts-endpoint-url"));
+        String p = NStringUtils.strip(System.getProperty("nuts-endpoint-url"));
         if (!p.isEmpty()) {
             if (p.equals("dev") || p.equals("debug")) {
                 p = "http://127.0.0.1:8080/public/nuts";
@@ -114,10 +115,10 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             String s = null;
             try {
                 NWebCli cli = NWebCli.of();
-                cli.setConnectTimeout(500);
-                cli.setReadTimeout(500);
-                s = NStringUtils.trim(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
-                        .run().getContent().readString());
+                cli.connectTimeout(NDuration.ofMillis(500));
+                cli.readTimeout(NDuration.ofMillis(500));
+                s = NStringUtils.strip(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
+                        .run().content().readString());
             } catch (Exception ex) {
                 //error;
             }

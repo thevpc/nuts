@@ -27,10 +27,13 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.util.NStreamTokenizer;
+import net.thevpc.nuts.io.NStreamTokenizer;
 import org.junit.jupiter.api.*;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -42,21 +45,21 @@ public class ExprTest {
     }
 
     private boolean accept(NExprOperator d, String pattern) {
-        NExprOpType f;
+        NFixity f;
         String n;
         if (pattern.startsWith("prefix:")) {
-            f = NExprOpType.PREFIX;
+            f = NFixity.PREFIX;
             n = pattern.substring("prefix:".length());
         } else if (pattern.startsWith("postfix:")) {
-            f = NExprOpType.POSTFIX;
+            f = NFixity.POSTFIX;
             n = pattern.substring("postfix:".length());
         } else if (pattern.startsWith("infix:")) {
-            f = NExprOpType.INFIX;
+            f = NFixity.INFIX;
             n = pattern.substring("infix:".length());
         } else {
             return false;
         }
-        return f.equals(d.operatorType()) && n.equals(d.name());
+        return f.equals(d.fixity()) && n.equals(d.name());
 
     }
 
@@ -72,7 +75,7 @@ public class ExprTest {
     private void _retain(NExprContext expr, String... patterns) {
         if (expr instanceof NExprMutableContext) {
             NExprMutableContext d = (NExprMutableContext) expr;
-            for (NExprOperator operator : d.getOperators()) {
+            for (NExprOperator operator : d.operators()) {
                 if (!accept(operator, patterns)) {
                     d.removeOperator(operator);
                 }
@@ -81,7 +84,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test1() throws Exception {
+    public void test1()  {
         NExprContext expr = _declareDefault();
         _retain(expr, "infix:+");
         NExprNode n = expr.parse("1+2+3").get();
@@ -96,7 +99,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test2() throws Exception {
+    public void test2()  {
         NExprContext expr = _declareDefault();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("1+2*3").get();
@@ -105,7 +108,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test3() throws Exception {
+    public void test3()  {
         NExprContext expr = _declareDefault();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("a").get();
@@ -114,7 +117,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test4() throws Exception {
+    public void test4()  {
         NExprContext expr = _declareDefault();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("(a&b)").get();
@@ -128,7 +131,7 @@ public class ExprTest {
 
 
     @Test
-    public void test5() throws Exception {
+    public void test5()  {
         NExprContext expr = _declareDefault();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("(a&&b)").get();
@@ -160,13 +163,13 @@ public class ExprTest {
 //        st.acceptTokenType(NToken.TT_LEFT_SHIFT);
         int i = st.nextToken();
         Assertions.assertEquals(st.image, "<<");
-        System.out.println(st.image);
-        System.out.println(st);
+        TestUtils.println(st.image);
+        TestUtils.println(st);
     }
 
 
     @Test
-    public void test6() throws Exception {
+    public void test6()  {
         NExprContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("if (a) 'hello' else 'hella'").get();
@@ -175,7 +178,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test7b() throws Exception {
+    public void test7b()  {
         NExprMutableContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         expr.declareVar("a");
@@ -185,7 +188,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test7() throws Exception {
+    public void test7()  {
         NExprContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("if (a) 'hello' else {'hella'};x=3").get();
@@ -194,7 +197,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test8() throws Exception {
+    public void test8()  {
         NExprContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("printChunk(0);;;;\n").get();
@@ -203,7 +206,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test9() throws Exception {
+    public void test9()  {
         NExprContext expr = declareMutable();
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("printChunk(0);;printChunk(0);;printChunk(0)\n").get();
@@ -219,7 +222,7 @@ public class ExprTest {
 
 
     @Test
-    public void test10() throws Exception {
+    public void test10() {
         NExprMutableContext expr = declareMutable();
         expr.declareVar("v");
         expr.setVarValue("v", "me");
@@ -230,7 +233,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test11() throws Exception {
+    public void test11()  {
         NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("a*b+c").get();
         Assertions.assertTrue(n.name().equals("+"));
@@ -240,7 +243,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test12() throws Exception {
+    public void test12()  {
         NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("a.b>1").get();
         Assertions.assertTrue(n.name().equals(">"));
@@ -249,7 +252,7 @@ public class ExprTest {
         Assertions.assertTrue(n.children().get(1) instanceof NExprLiteralNode);
     }
     @Test
-    public void test13() throws Exception {
+    public void test13()  {
         NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("a=b.c>2").get();
         Assertions.assertTrue(n.name().equals("="));
@@ -259,7 +262,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test14() throws Exception {
+    public void test14()  {
         NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("(b.c)>2").get();
         Assertions.assertTrue(n.name().equals(">"));
@@ -269,7 +272,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test15() throws Exception {
+    public void test15()  {
         NExprMutableContext expr = declareMutable();
         NExprNode n = expr.parse("plots[plotId].title").get();
         Assertions.assertTrue(n.name().equals("."));
@@ -279,7 +282,7 @@ public class ExprTest {
     }
 
     @Test
-    public void test16() throws Exception {
+    public void test16()  {
         NStreamTokenizer st = new NStreamTokenizer(new StringReader("1++ -2"));
         st.xmlComments(true);
         st.parseNumbers(true);
@@ -287,5 +290,47 @@ public class ExprTest {
         while ((s = st.nextToken()) != NToken.TT_EOF) {
             TestUtils.println("'"+st.image+"'");
         }
+    }
+
+
+    @Test
+    public void test17()  {
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader("1 .. 3"));
+        st.xmlComments(true);
+        st.parseNumbers(true);
+        int s;
+        List<String> found=new ArrayList<>();
+        while ((s = st.nextToken()) != NToken.TT_EOF) {
+            found.add(st.image);
+            TestUtils.println("'"+st.image+"'");
+        }
+        Assertions.assertEquals(Arrays.asList("1"," ",".."," ","3"),found);
+    }
+
+    @Test
+    public void test18()  {
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader("1..3"));
+        st.xmlComments(true);
+        st.parseNumbers(true);
+        int s;
+        List<String> found=new ArrayList<>();
+        while ((s = st.nextToken()) != NToken.TT_EOF) {
+            found.add(st.image);
+            TestUtils.println("'"+st.image+"'");
+        }
+        Assertions.assertEquals(Arrays.asList("1","..","3"),found);
+    }
+    @Test
+    public void test19()  {
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader("-1..-3"));
+        st.xmlComments(true);
+        st.parseNumbers(true);
+        int s;
+        List<String> found=new ArrayList<>();
+        while ((s = st.nextToken()) != NToken.TT_EOF) {
+            found.add(st.image);
+            TestUtils.println("'"+st.image+"'");
+        }
+        Assertions.assertEquals(Arrays.asList("-1","..","-3"),found);
     }
 }

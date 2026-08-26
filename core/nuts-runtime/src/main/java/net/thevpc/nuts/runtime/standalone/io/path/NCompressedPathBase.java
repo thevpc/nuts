@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -44,6 +47,16 @@ public class NCompressedPathBase extends NPathBase {
         this.compressedForm = compressedForm;
         this.formattedCompressedForm = formattedCompressedForm;
         this.base = base;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return base.isHidden();
+    }
+
+    @Override
+    public boolean isSymlink() {
+        return base.isSymlink();
     }
 
     @Override
@@ -115,23 +128,23 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getContentType() {
-        return base.getContentType();
+    public String contentType() {
+        return base.contentType();
     }
 
     @Override
-    public String getCharset() {
-        return base.getCharset();
+    public String charset() {
+        return base.charset();
     }
 
     @Override
-    public String getName() {
-        return base.getName();
+    public String name() {
+        return base.name();
     }
 
     @Override
-    public String getLocation() {
-        return base.getLocation();
+    public String location() {
+        return base.location();
     }
 
     @Override
@@ -168,8 +181,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getProtocol() {
-        return base.getProtocol();
+    public String protocol() {
+        return base.protocol();
     }
 
     @Override
@@ -201,13 +214,13 @@ public class NCompressedPathBase extends NPathBase {
     @Override
     public InputStream getInputStream(NPathOption... options) {
         return NInputSourceBuilder.of(base.getInputStream(options))
-                .setMetadata(getMetaData())
+                .metadata(metaData())
                 .createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        return NOutputStreamBuilder.of(base.getOutputStream(options)).setMetadata(this.getMetaData()).createOutputStream();
+        return NOutputStreamBuilder.of(base.getOutputStream(options)).metadata(this.metaData()).createOutputStream();
     }
 
     @Override
@@ -286,28 +299,28 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public long getContentLength() {
-        return base.getContentLength();
+    public long contentLength() {
+        return base.contentLength();
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
-        return base.getLastModifiedInstant();
+    public Instant lastModifiedInstant() {
+        return base.lastModifiedInstant();
     }
 
     @Override
-    public Instant getLastAccessInstant() {
-        return base.getLastAccessInstant();
+    public Instant lastAccessInstant() {
+        return base.lastAccessInstant();
     }
 
     @Override
-    public Instant getCreationInstant() {
-        return base.getCreationInstant();
+    public Instant creationInstant() {
+        return base.creationInstant();
     }
 
     @Override
-    public NPath getParent() {
-        return base.getParent();
+    public NPath parent() {
+        return base.parent();
     }
 
     @Override
@@ -339,8 +352,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NOptional<String> toRelative(NPath basePath) {
-        return base.toRelative(basePath);
+    public NOptional<String> stripParent(NPath basePath) {
+        return base.stripParent(basePath);
+    }
+
+    @Override
+    public NOptional<String> relativize(NPath basePath) {
+        return base.relativize(basePath);
     }
 
     @Override
@@ -354,13 +372,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public Set<NPathPermission> getPermissions() {
-        return base.getPermissions();
+    public Set<NPathPermission> permissions() {
+        return base.permissions();
     }
 
     @Override
-    public NPath setPermissions(NPathPermission... permissions) {
-        base.setPermissions(permissions);
+    public NPath permissions(NPathPermission... permissions) {
+        base.permissions(permissions);
         return this;
     }
 
@@ -382,8 +400,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public int getNameCount() {
-        return base.getNameCount();
+    public int nameCount() {
+        return base.nameCount();
     }
 
     @Override
@@ -407,13 +425,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getName(int index) {
-        return base.getName(index);
+    public String nameAt(int index) {
+        return base.nameAt(index);
     }
 
     @Override
-    public List<String> getNames() {
-        return base.getNames();
+    public List<String> names() {
+        return base.names();
     }
 
     @Override
@@ -427,8 +445,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NPath getRoot() {
-        return base.getRoot();
+    public NPath root() {
+        return base.root();
     }
 
     @Override
@@ -452,14 +470,6 @@ public class NCompressedPathBase extends NPathBase {
     @Override
     public String toString() {
         return String.valueOf(compressedForm);
-    }
-
-    @Override
-    public boolean isEqOrDeepChildOf(NPath other) {
-        if (other == null) {
-            return false;
-        }
-        return base.isEqOrDeepChildOf(unwrapPath(other));
     }
 
     @Override
@@ -509,8 +519,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NPathInfo getInfo() {
-        return getBase().getInfo();
+    public NPathInfo info() {
+        return getBase().info();
     }
 
     @Override

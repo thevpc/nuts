@@ -175,7 +175,7 @@ public class NLogUtils {
     public static final NSession resolveSession(LogRecord record) {
         NSession session = null;
         if (record instanceof NLogRecord) {
-            session = ((NLogRecord) record).getSession();
+            session = ((NLogRecord) record).session();
         }
         if (session == null) {
             session = NSession.get().orNull();

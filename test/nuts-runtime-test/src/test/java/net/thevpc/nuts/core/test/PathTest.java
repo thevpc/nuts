@@ -35,9 +35,14 @@ import net.thevpc.nuts.runtime.standalone.io.path.spi.GenericFilePath;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
@@ -78,7 +83,7 @@ public class PathTest {
         }
         NOut.println("----------------------------IdStore");
         for (NStoreType value : NStoreType.values()) {
-            NOut.println(NMsg.ofC("NPath.of(NStoreKey.of(NWorkspace.of().getApiId()).type(%s))) => %s", value, NPath.of(NStoreKey.of(NWorkspace.of().getApiId()).type(value))));
+            NOut.println(NMsg.ofC("NPath.of(NStoreKey.of(NWorkspace.of().getApiId()).type(%s))) => %s", value, NPath.of(NStoreKey.of(NWorkspace.of().apiId()).type(value))));
         }
     }
 
@@ -274,14 +279,14 @@ public class PathTest {
     public void testInvalidPath04() {
         NPath a = NPath.of("/*");
         List<NPath> nutsPaths = a.walkGlob().toList();
-        System.out.println(nutsPaths);
+        TestUtils.println(nutsPaths);
     }
 
     @Test
     public void testThevpcPath() {
         NPath a = NPath.of("htmlfs+https://maven.thevpc.net/net/thevpc/nuts/toolbox/noapi/");
         List<NPath> nutsPaths = a.list();
-        System.out.println(nutsPaths);
+        TestUtils.println(nutsPaths);
     }
 
 
@@ -289,16 +294,16 @@ public class PathTest {
     public void testGenericFile() {
         NScoredCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
-        NPath root = u.getRoot();
-        System.out.println(root);
+        NPath root = u.root();
+        TestUtils.println(root);
     }
 
     @Test
     public void testGenericFile2() {
         NScoredCallable<NPathSPI> p = new GenericFilePath.GenericPathFactory().createPath("/C:", null, null);
         NPathFromSPI u = new NPathFromSPI(p.call());
-        NPath root = u.getRoot();
-        System.out.println(root);
+        NPath root = u.root();
+        TestUtils.println(root);
     }
 
     //--------------
@@ -395,13 +400,106 @@ public class PathTest {
 
     }
 
+    @Test
+    public void test08() {
+        NPath t = NPath.ofTempFile();
+        NPath newPath = t.rename(v -> v.nameParts().toName("${base}-toz.${ext}"));
+        Assertions.assertEquals(t.name().length() + 4, newPath.name().length());
+        Assertions.assertTrue(!t.name().contains("-toz"));
+        Assertions.assertTrue(newPath.name().contains("-toz"));
+        Assertions.assertTrue(newPath.name().replace("-toz","").equals(t.name()));
+        Assertions.assertTrue(newPath.exists());
+        newPath.delete();
+    }
+
+    @Test
+    public void test9() {
+        NPath t = NPath.of("mem://something");
+        Assertions.assertFalse(t.exists());
+        t.writeString("Hello");
+        Assertions.assertTrue(t.exists());
+        Assertions.assertTrue(NPath.of("mem://something").exists());
+        t.delete();
+        Assertions.assertFalse(t.exists());
+    }
+
+    @Test
+    public void test10_roundTripContent() {
+        NPath t = NPath.of("mem://roundtrip");
+        try {
+            t.writeString("Hello");
+            Assertions.assertEquals("Hello", t.readString());
+        } finally {
+            t.delete();
+        }
+    }
+
+    @Test
+    public void test11_overwriteReplacesContent() {
+        NPath t = NPath.of("mem://overwrite");
+        try {
+            t.writeString("Hello World");
+            t.writeString("Hi");
+            Assertions.assertEquals("Hi", t.readString());
+        } finally {
+            t.delete();
+        }
+    }
+
+    @Test
+    public void test12_appendGrowsContent() {
+        NPath t = NPath.of("mem://append");
+        try {
+            t.writeString("Hello");
+            try (OutputStream os = t.getOutputStream(NPathOption.APPEND)) {
+                os.write(" World".getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            Assertions.assertEquals("Hello World", t.readString());
+        } finally {
+            t.delete();
+        }
+    }
+
+    @Test
+    public void test13_directorySemantics() {
+        NPath dir = NPath.of("mem://something2/child");
+        try {
+            dir.mkdirs();
+            Assertions.assertTrue(dir.exists());
+            Assertions.assertTrue(dir.isDirectory());
+
+            NPath file = dir.resolve("file.txt");
+            file.writeString("data");
+            Assertions.assertTrue(file.exists());
+            Assertions.assertFalse(file.isDirectory());
+
+            Assertions.assertThrows(NIOException.class, dir::readString);
+        } finally {
+            NPath.of("mem://").deleteTree(); // recursive delete, since dir has a child
+        }
+    }
+
+    @Test
+    public void test14_independentRoots() {
+        NPath a = NPath.of("mem://rootA/file");
+        NPath b = NPath.of("mem://rootB/file");
+        try {
+            a.mkParentDirs().writeString("A-data");
+            Assertions.assertFalse(b.exists());
+        } finally {
+            NPath.of("mem://").deleteTree();
+            // b was never created, nothing to clean there
+        }
+    }
     private String[] d(String n) {
         NPath p = NPath.of(n);
         if (p == null) {
             return new String[]{"", "", ""};
         }
         NPathNameParts nameParts = p.nameParts();
-        String[] strings = {nameParts.getBaseName(), nameParts.getExtension(), nameParts.getFullExtension()};
+        String[] strings = {nameParts.baseName(), nameParts.extension(), nameParts.fullExtension()};
         return strings;
     }
 

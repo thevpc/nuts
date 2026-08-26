@@ -37,6 +37,12 @@ import java.util.function.Supplier;
  * @param <T> Type
  */
 public interface NComparator<T> extends Comparator<T>, NRedescribable<NComparator<T>> {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param o o
+     * @return of result
+     */
     static <T> NComparator<T> of(Comparator<T> o) {
         if (o == null) {
             return null;
@@ -44,7 +50,23 @@ public interface NComparator<T> extends Comparator<T>, NRedescribable<NComparato
         if (o instanceof NComparator) {
             return (NComparator<T>) o;
         }
-        return new NComparatorFromJavaComparator<>(o);
+        return new NComparatorFromJavaComparator<>(o,null);
+    }
+    /**
+     * Creates a new instance of of.
+     *
+     * @param o o
+     * @param desc desc
+     * @return of result
+     */
+    static <T> NComparator<T> of(Comparator<T> o,NElement desc) {
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof NComparator) {
+            return (NComparator<T>) o;
+        }
+        return new NComparatorFromJavaComparator<>(o,desc==null?null:()->desc);
     }
 
     @Override

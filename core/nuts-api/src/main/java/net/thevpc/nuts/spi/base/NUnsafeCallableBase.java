@@ -6,6 +6,12 @@ import net.thevpc.nuts.concurrent.NUnsafeCallable;
 
 import java.util.function.Supplier;
 
+/**
+ * NUnsafeCallableBase class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public abstract class NUnsafeCallableBase<T> implements NUnsafeCallable<T> {
     @Override
     public NUnsafeCallable<T> withDescription(Supplier<NElement> description) {

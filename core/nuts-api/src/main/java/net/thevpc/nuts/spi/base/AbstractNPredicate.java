@@ -8,6 +8,12 @@ import net.thevpc.nuts.util.NPredicates;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+/**
+ * AbstractNPredicate class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public abstract class AbstractNPredicate<T> implements NPredicate<T> {
     @Override
     public NPredicate<T> and(Predicate<? super T> other) {

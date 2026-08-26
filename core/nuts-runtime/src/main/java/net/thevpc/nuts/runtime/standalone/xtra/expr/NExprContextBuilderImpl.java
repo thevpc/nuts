@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.expr.*;
-import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
 import net.thevpc.nuts.reflect.NReflectMethod;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -47,6 +47,24 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
+    public NExprLiteralMapper literalMapper() {
+        NExprLiteralMapper m = alteration.getLiteralMapper();
+        if(m!=null) {
+            return m;
+        }
+        if(parent!=null) {
+            return parent.literalMapper();
+        }
+        return null;
+    }
+
+    @Override
+    public NExprContextBuilder literalMapper(NExprLiteralMapper mapper) {
+        alteration.setLiteralMapper(mapper);
+        return this;
+    }
+
+    @Override
     public NExprContextBuilder declarePhysicsConstants() {
 // Already present
         this.declareVar(NExprVar.ofConst("C", 299792458.0));       // speed of light (m/s)
@@ -75,24 +93,27 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     public NExprContextBuilder declareBuiltins() {
-        addDefaultOp(NExprCommonOp.AND, NExprOpType.INFIX, NExprOpPrecedence.AND, NOperatorAssociativity.LEFT, "&");
-        addDefaultOp(NExprCommonOp.OR, NExprOpType.INFIX, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT, "|");
-        addDefaultOp(NExprCommonOp.LT, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.LTE, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.GT, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.GTE, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.EQ, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.LIKE, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.EQ_REGEX, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.NE, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT, "!=", "!==", "<>");
-        addDefaultOp(NExprCommonOp.PLUS, NExprOpType.INFIX, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.MINUS, NExprOpType.INFIX, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.MUL, NExprOpType.INFIX, NExprOpPrecedence.MUL, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.DIV, NExprOpType.INFIX, NExprOpPrecedence.MUL, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.REM, NExprOpType.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.XOR, NExprOpType.INFIX, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.POW, NExprOpType.INFIX, NExprOpPrecedence.POW, NOperatorAssociativity.LEFT);
-        addDefaultOp(NExprCommonOp.DOT, NExprOpType.INFIX, NExprOpPrecedence.DOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        this.declareVar(NExprVar.ofConst("true", true));
+        this.declareVar(NExprVar.ofConst("false", false));
+        this.declareVar(NExprVar.ofConst("null", null));
+        addDefaultOp(NExprCommonOp.AND, NFixity.INFIX, NExprOpPrecedence.AND, NOperatorAssociativity.LEFT, "&");
+        addDefaultOp(NExprCommonOp.OR, NFixity.INFIX, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT, "|");
+        addDefaultOp(NExprCommonOp.LT, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.LTE, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.GT, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.GTE, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.EQ, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.LIKE, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.EQ_REGEX, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.NE, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT, "!=", "!==", "<>");
+        addDefaultOp(NExprCommonOp.PLUS, NFixity.INFIX, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.MINUS, NFixity.INFIX, NExprOpPrecedence.PLUS, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.MUL, NFixity.INFIX, NExprOpPrecedence.MUL, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.DIV, NFixity.INFIX, NExprOpPrecedence.MUL, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.REM, NFixity.INFIX, NExprOpPrecedence.CMP, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.XOR, NFixity.INFIX, NExprOpPrecedence.OR, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.POW, NFixity.INFIX, NExprOpPrecedence.POW, NOperatorAssociativity.LEFT);
+        addDefaultOp(NExprCommonOp.DOT, NFixity.INFIX, NExprOpPrecedence.DOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 List<NExprNodeValue> args = callContext.args();
@@ -104,10 +125,10 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             }
         });
 
-        addDefaultOp(NExprCommonOp.MINUS, NExprOpType.PREFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.RIGHT);
-        addDefaultOp(NExprCommonOp.NOT, NExprOpType.PREFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.RIGHT);
+        addDefaultOp(NExprCommonOp.MINUS, NFixity.PREFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.RIGHT);
+        addDefaultOp(NExprCommonOp.NOT, NFixity.PREFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.RIGHT);
 
-        addDefaultOp(NExprCommonOp.ASSIGN, NExprOpType.INFIX, NExprOpPrecedence.ASSIGN, NOperatorAssociativity.RIGHT, new NExprCallHandler() {
+        addDefaultOp(NExprCommonOp.ASSIGN, NFixity.INFIX, NExprOpPrecedence.ASSIGN, NOperatorAssociativity.RIGHT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 String name = callContext.name();
@@ -126,7 +147,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         });
 
         for (String relOp : new String[]{"+", "-", "*", "/", "%", "^", "**"}) {
-            addDefaultOp(relOp + "=", NExprOpType.INFIX, NExprOpPrecedence.ASSIGN, NOperatorAssociativity.RIGHT, new NExprCallHandler() {
+            addDefaultOp(relOp + "=", NFixity.INFIX, NExprOpPrecedence.ASSIGN, NOperatorAssociativity.RIGHT, new NExprCallHandler() {
                 @Override
                 public Object eval(NExprCallContext callContext) {
                     String name = callContext.name();
@@ -147,7 +168,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             });
         }
 
-        addDefaultOp("++", NExprOpType.PREFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        addDefaultOp("++", NFixity.PREFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 String name = callContext.name();
@@ -166,7 +187,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             }
         });
 
-        addDefaultOp("++", NExprOpType.POSTFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        addDefaultOp("++", NFixity.POSTFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 String name = callContext.name();
@@ -185,7 +206,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             }
         });
 
-        addDefaultOp("--", NExprOpType.PREFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        addDefaultOp("--", NFixity.PREFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 String name = callContext.name();
@@ -204,7 +225,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             }
         });
 
-        addDefaultOp("--", NExprOpType.POSTFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        addDefaultOp("--", NFixity.POSTFIX, NExprOpPrecedence.NOT, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 String name = callContext.name();
@@ -223,7 +244,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             }
         });
 
-        addDefaultOp(";", NExprOpType.INFIX, NExprOpPrecedence.STATEMENT_SEPARATOR, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        addDefaultOp(";", NFixity.INFIX, NExprOpPrecedence.STATEMENT_SEPARATOR, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 String name = callContext.name();
@@ -236,20 +257,20 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                 return a;
             }
         });
-        addDefaultOp("(", NExprOpType.POSTFIX, NExprOpPrecedence.PARS, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        addDefaultOp("(", NFixity.POSTFIX, NExprOpPrecedence.PARS, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 throw new IllegalArgumentException("unable to evaluate");
             }
         });
-        addDefaultOp("[", NExprOpType.POSTFIX, NExprOpPrecedence.BRACKETS, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        addDefaultOp("[", NFixity.POSTFIX, NExprOpPrecedence.BRACKETS, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 throw new IllegalArgumentException("unable to evaluate");
             }
         });
 
-        addDefaultOp("{", NExprOpType.POSTFIX, NExprOpPrecedence.BRACES, NOperatorAssociativity.LEFT, new NExprCallHandler() {
+        addDefaultOp("{", NFixity.POSTFIX, NExprOpPrecedence.BRACES, NOperatorAssociativity.LEFT, new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
                 throw new IllegalArgumentException("unable to evaluate");
@@ -668,12 +689,12 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
             if (mutable) {
                 return new NExprMutableContextImpl(rpi, parent);
             }
-            return new NExprChildContextImpl(rpi, NExprContextAlteration.EMPTY_RESOLVER, parent);
+            return new NExprChildContextImpl(rpi, NExprContextAlteration.EMPTY_RESOLVER, null,parent);
         }
         if (mutable) {
             return new NExprMutableContextImpl(rpi, alteration, parent);
         }
-        return new NExprChildContextImpl(rpi, alteration.toExprResolver(), parent);
+        return new NExprChildContextImpl(rpi, alteration.toExprResolver(),alteration.getLiteralMapper(), parent);
     }
 
     @Override
@@ -779,13 +800,13 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder declareOperator(String name, NExprOpType type, NExprCallHandler impl) {
+    public NExprContextBuilder declareOperator(String name, NFixity type, NExprCallHandler impl) {
         alteration.declareOperator(name, type, impl);
         return this;
     }
 
     @Override
-    public NExprContextBuilder declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl) {
+    public NExprContextBuilder declareOperator(String name, NFixity type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl) {
         alteration.declareOperator(name, type, precedence, associativity, impl);
         return this;
     }
@@ -809,7 +830,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
     @Override
-    public NExprContextBuilder removeOperator(String name, NExprOpType type) {
+    public NExprContextBuilder removeOperator(String name, NFixity type) {
         alteration.removeOperator(name, type);
         return this;
     }
@@ -825,11 +846,11 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
     }
 
 
-    private void addDefaultOp(NExprCommonOp op, NExprOpType opType, int precedence, NOperatorAssociativity acc, String... names) {
+    private void addDefaultOp(NExprCommonOp op, NFixity opType, int precedence, NOperatorAssociativity acc, String... names) {
         NExprCallHandler h = new NExprCallHandler() {
             @Override
             public Object eval(NExprCallContext callContext) {
-                if (callContext.operatorType() == NExprOpType.INFIX) {
+                if (callContext.fixity() == NFixity.INFIX) {
                     Object a = callContext.arg(0).get().value().orNull();
                     Object b = callContext.arg(1).get().value().orNull();
                     Class<?> aClass = a == null ? null : a.getClass();
@@ -839,7 +860,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                         return f.apply(a, b);
                     }
                     throw new IllegalArgumentException("not found infix operator '" + callContext.name() + "'");
-                } else if (callContext.operatorType() == NExprOpType.PREFIX) {
+                } else if (callContext.fixity() == NFixity.PREFIX) {
                     Object a = callContext.arg(0).get().value().get();
                     NFunction f = callContext.context().findCommonPrefixOp(op
                             , a == null ? null : a.getClass()
@@ -848,7 +869,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                         return f.apply(a);
                     }
                     throw new IllegalArgumentException("not found prefix operator '" + callContext.name() + "'");
-                } else if (callContext.operatorType() == NExprOpType.POSTFIX) {
+                } else if (callContext.fixity() == NFixity.POSTFIX) {
                     Object a = callContext.arg(0).get().value().get();
                     NFunction f = callContext.context().findCommonPrefixOp(op, a == null ? null : a.getClass()
                     ).orNull();
@@ -866,7 +887,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         addDefaultOp(op, opType, precedence, acc, h, all.toArray(new String[0]));
     }
 
-    private void addDefaultOp(NExprCommonOp op, NExprOpType opType, int precedence, NOperatorAssociativity acc, NExprCallHandler h, String... names) {
+    private void addDefaultOp(NExprCommonOp op, NFixity opType, int precedence, NOperatorAssociativity acc, NExprCallHandler h, String... names) {
         LinkedHashSet<String> allNames = new LinkedHashSet<>(Arrays.asList(names));
         /*allNames.add(op.id())*/;
         allNames.add(op.image());
@@ -876,7 +897,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
         }
     }
 
-    private void addDefaultOp(String op, NExprOpType opType, int precedence, NOperatorAssociativity acc, NExprCallHandler h, String... names) {
+    private void addDefaultOp(String op, NFixity opType, int precedence, NOperatorAssociativity acc, NExprCallHandler h, String... names) {
         LinkedHashSet<String> allNames = new LinkedHashSet<>(Arrays.asList(names));
         allNames.add(op);
         for (String name : allNames) {
@@ -912,7 +933,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                 NExprFunctionNode w = (NExprFunctionNode) b.node();
                 String n = w.name();
                 NReflectType t = NReflectRepository.of().getType(instance.getClass());
-                if (w.getArguments().size() == 0) {
+                if (w.arguments().size() == 0) {
                     NOptional<NReflectMethod> method = t.getMethod(n, NReflectSignatureImpl.of());
                     if (method.isPresent() && method.get().isAccessible()) {
                         return method.get().invoke(instance);
@@ -923,10 +944,10 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                     }
                     throw new NIllegalArgumentException(NMsg.ofC("property not found %s", instance + "." + b));
                 } else {
-                    List<NReflectMethod> methodsByName = t.getMethods().stream().filter(x -> x.getName().equals(n)).collect(Collectors.toList());
+                    List<NReflectMethod> methodsByName = t.methods().stream().filter(x -> x.name().equals(n)).collect(Collectors.toList());
                     List<NReflectMethod> found1 = methodsByName.stream().filter(x ->
-                            x.getSignature().size() == w.getArguments().size()
-                                    || (x.getSignature().isVarArgs() && x.getSignature().size() > w.getArguments().size())
+                            x.signature().size() == w.arguments().size()
+                                    || (x.signature().isVarArgs() && x.signature().size() > w.arguments().size())
                     ).collect(Collectors.toList());
                     NReflectMethod goodMethod = null;
                     if (found1.size() == 1) {
@@ -937,7 +958,7 @@ public class NExprContextBuilderImpl implements NExprContextBuilder {
                     if (goodMethod == null) {
                         throw new NIllegalArgumentException(NMsg.ofC("method not found to match  %s", w));
                     }
-                    List<Object> values = w.getArguments().stream().map(x -> x.eval(context)).collect(Collectors.toList());
+                    List<Object> values = w.arguments().stream().map(x -> x.eval(context)).collect(Collectors.toList());
                     NOptional<NReflectMethod> matchingMethod = t.getMatchingMethod(n, NReflectSignatureImpl.of(values.stream().map(x -> x == null ? null : NReflectRepository.of().getType(x.getClass())).toArray(NReflectType[]::new)));
                     goodMethod = matchingMethod.get();
                     return goodMethod.invoke(instance, values.toArray());

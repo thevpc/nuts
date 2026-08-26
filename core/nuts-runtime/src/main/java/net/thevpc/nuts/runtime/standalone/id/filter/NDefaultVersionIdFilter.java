@@ -36,28 +36,16 @@ public class NDefaultVersionIdFilter extends AbstractIdFilter implements NIdFilt
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.defaultVersion);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefaultVersionIdFilter that = (NDefaultVersionIdFilter) o;
+        return Objects.equals(defaultVersion, that.defaultVersion);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefaultVersionIdFilter other = (NDefaultVersionIdFilter) obj;
-        if (!Objects.equals(this.defaultVersion, other.defaultVersion)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), defaultVersion);
     }
 
     @Override

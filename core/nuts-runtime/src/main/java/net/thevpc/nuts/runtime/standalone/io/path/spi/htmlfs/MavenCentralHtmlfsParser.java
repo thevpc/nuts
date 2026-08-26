@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -22,12 +23,12 @@ public class MavenCentralHtmlfsParser extends AbstractHtmlfsParser {
         try (BufferedReader br = CoreIOUtils.bufferedReaderOf(bytes)) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                if(line.trim().equals("<pre id=\"contents\">")){
+                if(NStringUtils.strip(line).equals("<pre id=\"contents\">")){
                     break;
                 }
             }
             while ((line = br.readLine()) != null) {
-                if(line.trim().equals("</pre>")){
+                if(NStringUtils.strip(line).equals("</pre>")){
                     break;
                 }
                 Matcher m = pattern.matcher(line);

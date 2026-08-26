@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.NExprCommonOp;
-import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.NFixity;
 
 import java.util.Objects;
 
 class NExprCommonOpAndType {
     private NExprCommonOp op;
-    private NExprOpType type;
+    private NFixity type;
 
-    public NExprCommonOpAndType(NExprCommonOp op, NExprOpType type) {
+    public NExprCommonOpAndType(NExprCommonOp op, NFixity type) {
         this.op = op;
         this.type = type;
     }
@@ -18,7 +18,7 @@ class NExprCommonOpAndType {
         return op;
     }
 
-    public NExprOpType getType() {
+    public NFixity getType() {
         return type;
     }
 

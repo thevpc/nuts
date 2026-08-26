@@ -23,6 +23,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
     private long waitTime = 3000;
     private long maxCount = -1;
     private NBootArguments unparsedOptions;
+    private NBootCompleteRequest complete;
+    private NBootCompleteCmdlineRequest cmdComplete;
 
     public NBootWorkspaceNativeExec(NBootArguments unparsedOptions) {
         if (unparsedOptions == null) {
@@ -30,19 +32,22 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         }
         this.unparsedOptions = unparsedOptions;
         NBootOptionsInfo userOptions = new NBootOptionsInfo();
-        userOptions.setStdin(unparsedOptions.getIn());
-        userOptions.setStdout(unparsedOptions.getOut());
-        userOptions.setStderr(unparsedOptions.getErr());
-        userOptions.setCreationTime(unparsedOptions.getStartTime());
+        userOptions.setStdin(unparsedOptions.in());
+        userOptions.setStdout(unparsedOptions.out());
+        userOptions.setStderr(unparsedOptions.err());
+        userOptions.setCreationTime(unparsedOptions.startTime());
         InputStream in = userOptions.getStdin();
         scanner = new Scanner(in == null ? System.in : in);
+        if (unparsedOptions.complete() != null) {
+            this.complete = unparsedOptions.complete();
+        }
         this.bLog = new NBootLog(userOptions);
         List<String> allArgs = new ArrayList<>();
-        if (unparsedOptions.getOptionArgs() != null) {
-            allArgs.addAll(Arrays.asList(unparsedOptions.getOptionArgs()));
+        if (unparsedOptions.optionArgs() != null) {
+            allArgs.addAll(Arrays.asList(unparsedOptions.optionArgs()));
         }
-        if (unparsedOptions.getAppArgs() != null) {
-            allArgs.addAll(Arrays.asList(unparsedOptions.getAppArgs()));
+        if (unparsedOptions.appArgs() != null) {
+            allArgs.addAll(Arrays.asList(unparsedOptions.appArgs()));
         }
         parseArguments(allArgs.toArray(new String[0]), userOptions);
         if (NBootUtils.firstNonNull(userOptions.getSkipErrors(), false)) {
@@ -767,16 +772,30 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
             @Override
             public void runBootCommand() {
             }
+
+            @Override
+            public void completeBootCommand(NBootCompleteCmdlineRequest completeRequest) {
+
+            }
         };
     }
 
 
     public void runWorkspace0() {
+        if (complete != null) {
+            NBootCompleteRequestOrResult r = NBootWorkspaceCmdLineParser.complete(new NBootCompleteCmdlineRequest(complete, Arrays.asList(unparsedOptions.optionArgs())));
+            if (r instanceof NBootCompleteResult) {
+                NBootContext.context().log.out().println(((NBootCompleteResult) r).format());
+                return;
+            } else {
+                cmdComplete = (NBootCompleteCmdlineRequest) r;
+            }
+        }
         if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
-            NBootWorkspaceHelper.runCommandHelp(options);
+            NBootWorkspaceHelper.runCommandHelp(options, cmdComplete);
             return;
         } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
-            NBootWorkspaceHelper.runCommandVersion(null, options);
+            NBootWorkspaceHelper.runCommandVersion(null, options, cmdComplete);
             return;
         }
 

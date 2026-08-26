@@ -24,8 +24,10 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
+
+import java.util.List;
 
 /**
  * Code Format to help formatting (syntax coloring) to NTF some code
@@ -35,9 +37,65 @@ import net.thevpc.nuts.text.NTexts;
  */
 public interface NCodeHighlighter extends NComponent {
 
-    String getId();
+    /**
+     * Creates a new instance of of.
+     *
+     * @param kind kind
+     * @return of result
+     */
+    static NCodeHighlighter of(String kind) {
+        return NTextRPI.of().codeHighlighter(kind);
+    }
 
-    NText stringToText(String text, NTexts txt);
+    /**
+     * Register code highlighter.
+     *
+     * @param format format
+     */
+    static void registerCodeHighlighter(NCodeHighlighter format) {
+        NTextRPI.of().registerCodeHighlighter(format);
+    }
 
-    NText tokenToText(String text, String tokenType, NTexts txt);
+    /**
+     * Unregister code highlighter.
+     *
+     * @param id id
+     */
+    static void unregisterCodeHighlighter(String id) {
+        NTextRPI.of().unregisterCodeHighlighter(id);
+    }
+
+    /**
+     * Code highlighters.
+     *
+     * @return code highlighters result
+     */
+    static List<NCodeHighlighter> codeHighlighters() {
+        return NTextRPI.of().codeHighlighters();
+    }
+
+
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    String id();
+
+    /**
+     * String to text.
+     *
+     * @param text text
+     * @return string to text result
+     */
+    NText stringToText(String text);
+
+    /**
+     * Converts to en to text.
+     *
+     * @param text text
+     * @param tokenType token type
+     * @return token to text result
+     */
+    NText tokenToText(String text, String tokenType);
 }

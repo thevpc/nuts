@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
+    <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
@@ -21,10 +23,12 @@
     <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+    <!-- Shared navbar (all pages) -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-navbar.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 
     <!-- Google tag (gtag.js) -->
@@ -40,90 +44,87 @@
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
-
-<!-- Preloader -->
-<div class="preloader">
-    <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
-<!-- Preloader -->
-
-<!-- Document Wrapper   
-=============================== -->
+    <title>FAQ — Nuts Package Manager</title>
+    <!-- Doc-specific overrides -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
+</head>
+<body>
 <div id="main-wrapper" class="documentation-main-wrapper">
-    
-    <!-- Header
-    ============================ -->
+    <!-- Header -->
 <header id="header" class="sticky-top">
-    <!-- Navbar -->
     <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
         <div class="container-fluid">
-            <!-- Sidebar Toggler -->
-            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span
-                    class="w-75"></span><span class="w-50"></span></button>
 
-            <!-- Logo -->
-            <a class="logo ml-md-3" href="index.html" title="Nuts Package Manager"> <img
-                    src="assets/images/nuts-icon.png" alt="Nuts Package Manager" width="32px"/> </a>
-            <span class="text-4 ml-2" style="font-family: ZeroesTwo;"><strong><a href="index.html">Nuts Package Manager</a></strong></span>
-            <span class="text-2 ml-2" style="font-family: ZeroesTwo;"><span class="badge badge-info">v0.8.9.0</span></span>
-            <!-- Logo End -->
+            <!-- Mobile sidebar toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button">
+                <span></span><span class="w-75"></span><span class="w-50"></span>
+            </button>
 
-            <!-- Navbar Toggler -->
-            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav">
-                <span></span><span></span><span></span></button>
+            <!-- Logo + brand + version dropdown -->
+            <div class="nuts-brand-wrapper d-inline-flex align-items-center">
+                <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
+                    <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
+                    <span class="nuts-brand__name">Nuts</span>
+                </a>
+                <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
+                    <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        v0.8.3
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
+                        <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
+                        <a class="dropdown-item " href="doc-nuts.html">v0.8.4 (Latest)</a>
+                        <a class="dropdown-item active" href="versions/v0.8.3/doc-nuts.html">v0.8.3</a>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Mobile collapse toggler -->
+            <button class="navbar-toggler ml-auto" type="button"
+                    data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span>
+            </button>
+
+            <!-- Nav links -->
             <div id="header-nav" class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav">
-                    <li><a href="naf.html" class="">Nuts Application Framework</a></li>
-                    <li class="dropdown"> <a class="dropdown-toggle" href="#">Documentation</a>
-                      <ul class="dropdown-menu">
-                          <li><a class="dropdown-item " href="doc-nuts.html">User Documentation</a>
-                          <li><a class="dropdown-item " href="contrib.html">Contributing</a></li>
-                          <li><a class="dropdown-item not-active" href="faq.html">FAQ</a></li>
-                          <!--
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">More</a>
-                          <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="index.html">Apps</a></li>
-                            <li><a class="dropdown-item" href="feature-header-dark.html">Change Log</a></li>
-                            <li><a class="dropdown-item" href="feature-header-primary.html">FAQ</a></li>
-                            <li><a class="dropdown-item" href="index-2.html">Another Link</a></li>
-                          </ul>
-                        </li>
-                        -->
-                      </ul>
+                <ul class="navbar-nav nuts-nav">
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#">Docs</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item "
+                                   href="doc-nuts.html">User Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item not-active"
+                                   href="faq.html">FAQ</a></li>
+                            <li><a class="dropdown-item "
+                                   href="contrib.html">Contributing</a></li>
+                        </ul>
                     </li>
-                    <li><a href="blog.html" class="">Blog</a></li>
-                    <li><a href="apps.html" class="">Apps</a></li>
-                    <li><a href="download.html" class="">Download</a></li>
-                    <li><a target="_blank" href="https://github.com/thevpc/nuts">GitHub</a></li>
+
+                    <li><a href="blog.html"
+                           class="">Blog</a></li>
+
+                    <li><a href="apps.html"
+                           class="">Apps</a></li>
+
+                    <li><a href="download.html"
+                           class="">Download</a></li>
+
+                    <li><a href="https://github.com/thevpc/nuts" target="_blank"
+                           class="nuts-nav__github">
+                        <i class="fab fa-github"></i>
+                    </a></li>
+
+                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers &rarr;</a></li>
+
                 </ul>
             </div>
-            <ul class="social-icons social-icons-sm ml-lg-2 mr-2">
-                <li class="social-icons-twitter"><a data-toggle="tooltip"
-                                                    href="http://www.twitter.com/tbensalah/" target="_blank"
-                                                    title="" data-original-title="Twitter"><i
-                        class="fab fa-twitter"></i></a></li>
-                <li class="social-icons-facebook"><a data-toggle="tooltip"
-                                                     href="http://www.facebook.com/tbensalah/" target="_blank"
-                                                     title="" data-original-title="Facebook"><i
-                        class="fab fa-facebook-f"></i></a></li>
-                <li class="social-icons-dribbble"><a data-toggle="tooltip"
-                                                     href="http://www.dribbble.com/tbensalah/" target="_blank"
-                                                     title="" data-original-title="Dribbble"><i
-                        class="fab fa-dribbble"></i></a></li>
-            </ul>
+
         </div>
     </nav>
-    <!-- Navbar End -->
 </header>
 <!-- Header End -->
-
 
     <!-- Content
     ============================ -->
@@ -132,6 +133,9 @@
         <!-- Sidebar Navigation
         ============================ -->
         <div class="idocs-navigation bg-light">
+            <div class="nav-search">
+                <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
+            </div>
             <ul class="nav flex-column ">
                 
                 <li class="nav-item"><a class="nav-link" href="#U7216b627e7045cd86929baf114a803ae40200042">1 Common Questions</a>
@@ -210,7 +214,7 @@
                     <section id="U7216b627e7045cd86929baf114a803ae40200042" >
                         <h2 class="main-section1"><a href="#U7216b627e7045cd86929baf114a803ae40200042">1 Common Questions</a></h2>
                         <div class="text-card" style="margin-bottom: 30px">
-                        <p class="md-phrase">In this section we will consider the simplest usage of <mark class="md-code md-code-` ">nuts</mark> package manager.</p>
+                        <p class="md-phrase">In this section we will consider the simplest usage of <mark class="md-code md-code-ac1">nuts</mark> package manager.</p>
                         </div>
                         <div class="accordion" id="accordionDefaultU7216b627e7045cd86929baf114a803ae40200042">
                         
@@ -233,7 +237,7 @@
                                     </div>
                                     <div id="collapseU5ec2bfa4d04c42d7a4fb68e1b11a7f6ef3a0651a" class="collapse show" aria-labelledby="headingU5ec2bfa4d04c42d7a4fb68e1b11a7f6ef3a0651a" data-parent="#accordionDefaultU7216b627e7045cd86929baf114a803ae40200042">
                                             <div class="text-card">
-                                                <H4 class="md-title-2">What does Nuts mean and why ?</H4><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> stands for "Network Updatable Things Services". It helps managing things (artifacts of any type, not only java). The Name also helps depicting another idea : <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is a good companion and complement to Maven tool.  The word maven (MAY-vin), from Yiddish, means a super-enthusiastic expert/fan/connoisseur/Wizard. And where wizards are, fools and <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> must be. </p><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is the foolish tool to support the deployment and not the build.  Hence the name.</p>
+                                                <H4 class="md-title-2">What does Nuts mean and why ?</H4><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> stands for "Network Updatable Things Services". It helps managing things (artifacts of any type, not only java). The Name also helps depicting another idea : <b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> is a good companion and complement to Maven tool.  The word maven (MAY-vin), from Yiddish, means a super-enthusiastic expert/fan/connoisseur/Wizard. And where wizards are, fools and <b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> must be. </p><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> is the foolish tool to support the deployment and not the build.  Hence the name.</p>
                                             </div>
                                     </div>
                                 </div>
@@ -245,7 +249,7 @@
                                     </div>
                                     <div id="collapseUeff6f272d01af0504e21d0412ffde6f6e590c8ec" class="collapse show" aria-labelledby="headingUeff6f272d01af0504e21d0412ffde6f6e590c8ec" data-parent="#accordionDefaultU7216b627e7045cd86929baf114a803ae40200042">
                                             <div class="text-card">
-                                                <p class="md-phrase">Not only. <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> supports all types of packaging, particularly, those supported by maven.  This includes  pom , jar , maven-plugin , ejb , war , ear , rar.</p><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is also intended to support any "thing" including "exe" ,"dll", "so", "zip" files, etc.</p><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> differs from maven as it defines other properties to the artifact descriptor (aka pom in maven) : os (operating system), arch (hardware architecture), osdist (relevant for linux for instance : opensuse, ubuntu) and platform (relevant to vm platforms like java vm, dotnet clr, etc). Such properties are queried to download the most appropriate binaries for the the current environment.</p>
+                                                <p class="md-phrase">Not only. <b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> supports all types of packaging, particularly, those supported by maven.  This includes  pom , jar , maven-plugin , ejb , war , ear , rar.</p><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> is also intended to support any "thing" including "exe" ,"dll", "so", "zip" files, etc.</p><p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> differs from maven as it defines other properties to the artifact descriptor (aka pom in maven) : os (operating system), arch (hardware architecture), osdist (relevant for linux for instance : opensuse, ubuntu) and platform (relevant to vm platforms like java vm, dotnet clr, etc). Such properties are queried to download the most appropriate binaries for the the current environment.</p>
                                             </div>
                                     </div>
                                 </div>
@@ -269,8 +273,8 @@
                                     </div>
                                     <div id="collapseUa7de1b4bcec4f759f573c3fc3a63636e5a1d58af" class="collapse show" aria-labelledby="headingUa7de1b4bcec4f759f573c3fc3a63636e5a1d58af" data-parent="#accordionDefaultU7216b627e7045cd86929baf114a803ae40200042">
                                             <div class="text-card">
-                                                Mainly all of the documentation can be found in 2 places:<ul class="md-ul"><li class="md-uli">this website: it includes both user documentation and javadocs (code documentation)</li><li class="md-uli">each command help option. when you type</li></ul><pre class="md-code md-code-``` sh"><code class="sh">nuts --help
-  </code></pre> or  <pre class="md-code md-code-``` sh"><code class="sh">nsh help
+                                                Mainly all of the documentation can be found in 2 places:<ul class="md-ul"><li class="md-uli">this website: it includes both user documentation and javadocs (code documentation)</li><li class="md-uli">each command help option. when you type</li></ul><pre><code class="language-sh">nuts --help
+  </code></pre> or  <pre><code class="language-sh">nsh help
   </code></pre> you will get more details on nuts or on the tool (here nsh)
                                             </div>
                                     </div>
@@ -283,7 +287,7 @@
                                     </div>
                                     <div id="collapseU0cbbd6ac0db6b5d42798bec4ed8a78006b1a3fb0" class="collapse show" aria-labelledby="headingU0cbbd6ac0db6b5d42798bec4ed8a78006b1a3fb0" data-parent="#accordionDefaultU7216b627e7045cd86929baf114a803ae40200042">
                                             <div class="text-card">
-                                                <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> is published under Licensed under the GNU LESSER GENERAL PUBLIC LICENSE, Version 3.   </p>
+                                                <p class="md-phrase"><b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> is published under Licensed under the GNU LESSER GENERAL PUBLIC LICENSE, Version 3.   </p>
                                             </div>
                                     </div>
                                 </div>
@@ -307,7 +311,7 @@
                                     </div>
                                     <div id="collapseUd83b2dc7202e37e85fad99797fe8be290091c533" class="collapse show" aria-labelledby="headingUd83b2dc7202e37e85fad99797fe8be290091c533" data-parent="#accordionDefaultU5d3c5800fa968d90251565f23d8694748a9ee965">
                                             <div class="text-card">
-                                                <p class="md-phrase">If by <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> aware you mean that you would download your application and run it using <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b>, then you just need to create the application using maven and deploy your application to the public maven central. Nothing really special is to be done from your side. You do not have to use plugins like 'maven-assembly-plugin' and 'maven-shade-plugin' to include your dependencies. Or, you can also use NAF (<b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> Application Framework) to make your application full featured "Nuts aware" application.</p>
+                                                <p class="md-phrase">If by <b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> aware you mean that you would download your application and run it using <b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b>, then you just need to create the application using maven and deploy your application to the public maven central. Nothing really special is to be done from your side. You do not have to use plugins like 'maven-assembly-plugin' and 'maven-shade-plugin' to include your dependencies. Or, you can also use NAF (<b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> Application Framework) to make your application full featured "Nuts aware" application.</p>
                                             </div>
                                     </div>
                                 </div>
@@ -319,7 +323,7 @@
                                     </div>
                                     <div id="collapseU95c7bfc09f59fdc68b2e71522badd7b22bb8e949" class="collapse show" aria-labelledby="headingU95c7bfc09f59fdc68b2e71522badd7b22bb8e949" data-parent="#accordionDefaultU5d3c5800fa968d90251565f23d8694748a9ee965">
                                             <div class="text-card">
-                                                or, "Why should I consider implementing my terminal application using Nuts Application Framework (NAF)?" First of all, NAF is a simple 300k jar so for what it provided to you, you would be surprised.  Indeed, implementing your application using NAF will provide you a clean way to :<ul class="md-ul"><li class="md-uli"><p class="md-phrase">seamless integration with <b class="md-bold"><mark class="md-code md-code-``` ">nuts</mark></b> and all other NAF applications (obviously!)</p></li><li class="md-uli"><p class="md-phrase">support standard file system layout (XDG) where config files and log files are not necessarily in the same folder see <a href="../04-nuts-concepts/04-filesystem" class="md-link">Nuts File System</a> for more details.<b class="md-bold"> support application life cycle events (onInstall, onUninstall, onUpdate), </b></p></li><li class="md-uli">standard support of command line arguments</li><li class="md-uli">dynamic dependency aware class loading</li><li class="md-uli">terminal coloring, and terminal components (progress bar, etc...)</li><li class="md-uli">json, yaml, xml, table, tree and plain format support out of the box as output to all your commands</li><li class="md-uli">pipe manipulation when calling sub processes</li><li class="md-uli">advanced io features (persistence Locks, monitored downloads, compression, file hashing....)</li><li class="md-uli">standard ways to support and use installed platforms (installed JRE, JDK, ...)</li><li class="md-uli">and lots more...</li></ul>
+                                                or, "Why should I consider implementing my terminal application using Nuts Application Framework (NAF)?" First of all, NAF is a simple 300k jar so for what it provided to you, you would be surprised.  Indeed, implementing your application using NAF will provide you a clean way to :<ul class="md-ul"><li class="md-uli"><p class="md-phrase">seamless integration with <b class="md-bold"><mark class="md-code md-code-ac3">nuts</mark></b> and all other NAF applications (obviously!)</p></li><li class="md-uli"><p class="md-phrase">support standard file system layout (XDG) where config files and log files are not necessarily in the same folder see <a href="../04-nuts-concepts/04-filesystem" class="md-link">Nuts File System</a> for more details.<b class="md-bold"> support application life cycle events (onInstall, onUninstall, onUpdate), </b></p></li><li class="md-uli">standard support of command line arguments</li><li class="md-uli">dynamic dependency aware class loading</li><li class="md-uli">terminal coloring, and terminal components (progress bar, etc...)</li><li class="md-uli">json, yaml, xml, table, tree and plain format support out of the box as output to all your commands</li><li class="md-uli">pipe manipulation when calling sub processes</li><li class="md-uli">advanced io features (persistence Locks, monitored downloads, compression, file hashing....)</li><li class="md-uli">standard ways to support and use installed platforms (installed JRE, JDK, ...)</li><li class="md-uli">and lots more...</li></ul>
                                             </div>
                                     </div>
                                 </div>
@@ -349,25 +353,29 @@
 
     <!-- Footer
 ============================ -->
-<footer id="footer" class="section bg-dark footer-text-light">
+<footer id="footer">
     <div class="container">
-        <ul class="social-icons social-icons-lg social-icons-muted justify-content-center mb-3">
-            <li><a data-toggle="tooltip" href="https://twitter.com/tbensalah/" target="_blank" title=""
-                   data-original-title="Twitter"><i class="fab fa-twitter"></i></a></li>
-            <li><a data-toggle="tooltip" href="http://www.facebook.com/tbensalah/" target="_blank" title=""
-                   data-original-title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
-            <li><a data-toggle="tooltip" href="http://www.dribbble.com/tbensalah/" target="_blank" title=""
-                   data-original-title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
-            <li><a data-toggle="tooltip" href="https://github.com/thevpc/nuts" target="_blank" title=""
-                   data-original-title="GitHub"><i class="fab fa-github"></i></a></li>
+        <ul class="social-icons">
+            <li>
+                <a href="https://github.com/thevpc/nuts" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com/tbensalah/" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.facebook.com/tbensalah/" target="_blank" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </li>
         </ul>
-        <p class="text-2 text-center mb-0">
+        <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-ndoc">ndoc</a> on 2026-05-02-182255
-            <br>
-            <span style="font-size: 0.5rem">Based on <a class="btn-link" target="_blank"
-                                                        href="https://github.com/harnishdesign/iDocs">HarnishDesign</a></span>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-142347
         </p>
     </div>
 </footer>
@@ -391,5 +399,7 @@
 <script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 <!-- Custom Script -->
 <script src="assets/js/theme.js"></script>
+<script src="assets/js/nuts-docs.js"></script>
+</body>
 </body>
 </html>

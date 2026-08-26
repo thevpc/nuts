@@ -42,31 +42,62 @@ public class NPredicates {
 
     private static final Blank BLANK = new Blank();
 
+    /**
+     * Never.
+     *
+     * @return never result
+     */
     @SuppressWarnings("unchecked")
     public static <T> NPredicate<T> never() {
         return NEVER;
     }
 
+    /**
+     * Blank.
+     *
+     * @return blank result
+     */
     @SuppressWarnings("unchecked")
     public static NPredicate<String> blank() {
         return BLANK;
     }
 
+    /**
+     * Always.
+     *
+     * @return always result
+     */
     @SuppressWarnings("unchecked")
     public static <T> NPredicate<T> always() {
         return ALWAYS;
     }
 
+    /**
+     * Checks if is null.
+     *
+     * @return is null result
+     */
     @SuppressWarnings("unchecked")
     public static <T> NPredicate<T> isNull() {
         return NULL;
     }
 
+    /**
+     * Non null.
+     *
+     * @return non null result
+     */
     @SuppressWarnings("unchecked")
     public static <T> NPredicate<T> nonNull() {
         return NULL.negate();
     }
 
+    /**
+     * With pars.
+     *
+     * @param sl sl
+     * @return with pars result
+     */
     private static String withPars(String sl) {
         if (!sl.matches("\\w")) {
             return "(" + sl + ")";
@@ -74,10 +105,22 @@ public class NPredicates {
         return sl;
     }
 
+    /**
+     * BaseOpPredicate class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static abstract class BaseOpPredicate<T> extends AbstractNPredicate<T> {
 
     }
 
+    /**
+     * Never class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static class Never<T> extends BaseOpPredicate<T> {
         @Override
         public boolean test(T t) {
@@ -86,6 +129,12 @@ public class NPredicates {
 
         @Override
         public int hashCode() {
+            /**
+             * Returns the class.
+             *
+             * @param ).getName().hashCode( ).get name().hash code(
+             * @return get class result
+             */
             return getClass().getName().hashCode();
         }
 
@@ -108,6 +157,12 @@ public class NPredicates {
 
         @Override
         public int hashCode() {
+            /**
+             * Returns the class.
+             *
+             * @param ).getName().hashCode( ).get name().hash code(
+             * @return get class result
+             */
             return getClass().getName().hashCode();
         }
 
@@ -130,6 +185,12 @@ public class NPredicates {
 
         @Override
         public int hashCode() {
+            /**
+             * Returns the class.
+             *
+             * @param ).getName().hashCode( ).get name().hash code(
+             * @return get class result
+             */
             return getClass().getName().hashCode();
         }
 
@@ -151,19 +212,30 @@ public class NPredicates {
                 return true;
             }
             if (t instanceof CharSequence) {
-                return t.toString().trim().isEmpty();
-            }
-            if (t instanceof NBlankable) {
-                return ((NBlankable) t).isBlank();
+                return NStringUtils.isBlank((CharSequence) t);
             }
             if (t instanceof char[]) {
-                return NBlankable.isBlank((char[]) t);
+                return NStringUtils.isBlank((char[]) t);
+            }
+            if (t instanceof NBlankable) {
+              /**
+               * Return.
+               *
+               * @param t).isBlank( t).is blank(
+               */
+                return ((NBlankable) t).isBlank();
             }
             return false;
         }
 
         @Override
         public int hashCode() {
+            /**
+             * Returns the class.
+             *
+             * @param ).getName().hashCode( ).get name().hash code(
+             * @return get class result
+             */
             return getClass().getName().hashCode();
         }
 
@@ -178,9 +250,21 @@ public class NPredicates {
         }
     }
 
+    /**
+     * Not class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static class Not<T> extends BaseOpPredicate<T> implements Serializable {
         private final Predicate<T> base;
 
+        /**
+         * Not.
+         *
+         * @param base base
+         * @return not result
+         */
         public Not(Predicate<T> base) {
             NAssert.requireNamedNonNull(base, "base");
             this.base = base;
@@ -210,10 +294,23 @@ public class NPredicates {
         }
     }
 
+    /**
+     * Or class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static class Or<T> extends BaseOpPredicate<T> {
         private final Predicate<T> left;
         private final Predicate<? super T> right;
 
+        /**
+         * Or.
+         *
+         * @param left left
+         * @param right right
+         * @return or result
+         */
         public Or(Predicate<T> left, Predicate<? super T> right) {
             NAssert.requireNamedNonNull(left, "left");
             NAssert.requireNamedNonNull(right, "right");
@@ -244,14 +341,33 @@ public class NPredicates {
 
         @Override
         public String toString() {
+            /**
+             * With pars.
+             *
+             * @param withPars(right.toString() with pars(right.to string()
+             * @return with pars result
+             */
             return withPars(left.toString()) + " | " + withPars(right.toString());
         }
     }
 
+    /**
+     * And class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static class And<T> extends BaseOpPredicate<T> {
         private final Predicate<T> left;
         private final Predicate<? super T> right;
 
+        /**
+         * And.
+         *
+         * @param left left
+         * @param right right
+         * @return and result
+         */
         public And(Predicate<T> left, Predicate<? super T> right) {
             NAssert.requireNamedNonNull(left, "left");
             NAssert.requireNamedNonNull(right, "right");
@@ -282,6 +398,12 @@ public class NPredicates {
 
         @Override
         public String toString() {
+            /**
+             * With pars.
+             *
+             * @param withPars(right.toString() with pars(right.to string()
+             * @return with pars result
+             */
             return withPars(left.toString()) + " & " + withPars(right.toString());
         }
     }

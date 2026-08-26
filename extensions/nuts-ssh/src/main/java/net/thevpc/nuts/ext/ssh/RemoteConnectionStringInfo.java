@@ -1,8 +1,8 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.NConstants;
@@ -76,16 +76,16 @@ public class RemoteConnectionStringInfo {
 
     public boolean copyId(NId id, NPath remoteRepo, NRef<NPath> remoteJar) {
         NDefinition def = NFetch.of(id)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDefinition();
-        NPath apiLocalPath = def.getContent().get();
+        NPath apiLocalPath = def.content().get();
         NPath remoteJarPath = remoteRepo.resolve(id.getMavenPath("jar"));
         if (remoteJar != null) {
             remoteJar.set(remoteJarPath);
         }
         if (copy(apiLocalPath, remoteJarPath)) {
-            NDescriptorWriter.of().setNtf(false).print(
-                    def.getDescriptor(), remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
+            NDescriptorWriter.of().ntf(false).print(
+                    def.descriptor(), remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
             );
             return true;
         }
@@ -95,12 +95,12 @@ public class RemoteConnectionStringInfo {
     public boolean copy(NPath local, NPath remote) {
         NLog log = LOG();
         log.log(NMsg.ofC("try copy %s %s", local, remote).asFiner().withIntent(NMsgIntent.START));
-        long localContentLength = local.getContentLength();
-        long remoteContentLength = remote.getContentLength();
+        long localContentLength = local.contentLength();
+        long remoteContentLength = remote.contentLength();
         if (remoteContentLength >= 0) {
             if (localContentLength == remoteContentLength) {
-                String ld = local.getDigestString();
-                String rd = remote.getDigestString();
+                String ld = local.digestString();
+                String rd = remote.digestString();
                 if (ld.equals(rd)) {
                     log.log(NMsg.ofC("do not copy %s %s", local, remote).asFiner().withIntent(NMsgIntent.START));
                     return false;
@@ -128,7 +128,7 @@ public class RemoteConnectionStringInfo {
         int e;
         NSession session = NSession.of();
         try (MyNExecTargetCommandContext d = new MyNExecTargetCommandContext(
-                NExec.of().setConnectionString(target).system(),
+                NExec.of().connectionString(target).system(),
                 commExec, target, cmd, out, err)) {
             e = commExec.exec(d);
         } catch (RuntimeException ex) {
@@ -152,9 +152,9 @@ public class RemoteConnectionStringInfo {
             LOG().log(NMsg.ofC("[%s] resolve remote jar", connectionString).asFiner().withIntent(NMsgIntent.START));
             NRef<NPath> remoteApiJar = NRef.ofNull();
             NWorkspace workspace = NWorkspace.of();
-            copyId(workspace.getApiId(), getStoreLocationLibRepo(commExec), remoteApiJar);
-            copyId(workspace.getRuntimeId(), getStoreLocationLibRepo(commExec), null);
-            nutsJar = remoteApiJar.get().getLocation();
+            copyId(workspace.apiId(), getStoreLocationLibRepo(commExec), remoteApiJar);
+            copyId(workspace.runtimeId(), getStoreLocationLibRepo(commExec), null);
+            nutsJar = remoteApiJar.get().location();
         }
         return nutsJar;
     }
@@ -170,28 +170,28 @@ public class RemoteConnectionStringInfo {
     public String getRootName(NExecTargetSPI commExec) {
         NEnv o = getProbedOs();
         synchronized (o) {
-            return o.getRootUserName();
+            return o.rootUserName();
         }
     }
 
     public String getUserName(NExecTargetSPI commExec) {
         NEnv o = getProbedOs();
         synchronized (o) {
-            return o.getUserName();
+            return o.userName();
         }
     }
 
     public String getUserHome(NExecTargetSPI commExec) {
         NEnv o = getProbedOs();
         synchronized (o) {
-            return o.getUserHome();
+            return o.userHome();
         }
     }
 
     public NOsFamily getOsFamily(NExecTargetSPI commExec) {
         NEnv o = getProbedOs();
         synchronized (o) {
-            return o.getOsFamily();
+            return o.osFamily();
         }
     }
 
@@ -236,8 +236,8 @@ public class RemoteConnectionStringInfo {
         if (isUpdatable(loadedWorkspaceJson)) {
             loadedWorkspaceJson = System.currentTimeMillis();
             NConnectionStringBuilder targetConnection = connectionString.builder()
-                    .setQueryString(null)
-                    .setPath(null);
+                    .queryString(null)
+                    .path(null);
             NPlatformHome pHome = NPlatformHome.ofPortable(getOsFamily(commExec), false, null, p -> {
                 switch (p) {
                     case "user.name": {
@@ -252,7 +252,7 @@ public class RemoteConnectionStringInfo {
             try {
                 workspaceJson = null;
                 NPath rpath = NPath.of(targetConnection.copy()
-                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/" + NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
+                        .path(pHome.home() + "/ws/" + workspaceName + "/" + NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)
                         .toString());
                 if (rpath.isRegularFile()) {
                     workspaceJson = NElementReader.ofJson()
@@ -276,13 +276,13 @@ public class RemoteConnectionStringInfo {
             }
 
             storeLocationLibRepo = NPath.of(targetConnection.copy()
-                    .setPath(storeLocationLib)
+                    .path(storeLocationLib)
                     .toString()).resolve(NConstants.Folders.ID);
             storeLocationCacheRepo = NPath.of(targetConnection.copy()
-                    .setPath(storeLocationCache)
+                    .path(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
-            NId appId = NApp.of().getId().orElseGet(() -> NWorkspace.of().getApiId());
-            storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.getMavenFolder()).resolve("repo");
+            NId appId = NApplication.of().id().orElseGet(() -> NWorkspace.of().apiId());
+            storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.mavenFolder()).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {
                 e.mkParentDirs().writeString("{}");
@@ -294,7 +294,7 @@ public class RemoteConnectionStringInfo {
     public String getSuPath(NExecTargetSPI commExec) {
         if (isUpdatable(loadedSu)) {
             loadedSu = System.currentTimeMillis();
-            suPath = NStringUtils.trimToNull(NStringUtils.trim(runOnceSystemGrab(commExec, connectionString, "which", "su")).trim());
+            suPath = NStringUtils.stripToNull(NStringUtils.strip(runOnceSystemGrab(commExec, connectionString, "which", "su")));
         }
         return suPath;
     }
@@ -302,7 +302,7 @@ public class RemoteConnectionStringInfo {
     public String getSudoPath(NExecTargetSPI commExec) {
         if (isUpdatable(loadedSudo)) {
             loadedSudo = System.currentTimeMillis();
-            sudoPath = NStringUtils.trimToNull(NStringUtils.trim(runOnceSystemGrab(commExec, connectionString, "which", "sudo")).trim());
+            sudoPath = NStringUtils.stripToNull(NStringUtils.strip(runOnceSystemGrab(commExec, connectionString, "which", "sudo")));
         }
         return sudoPath;
     }
@@ -357,12 +357,12 @@ public class RemoteConnectionStringInfo {
         }
 
         @Override
-        public NConnectionString getConnectionString() {
+        public NConnectionString connectionString() {
             return target;
         }
 
         @Override
-        public String[] getCommand() {
+        public String[] command() {
             return cmd;
         }
 
@@ -382,7 +382,7 @@ public class RemoteConnectionStringInfo {
         }
 
         @Override
-        public NExec getExecCommand() {
+        public NExec execCommand() {
             return ec;
         }
 

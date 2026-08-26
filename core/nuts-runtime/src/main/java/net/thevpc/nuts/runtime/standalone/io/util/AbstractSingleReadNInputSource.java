@@ -16,7 +16,7 @@ public abstract class AbstractSingleReadNInputSource extends AbstractNInputSourc
     }
 
     @Override
-    public long getContentLength() {
+    public long contentLength() {
         return -1;
     }
 }

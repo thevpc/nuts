@@ -25,12 +25,10 @@
  */
 package net.thevpc.nuts.artifact;
 
-import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -49,6 +47,11 @@ import java.util.function.UnaryOperator;
  */
 public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDescriptorBuilder of() {
         return NExtensions.of(NDescriptorBuilder.class);
     }
@@ -59,7 +62,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return artifact id
      */
-    NId getId();
+    @NGetter
+    NId id();
 
 
     /**
@@ -67,15 +71,23 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return true if the artifact is executable
      */
+    @NGetter
     boolean isExecutable();
 
     /**
-     * true if the artifact is a java executable that implements {@link NApplication} interface.
+     * true if the artifact is a java executable that implements {@link NApplicationHandler} interface.
      *
-     * @return true if the artifact is a java executable that implements {@link NApplication} interface.
+     * @return true if the artifact is a java executable that implements {@link NApplicationHandler} interface.
      */
+    @NGetter
     boolean isNutsApplication();
 
+    /**
+     * Checks if is platform application.
+     *
+     * @return is platform application result
+     */
+    @NGetter
     boolean isPlatformApplication();
 
 
@@ -84,13 +96,15 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return return descriptor packaging (used to resolve file extension)
      */
-    String getPackaging();
+    @NGetter
+    String packaging();
 
     /**
      *
      * This is typically the case for pom projects
      * @return true when the descriptor does not define a content.
      */
+    @NGetter
     boolean isNoContent();
 
     /**
@@ -98,28 +112,32 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return dependency resolution solver
      */
-    String getSolver();
+    @NGetter
+    String solver();
 
     /**
      * Descriptor Condition
      *
      * @return Descriptor Condition
      */
-    NEnvConditionBuilder getCondition();
+    @NGetter
+    NEnvConditionBuilder condition();
 
     /**
      * user-friendly name, a short description for the artifact
      *
      * @return user friendly name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * url (external or classpath url) to the application Icon
      *
      * @return url (external or classpath url) to the application Icon
      */
-    List<String> getIcons();
+    @NGetter
+    List<String> icons();
 
     /**
      * category path of the artifact (slash separated).
@@ -127,14 +145,16 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return category path of the artifact
      */
-    List<String> getCategories();
+    @NGetter
+    List<String> categories();
 
     /**
      * long description for the artifact
      *
      * @return long description for the artifact
      */
-    String getDescription();
+    @NGetter
+    String description();
 
     /**
      * list of available mirror locations from which nuts can download artifact content.
@@ -142,7 +162,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return list of available mirror locations
      */
-    List<NIdLocation> getLocations();
+    @NGetter
+    List<NIdLocation> locations();
 
 
     /**
@@ -153,35 +174,40 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return "standard" dependencies
      */
-    List<NDependency> getStandardDependencies();
+    @NGetter
+    List<NDependency> standardDependencies();
 
     /**
      * list of immediate (non-inherited and non-transitive dependencies
      *
      * @return list of immediate (non-inherited and non-transitive dependencies
      */
-    List<NDependency> getDependencies();
+    @NGetter
+    List<NDependency> dependencies();
 
     /**
      * descriptor of artifact responsible for running this artifact
      *
      * @return descriptor of artifact responsible for running this artifact
      */
-    NArtifactCall getExecutor();
+    @NGetter
+    NArtifactCall executor();
 
     /**
      * descriptor of artifact responsible for installing this artifact
      *
      * @return descriptor of artifact responsible for installing this artifact
      */
-    NArtifactCall getInstaller();
+    @NGetter
+    NArtifactCall installer();
 
     /**
      * custom properties that can be used as placeholders (int ${name} form) in other fields.
      *
      * @return custom properties that can be used as placeholders (int ${name} form) in other fields.
      */
-    List<NDescriptorProperty> getProperties();
+    @NGetter
+    List<NDescriptorProperty> properties();
 
     /**
      * create new builder filled with this descriptor fields.
@@ -195,31 +221,36 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @since 0.8.4
      * @return contributors
      */
-    List<NDescriptorContributor> getContributors();
+    @NGetter
+    List<NDescriptorContributor> contributors();
 
     /**
      * @since 0.8.4
      * @return developers
      */
-    List<NDescriptorContributor> getDevelopers();
+    @NGetter
+    List<NDescriptorContributor> developers();
 
     /**
      * @since 0.8.4
      * @return licenses
      */
-    List<NDescriptorLicense> getLicenses();
+    @NGetter
+    List<NDescriptorLicense> licenses();
 
     /**
      * @since 0.8.4
      * @return mailing lists
      */
-    List<NDescriptorMailingList> getMailingLists();
+    @NGetter
+    List<NDescriptorMailingList> mailingLists();
 
     /**
      * @since 0.8.4
      * @return organization
      */
-    NDescriptorOrganization getOrganization();
+    @NGetter
+    NDescriptorOrganization organization();
 
     /**
      * set id
@@ -227,7 +258,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param id new value
      * @return {@code this} instance
      */
-    NDescriptorBuilder setId(NId id);
+    @NSetter
+    NDescriptorBuilder id(NId id);
 
     /**
      * set id
@@ -235,14 +267,15 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param id new value
      * @return {@code this instance}
      */
-    NDescriptorBuilder setId(String id);
+    NDescriptorBuilder id(String id);
 
     /**
      * descriptor parent list (may be empty)
      *
      * @return descriptor parent list (may be empty)
      */
-    List<NId> getParents();
+    @NGetter
+    List<NId> parents();
 
     /**
      * set parents
@@ -250,7 +283,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param parents value to set
      * @return {@code this} instance
      */
-    NDescriptorBuilder setParents(List<NId> parents);
+    @NSetter
+    NDescriptorBuilder parents(List<NId> parents);
 
     /**
      * set packaging
@@ -258,7 +292,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param packaging new value
      * @return {@code this} instance
      */
-    NDescriptorBuilder setPackaging(String packaging);
+    @NSetter
+    NDescriptorBuilder packaging(String packaging);
 
     /**
      * set name
@@ -266,7 +301,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param name value to set
      * @return {@code this} instance
      */
-    NDescriptorBuilder setName(String name);
+    @NSetter
+    NDescriptorBuilder name(String name);
 
     /**
      * update dependency resolution solver
@@ -274,23 +310,77 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param solver dependency resolution solver
      * @return {@code this} instance
      */
-    NDescriptorBuilder setSolver(String solver);
+    @NSetter
+    NDescriptorBuilder solver(String solver);
 
-    String getGenericName();
+    /**
+     * Generic name.
+     *
+     * @return generic name result
+     */
+    @NGetter
+    String genericName();
 
-    NDescriptorBuilder setGenericName(String name);
+    /**
+     * Generic name.
+     *
+     * @param name name
+     * @return generic name result
+     */
+    NDescriptorBuilder genericName(String name);
 
-    NDescriptorBuilder setIcons(List<String> icons);
+    /**
+     * Icons.
+     *
+     * @param icons icons
+     * @return icons result
+     */
+    @NSetter
+    NDescriptorBuilder icons(List<String> icons);
 
-    NDescriptorBuilder setIcons(String... icons);
+    /**
+     * Icons.
+     *
+     * @param icons icons
+     * @return icons result
+     */
+    NDescriptorBuilder icons(String... icons);
 
 
-    NDescriptorBuilder setCategories(List<String> categories);
+    /**
+     * Categories.
+     *
+     * @param categories categories
+     * @return categories result
+     */
+    @NSetter
+    NDescriptorBuilder categories(List<String> categories);
 
-    NDescriptorBuilder setCategories(String... categories);
+    /**
+     * Categories.
+     *
+     * @param categories categories
+     * @return categories result
+     */
+    @NSetter
+    NDescriptorBuilder categories(String... categories);
 
-    NDescriptorBuilder setCondition(NEnvCondition condition);
-    NDescriptorBuilder setCondition(NEnvConditionBuilder condition);
+    /**
+     * Condition.
+     *
+     * @param condition condition
+     * @return condition result
+     */
+    @NSetter
+    NDescriptorBuilder condition(NEnvCondition condition);
+    /**
+     * Condition.
+     *
+     * @param condition condition
+     * @return condition result
+     */
+    @NSetter
+    NDescriptorBuilder condition(NEnvConditionBuilder condition);
 
     /**
      * set description
@@ -298,7 +388,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param description new value
      * @return {@code this} instance
      */
-    NDescriptorBuilder setDescription(String description);
+    @NSetter
+    NDescriptorBuilder description(String description);
 
     /**
      * set locations
@@ -306,9 +397,16 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param locations new value
      * @return {@code this} instance
      */
-    NDescriptorBuilder setLocations(List<NIdLocation> locations);
+    @NSetter
+    NDescriptorBuilder locations(List<NIdLocation> locations);
 
-    NDescriptorBuilder setLocations(NIdLocation... locations);
+    /**
+     * Locations.
+     *
+     * @param locations locations
+     * @return locations result
+     */
+    NDescriptorBuilder locations(NIdLocation... locations);
 
 
     /**
@@ -317,7 +415,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param dependencies value to set
      * @return {@code this} instance
      */
-    NDescriptorBuilder setStandardDependencies(List<NDependency> dependencies);
+    @NSetter
+    NDescriptorBuilder standardDependencies(List<NDependency> dependencies);
 
     /**
      * set dependencies
@@ -325,7 +424,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param dependencies new value
      * @return {@code this} instance
      */
-    NDescriptorBuilder setDependencies(List<NDependency> dependencies);
+    @NSetter
+    NDescriptorBuilder dependencies(List<NDependency> dependencies);
 
 
     /**
@@ -334,7 +434,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param executor new value
      * @return {@code this} instance
      */
-    NDescriptorBuilder setExecutor(NArtifactCall executor);
+    @NSetter
+    NDescriptorBuilder executor(NArtifactCall executor);
 
 
     /**
@@ -343,7 +444,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param installer new value
      * @return {@code this} instance
      */
-    NDescriptorBuilder setInstaller(NArtifactCall installer);
+    @NSetter
+    NDescriptorBuilder installer(NArtifactCall installer);
 
     /**
      * set properties
@@ -351,6 +453,7 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param properties new value
      * @return {@code this} instance
      */
+    @NSetter
     NDescriptorBuilder setProperties(List<NDescriptorProperty> properties);
 
     /**
@@ -514,7 +617,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return return descriptor flags
      */
-    Set<NDescriptorFlag> getFlags();
+    @NGetter
+    Set<NDescriptorFlag> flags();
 
     /**
      * set flags
@@ -522,9 +626,16 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param flags flags
      * @return {@code this} instance
      */
-    NDescriptorBuilder setFlags(Set<NDescriptorFlag> flags);
+    @NSetter
+    NDescriptorBuilder flags(Set<NDescriptorFlag> flags);
 
-    NDescriptorBuilder setFlags(NDescriptorFlag... flags);
+    /**
+     * Flags.
+     *
+     * @param flags flags
+     * @return flags result
+     */
+    NDescriptorBuilder flags(NDescriptorFlag... flags);
     /**
      * add flag
      *
@@ -585,7 +696,8 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      *
      * @return id type
      */
-    NIdType getIdType();
+    @NGetter
+    NIdType idType();
 
     /**
      * set idType
@@ -593,17 +705,53 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param idType idType
      * @return {@code this} instance
      */
-    NDescriptorBuilder setIdType(NIdType idType);
+    @NSetter
+    NDescriptorBuilder idType(NIdType idType);
 
-    NDescriptorBuilder setContributors(List<NDescriptorContributor> contributors);
+    /**
+     * Contributors.
+     *
+     * @param contributors contributors
+     * @return contributors result
+     */
+    @NSetter
+    NDescriptorBuilder contributors(List<NDescriptorContributor> contributors);
 
-    NDescriptorBuilder setDevelopers(List<NDescriptorContributor> developers);
+    /**
+     * Developers.
+     *
+     * @param developers developers
+     * @return developers result
+     */
+    @NSetter
+    NDescriptorBuilder developers(List<NDescriptorContributor> developers);
 
 
-    NDescriptorBuilder setLicenses(List<NDescriptorLicense> licenses);
+    /**
+     * Licenses.
+     *
+     * @param licenses licenses
+     * @return licenses result
+     */
+    @NSetter
+    NDescriptorBuilder licenses(List<NDescriptorLicense> licenses);
 
 
-    NDescriptorBuilder setMailingLists(List<NDescriptorMailingList> mailingLists);
+    /**
+     * Mailing lists.
+     *
+     * @param mailingLists mailing lists
+     * @return mailing lists result
+     */
+    @NSetter
+    NDescriptorBuilder mailingLists(List<NDescriptorMailingList> mailingLists);
 
-    NDescriptorBuilder setOrganization(NDescriptorOrganization organization);
+    /**
+     * Organization.
+     *
+     * @param organization organization
+     * @return organization result
+     */
+    @NSetter
+    NDescriptorBuilder organization(NDescriptorOrganization organization);
 }

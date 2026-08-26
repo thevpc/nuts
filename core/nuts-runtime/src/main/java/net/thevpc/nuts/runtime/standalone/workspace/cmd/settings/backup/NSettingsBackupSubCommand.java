@@ -16,13 +16,12 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.platform.NPlatformHome;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.io.File;
 import java.io.InputStream;
@@ -44,21 +43,21 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         NSession session= NSession.of();
         if (cmdLine.next("backup").isPresent()) {
-            cmdLine.setCommandName("settings backup");
+            cmdLine.commandName("settings backup");
             String file = null;
             NArg a;
             while (cmdLine.hasNext()) {
                 if ((a = cmdLine.nextEntry("--file", "-f").orNull()) != null) {
-                    file = a.getValue().asString().orElse("");
+                    file = a.literalValue().asString().orElse("");
                 } else if (cmdLine.peek().get().isNonOption()) {
-                    file = cmdLine.nextEntry().get().getValue().asString().orElse("");
+                    file = cmdLine.nextEntry().get().literalValue().asString().orElse("");
                 } else {
                     session.configureLast(cmdLine);
                 }
             }
             if (cmdLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
-                all.add(NWorkspace.of().getWorkspaceLocation().toPath().get()
+                all.add(NWorkspace.of().workspaceLocation().toPath().get()
                         .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME).toString()
                 );
                 for (NStoreType storeType : NStoreType.values()) {
@@ -68,44 +67,44 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
                 if (file == null || file.isEmpty()) {
-                    file = session.getWorkspace().getName() + ".zip";
+                    file = session.workspace().name() + ".zip";
                 } else if (file.endsWith("/") || file.endsWith("\\")) {
-                    file += session.getWorkspace().getName() + ".zip";
+                    file += session.workspace().name() + ".zip";
                 } else if (Files.isDirectory(Paths.get(file))) {
-                    file += File.separator + session.getWorkspace().getName() + ".zip";
+                    file += File.separator + session.workspace().name() + ".zip";
                 }
                 if (Paths.get(file).getFileName().toString().indexOf('.') < 0) {
                     file += ".zip";
                 }
                 NCompress cmp = NCompress.of();
                 for (String s : all) {
-                    cmp.addSource(NPath.of(s));
+                    cmp.source(NPath.of(s));
                 }
                 cmp.to(file).run();
             }
             return true;
         } else if (cmdLine.next("restore").isPresent()) {
-            cmdLine.setCommandName("settings restore");
+            cmdLine.commandName("settings restore");
             String file = null;
             String ws = null;
             NArg a;
             while (cmdLine.hasNext()) {
                 if ((a = cmdLine.nextEntry("--file", "-f").orNull()) != null) {
-                    file = a.getValue().asString().orElse("");
+                    file = a.literalValue().asString().orElse("");
                 } else if ((a = cmdLine.nextEntry("--workspace", "-w").orNull()) != null) {
-                    ws = a.getValue().asString().orElse("");
+                    ws = a.literalValue().asString().orElse("");
                 } else if (cmdLine.peek().get().isNonOption()) {
-                    file = cmdLine.nextEntry().get().getValue().asString().orElse("");
+                    file = cmdLine.nextEntry().get().literalValue().asString().orElse("");
                 } else {
                     session.configureLast(cmdLine);
                 }
             }
             if (file == null || file.isEmpty()) {
-                file = session.getWorkspace().getName() + ".zip";
+                file = session.workspace().name() + ".zip";
             } else if (file.endsWith("/") || file.endsWith("\\")) {
-                file += session.getWorkspace().getName() + ".zip";
+                file += session.workspace().name() + ".zip";
             } else if (Files.isDirectory(Paths.get(file))) {
-                file += File.separator + session.getWorkspace().getName() + ".zip";
+                file += File.separator + session.workspace().name() + ".zip";
             }
             if (Paths.get(file).getFileName().toString().indexOf('.') < 0 && !Files.exists(Paths.get(file))) {
                 file += ".zip";
@@ -142,11 +141,11 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 if (ws == null || ws.isEmpty()) {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
-                String platformHomeFolder = NPlatformHome.of(null, NWorkspace.of().getStoredConfig().isSystem()).getWorkspaceLocation(ws);
+                String platformHomeFolder = NPlatformHome.of(null, NWorkspace.of().storedConfig().isSystem()).getWorkspaceLocation(ws);
                 NUncompress.of()
                         .from(NPath.of(file))
                         .to(NPath.of(platformHomeFolder))
-                        .setSkipRoot(true).run();
+                        .skipRoot(true).run();
                 if (session.isPlainTrace()) {
                     NOut.println(NMsg.ofC("restore %s to %s", file, platformHomeFolder));
                 }

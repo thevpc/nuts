@@ -27,14 +27,9 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NReaderProvider;
 import net.thevpc.nuts.runtime.standalone.elem.builder.DefaultNCharStreamElementBuilder;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +50,7 @@ public class DefaultNCharStreamElement extends AbstractNElement implements NChar
     public DefaultNCharStreamElement(String blockIdentifier, NReaderProvider value, List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics,NElementMetadata metadata) {
         super(NElementType.CHAR_STREAM, affixes, diagnostics,metadata);
         this.value = value;
-        this.blockIdentifier = NStringUtils.trim(blockIdentifier);
+        this.blockIdentifier = NStringUtils.strip(blockIdentifier);
     }
 
     @Override
@@ -65,7 +60,7 @@ public class DefaultNCharStreamElement extends AbstractNElement implements NChar
 
     @Override
     public NOptional<NElement> resolve(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
             return NOptional.of(this);
         }
@@ -74,7 +69,7 @@ public class DefaultNCharStreamElement extends AbstractNElement implements NChar
 
     @Override
     public List<NElement> resolveAll(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
             return new ArrayList<>(Arrays.asList(this));
         }

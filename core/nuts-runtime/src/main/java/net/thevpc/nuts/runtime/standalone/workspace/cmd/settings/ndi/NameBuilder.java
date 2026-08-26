@@ -119,37 +119,37 @@ public class NameBuilder {
                 char cc = charArray[i];
                 switch (cc) {
                     case 'v': {
-                        h.append(id.getVersion().toString());
+                        h.append(id.version().toString());
                         break;
                     }
                     case 'g': {
-                        h.append(id.getGroupId());
+                        h.append(id.groupId());
                         break;
                     }
                     case 'n': {
-                        h.append(id.getArtifactId());
+                        h.append(id.artifactId());
                         break;
                     }
                     case 'N': {
-                        String str = descriptor.getName();
+                        String str = descriptor.name();
                         if (str == null) {
                             str = "";
                         }
                         str = str.trim();
                         if (str.isEmpty()) {
-                            str = id.getArtifactId();
+                            str = id.artifactId();
                         }
                         h.append(str);
                         break;
                     }
                     case 'h': {
                         if (!NWorkspaceUtils.isUserDefaultWorkspace()) {
-                            h.append(NWorkspace.of().getDigestName());
+                            h.append(NWorkspace.of().digestName());
                         }
                         break;
                     }
                     case 'a': {
-                        h.appendValid(CoreStringUtils.joinAndTrimToNull(id.getCondition().getArch()));
+                        h.appendValid(CoreStringUtils.joinAndTrimToNull(id.condition().arch()));
                         break;
                     }
                     case 's': {
@@ -169,7 +169,7 @@ public class NameBuilder {
             }
         }
         if (h.isEmpty()) {
-            h.appendValid(id.getArtifactId());
+            h.appendValid(id.artifactId());
         }
         return h.toString();
     }

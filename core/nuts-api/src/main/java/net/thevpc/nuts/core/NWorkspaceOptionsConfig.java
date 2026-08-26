@@ -25,6 +25,8 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Objects;
 
@@ -39,16 +41,36 @@ public class NWorkspaceOptionsConfig {
     private NVersion apiVersion;
 
 
-    public NWorkspaceOptionsConfig setApiVersion(NVersion apiVersion) {
+    /**
+     * Api version.
+     *
+     * @param apiVersion api version
+     * @return api version result
+     */
+    @NSetter
+    public NWorkspaceOptionsConfig apiVersion(NVersion apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
-    public NVersion getApiVersion() {
+    /**
+     * Api version.
+     *
+     * @return api version result
+     */
+    @NGetter
+    public NVersion apiVersion() {
         return apiVersion;
     }
 
-    public NWorkspaceOptionsConfig setCompact(boolean compact) {
+    /**
+     * Compact.
+     *
+     * @param compact compact
+     * @return compact result
+     */
+    @NSetter
+    public NWorkspaceOptionsConfig compact(boolean compact) {
         if (compact) {
             shortOptions = true;
             singleArgOptions = true;
@@ -61,14 +83,29 @@ public class NWorkspaceOptionsConfig {
         return this;
     }
 
+    /**
+     * Checks if is short options.
+     *
+     * @return is short options result
+     */
     public boolean isShortOptions() {
         return shortOptions;
     }
 
+    /**
+     * Checks if is single arg options.
+     *
+     * @return is single arg options result
+     */
     public boolean isSingleArgOptions() {
         return singleArgOptions;
     }
 
+    /**
+     * Checks if is omit defaults.
+     *
+     * @return is omit defaults result
+     */
     public boolean isOmitDefaults() {
         return omitDefaults;
     }

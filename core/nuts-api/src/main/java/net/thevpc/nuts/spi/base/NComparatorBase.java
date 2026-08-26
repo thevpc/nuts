@@ -12,6 +12,13 @@ class NComparatorBase<T> implements NComparator<T> {
     private final Comparator<T> base;
     private final Supplier<NElement> nfo;
 
+    /**
+     * N comparator base.
+     *
+     * @param base base
+     * @param nfo nfo
+     * @return n comparator base result
+     */
     public NComparatorBase(Comparator<T> base, Supplier<NElement> nfo) {
         this.base = base;
         this.nfo = nfo;

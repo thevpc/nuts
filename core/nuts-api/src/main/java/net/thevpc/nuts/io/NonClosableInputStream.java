@@ -4,15 +4,27 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
+/**
+ * NonClosableInputStream class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NonClosableInputStream extends InputStream implements InputStreamDelegate {
     private InputStream base;
 
+    /**
+     * Non closable input stream.
+     *
+     * @param base base
+     * @return non closable input stream result
+     */
     public NonClosableInputStream(InputStream base) {
         this.base = base;
     }
 
     @Override
-    public InputStream getDelegateInputStream() {
+    public InputStream delegateInputStream() {
         return base;
     }
 

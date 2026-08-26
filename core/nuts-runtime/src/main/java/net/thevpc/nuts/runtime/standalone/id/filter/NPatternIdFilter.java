@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.spi.base.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -38,11 +39,11 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         super(NFilterOp.CUSTOM);
         this.id = id;
         this.wildcard = containsWildcard(id.toString());
-        g = GlobUtils.ofExact(id.getGroupId());
-        n = GlobUtils.ofExact(id.getArtifactId());
-        v = id.getVersion().toFilter();
-        qm = id.getProperties();
-        for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
+        g = GlobUtils.ofExact(id.groupId());
+        n = GlobUtils.ofExact(id.artifactId());
+        v = id.version().toFilter();
+        qm = id.properties();
+        for (Map.Entry<String, String> entry : id.properties().entrySet()) {
             String key = entry.getKey();
             String val = entry.getValue();
             if (!key.contains("*")) {
@@ -65,31 +66,31 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
 
     @Override
     public boolean acceptId(NId other) {
-        if (!g.matcher(other.getGroupId()).matches()) {
+        if (!g.matcher(other.groupId()).matches()) {
             return false;
         }
-        if (!n.matcher(other.getArtifactId()).matches()) {
+        if (!n.matcher(other.artifactId()).matches()) {
             return false;
         }
-        if (!v.acceptVersion(other.getVersion())) {
+        if (!v.acceptVersion(other.version())) {
             return false;
         }
         Map<String, String> oqm = null;
         for (Predicate<Map<String, String>> pp : q) {
             if (oqm == null) {
-                oqm = other.getProperties();
+                oqm = other.properties();
             }
             if (!pp.test(oqm)) {
                 return false;
             }
         }
-        NEnvCondition condition = id.getCondition();
+        NEnvCondition condition = id.condition();
         if (condition != null && !condition.isBlank()) {
             NEnvCondition otherCondition = null;
             try {
                 otherCondition = NFetch.of(other)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                        .getResultDescriptor().getCondition();
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
+                        .getResultDescriptor().condition();
             } catch (Exception ex) {
                 //ignore any error
             }
@@ -116,7 +117,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
 
         @Override
         public boolean test(Map<String, String> x) {
-            String sv = NStringUtils.trim(x.get(key));
+            String sv = NStringUtils.strip(x.get(key));
             return valPattern.matcher(sv).matches();
         }
 
@@ -144,7 +145,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         public boolean test(Map<String, String> x) {
             for (Map.Entry<String, String> entry : x.entrySet()) {
                 if (keyPattern.matcher(entry.getKey()).matches()) {
-                    String sv = NStringUtils.trim(entry.getValue());
+                    String sv = NStringUtils.strip(entry.getValue());
                     return valPattern.matcher(sv).matches();
                 }
             }
@@ -158,28 +159,16 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.id);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NPatternIdFilter that = (NPatternIdFilter) o;
+        return wildcard == that.wildcard && Objects.equals(id, that.id) && Objects.equals(g, that.g) && Objects.equals(n, that.n) && Objects.equals(v, that.v) && Objects.equals(qm, that.qm) && Objects.equals(q, that.q);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NPatternIdFilter other = (NPatternIdFilter) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, g, n, wildcard, v, qm, q);
     }
 
     @Override
@@ -199,13 +188,13 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
             return false;
         }
         NId nId = NId.of(id);
-        if(containsWildcardString(nId.getArtifactId())){
+        if(containsWildcardString(nId.artifactId())){
             return true;
         }
-        if(containsWildcardString(nId.getGroupId())){
+        if(containsWildcardString(nId.groupId())){
             return true;
         }
-        if(containsWildcard(nId.getVersion())){
+        if(containsWildcard(nId.version())){
             return true;
         }
         return id.indexOf('*') >= 0;

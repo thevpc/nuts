@@ -92,8 +92,8 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
             this.value = from.value();
             return this;
         }
-        if (other instanceof NUpletElementBuilder) {
-            NUpletElementBuilder from = (NUpletElementBuilder) other;
+        if (other instanceof NTupleElementBuilder) {
+            NTupleElementBuilder from = (NTupleElementBuilder) other;
             if (from.size() > 0) {
                 this.key = from.get(0).get();
             }
@@ -137,8 +137,8 @@ public class DefaultNPairElementBuilder extends AbstractNElementBuilder implemen
             this.value = from.value();
             return this;
         }
-        if (other instanceof NUpletElement) {
-            NUpletElement from = (NUpletElement) other;
+        if (other instanceof NTupleElement) {
+            NTupleElement from = (NTupleElement) other;
             if (from.size() > 0) {
                 this.key = from.get(0).get();
             }

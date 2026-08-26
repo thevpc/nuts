@@ -1,19 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NPrepareCmd;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NScore;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,59 +34,59 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
         String version = getVersion();
         getValidUser();
         NWorkspace workspace = NWorkspace.of();
-        String currentVersion = workspace.getApiVersion().toString();
+        String currentVersion = workspace.apiVersion().toString();
         if (version == null) {
             version = currentVersion;
         }
         mkdirs(remoteHomeFile("bin"));
-        NId apiId = workspace.getApiId();
+        NId apiId = workspace.apiId();
 
         if (NBlankable.isBlank(version)) {
-            apiId = apiId.builder().setVersion(version).build();
+            apiId = apiId.builder().version(version).build();
         }
-        NPath javaPath = remoteJavaCommand(apiId.getVersion());
+        NPath javaPath = remoteJavaCommand(apiId.version());
         if (javaPath == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("missing java"));
+            throw new NIllegalArgumentException(NMsg.ofP("missing java"));
         }
         pushId(apiId, null);
         Set<NId> deps = new HashSet<>();
-        deps.add(workspace.getRuntimeId());
-        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+        deps.add(workspace.runtimeId());
+        deps.addAll(NSearch.of().addId("net.thevpc.nsh:nsh").latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilter.ofRunnable()).basePackage(true)
 //                .setDependencies(true)
                 .getResultIds().toList());
         if(ids!=null){
             for (NId id : deps) {
-                deps.addAll(NSearch.of().addId(id).setLatest(true).setTargetApiVersion(apiId.getVersion()).setDependencyFilter(NDependencyFilters.of().byRunnable()).setBasePackage(true)
+                deps.addAll(NSearch.of().addId(id).latest(true).targetApiVersion(apiId.version()).dependencyFilter(NDependencyFilter.ofRunnable()).basePackage(true)
 //                        .setDependencies(true)
                         .getResultIds().toList());
             }
         }
         for (NId dep : deps) {
-            pushId(dep, apiId.getVersion());
+            pushId(dep, apiId.version());
         }
         runRemoteAsString(javaPath.toString(), "-jar", remoteIdMavenJar(apiId));
         return this;
     }
 
     private void pushId(NId pid, NVersion apiIdVersion) {
-        NDefinition def = NSearch.of().addId(pid).setLatest(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
-        NPath apiJar = def.getContent().get();
-        if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.getApiId()))) {
+        NDefinition def = NSearch.of().addId(pid).latest(true).targetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
+        NPath apiJar = def.content().get();
+        if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.apiId()))) {
             if (!isLocalhost()) {
                 String targetServer = getTargetServer();
-                NExec.of().addCommand("scp")
-                        .addCommand(apiJar.toString()).addCommand(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.getApiId()))
-                        .failFast().getGrabbedAllString();
+                NExec.of().command("scp")
+                        .command(apiJar.toString()).command(getValidUser() + "@" + targetServer + ":" + remoteIdMavenJar(def.apiId()))
+                        .failFast(true).grabbedAll();
             } else {
-                NPath to = NPath.of(remoteIdMavenJar(def.getApiId()));
-                to.getParent().mkdirs();
+                NPath to = NPath.of(remoteIdMavenJar(def.apiId()));
+                to.parent().mkdirs();
                 apiJar.copyTo(to);
             }
         }
     }
 
     private String remoteIdMavenJar(NId apiId) {
-        return remoteHomeFile(".m2/repository/" + String.join("/", apiId.getGroupId().split("[.]"))) + "/" + apiId.getArtifactId() + "/" + apiId.getVersion() + "/" + apiId.getArtifactId() + "-" + apiId.getVersion() + ".jar";
+        return remoteHomeFile(".m2/repository/" + String.join("/", apiId.groupId().split("[.]"))) + "/" + apiId.artifactId() + "/" + apiId.version() + "/" + apiId.artifactId() + "-" + apiId.version() + ".jar";
     }
 
     private NPath remoteJavaCommand(NVersion apiVersion) {
@@ -99,7 +96,7 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
 
     private NPath remoteNutsCommand() {
         if (version == null) {
-            version = NWorkspace.of().getApiVersion().toString();
+            version = NWorkspace.of().apiVersion().toString();
         }
         NPath e = remoteHomeFile("bin/nuts-" + version);
         if (runRemoteAsStringNoFail("ls " + e)) {
@@ -155,9 +152,9 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
 
         if (!isLocalhost()) {
             String targetServer = getTargetServer();
-            e.addCommand("ssh", remoteUser + "@" + targetServer);
+            e.command("ssh", remoteUser + "@" + targetServer);
         }
-        return e.addCommand(cmd).failFast().getGrabbedAllString();
+        return e.command(cmd).failFast(true).grabbedAll();
     }
 
 }

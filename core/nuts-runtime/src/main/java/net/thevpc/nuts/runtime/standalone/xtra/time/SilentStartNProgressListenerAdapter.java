@@ -4,8 +4,8 @@ import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.logging.Level;
@@ -25,20 +25,20 @@ class SilentStartNProgressListenerAdapter implements NProgressListener {
     
     @Override
     public boolean onProgress(NProgressEvent event) {
-        switch (event.getState()){
+        switch (event.state()){
             case START:{
                 return false;
             }
             case COMPLETE:{
                 boolean b=delegate.onProgress(event);
-                if (event.getError() != null) {
+                if (event.error() != null) {
                     _LOG()
 
-                            .log(NMsg.ofC(NI18n.of("download failed    : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL).withDurationMillis(event.getDuration().toMillis()));
+                            .log(NMsg.ofC(NI18n.of("download failed    : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL).withDurationMillis(event.duration().toMillis()));
                 } else {
                     _LOG()
 
-                            .log(NMsg.ofC( NI18n.of("download succeeded : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS).withDurationMillis(event.getDuration().toMillis()));
+                            .log(NMsg.ofC( NI18n.of("download succeeded : %s"), path).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS).withDurationMillis(event.duration().toMillis()));
                 }
                 return b;
             }

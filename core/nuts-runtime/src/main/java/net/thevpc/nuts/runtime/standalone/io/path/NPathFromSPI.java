@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 
 
 import net.thevpc.nuts.core.NStoreKey;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -67,27 +67,27 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public String getContentType() {
+    public String contentType() {
         return base.getContentType(this);
     }
 
     @Override
-    public String getCharset() {
+    public String charset() {
         return base.getCharset(this);
     }
 
     @Override
-    public String getName() {
+    public String name() {
         String n = base.getName(this);
         if (n == null) {
-            String loc = getLocation();
+            String loc = location();
             return loc == null ? "" : URLPath.getURLName(loc);
         }
         return n;
     }
 
     @Override
-    public String getLocation() {
+    public String location() {
         String p = base.getLocation(this);
         if (p != null) {
             return p;
@@ -136,7 +136,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath resolveChild(NPath other) {
-        String loc = other.getLocation();
+        String loc = other.location();
         while (loc.startsWith("/") || loc.startsWith("\\")) {
             loc = loc.substring(1);
         }
@@ -150,43 +150,43 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath resolve(NPath other) {
-        NPath p = base.resolve(this, other.getLocation());
+        NPath p = base.resolve(this, other.location());
         if (p != null) {
             return p;
         }
         String old = toString();
-        return NPath.of(NStringUtils.pjoin("/", old, other.getLocation()));
+        return NPath.of(NStringUtils.pjoin("/", old, other.location()));
     }
 
     @Override
     public NPath resolveSibling(String other) {
         if (NBlankable.isBlank(other)) {
-            return getParent();
+            return parent();
         }
         NPath p = base.resolveSibling(this, other);
         if (p != null) {
             return p;
         }
-        NPath parent = getParent();
+        NPath parent = parent();
         return parent.resolve(other);
     }
 
     @Override
     public NPath resolveSibling(NPath other) {
         if (NBlankable.isBlank(other)) {
-            return getParent();
+            return parent();
         }
-        NPath p = base.resolveSibling(this, other.getLocation());
+        NPath p = base.resolveSibling(this, other.location());
         if (p != null) {
             return p;
         }
-        NPath parent = getParent();
+        NPath parent = parent();
         return parent.resolve(other);
     }
 
     @Override
     public byte[] readBytes(NPathOption... options) {
-        long len = this.getContentLength();
+        long len = this.contentLength();
         int readSize = 1024;
         if (len < 0) {
             //unknown size!
@@ -228,7 +228,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath writeBytes(byte[] bytes, NPathOption... options) {
-        try (OutputStream os = getOutputStream()) {
+        try (OutputStream os = getOutputStream(options)) {
             os.write(bytes);
         } catch (IOException ex) {
             throw new NIOException(NMsg.ofC("unable to write to %s", this));
@@ -237,7 +237,7 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public String getProtocol() {
+    public String protocol() {
         String n = base.getProtocol(this);
         if (n == null) {
             String ts = base.toString();
@@ -286,14 +286,14 @@ public class NPathFromSPI extends NPathBase {
     @Override
     public InputStream getInputStream(NPathOption... options) {
         return NInputSourceBuilder.of(base.getInputStream(this, options))
-                .setMetadata(getMetaData())
+                .metadata(metaData())
                 .createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
         return NOutputStreamBuilder.of(base.getOutputStream(this, options))
-                .setMetadata(this.getMetaData())
+                .metadata(this.metaData())
                 .createOutputStream()
                 ;
     }
@@ -384,7 +384,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath mkParentDirs() {
-        NPath p = getParent();
+        NPath p = parent();
         if (p != null) {
             p.mkdir(true);
         }
@@ -394,6 +394,16 @@ public class NPathFromSPI extends NPathBase {
     @Override
     public boolean isOther() {
         return base.getType(this) == NPathType.OTHER;
+    }
+
+    @Override
+    public boolean isSymlink() {
+        return type()==NPathType.SYMBOLIC_LINK;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return base.isHidden(this);
     }
 
     @Override
@@ -427,27 +437,27 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public long getContentLength() {
+    public long contentLength() {
         return base.getContentLength(this);
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
+    public Instant lastModifiedInstant() {
         return base.getLastModifiedInstant(this);
     }
 
     @Override
-    public Instant getLastAccessInstant() {
+    public Instant lastAccessInstant() {
         return base.getLastAccessInstant(this);
     }
 
     @Override
-    public Instant getCreationInstant() {
+    public Instant creationInstant() {
         return base.getCreationInstant(this);
     }
 
     @Override
-    public NPath getParent() {
+    public NPath parent() {
         NPath p = base.getParent(this);
         if (p != null) {
             return p;
@@ -455,9 +465,9 @@ public class NPathFromSPI extends NPathBase {
         if (isRoot()) {
             return this;
         }
-        List<String> names = getNames();
+        List<String> names = names();
         List<String> items = names.subList(0, names.size() - 1);
-        NPath root = getRoot();
+        NPath root = root();
         for (String item : items) {
             root = root.resolve(item);
         }
@@ -478,8 +488,8 @@ public class NPathFromSPI extends NPathBase {
         if (isRoot()) {
             return this;
         }
-        List<String> names = getNames();
-        NPath root = getRoot();
+        List<String> names = names();
+        NPath root = root();
         List<String> newNames = NIOUtils.normalizePathNames(names);
         if (newNames.size() != names.size()) {
             for (String item : newNames) {
@@ -526,12 +536,12 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public Set<NPathPermission> getPermissions() {
+    public Set<NPathPermission> permissions() {
         return base.getPermissions(this);
     }
 
     @Override
-    public NPath setPermissions(NPathPermission... permissions) {
+    public NPath permissions(NPathPermission... permissions) {
         base.setPermissions(this, permissions);
         return this;
     }
@@ -552,7 +562,7 @@ public class NPathFromSPI extends NPathBase {
     public boolean isName() {
         Boolean b = base.isName(this);
         if (b == null) {
-            if (getNameCount() > 1) {
+            if (nameCount() > 1) {
                 return false;
             }
             String v = toString();
@@ -578,12 +588,12 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public int getNameCount() {
+    public int nameCount() {
         Integer r = base.getNameCount(this);
-        if (r != 0) {
+        if (r != null) {
             return r;
         }
-        return getNames().size();
+        return names().size();
     }
 
     @Override
@@ -597,7 +607,7 @@ public class NPathFromSPI extends NPathBase {
         if (infos != null) {
             return infos;
         }
-        return list().stream().map(x -> new NPathChildDigestInfo().setName(x.getName()).setDigest(x.getDigest(algo))).collect(Collectors.toList());
+        return list().stream().map(x -> new NPathChildDigestInfo().name(x.name()).digest(x.getDigest(algo))).collect(Collectors.toList());
     }
 
     @Override
@@ -611,12 +621,12 @@ public class NPathFromSPI extends NPathBase {
         if (infos != null) {
             return infos.stream().map(x ->
                     new NPathChildStringDigestInfo()
-                            .setName(x.getName())
-                            .setDigest(NHex.fromBytes(x.getDigest()))
+                            .name(x.name())
+                            .digest(NHex.fromBytes(x.digest()))
             ).collect(Collectors.toList());
         }
-        return list().stream().map(x -> new NPathChildStringDigestInfo().setName(x.getName()).setDigest(
-                NHex.fromBytes(x.getDigest())
+        return list().stream().map(x -> new NPathChildStringDigestInfo().name(x.name()).digest(
+                NHex.fromBytes(x.digest())
         )).collect(Collectors.toList());
     }
 
@@ -626,7 +636,7 @@ public class NPathFromSPI extends NPathBase {
         if (b != null) {
             return b;
         }
-        return getNameCount() == 0;
+        return nameCount() == 0;
     }
 
     @Override
@@ -656,8 +666,8 @@ public class NPathFromSPI extends NPathBase {
         if (subpath != null) {
             return subpath;
         }
-        List<String> items = getNames().subList(beginIndex, endIndex);
-        NPath root = getRoot();
+        List<String> items = names().subList(beginIndex, endIndex);
+        NPath root = root();
         for (String item : items) {
             root = root.resolve(item);
         }
@@ -665,8 +675,8 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public String getName(int index) {
-        List<String> names = getNames();
+    public String nameAt(int index) {
+        List<String> names = names();
         if (index >= 0 && index < names.size()) {
             return names.get(index);
         }
@@ -677,15 +687,15 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public List<String> getNames() {
+    public List<String> names() {
         if (items == null) {
             items = base.getNames(this);
             if (items == null) {
-                String location = getLocation();
+                String location = location();
                 items = NStringUtils.split(location, "/", true, true);
             }
         }
-        return items;
+        return Collections.unmodifiableList(items);
     }
 
     @Override
@@ -708,7 +718,7 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public NPath getRoot() {
+    public NPath root() {
         return base.getRoot(this);
     }
 
@@ -791,13 +801,6 @@ public class NPathFromSPI extends NPathBase {
         return digest;
     }
 
-    @Override
-    public boolean isEqOrDeepChildOf(NPath other) {
-        if (other == null) {
-            return false;
-        }
-        return !toRelative(other).isPresent();
-    }
 
     @Override
     public NPathType type() {
@@ -805,21 +808,36 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public NOptional<String> toRelative(NPath parentPath) {
-        NOptional<String> r = base.toRelative(this, unwrapPath(parentPath));
+    public NOptional<String> stripParent(NPath parentPath) {
+        NOptional<String> r = base.stripParent(this, unwrapPath(parentPath));
         if (r != null) {
             return r;
         }
         //default impl
-        String child = getLocation();
-        String parent = parentPath.getLocation();
-        return NOptional.ofNamed(NIOUtils.toRelativePath(child, parent), "relative path");
+        String child = location();
+        String parent = parentPath.location();
+        return NOptional.ofNamed(NIOUtils.stripParent(child, parent), "relative path");
+    }
+
+    @Override
+    public NOptional<String> relativize(NPath parentPath) {
+        NOptional<String> r = base.relativize(this, unwrapPath(parentPath));
+        if (r != null) {
+            return r;
+        }
+        //default impl
+        String child = location();
+        String parent = parentPath.location();
+        return NOptional.ofNamed(NIOUtils.relativize(child, parent), "relative path");
     }
 
 
     @Override
     public boolean startsWith(NPath other) {
-        return toRelative(unwrapPath(other)).orNull() != null;
+        if (other == null) {
+            return false;
+        }
+        return stripParent(unwrapPath(other)).orNull() != null;
     }
 
     @Override
@@ -837,11 +855,11 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public boolean startsWith(String other) {
-        return toRelative(NPath.of(other)).orNull() != null;
+        return stripParent(NPath.of(other)).orNull() != null;
     }
 
     @Override
-    public NPathInfo getInfo() {
+    public NPathInfo info() {
         NPathInfo i = base.getInfo(this);
         if (i != null) {
             return i;
@@ -849,15 +867,15 @@ public class NPathFromSPI extends NPathBase {
         NPathType type = NPathFromSPI.this.type();
 
         return new DefaultNPathInfo(
-                getName(),
-                getLocation(),
+                this.name(),
+                location(),
                 type,
-                null, null, this.getContentLength(),
+                null, null, this.contentLength(),
                 type == NPathType.SYMBOLIC_LINK,
-                getLastModifiedInstant(),
-                getLastAccessInstant(),
-                getCreationInstant(),
-                getPermissions(),
+                lastModifiedInstant(),
+                lastAccessInstant(),
+                creationInstant(),
+                permissions(),
                 owner(),
                 group()
         );
@@ -869,7 +887,7 @@ public class NPathFromSPI extends NPathBase {
         if (r != null) {
             return r;
         }
-        return list().stream().map(x -> x.getInfo()).collect(Collectors.toList());
+        return list().stream().map(x -> x.info()).collect(Collectors.toList());
     }
 
 }

@@ -31,13 +31,30 @@ import net.thevpc.nuts.core.NRepositorySpec;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * NRepositorySelectorList class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NRepositorySelectorList {
 
     private final List<NRepositorySelector> selectors = new ArrayList<>();
 
+    /**
+     * N repository selector list.
+     *
+     * @return n repository selector list result
+     */
     public NRepositorySelectorList() {
     }
 
+    /**
+     * N repository selector list.
+     *
+     * @param a a
+     * @return n repository selector list result
+     */
     public NRepositorySelectorList(NRepositorySelector[] a) {
         for (NRepositorySelector repoDefString : a) {
             if (repoDefString != null) {
@@ -46,10 +63,21 @@ public class NRepositorySelectorList {
         }
     }
 
-    public List<NRepositorySelector> getSelectors() {
+    /**
+     * Selectors.
+     *
+     * @return selectors result
+     */
+    public List<NRepositorySelector> selectors() {
         return Collections.unmodifiableList(selectors);
     }
 
+    /**
+     * Merge.
+     *
+     * @param other other
+     * @return merge result
+     */
     public NRepositorySelectorList merge(NRepositorySelectorList other) {
         if (other == null || other.selectors.isEmpty()) {
             return this;
@@ -60,11 +88,17 @@ public class NRepositorySelectorList {
         return new NRepositorySelectorList(result.toArray(new NRepositorySelector[0]));
     }
 
+    /**
+     * Accept existing.
+     *
+     * @param location location
+     * @return accept existing result
+     */
     public boolean acceptExisting(NRepositorySpec location) {
         boolean includeOthers = true;
         for (NRepositorySelector s : selectors) {
-            if (s.matches(location.getSourceLocation())) {
-                switch (s.getOp()) {
+            if (s.matches(location.sourceLocation())) {
+                switch (s.op()) {
                     case EXACT:
                     case INCLUDE:
                         return true;
@@ -72,13 +106,18 @@ public class NRepositorySelectorList {
                         return false;
                 }
             }
-            if (s.getOp() == NSelectorOp.EXACT) {
+            if (s.op() == NSelectorOp.EXACT) {
                 includeOthers = false;
             }
         }
         return includeOthers;
     }
 
+    /**
+     * Converts to array.
+     *
+     * @return to array result
+     */
     public NRepositorySelector[] toArray() {
         return selectors.toArray(new NRepositorySelector[0]);
     }

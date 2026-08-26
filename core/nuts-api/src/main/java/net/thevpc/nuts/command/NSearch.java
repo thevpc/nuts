@@ -30,11 +30,12 @@ import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.util.NComparator;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.reflect.NClassLoader;
+import net.thevpc.nuts.reflect.NMutableClassLoader;
+import net.thevpc.nuts.util.*;
 
 import java.time.Instant;
 import java.util.Comparator;
@@ -50,25 +51,68 @@ import java.util.List;
  */
 public interface NSearch extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NSearch of() {
         return NExtensions.of(NSearch.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ids ids
+     * @return of result
+     */
     static NSearch of(String... ids) {
         return NExtensions.of(NSearch.class).addIds(ids);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ids ids
+     * @return of result
+     */
     static NSearch of(NId... ids) {
         return NExtensions.of(NSearch.class).addIds(ids);
     }
 
-    NOptional<NFetchStrategy> getFetchStrategy();
+    /**
+     * Fetch strategy.
+     *
+     * @return fetch strategy result
+     */
+    @NGetter
+    NOptional<NFetchStrategy> fetchStrategy();
 
-    NOptional<Boolean> getTransitive();
+    /**
+     * Transitive.
+     *
+     * @return transitive result
+     */
+    @NGetter
+    NOptional<Boolean> transitive();
 
-    NSearch setFetchStrategy(NFetchStrategy fetchStrategy);
+    /**
+     * Fetch strategy.
+     *
+     * @param fetchStrategy fetch strategy
+     * @return fetch strategy result
+     */
+    @NSetter
+    NSearch fetchStrategy(NFetchStrategy fetchStrategy);
 
-    NSearch setTransitive(Boolean transitive);
+    /**
+     * Transitive.
+     *
+     * @param transitive transitive
+     * @return transitive result
+     */
+    @NSetter
+    NSearch transitive(Boolean transitive);
 
     /**
      * return expired date/time or zero if not set. Expire time is used to
@@ -77,7 +121,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @return expired date/time or zero
      * @since 0.8.0
      */
-    NOptional<Instant> getExpireTime();
+    @NGetter
+    NOptional<Instant> expireTime();
 
     /**
      * set expire instant. Expire time is used to expire any cached file that
@@ -87,12 +132,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @return {@code this} instance
      * @since 0.8.0
      */
-    NSearch setExpireTime(Instant value);
-
-
-    ////////////////////////////////////////////////////////
-    // Setters
-    ////////////////////////////////////////////////////////
+    @NSetter
+    NSearch expireTime(Instant value);
 
     /**
      * reset ids to search for
@@ -133,6 +174,15 @@ public interface NSearch extends NWorkspaceCmd {
      */
     NSearch addIds(NId... ids);
 
+
+    /**
+     * add ids to search.
+     *
+     * @param ids ids to search
+     * @return {@code this} instance
+     */
+    NSearch addIds(List<NId> ids);
+
     /**
      * remove id to search.
      *
@@ -162,7 +212,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @param enable when true include runtime id in search
      * @return {@code this} instance
      */
-    NSearch setRuntime(boolean enable);
+    @NSetter
+    NSearch runtime(boolean enable);
 
     /**
      * companion filter
@@ -178,7 +229,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @return {@code this} instance
      * @since 0.5.7
      */
-    NSearch setCompanion(boolean enable);
+    @NSetter
+    NSearch companion(boolean enable);
 
     /**
      * extension filter
@@ -194,14 +246,15 @@ public interface NSearch extends NWorkspaceCmd {
      * @return {@code this} instance
      * @since 0.5.7
      */
-    NSearch setExtension(boolean enable);
+    @NSetter
+    NSearch extension(boolean enable);
 
     /**
      * app filter
      *
      * @return app filter
      */
-    boolean isExec();
+    boolean isExecutable();
 
     /**
      * set app filter. if true non lib (app) only are retrieved.
@@ -209,7 +262,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NSearch setExec(boolean enable);
+    @NSetter
+    NSearch executable(boolean enable);
 
     /**
      * nuts app filter
@@ -225,7 +279,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @param enable ap filter
      * @return {@code this} instance
      */
-    NSearch setNutsApplication(boolean enable);
+    @NSetter
+    NSearch nutsApplication(boolean enable);
 
 
     /**
@@ -242,7 +297,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @param enable ap filter
      * @return {@code this} instance
      */
-    NSearch setPlatformApplication(boolean enable);
+    @NSetter
+    NSearch platformApplication(boolean enable);
 
     /**
      * lib filter
@@ -257,6 +313,7 @@ public interface NSearch extends NWorkspaceCmd {
      * @param enable lib filter
      * @return {@code this} instance
      */
+    @NSetter
     NSearch setLib(boolean enable);
 
     /**
@@ -295,7 +352,8 @@ public interface NSearch extends NWorkspaceCmd {
      *
      * @return ids to search for
      */
-    List<NId> getIds();
+    @NGetter
+    List<NId> ids();
 
     /**
      * add ids to search.
@@ -303,7 +361,16 @@ public interface NSearch extends NWorkspaceCmd {
      * @param ids id to search
      * @return {@code this} instance
      */
-    NSearch setIds(String... ids);
+    NSearch ids(String... ids);
+
+    /**
+     * Ids.
+     *
+     * @param ids ids
+     * @return ids result
+     */
+    @NSetter
+    NSearch ids(List<NId> ids);
 
     /**
      * add ids to search.
@@ -311,13 +378,14 @@ public interface NSearch extends NWorkspaceCmd {
      * @param ids ids to search
      * @return {@code this} instance
      */
-    NSearch setIds(NId... ids);
+    NSearch ids(NId... ids);
 
     /**
      * return true if sort flag is armed.
      *
      * @return true if sort flag is armed.
      */
+    @NGetter
     boolean isSorted();
 
     /**
@@ -326,27 +394,30 @@ public interface NSearch extends NWorkspaceCmd {
      * @param sort enable sort
      * @return {@code this} instance
      */
-    NSearch setSorted(boolean sort);
+    @NSetter
+    NSearch sorted(boolean sort);
 
     /**
      * return dependency filter
      *
      * @return dependency filter
      */
-    NDependencyFilter getDependencyFilter();
+    @NGetter
+    NDependencyFilter dependencyFilter();
 
     /**
      * define dependency filter. applicable when using
-     * {@link #setInlineDependencies(boolean)}
+     * {@link #inlineDependencies(boolean)}
      *
      * @param filter dependency filter
      * @return {@code this} instance
      */
-    NSearch setDependencyFilter(NDependencyFilter filter);
+    @NSetter
+    NSearch dependencyFilter(NDependencyFilter filter);
 
     /**
      * define dependency filter by AND. applicable when using
-     * {@link #setInlineDependencies(boolean)}
+     * {@link #inlineDependencies(boolean)}
      *
      * @param filter dependency filter
      * @return {@code this} instance
@@ -355,19 +426,21 @@ public interface NSearch extends NWorkspaceCmd {
 
     /**
      * define dependency filter. applicable when using
-     * {@link #setInlineDependencies(boolean)}
+     * {@link #inlineDependencies(boolean)}
      *
      * @param filter dependency filter
      * @return {@code this} instance
      */
-    NSearch setDependencyFilter(String filter);
+    @NSetter
+    NSearch dependencyFilter(String filter);
 
     /**
      * return repository filter
      *
      * @return repository filter
      */
-    NRepositoryFilter getRepositoryFilter();
+    @NGetter
+    NRepositoryFilter repositoryFilter();
 
     /**
      * define repository filter.
@@ -375,8 +448,15 @@ public interface NSearch extends NWorkspaceCmd {
      * @param filter repository filter
      * @return {@code this} instance
      */
-    NSearch setRepositoryFilter(NRepositoryFilter filter);
+    @NSetter
+    NSearch repositoryFilter(NRepositoryFilter filter);
 
+    /**
+     * Adds the specified repository filter.
+     *
+     * @param filter filter
+     * @return add repository filter result
+     */
     NSearch addRepositoryFilter(NRepositoryFilter filter);
 
     /**
@@ -384,7 +464,8 @@ public interface NSearch extends NWorkspaceCmd {
      *
      * @return descriptor filter
      */
-    NDefinitionFilter getDefinitionFilter();
+    @NGetter
+    NDefinitionFilter definitionFilter();
 
     /**
      * define descriptor filter.
@@ -392,8 +473,14 @@ public interface NSearch extends NWorkspaceCmd {
      * @param filter descriptor filter
      * @return {@code this} instance
      */
-    NSearch setDefinitionFilter(NDefinitionFilter filter);
+    NSearch definitionFilter(NDefinitionFilter filter);
 
+    /**
+     * Adds the specified definition filter.
+     *
+     * @param filter filter
+     * @return add definition filter result
+     */
     NSearch addDefinitionFilter(NDefinitionFilter filter);
 
     ////////////////////////////////////////////////////////
@@ -405,29 +492,23 @@ public interface NSearch extends NWorkspaceCmd {
      *
      * @return true if armed FailFast mode
      */
+    @NGetter
     boolean isFailFast();
-
-    /**
-     * set armed (or disarmed) fail safe mode. if true, null replaces
-     * NArtifactNotFoundException.
-     *
-     * @param enable if true, null replaces NArtifactNotFoundException.
-     * @return {@code this} instance
-     */
-    NSearch setFailFast(boolean enable);
 
     /**
      * result comparator
      *
      * @return result comparator
      */
-    NComparator<?> getComparator();
+    @NGetter
+    NComparator<?> comparator();
 
     /**
      * true if duplicates are skipped
      *
      * @return true if duplicates are skipped
      */
+    @NGetter
     boolean isDistinct();
 
     /**
@@ -436,16 +517,16 @@ public interface NSearch extends NWorkspaceCmd {
      * @param distinct skip duplicates
      * @return {@code this}
      */
-    NSearch setDistinct(boolean distinct);
-
-    NSearch distinct();
+    @NSetter
+    NSearch distinct(boolean distinct);
 
     /**
      * target api version
      *
      * @return target api version
      */
-    NVersion getTargetApiVersion();
+    @NGetter
+    NVersion targetApiVersion();
 
     /**
      * set target api version
@@ -453,13 +534,15 @@ public interface NSearch extends NWorkspaceCmd {
      * @param targetApiVersion new value
      * @return target api version
      */
-    NSearch setTargetApiVersion(NVersion targetApiVersion);
+    @NSetter
+    NSearch targetApiVersion(NVersion targetApiVersion);
 
     /**
      * true if base package flag is armed.
      *
      * @return true if base package flag is armed.
      */
+    @NGetter
     boolean isBasePackage();
 
     /**
@@ -468,7 +551,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @param includeBasePackage include Base Package
      * @return {@code this} instance
      */
-    NSearch setBasePackage(boolean includeBasePackage);
+    @NSetter
+    NSearch basePackage(boolean includeBasePackage);
 
     /**
      * true if search must return only latest versions for each artifact id
@@ -476,6 +560,7 @@ public interface NSearch extends NWorkspaceCmd {
      * @return true if search must return only latest versions for each artifact
      * id
      */
+    @NGetter
     boolean isLatest();
 
     ////////////////////////////////////////////////////////
@@ -488,9 +573,8 @@ public interface NSearch extends NWorkspaceCmd {
      * @param enable enable latest artifact id filter
      * @return {@code this} instance
      */
-    NSearch setLatest(boolean enable);
-
-    NSearch latest();
+    @NSetter
+    NSearch latest(boolean enable);
 
     /**
      * create fetch command initialized with this instance options.
@@ -527,6 +611,11 @@ public interface NSearch extends NWorkspaceCmd {
      */
     NStream<NDefinition> getResultDefinitions();
 
+    /**
+     * Returns the result descriptors.
+     *
+     * @return get result descriptors result
+     */
     NStream<NDescriptor> getResultDescriptors();
 
     /**
@@ -534,7 +623,7 @@ public interface NSearch extends NWorkspaceCmd {
      *
      * @return result as class loader
      */
-    ClassLoader getResultClassLoader();
+    NClassLoader getResultClassLoader();
 
     /**
      * execute query and return result as class loader
@@ -542,7 +631,15 @@ public interface NSearch extends NWorkspaceCmd {
      * @param parent parent class loader
      * @return result as class loader
      */
-    ClassLoader getResultClassLoader(ClassLoader parent);
+    NClassLoader getResultClassLoader(ClassLoader parent);
+
+    /**
+     * Returns the result mutable class loader.
+     *
+     * @param classLoader class loader
+     * @return get result mutable class loader result
+     */
+    NClassLoader getResultMutableClassLoader(NMutableClassLoader classLoader);
 
     ///////////////////////
     // SHARED
@@ -597,25 +694,17 @@ public interface NSearch extends NWorkspaceCmd {
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
-    NSearch setInlineDependencies(boolean enable);
+    @NSetter
+    NSearch inlineDependencies(boolean enable);
 
-    NSearch failFast();
-
-//    /**
-//     * true if dependencies as list is activated
-//     *
-//     * @return true if dependencies as list is activated
-//     */
-//    boolean isDependencies();
-//
-//    /**
-//     * enable/disable dependencies list retrieval
-//     *
-//     * @param enable if true retrieval is enabled.
-//     * @return {@code this} instance
-//     */
-//    NSearchCmd setDependencies(boolean enable);
-
+    /**
+     * Fail fast.
+     *
+     * @param failFast fail fast
+     * @return fail fast result
+     */
+    @NSetter
+    NSearch failFast(boolean failFast);
 
     /**
      * configure the current command with the given arguments. This is an
@@ -643,7 +732,7 @@ public interface NSearch extends NWorkspaceCmd {
      *
      * @return result as content paths
      */
-    NStream<String> getResultPaths();
+    NStream<NPath> getResultPaths();
 
     /**
      * return result as content path names
@@ -786,7 +875,7 @@ public interface NSearch extends NWorkspaceCmd {
      * @param id id to search
      * @return {@code this} instance
      */
-    NSearch setId(String id);
+    NSearch id(String id);
 
     /**
      * add id to search.
@@ -794,11 +883,28 @@ public interface NSearch extends NWorkspaceCmd {
      * @param id id to search
      * @return {@code this} instance
      */
-    NSearch setId(NId id);
+    NSearch id(NId id);
 
+    /**
+     * Returns the result query plan.
+     *
+     * @return get result query plan result
+     */
     NElement getResultQueryPlan();
 
+    /**
+     * Checks if is ignore current environment.
+     *
+     * @return is ignore current environment result
+     */
     boolean isIgnoreCurrentEnvironment();
 
-    NSearch setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
+    /**
+     * Ignore current environment.
+     *
+     * @param ignoreCurrentEnvironment ignore current environment
+     * @return ignore current environment result
+     */
+    @NSetter
+    NSearch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 }

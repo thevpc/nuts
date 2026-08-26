@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
+/**
+ * ReaderInputStream class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class ReaderInputStream extends InputStream {
     private final Reader reader;
     private final String charsetName;
@@ -11,6 +17,13 @@ public class ReaderInputStream extends InputStream {
     private int index;
     private int end;
 
+    /**
+     * Reader input stream.
+     *
+     * @param reader reader
+     * @param charsetName charset name
+     * @return reader input stream result
+     */
     public ReaderInputStream(Reader reader, String charsetName) {
         this.reader = reader;
         this.charsetName = charsetName == null ? "UTF-8" : charsetName;

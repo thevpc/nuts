@@ -37,7 +37,7 @@ public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder
         return addSpace(elementType, anchor, " ");
     }
 
-    public int getColumnLimit() {
+    public int columnLimit() {
         Object c = options.get("columns");
         int i = NLiteral.of(c).asInt().orElse(-1);
         if (i < 0) {
@@ -53,7 +53,7 @@ public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder
     }
 
     @Override
-    public NNewLineMode getNewLineMode() {
+    public NNewLineMode newLineMode() {
         Object c = options.get("newline");
         if (c instanceof NNewLineMode) {
             return (NNewLineMode) c;
@@ -67,7 +67,7 @@ public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder
     }
 
     @Override
-    public int getIndent() {
+    public int indent() {
         Object c = options.get("indent");
         int i = NLiteral.of(c).asInt().orElse(-1);
         if (i < 0) {
@@ -83,7 +83,7 @@ public class DefaultNElementFormatterBuilder implements NElementFormatterBuilder
     }
 
     @Override
-    public int getComplexityThreshold() {
+    public int complexityThreshold() {
         Object c = options.get("indent");
         int i = NLiteral.of(c).asInt().orElse(-1);
         if (i < 0) {

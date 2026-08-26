@@ -37,33 +37,106 @@ import java.util.List;
  */
 public interface NRepositoryAccessSpec {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param userName user name
+     * @param repository repository
+     * @return of result
+     */
     static NRepositoryAccessSpec of(String userName, String repository) {
         return NSecurityManager.of().createRepositoryAccessSpec(userName, repository);
     }
 
-    String getUserName();
+    /**
+     * User name.
+     *
+     * @return user name result
+     */
+    String userName();
 
-    String getRepository();
+    /**
+     * Repository.
+     *
+     * @return repository result
+     */
+    String repository();
 
-    String getRemoteUserName();
+    /**
+     * Remote user name.
+     *
+     * @return remote user name result
+     */
+    String remoteUserName();
 
-    NSecureString getRemoteCredential();
+    /**
+     * Remote credential.
+     *
+     * @return remote credential result
+     */
+    NSecureString remoteCredential();
 
-    String getRemoteAuthType();
+    /**
+     * Remote auth type.
+     *
+     * @return remote auth type result
+     */
+    String remoteAuthType();
 
-    List<String> getPermissions();
+    /**
+     * Permissions.
+     *
+     * @return permissions result
+     */
+    List<String> permissions();
 
-    NRepositoryAccessSpec setRemoteUserName(String remoteUserName);
+    /**
+     * Remote user name.
+     *
+     * @param remoteUserName remote user name
+     * @return remote user name result
+     */
+    NRepositoryAccessSpec remoteUserName(String remoteUserName);
 
-    NRepositoryAccessSpec setRemoteCredential(NSecureString remoteCredential);
+    /**
+     * Remote credential.
+     *
+     * @param remoteCredential remote credential
+     * @return remote credential result
+     */
+    NRepositoryAccessSpec remoteCredential(NSecureString remoteCredential);
 
-    NRepositoryAccessSpec setRemoteAuthType(String remoteAuthType);
+    /**
+     * Remote auth type.
+     *
+     * @param remoteAuthType remote auth type
+     * @return remote auth type result
+     */
+    NRepositoryAccessSpec remoteAuthType(String remoteAuthType);
 
+    /**
+     * Adds the specified permissions.
+     *
+     * @param permissions permissions
+     * @return add permissions result
+     */
     NRepositoryAccessSpec addPermissions(String... permissions);
 
+    /**
+     * Removes the specified permissions.
+     *
+     * @param permissions permissions
+     * @return remove permissions result
+     */
     NRepositoryAccessSpec removePermissions(String... permissions);
 
-    NRepositoryAccessSpec setPermissions(List<String> permissions);
+    /**
+     * Permissions.
+     *
+     * @param permissions permissions
+     * @return permissions result
+     */
+    NRepositoryAccessSpec permissions(List<String> permissions);
 
 
 }

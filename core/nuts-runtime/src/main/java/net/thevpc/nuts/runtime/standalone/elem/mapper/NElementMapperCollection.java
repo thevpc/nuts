@@ -85,7 +85,7 @@ public class NElementMapperCollection implements NElementMapper<Collection> {
                 return fillObject(element, new ArrayList(), elemType, to, context);
             }
             default: {
-                NReflectType m = context.getTypesRepository().getType(to);
+                NReflectType m = context.typesRepository().getType(to);
                 return fillObject(element, (Collection) m.newInstance(), elemType, to, context);
             }
         }

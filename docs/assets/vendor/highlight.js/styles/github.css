@@ -8,7 +8,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   display: block;
   overflow-x: auto;
   padding: 0.5em;
-  color: #333;
+  color: #777;
   background: #f8f8f8;
 }
 
@@ -21,7 +21,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-subst {
-  color: #333;
+  color: #777;
   font-weight: bold;
 }
 
@@ -58,7 +58,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 .hljs-tag,
 .hljs-name,
 .hljs-attribute {
-  color: #000080;
+  color: #4646d5;
   font-weight: normal;
 }
 

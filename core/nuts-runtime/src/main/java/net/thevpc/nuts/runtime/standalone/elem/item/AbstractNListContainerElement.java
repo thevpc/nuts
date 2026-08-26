@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.item;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

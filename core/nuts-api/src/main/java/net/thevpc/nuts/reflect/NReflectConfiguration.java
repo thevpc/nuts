@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts.reflect;
 
+import java.util.Set;
+
 /**
  *
  * @author thevpc
@@ -31,7 +33,19 @@ package net.thevpc.nuts.reflect;
  */
 public interface NReflectConfiguration {
 
-    NReflectPropertyAccessStrategy getAccessStrategy(Class clz);
+    /**
+     * Returns the default access strategies.
+     *
+     * @param clz clz
+     * @return get default access strategies result
+     */
+    Set<NReflectPropertyAccessStrategy> getDefaultAccessStrategies(Class clz);
 
+    /**
+     * Returns the default value strategy.
+     *
+     * @param clz clz
+     * @return get default value strategy result
+     */
     NReflectPropertyDefaultValueStrategy getDefaultValueStrategy(Class clz);
 }

@@ -28,6 +28,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.List;
 
@@ -38,19 +39,69 @@ import java.util.List;
  */
 public interface NCustomCmd {
 
-    String getFactoryId();
+    /**
+     * Factory id.
+     *
+     * @return factory id result
+     */
+    @NGetter
+    String factoryId();
 
-    NId getOwner();
+    /**
+     * Owner.
+     *
+     * @return owner result
+     */
+    @NGetter
+    NId owner();
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    String name();
 
+    /**
+     * Exec.
+     *
+     * @param args args
+     * @param options options
+     * @return exec result
+     * @throws NExecutionException if execution fails
+     */
     int exec(String[] args, NCmdExecOptions options) throws NExecutionException;
 
-    NText getHelpText() throws NExecutionException;
+    /**
+     * Help text.
+     *
+     * @return help text result
+     * @throws NExecutionException if execution fails
+     */
+    @NGetter
+    NText helpText() throws NExecutionException;
 
-    List<String> getCommand();
+    /**
+     * Command.
+     *
+     * @return command result
+     */
+    @NGetter
+    List<String> command();
 
-    List<String> getExecutorOptions();
+    /**
+     * Executor options.
+     *
+     * @return executor options result
+     */
+    @NGetter
+    List<String> executorOptions();
 
+    /**
+     * Converts to command config.
+     *
+     * @return to command config result
+     */
     NCommandConfig toCommandConfig();
 }

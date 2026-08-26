@@ -40,16 +40,36 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
     private String user;
     private String credential;
 
+    /**
+     * N named credential config.
+     *
+     * @return n named credential config result
+     */
     public NNamedCredentialConfig() {
     }
 
+    /**
+     * N named credential config.
+     *
+     * @param other other
+     * @return n named credential config result
+     */
     public NNamedCredentialConfig(NNamedCredentialConfig other) {
-        this.user = other.getUser();
-        this.credential = other.getCredential();
-        this.name = other.getName();
-        this.resource = other.getResource();
+        this.user = other.user();
+        this.credential = other.credential();
+        this.name = other.name();
+        this.resource = other.resource();
     }
 
+    /**
+     * N named credential config.
+     *
+     * @param name name
+     * @param resource resource
+     * @param user user
+     * @param credential credential
+     * @return n named credential config result
+     */
     public NNamedCredentialConfig(String name, String resource, String user, String credential) {
         this.user = user;
         this.credential = credential;
@@ -57,7 +77,17 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
         this.resource = resource;
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NNamedCredentialConfig copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -67,40 +97,88 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
             NNamedCredentialConfig o =(NNamedCredentialConfig) super.clone();
             return o;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
 
-    public String getUser() {
+    /**
+     * User.
+     *
+     * @return user result
+     */
+    public String user() {
         return user;
     }
 
-    public void setUser(String user) {
+    /**
+     * User.
+     *
+     * @param user user
+     */
+    public void user(String user) {
         this.user = user;
     }
 
-    public String getCredential() {
+    /**
+     * Credential.
+     *
+     * @return credential result
+     */
+    public String credential() {
         return credential;
     }
 
-    public void setCredential(String credential) {
+    /**
+     * Credential.
+     *
+     * @param credential credential
+     */
+    public void credential(String credential) {
         this.credential = credential;
     }
 
-    public String getName() {
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    public String name() {
         return name;
     }
 
-    public NNamedCredentialConfig setName(String name) {
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    public NNamedCredentialConfig name(String name) {
         this.name = name;
         return this;
     }
 
-    public String getResource() {
+    /**
+     * Resource.
+     *
+     * @return resource result
+     */
+    public String resource() {
         return resource;
     }
 
-    public NNamedCredentialConfig setResource(String resource) {
+    /**
+     * Resource.
+     *
+     * @param resource resource
+     * @return resource result
+     */
+    public NNamedCredentialConfig resource(String resource) {
         this.resource = resource;
         return this;
     }
@@ -108,7 +186,7 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
 
     @Override
     public String toString() {
-        return "NutsUserConfig{" +
+        return "NNamedCredentialConfig{" +
                 "user='" + user + '\'' +
                 ", credentials='" + credential + '\'' +
                 '}';

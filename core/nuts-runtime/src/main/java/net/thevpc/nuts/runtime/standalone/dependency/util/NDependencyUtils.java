@@ -28,6 +28,8 @@ import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyScope;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.util.*;
 
 import java.util.Iterator;
@@ -40,13 +42,13 @@ import java.util.TreeSet;
 public class NDependencyUtils {
 
     public static String normalizeDependencyType(String s1) {
-        return NStringUtils.trimToNull(s1);
+        return NStringUtils.stripToNull(s1);
     }
 
     public static String toExclusionListString(NId[] exclusions) {
         TreeSet<String> ex = new TreeSet<>();
         for (NId exclusion : exclusions) {
-            ex.add(exclusion.getShortName());
+            ex.add(exclusion.shortName());
         }
         return String.join(",", ex);
     }
@@ -59,7 +61,7 @@ public class NDependencyUtils {
         if (d.isOptional()) {
             return false;
         }
-        if (NDependencyScope.parse(d.getScope()).orElse(NDependencyScope.API) == NDependencyScope.SYSTEM) {
+        if (NDependencyScope.parse(d.scope()).orElse(NDependencyScope.API) == NDependencyScope.SYSTEM) {
             //NutsEnvCondition c = d.getDependency().getCondition();
             //if(c!=null && c.getProfiles().length>0) {
             //Should add some log!
@@ -74,17 +76,17 @@ public class NDependencyUtils {
     }
 
     public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NDependency copyFrom) {
-        String _optional = copyFrom.getOptional();
-        String _scope = copyFrom.getScope();
+        String _optional = copyFrom.optional();
+        String _scope = copyFrom.scope();
         return NIteratorBuilder.of(id).map(NFunction.of(
                         (NId x) -> x.toDependency().builder()
-                                .setOptional(_optional).setScope(_scope).build())
+                                .optional(_optional).scope(_scope).build())
                 .withDescription(NDescribables.ofDesc("IdToDependency"))
         ).build();
     }
 
     public static boolean isDefaultOptional(String s1) {
-        s1 = NStringUtils.trim(s1);
+        s1 = NStringUtils.strip(s1);
         return s1.isEmpty() || s1.equals("false");
     }
 }

@@ -9,11 +9,12 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NInfoCmd;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
+
+import java.util.List;
 
 /**
  *
@@ -21,16 +22,16 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNInfoInternalExecutable(String[] args, NExec execCommand) {
-        super("info", args, execCommand);
+    public DefaultNInfoInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("info", args, execCommand,executorOptions);
     }
 
     @Override
     public int execute() {
         NSession session = NSession.of();
-        session = NSessionUtils.configureCopyOfSession(session, getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
+        session = NSessionUtils.configureCopyOfSession(session, getExecCommand().in(), getExecCommand().out(),getExecCommand().err());
         return session.callWith(()->{
-            boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+            boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
             if(dry){
                 dryExecute();
                 return NExecutionException.SUCCESS;

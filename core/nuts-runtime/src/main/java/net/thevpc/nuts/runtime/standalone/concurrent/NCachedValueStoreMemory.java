@@ -2,8 +2,6 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.NCachedValueModel;
 import net.thevpc.nuts.concurrent.NCachedValueStore;
-import net.thevpc.nuts.concurrent.NRateLimitValueModel;
-import net.thevpc.nuts.concurrent.NRateLimitValueStore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +17,9 @@ class NCachedValueStoreMemory implements NCachedValueStore {
     @Override
     public void save(NCachedValueModel value) {
         if (value != null) {
-            values.put(value.getId(), value);
+            values.put(value.id(), value);
         } else {
-            values.remove(value.getId());
+            values.remove(value.id());
         }
     }
 }

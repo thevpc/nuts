@@ -28,6 +28,8 @@ package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 
@@ -41,25 +43,83 @@ import java.util.List;
  */
 public interface NWorkspaceList extends NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NWorkspaceList of() {
         return NExtensions.of(NWorkspaceList.class);
     }
 
-    List<NWorkspaceLocation> getWorkspaces();
+    /**
+     * Workspaces.
+     *
+     * @return workspaces result
+     */
+    @NGetter
+    List<NWorkspaceLocation> workspaces();
 
+    /**
+     * Returns the workspace location.
+     *
+     * @param uuid uuid
+     * @return get workspace location result
+     */
     NWorkspaceLocation getWorkspaceLocation(String uuid);
 
-    NWorkspaceListConfig getConfig();
+    /**
+     * Config.
+     *
+     * @return config result
+     */
+    @NGetter
+    NWorkspaceListConfig config();
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    String name();
 
-    NWorkspaceList setName(String name);
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    @NSetter
+    NWorkspaceList name(String name);
 
-    NWorkspaceList setConfig(NWorkspaceListConfig config);
+    /**
+     * Config.
+     *
+     * @param config config
+     * @return config result
+     */
+    @NSetter
+    NWorkspaceList config(NWorkspaceListConfig config);
 
+    /**
+     * Adds the specified workspace.
+     *
+     * @param path path
+     * @return add workspace result
+     */
     NWorkspace addWorkspace(String path);
 
+    /**
+     * Removes the specified workspace.
+     *
+     * @param name name
+     * @return remove workspace result
+     */
     boolean removeWorkspace(String name);
 
+    /**
+     * Save.
+     */
     void save();
 }

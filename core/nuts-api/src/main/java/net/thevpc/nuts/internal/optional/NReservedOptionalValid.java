@@ -7,9 +7,26 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * NReservedOptionalValid class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> implements Cloneable {
 
+    /**
+     * N reserved optional valid.
+     *
+     * @param message message
+     * @return n reserved optional valid result
+     */
     public NReservedOptionalValid(Supplier<NMsg> message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -20,10 +37,10 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
             try {
                 return NOptional.of(mapper.apply(y));
             } catch (Exception ex) {
-                return NOptional.ofError(getMessage(), ex);
+                return NOptional.ofError(message(), ex);
             }
         } else {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
     }
 
@@ -34,6 +51,11 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
 
     @Override
     public T get(Supplier<NMsg> message) {
+        /**
+         * Returns the get.
+         *
+         * @return get result
+         */
         return get();
     }
 
@@ -57,9 +79,14 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
         return false;
     }
 
+    /**
+     * On blank empty.
+     *
+     * @return on blank empty result
+     */
     public NOptional<T> onBlankEmpty() {
         if (isBlank()) {
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
         return this;
     }
@@ -86,11 +113,21 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
 
     @Override
     public T orDefault() {
+        /**
+         * Returns the get.
+         *
+         * @return get result
+         */
         return get();
     }
 
     @Override
     public T orDefault(Class<T> defaultType) {
+        /**
+         * Returns the get.
+         *
+         * @return get result
+         */
         return get();
     }
 
@@ -115,7 +152,7 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
     }
 
     @Override
-    public NOptionalType getType() {
+    public NOptionalType type() {
         return NOptionalType.PRESENT;
     }
 

@@ -37,25 +37,80 @@ import java.util.List;
  */
 public interface NWorkspaceUpdateResult {
 
-    NUpdateResult getApi();
+    /**
+     * Api.
+     *
+     * @return api result
+     */
+    NUpdateResult api();
 
-    NUpdateResult getRuntime();
+    /**
+     * Runtime.
+     *
+     * @return runtime result
+     */
+    NUpdateResult runtime();
 
-    List<NUpdateResult> getExtensions();
+    /**
+     * Extensions.
+     *
+     * @return extensions result
+     */
+    List<NUpdateResult> extensions();
 
-    List<NUpdateResult> getArtifacts();
+    /**
+     * Artifacts.
+     *
+     * @return artifacts result
+     */
+    List<NUpdateResult> artifacts();
 
+    /**
+     * Checks if is updatable api.
+     *
+     * @return is updatable api result
+     */
     boolean isUpdatableApi();
 
+    /**
+     * Checks if is updatable runtime.
+     *
+     * @return is updatable runtime result
+     */
     boolean isUpdatableRuntime();
 
+    /**
+     * Checks if is updatable extensions.
+     *
+     * @return is updatable extensions result
+     */
     boolean isUpdatableExtensions();
 
+    /**
+     * Checks if is update available.
+     *
+     * @return is update available result
+     */
     boolean isUpdateAvailable();
 
-    int getUpdatesCount();
+    /**
+     * Updates count.
+     *
+     * @return updates count result
+     */
+    int updatesCount();
 
-    List<NUpdateResult> getUpdatable();
+    /**
+     * Updatable.
+     *
+     * @return updatable result
+     */
+    List<NUpdateResult> updatable();
 
-    List<NUpdateResult> getAllResults();
+    /**
+     * All results.
+     *
+     * @return all results result
+     */
+    List<NUpdateResult> allResults();
 }

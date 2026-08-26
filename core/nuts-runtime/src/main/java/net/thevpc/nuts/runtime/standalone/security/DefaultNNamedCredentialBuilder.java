@@ -26,54 +26,54 @@ public class DefaultNNamedCredentialBuilder implements NNamedCredentialBuilder {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public NNamedCredentialBuilder setName(String name) {
+    public NNamedCredentialBuilder name(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
     @Override
-    public NNamedCredentialBuilder setUserName(String user) {
+    public NNamedCredentialBuilder userName(String user) {
         this.userName = user;
         return this;
     }
 
-    public String getAuthType() {
+    public String authType() {
         return authType;
     }
 
-    public NNamedCredentialBuilder setAuthType(String authType) {
+    public NNamedCredentialBuilder authType(String authType) {
         this.authType = authType;
         return this;
     }
 
     @Override
-    public NSecureToken getCredentialId() {
+    public NSecureToken credentialId() {
         return credentialId;
     }
 
     @Override
-    public String getResource() {
+    public String resource() {
         return resource;
     }
 
     @Override
-    public NNamedCredentialBuilder setResource(String resource) {
+    public NNamedCredentialBuilder resource(String resource) {
         this.resource = resource;
         return this;
     }
 
     @Override
-    public NNamedCredentialBuilder setCredentialId(NSecureToken credentialId) {
+    public NNamedCredentialBuilder credentialId(NSecureToken credentialId) {
         this.credentialId = credentialId;
         credentialIdSupplier = () -> credentialId;
         return this;

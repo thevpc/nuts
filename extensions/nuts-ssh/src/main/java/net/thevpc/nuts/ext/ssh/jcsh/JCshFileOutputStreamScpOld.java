@@ -8,6 +8,8 @@ import net.thevpc.nuts.ext.ssh.SshConnectionPool;
 import net.thevpc.nuts.ext.ssh.util.SshUtils;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NUnused;
 
 import java.io.*;
@@ -31,7 +33,7 @@ public class JCshFileOutputStreamScpOld extends OutputStream {
         NSession session = NSession.of();
         this.connection = SshConnectionPool.of().acquire(path);
         this.mkdirs = mkdirs;
-        this.to = path.getPath();
+        this.to = path.path();
         this.failFast = failFast;
         this.filesize = filesize;
     }
@@ -61,7 +63,7 @@ public class JCshFileOutputStreamScpOld extends OutputStream {
     }
 
     private boolean _start() throws JSchException, IOException {
-        if (to == null || to.trim().isEmpty()) {
+        if (NBlankable.isBlank(to)) {
             throw new IllegalArgumentException("missing target path");
         }
         if (mkdirs) {
@@ -113,7 +115,7 @@ public class JCshFileOutputStreamScpOld extends OutputStream {
 
         // send "C0644 filesize filename", where filename should not include '/'
         command = "C0644 " + filesize + " ";
-        command += NPath.of(to).getName();
+        command += NPath.of(to).name();
 
         command += "\n";
         out.write(command.getBytes());

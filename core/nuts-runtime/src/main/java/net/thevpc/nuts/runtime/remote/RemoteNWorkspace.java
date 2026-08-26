@@ -30,10 +30,9 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
                     .set("cmd", commandName)
                     .set("body", body).build();
             String json = NElementWriter.ofJson().formatPlain(q);
-            String wsURL = NWorkspace.of().getBootOptions().getWorkspace().orNull();
+            String wsURL = NWorkspace.of().bootOptions().workspace().orNull();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
             NObjectElement resultObject = NElementReader.ofJson().read(result, NObjectElement.class);
-            NElements prv = NElements.of();
             boolean success = resultObject.getBooleanValue("success").get();
             if (success) {
                 return resultObject.get("body").orNull();
@@ -115,7 +114,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
 //    }
 //
     public <T> T remoteCall(NElement call, Class<T> expectedType) {
-        throw new NUnsupportedOperationException(NMsg.ofPlain("not yet supported remoteCall"));
+        throw new NUnsupportedOperationException(NMsg.ofP("not yet supported remoteCall"));
     }
 
 }

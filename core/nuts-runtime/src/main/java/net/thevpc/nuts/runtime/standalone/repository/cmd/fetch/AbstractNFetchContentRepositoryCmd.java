@@ -58,12 +58,12 @@ public abstract class AbstractNFetchContentRepositoryCmd extends NRepositoryCmdB
     }
 
     @Override
-    public NDescriptor getDescriptor() {
+    public NDescriptor descriptor() {
         return descriptor;
     }
 
     @Override
-    public NFetchContentRepositoryCmd setDescriptor(NDescriptor descriptor) {
+    public NFetchContentRepositoryCmd descriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
         return this;
     }
@@ -77,13 +77,13 @@ public abstract class AbstractNFetchContentRepositoryCmd extends NRepositoryCmdB
     }
 
     @Override
-    public NFetchContentRepositoryCmd setId(NId id) {
+    public NFetchContentRepositoryCmd id(NId id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 

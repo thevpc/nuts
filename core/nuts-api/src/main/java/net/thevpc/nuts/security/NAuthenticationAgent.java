@@ -48,11 +48,27 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      *
      * @return agent id
      */
-    String getId();
+    String id();
 
 
+    /**
+     * With secret.
+     *
+     * @param id id
+     * @param consumer consumer
+     * @param env env
+     * @return with secret result
+     */
     <T> T withSecret(NSecureToken id, NSecretCaller<T> consumer, Function<String, String> env);
 
+    /**
+     * Verify.
+     *
+     * @param id id
+     * @param candidate candidate
+     * @param env env
+     * @return verify result
+     */
     boolean verify(NSecureToken id, NSecureString candidate, Function<String, String> env);
 
     /**
@@ -66,6 +82,13 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      */
     boolean removeCredentials(NSecureToken credentialsId, Function<String, String> envProvider);
 
+    /**
+     * Adds the specified secret.
+     *
+     * @param credentials credentials
+     * @param envProvider env provider
+     * @return add secret result
+     */
     NSecureToken addSecret(NSecureString credentials, Function<String, String> envProvider);
 
     /**
@@ -75,6 +98,13 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      */
     NSecureToken updateSecret(NSecureToken od, NSecureString credentials, Function<String, String> envProvider);
 
+    /**
+     * Adds the specified one way credential.
+     *
+     * @param password password
+     * @param envProvider env provider
+     * @return add one way credential result
+     */
     NSecureToken addOneWayCredential(NSecureString password, Function<String, String> envProvider);
 
     /**

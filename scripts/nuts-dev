@@ -16,7 +16,7 @@
 ## In the case you are debugging an application called by nuts
 ## you can simply call 'nuts ---jdb your-application' (Please note the 3 dashes preceding jdb)
 ##
-NUTS_VERSION=0.8.9
+NUTS_VERSION=1.0.0
 NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
 
 # Check if the NUTS_VERSION is set

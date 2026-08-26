@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 
 import java.util.Arrays;
 
@@ -53,6 +53,12 @@ public interface NCmdLineConfigurable {
      * @return {@code this} instance
      */
     default Object configure(boolean skipUnsupported, String... args) {
+      /**
+       * Configure.
+       *
+       * @param skipUnsupported skip unsupported
+       * @param NCmdLine.of(args) n cmd line.of(args)
+       */
         configure(skipUnsupported, NCmdLine.of(args));
         return this;
     }
@@ -83,7 +89,7 @@ public interface NCmdLineConfigurable {
                 }
                 String[] after = cmdLine.toStringArray();
                 if (Arrays.equals(before, after)) {
-                    throw NExceptions.ofSafeIllegalArgumentException(
+                    throw NException.ofSafeIllegalArgumentException(
                             NMsg.ofC(
                                     "bad implementation of configureFirst in class %s."
                                     + " cmdLine is not consumed; perhaps missing skip() class."
@@ -122,6 +128,11 @@ public interface NCmdLineConfigurable {
      */
     boolean configureFirst(NCmdLine cmdLine);
 
+    /**
+     * Configure last.
+     *
+     * @param cmdLine cmd line
+     */
     default void configureLast(NCmdLine cmdLine) {
         if (!configureFirst(cmdLine)) {
             cmdLine.throwUnexpectedArgument();
@@ -142,7 +153,7 @@ public interface NCmdLineConfigurable {
      * @return {@code this} instance
      */
     static <T> T configure(NCmdLineConfigurable c, boolean skipUnsupported, String[] args, String commandName) {
-        c.configure(skipUnsupported, NCmdLine.of(args).setCommandName(commandName));
+        c.configure(skipUnsupported, NCmdLine.of(args).commandName(commandName));
         return (T) c;
     }
 }

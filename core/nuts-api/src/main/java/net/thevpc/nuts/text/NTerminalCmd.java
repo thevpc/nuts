@@ -55,39 +55,109 @@ public final class NTerminalCmd {
     private final String name;
     private final List<String> args;
 
+    /**
+     * N terminal cmd.
+     *
+     * @param name name
+     * @return n terminal cmd result
+     */
     public NTerminalCmd(String name) {
+      /**
+       * This.
+       *
+       * @param name name
+       * @param Collections.emptyList() collections.empty list()
+       */
         this(name, Collections.emptyList());
     }
 
+    /**
+     * N terminal cmd.
+     *
+     * @param name name
+     * @param args args
+     * @return n terminal cmd result
+     */
     public NTerminalCmd(String name, List<String> args) {
         this.name = name;
         this.args = NReservedLangUtils.unmodifiableList(args);
     }
 
+    /**
+     * Move_to.
+     *
+     * @param col col
+     * @param row row
+     * @return move_to result
+     */
     public static NTerminalCmd MOVE_TO(int col, int row) {
         return new NTerminalCmd(Ids.MOVE_TO, Arrays.asList(String.valueOf(col),String.valueOf(row)));
     }
 
+    /**
+     * Move_right.
+     *
+     * @param count count
+     * @return move_right result
+     */
     public static NTerminalCmd MOVE_RIGHT(int count) {
         return new NTerminalCmd(Ids.MOVE_RIGHT, Arrays.asList(count <= 0 ? "1" : String.valueOf(count)));
     }
 
+    /**
+     * Move_left.
+     *
+     * @param count count
+     * @return move_left result
+     */
     public static NTerminalCmd MOVE_LEFT(int count) {
         return new NTerminalCmd(Ids.MOVE_LEFT, Arrays.asList(count <= 0 ? "1" : String.valueOf(count)));
     }
 
+    /**
+     * Move_up.
+     *
+     * @param count count
+     * @return move_up result
+     */
     public static NTerminalCmd MOVE_UP(int count) {
         return new NTerminalCmd(Ids.MOVE_UP, Arrays.asList(count <= 0 ? "1" : String.valueOf(count)));
     }
 
+    /**
+     * Move_down.
+     *
+     * @param count count
+     * @return move_down result
+     */
     public static NTerminalCmd MOVE_DOWN(int count) {
         return new NTerminalCmd(Ids.MOVE_DOWN, Arrays.asList(count <= 0 ? "1" : String.valueOf(count)));
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @return of result
+     */
     public static NTerminalCmd of(String name) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param name name
+         * @param "" ""
+         * @return of result
+         */
         return of(name, "");
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @param args args
+     * @return of result
+     */
     public static NTerminalCmd of(String name, String... args) {
         if (args == null || args.length == 0) {
             switch (name) {
@@ -136,23 +206,57 @@ public final class NTerminalCmd {
             case Ids.CLEAR_LINE_FROM_CURSOR:
                 return CLEAR_LINE_FROM_CURSOR;
             case Ids.MOVE_UP:
+                /**
+                 * Move_up.
+                 *
+                 * @param NLiteral.of(args[0]).asInt().orElse(1) n literal.of(args[0]).as int().or else(1)
+                 * @return move_up result
+                 */
                 return MOVE_UP(NLiteral.of(args[0]).asInt().orElse(1));
             case Ids.MOVE_DOWN:
+                /**
+                 * Move_down.
+                 *
+                 * @param NLiteral.of(args[0]).asInt().orElse(1) n literal.of(args[0]).as int().or else(1)
+                 * @return move_down result
+                 */
                 return MOVE_DOWN(NLiteral.of(args[0]).asInt().orElse(1));
             case Ids.MOVE_LEFT:
+                /**
+                 * Move_left.
+                 *
+                 * @param NLiteral.of(args[0]).asInt().orElse(1) n literal.of(args[0]).as int().or else(1)
+                 * @return move_left result
+                 */
                 return MOVE_LEFT(NLiteral.of(args[0]).asInt().orElse(1));
             case Ids.MOVE_RIGHT:
+                /**
+                 * Move_right.
+                 *
+                 * @param NLiteral.of(args[0]).asInt().orElse(1) n literal.of(args[0]).as int().or else(1)
+                 * @return move_right result
+                 */
                 return MOVE_RIGHT(NLiteral.of(args[0]).asInt().orElse(1));
         }
 
         return new NTerminalCmd(name, args == null ? null : Arrays.asList(args));
     }
 
-    public String getName() {
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    public String name() {
         return name;
     }
 
-    public List<String> getArgs() {
+    /**
+     * Args.
+     *
+     * @return args result
+     */
+    public List<String> args() {
         return args;
     }
 
@@ -174,6 +278,12 @@ public final class NTerminalCmd {
         return "NutsTerminalCommand{" + "name=" + name + ", args=" + args + '}';
     }
 
+    /**
+     * Ids class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static final class Ids {
 
         public static final String LATER_RESET_LINE = ("later-reset-line");
@@ -193,6 +303,11 @@ public final class NTerminalCmd {
         public static final String GET_SIZE = ("get-size");
         public static final String GET_CURSOR = ("get-cursor");
 
+        /**
+         * Ids.
+         *
+         * @return ids result
+         */
         private Ids() {
         }
 

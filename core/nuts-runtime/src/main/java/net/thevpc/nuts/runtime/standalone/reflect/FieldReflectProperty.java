@@ -24,10 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -70,7 +70,7 @@ public class FieldReflectProperty extends AbstractReflectProperty {
         try {
             return field.get(instance);
         } catch (IllegalAccessException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access (%s) %s", toString(), NExceptions.getErrorMessage(ex)), ex);
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access (%s) %s", toString(), NException.getErrorMessage(ex)), ex);
         }
     }
 
@@ -79,7 +79,7 @@ public class FieldReflectProperty extends AbstractReflectProperty {
         try {
             field.set(instance, value);
         } catch (IllegalAccessException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access (%s) %s", toString(), NExceptions.getErrorMessage(ex)), ex);
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access (%s) %s", toString(), NException.getErrorMessage(ex)), ex);
         } catch (IllegalArgumentException ex) {
             throw ex;
         }

@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NIdType;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NSearch;
@@ -17,17 +14,17 @@ import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.io.NOut;
+import net.thevpc.nuts.ext.NServiceLoader;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
-import net.thevpc.nuts.runtime.standalone.util.collections.NListMultiValueMapImpl;
+import net.thevpc.nuts.reflect.NClassLoader;
+import net.thevpc.nuts.reflect.NMutableClassLoader;
+import net.thevpc.nuts.runtime.standalone.collections.NListMultiValueMapImpl;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionAlreadyRegisteredException;
 import net.thevpc.nuts.ext.NExtensionInformation;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NServiceLoader;
-import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
@@ -35,7 +32,7 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.util.NListMultiValueMap;
+import net.thevpc.nuts.collections.NListMultiValueMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -52,6 +49,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -93,8 +91,9 @@ public class DefaultNWorkspaceExtensionModel {
     private final NWorkspace workspace;
     private final NBootWorkspaceFactory bootFactory;
     private final NWorkspaceFactory objectFactory;
-    private DefaultNClassLoader workspaceExtensionsClassLoader;
-    private final Map<NURLClassLoaderKey, DefaultNClassLoader> cachedClassLoaders = new HashMap<>();
+    private NMutableClassLoader workspaceExtensionsClassLoader;
+    private final ConcurrentHashMap<CachedNutsURLClassLoaderKey, NClassLoader> cachedWorkspaceExtensionsClassLoadersImmutable = new ConcurrentHashMap<>();
+    private final Map<NURLClassLoaderKey, NClassLoaderBase> cachedClassLoaders = new HashMap<>();
     private final Map<NId, NWorkspaceExtension> extensions = new HashMap<>();
     private final Set<NId> loadedExtensionIds = new LinkedHashSet<>();
     private final Set<URL> loadedExtensionURLs = new LinkedHashSet<>();
@@ -113,7 +112,7 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     public boolean isExcludedExtension(NId excluded) {
-        return this.exclusions.contains(excluded.getShortName());
+        return this.exclusions.contains(excluded.shortName());
     }
 
     public void setExcludedExtensions(List<String> excluded) {
@@ -123,7 +122,7 @@ public class DefaultNWorkspaceExtensionModel {
                 for (String e : StringTokenizerUtils.splitDefault(ex)) {
                     NId ee = NId.get(e).orNull();
                     if (ee != null) {
-                        this.exclusions.add(ee.getShortName());
+                        this.exclusions.add(ee.shortName());
                     }
                 }
             }
@@ -132,15 +131,15 @@ public class DefaultNWorkspaceExtensionModel {
 
     //    @Override
     public List<NExtensionInformation> findWorkspaceExtensions() {
-        return findWorkspaceExtensions(workspace.getApiVersion().toString());
+        return findWorkspaceExtensions(workspace.apiVersion().toString());
     }
 
     //  @Override
     public List<NExtensionInformation> findWorkspaceExtensions(String version) {
         if (version == null) {
-            version = workspace.getApiVersion().toString();
+            version = workspace.apiVersion().toString();
         }
-        NId id = workspace.getApiId().builder().setVersion(version).build();
+        NId id = workspace.apiId().builder().version(version).build();
         return findExtensions(id, "extensions");
     }
 
@@ -151,7 +150,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     // @Override
     public List<NExtensionInformation> findExtensions(NId id, String extensionType) {
-        NAssert.requireNamedNonBlank(id.getVersion(), "version");
+        NAssert.requireNamedNonBlank(id.version(), "version");
         List<NExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
@@ -160,7 +159,7 @@ public class DefaultNWorkspaceExtensionModel {
             URL u = expandURL(url);
             if (u != null) {
                 NExtensionInformation[] s = new NExtensionInformation[0];
-                try (Reader rr = new InputStreamReader(NPath.of(u).getInputStream())) {
+                try (Reader rr = new InputStreamReader(NPath.of(u).inputStream())) {
                     s = NElementReader.ofJson().read(rr, DefaultNExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOG()
@@ -258,76 +257,26 @@ public class DefaultNWorkspaceExtensionModel {
         );
 
         // discover runtime path
-        if (!bOptions.getRuntimeBootDependencyNode().isBlank()) {
+        if (!bOptions.runtimeBootDependencyNode().isBlank()) {
             objectFactory.discoverTypes(
-                    bOptions.getRuntimeBootDependencyNode().get().getId(),
-                    bOptions.getRuntimeBootDependencyNode().get().getURL(),
+                    bOptions.runtimeBootDependencyNode().get().id(),
+                    bOptions.runtimeBootDependencyNode().get().url(),
                     bootClassLoader
             );
         }
-
-        // discover extensions path
-        for (NClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
-            if (idurl.getId() != null) {
-                objectFactory.discoverTypes(
-                        idurl.getId(),
-                        idurl.getURL(),
-                        bootClassLoader
-                );
-            }
-        }
-        this.workspaceExtensionsClassLoader = new DefaultNClassLoader("workspaceExtensionsClassLoader", bootClassLoader);
+        this.workspaceExtensionsClassLoader = createMutableClassLoader("workspaceExtensionsClassLoader", bootClassLoader, new NClasspathEntry[0], null, null);
     }
 
-    //    public void registerType(RegInfo regInfo) {
-//        if (registerType(regInfo.extensionPointType, regInfo.extensionTypeImpl, session)) {
-//            defaultWiredComponents.add(regInfo.extensionPointType.getName(), ((Class<? extends NutsComponent>) regInfo.extensionTypeImpl).getName());
-//        }
-//    }
-//    public void registerTypes(List<RegInfo> all) {
-//        for (RegInfo regInfo : all) {
-//            registerType(regInfo, session);
-//        }
-//    }
     public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl) {
         if (NComponent.class.isAssignableFrom(extensionPointType)) {
-            if (extensionPointType.isInstance(extensionImpl)) {
-                return registerInstance(extensionPointType, extensionImpl);
-            }
-            throw new ClassCastException(extensionImpl.getClass().getName());
+            return registerInstance(extensionPointType, extensionImpl);
         }
         throw new ClassCastException(NComponent.class.getName());
     }
 
-    //    @Override
-//    public NutsWorkspaceExtension addWorkspaceExtension(NutsId id) {
-//        session = NutsWorkspaceUtils.validateSession(ws, session);
-//        NutsWorkspaceConfigManagerExt cfg = NutsWorkspaceConfigManagerExt.of(ws.config());
-//        NutsExtensionListHelper h = new NutsExtensionListHelper(cfg.getStoredConfig().getExtensions()).save().compress().add(id);
-//        v2.add(id);
-//        if (!v2.equals(old)) {
-//            //some updates
-//            cfg.getStoredConfig().setExtensions(v2.getIds());
-//            for (NutsDefinition def : ws.search().ids(v2.getIds().toArray(new NutsId[0])).getResultDefinitions()) {
-//                
-//            }
-//            cfg.fireConfigurationChanged();
-//        }
-//        NutsId oldId = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
-//        NutsWorkspaceExtension old = null;
-//        if (oldId == null) {
-//            NutsWorkspaceExtension e = wireExtension(id, ws.fetch().setFetchStratery(NutsFetchStrategy.ONLINE).setSession(session));
-//            addExtension(id);
-//            return e;
-//        } else {
-//            old = extensions.get(oldId);
-//            addExtension(id);
-//            return old;
-//        }
-//    }
     public Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader) {
         URL url = NFetch.of(id)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader);
     }
@@ -392,6 +341,9 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     public <T> boolean registerInstance(Class<T> extensionPointType, T extensionImpl) {
+        if (!extensionPointType.isInstance(extensionImpl)) {
+            throw new ClassCastException(extensionImpl.getClass().getName());
+        }
         if (!isRegisteredType(extensionPointType, extensionImpl.getClass().getName()) && !isRegisteredInstance(extensionPointType, extensionImpl)) {
             objectFactory.registerInstance(extensionPointType, extensionImpl);
             return true;
@@ -420,7 +372,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     public boolean isLoadedExtensions(NId id) {
         return loadedExtensionIds.stream().anyMatch(
-                x -> x.getShortName().equals(id.getShortName())
+                x -> x.shortName().equals(id.shortName())
         );
     }
 
@@ -449,7 +401,7 @@ public class DefaultNWorkspaceExtensionModel {
         boolean someUpdates = false;
         for (NId extension : extensions) {
             if (extension != null) {
-                extension = extension.builder().setVersion("").build();
+                extension = extension.builder().version("").build();
                 if (loadedExtensionIds.contains(extension)) {
                     //
                 } else if (unloadedExtensions.contains(extension)) {
@@ -459,27 +411,24 @@ public class DefaultNWorkspaceExtensionModel {
                 } else {
                     //load extension
                     NDefinition def = NSearch.of()
-                            .addId(extension).setTargetApiVersion(workspace.getApiVersion())
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setLatest(true)
+                            .addId(extension).targetApiVersion(workspace.apiVersion())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
+                            .latest(true)
                             .getResultDefinitions().findFirst().orNull();
-                    if (def == null || def.getContent().isNotPresent()) {
+                    if (def == null || def.content().isNotPresent()) {
                         throw new NIllegalArgumentException(NMsg.ofC("extension not found: %s", extension));
                     }
-                    if (def.getDescriptor().getIdType() != NIdType.EXTENSION) {
+                    if (def.descriptor().idType() != NIdType.EXTENSION) {
                         throw new NIllegalArgumentException(NMsg.ofC("not an extension: %s", extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
-                    workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, null));
-                    Set<Class<?>> classes = objectFactory.discoverTypes(def.getId(), def.getContent().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader);
-                    for (Class<?> aClass : classes) {
-                        ((NWorkspaceExt) workspace).getModel().configModel.onNewComponent(aClass);
-                    }
+                    workspaceExtensionsClassLoader.add(def);
+                    Set<Class<?>> classes = objectFactory.discoverTypes(def.id(), def.content().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader.asClassLoader());
                     //should check current classpath
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
                     _LOG()
-                            .log(NMsg.ofC("extension %s loaded", def.getId())
+                            .log(NMsg.ofC("extension %s loaded", def.id())
                                     .withIntent(NMsgIntent.SUCCESS)
                                     .withLevel(Level.CONFIG)
                             );
@@ -495,11 +444,11 @@ public class DefaultNWorkspaceExtensionModel {
     private void updateLoadedExtensionURLs() {
         loadedExtensionURLs.clear();
         for (NDefinition def : NSearch.of().addIds(loadedExtensionIds.toArray(new NId[0]))
-                .setTargetApiVersion(workspace.getApiVersion())
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                .setLatest(true)
+                .targetApiVersion(workspace.apiVersion())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
+                .latest(true)
                 .getResultDefinitions().toList()) {
-            loadedExtensionURLs.add(def.getContent().flatMap(NPath::toURL).orNull());
+            loadedExtensionURLs.add(def.content().flatMap(NPath::toURL).orNull());
         }
     }
 
@@ -507,7 +456,7 @@ public class DefaultNWorkspaceExtensionModel {
         boolean someUpdates = false;
         for (NId extension : extensions) {
             NId u = loadedExtensionIds.stream().filter(
-                    x -> x.getShortName().equals(extension.getShortName())
+                    x -> x.shortName().equals(extension.shortName())
             ).findFirst().orElse(null);
             if (u != null) {
                 NSession session = getWorkspace().currentSession();
@@ -525,6 +474,10 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     //    @Override
+    public NOptional<NWorkspaceExtension> getWorkspaceExtension(NId id) {
+        return NOptional.ofNamed(extensions.get(id), String.valueOf(id));
+    }
+
     public NWorkspaceExtension[] getWorkspaceExtensions() {
         return extensions.values().toArray(new NWorkspaceExtension[0]);
     }
@@ -533,19 +486,25 @@ public class DefaultNWorkspaceExtensionModel {
     public static class ExtensionCacheNode {
         private String id;
         private String path;
-        private ExtensionCacheNode[] dependencies;
+        private NDefinition definition;
+        private NId[] dependencies;
 
         public ExtensionCacheNode() {
         }
 
-        public ExtensionCacheNode(String id, String path, ExtensionCacheNode[] dependencies) {
+        public ExtensionCacheNode(String id, String path, NId[] dependencies) {
             this.id = id;
             this.path = path;
             this.dependencies = dependencies;
         }
     }
 
-    public NWorkspaceExtension wireExtension(NId id, NFetch options) {
+    public NWorkspaceExtension wireExtension(NId id, NFetch options, boolean ignoreExcluded) {
+        if (ignoreExcluded) {
+            if (isExcludedExtension(id)) {
+                return null;
+            }
+        }
         NSession session = workspace.currentSession();
         NAssert.requireNamedNonNull(id, "extension id");
         NId wired = CoreNUtils.findNutsIdBySimpleName(id, extensions.keySet());
@@ -556,9 +515,9 @@ public class DefaultNWorkspaceExtensionModel {
         _LOG().log(NMsg.ofC("installing extension %s", id)
                 .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
         );
-        NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().getRuntimeId())).resolve("extensions-" + id.getMavenFileName("cache"));
+        NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().runtimeId())).resolve("extensions-" + id.getMavenFileName("cache"));
         ExtensionCacheNode ec = null;
-        NClassLoaderNode node = null;
+//        NClassLoaderNode node = null;
         if (cacheFile.isRegularFile()) {
             try {
                 ec = NElementReader.ofJson().read(cacheFile, ExtensionCacheNode.class);
@@ -568,35 +527,43 @@ public class DefaultNWorkspaceExtensionModel {
         }
         NId ecId;
         NPath ecPath;
+        if (ec != null) {
+            if (ec.id == null || ec.definition == null || ec.dependencies == null) {
+                ec = null;
+            }
+        }
         if (ec == null) {
             NDefinition nDefinitions = NSearch.of()
                     .copyFrom(options)
                     .addId(id)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     //
-                    .setLatest(true)
+                    .latest(true)
                     .getResultDefinitions().findFirst().get();
             ec = new ExtensionCacheNode();
-            ecId = nDefinitions.getId();
-            ecPath = nDefinitions.getContent().orNull();
+            ecId = nDefinitions.id();
+            ecPath = nDefinitions.content().orNull();
             ec.id = ecId.toString();
-            ec.path = nDefinitions.getContent().map(x -> x.toString()).orNull();
-            node = NClassLoaderUtils.definitionToClassLoaderNode(nDefinitions, null);
-            ec.dependencies = node.getDependencies().stream().map(x -> toExtensionCacheNode(x))
-                    .filter(Objects::nonNull)
-                    .toArray(ExtensionCacheNode[]::new);
+            ec.definition = nDefinitions;
+            ec.path = nDefinitions.content().map(x -> x.toString()).orNull();
+            ec.dependencies = nDefinitions.dependencies().stream().flatMapStream(x -> x.transitive())
+                    .map(x -> x.toId())
+                    .toArray(NId[]::new);
             NElementWriter.ofJson().write(ec, cacheFile);
         } else {
             ecId = NId.of(ec.id);
             ecPath = NPath.of(ec.path);
-            node = fromExtensionCacheNode(ec);
         }
         if (!isLoadedClassPath(ecId, ecPath)) {
-            this.workspaceExtensionsClassLoader.add(node);
+            this.workspaceExtensionsClassLoader.add(ec.definition);
         }
-        DefaultNWorkspaceExtension workspaceExtension = new DefaultNWorkspaceExtension(id, ecId, this.workspaceExtensionsClassLoader);
+        DefaultNWorkspaceExtension workspaceExtension = new DefaultNWorkspaceExtension(id, ecId, this.workspaceExtensionsClassLoader.asClassLoader());
+        extensions.put(id, workspaceExtension);
         //now will iterate over Extension classes to wire them ...
         Set<Class<?>> discoveredTypes = objectFactory.discoverTypes(ecId, ecPath == null ? null : ecPath.toURL().orNull(), workspaceExtension.getClassLoader());
+        for (NExtensionLifeCycle eventLifeCycle : workspaceExtension.getEventLifeCycles()) {
+            eventLifeCycle.onInitExtension(workspaceExtension);
+        }
 //        for (Class extensionImpl : getExtensionTypes(NutsComponent.class, session)) {
 //            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
 //                if (registerType(extensionPointType, extensionImpl, session)) {
@@ -604,13 +571,12 @@ public class DefaultNWorkspaceExtensionModel {
 //                }
 //            }
 //        }
-        extensions.put(id, workspaceExtension);
         _LOG().log(NMsg.ofC("extension %s installed successfully", id)
                 .withLevel(Level.FINE).withIntent(NMsgIntent.ADD)
         );
         NTerminalSpec spec = new NDefaultTerminalSpec();
-        if (session.getTerminal() != null) {
-            spec.setProperty("ignoreClass", session.getTerminal().getClass());
+        if (session.terminal() != null) {
+            spec.property("ignoreClass", session.terminal().getClass());
         }
         NTerminal newTerminal = createTerminal(spec);
         if (newTerminal != null) {
@@ -618,41 +584,32 @@ public class DefaultNWorkspaceExtensionModel {
                     .log(NMsg.ofC("extension %s changed Terminal configuration. Reloading Session Terminal", id)
                             .withLevel(Level.FINE).withIntent(NMsgIntent.UPDATE)
                     );
-            session.setTerminal(newTerminal);
+            session.terminal(newTerminal);
         }
-        for (Class<?> discoveredType : discoveredTypes) {
-            if (NExtensionLifeCycle.class.isAssignableFrom(discoveredType)) {
-                workspaceExtension.getEvents().add(
-                        (NExtensionLifeCycle) objectFactory.createComponent(discoveredType, null).get()
-                );
-            }
-        }
-        for (NExtensionLifeCycle event : workspaceExtension.getEvents()) {
-            event.onInitExtension(workspaceExtension);
-        }
+
         return workspaceExtension;
     }
 
-    private ExtensionCacheNode toExtensionCacheNode(NClassLoaderNode x) {
-        return new ExtensionCacheNode(
-                x.getId().getLongName(),
-                x.getURL() == null ? null : x.getURL().toString(),
-                x.getDependencies().stream().map(y -> toExtensionCacheNode(y)).toArray(ExtensionCacheNode[]::new)
-        );
-    }
+//    private ExtensionCacheNode toExtensionCacheNode(NClassLoaderNode x) {
+//        return new ExtensionCacheNode(
+//                x.id().longName(),
+//                x.url() == null ? null : x.url().toString(),
+//                x.dependencies().stream().map(y -> toExtensionCacheNode(y)).toArray(ExtensionCacheNode[]::new)
+//        );
+//    }
 
-    private NClassLoaderNode fromExtensionCacheNode(ExtensionCacheNode x) {
-        return new NDefaultClassLoaderNode(
-                NId.of(x.id),
-                NPath.of(x.path).toURL().get(),
-                true,
-                true,
-                Arrays.stream(x.dependencies).map(y -> fromExtensionCacheNode(y)).toArray(NClassLoaderNode[]::new)
-        );
-    }
+//    private NClassLoaderNode fromExtensionCacheNode(ExtensionCacheNode x) {
+//        return new NDefaultClassLoaderNode(
+//                NId.of(x.id),
+//                NPath.of(x.path).toURL().get(),
+//                true,
+//                true,
+//                Arrays.stream(x.dependencies).map(y -> fromExtensionCacheNode(y)).toArray(NClassLoaderNode[]::new)
+//        );
+//    }
 
     private boolean isLoadedClassPath(NDefinition file) {
-        return isLoadedClassPath(file.getId(), file.getContent().orNull());
+        return isLoadedClassPath(file.id(), file.content().orNull());
     }
 
     private boolean isLoadedClassPath(NId id, NPath content) {
@@ -735,7 +692,7 @@ public class DefaultNWorkspaceExtensionModel {
 //    }
     public NTerminal createTerminal(NTerminalSpec spec) {
         NSystemTerminalBase termb = createSupported(NSystemTerminalBase.class, spec).get();
-        if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
+        if (spec != null && spec.getProperty("ignoreClass") != null && spec.getProperty("ignoreClass").equals(termb.getClass())) {
             return null;
         }
         return new DefaultNTerminalFromSystem(termb);
@@ -771,7 +728,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     protected URL expandURL(String url) {
         return NPath.of(url)
-                .toAbsolute(NWorkspace.of().getWorkspaceLocation())
+                .toAbsolute(NWorkspace.of().workspaceLocation())
                 .toURL().get();
     }
 
@@ -844,11 +801,114 @@ public class DefaultNWorkspaceExtensionModel {
         return NWorkspaceExt.of(workspace).getConfigModel().getStoredConfigBoot();
     }
 
-    public synchronized DefaultNClassLoader getNutsURLClassLoader(String name, ClassLoader parent) {
-        if (parent == null) {
-            parent = workspaceExtensionsClassLoader;
+    public NMutableClassLoader getWorkspaceExtensionsClassLoader() {
+        return workspaceExtensionsClassLoader;
+    }
+
+    private static class CachedNutsURLClassLoaderKey {
+        private final String name;
+        ClassLoader parent;
+        List<NId> nodes;
+        NRepositoryFilter repositoryFilter;
+        NDependencyFilter dependencyFilter;
+
+        public CachedNutsURLClassLoaderKey(String name, ClassLoader parent, NId[] nodes, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+            this.name = name;
+            this.parent = parent;
+            this.repositoryFilter = repositoryFilter;
+            this.dependencyFilter = dependencyFilter;
+            this.nodes = nodes == null ? Collections.emptyList() : Arrays.stream(nodes).filter(Objects::nonNull).collect(Collectors.toList());
         }
-        return new DefaultNClassLoader(name, parent);
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            CachedNutsURLClassLoaderKey that = (CachedNutsURLClassLoaderKey) o;
+            return Objects.equals(name, that.name) && Objects.equals(
+                    (parent == null ? 0 : System.identityHashCode(parent))
+                    , (that.parent == null ? 0 : System.identityHashCode(that.parent)))
+                    && Objects.equals(nodes, that.nodes) && Objects.equals(repositoryFilter, that.repositoryFilter) && Objects.equals(dependencyFilter, that.dependencyFilter);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, parent == null ? 0 : System.identityHashCode(parent), repositoryFilter, dependencyFilter);
+        }
+
+        @Override
+        public String toString() {
+            return "CachedNutsURLClassLoaderKey{" +
+                    "name='" + name + '\'' +
+                    ", nodes=" + nodes +
+                    ", parent=" + parent +
+                    ", repositoryFilter=" + repositoryFilter +
+                    ", dependencyFilter=" + dependencyFilter +
+                    '}';
+        }
+    }
+
+
+    public synchronized NMutableClassLoader createMutableClassLoader(String name, ClassLoader parent, NClasspathEntry[] nodes, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+        if (nodes == null) {
+            nodes = new NClasspathEntry[0];
+        } else {
+            nodes = Arrays.stream(nodes).filter(Objects::nonNull).toArray(NClasspathEntry[]::new);
+        }
+        if (repositoryFilter == null) {
+            repositoryFilter = NRepositoryFilter.ofAlways();
+        }
+        if (dependencyFilter == null) {
+            dependencyFilter = NDependencyFilter.ofRunnable(false);
+        }
+        return new DefaultNMutableClassLoader(name, parent, nodes, repositoryFilter, dependencyFilter);
+    }
+
+    public synchronized NClassLoader createImmutableClassLoader(String name, ClassLoader parent, NClasspathEntry[] nodes, boolean usePreferred, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+        if (nodes == null) {
+            nodes = new NClasspathEntry[0];
+        } else {
+            nodes = Arrays.stream(nodes).filter(Objects::nonNull).toArray(NClasspathEntry[]::new);
+        }
+        if (repositoryFilter == null) {
+            repositoryFilter = NRepositoryFilter.ofAlways();
+        }
+        if (dependencyFilter == null) {
+            dependencyFilter = NDependencyFilter.ofRunnable(false);
+        }
+        ClassLoader validParent = parent == null ? workspaceExtensionsClassLoader.asClassLoader() : parent;
+        String validName = NStringUtils.firstNonEmpty(name, "nclassloader");
+        CachedNutsURLClassLoaderKey withName = new CachedNutsURLClassLoaderKey(validName, validParent, Arrays.stream(nodes).map(x -> x.id().longId()).toArray(NId[]::new), repositoryFilter, dependencyFilter);
+        CachedNutsURLClassLoaderKey withoutName = new CachedNutsURLClassLoaderKey("", validParent, Arrays.stream(nodes).map(x -> x.id().longId()).toArray(NId[]::new), repositoryFilter, dependencyFilter);
+        synchronized (cachedWorkspaceExtensionsClassLoadersImmutable) {
+            NClassLoader nnold = cachedWorkspaceExtensionsClassLoadersImmutable.get(withoutName);
+            if (usePreferred) {
+                if (nnold != null) {
+                    if (Objects.equals(nnold.name(), name)) {
+                        return nnold;
+                    }
+                }
+                if (nnold == null && !cachedWorkspaceExtensionsClassLoadersImmutable.isEmpty()) {
+                    for (Map.Entry<CachedNutsURLClassLoaderKey, NClassLoader> e : cachedWorkspaceExtensionsClassLoadersImmutable.entrySet()) {
+                        _LOG().warn(
+                                NMsg.ofP(Objects.equals(e.getKey(), withoutName) + " : "
+                                        + "\n  " + e.getKey()
+                                        + "\n   <> "
+                                        + "\n  " + withoutName)
+                        );
+                    }
+                }
+            }
+            NClassLoader wnold = cachedWorkspaceExtensionsClassLoadersImmutable.get(withName);
+            if (wnold != null) {
+                return wnold;
+            }
+            DefaultImmutableNClassLoader i = new DefaultImmutableNClassLoader(validName, validParent, nodes, repositoryFilter, dependencyFilter);
+            if (nnold == null) {
+                cachedWorkspaceExtensionsClassLoadersImmutable.put(withoutName, i);
+            }
+            cachedWorkspaceExtensionsClassLoadersImmutable.put(withName, i);
+            return i;
+        }
     }
 
     public static class RegInfo {

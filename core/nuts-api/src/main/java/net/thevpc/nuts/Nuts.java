@@ -105,7 +105,7 @@ public final class Nuts {
     /**
      * current Nuts version
      */
-    private static final NVersion version = NVersion.of("0.8.9");
+    private static final NVersion version = NVersion.of("1.0.0");
     private static final NVersion bootVersion = NVersion.of(NBootWorkspace.NUTS_BOOT_VERSION);
     private static final NId id = NId.of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version);
     private static volatile NWorkspace defaultInMemoryWorkspace;
@@ -122,15 +122,25 @@ public final class Nuts {
      *
      * @return current nuts version
      */
-    public static NVersion getVersion() {
+    public static NVersion version() {
         return version;
     }
 
-    public static NVersion getBootVersion() {
+    /**
+     * Returns the current Nuts boot version.
+     *
+     * @return current Nuts boot version
+     */
+    public static NVersion bootVersion() {
         return bootVersion;
     }
 
-    public static NId getApiId() {
+    /**
+     * Returns the Nuts API artifact identifier.
+     *
+     * @return current Nuts API artifact identifier
+     */
+    public static NId apiId() {
         return id;
     }
 

@@ -12,19 +12,21 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNUninstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUninstallInternalExecutable(String[] args, NExec execCommand) {
-        super("uninstall", args, execCommand);
+    public DefaultNUninstallInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("uninstall", args, execCommand,executorOptions);
     }
 
     @Override
     public int execute() {
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;

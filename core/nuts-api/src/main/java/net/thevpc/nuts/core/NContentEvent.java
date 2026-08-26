@@ -27,6 +27,7 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NGetter;
 
 /**
  * Event for {@link NRepositoryListener} methods.
@@ -42,14 +43,16 @@ public interface NContentEvent extends NSessionProvider {
      *
      * @return artifact path
      */
-    NPath getLocation();
+    @NGetter
+    NPath location();
 
     /**
      * current workspace
      *
      * @return workspace
      */
-    NWorkspace getWorkspace();
+    @NGetter
+    NWorkspace workspace();
 
     /**
      * current session
@@ -61,5 +64,6 @@ public interface NContentEvent extends NSessionProvider {
      *
      * @return current repository
      */
-    NRepository getRepository();
+    @NGetter
+    NRepository repository();
 }

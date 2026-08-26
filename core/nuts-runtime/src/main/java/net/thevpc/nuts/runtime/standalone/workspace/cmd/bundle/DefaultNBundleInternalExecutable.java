@@ -21,12 +21,13 @@ import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.shell.NShellWriter;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NMapBuilder;
 
 import java.util.*;
 
@@ -35,8 +36,8 @@ import java.util.*;
  */
 public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNBundleInternalExecutable(String[] args, NExec execCommand) {
-        super("bundle", args, execCommand);
+    public DefaultNBundleInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("bundle", args, execCommand,executorOptions);
     }
 
     private NOptional<String> ensureValidFileName(String any) {
@@ -78,7 +79,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         }
         NTrace.println(NMsg.ofC("nuts %s v%s",
                 NMsg.ofStyledPrimary1("bundle builder"),
-                NWorkspace.of().getRuntimeId().getVersion()));
+                NWorkspace.of().runtimeId().version()));
         BOptions boptions = new BOptions();
         NCmdLine cmdLine = NCmdLine.of(args);
         new BOptionsParser().parseBOptions(boptions, cmdLine);
@@ -112,18 +113,18 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         if (resultingIds.executableAppIds.size() == 1) {
             for (NId executableAppId : resultingIds.executableAppIds) {
                 defaultName = preferredAppName(executableAppId);
-                defaultVersion = executableAppId.getVersion().toString();
+                defaultVersion = executableAppId.version().toString();
                 break;
             }
         } else if (resultingIds.executableAppIds.size() > 1) {
             NId[] explicitIds = resultingIds.executableAppIds.stream().filter(x -> {
                 for (String id : boptions.ids) {
-                    if (Objects.equals(NId.of(id).getShortName(), x.getShortName())) {
+                    if (Objects.equals(NId.of(id).shortName(), x.shortName())) {
                         return true;
                     }
                 }
                 for (String id : boptions.ids) {
-                    if (Objects.equals(id, x.getArtifactId())) {
+                    if (Objects.equals(id, x.artifactId())) {
                         return true;
                     }
                 }
@@ -131,19 +132,19 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             }).toArray(NId[]::new);
             if (explicitIds.length == 1) {
                 defaultName = preferredAppName(explicitIds[0]);
-                defaultVersion = explicitIds[0].getVersion().toString();
+                defaultVersion = explicitIds[0].version().toString();
             } else {
                 for (NId executableAppId : resultingIds.executableAppIds) {
                     defaultName = preferredAppName(executableAppId) + "-and-all";
-                    defaultVersion = executableAppId.getVersion().toString();
+                    defaultVersion = executableAppId.version().toString();
                     break;
                 }
             }
         }
-        nuts_bundle_info_config.appName = NStringUtils.firstNonBlankTrimmed(boptions.appName, boptions.appTitle, defaultName);
-        nuts_bundle_info_config.appVersion = NStringUtils.firstNonBlankTrimmed(boptions.appVersion, defaultVersion, "1.0");
-        nuts_bundle_info_config.appTitle = NStringUtils.firstNonBlankTrimmed(boptions.appTitle, nuts_bundle_info_config.appName);
-        nuts_bundle_info_config.appDesc = NStringUtils.firstNonBlankTrimmed(boptions.appDesc, nuts_bundle_info_config.appTitle);
+        nuts_bundle_info_config.appName = NStringUtils.firstNonBlankStripped(boptions.appName, boptions.appTitle, defaultName);
+        nuts_bundle_info_config.appVersion = NStringUtils.firstNonBlankStripped(boptions.appVersion, defaultVersion, "1.0");
+        nuts_bundle_info_config.appTitle = NStringUtils.firstNonBlankStripped(boptions.appTitle, nuts_bundle_info_config.appName);
+        nuts_bundle_info_config.appDesc = NStringUtils.firstNonBlankStripped(boptions.appDesc, nuts_bundle_info_config.appTitle);
         String fullAppFileName = ensureValidFileName(nuts_bundle_info_config.appName).orElse("app") + "-" + ensureValidFileName(nuts_bundle_info_config.appVersion).orElse("1.0");
         nuts_bundle_info_config.target = "${user.dir}/" + fullAppFileName;
 
@@ -206,21 +207,21 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         if (format==BundleType.JAR) {
             cp
                     .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class.template"))
-                    .setMkdirs(true)
+                    .mkdirs(true)
                     .to(rootFolder.resolve("net/thevpc/nuts/runtime/standalone/installer/NutsBundleRunner.class"))
                     .run();
             cp
                     .from(getClass().getResource("/META-INF/bundle/MANIFEST-COPY.MF"))
-                    .setMkdirs(true)
+                    .mkdirs(true)
                     .to(rootFolder.resolve("META-INF/MANIFEST.MF"))
                     .run();
         }
 
         for (NDefinition d : resultingIds.classPath.values()) {
-            NId id = d.getId();
+            NId id = d.id();
             String fullPath = id.getMavenPath("jar");
-            if (d.getContent().isPresent()) {
-                cp.from(d.getContent().get())
+            if (d.content().isPresent()) {
+                cp.from(d.content().get())
                         .to(bundleFolder.resolve(fullPath))
                         .run();
                 if (includeConfigFiles) {
@@ -234,9 +235,9 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
             fullPath = id
                     //descriptor is not classifier aware
-                    .builder().setClassifier(null).build()
+                    .builder().classifier(null).build()
                     .getMavenPath(NConstants.Files.DESCRIPTOR_FILE_EXTENSION_SIMPLE);
-            cp.from(NDescriptorWriter.of().formatPlain(d.getDescriptor()).getBytes())
+            cp.from(NDescriptorWriter.of().formatPlain(d.descriptor()).getBytes())
                     .to(bundleFolder.resolve(fullPath))
                     .run();
             if (includeConfigFiles) {
@@ -253,11 +254,11 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             for (NId executableAppId : resultingIds.executableAppIds) {
                 NDefinition d = resultingIds.classPath.get(executableAppId);
                 int minJava = 8;
-                boolean gui = d.getDescriptor().getFlags().contains(NDescriptorFlag.GUI);
-                for (String s : d.getDescriptor().getCondition().getPlatform()) {
+                boolean gui = d.descriptor().flags().contains(NDescriptorFlag.GUI);
+                for (String s : d.descriptor().condition().platform()) {
                     NId id = NId.get(s).orNull();
                     if (NJavaSdkUtils.isJava(id)) {
-                        minJava = NJavaSdkUtils.normalizeJavaVersionAsInt(id.getVersion());
+                        minJava = NJavaSdkUtils.normalizeJavaVersionAsInt(id.version());
                     }
                 }
                 NTrace.println(NMsg.ofC(NI18n.of("building executable script for %s"), executableAppId));
@@ -274,14 +275,14 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         NSession nSession = NSession.of();
         switch (format) {
             case JAR: {
-                NCompress zip = NCompress.of().setPackaging("zip");
+                NCompress zip = NCompress.of().packaging("zip");
                 NPath target = NPath.of(NStringUtils.firstNonBlank(boptions.withTarget,
                         fullAppFileName
                                 + "-bundle"
                                 + ".jar")).toAbsolute();
-                zip.addSource(rootFolder)
-                        .setSkipRoot(true)
-                        .setTarget(
+                zip.source(rootFolder)
+                        .skipRoot(true)
+                        .target(
                                 target
                         )
                         .run();
@@ -298,14 +299,14 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 break;
             }
             case ZIP: {
-                NCompress zip = NCompress.of().setPackaging("zip");
+                NCompress zip = NCompress.of().packaging("zip");
                 NPath target = NPath.of(NStringUtils.firstNonBlank(boptions.withTarget,
                         fullAppFileName
                                 + "-bundle"
                                 + ".zip")).toAbsolute();
-                zip.addSource(rootFolder)
-                        .setSkipRoot(true)
-                        .setTarget(target
+                zip.source(rootFolder)
+                        .skipRoot(true)
+                        .target(target
                         )
                         .run();
                 if (tempBundleFolder) {
@@ -341,10 +342,10 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
 
     private String preferredAppName(NId mainIdStr) {
-        if (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName())) {
+        if (NConstants.Ids.NUTS_APP.equals(mainIdStr.shortName())) {
             return "nuts";
         }
-        return mainIdStr.getArtifactId();
+        return mainIdStr.artifactId();
     }
 
     private void createAppScripts(NId mainIdStr, NId nutsId, NPath bundleFolder,
@@ -377,8 +378,8 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             String dotBatOrNothing = osFamily == NOsFamily.WINDOWS ? ".bat" : "";
             out
                     .printlnComment("-------------------------------------")
-                    .printlnComment(" Nuts Bundle Launcher Script " + NWorkspace.of().getRuntimeId().getVersion())
-                    .printlnComment(" This bundle was created for " + mainIdStr.getShortName())
+                    .printlnComment(" Nuts Bundle Launcher Script " + NWorkspace.of().runtimeId().version())
+                    .printlnComment(" This bundle was created for " + mainIdStr.shortName())
                     .printlnComment(" (c) 2025 thevpc")
                     .printlnComment("-------------------------------------")
                     .println()
@@ -407,7 +408,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     .println()
                     .setEnableCommands()
                     .printlnCommand("$NS_JAVA $NS_JAVA_OPTIONS -jar \"$NS_WS_JAR\" $NS_WS_OPTIONS " +
-                            (NConstants.Ids.NUTS_APP.equals(mainIdStr.getShortName()) ? "" : ("\"" + mainIdStr + "\""))
+                            (NConstants.Ids.NUTS_APP.equals(mainIdStr.shortName()) ? "" : ("\"" + mainIdStr + "\""))
                             + " ${*}")
             ;
 

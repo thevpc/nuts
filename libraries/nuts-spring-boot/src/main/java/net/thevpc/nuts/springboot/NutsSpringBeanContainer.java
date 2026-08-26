@@ -15,6 +15,6 @@ class NutsSpringBeanContainer implements NBeanContainer {
 
     @Override
     public <T> NOptional<T> get(NBeanRef ref) {
-        return NOptional.of((T)sac.getBean(ref.getId()), NMsg.ofC("bean %s",ref));
+        return NOptional.of((T)sac.getBean(ref.id()), NMsg.ofC("bean %s",ref));
     }
 }

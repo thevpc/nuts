@@ -41,6 +41,11 @@ public class NConcurrencyLimitException extends NException {
      * @param message      message or null
      */
     public NConcurrencyLimitException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message == null ? NMsg.ofC("concurrency limit exceeds"): message);
     }
     /**

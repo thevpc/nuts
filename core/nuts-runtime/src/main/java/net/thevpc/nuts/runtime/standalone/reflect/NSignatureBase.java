@@ -31,7 +31,7 @@ public abstract class NSignatureBase<T, A extends NSignature<T,?>> implements NS
     }
 
     protected NSignatureBase(String name, T[] types, boolean vararg, NSignatureDomain<T> domain) {
-        this.name = NStringUtils.trimToNull(name);
+        this.name = NStringUtils.stripToNull(name);
         this.types = types;
         this.vararg = vararg;
         this.domain = domain;
@@ -55,7 +55,7 @@ public abstract class NSignatureBase<T, A extends NSignature<T,?>> implements NS
     protected abstract A _create(String name, T[] types, boolean vararg);
 
     public A toNamed(String newName) {
-        String n = NStringUtils.trimToNull(newName);
+        String n = NStringUtils.stripToNull(newName);
         if (Objects.equals(n, name)) {
             return (A) this;
         }
@@ -325,7 +325,7 @@ public abstract class NSignatureBase<T, A extends NSignature<T,?>> implements NS
         if (NBlankable.isBlank(namePattern) || NBlankable.isBlank(name)) {
             return true;
         }
-        if (NStringUtils.trim(namePattern).equals("*")) {
+        if (NStringUtils.strip(namePattern).equals("*")) {
             return true;
         }
         return name.matches(namePattern);
@@ -377,7 +377,7 @@ public abstract class NSignatureBase<T, A extends NSignature<T,?>> implements NS
             }
 
             // Add Interfaces (Weight: +10 per level to deprioritize generic interfaces)
-            T[] interfaces = d.getInterfaces(current.type);
+            List<T> interfaces = d.getInterfaces(current.type);
             if (interfaces != null) {
                 for (T itf : interfaces) {
                     if (itf != null && visited.add(itf)) {

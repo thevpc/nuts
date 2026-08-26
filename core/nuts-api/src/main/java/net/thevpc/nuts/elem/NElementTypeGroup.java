@@ -55,10 +55,19 @@ public enum NElementTypeGroup implements NEnum {
      */
     private final String id;
 
+  /**
+   * N element type group.
+   */
     NElementTypeGroup() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NElementTypeGroup> parse(String value) {
         return NEnumUtils.parseEnum(value, NElementTypeGroup.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NElementTypeGroup>>() {
             @Override

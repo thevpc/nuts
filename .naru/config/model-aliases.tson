@@ -1,0 +1,12 @@
+{
+  seek : {
+    name : "seek" ,
+    model : "deepseek-coder-v2:16b" ,
+    provider : "ollama" ,
+    contextLength : 163840 ,
+    temperature : null ,
+    nucleusThreshold : null ,
+    candidateCount : null ,
+    maxTokens : null
+  }
+}

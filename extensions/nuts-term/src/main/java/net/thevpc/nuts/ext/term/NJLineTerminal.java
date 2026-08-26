@@ -26,21 +26,23 @@ package net.thevpc.nuts.ext.term;
 
 import java.awt.Color;
 
-import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NArgCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.io.NAnsiTermHelper;
-import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -48,7 +50,6 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.*;
 import java.util.function.IntConsumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.jline.reader.impl.LineReaderImpl;
@@ -62,16 +63,15 @@ import org.jline.utils.AttributedStyle;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
-    private static final Logger LOG = Logger.getLogger(NJLineTerminal.class.getName());
     private Terminal terminal;
     private LineReader reader;
     private NPrintStream out;
     private NPrintStream err;
     private InputStream in;
-    private NCmdLineAutoCompleteResolver autoCompleteResolver;
+    private NArgCompleteResolver autoCompleteResolver;
     private NCmdLineHistory commandHistory;
-    private String commandHighlighter;
-    protected boolean lastWasProgress=false;
+    private NTerminalFormatter commandHighlighter;
+    protected boolean lastWasProgress = false;
 
     public NJLineTerminal() {
         super();
@@ -80,30 +80,30 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private AttributedString toAttributedString(NText n, NTextStyles styles) {
         switch (n.type()) {
             case PLAIN: {
-                styles = NTexts.of().getTheme().toBasicStyles(styles,false);
+                styles = NTextTheme.of().toBasicStyles(styles, false);
                 NTextPlain p = (NTextPlain) n;
                 if (styles.isPlain()) {
-                    return new AttributedString(p.getValue());
+                    return new AttributedString(p.value());
                 } else {
                     AttributedStyle s = AttributedStyle.DEFAULT;
                     for (int i = 0; i < styles.size(); i++) {
                         NTextStyle ii = styles.get(i);
-                        switch (ii.getType()) {
+                        switch (ii.type()) {
                             case BACK_COLOR: {
-                                s = s.background(ii.getVariant());
+                                s = s.background(ii.variant());
                                 break;
                             }
                             case BACK_TRUE_COLOR: {
-                                Color c = new Color(ii.getVariant());
+                                Color c = new Color(ii.variant());
                                 s = s.background(c.getRed(), c.getGreen(), c.getBlue());
                                 break;
                             }
                             case FORE_COLOR: {
-                                s = s.foreground(ii.getVariant());
+                                s = s.foreground(ii.variant());
                                 break;
                             }
                             case FORE_TRUE_COLOR: {
-                                Color c = new Color(ii.getVariant());
+                                Color c = new Color(ii.variant());
                                 s = s.foreground(c.getRed(), c.getGreen(), c.getBlue());
                                 break;
                             }
@@ -129,7 +129,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                             }
                         }
                     }
-                    return new AttributedString(p.getValue(), s);
+                    return new AttributedString(p.value(), s);
                 }
             }
             case ANCHOR: {
@@ -145,12 +145,12 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             }
             case TITLE: {
                 NTextTitle p = (NTextTitle) n;
-                return toAttributedString(p.getChild(), NTextStyles.PLAIN);
+                return toAttributedString(p.child(), NTextStyles.PLAIN);
             }
             case LINK: {
                 NTextLink p = (NTextLink) n;
                 return toAttributedString(
-                        NText.ofPlain(p.getValue()),
+                        NText.ofPlain(p.value()),
                         styles.append(NTextStyle.underlined())
                 );
             }
@@ -159,7 +159,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 return toAttributedString(
                         NText.ofList(
                                 NText.ofPlain("include"),
-                                NText.ofPlain(p.getValue())
+                                NText.ofPlain(p.value())
                         ),
                         styles.append(NTextStyle.danger())
                 );
@@ -175,13 +175,16 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             case STYLED: {
                 NTextStyled p = (NTextStyled) n;
                 if (styles.isPlain()) {
-                    return toAttributedString(p.getChild(), p.getStyles());
+                    return toAttributedString(p.child(), p.styles());
                 } else {
                     return toAttributedString(
-                            p.getChild(),
-                            styles.append(p.getStyles())
+                            p.child(),
+                            styles.append(p.styles())
                     );
                 }
+            }
+            case BUILDER: {
+                return toAttributedString(((NTextBuilder) n).build(), styles);
             }
         }
         return new AttributedString(n.toString());
@@ -191,7 +194,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         return lastWasProgress;
     }
 
-    public void setLastWasProgress(boolean lastWasProgress) {
+    public void lastWasProgress(boolean lastWasProgress) {
         this.lastWasProgress = lastWasProgress;
     }
 
@@ -203,49 +206,43 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         builder.streams(System.in, System.out);
         builder.system(true);
         builder.dumb(false);
-
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
-            terminal = builder.build();
-        } catch (Throwable ex) {
-            //unable to create system terminal
-            //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
+            // ServiceLoader uses Thread.currentThread().getContextClassLoader() to discover
+            // provider implementations via META-INF/services. In subprocess mode, the context
+            // classloader is AppClassLoader which does not have visibility into nuts' extension
+            // classloader (NutsURLClassLoader) where jline and its providers are loaded.
+            // We temporarily switch the context classloader to this class's classloader so that
+            // ServiceLoader can find the TerminalProvider implementations, then restore it.
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            try {
+                terminal = builder.build();
+            } catch (Throwable ex) {
+                NLog nLog = NLog.of(NJLineTerminal.class);
+                if (nLog.isLoggable(Level.FINEST)) {
+                    nLog.log(NMsg.ofC("unable to create JLine system terminal: %s", ex).asFinestFail(ex));
+                    for (String s : NStringUtils.stacktraceArray(ex)) {
+                        nLog.log(NMsg.ofC(">> %s", s));
+                    }
+                }
+                //unable to create system terminal
+                //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+                throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
         }
+
         NSession session = NSession.of();
         reader = LineReaderBuilder.builder()
                 .completer(new NJLineCompleter(this))
-                .highlighter(new Highlighter() {
-                    @Override
-                    public AttributedString highlight(LineReader reader, String buffer) {
-                        //session is not inherited here so pass it manually
-                        return session.callWith(()->{
-                            NTexts text = NTexts.of();
-                            String ct = getCommandHighlighter();
-                            if (NBlankable.isBlank(ct)) {
-                                ct = "system";
-                            }
-                            NText n = NText.ofCode(ct, buffer).highlight();
-                            return toAttributedString(n, NTextStyles.PLAIN);
-                        });
-                    }
-
-                    @Override
-                    public void setErrorPattern(Pattern ptrn) {
-
-                    }
-
-                    @Override
-                    public void setErrorIndex(int i) {
-
-                    }
-
-                })
+                .highlighter(new NutsJLineHighlighter(session))
                 .terminal(terminal)
                 //                .completer(completer)
                 //                .parse(parse)
                 .build();
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
-        reader.setVariable(LineReader.HISTORY_FILE, NWorkspace.of().getWorkspaceLocation().resolve("history").normalize().toPath().get());
+        reader.setVariable(LineReader.HISTORY_FILE, NWorkspace.of().workspaceLocation().resolve("history").normalize().toPath().get());
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, this));
         }
@@ -269,7 +266,13 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             try {
                 reader.getTerminal().close();
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "error closing terminal", ex);
+                NLog nLog = NLog.of(NJLineTerminal.class);
+                if (nLog.isLoggable(Level.FINEST)) {
+                    nLog.log(NMsg.ofC("error closing terminal: %s", ex).asFinestFail(ex));
+                    for (String s : NStringUtils.stacktraceArray(ex)) {
+                        nLog.log(NMsg.ofC(">> %s", s));
+                    }
+                }
             }
         }
     }
@@ -280,7 +283,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             //prepare();
         } catch (Exception ex) {
             NLog.of(NJLineTerminal.class)
-                    .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored.").asFinestFail(ex));
+                    .log(NMsg.ofP("unable to create NutsJLineTerminal. ignored.").asFinestFail(ex));
             return NScorable.UNSUPPORTED_SCORE;
         }
         return NScorable.DEFAULT_SCORE + 1;
@@ -289,17 +292,16 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     @Override
     public String readLine(NPrintStream out, NMsg message) {
         prepare();
-//        if (out == null) {
-//            out = getOut();
-//        }
-//        if (out == null) {
-//            out = NIO.of().stdout();
-//        }
         String readLine = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        NPrintStream m = NPrintStream.of(bos, NTerminalMode.FORMATTED, NTerminalMode.ANSI);
+        m.print(NText.of(message).toString());
+        m.flush();
+
         try {
-            readLine = reader.readLine(NText.of(message).toString());
+            readLine = reader.readLine(bos.toString());
         } catch (UserInterruptException e) {
-            throw new NJLineInterruptException();
+            throw new NCancelException();
         }
         try {
             reader.getHistory().save();
@@ -321,22 +323,25 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public InputStream getIn() {
+    public InputStream in() {
+        prepare();
         return in;
     }
 
     @Override
-    public NPrintStream getOut() {
+    public NPrintStream out() {
+        prepare();
         return out;
     }
 
     @Override
-    public NPrintStream getErr() {
+    public NPrintStream err() {
+        prepare();
         return err;
     }
 
     @Override
-    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
+    public NArgCompleteResolver autoCompleteResolver() {
         return autoCompleteResolver;
     }
 
@@ -346,34 +351,35 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NJLineTerminal setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NJLineTerminal commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver) {
         this.autoCompleteResolver = autoCompleteResolver;
         return this;
     }
 
     @Override
-    public NCmdLineHistory getCommandHistory() {
+    public NCmdLineHistory commandHistory() {
         return commandHistory;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
+    public NSystemTerminalBase commandHistory(NCmdLineHistory history) {
         this.commandHistory = history;
         return this;
     }
 
-    public String getCommandHighlighter() {
+    public NTerminalFormatter commandHighlighter() {
         return commandHighlighter;
     }
 
-    public NJLineTerminal setCommandHighlighter(String commandHighlighter) {
+    public NJLineTerminal commandHighlighter(NTerminalFormatter commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
         return this;
     }
 
     @Override
     public Object run(NTerminalCmd command, NPrintStream printStream) {
-        switch (command.getName()) {
+        prepare();
+        switch (command.name()) {
             case NTerminalCmd.Ids.GET_CURSOR: {
                 org.jline.terminal.Cursor c = terminal.getCursorPosition(new IntConsumer() {
                     @Override
@@ -401,7 +407,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 String s = NAnsiTermHelper.of().command(command);
                 if (s != null) {
                     byte[] bytes = s.getBytes();
-                    printStream.writeRaw(bytes,0,bytes.length);
+                    printStream.writeRaw(bytes, 0, bytes.length);
 //                    try {
 //                        reader.getTerminal().output().write(bytes);
 //                    } catch (IOException e) {
@@ -413,11 +419,11 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         }
     }
 
-    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+    public void styles(NTextStyles styles, NPrintStream printStream) {
         String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();
-            printStream.writeRaw(bytes,0,bytes.length);
+            printStream.writeRaw(bytes, 0, bytes.length);
 //            try {
 //                reader.getTerminal().output().write(s.getBytes());
 //            } catch (IOException e) {
@@ -428,7 +434,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     private static class TransparentInputStream extends FilterInputStream implements NInputStreamTransparentAdapter {
 
-        private InputStream root;
+        private final InputStream root;
 
         public TransparentInputStream(InputStream in, InputStream root) {
             super(in);
@@ -443,7 +449,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     private static class TransparentPrintStream extends PrintStream implements NOutputStreamTransparentAdapter {
 
-        private OutputStream root;
+        private final OutputStream root;
 
         public TransparentPrintStream(OutputStream out, OutputStream root) {
             super(out, true);
@@ -457,4 +463,61 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     }
 
+    private static class MyContext implements NTerminalFormatter.Context {
+        private final String buffer;
+        private final Highlighter h;
+
+        public MyContext(String buffer, Highlighter h) {
+            this.buffer = buffer;
+            this.h = h;
+        }
+
+        @Override
+        public String buffer() {
+            return buffer;
+        }
+
+    }
+
+    private class NutsJLineHighlighter implements Highlighter {
+        private final NSession session;
+
+        public NutsJLineHighlighter(NSession session) {
+            this.session = session;
+        }
+
+        @Override
+        public AttributedString highlight(LineReader reader, String buffer) {
+            //session is not inherited here so pass it manually
+            return session.callWith(() -> {
+                setErrorIndex(-1);
+                setErrorPattern(null);
+                NTerminalFormatter ct = commandHighlighter();
+                if (ct == null) {
+                    ct = NTerminalFormatter.ofSystemHighlighter();
+                }
+                NText n;
+                try {
+                    n = ct.format(new MyContext(buffer, NutsJLineHighlighter.this));
+                } catch (Exception ex) {
+                    n = NText.ofPlain(buffer);
+                }
+                if (n == null) {
+                    n = NText.ofPlain(buffer);
+                }
+                return toAttributedString(n, NTextStyles.PLAIN);
+            });
+        }
+
+        @Override
+        public void setErrorPattern(Pattern ptrn) {
+
+        }
+
+        @Override
+        public void setErrorIndex(int i) {
+
+        }
+
+    }
 }

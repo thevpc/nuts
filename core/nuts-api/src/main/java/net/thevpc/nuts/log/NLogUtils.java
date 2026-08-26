@@ -3,20 +3,38 @@ package net.thevpc.nuts.log;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * NLogUtils class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NLogUtils {
+    /**
+     * N log utils.
+     *
+     * @return n log utils result
+     */
     private NLogUtils() {
     }
 
+    /**
+     * Parse log level.
+     *
+     * @param value value
+     * @return parse log level result
+     */
     public static NOptional<Level> parseLogLevel(String value) {
-        value = value == null ? "" : value.trim();
+        value = NStringUtils.strip(value);
         if (value.isEmpty()) {
             return NOptional.ofNamedEmpty("log level");
         }
-        switch (value.trim().toLowerCase()) {
+        switch (value.toLowerCase()) {
             case "off": {
                 return NOptional.of(Level.OFF);
             }
@@ -75,11 +93,30 @@ public class NLogUtils {
     }
 
     private static class CustomLogLevel extends Level {
+        /**
+         * Custom log level.
+         *
+         * @param name name
+         * @param value value
+         * @return custom log level result
+         */
         public CustomLogLevel(String name, int value) {
+          /**
+           * Super.
+           *
+           * @param name name
+           * @param value value
+           */
             super(name, value);
         }
     }
 
+    /**
+     * Safe log.
+     *
+     * @param msg msg
+     * @param source source
+     */
     public static void safeLog(NMsg msg, Class<?> source) {
         if (msg == null) {
             return;
@@ -101,7 +138,7 @@ public class NLogUtils {
                 //
             }
         }
-        Level level = msg.getLevel();
+        Level level = msg.level();
         if (level == null) {
             level = Level.INFO;
         }

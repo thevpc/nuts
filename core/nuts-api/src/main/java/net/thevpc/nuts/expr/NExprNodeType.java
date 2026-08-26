@@ -5,6 +5,12 @@ import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 
+/**
+ * NExprNodeType enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NExprNodeType implements NEnum {
     FUNCTION,
     OPERATOR,
@@ -15,11 +21,20 @@ public enum NExprNodeType implements NEnum {
     ;
     private final String id;
 
+  /**
+   * N expr node type.
+   */
     NExprNodeType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NExprNodeType> parse(String value) {
         return NEnumUtils.parseEnum(value, NExprNodeType.class, s -> {
             switch (s.normalizedValue()) {

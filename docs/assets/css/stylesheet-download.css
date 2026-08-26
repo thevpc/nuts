@@ -1,0 +1,475 @@
+/* ============================================================
+   Nuts Download Page — Wizard UX
+   ============================================================ */
+
+.download-main-wrapper {
+    background: #f0f2f5;
+    min-height: 100vh;
+}
+
+/* ---- Page header ---- */
+.dl-page-header {
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 60%, #1a1a6e 100%);
+    padding: 52px 0 40px;
+    text-align: center;
+}
+
+.dl-page-header__title {
+    font-family: ZeroesTwo, sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    color: #fff;
+    margin: 0 0 10px;
+}
+
+.dl-page-header__sub {
+    color: rgba(255,255,255,0.65);
+    font-size: 1rem;
+    margin: 0 0 24px;
+}
+
+.dl-version-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.dl-version-pill {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 99px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.dl-version-pill--latest  { background: rgba(59,130,246,0.2);  border: 1px solid rgba(59,130,246,0.4);  color: #93c5fd; }
+.dl-version-pill--lts     { background: rgba(16,185,129,0.2);  border: 1px solid rgba(16,185,129,0.4);  color: #6ee7b7; }
+.dl-version-pill--java    { background: rgba(245,158,11,0.2);   border: 1px solid rgba(245,158,11,0.4);   color: #fcd34d; }
+
+/* ---- Container ---- */
+.dl-container {
+    max-width: 860px;
+    padding: 32px 20px 80px;
+}
+
+/* ---- Wizard ---- */
+.dl-wizard {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ---- Step block ---- */
+.dl-step-block {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+.dl-step-block--locked {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.dl-step-block__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f2f5;
+    background: #fafbfc;
+}
+
+.dl-step-block__num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0366d6, #23a6d5);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(3,102,214,0.3);
+}
+
+.dl-step-block--locked .dl-step-block__num {
+    background: #cbd5e0;
+    box-shadow: none;
+}
+
+.dl-step-block__title {
+    font-family: ZeroesTwo, sans-serif;
+    font-size: 1.05rem;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.dl-step-block__selection {
+    margin-left: auto;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0366d6;
+    white-space: nowrap;
+}
+
+.dl-step-block__body {
+    padding: 20px;
+}
+
+/* ---- Choice grid ---- */
+.dl-choice-grid {
+    display: grid;
+    gap: 12px;
+}
+.dl-choice-grid--2 { grid-template-columns: repeat(2, 1fr); }
+.dl-choice-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.dl-choice-grid--4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 700px) {
+    .dl-choice-grid--4 { grid-template-columns: repeat(2, 1fr); }
+    .dl-choice-grid--3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+    .dl-choice-grid--2,
+    .dl-choice-grid--3,
+    .dl-choice-grid--4 { grid-template-columns: 1fr; }
+}
+
+/* ---- Choice button ---- */
+.dl-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #f7f9fc;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    width: 100%;
+}
+
+.dl-choice:hover {
+    border-color: #0366d6;
+    background: #f0f6ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(3,102,214,0.1);
+}
+
+.dl-choice--active {
+    border-color: #0366d6 !important;
+    background: #eef6ff !important;
+    box-shadow: 0 0 0 3px rgba(3,102,214,0.12);
+}
+
+.dl-choice__icon {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.dl-choice__icon--blue   { background: #dbeafe; color: #1d4ed8; }
+.dl-choice__icon--green  { background: #d1fae5; color: #065f46; }
+.dl-choice__icon--orange { background: #ffedd5; color: #c2410c; }
+.dl-choice__icon--silver { background: #f1f5f9; color: #334155; }
+.dl-choice__icon--docker { background: #dbeafe; color: #2496ed; }
+.dl-choice__icon--indigo { background: #ede9fe; color: #5b21b6; }
+
+.dl-choice__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.dl-choice__label {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.dl-choice__version {
+    font-size: 0.78rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: #0366d6;
+    font-weight: 600;
+}
+
+.dl-choice__desc {
+    font-size: 0.78rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* ---- Install content ---- */
+.dl-install-content {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f2f5;
+}
+
+/* ---- Install steps ---- */
+.dl-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.dl-step__num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #0366d6;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.dl-step__body { flex: 1; }
+
+.dl-step__label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ---- Code blocks ---- */
+.dl-code-block {
+    position: relative;
+    background: #1e2330;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.dl-code-block pre {
+    margin: 0 !important;
+    padding: 13px 44px 13px 16px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow-x: auto;
+}
+
+.dl-code-block code {
+    font-size: 0.82rem !important;
+    line-height: 1.55 !important;
+    background: transparent !important;
+    color: #e2e8f0 !important;
+    padding: 0 !important;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.dl-code-block--inline pre { padding: 10px 44px 10px 14px !important; }
+.dl-code-block--inline code { font-size: 0.78rem !important; }
+
+.dl-copy-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.55);
+    border-radius: 5px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.15s;
+    padding: 0;
+}
+.dl-copy-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.dl-copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+/* ---- Notices ---- */
+.dl-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    margin-top: 12px;
+}
+.dl-notice i { margin-top: 2px; flex-shrink: 0; }
+.dl-notice--info { background: #f0f6ff; color: #1e4a8a; border: 1px solid #bfdbfe; }
+.dl-notice--tip  { background: #f0faf4; color: #065f46; border: 1px solid #a7f3d0; }
+.dl-notice code  { background: rgba(0,0,0,0.08); padding: 1px 5px; border-radius: 3px; font-size: 0.8em; }
+
+/* ---- Installer table ---- */
+.dl-installer-table { margin-bottom: 8px; }
+
+.dl-installer-group {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dl-installer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 16px;
+    border-bottom: 1px solid #f0f2f5;
+    flex-wrap: wrap;
+}
+.dl-installer-row:last-child { border-bottom: none; }
+
+.dl-installer-row__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.dl-installer-row__name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.dl-installer-row__desc {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.dl-badge { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 99px; margin-top: 2px; width: fit-content; }
+.dl-badge--jre { background: #f0faf4; color: #065f46; border: 1px solid #a7f3d0; }
+
+.dl-installer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: #f0f6ff;
+    border: 1px solid #bfdbfe;
+    color: #0366d6 !important;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: all 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.dl-installer-btn:hover { background: #0366d6; color: #fff !important; border-color: #0366d6; }
+
+/* ---- Docker desc ---- */
+.dl-docker__desc {
+    font-size: 0.88rem;
+    color: #5a6a7a;
+    margin: 0 0 10px;
+    line-height: 1.6;
+}
+
+/* ---- Verify ---- */
+.dl-verify {
+    margin-top: 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 22px 24px;
+}
+
+.dl-verify__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dl-verify__title i { color: #059669; }
+.dl-verify__sub { font-size: 0.85rem; color: #5a6a7a; margin: 10px 0 6px; }
+
+/* ---- Archive ---- */
+.dl-archive-block {
+    margin-top: 16px;
+}
+
+.dl-archive-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.15s;
+    text-align: left;
+}
+.dl-archive-toggle:hover { color: #0366d6; border-color: #0366d6; background: #f0f6ff; }
+.dl-archive-toggle--open { border-radius: 12px 12px 0 0; border-color: #0366d6; color: #0366d6; }
+
+.dl-archive-toggle__chevron {
+    margin-left: auto;
+    transition: transform 0.2s;
+}
+.dl-archive-toggle--open .dl-archive-toggle__chevron { transform: rotate(180deg); }
+
+.dl-archive-body {
+    background: #fff;
+    border: 1px solid #0366d6;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+}
+
+.dl-archive-table { width: 100%; }
+
+.dl-archive-header {
+    display: grid;
+    grid-template-columns: 70px 1fr 80px;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #1e2330;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.dl-archive-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 80px;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f0f2f5;
+    align-items: center;
+}
+.dl-archive-row:last-child { border-bottom: none; }
+
+.dl-archive-version {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.dl-archive-notes { font-size: 0.8rem; font-weight: 600; color: #0366d6; text-align: right; }
+
+@media (max-width: 600px) {
+    .dl-archive-header,
+    .dl-archive-row { grid-template-columns: 60px 1fr; }
+    .dl-archive-header span:last-child,
+    .dl-archive-row .dl-archive-notes { display: none; }
+}

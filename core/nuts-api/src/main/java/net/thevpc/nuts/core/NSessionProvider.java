@@ -1,5 +1,16 @@
 package net.thevpc.nuts.core;
 
+/**
+ * NSessionProvider interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NSessionProvider {
-    NSession getSession();
+    /**
+     * Session.
+     *
+     * @return session result
+     */
+    NSession session();
 }

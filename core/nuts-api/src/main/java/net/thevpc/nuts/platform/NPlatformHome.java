@@ -14,6 +14,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * NPlatformHome class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NPlatformHome {
     public static final NPlatformHome USER = of(null);
     public static final NPlatformHome SYSTEM = ofSystem(null);
@@ -24,38 +30,117 @@ public class NPlatformHome {
     private final String sysPrefix = "system";
 
 
+    /**
+     * Creates a new instance of of system.
+     *
+     * @param platformOsFamily platform os family
+     * @param env env
+     * @param props props
+     * @return of system result
+     */
     public static NPlatformHome ofSystem(NOsFamily platformOsFamily, Function<String, String> env, Function<String, String> props) {
         return new NPlatformHome(platformOsFamily, true, env, props);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param platformOsFamily platform os family
+     * @param env env
+     * @param props props
+     * @return of result
+     */
     public static NPlatformHome of(NOsFamily platformOsFamily, Function<String, String> env, Function<String, String> props) {
         return new NPlatformHome(platformOsFamily, false, env, props);
     }
 
+    /**
+     * Creates a new instance of of system.
+     *
+     * @param platformOsFamily platform os family
+     * @return of system result
+     */
     public static NPlatformHome ofSystem(NOsFamily platformOsFamily) {
         return new NPlatformHome(platformOsFamily, true, null, null);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param platformOsFamily platform os family
+     * @return of result
+     */
     public static NPlatformHome of(NOsFamily platformOsFamily) {
         return new NPlatformHome(platformOsFamily, false, null, null);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param platformOsFamily platform os family
+     * @param system system
+     * @return of result
+     */
     public static NPlatformHome of(NOsFamily platformOsFamily, boolean system) {
         return new NPlatformHome(platformOsFamily, system, null, null);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param system system
+     * @return of result
+     */
     public static NPlatformHome of(boolean system) {
         return new NPlatformHome(null, system, null, null);
     }
 
+    /**
+     * Creates a new instance of of portable.
+     *
+     * @param platformOsFamily platform os family
+     * @param userName user name
+     * @return of portable result
+     */
     public static NPlatformHome ofPortable(NOsFamily platformOsFamily, String userName) {
+        /**
+         * Creates a new instance of of portable.
+         *
+         * @param platformOsFamily platform os family
+         * @param false false
+         * @param userName user name
+         * @return of portable result
+         */
         return ofPortable(platformOsFamily, false, userName);
     }
 
+    /**
+     * Creates a new instance of of portable system.
+     *
+     * @param platformOsFamily platform os family
+     * @param userName user name
+     * @return of portable system result
+     */
     public static NPlatformHome ofPortableSystem(NOsFamily platformOsFamily, String userName) {
+        /**
+         * Creates a new instance of of portable.
+         *
+         * @param platformOsFamily platform os family
+         * @param true true
+         * @param userName user name
+         * @return of portable result
+         */
         return ofPortable(platformOsFamily, true, userName);
     }
 
+    /**
+     * Creates a new instance of of portable.
+     *
+     * @param platformOsFamily platform os family
+     * @param system system
+     * @param userName user name
+     * @return of portable result
+     */
     public static NPlatformHome ofPortable(NOsFamily platformOsFamily, boolean system, String userName) {
         NAssert.requireNamedNonBlank(userName, "userName");
         return new NPlatformHome(platformOsFamily, system, p -> null, p -> portableProp(p, platformOsFamily, null, x -> {
@@ -67,11 +152,29 @@ public class NPlatformHome {
         }));
     }
 
+    /**
+     * Creates a new instance of of portable.
+     *
+     * @param platformOsFamily platform os family
+     * @param system system
+     * @param env env
+     * @param props props
+     * @return of portable result
+     */
     public static NPlatformHome ofPortable(NOsFamily platformOsFamily, boolean system, Function<String, String> env, Function<String, String> props) {
         return new NPlatformHome(platformOsFamily, system, p -> null, p -> portableProp(p, platformOsFamily, env, props));
     }
 
 
+    /**
+     * Portable prop.
+     *
+     * @param p p
+     * @param platformOsFamily platform os family
+     * @param env env
+     * @param props props
+     * @return portable prop result
+     */
     private static String portableProp(String p, NOsFamily platformOsFamily, Function<String, String> env, Function<String, String> props) {
         NOsFamily osFamily = platformOsFamily == null ? NOsFamily.UNIX : platformOsFamily;
         switch (p) {
@@ -122,8 +225,17 @@ public class NPlatformHome {
     }
 
 
+    /**
+     * N platform home.
+     *
+     * @param platformOsFamily platform os family
+     * @param system system
+     * @param env env
+     * @param props props
+     * @return n platform home result
+     */
     public NPlatformHome(NOsFamily platformOsFamily, boolean system, Function<String, String> env, Function<String, String> props) {
-        this.platformOsFamily = platformOsFamily != null ? platformOsFamily : NOsFamily.getCurrent();
+        this.platformOsFamily = platformOsFamily != null ? platformOsFamily : NOsFamily.current();
         this.system = system;
         this.env = env != null ? env : System::getenv;
         this.props = props != null ? props : System::getProperty;
@@ -144,22 +256,22 @@ public class NPlatformHome {
         }
         String s;
         String locationName = location.id();
-        s = NStringUtils.trim(props.apply("nuts.home." + locationName + "." + platformOsFamily.id()));
+        s = NStringUtils.strip(props.apply("nuts.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s/* + "/" + workspaceName*/;
         }
-        s = NStringUtils.trim(props.apply("nuts.export.home." + locationName + "." + platformOsFamily.id()));
+        s = NStringUtils.strip(props.apply("nuts.export.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s/* + "/" + workspaceName*/;
         }
         if (homeLocations != null && homeLocations.size() > 0) {
             NHomeLocation key = NHomeLocation.of(platformOsFamily, location);
-            s = NStringUtils.trim(homeLocations.get(key));
+            s = NStringUtils.strip(homeLocations.get(key));
             if (!s.isEmpty()) {
                 return s/* + "/" + workspaceName*/;
             }
             key = NHomeLocation.of(null, location);
-            s = NStringUtils.trim(homeLocations.get(key));
+            s = NStringUtils.strip(homeLocations.get(key));
             if (!s.isEmpty()) {
                 return s /* + "/" + workspaceName*/;
             }
@@ -182,37 +294,93 @@ public class NPlatformHome {
      */
     public String getWorkspaceLocation(NStoreType location, Map<NHomeLocation, String> homeLocations, String workspaceName) {
         if (location == null) {
+            /**
+             * Returns the workspace location.
+             *
+             * @param workspaceName workspace name
+             * @return get workspace location result
+             */
             return getWorkspaceLocation(workspaceName);
         }
         String s = getCustomPlatformHomeFolder(location, homeLocations);
         if (s != null) {
             return s;
         }
+        /**
+         * Returns the workspace store.
+         *
+         * @param location location
+         * @param workspaceName workspace name
+         * @return get workspace store result
+         */
         return getWorkspaceStore(location, workspaceName);
     }
 
+    /**
+     * Returns the base location.
+     *
+     * @param location location
+     * @param homeLocations home locations
+     * @return get base location result
+     */
     public String getBaseLocation(NStoreType location, Map<NHomeLocation, String> homeLocations) {
         if (location == null) {
-            return getHome() + getNativePath("/ws");
+            /**
+             * Home.
+             *
+             * @param nativePath("/ws" native path("/ws"
+             * @return home result
+             */
+            return home() + nativePath("/ws");
         }
         String s = getCustomPlatformHomeFolder(location, homeLocations);
         if (!NBlankable.isBlank(s)) {
             return s;
         }
-        return getStore(location) + getNativePath("/ws/");
+        /**
+         * Returns the store.
+         *
+         * @param nativePath("/ws/" native path("/ws/"
+         * @return get store result
+         */
+        return getStore(location) + nativePath("/ws/");
     }
 
+    /**
+     * Returns the global location.
+     *
+     * @param location location
+     * @param homeLocations home locations
+     * @return get global location result
+     */
     public String getGlobalLocation(NStoreType location, Map<NHomeLocation, String> homeLocations) {
         if (location == null) {
-            return getGlobalLocation();
+            /**
+             * Global location.
+             *
+             * @return global location result
+             */
+            return globalLocation();
         }
         String s = getCustomPlatformHomeFolder(location, homeLocations);
         if (s != null) {
             return s;
         }
+        /**
+         * Returns the global store.
+         *
+         * @param location location
+         * @return get global store result
+         */
         return getGlobalStore(location);
     }
 
+    /**
+     * Returns the workspace location.
+     *
+     * @param workspaceName workspace name
+     * @return get workspace location result
+     */
     public String getWorkspaceLocation(String workspaceName) {
         if (NBlankable.isBlank(workspaceName)) {
             workspaceName = NConstants.Names.DEFAULT_WORKSPACE_NAME;
@@ -221,18 +389,40 @@ public class NPlatformHome {
             //return it as is and make it absolute
             return Paths.get(workspaceName).normalize().toAbsolutePath().toString();
         }
-        return getHome() + getNativePath("/ws/" + workspaceName);
+        /**
+         * Home.
+         *
+         * @param workspaceName workspace name
+         * @return home result
+         */
+        return home() + nativePath("/ws/" + workspaceName);
     }
 
-    public String getGlobalLocation() {
-        return getHome() + getNativePath("/global");
+    /**
+     * Global location.
+     *
+     * @return global location result
+     */
+    public String globalLocation() {
+        /**
+         * Home.
+         *
+         * @param nativePath("/global" native path("/global"
+         * @return home result
+         */
+        return home() + nativePath("/global");
     }
 
-    public String getHome() {
+    /**
+     * Home.
+     *
+     * @return home result
+     */
+    public String home() {
         if (system) {
             switch (platformOsFamily) {
                 case WINDOWS: {
-                    return getWindowsProgramFiles() + "\\nuts";
+                    return windowsProgramFiles() + "\\nuts";
                 }
                 default: {
                     return "/etc/opt/nuts";
@@ -240,7 +430,7 @@ public class NPlatformHome {
             }
         } else {
             String userHome = props.apply("user.home");
-            return userHome + getNativePath("/.nuts");
+            return userHome + nativePath("/.nuts");
         }
     }
 
@@ -257,6 +447,12 @@ public class NPlatformHome {
      */
     public String getWorkspaceStore(NStoreType location, String workspaceName) {
         if (location == null) {
+            /**
+             * Returns the workspace location.
+             *
+             * @param workspaceName workspace name
+             * @return get workspace location result
+             */
             return getWorkspaceLocation(workspaceName);
         }
         if (NBlankable.isBlank(workspaceName)) {
@@ -270,37 +466,66 @@ public class NPlatformHome {
                 workspaceName = fileName.toString();
             }
         }
-        return getStore(location) + getNativePath("/ws/" + getNativePath(workspaceName));
+        /**
+         * Returns the store.
+         *
+         * @param nativePath(workspaceName) native path(workspace name)
+         * @return get store result
+         */
+        return getStore(location) + nativePath("/ws/" + nativePath(workspaceName));
     }
 
+    /**
+     * Returns the global store.
+     *
+     * @param storeType store type
+     * @return get global store result
+     */
     public String getGlobalStore(NStoreType storeType) {
-        return getStore(storeType) + getNativePath("/global");
+        /**
+         * Returns the store.
+         *
+         * @param nativePath("/global" native path("/global"
+         * @return get store result
+         */
+        return getStore(storeType) + nativePath("/global");
     }
 
+    /**
+     * Returns the store.
+     *
+     * @param location location
+     * @return get store result
+     */
     public String getStore(NStoreType location) {
         if (location == null) {
-            return getHome();
+            /**
+             * Home.
+             *
+             * @return home result
+             */
+            return home();
         }
         NOsFamily platformOsFamily = this.platformOsFamily;
         if (platformOsFamily == null) {
-            platformOsFamily = NOsFamily.getCurrent();
+            platformOsFamily = NOsFamily.current();
         }
         String locationName = location.id();
         if (system) {
             String s = null;
-            s = NStringUtils.trim(props.apply("nuts.store.system." + locationName + "." + platformOsFamily.id()));
+            s = NStringUtils.strip(props.apply("nuts.store.system." + locationName + "." + platformOsFamily.id()));
             if (!s.isEmpty()) {
                 return s;
             }
-            s = NStringUtils.trim(props.apply("nuts.export.store.system." + locationName + "." + platformOsFamily.id()));
+            s = NStringUtils.strip(props.apply("nuts.export.store.system." + locationName + "." + platformOsFamily.id()));
             if (!s.isEmpty()) {
-                return s.trim();
+                return NStringUtils.strip(s);
             }
             switch (location) {
                 case BIN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
+                            return windowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/opt/nuts/" + locationName;
@@ -310,7 +535,7 @@ public class NPlatformHome {
                 case LIB: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
+                            return windowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/opt/nuts/" + locationName;
@@ -320,7 +545,7 @@ public class NPlatformHome {
                 case CONF: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
+                            return windowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/etc/opt/nuts/" + locationName;
@@ -330,7 +555,7 @@ public class NPlatformHome {
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
+                            return windowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/var/log/nuts";
@@ -340,7 +565,7 @@ public class NPlatformHome {
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
+                            return windowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/var/cache/nuts";
@@ -350,7 +575,7 @@ public class NPlatformHome {
                 case VAR: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
+                            return windowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/var/opt/nuts";
@@ -362,7 +587,7 @@ public class NPlatformHome {
                         case WINDOWS: {
                             String pf = env.apply("TMP");
                             if (NBlankable.isBlank(pf)) {
-                                pf = getWindowsSystemRoot() + "\\Temp";
+                                pf = windowsSystemRoot() + "\\Temp";
                             }
                             return pf + "\\nuts";
                         }
@@ -376,7 +601,7 @@ public class NPlatformHome {
                         case WINDOWS: {
                             String pf = env.apply("TMP");
                             if (NBlankable.isBlank(pf)) {
-                                pf = getWindowsSystemRoot() + "\\Temp";
+                                pf = windowsSystemRoot() + "\\Temp";
                             }
                             return pf + "\\nuts\\run";
                         }
@@ -395,10 +620,10 @@ public class NPlatformHome {
                 case LIB: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return userHome + getNativePath("/AppData/Roaming/nuts/" + locationName);
+                            return userHome + nativePath("/AppData/Roaming/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_DATA_HOME"));
+                            String val = NStringUtils.strip(env.apply("XDG_DATA_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts/" + locationName;
                             }
@@ -409,10 +634,10 @@ public class NPlatformHome {
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return userHome + getNativePath("/AppData/LocalLow/nuts/" + locationName);
+                            return userHome + nativePath("/AppData/LocalLow/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_LOG_HOME"));
+                            String val = NStringUtils.strip(env.apply("XDG_LOG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -423,10 +648,10 @@ public class NPlatformHome {
                 case RUN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return userHome + getNativePath("/AppData/Local/nuts/" + locationName);
+                            return userHome + nativePath("/AppData/Local/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_RUNTIME_DIR"));
+                            String val = NStringUtils.strip(env.apply("XDG_RUNTIME_DIR"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -437,10 +662,10 @@ public class NPlatformHome {
                 case CONF: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return userHome + getNativePath("/AppData/Roaming/nuts/" + locationName);
+                            return userHome + nativePath("/AppData/Roaming/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_CONFIG_HOME"));
+                            String val = NStringUtils.strip(env.apply("XDG_CONFIG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -451,10 +676,10 @@ public class NPlatformHome {
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return userHome + getNativePath("/AppData/Local/nuts/cache");
+                            return userHome + nativePath("/AppData/Local/nuts/cache");
                         }
                         default: {
-                            String val = NStringUtils.trim(env.apply("XDG_CACHE_HOME"));
+                            String val = NStringUtils.strip(env.apply("XDG_CACHE_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -465,35 +690,45 @@ public class NPlatformHome {
                 case TEMP: {
                     switch (platformOsFamily) {
                         case WINDOWS:
-                            return userHome + getNativePath("/AppData/Local/nuts/" + locationName);
+                            return userHome + nativePath("/AppData/Local/nuts/" + locationName);
                         default:
                             //on macos/unix/linux temp folder is shared. will add user folder as discriminator
-                            return props.apply("java.io.tmpdir") + getNativePath("/" + userName + "/nuts");
+                            return props.apply("java.io.tmpdir") + nativePath("/" + userName + "/nuts");
                     }
                 }
             }
         }
-        throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("unsupported getDefaultPlatformHomeFolderBase %s/%s"), platformOsFamily, location));
+        throw NException.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("unsupported getDefaultPlatformHomeFolderBase %s/%s"), platformOsFamily, location));
     }
 
-    public String getWindowsProgramFiles() {
+    /**
+     * Windows program files.
+     *
+     * @return windows program files result
+     */
+    public String windowsProgramFiles() {
         String s = env.apply("ProgramFiles");
         if (!NBlankable.isBlank(s)) {
             return s;
         }
-        String c = getWindowsSystemDrive();
+        String c = windowsSystemDrive();
         if (!NBlankable.isBlank(c)) {
             return c + "\\Program Files";
         }
         return "C:\\Program Files";
     }
 
-    public String getWindowsProgramFilesX86() {
+    /**
+     * Windows program files x86.
+     *
+     * @return windows program files x86 result
+     */
+    public String windowsProgramFilesX86() {
         String s = env.apply("ProgramFiles(x86)");
         if (!NBlankable.isBlank(s)) {
             return s;
         }
-        String c = getWindowsSystemDrive();
+        String c = windowsSystemDrive();
         if (!NBlankable.isBlank(c)) {
             return c + "\\Program Files (x86)";
         }
@@ -501,7 +736,12 @@ public class NPlatformHome {
     }
 
 
-    public String getWindowsSystemRoot() {
+    /**
+     * Windows system root.
+     *
+     * @return windows system root result
+     */
+    public String windowsSystemRoot() {
         String e;
         e = env.apply("SystemRoot");
         if (!NBlankable.isBlank(e)) {
@@ -518,7 +758,12 @@ public class NPlatformHome {
         return "C:\\Windows";
     }
 
-    public String getWindowsSystemDrive() {
+    /**
+     * Windows system drive.
+     *
+     * @return windows system drive result
+     */
+    public String windowsSystemDrive() {
         String e = env.apply("SystemDrive");
         if (!NBlankable.isBlank(e)) {
             return e;
@@ -534,7 +779,13 @@ public class NPlatformHome {
         return null;
     }
 
-    private String getNativePath(String s) {
+    /**
+     * Native path.
+     *
+     * @param s s
+     * @return native path result
+     */
+    private String nativePath(String s) {
         switch (platformOsFamily) {
             case WINDOWS:
                 return s.replace('/', '\\');
@@ -559,7 +810,7 @@ public class NPlatformHome {
         for (NStoreType location : NStoreType.values()) {
             String platformHomeFolder = getWorkspaceLocation(location, homeLocations, workspaceLocation);
             if (NBlankable.isBlank(platformHomeFolder)) {
-                throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing Home for %s"), location.id()));
+                throw NException.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing Home for %s"), location.id()));
             }
             homes[location.ordinal()] = platformHomeFolder;
         }
@@ -571,7 +822,7 @@ public class NPlatformHome {
             for (Map.Entry<NStoreType, String> e : baseLocations.entrySet()) {
                 NStoreType loc = e.getKey();
                 if (loc == null) {
-                    throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofPlain(NI18n.of("null location")));
+                    throw NException.ofSafeIllegalArgumentException(NMsg.ofP(NI18n.of("null location")));
                 }
                 storeLocations.put(loc, e.getValue());
             }

@@ -27,6 +27,7 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NGetter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,14 +95,31 @@ public final class NMsgIntent {
 
     private final String name;
 
+    /**
+     * N msg intent.
+     *
+     * @param name name
+     * @return n msg intent result
+     */
     public NMsgIntent(String name) {
         NAssert.requireNamedNonBlank(name, "log verb");
         this.name = name;
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @return of result
+     */
     public static NMsgIntent of(String name) {
         NMsgIntent t = cached.get(name);
         if (t == null) {
+          /**
+           * Synchronized.
+           *
+           * @param cached cached
+           */
             synchronized (cached) {
                 t = cached.get(name);
                 if (t == null) {
@@ -112,6 +130,12 @@ public final class NMsgIntent {
         return t;
     }
 
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
     public String name() {
         return name;
     }

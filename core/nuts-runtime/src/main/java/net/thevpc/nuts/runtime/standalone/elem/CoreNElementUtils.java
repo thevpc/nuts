@@ -11,6 +11,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.*;
+import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.function.Predicate;
@@ -75,7 +76,7 @@ public class CoreNElementUtils {
                 // e.g. List<String> -> get raw type List
                 Type rawType = ((ParameterizedType) type).getRawType();
                 if (rawType instanceof Class<?>) {
-                    return test((Class<?>) rawType);
+                    return test(rawType);
                 } else {
                     throw new IllegalArgumentException("Unexpected raw type: " + rawType);
                 }
@@ -219,15 +220,12 @@ public class CoreNElementUtils {
                 if (Temporal.class.isAssignableFrom(cls)) {
                     return true;
                 }
-                if (java.util.Date.class.isAssignableFrom(cls)) {
-                    return true;
-                }
-                return false;
+                return Date.class.isAssignableFrom(cls);
             } else if (type instanceof ParameterizedType) {
                 // e.g. List<String> -> get raw type List
                 Type rawType = ((ParameterizedType) type).getRawType();
                 if (rawType instanceof Class<?>) {
-                    return test((Class<?>) rawType);
+                    return test(rawType);
                 } else {
                     throw new IllegalArgumentException("Unexpected raw type: " + rawType);
                 }
@@ -256,7 +254,7 @@ public class CoreNElementUtils {
             if (type == null) {
                 return true;
             }
-            if(DEFAULT_INDESTRUCTIBLE_PRIMITIVE.test(type)) {
+            if (DEFAULT_INDESTRUCTIBLE_PRIMITIVE.test(type)) {
                 return true;
             }
             if (type instanceof Class<?>) {
@@ -266,7 +264,7 @@ public class CoreNElementUtils {
                 // e.g. List<String> -> get raw type List
                 Type rawType = ((ParameterizedType) type).getRawType();
                 if (rawType instanceof Class<?>) {
-                    return test((Class<?>) rawType);
+                    return test(rawType);
                 } else {
                     throw new IllegalArgumentException("Unexpected raw type: " + rawType);
                 }
@@ -535,12 +533,33 @@ public class CoreNElementUtils {
         return new DefaultNPairElement(denullOne(k), denullOne(v));
     }
 
-    public static NPairElement pair(NElement k, boolean v) {
+    public static NPairElement pair(NElement k, Boolean v) {
         return new DefaultNPairElement(denullOne(k), NElement.ofBoolean(v));
     }
 
-    public static NPairElement pair(NElement k, int v) {
+    public static NPairElement pair(NElement k, Instant v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofInstant(v));
+    }
+
+
+    public static NPairElement pair(NElement k, Integer v) {
         return new DefaultNPairElement(denullOne(k), NElement.ofInt(v));
+    }
+
+    public static NPairElement pair(NElement k, Character v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofChar(v));
+    }
+
+    public static NPairElement pair(NElement k, Short v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofShort(v));
+    }
+
+    public static NPairElement pair(NElement k, Long v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofLong(v));
+    }
+
+    public static NPairElement pair(NElement k, Byte v) {
+        return new DefaultNPairElement(denullOne(k), NElement.ofByte(v));
     }
 
 
@@ -548,15 +567,27 @@ public class CoreNElementUtils {
         return pair(NElement.ofNameOrString(name), denullOne(value));
     }
 
-    public static NPairElement pair(String name, boolean value) {
+    public static NPairElement pair(String k, Instant v) {
+        return new DefaultNPairElement(NElement.ofNameOrString(k), NElement.ofInstant(v));
+    }
+
+    public static NPairElement pair(String name, Boolean value) {
         return pair(NElement.ofNameOrString(name), NElement.ofBoolean(value));
     }
 
-    public static NPairElement pair(String name, int value) {
+    public static NPairElement pair(String name, Integer value) {
         return pair(NElement.ofNameOrString(name), NElement.ofInt(value));
     }
 
-    public static NPairElement pair(String name, double value) {
+    public static NPairElement pair(String name, Character value) {
+        return pair(NElement.ofNameOrString(name), NElement.ofChar(value));
+    }
+
+    public static NPairElement pair(String name, Long value) {
+        return pair(NElement.ofNameOrString(name), NElement.ofLong(value));
+    }
+
+    public static NPairElement pair(String name, Double value) {
         return pair(NElement.ofNameOrString(name), NElement.ofDouble(value));
     }
 
@@ -594,7 +625,7 @@ public class CoreNElementUtils {
             if (s == 1) {
                 return f.children().get(0);
             }
-            return NElement.ofUplet(f.children().toArray(new NElement[0]));
+            return NElement.ofTuple(f.children().toArray(new NElement[0]));
         }
         return any;
     }
@@ -630,8 +661,8 @@ public class CoreNElementUtils {
         return ret;
     }
 
-    public static NOptional<NElement> getByName(List<NElement> values,String s) {
-        if(values==null){
+    public static NOptional<NElement> getByName(List<NElement> values, String s) {
+        if (values == null) {
             return NOptional.ofNamedEmpty("property " + s);
         }
         for (NElement x : values) {
@@ -649,5 +680,20 @@ public class CoreNElementUtils {
             }
         }
         return NOptional.ofNamedEmpty("property " + s);
+    }
+
+    public static void removePairByKey(String child, List<NElement> values) {
+        if (values != null) {
+            Iterator<NElement> it = values.iterator();
+            while (it.hasNext()) {
+                NElement n = it.next();
+                if (n.isNamedPair()) {
+                    NPairElement p = n.asPair().get();
+                    if ((p.key().isNull() && child == null) || Objects.equals(p.key().asStringValue().orNull(), child)) {
+                        it.remove();
+                    }
+                }
+            }
+        }
     }
 }

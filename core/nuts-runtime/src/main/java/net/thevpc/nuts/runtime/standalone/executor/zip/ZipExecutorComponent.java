@@ -29,6 +29,9 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.executor.exec.NExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -51,7 +54,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
@@ -62,9 +65,9 @@ public class ZipExecutorComponent implements NExecutorComponent {
 
     @NScore
     public static int getScore(NScorableContext ctx) {
-        NDefinition def = ctx.getCriteria(NDefinition.class);
+        NDefinition def = ctx.criteria(NDefinition.class);
         if (def != null) {
-            String shortName = def.getId().getShortName();
+            String shortName = def.id().shortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-zip".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
@@ -72,7 +75,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
             if ("zip".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
-            switch (NStringUtils.trim(def.getDescriptor().getPackaging())) {
+            switch (NStringUtils.strip(def.descriptor().packaging())) {
                 case "zip": {
                     return NScorable.DEFAULT_SCORE + 10;
                 }
@@ -83,22 +86,22 @@ public class ZipExecutorComponent implements NExecutorComponent {
 
     //@Override
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        NDefinition def = executionContext.getDefinition();
+        NDefinition def = executionContext.definition();
         HashMap<String, String> osEnv = new HashMap<>();
-        NArtifactCall executor = def.getDescriptor().getExecutor();
-        NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.getId()));
-        List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
-        args.addAll(executionContext.getArguments());
-        if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
+        NArtifactCall executor = def.descriptor().executor();
+        NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.id()));
+        List<String> args = new ArrayList<>(executionContext.executorOptions());
+        args.addAll(executionContext.arguments());
+        if (executor.id() != null && !executor.id().toString().equals("exec")) {
             // TODO: delegate to another executor!
-            throw new NIOException(NMsg.ofC("unsupported executor %s for %s", executor.getId(), def.getId()));
+            throw new NIOException(NMsg.ofC("unsupported executor %s for %s", executor.id(), def.id()));
         }
         String directory = null;
         return NExecHelper.ofDefinition(
                 def,
                 args.toArray(new String[0]), osEnv, directory, true,
-                true, executionContext.getSleepMillis(),
-                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(), executionContext.getRunAs()
+                true, executionContext.sleepDuration(),
+                executionContext.in(), executionContext.out(), executionContext.err(), executionContext.runAs()
         );
     }
 }

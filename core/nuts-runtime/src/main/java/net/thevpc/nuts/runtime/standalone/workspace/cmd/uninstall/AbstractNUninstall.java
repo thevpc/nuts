@@ -11,10 +11,10 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NUninstall;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.AbstractNInstall;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +95,7 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> args() {
         return NCollections.unmodifiableList(args);
     }
 
@@ -116,6 +116,23 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
     }
 
     @Override
+    public NUninstall args(List<String> args) {
+        if (this.args == null) {
+            this.args = new ArrayList<>();
+        } else {
+            this.args.clear();
+        }
+        if (args != null) {
+            for (String arg : args) {
+                if (arg != null) {
+                    this.args.add(arg);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NUninstall addArgs(Collection<String> args) {
         if (this.args == null) {
             this.args = new ArrayList<>();
@@ -131,7 +148,7 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return NCollections.unmodifiableList(ids);
     }
 
@@ -141,7 +158,7 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
     }
 
     @Override
-    public NUninstall setErase(boolean erase) {
+    public NUninstall erase(boolean erase) {
         this.erase = erase;
         return this;
     }
@@ -155,12 +172,12 @@ public abstract class AbstractNUninstall extends NWorkspaceCmdBase<NUninstall> i
         switch (aa.key()) {
             case "-e":
             case "--erase": {
-                cmdLine.matcher().matchFlag((v) -> this.setErase(v.booleanValue())).anyMatch();
+                cmdLine.matcher().whenAny().asFlag((v) -> this.erase(v.booleanValue())).anyMatch();
                 return true;
             }
             case "-g":
             case "--args": {
-                cmdLine.matcher().matchFlag((v) -> {
+                cmdLine.matcher().whenAny().asFlag((v) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 }).anyMatch();

@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
@@ -20,7 +20,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledReposit
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.artifact.NDependencySolver;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.text.NText;
 
@@ -84,7 +84,7 @@ public interface NWorkspaceExt {
 
     NSession defaultSession();
 
-    NApp getApp();
+    NApplication getApp();
     NWorkspaceModel getModel();
 
     String getInstallationDigest();

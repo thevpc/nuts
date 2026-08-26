@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.repository.filter;
 
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -17,20 +16,20 @@ public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
         super(NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>(
                 exactRepos==null?new ArrayList<>() :
-                        exactRepos.stream().map(x-> NStringUtils.trimToNull(x))
+                        exactRepos.stream().map(x-> NStringUtils.stripToNull(x))
                                 .filter(x->x!=null).collect(Collectors.toList())
         );
     }
 
     @Override
     public boolean acceptRepository(NRepository repository) {
-        return exactRepos.contains(repository.getUuid());
+        return exactRepos.contains(repository.uuid());
     }
 
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty()){
-            return NRepositoryFilters.of().always();
+            return NRepositoryFilter.ofAlways();
         }
         return this;
     }
@@ -41,28 +40,15 @@ public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
     }
 
     @Override
-    public int hashCode() {
-        int hash = getClass().getName().hashCode();
-        hash = 41 * hash + Objects.hashCode(this.exactRepos);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNRepositoryUuidFilter that = (DefaultNRepositoryUuidFilter) o;
+        return Objects.equals(exactRepos, that.exactRepos);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNRepositoryUuidFilter other = (DefaultNRepositoryUuidFilter) obj;
-        if (!Objects.equals(this.exactRepos, other.exactRepos)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), exactRepos);
     }
-
 }

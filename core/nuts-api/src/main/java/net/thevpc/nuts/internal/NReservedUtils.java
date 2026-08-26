@@ -50,6 +50,12 @@ import java.util.stream.Collectors;
 public final class NReservedUtils {
 
 
+    /**
+     * Parse complex strings.
+     *
+     * @param complex complex
+     * @return parse complex strings result
+     */
     public static String[] parseComplexStrings(String complex) {
         if (complex == null) {
             complex = "";
@@ -148,8 +154,14 @@ public final class NReservedUtils {
         };
     }
 
+    /**
+     * Resolve java command.
+     *
+     * @param javaHome java home
+     * @return resolve java command result
+     */
     public static String resolveJavaCommand(String javaHome) {
-        String exe = NOsFamily.getCurrent().equals(NOsFamily.WINDOWS) ? "java.exe" : "java";
+        String exe = NOsFamily.current().equals(NOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (NBlankable.isBlank(javaHome) || "null".equals(javaHome)) {
@@ -161,6 +173,12 @@ public final class NReservedUtils {
     }
 
 
+    /**
+     * Desc.
+     *
+     * @param s s
+     * @return desc result
+     */
     public static String desc(Object s) {
         if (s == null) {
             return "<EMPTY>";
@@ -168,20 +186,45 @@ public final class NReservedUtils {
         String ss
                 =
                 (s instanceof Enum) ? NNameFormat.CONST_NAME.format(((Enum<?>) s).name())
-                        : s.toString().trim();
+                        : NStringUtils.strip(s.toString());
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
+    /**
+     * Coalesce.
+     *
+     * @param all all
+     * @return coalesce result
+     */
     public static String coalesce(Object... all) {
         for (Object object : all) {
             if (object != null) {
+                /**
+                 * Desc.
+                 *
+                 * @param object object
+                 * @return desc result
+                 */
                 return desc(object);
             }
         }
+        /**
+         * Desc.
+         *
+         * @param null null
+         * @return desc result
+         */
         return desc(null);
     }
 
 
+    /**
+     * Returns the sys bool nuts property.
+     *
+     * @param property property
+     * @param defaultValue default value
+     * @return get sys bool nuts property result
+     */
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return
                 NLiteral.of(System.getProperty("nuts." + property)).asBoolean().onEmpty(defaultValue).orElse(false)
@@ -189,6 +232,13 @@ public final class NReservedUtils {
                 ;
     }
 
+    /**
+     * Checks if is infinite loop thread.
+     *
+     * @param className class name
+     * @param methodName method name
+     * @return is infinite loop thread result
+     */
     public static boolean isInfiniteLoopThread(String className, String methodName) {
         Thread thread = Thread.currentThread();
         StackTraceElement[] elements = thread.getStackTrace();
@@ -208,50 +258,74 @@ public final class NReservedUtils {
         return false;
     }
 
+    /**
+     * Returns the home.
+     *
+     * @param storeFolder store folder
+     * @param bOptions b options
+     * @return get home result
+     */
     public static String getHome(NStoreType storeFolder, NBootOptions bOptions) {
-        return (bOptions.getSystem().orElse(false) ?
-                NPlatformHome.ofSystem(bOptions.getStoreLayout().orNull()) :
-                NPlatformHome.of(bOptions.getStoreLayout().orNull()))
+        return (bOptions.system().orElse(false) ?
+                NPlatformHome.ofSystem(bOptions.storeLayout().orNull()) :
+                NPlatformHome.of(bOptions.storeLayout().orNull()))
                 .getWorkspaceLocation(
                         storeFolder,
-                        bOptions.getHomeLocations().orNull(),
-                        bOptions.getName().orNull()
+                        bOptions.homeLocations().orNull(),
+                        bOptions.name().orNull()
                 );
     }
 
 
+    /**
+     * Returns the id short name.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param classifier classifier
+     * @return get id short name result
+     */
     public static String getIdShortName(String groupId, String artifactId, String classifier) {
         StringBuilder sb = new StringBuilder();
         if (NBlankable.isBlank(classifier)) {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId).append(":");
             }
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
         } else {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId);
             }
             sb.append(":");
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
             sb.append(":");
             sb.append(classifier);
         }
         return sb.toString();
     }
 
+    /**
+     * Returns the id long name.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param version version
+     * @param classifier classifier
+     * @return get id long name result
+     */
     public static String getIdLongName(String groupId, String artifactId, NVersion version, String classifier) {
         StringBuilder sb = new StringBuilder();
         if (NBlankable.isBlank(classifier)) {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId).append(":");
             }
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
         } else {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId);
             }
             sb.append(":");
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
             sb.append(":");
             sb.append(classifier);
         }
@@ -262,16 +336,22 @@ public final class NReservedUtils {
         return sb.toString();
     }
 
+    /**
+     * Checks if is accept condition.
+     *
+     * @param cond cond
+     * @return is accept condition result
+     */
     public static boolean isAcceptCondition(NEnvCondition cond) {
-        List<String> oss = NReservedLangUtils.uniqueNonBlankList(cond.getOs());
-        List<String> archs = NReservedLangUtils.uniqueNonBlankList(cond.getArch());
+        List<String> oss = NReservedLangUtils.uniqueNonBlankList(cond.os());
+        List<String> archs = NReservedLangUtils.uniqueNonBlankList(cond.arch());
         if (!oss.isEmpty()) {
-            NOsFamily eos = NOsFamily.getCurrent();
+            NOsFamily eos = NOsFamily.current();
             boolean osOk = false;
             for (String e : oss) {
                 NId ee = NId.get(e).get();
-                if (ee.getShortName().equalsIgnoreCase(eos.id())) {
-                    if (acceptVersion(ee.getVersion(), NVersion.of(System.getProperty("os.version")))) {
+                if (ee.shortName().equalsIgnoreCase(eos.id())) {
+                    if (acceptVersion(ee.version(), NVersion.of(System.getProperty("os.version")))) {
                         osOk = true;
                     }
                     break;
@@ -300,20 +380,39 @@ public final class NReservedUtils {
     }
 
 
+    /**
+     * Converts to dependency exclusion list string.
+     *
+     * @param exclusions exclusions
+     * @return to dependency exclusion list string result
+     */
     public static String toDependencyExclusionListString(List<NId> exclusions) {
         TreeSet<String> ex = new TreeSet<>();
         for (NId exclusion : exclusions) {
-            ex.add(exclusion.getShortName());
+            ex.add(exclusion.shortName());
         }
         return String.join(",", ex);
     }
 
+    /**
+     * Checks if is dependency default scope.
+     *
+     * @param s1 s1
+     * @return is dependency default scope result
+     */
     public static boolean isDependencyDefaultScope(String s1) {
         return NDependencyScope.parse(s1).orElse(NDependencyScope.API) == NDependencyScope.API;
     }
 
+    /**
+     * Accept version.
+     *
+     * @param one one
+     * @param other other
+     * @return accept version result
+     */
     public static boolean acceptVersion(NVersionInterval one, NVersion other) {
-        NVersion a = NVersion.of(one.getLowerBound());
+        NVersion a = NVersion.of(one.lowerBound());
         if (a.isBlank()) {
             //ok
         } else {
@@ -328,7 +427,7 @@ public final class NReservedUtils {
                 }
             }
         }
-        a = NVersion.of(one.getUpperBound());
+        a = NVersion.of(one.upperBound());
         if (a.isBlank()) {
             //ok
         } else {
@@ -342,9 +441,16 @@ public final class NReservedUtils {
         return true;
     }
 
+    /**
+     * Accept version.
+     *
+     * @param one one
+     * @param other other
+     * @return accept version result
+     */
     public static boolean acceptVersion(NVersion one, NVersion other) {
         if (!other.isSingleValue()) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("expected single value version: %s", other));
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("expected single value version: %s", other));
         }
         List<NVersionInterval> ii = one.toIntervals().get();
         if (ii.isEmpty()) {
@@ -367,7 +473,7 @@ public final class NReservedUtils {
      * @return nutsId
      */
     public static NOptional<NId> parseId(String nutsId) {
-        nutsId = NStringUtils.trim(nutsId);
+        nutsId = NStringUtils.strip(nutsId);
         if (NBlankable.isBlank(nutsId)) {
             return NOptional.of(NId.BLANK);
         }
@@ -396,7 +502,7 @@ public final class NReservedUtils {
                 Map.Entry<String, String> e = iterator.next();
                 String key = e.getKey();
                 String value = e.getValue();
-                switch (NStringUtils.trim(key)) {
+                switch (NStringUtils.strip(key)) {
                     case NConstants.IdProperties.CLASSIFIER: {
                         classifier = value;
                         break;
@@ -455,23 +561,29 @@ public final class NReservedUtils {
             try {
                 fileContent = new String(Files.readAllBytes(filePath));
             } catch (IOException ex) {
+                /**
+                 * Unchecked io exception.
+                 *
+                 * @param ex ex
+                 * @return unchecked io exception result
+                 */
                 throw new UncheckedIOException(ex);
             }
             String[] fileRows = fileContent.split("\n");
             if (ensureHeader != null) {
-                if (fileRows.length == 0 || !fileRows[0].trim().matches(ensureHeader)) {
+                if (fileRows.length == 0 || !NStringUtils.strip(fileRows[0]).matches(ensureHeader)) {
                     lines.add(headerReplace);
                     updatedFile = true;
                 }
             }
             for (int i = 0; i < fileRows.length; i++) {
                 String row = fileRows[i];
-                if (row.trim().equals("# " + (commentLine))) {
+                if (NStringUtils.strip(row).equals("# " + (commentLine))) {
                     lines.add(row);
                     found = true;
                     i++;
                     if (i < fileRows.length) {
-                        if (!fileRows[i].trim().equals(goodLine)) {
+                        if (!NStringUtils.strip(fileRows[i]).equals(goodLine)) {
                             updatedFile = true;
                         }
                     }
@@ -498,12 +610,27 @@ public final class NReservedUtils {
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
             } catch (IOException ex) {
+                /**
+                 * Unchecked io exception.
+                 *
+                 * @param ex ex
+                 * @return unchecked io exception result
+                 */
                 throw new UncheckedIOException(ex);
             }
         }
         return updatedFile;
     }
 
+    /**
+     * Ndi remove file commented2 lines.
+     *
+     * @param filePath file path
+     * @param commentLine comment line
+     * @param force force
+     * @param bLog b log
+     * @return ndi remove file commented2 lines result
+     */
     static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, NLog bLog) {
         boolean found = false;
         boolean updatedFile = false;
@@ -514,7 +641,7 @@ public final class NReservedUtils {
                 String[] fileRows = fileContent.split("\n");
                 for (int i = 0; i < fileRows.length; i++) {
                     String row = fileRows[i];
-                    if (row.trim().equals("# " + (commentLine))) {
+                    if (NStringUtils.strip(row).equals("# " + (commentLine))) {
                         found = true;
                         i += 2;
                         for (; i < fileRows.length; i++) {
@@ -536,16 +663,22 @@ public final class NReservedUtils {
             }
             return updatedFile;
         } catch (IOException ex) {
-            bLog.log(NMsg.ofPlain("unable to update update " + filePath).asWarningAlert(ex));
+            bLog.log(NMsg.ofP("unable to update update " + filePath).asWarningAlert(ex));
             return false;
         }
     }
 
+    /**
+     * Format string id list.
+     *
+     * @param s s
+     * @return format string id list result
+     */
     public static String formatStringIdList(List<String> s) {
         LinkedHashSet<String> allIds = new LinkedHashSet<>();
         if (s != null) {
             for (String s1 : s) {
-                s1 = NStringUtils.trim(s1);
+                s1 = NStringUtils.strip(s1);
                 if (s1.length() > 0) {
                     allIds.add(s1);
                 }
@@ -555,6 +688,12 @@ public final class NReservedUtils {
     }
 
 
+    /**
+     * Parse string id list.
+     *
+     * @param s s
+     * @return parse string id list result
+     */
     public static NOptional<List<String>> parseStringIdList(String s) {
         if (s == null) {
             return NOptional.of(Collections.emptyList());
@@ -605,6 +744,12 @@ public final class NReservedUtils {
         return NOptional.of(new ArrayList<>(allIds));
     }
 
+    /**
+     * Parse id list.
+     *
+     * @param s s
+     * @return parse id list result
+     */
     public static NOptional<List<NId>> parseIdList(String s) {
         List<NId> list = new ArrayList<>();
         NOptional<List<String>> o = parseStringIdList(s);
@@ -612,7 +757,7 @@ public final class NReservedUtils {
             for (String x : o.get()) {
                 NOptional<NId> y = NId.get(x).onBlankEmpty();
                 if (y.isError()) {
-                    return NOptional.ofError(y.getMessage());
+                    return NOptional.ofError(y.message());
                 }
                 if (y.isPresent()) {
                     list.add(y.get());
@@ -621,52 +766,58 @@ public final class NReservedUtils {
             return NOptional.of(list);
         }
         if (o.isError()) {
-            return NOptional.ofError(o.getMessage());
+            return NOptional.ofError(o.message());
         }
-        return NOptional.ofEmpty(o.getMessage());
+        return NOptional.ofEmpty(o.message());
     }
 
+    /**
+     * Converts to map.
+     *
+     * @param condition condition
+     * @return to map result
+     */
     public static Map<String, String> toMap(NEnvCondition condition) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s;
-        if (condition.getArch() != null) {
-            s = condition.getArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.arch() != null) {
+            s = condition.arch().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.ARCH, s);
             }
         }
-        if (condition.getOs() != null) {
-            s = condition.getOs().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.os() != null) {
+            s = condition.os().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.OS, s);
             }
         }
-        if (condition.getOsDist() != null) {
-            s = condition.getOsDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.osDist() != null) {
+            s = condition.osDist().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.OS_DIST, s);
             }
         }
-        if (condition.getPlatform() != null) {
-            s = formatStringIdList(condition.getPlatform());
+        if (condition.platform() != null) {
+            s = formatStringIdList(condition.platform());
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.PLATFORM, s);
             }
         }
-        if (condition.getDesktopEnvironment() != null) {
-            s = condition.getDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.desktopEnvironment() != null) {
+            s = condition.desktopEnvironment().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.DESKTOP, s);
             }
         }
-        if (condition.getProfiles() != null) {
-            s = condition.getProfiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.profiles() != null) {
+            s = condition.profiles().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.PROFILE, s);
             }
         }
-        if (condition.getProperties() != null) {
-            Map<String, String> properties = condition.getProperties();
+        if (condition.properties() != null) {
+            Map<String, String> properties = condition.properties();
             if (!properties.isEmpty()) {
                 m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringMapFormat.DEFAULT.format(properties));
             }

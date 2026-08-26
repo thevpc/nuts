@@ -30,6 +30,7 @@ import net.thevpc.nuts.util.*;
  * @app.category Format
  */
 public enum NTextStyleType implements NEnum {
+    // === 1. BASIC STYLES & MODIFIERS (Hardware/Ansi level effects) ===
     PLAIN(true),//f
     UNDERLINED(true),//_
     ITALIC(true),// /
@@ -37,43 +38,78 @@ public enum NTextStyleType implements NEnum {
     REVERSED(true),//v
     BOLD(true),//d
     BLINK(true),//k
+    PALE(false),
     FORE_COLOR(true),//f
     BACK_COLOR(true),//b
     FORE_TRUE_COLOR(true),//f
     BACK_TRUE_COLOR(true),//b
 
+    // === 2. THE CORE PALETTE (Branding / Base Theme FG & BG) ===
     PRIMARY(false), //p
     SECONDARY(false),//s
-    ERROR(false),
-    WARN(false),
-    INFO(false),
-    CONFIG(false),
+
+    // === 3. SYNTAX & LITERALS (Code tokens and data types) ===
+    KEYWORD(false),
+    /**
+     * entity, class, object, ...
+     * @since 1.0.0
+     */
+    ENTITY(false), // type, class, struct
+    /**
+     * function, method, ...
+     * @since 1.0.0
+     */
+    ACTION(false),
+    /**
+     * annotation, attribute, metadata ...
+     * @since 1.0.0
+     */
+    ANNOTATION(false),
+    VAR(false),
+    OPERATOR(false),
+    SEPARATOR(false),
     COMMENTS(false),
+
+    // Literals section (Strings, inputs, and string-variants)
     STRING(false),
+    INPUT(false),
+    PATH(false),
+    VERSION(false),
     NUMBER(false),
     DATE(false),
     BOOLEAN(false),
-    KEYWORD(false),
     OPTION(false),
-    INPUT(false),
-    SEPARATOR(false),
-    OPERATOR(false),
+    TITLE(false),
+    PLACEHOLDER(false),
+
+    // === 3. UI / STATE STYLES ===
+    INFO(false),
+    CONFIG(false),
     SUCCESS(false),
-    FAIL(false),
+    WARN(false),
+    ERROR(false),
     DANGER(false),
-    VAR(false),
-    PALE(false),
-    PATH(false),
-    VERSION(false),
-    TITLE(false);
+    FAIL(false)
+    ;
     private final boolean basic;
     private final String id;
 
+  /**
+   * N text style type.
+   *
+   * @param basic basic
+   */
     NTextStyleType(boolean basic) {
         this.basic = basic;
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NTextStyleType> parse(String value) {
         return NEnumUtils.parseEnum(value, NTextStyleType.class, s -> {
             switch (s.normalizedValue()) {
@@ -222,6 +258,12 @@ public enum NTextStyleType implements NEnum {
         return id;
     }
 
+    /**
+     * Checks if is basic.
+     *
+     * @param trueBasic true basic
+     * @return is basic result
+     */
     public boolean isBasic(boolean trueBasic) {
         if (trueBasic) {
             if (basic) {
@@ -239,10 +281,20 @@ public enum NTextStyleType implements NEnum {
         }
     }
 
+    /**
+     * Basic.
+     *
+     * @return basic result
+     */
     public boolean basic() {
         return basic;
     }
 
+    /**
+     * True basic.
+     *
+     * @return true basic result
+     */
     public boolean trueBasic() {
         if (basic) {
             switch (this) {

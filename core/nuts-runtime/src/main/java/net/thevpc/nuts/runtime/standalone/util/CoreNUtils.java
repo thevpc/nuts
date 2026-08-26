@@ -33,6 +33,7 @@ import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -101,7 +102,7 @@ public class CoreNUtils {
                 }
                 return 1;
             }
-            return NUTS_ID_COMPARATOR.compare(o1.getId(), o2.getId());
+            return NUTS_ID_COMPARATOR.compare(o1.id(), o2.id());
         }
     };
 
@@ -188,13 +189,13 @@ public class CoreNUtils {
     }
 
     public static boolean isEffectiveId(NId id) {
-        return (isEffectiveValue(id.getGroupId()) && isEffectiveValue(id.getArtifactId()) && isEffectiveValue(id.getVersion().getValue()));
+        return (isEffectiveValue(id.groupId()) && isEffectiveValue(id.artifactId()) && isEffectiveValue(id.version().value()));
     }
 
     public static boolean containsVars(NId id) {
-        return (CoreStringUtils.containsVars(id.getGroupId())
-                && CoreStringUtils.containsVars(id.getArtifactId())
-                && CoreStringUtils.containsVars(id.getVersion().getValue()));
+        return (CoreStringUtils.containsVars(id.groupId())
+                && CoreStringUtils.containsVars(id.artifactId())
+                && CoreStringUtils.containsVars(id.version().value()));
     }
 
     public static List<String> applyStringPropertiesList(List<String> child, Function<String, String> properties) {
@@ -233,12 +234,12 @@ public class CoreNUtils {
         if (child == null) {
             return child;
         }
-        String s = child.getValue();
+        String s = child.value();
         if (NBlankable.isBlank(s)) {
             return NVersion.BLANK;
         }
         String s2 = applyStringProperties(s, properties);
-        if (!NStringUtils.trim(s2).equals(s)) {
+        if (!NStringUtils.strip(s2).equals(s)) {
             return NVersion.get(s2).orElse(NVersion.BLANK);
         }
         return child;
@@ -259,8 +260,8 @@ public class CoreNUtils {
 //        return CoreStringUtils.replaceDollarPlaceHolders(child, properties);
 //    }
     public static String applyStringInheritance(String child, String parent) {
-        child = NStringUtils.trimToNull(child);
-        parent = NStringUtils.trimToNull(parent);
+        child = NStringUtils.stripToNull(child);
+        parent = NStringUtils.stripToNull(parent);
         if (child == null) {
             return parent;
         }
@@ -270,37 +271,37 @@ public class CoreNUtils {
     public static NId applyNutsIdInheritance(NId child, NId parent) {
         if (parent != null) {
             boolean modified = false;
-            String repository = child.getRepository();
-            String group = child.getGroupId();
-            String name = child.getArtifactId();
-            String version = child.getVersion().getValue();
-            Map<String, String> props = child.getProperties();
+            String repository = child.repository();
+            String group = child.groupId();
+            String name = child.artifactId();
+            String version = child.version().value();
+            Map<String, String> props = child.properties();
             if (NBlankable.isBlank(repository)) {
                 modified = true;
-                repository = parent.getRepository();
+                repository = parent.repository();
             }
             if (NBlankable.isBlank(group)) {
                 modified = true;
-                group = parent.getGroupId();
+                group = parent.groupId();
             }
             if (NBlankable.isBlank(name)) {
                 modified = true;
-                name = parent.getArtifactId();
+                name = parent.artifactId();
             }
             if (NBlankable.isBlank(version)) {
                 modified = true;
-                version = parent.getVersion().getValue();
+                version = parent.version().value();
             }
-            Map<String, String> parentFaceMap = parent.getProperties();
+            Map<String, String> parentFaceMap = parent.properties();
             if (!parentFaceMap.isEmpty()) {
                 modified = true;
                 props.putAll(parentFaceMap);
             }
             if (modified) {
-                return NIdBuilder.of().setRepository(repository)
-                        .setGroupId(group)
-                        .setArtifactId(name)
-                        .setVersion(version)
+                return NIdBuilder.of().repository(repository)
+                        .groupId(group)
+                        .artifactId(name)
+                        .version(version)
                         .setProperties(props).build();
             }
         }
@@ -326,32 +327,32 @@ public class CoreNUtils {
 
     public static Map<String, Object> traceJsonNutsDefinition(NDefinition def) {
         Map<String, Object> x = new LinkedHashMap<>();
-        x.put("id", def.getId());
-        if (def.getContent().isPresent()) {
-            x.put("path", def.getContent().get());
-            x.put("cached", def.getContent().get().isUserCache());
-            x.put("temporary", def.getContent().get().isUserTemporary());
+        x.put("id", def.id());
+        if (def.content().isPresent()) {
+            x.put("path", def.content().get());
+            x.put("cached", def.content().get().isUserCache());
+            x.put("temporary", def.content().get().isUserTemporary());
         }
-        if (def.getInstallInformation().isPresent()) {
-            NInstallInformation nInstallInformation = def.getInstallInformation().get();
-            if (nInstallInformation.getInstallFolder() != null) {
-                x.put("install-folder", nInstallInformation.getInstallFolder());
+        if (def.installInformation().isPresent()) {
+            NInstallInformation nInstallInformation = def.installInformation().get();
+            if (nInstallInformation.installFolder() != null) {
+                x.put("install-folder", nInstallInformation.installFolder());
             }
-            x.put("install-status", nInstallInformation.getInstallStatus().toString());
+            x.put("install-status", nInstallInformation.installStatus().toString());
             x.put("was-installed", nInstallInformation.isWasInstalled());
             x.put("was-required", nInstallInformation.isWasRequired());
         }
-        if (def.getRepositoryName() != null) {
-            x.put("repository-name", def.getRepositoryName());
+        if (def.repositoryName() != null) {
+            x.put("repository-name", def.repositoryName());
         }
-        if (def.getRepositoryUuid() != null) {
-            x.put("repository-uuid", def.getRepositoryUuid());
+        if (def.repositoryUuid() != null) {
+            x.put("repository-uuid", def.repositoryUuid());
         }
-        if (def.getDescriptor() != null) {
-            x.put("descriptor", NDescriptorWriter.of().format(def.getDescriptor()));
+        if (def.descriptor() != null) {
+            x.put("descriptor", NDescriptorWriter.of().format(def.descriptor()));
             x.put("effective-descriptor", NDescriptorWriter.of(
             ).format(
-                    def.getEffectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(), new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
+                    def.effectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.descriptor(), new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true)))
             ));
         }
         return x;
@@ -463,7 +464,7 @@ public class CoreNUtils {
 
     public static int getApiVersionOrdinalNumber(NVersion ss) {
         try {
-            String s = ss.getValue();
+            String s = ss.value();
             int qualifierIndex = s.indexOf('-');
             if (qualifierIndex >= 0) {
                 s = s.substring(0, qualifierIndex);
@@ -544,42 +545,42 @@ public class CoreNUtils {
     }
 
 
-    public static NIdType detectIdType(NId depId) {
-        switch (depId.getShortName()) {
-            case NConstants.Ids.NUTS_API: {
-                return NIdType.API;
-            }
-            case NConstants.Ids.NUTS_RUNTIME: {
-                return NIdType.RUNTIME;
-            }
-            default: {
-                String rt = NWorkspace.of().getRuntimeId().getShortName();
-                if (rt.equals(depId.getShortName())) {
-                    return NIdType.RUNTIME;
-                } else {
-                    for (NClassLoaderNode n : NWorkspace.of().getBootExtensionClassLoaderNodes()) {
-                        if (n.getId() != null) {
-                            if (n.getId().equalsShortId(depId)) {
-                                return NIdType.EXTENSION;
-                            }
-                        }
-                    }
-                    return NIdType.REGULAR;
-                }
-            }
-        }
-    }
+//    public static NIdType detectIdType(NId depId) {
+//        switch (depId.shortName()) {
+//            case NConstants.Ids.NUTS_API: {
+//                return NIdType.API;
+//            }
+//            case NConstants.Ids.NUTS_RUNTIME: {
+//                return NIdType.RUNTIME;
+//            }
+//            default: {
+//                String rt = NWorkspace.of().runtimeId().shortName();
+//                if (rt.equals(depId.shortName())) {
+//                    return NIdType.RUNTIME;
+//                } else {
+//                    for (NClassLoaderNode n : NWorkspace.of().bootExtensionClassLoaderNodes()) {
+//                        if (n.id() != null) {
+//                            if (n.id().equalsShortId(depId)) {
+//                                return NIdType.EXTENSION;
+//                            }
+//                        }
+//                    }
+//                    return NIdType.REGULAR;
+//                }
+//            }
+//        }
+//    }
 
     public static List<NId> resolveNutsApiIdsFromId(NId id) {
         List<NDependency> deps = NFetch.of(id)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDefinition()
-                .getDependencies().get().transitive().toList();
+                .dependencies().get().transitive().toList();
         return resolveNutsApiIdsFromDependencyList(deps);
     }
 
     public static List<NId> resolveNutsApiIdsFromDefinition(NDefinition def) {
-        return resolveNutsApiFromFromDependencies(def.getDependencies().get());
+        return resolveNutsApiFromFromDependencies(def.dependencies().get());
     }
 
     public static List<NId> resolveNutsApiFromFromDependencies(NDependencies deps) {

@@ -1,6 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,106 +51,250 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
     private NSagaNodeStatus status = NSagaNodeStatus.PENDING;
     private NCompensationStrategy compensationStrategy = NCompensationStrategy.ABORT;
 
+    /**
+     * N saga node model.
+     *
+     * @return n saga node model result
+     */
     public NSagaNodeModel() {
     }
 
-    public String getId() {
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NSagaNodeModel setId(String id) {
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
+    public NSagaNodeModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public String getName() {
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NSagaNodeModel setName(String name) {
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    public NSagaNodeModel name(String name) {
         this.name = name;
         return this;
     }
 
-    public NSagaNodeType getType() {
+    /**
+     * Type.
+     *
+     * @return type result
+     */
+    @NGetter
+    public NSagaNodeType type() {
         return type;
     }
 
-    public NSagaNodeModel setType(NSagaNodeType type) {
+    /**
+     * Type.
+     *
+     * @param type type
+     * @return type result
+     */
+    @NSetter
+    public NSagaNodeModel type(NSagaNodeType type) {
         this.type = type;
         return this;
     }
 
-    public NSagaStep getStepCall() {
+    /**
+     * Step call.
+     *
+     * @return step call result
+     */
+    @NGetter
+    public NSagaStep stepCall() {
         return stepCall;
     }
 
-    public NSagaNodeModel setStepCall(NSagaStep stepCall) {
+    /**
+     * Step call.
+     *
+     * @param stepCall step call
+     * @return step call result
+     */
+    @NSetter
+    public NSagaNodeModel stepCall(NSagaStep stepCall) {
         this.stepCall = stepCall;
         return this;
     }
 
-    public NSagaCondition getStepCondition() {
+    /**
+     * Step condition.
+     *
+     * @return step condition result
+     */
+    @NGetter
+    public NSagaCondition stepCondition() {
         return stepCondition;
     }
 
-    public NSagaNodeModel setStepCondition(NSagaCondition stepCondition) {
+    /**
+     * Step condition.
+     *
+     * @param stepCondition step condition
+     * @return step condition result
+     */
+    @NSetter
+    public NSagaNodeModel stepCondition(NSagaCondition stepCondition) {
         this.stepCondition = stepCondition;
         return this;
     }
 
-    public List<NSagaNodeModel> getChildren() {
+    /**
+     * Children.
+     *
+     * @return children result
+     */
+    @NGetter
+    public List<NSagaNodeModel> children() {
         return children;
     }
 
-    public NSagaNodeModel setChildren(List<NSagaNodeModel> children) {
+    /**
+     * Children.
+     *
+     * @param children children
+     * @return children result
+     */
+    @NSetter
+    public NSagaNodeModel children(List<NSagaNodeModel> children) {
         this.children = children;
         return this;
     }
 
+    /**
+     * Adds the specified child.
+     *
+     * @param child child
+     * @return add child result
+     */
     public NSagaNodeModel addChild(NSagaNodeModel child) {
         this.children.add(child);
         return this;
     }
 
-    public List<NSagaNodeModel> getElseIfBranches() {
+    /**
+     * Else if branches.
+     *
+     * @return else if branches result
+     */
+    @NGetter
+    public List<NSagaNodeModel> elseIfBranches() {
         return elseIfBranches;
     }
 
-    public NSagaNodeModel setElseIfBranches(List<NSagaNodeModel> elseIfBranches) {
+    /**
+     * Else if branches.
+     *
+     * @param elseIfBranches else if branches
+     * @return else if branches result
+     */
+    @NSetter
+    public NSagaNodeModel elseIfBranches(List<NSagaNodeModel> elseIfBranches) {
         this.elseIfBranches = elseIfBranches;
         return this;
     }
 
-    public List<NSagaNodeModel> getOtherwiseBranch() {
+    /**
+     * Otherwise branch.
+     *
+     * @return otherwise branch result
+     */
+    @NGetter
+    public List<NSagaNodeModel> otherwiseBranch() {
         return otherwiseBranch;
     }
 
-    public NSagaNodeModel setOtherwiseBranch(List<NSagaNodeModel> otherwiseBranch) {
+    /**
+     * Otherwise branch.
+     *
+     * @param otherwiseBranch otherwise branch
+     * @return otherwise branch result
+     */
+    @NSetter
+    public NSagaNodeModel otherwiseBranch(List<NSagaNodeModel> otherwiseBranch) {
         this.otherwiseBranch = otherwiseBranch;
         return this;
     }
 
-    public NSagaNodeStatus getStatus() {
+    /**
+     * Status.
+     *
+     * @return status result
+     */
+    @NGetter
+    public NSagaNodeStatus status() {
         return status;
     }
 
-    public NSagaNodeModel setStatus(NSagaNodeStatus status) {
+    /**
+     * Status.
+     *
+     * @param status status
+     * @return status result
+     */
+    @NSetter
+    public NSagaNodeModel status(NSagaNodeStatus status) {
         this.status = status;
         return this;
     }
 
-    public NCompensationStrategy getCompensationStrategy() {
+    /**
+     * Compensation strategy.
+     *
+     * @return compensation strategy result
+     */
+    @NGetter
+    public NCompensationStrategy compensationStrategy() {
         return compensationStrategy;
     }
 
-    public NSagaNodeModel setCompensationStrategy(NCompensationStrategy compensationStrategy) {
+    /**
+     * Compensation strategy.
+     *
+     * @param compensationStrategy compensation strategy
+     * @return compensation strategy result
+     */
+    @NSetter
+    public NSagaNodeModel compensationStrategy(NCompensationStrategy compensationStrategy) {
         this.compensationStrategy = compensationStrategy;
         return this;
     }
 
     @Override
     public NSagaNodeModel copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 

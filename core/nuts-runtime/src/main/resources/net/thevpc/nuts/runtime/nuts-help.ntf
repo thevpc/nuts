@@ -97,9 +97,11 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --sandbox=true|false ``` (default is ```kw false``` )
       when creating the workspace, generate a random workspace, for testing purposes.
       sandbox mode will be propagated/exported as ```kw --confined```
+  ```sh --in-memory ``` (default is ```kw false``` )
+      run the workspace entirely in memory without disk persistence.
  ```sh --confined=true|false ``` (default is ```kw false``` )
       use a confined workspace that does not allow user wide or system wide alteration
- ```sh --isolation=system|user|confined|sandbox ``` (default is ```kw system``` )
+ ```sh --isolation-level=system|user|confined|sandbox|memory ``` (default is ```kw system``` )
       use the level of isolation for the workspace
 
  ```sh --boot-runtime <runtime-id-or-version> ``` (default is ```kw ""``` and points to the latest compatible nuts-runtime artifact)
@@ -199,39 +201,39 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       ```kw macos```      : always use macos layout (even if running on windows)
 
       Data folders of nuts are :
-        apps     : executable binaries folder. Equivalent to linux's '/bin' folder. It's defined as
+        conf     : configuration/settings files folder. equivalent to XDG spec's XDG_CONFIG_HOME folder defined as
+                        "base directory relative to which user-specific configuration files should be written"
+        bin      : executable binaries folder. Equivalent to linux's '/bin' folder. It's defined as
                         "base directory relative to which reusable executable applications and scripts should be written"
         lib      : non executable binaries (libraries) folder. Equivalent to linux's '/usr/lib' folder. It's defined as
                         "base directory relative to which reusable libraries should be written"
-        config   : configuration/settings files folder. equivalent to XDG spec's XDG_CONFIG_HOME folder defined as
-                        "base directory relative to which user-specific configuration files should be written"
         var      : data files folder. More or less related to XDG spec's XDG_DATA_HOME folder. It's defined as
                         "the base directory relative to which user-specific non executable data files should be stored"
         log      : log/trace files folder. Equivalent to XDG_LOG_HOME a non standard XDG variable defined as
                         "the base directory relative to which application non-essential data for trace and monitoring
                         should be stored"
-        temp     : temporary files folder. Equivalent to user/system temp folder defined as
-                        "the base directory relative to which application temporary data should be stored"
         cache    : cache folder. Equivalent to XDG spec's XDG_CACHE_HOME folder defined as
                         "the base directory relative to which user-specific non-essential data files should be stored"
+        temp     : temporary files folder. Equivalent to user/system temp folder defined as
+                        "the base directory relative to which application temporary data should be stored"
         run      : run folder. Equivalent to to XDG spec's XDG_RUNTIME_HOME bin folder defined as
                         "the base directory relative to which user-specific non-essential runtime files and other
                         file objects (such as sockets, named pipes, ...) should be stored"
 
      In the Windows layout, default (home) locations resolve to ($HOME is the user's home folder)
-        apps     : ```sh "$HOME/AppData/Roaming/nuts/apps"```
+        conf     : ```sh "$HOME/AppData/Roaming/nuts/conf"```
+        bin      : ```sh "$HOME/AppData/Roaming/nuts/bin"```
         lib      : ```sh "$HOME/AppData/Roaming/nuts/lib"```
-        config   : ```sh "$HOME/AppData/Roaming/nuts/config"```
         var      : ```sh "$HOME/AppData/Roaming/nuts/var"```
         log      : ```sh "$HOME/AppData/Roaming/nuts/log"```
-        temp     : ```sh "$HOME/AppData/Local/nuts/temp"```
         cache    : ```sh "$HOME/AppData/Local/nuts/cache"```
+        temp     : ```sh "$HOME/AppData/Local/nuts/temp"```
         run      : ```sh "$HOME/AppData/Local/nuts/run"```
 
      In the Linux/Unix/MacOS layout, default locations resolve (according to XDG Base Directory Specification) 
      to ($HOME is the user's home folder)
-        config   : ```sh "$HOME/.config/nuts"```
-        apps     : ```sh "$HOME/.local/share/nuts/apps"```
+        conf     : ```sh "$HOME/.config/nuts"```
+        bin      : ```sh "$HOME/.local/share/nuts/apps"```
         lib      : ```sh "$HOME/.local/share/nuts/lib"```
         var      : ```sh "$HOME/.local/share/nuts/var"```
         log      : ```sh "$HOME/.local/log/nuts"```
@@ -240,22 +242,22 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
         run      : ```sh "/run/user/$USER_ID/nuts"```
      
     These home locations are tuned individually using the following options
+            ```sh --system-conf-home <path>```
             ```sh --system-bin-home <path>```
             ```sh --system-lib-home <path>```
-            ```sh --system-conf-home <path>```
             ```sh --system-var-home <path>```
             ```sh --system-log-home <path>```
-            ```sh --system-temp-home <path>```
             ```sh --system-cache-home <path>```
+            ```sh --system-temp-home <path>```
             ```sh --system-run-home <path>```
 
+            ```sh --<os-family>-conf-home <path>```
             ```sh --<os-family>-bin-home <path>```
             ```sh --<os-family>-lib-home <path>```
-            ```sh --<os-family>-conf-home <path>```
             ```sh --<os-family>-var-home <path>```
             ```sh --<os-family>-log-home <path>```
-            ```sh --<os-family>-temp-home <path>```
             ```sh --<os-family>-cache-home <path>```
+            ```sh --<os-family>-temp-home <path>```
             ```sh --<os-family>-run-home <path>```
 
             where <os-family> in one of ```kw windows```, ```kw linux```, ```kw unix```, ```kw macos``` or ```kw system```.
@@ -320,18 +322,18 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       Linux/Unix : ```sh "/usr/share/nuts/default-workspace" ```
       More generally folder homes are defines as follows :
       Windows Layout   :
-        apps     : ```sh "$ProgramFiles/nuts" ```
+        bin      : ```sh "$ProgramFiles/nuts" ```
         lib      : ```sh "$ProgramFiles/nuts" ```
-        config   : ```sh "$ProgramFiles/nuts" ```
+        conf     : ```sh "$ProgramFiles/nuts" ```
         var      : ```sh "$ProgramFiles/nuts" ```
         log      : ```sh "$ProgramFiles/nuts" ```
         temp     : ```sh "$TMP/nuts" ```
         cache    : ```sh "$ProgramFiles/nuts" ```
         run      : ```sh "$ProgramFiles/nuts" ```
       Linux Layout    :
-        apps     : ```sh "/opt/nuts/apps" ```
+        bin      : ```sh "/opt/nuts/bin" ```
         lib      : ```sh "/opt/nuts/lib" ```
-        config   : ```sh "/etc/opt/nuts" ```
+        conf     : ```sh "/etc/opt/nuts" ```
         var      : ```sh "/var/opt/nuts" ```
         log      : ```sh "/var/log/nuts" ```
         temp     : ```sh "/tmp/nuts/global" ```
@@ -353,17 +355,28 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --no-color```
       disable formatted (colorful) terminal (```kw filtered``` terminal).
 
- ```sh --trace``` (default is true)
- ```sh -t```
-      apply trace mode which allows a more verbose output
+  ```sh --trace``` (default is true)
+  ```sh -t```
+       apply trace mode which allows a more verbose output
 
- ```sh --transitive``` (default is true)
+  ```sh --bot``` (default is false)
+  ```sh -B```
+       enable bot/automation mode (non-interactive, structured output)
+
+  ```sh --stacktrace``` (default is false)
+  ```sh -d```
+       show Java stacktrace on error
+
+  ```sh --reset-options```
+       reset options to default values
+
+  ```sh --transitive``` (default is true)
       consider transitive repositories
 
- ```sh --index``` (default is true)
+  ```sh --indexed``` (default is true)
       search into indexes
 
- ```sh --cached```  (default is true)
+  ```sh --cached```  (default is true)
       use cache whenever possible
 
  ```sh --progress[=<options>]```
@@ -576,10 +589,10 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --reset  or -Z``` (defaults to ```bool false```)
       reset (delete) ```sh nuts``` workspace folder before starting the workspace. All user configuration will not be deleted.
 
- ```sh --hard-reset``` (defaults to ```bool false```)
-      hard reset (delete) all of ```sh nuts``` workspaces and any configuration file. All user configuration will not be deleted.
-      a common usage is to hard-reset nuts and exit using ```sh -Qy --hard-reset``` which will silently hard-reset configuration and exit.
-      if ```sh -Q``` is not used, after resetting, a new workspace will be bootstrapping
+  ```sh --reset-hard``` or ```sh --hard-reset``` (defaults to ```bool false```)
+       hard reset (delete) all of ```sh nuts``` workspaces and any configuration file. All user configuration will not be deleted.
+       a common usage is to hard-reset nuts and exit using ```sh -Qy --reset-hard``` which will silently hard-reset configuration and exit.
+       if ```sh -Q``` is not used, after resetting, a new workspace will be bootstrapping
 
  ```sh --skip-boot  or -Q``` (defaults to ```bool false```)
       do not load workspace. This is helpful when used with ```sh --reset  or -Z```, aka ```sh -QZ```,  in which case,

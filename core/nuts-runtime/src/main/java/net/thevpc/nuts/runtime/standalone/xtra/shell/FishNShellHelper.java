@@ -1,7 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
-public class FishNShellHelper extends ShNShellHelper {
+public class FishNShellHelper extends PosixNShellHelper {
     public static final NShellHelper FISH=new FishNShellHelper();
+    public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/fish", "#!.*");
+    public ReplaceString getShebanSh() {
+        return SHEBAN_SH;
+    }
 
     @Override
     public String getSysRcName() {

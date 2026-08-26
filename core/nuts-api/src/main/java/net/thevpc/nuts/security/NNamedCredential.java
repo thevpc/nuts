@@ -1,19 +1,30 @@
 package net.thevpc.nuts.security;
 
+/**
+ * NNamedCredential interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NNamedCredential {
     /**
      * Human-readable name (e.g., "github-personal", "nexus-corp").
      * Used in .nops files: include(url, credential:"github-personal")
      */
-    String getName();
+    String name();
 
     /**
      * Nuts workspace user who owns this credential (permission scoping).
      * Only this user (or admin) can use/reference this credential.
      */
-    String getUserName();
+    String userName();
 
-    String getAuthType();
+    /**
+     * Auth type.
+     *
+     * @return auth type result
+     */
+    String authType();
 
     /**
      * Opaque credential identifier in {@code agent#version:payload} format.
@@ -29,13 +40,18 @@ public interface NNamedCredential {
      *
      * @return opaque credential identifier (agent#version:payload)
      */
-    NSecureToken getCredential();
+    NSecureToken credential();
 
     /**
      * Optional URL pattern for auto-resolution (e.g., "https://github.com/*").
      * When null, credential must be explicitly referenced by name.
      */
-    String getResource();
+    String resource();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NNamedCredentialBuilder builder();
 }

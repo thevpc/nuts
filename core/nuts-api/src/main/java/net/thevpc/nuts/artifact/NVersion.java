@@ -62,14 +62,26 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
         if (NBlankable.isBlank(version)) {
             return NOptional.of(BLANK);
         }
-        String version2 = NStringUtils.trim(version);
+        String version2 = NStringUtils.strip(version);
         if (PATTERN.matcher(version2).matches()) {
             return NOptional.of(new DefaultNVersion(version2));
         }
         return NOptional.ofError(() -> NMsg.ofC("invalid version format : %s", version));
     }
 
+    /**
+     * Creates a new instance of.
+     *
+     * @param version version
+     * @return of result
+     */
     static NVersion of(String version) {
+        /**
+         * Returns the get.
+         *
+         * @param version).get( version).get(
+         * @return get result
+         */
         return get(version).get();
     }
 
@@ -85,7 +97,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      *
      * @return string representation of the version (never null)
      */
-    String getValue();
+    String value();
 
     /**
      * compare this version to the other version
@@ -106,8 +118,22 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     @Override
     int compareTo(NVersion other);
 
+    /**
+     * Compare to.
+     *
+     * @param other other
+     * @param comparator comparator
+     * @return compare to result
+     */
     int compareTo(NVersion other, NVersionComparator comparator);
 
+    /**
+     * Compare to.
+     *
+     * @param other other
+     * @param comparator comparator
+     * @return compare to result
+     */
     int compareTo(String other, NVersionComparator comparator);
 
     /**
@@ -132,6 +158,12 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      */
     NVersionFilter toFilter();
 
+    /**
+     * Converts to filter.
+     *
+     * @param comparator comparator
+     * @return to filter result
+     */
     NVersionFilter toFilter(NVersionComparator comparator);
 
     /**
@@ -159,6 +191,12 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      */
     NOptional<List<NVersionInterval>> toIntervals();
 
+    /**
+     * Converts to intervals.
+     *
+     * @param comparator comparator
+     * @return to intervals result
+     */
     NOptional<List<NVersionInterval>> toIntervals(NVersionComparator comparator);
 
     /**
@@ -168,6 +206,11 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      */
     boolean isSingleValue();
 
+    /**
+     * As single value.
+     *
+     * @return as single value result
+     */
     NOptional<String> asSingleValue();
 
     /**
@@ -265,17 +308,55 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      */
     NOptional<Number> getNumberAt(int index);
 
+    /**
+     * Returns the int at.
+     *
+     * @param index index
+     * @return get int at result
+     */
     NOptional<Integer> getIntAt(int index);
 
+    /**
+     * Returns the long at.
+     *
+     * @param index index
+     * @return get long at result
+     */
     NOptional<Long> getLongAt(int index);
 
+    /**
+     * Returns the big int at.
+     *
+     * @param level level
+     * @return get big int at result
+     */
     NOptional<BigInteger> getBigIntAt(int level);
 
+    /**
+     * Checks if is latest.
+     *
+     * @return is latest result
+     */
     boolean isLatest();
 
+    /**
+     * Checks if is release.
+     *
+     * @return is release result
+     */
     boolean isRelease();
 
+    /**
+     * Checks if is snapshot.
+     *
+     * @return is snapshot result
+     */
     boolean isSnapshot();
 
+    /**
+     * Parts.
+     *
+     * @return parts result
+     */
     List<NVersionPart> parts();
 }

@@ -16,8 +16,11 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceUpdateResult;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
+import net.thevpc.nuts.collections.NCollections;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -55,7 +58,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return NCollections.unmodifiableList(ids);
     }
 
@@ -143,7 +146,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> args() {
         return NCollections.unmodifiableList(args);
     }
 
@@ -185,7 +188,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
     }
 
     @Override
-    public List<NId> getLockedIds() {
+    public List<NId> lockedIds() {
         return NCollections.unmodifiableList(lockedIds);
     }
 
@@ -195,7 +198,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
     }
 
     @Override
-    public NUpdate setEnableInstall(boolean enableInstall) {
+    public NUpdate enableInstall(boolean enableInstall) {
         this.enableInstall = enableInstall;
         return this;
     }
@@ -212,7 +215,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
         }
 
         for (NId id : ids) {
-            if (id.getShortName().equals(NConstants.Ids.NUTS_API)) {
+            if (id.shortName().equals(NConstants.Ids.NUTS_API)) {
                 return true;
             }
         }
@@ -241,7 +244,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
             return true;
         }
         for (NId id : ids) {
-            if (id.getShortName().equals(NWorkspace.of().getRuntimeId().getShortName())) {
+            if (id.shortName().equals(NWorkspace.of().runtimeId().shortName())) {
                 return true;
             }
 
@@ -250,13 +253,13 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
     }
 
     @Override
-    public NUpdate setApi(boolean enableMajorUpdates) {
+    public NUpdate api(boolean enableMajorUpdates) {
         this.updateApi = enableMajorUpdates;
         return this;
     }
 
     @Override
-    public NUpdate setCompanions(boolean updateCompanions) {
+    public NUpdate companions(boolean updateCompanions) {
         this.updateCompanions = updateCompanions;
         return this;
     }
@@ -270,25 +273,25 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
     }
 
     @Override
-    public NUpdate setExtensions(boolean updateExtensions) {
+    public NUpdate extensions(boolean updateExtensions) {
         this.updateExtensions = updateExtensions;
         return this;
     }
 
     @Override
-    public NVersion getApiVersion() {
+    public NVersion apiVersion() {
         return forceBootAPIVersion;
     }
 
     @Override
-    public NUpdate setApiVersion(NVersion value) {
+    public NUpdate apiVersion(NVersion value) {
         this.forceBootAPIVersion = value;
         return this;
     }
 
     @Override
     public int getResultCount() {
-        return getResult().getUpdatesCount();
+        return getResult().updatesCount();
     }
 
     @Override
@@ -317,13 +320,13 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
     }
 
     @Override
-    public NUpdate setRuntime(boolean updateRuntime) {
+    public NUpdate runtime(boolean updateRuntime) {
         this.updateRuntime = updateRuntime;
         return this;
     }
 
     @Override
-    public NUpdate setInstalled(boolean enable) {
+    public NUpdate installed(boolean enable) {
         this.updateInstalled = enable;
         return this;
     }
@@ -348,12 +351,12 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
 //    }
 
     @Override
-    public NUpdate setAll() {
-        setApi(true);
-        setRuntime(true);
-        setExtensions(true);
-        setCompanions(true);
-        setInstalled(true);
+    public NUpdate all() {
+        api(true);
+        runtime(true);
+        extensions(true);
+        companions(true);
+        installed(true);
         return this;
     }
 
@@ -423,7 +426,7 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
             case "--all": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.setAll();
+                    this.all();
                 }
                 return true;
             }
@@ -438,29 +441,29 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
 //            }
             case "-i":
             case "--installed": {
-                return cmdLine.matcher().matchFlag((v) -> this.setInstalled(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.installed(v.booleanValue())).anyMatch();
             }
             case "-r":
             case "--runtime": {
-                return cmdLine.matcher().matchFlag((v) -> this.setRuntime(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.runtime(v.booleanValue())).anyMatch();
             }
             case "-A":
             case "--api": {
-                return cmdLine.matcher().matchFlag((v) -> this.setApi(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.api(v.booleanValue())).anyMatch();
             }
 
             case "-e":
             case "--extensions": {
-                return cmdLine.matcher().matchFlag((v) -> this.setExtensions(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.extensions(v.booleanValue())).anyMatch();
             }
             case "-c":
             case "--companions": {
-                return cmdLine.matcher().matchFlag((v) -> this.setCompanions(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> this.companions(v.booleanValue())).anyMatch();
             }
             case "-v":
             case "--api-version":
             case "--to-version": {
-                return cmdLine.matcher().matchEntry((v) -> this.setApiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.apiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
             }
             case "-g":
             case "--args": {
@@ -499,11 +502,11 @@ public abstract class AbstractNUpdate extends NWorkspaceCmdBase<NUpdate> impleme
         }
     }
 
-    public NRepositoryFilter getRepositoryFilter() {
+    public NRepositoryFilter repositoryFilter() {
         return repositoryFilter;
     }
 
-    public NUpdate setRepositoryFilter(NRepositoryFilter repositoryFilter) {
+    public NUpdate repositoryFilter(NRepositoryFilter repositoryFilter) {
         this.repositoryFilter = repositoryFilter;
         return this;
     }

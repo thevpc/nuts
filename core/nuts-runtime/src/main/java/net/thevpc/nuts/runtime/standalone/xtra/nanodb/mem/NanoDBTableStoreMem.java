@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb.mem;
 
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.file.NanoDBDefaultIndex;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.nio.channels.FileChannel;
 import java.util.*;
@@ -49,6 +50,9 @@ public class NanoDBTableStoreMem<T> implements NanoDBTableStore<T> {
     }
 
     public void close() {
+        for (IndexInfo value : indexDefinitions.values()) {
+            value.close();
+        }
     }
 
     public NStream<T> stream() {
@@ -128,12 +132,25 @@ public class NanoDBTableStoreMem<T> implements NanoDBTableStore<T> {
                 if (data != null) {
                     return data;
                 }
-                NanoDBIndex fi=new NanoDBDefaultIndexInMem(def.getIndexType(),
-                        db.getSerializers().findSerializer(def.getIndexType(), def.isNullable())
-                        , new DBIndexValueStoreDefaultFactory(), new HashMap<>());
-
+                NanoDBIndex fi = new NanoDBDefaultIndex(def.getIndexType(),
+                        db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()),
+                        null);
+                fi.load();
                 data = fi;
                 return fi;
+            }
+        }
+
+        public void close() {
+            synchronized (tableLock) {
+                if (data != null) {
+                    try {
+                        data.close();
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    data = null;
+                }
             }
         }
 

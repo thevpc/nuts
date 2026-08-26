@@ -12,6 +12,15 @@ install ```sh nuts``` package <nuts-artifact>
     ```sh -i | --installed```
         include already installed artifacts in the install process (re-install)
 
+    ```sh --reinstall```
+        force reinstalling the package even if already installed
+
+    ```sh --deploy-only```
+        deploy package to local repository without executing install logic
+
+    ```sh --repair```
+        repair corrupted installation
+
     ```sh -g | --args <args> ...```
         pass the given args to the install executor
 

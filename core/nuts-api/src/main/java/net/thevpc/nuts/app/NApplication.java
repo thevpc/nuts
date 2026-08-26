@@ -1,300 +1,401 @@
-/**
- * ====================================================================
- * Nuts : Network Updatable Things Service
- * (universal package manager)
- * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
- * <br>
- * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
- */
 package net.thevpc.nuts.app;
 
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.cmdline.NArgCompletePosition;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.time.NClock;
+import net.thevpc.nuts.util.NOptional;
+
+import java.util.List;
+
 /**
- * Nuts Application is the Top Level interface to be managed by nuts. By default, NApplication classes :
- * <ul>
- * <li>have a nutsApplication=true in their descriptor file (in maven descriptor you should add a property nuts.application=true)</li>
- * <li>support inheritance of all workspace options (from caller nuts process)</li>
- * <li>enables auto-complete mode to help forecasting the next token in the command line</li>
- * <li>enables install mode to be executed when the jar is installed in nuts repos</li>
- * <li>enables uninstall mode to be executed when the jar is uninstalled from nuts repos</li>
- * <li>enables update mode to be executed when the a new version of the same jar has been installed</li>
- * <li>have many default options enabled (such as --help, --version, --json,--table, etc.) and thus support natively multi output channels</li>
- * <li>have a well defined storage layout (with temp, lib, config folders, etc...)</li>
- * </ul>
- * Typically, a Nuts Application follows this code pattern :
- * <pre>
- *   package org.example.test;
- *
- * import net.thevpc.nuts.app.NApplication;
- * import net.thevpc.nuts.core.NSession;
- * import net.thevpc.nuts.cmdline.NArg;
- * import net.thevpc.nuts.cmdline.NCmdLine;
- * import net.thevpc.nuts.cmdline.NCmdLineContext;
- * import net.thevpc.nuts.cmdline.NCmdLineRunner;
- *
- * import java.util.ArrayList;
- * import java.util.List;
- *
- * public class MyApplication1 implements NApplication {
- *     public static void main(String[] args) {
- *         // just create an instance and call runAndExit in the main method
- *         new MyApplication1().run(NAppRunOptions.ofExit(args));
- *     }
- *
- *     public void run() {
- *         session.runAppCmdLine(new NCmdLineRunner() {
- *             boolean noMoreOptions = false;
- *             boolean clean = false;
- *             List<String> params = new ArrayList<>();
- *
- *             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
- *                 if (!noMoreOptions) {
- *                     return false;
- *                 }
- *                 switch (option.key()) {
- *                     case "-c":
- *                     case "--clean": {
- *                         NArg a = cmdLine.nextFlag().get();
- *                         if (a.isEnabled()) {
- *                             clean = a.getBooleanValue().get();
- *                         }
- *                         return true;
- *                     }
- *                 }
- *                 return false;
- *             }
- *
- *             public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
- *                 params.add(cmdLine.next().get().toString());
- *                 return true;
- *             }
- *
- *             public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
- *                 if(clean){
- *                     cmdLine.getSession().out().println("cleaned!");
- *                 }
- *             }
- *         });
- *     }
- * }
- * </pre>
- * another example of using this class is :
- * <pre>
- *     package org.example.test;
- *
- * import net.thevpc.nuts.*;
- * import net.thevpc.nuts.cmdline.NArg;
- * import net.thevpc.nuts.cmdline.NCmdLine;
- *
- * import java.util.ArrayList;
- * import java.util.List;
- *
- * public class MyApplication2 implements NApplication {
- *     public static void main(String[] args) {
- *         // just create an instance and call runAndExit in the main method
- *         new MyApplication2().run(NAppRunOptions.ofExit(args));
- *     }
- *
- *     // do the main staff in launch method
- *     public void run() {
- *         NCmdLine cmdLine = session.getCmdLine();
- *         boolean boolOption = false;
- *         String stringOption = null;
- *         List<String> others = new ArrayList<>();
- *         NArg a;
- *         while (cmdLine.hasNext()) {
- *             a = cmdLine.peek().get();
- *             if (a.isOption()) {
- *                 switch (a.key()) {
- *                     case "-o":
- *                     case "--option": {
- *                         a = cmdLine.nextFlag().get(session);
- *                         if (a.isEnabled()) {
- *                             boolOption = a.getBooleanValue().get(session);
- *                         }
- *                         break;
- *                     }
- *                     case "-n":
- *                     case "--name": {
- *                         a = cmdLine.nextEntry().get(session);
- *                         if (a.isEnabled()) {
- *                             stringOption = a.getStringValue().get(session);
- *                         }
- *                         break;
- *                     }
- *                     default: {
- *                         session.configureLast(cmdLine);
- *                     }
- *                 }
- *             } else {
- *                 others.add(cmdLine.next().get().toString());
- *             }
- *         }
- *         // test if application is running in exec mode
- *         // (and not in autoComplete mode)
- *         if (cmdLine.isExecMode()) {
- *             //do the good staff here
- *             NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
- *         }
- *     }
- * }
- * </pre>
- * <p>
- * and yet another example of using this class is :
- * <pre>
- * package org.example.test;
- *
- * import net.thevpc.nuts.app.NApplication;
- * import net.thevpc.nuts.core.NSession;
- * import net.thevpc.nuts.text.NMsg;
- * import net.thevpc.nuts.core.NSession;
- * import net.thevpc.nuts.cmdline.NArg;
- * import net.thevpc.nuts.cmdline.NCmdLine;
- * import net.thevpc.nuts.util.NRef;
- *
- * import java.util.ArrayList;
- * import java.util.List;
- *
- * public class MyApplication3 implements NApplication {
- *     public static void main(String[] args) {
- *         // just create an instance and call runAndExit in the main method
- *         new MyApplication3().run(NAppRunOptions.ofExit(args));
- *     }
- *
- *     // do the main staff in launch method
- *     public void run() {
- *         NCmdLine cmdLine = session.getCmdLine();
- *         NRef<Boolean> boolOption = NRef.of(false);
- *         NRef<String> stringOption = NRef.ofNull();
- *         List<String> others = new ArrayList<>();
- *         NArg a;
- *         while (cmdLine.hasNext()) {
- *             a = cmdLine.peek().get();
- *             if (a.isOption()) {
- *                 switch (a.key()) {
- *                     case "-o":
- *                     case "--option": {
- *                         cmdLine.withNextFlag((v, e, s)->boolOption.set(v));
- *                         break;
- *                     }
- *                     case "-n":
- *                     case "--name": {
- *                         cmdLine.withNextEntry((v, e, s)->stringOption.set(v));
- *                         break;
- *                     }
- *                     default: {
- *                         session.configureLast(cmdLine);
- *                     }
- *                 }
- *             } else {
- *                 others.add(cmdLine.next().get().toString());
- *             }
- *         }
- *         // test if application is running in exec mode
- *         // (and not in autoComplete mode)
- *         if (cmdLine.isExecMode()) {
- *             //do the good staff here
- *             NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
- *         }
- *     }
- * }
- * </pre>
- * <p>
- * and yet another good way to use It's :
- * <pre>
- *     package org.example.test;
- *
- * import net.thevpc.nuts.app.NApplication;
- * import net.thevpc.nuts.text.NMsg;
- * import net.thevpc.nuts.core.NSession;
- * import net.thevpc.nuts.cmdline.NArg;
- * import net.thevpc.nuts.cmdline.NCmdLine;
- * import net.thevpc.nuts.util.NRef;
- *
- * import java.util.ArrayList;
- * import java.util.List;
- * @App.Info
- * public class MyApplication4 implements NApplication {
- *     public static void main(String[] args) {
- *         // just create a builer and run it
- *         NApp.builder(args).run();
- *     }
- *
- *     App.Main
- *     // do the main staff in launch method
- *     public void run() {
- *         NCmdLine cmdLine = session.getCmdLine();
- *         NRef<Boolean> boolOption = NRef.of(false);
- *         NRef<String> stringOption = NRef.ofNull();
- *         List<String> others = new ArrayList<>();
- *         while (cmdLine.hasNext()) {
- *             if(cmdLine.withNextFlag((v, a, s)->boolOption.set(v),"-o","--option")) {
- *
- *             }else if(cmdLine.withNextEntry((v, a, s)->stringOption.set(v),"-n","--name")){
- *
- *             }else if(cmdLine.hasNextOption()){
- *                 session.configureLast(cmdLine);
- *             }else{
- *                 others.add(cmdLine.nextString().get());
- *             }
- *         }
- *         // test if application is running in exec mode
- *         // (and not in autoComplete mode)
- *         if (cmdLine.isExecMode()) {
- *             //do the good staff here
- *             NOut.println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
- *         }
- *     }
- * }
- * </pre>
- *
- * @author thevpc
- * @app.category Application
- * @since 0.5.5
+ * Represents application configuration bound to the current {@code NSession}
+ * This interface provides methods for application lifecycle management, configuration,
+ * properties, and utility functions to support application execution and interaction.
  */
-public interface NApplication {
+public interface NApplication extends NComponent {
 
     /**
-     * this method should be overridden to perform specific business when
-     * application is installed
+     * Builder.
+     *
+     * @return builder result
      */
-    default void onInstallApplication() {
+    static NApplicationBuilder builder() {
+        return new NApplicationBuilder();
     }
 
     /**
-     * this method should be overridden to perform specific business when
-     * application is updated
+     * Builder.
+     *
+     * @param args args
+     * @return builder result
      */
-    default void onUpdateApplication() {
+    static NApplicationBuilder builder(String[] args) {
+        return new NApplicationBuilder().args(args);
     }
 
     /**
-     * this method should be overridden to perform specific business when
-     * application is uninstalled
+     * Returns the instance of {@code NApp} that is bound to the current {@code NSession}.
+     *
+     * @return the instance of {@code NApp} that is bound to the current {@code NSession}.
      */
-    default void onUninstallApplication() {
+    static NApplication of() {
+        return NExtensions.of(NApplication.class);
     }
+
+    /**
+     * Returns the get.
+     *
+     * @return get result
+     */
+    static NOptional<NApplication> get() {
+        return NExtensions.get().flatMap(x->x.createComponent(NApplication.class));
+    }
+
+    /**
+     * Prepares the application with the provided initialization information for the current {@code session}
+     *
+     * @param appInitInfo the initialization information required to prepare the application for the current {@code session}
+     */
+    void prepare(NAppInitInfo appInitInfo);
+
+    /**
+     * Handler.
+     *
+     * @return handler result
+     */
+    NApplicationHandler handler();
+
+    /**
+     * Source.
+     *
+     * @return source result
+     */
+    Object source();
+
+    /**
+     * Creates and returns a copy of this {@code NApp} instance.
+     *
+     * @return a new {@code NApp} instance that is a copy of this instance
+     */
+    NApplication copy();
+
+    /**
+     * Copies the properties and state from the specified {@code other} instance of {@code NApp}
+     * into this instance.
+     *
+     * @param other the {@code NApp} instance from which properties and state should be copied
+     * @return the current {@code NApp} instance with updated properties and state
+     */
+    NApplication copyFrom(NApplication other);
+
+    /**
+     * Retrieves the identifier associated with this instance of {@code NApp}.
+     *
+     * @return an {@code NOptional} containing the {@code NId} associated with this application,
+     *         or an empty {@code NOptional} if no identifier is set.
+     */
+    NOptional<NId> id();
+
+    /**
+     * Retrieves the current execution mode of the application.
+     *
+     * @return the {@code NApplicationMode} representing the current mode
+     *         in which the application is running
+     */
+    NApplicationMode mode();
 
 
     /**
-     * run application within the given context
+     * detected bundle name
+     * @return detected bundle name
      */
-    void run();
+    String bundleName();
+
+    /**
+     * Retrieves the list of arguments associated with the current execution mode
+     * of the application.
+     *
+     * @return a {@code List<String>} containing the arguments relevant to the
+     *         current application mode, or an empty list if no mode arguments
+     *         are set.
+     */
+    List<String> modeArguments();
+
+    /**
+     * Retrieves the {@code NArgCompletePos} instance associated with the application.
+     * This utility can be used to collect command line argument candidates, manage
+     * autocomplete suggestions, and retrieve information about the current command line context.
+     *
+     * @return an instance of {@code NArgCompletePos} providing command line auto-completion features
+     */
+    NArgCompletePosition completePosition();
+
+    /**
+     * Retrieves the detailed help text associated with this application, providing
+     * guidance or instructions on its usage.
+     *
+     * @return an {@code NOptional<NText>} containing the help text if available,
+     *         or an empty {@code NOptional} if no help text is defined.
+     */
+    NOptional<NText> helpText();
+
+    /**
+     * Displays detailed help information about the application.
+     * This method is used to output guidance, instructions, or
+     * any relevant assistance to the user regarding the application's usage.
+     */
+    void printHelp();
+
+    /**
+     * Retrieves the main application class associated with this {@code NApp} instance.
+     *
+     * @return a {@code Class<?>} representing the main application class, or {@code null} if It's not defined.
+     */
+    Class<?> sourceType();
+
+    /**
+     * Retrieves the path to the binary folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the binary folder.
+     */
+    NPath binFolder();
+
+    /**
+     * Retrieves the path to the configuration folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the configuration folder.
+     */
+    NPath confFolder();
+
+    /**
+     * Retrieves the path to the log folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the log folder.
+     */
+    NPath logFolder();
+
+    /**
+     * Retrieves the path to the temporary folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the temporary folder.
+     */
+    NPath tempFolder();
+
+    /**
+     * Retrieves the path to the variable folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the variable folder.
+     */
+    NPath varFolder();
+
+    /**
+     * Retrieves the path to the library folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the library folder.
+     */
+    NPath libFolder();
+
+    /**
+     * Retrieves the path to the run folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the run folder.
+     */
+    NPath runFolder();
+
+    /**
+     * Retrieves the path to the cache folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the cache folder.
+     */
+    NPath cacheFolder();
+
+    /**
+     * Retrieves the path to a specific version folder associated with the application.
+     *
+     * @param storeType the type of store (e.g., configuration, cache, runtime, etc.)
+     *                  for which the versioned folder path is to be retrieved
+     * @param version   the specific version identifier for which the folder path is required
+     * @return an {@code NPath} representing the location of the version-specific folder,
+     *         or {@code null} if the path cannot be determined
+     */
+    NPath getVersionFolder(NStoreType storeType, String version);
+
+    /**
+     * Retrieves the path to the shared applications folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the shared applications folder.
+     */
+    NPath sharedAppsFolder();
+
+    /**
+     * Retrieves the path to the shared configuration folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the shared configuration folder.
+     */
+    NPath sharedConfFolder();
+
+    /**
+     * Retrieves the path to the shared log folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the shared log folder.
+     */
+    NPath sharedLogFolder();
+
+    /**
+     * Retrieves the path to the shared temporary folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the shared temporary folder.
+     */
+    NPath sharedTempFolder();
+
+    /**
+     * Retrieves the path to the shared variable folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the shared variable folder.
+     */
+    NPath sharedVarFolder();
+
+    /**
+     * Retrieves the path to the shared library folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the shared library folder.
+     */
+    NPath sharedLibFolder();
+
+    /**
+     * Retrieves the path to the shared run folder associated with this application.
+     *
+     * @return an {@code NPath} representing the location of the shared run folder.
+     */
+    NPath sharedRunFolder();
+
+    /**
+     * Retrieves the path to the shared folder associated with the specified {@code location}.
+     * The shared folder depends on the provided {@code location} parameter, which represents
+     * the type of store (e.g., configuration, cache, runtime, etc.).
+     *
+     * @param location the {@code NStoreType} specifying the type of store whose shared folder
+     *                 path is to be retrieved
+     * @return an {@code NPath} representing the location of the shared folder for the given
+     *         {@code location}
+     */
+    NPath getSharedFolder(NStoreType location);
+
+    /**
+     * Retrieves the version information wrapped in an NOptional.
+     *
+     * @return an NOptional containing the NVersion instance if available, or an empty NOptional if no version is found.
+     */
+    NOptional<NVersion> version();
+
+    /**
+     * Retrieves a list of arguments as strings.
+     *
+     * @return a List of String objects representing the arguments
+     */
+    List<String> arguments();
+
+    /**
+     * Retrieves the start time of the clock.
+     *
+     * @return an NClock object representing the start time.
+     */
+    NClock startTime();
+
+    /**
+     * Retrieves the previous version of the current entity or state, if available.
+     *
+     * @return an {@code NOptional} containing the previous {@code NVersion} if it exists,
+     *         or an empty {@code NOptional} if no previous version is available.
+     */
+    NOptional<NVersion> previousVersion();
+
+    /**
+     * Retrieves the command line object associated with the current instance.
+     *
+     * @return an NCmdLine object representing the command line arguments and options.
+     */
+    NCmdLine cmdLine();
+
+    /**
+     * Retrieves the folder path associated with the specified storage type location.
+     *
+     * @param location the specific type of storage location for which the folder path is needed
+     * @return the folder path corresponding to the given storage type location
+     */
+    NPath getFolder(NStoreType location);
+
+    /**
+     * Determines if the current mode of operation is execution mode.
+     *
+     * @return true if the system is in execution mode, otherwise false
+     */
+    boolean isExecMode();
+
+    /**
+     * Retrieves an instance of NAppStoreLocationResolver, which is responsible
+     * for resolving the location of the application store.
+     *
+     * @return an instance of NAppStoreLocationResolver that handles store location resolution.
+     */
+    NAppStoreLocationResolver storeLocationResolver();
+
+    /**
+     * Sets the folder for the given location type.
+     *
+     * @param location the type of the store (e.g., file system, database, etc.)
+     * @param folder the path of the folder to be set
+     * @return the updated NApp instance
+     */
+    NApplication setFolder(NStoreType location, NPath folder);
+
+    /**
+     * Sets the shared folder for the application to the specified location and path.
+     *
+     * @param location the type of storage location where the shared folder is to be set
+     * @param folder the path to the folder to be set as the shared folder
+     * @return the current instance of NApp with the updated shared folder configuration
+     */
+    NApplication setSharedFolder(NStoreType location, NPath folder);
+
+    /**
+     * Sets the ID of the application.
+     *
+     * @param appId the ID to be set for the application
+     * @return the updated instance of NApp
+     */
+    NApplication id(NId appId);
+
+    /**
+     * Sets the list of arguments for the application.
+     *
+     * @param args the list of arguments to be set
+     * @return the instance of the NApp with the updated arguments
+     */
+    NApplication arguments(List<String> args);
+
+    /**
+     * Sets the arguments for the application.
+     *
+     * @param args the array of arguments to be passed to the application
+     * @return the current instance of NApp with the updated arguments
+     */
+    NApplication arguments(String[] args);
+
+    /**
+     * Sets the start time for the application.
+     *
+     * @param startTime an instance of NClock representing the desired start time
+     * @return the current NApp instance with the updated start time
+     */
+    NApplication startTime(NClock startTime);
+
 
 }

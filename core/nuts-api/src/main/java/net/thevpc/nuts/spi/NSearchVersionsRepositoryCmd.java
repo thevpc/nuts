@@ -29,7 +29,7 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetchMode;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 /**
  * @author thevpc
@@ -37,13 +37,35 @@ import net.thevpc.nuts.util.NIterator;
  */
 public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
 
+    /**
+     * Returns the filter.
+     *
+     * @return get filter result
+     */
     NDefinitionFilter getFilter();
 
-    NSearchVersionsRepositoryCmd setFilter(NDefinitionFilter filter);
+    /**
+     * Filter.
+     *
+     * @param filter filter
+     * @return filter result
+     */
+    NSearchVersionsRepositoryCmd filter(NDefinitionFilter filter);
 
-    NId getId();
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    NId id();
 
-    NSearchVersionsRepositoryCmd setId(NId id);
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
+    NSearchVersionsRepositoryCmd id(NId id);
 
     /**
      * run this command and return {@code this} instance
@@ -58,7 +80,7 @@ public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
      *
      * @return {@code this} instance
      */
-    NFetchMode getFetchMode();
+    NFetchMode fetchMode();
 
     /**
      * fetchMode
@@ -66,7 +88,12 @@ public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
      * @param fetchMode fetchMode
      * @return {@code this} instance
      */
-    NSearchVersionsRepositoryCmd setFetchMode(NFetchMode fetchMode);
+    NSearchVersionsRepositoryCmd fetchMode(NFetchMode fetchMode);
 
+    /**
+     * Returns the result.
+     *
+     * @return get result result
+     */
     NIterator<NId> getResult();
 }

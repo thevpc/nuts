@@ -27,6 +27,7 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.util.NGetter;
 
 /**
  * Created by vpc on 1/15/17.
@@ -42,7 +43,8 @@ public interface NWorkspaceExtension {
      *
      * @return extension id pattern (configured)
      */
-    NId getConfigId();
+    @NGetter
+    NId configId();
 
 
     /**
@@ -50,12 +52,14 @@ public interface NWorkspaceExtension {
      *
      * @return extension id resolved and wired
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * true if the extension is enabled
      *
      * @return true if the extension is enabled
      */
+    @NGetter
     boolean isEnabled();
 }

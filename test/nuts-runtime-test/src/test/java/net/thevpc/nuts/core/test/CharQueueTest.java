@@ -5,7 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.util.NCharQueue;
+import net.thevpc.nuts.runtime.standalone.collections.DefaultNCharQueue;
+import net.thevpc.nuts.collections.NCharQueue;
 import net.thevpc.nuts.util.NMatchType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ public class CharQueueTest {
 
     @Test
     public void test01() {
-        NCharQueue q = new NCharQueue(4);
+        NCharQueue q = NCharQueue.of(4);
         Assertions.assertEquals(0, q.length());
         Assertions.assertEquals("", q.toString());
 
@@ -51,7 +52,7 @@ public class CharQueueTest {
 
     @Test
     public void test02() {
-        NCharQueue q = new NCharQueue();
+        NCharQueue q = NCharQueue.of();
         q.write("###");
 
         Assertions.assertEquals(NMatchType.FULL_MATCH, q.peekPattern("#").mode());
@@ -62,51 +63,51 @@ public class CharQueueTest {
 
     @Test
     public void test03() {
-        NCharQueue q = new NCharQueue();
+        NCharQueue q = NCharQueue.of();
         q.write("###");
         Assertions.assertEquals(NMatchType.MATCH, q.peekPattern("#*").mode());
     }
 
     @Test
     public void test04() {
-        NCharQueue q = new NCharQueue();
+        NCharQueue q = NCharQueue.of();
         q.write("a");
         Assertions.assertEquals('a', q.read());
     }
 
     @Test
     public void test05() {
-        NCharQueue q = new NCharQueue(2,2);
+        DefaultNCharQueue q = new DefaultNCharQueue(2,2);
         q.write("a");
-        Assertions.assertEquals(0, q.getFrom());
-        Assertions.assertEquals(1, q.getTo());
-        Assertions.assertEquals(2, q.getAllocatedSize());
+        Assertions.assertEquals(0, q.from());
+        Assertions.assertEquals(1, q.to());
+        Assertions.assertEquals(2, q.allocatedSize());
 
         q.ensureAvailable(1);
-        Assertions.assertEquals(0, q.getFrom());
-        Assertions.assertEquals(1, q.getTo());
-        Assertions.assertEquals(2, q.getAllocatedSize());
+        Assertions.assertEquals(0, q.from());
+        Assertions.assertEquals(1, q.to());
+        Assertions.assertEquals(2, q.allocatedSize());
 
         q.ensureAvailable(2);
-        Assertions.assertEquals(0, q.getFrom());
-        Assertions.assertEquals(1, q.getTo());
-        Assertions.assertEquals(5, q.getAllocatedSize());
+        Assertions.assertEquals(0, q.from());
+        Assertions.assertEquals(1, q.to());
+        Assertions.assertEquals(5, q.allocatedSize());
 
         q.read();
 
         q.ensureAvailable(4);
-        Assertions.assertEquals(1, q.getFrom());
-        Assertions.assertEquals(1, q.getTo());
-        Assertions.assertEquals(5, q.getAllocatedSize());
+        Assertions.assertEquals(1, q.from());
+        Assertions.assertEquals(1, q.to());
+        Assertions.assertEquals(5, q.allocatedSize());
 
         q.ensureAvailable(6);
-        Assertions.assertEquals(0, q.getFrom());
-        Assertions.assertEquals(0, q.getTo());
-        Assertions.assertEquals(8, q.getAllocatedSize());
+        Assertions.assertEquals(0, q.from());
+        Assertions.assertEquals(0, q.to());
+        Assertions.assertEquals(8, q.allocatedSize());
 
         q.ensureAvailable(8);
-        Assertions.assertEquals(0, q.getFrom());
-        Assertions.assertEquals(0, q.getTo());
-        Assertions.assertEquals(8, q.getAllocatedSize());
+        Assertions.assertEquals(0, q.from());
+        Assertions.assertEquals(0, q.to());
+        Assertions.assertEquals(8, q.allocatedSize());
     }
 }

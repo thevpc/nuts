@@ -7,6 +7,8 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
@@ -53,11 +55,11 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
                 }
                 default: {
                     this.wildcard = containsWildcad(sid);
-                    g = GlobUtils.ofExact(id.getGroupId());
-                    n = GlobUtils.ofExact(id.getArtifactId());
-                    v = id.getVersion().toFilter();
-                    qm = id.getProperties();
-                    for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
+                    g = GlobUtils.ofExact(id.groupId());
+                    n = GlobUtils.ofExact(id.artifactId());
+                    v = id.version().toFilter();
+                    qm = id.properties();
+                    for (Map.Entry<String, String> entry : id.properties().entrySet()) {
                         String key = entry.getKey();
                         String val = entry.getValue();
                         if (!key.contains("*")) {
@@ -86,32 +88,32 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
         if (any) {
             return true;
         }
-        NId other = def.getId();
-        if (!g.matcher(other.getGroupId()).matches()) {
+        NId other = def.id();
+        if (!g.matcher(other.groupId()).matches()) {
             return false;
         }
-        if (!n.matcher(other.getArtifactId()).matches()) {
+        if (!n.matcher(other.artifactId()).matches()) {
             return false;
         }
-        if (!v.acceptVersion(other.getVersion())) {
+        if (!v.acceptVersion(other.version())) {
             return false;
         }
         Map<String, String> oqm = null;
         for (Predicate<Map<String, String>> pp : q) {
             if (oqm == null) {
-                oqm = other.getProperties();
+                oqm = other.properties();
             }
             if (!pp.test(oqm)) {
                 return false;
             }
         }
-        NEnvCondition condition = this.id.getCondition();
+        NEnvCondition condition = this.id.condition();
         if (condition != null && !condition.isBlank()) {
             NEnvCondition otherCondition = null;
             try {
                 otherCondition = NFetch.of(other)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                        .getResultDescriptor().getCondition();
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
+                        .getResultDescriptor().condition();
             } catch (Exception ex) {
                 //ignore any error
             }
@@ -138,13 +140,25 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
 
         @Override
         public boolean test(Map<String, String> x) {
-            String sv = NStringUtils.trim(x.get(key));
+            String sv = NStringUtils.strip(x.get(key));
             return valPattern.matcher(sv).matches();
         }
 
         @Override
         public String toString() {
             return "EntryMatches[key='" + key + "',val='" + (NBlankable.isBlank(val) ? "*" : val) + "']";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            PredicateStaticKey that = (PredicateStaticKey) o;
+            return Objects.equals(key, that.key) && Objects.equals(val, that.val) && Objects.equals(valPattern, that.valPattern);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(key, val, valPattern);
         }
     }
 
@@ -166,11 +180,23 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
         public boolean test(Map<String, String> x) {
             for (Map.Entry<String, String> entry : x.entrySet()) {
                 if (keyPattern.matcher(entry.getKey()).matches()) {
-                    String sv = NStringUtils.trim(entry.getValue());
+                    String sv = NStringUtils.strip(entry.getValue());
                     return valPattern.matcher(sv).matches();
                 }
             }
             return false;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            PredicateWildKey that = (PredicateWildKey) o;
+            return Objects.equals(keyPattern, that.keyPattern) && Objects.equals(valPattern, that.valPattern) && Objects.equals(skey, that.skey) && Objects.equals(sval, that.sval);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(keyPattern, valPattern, skey, sval);
         }
 
         @Override
@@ -180,28 +206,16 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.id);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NPatternDefinitionFilter that = (NPatternDefinitionFilter) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NPatternDefinitionFilter other = (NPatternDefinitionFilter) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id);
     }
 
     @Override
@@ -217,7 +231,7 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
     @Override
     public NDefinitionFilter simplify() {
         if (any) {
-            return NDefinitionFilters.of().always();
+            return NDefinitionFilterRPI.of().always();
         }
         return this;
     }

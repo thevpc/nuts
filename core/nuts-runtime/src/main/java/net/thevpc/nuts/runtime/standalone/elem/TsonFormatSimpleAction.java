@@ -2,10 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.writer.DefaultTsonWriter;
-import net.thevpc.nuts.text.NTreeVisitResult;
-
-import java.util.IdentityHashMap;
-import java.util.Map;
 
 public class TsonFormatSimpleAction implements NElementFormatterAction {
 
@@ -32,9 +28,9 @@ public class TsonFormatSimpleAction implements NElementFormatterAction {
                 applyObjectOrArray(builder, context);
                 return;
             }
-            case NAMED_UPLET:
-            case UPLET: {
-                applyUplet(builder, context);
+            case NAMED_TUPLE:
+            case TUPLE: {
+                applyTuple(builder, context);
                 return;
             }
             case PAIR: {
@@ -54,7 +50,7 @@ public class TsonFormatSimpleAction implements NElementFormatterAction {
         builder.addSeparatorAffix(",", NAffixAnchor.SEP_2);
     }
 
-    private void applyUplet(NElementBuilder builder, NElementFormatContext context) {
+    private void applyTuple(NElementBuilder builder, NElementFormatContext context) {
         builder.addSeparatorAffix(",", NAffixAnchor.SEP_1);
     }
 

@@ -29,6 +29,11 @@ package net.thevpc.nuts.text;
  */
 public interface NTextArtRenderer {
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    String name();
 
 }

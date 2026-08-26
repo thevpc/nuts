@@ -5,12 +5,13 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -59,7 +60,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
         this.source = source;
 
         if (length == null || length < 0) {
-            Long len = this.md.getContentLength().orElse(null);
+            Long len = this.md.contentLength().orElse(null);
             if (len != null) {
                 long l = len;
                 if (l >= 0) {
@@ -71,15 +72,15 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
         }
         this.length = length;
         if (sourceName == null) {
-            NMsg m2 = this.md.getMessage().orElse(null);
+            NMsg m2 = this.md.message().orElse(null);
             if (m2 != null) {
                 sourceName = m2;
             }
         }
         if (sourceName == null) {
-            String m2 = this.md.getName().orElse(null);
+            String m2 = this.md.name().orElse(null);
             if (m2 != null) {
-                sourceName = NMsg.ofPlain(m2);
+                sourceName = NMsg.ofP(m2);
             }
         }
         this.sourceName = sourceName;
@@ -91,7 +92,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
     }
 
     @Override
-    public void interrupt() throws NInterruptException {
+    public void interrupt() throws NInterruptedException {
         this.interrupted = true;
         if (base instanceof NInterruptible) {
             ((NInterruptible) base).interrupt();
@@ -202,7 +203,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
             try {
                 base.close();
             } catch (IOException e) {
-                throw new NIOException(NMsg.ofPlain("error closing base stream"), e);
+                throw new NIOException(NMsg.ofP("error closing base stream"), e);
             }
         }
         if (onClose != null) {
@@ -280,12 +281,12 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(NMsg.ofPlain("stream is interrupted"));
+            throw new NIOException(NMsg.ofP("stream is interrupted"));
         }
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
@@ -297,7 +298,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
     @Override
     public String toString() {
         NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
-        NOptional<NMsg> m = getMetaData().getMessage();
+        NOptional<NMsg> m = metaData().message();
         if (m.isPresent()) {
             out.print(m.get());
         } else if (sourceName != null) {

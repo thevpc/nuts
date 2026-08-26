@@ -47,5 +47,10 @@ public interface NPairElement extends NNamedElement {
      */
     NElement value();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NPairElementBuilder builder();
 }

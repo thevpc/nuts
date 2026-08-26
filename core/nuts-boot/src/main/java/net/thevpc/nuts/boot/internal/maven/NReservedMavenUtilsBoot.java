@@ -1,7 +1,7 @@
 package net.thevpc.nuts.boot.internal.maven;
 
 import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.boot.internal.cmdline.NBootArg;
+import net.thevpc.nuts.boot.internal.NBootVersion;
 import net.thevpc.nuts.boot.internal.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,7 +41,7 @@ public class NReservedMavenUtilsBoot {
      * @param url to look into!
      * @return list of detected urls
      */
-    public static NBootId[] resolveJarIds(URL url) {
+    public static NBootDependency[] resolveJarIds(URL url) {
         File file = NBootUtils.toFile(url);
         if (file != null) {
             if (file.isDirectory()) {
@@ -57,7 +57,7 @@ public class NReservedMavenUtilsBoot {
                         String artifactId = map.get("artifactId");
                         String version = map.get("version");
                         if (groupId != null && artifactId != null && version != null) {
-                            return new NBootId[]{NBootId.of(
+                            return new NBootDependency[]{NBootDependency.of(
                                     groupId, artifactId, version
                             )};
                         }
@@ -65,9 +65,9 @@ public class NReservedMavenUtilsBoot {
                 }
 
 
-                return new NBootId[0];
+                return new NBootDependency[0];
             } else if (file.isFile()) {
-                List<NBootId> all = new ArrayList<>();
+                List<NBootDependency> all = new ArrayList<>();
                 String fileName = file.getName().toLowerCase();
                 if (fileName.endsWith(".jar") || fileName.endsWith(".zip")) {
                     try (ZipFile zf = new ZipFile(file)) {
@@ -85,7 +85,7 @@ public class NReservedMavenUtilsBoot {
                                     Map<String, String> map = resolvePomTagValues(new String[]{"groupId", "artifactId", "version"}, is);
                                     if (map.containsKey("version")) {
                                         String version = map.get("version");
-                                        all.add(NBootId.of(groupId, artifactId, version));
+                                        all.add(NBootDependency.of(groupId, artifactId, version));
                                     }
                                 }
                             }
@@ -101,7 +101,7 @@ public class NReservedMavenUtilsBoot {
                                             Map<?, ?> map = ((Map<?, ?>) p);
                                             Object v = map.get("version");
                                             if (v instanceof String) {
-                                                all.add(NBootId.of(groupId, artifactId, ((String) v)));
+                                                all.add(NBootDependency.of(groupId, artifactId, ((String) v)));
                                             }
                                         }
                                     }
@@ -112,21 +112,21 @@ public class NReservedMavenUtilsBoot {
                         //
                     }
                 }
-                return all.toArray(new NBootId[0]);
+                return all.toArray(new NBootDependency[0]);
             }
         }
-        return new NBootId[0];
+        return new NBootDependency[0];
     }
 
-    public static String getFileName(NBootId id, String ext) {
+    public static String getFileName(NBootDependency id, String ext) {
         return id.getArtifactId() + "-" + id.getVersion() + "." + ext;
     }
 
-    public static String toMavenPath(NBootId nutsId) {
+    public static String toMavenPath(NBootDependency nutsId) {
         return NBootUtils.resolveIdPath(nutsId);
     }
 
-    public static String resolveMavenFullPath(NBootRepositoryLocation repo, NBootId nutsId, String ext) {
+    public static String resolveMavenFullPath(NBootRepositoryLocation repo, NBootDependency nutsId, String ext) {
         String jarPath = toMavenPath(nutsId) + "/" + getFileName(nutsId, ext);
         String mvnUrl = repo.getPath();
         String sep = "/";
@@ -140,11 +140,11 @@ public class NReservedMavenUtilsBoot {
     }
 
 
-    public static String getPathFile(NBootId id, String name) {
+    public static String getPathFile(NBootDependency id, String name) {
         return toMavenPath(id) + "/" + name;
     }
 
-    public static File resolveOrDownloadJar(NBootId nutsId, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder, boolean includeDesc, Instant expire, NBootErrorInfoList errors) {
+    public static File resolveOrDownloadJar(NBootDependency nutsId, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder, boolean includeDesc, Instant expire, NBootErrorInfoList errors) {
         File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
         if (cachedJarFile.isFile()) {
             if (NBootUtils.isFileAccessible(cachedJarFile.toPath(), expire)) {
@@ -180,10 +180,10 @@ public class NReservedMavenUtilsBoot {
         return null;
     }
 
-    public static Set<NBootId> loadDependenciesFromId(NBootId rid, Collection<NBootRepositoryLocation> repos) {
+    public static Set<NBootDependency> loadDependenciesFromId(NBootDependency rid, Collection<NBootRepositoryLocation> repos) {
         String pomPath = NBootUtils.resolveFilePath(rid, "pom");
         String nutsPath = NBootUtils.resolveFilePath(rid, "nuts");
-        Set<NBootId> deps = null;
+        Set<NBootDependency> deps = null;
         for (NBootRepositoryLocation baseUrl : repos) {
             String loc = baseUrl.getPath();
             Set<String> urls = expandRepoUrls(baseUrl);
@@ -213,7 +213,7 @@ public class NReservedMavenUtilsBoot {
     }
 
 
-    public static Set<NBootId> loadDependenciesFromNutsUrl(String url) {
+    public static Set<NBootDependency> loadDependenciesFromNutsUrl(String url) {
         InputStream inputStream = NBootUtils.resolveInputStream(url);
         Map<String, Object> descNuts = null;
         if (inputStream != null) {
@@ -225,7 +225,7 @@ public class NReservedMavenUtilsBoot {
                 if (dependencies == null) {
                     return new LinkedHashSet<>();
                 }
-                return dependencies.stream().map(x -> NBootId.of(x)).collect(Collectors.toSet());
+                return dependencies.stream().map(x -> NBootDependency.of(x)).collect(Collectors.toSet());
             } finally {
                 try {
                     inputStream.close();
@@ -238,8 +238,8 @@ public class NReservedMavenUtilsBoot {
     }
 
 
-    private static Set<NBootId> loadDependenciesFromPomUrl(String url) {
-        LinkedHashSet<NBootId> depsSet = new LinkedHashSet<>();
+    private static Set<NBootDependency> loadDependenciesFromPomUrl(String url) {
+        LinkedHashSet<NBootDependency> depsSet = new LinkedHashSet<>();
         InputStream xml = NBootUtils.resolveInputStream(url);
         if (xml != null) {
             try {
@@ -312,17 +312,16 @@ public class NReservedMavenUtilsBoot {
                                 if (NBootUtils.isBlank(scope) || scope.equals("compile")) {
                                     boolean optionalBool = NBootUtils.parseBooleanOr(optional, false);
                                     depsSet.add(
-                                            NBootId.of(
+                                            NBootDependency.of(
                                                             groupId,
                                                             artifactId,
                                                             version)
                                                     .setProperty(NBootConstants.IdProperties.OPTIONAL,
                                                             optionalBool ? Boolean.TRUE.toString() : null)
-                                                    .setCondition(
-                                                            new NBootEnvCondition()
-                                                                    .setOs(Arrays.asList(osMap.get(groupId + ":" + artifactId)))
-                                                                    .setArch(Arrays.asList(archMap.get(groupId + ":" + artifactId))))
-                                    );
+                                                    .setConditionOs(Collections.singletonList(osMap.get(groupId + ":" + artifactId)))
+                                                    .setConditionArch(Collections.singletonList(archMap.get(groupId + ":" + artifactId)))
+                                    )
+                                    ;
                                 } else if (version.contains("$")) {
                                     throw new NBootException(NBootMsg.ofC("unexpected maven variable in artifactId=%s", version));
                                 }
@@ -361,30 +360,25 @@ public class NReservedMavenUtilsBoot {
                         }
                     }
                 }
-                List<NBootId> ok = new ArrayList<>();
-                for (NBootId idep : depsSet) {
+                List<NBootDependency> ok = new ArrayList<>();
+                for (NBootDependency idep : depsSet) {
                     NBootDependency dep = idep.toDependency();
 
                     String arch = archMap.get(idep.getShortName());
                     String os = osMap.get(idep.getShortName());
                     boolean replace = false;
                     if (arch != null || os != null) {
-                        if ((dep.getCondition().getOs().isEmpty() && os != null)
-                                || (dep.getCondition().getArch().isEmpty() && arch != null)) {
+                        if ((dep.getConditionOs().isEmpty() && os != null)
+                                || (dep.getConditionArch().isEmpty() && arch != null)) {
                             replace = true;
                         }
                     }
                     if (replace) {
                         ok.add(
-                                dep
-                                        .setCondition(
-                                                dep.getCondition().builder()
-                                                        .setArch(
-                                                                arch != null ? Arrays.asList(arch) : dep.getCondition().getArch())
-                                                        .setOs(
-                                                                arch != null ? Arrays.asList(arch) : dep.getCondition().getArch())
-                                                        .build()
-                                        ).toId()
+                                dep.setConditionArch(
+                                                arch != null ? Collections.singletonList(arch) : dep.getConditionArch())
+                                        .setConditionOs(
+                                                arch != null ? Collections.singletonList(arch) : dep.getConditionArch())
                         );
                     } else {
                         ok.add(idep);
@@ -461,7 +455,7 @@ public class NReservedMavenUtilsBoot {
         return all;
     }
 
-    static VersionAndPath resolveLatestMavenId(NBootId zId, String path, Predicate<NBootVersion> filter,
+    static VersionAndPath resolveLatestMavenId(NBootDependency zId, String path, Predicate<NBootVersion> filter,
                                                NBootRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsInfo options, boolean local, boolean remote) {
         String descType = "MAVEN";
         if (NBootConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
@@ -493,7 +487,7 @@ public class NReservedMavenUtilsBoot {
                                             if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                                 //we will ignore artifact classifier to simplify search
                                                 Path jarPath = file.toPath().resolve(
-                                                        getFileName(NBootId.of(zId.getGroupId(), zId.getArtifactId(), p.getValue()), "jar")
+                                                        getFileName(NBootDependency.of(zId.getGroupId(), zId.getArtifactId(), p.getValue()), "jar")
                                                 );
                                                 if (Files.isRegularFile(jarPath)) {
                                                     bestVersion = p;
@@ -575,8 +569,8 @@ public class NReservedMavenUtilsBoot {
      * @param options
      * @return latest runtime version
      */
-    public static NBootId resolveLatestMavenId(NBootId zId, Predicate<NBootVersion> filter,
-                                               Collection<NBootRepositoryLocation> bootRepositories, NBootOptionsInfo options) {
+    public static NBootDependency resolveLatestMavenId(NBootDependency zId, Predicate<NBootVersion> filter,
+                                                       Collection<NBootRepositoryLocation> bootRepositories, NBootOptionsInfo options) {
         NBootLog log = NBootContext.log();
         if (log.isLoggable(Level.FINEST)) {
             switch (bootRepositories.size()) {
@@ -661,7 +655,7 @@ public class NReservedMavenUtilsBoot {
         if (bestVersion == null) {
             return null;
         }
-        NBootId iid = NBootId.of(zId.getGroupId(), zId.getArtifactId(), bestVersion.getValue());
+        NBootDependency iid = NBootDependency.of(zId.getGroupId(), zId.getArtifactId(), bestVersion.getValue());
         log.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("resolve %s from %s", iid, bestPath));
         return iid;
     }
@@ -691,7 +685,7 @@ public class NReservedMavenUtilsBoot {
         return all;
     }
 
-    public static File getBootCacheJar(NBootId vid, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder, boolean useCache, String name,
+    public static File getBootCacheJar(NBootDependency vid, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder, boolean useCache, String name,
                                        Instant expire, NBootErrorInfoList errorList, NBootOptionsInfo bOptions,
                                        Function<String, String> pathExpansionConverter) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter);
@@ -702,7 +696,7 @@ public class NReservedMavenUtilsBoot {
         return f;
     }
 
-    static File getBootCacheFile(NBootId vid, String fileName, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder,
+    static File getBootCacheFile(NBootDependency vid, String fileName, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, NBootErrorInfoList errorList,
                                  NBootOptionsInfo bOptions,
                                  Function<String, String> pathExpansionConverter) {
@@ -735,7 +729,7 @@ public class NReservedMavenUtilsBoot {
         return null;
     }
 
-    private static File getBootCacheFile(NBootId nutsId, String path, NBootRepositoryLocation repository0, NBootRepositoryLocation cacheFolder,
+    private static File getBootCacheFile(NBootDependency nutsId, String path, NBootRepositoryLocation repository0, NBootRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, NBootErrorInfoList errorList,
                                          NBootOptionsInfo bOptions, Function<String, String> pathExpansionConverter) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
@@ -839,9 +833,7 @@ public class NReservedMavenUtilsBoot {
                 "maven".equals(loc.getName())
                         || "maven".equals(loc.getLocationType())
         ) {
-            if (NBootUtils.isBlank(loc.getPath()) || "maven".equals(loc.getPath())) {
-                return true;
-            }
+            return NBootUtils.isBlank(loc.getPath()) || "maven".equals(loc.getPath());
         }
         return false;
     }
@@ -1020,7 +1012,7 @@ public class NReservedMavenUtilsBoot {
                                 resource,
                                 null, false).getProperty("id");
                         if (!NBootUtils.isBlank(id)) {
-                            NBootId nId = NBootId.of(id);
+                            NBootDependency nId = NBootDependency.of(id);
                             switch (propName) {
                                 case "groupId":
                                     propValue = nId.getGroupId();
@@ -1029,7 +1021,7 @@ public class NReservedMavenUtilsBoot {
                                     propValue = nId.getArtifactId();
                                     break;
                                 case "version":
-                                    propValue = nId.getVersion().toString();
+                                    propValue = nId.getVersion();
                                     break;
                             }
                         }

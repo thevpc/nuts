@@ -52,7 +52,19 @@ public interface NContentTypeResolver extends NComponent {
      */
     NScoredCallable<String> probeContentType(byte[] bytes);
 
+    /**
+     * Finds the find extensions by content type.
+     *
+     * @param contentType content type
+     * @return find extensions by content type result
+     */
     List<String> findExtensionsByContentType(String contentType);
+    /**
+     * Finds the find content types by extension.
+     *
+     * @param extension extension
+     * @return find content types by extension result
+     */
     List<String> findContentTypesByExtension(String extension);
 
 }

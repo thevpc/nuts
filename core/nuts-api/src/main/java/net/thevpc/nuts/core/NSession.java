@@ -29,7 +29,6 @@ import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.command.NInstallListener;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -37,7 +36,7 @@ import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NAssertException;
 import net.thevpc.nuts.util.NNonCopiableException;
-import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.collections.NObservableMapListener;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Closeable;
@@ -56,44 +55,80 @@ import java.util.logging.Level;
  * @since 0.5.4
  */
 public interface NSession extends NCmdLineConfigurable, Closeable {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NSession of() {
+        /**
+         * Returns the get.
+         *
+         * @param ).get( ).get(
+         * @return get result
+         */
         return get().get();
     }
 
+    /**
+     * Returns the get.
+     *
+     * @return get result
+     */
     static NOptional<NSession> get() {
         return NWorkspace.get().map(NWorkspace::currentSession);
     }
 
+    /**
+     * Run with.
+     *
+     * @param runnable runnable
+     */
     void runWith(Runnable runnable);
 
+    /**
+     * Call with.
+     *
+     * @param callable callable
+     * @return call with result
+     */
     <T> T callWith(NCallable<T> callable);
 
 
+    /**
+     * Returns the trace.
+     *
+     * @return get trace result
+     */
     NOptional<Boolean> getTrace();
 
+    /**
+     * Returns the trace.
+     *
+     * @param inherit inherit
+     * @return get trace result
+     */
     Boolean getTrace(boolean inherit);
 
     /**
      * When true, operations are invited to print to output stream extra
      * information about processing. Output may be in different formats
-     * according to {@link #getOutputFormat()} and {@link #isIterableOut()}
+     * according to {@link #outputFormat()} and {@link #isIterableOut()}
      *
      * @return true if trace flag is armed
      */
     boolean isTrace();
 
-    NSession trace();
-
     /**
      * change trace flag value. When true, operations are invited to print to
      * output stream information about processing. Output may be in different
-     * formats according to {@link #getOutputFormat()} and
+     * formats according to {@link #outputFormat()} and
      * {@link #isIterableOut()}
      *
      * @param trace new value
      * @return {@code this} instance
      */
-    NSession setTrace(Boolean trace);
+    NSession trace(Boolean trace);
 
     /**
      * true if non iterable and plain formats along with trace flag are armed.
@@ -132,7 +167,13 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      */
     boolean isIterableOut();
 
-    NSession setIterableOut(boolean iterableOut);
+    /**
+     * Iterable out.
+     *
+     * @param iterableOut iterable out
+     * @return iterable out result
+     */
+    NSession iterableOut(boolean iterableOut);
 
     /**
      * true if NON iterable and NON plain formats are armed. equivalent to {@code !isIterableOut()
@@ -143,9 +184,20 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      */
     boolean isStructuredOut();
 
-    NArrayElementBuilder getElemOut();
+    /**
+     * Elem out.
+     *
+     * @return elem out result
+     */
+    NArrayElementBuilder elemOut();
 
-    NSession setElemOut(NArrayElementBuilder eout);
+    /**
+     * Elem out.
+     *
+     * @param eout eout
+     * @return elem out result
+     */
+    NSession elemOut(NArrayElementBuilder eout);
 
     /**
      * true if NON iterable and plain format are armed.
@@ -155,28 +207,68 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      */
     boolean isPlainOut();
 
-    NOptional<Boolean> getBot();
+    /**
+     * Bot.
+     *
+     * @return bot result
+     */
+    NOptional<Boolean> bot();
 
     /**
      * @return preview repo
      * @since 0.8.5
      */
-    NOptional<Boolean> getPreviewRepo();
+    NOptional<Boolean> previewRepo();
 
+    /**
+     * Checks if is preview repo.
+     *
+     * @return is preview repo result
+     */
     boolean isPreviewRepo();
 
+    /**
+     * Checks if is bot.
+     *
+     * @return is bot result
+     */
     boolean isBot();
 
-    NSession setBot(Boolean bot);
+    /**
+     * Bot.
+     *
+     * @param bot bot
+     * @return bot result
+     */
+    NSession bot(Boolean bot);
 
-    NSession setPreviewRepo(Boolean bot);
+    /**
+     * Preview repo.
+     *
+     * @param bot bot
+     * @return preview repo result
+     */
+    NSession previewRepo(Boolean bot);
 
-    NSession bot();
-
+    /**
+     * Yes.
+     *
+     * @return yes result
+     */
     NSession yes();
 
+    /**
+     * No.
+     *
+     * @return no result
+     */
     NSession no();
 
+    /**
+     * Ask.
+     *
+     * @return ask result
+     */
     NSession ask();
 
     /**
@@ -206,13 +298,13 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
-     * {@link #setOutputFormat(NContentType)}. If none of null {@link #setIterableOut(boolean)}
-     * {@link #setOutputFormat(NContentType)} has been called (or called with
+     * {@link #outputFormat(NContentType)}. If none of null {@link #iterableOut(boolean)}
+     * {@link #outputFormat(NContentType)} has been called (or called with
      * null values) {@link NContentType#PLAIN} should be returned.
      *
      * @return effective trace output format
      */
-    NOptional<NContentType> getOutputFormat();
+    NOptional<NContentType> outputFormat();
 
     /**
      * set output format
@@ -220,7 +312,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param outputFormat output format
      * @return {@code this} instance
      */
-    NSession setOutputFormat(NContentType outputFormat);
+    NSession outputFormat(NContentType outputFormat);
 
     /**
      * set json output format
@@ -294,7 +386,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      *
      * @return {@code this} instance
      */
-    NOptional<NFetchStrategy> getFetchStrategy();
+    NOptional<NFetchStrategy> fetchStrategy();
 
     /**
      * change fetch strategy
@@ -302,7 +394,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param mode new strategy or null
      * @return {@code this} instance
      */
-    NSession setFetchStrategy(NFetchStrategy mode);
+    NSession fetchStrategy(NFetchStrategy mode);
 
     /**
      * add session listener. supported listeners are instances of:
@@ -352,7 +444,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      *
      * @return all registered listeners.
      */
-    List<NListener> getListeners();
+    List<NListener> listeners();
 
     /**
      * return confirmation mode or {@link NConfirmationMode#ASK}
@@ -360,7 +452,12 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return confirmation mode
      */
 //    NConfirmationMode getConfirm();
-    NOptional<NConfirmationMode> getConfirm();
+    /**
+     * Confirm.
+     *
+     * @return confirm result
+     */
+    NOptional<NConfirmationMode> confirm();
 
     /**
      * set confirm mode.
@@ -368,7 +465,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param confirm confirm type.
      * @return {@code this} instance
      */
-    NSession setConfirm(NConfirmationMode confirm);
+    NSession confirm(NConfirmationMode confirm);
 
     /**
      * add output format options
@@ -383,7 +480,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      *
      * @return output format options
      */
-    List<String> getOutputFormatOptions();
+    List<String> outputFormatOptions();
 
     /**
      * set output format options (clear and add)
@@ -391,9 +488,15 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param options output format options.
      * @return {@code this} instance
      */
-    NSession setOutputFormatOptions(String... options);
+    NSession outputFormatOptions(String... options);
 
-    NSession setOutputFormatOptions(List<String> options);
+    /**
+     * Output format options.
+     *
+     * @param options options
+     * @return output format options result
+     */
+    NSession outputFormatOptions(List<String> options);
 
     /**
      * current output stream
@@ -402,6 +505,11 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      */
     NPrintStream out();
 
+    /**
+     * In.
+     *
+     * @return in result
+     */
     InputStream in();
 
     /**
@@ -416,14 +524,14 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      *
      * @return iterable output
      */
-    NIterableFormat getIterableOutput();
+    NIterableFormat iterableOutput();
 
     /**
      * current terminal
      *
      * @return current terminal
      */
-    NTerminal getTerminal();
+    NTerminal terminal();
 
     /**
      * set session terminal
@@ -431,16 +539,21 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param terminal session terminal
      * @return {@code this} instance
      */
-    NSession setTerminal(NTerminal terminal);
+    NSession terminal(NTerminal terminal);
 
     /**
      * current workspace
      *
      * @return current workspace
      */
-    NWorkspace getWorkspace();
+    NWorkspace workspace();
 
-    NOptional<Boolean> getTransitive();
+    /**
+     * Transitive.
+     *
+     * @return transitive result
+     */
+    NOptional<Boolean> transitive();
 
     /**
      * true when considering transitive repositories.
@@ -455,9 +568,14 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param value nullable value
      * @return {@code this} instance
      */
-    NSession setTransitive(Boolean value);
+    NSession transitive(Boolean value);
 
-    NOptional<Boolean> getCached();
+    /**
+     * Cached.
+     *
+     * @return cached result
+     */
+    NOptional<Boolean> cached();
 
     /**
      * true when using cache
@@ -472,9 +590,14 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param value value
      * @return {@code this} instance
      */
-    NSession setCached(Boolean value);
+    NSession cached(Boolean value);
 
-    NOptional<Boolean> getIndexed();
+    /**
+     * Indexed.
+     *
+     * @return indexed result
+     */
+    NOptional<Boolean> indexed();
 
     /**
      * true when using indexes
@@ -489,7 +612,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param value value
      * @return {@code this} instance
      */
-    NSession setIndexed(Boolean value);
+    NSession indexed(Boolean value);
 
     /**
      * return expired date/time or zero if not set. Expire time is used to
@@ -498,7 +621,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return expired date/time or zero
      * @since 0.8.0
      */
-    NOptional<Instant> getExpireTime();
+    NOptional<Instant> expireTime();
 
     /**
      * set expire instant. Expire time is used to expire any cached file that
@@ -508,15 +631,20 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return {@code this} instance
      * @since 0.8.0
      */
-    NSession setExpireTime(Instant value);
+    NSession expireTime(Instant value);
 
     /**
      * return progress options
      *
      * @return progress options
      */
-    String getProgressOptions();
+    String progressOptions();
 
+    /**
+     * Checks if is progress.
+     *
+     * @return is progress result
+     */
     boolean isProgress();
 
     /**
@@ -525,29 +653,89 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param progressOptions options
      * @return {@code this} instance
      */
-    NSession setProgressOptions(String progressOptions);
+    NSession progressOptions(String progressOptions);
 
-    NOptional<Boolean> getGui();
+    /**
+     * Gui.
+     *
+     * @return gui result
+     */
+    NOptional<Boolean> gui();
 
+    /**
+     * Checks if is gui.
+     *
+     * @return is gui result
+     */
     boolean isGui();
 
-    NSession setGui(Boolean gui);
+    /**
+     * Gui.
+     *
+     * @param gui gui
+     * @return gui result
+     */
+    NSession gui(Boolean gui);
 
-    String getErrLinePrefix();
+    /**
+     * Err line prefix.
+     *
+     * @return err line prefix result
+     */
+    String errLinePrefix();
 
-    NSession setErrLinePrefix(String errLinePrefix);
+    /**
+     * Err line prefix.
+     *
+     * @param errLinePrefix err line prefix
+     * @return err line prefix result
+     */
+    NSession errLinePrefix(String errLinePrefix);
 
-    String getOutLinePrefix();
+    /**
+     * Out line prefix.
+     *
+     * @return out line prefix result
+     */
+    String outLinePrefix();
 
-    NSession setOutLinePrefix(String outLinePrefix);
+    /**
+     * Out line prefix.
+     *
+     * @param outLinePrefix out line prefix
+     * @return out line prefix result
+     */
+    NSession outLinePrefix(String outLinePrefix);
 
-    NOptional<Boolean> getDry();
+    /**
+     * Dry.
+     *
+     * @return dry result
+     */
+    NOptional<Boolean> dry();
 
-    NOptional<Boolean> getShowStacktrace();
+    /**
+     * Show stacktrace.
+     *
+     * @return show stacktrace result
+     */
+    NOptional<Boolean> showStacktrace();
 
-    NSession setDry(Boolean dry);
+    /**
+     * Dry.
+     *
+     * @param dry dry
+     * @return dry result
+     */
+    NSession dry(Boolean dry);
 
-    NSession setShowStacktrace(Boolean showStacktrace);
+    /**
+     * Show stacktrace.
+     *
+     * @param showStacktrace show stacktrace
+     * @return show stacktrace result
+     */
+    NSession showStacktrace(Boolean showStacktrace);
 
     /**
      * equivalent to getDry().orDefault();
@@ -556,16 +744,49 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      */
     boolean isDry();
 
-    Level getLogTermLevel();
+    /**
+     * Log term level.
+     *
+     * @return log term level result
+     */
+    Level logTermLevel();
 
+    /**
+     * Checks if is log term level.
+     *
+     * @param level level
+     * @return is log term level result
+     */
     boolean isLogTermLevel(Level level);
 
+    /**
+     * Checks if is log file level.
+     *
+     * @param level level
+     * @return is log file level result
+     */
     boolean isLogFileLevel(Level level);
 
-    NSession setLogTermLevel(Level level);
+    /**
+     * Log term level.
+     *
+     * @param level level
+     * @return log term level result
+     */
+    NSession logTermLevel(Level level);
 
+    /**
+     * Checks if is verbose term.
+     *
+     * @return is verbose term result
+     */
     boolean isVerboseTerm();
 
+    /**
+     * Checks if is verbose file.
+     *
+     * @return is verbose file result
+     */
     boolean isVerboseFile();
 
     /**
@@ -577,35 +798,115 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      */
     NSession configure(NWorkspaceOptions options);
 
-    Level getLogFileLevel();
+    /**
+     * Log file level.
+     *
+     * @return log file level result
+     */
+    Level logFileLevel();
 
-    NSession setLogFileLevel(Level logFileLevel);
+    /**
+     * Log file level.
+     *
+     * @param logFileLevel log file level
+     * @return log file level result
+     */
+    NSession logFileLevel(Level logFileLevel);
 
+    /**
+     * Eout.
+     *
+     * @return eout result
+     */
     NArrayElementBuilder eout();
 
+    /**
+     * Flush.
+     *
+     * @return flush result
+     */
     NSession flush();
 
-    NOptional<NExecutionType> getExecutionType();
+    /**
+     * Execution type.
+     *
+     * @return execution type result
+     */
+    NOptional<NExecutionType> executionType();
 
+    /**
+     * Embedded.
+     *
+     * @return embedded result
+     */
     NSession embedded();
 
+    /**
+     * System.
+     *
+     * @return system result
+     */
     NSession system();
 
+    /**
+     * Spawn.
+     *
+     * @return spawn result
+     */
     NSession spawn();
 
-    NSession setExecutionType(NExecutionType executionType);
+    /**
+     * Execution type.
+     *
+     * @param executionType execution type
+     * @return execution type result
+     */
+    NSession executionType(NExecutionType executionType);
 
-    NOptional<String> getDebug();
+    /**
+     * Debug.
+     *
+     * @return debug result
+     */
+    NOptional<String> debug();
 
-    NSession setDebug(String debug);
+    /**
+     * Debug.
+     *
+     * @param debug debug
+     * @return debug result
+     */
+    NSession debug(String debug);
 
-    NOptional<String> getLocale();
+    /**
+     * Locale.
+     *
+     * @return locale result
+     */
+    NOptional<String> locale();
 
-    NSession setLocale(String locale);
+    /**
+     * Locale.
+     *
+     * @param locale locale
+     * @return locale result
+     */
+    NSession locale(String locale);
 
-    NOptional<NRunAs> getRunAs();
+    /**
+     * Run as.
+     *
+     * @return run as result
+     */
+    NOptional<NRunAs> runAs();
 
-    NSession setRunAs(NRunAs runAs);
+    /**
+     * Run as.
+     *
+     * @param runAs run as
+     * @return run as result
+     */
+    NSession runAs(NRunAs runAs);
 
     ////////////////////////////////////////
     //COMMANDS
@@ -613,10 +914,25 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
     /// /////////////////////////////////
     /// CONFIG
     /// /////////////////////////////////
+    /**
+     * Sudo.
+     *
+     * @return sudo result
+     */
     NSession sudo();
 
+    /**
+     * Root.
+     *
+     * @return root result
+     */
     NSession root();
 
+    /**
+     * Current user.
+     *
+     * @return current user result
+     */
     NSession currentUser();
 
     /**
@@ -625,7 +941,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return dependency solver Name
      * @since 0.8.3
      */
-    String getDependencySolver();
+    String dependencySolver();
 
     /**
      * update dependency solver Name
@@ -634,8 +950,11 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NSession setDependencySolver(String dependencySolver);
+    NSession dependencySolver(String dependencySolver);
 
+    /**
+     * Close.
+     */
     void close();
 
     /// /////////////////////
@@ -748,7 +1067,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return a map of property names to their current values
      * @since 0.8.9
      */
-    Map<String, Object> getProperties();
+    Map<String, Object> properties();
 
     /**
      * Retrieves the current value of a property by name.

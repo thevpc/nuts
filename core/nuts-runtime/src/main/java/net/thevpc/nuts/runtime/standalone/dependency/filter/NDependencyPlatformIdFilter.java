@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
-import net.thevpc.nuts.artifact.NDependency;
-import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +33,7 @@ public class NDependencyPlatformIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        List<String> current = NStream.ofIterable(dependency.getCondition().getPlatform()).nonBlank().toList();
+        List<String> current = NStream.ofIterable(dependency.condition().platform()).nonBlank().toList();
         if(current.size()==0 || accepted.isEmpty()){
             return true;
         }
@@ -56,6 +54,19 @@ public class NDependencyPlatformIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public NDependencyFilter simplify() {
-        return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
+        return accepted.isEmpty() ? NDependencyFilterRPI.of().always() : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyPlatformIdFilter that = (NDependencyPlatformIdFilter) o;
+        return Objects.equals(accepted, that.accepted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), accepted);
     }
 }

@@ -31,11 +31,37 @@ package net.thevpc.nuts.text;
  * @param <T> Type
  */
 public interface NTreeVisitor<T> {
+    /**
+     * Pre visit directory.
+     *
+     * @param dir dir
+     * @return pre visit directory result
+     */
     default NTreeVisitResult preVisitDirectory(T dir){return NTreeVisitResult.CONTINUE;}
 
+    /**
+     * Visit file.
+     *
+     * @param file file
+     * @return visit file result
+     */
     default NTreeVisitResult visitFile(T file){return NTreeVisitResult.CONTINUE;}
 
+    /**
+     * Visit file failed.
+     *
+     * @param file file
+     * @param exc exc
+     * @return visit file failed result
+     */
     default NTreeVisitResult visitFileFailed(T file, Exception exc){return NTreeVisitResult.CONTINUE;}
 
+    /**
+     * Post visit directory.
+     *
+     * @param dir dir
+     * @param exc exc
+     * @return post visit directory result
+     */
     default NTreeVisitResult postVisitDirectory(T dir, Exception exc){return NTreeVisitResult.CONTINUE;}
 }

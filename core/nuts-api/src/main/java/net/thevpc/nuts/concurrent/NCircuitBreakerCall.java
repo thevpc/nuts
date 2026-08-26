@@ -2,6 +2,7 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.function.IntFunction;
 
@@ -96,7 +97,8 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
      * @param failureThreshold number of failures to trigger open state
      * @return this instance for fluent chaining
      */
-    NCircuitBreakerCall<T> setFailureThreshold(int failureThreshold);
+    @NSetter
+    NCircuitBreakerCall<T> failureThreshold(int failureThreshold);
 
 
     /**
@@ -105,7 +107,8 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
      * @param successThreshold number of successes to transition to closed state
      * @return this instance for fluent chaining
      */
-    NCircuitBreakerCall<T> setSuccessThreshold(int successThreshold);
+    @NSetter
+    NCircuitBreakerCall<T> successThreshold(int successThreshold);
 
     /**
      * Sets the retry period to apply after a failure.
@@ -113,7 +116,8 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
      * @param retryPeriod function mapping the failure attempt number to a {@link NDuration}
      * @return this instance for fluent chaining
      */
-    NCircuitBreakerCall<T> setSuccessRetryPeriod(IntFunction<NDuration> retryPeriod);
+    @NSetter
+    NCircuitBreakerCall<T> successRetryPeriod(IntFunction<NDuration> retryPeriod);
 
     /**
      * Sets the retry period to apply after a successful execution in half-open state.
@@ -121,7 +125,8 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
      * @param retryPeriod function mapping the success attempt number to a {@link NDuration}
      * @return this instance for fluent chaining
      */
-    NCircuitBreakerCall<T> setFailureRetryPeriod(IntFunction<NDuration> retryPeriod);
+    @NSetter
+    NCircuitBreakerCall<T> failureRetryPeriod(IntFunction<NDuration> retryPeriod);
 
     /**
      * Executes the callable, returning the result or delegating to a recovery callable if an error occurs.

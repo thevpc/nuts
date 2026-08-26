@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.artifact.NDependencySolver;
+
 /**
  * Nuts descriptors solver factory responsible to building traversable dependency tree
  *
@@ -33,7 +35,17 @@ package net.thevpc.nuts.spi;
  */
 public interface NDependencySolverFactory extends NComponent {
 
+    /**
+     * Creates a new instance of create.
+     *
+     * @return create result
+     */
     NDependencySolver create();
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    String name();
 }

@@ -2,6 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.function.Supplier;
 
@@ -43,7 +45,8 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      * @param expiry the expiry duration, or {@code null} for no expiry
      * @return this instance
      */
-    NCachedValue<T> setExpiry(NDuration expiry);
+    @NSetter
+    NCachedValue<T> expiry(NDuration expiry);
 
     /**
      * Sets the expiry duration in milliseconds.
@@ -51,7 +54,8 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      * @param expiry the expiry duration in milliseconds, or {@code 0} for no expiry
      * @return this instance
      */
-    NCachedValue<T> setExpiryMillis(long expiry);
+    @NGetter
+    NCachedValue<T> expiryMillis(long expiry);
 
     /**
      * Sets the maximum number of retry attempts after a failed computation.
@@ -61,7 +65,8 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      * @param maxRetries the maximum retry count
      * @return this instance
      */
-    NCachedValue<T> setMaxRetries(int maxRetries);
+    @NGetter
+    NCachedValue<T> maxRetries(int maxRetries);
 
     /**
      * Sets the minimum period between retry attempts after a failed computation.
@@ -73,7 +78,8 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      * @param retryPeriod the retry period, or {@code null} for immediate retry
      * @return this instance
      */
-    NCachedValue<T> setRetryPeriod(NDuration retryPeriod);
+    @NGetter
+    NCachedValue<T> retryPeriod(NDuration retryPeriod);
 
     /**
      * Sets both retry parameters at once: the maximum retry count and the retry period.
@@ -82,7 +88,8 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      * @param retryPeriod the delay between retry attempts
      * @return this instance
      */
-    NCachedValue<T> setRetry(int maxRetries, NDuration retryPeriod);
+    @NGetter
+    NCachedValue<T> retry(int maxRetries, NDuration retryPeriod);
 
     /**
      * Configures whether to retain the last successfully computed value
@@ -110,6 +117,7 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      *
      * @return {@code true} if the value is valid
      */
+    @NGetter
     boolean isValid();
 
     /**
@@ -117,6 +125,7 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      *
      * @return {@code true} if the value failed to compute
      */
+    @NGetter
     boolean isError();
 
     /**
@@ -124,6 +133,7 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      *
      * @return {@code true} if the value has been evaluated
      */
+    @NGetter
     boolean isEvaluated();
 
     /**
@@ -132,6 +142,7 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      *
      * @return {@code true} if the value is expired
      */
+    @NGetter
     boolean isExpired();
 
     /**
@@ -183,7 +194,8 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      * @param value the new cached value
      * @return this instance
      */
-    NCachedValue<T> setValue(T value);
+    @NSetter
+    NCachedValue<T> value(T value);
 
     /**
      * Computes and updates the cached value if it is currently invalid.

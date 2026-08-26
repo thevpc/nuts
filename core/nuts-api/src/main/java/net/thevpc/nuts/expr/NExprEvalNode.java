@@ -2,8 +2,24 @@ package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.util.NOptional;
 
+/**
+ * NExprEvalNode interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NExprEvalNode {
-    NExprNode getNode();
+    /**
+     * Node.
+     *
+     * @return node result
+     */
+    NExprNode node();
 
-    NOptional<Object> getValue();
+    /**
+     * Value.
+     *
+     * @return value result
+     */
+    NOptional<Object> value();
 }

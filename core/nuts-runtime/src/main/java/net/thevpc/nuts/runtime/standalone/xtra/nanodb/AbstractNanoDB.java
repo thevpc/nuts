@@ -119,6 +119,6 @@ public abstract class AbstractNanoDB implements NanoDB {
     }
 
     public <T> NanoDBIndex<T> createIndexFor(Class<T> type, NanoDBSerializer<T> ser, File file) {
-        return new NanoDBDefaultIndex<T>(type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
+        return (NanoDBIndex<T>) new NanoDBDefaultIndex(type, ser, file);
     }
 }

@@ -28,7 +28,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 
 import java.io.InputStream;
 
@@ -38,6 +38,9 @@ import java.io.InputStream;
  * @since 0.5.4
  */
 public interface NSystemTerminal extends NSystemTerminalBase {
+    /**
+     * Enable rich term.
+     */
     static void enableRichTerm() {
         NIORPI.of().enableRichTerm();
     }
@@ -94,5 +97,10 @@ public interface NSystemTerminal extends NSystemTerminalBase {
      */
     NSystemTerminal printProgress(float progress, NMsg message);
 
-    NSystemTerminalBase getBase();
+    /**
+     * Base.
+     *
+     * @return base result
+     */
+    NSystemTerminalBase base();
 }

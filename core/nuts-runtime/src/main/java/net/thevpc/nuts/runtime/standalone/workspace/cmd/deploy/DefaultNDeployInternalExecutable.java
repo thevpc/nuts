@@ -12,13 +12,15 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  * @author thevpc
  */
 public class DefaultNDeployInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNDeployInternalExecutable(String[] args, NExec execCommand) {
-        super("deploy", args, execCommand);
+    public DefaultNDeployInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("deploy", args, execCommand,executorOptions);
     }
 
     @Override

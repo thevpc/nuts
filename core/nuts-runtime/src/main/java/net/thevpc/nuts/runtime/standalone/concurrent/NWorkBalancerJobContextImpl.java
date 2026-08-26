@@ -26,46 +26,46 @@ class NWorkBalancerJobContextImpl implements NWorkBalancerJobContext {
     }
 
     @Override
-    public int getWorkerIndex() {
+    public int workerIndex() {
         return workerIndex;
     }
 
     @Override
-    public int getWorkersCount() {
-        return model.getWorkers().size();
+    public int workersCount() {
+        return model.workers().size();
     }
 
     @Override
-    public String getJobId() {
+    public String jobId() {
         return jobId;
     }
 
-    public String getJobName() {
+    public String jobName() {
         return jobName;
     }
 
-    public String getWorkerName() {
-        return worker.getName();
+    public String workerName() {
+        return worker.name();
     }
 
     @Override
-    public NWorkBalancerWorker getWorker() {
+    public NWorkBalancerWorker worker() {
         return worker;
     }
 
     @Override
-    public Map<String, NElement> getOptions() {
-        if (model.getOptions() == null) {
+    public Map<String, NElement> options() {
+        if (model.options() == null) {
             return new HashMap<>();
         }
-        return Collections.unmodifiableMap(model.getOptions());
+        return Collections.unmodifiableMap(model.options());
     }
 
     @Override
     public NOptional<NElement> getOption(String name) {
-        if (model.getOptions() == null) {
+        if (model.options() == null) {
             return NOptional.ofNamedEmpty(name);
         }
-        return NOptional.ofNamed(model.getOptions().get(name), name);
+        return NOptional.ofNamed(model.options().get(name), name);
     }
 }

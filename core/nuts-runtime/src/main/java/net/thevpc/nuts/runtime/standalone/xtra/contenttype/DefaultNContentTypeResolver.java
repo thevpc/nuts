@@ -26,11 +26,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.io.NPathExtensionType;
 import net.thevpc.nuts.io.NPath;
@@ -82,20 +83,20 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
 
             if (contentType == null) {
-                String name = path.getName();
+                String name = path.name();
                 try {
                     contentType = URLConnection.guessContentTypeFromName(name);
                 } catch (Exception e) {
                     //ignore
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
+                    String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).extension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
                         return NScoredCallable.of(NScorable.DEFAULT_SCORE + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).getExtension();
+                    String e = NPath.of(Paths.get(name)).nameParts(NPathExtensionType.SHORT).extension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
                         return NScoredCallable.of(NScorable.DEFAULT_SCORE + 10, "application/json");
                     }
@@ -118,9 +119,9 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         }
         NPath nPath = NPath.of(file);
         Set<String> extensions=new HashSet<>();
-        extensions.add(nPath.nameParts(NPathExtensionType.LONG).getExtension());
-        extensions.add(nPath.nameParts(NPathExtensionType.SHORT).getExtension());
-        extensions.add(nPath.nameParts(NPathExtensionType.SMART).getExtension());
+        extensions.add(nPath.nameParts(NPathExtensionType.LONG).extension());
+        extensions.add(nPath.nameParts(NPathExtensionType.SHORT).extension());
+        extensions.add(nPath.nameParts(NPathExtensionType.SMART).extension());
         extensions=extensions.stream().filter(NBlankable::isNonBlank).filter(x->!x.isEmpty()).collect(Collectors.toSet());
         if (contentType == null) {
             for (String extension : extensions) {
@@ -134,13 +135,13 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
         if (contentType == null) {
-            if (NEnv.of().getOsFamily().isPosix()) {
+            if (NEnv.of().osFamily().isPosix()) {
                 if (contentType == null) {
                     try {
                         String c = NExec.of("file", "--mime-type", file.toString())
                                 .system()
-                                .failFast()
-                                .getGrabbedOutString();
+                                .failFast(true)
+                                .grabbedOut();
                         if (c != null) {
                             int i = c.lastIndexOf(':');
                             if (i > 0) {
@@ -155,8 +156,8 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                     try {
                         String c = NExec.of("xdg-mime", "query", "filetype", file.toString())
                                 .system()
-                                .failFast()
-                                .getGrabbedOutString();
+                                .failFast(true)
+                                .grabbedOut();
                         if (c != null) {
                             int i = c.indexOf(':');
                             if (i > 0) {

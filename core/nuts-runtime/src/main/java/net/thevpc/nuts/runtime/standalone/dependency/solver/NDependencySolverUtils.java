@@ -10,7 +10,7 @@ public class NDependencySolverUtils {
         if(name==null){
             return DEFAULT_SOLVER_NAME;
         }
-        name= NStringUtils.trim(name);
+        name= NStringUtils.strip(name);
         String lcName=name.toLowerCase();
         if(lcName.equals("default")){
             lcName="maven";

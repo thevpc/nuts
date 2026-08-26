@@ -30,5 +30,10 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextPlain extends NPrimitiveText {
-    String getValue();
+    /**
+     * Value.
+     *
+     * @return value result
+     */
+    String value();
 }

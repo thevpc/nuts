@@ -44,6 +44,13 @@ public class NParseEnumException extends NException {
      * @param enumType     java Enum or NutsEnum type (cannot be null)
      */
     public NParseEnumException(String invalidValue, Class<?> enumType) {
+      /**
+       * This.
+       *
+       * @param null null
+       * @param invalidValue invalid value
+       * @param enumType enum type
+       */
         this(null, invalidValue, enumType);
     }
 
@@ -61,7 +68,7 @@ public class NParseEnumException extends NException {
                         : message
         );
         if (enumType == null || (!Enum.class.isAssignableFrom(enumType) && !NEnum.class.isAssignableFrom(enumType))) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
         }
         this.enumType = enumType;
         this.invalidValue = invalidValue;
@@ -72,7 +79,7 @@ public class NParseEnumException extends NException {
      *
      * @return invalid value
      */
-    public String getInvalidValue() {
+    public String invalidValue() {
         return invalidValue;
     }
 
@@ -81,7 +88,7 @@ public class NParseEnumException extends NException {
      *
      * @return enum type
      */
-    public Class getEnumType() {
+    public Class enumType() {
         return enumType;
     }
 }

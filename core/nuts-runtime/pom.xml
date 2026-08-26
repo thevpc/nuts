@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-runtime</artifactId>
-    <version>0.8.9.0</version>
+    <version>1.0.0.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community Core Runtime</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -40,6 +40,7 @@
         <name>vpc open source initiative</name>
         <url>https://thevpc.net</url>
     </organization>
+
     <developers>
         <developer>
             <id>vpc</id>
@@ -68,9 +69,9 @@
     </licenses>
 
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.9</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>1.0.0</version></dependency>
         <!-- force transitive dependencies-->
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-boot</artifactId><version>0.8.9</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-boot</artifactId><version>1.0.0</version></dependency>
         <dependency><groupId>org.fusesource.jansi</groupId><artifactId>jansi</artifactId><version>2.3.4</version><!--<optional>true</optional>--><!--!<os>windows</os>--></dependency>
         <dependency><groupId>com.github.vatbub</groupId><artifactId>mslinks</artifactId><version>1.0.5</version><!--<version>1.0.6.2</version> requires JDK10--><!--!<os>windows</os>--></dependency>
     </dependencies>
@@ -201,9 +202,7 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.9</version>
+                        <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.9</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -288,6 +287,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.6</version>
+                        <configuration>
+                            <keyname>C861C1799197D091</keyname>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -310,9 +312,7 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.9</version>
+                        <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.9</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -329,14 +329,14 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.10.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
                         </configuration>
                     </plugin>
                 </plugins>

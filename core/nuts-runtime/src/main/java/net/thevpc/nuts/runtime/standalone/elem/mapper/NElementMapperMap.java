@@ -88,7 +88,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
             elemType2 = pt.getActualTypeArguments()[1];
         }
         if (cls == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("class is null"));
+            throw new NIllegalArgumentException(NMsg.ofP("class is null"));
         }
         switch (cls.getName()) {
             case "java.util.Map":
@@ -103,7 +103,7 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 return fillObject(element, new TreeMap(), elemType1, elemType2, to, context);
             }
             default: {
-                return fillObject(element, (Map) context.getTypesRepository().getType(to).newInstance(), elemType1, elemType2, to, context);
+                return fillObject(element, (Map) context.typesRepository().getType(to).newInstance(), elemType1, elemType2, to, context);
             }
         }
     }

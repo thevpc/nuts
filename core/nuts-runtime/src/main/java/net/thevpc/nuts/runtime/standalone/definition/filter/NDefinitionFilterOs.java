@@ -52,7 +52,7 @@ public class NDefinitionFilterOs extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition descriptor) {
-        return CoreFilterUtils.matchesOs(os, descriptor.getDescriptor().getCondition().getOs());
+        return CoreFilterUtils.matchesOs(os, descriptor.descriptor().condition().os());
     }
 
     /**
@@ -67,30 +67,22 @@ public class NDefinitionFilterOs extends AbstractDefinitionFilter {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + Objects.hashCode(this.os);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterOs that = (NDefinitionFilterOs) o;
+        return Objects.equals(os, that.os);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefinitionFilterOs other = (NDefinitionFilterOs) obj;
-        return Objects.equals(this.os, other.os);
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), os);
     }
 
     @Override
     public String toString() {
         return "Os{" + os + '}';
     }
+
 
 }

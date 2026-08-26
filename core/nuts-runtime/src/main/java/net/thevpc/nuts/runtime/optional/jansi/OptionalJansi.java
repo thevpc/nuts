@@ -25,10 +25,12 @@
 package net.thevpc.nuts.runtime.optional.jansi;
 
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.reflect.NTypeLoader;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -42,9 +44,10 @@ import java.util.Set;
 public class OptionalJansi {
     private static final NTypeLoader jansiCLibrary = new NTypeLoaderImpl("org.fusesource.jansi.internal.CLibrary");
     private static final NTypeLoader jansiAnsiOutputStream = new NTypeLoaderImpl("org.fusesource.jansi.io.AnsiOutputStream");
+    private static volatile Boolean JANSI_INSTALLED = null;
 
     public static boolean isatty(int fd) {
-        if (jansiCLibrary.getType().isPresent()) {
+        if (jansiCLibrary.type().isPresent()) {
             try {
                 Method m = jansiCLibrary.getDeclaredMethod("isatty", int.class).orNull();
                 if (m != null) {
@@ -59,8 +62,8 @@ public class OptionalJansi {
     }
 
     public static boolean isAvailable() {
-        if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
-            return jansiAnsiOutputStream.getType().isPresent();
+        if (NOsFamily.current() == NOsFamily.WINDOWS) {
+            return jansiAnsiOutputStream.type().isPresent();
         }
         return false;
     }
@@ -70,7 +73,7 @@ public class OptionalJansi {
         if (isAvailable()) {
             flags.add("jansi");
             if (System.console() != null) {
-                org.fusesource.jansi.AnsiConsole.systemInstall();
+                ensureJansiInstalled();
                 flags.add("ansi");
                 return new NWorkspaceTerminalOptions(System.in, System.out, System.err, flags.toArray(new String[0]));
             } else {
@@ -90,7 +93,7 @@ public class OptionalJansi {
         if (isAvailable()) {
             flags.add("jansi");
             if (System.console() != null) {
-                org.fusesource.jansi.AnsiConsole.systemInstall();
+                ensureJansiInstalled();
                 flags.add("ansi");
             } else {
                 if (tty) {
@@ -102,6 +105,58 @@ public class OptionalJansi {
         }
     }
 
+    public static void ensureJansiInstalled() {
+        boolean window = System.getProperty("os.name","").toLowerCase().contains("win");
+        window=false;
+        if(window) {
+            if (JANSI_INSTALLED == null) {
+                System.setProperty("jansi.passthrough", "true");
+                System.setProperty("jansi.mode", "strip");
+                synchronized (OptionalJansi.class) {
+                    if (JANSI_INSTALLED == null) {
+                        org.fusesource.jansi.AnsiConsole.systemInstall();
+                        try {
+                            org.fusesource.jansi.AnsiConsole.out().install();
+                        } catch (IOException e) {
+                            JANSI_INSTALLED=false;
+                            return;
+                        }
+                        try {
+                            org.fusesource.jansi.AnsiConsole.err().install();
+                        } catch (IOException e) {
+                            JANSI_INSTALLED=false;
+                            return;
+                        }
+                        JANSI_INSTALLED = true;
+                        // 2. Ensure console state is restored even on SIGINT / Ctrl+C / normal exit
+                        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                            try {
+                                org.fusesource.jansi.AnsiConsole.out().uninstall();
+                            } catch (IOException e) {
+                            }
+                            try {
+                                org.fusesource.jansi.AnsiConsole.err().uninstall();
+                            } catch (IOException e) {
+                            }
+                        }));
+                    }
+                }
+            }else{
+                if (JANSI_INSTALLED == null) {
+                    org.fusesource.jansi.AnsiConsole.systemInstall();
+                    JANSI_INSTALLED = true;
+                    // 2. Ensure console state is restored even on SIGINT / Ctrl+C / normal exit
+                    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                        try {
+                            org.fusesource.jansi.AnsiConsole.systemUninstall();
+                        } catch (Exception e) {
+                        }
+                    }));
+                }
+            }
+        }
+
+    }
 //
 //    private static class ResetOnCloseOutputStream extends BaseTransparentFilterOutputStream {
 //

@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.log.NLog;
@@ -31,7 +34,7 @@ public class NUncompressZip implements NUncompressPackaging {
     }
 
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {
-        NOutputTarget target = uncompress.getTarget();
+        NOutputTarget target = uncompress.target();
         try {
             NPath _target = asValidTargetPath(target);
             if (_target == null) {
@@ -40,26 +43,39 @@ public class NUncompressZip implements NUncompressPackaging {
             Path folder = _target.toPath().get();
             NPath.of(folder).mkdirs();
             byte[] buffer = new byte[10 * 4 * 1024];
-            InputStream _in = source.getInputStream();
+            InputStream _in = source.inputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
                     //get the zipped file list entry
                     ZipEntry ze = zis.getNextEntry();
                     String root = null;
                     while (ze != null) {
-                        String fileName = ze.getName();
+                        String fileName0 = ze.getName();
+                        String fileName = fileName0;
                         if (uncompress.isSkipRoot()) {
-                            String root2 = extractRoot(fileName);
+                            String currentRoot = extractRoot(fileName0);
+
                             if (root == null) {
-                                root = root2;
-                            } else if (!Objects.equals(root2, root)) {
-                                throw new IOException("not a single root zip : '" + root2 + "' <> '" + root + "'");
+                                root = currentRoot;
+                            } else if (!Objects.equals(root, currentRoot)) {
+                                throw new IOException("not a single root archive: '" + currentRoot + "' <> '" + root + "'");
                             }
-                            fileName = fileName.substring(root.length());
+
+                            // Strip the root from the filename
+                            fileName = fileName0.substring(root.length());
+
+                            // Edge case: If the entry IS the root directory itself, its stripped name will be empty.
+                            // We skip it to avoid creating an empty directory or triggering weird edge cases.
+                            if (fileName.isEmpty() || fileName.equals("/")) {
+                                ze = zis.getNextEntry();
+                                continue;
+                            }
                         }
-                        if (fileName.endsWith("/")) {
-                            Path newFile = folder.resolve(fileName);
-                            NPath.of(newFile).mkdirs();
+                        if (fileName0.endsWith("/")) {
+                            if(!fileName.isEmpty()){ //check the case of skip riit
+                                Path newFile = folder.resolve(fileName);
+                                NPath.of(newFile).mkdirs();
+                            }
                         } else {
                             Path newFile = folder.resolve(fileName);
                             _LOG()
@@ -96,7 +112,7 @@ public class NUncompressZip implements NUncompressPackaging {
     public void visitPackage(NUncompress uncompress, NInputSource source, NUncompressVisitor visitor) {
         try {
             //get the zip file content
-            InputStream _in = source.getInputStream();
+            InputStream _in = source.inputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
                     //get the zipped file list entry
@@ -106,19 +122,21 @@ public class NUncompressZip implements NUncompressPackaging {
 
                         String fileName = ze.getName();
                         if (uncompress.isSkipRoot()) {
+                            String currentRoot = extractRoot(fileName);
+
                             if (root == null) {
-                                if (fileName.endsWith("/")) {
-                                    root = fileName;
-                                    ze = zis.getNextEntry();
-                                    continue;
-                                } else {
-                                    throw new IOException("not a single root zip");
-                                }
+                                root = currentRoot;
+                            } else if (!Objects.equals(root, currentRoot)) {
+                                throw new IOException("not a single root archive: '" + currentRoot + "' <> '" + root + "'");
+
                             }
-                            if (fileName.startsWith(root)) {
-                                fileName = fileName.substring(root.length());
-                            } else {
-                                throw new IOException("not a single root zip");
+
+                            // Strip the root from the filename
+                            fileName = fileName.substring(root.length());
+
+                            // Edge case: Skip the root directory entry itself
+                            if (fileName.isEmpty() || fileName.equals("/")) {
+                                continue;
                             }
                         }
                         if (fileName.endsWith("/")) {
@@ -178,8 +196,7 @@ public class NUncompressZip implements NUncompressPackaging {
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        NUncompress c = context.getCriteria(NUncompress.class);
-        String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
+        String z = NStringUtils.strip(context.criteria(String.class)).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")
                 || z.equals("jar")

@@ -1,0 +1,32 @@
+package net.thevpc.nuts.runtime.standalone.collections;
+
+import net.thevpc.nuts.collections.NBPlusTree;
+
+public abstract class NBPlusTreeStoreMemNode<K, V> implements NBPlusTree.Node<K, V> {
+
+    int maxSize;
+    int minSize;
+    int size;
+    NBPlusTree.IntermediateNode parent;
+
+    @Override
+    public NBPlusTree.IntermediateNode<K, V> parent() {
+        return parent;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public int minSize() {
+        return minSize;
+    }
+
+    @Override
+    public int maxSize() {
+        return maxSize;
+    }
+
+}

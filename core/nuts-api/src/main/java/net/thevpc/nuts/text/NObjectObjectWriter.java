@@ -41,27 +41,83 @@ import java.util.Map;
  */
 public interface NObjectObjectWriter extends NContentTypeWriter {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NObjectObjectWriter of() {
        return NExtensions.of(NObjectObjectWriter.class);
     }
 
-    String getFormatMode();
+    /**
+     * Format mode.
+     *
+     * @return format mode result
+     */
+    String formatMode();
 
-    NObjectObjectWriter setFormatMode(String formatMode);
+    /**
+     * Format mode.
+     *
+     * @param formatMode format mode
+     * @return format mode result
+     */
+    NObjectObjectWriter formatMode(String formatMode);
 
-    String getFormatString();
+    /**
+     * Format string.
+     *
+     * @return format string result
+     */
+    String formatString();
 
-    NObjectObjectWriter setFormatString(String formatString);
+    /**
+     * Format string.
+     *
+     * @param formatString format string
+     * @return format string result
+     */
+    NObjectObjectWriter formatString(String formatString);
 
-    Map<String, Object> getFormatParams();
+    /**
+     * Format params.
+     *
+     * @return format params result
+     */
+    Map<String, Object> formatParams();
 
-    NObjectObjectWriter setFormatParams(Map<String, Object> formatParams);
+    /**
+     * Format params.
+     *
+     * @param formatParams format params
+     * @return format params result
+     */
+    NObjectObjectWriter formatParams(Map<String, Object> formatParams);
 
-    NObjectObjectWriter setFormatParam(String name, Object value);
+    /**
+     * Format param.
+     *
+     * @param name name
+     * @param value value
+     * @return format param result
+     */
+    NObjectObjectWriter formatParam(String name, Object value);
 
-    NContentType getOutputFormat();
+    /**
+     * Output format.
+     *
+     * @return output format result
+     */
+    NContentType outputFormat();
 
-    NObjectObjectWriter setOutputFormat(NContentType outputFormat);
+    /**
+     * Output format.
+     *
+     * @param outputFormat output format
+     * @return output format result
+     */
+    NObjectObjectWriter outputFormat(NContentType outputFormat);
 
     /**
      * configure the current command with the given arguments. This is an
@@ -88,8 +144,14 @@ public interface NObjectObjectWriter extends NContentTypeWriter {
      * @param compact true to enable compact mode
      * @return {@code this} instance
      */
-    NObjectObjectWriter setCompact(boolean compact);
+    NObjectObjectWriter compact(boolean compact);
 
 
-    NObjectObjectWriter setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    NObjectObjectWriter ntf(boolean ntf);
 }

@@ -90,10 +90,19 @@ public enum NExecutionType implements NEnum {
      */
     private final String id;
 
+  /**
+   * N execution type.
+   */
     NExecutionType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NExecutionType> parse(String value) {
         return NEnumUtils.parseEnum(value, NExecutionType.class);
     }

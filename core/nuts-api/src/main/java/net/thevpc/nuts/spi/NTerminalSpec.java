@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -33,21 +35,73 @@ import java.util.Map;
  * @app.category Input Output
  */
 public interface NTerminalSpec extends Serializable {
-    NSystemTerminalBase getParent();
+    /**
+     * Parent.
+     *
+     * @return parent result
+     */
+    NSystemTerminalBase parent();
 
-    NTerminalSpec setParent(NSystemTerminalBase parent);
+    /**
+     * Parent.
+     *
+     * @param parent parent
+     * @return parent result
+     */
+    NTerminalSpec parent(NSystemTerminalBase parent);
 
-    Boolean getAutoComplete();
+    /**
+     * Auto complete.
+     *
+     * @return auto complete result
+     */
+    Boolean autoComplete();
 
-    NTerminalSpec setAutoComplete(Boolean autoComplete);
+    /**
+     * Auto complete.
+     *
+     * @param autoComplete auto complete
+     * @return auto complete result
+     */
+    NTerminalSpec autoComplete(Boolean autoComplete);
 
-    Object get(String name);
+    /**
+     * Returns the property.
+     *
+     * @param name name
+     * @return get property result
+     */
+    Object getProperty(String name);
 
-    NTerminalSpec setProperty(String name, Object o);
+    /**
+     * Property.
+     *
+     * @param name name
+     * @param o o
+     * @return property result
+     */
+    NTerminalSpec property(String name, Object o);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NTerminalSpec copyFrom(NTerminalSpec other);
 
-    NTerminalSpec setProperties(Map<String, Object> other);
+    /**
+     * Properties.
+     *
+     * @param other other
+     * @return properties result
+     */
+    NTerminalSpec properties(Map<String, Object> other);
 
-    Map<String, Object> getProperties();
+    /**
+     * Properties.
+     *
+     * @return properties result
+     */
+    Map<String, Object> properties();
 }

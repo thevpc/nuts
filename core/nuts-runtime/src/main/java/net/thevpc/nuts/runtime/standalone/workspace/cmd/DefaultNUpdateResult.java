@@ -69,22 +69,22 @@ public final class DefaultNUpdateResult implements NUpdateResult {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
     @Override
-    public NDefinition getInstalled() {
+    public NDefinition installed() {
         return installed;
     }
 
     @Override
-    public NDefinition getAvailable() {
+    public NDefinition available() {
         return available;
     }
 
     @Override
-    public List<NId> getDependencies() {
+    public List<NId> dependencies() {
         return dependencies;
     }
 

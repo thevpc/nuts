@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogScope;
-import net.thevpc.nuts.log.NLogSPI;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
@@ -22,7 +22,7 @@ public final class NLogScopeImpl implements NLogScope {
     public static final NLogScope BLANK = new NLogScopeImpl(null, null, Collections.emptyMap(), null);
 
     @Override
-    public Map<String, Supplier<?>> getPlaceholders() {
+    public Map<String, Supplier<?>> placeholders() {
         return new LinkedHashMap<>(properties);
     }
 
@@ -164,13 +164,13 @@ public final class NLogScopeImpl implements NLogScope {
             return other;
         }
         NLog newLog = log;
-        if (other.getLog() != null) {
-            newLog = other.getLog();
+        if (other.log() != null) {
+            newLog = other.log();
         }
-        NMsgSupplier<NMsg> prefix2 = mergeBoundaries(messagePrefix, other.getMessagePrefix());
-        NMsgSupplier<NMsg> suffix2 = mergeBoundaries(messageSuffix, other.getMessageSuffix());
+        NMsgSupplier<NMsg> prefix2 = mergeBoundaries(messagePrefix, other.messagePrefix());
+        NMsgSupplier<NMsg> suffix2 = mergeBoundaries(messageSuffix, other.messageSuffix());
         Map<String, Supplier<?>> properties2 = new LinkedHashMap<>(this.properties);
-        for (Map.Entry<String, Supplier<?>> e : other.getPlaceholders().entrySet()) {
+        for (Map.Entry<String, Supplier<?>> e : other.placeholders().entrySet()) {
             if (e.getValue() != null) {
                 properties2.put(e.getKey(), e.getValue());
             } else {
@@ -201,12 +201,12 @@ public final class NLogScopeImpl implements NLogScope {
     }
 
     @Override
-    public NMsgSupplier<NMsg> getMessagePrefix() {
+    public NMsgSupplier<NMsg> messagePrefix() {
         return messagePrefix;
     }
 
     @Override
-    public NMsgSupplier<NMsg> getMessageSuffix() {
+    public NMsgSupplier<NMsg> messageSuffix() {
         return messageSuffix;
     }
 
@@ -241,7 +241,7 @@ public final class NLogScopeImpl implements NLogScope {
     }
 
     @Override
-    public NLog getLog() {
+    public NLog log() {
         return log;
     }
 

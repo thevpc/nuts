@@ -1,0 +1,8 @@
+net.thevpc.nuts.ext.compression.NCompressTar
+net.thevpc.nuts.ext.compression.NUncompressTar
+
+net.thevpc.nuts.ext.compression.NCompressTarGz
+net.thevpc.nuts.ext.compression.NUncompressTarGz
+
+net.thevpc.nuts.ext.compression.NCompressTarXz
+net.thevpc.nuts.ext.compression.NUncompressTarXz

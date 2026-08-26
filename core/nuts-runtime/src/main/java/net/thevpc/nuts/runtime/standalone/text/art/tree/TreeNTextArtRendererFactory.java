@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.text.art.tree;
 
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.text.art.NTextArtImpl;
 import net.thevpc.nuts.runtime.standalone.text.art.img.PixelNTextArtImageRenderer;
 import net.thevpc.nuts.util.*;
@@ -9,6 +11,7 @@ import net.thevpc.nuts.text.NTextArtImageRenderer;
 import net.thevpc.nuts.text.NTextArtRenderer;
 import net.thevpc.nuts.text.NTextArtRendererFactory;
 import net.thevpc.nuts.text.NTextArtTextRenderer;
+import net.thevpc.nuts.collections.NCollections;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,6 +79,9 @@ public class TreeNTextArtRendererFactory implements NTextArtRendererFactory {
     }
 
     public NOptional<NTextArtRenderer> getRenderer(String renderName) {
+        if (renderName.equals(rendererType)) {
+            return NOptional.of(new DefaultNTextArtTreeRenderer("tree:default"));
+        }
         if (renderName.startsWith(rendererType + ":")) {
             switch (renderName){
                 case "tree:default":return NOptional.of(new DefaultNTextArtTreeRenderer("tree:default"));

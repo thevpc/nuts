@@ -13,27 +13,27 @@ public class PomDependencyObj extends DefaultNPomNode<NPomDependency> implements
 
     @Override
     public void setVersion(String value) {
-        super.setTextElement("version", NStringUtils.trimToNull(value), true,true);
+        super.setTextElement("version", NStringUtils.stripToNull(value), true,true);
     }
 
     @Override
     public void setGroupId(String value) {
-        super.setTextElement("groupId", NStringUtils.trimToNull(value), true,true);
+        super.setTextElement("groupId", NStringUtils.stripToNull(value), true,true);
     }
 
     @Override
     public void setArtifactId(String value) {
-        super.setTextElement("artifactId", NStringUtils.trimToNull(value), true,true);
+        super.setTextElement("artifactId", NStringUtils.stripToNull(value), true,true);
     }
 
     @Override
     public void setOptional(String value) {
-        super.setTextElement("optional", NStringUtils.trimToNull(value), true,true);
+        super.setTextElement("optional", NStringUtils.stripToNull(value), true,true);
     }
 
     @Override
     public void setClassifier(String value) {
-        super.setTextElement("classifier", NStringUtils.trimToNull(value), true,true);
+        super.setTextElement("classifier", NStringUtils.stripToNull(value), true,true);
     }
 
 }

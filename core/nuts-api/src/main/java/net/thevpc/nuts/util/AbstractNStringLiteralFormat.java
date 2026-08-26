@@ -86,8 +86,18 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
      */
     public abstract String format(String text);
 
-    public NElementType getQuoteType()     { return quoteType; }
-    public NSupportMode getCondition()     { return condition; }
+    /**
+     * Quote type.
+     *
+     * @return quote type result
+     */
+    public NElementType quoteType()     { return quoteType; }
+    /**
+     * Condition.
+     *
+     * @return condition result
+     */
+    public NSupportMode condition()     { return condition; }
 
     // ── Static factories ──────────────────────────────────────────────────────
 
@@ -163,8 +173,19 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
 
     // ── Builder ───────────────────────────────────────────────────────────────
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     public static Builder builder() { return new Builder(); }
 
+    /**
+     * Builder class.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public static final class Builder {
         private Mode           mode           = Mode.ESCAPE_CHAR;
         private NElementType   quoteType      = NElementType.DOUBLE_QUOTED_STRING;
@@ -175,17 +196,75 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
         private String         linePrefix     = "";
         private String         lineSuffix     = "";
 
+        /**
+         * Builder.
+         *
+         * @return builder result
+         */
         private Builder() {}
 
+        /**
+         * Mode.
+         *
+         * @param m m
+         * @return mode result
+         */
         public Builder mode(Mode m)                    { this.mode           = m;  return this; }
+        /**
+         * Quote type.
+         *
+         * @param t t
+         * @return quote type result
+         */
         public Builder quoteType(NElementType t)       { this.quoteType      = t;  return this; }
+        /**
+         * Repeat char.
+         *
+         * @param c c
+         * @return repeat char result
+         */
         public Builder repeatChar(char c)              { this.repeatChar     = c;  return this; }
+        /**
+         * Condition.
+         *
+         * @param c c
+         * @return condition result
+         */
         public Builder condition(NSupportMode c)       { this.condition      = c;  return this; }
+        /**
+         * Boundary escape.
+         *
+         * @param e e
+         * @return boundary escape result
+         */
         public Builder boundaryEscape(NCharEscape e)   { this.boundaryEscape = e;  return this; }
+        /**
+         * Char escape set.
+         *
+         * @param s s
+         * @return char escape set result
+         */
         public Builder charEscapeSet(NCharEscapeSet s) { this.charEscapeSet  = s;  return this; }
+        /**
+         * Line prefix.
+         *
+         * @param p p
+         * @return line prefix result
+         */
         public Builder linePrefix(String p)            { this.linePrefix     = p;  return this; }
+        /**
+         * Line suffix.
+         *
+         * @param s s
+         * @return line suffix result
+         */
         public Builder lineSuffix(String s)            { this.lineSuffix     = s;  return this; }
 
+        /**
+         * Build.
+         *
+         * @return build result
+         */
         public NStringLiteralFormat build() {
             switch (mode) {
                 case ESCAPE_CHAR: {
@@ -202,6 +281,12 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
                     return new PrefixFormat(quoteType, linePrefix, lineSuffix,
                             condition, charEscapeSet);
                 default:
+                    /**
+                     * Illegal argument exception.
+                     *
+                     * @param mode mode
+                     * @return illegal argument exception result
+                     */
                     throw new IllegalArgumentException("Unknown mode: " + mode);
             }
         }
@@ -229,6 +314,12 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
             case TRIPLE_SINGLE_QUOTED_STRING: return "'''"    + body + "'''";
             case TRIPLE_BACKTICK_STRING:      return "```"    + body + "```";
             default:
+                /**
+                 * Illegal argument exception.
+                 *
+                 * @param quoteType quote type
+                 * @return illegal argument exception result
+                 */
                 throw new IllegalArgumentException("Unsupported quote type for wrap: " + quoteType);
         }
     }
@@ -256,6 +347,14 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
                 NSupportMode   condition,
                 NCharEscapeSet charEscapeSet,
                 NCharEscape    boundaryEscape) {
+          /**
+           * Super.
+           *
+           * @param quoteType quote type
+           * @param condition condition
+           * @param boundaryEscape boundary escape
+           * @param charEscapeSet char escape set
+           */
             super(quoteType, condition, boundaryEscape, charEscapeSet);
         }
 
@@ -326,10 +425,24 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
                 NSupportMode   condition,
                 NCharEscapeSet charEscapeSet,
                 NCharEscape    boundaryEscape) {
+          /**
+           * Super.
+           *
+           * @param resolveType(quoteChar) resolve type(quote char)
+           * @param condition condition
+           * @param boundaryEscape boundary escape
+           * @param charEscapeSet char escape set
+           */
             super(resolveType(quoteChar), condition, boundaryEscape, charEscapeSet);
             this.qc = quoteChar;
         }
 
+        /**
+         * Resolve type.
+         *
+         * @param c c
+         * @return resolve type result
+         */
         private static NElementType resolveType(char c) {
             switch (c) {
                 case '\'': return NElementType.SINGLE_QUOTED_STRING;
@@ -403,6 +516,14 @@ public abstract class AbstractNStringLiteralFormat implements NStringLiteralForm
                 NSupportMode   condition,
                 NCharEscapeSet charEscapeSet) {
             // PREFIX has no boundary escape concept — pass null
+          /**
+           * Super.
+           *
+           * @param quoteType quote type
+           * @param condition condition
+           * @param null null
+           * @param charEscapeSet char escape set
+           */
             super(quoteType, condition, null, charEscapeSet);
             this.linePrefix = (linePrefix != null) ? linePrefix : "";
             this.lineSuffix = (lineSuffix != null) ? lineSuffix : "";

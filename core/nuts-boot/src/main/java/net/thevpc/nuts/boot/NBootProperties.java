@@ -1,9 +1,11 @@
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.boot.internal.util.NBootUtils;
+
 import java.util.*;
 
 public class NBootProperties {
-    private Map<String, Map<NBootEnvCondition, NBootDescriptorProperty>> properties = new LinkedHashMap<>();
+    private Map<String, Map<String, NBootDescriptorProperty>> properties = new LinkedHashMap<>();
 
     public NBootProperties() {
     }
@@ -14,16 +16,31 @@ public class NBootProperties {
         }
         return this;
     }
+    private String condKey(NBootDescriptorProperty d){
+        NBootDependency d2=new NBootDependency();
+        d2.setConditionOs(d.getConditionOs());
+        d2.setConditionOsDist(d.getConditionOsDist());
+        d2.setConditionArch(d.getConditionArch());
+        d2.setConditionDesktopEnvironment(d.getConditionDesktopEnvironment());
+        d2.setConditionProfile(d.getConditionProfiles());
+        d2.setConditionPlatform(d.getConditionPlatform());
+        d2.setConditionProperties(d.getConditionProperties());
+        d2.setGroupId("g");
+        d2.setArtifactId("a");
+        String s = d2.toString();
+        int i=s.indexOf("?");
+        if(i>0){
+            return s.substring(i+1);
+        }
+        return "";
+    }
 
     public NBootProperties remove(NBootDescriptorProperty p) {
         if (p != null) {
             String n = p.getName();
-            Map<NBootEnvCondition, NBootDescriptorProperty> m = properties.get(n);
+            Map<String, NBootDescriptorProperty> m = properties.get(n);
             if (m != null) {
-                NBootEnvCondition c = p.getCondition();
-                if (c != null && c.isBlank()) {
-                    c = null;
-                }
+                String c = condKey(p);
                 m.remove(c);
             }
         }
@@ -36,7 +53,7 @@ public class NBootProperties {
 
     public List<NBootDescriptorProperty> toList() {
         List<NBootDescriptorProperty> all = new ArrayList<>();
-        for (Map<NBootEnvCondition, NBootDescriptorProperty> value : properties.values()) {
+        for (Map<String, NBootDescriptorProperty> value : properties.values()) {
             all.addAll(value.values());
         }
         return all;
@@ -44,25 +61,25 @@ public class NBootProperties {
 
     public NBootDescriptorProperty[] toArray() {
         List<NBootDescriptorProperty> all = new ArrayList<>();
-        for (Map<NBootEnvCondition, NBootDescriptorProperty> value : properties.values()) {
+        for (Map<String, NBootDescriptorProperty> value : properties.values()) {
             all.addAll(value.values());
         }
         return all.toArray(new NBootDescriptorProperty[0]);
     }
 
-    public NBootDescriptorProperty get(String name, NBootEnvCondition cond) {
-        if (cond != null && cond.isBlank()) {
-            cond = null;
-        }
-        Map<NBootEnvCondition, NBootDescriptorProperty> m = properties.get(name);
-        if (m != null) {
-            return m.get(cond);
-        }
-        return null;
-    }
+//    public NBootDescriptorProperty get(String name, NBootEnvCondition cond) {
+//        if (cond != null && cond.isBlank()) {
+//            cond = null;
+//        }
+//        Map<String, NBootDescriptorProperty> m = properties.get(name);
+//        if (m != null) {
+//            return m.get(cond);
+//        }
+//        return null;
+//    }
 
     public NBootDescriptorProperty[] getAll(String name) {
-        Map<NBootEnvCondition, NBootDescriptorProperty> m = properties.get(name);
+        Map<String, NBootDescriptorProperty> m = properties.get(name);
         if (m != null) {
             return m.values().toArray(new NBootDescriptorProperty[0]);
         }
@@ -81,15 +98,12 @@ public class NBootProperties {
     public NBootProperties add(NBootDescriptorProperty p) {
         if (p != null) {
             String n = p.getName();
-            Map<NBootEnvCondition, NBootDescriptorProperty> m = properties.get(n);
+            Map<String, NBootDescriptorProperty> m = properties.get(n);
             if (m == null) {
                 m = new LinkedHashMap<>();
                 properties.put(n, m);
             }
-            NBootEnvCondition c = p.getCondition();
-            if (c != null && c.isBlank()) {
-                c = null;
-            }
+            String c = condKey(p);
             m.put(c, p);
         }
         return this;

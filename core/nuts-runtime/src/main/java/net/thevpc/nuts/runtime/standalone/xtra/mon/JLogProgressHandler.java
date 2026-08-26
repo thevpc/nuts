@@ -6,9 +6,9 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgParam;
 import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.runtime.standalone.util.MemoryUtils;
-import net.thevpc.nuts.time.NProgressHandler;
-import net.thevpc.nuts.time.NProgressHandlerEvent;
-import net.thevpc.nuts.time.NProgressMonitorModel;
+import net.thevpc.nuts.mon.NProgressHandler;
+import net.thevpc.nuts.mon.NProgressHandlerEvent;
+import net.thevpc.nuts.mon.NProgressMonitorModel;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -46,30 +46,30 @@ public class JLogProgressHandler implements NProgressHandler {
 
     @Override
     public void onEvent(NProgressHandlerEvent event) {
-        NMsg msg = formatMessage(messageFormat, event.getModel());
+        NMsg msg = formatMessage(messageFormat, event.model());
         logger.log(msg);
     }
 
     public static NMsg formatMessage(NMsgTemplate messageFormat, NProgressMonitorModel model) {
         long newd = System.currentTimeMillis();
-        NMsg message = model.getMessage();
+        NMsg message = model.message();
         return messageFormat.build(
                 NMsgParam.of("message",()-> message==null?"":message),
                 NMsgParam.of("date",()-> new Date(newd)),
-                NMsgParam.of("progress",()-> Double.isNaN(model.getProgress()) ? "   ?%" : PERCENT_FORMAT.format(model.getProgress())),
+                NMsgParam.of("progress",()-> Double.isNaN(model.progress()) ? "   ?%" : PERCENT_FORMAT.format(model.progress())),
                 NMsgParam.of("inuse",()->MF.format(MemoryUtils.inUseMemory())),
                 NMsgParam.of("free",()-> MF.format(MemoryUtils.maxFreeMemory()))
-        ).withLevel(message==null?Level.INFO:message.getLevel());
+        ).withLevel(message==null?Level.INFO:message.level());
     }
 
     public static NMsgTemplate resolveFormat(NMsgTemplate messageFormat) {
         if (messageFormat == null) {
             messageFormat = NMsgTemplate.ofV("$inuse | $free | $progress : $message");
         }
-        if (messageFormat.getParamNames().length==0) {
-            switch (messageFormat.getFormat()){
+        if (messageFormat.paramNames().isEmpty()) {
+            switch (messageFormat.format()){
                 case VFORMAT:{
-                    String message = messageFormat.getMessage();
+                    String message = messageFormat.message();
                     if (!message.endsWith(" ")) {
                         message += " ";
                     }
@@ -77,8 +77,17 @@ public class JLogProgressHandler implements NProgressHandler {
                     messageFormat=NMsgTemplate.ofV(message);
                     break;
                 }
+                case MFORMAT:{
+                    String message = messageFormat.message();
+                    if (!message.endsWith(" ")) {
+                        message += " ";
+                    }
+                    message += "{{message}}";
+                    messageFormat=NMsgTemplate.ofM(message);
+                    break;
+                }
                 case CFORMAT:{
-                    String message = messageFormat.getMessage();
+                    String message = messageFormat.message();
                     if (!message.endsWith(" ")) {
                         message += " ";
                     }
@@ -87,12 +96,21 @@ public class JLogProgressHandler implements NProgressHandler {
                     break;
                 }
                 case JFORMAT:{
-                    String message = messageFormat.getMessage();
+                    String message = messageFormat.message();
                     if (!message.endsWith(" ")) {
                         message += " ";
                     }
                     message += "{0}";
                     messageFormat=NMsgTemplate.ofJ(message);
+                    break;
+                }
+                case SFORMAT:{
+                    String message = messageFormat.message();
+                    if (!message.endsWith(" ")) {
+                        message += " ";
+                    }
+                    message += "?";
+                    messageFormat=NMsgTemplate.ofS(message);
                     break;
                 }
             }

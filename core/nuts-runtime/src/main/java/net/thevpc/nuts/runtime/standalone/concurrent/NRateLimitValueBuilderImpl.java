@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NCollectionDiff;
-import net.thevpc.nuts.util.NCollectionDiffChange;
+import net.thevpc.nuts.collections.NCollectionDiff;
+import net.thevpc.nuts.collections.NCollectionDiffChange;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.*;
@@ -70,16 +70,16 @@ public class NRateLimitValueBuilderImpl implements NRateLimitValueBuilder {
                         x.getMax(), x.getDuration()==null?0:x.getDuration().toMillis(), 0, x.getStartDate()==null?0:x.getStartDate().toEpochMilli(),
                         new byte[0])).toArray(NRateLimitRuleModel[]::new)
         );
-        NRateLimitValueModel old = factory.load(newModel.getId());
+        NRateLimitValueModel old = factory.load(newModel.id());
         if (old == null) {
             factory.save(newModel);
             return new NRateLimitValueImpl(newModel, factory);
         } else {
             List<NRateLimitRuleModel> okkay = new ArrayList<>();
-            for (NCollectionDiffChange<NRateLimitRuleModel> d : NCollectionDiff.diffList(Arrays.asList(old.getRules()), Arrays.asList(newModel.getRules()), m -> m.getId())) {
-                switch (d.getMode()) {
+            for (NCollectionDiffChange<NRateLimitRuleModel> d : NCollectionDiff.diffList(Arrays.asList(old.rules()), Arrays.asList(newModel.rules()), m -> m.id())) {
+                switch (d.mode()) {
                     case ADDED: {
-                        okkay.add(d.getNewValue());
+                        okkay.add(d.newValue());
                         break;
                     }
                     case REMOVED: {
@@ -87,22 +87,22 @@ public class NRateLimitValueBuilderImpl implements NRateLimitValueBuilder {
                     }
                     case CHANGED: {
                         okkay.add(new NRateLimitRuleModel(
-                                d.getNewValue().getId(),
-                                d.getNewValue().getStrategy(),
-                                d.getNewValue().getCapacity(),
-                                d.getNewValue().getDuration(),
-                                Math.min(d.getOldValue().getAvailable(), d.getNewValue().getCapacity()),
-                                d.getOldValue().getLastRefill(),
-                                d.getOldValue().getConfig()
+                                d.newValue().id(),
+                                d.newValue().strategy(),
+                                d.newValue().capacity(),
+                                d.newValue().duration(),
+                                Math.min(d.oldValue().available(), d.newValue().capacity()),
+                                d.oldValue().lastRefill(),
+                                d.oldValue().config()
                         ));
                         break;
                     }
                     case UNCHANGED: {
-                        okkay.add(d.getOldValue());
+                        okkay.add(d.oldValue());
                     }
                 }
             }
-            newModel = new NRateLimitValueModel(newModel.getId(), old.getLastAccess(), okkay.toArray(new NRateLimitRuleModel[0]));
+            newModel = new NRateLimitValueModel(newModel.id(), old.lastAccess(), okkay.toArray(new NRateLimitRuleModel[0]));
             factory.save(newModel);
             return new NRateLimitValueImpl(newModel, factory);
         }

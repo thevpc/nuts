@@ -5,9 +5,10 @@ import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 public interface ToolboxRepoHelper {
+    String DYNAMIC_DESCRIPTOR = "dynamic-descriptor";
     NIterator<NId> searchVersions(NId id, NDefinitionFilter filter, NRepository repository);
 
     boolean acceptId(NId id);

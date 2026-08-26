@@ -27,10 +27,12 @@
 package net.thevpc.nuts.ext;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptions;
-import net.thevpc.nuts.io.NServiceLoader;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableQuery;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.*;
 
@@ -59,18 +61,9 @@ public interface NExtensions extends NComponent {
         return NWorkspace.get().map(x -> x.extensions());
     }
 
-    Set<NId> getCompanionIds();
-
-    <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl);
+    Set<NId> companionIds();
 
     Set<Class<?>> discoverTypes(NId id, ClassLoader classLoader);
-
-    <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
-
-    <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
-
-
-    NMutableClassLoader createMutableClassLoader(ClassLoader parentClassLoader);
 
     <T> NScoredValue<T> getTypeScoredValue(Class<? extends T> implType, Class<T> apiType, NScorableContext scorableContext);
 
@@ -88,6 +81,7 @@ public interface NExtensions extends NComponent {
      * @return valid instance or null if no extension implementation was found
      */
     <T> NOptional<T> createComponent(Class<T> type);
+    <T extends NScorable> NScorableQuery<T> ofScorableQuery();
 
     /**
      * create supported extension implementation or return null.
@@ -103,9 +97,6 @@ public interface NExtensions extends NComponent {
     <T, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
 
     <T> List<T> createAll(Class<T> type);
-
-//    Set<Class> getExtensionPoints(NSession session);
-
 
     <T> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint);
 
@@ -127,7 +118,8 @@ public interface NExtensions extends NComponent {
 
     boolean isLoadedExtensions(NId id);
 
-    List<NId> getLoadedExtensions();
+    @NGetter
+    List<NId> loadedExtensions();
 
     NExtensions loadExtension(NId extension);
 
@@ -138,7 +130,8 @@ public interface NExtensions extends NComponent {
      *
      * @return extension ids
      */
-    List<NId> getConfigExtensions();
+    @NGetter
+    List<NId> configExtensions();
 
     boolean isExcludedExtension(String extensionId, NWorkspaceOptions options);
 

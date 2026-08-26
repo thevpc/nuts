@@ -7,6 +7,9 @@ import net.thevpc.nuts.reflect.NSignatureDomain;
 import net.thevpc.nuts.util.NOptional;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class NPlatformSignatureImpl extends NSignatureBase<Type, NPlatformSignature> implements NPlatformSignature {
     public static final NSignatureDomain<Type> DOMAIN = new NSignatureDomain<Type>() {
@@ -48,11 +51,11 @@ public class NPlatformSignatureImpl extends NSignatureBase<Type, NPlatformSignat
         }
 
         @Override
-        public Type[] getInterfaces(Type any) {
+        public List<Type> getInterfaces(Type any) {
             if (any instanceof Class) {
-                return ((Class<?>) any).getInterfaces();
+                return Arrays.asList(((Class<?>) any).getInterfaces());
             }
-            return new Type[0];
+            return Collections.emptyList();
         }
 
         @Override

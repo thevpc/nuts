@@ -12,19 +12,21 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNSearchInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSearchInternalExecutable(String[] args, NExec execCommand) {
-        super("search", args, execCommand);
+    public DefaultNSearchInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("search", args, execCommand,executorOptions);
     }
 
     @Override
     public int execute() {
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;

@@ -6,8 +6,8 @@
 //package net.thevpc.nuts.runtime.standalone.util.stream;
 //
 //import net.thevpc.nuts.util.NUnexpectedException;
-//import net.thevpc.nuts.util.NIterable;
-//import net.thevpc.nuts.util.NIterator;
+//import net.thevpc.nuts.pipeline.NIterable;
+//import net.thevpc.nuts.pipeline.NIterator;
 //import net.thevpc.nuts.text.NMsg;
 //
 //import java.util.*;

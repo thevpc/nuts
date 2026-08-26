@@ -681,7 +681,7 @@ public class TsonCustomParser {
         boundAffixes.addAll(beforeLparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.START)).collect(Collectors.toList()));
         boundAffixes.addAll(beforeRparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.PRE_3)).collect(Collectors.toList()));
         boundAffixes.addAll(readPostComments());
-        return new DefaultNUpletElement(
+        return new DefaultNTupleElement(
                 seenName, elements,
                 boundAffixes, diagnostics, null
         );

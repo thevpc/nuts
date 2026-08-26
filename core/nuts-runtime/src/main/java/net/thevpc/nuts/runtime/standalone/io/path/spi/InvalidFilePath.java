@@ -8,7 +8,7 @@ import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,6 +43,10 @@ public class InvalidFilePath implements NPathSPI {
             return "";
         }
         return pa.get(pa.size() - 1);
+    }
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
     }
 
     @Override
@@ -341,7 +345,7 @@ public class InvalidFilePath implements NPathSPI {
 
         private final InvalidFilePath p;
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 
@@ -374,9 +378,9 @@ public class InvalidFilePath implements NPathSPI {
         if(isRoot(basePath)){
             return basePath;
         }
-        NPath r = basePath.getParent();
+        NPath r = basePath.parent();
         if(r!=null) {
-            return r.getRoot();
+            return r.root();
         }
         return null;
     }

@@ -9,7 +9,7 @@ import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 public class NSimpleRepositoryWrapper extends NCachedRepository {
     private NRepositoryModel base;
@@ -17,11 +17,11 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
 
     public NSimpleRepositoryWrapper(NRepositorySpec options, NRepository parent, NRepositoryModel base) {
         super(options, parent,
-                base.getSpeed(),
-                (base.getMode() & NRepositoryModel.MIRRORING) != 0,
-                base.getRepositoryType(),true
+                base.speed(),
+                (base.mode() & NRepositoryModel.MIRRORING) != 0,
+                base.repositoryType(),true
         );
-        this.mode = base.getMode();
+        this.mode = base.mode();
         lib.setReadEnabled((this.mode & NRepositoryModel.LIB_READ) != 0);
         lib.setWriteEnabled((this.mode & NRepositoryModel.LIB_WRITE) != 0);
         cache.setReadEnabled((this.mode & NRepositoryModel.CACHE_READ) != 0);
@@ -30,7 +30,7 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
     }
 
     @Override
-    public String getBootConnectionString() {
+    public String bootConnectionString() {
         return null;
     }
 
@@ -81,6 +81,6 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
 
     @Override
     public boolean isRemote() {
-        return base.isRemote();
+        return base.remote();
     }
 }

@@ -32,5 +32,11 @@ package net.thevpc.nuts.io;
  */
 public interface NAskParser<T> {
 
+    /**
+     * Parse.
+     *
+     * @param context context
+     * @return parse result
+     */
     T parse(NAskParseContext<T> context);
 }

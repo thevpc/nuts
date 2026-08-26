@@ -3,8 +3,8 @@ package net.thevpc.nuts.ext.term;
 import net.thevpc.nuts.core.NWorkspaceExtension;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.spi.NExtensionLifeCycle;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NUnused;
 
 @NUnused
@@ -15,7 +15,7 @@ public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
 
     @Override
     public void onInitExtension(NWorkspaceExtension extension) {
-        NIO.of().setSystemTerminal(new NJLineTerminal());
+        NIO.of().systemTerminal(new NJLineTerminal());
     }
 
     @Override
@@ -30,6 +30,7 @@ public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
 
     @Override
     public void onDestroyExtension(NWorkspaceExtension extension) {
-        NIO.of().setSystemTerminal(null);
+        NIO.of().systemTerminal(null);
     }
+
 }

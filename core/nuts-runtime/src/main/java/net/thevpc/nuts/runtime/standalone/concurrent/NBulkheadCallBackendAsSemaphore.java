@@ -89,13 +89,13 @@ public class NBulkheadCallBackendAsSemaphore implements NBulkheadCallBackend {
 
     @Override
     public void release(NBulkheadPermit permit) {
-        BulkheadState state = bulkheads.get(permit.getBulkheadId());
+        BulkheadState state = bulkheads.get(permit.bulkheadId());
         if (state != null) {
             state.semaphore.release();
             state.activeCount.decrementAndGet();
             state.totalReleased.incrementAndGet();
 
-            long duration = System.currentTimeMillis() - permit.getAcquiredAt();
+            long duration = System.currentTimeMillis() - permit.acquiredAt();
             state.updateMaxHoldTime(duration);
         }
     }
@@ -213,17 +213,17 @@ public class NBulkheadCallBackendAsSemaphore implements NBulkheadCallBackend {
         }
 
         @Override
-        public String getBulkheadId() {
+        public String bulkheadId() {
             return bulkheadId;
         }
 
         @Override
-        public String getPermitId() {
+        public String permitId() {
             return permitId;
         }
 
         @Override
-        public long getAcquiredAt() {
+        public long acquiredAt() {
             return acquiredAt;
         }
 

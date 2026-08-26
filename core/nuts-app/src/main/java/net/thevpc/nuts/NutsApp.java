@@ -26,7 +26,13 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
 
-import java.net.URL;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Nuts App. Nuts is a Package manager for Java Applications and this
@@ -47,6 +53,11 @@ public final class NutsApp {
      */
     @SuppressWarnings("UseSpecificCatch")
     public static void main(String[] args) {
+//        try {
+//            Files.write(new File("nuts-args.txt").toPath(),(new Date()+"\n"+Arrays.toString(args)+"\n").getBytes(StandardCharsets.UTF_8));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
         try {
             NBootWorkspace bws = NBootWorkspace.of(args);
             bws.runWorkspace();

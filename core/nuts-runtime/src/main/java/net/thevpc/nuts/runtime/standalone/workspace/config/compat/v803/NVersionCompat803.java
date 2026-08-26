@@ -35,7 +35,7 @@ public class NVersionCompat803 extends AbstractNVersionCompat {
         v.setRepositoryStoreStrategy(w.getRepositoryStoreStrategy());
         v.setStoreStrategy(w.getStoreStrategy());
         v.setStoreLayout(w.getStoreLayout());
-        v.setConfigVersion(w.getConfigVersion());
+        v.configVersion(w.getConfigVersion());
         v.setExtensions(w.getExtensions()==null?null:w.getExtensions().stream().map(x->{
             if(x==null){
                 return null;
@@ -44,7 +44,7 @@ public class NVersionCompat803 extends AbstractNVersionCompat {
             c.setDependencies(x.getDependencies());
             c.setEnabled(x.isEnabled());
             c.setId(x.getId());
-            c.setConfigVersion(x.getConfigVersion());
+            c.configVersion(x.getConfigVersion());
             return c;
         }).collect(Collectors.toList()));
         return v;

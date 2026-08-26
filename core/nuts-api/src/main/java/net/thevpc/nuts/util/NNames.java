@@ -10,7 +10,19 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * NNames class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NNames {
+    /**
+     * Load names.
+     *
+     * @param resources resources
+     * @return load names result
+     */
     private static Set<String> loadNames(String... resources) {
         Set<String> all = new TreeSet<>();
         for (String resource : resources) {
@@ -18,19 +30,35 @@ public class NNames {
             try {
                 found = NNames.class.getClassLoader().getResources(resource);
             } catch (IOException e) {
+                /**
+                 * Runtime exception.
+                 *
+                 * @param e e
+                 * @return runtime exception result
+                 */
                 throw new RuntimeException(e);
             }
             while (found.hasMoreElements()) {
                 URL u = found.nextElement();
+              /**
+               * Try.
+               *
+               * @param u.openStream() u.open stream()
+               */
                 try (InputStream is = u.openStream()) {
+                  /**
+                   * Try.
+                   *
+                   * @param InputStreamReader(is)) input stream reader(is))
+                   */
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                         String line = null;
                         while ((line = br.readLine()) != null) {
-                            line = line.trim();
+                            line = NStringUtils.strip(line);
                             if (!line.isEmpty()) {
                                 if (!line.startsWith("#")) {
                                     for (String s : line.split("[, ;]+")) {
-                                        String ts = s.trim();
+                                        String ts = NStringUtils.strip(s);
                                         if (!ts.isEmpty()) {
                                             all.add(ts.toLowerCase());
                                         }
@@ -105,6 +133,12 @@ public class NNames {
                     return format.format(selected);
                 }
             }
+            /**
+             * Illegal argument exception.
+             *
+             * @param happen" happen"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("should never happen");
         } else if (wordsCount == 2) {
             int usecase = ihash(hash, 3);
@@ -127,6 +161,12 @@ public class NNames {
                     return format.format(selected);
                 }
             }
+            /**
+             * Illegal argument exception.
+             *
+             * @param happen" happen"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("should never happen");
         } else if (wordsCount == 3) {
             int usecase = ihash(hash, 3);
@@ -156,6 +196,12 @@ public class NNames {
                     return format.format(aa.toArray(new String[0]));
                 }
             }
+            /**
+             * Illegal argument exception.
+             *
+             * @param happen" happen"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("should never happen");
         } else {
             // a adjectives
@@ -206,6 +252,12 @@ public class NNames {
         }
     }
 
+    /**
+     * Finds the find triples.
+     *
+     * @param n n
+     * @return find triples result
+     */
     private static List<int[]> findTriples(int n) {
         if (n <= 3) throw new IllegalArgumentException("n must be > 3");
         List<int[]> result = new ArrayList<>();
@@ -225,17 +277,37 @@ public class NNames {
         return result;
     }
 
+    /**
+     * Ihash.
+     *
+     * @param hash hash
+     * @param count count
+     * @return ihash result
+     */
     private static int ihash(int hash, int count) {
         return Math.abs(hash) % count;
     }
 
+    /**
+     * Lhash.
+     *
+     * @param hash hash
+     * @param list list
+     * @return lhash result
+     */
     private static String lhash(int hash, List<String> list) {
         return list.get(ihash(hash, list.size()));
     }
 
+    /**
+     * Color names.
+     *
+     * @param size size
+     * @return color names result
+     */
     private static List<String[]> colorNames(int size) {
         return CACHED_COLOR_NAMES_BY_EQ_SIZE.computeIfAbsent(size, currentSize -> NColor.ALL_CANONICAL.stream().map(x -> {
-            String[] a = NNameFormat.parse(x.getName());
+            String[] a = NNameFormat.parse(x.name());
             if (a.length == currentSize) {
                 return a;
             } else {
@@ -244,9 +316,15 @@ public class NNames {
         }).filter(x -> x != null).collect(Collectors.toList()));
     }
 
+    /**
+     * Color names lte.
+     *
+     * @param size size
+     * @return color names lte result
+     */
     private static List<String[]> colorNamesLte(int size) {
         return CACHED_COLOR_NAMES_BY_LTE_SIZE.computeIfAbsent(size, currentSize -> NColor.ALL_CANONICAL.stream().map(x -> {
-            String[] a = NNameFormat.parse(x.getName());
+            String[] a = NNameFormat.parse(x.name());
             if (a.length <= currentSize) {
                 return a;
             } else {

@@ -25,6 +25,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
@@ -53,9 +54,9 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *                     location)
      */
     public NRepositoryLocation(String name, String locationType, String path) {
-        this.name = NStringUtils.trimToNull(name);
-        this.locationType = NStringUtils.trimToNull(locationType);
-        this.path = NStringUtils.trimToNull(path);
+        this.name = NStringUtils.stripToNull(name);
+        this.locationType = NStringUtils.stripToNull(locationType);
+        this.path = NStringUtils.stripToNull(path);
     }
 
     /**
@@ -70,13 +71,13 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         }
         Matcher nm = FULL_PATTERN.matcher(locationString);
         if (nm.find()) {
-            name = NStringUtils.trimToNull(nm.group("n"));
-            locationType = NStringUtils.trimToNull(nm.group("t"));
-            path = NStringUtils.trimToNull(nm.group("r"));
+            name = NStringUtils.stripToNull(nm.group("n"));
+            locationType = NStringUtils.stripToNull(nm.group("t"));
+            path = NStringUtils.stripToNull(nm.group("r"));
         } else {
             name = null;
             locationType = null;
-            path = NStringUtils.trimToNull(locationString);
+            path = NStringUtils.stripToNull(locationString);
         }
     }
 
@@ -91,7 +92,20 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         return new NRepositoryLocation(locationString);
     }
 
+    /**
+     * Creates a new instance of of name.
+     *
+     * @param name name
+     * @return of name result
+     */
     public static NRepositoryLocation ofName(String name) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param name name
+         * @param null null
+         * @return of result
+         */
         return of(name, (String) null);
     }
 
@@ -108,7 +122,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
     public static NRepositoryLocation of(String name, String fullLocation) {
         NRepositoryLocation q = of(fullLocation);
         if (name != null) {
-            q = q.setName(name);
+            q = q.name(name);
         }
         return q;
     }
@@ -119,7 +133,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *
      * @return location name
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -129,7 +143,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @param name name
      * @return a new instance with the updated name
      */
-    public NRepositoryLocation setName(String name) {
+    public NRepositoryLocation name(String name) {
         return new NRepositoryLocation(name, locationType, path);
     }
 
@@ -138,7 +152,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *
      * @return location name
      */
-    public String getPath() {
+    public String path() {
         return path;
     }
 
@@ -148,7 +162,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @param path location
      * @return a new instance with the updated location
      */
-    public NRepositoryLocation setPath(String path) {
+    public NRepositoryLocation path(String path) {
         return new NRepositoryLocation(name, locationType, path);
     }
 
@@ -157,7 +171,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *
      * @return location type
      */
-    public String getLocationType() {
+    public String locationType() {
         return locationType;
     }
 
@@ -167,7 +181,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @param locationType locationType
      * @return a new instance with the updated location type
      */
-    public NRepositoryLocation setLocationType(String locationType) {
+    public NRepositoryLocation locationType(String locationType) {
         return new NRepositoryLocation(name, locationType, path);
     }
 
@@ -204,7 +218,8 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      *
      * @return location prefixed with location locationType if specified
      */
-    public String getFullLocation() {
+    @NGetter
+    public String fullLocation() {
         StringBuilder sb = new StringBuilder();
         if (!NBlankable.isBlank(locationType)) {
             sb.append(locationType);
@@ -271,15 +286,36 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         return toString().compareTo(o.toString());
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NRepositoryLocation copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
     @Override
     protected NRepositoryLocation clone() {
         try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
             return (NRepositoryLocation) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

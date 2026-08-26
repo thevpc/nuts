@@ -4,13 +4,13 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NIndexStore;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 public class DummyNIndexStore extends AbstractNIndexStore {
 
     public DummyNIndexStore(NRepository repository) {
         super(repository);
-        super.setEnabled(false);
+        super.enabled(false);
     }
 
     @Override
@@ -29,8 +29,8 @@ public class DummyNIndexStore extends AbstractNIndexStore {
     }
 
     @Override
-    public NIndexStore setEnabled(boolean enabled) {
-        super.setEnabled(false);
+    public NIndexStore enabled(boolean enabled) {
+        super.enabled(false);
         return this;
     }
 

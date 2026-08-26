@@ -1,12 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.runtime.standalone.util.collections.NEvictingQueueImpl;
+import net.thevpc.nuts.io.NStreamTokenizer;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.runtime.standalone.collections.NEvictingQueueImpl;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -19,13 +22,13 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "xml";
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if(s==null){
             return NScorable.DEFAULT_SCORE;
         }
@@ -45,7 +48,7 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         NStreamTokenizer st = new NStreamTokenizer(new StringReader(text));
         st.xmlComments(true);
         st.parseNumbers(false);
@@ -59,11 +62,11 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
         while ((s = st.nextToken()) != NToken.TT_EOF) {
             switch (s) {
                 case NToken.TT_SPACE: {
-                    nodes.add(txt.ofPlain(st.image));
+                    nodes.add(NText.ofPlain(st.image));
                     break;
                 }
                 case NToken.TT_COMMENTS: {
-                    nodes.add(txt.ofStyled(st.image, NTextStyle.comments()));
+                    nodes.add(NText.ofStyled(st.image, NTextStyle.comments()));
                     break;
                 }
                 case NToken.TT_INT:
@@ -72,57 +75,57 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
                 case NToken.TT_FLOAT:
                 case NToken.TT_DOUBLE:
                 case NToken.TT_BIG_DECIMAL:{
-                    nodes.add(txt.ofStyled(st.image, NTextStyle.number()));
+                    nodes.add(NText.ofStyled(st.image, NTextStyle.number()));
                     break;
                 }
                 case NToken.TT_WORD: {
                     if (last.size() > 0 && last.get(last.size() - 1).equals("<")) {
-                        nodes.add(formatNodeName(st.image, txt));
+                        nodes.add(formatNodeName(st.image));
                     } else if (last.size() > 1 && last.get(last.size() - 2).equals("<") && last.get(last.size() - 1).equals("/")) {
-                        nodes.add(formatNodeName(st.image, txt));
+                        nodes.add(formatNodeName(st.image));
                     } else if (last.size() > 1 && last.get(last.size() - 2).equals("<") && last.get(last.size() - 1).equals("?")) {
-                        nodes.add(formatNodeName(st.image, txt));
+                        nodes.add(formatNodeName(st.image));
                     } else {
                         if (st.image.equals("true") || st.image.equals("false")) {
-                            nodes.add(formatNodeName(st.image, txt));
+                            nodes.add(formatNodeName(st.image));
                         } else {
-                            nodes.add(txt.ofPlain(st.image));
+                            nodes.add(NText.ofPlain(st.image));
                         }
                     }
                     break;
                 }
                 case '\'': {
-                    nodes.add(formatNodeString(st.image, txt));
+                    nodes.add(formatNodeString(st.image));
                     break;
                 }
                 case '\"': {
-                    nodes.add(formatNodeString(st.image, txt));
+                    nodes.add(formatNodeString(st.image));
                     break;
                 }
                 case '<':
                 case '>':
                 case '&':
                 case '=': {
-                    nodes.add(txt.ofStyled(st.image, NTextStyle.separator()));
+                    nodes.add(NText.ofStyled(st.image, NTextStyle.separator()));
                     break;
                 }
                 default: {
-                    nodes.add(txt.ofStyled(st.image, NTextStyle.separator()));
+                    nodes.add(NText.ofStyled(st.image, NTextStyle.separator()));
                 }
             }
             last.add(st.image == null ? "" : st.image);
         }
-        return txt.ofList(nodes).simplify();
+        return NText.ofList(nodes).simplify();
     }
 
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        switch (NStringUtils.trim(nodeType).toLowerCase()) {
+    public NText tokenToText(String text, String nodeType) {
+        switch (NStringUtils.strip(nodeType).toLowerCase()) {
             case "name":
-                return formatNodeName(text, txt);
+                return formatNodeName(text);
             case "attribute":
-                return formatNodeName(text, txt);
+                return formatNodeName(text);
             case "string":
-                return formatNodeString(text, txt);
+                return formatNodeString(text);
             case "<":
             case "<?":
             case "</":
@@ -130,20 +133,20 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
             case "&":
             case "=":
             case "separator":
-                return formatNodeSeparator(text, txt);
+                return formatNodeSeparator(text);
         }
-        return txt.ofPlain(text);
+        return NText.ofPlain(text);
     }
 
-    public NText formatNodeName(String text, NTexts txt) {
-        return txt.ofStyled(text, NTextStyle.keyword());
+    public NText formatNodeName(String text) {
+        return NText.ofStyled(text, NTextStyle.keyword());
     }
 
-    public NText formatNodeString(String text, NTexts txt) {
-        return txt.ofStyled(text, NTextStyle.string());
+    public NText formatNodeString(String text) {
+        return NText.ofStyled(text, NTextStyle.string());
     }
 
-    public NText formatNodeSeparator(String text, NTexts txt) {
-        return txt.ofStyled(text, NTextStyle.separator());
+    public NText formatNodeSeparator(String text) {
+        return NText.ofStyled(text, NTextStyle.separator());
     }
 }

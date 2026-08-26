@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -38,14 +39,14 @@ public class RollingFileService {
             df.append('0');
         }
         doubleFormat = new DecimalFormat(df.toString());
-        this.folder = folder.toAbsolute().getParent();
+        this.folder = folder.toAbsolute().parent();
         if (this.folder == null) {
             this.folder = NPath.ofUserDirectory();
         }
-        this.fileName = folder.getName();
+        this.fileName = folder.name();
         if (this.fileName.indexOf('#') < 0) {
-            String b = folder.nameParts().getBaseName();
-            String e = folder.nameParts().getExtension();
+            String b = folder.nameParts().baseName();
+            String e = folder.nameParts().extension();
             this.fileName = b + "#" + e;
         }
         char[] t = fileName.toCharArray();
@@ -109,13 +110,13 @@ public class RollingFileService {
                 }
             }
         }
-        String z = sb1.toString().trim();
+        String z = NStringUtils.strip(sb1.toString());
         if (z.isEmpty()) {
             z = "(?<t>\\d{17})-(?<n>\\d{1,10})";
         }
         ps = z;
 
-        z = sb2.toString().trim();
+        z = NStringUtils.strip(sb2.toString());
         if (z.isEmpty()) {
             z = "#";
         }
@@ -160,7 +161,7 @@ public class RollingFileService {
     }
 
     private NOptional<PathAndNbr> toPathAndNbr(NPath x) {
-        Matcher matcher = p.matcher(x.getName());
+        Matcher matcher = p.matcher(x.name());
         if (matcher.matches()) {
             String n = matcher.group("n");
             String t = matcher.group("t");

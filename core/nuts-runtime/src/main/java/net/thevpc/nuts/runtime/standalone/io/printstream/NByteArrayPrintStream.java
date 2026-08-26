@@ -16,26 +16,26 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
 
     public NByteArrayPrintStream(NTerminalMode mode) {
         super(new ByteArrayOutputStream2(), mode, null, null, new Bindings(), null);
-        getMetaData().setMessage(
+        metaData().message(
                 NMsg.ofNtf(NText.ofStyledPath("<memory-buffer>"))
         );
     }
 
     protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream2 bos, NWorkspace workspace) {
         super(bos, mode, null, null, new Bindings(), null);
-        getMetaData().setMessage(
+        metaData().message(
                 NMsg.ofNtf(NText.ofStyledPath("<memory-buffer>"))
         );
     }
 
     protected NPrintStream printParsed(NText b) {
-        switch (getTerminalMode()) {
+        switch (terminalMode()) {
             case FILTERED:{
-                NText transformed = txt().transform(b,
+                NText transformed = NText.transform(b,
                         new NTextTransformConfig()
-                                .setFiltered(true)
-                                .setNormalize(true)
-                                .setFlatten(true)
+                                .filtered(true)
+                                .normalize(true)
+                                .flatten(true)
                 );
                 print(transformed.toString());
                 return this;
@@ -46,7 +46,7 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
     }
 
     @Override
-    public byte[] getBytes() {
+    public byte[] bytes() {
         flush();
         return out2().toByteArray();
     }
@@ -62,7 +62,7 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream outputStream() {
         return asOutputStream();
     }
 
@@ -270,13 +270,13 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
         }
 
         @Override
-        public InputStream getInputStream() {
+        public InputStream inputStream() {
             return value.out2().asInputStream();
         }
 
         @Override
-        public NContentMetadata getMetaData() {
-            return value.getMetaData();
+        public NContentMetadata metaData() {
+            return value.metaData();
         }
 
         @Override
@@ -285,7 +285,7 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
         }
 
         @Override
-        public long getContentLength() {
+        public long contentLength() {
             return value.out2().size();
         }
     }

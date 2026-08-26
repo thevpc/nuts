@@ -12,18 +12,20 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  * @author thevpc
  */
 public class DefaultNPrepareInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPrepareInternalExecutable(String[] args, NExec execCommand) {
-        super("prepare", args, execCommand);
+    public DefaultNPrepareInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("prepare", args, execCommand,executorOptions);
     }
 
     @Override
     public int execute() {
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         if (dry) {
             dryExecute();
             return NExecutionException.SUCCESS;

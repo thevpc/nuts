@@ -13,6 +13,7 @@ import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -30,13 +31,13 @@ public class NDefinitionExecCompanionFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        if(companions.contains(other.getId().getShortName())){
-            for (NDependency dependency : other.getDescriptor().getDependencies()) {
-                if(dependency.toId().getShortName().equals(this.apiId.getShortName())){
+        if(companions.contains(other.id().shortName())){
+            for (NDependency dependency : other.descriptor().dependencies()) {
+                if(dependency.toId().shortName().equals(this.apiId.shortName())){
                     if(apiId==null){
                         return true;
                     }
-                    if(apiId.getVersion().equals(dependency.toId().getVersion())){
+                    if(apiId.version().equals(dependency.toId().version())){
                         return true;
                     }
                     return false;
@@ -57,7 +58,19 @@ public class NDefinitionExecCompanionFilter extends AbstractDefinitionFilter {
         if(apiId==null){
             return "companion";
         }
-        return "companion("+ apiId.getVersion()+")";
+        return "companion("+ apiId.version()+")";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionExecCompanionFilter that = (NDefinitionExecCompanionFilter) o;
+        return Objects.equals(apiId, that.apiId) && Objects.equals(companions, that.companions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), apiId, companions);
+    }
 }

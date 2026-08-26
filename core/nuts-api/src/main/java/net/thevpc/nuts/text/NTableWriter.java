@@ -34,10 +34,21 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  * @since 0.5.5
  */
 public interface NTableWriter extends NContentTypeWriter {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTableWriter of() {
        return NExtensions.of(NTableWriter.class);
     }
 
+    /**
+     * Returns the model.
+     *
+     * @param aValue a value
+     * @return get model result
+     */
     NTableModel getModel(Object aValue);
 /**
      * configure the current command with the given arguments. This is an
@@ -52,6 +63,6 @@ public interface NTableWriter extends NContentTypeWriter {
     NTableWriter configure(boolean skipUnsupported, String... args);
 
     @Override
-    NTableWriter setNtf(boolean ntf);
+    NTableWriter ntf(boolean ntf);
 
 }

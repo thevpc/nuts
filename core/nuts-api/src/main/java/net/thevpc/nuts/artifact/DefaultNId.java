@@ -29,6 +29,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.boot.internal.util.NBootUtils;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
+import net.thevpc.nuts.internal.rpi.NIdFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
@@ -48,6 +49,11 @@ public class DefaultNId implements NId {
     private final String properties;
     private final NEnvCondition condition;
 
+    /**
+     * Default n id.
+     *
+     * @return default n id result
+     */
     public DefaultNId() {
         this.groupId = null;
         this.artifactId = null;
@@ -57,25 +63,65 @@ public class DefaultNId implements NId {
         this.properties = "";
     }
 
+    /**
+     * Default n id.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param version version
+     * @return default n id result
+     */
     public DefaultNId(String groupId, String artifactId, NVersion version) {
-        this.groupId = NStringUtils.trimToNull(groupId);
-        this.artifactId = NStringUtils.trimToNull(artifactId);
+        this.groupId = NStringUtils.stripToNull(groupId);
+        this.artifactId = NStringUtils.stripToNull(artifactId);
         this.version = version == null ? NVersion.BLANK : version;
         this.classifier = null;
         this.condition = NEnvCondition.BLANK;
         this.properties = "";
     }
 
+    /**
+     * Default n id.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param classifier classifier
+     * @param version version
+     * @param properties properties
+     * @param condition condition
+     * @return default n id result
+     */
     public DefaultNId(String groupId, String artifactId, String classifier, NVersion version, Map<String, String> properties, NEnvCondition condition) {
-        this.groupId = NStringUtils.trimToNull(groupId);
-        this.artifactId = NStringUtils.trimToNull(artifactId);
+        this.groupId = NStringUtils.stripToNull(groupId);
+        this.artifactId = NStringUtils.stripToNull(artifactId);
         this.version = version == null ? NVersion.BLANK : version;
-        this.classifier = NStringUtils.trimToNull(classifier);
+        this.classifier = NStringUtils.stripToNull(classifier);
         this.condition = condition == null ? NEnvCondition.BLANK : condition;
-        this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(properties));
+        this.properties = NStringUtils.strip(NStringMapFormat.DEFAULT.format(properties));
     }
 
+    /**
+     * Default n id.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param classifier classifier
+     * @param version version
+     * @param properties properties
+     * @param condition condition
+     * @return default n id result
+     */
     public DefaultNId(String groupId, String artifactId, String classifier, NVersion version, String properties, NEnvCondition condition) {
+      /**
+       * This.
+       *
+       * @param groupId group id
+       * @param artifactId artifact id
+       * @param classifier classifier
+       * @param version version
+       * @param NStringMapFormat.DEFAULT.parse(properties).get() n string map format.default.parse(properties).get()
+       * @param condition condition
+       */
         this(groupId, artifactId, classifier, version, NStringMapFormat.DEFAULT.parse(properties).get(), condition);
     }
 
@@ -89,7 +135,12 @@ public class DefaultNId implements NId {
         return toString().isEmpty();
     }
 
-    public String getMavenFolder() {
+    /**
+     * Maven folder.
+     *
+     * @return maven folder result
+     */
+    public String mavenFolder() {
         StringBuilder sb = new StringBuilder();
         if (!NBootUtils.isBlank(groupId)) {
             sb.append(String.join("/", NStringUtils.split(groupId, "./\\", true, true)));
@@ -127,7 +178,7 @@ public class DefaultNId implements NId {
 
     @Override
     public String getMavenPath(String extension) {
-        String p = getMavenFolder();
+        String p = mavenFolder();
         String n = getMavenFileName(extension);
         if (p.isEmpty()) {
             return n;
@@ -144,9 +195,9 @@ public class DefaultNId implements NId {
         if (other == null) {
             return false;
         }
-        return NStringUtils.trim(groupId).equals(NStringUtils.trim(other.getGroupId()))
-                && NStringUtils.trim(artifactId).equals(NStringUtils.trim(other.getArtifactId()))
-                && Objects.equals(getClassifier(), other.getClassifier())
+        return NStringUtils.strip(groupId).equals(NStringUtils.strip(other.groupId()))
+                && NStringUtils.strip(artifactId).equals(NStringUtils.strip(other.artifactId()))
+                && Objects.equals(classifier(), other.classifier())
                 ;
     }
 
@@ -155,7 +206,13 @@ public class DefaultNId implements NId {
         if (NBlankable.isBlank(properties)) {
             return true;
         }
-        return getProperties().isEmpty();
+        /**
+         * Properties.
+         *
+         * @param ).isEmpty( ).is empty(
+         * @return properties result
+         */
+        return properties().isEmpty();
     }
 
     @Override
@@ -170,96 +227,96 @@ public class DefaultNId implements NId {
         if (other == null) {
             return false;
         }
-        return NStringUtils.trim(groupId).equals(NStringUtils.trim(other.getGroupId()))
-                && NStringUtils.trim(artifactId).equals(NStringUtils.trim(other.getArtifactId()))
+        return NStringUtils.strip(groupId).equals(NStringUtils.strip(other.groupId()))
+                && NStringUtils.strip(artifactId).equals(NStringUtils.strip(other.artifactId()))
                 && Objects.equals((version == null || version.isBlank()) ? null : version,
-                (other.getVersion() == null || other.getVersion().isBlank()) ? null : other.getVersion())
-                && Objects.equals(getClassifier(), other.getClassifier())
+                (other.version() == null || other.version().isBlank()) ? null : other.version())
+                && Objects.equals(classifier(), other.classifier())
                 ;
     }
 
     @Override
-    public String getFace() {
-        String s = getProperties().get(NConstants.IdProperties.FACE);
-        return NStringUtils.trimToNull(s);
+    public String face() {
+        String s = properties().get(NConstants.IdProperties.FACE);
+        return NStringUtils.stripToNull(s);
     }
 
     @Override
-    public String getClassifier() {
-        return NStringUtils.trimToNull(classifier);
+    public String classifier() {
+        return NStringUtils.stripToNull(classifier);
     }
 
     @Override
-    public String getPackaging() {
-        String s = getProperties().get(NConstants.IdProperties.PACKAGING);
-        return NStringUtils.trimToNull(s);
+    public String packaging() {
+        String s = properties().get(NConstants.IdProperties.PACKAGING);
+        return NStringUtils.stripToNull(s);
     }
 
     @Override
-    public NEnvCondition getCondition() {
+    public NEnvCondition condition() {
         return condition;
     }
 
     @Override
-    public String getPropertiesQuery() {
+    public String propertiesQuery() {
         return properties;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return NStringMapFormat.DEFAULT.parse(properties).get();
     }
 
     @Override
-    public String getRepository() {
-        String s = getProperties().get(NConstants.IdProperties.REPO);
-        return NStringUtils.trimToNull(s);
+    public String repository() {
+        String s = properties().get(NConstants.IdProperties.REPO);
+        return NStringUtils.stripToNull(s);
     }
 
     @Override
-    public String getGroupId() {
+    public String groupId() {
         return groupId;
     }
 
     @Override
-    public NId getShortId() {
+    public NId shortId() {
         return new DefaultNId(groupId, artifactId, classifier, (NVersion) null, "",
                 NEnvCondition.BLANK);
     }
 
     @Override
-    public NId getSharedId() {
+    public NId sharedId() {
         return new DefaultNId(groupId, artifactId, classifier, NVersion.of("SHARED"), "",
                 NEnvCondition.BLANK);
     }
 
     @Override
-    public NId getLongId() {
+    public NId longId() {
         return new DefaultNId(groupId, artifactId, classifier, version, "", NEnvCondition.BLANK);
     }
 
     @Override
-    public String getShortName() {
+    public String shortName() {
         return NReservedUtils.getIdShortName(groupId,artifactId, classifier);
     }
 
     @Override
-    public String getLongName() {
+    public String longName() {
         return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
 
     @Override
-    public String getFullName() {
+    public String fullName() {
         return toString();
     }
 
     @Override
-    public String getArtifactId() {
+    public String artifactId() {
         return artifactId;
     }
 
     @Override
-    public NVersion getVersion() {
+    public NVersion version() {
         return version;
     }
 
@@ -270,13 +327,13 @@ public class DefaultNId implements NId {
             if (!NBlankable.isBlank(groupId)) {
                 sb.append(groupId).append(":");
             }
-            sb.append(NStringUtils.trim(artifactId));
+            sb.append(NStringUtils.strip(artifactId));
         }else {
-            sb.append(NStringUtils.trim(groupId));
-            sb.append(":").append(NStringUtils.trim(artifactId));
-            sb.append(":").append(NStringUtils.trim(classifier));
+            sb.append(NStringUtils.strip(groupId));
+            sb.append(":").append(NStringUtils.strip(artifactId));
+            sb.append(":").append(NStringUtils.strip(classifier));
         }
-        NVersion v = getVersion();
+        NVersion v = version();
         if (!v.isBlank()) {
             sb.append("#");
             sb.append(v);
@@ -333,7 +390,7 @@ public class DefaultNId implements NId {
 
     @Override
     public NDependency toDependency() {
-        Map<String, String> properties = getProperties();
+        Map<String, String> properties = properties();
         //CoreStringUtils.join(",", ex)
         String exc = properties.get(NConstants.IdProperties.EXCLUSIONS);
         if (exc == null) {
@@ -347,16 +404,16 @@ public class DefaultNId implements NId {
             }
         }
         return NDependencyBuilder.of()
-                .setRepository(getRepository())
-                .setArtifactId(getArtifactId())
-                .setGroupId(getGroupId())
-                .setClassifier(getClassifier())
-                .setVersion(getVersion())
-                .setScope(properties.get(NConstants.IdProperties.SCOPE))
-                .setOptional(properties.get(NConstants.IdProperties.OPTIONAL))
-                .setExclusions(a)
-                .setCondition(getCondition())
-                .setProperties(properties)
+                .repository(repository())
+                .artifactId(artifactId())
+                .groupId(groupId())
+                .classifier(classifier())
+                .version(version())
+                .scope(properties.get(NConstants.IdProperties.SCOPE))
+                .optional(properties.get(NConstants.IdProperties.OPTIONAL))
+                .exclusions(a)
+                .condition(condition())
+                .properties(properties)
                 .build()
                 ;
     }
@@ -369,19 +426,19 @@ public class DefaultNId implements NId {
     @Override
     public int compareTo(NId o2) {
         int x;
-        x = NStringUtils.trim(this.getGroupId()).compareTo(NStringUtils.trim(o2.getGroupId()));
+        x = NStringUtils.strip(this.groupId()).compareTo(NStringUtils.strip(o2.groupId()));
         if (x != 0) {
             return x;
         }
-        x = NStringUtils.trim(this.getArtifactId()).compareTo(NStringUtils.trim(o2.getArtifactId()));
+        x = NStringUtils.strip(this.artifactId()).compareTo(NStringUtils.strip(o2.artifactId()));
         if (x != 0) {
             return x;
         }
-        x = NStringUtils.trim(this.getClassifier()).compareTo(NStringUtils.trim(o2.getClassifier()));
+        x = NStringUtils.strip(this.classifier()).compareTo(NStringUtils.strip(o2.classifier()));
         if (x != 0) {
             return x;
         }
-        x = this.getVersion().compareTo(o2.getVersion());
+        x = this.version().compareTo(o2.version());
         if (x != 0) {
             return x;
         }
@@ -390,16 +447,28 @@ public class DefaultNId implements NId {
 
     @Override
     public NIdFilter toFilter() {
-        return NIdFilters.of().byValue(this);
+        return NIdFilter.ofValue(this);
     }
 
     @Override
     public NId toAtLeast() {
-        return builder().setVersion(getVersion().toAtMost()).build();
+        /**
+         * Builder.
+         *
+         * @param ).version(version().toAtMost()).build( ).version(version().to at most()).build(
+         * @return builder result
+         */
+        return builder().version(version().toAtMost()).build();
     }
 
     @Override
     public NId toAtMost() {
-        return builder().setVersion(getVersion().toAtLeast()).build();
+        /**
+         * Builder.
+         *
+         * @param ).version(version().toAtLeast()).build( ).version(version().to at least()).build(
+         * @return builder result
+         */
+        return builder().version(version().toAtLeast()).build();
     }
 }

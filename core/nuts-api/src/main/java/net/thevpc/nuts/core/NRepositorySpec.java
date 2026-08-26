@@ -27,6 +27,8 @@ package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.io.Serializable;
@@ -168,6 +170,11 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @return a new instance of {@code NAddRepositoryOptions} that is a copy of this object
      */
     public NRepositorySpec copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -203,15 +210,34 @@ public class NRepositorySpec implements Serializable, Cloneable {
             }
             return o;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
 
-    public String[] getAliases() {
+    /**
+     * Aliases.
+     *
+     * @return aliases result
+     */
+    @NGetter
+    public String[] aliases() {
         return aliases;
     }
 
-    public NRepositorySpec setAliases(String... aliases) {
+    /**
+     * Aliases.
+     *
+     * @param aliases aliases
+     * @return aliases result
+     */
+    @NSetter
+    public NRepositorySpec aliases(String... aliases) {
         this.aliases = aliases;
         return this;
     }
@@ -221,7 +247,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      *
      * @return repository model
      */
-    public NRepositoryModel getSourceModel() {
+    @NGetter
+    public NRepositoryModel sourceModel() {
         return sourceModel;
     }
 
@@ -231,7 +258,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param sourceModel repository model
      * @return {@code this instance}
      */
-    public NRepositorySpec setSourceModel(NRepositoryModel sourceModel) {
+    @NSetter
+    public NRepositorySpec sourceModel(NRepositoryModel sourceModel) {
         this.sourceModel = sourceModel;
         return this;
     }
@@ -242,7 +270,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      *
      * @return order
      */
-    public int getOrder() {
+    @NGetter
+    public int order() {
         return order;
     }
 
@@ -252,7 +281,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param order order
      * @return {@code this instance}
      */
-    public NRepositorySpec setOrder(int order) {
+    @NSetter
+    public NRepositorySpec order(int order) {
         this.order = order;
         return this;
     }
@@ -262,6 +292,7 @@ public class NRepositorySpec implements Serializable, Cloneable {
      *
      * @return temporary repository
      */
+    @NGetter
     public boolean isTemporary() {
         return temporary;
     }
@@ -272,7 +303,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NRepositorySpec setTemporary(boolean value) {
+    @NSetter
+    public NRepositorySpec temporary(boolean value) {
         this.temporary = value;
         return this;
     }
@@ -282,7 +314,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      *
      * @return repository name (should no include special space or characters)
      */
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
@@ -292,7 +325,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NRepositorySpec setName(String value) {
+    @NSetter
+    public NRepositorySpec name(String value) {
         this.name = value;
         return this;
     }
@@ -302,7 +336,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      *
      * @return repository location
      */
-    public String getLocation() {
+    @NGetter
+    public String location() {
         return location;
     }
 
@@ -312,7 +347,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NRepositorySpec setLocation(String value) {
+    @NSetter
+    public NRepositorySpec location(String value) {
         this.location = value;
         return this;
     }
@@ -332,7 +368,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NRepositorySpec setEnabled(boolean value) {
+    @NSetter
+    public NRepositorySpec enabled(boolean value) {
         this.enabled = value;
         return this;
     }
@@ -343,6 +380,7 @@ public class NRepositorySpec implements Serializable, Cloneable {
      *
      * @return fail safe repository
      */
+    @NGetter
     public boolean isFailSafe() {
         return failSafe;
     }
@@ -354,7 +392,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NRepositorySpec setFailSafe(boolean value) {
+    @NSetter
+    public NRepositorySpec failSafe(boolean value) {
         this.failSafe = value;
         return this;
     }
@@ -364,6 +403,7 @@ public class NRepositorySpec implements Serializable, Cloneable {
      *
      * @return always create
      */
+    @NGetter
     public boolean isCreate() {
         return create;
     }
@@ -374,7 +414,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NRepositorySpec setCreate(boolean value) {
+    @NSetter
+    public NRepositorySpec create(boolean value) {
         this.create = value;
         return this;
     }
@@ -384,7 +425,8 @@ public class NRepositorySpec implements Serializable, Cloneable {
      *
      * @return repository deploy order
      */
-    public int getDeployWeight() {
+    @NGetter
+    public int deployWeight() {
         return deployWeight;
     }
 
@@ -394,164 +436,338 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NRepositorySpec setDeployWeight(int value) {
+    @NSetter
+    public NRepositorySpec deployWeight(int value) {
         this.deployWeight = value;
         return this;
     }
 
-    public String getUuid() {
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
+    @NGetter
+    public String uuid() {
         return uuid;
     }
 
+    /**
+     * Merge config.
+     *
+     * @param config config
+     * @return merge config result
+     */
     public NRepositorySpec mergeConfig(NRepositoryConfig config) {
         if (config == null) return this;
-        if (config.getUuid() != null) {
-            this.setUuid(config.getUuid());
+        if (config.uuid() != null) {
+            this.uuid(config.uuid());
         }
-        if (config.getLocation()!=null) {
-            this.setSourceLocation(config.getLocation().copy());
+        if (config.location()!=null) {
+            this.sourceLocation(config.location().copy());
         }
-        if (config.getStoreStrategy()!=null) {
-            this.setStoreStrategy(config.getStoreStrategy());
+        if (config.storeStrategy()!=null) {
+            this.storeStrategy(config.storeStrategy());
         }
-        if (config.getGroups()!=null) {
-            this.setGroups(config.getGroups());
+        if (config.groups()!=null) {
+            this.groups(config.groups());
         }
-        if (config.getEnv()!=null) {
-            if(getEnv()==null){
-                setEnv(new HashMap<>(config.getEnv()));
+        if (config.env()!=null) {
+            if(env()==null){
+              /**
+               * Env.
+               *
+               * @param HashMap<>(config.env()) hash map<>(config.env())
+               */
+                env(new HashMap<>(config.env()));
             }else{
-                getEnv().putAll(config.getEnv());
+              /**
+               * Env.
+               *
+               * @param ).putAll(config.env() ).put all(config.env()
+               */
+                env().putAll(config.env());
             }
         }
-        if (config.getTags()!=null) {
-            if(getTags()==null){
-                setTags(new LinkedHashSet<>(Arrays.asList(config.getTags())).toArray(new String[0]));
+        if (config.tags()!=null) {
+            if(tags()==null){
+              /**
+               * Tags.
+               *
+               * @param String[0]) string[0])
+               */
+                tags(new LinkedHashSet<>(Arrays.asList(config.tags())).toArray(new String[0]));
             }else{
-                LinkedHashSet<String> a = new LinkedHashSet<>(Arrays.asList(this.getTags()));
-                a.addAll(Arrays.asList(config.getTags()));
-                setTags(a.toArray(new String[0]));
+                LinkedHashSet<String> a = new LinkedHashSet<>(Arrays.asList(this.tags()));
+                a.addAll(Arrays.asList(config.tags()));
+              /**
+               * Tags.
+               *
+               * @param String[0]) string[0])
+               */
+                tags(a.toArray(new String[0]));
             }
         }
-        if (config.getStoreLocations()!=null) {
-            if(getStoreLocations()==null){
-                setStoreLocations(new HashMap<>(config.getStoreLocations()));
+        if (config.storeLocations()!=null) {
+            if(storeLocations()==null){
+              /**
+               * Store locations.
+               *
+               * @param HashMap<>(config.storeLocations()) hash map<>(config.store locations())
+               */
+                storeLocations(new HashMap<>(config.storeLocations()));
             }else{
-                getStoreLocations().putAll(config.getStoreLocations());
+              /**
+               * Store locations.
+               *
+               * @param ).putAll(config.storeLocations() ).put all(config.store locations()
+               */
+                storeLocations().putAll(config.storeLocations());
             }
         }
-        if (config.getMirrors()!=null) {
-            if(getMirrors()==null){
-                setMirrors(new ArrayList<>(config.getMirrors()));
+        if (config.mirrors()!=null) {
+            if(mirrors()==null){
+              /**
+               * Mirrors.
+               *
+               * @param ArrayList<>(config.mirrors()) array list<>(config.mirrors())
+               */
+                mirrors(new ArrayList<>(config.mirrors()));
             }else{
-                getMirrors().addAll(config.getMirrors());
+              /**
+               * Mirrors.
+               *
+               * @param ).addAll(config.mirrors() ).add all(config.mirrors()
+               */
+                mirrors().addAll(config.mirrors());
             }
         }
-        this.setMirrors(config.getMirrors() == null ? null : new ArrayList<>(config.getMirrors().stream().map(x -> x.copy()).collect(Collectors.toList())));
-        this.setIndexEnabled(config.isIndexEnabled());
-        if (config.getAuthenticationAgent() != null) {
-            this.setAuthenticationAgent(config.getAuthenticationAgent());
+        this.mirrors(config.mirrors() == null ? null : new ArrayList<>(config.mirrors().stream().map(x -> x.copy()).collect(Collectors.toList())));
+        this.indexEnabled(config.isIndexEnabled());
+        if (config.authenticationAgent() != null) {
+            this.authenticationAgent(config.authenticationAgent());
         }
         return this;
     }
 
+    /**
+     * Converts to config.
+     *
+     * @return to config result
+     */
     public NRepositoryConfig toConfig() {
         NRepositoryConfig config=new NRepositoryConfig();
-        config.setUuid(this.getUuid());
-        config.setLocation(this.getSourceLocation()==null?null:this.getSourceLocation().copy());
-        config.setStoreStrategy(this.getStoreStrategy());
-        config.setGroups(this.getGroups());
-        config.setEnv(this.getEnv()==null?null:new HashMap<>(this.getEnv()));
-        config.setTags(this.getTags()==null?null:Arrays.copyOf(this.getTags(), this.getTags().length));
-        config.setStoreLocations(this.getStoreLocations()==null?null:new HashMap<>(this.getStoreLocations()));
-        config.setMirrors(this.getMirrors()==null?null:new ArrayList<>(this.getMirrors().stream().map(x->x.copy()).collect(Collectors.toList())));
-        config.setIndexEnabled(this.isIndexEnabled());
-        config.setAuthenticationAgent(this.getAuthenticationAgent());
+        config.uuid(this.uuid());
+        config.location(this.sourceLocation()==null?null:this.sourceLocation().copy());
+        config.storeStrategy(this.storeStrategy());
+        config.groups(this.groups());
+        config.env(this.env()==null?null:new HashMap<>(this.env()));
+        config.tags(this.tags()==null?null:Arrays.copyOf(this.tags(), this.tags().length));
+        config.storeLocations(this.storeLocations()==null?null:new HashMap<>(this.storeLocations()));
+        config.mirrors(this.mirrors()==null?null:new ArrayList<>(this.mirrors().stream().map(x->x.copy()).collect(Collectors.toList())));
+        config.indexEnabled(this.isIndexEnabled());
+        config.authenticationAgent(this.authenticationAgent());
         return config;
     }
 
-    public NRepositorySpec setUuid(String uuid) {
+    /**
+     * Uuid.
+     *
+     * @param uuid uuid
+     * @return uuid result
+     */
+    @NSetter
+    public NRepositorySpec uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }
 
-    public NRepositoryLocation getSourceLocation() {
+    /**
+     * Source location.
+     *
+     * @return source location result
+     */
+    public NRepositoryLocation sourceLocation() {
         return sourceLocation;
     }
 
-    public NRepositorySpec setSourceLocation(NRepositoryLocation sourceLocation) {
+    /**
+     * Source location.
+     *
+     * @param sourceLocation source location
+     * @return source location result
+     */
+    @NSetter
+    public NRepositorySpec sourceLocation(NRepositoryLocation sourceLocation) {
         this.sourceLocation = sourceLocation;
         return this;
     }
 
-    public Map<NStoreType, String> getStoreLocations() {
+    /**
+     * Store locations.
+     *
+     * @return store locations result
+     */
+    public Map<NStoreType, String> storeLocations() {
         return storeLocations;
     }
 
-    public NRepositorySpec setStoreLocations(Map<NStoreType, String> storeLocations) {
+    /**
+     * Store locations.
+     *
+     * @param storeLocations store locations
+     * @return store locations result
+     */
+    @NSetter
+    public NRepositorySpec storeLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }
 
-    public NStoreStrategy getStoreStrategy() {
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
+    public NStoreStrategy storeStrategy() {
         return storeStrategy;
     }
 
-    public NRepositorySpec setStoreStrategy(NStoreStrategy storeStrategy) {
+    /**
+     * Store strategy.
+     *
+     * @param storeStrategy store strategy
+     * @return store strategy result
+     */
+    @NSetter
+    public NRepositorySpec storeStrategy(NStoreStrategy storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
 
-    public String getGroups() {
+    /**
+     * Groups.
+     *
+     * @return groups result
+     */
+    public String groups() {
         return groups;
     }
 
-    public NRepositorySpec setGroups(String groups) {
+    /**
+     * Groups.
+     *
+     * @param groups groups
+     * @return groups result
+     */
+    @NSetter
+    public NRepositorySpec groups(String groups) {
         this.groups = groups;
         return this;
     }
 
-    public Map<String, String> getEnv() {
+    /**
+     * Env.
+     *
+     * @return env result
+     */
+    public Map<String, String> env() {
         return env;
     }
 
-    public NRepositorySpec setEnv(Map<String, String> env) {
+    /**
+     * Env.
+     *
+     * @param env env
+     * @return env result
+     */
+    @NSetter
+    public NRepositorySpec env(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
-    public List<NRepositoryRef> getMirrors() {
+    /**
+     * Mirrors.
+     *
+     * @return mirrors result
+     */
+    public List<NRepositoryRef> mirrors() {
         return mirrors;
     }
 
-    public NRepositorySpec setMirrors(List<NRepositoryRef> mirrors) {
+    /**
+     * Mirrors.
+     *
+     * @param mirrors mirrors
+     * @return mirrors result
+     */
+    @NSetter
+    public NRepositorySpec mirrors(List<NRepositoryRef> mirrors) {
         this.mirrors = mirrors;
         return this;
     }
 
+    /**
+     * Checks if is index enabled.
+     *
+     * @return is index enabled result
+     */
     public boolean isIndexEnabled() {
         return indexEnabled;
     }
 
-    public NRepositorySpec setIndexEnabled(boolean indexEnabled) {
+    /**
+     * Index enabled.
+     *
+     * @param indexEnabled index enabled
+     * @return index enabled result
+     */
+    @NSetter
+    public NRepositorySpec indexEnabled(boolean indexEnabled) {
         this.indexEnabled = indexEnabled;
         return this;
     }
 
-    public String getAuthenticationAgent() {
+    /**
+     * Authentication agent.
+     *
+     * @return authentication agent result
+     */
+    public String authenticationAgent() {
         return authenticationAgent;
     }
 
-    public NRepositorySpec setAuthenticationAgent(String authenticationAgent) {
+    /**
+     * Authentication agent.
+     *
+     * @param authenticationAgent authentication agent
+     * @return authentication agent result
+     */
+    @NSetter
+    public NRepositorySpec authenticationAgent(String authenticationAgent) {
         this.authenticationAgent = authenticationAgent;
         return this;
     }
 
-    public String[] getTags() {
+    /**
+     * Tags.
+     *
+     * @return tags result
+     */
+    @NGetter
+    public String[] tags() {
         return tags;
     }
 
-    public NRepositorySpec setTags(String... tags) {
+    /**
+     * Tags.
+     *
+     * @param tags tags
+     * @return tags result
+     */
+    @NSetter
+    public NRepositorySpec tags(String... tags) {
         this.tags = tags;
         return this;
     }

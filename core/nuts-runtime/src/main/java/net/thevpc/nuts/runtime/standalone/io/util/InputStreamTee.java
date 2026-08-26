@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.io.*;
 
@@ -36,12 +37,12 @@ public class InputStreamTee extends InputStream implements NInterruptible<InputS
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return metadata;
     }
 
     @Override
-    public void interrupt() throws NInterruptException {
+    public void interrupt() throws NInterruptedException {
         this.interrupted = true;
     }
 
@@ -129,12 +130,12 @@ public class InputStreamTee extends InputStream implements NInterruptible<InputS
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(NMsg.ofPlain("stream is interrupted"));
+            throw new NIOException(NMsg.ofP("stream is interrupted"));
         }
     }
 
     private void checkMark() {
-        throw new NIOException(NMsg.ofPlain("unsupported mark"));
+        throw new NIOException(NMsg.ofP("unsupported mark"));
     }
 
 }

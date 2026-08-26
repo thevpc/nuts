@@ -5,16 +5,18 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.command.NUninstall;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -44,29 +46,29 @@ public class DefaultNUninstall extends AbstractNUninstall {
         NWorkspaceUtils.of().checkReadOnly();
         NSecurityManager.of().checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         InstallIdList list = new InstallIdList();
-        List<NId> nutsIds = this.getIds();
+        List<NId> nutsIds = this.ids();
         NAssert.requireNamedNonBlank(nutsIds, "packages to uninstall");
         List<NId> installed = new ArrayList<>();
         List<InstallIdInfo> infos = new ArrayList<>();
         InstallHelper h = new InstallHelper((DefaultNWorkspace) NWorkspaceExt.of(), list, false, args, conditionalArguments);
         for (NId id : nutsIds) {
             List<NDefinition> resultDefinitions = NSearch.of()
-                    .setTransitive(false)
+                    .transitive(false)
                     .addId(id)
-                    .setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .definitionFilter(NDefinitionFilter.ofInstalled(true))
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .getResultDefinitions()
                     .distinct()
                     .toList();
-            resultDefinitions.removeIf(it -> !it.getInstallInformation().get().isInstalledOrRequired());
+            resultDefinitions.removeIf(it -> !it.installInformation().get().isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {
                 throw new NIllegalArgumentException(NMsg.ofC("not installed : %s", id));
             }
             for (NDefinition resultDefinition : resultDefinitions) {
-                InstallIdInfo uu = list.addAsUninstalled(resultDefinition.getId(), new InstallFlags());
-                uu.cacheItem = h.getCache(resultDefinition.getId());
+                InstallIdInfo uu = list.addAsUninstalled(resultDefinition.id(), new InstallFlags());
+                uu.cacheItem = h.getCache(resultDefinition.id());
                 uu.cacheItem.revalidate(resultDefinition);
-                installed.add(resultDefinition.getId());
+                installed.add(resultDefinition.id());
                 infos.add(uu);
             }
         }
@@ -74,13 +76,13 @@ public class DefaultNUninstall extends AbstractNUninstall {
         printList(mout, "installed", "uninstalled", installed);
         mout.println("should we proceed uninstalling ?");
         NMsg cancelMessage = NMsg.ofC("uninstall cancelled : %s", installed.stream()
-                .map(NId::getFullName)
+                .map(NId::fullName)
                 .collect(Collectors.joining(", ")));
         if (!installed.isEmpty() && !NIn.ask()
                 .forBoolean(NMsg.ofNtf(mout.toString()))
-                .setDefaultValue(true)
-                .setCancelMessage(cancelMessage)
-                .getBooleanValue()) {
+                .defaultValue(true)
+                .cancelMessage(cancelMessage)
+                .booleanValue()) {
             throw new NCancelException(cancelMessage);
         }
         for (InstallIdInfo def : infos) {
@@ -90,13 +92,12 @@ public class DefaultNUninstall extends AbstractNUninstall {
     }
 
     private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
-        if (all.size() > 0) {
+        if (!all.isEmpty()) {
             NSession session = NSession.of();
             if (NOut.isPlain()) {
-                NTexts text = NTexts.of();
-                NText kind = text.ofStyled(skind, NTextStyle.primary2());
+                NText kind = NText.ofStyled(skind, NTextStyle.primary2());
                 NText action =
-                        text.ofStyled(saction,
+                        NText.ofStyled(saction,
                                 saction.equals("set as default") ? NTextStyle.primary3() :
                                         saction.equals("ignored") ? NTextStyle.pale() :
                                         NTextStyle.primary1()

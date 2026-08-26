@@ -33,7 +33,7 @@ import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceCurrentConfig;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.platform.NOsFamily;
@@ -75,11 +75,6 @@ public final class NBootConfig implements Cloneable, Serializable {
      * runtime package dependencies id list (; separated)
      */
     private NDescriptor runtimeBootDescriptor;
-
-    /**
-     *
-     */
-    private List<NDescriptor> extensionBootDescriptors;
 
     /**
      * bootRepositories list (; separated) where to look for runtime dependencies
@@ -132,16 +127,16 @@ public final class NBootConfig implements Cloneable, Serializable {
 
     public NBootConfig(NWorkspaceOptions options) {
         if (options != null) {
-            this.setWorkspace(options.getWorkspace().orNull());
-            this.setName(options.getName().orNull());
-            this.setStoreStrategy(options.getStoreStrategy().orNull());
-            this.setRepositoryStoreStrategy(options.getRepositoryStoreStrategy().orNull());
-            this.setStoreLayout(options.getStoreLayout().orNull());
-            this.storeLocations = NCollections.nonNullMap(options.getStoreLocations().orNull());
-            this.homeLocations = NCollections.nonNullMap(options.getHomeLocations().orNull());
-            this.setRuntimeId(options.getRuntimeId().orNull());
-            this.system = options.getSystem().orElse(false);
-            this.runtimeId = options.getRuntimeId().orNull();
+            this.setWorkspace(options.workspace().orNull());
+            this.setName(options.name().orNull());
+            this.setStoreStrategy(options.storeStrategy().orNull());
+            this.setRepositoryStoreStrategy(options.repositoryStoreStrategy().orNull());
+            this.setStoreLayout(options.storeLayout().orNull());
+            this.storeLocations = NCollections.nonNullMap(options.storeLocations().orNull());
+            this.homeLocations = NCollections.nonNullMap(options.homeLocations().orNull());
+            this.setRuntimeId(options.runtimeId().orNull());
+            this.system = options.system().orElse(false);
+            this.runtimeId = options.runtimeId().orNull();
         }
     }
 
@@ -151,7 +146,6 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.apiVersion = context.getApiVersion();
             this.runtimeId = context.getRuntimeId();
             this.runtimeBootDescriptor = context.getRuntimeBootDescriptor();
-            this.extensionBootDescriptors = context.getExtensionBootDescriptors();
             this.bootRepositories = context.getBootRepositories();
             this.javaCommand = context.getJavaCommand();
             this.javaOptions = context.getJavaOptions();
@@ -170,7 +164,6 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.apiVersion = other.getApiVersion();
             this.runtimeId = other.getRuntimeId();
             this.runtimeBootDescriptor = other.getRuntimeBootDescriptor();
-            this.extensionBootDescriptors = other.getExtensionBootDescriptors();
             this.bootRepositories = other.getBootRepositories();
             this.javaCommand = other.getJavaCommand();
             this.javaOptions = other.getJavaOptions();
@@ -218,15 +211,6 @@ public final class NBootConfig implements Cloneable, Serializable {
 
     public NBootConfig setRuntimeBootDescriptor(NDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
-        return this;
-    }
-
-    public List<NDescriptor> getExtensionBootDescriptors() {
-        return extensionBootDescriptors;
-    }
-
-    public NBootConfig setExtensionBootDescriptors(List<NDescriptor> extensionBootDescriptors) {
-        this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
 

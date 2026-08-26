@@ -98,13 +98,13 @@ public class FigletNTextArtTextRenderer implements NTextArtTextRenderer, Cloneab
     }
 
     public FigletNTextArtTextRenderer(NInputSource file) {
-        try (InputStream in = file.getInputStream()) {
+        try (InputStream in = file.inputStream()) {
             if (file instanceof NPath) {
-                fontName = ((NPath) file).nameParts().getBaseName();
+                fontName = ((NPath) file).nameParts().baseName();
             } else {
-                NContentMetadata md = file.getMetaData();
+                NContentMetadata md = file.metaData();
                 if (md != null) {
-                    fontName = NPath.of(md.getName().orElse(null)).nameParts().getBaseName();
+                    fontName = NPath.of(md.name().orElse(null)).nameParts().baseName();
                 }
             }
             load(in);
@@ -138,7 +138,7 @@ public class FigletNTextArtTextRenderer implements NTextArtTextRenderer, Cloneab
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "figlet:" + NStringUtils.firstNonBlank(fontName, "noname");
     }
 

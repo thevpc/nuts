@@ -4,8 +4,8 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgTemplate;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.time.NProgressHandlerEvent;
-import net.thevpc.nuts.time.NProgressHandler;
+import net.thevpc.nuts.mon.NProgressHandlerEvent;
+import net.thevpc.nuts.mon.NProgressHandler;
 
 import java.util.logging.Level;
 
@@ -31,9 +31,9 @@ public class NPrintStreamProgressHandler implements NProgressHandler {
 
     @Override
     public void onEvent(NProgressHandlerEvent event) {
-        NMsg message = event.getModel().getMessage();
-        Object msg = JLogProgressHandler.formatMessage(messageFormat, event.getModel());
-        printStream.print(message.getLevel() == null ? Level.INFO : message.getLevel() + " ");
+        NMsg message = event.model().message();
+        Object msg = JLogProgressHandler.formatMessage(messageFormat, event.model());
+        printStream.print(message.level() == null ? Level.INFO : message.level() + " ");
         printStream.println(msg);
     }
 

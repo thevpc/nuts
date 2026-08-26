@@ -35,8 +35,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.*;
 
@@ -50,7 +50,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
     public static NId ID=NId.get("net.thevpc.nuts.exec:exec-native").get();
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
@@ -60,10 +60,10 @@ public class ProcessExecutorComponent implements NExecutorComponent {
     }
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        NDefinition nutMainFile = executionContext.getDefinition();
-        NPath storeFolder = nutMainFile.getInstallInformation().get().getInstallFolder();
-        List<String> execArgs = executionContext.getExecutorOptions();
-        List<String> appArgs = executionContext.getArguments();
+        NDefinition nutMainFile = executionContext.definition();
+        NPath storeFolder = nutMainFile.installInformation().get().installFolder();
+        List<String> execArgs = executionContext.executorOptions();
+        List<String> appArgs = executionContext.arguments();
 
         List<String> app = new ArrayList<>(appArgs);
         if (app.isEmpty()) {
@@ -76,7 +76,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
 
         Map<String, String> osEnv = new HashMap<>();
         String bootArgumentsString = JavaExecutorComponent.createChildOptions(executionContext)
-                .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
+                .toCmdLine(new NWorkspaceOptionsConfig().compact(true))
                 .toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
@@ -97,11 +97,11 @@ public class ProcessExecutorComponent implements NExecutorComponent {
         return ProcessExecHelper.ofDefinition(nutMainFile,
                 app.toArray(new String[0]), osEnv, directory,
                 showCommand, true,
-                executionContext.getSleepMillis(),
-                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(),
-                executionContext.getRunAs(),
-                executionContext.getExecutorOptions().toArray(new String[0]),
-                executionContext.isDry(), executionContext.getSession()
+                executionContext.sleepDuration(),
+                executionContext.in(), executionContext.out(), executionContext.err(),
+                executionContext.runAs(),
+                executionContext.executorOptions().toArray(new String[0]),
+                executionContext.isDry(), executionContext.session()
         );
     }
 }

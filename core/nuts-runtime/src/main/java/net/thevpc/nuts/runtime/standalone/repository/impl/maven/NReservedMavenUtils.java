@@ -159,7 +159,7 @@ public final class NReservedMavenUtils {
     }
 
     public static String getFileName(NId id, String ext) {
-        return id.getArtifactId() + "-" + id.getVersion() + "." + ext;
+        return id.artifactId() + "-" + id.version() + "." + ext;
     }
 
 //    public static String toMavenPath(NId nutsId) {
@@ -498,14 +498,14 @@ public final class NReservedMavenUtils {
     static VersionAndPath resolveLatestMavenId(NId zId, String path, Predicate<NVersion> filter,
                                                NLog bLog, NRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsBuilder options) {
         NDescriptorStyle descType = NDescriptorStyle.MAVEN;
-        if (NConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
+        if (NConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.locationType())) {
             descType = NDescriptorStyle.NUTS;
         }
-        String repoUrl = repoUrl2.getPath();
+        String repoUrl = repoUrl2.path();
         boolean found = false;
         NVersion bestVersion = null;
         String bestPath = null;
-        NFetchStrategy fetchStrategy = options.getFetchStrategy().orElse(NFetchStrategy.ANYWHERE);
+        NFetchStrategy fetchStrategy = options.fetchStrategy().orElse(NFetchStrategy.ANYWHERE);
         boolean offline = fetchStrategy != NFetchStrategy.REMOTE;
         boolean online = fetchStrategy != NFetchStrategy.OFFLINE;
         if (!repoUrl.contains("://")) {
@@ -527,7 +527,7 @@ public final class NReservedMavenUtils {
                                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                             //we will ignore artifact classifier to simplify search
                                             Path jarPath = file.toPath().resolve(
-                                                    getFileName(NId.get(zId.getGroupId(), zId.getArtifactId(), p).get(), "jar")
+                                                    getFileName(NId.get(zId.groupId(), zId.artifactId(), p).get(), "jar")
                                             );
                                             if (Files.isRegularFile(jarPath)) {
                                                 bestVersion = p;
@@ -915,13 +915,13 @@ public final class NReservedMavenUtils {
                             NId nId = NId.get(id).orNull();
                             switch (propName) {
                                 case "groupId":
-                                    propValue = nId.getGroupId();
+                                    propValue = nId.groupId();
                                     break;
                                 case "artifactId":
-                                    propValue = nId.getArtifactId();
+                                    propValue = nId.artifactId();
                                     break;
                                 case "version":
-                                    propValue = nId.getVersion().toString();
+                                    propValue = nId.version().toString();
                                     break;
                             }
                         }

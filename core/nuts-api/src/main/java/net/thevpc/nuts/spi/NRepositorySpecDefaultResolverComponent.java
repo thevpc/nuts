@@ -38,6 +38,11 @@ import java.util.List;
  */
 public interface NRepositorySpecDefaultResolverComponent extends NComponent {
 
-    List<NRepositorySpec> getDefaultRepositoryDefinitions();
+    /**
+     * Default repository definitions.
+     *
+     * @return default repository definitions result
+     */
+    List<NRepositorySpec> defaultRepositoryDefinitions();
 
 }

@@ -30,32 +30,32 @@ public class UnmodifiableTerminal extends AbstractNTerminal {
     }
 
     @Override
-    public InputStream getIn() {
-        return getBase().getIn();
+    public InputStream in() {
+        return getBase().in();
     }
 
     @Override
-    public void setIn(InputStream in) {
-
-    }
-
-    @Override
-    public NPrintStream getOut() {
-        return getBase().getOut();
-    }
-
-    @Override
-    public void setOut(NPrintStream out) {
+    public void in(InputStream in) {
 
     }
 
     @Override
-    public NPrintStream getErr() {
-        return getBase().getErr();
+    public NPrintStream out() {
+        return getBase().out();
     }
 
     @Override
-    public void setErr(NPrintStream out) {
+    public void out(NPrintStream out) {
+
+    }
+
+    @Override
+    public NPrintStream err() {
+        return getBase().err();
+    }
+
+    @Override
+    public void err(NPrintStream out) {
 
     }
 
@@ -70,26 +70,6 @@ public class UnmodifiableTerminal extends AbstractNTerminal {
                 .<T>ask()
                 ;
     }
-
-    @Override
-    public InputStream in() {
-        return getBase().in();
-    }
-
-    @Override
-    public NPrintStream out() {
-        return getBase().out();
-    }
-
-    @Override
-    public NPrintStream err() {
-        return getBase().err();
-    }
-
-//    @Override
-//    public int getScore(NutsScorableContext<NutsTerminalSpec> criteria) {
-//        return getBase().getScore(criteria);
-//    }
 
     @Override
     public NTerminal printProgress(float progress, NMsg message) {

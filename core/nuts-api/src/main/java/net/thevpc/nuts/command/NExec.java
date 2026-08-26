@@ -35,7 +35,10 @@ import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NConnectionStringAware;
+import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Collection;
 import java.util.List;
@@ -84,7 +87,7 @@ import java.util.Map;
  *         .at("ssh://remote-server")
  *         .grabOut()
  *         .run();
- * String output = cmd.getGrabbedOutString();
+ * String output = cmd.grabbedOut();
  * }</pre>
  *
  * @author thevpc
@@ -112,7 +115,13 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return a new {@code NExec} instance with the specified command
      */
     static NExec of(String... cmd) {
-        return of().addCommand(cmd);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).command(cmd ).command(cmd
+         * @return of result
+         */
+        return of().command(cmd);
     }
 
     /**
@@ -124,11 +133,29 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return a new {@code NExec} instance configured for system execution
      */
     static NExec ofSystem(String... cmd) {
-        return of().addCommand(cmd).system();
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).command(cmd).system( ).command(cmd).system(
+         * @return of result
+         */
+        return of().command(cmd).system();
     }
 
+    /**
+     * Creates a new instance of of open file.
+     *
+     * @param path path
+     * @return of open file result
+     */
     static NExec ofOpenFile(NPath path) {
-        return of().addCommand(path).open();
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).command(path).open( ).command(path).open(
+         * @return of result
+         */
+        return of().command(path).open();
     }
 
     /**
@@ -137,6 +164,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return true if failFast is armed
      */
+    @NGetter
     boolean isFailFast();
 
     /**
@@ -148,14 +176,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *                 is not zero
      * @return {@code this} instance
      */
-    NExec setFailFast(boolean failFast);
-
-    /**
-     * equivalent to <code>failFast(true)</code>
-     *
-     * @return {@code this} instance
-     */
-    NExec failFast();
+    @NSetter
+    NExec failFast(boolean failFast);
 
     /**
      * Enables or disables "bot mode" for this command.
@@ -166,7 +188,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param bot {@code true} to enable bot mode, {@code false} to disable
      * @return this instance for fluent API usage
      */
-    NExec setBot(Boolean bot);
+    @NSetter
+    NExec bot(Boolean bot);
 
     /**
      * Returns whether "bot mode" is enabled for this command.
@@ -175,31 +198,16 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return {@code true} if bot mode is enabled, {@code false} otherwise
      */
-    Boolean getBot();
+    @NGetter
+    Boolean bot();
 
     /**
      * return command to execute
      *
      * @return command to execute
      */
-    List<String> getCommand();
-
-    /**
-     * reset command arguments to the given array
-     *
-     * @param command command
-     * @return {@code this} instance
-     * @since 0.7.1
-     */
-    NExec setCommand(String... command);
-
-    /**
-     * reset command arguments to the given collection
-     *
-     * @param command command
-     * @return {@code this} instance
-     */
-    NExec setCommand(Collection<String> command);
+    @NGetter
+    List<String> command();
 
     /**
      * set command artifact definition. The definition is expected to include
@@ -208,7 +216,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param definition definition for the executable
      * @return {@code this} instance
      */
-    NExec setCommandDefinition(NDefinition definition);
+    @NSetter
+    NExec commandDefinition(NDefinition definition);
 
     /**
      * Returns the artifact definition associated with this command.
@@ -217,35 +226,38 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return the command's artifact definition
      */
-    NDefinition getCommandDefinition();
+    @NGetter
+    NDefinition commandDefinition();
 
     /**
-     * Appends one or more arguments to the command to be executed.
+     * Appends one or more arguments to the command to be executed  if not null.
      * These arguments are added to the existing command line and will be passed
      * to the underlying process or embedded executor as-is.
      *
      * @param command one or more command arguments to append
      * @return this instance for fluent API usage
      */
-    NExec addCommand(String... command);
+    NExec command(String... command);
+
 
     /**
-     * Appends a path to the command to be executed.
+     * Appends a path to the command to be executed  if not null
      * The path is converted to a string representation and added to the command line.
      * This is useful for passing executable files or file arguments.
      *
      * @param path the path to append to the command
      * @return this instance for fluent API usage
      */
-    NExec addCommand(NPath path);
+    NExec command(NPath path);
+
 
     /**
-     * append command arguments
+     * append command arguments if not null
      *
      * @param command command
      * @return {@code this} instance
      */
-    NExec addCommand(Collection<String> command);
+    NExec command(Collection<String> command);
 
     /**
      * clear command
@@ -260,7 +272,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executorOption executor options
      * @return {@code this} instance
      */
-    NExec addExecutorOption(String executorOption);
+    NExec executorOption(String executorOption);
 
     /**
      * append executor options
@@ -268,7 +280,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executorOptions executor options
      * @return {@code this} instance
      */
-    NExec addExecutorOptions(String... executorOptions);
+    NExec executorOptions(String... executorOptions);
 
     /**
      * Sets the executor options for this command, replacing any existing options.
@@ -278,17 +290,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executorOptions a collection of executor-specific options
      * @return this instance for fluent API usage
      */
-    NExec setExecutorOptions(Collection<String> executorOptions);
+    NExec executorOptions(Collection<String> executorOptions);
 
-    /**
-     * Appends executor options to the current set of options.
-     * These options are passed to the underlying process executor (or embedded runtime)
-     * in addition to any existing options.
-     *
-     * @param executorOptions a collection of executor-specific options to add
-     * @return this instance for fluent API usage
-     */
-    NExec addExecutorOptions(Collection<String> executorOptions);
 
     /**
      * clear executor options
@@ -305,7 +308,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return a list of workspace options as strings
      */
-    List<String> getWorkspaceOptions();
+    @NGetter
+    List<String> workspaceOptions();
 
     /**
      * Removes a specific workspace option from this command.
@@ -325,7 +329,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param workspaceOptions the workspace option to add
      * @return this instance for fluent API usage
      */
-    NExec addWorkspaceOptions(NWorkspaceOptions workspaceOptions);
+    NExec workspaceOptions(NWorkspaceOptions workspaceOptions);
 
     /**
      * Adds a workspace option to this command using a string representation.
@@ -335,22 +339,15 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param workspaceOptions the workspace option to add as a string
      * @return this instance for fluent API usage
      */
-    NExec addWorkspaceOptions(String workspaceOptions);
+    NExec workspaceOptions(String workspaceOptions);
 
     /**
      * return env properties
      *
      * @return env properties
      */
-    Map<String, String> getEnv();
-
-    /**
-     * clear existing env and set new env
-     *
-     * @param env new env
-     * @return {@code this} instance
-     */
-    NExec setEnv(Map<String, String> env);
+    @NGetter
+    Map<String, String> env();
 
     /**
      * merge env properties
@@ -358,7 +355,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param env env properties
      * @return {@code this} instance
      */
-    NExec addEnv(Map<String, String> env);
+    NExec env(Map<String, String> env);
 
     /**
      * set or unset env property. the property is unset if the value is null.
@@ -367,7 +364,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param value env value
      * @return {@code this} instance
      */
-    NExec setEnv(String key, String value);
+    NExec env(String key, String value);
 
     /**
      * clear env
@@ -381,7 +378,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return execution directory
      */
-    NPath getDirectory();
+    @NGetter
+    NPath directory();
 
     /**
      * set execution directory
@@ -389,14 +387,16 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param directory execution directory
      * @return {@code this} instance
      */
-    NExec setDirectory(NPath directory);
+    @NSetter
+    NExec directory(NPath directory);
 
     /**
      * return new command input stream (standard input source)
      *
      * @return new command input stream (standard input source)
      */
-    NExecInput getIn();
+    @NGetter
+    NExecInput in();
 
     /**
      * set new command input stream (standard input source)
@@ -404,14 +404,16 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param in standard input source
      * @return {@code this} instance
      */
-    NExec setIn(NExecInput in);
+    @NSetter
+    NExec in(NExecInput in);
 
     /**
      * return new command output stream (standard output destination)
      *
      * @return new command output stream (standard output destination)
      */
-    NExecOutput getOut();
+    @NGetter
+    NExecOutput out();
 
     /**
      * set new command output stream (standard output destination)
@@ -419,7 +421,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param out standard output destination
      * @return {@code this} instance
      */
-    NExec setOut(NExecOutput out);
+    @NSetter
+    NExec out(NExecOutput out);
 
     /**
      * grub output stream while redirecting error stream to the grabbed output
@@ -431,7 +434,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
 
     /**
      * grub output stream to be retrieved later using
-     * <code>getGrabbedOutString</code>.
+     * <code>grabbedOut</code>.
      *
      * @return this instance
      */
@@ -454,23 +457,23 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
 
     /**
      * redirects error to out, runs the command and returns out string
-     * equivalent to <code>grabAll().getGrabbedOutString()</code> if the command
+     * equivalent to <code>grabAll().grabbedOut()</code> if the command
      * is already run, has no effect, and may fail if the out stream is not
      * configured to bed grabbed.
      *
      * @return output stream, ignoring error stream
      */
-    String getGrabbedAllString();
+    String grabbedAll();
 
     /**
      * silences error, runs the command and return out string equivalent to
-     * <code>grabOutOnly().getGrabbedOutString()</code> if the command is
+     * <code>grabOutOnly().grabbedOut()</code> if the command is
      * already run, has no effect, and may fail if the out stream is not
      * configured to bed grabbed.
      *
      * @return output stream, ignoring error stream
      */
-    String getGrabbedOutOnlyString();
+    String grabbedOutOnly();
 
     /**
      * return grabbed output after command execution Also runs the command if
@@ -478,33 +481,34 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return grabbed output after command execution
      */
-    String getGrabbedOutString();
+    String grabbedOut();
 
     /**
      *
      * @since 0.8.9
      */
-    byte[] getGrabbedOutBytes();
+    byte[] grabbedOutBytes();
 
     /**
      * return grabbed error after command execution
      *
      * @return grabbed error after command execution
      */
-    String getGrabbedErrString();
+    String grabbedErr();
 
     /**
      *
      * @since 0.8.9
      */
-    byte[] getGrabbedErrBytes();
+    byte[] grabbedErrBytes();
 
     /**
      * return new command error stream (standard error destination)
      *
      * @return new command error stream (standard error destination)
      */
-    NExecOutput getErr();
+    @NGetter
+    NExecOutput err();
 
     /**
      * set new command error stream (standard error destination)
@@ -512,14 +516,16 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param err standard error destination
      * @return {@code this} instance
      */
-    NExec setErr(NExecOutput err);
+    @NSetter
+    NExec err(NExecOutput err);
 
     /**
      * return execution type
      *
      * @return execution type
      */
-    NExecutionType getExecutionType();
+    @NGetter
+    NExecutionType executionType();
 
     /**
      * set execution type
@@ -527,7 +533,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param executionType execution type
      * @return {@code this} instance
      */
-    NExec setExecutionType(NExecutionType executionType);
+    @NSetter
+    NExec executionType(NExecutionType executionType);
 
     /**
      * Configures the command to be executed as a system command.
@@ -572,7 +579,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return the current run-as configuration
      */
-    NRunAs getRunAs();
+    @NGetter
+    NRunAs runAs();
 
     /**
      * Sets the user context under which the command will be executed.
@@ -582,7 +590,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param runAs user context to apply to command execution
      * @return this instance for fluent API usage
      */
-    NExec setRunAs(NRunAs runAs);
+    @NSetter
+    NExec runAs(NRunAs runAs);
 
     /**
      * Returns whether the command is in "dry-run" mode.
@@ -590,7 +599,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return {@code true} if dry-run is enabled, {@code false} otherwise
      */
-    Boolean getDry();
+    @NGetter
+    Boolean dry();
 
     /**
      * Sets the "dry-run" mode for this command.
@@ -600,7 +610,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param dry {@code true} to enable dry-run mode, {@code false} otherwise
      * @return this instance for fluent API usage
      */
-    NExec setDry(Boolean dry);
+    @NSetter
+    NExec dry(Boolean dry);
 
     /**
      * Configures the command to execute with elevated privileges using sudo.
@@ -646,7 +657,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return result value
      */
-    int getResultCode();
+    int exitCode();
 
     /**
      * return executable information
@@ -660,14 +671,15 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return executor options
      */
-    List<String> getExecutorOptions();
+    @NGetter
+    List<String> executorOptions();
 
     /**
      * return result exception or null
      *
      * @return result exception or null
      */
-    NOptional<NExecutionException> getResultException();
+    NOptional<NExecutionException> resultException();
 
 
     /**
@@ -701,7 +713,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return post-execution wait duration in milliseconds
      */
-    long getSleepMillis();
+    @NGetter
+    NDuration sleepDuration();
 
     /**
      * Sets the duration in milliseconds to wait after the command completes.
@@ -714,7 +727,24 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param sleepMillis post-execution wait duration in milliseconds
      * @return this instance for fluent API usage
      */
-    NExec setSleepMillis(long sleepMillis);
+    @NSetter
+    NExec sleepDuration(NDuration sleepMillis);
+
+    /**
+     * Max lines.
+     *
+     * @param maxLines max lines
+     * @return max lines result
+     */
+    NExec maxLines(int maxLines);
+
+    /**
+     * Max bytes.
+     *
+     * @param maxBytes max bytes
+     * @return max bytes result
+     */
+    NExec maxBytes(int maxBytes);
 
     /**
      * Returns the connection string representing the target host for execution.
@@ -723,7 +753,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return the target host connection string
      * @since 0.8.4
      */
-    NConnectionString getConnectionString();
+    @NGetter
+    NConnectionString connectionString();
 
     /**
      * Updates the target host connection string.
@@ -732,7 +763,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param connectionString target host connection string
      * @return this instance for fluent API usage
      */
-    NExec setConnectionString(String connectionString);
+    NExec connectionString(String connectionString);
 
     /**
      * Shortcut to set the connection string for execution.
@@ -757,7 +788,8 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @param connectionString target host connection object
      * @return this instance for fluent API usage
      */
-    NExec setConnectionString(NConnectionString connectionString);
+    @NSetter
+    NExec connectionString(NConnectionString connectionString);
 
     /**
      * Redirects the standard error stream to the standard output stream.
@@ -774,6 +806,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return {@code true} if the command is raw, {@code false} otherwise
      * @since 0.8.9
      */
+    @NGetter
     boolean isRawCommand();
 
     /**
@@ -785,6 +818,6 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return this instance for fluent API usage
      * @since 0.8.9
      */
-    NExec setRawCommand(boolean rawCommand);
+    NExec rawCommand(boolean rawCommand);
 
 }

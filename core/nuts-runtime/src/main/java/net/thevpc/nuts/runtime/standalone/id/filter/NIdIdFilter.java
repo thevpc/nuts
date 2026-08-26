@@ -38,12 +38,12 @@ public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, NSimplif
         if(LOG==null){
             LOG= NLog.of(NIdIdFilter.class);
         }
-        if(id.getShortName().equals(filter.getShortName())){
-            if (!filter.getVersion().toFilter().acceptVersion(id.getVersion())) {
+        if(id.shortName().equals(filter.shortName())){
+            if (!filter.version().toFilter().acceptVersion(id.version())) {
                 return false;
             }
-            Map<String, String> e = filter.getProperties();
-            Map<String, String> m = id.getProperties();
+            Map<String, String> e = filter.properties();
+            Map<String, String> m = id.properties();
             for (Map.Entry<String, String> v : e.entrySet()) {
                 if(!Objects.equals(
                         v.getValue(),m.get(v.getKey())
@@ -57,28 +57,16 @@ public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, NSimplif
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.filter);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NIdIdFilter that = (NIdIdFilter) o;
+        return Objects.equals(filter, that.filter);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NIdIdFilter other = (NIdIdFilter) obj;
-        if (!Objects.equals(this.filter, other.filter)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), filter);
     }
 
     @Override

@@ -28,13 +28,30 @@ package net.thevpc.nuts.text;
  */
 public interface NTextArtTableRenderer extends NTextArtRenderer {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTextArtTableRenderer of() {
-        return NTextArt.of().getTableRenderer().get();
+        return NTextArt.of().tableRenderer().get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @return of result
+     */
     static NTextArtTableRenderer of(String name) {
         return NTextArt.of().getTableRenderer(name).get();
     }
 
+    /**
+     * Render.
+     *
+     * @param text text
+     * @return render result
+     */
     NText render(NTableModel text);
 }

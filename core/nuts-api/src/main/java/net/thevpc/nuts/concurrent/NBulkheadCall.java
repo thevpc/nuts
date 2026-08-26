@@ -2,7 +2,9 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 /**
  * Represents a callable task with bounded concurrency control.
@@ -52,6 +54,13 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable {
      * @return a new {@code NConcurrencyLimiter} instance
      */
     static <T> NBulkheadCall<T> of(NCallable<T> callable) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param null null
+         * @param callable callable
+         * @return of result
+         */
         return of(null,callable);
     }
 
@@ -74,7 +83,8 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable {
      * @param expiry expiry duration
      * @return this instance for fluent chaining
      */
-    NBulkheadCall<T> setPermitExpiry(NDuration expiry);
+    @NSetter
+    NBulkheadCall<T> permitExpiry(NDuration expiry);
 
     /**
      * Sets the maximum number of concurrent executions allowed.
@@ -82,7 +92,8 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable {
      * @param maxConcurrent maximum concurrent executions (must be > 0)
      * @return this instance for fluent chaining
      */
-    NBulkheadCall<T> setMaxConcurrent(int maxConcurrent);
+    @NSetter
+    NBulkheadCall<T> maxConcurrent(int maxConcurrent);
 
     /**
      * Attempts to execute the callable immediately without waiting.
@@ -148,26 +159,30 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable {
      *
      * @return the concurrency limit
      */
-    int getMaxConcurrent();
+    @NGetter
+    int maxConcurrent();
 
     /**
      * Returns the current number of active executions.
      *
      * @return number of currently running calls
      */
-    int getActiveCalls();
+    @NGetter
+    int activeCalls();
 
     /**
      * Returns the number of available execution slots.
      *
      * @return number of slots not currently in use
      */
-    int getAvailableSlots();
+    @NGetter
+    int availableSlots();
 
     /**
      * Returns true if the concurrency limit has been reached.
      *
      * @return true if no slots are available
      */
+    @NGetter
     boolean isFull();
 }

@@ -29,6 +29,8 @@ import net.thevpc.nuts.boot.NBootDependency;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -62,46 +64,46 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     public DefaultNDependencyBuilder(String groupId, String artifactId) {
-        this.groupId = NStringUtils.trimToNull(groupId);
-        this.artifactId = NStringUtils.trimToNull(artifactId);
+        this.groupId = NStringUtils.stripToNull(groupId);
+        this.artifactId = NStringUtils.stripToNull(artifactId);
     }
 
     @Override
-    public NDependencyBuilder setId(NId id) {
+    public NDependencyBuilder id(NId id) {
         if (id == null) {
-            setRepository(null);
-            setGroupId(null);
-            setArtifactId(null);
-            setVersion((String) null);
+            repository(null);
+            groupId(null);
+            artifactId(null);
+            version((String) null);
         } else {
-            setRepository(id.getRepository());
-            setGroupId(id.getGroupId());
-            setArtifactId(id.getArtifactId());
-            setVersion(id.getVersion());
-            this.setProperties(id.getProperties());
+            repository(id.repository());
+            groupId(id.groupId());
+            artifactId(id.artifactId());
+            version(id.version());
+            this.properties(id.properties());
         }
         return this;
     }
 
     @Override
-    public NDependencyBuilder setDependency(NDependencyBuilder value) {
+    public NDependencyBuilder dependency(NDependencyBuilder value) {
         return copyFrom(value);
     }
 
     @Override
     public NDependencyBuilder copyFrom(NDependencyBuilder value) {
         if (value != null) {
-            setRepository(value.getRepository());
-            setGroupId(value.getGroupId());
-            setArtifactId(value.getArtifactId());
-            setVersion(value.getVersion());
-            setScope(value.getScope());
-            setOptional(value.getOptional());
-            setExclusions(value.getExclusions());
-            setClassifier(value.getClassifier());
-            getCondition().copyFrom(value.getCondition());
-            setType(value.getType());
-            setProperties(value.getProperties());
+            repository(value.repository());
+            groupId(value.groupId());
+            artifactId(value.artifactId());
+            version(value.version());
+            scope(value.scope());
+            optional(value.optional());
+            exclusions(value.exclusions());
+            classifier(value.classifier());
+            condition().copyFrom(value.condition());
+            type(value.type());
+            properties(value.properties());
         } else {
             clear();
         }
@@ -111,17 +113,17 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     public NDependencyBuilder copyFrom(NBootDependency value) {
         if (value != null) {
-            setRepository(value.getRepository());
-            setGroupId(value.getGroupId());
-            setArtifactId(value.getArtifactId());
-            setVersion(value.getVersion());
-            setScope(value.getScope());
-            setOptional(value.getOptional());
-            setExclusions(value.getExclusions()==null?null:value.getExclusions().stream().map(x->x==null?null:NId.get(x.toString()).get()).collect(Collectors.toList()));
-            setClassifier(value.getClassifier());
-            getCondition().copyFrom(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().copyFrom(value.getCondition()));
-            setType(value.getType());
-            setProperties(value.getProperties());
+            repository(value.getRepository());
+            groupId(value.getGroupId());
+            artifactId(value.getArtifactId());
+            version(value.getVersion());
+            scope(value.getScope());
+            optional(value.getOptional());
+            exclusions(value.getExclusions()==null?null:value.getExclusions().stream().map(x->x==null?null:NId.get(x.toString()).get()).collect(Collectors.toList()));
+            classifier(value.getClassifier());
+            condition().copyFrom(new DefaultNEnvConditionBuilder().copyConditionsFromDependency(value));
+            type(value.getType());
+            properties(value.getProperties());
         } else {
             clear();
         }
@@ -131,17 +133,17 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     @Override
     public NDependencyBuilder copyFrom(NDependency value) {
         if (value != null) {
-            setRepository(value.getRepository());
-            setGroupId(value.getGroupId());
-            setArtifactId(value.getArtifactId());
-            setVersion(value.getVersion());
-            setScope(value.getScope());
-            setOptional(value.getOptional());
-            setExclusions(value.getExclusions());
-            setClassifier(value.getClassifier());
-            getCondition().copyFrom(value.getCondition());
-            setType(value.getType());
-            setProperties(value.getProperties());
+            repository(value.repository());
+            groupId(value.groupId());
+            artifactId(value.artifactId());
+            version(value.version());
+            scope(value.scope());
+            optional(value.optional());
+            exclusions(value.exclusions());
+            classifier(value.classifier());
+            condition().copyFrom(value.condition());
+            type(value.type());
+            properties(value.properties());
         } else {
             clear();
         }
@@ -149,23 +151,23 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     @Override
-    public NDependencyBuilder setDependency(NDependency value) {
+    public NDependencyBuilder dependency(NDependency value) {
         return copyFrom(value);
     }
 
     @Override
     public NDependencyBuilder clear() {
-        setRepository(null);
-        setGroupId(null);
-        setArtifactId(null);
-        setVersion((NVersion) null);
-        setScope((String) null);
-        setOptional(null);
-        setExclusions((List<NId>) null);
-        setClassifier(null);
-        getCondition().clear();
-        setType(null);
-        setProperties((Map<String, String>) null);
+        repository(null);
+        groupId(null);
+        artifactId(null);
+        version((NVersion) null);
+        scope((String) null);
+        optional(null);
+        exclusions((List<NId>) null);
+        classifier(null);
+        condition().clear();
+        type(null);
+        properties((Map<String, String>) null);
         return this;
     }
 
@@ -174,24 +176,24 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
         return optional != null && Boolean.parseBoolean(optional);
     }
 
-    public String getType() {
+    public String type() {
         return type;
     }
 
     @Override
-    public NDependencyBuilder setType(String type) {
-        this.type = NStringUtils.trimToNull(type);
+    public NDependencyBuilder type(String type) {
+        this.type = NStringUtils.stripToNull(type);
         return this;
     }
 
     @Override
-    public String getOptional() {
+    public String optional() {
         return optional;
     }
 
     @Override
-    public NDependencyBuilder setOptional(String optional) {
-        String o = NStringUtils.trimToNull(optional);
+    public NDependencyBuilder optional(String optional) {
+        String o = NStringUtils.stripToNull(optional);
         if ("false".equals(o)) {
             o = null;
         } else if ("true".equalsIgnoreCase(o)) {
@@ -202,18 +204,18 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     @Override
-    public String getScope() {
+    public String scope() {
         return scope;
     }
 
     @Override
-    public NDependencyBuilder setScope(NDependencyScope scope) {
+    public NDependencyBuilder scope(NDependencyScope scope) {
         this.scope = scope == null ? "" : scope.toString();
         return this;
     }
 
     @Override
-    public NDependencyBuilder setScope(String scope) {
+    public NDependencyBuilder scope(String scope) {
         this.scope = NDependencyScope.parse(scope).orElse(NDependencyScope.API).id();
         return this;
     }
@@ -234,92 +236,92 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
             m.put(NConstants.IdProperties.EXCLUSIONS, NReservedUtils.toDependencyExclusionListString(exclusions));
         }
         return NIdBuilder.of()
-                .setRepository(getRepository())
-                .setGroupId(getGroupId())
-                .setClassifier(getClassifier())
-                .setArtifactId(getArtifactId())
-                .setVersion(getVersion())
-                .setCondition(getCondition())
+                .repository(repository())
+                .groupId(groupId())
+                .classifier(classifier())
+                .artifactId(artifactId())
+                .version(version())
+                .condition(condition())
                 .setProperties(m).build()
                 ;
     }
 
     @Override
-    public String getRepository() {
+    public String repository() {
         return repo;
     }
 
     @Override
-    public NDependencyBuilder setRepository(String repository) {
-        this.repo = NStringUtils.trimToNull(repository);
+    public NDependencyBuilder repository(String repository) {
+        this.repo = NStringUtils.stripToNull(repository);
         return this;
     }
 
     @Override
-    public String getGroupId() {
+    public String groupId() {
         return groupId;
     }
 
     @Override
-    public NDependencyBuilder setGroupId(String groupId) {
-        this.groupId = NStringUtils.trimToNull(groupId);
+    public NDependencyBuilder groupId(String groupId) {
+        this.groupId = NStringUtils.stripToNull(groupId);
         return this;
     }
 
     @Override
-    public String getArtifactId() {
+    public String artifactId() {
         return artifactId;
     }
 
     @Override
-    public NDependencyBuilder setArtifactId(String artifactId) {
-        this.artifactId = NStringUtils.trimToNull(artifactId);
+    public NDependencyBuilder artifactId(String artifactId) {
+        this.artifactId = NStringUtils.stripToNull(artifactId);
         return this;
     }
 
     @Override
-    public String getClassifier() {
+    public String classifier() {
         return classifier;
     }
 
     @Override
-    public NDependencyBuilder setClassifier(String classifier) {
-        this.classifier = NStringUtils.trimToNull(classifier);
+    public NDependencyBuilder classifier(String classifier) {
+        this.classifier = NStringUtils.stripToNull(classifier);
         return this;
     }
 
     @Override
-    public String getFullName() {
+    public String fullName() {
         if (NBlankable.isBlank(groupId)) {
-            return NStringUtils.trim(artifactId);
+            return NStringUtils.strip(artifactId);
         }
-        return NStringUtils.trim(groupId) + ":" + NStringUtils.trim(artifactId);
+        return NStringUtils.strip(groupId) + ":" + NStringUtils.strip(artifactId);
     }
 
     @Override
-    public NVersion getVersion() {
+    public NVersion version() {
         return version;
     }
 
     @Override
-    public NDependencyBuilder setVersion(NVersion version) {
+    public NDependencyBuilder version(NVersion version) {
         this.version = version == null ? NVersion.BLANK : version;
         return this;
     }
 
     @Override
-    public NDependencyBuilder setVersion(String version) {
+    public NDependencyBuilder version(String version) {
         this.version = NVersion.get(version).get();
         return this;
     }
 
     @Override
-    public List<NId> getExclusions() {
+    public List<NId> exclusions() {
         return exclusions;
     }
 
     @Override
-    public NDependencyBuilder setExclusions(List<NId> exclusions) {
+    public NDependencyBuilder exclusions(List<NId> exclusions) {
         this.exclusions = NReservedLangUtils.nonNullList(exclusions);
         return this;
     }
@@ -327,36 +329,36 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     @Override
     public NDependency build() {
         return new DefaultNDependency(
-                getRepository(), getGroupId(), getArtifactId(), getClassifier(),
-                getVersion(),
-                getScope(),
-                getOptional(),
-                getExclusions(),
-                getCondition().build(),
-                getType(),
-                getPropertiesQuery()
+                repository(), groupId(), artifactId(), classifier(),
+                version(),
+                scope(),
+                optional(),
+                exclusions(),
+                condition().build(),
+                type(),
+                propertiesQuery()
         );
     }
 
 
     @Override
-    public NDependencyBuilder setProperty(String property, String value) {
+    public NDependencyBuilder property(String property, String value) {
         if (property != null) {
             switch (property) {
                 case NConstants.IdProperties.SCOPE: {
-                    setScope(value);
+                    scope(value);
                     break;
                 }
                 case NConstants.IdProperties.VERSION: {
-                    setVersion(value);
+                    version(value);
                     break;
                 }
                 case NConstants.IdProperties.OPTIONAL: {
-                    setOptional(value);
+                    optional(value);
                     break;
                 }
                 case NConstants.IdProperties.REPO: {
-                    setRepository(value);
+                    repository(value);
                     break;
                 }
                 case NConstants.IdProperties.EXCLUSIONS: {
@@ -364,27 +366,27 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
                     break;
                 }
                 case NConstants.IdProperties.OS: {
-                    condition.setOs(NStringUtils.parsePropertyIdList(value).get());
+                    condition.os(NStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NConstants.IdProperties.ARCH: {
-                    condition.setArch(NStringUtils.parsePropertyIdList(value).get());
+                    condition.arch(NStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NConstants.IdProperties.PLATFORM: {
-                    condition.setPlatform(NStringUtils.parsePropertyIdList(value).get());
+                    condition.platform(NStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NConstants.IdProperties.OS_DIST: {
-                    condition.setOsDist(NStringUtils.parsePropertyIdList(value).get());
+                    condition.osDist(NStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NConstants.IdProperties.DESKTOP: {
-                    condition.setDesktopEnvironment(NStringUtils.parsePropertyIdList(value).get());
+                    condition.desktopEnvironment(NStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NConstants.IdProperties.TYPE: {
-                    setType(value);
+                    type(value);
                     break;
                 }
                 default: {
@@ -408,53 +410,53 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     public NDependencyBuilder addProperties(Map<String, String> queryMap) {
         if (queryMap != null) {
             for (Map.Entry<String, String> e : queryMap.entrySet()) {
-                setProperty(e.getKey(), e.getValue());
+                property(e.getKey(), e.getValue());
             }
         }
         return this;
     }
 
     @Override
-    public NDependencyBuilder setProperties(Map<String, String> queryMap) {
+    public NDependencyBuilder properties(Map<String, String> queryMap) {
         properties.clear();
         if (queryMap != null) {
             for (Map.Entry<String, String> e : queryMap.entrySet()) {
-                setProperty(e.getKey(), e.getValue());
+                property(e.getKey(), e.getValue());
             }
         }
         return this;
     }
 
     @Override
-    public NDependencyBuilder setPropertiesQuery(String propertiesQuery) {
-        setProperties(NStringMapFormat.DEFAULT.parse(propertiesQuery).get());
+    public NDependencyBuilder propertiesQuery(String propertiesQuery) {
+        properties(NStringMapFormat.DEFAULT.parse(propertiesQuery).get());
         return this;
     }
 
     @Override
-    public String getPropertiesQuery() {
+    public String propertiesQuery() {
         return NStringMapFormat.DEFAULT.format(properties);
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
 
-    public NEnvConditionBuilder getCondition() {
+    public NEnvConditionBuilder condition() {
         return condition;
     }
 
     @Override
-    public NDependencyBuilder setCondition(NEnvCondition condition) {
+    public NDependencyBuilder condition(NEnvCondition condition) {
         this.condition.clear();
         this.condition.copyFrom(condition);
         return this;
     }
 
     @Override
-    public NDependencyBuilder setCondition(NEnvConditionBuilder condition) {
+    public NDependencyBuilder condition(NEnvConditionBuilder condition) {
         this.condition.clear();
         this.condition.copyFrom(condition);
         return this;
@@ -477,7 +479,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
                 ids.add(ii);
             }
         }
-        setExclusions(ids);
+        exclusions(ids);
         return this;
     }
 
@@ -497,12 +499,12 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     @Override
-    public String getShortName() {
+    public String shortName() {
         return NReservedUtils.getIdShortName(groupId,artifactId, classifier);
     }
 
     @Override
-    public String getLongName() {
+    public String longName() {
         return NReservedUtils.getIdLongName(groupId,artifactId, version, classifier);
     }
 

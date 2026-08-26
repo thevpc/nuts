@@ -46,10 +46,19 @@ public enum NTextType implements NEnum {
     ;
     private final String id;
 
+  /**
+   * N text type.
+   */
     NTextType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NTextType> parse(String value) {
         return NEnumUtils.parseEnum(value, NTextType.class);
     }

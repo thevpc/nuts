@@ -22,7 +22,7 @@ public class JCshFileInputStreamScp extends DynamicInputStream {
     private JCshConnection connection;
     public JCshFileInputStreamScp(NConnectionString path) {
         super(4096);
-        this.from = path.getPath();
+        this.from = path.path();
         init = false;
         filesize = 0L;
         buf = new byte[1024];

@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -39,57 +41,68 @@ public class NDefaultTerminalSpec implements NTerminalSpec {
     private NSystemTerminalBase parent;
 
     @Override
-    public NSystemTerminalBase getParent() {
+    public NSystemTerminalBase parent() {
         return parent;
     }
 
     @Override
-    public NTerminalSpec setParent(NSystemTerminalBase parent) {
+    public NTerminalSpec parent(NSystemTerminalBase parent) {
         this.parent = parent;
         return this;
     }
 
     @Override
-    public Boolean getAutoComplete() {
+    public Boolean autoComplete() {
         return autoComplete;
     }
 
     @Override
-    public NTerminalSpec setAutoComplete(Boolean autoComplete) {
+    public NTerminalSpec autoComplete(Boolean autoComplete) {
         this.autoComplete = autoComplete;
         return this;
     }
 
     @Override
-    public Object get(String name) {
+    public Object getProperty(String name) {
         return other.get(name);
     }
 
     @Override
-    public NTerminalSpec setProperty(String name, Object o) {
+    public NTerminalSpec property(String name, Object o) {
         other.put(name, o);
         return this;
     }
 
     @Override
     public NTerminalSpec copyFrom(NTerminalSpec other) {
-        this.autoComplete = other.getAutoComplete();
-        setProperties(other.getProperties());
+        this.autoComplete = other.autoComplete();
+      /**
+       * Properties.
+       *
+       * @param other.properties() other.properties()
+       */
+        properties(other.properties());
         return this;
     }
 
     @Override
-    public NTerminalSpec setProperties(Map<String, Object> other) {
+    public NTerminalSpec properties(Map<String, Object> other) {
         if (other != null) {
             for (Map.Entry<String, Object> e : other.entrySet()) {
-                setProperty(e.getKey(), e.getValue());
+              /**
+               * Property.
+               *
+               * @param e.getKey() e.get key()
+               * @param e.getValue() e.get value()
+               */
+                property(e.getKey(), e.getValue());
             }
         }
         return this;
     }
 
     @Override
-    public Map<String, Object> getProperties() {
+    public Map<String, Object> properties() {
         return other;
     }
 

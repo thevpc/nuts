@@ -1,5 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -22,11 +25,11 @@ public class LazyNScoredValueImpl<T> implements NScoredValue<T> {
         this.apiType = apiType;
     }
 
-    public Class<? extends T> getImplType() {
+    public Class<? extends T> implType() {
         return implType;
     }
 
-    public Class<T> getApiType() {
+    public Class<T> apiType() {
         return apiType;
     }
 
@@ -63,5 +66,16 @@ public class LazyNScoredValueImpl<T> implements NScoredValue<T> {
             }
         }
         return _score;
+    }
+
+    @Override
+    public String toString() {
+        return "LazyNScoredValueImpl{" +
+                "_instance=" + _instance +
+                ", _score=" + _score +
+                ", supportCriteria=" + supportCriteria +
+                ", implType=" + implType +
+                ", apiType=" + apiType +
+                '}';
     }
 }

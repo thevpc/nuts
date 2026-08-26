@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.text.NPositionType;
-import net.thevpc.nuts.time.NProgressEventType;
-import net.thevpc.nuts.time.NProgressHandlerEvent;
-import net.thevpc.nuts.time.NProgressMonitorModel;
+import net.thevpc.nuts.mon.NProgressEventType;
+import net.thevpc.nuts.mon.NProgressHandlerEvent;
+import net.thevpc.nuts.mon.NProgressMonitorModel;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class DefaultNProgressHandlerEvent implements NProgressHandlerEvent {
@@ -21,22 +21,22 @@ public class DefaultNProgressHandlerEvent implements NProgressHandlerEvent {
     }
 
     @Override
-    public NProgressEventType getEventType() {
+    public NProgressEventType eventType() {
         return eventType;
     }
 
     @Override
-    public String getPropertyName() {
+    public String propertyName() {
         return propertyName;
     }
 
     @Override
-    public NProgressMonitorModel getModel() {
+    public NProgressMonitorModel model() {
         return model;
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
 
@@ -49,7 +49,7 @@ public class DefaultNProgressHandlerEvent implements NProgressHandlerEvent {
                 + (model.isBlocked() ? "B" : " ")
                 + (model.isCancelled() ? "C" : " ")
                 + (model.isCompleted() ? "T" : " ")
-                + " " + model.getProgress()
-                + " " + model.getMessage();
+                + " " + model.progress()
+                + " " + model.message();
     }
 }

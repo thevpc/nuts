@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.artifact.NArtifactNotFoundException;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
@@ -52,7 +54,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUp
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
-import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
+import net.thevpc.nuts.spi.NUndeployRepositoryCmd;
 import net.thevpc.nuts.spi.NUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.util.*;
 
@@ -109,17 +111,17 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
     @Override
     public NDescriptor deployImpl(NDeployRepositoryCmd command) {
-        return lib.deploy(command, getWorkspace().currentSession().getConfirm().orDefault());
+        return lib.deploy(command, workspace().currentSession().confirm().orDefault());
     }
 
     @Override
-    public final void undeployImpl(NRepositoryUndeployCmd options) {
+    public final void undeployImpl(NUndeployRepositoryCmd options) {
         lib.undeploy(options);
     }
 
     @Override
     public NDescriptor fetchDescriptorImpl(NId id, NFetchMode fetchMode) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = workspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             if (lib.isReadEnabled()) {
                 NDescriptor libDesc = lib.fetchDescriptorImpl(id);
@@ -144,14 +146,14 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 if (success != null) {
                     if (cache.isWriteEnabled()) {
                         NId id0 = NWorkspaceExt.of().resolveEffectiveId(success);
-                        if (!id0.getLongName().equals(success.getId().getLongName())) {
-                            success = success.builder().setId(id0).build();
+                        if (!id0.longName().equals(success.id().longName())) {
+                            success = success.builder().id(id0).build();
                         }
-                        cache.deployDescriptor(success.getId(), success, NConfirmationMode.YES);
+                        cache.deployDescriptor(success.id(), success, NConfirmationMode.YES);
                     }
                     return NOptional.of(success);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id.getLongId()), new NArtifactNotFoundException(id.getLongId()));
+                    return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id.longId()), new NArtifactNotFoundException(id.longId()));
                 }
             } catch (RuntimeException ex) {
                 return NOptional.ofError(() -> NMsg.ofC(NI18n.of("nuts descriptor not found %s"), id), ex);
@@ -161,7 +163,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         try {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
-                    NLock.ofId(id.builder().setFaceDescriptor().build()).callWith(nOptionalCallable)
+                    NLock.ofId(id.builder().faceDescriptor().build()).callWith(nOptionalCallable)
                     : nOptionalCallable.call();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -196,7 +198,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             if (lib.isReadEnabled()) {
                 all.add(NIteratorBuilder.of(
                                         lib.searchVersions(id, idFilter, false)
-                                ).named(NElement.ofUplet("searchVersionInLib", NElement.ofString(getName())))
+                                ).named(NElement.ofTuple("searchVersionInLib", NElement.ofString(name())))
                                 .build()
 
                 );
@@ -209,7 +211,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                             NIteratorBuilder.of(
                                     cache.searchVersions(id, idFilter, false)
                             )
-                                    .named(NElement.ofUplet("searchVersionInCache", NElement.ofString(getName())))
+                                    .named(NElement.ofTuple("searchVersionInCache", NElement.ofString(name())))
                                     .build());
                 }
 //                Iterator<NutsId> p = null;
@@ -232,7 +234,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             if (p != null) {
                 all.add(
                         NIteratorBuilder.of(p)
-                                .named(NElement.ofUplet("searchVersionInCore", NElement.ofString(getName())))
+                                .named(NElement.ofTuple("searchVersionInCore", NElement.ofString(name())))
                                 .build());
             }
         } catch (NArtifactNotFoundException ex) {
@@ -243,7 +245,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             //ignore....
         }
         NIterator<NId> namedNutIdIterator = NIteratorBuilder.ofConcat(all).distinct(
-                NFunction.of(NId::getLongName).withDescription(NDescribables.ofDesc("getLongName"))).build();
+                NFunction.of(NId::longName).withDescription(NDescribables.ofDesc("getLongName"))).build();
 
         if (namedNutIdIterator == null) {
             namedNutIdIterator = NIterator.ofEmpty();
@@ -251,7 +253,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return NIteratorBuilder.of(
                 mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode)
         )
-                .named(NElement.ofUplet("searchVersion", NElement.ofString(getName())))
+                .named(NElement.ofTuple("searchVersion", NElement.ofString(name())))
                 .build();
 
     }
@@ -264,7 +266,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 return c;
             }
         }
-        NSession session = getWorkspace().currentSession();
+        NSession session = workspace().currentSession();
         if (cache.isReadEnabled() && session.isCached()) {
             NPath c = cache.fetchContentImpl(id);
             if (c != null) {
@@ -286,13 +288,13 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 }
                 if (c2 != null) {
                     NCp.of().from(c2).to(cachePath).run();
-                    return NOptional.of(cachePath.setUserCache(true).setUserTemporary(false));
+                    return NOptional.of(cachePath.userCache(true).userTemporary(false));
                 } else if (impl2Ex instanceof NArtifactNotFoundException) {
                     return NOptional.ofNamedEmpty(id.toString());
                 } else if (impl2Ex != null) {
                     return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id.getLongId()));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id.longId()));
                 }
             } else {
                 NPath c2 = null;
@@ -309,7 +311,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 } else if (impl2Ex != null) {
                     return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
-                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id.getLongId()));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NArtifactNotFoundException(id.longId()));
                 }
             }
         };
@@ -317,7 +319,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         try {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
-                    NLock.ofId(id.builder().setFaceContent().build()).callWith(nOptionalCallable)
+                    NLock.ofId(id.builder().faceContent().build()).callWith(nOptionalCallable)
                     : nOptionalCallable.call();
         } catch (Exception e) {
             res=NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), e);
@@ -351,21 +353,21 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
     @Override
     public final NIterator<NId> searchImpl(final NDefinitionFilter filter, NFetchMode fetchMode) {
-        NSession session = getWorkspace().currentSession();
+        NSession session = workspace().currentSession();
         List<NPath> basePaths = CommonRootsByPathHelper.resolveRootPaths(filter);
         List<NId> baseIds = CommonRootsByIdHelper.resolveRootPaths(filter);
         List<NIterator<? extends NId>> li = new ArrayList<>();
         for (NPath basePath : basePaths) {
             if (fetchMode != NFetchMode.REMOTE) {
-                if (basePath.getName().equals("*")) {
-                    li.add(lib.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE));
+                if (basePath.name().equals("*")) {
+                    li.add(lib.findInFolder(basePath.parent(), filter, Integer.MAX_VALUE));
                 } else {
                     li.add(lib.findInFolder(basePath, filter, 2));
                 }
             }
             if (cache.isReadEnabled() && session.isCached()) {
-                if (basePath.getName().equals("*")) {
-                    li.add(cache.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE));
+                if (basePath.name().equals("*")) {
+                    li.add(cache.findInFolder(basePath.parent(), filter, Integer.MAX_VALUE));
                 } else {
                     li.add(cache.findInFolder(basePath, filter, 2));
                 }
@@ -385,7 +387,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             li.add(p);
         }
         return mirroring.search(NIteratorBuilder.ofConcat(li).distinct(
-                NFunction.of(NId::getLongName).withDescription(NDescribables.ofDesc("getLongName"))
+                NFunction.of(NId::longName).withDescription(NDescribables.ofDesc("getLongName"))
         ).build(), filter, fetchMode);
     }
 
@@ -414,9 +416,9 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public String getBootConnectionString() {
-        if(options.getSourceLocation()!=null){
-            return getName()+"="+options.getSourceLocation().toString();
+    public String bootConnectionString() {
+        if(options.sourceLocation()!=null){
+            return name()+"="+options.sourceLocation().toString();
         }
         return null;
     }
@@ -426,27 +428,27 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode) {
-        String groups = config().getGroups();
+        String groups = config().groups();
         if (NBlankable.isBlank(groups)) {
             return true;
         }
-        return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();
+        return GlobUtils.ofExact(groups).matcher(id.groupId()).matches();
     }
 
     @Override
     public final NId searchLatestVersion(NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
-        if (id.getVersion().isBlank() && filter == null) {
+        if (id.version().isBlank() && filter == null) {
             NId bestId = lib.searchLatestVersion(id, filter);
             NId c1 = null;
             if (cache.isReadEnabled()) {
                 c1 = cache.searchLatestVersion(id, filter);
-                if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
+                if (bestId == null || (c1 != null && c1.version().compareTo(bestId.version()) > 0)) {
                     bestId = c1;
                 }
             }
             try {
                 c1 = searchLatestVersionCore(id, filter, fetchMode);
-                if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
+                if (bestId == null || (c1 != null && c1.version().compareTo(bestId.version()) > 0)) {
                     bestId = c1;
                 }
             } catch (NArtifactNotFoundException | NFetchModeNotSupportedException ex) {

@@ -5,7 +5,6 @@ import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.boot.NBootDependency;
 import net.thevpc.nuts.boot.NBootDescriptor;
-import net.thevpc.nuts.boot.NBootId;
 import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class NBootHelper {
-    public static NId toId(NBootId x) {
+    public static NId toId(NBootDependency x) {
         return x == null ? null : NId.get(x.toString()).get();
     }
 

@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.system;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExec;
@@ -17,7 +17,7 @@ import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecTargetCommandContext;
 import net.thevpc.nuts.text.NText;
@@ -33,8 +33,6 @@ import java.util.List;
 public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformationExt {
 
     String[] cmd;
-    List<String> executorOptions;
-    private boolean showCommand = false;
     private NExecTargetSPI commExec;
     private NExecInput in;
     private NExecOutput out;
@@ -56,51 +54,34 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
         this.cmd = cmd;
         this.executorOptions = NCollections.nonNullList(executorOptions);
         this.commExec = commExec;
-        NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get();
-            switch (aa.key()) {
-                case "--show-command": {
-                    cmdLine.matcher().matchFlag((v) -> this.showCommand = (v.booleanValue())).anyMatch();
-                    break;
-                }
-                default: {
-                    cmdLine.skip();
-                }
-            }
-        }
+        NCmdLine.of(this.executorOptions).matcher()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
+                .requireAll();
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return null;
     }
 
     private AbstractSyncIProcessExecHelper resolveExecHelper() {
-//        Map<String, String> e2 = null;
-//        Map<String, String> env1 = execCommand.getEnv();
-//        if (env1 != null) {
-//            e2 = new HashMap<>((Map) env1);
-//        }
-//        return ProcessExecHelper.ofArgs(null,
-//                execCommand.getCommand().toArray(new String[0]), e2,
-//                execCommand.getDirectory() == null ? null : execCommand.getDirectory().toFile(),
-//                session.getTerminal(),
-//                execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
-//                inheritSystemIO,
-//                /*redirectErr*/ false,
-//                /*fileIn*/ execCommand.getRedirectInputFile(),
-//                /*fileOut*/ execCommand.getRedirectOutputFile(),
-//                execCommand.getRunAs(),
-//                session);
-
-
+        if(completeRequest!=null){
+            return new AbstractSyncIProcessExecHelper() {
+                @Override
+                public int exec() {
+                    return NExecutionException.SUCCESS;
+                }
+            };
+        }
         return new AbstractSyncIProcessExecHelper() {
             @Override
             public int exec() {
+
                 NExec execCommand = getExecCommand();
                 try(DefaultNExecTargetCommandContext d=new DefaultNExecTargetCommandContext(
-                        execCommand.getConnectionString(),
+                        execCommand.connectionString(),
                         cmd,
                         in,
                         out,
@@ -122,18 +103,18 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
 
     @Override
-    public NText getHelpText() {
-        switch (NEnv.of().getOsFamily()) {
+    public NText helpText() {
+        switch (NEnv.of().osFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
-                        "No help available. Try " + getName() + " /help",
+                        "No help available. Try " + name() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
                         NText.ofStyled(
-                                "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
+                                "No help available. Try 'man " + name() + "' or '" + name() + " --help'",
                                 NTextStyle.error()
                         );
             }
@@ -142,7 +123,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
     @Override
     public String toString() {
-        return getExecCommand().getRunAs() + " " + NCmdLine.of(cmd).toString();
+        return getExecCommand().runAs() + " " + NCmdLine.of(cmd).toString();
     }
 
 }

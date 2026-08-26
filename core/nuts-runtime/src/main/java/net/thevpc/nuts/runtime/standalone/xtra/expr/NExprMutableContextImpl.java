@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.NOperatorAssociativity;
-import net.thevpc.nuts.internal.expr.NExprRPI;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.expr.*;
 
@@ -10,15 +10,15 @@ import java.util.function.Supplier;
 
 public class NExprMutableContextImpl extends NExprContextBase implements NExprMutableContext {
 
-    private NExprContext parent;
-    private NExprContextAlteration alteration=new NExprContextAlteration();
+    private final NExprContext parent;
+    private final NExprContextAlteration alteration = new NExprContextAlteration();
 
     public NExprMutableContextImpl(NExprRPI nExprRPI, NExprContext parent) {
         super(nExprRPI);
         this.parent = parent;
     }
 
-    public NExprMutableContextImpl(NExprRPI nExprRPI, NExprContextAlteration alteration,NExprContext parent) {
+    public NExprMutableContextImpl(NExprRPI nExprRPI, NExprContextAlteration alteration, NExprContext parent) {
         super(nExprRPI);
         this.parent = parent;
         this.alteration.addAll(alteration);
@@ -37,18 +37,30 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
     @Override
+    public NExprLiteralMapper literalMapper() {
+        NExprLiteralMapper m = alteration.getLiteralMapper();
+        if (m != null) {
+            return m;
+        }
+        if (parent != null) {
+            return parent.literalMapper();
+        }
+        return (x,c)->x;
+    }
+
+    @Override
     public NExprVar declareVar(String name) {
         return alteration.declareVar(name);
     }
 
     @Override
     public NExprVar declareConstant(String name, Object value) {
-        return declareVar(NExprVar.ofConst(name,value));
+        return declareVar(NExprVar.ofConst(name, value));
     }
 
     @Override
     public NExprFunction declareFunction(String name, NExprCallHandler fctImpl) {
-        return alteration.declareFunction(name,fctImpl);
+        return alteration.declareFunction(name, fctImpl);
     }
 
     @Override
@@ -63,12 +75,12 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
 
     @Override
     public NExprFunction declareConstruct(String name, NExprCallHandler constructImpl) {
-        return alteration.declareConstruct(name,constructImpl);
+        return alteration.declareConstruct(name, constructImpl);
     }
 
     @Override
     public NExprOperator declareOperator(String name, NExprCallHandler impl) {
-        return alteration.declareOperator(name,impl);
+        return alteration.declareOperator(name, impl);
     }
 
     @Override
@@ -77,14 +89,13 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
     @Override
-    public NExprOperator declareOperator(String name, NExprOpType type, NExprCallHandler impl) {
-        return alteration.declareOperator(name, type,impl);
+    public NExprOperator declareOperator(String name, NFixity type, NExprCallHandler impl) {
+        return alteration.declareOperator(name, type, impl);
     }
 
-    public NExprOperator declareOperator(String name, NExprOpType type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl) {
-        return alteration.declareOperator(name, type,precedence,associativity,impl);
+    public NExprOperator declareOperator(String name, NFixity type, int precedence, NOperatorAssociativity associativity, NExprCallHandler impl) {
+        return alteration.declareOperator(name, type, precedence, associativity, impl);
     }
-
 
 
     @Override
@@ -118,8 +129,8 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
     @Override
-    public NExprMutableContext removeOperator(String name, NExprOpType type) {
-        alteration.removeOperator(name,type);
+    public NExprMutableContext removeOperator(String name, NFixity type) {
+        alteration.removeOperator(name, type);
         return this;
     }
 
@@ -143,8 +154,8 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
 
     @Override
     public NExprMutableContext removeConstruct(NExprFunction member) {
-       alteration.removeConstruct(member);
-       return this;
+        alteration.removeConstruct(member);
+        return this;
     }
 
     @Override
@@ -160,26 +171,26 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
     }
 
 
-    ///////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... nodes) {
-        return alteration.getOperator(this,parent,opName, type,nodes);
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... nodes) {
+        return alteration.getOperator(this, parent, opName, type, nodes);
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
+    public List<NExprOperator> operators() {
         List<NExprOperator> all = new ArrayList<>();
         if (parent != null) {
-            for (NExprOperator o : parent.getOperators()) {
-                if(alteration.userOperators!=null) {
-                    NExprContextAlteration.DecInfo<NExprOperator> y = alteration.userOperators.get(new NExprOpNameAndType(o.name(), o.operatorType()));
+            for (NExprOperator o : parent.operators()) {
+                if (alteration.userOperators != null) {
+                    NExprContextAlteration.DecInfo<NExprOperator> y = alteration.userOperators.get(new NExprOpNameAndType(o.name(), o.fixity()));
                     if (y == null) {
                         all.add(o);
                     }
                 }
             }
         }
-        if(alteration.userOperators!=null) {
+        if (alteration.userOperators != null) {
             for (NExprContextAlteration.DecInfo<NExprOperator> value : alteration.userOperators.values()) {
                 if (value.value != null) {
                     all.add(value.value);
@@ -188,24 +199,25 @@ public class NExprMutableContextImpl extends NExprContextBase implements NExprMu
         }
         return all;
     }
+
     @Override
     public NOptional<NExprVar> getVar(String name) {
-        return alteration.getVar(this,parent,name);
+        return alteration.getVar(this, parent, name);
     }
 
     @Override
     public NExprVar getOrDeclareVar(String name, Supplier<Object> value) {
-        return alteration.getOrDeclareVar(this,parent,name,value);
+        return alteration.getOrDeclareVar(this, parent, name, value);
     }
 
     @Override
     public NOptional<NExprFunction> getFunction(String name, NExprNodeValue... args) {
-        return alteration.getFunction(this,parent,name,args);
+        return alteration.getFunction(this, parent, name, args);
     }
 
     @Override
     public NOptional<NExprFunction> getConstruct(String name, NExprNodeValue... args) {
-        return alteration.getConstruct(this,parent,name,args);
+        return alteration.getConstruct(this, parent, name, args);
     }
 
 }

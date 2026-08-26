@@ -6,7 +6,7 @@ import net.thevpc.nuts.core.NWorkspaceEvent;
 import net.thevpc.nuts.core.NWorkspaceListener;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTextStyles;
 
 public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
@@ -21,7 +21,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public NSystemTerminalBase getBase() {
+    public NSystemTerminalBase base() {
         return base;
     }
 
@@ -36,7 +36,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
 
         if (old != base) {
             NWorkspaceEvent event = null;
-            for (NWorkspaceListener workspaceListener : NWorkspace.of().getWorkspaceListeners()) {
+            for (NWorkspaceListener workspaceListener : NWorkspace.of().workspaceListeners()) {
                 if (event == null) {
                     event = new DefaultNWorkspaceEvent(session, null, "systemTerminal", null, this);
                 }
@@ -48,7 +48,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        base.setStyles(styles, printStream);
+    public void styles(NTextStyles styles, NPrintStream printStream) {
+        base.styles(styles, printStream);
     }
 }

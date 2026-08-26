@@ -24,8 +24,10 @@
  */
 package net.thevpc.nuts.boot.internal.util;
 
+import net.thevpc.nuts.boot.NBootDependency;
 import net.thevpc.nuts.boot.core.NAnyBootAwareExceptionBase;
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.boot.internal.NBootVersion;
 import net.thevpc.nuts.boot.internal.cmdline.NBootArg;
 import net.thevpc.nuts.boot.internal.cmdline.NBootWorkspaceCmdLineParser;
 import net.thevpc.nuts.boot.internal.maven.NReservedMavenUtilsBoot;
@@ -200,7 +202,7 @@ public final class NBootUtils {
     }
 
     public static String resolveJavaCommand(String javaHome) {
-        String exe = sameEnum(NBootPlatformHome.currentOsFamily(), "WINDOWS") ? "java.exe" : "java";
+        String exe = NBootPlatformHome.isWindows() ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (isBlank(javaHome) || "null".equals(javaHome)) {
@@ -337,14 +339,14 @@ public final class NBootUtils {
         return sb.toString();
     }
 
-    public static boolean isAcceptCondition(NBootEnvCondition cond) {
-        List<String> oss = uniqueNonBlankStringList(cond.getOs());
-        List<String> archs = uniqueNonBlankStringList(cond.getArch());
+    public static boolean isAcceptCondition(NBootDependency cond) {
+        List<String> oss = uniqueNonBlankStringList(cond.getConditionOs());
+        List<String> archs = uniqueNonBlankStringList(cond.getConditionArch());
         if (!oss.isEmpty()) {
             String eos = NBootPlatformHome.currentOsFamily();
             boolean osOk = false;
             for (String e : oss) {
-                NBootId ee = NBootId.of(e);
+                NBootDependency ee = NBootDependency.of(e);
                 if (ee.getShortName().equalsIgnoreCase(eos)) {
                     if (acceptVersion(ee.getVersion(), System.getProperty("os.version"))) {
                         osOk = true;
@@ -382,13 +384,13 @@ public final class NBootUtils {
      * @param nutsId nutsId
      * @return nutsId
      */
-    public static NBootId parseId(String nutsId) {
+    public static NBootDependency parseId(String nutsId) {
         if (isBlank(nutsId)) {
-            return new NBootId(null, null);
+            return new NBootDependency(null, null);
         }
-        Matcher m = NBootId.PATTERN.matcher(nutsId);
+        Matcher m = NBootDependency.PATTERN.matcher(nutsId);
         if (m.find()) {
-            NBootId idBuilder = new NBootId();
+            NBootDependency idBuilder = new NBootDependency();
             String group = m.group("group");
             String artifact = m.group("artifact");
             idBuilder.setArtifactId(artifact);
@@ -401,18 +403,16 @@ public final class NBootUtils {
             idBuilder.setGroupId(group);
 
             Map<String, String> queryMap = NBootStringMapFormat.DEFAULT.parse(m.group("query"));
-            NBootEnvCondition conditionBuilder = new NBootEnvCondition();
 
             Map<String, String> idProperties = new LinkedHashMap<>();
             for (Iterator<Map.Entry<String, String>> iterator = queryMap.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry<String, String> e = iterator.next();
                 String key = e.getKey();
                 String value = e.getValue();
-                setIdProperty(key, value, idBuilder, conditionBuilder, idProperties);
+                setIdProperty(key, value, idBuilder, idProperties);
             }
 
-            return (idBuilder.setCondition(conditionBuilder)
-                    .setProperties(idProperties));
+            return idBuilder.setProperties(idProperties);
         }
         throw new NBootException(NBootMsg.ofC("invalid id format : %s", nutsId));
     }
@@ -558,11 +558,11 @@ public final class NBootUtils {
         }
     }
 
-    public static String formatIdList(List<NBootId> s) {
+    public static String formatIdList(List<NBootDependency> s) {
         return s.stream().map(Object::toString).collect(Collectors.joining(","));
     }
 
-    public static String formatIdArray(NBootId[] s) {
+    public static String formatIdArray(NBootDependency[] s) {
         return Arrays.stream(s).map(Object::toString).collect(Collectors.joining(","));
     }
 
@@ -642,65 +642,17 @@ public final class NBootUtils {
         return (new ArrayList<>(allIds));
     }
 
-    public static List<NBootId> parseIdList(String s) {
-        List<NBootId> list = new ArrayList<>();
+    public static List<NBootDependency> parseIdList(String s) {
+        List<NBootDependency> list = new ArrayList<>();
         List<String> o = parseStringIdList(s);
         for (String x : o) {
-            NBootId y = NBootId.of(x);
+            NBootDependency y = NBootDependency.of(x);
             if (y == null) {
                 return null;
             }
             list.add(y);
         }
         return list;
-    }
-
-    public static Map<String, String> toMap(NBootEnvCondition condition) {
-        LinkedHashMap<String, String> m = new LinkedHashMap<>();
-        String s;
-        if (condition.getArch() != null) {
-            s = condition.getArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-            if (!isBlank(s)) {
-                m.put(NBootConstants.IdProperties.ARCH, s);
-            }
-        }
-        if (condition.getOs() != null) {
-            s = condition.getOs().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-            if (!isBlank(s)) {
-                m.put(NBootConstants.IdProperties.OS, s);
-            }
-        }
-        if (condition.getOsDist() != null) {
-            s = condition.getOsDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-            if (!isBlank(s)) {
-                m.put(NBootConstants.IdProperties.OS_DIST, s);
-            }
-        }
-        if (condition.getPlatform() != null) {
-            s = formatStringIdList(condition.getPlatform());
-            if (!isBlank(s)) {
-                m.put(NBootConstants.IdProperties.PLATFORM, s);
-            }
-        }
-        if (condition.getDesktopEnvironment() != null) {
-            s = condition.getDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-            if (!isBlank(s)) {
-                m.put(NBootConstants.IdProperties.DESKTOP, s);
-            }
-        }
-        if (condition.getProfiles() != null) {
-            s = condition.getProfiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-            if (!isBlank(s)) {
-                m.put(NBootConstants.IdProperties.PROFILE, s);
-            }
-        }
-        if (condition.getProperties() != null) {
-            Map<String, String> properties = condition.getProperties();
-            if (!properties.isEmpty()) {
-                m.put(NBootConstants.IdProperties.CONDITIONAL_PROPERTIES, NBootStringMapFormat.DEFAULT.format(properties));
-            }
-        }
-        return m;
     }
 
     public static boolean isBootOptional(String name, NBootOptionsInfo bOptions) {
@@ -792,10 +744,10 @@ public final class NBootUtils {
 
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
-        return resolveNutsIdDigest(NBootId.ofApi(NBootWorkspace.NUTS_BOOT_VERSION), resolveClasspathURLs(NBootWorkspaceImpl.class.getClassLoader(), true));
+        return resolveNutsIdDigest(NBootDependency.ofApi(NBootWorkspace.NUTS_BOOT_VERSION), resolveClasspathURLs(NBootWorkspaceImpl.class.getClassLoader(), true));
     }
 
-    public static String resolveNutsIdDigest(NBootId id, URL[] urls) {
+    public static String resolveNutsIdDigest(NBootDependency id, URL[] urls) {
         return getURLDigest(findClassLoaderJar(id, urls));
     }
 
@@ -808,7 +760,7 @@ public final class NBootUtils {
                 return false;
             }
         }
-        return isAcceptCondition(s.getCondition());
+        return isAcceptCondition(s);
     }
 
     public static boolean isDependencyDefaultScope(String s1) {
@@ -886,46 +838,46 @@ public final class NBootUtils {
         return sb.toString();
     }
 
-    public static String toDependencyExclusionListString(List<NBootId> exclusions) {
+    public static String toDependencyExclusionListString(List<NBootDependency> exclusions) {
         TreeSet<String> ex = new TreeSet<>();
-        for (NBootId exclusion : exclusions) {
+        for (NBootDependency exclusion : exclusions) {
             ex.add(exclusion.getShortName());
         }
         return String.join(",", ex);
     }
 
-    private static void setIdProperty(String key, String value, NBootId builder, NBootEnvCondition sb, Map<String, String> props) {
+    private static void setIdProperty(String key, String value, NBootDependency builder, Map<String, String> props) {
         if (key == null) {
             return;
         }
         switch (key) {
             case NBootConstants.IdProperties.PROFILE: {
-                sb.setProfile(splitDefault(value));
+                builder.setConditionProfile(splitDefault(value));
                 break;
             }
             case NBootConstants.IdProperties.PLATFORM: {
-                sb.setPlatform(parsePropertyIdList(value));
+                builder.setConditionPlatform(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.OS_DIST: {
-                sb.setOsDist(parsePropertyIdList(value));
+                builder.setConditionOsDist(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.ARCH: {
-                sb.setArch(parsePropertyIdList(value));
+                builder.setConditionArch(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.OS: {
-                sb.setOs(parsePropertyIdList(value));
+                builder.setConditionOs(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.DESKTOP: {
-                sb.setDesktopEnvironment(parsePropertyIdList(value));
+                builder.setConditionDesktopEnvironment(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.CONDITIONAL_PROPERTIES: {
                 Map<String, String> mm = NBootStringMapFormat.COMMA_FORMAT.parse(value);
-                sb.setProperties(mm);
+                builder.setConditionProperties(mm);
                 break;
             }
             default: {
@@ -1250,7 +1202,7 @@ public final class NBootUtils {
     }
 
     private static void fillBootDependencyNodes(NBootClassLoaderNode node, Set<URL> urls, Set<String> visitedIds) {
-        String shortName = NBootId.of(node.getId()).getShortName();
+        String shortName = NBootDependency.of(node.getId()).getShortName();
         if (!visitedIds.contains(shortName)) {
             visitedIds.add(shortName);
             if (!node.isIncludedInClasspath()) {
@@ -1275,10 +1227,10 @@ public final class NBootUtils {
         return urls.toArray(new URL[0]);
     }
 
-    public static URL findClassLoaderJar(NBootId id, URL[] urls) {
+    public static URL findClassLoaderJar(NBootDependency id, URL[] urls) {
         for (URL url : urls) {
-            NBootId[] nutsBootIds = NReservedMavenUtilsBoot.resolveJarIds(url);
-            for (NBootId i : nutsBootIds) {
+            NBootDependency[] nutsBootIds = NReservedMavenUtilsBoot.resolveJarIds(url);
+            for (NBootDependency i : nutsBootIds) {
                 if (isBlank(id.getGroupId()) || i.getGroupId().equals(id.getGroupId())) {
                     if (isBlank(id.getArtifactId()) || i.getArtifactId().equals(id.getArtifactId())) {
                         if (isBlank(id.getVersion()) || i.getVersion().equals(id.getVersion())) {
@@ -1399,7 +1351,7 @@ public final class NBootUtils {
         return groupId.replace('.', '/');
     }
 
-    public static String resolveIdPath(NBootId id) {
+    public static String resolveIdPath(NBootDependency id) {
         StringBuilder sb = new StringBuilder();
         sb.append(resolveGroupIdPath(id.getGroupId()));
         if (!isBlank(id.getArtifactId())) {
@@ -1413,19 +1365,19 @@ public final class NBootUtils {
         return sb.toString();
     }
 
-    public static String resolveJarPath(NBootId id) {
+    public static String resolveJarPath(NBootDependency id) {
         return resolveFilePath(id, "jar");
     }
 
-    public static String resolveDescPath(NBootId id) {
+    public static String resolveDescPath(NBootDependency id) {
         return resolveFilePath(id, "nuts");
     }
 
-    public static String resolveNutsDescriptorPath(NBootId id) {
+    public static String resolveNutsDescriptorPath(NBootDependency id) {
         return resolveFilePath(id, "nuts");
     }
 
-    public static String resolveFileName(NBootId id, String extension) {
+    public static String resolveFileName(NBootDependency id, String extension) {
         StringBuilder sb = new StringBuilder();
         sb.append(id.getArtifactId());
         if (!isBlank(id.getVersion())) {
@@ -1437,7 +1389,7 @@ public final class NBootUtils {
         return sb.toString();
     }
 
-    public static String resolveFilePath(NBootId id, String extension) {
+    public static String resolveFilePath(NBootDependency id, String extension) {
         String fileName = resolveFileName(id, extension);
         return resolveIdPath(id) + '/' + fileName;
     }
@@ -2073,7 +2025,12 @@ public final class NBootUtils {
                         try {
                             Files.delete(file);
                         } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            if(NBootPlatformHome.isWindows()){
+                                // in windows just ignore because used log files cannot be deleted
+                                log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("unable to delete : %s (%s). Ignored!", file, e).asWarning());
+                            }else {
+                                throw new UncheckedIOException(e);
+                            }
                         }
                         count[0]++;
                         return FileVisitResult.CONTINUE;
@@ -2093,7 +2050,12 @@ public final class NBootUtils {
                                 // the children (asynchronous)
                                 //try three times and then exit!
                             } catch (IOException e) {
-                                throw new UncheckedIOException(e);
+                                if(NBootPlatformHome.isWindows()){
+                                    // in windows just ignore because used log files cannot be deleted
+                                    log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("unable to delete : %s (%s). Ignored!", dir, e).asWarning());
+                                }else {
+                                    throw new UncheckedIOException(e);
+                                }
                             }
                             try {
                                 Thread.sleep(500);
@@ -2106,7 +2068,12 @@ public final class NBootUtils {
                             try {
                                 Files.delete(dir);
                             } catch (IOException e) {
-                                throw new UncheckedIOException(e);
+                                if(NBootPlatformHome.isWindows()){
+                                    // in windows just ignore becau used log files cannot be deleted
+                                    log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("unable to delete : %s (%s). Ignored!", dir, e).asWarning());
+                                }else {
+                                    throw new UncheckedIOException(e);
+                                }
                             }
                         }
                         return FileVisitResult.CONTINUE;
@@ -2990,6 +2957,7 @@ public final class NBootUtils {
             } else {
                 if (bootOptions == null) {
                     bootOptions = new NBootOptionsInfo();
+                    NBootWorkspaceCmdLineParser.denullProperties(bootOptions);
                     NBootWorkspaceCmdLineParser.parseNutsArguments(args, bootOptions);
                 }
                 return processThrowable(ex, true, resolveShowStackTrace(bootOptions), resolveGui(bootOptions));

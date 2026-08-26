@@ -78,10 +78,19 @@ public enum NExecutionEngineFamily implements NEnum {
      */
     private final String id;
 
+  /**
+   * N execution engine family.
+   */
     NExecutionEngineFamily() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NExecutionEngineFamily> parse(String value) {
         return NEnumUtils.parseEnum(value, NExecutionEngineFamily.class, s->{
             switch (s.normalizedValue()) {

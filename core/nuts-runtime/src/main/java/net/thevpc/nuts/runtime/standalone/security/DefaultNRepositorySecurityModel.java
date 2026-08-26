@@ -151,7 +151,7 @@
 //    }
 //
 //    public NAuthenticationAgent getAuthenticationAgent(String id) {
-//        id = NStringUtils.trim(id);
+//        id = NStringUtils.strip(id);
 //        if (id.isEmpty()) {
 //            id = ((DefaultNRepoConfigManager) repository.config())
 //                    .getModel()

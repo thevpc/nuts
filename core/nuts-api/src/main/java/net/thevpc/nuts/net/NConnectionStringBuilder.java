@@ -3,60 +3,196 @@ package net.thevpc.nuts.net;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
 
+/**
+ * NConnectionStringBuilder interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NConnectionStringBuilder extends NComponent {
+    /**
+     * Returns the get.
+     *
+     * @param expression expression
+     * @return get result
+     */
     static NOptional<NConnectionStringBuilder> get(String expression) {
         return NExtensions.of(NConnectionStringBuilderFactory.class)
                 .create(expression);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param expression expression
+     * @return of result
+     */
     static NConnectionStringBuilder of(String expression) {
+        /**
+         * Returns the get.
+         *
+         * @param expression).get( expression).get(
+         * @return get result
+         */
         return get(expression).get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NConnectionStringBuilder of() {
         return NExtensions.of(NConnectionStringBuilderFactory.class)
                 .create();
     }
 
-    String getUserName();
+    /**
+     * User name.
+     *
+     * @return user name result
+     */
+    String userName();
 
-    NConnectionStringBuilder setUserName(String userName);
+    /**
+     * User name.
+     *
+     * @param userName user name
+     * @return user name result
+     */
+    @NSetter
+    NConnectionStringBuilder userName(String userName);
 
-    String getPassword();
+    /**
+     * Password.
+     *
+     * @return password result
+     */
+    String password();
 
-    NConnectionStringBuilder setPassword(String password);
+    /**
+     * Password.
+     *
+     * @param password password
+     * @return password result
+     */
+    @NSetter
+    NConnectionStringBuilder password(String password);
 
-    String getHost();
+    /**
+     * Host.
+     *
+     * @return host result
+     */
+    String host();
 
-    NConnectionStringBuilder setHost(String host);
+    /**
+     * Host.
+     *
+     * @param host host
+     * @return host result
+     */
+    @NSetter
+    NConnectionStringBuilder host(String host);
 
-    NConnectionStringBuilder getRoot();
+    /**
+     * Root.
+     *
+     * @return root result
+     */
+    NConnectionStringBuilder root();
 
-    NConnectionStringBuilder getParent();
+    /**
+     * Parent.
+     *
+     * @return parent result
+     */
+    NConnectionStringBuilder parent();
 
-    String getPort();
+    /**
+     * Port.
+     *
+     * @return port result
+     */
+    String port();
 
-    NConnectionStringBuilder setPort(String port);
+    /**
+     * Port.
+     *
+     * @param port port
+     * @return port result
+     */
+    @NSetter
+    NConnectionStringBuilder port(String port);
 
-    NConnectionStringBuilder setQueryMap(Map<String, List<String>> queryMap);
+    /**
+     * Query map.
+     *
+     * @param queryMap query map
+     * @return query map result
+     */
+    @NSetter
+    NConnectionStringBuilder queryMap(Map<String, List<String>> queryMap);
 
-    NOptional<Map<String, List<String>>> getQueryMap();
+    /**
+     * Query map.
+     *
+     * @return query map result
+     */
+    NOptional<Map<String, List<String>>> queryMap();
 
-    String getPath();
+    /**
+     * Path.
+     *
+     * @return path result
+     */
+    String path();
 
-    NConnectionStringBuilder setPath(String path);
+    /**
+     * Path.
+     *
+     * @param path path
+     * @return path result
+     */
+    @NSetter
+    NConnectionStringBuilder path(String path);
 
-    String getProtocol();
+    /**
+     * Protocol.
+     *
+     * @return protocol result
+     */
+    String protocol();
 
-    NConnectionStringBuilder setProtocol(String protocol);
+    /**
+     * Protocol.
+     *
+     * @param protocol protocol
+     * @return protocol result
+     */
+    @NSetter
+    NConnectionStringBuilder protocol(String protocol);
 
-    String getQueryString();
+    /**
+     * Query string.
+     *
+     * @return query string result
+     */
+    String queryString();
 
-    NConnectionStringBuilder setQueryString(String queryString);
+    /**
+     * Query string.
+     *
+     * @param queryString query string
+     * @return query string result
+     */
+    @NSetter
+    NConnectionStringBuilder queryString(String queryString);
 
     /**
      * @since 0.8.9
@@ -96,7 +232,8 @@ public interface NConnectionStringBuilder extends NComponent {
      *
      * @since  0.8.9
      */
-    NConnectionStringBuilder setNormalized(boolean normalized);
+    @NSetter
+    NConnectionStringBuilder normalized(boolean normalized);
 
     /**
      *
@@ -104,12 +241,33 @@ public interface NConnectionStringBuilder extends NComponent {
      */
     boolean isNormalized();
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NConnectionStringBuilder copy();
 
-    List<String> getNames();
+    /**
+     * Names.
+     *
+     * @return names result
+     */
+    List<String> names();
 
+    /**
+     * Resolve.
+     *
+     * @param child child
+     * @return resolve result
+     */
     NConnectionStringBuilder resolve(String child);
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NConnectionString build();
 
 }

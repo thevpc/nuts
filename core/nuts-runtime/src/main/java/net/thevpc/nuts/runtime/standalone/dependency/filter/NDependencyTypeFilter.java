@@ -11,7 +11,7 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public class NDependencyTypeFilter extends AbstractDependencyFilter {
 
-    private String type = null;
+    private final String type;
 
     public NDependencyTypeFilter(String type) {
         super(NFilterOp.CUSTOM);
@@ -20,7 +20,7 @@ public class NDependencyTypeFilter extends AbstractDependencyFilter {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        String curr = NDependencyUtils.normalizeDependencyType(dependency.getType());
+        String curr = NDependencyUtils.normalizeDependencyType(dependency.type());
         String toCheck = NDependencyUtils.normalizeDependencyType(type);
         return Objects.equals(curr, toCheck);
     }
@@ -33,5 +33,18 @@ public class NDependencyTypeFilter extends AbstractDependencyFilter {
     @Override
     public NDependencyFilter simplify() {
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyTypeFilter that = (NDependencyTypeFilter) o;
+        return Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
     }
 }

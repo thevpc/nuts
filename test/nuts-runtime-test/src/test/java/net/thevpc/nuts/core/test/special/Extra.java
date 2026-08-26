@@ -1,5 +1,6 @@
 package net.thevpc.nuts.core.test.special;
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.text.NVisitResult;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
@@ -44,13 +45,13 @@ public class Extra {
             ex.printStackTrace();
         }
         for (Map.Entry<String, Set<String>> e : classes.entrySet()) {
-            System.out.println(e.getKey() + " (" + e.getValue().size() + ")");
+            TestUtils.println(e.getKey() + " (" + e.getValue().size() + ")");
         }
-        System.out.println("DETAILS:");
+        TestUtils.println("DETAILS:");
         for (Map.Entry<String, Set<String>> e : classes.entrySet()) {
-            System.out.println(e.getKey() + " (" + e.getValue().size() + ")");
+            TestUtils.println(e.getKey() + " (" + e.getValue().size() + ")");
             for (String s : e.getValue()) {
-                System.out.println("\t" + s);
+                TestUtils.println("\t" + s);
             }
         }
     }

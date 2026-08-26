@@ -30,6 +30,7 @@ import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,15 +49,34 @@ public class NHomeLocation implements NEnum {
     private final NOsFamily osFamily;
     private final NStoreType storeType;
 
+    /**
+     * N home location.
+     *
+     * @param osFamily os family
+     * @param storeType store type
+     * @return n home location result
+     */
     private NHomeLocation(NOsFamily osFamily, NStoreType storeType) {
         this.osFamily = osFamily;
         this.storeType = storeType;
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param osFamily os family
+     * @param storeType store type
+     * @return of result
+     */
     public static NHomeLocation of(NOsFamily osFamily, NStoreType storeType) {
         String key = (osFamily == null ? "system" : osFamily.id()) + "_" + (storeType == null ? "system" : storeType.id());
         NHomeLocation instance = CACHE.get(key);
         if (instance == null) {
+          /**
+           * Synchronized.
+           *
+           * @param CACHE cache
+           */
             synchronized (CACHE) {
                 instance = CACHE.get(key);
                 if (instance == null) {
@@ -68,11 +88,17 @@ public class NHomeLocation implements NEnum {
         return instance;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NHomeLocation> parse(String value) {
         if (value == null) {
             value = "";
         } else {
-            value = value.trim().toLowerCase();
+            value = NStringUtils.strip(value).toLowerCase();
         }
         if (value.isEmpty()) {
             return NOptional.ofEmpty(() -> NMsg.ofC(NI18n.of("%s is empty"), NHomeLocation.class.getSimpleName()));
@@ -106,7 +132,7 @@ public class NHomeLocation implements NEnum {
      *
      * @return OS family
      */
-    public NOsFamily getOsFamily() {
+    public NOsFamily osFamily() {
         return osFamily;
     }
 
@@ -115,7 +141,7 @@ public class NHomeLocation implements NEnum {
      *
      * @return Store Location
      */
-    public NStoreType getStoreType() {
+    public NStoreType storeType() {
         return storeType;
     }
 
@@ -134,6 +160,11 @@ public class NHomeLocation implements NEnum {
 
     @Override
     public String toString() {
+        /**
+         * Name.
+         *
+         * @return name result
+         */
         return name();
     }
 
@@ -144,6 +175,11 @@ public class NHomeLocation implements NEnum {
      * @return the name of this pseudo enum constant
      */
     public String name() {
+      /**
+       * Return.
+       *
+       * @param storeType.name() store type.name()
+       */
         return (osFamily == null ? "SYSTEM" : osFamily.name()) + "_" + (storeType == null ? "SYSTEM" : storeType.name());
     }
 
@@ -154,6 +190,11 @@ public class NHomeLocation implements NEnum {
      * @return the id of this pseudo enum constant
      */
     public String id() {
+      /**
+       * Return.
+       *
+       * @param storeType.id() store type.id()
+       */
         return (osFamily == null ? "system" : osFamily.id()) + "-" + (storeType == null ? "system" : storeType.id());
     }
 }

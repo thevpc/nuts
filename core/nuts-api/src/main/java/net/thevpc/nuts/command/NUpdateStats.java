@@ -39,28 +39,91 @@ import java.util.Collection;
  * @since 0.5.5
  */
 public interface NUpdateStats extends NWorkspaceCmd {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NUpdateStats of() {
         return NExtensions.of(NUpdateStats.class);
     }
 
+    /**
+     * Clear repos.
+     *
+     * @return clear repos result
+     */
     NUpdateStats clearRepos();
 
+    /**
+     * Adds the specified repo.
+     *
+     * @param s s
+     * @return add repo result
+     */
     NUpdateStats addRepo(String s);
 
+    /**
+     * Removes the specified repo.
+     *
+     * @param s s
+     * @return remove repo result
+     */
     NUpdateStats removeRepo(String s);
 
+    /**
+     * Adds the specified repos.
+     *
+     * @param all all
+     * @return add repos result
+     */
     NUpdateStats addRepos(String... all);
 
+    /**
+     * Adds the specified repos.
+     *
+     * @param all all
+     * @return add repos result
+     */
     NUpdateStats addRepos(Collection<String> all);
 
+    /**
+     * Clear paths.
+     *
+     * @return clear paths result
+     */
     NUpdateStats clearPaths();
 
+    /**
+     * Adds the specified path.
+     *
+     * @param s s
+     * @return add path result
+     */
     NUpdateStats addPath(Path s);
 
+    /**
+     * Removes the specified path.
+     *
+     * @param s s
+     * @return remove path result
+     */
     NUpdateStats removePath(Path s);
 
+    /**
+     * Adds the specified paths.
+     *
+     * @param all all
+     * @return add paths result
+     */
     NUpdateStats addPaths(Path... all);
 
+    /**
+     * Adds the specified paths.
+     *
+     * @param all all
+     * @return add paths result
+     */
     NUpdateStats addPaths(Collection<Path> all);
 
     /**

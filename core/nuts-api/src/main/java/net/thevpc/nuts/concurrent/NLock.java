@@ -32,9 +32,7 @@ import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -49,55 +47,172 @@ import java.util.concurrent.locks.Lock;
  * @since 0.5.8
  */
 public interface NLock extends Lock, NDescribable {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param source source
+     * @return of result
+     */
     static NLock of(Object source) {
-        return NLockBuilder.of().setSource(source).build();
+        return NLockBuilder.of().source(source).build();
     }
 
+    /**
+     * Creates a new instance of of path.
+     *
+     * @param source source
+     * @return of path result
+     */
     static NLock ofPath(NPath source) {
-        return NLockBuilder.of().setSource(source).build();
+        return NLockBuilder.of().source(source).build();
     }
 
+    /**
+     * Creates a new instance of of path companion.
+     *
+     * @param source source
+     * @return of path companion result
+     */
     static NLock ofPathCompanion(NPath source) {
-        return NLockBuilder.of().setSource(source).setResource(source.resolveSibling(source.getName() + ".lock")).build();
+        return NLockBuilder.of().source(source).resource(source.resolveSibling(source.name() + ".lock")).build();
     }
 
+    /**
+     * Creates a new instance of of resource.
+     *
+     * @param resource resource
+     * @return of resource result
+     */
     static NLock ofResource(Object resource) {
-        return NLockBuilder.of().setResource(resource).build();
+        return NLockBuilder.of().resource(resource).build();
     }
 
+    /**
+     * Creates a new instance of of id.
+     *
+     * @param id id
+     * @return of id result
+     */
     static NLock ofId(NId id) {
-        if (NWorkspace.of().getBootOptions().getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
-            return of(id.getLongId());
+        if (NWorkspace.of().bootOptions().isolationLevel().orNull() == NIsolationLevel.MEMORY) {
+            /**
+             * Creates a new instance of of.
+             *
+             * @param id.longId() id.long id()
+             * @return of result
+             */
+            return of(id.longId());
         } else {
+            /**
+             * Creates a new instance of of id path.
+             *
+             * @param id id
+             * @param NStoreScope.WORKSPACE n store scope.workspace
+             * @return of id path result
+             */
             return ofIdPath(id, NStoreScope.WORKSPACE);
         }
     }
 
+    /**
+     * Creates a new instance of of id path.
+     *
+     * @param id id
+     * @param storeScope store scope
+     * @return of id path result
+     */
     static NLock ofIdPath(NId id, NStoreScope storeScope) {
+        /**
+         * Creates a new instance of of id path.
+         *
+         * @param id id
+         * @param storeScope store scope
+         * @param null null
+         * @return of id path result
+         */
         return ofIdPath(id, storeScope, null);
     }
 
+    /**
+     * Creates a new instance of of id path.
+     *
+     * @param id id
+     * @param storeScope store scope
+     * @param path path
+     * @return of id path result
+     */
     static NLock ofIdPath(NId id, NStoreScope storeScope, String path) {
         if(NBlankable.isBlank(path)){
-            path="nuts-" + NStringUtils.firstNonBlankTrimmed(id.getFace(), "content") + ".lock";
+            path="nuts-" + NStringUtils.firstNonBlankStripped(id.face(), "content") + ".lock";
         }
-        return NLockBuilder.of().setSource(id.getLongId()).setResource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
+        return NLockBuilder.of().source(id.longId()).resource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
     }
 
+    /**
+     * Checks if is locked.
+     *
+     * @return is locked result
+     */
+    @NGetter
     boolean isLocked();
 
+    /**
+     * Checks if is held by current thread.
+     *
+     * @return is held by current thread result
+     */
+    @NGetter
     boolean isHeldByCurrentThread();
 
+    /**
+     * Run with.
+     *
+     * @param runnable runnable
+     */
     void runWith(Runnable runnable);
 
+    /**
+     * Call with.
+     *
+     * @param callable callable
+     * @return call with result
+     */
     <T> T callWith(Callable<T> callable);
 
+    /**
+     * Run with immediately.
+     *
+     * @param runnable runnable
+     * @return run with immediately result
+     */
     boolean runWithImmediately(Runnable runnable);
 
+    /**
+     * Run with.
+     *
+     * @param runnable runnable
+     * @param time time
+     * @param unit unit
+     * @return run with result
+     */
     boolean runWith(Runnable runnable, long time, TimeUnit unit);
 
+    /**
+     * Call with immediately.
+     *
+     * @param callable callable
+     * @return call with immediately result
+     */
     <T> NOptional<T> callWithImmediately(Callable<T> callable);
 
+    /**
+     * Call with.
+     *
+     * @param callable callable
+     * @param time time
+     * @param unit unit
+     * @return call with result
+     */
     <T> NOptional<T> callWith(Callable<T> callable, long time, TimeUnit unit);
 
 }

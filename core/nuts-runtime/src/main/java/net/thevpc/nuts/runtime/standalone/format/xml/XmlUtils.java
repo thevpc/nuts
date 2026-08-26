@@ -45,6 +45,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -179,7 +180,7 @@ public class XmlUtils {
         if (name == null) {
             name = "";
         }
-        name = name.trim();
+        name = NStringUtils.strip(name);
         if (name.isEmpty()) {
             name = "node";
         }

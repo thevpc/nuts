@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.reflect.NReflectUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -51,7 +52,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
             instance = onNewInstance.newInstance(context);
         }
         if (instance == null) {
-            Type rtype = type.getJavaType();
+            Type rtype = type.javaType();
             if (rtype instanceof Class) {
                 Class cType = (Class) rtype;
                 if (cType.isInterface()) {
@@ -66,19 +67,19 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 instance = (T) type.newInstance();
             }
         }
-        NReflectType effectiveType=type.getRepository().getType(instance.getClass());
+        NReflectType effectiveType=type.repository().getType(instance.getClass());
         //now that we have the instance lets compute
         Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> allFields = new HashMap<>();
         Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> argFields = new HashMap<>();
         Map<String, NElementDeserializerBuilderNElementDeserializerFieldImpl<T>> bodyFields = new HashMap<>();
 
-        for (NReflectProperty property : effectiveType.getProperties()) {
-            if (!allFields.containsKey(property.getName())) {
-                NElementDeserializerBuilderNElementDeserializerFieldImpl<T> o = (NElementDeserializerBuilderNElementDeserializerFieldImpl<T>) builder.preConfiguredFields.get(property.getName());
+        for (NReflectProperty property : effectiveType.properties()) {
+            if (!allFields.containsKey(property.name())) {
+                NElementDeserializerBuilderNElementDeserializerFieldImpl<T> o = (NElementDeserializerBuilderNElementDeserializerFieldImpl<T>) builder.preConfiguredFields.get(property.name());
                 if(o!=null){
                     o=o.copy();
                 }else{
-                    o=new NElementDeserializerBuilderNElementDeserializerFieldImpl<>(property.getName(),builder);
+                    o=new NElementDeserializerBuilderNElementDeserializerFieldImpl<>(property.name(),builder);
                 }
                 NElementDeserializerBuilderNElementDeserializerFieldImpl<T> f = o;
                 if(o.isIgnored()){
@@ -86,8 +87,8 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 }
                 f.uniformName = uniformName(f.name);
                 f.field = null;
-                for (NReflectProperty field : effectiveType.getProperties()) {
-                    String u = uniformName(field.getName());
+                for (NReflectProperty field : effectiveType.properties()) {
+                    String u = uniformName(field.name());
                     if (u.equals(f.uniformName)) {
                         f.field = field;
                         break;
@@ -95,8 +96,8 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 }
                 f.wrapCollections=builder.wrapCollections;
                 f.containerIsCollection=builder.containerIsCollection;
-                f.arg= paramFieldFieldFilter == null || paramFieldFieldFilter.test(property.getName());
-                f.body= bodyFieldNameFilter == null || bodyFieldNameFilter.test(property.getName());
+                f.arg= paramFieldFieldFilter == null || paramFieldFieldFilter.test(property.name());
+                f.body= bodyFieldNameFilter == null || bodyFieldNameFilter.test(property.name());
                 boolean body = f.body || (!f.arg && !f.body);
                 boolean arg = f.arg || (!f.arg && !f.body);
                 if (body) {
@@ -115,7 +116,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                         }
                     }
                 }
-                allFields.put(property.getName(), f);
+                allFields.put(property.name(), f);
                 if(f.aliases!=null){
                     for (String alias : f.aliases) {
                         allFields.put(uniformName(alias), f);
@@ -179,10 +180,10 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
                 if(tField.typeOverride!=null) {
                     jt = (Class<?>) NReflectUtils.getRawClass(tField.typeOverride).orNull();
                     if(jt==null){
-                        jt = (Class<?>) tField.field.getPropertyType().getJavaType();
+                        jt = (Class<?>) tField.field.propertyType().javaType();
                     }
                 }else{
-                    jt = (Class<?>) tField.field.getPropertyType().getJavaType();
+                    jt = (Class<?>) tField.field.propertyType().javaType();
                 }
                 if((jt.isArray() || Collection.class.isAssignableFrom(jt)) && !value.isAnyArray()) {
                     tField.field.write(instance, context.toObject(value.wrapIntoArray(), jt));
@@ -229,7 +230,7 @@ class NElementMapperFromBuilder<T> implements NElementDeserializer<T> {
     }
 
     private String uniformName(String s) {
-        s = s.trim();
+        s = NStringUtils.strip(s);
         if(fieldNameNormalizer !=null){
             return fieldNameNormalizer.apply(s);
         }

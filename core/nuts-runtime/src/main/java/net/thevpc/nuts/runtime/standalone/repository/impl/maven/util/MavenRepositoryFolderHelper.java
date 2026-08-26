@@ -85,7 +85,7 @@ public class MavenRepositoryFolderHelper {
     public NPath fetchContentImpl(NId id, Path localPath) {
         NPath cacheContent = getIdLocalFile(id);
         if (cacheContent != null && cacheContent.exists()) {
-            return cacheContent.setUserCache(true).setUserTemporary(false);
+            return cacheContent.userCache(true).userTemporary(false);
         }
         return null;
     }
@@ -99,16 +99,16 @@ public class MavenRepositoryFolderHelper {
 
     public NPath getLocalGroupAndArtifactFile(NId id) {
         CoreNIdUtils.checkShortId(id);
-        return getStoreLocation().resolve(id.getShortId().getMavenFolder());
+        return getStoreLocation().resolve(id.shortId().mavenFolder());
     }
 
     public Iterator<NId> searchVersions(NId id, final NDefinitionFilter filter, boolean deep) {
-        String singleVersion = id.getVersion().asSingleValue().orNull();
+        String singleVersion = id.version().asSingleValue().orNull();
         if (singleVersion != null) {
-            NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
+            NId id1 = id.builder().version(singleVersion).faceDescriptor().build();
             NPath localFile = getIdLocalFile(id1);
             if (localFile != null && localFile.isRegularFile()) {
-                return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
+                return Collections.singletonList(id.builder().repository(repo == null ? null : repo.name()).build()).iterator();
             }
             return null;
         }
@@ -121,17 +121,17 @@ public class MavenRepositoryFolderHelper {
         return new NIdPathIterator(repo, rootPath.normalize(), folder, filter, new NIdPathIteratorBase() {
             @Override
             public NWorkspace getWorkspace() {
-                return repo.getWorkspace();
+                return repo.workspace();
             }
 
             @Override
             public void undeploy(NId id) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported undeploy"));
+                throw new NIllegalArgumentException(NMsg.ofP("unsupported undeploy"));
             }
 
             @Override
             public boolean isDescFile(NPath pathname) {
-                return pathname.getName().equals("pom.xml");
+                return pathname.name().equals("pom.xml");
             }
 
             @Override
@@ -152,8 +152,8 @@ public class MavenRepositoryFolderHelper {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory).withDescription(NDescribables.ofDesc("isDirectory"))
                     .toArray(NPath[]::new);
             for (NPath versionFolder : versionFolders) {
-                NId id2 = id.builder().setVersion(versionFolder.getName()).build();
-                if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
+                NId id2 = id.builder().version(versionFolder.name()).build();
+                if (bestId == null || id2.version().compareTo(bestId.version()) > 0) {
                     bestId = id2;
                 }
             }
@@ -276,7 +276,7 @@ public class MavenRepositoryFolderHelper {
 //                            throw new NutsIOException(getWorkspace(),e);
 //                        }
                         try (PrintStream p = new PrintStream(new File(folder, CoreNConstants.Files.DOT_FILES))) {
-                            p.println("#version=" + NWorkspace.of().getApiVersion());
+                            p.println("#version=" + NWorkspace.of().apiVersion());
                             for (String file : folders) {
                                 p.println(file + "/");
                             }

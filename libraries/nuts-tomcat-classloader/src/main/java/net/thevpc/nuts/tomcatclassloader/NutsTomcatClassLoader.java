@@ -6,6 +6,7 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NOpenMode;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
+import net.thevpc.nuts.util.NStringUtils;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.loader.WebappClassLoader;
@@ -114,7 +115,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
                     resolveWorkspace().runWith(()->{
-                        nutsClassLoader = NSearch.of().addIds(pathList).setInlineDependencies(true).getResultClassLoader();
+                        nutsClassLoader = NSearch.of().addIds(pathList).inlineDependencies(true).getResultClassLoader().asClassLoader();
                     });
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -132,13 +133,13 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
             workspace
                     = Nuts.openWorkspace(
                         NWorkspaceOptionsBuilder.of()
-                                    .setRuntimeId(getWorkspaceBootRuntime())
-                                    .setClassLoaderSupplier(this::getParent)
-                                    .setOpenMode(NOpenMode.OPEN_OR_CREATE)
-                                    .setWorkspace(getWorkspaceLocation())
-                                    .setArchetype(getWorkspaceArchetype())
+                                    .runtimeId(getWorkspaceBootRuntime())
+                                    .classLoaderSupplier(this::getParent)
+                                    .openMode(NOpenMode.OPEN_OR_CREATE)
+                                    .workspace(getWorkspaceLocation())
+                                    .archetype(getWorkspaceArchetype())
 //                                    .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
-                                    .setExcludedExtensions(
+                                    .excludedExtensions(
                                             Arrays.asList(splitString(getWorkspaceExcludedExtensions(), " ;"))
                                     ).build()
                     );
@@ -265,7 +266,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     private String[] splitString(String nutsPath, String sep) {
         List<String> all = new ArrayList<>();
         for (String s : (nutsPath == null ? "" : nutsPath).split("[" + sep + "]")) {
-            s = s.trim();
+            s = NStringUtils.strip(s);
             if (s.length() > 0) {
                 all.add(s);
             }

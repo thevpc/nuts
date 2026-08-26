@@ -57,7 +57,7 @@ public class YamlFormat {
                 value1.set("op", ope.type().id());
                 value1.set("symbols", NElement.ofEnumArray(ope.operatorSymbols().toArray(new Enum[0])));
                 value1.set("operands", NElement.ofArray(ope.operands().toArray(new NElement[0])));
-                value1.set("position", ope.position().id());
+                value1.set("position", ope.fixity().id());
                 value1.name(null);
                 return value1.build();
             }
@@ -113,8 +113,8 @@ public class YamlFormat {
                 value1.set("$array", NElement.ofArray(value1.children().toArray(new NElement[0])));
                 return value1.build();
             }
-            case UPLET:
-            case NAMED_UPLET: {
+            case TUPLE:
+            case NAMED_TUPLE: {
                 NObjectElementBuilder value1 = NElement.ofObjectBuilder().copyFrom(value);
                 List<NElement> children = value1.children();
                 value1.clearChildren();

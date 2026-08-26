@@ -1,16 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
-import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.app.NAppInitInfo;
-import net.thevpc.nuts.app.NApplication;
-import net.thevpc.nuts.app.NApplications;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
-import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
+import net.thevpc.nuts.runtime.standalone.app.NApplicationImpl;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExtNewContext;
 import net.thevpc.nuts.text.NCmdLineWriter;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -43,8 +39,8 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
     @Override
     public Object runWithContext() {
         NWorkspaceExt ows = NWorkspaceExt.of();
-        Map<String, String> newEnv = ows.getModel().appendEnv(executionContext.getEnv());
-        NAppImpl newApp = new NAppImpl();
+        Map<String, String> newEnv = ows.getModel().appendEnv(executionContext.env());
+        NApplicationImpl newApp = new NApplicationImpl();
         NWorkspaceExtNewContext wsc = new NWorkspaceExtNewContext(ows, newEnv, newApp);
         return wsc.callWith(() -> {
             NClock now = NClock.now();
@@ -53,20 +49,20 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                         joptions.getAppArgs().toArray(new String[0])
                 );
                 List<String> appArgs;
-                if (o.getApplicationArguments().get().isEmpty()) {
-                    if (o.getSkipWelcome().orElse(false)) {
+                if (o.applicationArguments().get().isEmpty()) {
+                    if (o.skipWelcome().orElse(false)) {
                         return null;
                     }
                     appArgs = Arrays.asList(new String[]{"welcome"});
                 } else {
-                    appArgs = o.getApplicationArguments().get();
+                    appArgs = o.applicationArguments().get();
                 }
                 session.configure(o.build());
                 NExec.of()
-                        .addCommand(appArgs)
-                        .addExecutorOptions(o.getExecutorOptions().orNull())
-                        .setExecutionType(o.getExecutionType().orNull())
-                        .failFast()
+                        .command(appArgs)
+                        .executorOptions(o.executorOptions().orNull())
+                        .executionType(o.executionType().orNull())
+                        .failFast(true)
                         .run();
                 return null;
             }
@@ -89,7 +85,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 //            NApplication applicationInstance = NApplications.createApplicationInstanceFromAnnotatedInstance(applicationRawInstance);
 
             return sessionCopy.callWith(() -> {
-//                NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, applicationRawInstance, applicationInstance, null, now));
+//                NApplication.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, applicationRawInstance, applicationInstance, null, now));
                 String old_nuts_boot_args=System.getProperty("nuts.boot.args");
                 String old_nuts_args=System.getProperty("nuts.args");
                 try {
@@ -101,9 +97,9 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
                         NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
                         System.setProperty("nuts.boot.args",
-                                NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(bootOptions
-                                        .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
-                                        .add(id.getLongName()))
+                                NCmdLineWriter.of().shellFamily(NShellFamily.SH).formatPlain(bootOptions
+                                        .toCmdLine(new NWorkspaceOptionsConfig().compact(true))
+                                        .add(id.longName()))
                         );
                         System.setProperty("nuts.args","");
                         mainMethod[0] = cls.getMethod("main", String[].class);

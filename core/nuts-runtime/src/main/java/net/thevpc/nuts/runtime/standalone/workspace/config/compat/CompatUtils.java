@@ -33,11 +33,11 @@ public class CompatUtils {
                 list.add(null);
             } else {
                 NRepositoryRef r2 = new NRepositoryRef();
-                r2.setEnabled(r.isEnabled());
-                r2.setDeployWeight(r.getDeployWeight());
-                r2.setFailSafe(r.isFailSafe());
-                r2.setLocation(r.getLocation());
-                r2.setName(r.getName());
+                r2.enabled(r.isEnabled());
+                r2.deployWeight(r.deployWeight());
+                r2.failSafe(r.isFailSafe());
+                r2.location(r.location());
+                r2.name(r.name());
                 list.add(r2);
             }
         }
@@ -54,11 +54,11 @@ public class CompatUtils {
                 list.add(null);
             } else {
                 NUserConfig r2 = new NUserConfig();
-                r2.setGroups(r.getGroups());
-                r2.setPermissions(r.getPermissions());
+                r2.groups(r.groups());
+                r2.permissions(r.permissions());
 //                r2.setRemoteCredentials(r.getRemoteCredentials());
 //                r2.setRemoteIdentity(r.getRemoteIdentity());
-                r2.setUserName(r.getUserName());
+                r2.userName(r.userName());
                 list.add(r2);
             }
         }
@@ -75,11 +75,11 @@ public class CompatUtils {
                 list.add(null);
             } else {
                 NUserConfig r2 = new NUserConfig();
-                r2.setGroups(r.getGroups());
-                r2.setPermissions(r.getPermissions());
+                r2.groups(r.groups());
+                r2.permissions(r.permissions());
 //                r2.setRemoteCredentials(r.getRemoteCredentials());
 //                r2.setRemoteIdentity(r.getRemoteIdentity());
-                r2.setUserName(r.getUserName());
+                r2.userName(r.userName());
                 list.add(r2);
             }
         }
@@ -96,10 +96,10 @@ public class CompatUtils {
                 list.add(null);
             } else {
                 NCommandFactoryConfig r2 = new NCommandFactoryConfig();
-                r2.setFactoryId(r.getFactoryId());
-                r2.setFactoryType(r.getFactoryType());
-                r2.setParameters(r.getParameters() == null ? null : new LinkedHashMap<>(r.getParameters()));
-                r2.setPriority(r.getPriority());
+                r2.factoryId(r.factoryId());
+                r2.factoryType(r.factoryType());
+                r2.parameters(r.parameters() == null ? null : new LinkedHashMap<>(r.parameters()));
+                r2.priority(r.priority());
                 list.add(r2);
             }
         }
@@ -116,7 +116,7 @@ public class CompatUtils {
                 list.add(null);
             } else {
                 NExecutionEngineLocation r2 = r.copy();
-                r2.setConfigVersion(r.getConfigVersion());
+                r2.configVersion(r.getConfigVersion());
                 list.add(r2);
             }
         }

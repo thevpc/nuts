@@ -43,16 +43,26 @@ public interface NArtifactCall extends Serializable, NBlankable {
      *
      * @return artifact id
      */
-    NId getId();
+    NId id();
 
     /**
      * execution arguments
      *
      * @return execution arguments
      */
-    List<String> getArguments();
+    List<String> arguments();
 
-    String getScriptName();
+    /**
+     * Script name.
+     *
+     * @return script name result
+     */
+    String scriptName();
 
-    String getScriptContent();
+    /**
+     * Script content.
+     *
+     * @return script content result
+     */
+    String scriptContent();
 }

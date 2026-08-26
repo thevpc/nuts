@@ -41,7 +41,7 @@ public class NSysExecUtils {
         if (p != null) {
             for (String s : p.split(File.pathSeparator)) {
                 try {
-                    if (!s.trim().isEmpty()) {
+                    if (!NStringUtils.isBlank(s)) {
                         Path c = Paths.get(s, commandName);
                         if (Files.isRegularFile(c)) {
                             if (Files.isExecutable(c)) {
@@ -62,7 +62,7 @@ public class NSysExecUtils {
     }
 
     public static String resolveRootUserName() {
-        NOsFamily sysFamily = NEnv.of().getOsFamily();
+        NOsFamily sysFamily = NEnv.of().osFamily();
         switch (sysFamily) {
             case WINDOWS: {
                 String s = (String) NSession.of().getProperty("nuts.windows.root-user").orNull();
@@ -104,7 +104,7 @@ public class NSysExecUtils {
     ) {
         NSession session = NSession.of();
         return NSysExecUtils.buildEffectiveCommand(args, runAsMode,
-                NEnv.of().getDesktopEnvironmentFamilies(),
+                NEnv.of().desktopEnvironmentFamilies(),
                 n -> {
                     Path path = NSysExecUtils.sysWhich(n);
                     if (path != null) {
@@ -160,7 +160,7 @@ public class NSysExecUtils {
                                                      String[] executorOptions
     ) {
         //String runAsEffective = null;
-        NOsFamily sysFamily = NEnv.of().getOsFamily();
+        NOsFamily sysFamily = NEnv.of().osFamily();
         List<String> command = new ArrayList<>(Arrays.asList(cmd));
         if (runAsMode == null) {
             runAsMode = NRunAs.CURRENT_USER;
@@ -179,7 +179,7 @@ public class NSysExecUtils {
             };
         }
         //optimize mode
-        switch (runAsMode.getMode()) {
+        switch (runAsMode.mode()) {
             case ROOT: {
                 if (rootUserName.equals(currentUserName)) {
                     runAsMode = NRunAs.currentUser();
@@ -187,12 +187,12 @@ public class NSysExecUtils {
                 break;
             }
             case USER: {
-                String s = runAsMode.getUser();
-                s = s.trim();
+                String s = runAsMode.user();
+                s = NStringUtils.strip(s);
                 if (currentUserName.equals(s)) {
                     runAsMode = NRunAs.currentUser();
                 }
-                if (!s.equals(runAsMode.getUser())) {
+                if (!s.equals(runAsMode.user())) {
                     runAsMode = NRunAs.user(s);
                 }
                 break;
@@ -201,13 +201,13 @@ public class NSysExecUtils {
         NRunAs finalRunAsMode = runAsMode;
         Function<String,String[]> cm= s -> {
             switch (s){
-                case "user":return new String[]{finalRunAsMode.getMode() == NRunAsMode.USER ? finalRunAsMode.getUser() : rootUserName};
+                case "user":return new String[]{finalRunAsMode.mode() == NRunAsMode.USER ? finalRunAsMode.user() : rootUserName};
                 case "command":return command.toArray(new String[0]);
                 case "rootUser":return new String[]{rootUserName};
             }
             return null;
         };
-        switch (runAsMode.getMode()) {
+        switch (runAsMode.mode()) {
             case CURRENT_USER: {
                 List<String> cc = new ArrayList<>();
                 cc.addAll(command);
@@ -232,7 +232,7 @@ public class NSysExecUtils {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", finalRunAsMode.getMode() == NRunAsMode.USER ? finalRunAsMode.getUser() : rootUserName));
+                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", finalRunAsMode.mode() == NRunAsMode.USER ? finalRunAsMode.user() : rootUserName));
                     }
                 }
                 return cc;
@@ -261,7 +261,7 @@ public class NSysExecUtils {
                 return cc;
             }
         }
-        throw new NIllegalArgumentException(NMsg.ofPlain("cannot run as admin/root on unknown system OS family"));
+        throw new NIllegalArgumentException(NMsg.ofP("cannot run as admin/root on unknown system OS family"));
     }
 
     private static NOptional<String[]> guiWindowsSudo(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
@@ -288,8 +288,8 @@ public class NSysExecUtils {
             NArg ac = cmdLine.peek().get();
             switch (ac.key()) {
                 case "--sudo-prompt": {
-                    if (ac.getValue().isNull()) {
-                        cmdLine.matcher().matchFlag((v) -> {
+                    if (ac.literalValue().isNull()) {
+                        cmdLine.matcher().whenAny().asFlag((v) -> {
                             if (v.booleanValue()) {
                                 // --sudo-prompt will reset the prompt to its defaults!
                                 changePrompt.set(false);
@@ -300,8 +300,8 @@ public class NSysExecUtils {
                                 newPromptValue.set("");
                             }
                         }).anyMatch();
-                    } else if (ac.getValue().isString()) {
-                        cmdLine.matcher().matchEntry((v) -> {
+                    } else if (ac.literalValue().isString()) {
+                        cmdLine.matcher().whenAny().asEntry((v) -> {
                             changePrompt.set(true);
                             newPromptValue.set(v.stringValue());
                         }).anyMatch();
@@ -333,7 +333,7 @@ public class NSysExecUtils {
     private static NOptional<String[]> guiPosixSu
             (Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
-            de = NEnv.of().getDesktopEnvironmentFamilies();
+            de = NEnv.of().desktopEnvironmentFamilies();
         }
         String currSu = null;
         currSu = sysWhich.apply("pkexec");
@@ -369,7 +369,7 @@ public class NSysExecUtils {
     private static NOptional<String[]> guiPosixSudo
             (Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich) {
         if (de == null) {
-            de = NEnv.of().getDesktopEnvironmentFamilies();
+            de = NEnv.of().desktopEnvironmentFamilies();
         }
         String currSu = null;
         currSu = sysWhich.apply("pkexec");

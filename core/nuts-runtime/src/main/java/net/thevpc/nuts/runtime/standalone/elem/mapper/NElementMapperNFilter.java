@@ -1,13 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.artifact.NDefinitionFilters;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NIdFilters;
-import net.thevpc.nuts.artifact.NVersionFilters;
+import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.internal.rpi.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
 import java.lang.reflect.Type;
@@ -29,25 +27,25 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
         NElement element = context.element();
         Type to = context.instanceType();
         String s = element.asStringValue().orNull();
-        if(s==null || s.trim().isEmpty()){
+        if(NStringUtils.isBlank(s)){
             s="true";
         }
         if(to instanceof Class) {
             switch (((Class) to).getName()) {
                 case "net.thevpc.nuts.artifact.NIdFilter": {
-                    return NIdFilters.of().parse(s);
+                    return NIdFilterRPI.of().parse(s);
                 }
                 case "net.thevpc.nuts.artifact.NDefinitionFilter": {
-                    return NDefinitionFilters.of().parse(s);
+                    return NDefinitionFilterRPI.of().parse(s);
                 }
                 case "net.thevpc.nuts.artifact.NVersionFilter": {
-                    return NVersionFilters.of().parse(s);
+                    return NVersionFilterRPI.of().parse(s);
                 }
                 case "net.thevpc.nuts.artifact.NDependencyFilter": {
-                    return NDependencyFilters.of().parse(s);
+                    return NDependencyFilterRPI.of().parse(s);
                 }
                 case "net.thevpc.nuts.core.NRepositoryFilter": {
-                    return NRepositoryFilters.of().parse(s);
+                    return NRepositoryFilterRPI.of().parse(s);
                 }
             }
         }

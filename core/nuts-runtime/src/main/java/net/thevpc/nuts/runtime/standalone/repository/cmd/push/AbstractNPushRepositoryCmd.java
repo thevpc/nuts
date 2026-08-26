@@ -9,7 +9,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
 
 import java.util.Arrays;
@@ -39,12 +39,12 @@ public abstract class AbstractNPushRepositoryCmd extends NRepositoryCmdBase<NPus
     }
 
     @Override
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
     @Override
-    public NPushRepositoryCmd setRepository(String repository) {
+    public NPushRepositoryCmd repository(String repository) {
         this.repository = repository;
         return this;
     }
@@ -55,13 +55,13 @@ public abstract class AbstractNPushRepositoryCmd extends NRepositoryCmdBase<NPus
     }
 
     @Override
-    public NPushRepositoryCmd setOffline(boolean offline) {
+    public NPushRepositoryCmd offline(boolean offline) {
         this.offline = offline;
         return this;
     }
 
     @Override
-    public NPushRepositoryCmd setId(NId id) {
+    public NPushRepositoryCmd id(NId id) {
         this.id = id;
         return this;
     }
@@ -72,12 +72,12 @@ public abstract class AbstractNPushRepositoryCmd extends NRepositoryCmdBase<NPus
 //    }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> args() {
         return NCollections.unmodifiableList(args);
     }
 
@@ -89,14 +89,14 @@ public abstract class AbstractNPushRepositoryCmd extends NRepositoryCmdBase<NPus
 
 
     @Override
-    public NPushRepositoryCmd setArgs(List<String> args) {
+    public NPushRepositoryCmd args(List<String> args) {
         this.args.clear();
         this.args.addAll(NCollections.nonNullList(args));
         return this;
     }
 
     @Override
-    public NPushRepositoryCmd setArgs(String[] args) {
+    public NPushRepositoryCmd args(String[] args) {
         this.args.clear();
         if (args != null) {
             this.args.addAll(Arrays.asList(args));

@@ -52,26 +52,6 @@ public class NDefinitionFilterFalse extends AbstractDefinitionFilter {
     }
 
     @Override
-    public int hashCode() {
-        return getClass().getName().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefinitionFilterFalse other = (NDefinitionFilterFalse) obj;
-        return true;
-    }
-
-    @Override
     public String toString() {
         return "false";
     }

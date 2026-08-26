@@ -27,8 +27,8 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
         this.parent = other.parent;
         this.in = other.in;
         this.inReader = other.inReader;
-        setOut(other.out);
-        setErr(other.err);
+        out(other.out);
+        err(other.err);
     }
 
     public DefaultNSessionTerminalFrom(NTerminal parent) {
@@ -39,7 +39,7 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
         if (this.inReader != null) {
             return this.inReader;
         }
-        final InputStream _in = getIn();
+        final InputStream _in = this.in();
         if (_in != null) {
             this.inReader = new BufferedReader(new InputStreamReader(_in));
         }
@@ -88,7 +88,7 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
             }
         }
 
-        InputStream in = getIn();
+        InputStream in = this.in();
         Console cons = null;
         char[] passwd = null;
         if (in == null) {
@@ -112,28 +112,28 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
     }
 
     @Override
-    public InputStream getIn() {
+    public InputStream in() {
         if (this.in != null) {
             return this.in;
         }
         if (parent != null) {
-            return parent.getIn();
+            return parent.in();
         }
         return null;
     }
 
     @Override
-    public void setIn(InputStream in) {
+    public void in(InputStream in) {
         this.in = in;
         this.inReader = null;
     }
 
     @Override
-    public NPrintStream getOut() {
+    public NPrintStream out() {
         if (out == null) {
             NTerminal p = getParent();
             if (p != null) {
-                NPrintStream o = p.getOut();
+                NPrintStream o = p.out();
                 if(o!=null){
                     return o;
                 }
@@ -143,16 +143,16 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
     }
 
     @Override
-    public void setOut(NPrintStream out) {
+    public void out(NPrintStream out) {
         this.out = out;
     }
 
     @Override
-    public NPrintStream getErr() {
+    public NPrintStream err() {
         if (err == null) {
             NTerminal p = getParent();
             if (p != null) {
-                NPrintStream o = p.getErr();
+                NPrintStream o = p.err();
                 if(o!=null){
                     return o;
                 }
@@ -162,7 +162,7 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
     }
 
     @Override
-    public void setErr(NPrintStream err) {
+    public void err(NPrintStream err) {
         this.err = err;
     }
 
@@ -177,21 +177,6 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
     @Override
     public <T> NAsk<T> ask() {
         return new DefaultNAsk<T>(this, out());
-    }
-
-    @Override
-    public InputStream in() {
-        return getIn();
-    }
-
-    @Override
-    public NPrintStream out() {
-        return getOut();
-    }
-
-    @Override
-    public NPrintStream err() {
-        return getErr();
     }
 
     @Override

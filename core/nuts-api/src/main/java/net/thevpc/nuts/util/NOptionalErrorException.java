@@ -42,9 +42,14 @@ public class NOptionalErrorException extends NException {
      * call to {@link #initCause}.
      *
      * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     *                later retrieval by the {@link #message()} method.
      */
     public NOptionalErrorException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -57,13 +62,19 @@ public class NOptionalErrorException extends NException {
      * this runtime exception's detail message.
      *
      * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
+     *                by the {@link #message()} method).
      * @param cause   the cause (which is saved for later retrieval by the
      *                {@link #getCause()} method).  (A {@code null} value is
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
     public NOptionalErrorException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 
@@ -81,6 +92,14 @@ public class NOptionalErrorException extends NException {
      *                           be writable
      */
     public NOptionalErrorException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

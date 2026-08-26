@@ -18,8 +18,8 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressListener;
 import org.junit.jupiter.api.*;
 import net.thevpc.nuts.core.test.utils.*;
 
@@ -74,10 +74,10 @@ public class CpTest {
 
         NCp.of().from(from).to(to)
                 .addOptions(NPathOption.LOG, NPathOption.TRACE)
-                .setProgressMonitor(new NProgressListener() {
+                .progressMonitor(new NProgressListener() {
                     @Override
                     public boolean onProgress(NProgressEvent event) {
-                        TestUtils.println(event.getProgress());
+                        TestUtils.println(event.progress());
                         return true;
                     }
                 }).run();

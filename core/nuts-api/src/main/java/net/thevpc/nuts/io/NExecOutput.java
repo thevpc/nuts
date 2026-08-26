@@ -2,8 +2,11 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents an output stream, file, or buffer for capturing the
@@ -19,8 +22,8 @@ import java.io.OutputStream;
  *     <li>{@link NRedirectType#NULL} - discard output</li>
  * </ul>
  *
- * <p>Grab modes allow retrieving captured output via {@link #getResultBytes()} or
- * {@link #getResultString()}.
+ * <p>Grab modes allow retrieving captured output via {@link #resultBytes()} or
+ * {@link #resultString()}.
  */
 public class NExecOutput {
     private NRedirectType type;
@@ -28,6 +31,8 @@ public class NExecOutput {
     private NPath path;
     private NPathOption[] options;
     private NInputSource result;
+    private final long maxLines;
+    private final long maxBytes;
 
 
     /**
@@ -36,18 +41,29 @@ public class NExecOutput {
      * @return a NExecOutput configured to discard output
      */
     public static NExecOutput ofNull() {
-        return new NExecOutput(NRedirectType.NULL, null, null, null);
+        return new NExecOutput(NRedirectType.NULL, null, null, null, -1, -1);
     }
 
     /**
      * Captures the command output into memory.
      * <p>
-     * The result can be read later via {@link #getResultBytes()} or {@link #getResultString()}.
+     * The result can be read later via {@link #resultBytes()} or {@link #resultString()}.
      *
      * @return a NExecOutput configured to capture output in memory
      */
     public static NExecOutput ofGrabMem() {
-        return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null);
+        return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null, -1, -1);
+    }
+
+    /**
+     * Creates a new instance of grab mem.
+     *
+     * @param maxBytes max bytes
+     * @param maxLines max lines
+     * @return of grab mem result
+     */
+    public static NExecOutput ofGrabMem(int maxBytes, int maxLines) {
+        return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null, maxBytes, maxLines);
     }
 
     /**
@@ -58,7 +74,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to capture output to a temporary file
      */
     public static NExecOutput ofGrabFile() {
-        return new NExecOutput(NRedirectType.GRAB_FILE, null, null, null);
+        return new NExecOutput(NRedirectType.GRAB_FILE, null, null, null, -1, -1);
     }
 
     /**
@@ -69,7 +85,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to inherit output
      */
     public static NExecOutput ofInherit() {
-        return new NExecOutput(NRedirectType.INHERIT, null, null, null);
+        return new NExecOutput(NRedirectType.INHERIT, null, null, null, -1, -1);
     }
 
 
@@ -79,7 +95,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to use default redirection
      */
     public static NExecOutput ofRedirect() {
-        return new NExecOutput(NRedirectType.REDIRECT, null, null, null);
+        return new NExecOutput(NRedirectType.REDIRECT, null, null, null, -1, -1);
     }
 
     /**
@@ -103,7 +119,7 @@ public class NExecOutput {
      * @return a NExecOutput configured to write output to the given stream
      */
     public static NExecOutput ofStream(OutputStream stream) {
-        return stream == null ? ofInherit() : new NExecOutput(NRedirectType.STREAM, stream, null, null);
+        return stream == null ? ofInherit() : new NExecOutput(NRedirectType.STREAM, stream, null, null, -1, -1);
     }
 
     /**
@@ -112,30 +128,30 @@ public class NExecOutput {
      * @return a NExecOutput configured to pipe output
      */
     public static NExecOutput ofPipe() {
-        return new NExecOutput(NRedirectType.PIPE, null, null, null);
+        return new NExecOutput(NRedirectType.PIPE, null, null, null, -1, -1);
     }
 
 
     /**
      * Redirects command output to the specified file path.
      *
-     * @param path the target file path
+     * @param path    the target file path
      * @param options optional path options (e.g., append)
      * @return a NExecOutput configured to write output to the file
      */
     public static NExecOutput ofPath(NPath path, NPathOption... options) {
-        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, options);
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, options, -1, -1);
     }
 
     /**
      * Redirects command output to the specified file path with optional append mode.
      *
-     * @param path the target file path
+     * @param path   the target file path
      * @param append if true, output is appended; otherwise, it overwrites the file
      * @return a NExecOutput configured to write output to the file
      */
     public static NExecOutput ofPath(NPath path, boolean append) {
-        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, append ? null : new NPathOption[]{NPathOption.APPEND});
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, append ? null : new NPathOption[]{NPathOption.APPEND}, -1, -1);
     }
 
     /**
@@ -145,37 +161,83 @@ public class NExecOutput {
      * @return a NExecOutput configured to write output to the file
      */
     public static NExecOutput ofPath(NPath path) {
-        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, null);
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, null, -1, -1);
     }
 
-    private NExecOutput(NRedirectType type, OutputStream stream, NPath path, NPathOption[] options) {
+    /**
+     * N exec output.
+     *
+     * @param type type
+     * @param stream stream
+     * @param path path
+     * @param options options
+     * @param maxBytes max bytes
+     * @param maxLines max lines
+     * @return n exec output result
+     */
+    private NExecOutput(NRedirectType type, OutputStream stream, NPath path, NPathOption[] options, long maxBytes, long maxLines) {
         this.type = type;
         this.stream = stream;
         this.path = path;
-        this.options = options == null ? new NPathOption[0] : options;
+        this.options = options == null ? new NPathOption[0] : Arrays.copyOf(options, options.length);
+        this.maxLines = maxLines;
+        this.maxBytes = maxBytes;
     }
 
-    public NRedirectType getType() {
+    /**
+     * Max lines.
+     *
+     * @return max lines result
+     */
+    public long maxLines() {
+        return maxLines;
+    }
+
+    /**
+     * Max bytes.
+     *
+     * @return max bytes result
+     */
+    public long maxBytes() {
+        return maxBytes;
+    }
+
+    /**
+     * Type.
+     *
+     * @return type result
+     */
+    public NRedirectType type() {
         return type;
     }
 
-    public NOptional<NInputSource> getResultSource() {
-        switch (getType()) {
+    /**
+     * Result source.
+     *
+     * @return result source result
+     */
+    public NOptional<NInputSource> resultSource() {
+        switch (type()) {
             case GRAB_STREAM:
             case GRAB_FILE: {
                 if (result != null) {
                     return NOptional.of(result);
                 }
-                return NOptional.ofEmpty(() -> NMsg.ofPlain("grabbed result is not available"));
+                return NOptional.ofEmpty(() -> NMsg.ofP("grabbed result is not available"));
             }
         }
-        return NOptional.ofEmpty(() -> NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
+        return NOptional.ofEmpty(() -> NMsg.ofP("no buffer was configured; should call setGrabOutString"));
     }
 
-    public byte[] getResultBytes() {
+    /**
+     * Result bytes.
+     *
+     * @return result bytes result
+     */
+    public byte[] resultBytes() {
         NInputSource s = null;
         try {
-            s = getResultSource().get();
+            s = resultSource().get();
             return s.readBytes();
         } finally {
             if (s != null) {
@@ -184,47 +246,105 @@ public class NExecOutput {
         }
     }
 
-    public String getResultString() {
-        return new String(getResultBytes());
+    /**
+     * Result string.
+     *
+     * @return result string result
+     */
+    public String resultString() {
+        return new String(resultBytes());
     }
 
-    public OutputStream getStream() {
+    /**
+     * Output stream.
+     *
+     * @return output stream result
+     */
+    public OutputStream outputStream() {
         return stream;
     }
 
-    public NPath getPath() {
+    /**
+     * Path.
+     *
+     * @return path result
+     */
+    public NPath path() {
         return path;
     }
 
-    public NPathOption[] getOptions() {
-        return options;
+    /**
+     * Options.
+     *
+     * @return options result
+     */
+    public List<NPathOption> options() {
+        return Arrays.asList(options);
     }
 
-    public NExecOutput setType(NRedirectType type) {
+    /**
+     * Type.
+     *
+     * @param type type
+     * @return type result
+     */
+    public NExecOutput type(NRedirectType type) {
         this.type = type;
         return this;
     }
 
-    public NExecOutput setStream(OutputStream stream) {
+    /**
+     * Output stream.
+     *
+     * @param stream stream
+     * @return output stream result
+     */
+    @NSetter
+    public NExecOutput outputStream(OutputStream stream) {
         this.stream = stream;
         return this;
     }
 
-    public NExecOutput setPath(NPath path) {
+    /**
+     * Path.
+     *
+     * @param path path
+     * @return path result
+     */
+    @NSetter
+    public NExecOutput path(NPath path) {
         this.path = path;
         return this;
     }
 
-    public NExecOutput setOptions(NPathOption[] options) {
-        this.options = options;
+    /**
+     * Options.
+     *
+     * @param options options
+     * @return options result
+     */
+    public NExecOutput options(NPathOption[] options) {
+        this.options = options == null ? new NPathOption[0] : Arrays.copyOf(options, options.length);
         return this;
     }
 
-    public NInputSource getResult() {
+    /**
+     * Result.
+     *
+     * @return result result
+     */
+    public NInputSource result() {
         return result;
     }
 
-    public NExecOutput setResult(NInputSource result) {
+    /**
+     * Result.
+     *
+     * @param result result
+     * @return result result
+     */
+    @NSetter
+    public NExecOutput result(NInputSource result) {
         this.result = result;
         return this;
     }

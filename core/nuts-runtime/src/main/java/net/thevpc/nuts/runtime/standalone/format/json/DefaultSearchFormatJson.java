@@ -7,15 +7,14 @@ package net.thevpc.nuts.runtime.standalone.format.json;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NElementFormatter;
 import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 
 /**
  * @author thevpc
@@ -24,24 +23,22 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     private boolean compact;
 
-    NTexts txt;
     private NCodeHighlighter codeFormat;
 
     public DefaultSearchFormatJson(NPrintStream writer, NFetchDisplayOptions options) {
         super(writer, NContentType.JSON, options);
-        txt = NTexts.of();
-        codeFormat = NTexts.of().getCodeHighlighter("json");
+        codeFormat = NTextRPI.of().codeHighlighter("json");
     }
 
     @Override
     public void start() {
-        getWriter().println(codeFormat.tokenToText("[", "separator", txt));
+        getWriter().println(codeFormat.tokenToText("[", "separator"));
         getWriter().flush();
     }
 
     @Override
     public void complete(long count) {
-        getWriter().println(codeFormat.tokenToText("]", "separator", txt));
+        getWriter().println(codeFormat.tokenToText("]", "separator"));
         getWriter().flush();
     }
 
@@ -56,7 +53,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         }
         switch (aa.key()) {
             case "--compact": {
-                cmdLine.matcher().matchFlag((v) -> this.compact = v.booleanValue()).anyMatch();
+                cmdLine.matcher().whenAny().asFlag((v) -> this.compact = v.booleanValue()).anyMatch();
                 return true;
             }
         }
@@ -71,9 +68,9 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
             getWriter().print("  ");
         }
         String json = NElementWriter.ofJson()
-                .setCompact(isCompact())
+                .compact(isCompact())
                 .formatPlain(object);
-        NText ee = codeFormat.stringToText(json, txt);
+        NText ee = codeFormat.stringToText(json);
         getWriter().println(ee);
         getWriter().flush();
     }

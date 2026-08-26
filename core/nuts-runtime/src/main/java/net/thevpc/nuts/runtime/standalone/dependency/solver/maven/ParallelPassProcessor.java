@@ -55,7 +55,7 @@ class ParallelPassProcessor {
         
         NDependencyInfo oldDepInfo = mergedVisitedSet.find(currentNode.dependency);
         if (oldDepInfo != null) {
-            if (oldDepInfo.dependency.getVersion().equals(currentNode.dependency.getVersion())) {
+            if (oldDepInfo.dependency.version().equals(currentNode.dependency.version())) {
                 mavenNDependencySolver.doLog("processCurrentNonProvided already visited " + currentNode.dependency);
                 return;
             } else {
@@ -89,7 +89,7 @@ class ParallelPassProcessor {
                     mergedRootNodeBuilders.add(currentNode);
                     currentNode.includedInClassPath = true;
                     List<NDependency> immediate = CoreFilterUtils.filterDependencies(id,
-                            currentNode.getEffectiveDescriptor().getDependencies(),
+                            currentNode.getEffectiveDescriptor().dependencies(),
                             mavenNDependencySolver.effDependencyFilter);
                     immediates.addAll(immediate);
                 } else {
@@ -111,7 +111,7 @@ class ParallelPassProcessor {
                 mergedRootNodeBuilders.add(currentNode);
                 currentNode.includedInClassPath = true;
             }
-            for (NDependency dependency : effectiveDescriptor.getDependencies()) {
+            for (NDependency dependency : effectiveDescriptor.dependencies()) {
                 if (currentNode.isAcceptableDependency(dependency)) {
                     NDependencyTreeNodeBuild childNode = new NDependencyTreeNodeBuild(mavenNDependencySolver, currentNode, dependency, null, currentNode.depth + 1);
                     currentNode.children.add(childNode);
@@ -238,7 +238,7 @@ class ParallelPassProcessor {
         final NDependency[] nonMergedDepsList = nonMergedVisitedSet.visitedSet.values().stream().map(NDependencyInfo::getDependency)
                 .toArray(NDependency[]::new);
         return new DefaultNDependencies(
-                mavenNDependencySolver.getName(),
+                mavenNDependencySolver.name(),
                 sourceIds.toArray(new NId[0]), mavenNDependencySolver.getDependencyFilter(),
                 immediates.toArray(new NDependency[0]),
                 nonMergedDepsList,

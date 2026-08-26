@@ -27,7 +27,6 @@ package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NExceptions;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -54,6 +53,12 @@ public class NArtifactNotFoundException extends NException {
      * @param id artifact id
      */
     public NArtifactNotFoundException(NId id) {
+      /**
+       * This.
+       *
+       * @param id id
+       * @param null null
+       */
         this(id, (NMsg) null);
     }
 
@@ -64,6 +69,14 @@ public class NArtifactNotFoundException extends NException {
      * @param cause cause
      */
     public NArtifactNotFoundException(NId id, Throwable cause) {
+      /**
+       * This.
+       *
+       * @param id id
+       * @param null null
+       * @param null null
+       * @param cause cause
+       */
         this(id, null, null, cause);
     }
 
@@ -77,6 +90,12 @@ public class NArtifactNotFoundException extends NException {
      * @param cause        cause
      */
     public NArtifactNotFoundException(NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param cause) cause)
+       * @param cause cause
+       */
         super(prepareMessage(id, dependencies, locations, cause), cause);
         this.id = id;
         if (locations != null) {
@@ -95,26 +114,49 @@ public class NArtifactNotFoundException extends NException {
      * @param cause   cause
      */
     public NArtifactNotFoundException(NId id, NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param cause) cause)
+       * @param cause cause
+       */
         super(prepareMessage(id, message, cause),cause);
         this.id = id;
     }
 
+    /**
+     * Prepare message.
+     *
+     * @param id id
+     * @param dependencies dependencies
+     * @param locations locations
+     * @param cause cause
+     * @return prepare message result
+     */
     private static NMsg prepareMessage(NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
         String dependenciesToString = dependenciesToString(dependencies);
         if(cause==null){
-            return NMsg.ofC("artifact not found %s%s", (id == null ? "<null>" : id.getLongId()), dependenciesToString);
+            return NMsg.ofC("artifact not found %s%s", (id == null ? "<null>" : id.longId()), dependenciesToString);
         }
-        return NMsg.ofC("artifact not found %s : %s%s", (id == null ? "<null>" : id.getLongId()), NExceptions.getErrorMessage(cause), dependenciesToString);
+        return NMsg.ofC("artifact not found %s : %s%s", (id == null ? "<null>" : id.longId()), NException.getErrorMessage(cause), dependenciesToString);
     }
 
+    /**
+     * Prepare message.
+     *
+     * @param id id
+     * @param message message
+     * @param cause cause
+     * @return prepare message result
+     */
     private static NMsg prepareMessage(NId id, NMsg message, Throwable cause) {
         if(message!=null){
             return message;
         }
         if(cause==null){
-            return NMsg.ofC("artifact not found %s", (id == null ? "<null>" : id.getLongId()));
+            return NMsg.ofC("artifact not found %s", (id == null ? "<null>" : id.longId()));
         }
-        return NMsg.ofC("artifact not found %s : %s", (id == null ? "<null>" : id.getLongId()), NExceptions.getErrorMessage(cause));
+        return NMsg.ofC("artifact not found %s : %s", (id == null ? "<null>" : id.longId()), NException.getErrorMessage(cause));
     }
 
     /**
@@ -124,9 +166,22 @@ public class NArtifactNotFoundException extends NException {
      * @param message message
      */
     public NArtifactNotFoundException(NId id, NMsg message) {
+      /**
+       * This.
+       *
+       * @param id id
+       * @param message message
+       * @param null null
+       */
         this(id, message, null);
     }
 
+    /**
+     * Dependencies to string.
+     *
+     * @param dependencies dependencies
+     * @return dependencies to string result
+     */
     protected static String dependenciesToString(NIdInvalidDependency[] dependencies) {
         Set<NIdInvalidDependency> missingDependencies0 = dependencies == null ?
                 Collections.emptySet() : Collections.unmodifiableSet(Arrays.stream(dependencies).filter(Objects::nonNull).collect(Collectors.toSet()));
@@ -140,10 +195,17 @@ public class NArtifactNotFoundException extends NException {
         return sb.toString();
     }
 
+    /**
+     * Dependencies to string.
+     *
+     * @param prefix prefix
+     * @param d d
+     * @return dependencies to string result
+     */
     protected static String dependenciesToString(String prefix, NIdInvalidDependency d) {
         StringBuilder sb = new StringBuilder();
         sb.append(prefix).append(d.id);
-        for (NIdInvalidDependency d2 : d.getCause()) {
+        for (NIdInvalidDependency d2 : d.cause()) {
             sb.append("\n").append(dependenciesToString(prefix + "  ", d2));
         }
         return sb.toString();
@@ -155,20 +217,35 @@ public class NArtifactNotFoundException extends NException {
      * @return artifact id
      */
     public NIdInvalidDependency toInvalidDependency() {
-        return new NIdInvalidDependency(getId(),
-                getMissingDependencies()
+        return new NIdInvalidDependency(id(),
+                missingDependencies()
         );
     }
 
-    public NId getId() {
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    public NId id() {
         return id;
     }
 
-    public Set<NIdInvalidDependency> getMissingDependencies() {
+    /**
+     * Missing dependencies.
+     *
+     * @return missing dependencies result
+     */
+    public Set<NIdInvalidDependency> missingDependencies() {
         return missingDependencies;
     }
 
-    public Set<NIdInvalidLocation> getLocations() {
+    /**
+     * Locations.
+     *
+     * @return locations result
+     */
+    public Set<NIdInvalidLocation> locations() {
         return locations;
     }
 
@@ -179,16 +256,33 @@ public class NArtifactNotFoundException extends NException {
         private final NId id;
         private final Set<NIdInvalidDependency> cause;
 
+        /**
+         * N id invalid dependency.
+         *
+         * @param id id
+         * @param cause cause
+         * @return n id invalid dependency result
+         */
         public NIdInvalidDependency(NId id, Set<NIdInvalidDependency> cause) {
             this.id = id;
             this.cause = cause == null ? Collections.emptySet() : cause;
         }
 
-        public NId getId() {
+        /**
+         * Id.
+         *
+         * @return id result
+         */
+        public NId id() {
             return id;
         }
 
-        public Set<NIdInvalidDependency> getCause() {
+        /**
+         * Cause.
+         *
+         * @return cause result
+         */
+        public Set<NIdInvalidDependency> cause() {
             return cause;
         }
 
@@ -215,21 +309,44 @@ public class NArtifactNotFoundException extends NException {
         private final String url;
         private final String message;
 
+        /**
+         * N id invalid location.
+         *
+         * @param repository repository
+         * @param url url
+         * @param message message
+         * @return n id invalid location result
+         */
         public NIdInvalidLocation(String repository, String url, String message) {
             this.repository = repository;
             this.url = url;
             this.message = message;
         }
 
-        public String getRepository() {
+        /**
+         * Repository.
+         *
+         * @return repository result
+         */
+        public String repository() {
             return repository;
         }
 
-        public String getUrl() {
+        /**
+         * Url.
+         *
+         * @return url result
+         */
+        public String url() {
             return url;
         }
 
-        public String getMessage() {
+        /**
+         * Message.
+         *
+         * @return message result
+         */
+        public String message() {
             return message;
         }
 

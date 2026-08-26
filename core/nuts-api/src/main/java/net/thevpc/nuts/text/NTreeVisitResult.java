@@ -48,10 +48,19 @@ public enum NTreeVisitResult implements NEnum {
      */
     private final String id;
 
+  /**
+   * N tree visit result.
+   */
     NTreeVisitResult() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NTreeVisitResult> parse(String value) {
         return NEnumUtils.parseEnum(value, NTreeVisitResult.class);
     }

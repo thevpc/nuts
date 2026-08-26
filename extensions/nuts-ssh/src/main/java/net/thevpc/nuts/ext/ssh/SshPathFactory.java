@@ -4,9 +4,9 @@ import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.spi.NDefaultScorableContext;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -33,12 +33,12 @@ public class SshPathFactory implements NPathFactorySPI {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        Object cri = context.getCriteria();
+        Object cri = context.criteria();
         if(!(cri instanceof String)) {
             return NScorable.DEFAULT_SCORE;
         }
         String path = (String) cri;
-        if(NStringUtils.trim(path).startsWith("ssh:")){
+        if(NStringUtils.strip(path).startsWith("ssh:")){
             return NScorable.DEFAULT_SCORE;
         }
         return NScorable.UNSUPPORTED_SCORE;

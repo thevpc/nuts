@@ -14,7 +14,7 @@ public interface NRetryCallFactory {
      *
      * @return the retry call store, may be {@code null} if not configured
      */
-    NRetryCallStore getStore();
+    NRetryCallStore store();
 
     /**
      * Returns a new factory instance using the provided store for persistence.

@@ -36,7 +36,7 @@ import net.thevpc.nuts.platform.NStoreType;
  */
 public interface NAppStoreLocationResolver {
     /**
-     * used in {@link NApp#getVersionFolder(NStoreType, String)}
+     * used in {@link NApplication#getVersionFolder(NStoreType, String)}
      * to resolve folder for the given version
      *
      * @param id         nuts id

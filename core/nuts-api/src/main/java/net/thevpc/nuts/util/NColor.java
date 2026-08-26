@@ -448,105 +448,299 @@ public interface NColor {
     }
 
 
+    /**
+     * Creates a new instance of of name.
+     *
+     * @param name name
+     * @return of name result
+     */
     static NOptional<NColor> ofName(String name) {
         return AbstractNColor.ofName(name);
     }
 
+    /**
+     * Creates a new instance of of canonical name.
+     *
+     * @param name name
+     * @return of canonical name result
+     */
     static NOptional<List<NColor>> ofCanonicalName(String name) {
         return AbstractNColor.ofCanonicalName(name);
     }
 
+    /**
+     * Converts to html hex.
+     *
+     * @param cl cl
+     * @return to html hex result
+     */
     static String toHtmlHex(NColor cl) {
         return AbstractNColor.toHtmlHex(cl);
     }
 
+    /**
+     * Ansi to color.
+     *
+     * @param index index
+     * @return ansi to color result
+     */
     static NColor ansiToColor(int index) {
         return AbstractNColor.ansiToColor(index);
     }
 
+    /**
+     * Creates a new instance of of4.
+     *
+     * @param color color
+     * @return of4 result
+     */
     static NColor of4(int color) {
         return AbstractNColor.of4(color);
     }
 
+    /**
+     * Creates a new instance of of4.
+     *
+     * @param color color
+     * @param name name
+     * @return of4 result
+     */
     static NColor of4(int color, String name) {
         return AbstractNColor.of4(color,name);
     }
 
+    /**
+     * Creates a new instance of of8.
+     *
+     * @param color color
+     * @return of8 result
+     */
     static NColor of8(int color) {
         return AbstractNColor.of8(color);
     }
 
+    /**
+     * Creates a new instance of of8.
+     *
+     * @param color color
+     * @param name name
+     * @return of8 result
+     */
     static NColor of8(int color, String name) {
         return AbstractNColor.of8(color,name);
     }
 
+    /**
+     * Creates a new instance of of16.
+     *
+     * @param color color
+     * @return of16 result
+     */
     static NColor of16(int color) {
         return AbstractNColor.of16(color);
     }
 
+    /**
+     * Creates a new instance of of16.
+     *
+     * @param color color
+     * @param name name
+     * @return of16 result
+     */
     static NColor of16(int color, String name) {
         return AbstractNColor.of16(color,name);
     }
 
+    /**
+     * Creates a new instance of of24.
+     *
+     * @param color color
+     * @return of24 result
+     */
     static NColor of24(int color) {
         return AbstractNColor.of24(color);
     }
+    /**
+     * Creates a new instance of of24.
+     *
+     * @param color color
+     * @param name name
+     * @return of24 result
+     */
     static NColor of24(int color, String name) {
         return AbstractNColor.of24(color,name);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param r r
+     * @param g g
+     * @param b b
+     * @return of32 result
+     */
     static NColor of32(int r, int g, int b) {
         return AbstractNColor.of32(r,g,b);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param r r
+     * @param g g
+     * @param b b
+     * @param name name
+     * @return of32 result
+     */
     static NColor of32(int r, int g, int b, String name) {
         return AbstractNColor.of32(r,g,b,name);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param r r
+     * @param g g
+     * @param b b
+     * @param a a
+     * @return of32 result
+     */
     static NColor of32(int r, int g, int b, int a) {
         return AbstractNColor.of32(r,g,b,a);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param r r
+     * @param g g
+     * @param b b
+     * @param a a
+     * @param name name
+     * @return of32 result
+     */
     static NColor of32(int r, int g, int b, int a, String name) {
         return AbstractNColor.of32(r,g,b,a,name);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param color color
+     * @return of32 result
+     */
     static NColor of32(int color) {
         return AbstractNColor.of32(color);
     }
 
+    /**
+     * Creates a new instance of of32.
+     *
+     * @param color color
+     * @param name name
+     * @return of32 result
+     */
     static NColor of32(int color, String name) {
         return AbstractNColor.of32(color,name);
     }
 
+    /**
+     * Creates a new instance of of64.
+     *
+     * @param color color
+     * @return of64 result
+     */
     static NColor of64(long color) {
         return AbstractNColor.of64(color);
     }
 
+    /**
+     * Creates a new instance of of64.
+     *
+     * @param color color
+     * @param name name
+     * @return of64 result
+     */
     static NColor of64(long color, String name) {
         return AbstractNColor.of64(color,name);
     }
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    String name();
 
-    NColorBits getBits();
+    /**
+     * Bits.
+     *
+     * @return bits result
+     */
+    NColorBits bits();
 
+    /**
+     * With name.
+     *
+     * @param name name
+     * @return with name result
+     */
     NColor withName(String name);
 
-    int getIntColor();
+    /**
+     * Int color.
+     *
+     * @return int color result
+     */
+    int intColor();
 
-    long getLongColor();
+    /**
+     * Long color.
+     *
+     * @return long color result
+     */
+    long longColor();
 
+    /**
+     * Converts to color32.
+     *
+     * @return to color32 result
+     */
     NColor toColor32();
 
-    int getRGB();
+    /**
+     * Rgb.
+     *
+     * @return rgb result
+     */
+    int rgb();
 
-    int getRed();
+    /**
+     * Red.
+     *
+     * @return red result
+     */
+    int red();
 
-    int getGreen();
+    /**
+     * Green.
+     *
+     * @return green result
+     */
+    int green();
 
-    int getBlue();
+    /**
+     * Blue.
+     *
+     * @return blue result
+     */
+    int blue();
 
-    int getAlpha();
+    /**
+     * Alpha.
+     *
+     * @return alpha result
+     */
+    int alpha();
 
 }

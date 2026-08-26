@@ -31,7 +31,7 @@ public class NWorkBalancerFactoryImpl implements NWorkBalancerFactory {
     }
 
     @Override
-    public NWorkBalancerStore getStore() {
+    public NWorkBalancerStore store() {
         return store;
     }
 

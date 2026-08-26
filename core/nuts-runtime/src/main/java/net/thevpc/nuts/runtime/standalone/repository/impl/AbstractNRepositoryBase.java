@@ -44,7 +44,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchDesc
 import net.thevpc.nuts.runtime.standalone.repository.cmd.push.DefaultNPushRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchVersionsRepositoryCmd;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNUndeployRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
@@ -73,7 +73,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NIndexStore getIndexStore() {
+    public NIndexStore indexStore() {
         return nIndexStore;
     }
 
@@ -81,23 +81,23 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         this.options = options.copy();
         this.parentRepository = parent;
         this.configModel = new DefaultNRepositoryConfigModel(this, options, workspace,speed, supportedMirroring, repositoryType);
-        this.nIndexStore = NWorkspace.of().getIndexStoreClientFactory().createIndexStore(this);
+        this.nIndexStore = NWorkspace.of().indexStoreClientFactory().createIndexStore(this);
 //        setEnabled(options.isEnabled(), initSession);
     }
 
     @Override
     public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode) {
-        String groups = config().getGroups();
+        String groups = config().groups();
         if (NBlankable.isBlank(groups)) {
             return true;
         }
-        return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();
+        return GlobUtils.ofExact(groups).matcher(id.groupId()).matches();
     }
 
     @Override
     public String toString() {
         NRepositoryConfigManagerExt c = NRepositoryConfigManagerExt.of(config());
-        String name = getName();
+        String name = name();
         String storePath = null;
         NRepositoryConfigModel model = c.getModel();
         NRepositoryLocation loc = model==null?null:model.getLocation();
@@ -130,13 +130,13 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
 
     @Override
     public NId searchLatestVersion(NId id, NDefinitionFilter filter, NFetchMode fetchMode) {
-        Iterator<NId> allVersions = searchVersions().setId(id).setFilter(filter)
-                .setFetchMode(fetchMode)
+        Iterator<NId> allVersions = searchVersions().id(id).filter(filter)
+                .fetchMode(fetchMode)
                 .getResult();
         NId a = null;
         while (allVersions.hasNext()) {
             NId next = allVersions.next();
-            if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+            if (a == null || next.version().compareTo(a.version()) > 0) {
                 a = next;
             }
         }
@@ -144,7 +144,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     protected void traceMessage(NFetchMode fetchMode, Level lvl, NId id, NMsgIntent tracePhase, String title, long startTime, NMsg extraMessage) {
-        NLogUtils.traceMessage(NLog.of(AbstractNRepositoryBase.class), lvl, getName(), fetchMode, id, tracePhase, title, startTime, extraMessage);
+        NLogUtils.traceMessage(NLog.of(AbstractNRepositoryBase.class), lvl, name(), fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 
     @Override
@@ -173,8 +173,8 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NRepositoryUndeployCmd undeploy() {
-        return new DefaultNRepositoryUndeployCmd(this);
+    public NUndeployRepositoryCmd undeploy() {
+        return new DefaultNUndeployRepositoryCmd(this);
     }
 
     protected String getIdComponentExtension(String packaging) {
@@ -191,7 +191,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     public NPath getIdRemotePath(NId id) {
-        return config().getLocationPath().resolve(getIdRelativePath(id));
+        return config().locationPath().resolve(getIdRelativePath(id));
     }
 
     protected NPath getIdRelativePath(NId id) {

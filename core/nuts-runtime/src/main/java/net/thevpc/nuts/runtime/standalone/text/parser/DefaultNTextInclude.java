@@ -28,14 +28,11 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.NPrimitiveText;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NTextInclude;
 import net.thevpc.nuts.text.NTextType;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -51,7 +48,7 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
     }
 
     @Override
-    public String getText() {
+    public String text() {
         return value;
     }
 
@@ -118,22 +115,18 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
         return new DefaultNTextPlain("");
     }
 
-    public List<NText> split(String chars, boolean returnSeparator) {
-        return new ArrayList<>();
-    }
-
     @Override
-    public NText trim() {
+    public NText strip() {
         return this;
     }
 
     @Override
-    public NText trimLeft() {
+    public NText stripLeft() {
         return this;
     }
 
     @Override
-    public NText trimRight() {
+    public NText stripRight() {
         return this;
     }
 }

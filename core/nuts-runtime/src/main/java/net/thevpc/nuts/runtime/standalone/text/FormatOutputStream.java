@@ -5,7 +5,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 
 import java.io.OutputStream;
 
@@ -15,7 +15,7 @@ public class FormatOutputStream extends RenderedOutputStream implements Extended
         super(out, term, false);
         NTerminalModeOp op = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (op != NTerminalModeOp.NOP) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("expected Raw"));
+            throw new NIllegalArgumentException(NMsg.ofP("expected Raw"));
         }
     }
 

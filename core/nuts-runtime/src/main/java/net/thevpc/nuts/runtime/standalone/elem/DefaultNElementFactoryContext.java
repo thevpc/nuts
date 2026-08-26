@@ -88,7 +88,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public Predicate<Type> getSimpleTypesFilter() {
+    public Predicate<Type> simpleTypesFilter() {
         return globalIndestructibleTypesFilter;
     }
 
@@ -97,7 +97,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         if (any == null) {
             return false;
         }
-        Predicate<Type> f = getSimpleTypesFilter();
+        Predicate<Type> f = simpleTypesFilter();
         if (f == null) {
             return false;
         }
@@ -109,7 +109,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         if (any == null) {
             return true;
         }
-        Predicate<Type> f = getSimpleTypesFilter();
+        Predicate<Type> f = simpleTypesFilter();
         if (f == null) {
             return true;
         }
@@ -133,7 +133,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public Map<String, Object> getProperties() {
+    public Map<String, Object> properties() {
         return properties;
     }
 
@@ -281,7 +281,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public NReflectRepository getTypesRepository() {
+    public NReflectRepository typesRepository() {
         return repository;
     }
 

@@ -40,6 +40,11 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NContentTypeWriter extends NObjectWriter {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NContentTypeWriter of() {
         return NExtensions.of(NContentTypeWriter.class);
     }
@@ -56,5 +61,11 @@ public interface NContentTypeWriter extends NObjectWriter {
     @Override
     NContentTypeWriter configure(boolean skipUnsupported, String... args);
 
-    NContentTypeWriter setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    NContentTypeWriter ntf(boolean ntf);
 }

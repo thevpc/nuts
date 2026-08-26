@@ -2,11 +2,13 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 public class NDependencyScopeFilter extends AbstractDependencyFilter {
@@ -50,7 +52,7 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        return scopes.isEmpty() || scopes.contains(NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API));
+        return scopes.isEmpty() || scopes.contains(NDependencyScope.parse(dependency.scope()).orElse(NDependencyScope.API));
     }
 
     @Override
@@ -62,6 +64,19 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     @Override
     public NDependencyFilter simplify() {
-        return scopes.isEmpty()? NDependencyFilters.of().always() : this;
+        return scopes.isEmpty()? NDependencyFilterRPI.of().always() : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyScopeFilter that = (NDependencyScopeFilter) o;
+        return Objects.equals(scopes, that.scopes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), scopes);
     }
 }

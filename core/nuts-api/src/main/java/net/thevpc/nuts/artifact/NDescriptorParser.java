@@ -29,7 +29,9 @@ package net.thevpc.nuts.artifact;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.File;
 import java.io.InputStream;
@@ -44,20 +46,40 @@ import java.nio.file.Path;
  */
 public interface NDescriptorParser extends NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDescriptorParser of() {
         return NExtensions.of(NDescriptorParser.class);
     }
 
+    /**
+     * Creates a new instance of of maven.
+     *
+     * @return of maven result
+     */
     static NDescriptorParser ofMaven() {
-        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.MAVEN);
+        return NExtensions.of(NDescriptorParser.class).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
+    /**
+     * Creates a new instance of of manifest.
+     *
+     * @return of manifest result
+     */
     static NDescriptorParser ofManifest() {
-        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.MANIFEST);
+        return NExtensions.of(NDescriptorParser.class).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
+    /**
+     * Creates a new instance of of nuts.
+     *
+     * @return of nuts result
+     */
     static NDescriptorParser ofNuts() {
-        return NExtensions.of(NDescriptorParser.class).setDescriptorStyle(NDescriptorStyle.NUTS);
+        return NExtensions.of(NDescriptorParser.class).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
     /**
@@ -105,6 +127,12 @@ public interface NDescriptorParser extends NComponent {
      */
     NOptional<NDescriptor> parse(InputStream stream);
 
+    /**
+     * Parse.
+     *
+     * @param path path
+     * @return parse result
+     */
     NOptional<NDescriptor> parse(NPath path);
 
     /**
@@ -116,9 +144,22 @@ public interface NDescriptorParser extends NComponent {
      */
     NOptional<NDescriptor> parse(String descriptorString);
 
-    NDescriptorStyle getDescriptorStyle();
+    /**
+     * Descriptor style.
+     *
+     * @return descriptor style result
+     */
+    @NGetter
+    NDescriptorStyle descriptorStyle();
 
-    NDescriptorParser setDescriptorStyle(NDescriptorStyle descriptorStyle);
+    /**
+     * Descriptor style.
+     *
+     * @param descriptorStyle descriptor style
+     * @return descriptor style result
+     */
+    @NSetter
+    NDescriptorParser descriptorStyle(NDescriptorStyle descriptorStyle);
 
 
 }

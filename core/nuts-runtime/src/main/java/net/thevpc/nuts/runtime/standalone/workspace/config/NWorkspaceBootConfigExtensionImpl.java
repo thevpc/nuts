@@ -13,7 +13,7 @@ class NWorkspaceBootConfigExtensionImpl implements NWorkspaceBootConfig.Extensio
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 

@@ -3,11 +3,13 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
 
@@ -70,29 +72,29 @@ public class CoreAnsiTermHelper {
         NChronometer chronometer = NChronometer.of();
         try {
             try {
-                String s = NExec.of()
+                String s = NStringUtils.strip(NExec.of()
                         .system()
-                        .setIn(NExecInput.ofNull())
-                        .addCommand(cmd)
-                        .failFast()
-                        .getGrabbedOutOnlyString()
-                        .trim();
-                if (!s.trim().isEmpty()) {
-                    return s.trim();
+                        .in(NExecInput.ofNull())
+                        .command(cmd)
+                        .failFast(true)
+                        .grabbedOutOnly()
+                );
+                if (!s.isEmpty()) {
+                    return s;
                 }
                 NLog.of(CoreAnsiTermHelper.class)
                         .log(NMsg.ofC("command (%s) returned nothing, repeat with delay").asFinest());
                 //add 500 of sleep time!
-                s = NExec.of()
+                s = NStringUtils.strip(NExec.of()
                         .system()
-                        .addCommand(cmd)
-                        .failFast()
-                        .setSleepMillis(500)
-                        .getGrabbedOutOnlyString()
-                        .trim()
+                        .command(cmd)
+                        .failFast(true)
+                        .sleepDuration(NDuration.ofMillis(500))
+                        .grabbedOutOnly()
+                        )
                 ;
-                if (!s.trim().isEmpty()) {
-                    return s.trim();
+                if (!NStringUtils.isBlank(s)) {
+                    return NStringUtils.strip(s);
                 }
                 return null;
             } catch (Exception ex) {

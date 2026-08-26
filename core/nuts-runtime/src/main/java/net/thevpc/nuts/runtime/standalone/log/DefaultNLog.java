@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.log.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgBuilder;
@@ -29,7 +30,7 @@ public class DefaultNLog implements NLog {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -74,13 +75,13 @@ public class DefaultNLog implements NLog {
         }
         DefaultNLogModel logModel = NWorkspaceExt.of().getModel().logModel;
 
-        if (logModel.getTermHandler().isLoggable(msg.getLevel())) {
+        if (logModel.getTermHandler().isLoggable(msg.level())) {
             logModel.getTermHandler().log(msg);
         }
-        if (logModel.getFileHandler() != null && logModel.getFileHandler().isLoggable(msg.getLevel())) {
+        if (logModel.getFileHandler() != null && logModel.getFileHandler().isLoggable(msg.level())) {
             logModel.getFileHandler().log(msg);
         }
-        if (logSPI.isLoggable(msg.getLevel())) {
+        if (logSPI.isLoggable(msg.level())) {
             logSPI.log(prepareMsg(msg));
         }
     }
@@ -98,7 +99,7 @@ public class DefaultNLog implements NLog {
 
         NMsg msg = msgSupplier.get();
         if (msg == null) {
-            msg = prepareMsg(NMsg.ofPlain("").withLevel(level));
+            msg = prepareMsg(NMsg.ofP("").withLevel(level));
         } else {
             msg = prepareMsg(msg.withLevel(level));
         }
@@ -123,7 +124,7 @@ public class DefaultNLog implements NLog {
     }
 
     private NMsg prepareMsg(NMsg other) {
-        NLogScope c = NLogs.of().getContext();
-        return other.withPrefix(c.getMessagePrefix()).withSuffix(c.getMessageSuffix()).withPlaceholders(c::getPlaceholder);
+        NLogScope c = NLogScope.current();
+        return other.withPrefix(c.messagePrefix()).withSuffix(c.messageSuffix()).withPlaceholders(c::getPlaceholder);
     }
 }

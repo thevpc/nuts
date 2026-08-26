@@ -14,7 +14,7 @@ import java.util.Map;
  * and store temporary state relevant to the current load balancing decision.
  * </p>
  * <p>
- * Variables can be set globally using {@link #setVar(String, NElement)} or per worker
+ * Variables can be set globally using {@link #setSharedVar(String, NElement)} or per worker
  * using {@link #setWorkerVar(String, String, NElement)}. These variables can influence
  * future strategy decisions within the same {@link NWorkBalancer} instance.
  * </p>
@@ -27,7 +27,7 @@ public interface NWorkBalancerStrategyContext {
      *
      * @return list of {@link NWorkBalancerWorker} currently part of the call
      */
-    List<NWorkBalancerWorker> getWorkers();
+    List<NWorkBalancerWorker> workers();
 
     /**
      * Returns the current load metrics of a specific worker.
@@ -43,7 +43,7 @@ public interface NWorkBalancerStrategyContext {
      *
      * @return map of worker names to their load metrics
      */
-    Map<String, NWorkBalancerWorkerLoad> getWorkerLoads();
+    Map<String, NWorkBalancerWorkerLoad> workerLoads();
 
     /**
      * Returns a global option for the current call.
@@ -58,7 +58,7 @@ public interface NWorkBalancerStrategyContext {
      *
      * @return map of option names to values
      */
-    Map<String, NElement> getOptions();
+    Map<String, NElement> options();
 
 
     /**
@@ -76,7 +76,7 @@ public interface NWorkBalancerStrategyContext {
      * @param name variable name
      * @return an optional containing the variable value, or empty if not set
      */
-    NOptional<NElement> getVar(String name);
+    NOptional<NElement> getSharedVar(String name);
 
     /**
      * Sets a variable specific to a worker.
@@ -89,7 +89,7 @@ public interface NWorkBalancerStrategyContext {
      * @param value variable value
      * @return this context for fluent API
      */
-    NWorkBalancerStrategyContext setWorkerVar(String workerName,String name, NElement value);
+    NWorkBalancerStrategyContext setWorkerVar(String workerName, String name, NElement value);
 
 
     /**
@@ -102,6 +102,6 @@ public interface NWorkBalancerStrategyContext {
      * @param value variable value
      * @return this context for fluent API
      */
-    NWorkBalancerStrategyContext setVar(String name, NElement value);
+    NWorkBalancerStrategyContext setSharedVar(String name, NElement value);
 
 }

@@ -34,9 +34,9 @@ import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -49,15 +49,15 @@ public class WarExecutorComponent implements NExecutorComponent {
     public static NId ID=NId.get("net.thevpc.nuts.exec:war").get();
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NDefinition def = context.getCriteria(NDefinition.class);
+        NDefinition def = context.criteria(NDefinition.class);
         if (def != null) {
-            if ("war".equals(NStringUtils.trim(def.getDescriptor().getPackaging()))) {
+            if ("war".equals(NStringUtils.strip(def.descriptor().packaging()))) {
                 return NScorable.DEFAULT_SCORE + 1;
             }
         }
@@ -73,8 +73,8 @@ public class WarExecutorComponent implements NExecutorComponent {
         return new AbstractSyncIProcessExecHelper() {
             public int exec() {
                 throw new NIOException(NMsg.ofC("unsupported yet execution of %s with packaging %s",
-                        executionContext.getDefinition().getId(),
-                        executionContext.getDefinition().getDescriptor().getPackaging()
+                        executionContext.definition().id(),
+                        executionContext.definition().descriptor().packaging()
                 ));
             }
         };

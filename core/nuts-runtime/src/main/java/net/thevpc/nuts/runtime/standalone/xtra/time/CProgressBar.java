@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.time;
 
-import net.thevpc.nuts.app.NApp;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -14,8 +14,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NLiteral;
@@ -49,20 +48,18 @@ public class CProgressBar {
 
     static {
         reg("", () -> {
-            NTexts txt = NTexts.of();
             return CorePlatformUtils.SUPPORTS_UTF_ENCODING ? createFormatter("braille") : createFormatter("simple");
         });
         reg("square", () -> {
-            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("square",
                     new NText[]{
-                            txt.ofStyled("⬜", NTextStyle.primary1()),
-                            txt.ofStyled("⬛", NTextStyle.primary1()),
+                            NText.ofStyled("⬜", NTextStyle.primary1()),
+                            NText.ofStyled("⬛", NTextStyle.primary1()),
                     },
-                    new NText[]{txt.ofStyled("⬛", NTextStyle.primary1())},
+                    new NText[]{NText.ofStyled("⬛", NTextStyle.primary1())},
                     10,
                     -1, 10, 10
             );
@@ -72,131 +69,124 @@ public class CProgressBar {
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
-            NTexts txt = NTexts.of();
             return new SimpleFormatter("vbar",
                     new NText[]{
-                            txt.ofStyled(" ", NTextStyle.primary1()),
-                            txt.ofStyled("▁", NTextStyle.primary1()),
-                            txt.ofStyled("▂", NTextStyle.primary1()),
-                            txt.ofStyled("▃", NTextStyle.primary1()),
-                            txt.ofStyled("▄", NTextStyle.primary1()),
-                            txt.ofStyled("▅", NTextStyle.primary1()),
-                            txt.ofStyled("▆", NTextStyle.primary1()),
-                            txt.ofStyled("▇", NTextStyle.primary1()),
-                            txt.ofStyled("█", NTextStyle.primary1()),
+                            NText.ofStyled(" ", NTextStyle.primary1()),
+                            NText.ofStyled("▁", NTextStyle.primary1()),
+                            NText.ofStyled("▂", NTextStyle.primary1()),
+                            NText.ofStyled("▃", NTextStyle.primary1()),
+                            NText.ofStyled("▄", NTextStyle.primary1()),
+                            NText.ofStyled("▅", NTextStyle.primary1()),
+                            NText.ofStyled("▆", NTextStyle.primary1()),
+                            NText.ofStyled("▇", NTextStyle.primary1()),
+                            NText.ofStyled("█", NTextStyle.primary1()),
                     },
                     new NText[]{
-                            txt.ofStyled("▁", NTextStyle.primary1()),
-                            txt.ofStyled("▂", NTextStyle.primary1()),
-                            txt.ofStyled("▃", NTextStyle.primary1()),
-                            txt.ofStyled("▄", NTextStyle.primary1()),
-                            txt.ofStyled("▅", NTextStyle.primary1()),
-                            txt.ofStyled("▆", NTextStyle.primary1()),
-                            txt.ofStyled("▇", NTextStyle.primary1()),
-                            txt.ofStyled("█", NTextStyle.primary1()),
+                            NText.ofStyled("▁", NTextStyle.primary1()),
+                            NText.ofStyled("▂", NTextStyle.primary1()),
+                            NText.ofStyled("▃", NTextStyle.primary1()),
+                            NText.ofStyled("▄", NTextStyle.primary1()),
+                            NText.ofStyled("▅", NTextStyle.primary1()),
+                            NText.ofStyled("▆", NTextStyle.primary1()),
+                            NText.ofStyled("▇", NTextStyle.primary1()),
+                            NText.ofStyled("█", NTextStyle.primary1()),
                     },
                     new NText[]{
-                            txt.ofStyled("█", NTextStyle.primary1()),
-                            txt.ofStyled("▇", NTextStyle.primary1()),
-                            txt.ofStyled("▆", NTextStyle.primary1()),
-                            txt.ofStyled("▅", NTextStyle.primary1()),
-                            txt.ofStyled("▄", NTextStyle.primary1()),
-                            txt.ofStyled("▃", NTextStyle.primary1()),
-                            txt.ofStyled("▂", NTextStyle.primary1()),
-                            txt.ofStyled("▁", NTextStyle.primary1()),
+                            NText.ofStyled("█", NTextStyle.primary1()),
+                            NText.ofStyled("▇", NTextStyle.primary1()),
+                            NText.ofStyled("▆", NTextStyle.primary1()),
+                            NText.ofStyled("▅", NTextStyle.primary1()),
+                            NText.ofStyled("▄", NTextStyle.primary1()),
+                            NText.ofStyled("▃", NTextStyle.primary1()),
+                            NText.ofStyled("▂", NTextStyle.primary1()),
+                            NText.ofStyled("▁", NTextStyle.primary1()),
                     },
                     1, 1, 10, 10
             );
         });
 
         reg("shadow", () -> {
-            NTexts txt = NTexts.of();
             //" ░▒▓█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("shadow",
                     new NText[]{
-                            txt.ofStyled(" ", NTextStyle.primary1()),
-                            txt.ofStyled("░", NTextStyle.primary1()),
-                            txt.ofStyled("▒", NTextStyle.primary1()),
-                            txt.ofStyled("▓", NTextStyle.primary1()),
-                            txt.ofStyled("█", NTextStyle.primary1()),
+                            NText.ofStyled(" ", NTextStyle.primary1()),
+                            NText.ofStyled("░", NTextStyle.primary1()),
+                            NText.ofStyled("▒", NTextStyle.primary1()),
+                            NText.ofStyled("▓", NTextStyle.primary1()),
+                            NText.ofStyled("█", NTextStyle.primary1()),
                     },
                     new NText[]{
-                            txt.ofStyled("█", NTextStyle.primary1()),
+                            NText.ofStyled("█", NTextStyle.primary1()),
                     },
                     1, 1, 10, 10
             );
         });
         reg("hbar", () -> {
-            NTexts txt = NTexts.of();
             //" ▏▎▍▌▋▊▉█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("hbar",
                     new NText[]{
-                            txt.ofStyled(" ", NTextStyle.primary1()),
-                            txt.ofStyled("▏", NTextStyle.primary1()),
-                            txt.ofStyled("▎", NTextStyle.primary1()),
-                            txt.ofStyled("▍", NTextStyle.primary1()),
-                            txt.ofStyled("▌", NTextStyle.primary1()),
-                            txt.ofStyled("▋", NTextStyle.primary1()),
-                            txt.ofStyled("▊", NTextStyle.primary1()),
-                            txt.ofStyled("▉", NTextStyle.primary1()),
-                            txt.ofStyled("█", NTextStyle.primary1()),
+                            NText.ofStyled(" ", NTextStyle.primary1()),
+                            NText.ofStyled("▏", NTextStyle.primary1()),
+                            NText.ofStyled("▎", NTextStyle.primary1()),
+                            NText.ofStyled("▍", NTextStyle.primary1()),
+                            NText.ofStyled("▌", NTextStyle.primary1()),
+                            NText.ofStyled("▋", NTextStyle.primary1()),
+                            NText.ofStyled("▊", NTextStyle.primary1()),
+                            NText.ofStyled("▉", NTextStyle.primary1()),
+                            NText.ofStyled("█", NTextStyle.primary1()),
                     },
                     new NText[]{
-                            txt.ofStyled("█", NTextStyle.primary1()),
+                            NText.ofStyled("█", NTextStyle.primary1()),
                     },
                     10, -1, 10, 10
             );
         });
         reg("circle", () -> {
-            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("circle",
                     new NText[]{
-                            txt.ofStyled("⚪", NTextStyle.primary1()),
-                            txt.ofStyled("⚫", NTextStyle.primary1()),
+                            NText.ofStyled("⚪", NTextStyle.primary1()),
+                            NText.ofStyled("⚫", NTextStyle.primary1()),
                     },
-                    new NText[]{txt.ofStyled("⚫", NTextStyle.primary1())},
+                    new NText[]{NText.ofStyled("⚫", NTextStyle.primary1())},
                     10, -1, 10, 10
             );
         });
         reg("parallelogram", () -> {
-            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("parallelogram",
                     new NText[]{
-                            txt.ofStyled("▱", NTextStyle.primary1()),
-                            txt.ofStyled("▰", NTextStyle.primary1()),
+                            NText.ofStyled("▱", NTextStyle.primary1()),
+                            NText.ofStyled("▰", NTextStyle.primary1()),
                     },
-                    new NText[]{txt.ofStyled("▰", NTextStyle.primary1())},
+                    new NText[]{NText.ofStyled("▰", NTextStyle.primary1())},
                     10, -1, 10, 10
             );
         });
         reg("simple", () -> {
-            NTexts txt = NTexts.of();
             return new SimpleFormatter("simple",
                     new NText[]{
-                            txt.ofStyled(" ", NTextStyle.primary1()),
-                            txt.ofStyled("*", NTextStyle.primary1()),
+                            NText.ofStyled(" ", NTextStyle.primary1()),
+                            NText.ofStyled("*", NTextStyle.primary1()),
                     },
-                    new NText[]{txt.ofStyled("*", NTextStyle.primary1())},
+                    new NText[]{NText.ofStyled("*", NTextStyle.primary1())},
                     null,
-                    txt.ofStyled("[", NTextStyle.primary4()),
-                    txt.ofStyled("]", NTextStyle.primary4()),
+                    NText.ofStyled("[", NTextStyle.primary4()),
+                    NText.ofStyled("]", NTextStyle.primary4()),
                     10, -1, 10, 10
             );
         });
         reg("clock", () -> {
-            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
@@ -204,18 +194,17 @@ public class CProgressBar {
             // ○◔◑◕●
             return new SimpleFormatter("clock",
                     new NText[]{
-                            txt.ofStyled("\u25CB", NTextStyle.primary1()),
-                            txt.ofStyled("\u25D4", NTextStyle.primary1()),
-                            txt.ofStyled("\u25D1", NTextStyle.primary1()),
-                            txt.ofStyled("\u25D5", NTextStyle.primary1()),
-                            txt.ofStyled("\u25CF", NTextStyle.primary1()),
+                            NText.ofStyled("\u25CB", NTextStyle.primary1()),
+                            NText.ofStyled("\u25D4", NTextStyle.primary1()),
+                            NText.ofStyled("\u25D1", NTextStyle.primary1()),
+                            NText.ofStyled("\u25D5", NTextStyle.primary1()),
+                            NText.ofStyled("\u25CF", NTextStyle.primary1()),
                     },
-                    new NText[]{txt.ofStyled("\u25CF", NTextStyle.primary1())}
+                    new NText[]{NText.ofStyled("\u25CF", NTextStyle.primary1())}
                     , 1, 1, 10, 10
             );
         });
         reg("braille", () -> {
-            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
@@ -223,26 +212,26 @@ public class CProgressBar {
             // ○◔◑◕●
             return new SimpleFormatter("braille",
                     new NText[]{
-                            txt.ofStyled("\u2800", NTextStyle.primary1()),// ⠀
-                            txt.ofStyled("\u2801", NTextStyle.primary1()),// ⠁
-                            txt.ofStyled("\u2803", NTextStyle.primary1()),// ⠃
-                            txt.ofStyled("\u2807", NTextStyle.primary1()),// ⠇
-                            txt.ofStyled("\u2846", NTextStyle.primary1()),// ⡆
-                            txt.ofStyled("\u28C4", NTextStyle.primary1()),// ⣄
-                            txt.ofStyled("\u28E0", NTextStyle.primary1()),// ⣠
-                            txt.ofStyled("\u28B0", NTextStyle.primary1()),// ⢰
-                            txt.ofStyled("\u2838", NTextStyle.primary1()),// ⠸
-                            txt.ofStyled("\u2819", NTextStyle.primary1()),// ⠙
-                            txt.ofStyled("\u2819", NTextStyle.primary1()),// ⠙
-                            txt.ofStyled("\u2809", NTextStyle.primary1()),// ⠉
+                            NText.ofStyled("\u2800", NTextStyle.primary1()),// ⠀
+                            NText.ofStyled("\u2801", NTextStyle.primary1()),// ⠁
+                            NText.ofStyled("\u2803", NTextStyle.primary1()),// ⠃
+                            NText.ofStyled("\u2807", NTextStyle.primary1()),// ⠇
+                            NText.ofStyled("\u2846", NTextStyle.primary1()),// ⡆
+                            NText.ofStyled("\u28C4", NTextStyle.primary1()),// ⣄
+                            NText.ofStyled("\u28E0", NTextStyle.primary1()),// ⣠
+                            NText.ofStyled("\u28B0", NTextStyle.primary1()),// ⢰
+                            NText.ofStyled("\u2838", NTextStyle.primary1()),// ⠸
+                            NText.ofStyled("\u2819", NTextStyle.primary1()),// ⠙
+                            NText.ofStyled("\u2819", NTextStyle.primary1()),// ⠙
+                            NText.ofStyled("\u2809", NTextStyle.primary1()),// ⠉
                     },
                     new NText[]{
-                            txt.ofStyled("\u2815", NTextStyle.primary1()),// ⠕
-                            txt.ofStyled("\u2817", NTextStyle.primary1()),// ⠗
+                            NText.ofStyled("\u2815", NTextStyle.primary1()),// ⠕
+                            NText.ofStyled("\u2817", NTextStyle.primary1()),// ⠗
                     },
                     new NText[]{
-                            txt.ofStyled("\u282A", NTextStyle.primary1()),// ⠪
-                            txt.ofStyled("\u283A", NTextStyle.primary1()),// ⠺
+                            NText.ofStyled("\u282A", NTextStyle.primary1()),// ⠪
+                            NText.ofStyled("\u283A", NTextStyle.primary1()),// ⠺
                     }
                     , 1, 1, 10, 10
             );
@@ -503,7 +492,7 @@ public class CProgressBar {
 
     public NText progress(int percent) {
         long now = System.currentTimeMillis();
-        NTexts txt = NTexts.of();
+        NTextRPI txt = NTextRPI.of();
         if (now < lastPrint + minPeriod) {
             return NText.ofBlank();
         }
@@ -511,7 +500,7 @@ public class CProgressBar {
         boolean indeterminate = percent < 0;
         int eSize = getEffSize(indeterminate);
         if (indeterminate) {
-            NTextBuilder formattedLine = txt.ofBuilder();
+            NTextBuilder formattedLine = NTextBuilder.of();
             formattedLine.append(getFormatter().getStart());
             int indeterminateSize = (int) (this.indeterminateRatio * eSize);
             boolean forward = true;
@@ -561,7 +550,7 @@ public class CProgressBar {
             double d = (eSize / 100.0 * percent);
             int x = (int) d;
             float rest = (float) (d - x);
-            NTextBuilder formattedLine = txt.ofBuilder();
+            NTextBuilder formattedLine = NTextBuilder.of();
             formattedLine.append(getFormatter().getStart());
             if (x > 0) {
                 for (int i = 0; i < x; i++) {
@@ -592,7 +581,7 @@ public class CProgressBar {
             }
             logger.log(NMsg.ofNtf(p).withLevel(armedLogLevel).withIntent(NMsgIntent.PROGRESS));
         } else {
-            NTerminalMode m = out.getTerminalMode();
+            NTerminalMode m = out.terminalMode();
             NText p = progress(percent, msg, m == NTerminalMode.FILTERED);
             if (p == null || p.isEmpty()) {
                 return;
@@ -605,7 +594,7 @@ public class CProgressBar {
         if (p == null || p.isEmpty()) {
             return;
         }
-        boolean forceNewline = out.getTerminalMode() == NTerminalMode.FILTERED;
+        boolean forceNewline = out.terminalMode() == NTerminalMode.FILTERED;
         Level armedLogLevel = options.getArmedLogLevel();
         if (options.isArmedNewline() || forceNewline) {
             out.print("\n");
@@ -621,12 +610,12 @@ public class CProgressBar {
             NSystemTerminalBase.Size size = null;
             int max=maxColumnsInOutput;
             try {
-                size = out.getTerminal().getTerminalSize();
+                size = out.terminal().terminalSize();
             }catch (Exception ex) {
                 // just ignore
             }
-            if(size!=null && size.getColumns()>0){
-                max=size.getColumns()-1;
+            if(size!=null && size.columns()>0){
+                max=size.columns()-1;
             }
 //            out.resetLine();
             int len = p.length();
@@ -638,8 +627,7 @@ public class CProgressBar {
     }
 
     public NText progress(int percent, NText msg, boolean forceNewline) {
-        NTexts txt = NTexts.of();
-        NTextBuilder sb = txt.ofBuilder();
+        NTextBuilder sb = NTextBuilder.of();
         if (maxMessage < columns) {
             maxMessage = columns;
         }
@@ -656,14 +644,14 @@ public class CProgressBar {
                         sb.append("\n");
                     }
                 } else {
-                    sb.append(txt.ofCommand(NTerminalCmd.CLEAR_LINE));
-                    sb.append(txt.ofCommand(NTerminalCmd.MOVE_LINE_START));
+                    sb.append(NText.ofCommand(NTerminalCmd.CLEAR_LINE));
+                    sb.append(NText.ofCommand(NTerminalCmd.MOVE_LINE_START));
                 }
             }
         }
         NText p = progress(percent);
         if (p == null) {
-            return txt.ofBlank();
+            return NText.ofBlank();
         }
         sb.append(p).append(" ");
         sb.append(msg);

@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NFetch;
@@ -29,7 +30,7 @@ public class MvnClient {
     }
 
     public boolean get(NId id, String repoURL) {
-        if (id.getShortName().equals(NET_VPC_APP_NUTS_MVN)) {
+        if (id.shortName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
         switch (status) {
@@ -37,13 +38,13 @@ public class MvnClient {
                 status = Status.DIRTY;
                 try {
                     NDefinition ff = NSearch.of()
-                            .setFetchStrategy(NFetchStrategy.ONLINE)
+                            .fetchStrategy(NFetchStrategy.ONLINE)
                             .addId(NET_VPC_APP_NUTS_MVN)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .setInlineDependencies(true).setLatest(true).getResultDefinitions().findFirst().get();
-                    for (NId nutsId : NSearch.of().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
-                        NFetch.of(nutsId).setFetchStrategy(NFetchStrategy.ONLINE)
-                                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
+                            .inlineDependencies(true).latest(true).getResultDefinitions().findFirst().get();
+                    for (NId nutsId : NSearch.of().addId(ff.id()).inlineDependencies(true).getResultIds()) {
+                        NFetch.of(nutsId).fetchStrategy(NFetchStrategy.ONLINE)
+                                .dependencyFilter(NDependencyFilter.ofRunnable())
                                 .getResultDefinition();
                     }
                     status = Status.SUCCESS;
@@ -67,15 +68,15 @@ public class MvnClient {
         }
         try {
             NExec b = NExec.of()
-                    .failFast()
-                    .addCommand(
+                    .failFast(true)
+                    .command(
                             NET_VPC_APP_NUTS_MVN,
                             "--json",
                             "get",
                             id.toString(),
                             repoURL == null ? "" : repoURL
                     ).run();
-            return (b.getResultCode() == 0);
+            return (b.exitCode() == 0);
         } catch (Exception ex) {
             LOG().log(NMsg.ofJ("failed to invoke {0} : {1}", NET_VPC_APP_NUTS_MVN, ex).asFinestFail(ex));
             return false;

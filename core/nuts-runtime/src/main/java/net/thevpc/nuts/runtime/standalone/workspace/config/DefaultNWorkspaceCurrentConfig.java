@@ -34,7 +34,6 @@ public final class DefaultNWorkspaceCurrentConfig {
     private NId apiId;
     private NId bootRuntime;
     private NDescriptor runtimeBootDescriptor;
-    private List<NDescriptor> extensionBootDescriptors;
     private List<String> bootRepositories;
     private String bootJavaCommand;
     private String bootJavaOptions;
@@ -52,58 +51,55 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
     public DefaultNWorkspaceCurrentConfig merge(NWorkspaceOptions c) {
-        if (c.getName() != null) {
-            this.name = c.getName().orNull();
+        if (c.name() != null) {
+            this.name = c.name().orNull();
         }
-        if (c.getRuntimeId().isPresent()) {
-            setRuntimeId(c.getRuntimeId().get());
+        if (c.runtimeId().isPresent()) {
+            setRuntimeId(c.runtimeId().get());
         }
-        if (c.getJavaCommand().isPresent()) {
-            this.bootJavaCommand = c.getJavaCommand().get();
+        if (c.javaCommand().isPresent()) {
+            this.bootJavaCommand = c.javaCommand().get();
         }
-        if (c.getJavaOptions().isPresent()) {
-            this.bootJavaOptions = c.getJavaOptions().get();
+        if (c.javaOptions().isPresent()) {
+            this.bootJavaOptions = c.javaOptions().get();
         }
-        if (c.getStoreStrategy().isPresent()) {
-            this.storeStrategy = c.getStoreStrategy().get();
+        if (c.storeStrategy().isPresent()) {
+            this.storeStrategy = c.storeStrategy().get();
         }
-        if (c.getRepositoryStoreStrategy().isPresent()) {
-            this.repositoryStoreStrategy = c.getRepositoryStoreStrategy().get();
+        if (c.repositoryStoreStrategy().isPresent()) {
+            this.repositoryStoreStrategy = c.repositoryStoreStrategy().get();
         }
-        if (c.getStoreLayout().isPresent()) {
-            this.storeLayout = c.getStoreLayout().get();
+        if (c.storeLayout().isPresent()) {
+            this.storeLayout = c.storeLayout().get();
         }
-        for (Map.Entry<NStoreType, String> e : new NStoreLocationsMap(c.getStoreLocations().orNull()).toMap().entrySet()) {
+        for (Map.Entry<NStoreType, String> e : new NStoreLocationsMap(c.storeLocations().orNull()).toMap().entrySet()) {
             String o = this.userStoreLocations.get(e.getKey());
             if (NBlankable.isBlank(o)) {
                 this.userStoreLocations.put(e.getKey(), e.getValue());
             }
         }
-        for (Map.Entry<NHomeLocation, String> e : new NHomeLocationsMap(c.getHomeLocations().orNull()).toMap().entrySet()) {
+        for (Map.Entry<NHomeLocation, String> e : new NHomeLocationsMap(c.homeLocations().orNull()).toMap().entrySet()) {
             String o = this.homeLocations.get(e.getKey());
             if (NBlankable.isBlank(o)) {
                 this.homeLocations.put(e.getKey(), e.getValue());
             }
         }
         if (this.system == null) {
-            this.system = c.getSystem().orElse(false);
+            this.system = c.system().orElse(false);
         }
         return this;
     }
 
 
     public DefaultNWorkspaceCurrentConfig mergeRuntime(NWorkspaceOptions c) {
-        if (c.getRuntimeId().isPresent()) {
-            this.bootRuntime = c.getRuntimeId().get();
+        if (c.runtimeId().isPresent()) {
+            this.bootRuntime = c.runtimeId().get();
         }
-//        this.bootRuntimeDependencies = c.getRuntimeDependencies();
-//        this.bootExtensionDependencies = c.getExtensionDependencies();
-//        this.bootRepositories = c.getBootRepositories();
-        if (c.getJavaCommand().isPresent()) {
-            this.bootJavaCommand = c.getJavaCommand().get();
+        if (c.javaCommand().isPresent()) {
+            this.bootJavaCommand = c.javaCommand().get();
         }
-        if (c.getJavaOptions().isPresent()) {
-            this.bootJavaOptions = c.getJavaOptions().get();
+        if (c.javaOptions().isPresent()) {
+            this.bootJavaOptions = c.javaOptions().get();
         }
         return this;
     }
@@ -125,10 +121,10 @@ public final class DefaultNWorkspaceCurrentConfig {
             effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NStoreType.values()[i]));
         }
         if (apiId == null) {
-            apiId = NId.getApi(Nuts.getVersion()).get();
+            apiId = NId.getApi(Nuts.version()).get();
         }
         if (storeLayout == null) {
-            storeLayout = NEnv.of().getOsFamily();
+            storeLayout = NEnv.of().osFamily();
         }
         return this;
     }
@@ -140,9 +136,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId();
         }
-//        if (c.getExtensionDependencies() != null) {
-//            this.bootExtensionDependencies = c.getExtensionDependencies();
-//        }
         if (c.getJavaCommand() != null) {
             this.bootJavaCommand = c.getJavaCommand();
         }
@@ -158,8 +151,8 @@ public final class DefaultNWorkspaceCurrentConfig {
         }
         if (c.getDependencies() != null) {
             this.runtimeBootDescriptor = new DefaultNDescriptorBuilder()
-                    .setId(NId.get(this.bootRuntime.toString()).get())
-                    .setDependencies(
+                    .id(NId.get(this.bootRuntime.toString()).get())
+                    .dependencies(
                             StringTokenizerUtils.splitSemiColon(c.getDependencies()).stream()
                                     .map(x -> NDependency.get(x).get()).collect(Collectors.toList())
                     ).build()
@@ -211,9 +204,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (c.getRuntimeBootDescriptor() != null) {
             this.runtimeBootDescriptor = c.getRuntimeBootDescriptor();
         }
-        if (c.getExtensionBootDescriptors() != null) {
-            this.extensionBootDescriptors = c.getExtensionBootDescriptors();
-        }
         if (c.getBootRepositories() != null) {
             this.bootRepositories = c.getBootRepositories();
         }
@@ -250,16 +240,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-
-    public List<NDescriptor> getExtensionBootDescriptors() {
-        return extensionBootDescriptors;
-    }
-
-    public DefaultNWorkspaceCurrentConfig setExtensionBootDescriptors(List<NDescriptor> extensionBootDescriptors) {
-        this.extensionBootDescriptors = extensionBootDescriptors;
-        return this;
-    }
-
     public String getName() {
         return name;
     }
@@ -283,7 +263,7 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
     public NVersion getApiVersion() {
-        return getApiId().getVersion();
+        return getApiId().version();
     }
 
     public NId getApiId() {

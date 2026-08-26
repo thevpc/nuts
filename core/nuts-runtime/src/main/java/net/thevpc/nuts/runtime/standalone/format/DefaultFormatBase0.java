@@ -32,7 +32,7 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
     public NPrintStream getValidPrintStream(NPrintStream out) {
         if (out == null) {
             NSession session=NSession.of();
-            out = session.getTerminal().getOut();
+            out = session.terminal().out();
         }
         return out;
     }
@@ -63,7 +63,7 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
         return ntf;
     }
 
-    public T setNtf(boolean ntf) {
+    public T ntf(boolean ntf) {
         this.ntf = ntf;
         return (T)this;
     }

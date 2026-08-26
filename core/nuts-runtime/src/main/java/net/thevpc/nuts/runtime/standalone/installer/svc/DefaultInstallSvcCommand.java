@@ -9,6 +9,8 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
@@ -43,7 +45,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     public DefaultInstallSvcCommand() {
     }
 
-    public DefaultInstallSvcCommand setServiceType(NOsServiceType serviceType) {
+    public DefaultInstallSvcCommand serviceType(NOsServiceType serviceType) {
         this.serviceType = serviceType;
         return this;
     }
@@ -57,7 +59,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return serviceName;
     }
 
-    public NInstallSvcCmd setServiceName(String serviceName) {
+    public NInstallSvcCmd serviceName(String serviceName) {
         this.serviceName = serviceName;
         return this;
     }
@@ -66,17 +68,17 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return root;
     }
 
-    public NInstallSvcCmd setRootDirectory(NPath root) {
+    public NInstallSvcCmd rootDirectory(NPath root) {
         this.root = root;
         return this;
     }
 
     @Override
-    public NPath getWorkingDirectory() {
+    public NPath workingDirectory() {
         return workingDirectory;
     }
 
-    public NInstallSvcCmd setWorkingDirectory(NPath workingDirectory) {
+    public NInstallSvcCmd workingDirectory(NPath workingDirectory) {
         this.workingDirectory = workingDirectory;
         return this;
     }
@@ -90,63 +92,63 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return this;
     }
 
-    public NInstallSvcCmd setControlCommand(String[] startCommand) {
+    public NInstallSvcCmd controlCommand(String[] startCommand) {
         List<String> base0 = new ArrayList<>(Arrays.asList(startCommand));
 
         List<String> base = new ArrayList<>(base0);
         base.add("start");
-        setStartCommand(base.toArray(new String[0]));
+        startCommand(base.toArray(new String[0]));
 
         base = new ArrayList<>(base0);
         base.add("stop");
-        setStopCommand(base.toArray(new String[0]));
+        stopCommand(base.toArray(new String[0]));
 
         base = new ArrayList<>(base0);
         base.add("status");
-        setStatusCommand(base.toArray(new String[0]));
+        statusCommand(base.toArray(new String[0]));
 
         return this;
     }
 
     @Override
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         return env;
     }
 
-    public NInstallSvcCmd setEnv(Map<String, String> env) {
+    public NInstallSvcCmd env(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
     @Override
-    public String[] getStartCommand() {
+    public String[] startCommand() {
         return startCommand;
     }
 
     @Override
-    public DefaultInstallSvcCommand setStartCommand(String[] startCommand) {
+    public DefaultInstallSvcCommand startCommand(String[] startCommand) {
         this.startCommand = startCommand;
         return this;
     }
 
     @Override
-    public String[] getStopCommand() {
+    public String[] stopCommand() {
         return stopCommand;
     }
 
     @Override
-    public DefaultInstallSvcCommand setStopCommand(String[] stopCommand) {
+    public DefaultInstallSvcCommand stopCommand(String[] stopCommand) {
         this.stopCommand = stopCommand;
         return this;
     }
 
     @Override
-    public String[] getStatusCommand() {
+    public String[] statusCommand() {
         return statusCommand;
     }
 
     @Override
-    public DefaultInstallSvcCommand setStatusCommand(String[] statusCommand) {
+    public DefaultInstallSvcCommand statusCommand(String[] statusCommand) {
         this.statusCommand = statusCommand;
         return this;
     }
@@ -312,8 +314,8 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             createFileFromTemplate("service-initd", tempFile.toString());
             NPath rcFile = rootFile("/etc/rc.d/S99z_" + serviceName);
             ScriptBuilder script = new ScriptBuilder(serviceName, "initd service enable/start " + serviceName + " script")
-                    .printlnEcho("mkdir -p " + rcFile.getParent())
-                    .printlnEcho("mkdir -p " + serviceFilePath.getParent())
+                    .printlnEcho("mkdir -p " + rcFile.parent())
+                    .printlnEcho("mkdir -p " + serviceFilePath.parent())
                     .printlnEcho("cp " + tempFile.getPath() + " " + serviceFilePath)
                     .printlnEcho("rm -Rf " + rcFile)
                     .printlnEcho("ln -s " + serviceFilePath + " " + rcFile);
@@ -328,7 +330,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             // added to always return 0 code
             script.printlnEcho("echo 'end of script'");
             if (NSession.of().isDry()) {
-                serviceFilePath.getParent().mkdirs();
+                serviceFilePath.parent().mkdirs();
                 Files.copy(tempFile.toPath(), serviceFilePath.toPath().get(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");
                 logInfo(script.toString());
@@ -398,11 +400,11 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         if (serviceType != null) {
             return serviceType;
         }
-        return getSystemServiceType();
+        return systemServiceType();
     }
 
     @Override
-    public NOsServiceType getSystemServiceType() {
+    public NOsServiceType systemServiceType() {
         if (systemServiceType == null) {
             logVerbose(NMsg.ofC("Checking if systemctl is available..."));
             try {
@@ -478,7 +480,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        file(file).setPermissions(NPathPermission.CAN_EXECUTE);
+        file(file).permissions(NPathPermission.CAN_EXECUTE);
     }
 
     private String getInstallDir() {
@@ -654,7 +656,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         }
         if (x == null) {
             if (err) {
-                throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("svc var not found : %s",n));
+                throw NException.ofSafeIllegalArgumentException(NMsg.ofC("svc var not found : %s",n));
             } else {
                 x = image;
             }

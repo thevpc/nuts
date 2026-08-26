@@ -1,7 +1,7 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.app.NApplications;
+import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.core.NExceptionWithExitCodeBase;
@@ -22,8 +22,14 @@ import net.thevpc.nuts.internal.NReservedLangUtils;
 
 import java.util.logging.Level;
 
+/**
+ * NExceptionHandler class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NExceptionHandler {
-    private Throwable ex;
+    private Throwable throwable;
     private int code;
     private NLog out;
     private boolean stacktrace;
@@ -35,10 +41,30 @@ public class NExceptionHandler {
     private String messageString;
     private boolean built;
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ex ex
+     * @return of result
+     */
     public static NExceptionHandler of(Throwable ex) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ex ex
+         * @param null null
+         * @return of result
+         */
         return of(ex, null);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param ex ex
+     * @param out out
+     * @return of result
+     */
     public static NExceptionHandler of(Throwable ex, NLog out) {
         if (ex == null) {
             return new NExceptionHandler();
@@ -47,141 +73,244 @@ public class NExceptionHandler {
         if (session != null) {
             return session.callWith(() -> {
                 NWorkspaceOptions bo = null;
-                bo = session.getWorkspace().getBootOptions().toWorkspaceOptions();
+                bo = session.workspace().bootOptions().toWorkspaceOptions();
                 return new NExceptionHandler()
-                        .setEx(ex)
-                        .setShowMessage(true)
-                        .setOut(out)
-                        .setStacktrace(NApiUtilsRPI.resolveShowStackTrace(bo))
-                        .setGui(NApiUtilsRPI.resolveGui(bo))
+                        .throwable(ex)
+                        .showMessage(true)
+                        .out(out)
+                        .stacktrace(NApiUtilsRPI.resolveShowStackTrace(bo))
+                        .gui(NApiUtilsRPI.resolveGui(bo))
                         .build();
             });
         } else {
             //load inherited
-            String nutsArgs = NStringUtils.trim(
-                    NStringUtils.trim(System.getProperty("nuts.boot.args"))
-                            + " " + NStringUtils.trim(System.getProperty("nuts.args"))
+            String nutsArgs = NStringUtils.strip(
+                    NStringUtils.strip(System.getProperty("nuts.boot.args"))
+                            + " " + NStringUtils.strip(System.getProperty("nuts.args"))
             );
             try {
                 NBootOptionsInfo options = new NBootOptionsInfo();
+                NBootWorkspaceCmdLineParser.denullProperties(options);
                 NBootWorkspaceCmdLineParser.parseNutsArguments(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), options);
                 return new NExceptionHandler()
-                        .setEx(ex)
-                        .setShowMessage(true)
-                        .setOut(out)
-                        .setStacktrace(NApiUtilsRPI.resolveShowStackTrace(options))
-                        .setGui(NApiUtilsRPI.resolveGui(options))
+                        .throwable(ex)
+                        .showMessage(true)
+                        .out(out)
+                        .stacktrace(NApiUtilsRPI.resolveShowStackTrace(options))
+                        .gui(NApiUtilsRPI.resolveGui(options))
                         .build();
             } catch (Exception e) {
                 //any, ignore...
                 return new NExceptionHandler()
-                        .setEx(ex)
-                        .setShowMessage(true)
-                        .setOut(out)
-                        .setStacktrace(true)
-                        .setGui(false)
+                        .throwable(ex)
+                        .showMessage(true)
+                        .out(out)
+                        .stacktrace(true)
+                        .gui(false)
                         .build();
             }
         }
     }
 
+    /**
+     * N exception handler.
+     *
+     * @return n exception handler result
+     */
     public NExceptionHandler() {
     }
 
 
-    public NSession getSession() {
+    /**
+     * Session.
+     *
+     * @return session result
+     */
+    public NSession session() {
         return session;
     }
 
-    public NExceptionHandler setSession(NSession session) {
+    /**
+     * Session.
+     *
+     * @param session session
+     * @return session result
+     */
+    public NExceptionHandler session(NSession session) {
         this.session = session;
         return this;
     }
 
+    /**
+     * Checks if is show message.
+     *
+     * @return is show message result
+     */
     public boolean isShowMessage() {
         return showMessage;
     }
 
-    public NExceptionHandler setShowMessage(boolean showMessage) {
+    /**
+     * Show message.
+     *
+     * @param showMessage show message
+     * @return show message result
+     */
+    public NExceptionHandler showMessage(boolean showMessage) {
         this.showMessage = showMessage;
         return this;
     }
 
-    public Throwable getEx() {
-        return ex;
+    /**
+     * Throwable.
+     *
+     * @return throwable result
+     */
+    public Throwable throwable() {
+        return throwable;
     }
 
-    public NExceptionHandler setEx(Throwable ex) {
-        this.ex = ex;
+    /**
+     * Throwable.
+     *
+     * @param ex ex
+     * @return throwable result
+     */
+    public NExceptionHandler throwable(Throwable ex) {
+        this.throwable = ex;
         return this;
     }
 
-    public int getCode() {
+    /**
+     * Code.
+     *
+     * @return code result
+     */
+    public int code() {
         return code;
     }
 
-    public NExceptionHandler setCode(int code) {
+    /**
+     * Code.
+     *
+     * @param code code
+     * @return code result
+     */
+    public NExceptionHandler code(int code) {
         this.code = code;
         return this;
     }
 
-    public NLog getOut() {
+    /**
+     * Out.
+     *
+     * @return out result
+     */
+    public NLog out() {
         return out;
     }
 
-    public NExceptionHandler setOut(NLog out) {
+    /**
+     * Out.
+     *
+     * @param out out
+     * @return out result
+     */
+    public NExceptionHandler out(NLog out) {
         this.out = out;
         return this;
     }
 
+    /**
+     * Checks if is stacktrace.
+     *
+     * @return is stacktrace result
+     */
     public boolean isStacktrace() {
         return stacktrace;
     }
 
-    public NExceptionHandler setStacktrace(boolean stacktrace) {
+    /**
+     * Stacktrace.
+     *
+     * @param stacktrace stacktrace
+     * @return stacktrace result
+     */
+    public NExceptionHandler stacktrace(boolean stacktrace) {
         this.stacktrace = stacktrace;
         return this;
     }
 
+    /**
+     * Checks if is gui.
+     *
+     * @return is gui result
+     */
     public boolean isGui() {
         return gui;
     }
 
-    public NExceptionHandler setGui(boolean gui) {
+    /**
+     * Gui.
+     *
+     * @param gui gui
+     * @return gui result
+     */
+    public NExceptionHandler gui(boolean gui) {
         this.gui = gui;
         return this;
     }
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     public NExceptionHandler build() {
         if (built) {
             return this;
         }
         built = true;
-        if (ex == null) {
-            setCode(0);
+        if (throwable == null) {
+          /**
+           * Code.
+           *
+           * @param 0 0
+           */
+            code(0);
             return this;
         }
-        int errorCode = NExceptions.resolveExitCode(ex).orElse(204);
-        setCode(errorCode);
+        int errorCode = NException.resolveExitCode(throwable).orElse(204);
+      /**
+       * Code.
+       *
+       * @param errorCode error code
+       */
+        code(errorCode);
         if (errorCode == 0) {
             return this;
         }
-        setSession(NSessionAwareExceptionBase.resolveSession(ex).orNull());
-        messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::getFormattedMessage)
+      /**
+       * Session.
+       *
+       * @param NSessionAwareExceptionBase.resolveSession(throwable).orNull() n session aware exception base.resolve session(throwable).or null()
+       */
+        session(NSessionAwareExceptionBase.resolveSession(throwable).orNull());
+        messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable).map(NSessionAwareExceptionBase::formattedMessage)
                 .orNull();
-        messageString = NExceptions.getErrorMessage(ex);
-        if (getOut() == null) {
-            if (getSession() != null) {
+        messageString = NException.getErrorMessage(throwable);
+        if (out() == null) {
+            if (session() != null) {
                 try {
-                    sessionOut = NIO.of().getSystemTerminal().getErr();
+                    sessionOut = NIO.of().systemTerminal().err();
                     if (messageFormatted != null) {
                         messageFormatted = NMsg.ofNtf(NTextBuilder.of().append(messageFormatted, NTextStyle.error()).build());
                     } else {
                         messageFormatted = NMsg.ofStyledError(messageString);
                     }
                 } catch (Exception ex2) {
-                    NLog.of(NApplications.class).log(
-                            NMsg.ofPlain("unable to get system terminal").asFine(ex2)
+                    NLog.of(NApplicationHandler.class).log(
+                            NMsg.ofP("unable to get system terminal").asFine(ex2)
                     );
                     //
                 }
@@ -195,9 +324,9 @@ public class NExceptionHandler {
                 }
             }
         } else {
-            if (getSession() != null) {
+            if (session() != null) {
 //                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, null, session);
-                sessionOut = getSession().err();
+                sessionOut = session().err();
             } else {
                 sessionOut = null;
             }
@@ -205,11 +334,16 @@ public class NExceptionHandler {
         return this;
     }
 
+    /**
+     * Re throw.
+     *
+     * @return re throw result
+     */
     public NExceptionHandler reThrow() {
-        if (ex == null) {
+        if (throwable == null) {
             return this;
         }
-        NOptional<NExceptionWithExitCodeBase> u = NExceptions.resolveWithExitCodeExceptionBase(ex);
+        NOptional<NExceptionWithExitCodeBase> u = NException.resolveWithExitCodeExceptionBase(throwable);
         if (u.isPresent()) {
             NExceptionWithExitCodeBase o = u.get();
             if (o instanceof RuntimeException) {
@@ -217,43 +351,69 @@ public class NExceptionHandler {
             }
             if (session != null) {
                 session.runWith(() -> {
-                    throw new NException(NMsg.ofC("%s", o.toString(), o.getExitCode()));
+                    /**
+                     * N exception.
+                     *
+                     * @param o.exitCode()) o.exit code())
+                     * @return n exception result
+                     */
+                    throw new NException(NMsg.ofC("%s", o.toString(), o.exitCode()));
                 });
             }
-            throw new NBootException(NBootMsg.ofC("%s", o.toString(), o.getExitCode()));
+            /**
+             * N boot exception.
+             *
+             * @param o.exitCode()) o.exit code())
+             * @return n boot exception result
+             */
+            throw new NBootException(NBootMsg.ofC("%s", o.toString(), o.exitCode()));
         }
-        throw new NBootException(NBootMsg.ofC("%s", ex.toString(), 255));
+        /**
+         * N boot exception.
+         *
+         * @param 255) 255)
+         * @return n boot exception result
+         */
+        throw new NBootException(NBootMsg.ofC("%s", throwable.toString(), 255));
     }
 
 
+    /**
+     * Show error.
+     *
+     * @return show error result
+     */
     public NExceptionHandler showError() {
+      /**
+       * Build.
+       */
         build();
-        if (ex == null) {
+        if (throwable == null) {
             return this;
         }
         if (showMessage) {
             if (sessionOut != null) {
                 session.runWith(()->{
-                    if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
+                    if (session.outputFormat().orDefault() == NContentType.PLAIN) {
                         if (messageFormatted != null) {
                             sessionOut.println(messageFormatted);
                         } else {
                             sessionOut.println(messageString);
                         }
                         if (stacktrace) {
-                            ex.printStackTrace(sessionOut.asPrintStream());
+                            throwable.printStackTrace(sessionOut.asPrintStream());
                         }
                         sessionOut.flush();
                     } else {
                         if (messageFormatted != null) {
                             session.eout().add(NElement.ofObjectBuilder()
-                                    .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
+                                    .set("app-id", NStringUtils.toStringOrEmpty(NApplication.of().id().get()))
                                     .set("error", NText.of(messageFormatted).filteredText())
                                     .build()
                             );
                             if (stacktrace) {
                                 session.eout().add(NElement.ofObjectBuilder().set("errorTrace",
-                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
+                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                                 ).build());
                             }
                             NArrayElementBuilder e = session.eout();
@@ -264,12 +424,12 @@ public class NExceptionHandler {
                             sessionOut.flush();
                         } else {
                             session.eout().add(NElement.ofObjectBuilder()
-                                    .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
+                                    .set("app-id", NStringUtils.toStringOrEmpty(NApplication.of().id().get()))
                                     .set("error", messageString)
                                     .build());
                             if (stacktrace) {
                                 session.eout().add(NElement.ofObjectBuilder().set("errorTrace",
-                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(ex)).build()
+                                        NElement.ofArrayBuilder().addAll(NStringUtils.stacktraceArray(throwable)).build()
                                 ).build());
                             }
                             NArrayElementBuilder e = session.eout();
@@ -288,28 +448,28 @@ public class NExceptionHandler {
                     if (messageFormatted != null) {
                         out.log(msgBuilder.withMsg(messageFormatted));
                     } else {
-                        out.log(msgBuilder.withMsg(NMsg.ofPlain(messageString)));
+                        out.log(msgBuilder.withMsg(NMsg.ofP(messageString)));
                     }
                     if (stacktrace) {
                         out.log(msgBuilder.withMsgPlain("---------------"));
                         out.log(msgBuilder.withMsgPlain(">  STACKTRACE :"));
                         out.log(msgBuilder.withMsgPlain("---------------"));
                         out.log(msgBuilder.withMsgPlain(
-                                NStringUtils.stacktrace(ex)
+                                NStringUtils.stacktrace(throwable)
                         ));
                     }
                 }else{
                     if (messageFormatted != null) {
                         System.err.println(messageFormatted);
                     } else {
-                        System.err.println(NMsg.ofPlain(messageString));
+                        System.err.println(NMsg.ofP(messageString));
                     }
                     if (stacktrace) {
-                        System.err.println(NMsg.ofPlain("---------------"));
-                        System.err.println(NMsg.ofPlain(">  STACKTRACE :"));
-                        System.err.println(NMsg.ofPlain("---------------"));
-                        System.err.println(NMsg.ofPlain(
-                                NStringUtils.stacktrace(ex)
+                        System.err.println(NMsg.ofP("---------------"));
+                        System.err.println(NMsg.ofP(">  STACKTRACE :"));
+                        System.err.println(NMsg.ofP("---------------"));
+                        System.err.println(NMsg.ofP(
+                                NStringUtils.stacktrace(throwable)
                         ));
                     }
                 }
@@ -329,29 +489,53 @@ public class NExceptionHandler {
             if (stacktrace) {
                 if (sb.length() > 0) {
                     sb.append("\n");
-                    sb.append(NStringUtils.stacktrace(ex));
+                    sb.append(NStringUtils.stacktrace(throwable));
                 }
             }
             if (session != null) {
                 //TODO should we delegate to the workspace implementation?
-                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
+                NReservedLangUtils.showMessage(NMsg.ofP(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
             } else {
-                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
+                NReservedLangUtils.showMessage(NMsg.ofP(sb.toString()).toString(), NI18n.of("Nuts Package Manager - Error"), out);
             }
         }
         return this;
     }
 
+    /**
+     * Propagate.
+     *
+     * @return propagate result
+     */
     public NExceptionHandler propagate() {
+        /**
+         * Show error.
+         *
+         * @param ).reThrow( ).re throw(
+         * @return show error result
+         */
         return showError().reThrow();
     }
 
+    /**
+     * Handle.
+     *
+     * @return handle result
+     */
     public NExceptionHandler handle() {
+        /**
+         * Show error.
+         *
+         * @return show error result
+         */
         return showError();
     }
 
+    /**
+     * Handle fatal.
+     */
     public void handleFatal() {
-        System.exit(showError().getCode());
+        System.exit(showError().code());
     }
 
 }

@@ -30,5 +30,10 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextFormattable {
+    /**
+     * Converts to text.
+     *
+     * @return to text result
+     */
     NText toText();
 }

@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.time.Instant;
 import java.util.Set;
 
@@ -39,7 +41,8 @@ public interface NPsInfo {
      *
      * @return Process Id in string representation
      */
-    String getPid();
+    @NGetter
+    String pid();
 
     /**
      * Process Name.
@@ -47,48 +50,118 @@ public interface NPsInfo {
      *
      * @return Process Name or Java Class Name for Java Processes
      */
-    String getName();
+    @NGetter
+    String name();
 
-    NpsStatus getStatus();
+    /**
+     * Status.
+     *
+     * @return status result
+     */
+    @NGetter
+    NpsStatus status();
 
-    NpsType getType();
+    /**
+     * Type.
+     *
+     * @return type result
+     */
+    @NGetter
+    NpsType type();
 
-    Set<String> getStatusFlags();
+    /**
+     * Status flags.
+     *
+     * @return status flags result
+     */
+    @NGetter
+    Set<String> statusFlags();
 
     /**
      * Process Title / Window Title if available
      *
      * @return Process Title / Window Title if available
      */
-    String getTitle();
+    @NGetter
+    String title();
 
     /**
      * Process command line
      *
      * @return Process command line
      */
-    String getCmdLine();
+    @NGetter
+    String cmdLine();
 
     /**
      * Process parsed command line (when applicable)
      *
      * @return parsed Process command line
      */
-    String[] getCmdLineArgs();
+    @NGetter
+    String[] cmdLineArgs();
 
-    String getUser();
+    /**
+     * User.
+     *
+     * @return user result
+     */
+    @NGetter
+    String user();
 
-    double getPercentCpu();
+    /**
+     * Percent cpu.
+     *
+     * @return percent cpu result
+     */
+    @NGetter
+    double percentCpu();
 
-    double getPercentMem();
+    /**
+     * Percent mem.
+     *
+     * @return percent mem result
+     */
+    @NGetter
+    double percentMem();
 
-    long getVirtualMemorySize();
+    /**
+     * Virtual memory size.
+     *
+     * @return virtual memory size result
+     */
+    @NGetter
+    long virtualMemorySize();
 
-    long getResidentSetSize();
+    /**
+     * Resident set size.
+     *
+     * @return resident set size result
+     */
+    @NGetter
+    long residentSetSize();
 
-    String getTerminal();
+    /**
+     * Terminal.
+     *
+     * @return terminal result
+     */
+    @NGetter
+    String terminal();
 
-    Instant getStartTime();
+    /**
+     * Start time.
+     *
+     * @return start time result
+     */
+    @NGetter
+    Instant startTime();
 
-    long getTime();
+    /**
+     * Time.
+     *
+     * @return time result
+     */
+    @NGetter
+    long time();
 }

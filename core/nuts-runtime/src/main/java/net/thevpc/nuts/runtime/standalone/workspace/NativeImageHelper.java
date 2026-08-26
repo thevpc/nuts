@@ -11,15 +11,16 @@ import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NExprCommonOp;
 import net.thevpc.nuts.expr.NExprNodeType;
-import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.math.NIndexSelectionStrategy;
 import net.thevpc.nuts.net.NHttpMethod;
+import net.thevpc.nuts.pipeline.NIteratorErrorHandlerType;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineRPI;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter;
 import net.thevpc.nuts.runtime.standalone.format.NDisplayProperty;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
@@ -31,14 +32,14 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSelectorOp;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.time.NDurationFormatMode;
-import net.thevpc.nuts.time.NProgressEventType;
+import net.thevpc.nuts.mon.NDurationFormatMode;
+import net.thevpc.nuts.mon.NProgressEventType;
 import net.thevpc.nuts.util.*;
 
 public class NativeImageHelper {
     public static void prepare(){
         if(Boolean.getBoolean("EnableGraalVM")){
-            new DefaultNCmdLines();
+            new DefaultNCmdLineRPI();
             new DefaultNObjectObjectWriter();
             //load enums
             NStoreType.parse("");
@@ -49,7 +50,7 @@ public class NativeImageHelper {
             NIndexSelectionStrategy.parse("");
             NNewLineMode.parse("");
             NNameSelectorStrategy.parse("");
-            NTextFormatType.parse("");
+            NMsgType.parse("");
             NExecutionEngineFamily.parse("");
             NPathStandardOption.parse("");
             NAffixType.parse("");
@@ -62,7 +63,7 @@ public class NativeImageHelper {
             NMapSideStrategy.parse("");
             NMemoryUnit.parse("");
             NProgressEventType.parse("");
-            NExprOpType.parse("");
+            NFixity.parse("");
             NVisitResult.parse("");
             NFilterOp.parse("");
             NNumberLayout.parse("");
@@ -90,7 +91,7 @@ public class NativeImageHelper {
             NElementType.parse("");
             NDecision.parse("");
             NpsType.parse("");
-            NOperatorPosition.parse("");
+            NFixity.parse("");
             NContentType.parse("");
             NTextType.parse("");
             NOperatorSymbol.parse("");

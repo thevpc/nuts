@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
-import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NArgCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
@@ -10,12 +10,14 @@ import net.thevpc.nuts.io.NonClosableInputStream;
 import net.thevpc.nuts.io.NonClosablePrintStream;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.io.NAnsiTermHelper;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -29,23 +31,23 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     private final NPrintStream err;
     private final InputStream in;
     private NCmdLineHistory history;
-    private String commandHighlighter;
-    private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
+    private NTerminalFormatter commandHighlighter;
+    private NArgCompleteResolver commandAutoCompleteResolver;
     protected boolean lastWasProgress=false;
 
     public DefaultNSystemTerminalBaseBoot(DefaultNBootModel bootModel) {
         super();
         NBootOptions bo = bootModel.getBootUserOptions();
         NWorkspaceTerminalOptions bootStdFd = new NWorkspaceTerminalOptions(
-                new NonClosableInputStream(bo.getStdin().orElse(System.in)),
-                new NonClosablePrintStream(bo.getStdout().orElse(System.out)),
-                new NonClosablePrintStream(bo.getStderr().orElse(System.err)),
+                new NonClosableInputStream(bo.stdin().orElse(System.in)),
+                new NonClosablePrintStream(bo.stdout().orElse(System.out)),
+                new NonClosablePrintStream(bo.stderr().orElse(System.err)),
                 bootModel.getBootTerminal().getFlags().toArray(new String[0])
         );
-        NTerminalMode terminalMode = bootModel.getBootUserOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
+        NTerminalMode terminalMode = bootModel.getBootUserOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
         boolean bootStdFdAnsi = bootStdFd.getFlags().contains("ansi");
         if (terminalMode == NTerminalMode.DEFAULT) {
-            if (bootModel.getBootUserOptions().getBot().orElse(false)) {
+            if (bootModel.getBootUserOptions().bot().orElse(false)) {
                 terminalMode = NTerminalMode.FILTERED;
             } else {
                 if (bootStdFdAnsi) {
@@ -59,13 +61,13 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         }
         if(bootStdFd.getOut()==bootStdFd.getErr()){
             this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
-                    this).setTerminalMode(terminalMode);
+                    this).terminalMode(terminalMode);
             this.err = this.out;
         }else {
             this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
-                    this).setTerminalMode(terminalMode);
+                    this).terminalMode(terminalMode);
             this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFdAnsi,
-                    this).setTerminalMode(terminalMode);
+                    this).terminalMode(terminalMode);
         }
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
@@ -75,14 +77,14 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         return lastWasProgress;
     }
 
-    public void setLastWasProgress(boolean lastWasProgress) {
+    public void lastWasProgress(boolean lastWasProgress) {
         this.lastWasProgress = lastWasProgress;
     }
 
 
     public String readLine(NPrintStream out, NMsg message) {
         if (out == null) {
-            out = getOut();
+            out = out();
         }
         if (out == null) {
             out = NIO.of().stdout();
@@ -97,7 +99,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     @Override
     public char[] readPassword(NPrintStream out, NMsg message) {
         if (out == null) {
-            out = getOut();
+            out = out();
         }
         if (out == null) {
             out = NIO.of().stdout();
@@ -110,22 +112,22 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public InputStream getIn() {
+    public InputStream in() {
         return this.in;
     }
 
     @Override
-    public NPrintStream getOut() {
+    public NPrintStream out() {
         return this.out;
     }
 
     @Override
-    public NPrintStream getErr() {
+    public NPrintStream err() {
         return this.err;
     }
 
     @Override
-    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
+    public NArgCompleteResolver autoCompleteResolver() {
         return commandAutoCompleteResolver;
     }
 
@@ -135,29 +137,29 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase commandAutoCompleteResolver(NArgCompleteResolver autoCompleteResolver) {
         this.commandAutoCompleteResolver = autoCompleteResolver;
         return this;
     }
 
     @Override
-    public NCmdLineHistory getCommandHistory() {
+    public NCmdLineHistory commandHistory() {
         return history;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
+    public NSystemTerminalBase commandHistory(NCmdLineHistory history) {
         this.history = history;
         return this;
     }
 
     @Override
-    public String getCommandHighlighter() {
+    public NTerminalFormatter commandHighlighter() {
         return commandHighlighter;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHighlighter(String commandHighlighter) {
+    public NSystemTerminalBase commandHighlighter(NTerminalFormatter commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
         return this;
     }
@@ -169,17 +171,17 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public Cursor getTerminalCursor() {
-        return (Cursor) run(NTerminalCmd.GET_CURSOR, getOut());
+    public Cursor terminalCursor() {
+        return (Cursor) run(NTerminalCmd.GET_CURSOR, out());
     }
 
     @Override
-    public Size getTerminalSize() {
-        return (Size) run(NTerminalCmd.GET_SIZE, getOut());
+    public Size terminalSize() {
+        return (Size) run(NTerminalCmd.GET_SIZE, out());
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+    public void styles(NTextStyles styles, NPrintStream printStream) {
         String s = NAnsiTermHelper.of().styled(styles);
         if (s != null) {
             //try {

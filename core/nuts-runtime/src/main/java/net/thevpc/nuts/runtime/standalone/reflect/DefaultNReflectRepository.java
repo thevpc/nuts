@@ -24,10 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.reflect.*;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -44,7 +43,7 @@ public class DefaultNReflectRepository implements NReflectRepository {
     private NReflectConfiguration configuration;
 
     public DefaultNReflectRepository() {
-        this(NReflectConfigurationBuilder.of().build());
+        this(new DefaultNReflectConfiguration());
     }
 
     public DefaultNReflectRepository(NReflectConfiguration configuration) {
@@ -52,13 +51,7 @@ public class DefaultNReflectRepository implements NReflectRepository {
     }
 
     @Override
-    public DefaultNReflectRepository setConfiguration(NReflectConfiguration configuration) {
-        this.configuration = configuration;
-        return this;
-    }
-
-    @Override
-    public NReflectConfiguration getConfiguration() {
+    public NReflectConfiguration configuration() {
         return configuration;
     }
 

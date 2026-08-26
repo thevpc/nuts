@@ -34,11 +34,15 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.format.desc.NEDescHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetch;
@@ -67,11 +71,11 @@ public class DefaultNSearch extends AbstractNSearch {
     @Override
     public NFetch toFetch() {
         NFetch t = new DefaultNFetch().copyFromDefaultNQueryBaseOptions(this);
-        t.setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment());
+        t.ignoreCurrentEnvironment(isIgnoreCurrentEnvironment());
         //update RepositoryFilter with effective one that takes into consideration
         // id filters and status filters
         DefaultNSearchInfo bs = new DefaultNSearchInfoBuilder(this).build();
-        t.setRepositoryFilter(bs.getRepositoryFilter());
+        t.repositoryFilter(bs.getRepositoryFilter());
         return t;
     }
 
@@ -87,31 +91,31 @@ public class DefaultNSearch extends AbstractNSearch {
         NSession session = NSession.of();
         NRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         DefaultNSearchInfo.RegularId[] regularIds = search.getRegularIds();
-        NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
+        NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.fetchStrategy().orDefault());
         Set<NRepository> consideredRepos = new HashSet<>();
         NWorkspaceUtils wu = NWorkspaceUtils.of();
         if (regularIds.length > 0) {
             for (DefaultNSearchInfo.RegularId rid : regularIds) {
                 List<NIterator<? extends NId>> resultForEachAlternative = new ArrayList<>();
                 for (NId nutsId1 : rid.expandedIds) {
-                    if (NDependencyScope.parse(nutsId1.toDependency().getScope()).orNull() == NDependencyScope.SYSTEM) {
+                    if (NDependencyScope.parse(nutsId1.toDependency().scope()).orNull() == NDependencyScope.SYSTEM) {
                         // TODO, fix me
                         //just ignore or should we still support it?
                     } else {
                         NId nutsIdNonLatest = nutsId1;
                         boolean latestVersion = false;
                         boolean releaseVersion = false;
-                        if (nutsIdNonLatest.getVersion().isLatest()) {
+                        if (nutsIdNonLatest.version().isLatest()) {
                             latestVersion = true;
-                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
-                        } else if (nutsIdNonLatest.getVersion().isRelease()) {
+                            nutsIdNonLatest = nutsIdNonLatest.builder().version("").build();
+                        } else if (nutsIdNonLatest.version().isRelease()) {
                             releaseVersion = true;
-                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("").build();
+                            nutsIdNonLatest = nutsIdNonLatest.builder().version("").build();
                         }
-                        NDefinitionFilters dd = NDefinitionFilters.of();
+                        NDefinitionFilterRPI dd = NDefinitionFilterRPI.of();
                         NDefinitionFilter filter = (
-                                dd.byName(nutsIdNonLatest.getFullName())
-                                        .and(dd.byEnv(nutsIdNonLatest.getProperties()))
+                                dd.byName(nutsIdNonLatest.fullName())
+                                        .and(dd.byEnv(nutsIdNonLatest.properties()))
                                         .and(search.getDefinitionFilter())
                         );
 
@@ -127,16 +131,16 @@ public class DefaultNSearch extends AbstractNSearch {
                                 if (repoAndMode.getFetchMode() == fm) {
                                     consideredRepos.add(repoAndMode.getRepository());
                                     NRepositorySPI repoSPI = wu.toRepositorySPI(repoAndMode.getRepository());
-                                    if (nutsIdNonLatest.getGroupId() != null) {
-                                        NIterator<NId> baseIter = repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
-                                                .setFetchMode(repoAndMode.getFetchMode())
+                                    if (nutsIdNonLatest.groupId() != null) {
+                                        NIterator<NId> baseIter = repoSPI.searchVersions().id(nutsIdNonLatest).filter(filter)
+                                                .fetchMode(repoAndMode.getFetchMode())
                                                 .getResult();
                                         if(!NIteratorUtils.isNullOrEmpty(baseIter)) {
                                             NIterator<NId> z = NIteratorBuilder.of(baseIter)
                                                     .named(
                                                             NElement.ofObjectBuilder()
                                                                     .set("description", "searchVersions")
-                                                                    .set("repository", repoAndMode.getRepository().getName())
+                                                                    .set("repository", repoAndMode.getRepository().name())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
                                                                     .set("filter", NDescribables.describeResolveOrSimplify(filter))
                                                                     .build()
@@ -145,16 +149,16 @@ public class DefaultNSearch extends AbstractNSearch {
                                             idLookup.add(z);
                                         }
                                     } else {
-                                        NDefinitionFilter restrictedFilter = (NDefinitionFilter) NDefinitionFilters.of().byName(nutsIdNonLatest.toString()).and(filter).simplify();
-                                        NIterator<NId> baseIter = repoSPI.search().setFilter(restrictedFilter)
-                                                .setFetchMode(repoAndMode.getFetchMode())
+                                        NDefinitionFilter restrictedFilter = (NDefinitionFilter) NDefinitionFilter.ofName(nutsIdNonLatest.toString()).and(filter).simplify();
+                                        NIterator<NId> baseIter = repoSPI.search().filter(restrictedFilter)
+                                                .fetchMode(repoAndMode.getFetchMode())
                                                 .getResult();
                                         if(!NIteratorUtils.isNullOrEmpty(baseIter)) {
                                             NIterator<NId> z = NIteratorBuilder.of(baseIter)
                                                     .named(
                                                             NElement.ofObjectBuilder()
                                                                     .set("description", "search")
-                                                                    .set("repository", repoAndMode.getRepository().getName())
+                                                                    .set("repository", repoAndMode.getRepository().name())
                                                                     .set("fetchMode", repoAndMode.getFetchMode().id())
                                                                     .set("filter", NDescribables.describeResolveOrSimplify(restrictedFilter))
                                                                     .build()
@@ -189,12 +193,12 @@ public class DefaultNSearch extends AbstractNSearch {
                 consideredRepos.add(repoAndMode.getRepository());
                 all.add(
                         NIteratorBuilder.ofSupplier(() -> wu.toRepositorySPI(repoAndMode.getRepository()).search()
-                                                .setFilter(filter)
-                                                .setFetchMode(repoAndMode.getFetchMode())
+                                                .filter(filter)
+                                                .fetchMode(repoAndMode.getFetchMode())
                                                 .getResult(),
                                         NDescribables.ofDesc(NElement.ofObjectBuilder()
                                                 .set("description", "searchRepository")
-                                                .set("repository", repoAndMode.getRepository().getName())
+                                                .set("repository", repoAndMode.getRepository().name())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())
                                                 .set("filter", NDescribables.describeResolveOrSimplify(filter))
                                                 .build())
@@ -219,13 +223,13 @@ public class DefaultNSearch extends AbstractNSearch {
                     .flatMap(
                             NFunction.of(
                                             (NId x) -> {
-                                                NDefinition de = toFetch().setId(x)
+                                                NDefinition de = toFetch().id(x)
                                                         .getResultDefinition();
                                                 if(de==null){
                                                     return null;
                                                 }
                                                 return NIteratorBuilder.of(
-                                                        de.getDependencies().get().transitiveWithSource().iterator()
+                                                        de.dependencies().get().transitiveWithSource().iterator()
                                                 ).build();
                                             })
                                     .withDescription(NDescribables.ofDesc("getDependencies"))
@@ -247,7 +251,7 @@ public class DefaultNSearch extends AbstractNSearch {
         } else if (!latest && distinct) {
             r = NIteratorBuilder.of(baseIterator).distinct(
                     NFunction.of(
-                                    (NId nutsId) -> nutsId.getLongId()
+                                    (NId nutsId) -> nutsId.longId()
                                             .toString())
                             .withDescription(NDescribables.ofDesc("getLongId"))
             ).iterator();
@@ -256,9 +260,9 @@ public class DefaultNSearch extends AbstractNSearch {
                         Map<String, NId> visited = new LinkedHashMap<>();
                         while (baseIterator.hasNext()) {
                             NId nutsId = baseIterator.next();
-                            String k = nutsId.getShortName();
+                            String k = nutsId.shortName();
                             NId old = visited.get(k);
-                            if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+                            if (old == null || old.version().isBlank() || old.version().compareTo(nutsId.version()) < 0) {
                                 visited.put(k, nutsId);
                             }
                         }
@@ -274,12 +278,12 @@ public class DefaultNSearch extends AbstractNSearch {
                                 Map<String, List<NId>> visited = new LinkedHashMap<>();
                                 while (baseIterator.hasNext()) {
                                     NId nutsId = baseIterator.next();
-                                    String k = nutsId.getShortName();
+                                    String k = nutsId.shortName();
                                     List<NId> oldList = visited.get(k);
                                     NId old = oldList == null ? null : oldList.get(0);
-                                    if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+                                    if (old == null || old.version().isBlank() || old.version().compareTo(nutsId.version()) < 0) {
                                         visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
-                                    } else if (old.getVersion().compareTo(nutsId.getVersion()) == 0) {
+                                    } else if (old.version().compareTo(nutsId.version()) == 0) {
                                         oldList.add(nutsId);
                                     }
                                 }

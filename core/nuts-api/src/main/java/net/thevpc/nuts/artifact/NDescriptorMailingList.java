@@ -1,28 +1,100 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.util.List;
 import java.util.Map;
 
+/**
+ * NDescriptorMailingList interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NDescriptorMailingList {
-    String getId();
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    @NGetter
+    String id();
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    String name();
 
-    String getSubscribe();
+    /**
+     * Subscribe.
+     *
+     * @return subscribe result
+     */
+    @NGetter
+    String subscribe();
 
-    String getUnsubscribe();
+    /**
+     * Unsubscribe.
+     *
+     * @return unsubscribe result
+     */
+    @NGetter
+    String unsubscribe();
 
-    String getPost();
+    /**
+     * Post.
+     *
+     * @return post result
+     */
+    @NGetter
+    String post();
 
-    String getArchive();
+    /**
+     * Archive.
+     *
+     * @return archive result
+     */
+    @NGetter
+    String archive();
 
-    List<String> getOtherArchives();
+    /**
+     * Other archives.
+     *
+     * @return other archives result
+     */
+    @NGetter
+    List<String> otherArchives();
 
-    Map<String, String> getProperties();
+    /**
+     * Properties.
+     *
+     * @return properties result
+     */
+    @NGetter
+    Map<String, String> properties();
 
-    String getComments();
+    /**
+     * Comments.
+     *
+     * @return comments result
+     */
+    @NGetter
+    String comments();
 
+    /**
+     * Read only.
+     *
+     * @return read only result
+     */
     NDescriptorMailingList readOnly();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NDescriptorMailingListBuilder builder();
 }

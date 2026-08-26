@@ -29,8 +29,11 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepositorySpec;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
@@ -41,19 +44,21 @@ import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableStore;
-import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.Charset;
 import java.nio.file.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
@@ -89,14 +94,11 @@ public class CoreIOUtils {
     }
 
     public static boolean isValidConfLine(String line) {
-        String l = NStringUtils.trimLeftToNull(line);
+        String l = NStringUtils.stripLeftToNull(line);
         if (l == null) {
             return false;
         }
-        if (l.charAt(0) == '#') {
-            return false;
-        }
-        return true;
+        return l.charAt(0) != '#';
     }
 
     public static Stream<String> confLines(InputStream stream) {
@@ -113,7 +115,7 @@ public class CoreIOUtils {
 
     public static Stream<String> lines(Reader reader) {
         return NCollections.finiteStream(new Supplier<String>() {
-            private BufferedReader r = new BufferedReader(reader);
+            private final BufferedReader r = new BufferedReader(reader);
 
             public String get() {
                 try {
@@ -168,10 +170,10 @@ public class CoreIOUtils {
     }
 
     public static String resolveRepositoryPath(NRepositorySpec options, Path rootFolder) {
-        String loc = options.getLocation();
-        String goodName = options.getName();
+        String loc = options.location();
+        String goodName = options.name();
         if (NBlankable.isBlank(goodName)) {
-            goodName = options.getName();
+            goodName = options.name();
         }
         if (NBlankable.isBlank(goodName)) {
             if (options.isTemporary()) {
@@ -223,8 +225,8 @@ public class CoreIOUtils {
 
     public static NPrintStream resolveOut() {
         NSession session = NSession.of();
-        return (session.getTerminal() == null) ? NPrintStream.NULL
-                : session.getTerminal().out();
+        return (session.terminal() == null) ? NPrintStream.NULL
+                : session.terminal().out();
     }
 
     //
@@ -342,7 +344,7 @@ public class CoreIOUtils {
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound) {
         NWorkspace workspace = NWorkspace.of();
-        final NPath cacheBasePath = NPath.of(NStoreKey.ofCache(workspace.getRuntimeId()));
+        final NPath cacheBasePath = NPath.of(NStoreKey.ofCache(workspace.runtimeId()));
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
@@ -373,15 +375,15 @@ public class CoreIOUtils {
                 if (cachedID != null) {
                     NPath p = urlContent.resolve(cachedID);
                     if (p.exists()) {
-                        return p.getInputStream();
+                        return p.inputStream();
                     }
                 }
             }
         }
 
         NPath header = NPath.of(path);
-        long size = header.getContentLength();
-        Instant lastModifiedInstant = header.getLastModifiedInstant();
+        long size = header.contentLength();
+        Instant lastModifiedInstant = header.lastModifiedInstant();
         long lastModified = lastModifiedInstant == null ? 0 : lastModifiedInstant.toEpochMilli();
 
         //when sha1 was not resolved check size and last modification
@@ -392,7 +394,7 @@ public class CoreIOUtils {
                     if (cachedID != null) {
                         NPath p = urlContent.resolve(cachedID);
                         if (p.exists()) {
-                            return p.getInputStream();
+                            return p.inputStream();
                         }
                     }
                 }
@@ -402,18 +404,18 @@ public class CoreIOUtils {
         final String s = UUID.randomUUID().toString();
         final NPath outPath = urlContent.resolve(s + "~");
         urlContent.mkdirs();
-        OutputStream p = outPath.getOutputStream();
+        OutputStream p = outPath.outputStream();
         long finalLastModified = lastModified;
         NIO io = NIO.of();
-        InputStream ist = NInputSourceBuilder.of(header.getInputStream())
-                .setTee(p)
-                .setCloseAction(() -> {
+        InputStream ist = NInputSourceBuilder.of(header.inputStream())
+                .tee(p)
+                .closeAction(() -> {
                     if (outPath.exists()) {
                         CachedURL ccu = new CachedURL();
                         ccu.url = path;
                         ccu.path = s;
                         ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath);
-                        long newSize = outPath.getContentLength();
+                        long newSize = outPath.contentLength();
                         ccu.size = newSize;
                         ccu.lastModified = finalLastModified;
                         NPath newLocalPath = urlContent.resolve(s);
@@ -428,10 +430,10 @@ public class CoreIOUtils {
                 })
                 .createInputStream();
         return NInputSourceBuilder.of(ist)
-                .setMetadata(new DefaultNContentMetadata(
+                .metadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NText.ofStyledPath(path)),
-                        size, header.getContentType(), header.getCharset(), sourceTypeName
+                        size, header.contentType(), header.charset(), sourceTypeName
                 )).createInputStream()
                 ;
 
@@ -445,19 +447,19 @@ public class CoreIOUtils {
                 return sf;
             }
         }
-        String name = is.getMetaData().getName().orElse("no-name");
+        String name = is.metaData().name().orElse("no-name");
         Path temp = NPath.ofTempFile(name).toPath().get();
         NCp a = NCp.of().removeOptions(NPathOption.SAFE);
         if (isPath) {
             a.from(((NPath) is));
         } else {
-            a.from(is.getInputStream());
+            a.from(is.inputStream());
         }
         a.to(temp).run();
 
         if (enforceExtension) {
             NPath pp = NPath.of(temp);
-            String ext = pp.nameParts(NPathExtensionType.SHORT).getExtension();
+            String ext = pp.nameParts(NPathExtensionType.SHORT).extension();
             if (ext.isEmpty()) {
                 String ct = NIO.of().probeContentType(temp);
                 if (ct != null) {
@@ -490,7 +492,7 @@ public class CoreIOUtils {
 
     public static boolean isObsoletePath(NPath path) {
         try {
-            Instant i = path.getLastModifiedInstant();
+            Instant i = path.lastModifiedInstant();
             if (i == null) {
                 return false;
             }
@@ -502,8 +504,8 @@ public class CoreIOUtils {
 
     public static boolean isObsoleteInstant(Instant instant) {
         NSession session = NSession.of();
-        if (session.getExpireTime().isPresent()) {
-            return instant == null || instant.isBefore(session.getExpireTime().orNull());
+        if (session.expireTime().isPresent()) {
+            return instant == null || instant.isBefore(session.expireTime().orNull());
         }
         return false;
     }
@@ -538,7 +540,7 @@ public class CoreIOUtils {
 
     public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String encoding, String kind) {
         return NInputSourceBuilder.of(new ByteArrayInputStream(bytes))
-                .setMetadata(new DefaultNContentMetadata(
+                .metadata(new DefaultNContentMetadata(
                                 message,
                                 (long) bytes.length,
                                 contentType,
@@ -641,12 +643,12 @@ public class CoreIOUtils {
                 }
                 case ASK: {
                     if (NIn.ask()
-                            .setDefaultValue(true)
+                            .defaultValue(true)
                             .forBoolean(NMsg.ofC("create %s ?",
                                     NText.ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
-                            ).getBooleanValue()) {
+                            ).booleanValue()) {
                         out.mkParentDirs();
                         out.writeBytes(content);
 //                        if (session.isPlainTrace()) {
@@ -678,13 +680,13 @@ public class CoreIOUtils {
                 }
                 case ASK: {
                     if (NIn.ask()
-                            .setDefaultValue(true)
-                            .setRememberMeKey(rememberMeKey == null ? null : ("Override." + rememberMeKey))
+                            .defaultValue(true)
+                            .rememberMeKey(rememberMeKey == null ? null : ("Override." + rememberMeKey))
                             .forBoolean(NMsg.ofC("override %s ?",
                                     NText.ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
-                            ).getBooleanValue()) {
+                            ).booleanValue()) {
                         out.writeBytes(content);
 //                        if (session.isPlainTrace()) {
 //                            NOut.println(NMsg.ofC("update file %s", out));
@@ -705,8 +707,8 @@ public class CoreIOUtils {
         Set<CopyOption> joptions = new HashSet<>();
 
         for (NPathOption option : noptions) {
-            if(option instanceof NPathStandardOption) {
-                switch ((NPathStandardOption)option) {
+            if (option instanceof NPathStandardOption) {
+                switch ((NPathStandardOption) option) {
                     case REPLACE_EXISTING: {
                         joptions.add(StandardCopyOption.REPLACE_EXISTING);
                         break;
@@ -785,15 +787,15 @@ public class CoreIOUtils {
         if (err == null) {
             err = NExecOutput.ofStream(session.err());
         }
-        if (err.getType() == NRedirectType.INHERIT) {
+        if (err.type() == NRedirectType.INHERIT) {
             if (NIO.of().isStderr(session.err())) {
                 err = NExecOutput.ofInherit();
             } else {
                 err = NExecOutput.ofStream(session.err());
             }
-        } else if (err.getType() == NRedirectType.STREAM) {
-            if (NIO.of().isStderr(err.getStream())) {
-                err = NExecOutput.ofStream(err.getStream());
+        } else if (err.type() == NRedirectType.STREAM) {
+            if (NIO.of().isStderr(err.outputStream())) {
+                err = NExecOutput.ofStream(err.outputStream());
             }
         }
         return err;
@@ -815,6 +817,54 @@ public class CoreIOUtils {
         return NOptional.of(in);
     }
 
+    public static NStream<String> bufferedReaderToLinesStream(BufferedReader br) {
+        try {
+            return NStream.ofStream(br.lines().onClose(() -> {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }));
+        } catch (Error | RuntimeException e) {
+            try {
+                br.close();
+            } catch (IOException ex) {
+                try {
+                    e.addSuppressed(ex);
+                } catch (Throwable ignore) {
+
+                }
+            }
+            throw e;
+        }
+    }
+
+
+    public static byte[] getDigest(InputStream input,String algo) {
+        if (NBlankable.isBlank(algo)) {
+            algo = "SHA-1";
+        }
+        MessageDigest sha1 = null;
+        try {
+            sha1 = MessageDigest.getInstance(algo);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new NIOException(ex);
+        }
+        byte[] buffer = new byte[8192];
+        int len = 0;
+        try {
+            len = input.read(buffer);
+            while (len != -1) {
+                sha1.update(buffer, 0, len);
+                len = input.read(buffer);
+            }
+        } catch (IOException e) {
+            throw new NIOException(e);
+        }
+        return sha1.digest();
+    }
+
 
     public static class CachedURL {
 
@@ -828,7 +878,7 @@ public class CoreIOUtils {
     public static DefaultNContentMetadata defaultNutsInputSourceMetadata(InputStream is) {
         NAssert.requireNamedNonNull(is);
         if (is instanceof NInputSource) {
-            return new DefaultNContentMetadata(((NInputSource) is).getMetaData());
+            return new DefaultNContentMetadata(((NInputSource) is).metaData());
         }
         return new DefaultNContentMetadata();
     }
@@ -838,15 +888,15 @@ public class CoreIOUtils {
             NSession session = NSession.of();
             in = NExecInput.ofStream(session.in());
         }
-        if (in.getType() == NRedirectType.INHERIT) {
+        if (in.type() == NRedirectType.INHERIT) {
             NSession session = NSession.of();
             if (NIO.of().isStdin(session.in())) {
                 in = NExecInput.ofInherit();
             } else {
                 in = NExecInput.ofStream(session.in());
             }
-        } else if (in.getType() == NRedirectType.STREAM) {
-            if (NIO.of().isStdin(in.getStream())) {
+        } else if (in.type() == NRedirectType.STREAM) {
+            if (NIO.of().isStdin(in.inputStream())) {
                 in = NExecInput.ofInherit();
             }
         }
@@ -858,22 +908,22 @@ public class CoreIOUtils {
         if (out == null) {
             out = NExecOutput.ofStream(session.out());
         }
-        if (out.getType() == NRedirectType.INHERIT) {
+        if (out.type() == NRedirectType.INHERIT) {
             if (NIO.of().isStdout(session.out())) {
                 out = NExecOutput.ofInherit();
             } else {
                 out = NExecOutput.ofStream(session.out());
             }
-        } else if (out.getType() == NRedirectType.STREAM) {
-            if (NIO.of().isStdout(out.getStream())) {
-                out = NExecOutput.ofStream(out.getStream());
+        } else if (out.type() == NRedirectType.STREAM) {
+            if (NIO.of().isStdout(out.outputStream())) {
+                out = NExecOutput.ofStream(out.outputStream());
             }
         }
         return out;
     }
 
     public static String metadataToString(NContentMetadata md, Object caller) {
-        NOptional<NMsg> m = md.getMessage();
+        NOptional<NMsg> m = md.message();
         if (m.isPresent()) {
             NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
             out.print(m.get());
@@ -883,7 +933,7 @@ public class CoreIOUtils {
             }
         }
 
-        NOptional<String> m2 = md.getName();
+        NOptional<String> m2 = md.name();
         if (m2.isPresent()) {
             String s = m2.get();
             if (!NBlankable.isBlank(s)) {
@@ -904,26 +954,26 @@ public class CoreIOUtils {
                 if (o instanceof NContentMetadata) {
                     md2 = (NContentMetadata) o;
                 } else if (o instanceof NContentMetadataProvider) {
-                    md2 = ((NContentMetadataProvider) o).getMetaData();
+                    md2 = ((NContentMetadataProvider) o).metaData();
                 }
                 if (md2 != null) {
                     if (md == null) {
                         md = new DefaultNContentMetadata(md2);
                     } else {
-                        if (md.getContentLength().isNotPresent()) {
-                            md.setContentLength(md2.getContentLength().orNull());
+                        if (md.contentLength().isNotPresent()) {
+                            md.contentLength(md2.contentLength().orNull());
                         }
-                        if (md.getContentType().isNotPresent()) {
-                            md.setContentType(md2.getContentType().orNull());
+                        if (md.contentType().isNotPresent()) {
+                            md.contentType(md2.contentType().orNull());
                         }
-                        if (md.getMessage().isNotPresent()) {
-                            md.setMessage(md2.getMessage().orNull());
+                        if (md.message().isNotPresent()) {
+                            md.message(md2.message().orNull());
                         }
-                        if (md.getName().isNotPresent()) {
-                            md.setName(md2.getName().orNull());
+                        if (md.name().isNotPresent()) {
+                            md.name(md2.name().orNull());
                         }
-                        if (md.getKind().isNotPresent()) {
-                            md.setKind(md2.getKind().orNull());
+                        if (md.kind().isNotPresent()) {
+                            md.kind(md2.kind().orNull());
                         }
                     }
                 }
@@ -988,4 +1038,150 @@ public class CoreIOUtils {
         return "/";
     }
 
+
+    /**
+     * this is teh default implementation of lines part of any input stream
+     *
+     * @param from 0-based inclusive index of the first line to return or null. when negative, should consider tail (-from)
+     * @param to   0-based exclusive index of the last line to return or null. when negative, should consider tail (-to where -1 relates to the end of the stream)
+     * @param cs   charset if provided , if ot use default
+     * @return stream of lines
+     */
+    public static NStream<String> lines(NInputSource is, Long from, Long to, Charset cs) {
+        // ── Base case ──────────────────────────────────────────────
+        if (from == null && to == null) {
+            return is.lines(cs);
+        }
+
+        // Lazy supplier to avoid double-evaluating the base stream
+        Supplier<NStream<String>> base = () -> is.lines(cs);
+
+        // ── Only 'from' specified ─────────────────────────────────
+        if (from != null && to == null) {
+            return from >= 0
+                    ? base.get().skip(from)      // skip first N
+                    : is.tail(-from, cs);           // last N (your existing method)
+        }
+
+        // ── Only 'to' specified ───────────────────────────────────
+        if (from == null && to != null) {
+            return to >= 0
+                    ? base.get().limit(to)       // first N (exclusive)
+                    : excludeTail(is, -to, cs);      // all but last N
+        }
+
+        // ── Both specified, both non-negative ─────────────────────
+        if (from >= 0 && to >= 0) {
+            return (to <= from)
+                    ? NStream.ofEmpty()
+                    : base.get().skip(from).limit(to - from);
+        }
+
+        // ── At least one negative: resolve indices if possible ────
+        if (is.isMultiRead()) {
+            // Two-pass: count once, then compose with skip/limit
+            long total = base.get().count();
+            long start = (from < 0) ? Math.max(0, total + from) : from;
+            long end = (to < 0) ? Math.max(0, total + to) : to;
+
+            return (start >= end || start >= total)
+                    ? NStream.ofEmpty()
+                    : base.get().skip(start).limit(end - start);
+        }
+
+        // ── Single-read fallback: buffer minimally ────────────────
+        // Unavoidable: negative indices require seeing all lines once
+        List<String> all = base.get().toList();
+        long total = all.size();
+        long start = (from < 0) ? Math.max(0, total + from) : from;
+        long end = (to < 0) ? Math.max(0, total + to) : to;
+
+        if (start >= end || start >= total) return NStream.ofEmpty();
+        return NStream.ofStream(all.subList(
+                (int) start,
+                (int) Math.min(end, total)
+        ).stream());
+    }
+
+    /**
+     * Helper: return all lines except the last 'count' lines.
+     * Composes with head() if total is known, otherwise uses sliding buffer.
+     */
+    private static NStream<String> excludeTail(NInputSource is, long count, Charset cs) {
+        if (count <= 0) return is.lines(cs);
+
+        if (is.isMultiRead()) {
+            long total = is.lines(cs).count();
+            long keep = Math.max(0, total - count);
+            return keep == 0 ? NStream.ofEmpty() : is.lines(cs).limit(keep); // or head(keep)
+        }
+
+        // Single-pass: output lines with a 'count'-line delay
+        return NStream.ofIterator(new NIteratorBase<String>() {
+            private final Deque<String> buffer = new ArrayDeque<>((int) count);
+            private final NIterator<String> src = is.lines(cs).iterator();
+            private boolean initialized = false;
+            private String nextVal = null;
+
+            @Override
+            protected boolean hasNextImpl() {
+                if (!initialized) {
+                    // Prime the buffer with first 'count' lines
+                    for (int i = 0; i < count && src.hasNext(); i++) {
+                        buffer.addLast(src.next());
+                    }
+                    initialized = true;
+                }
+                if (nextVal != null) return true;
+                if (src.hasNext()) {
+                    nextVal = buffer.pollFirst();   // emit oldest
+                    buffer.addLast(src.next());      // buffer newest
+                    return true;
+                }
+                return false; // stream exhausted, remaining buffer is the tail to exclude
+            }
+
+            @Override
+            public String next() {
+                hasNext();
+                String result = nextVal;
+                nextVal = null;
+                return result;
+            }
+        });
+    }
+
+    public static long copyWithBuffer(InputStream in, Path target, CopyOption... options) throws IOException {
+        boolean replaceExisting = false;
+        for (CopyOption o : options) {
+            if (o == StandardCopyOption.REPLACE_EXISTING) replaceExisting = true;
+        }
+
+        Path parent = target.getParent();
+        if (parent != null) Files.createDirectories(parent);
+
+        Path tmp = parent != null
+                ? parent.resolve(target.getFileName() + ".part")
+                : target.resolveSibling(target.getFileName() + ".part");
+
+        try {
+            byte[] buf = new byte[1024 * 1024]; // 128KB buffer
+            try (OutputStream out = Files.newOutputStream(tmp, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                int n;
+                while ((n = in.read(buf)) >= 0) {
+                    out.write(buf, 0, n);
+                }
+                out.flush();
+            }
+            if (replaceExisting) {
+                Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } else {
+                Files.move(tmp, target);
+            }
+            return Files.size(target);
+        } catch (IOException | RuntimeException e) {
+            try { Files.deleteIfExists(tmp); } catch (IOException ignored) {}
+            throw e;
+        }
+    }
 }

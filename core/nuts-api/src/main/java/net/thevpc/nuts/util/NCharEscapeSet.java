@@ -55,9 +55,32 @@ public final class NCharEscapeSet {
      *       When quotes are present the char can appear literally inside them.</li>
      * </ul>
      */
-    public enum When {
+    public enum When implements NEnum{
         ALWAYS,
-        UNQUOTED_ONLY
+        UNQUOTED_ONLY;
+        private final String id;
+
+      /**
+       * When.
+       */
+        When() {
+            this.id = NNameFormat.ID_NAME.format(name());
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        /**
+         * Parse.
+         *
+         * @param value value
+         * @return parse result
+         */
+        public static NOptional<When> parse(String value) {
+            return NEnumUtils.parseEnum(value, When.class);
+        }
     }
 
     // ── Entry ─────────────────────────────────────────────────────────────────
@@ -71,6 +94,14 @@ public final class NCharEscapeSet {
         private final When        when;
         private final NCharEscape escape;
 
+        /**
+         * Entry.
+         *
+         * @param chars chars
+         * @param when when
+         * @param escape escape
+         * @return entry result
+         */
         private Entry(char[] chars, When when, NCharEscape escape) {
             this.chars  = sortAndDedup(chars);
             this.when   = when;
@@ -107,11 +138,27 @@ public final class NCharEscapeSet {
             return Arrays.binarySearch(chars, c) >= 0;
         }
 
-        public When        getWhen()   { return when; }
-        public NCharEscape getEscape() { return escape; }
+        /**
+         * When.
+         *
+         * @return when result
+         */
+        public When when()   { return when; }
+        /**
+         * Escape.
+         *
+         * @return escape result
+         */
+        public NCharEscape escape() { return escape; }
 
         // ── Helpers ───────────────────────────────────────────────────────────
 
+        /**
+         * Sort and dedup.
+         *
+         * @param raw raw
+         * @return sort and dedup result
+         */
         private static char[] sortAndDedup(char[] raw) {
             if (raw == null || raw.length == 0) return new char[0];
             char[] copy = Arrays.copyOf(raw, raw.length);
@@ -131,6 +178,12 @@ public final class NCharEscapeSet {
 
     private final Entry[] entries;
 
+    /**
+     * N char escape set.
+     *
+     * @param entries entries
+     * @return n char escape set result
+     */
     private NCharEscapeSet(Entry[] entries) {
         this.entries = entries;
     }
@@ -155,6 +208,13 @@ public final class NCharEscapeSet {
 
     /** Returns a new set with {@code extra} appended at the end. */
     public NCharEscapeSet andThen(NCharEscapeSet extra) {
+        /**
+         * Combine.
+         *
+         * @param this this
+         * @param extra extra
+         * @return combine result
+         */
         return combine(this, extra);
     }
 
@@ -208,11 +268,11 @@ public final class NCharEscapeSet {
         for (int i = 0; i < entries.length; i++) {
             Entry e = entries[i];
             // Skip UNQUOTED_ONLY entries when we are inside quotes
-            if (e.getWhen() == When.UNQUOTED_ONLY && quoted) {
+            if (e.when() == When.UNQUOTED_ONLY && quoted) {
                 continue;
             }
             if (e.contains(c)) {
-                return e.getEscape().escape(c, format);
+                return e.escape().escape(c, format);
             }
         }
         return null;
@@ -226,7 +286,7 @@ public final class NCharEscapeSet {
     public boolean triggers(char c, boolean quoted) {
         for (int i = 0; i < entries.length; i++) {
             Entry e = entries[i];
-            if (e.getWhen() == When.UNQUOTED_ONLY && quoted) continue;
+            if (e.when() == When.UNQUOTED_ONLY && quoted) continue;
             if (e.contains(c)) return true;
         }
         return false;

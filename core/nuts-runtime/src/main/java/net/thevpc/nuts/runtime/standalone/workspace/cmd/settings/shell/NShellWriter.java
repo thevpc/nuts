@@ -6,7 +6,7 @@ import net.thevpc.nuts.util.NOptional;
 public interface NShellWriter {
     static NOptional<NShellWriter> of(NShellFamily family) {
         if (family == null) {
-            family = NShellFamily.getCurrent();
+            family = NShellFamily.current();
         }
         switch (family) {
             case BASH: {

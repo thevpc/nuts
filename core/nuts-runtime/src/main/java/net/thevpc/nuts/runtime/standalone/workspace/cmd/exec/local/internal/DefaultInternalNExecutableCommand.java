@@ -6,19 +6,19 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutableType;
+import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextTransformConfig;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.text.NMsg;
+
+import java.util.List;
 
 /**
  * @author thevpc
@@ -27,18 +27,33 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
 
     protected String[] args;
     protected NInternalCommand impl;
-    public DefaultInternalNExecutableCommand(String name, String[] args, NExec execCommand) {
+    public DefaultInternalNExecutableCommand(String name, String[] args, NExec execCommand, List<String> executorOptions) {
         super(name, name, NExecutableType.INTERNAL,execCommand);
         this.args = args;
+        this.executorOptions = executorOptions;
+        NCmdLine.of(this.executorOptions).matcher()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
+                .requireAll();
     }
-    public DefaultInternalNExecutableCommand(NInternalCommand impl, String[] args, NExec execCommand) {
+    public DefaultInternalNExecutableCommand(NInternalCommand impl, String[] args, NExec execCommand, List<String> executorOptions) {
         super(impl.getName(), impl.getName(), NExecutableType.INTERNAL,execCommand);
         this.args = args;
         this.impl = impl;
+        this.executorOptions = executorOptions;
+        NCmdLine.of(this.executorOptions).matcher()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .whenAny().skip()
+                .requireAll();
     }
 
     @Override
     public int execute() {
+        if(completeRequest!=null){
+            return NExecutionException.SUCCESS;
+        }
         if(impl==null){
             throw new NIllegalArgumentException(NMsg.ofC("impl is null"));
         }
@@ -46,29 +61,28 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return null;
     }
 
     protected void showDefaultHelp() {
-        NOut.println(getHelpText());
+        NOut.println(helpText());
     }
 
 
     @Override
-    public NText getHelpText() {
-        NTexts txt = NTexts.of();
+    public NText helpText() {
         NPath path = NPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader());
-        NText n = txt.parser().parse(path);
+        NText n = NTextParser.of().parse(path);
         if (n == null) {
-            return super.getHelpText();
+            return super.helpText();
         }
-        return txt.transform(n,
+        return NText.transform(n,
                 new NTextTransformConfig()
-                        .setProcessAll(true)
-                        .setRootLevel(1)
-                        .setImportClassLoader(getClass().getClassLoader())
-                        .setCurrentDir(path.getParent())
+                        .processAll(true)
+                        .rootLevel(1)
+                        .importClassLoader(getClass().getClassLoader())
+                        .currentDir(path.parent())
         );
     }
 
@@ -78,23 +92,22 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
             NOut.println("[dry] ==show-help==");
             return;
         }
-        NTexts text = NTexts.of();
         if (NOut.isPlain()) {
             NOut.println(NMsg.ofC("[dry] %s%n",
-                    text.ofBuilder()
+                    NTextBuilder.of()
                             .append("internal", NTextStyle.pale())
                             .append(" ")
-                            .append(getName(), NTextStyle.primary5())
+                            .append(name(), NTextStyle.primary5())
                             .append(" ")
                             .append(NCmdLine.of(args))
             ));
         } else {
             NOut.println(NMsg.ofC(
                             "[dry] %s",
-                            text.ofBuilder()
+                            NTextBuilder.of()
                                     .append("internal", NTextStyle.pale())
                                     .append(" ")
-                                    .append(getName(), NTextStyle.primary5())
+                                    .append(name(), NTextStyle.primary5())
                                     .append(" ")
                                     .append(NCmdLine.of(args))
                     )
@@ -104,7 +117,7 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
 
     @Override
     public String toString() {
-        return getName() + " " + NCmdLine.of(args).toString();
+        return name() + " " + NCmdLine.of(args).toString();
     }
 
 }

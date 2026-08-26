@@ -214,10 +214,8 @@ image::images/nuts-components.png[scaledwidth=80%]
 
 ```java
     NSession session=Nuts.openWorkspace("-Z","-S");
-    int code=NExecCmd.of().addCommand("ls", "-l").getResult();
-    String out=NExecCmd.of().addCommand("nsh", "ls","--table")
-        .grabOutputString()
-        .getOutputString();
+    int code=NExec.of().command("ls", "-l").getResult();
+    String out=NExec.of().command("nsh", "ls","--table").grabbedOut();
 ```
 
 <<<
@@ -280,7 +278,7 @@ public class Main implements NApplication {
     }
     @Override
     public void run() {
-        NCmdLine cmd=NApp.of().getCmdLine();
+        NCmdLine cmd=NApplication.of().cmdLine();
         ...
     }
 }
@@ -295,7 +293,7 @@ public class Main implements NApplication {
     public static void main(String[] args) {new Main().run(NAppRunOptions.ofExit(args));}
     @Override
     public void run() {
-        NCmdLine cmd=NApp.of().getCmdLine();
+        NCmdLine cmd=NApplication.of().cmdLine();
         ...
     }
     @Override

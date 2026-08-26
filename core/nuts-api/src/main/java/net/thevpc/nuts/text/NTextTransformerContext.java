@@ -1,15 +1,53 @@
 package net.thevpc.nuts.text;
 
+/**
+ * NTextTransformerContext interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NTextTransformerContext {
-    NTextTransformConfig getConfig();
+    /**
+     * Config.
+     *
+     * @return config result
+     */
+    NTextTransformConfig config();
 
-    NTitleSequence getTitleSequence();
+    /**
+     * Title sequence.
+     *
+     * @return title sequence result
+     */
+    NTitleSequence titleSequence();
 
-    NTextTransformerContext setTitleSequence(NTitleSequence sequence);
+    /**
+     * Title sequence.
+     *
+     * @param sequence sequence
+     * @return title sequence result
+     */
+    NTextTransformerContext titleSequence(NTitleSequence sequence);
 
-    NTextTransformer getDefaultTransformer();
+    /**
+     * Default transformer.
+     *
+     * @return default transformer result
+     */
+    NTextTransformer defaultTransformer();
 
-    NTextTransformerContext setDefaultTransformer(NTextTransformer transformer);
+    /**
+     * Default transformer.
+     *
+     * @param transformer transformer
+     * @return default transformer result
+     */
+    NTextTransformerContext defaultTransformer(NTextTransformer transformer);
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NTextTransformerContext copy();
 }

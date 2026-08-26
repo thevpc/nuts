@@ -34,7 +34,7 @@ public class TestUtils {
     public static final String LINUX_CACHE = new File(System.getProperty("user.home") + "/.cache/nuts").getPath();
     public static final String LINUX_TEMP = new File(System.getProperty("java.io.tmpdir") + "/" + System.getProperty("user.name") + "/nuts").getPath();
     public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG, LINUX_CACHE, LINUX_TEMP, LINUX_APPS};
-    public static final NVersion NUTS_VERSION = Nuts.getVersion();
+    public static final NVersion NUTS_VERSION = Nuts.version();
 
     public static FileSystemStash STASH = new FileSystemStash();
 
@@ -330,10 +330,18 @@ public class TestUtils {
         return s[index];
     }
 
+    public static void println() {
+        System.out.println("[TEST] ");
+    }
     public static void println(Object any) {
         System.out.println("[TEST] "+any);
     }
     public static void print(Object any) {
         System.out.print("[TEST] "+any);
+    }
+    public static void printfln(String any,Object... args) {
+        System.out.print("[TEST] ");
+        System.out.printf(any,args);
+        System.out.println();
     }
 }

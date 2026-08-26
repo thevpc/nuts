@@ -25,7 +25,7 @@ public class BinSshFileOutputStreamScp extends OutputStream {
 
         // Create local temporary file
         this.temp = NPath.ofTempFile();
-        this.tempOS = this.temp.getOutputStream();
+        this.tempOS = this.temp.outputStream();
     }
 
     @Override
@@ -75,22 +75,22 @@ public class BinSshFileOutputStreamScp extends OutputStream {
         NConnectionStringBuilder cbuilder = remotePath.builder();
         String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
         NExec scp = NExec.ofSystem("scp", "-q", temp.toString(),
-                cbuilder.setPort(null).setQueryMap(null).toString());
-        int port = NLiteral.of(remotePath.getPort()).asInt().orElse(-1);
+                cbuilder.port(null).queryMap(null).toString());
+        int port = NLiteral.of(remotePath.port()).asInt().orElse(-1);
         if(port<=0){
             port=22;
         }
         if(port!=22){
-            scp.addCommand("-oPort",String.valueOf(port));
+            scp.command("-oPort",String.valueOf(port));
         }
         if(!NBlankable.isBlank(identityFile)){
-            scp.addCommand("-oIdentityFile",identityFile);
+            scp.command("-oIdentityFile",identityFile);
         }
         scp
-                .setIn(NExecInput.ofNull())
-                .setOut(NExecOutput.ofNull())
-                .setErr(NExecOutput.ofNull())
-                .failFast()
+                .in(NExecInput.ofNull())
+                .out(NExecOutput.ofNull())
+                .err(NExecOutput.ofNull())
+                .failFast(true)
                 .run();
     }
 }

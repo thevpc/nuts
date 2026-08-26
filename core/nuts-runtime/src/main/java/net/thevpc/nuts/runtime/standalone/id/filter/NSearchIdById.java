@@ -26,7 +26,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
@@ -45,14 +46,14 @@ public class NSearchIdById implements NSearchId {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
     @Override
-    public NDescriptor getDescriptor() {
+    public NDescriptor descriptor() {
         return NFetch.of(id)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDescriptor();
     }
 

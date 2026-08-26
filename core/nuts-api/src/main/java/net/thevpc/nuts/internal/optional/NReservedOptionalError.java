@@ -10,27 +10,69 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * NReservedOptionalError class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> implements Cloneable {
 
     private Throwable cause;
 
+    /**
+     * N reserved optional error.
+     *
+     * @param message message
+     * @param cause cause
+     * @return n reserved optional error result
+     */
     public NReservedOptionalError(Supplier<NMsg> message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param NMsg.ofInvalidValue(cause):message n msg.of invalid value(cause):message
+       */
         super(message==null?() -> NMsg.ofInvalidValue(cause):message);
         this.cause = cause;
     }
 
+    /**
+     * With message.
+     *
+     * @param message message
+     * @return with message result
+     */
     public NOptional<T> withMessage(Supplier<NMsg> message) {
         return new NReservedOptionalEmpty<>(message);
     }
 
+    /**
+     * With message.
+     *
+     * @param message message
+     * @return with message result
+     */
     public NOptional<T> withMessage(NMsg message) {
         return new NReservedOptionalEmpty<>(message == null ? (() -> NMsg.ofInvalidValue(cause)) : () -> message);
     }
 
+    /**
+     * With name.
+     *
+     * @param name name
+     * @return with name result
+     */
     public NOptional<T> withName(NMsg name) {
         return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofInvalidValue(cause)) : () -> NMsg.ofInvalidValue(cause, name));
     }
 
+    /**
+     * With name.
+     *
+     * @param name name
+     * @return with name result
+     */
     public NOptional<T> withName(String name) {
         return new NReservedOptionalEmpty<>(name == null ? (() -> NMsg.ofInvalidValue(cause)) : () -> NMsg.ofInvalidValue(cause, name));
     }
@@ -42,7 +84,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     }
 
     @Override
-    public NOptionalType getType() {
+    public NOptionalType type() {
         return NOptionalType.ERROR;
     }
 
@@ -53,12 +95,22 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get() {
-        throwError(getMessage());
+      /**
+       * Throw error.
+       *
+       * @param message() message()
+       */
+        throwError(message());
         return null;
     }
 
     @Override
     public T get(Supplier<NMsg> message) {
+      /**
+       * Throw error.
+       *
+       * @param message message
+       */
         throwError(message);
         //never reached!
         return null;
@@ -106,9 +158,14 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         return super.clone();
     }
 
+    /**
+     * Throw error.
+     *
+     * @param preferredMessage preferred message
+     */
     protected void throwError(Supplier<NMsg> preferredMessage) {
         if (preferredMessage == null) {
-            preferredMessage = getMessage();
+            preferredMessage = message();
         }
         if (preferredMessage == null) {
             preferredMessage = NMsg::ofMissingValue;
@@ -117,7 +174,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
         RuntimeException exception = null;
-        ExceptionFactory exceptionFactory = getExceptionFactory();
+        NOptionalExceptionFactory exceptionFactory = getExceptionFactory();
         if (exceptionFactory != null) {
             exception = exceptionFactory.createOptionalErrorException(m, cause);
         }
@@ -145,7 +202,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public NElement describe() {
-        return NElement.ofUpletBuilder("Optional")
+        return NElement.ofTupleBuilder("Optional")
                 .add("evaluated", true)
                 .add("empty", false)
                 .add("error", true)

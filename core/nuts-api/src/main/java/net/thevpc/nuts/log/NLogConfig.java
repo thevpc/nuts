@@ -26,9 +26,10 @@
  */
 package net.thevpc.nuts.log;
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 
 /**
@@ -53,9 +54,21 @@ public class NLogConfig implements Serializable, Cloneable {
     private String logFileBase = null;
     private boolean readOnly;
 
+    /**
+     * N log config.
+     *
+     * @return n log config result
+     */
     public NLogConfig() {
     }
 
+    /**
+     * N log config.
+     *
+     * @param other other
+     * @param readOnly read only
+     * @return n log config result
+     */
     public NLogConfig(NLogConfig other, boolean readOnly) {
         this.readOnly=readOnly;
         if (other != null) {
@@ -68,24 +81,60 @@ public class NLogConfig implements Serializable, Cloneable {
         }
     }
 
-    public Level getLogFileLevel() {
+    /**
+     * Log file level.
+     *
+     * @return log file level result
+     */
+    @NGetter
+    public Level logFileLevel() {
         return logFileLevel;
     }
 
-    public NLogConfig setLogFileLevel(Level logFileLevel) {
+    /**
+     * Log file level.
+     *
+     * @param logFileLevel log file level
+     * @return log file level result
+     */
+    public NLogConfig logFileLevel(Level logFileLevel) {
         if(readOnly){
+            /**
+             * Illegal argument exception.
+             *
+             * @param only" only"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileLevel = logFileLevel;
         return this;
     }
 
-    public Level getLogTermLevel() {
+    /**
+     * Log term level.
+     *
+     * @return log term level result
+     */
+    @NGetter
+    public Level logTermLevel() {
         return logTermLevel;
     }
 
-    public NLogConfig setLogTermLevel(Level logTermLevel) {
+    /**
+     * Log term level.
+     *
+     * @param logTermLevel log term level
+     * @return log term level result
+     */
+    public NLogConfig logTermLevel(Level logTermLevel) {
         if(readOnly){
+            /**
+             * Illegal argument exception.
+             *
+             * @param only" only"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("read only");
         }
         this.logTermLevel = logTermLevel;
@@ -97,7 +146,8 @@ public class NLogConfig implements Serializable, Cloneable {
      *
      * @return log file size
      */
-    public int getLogFileSize() {
+    @NGetter
+    public int logFileSize() {
         return logFileSize;
     }
 
@@ -107,8 +157,14 @@ public class NLogConfig implements Serializable, Cloneable {
      * @param logFileSize Log File Size in Mega Bytes
      * @return {@code this} instance
      */
-    public NLogConfig setLogFileSize(int logFileSize) {
+    public NLogConfig logFileSize(int logFileSize) {
         if(readOnly){
+            /**
+             * Illegal argument exception.
+             *
+             * @param only" only"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileSize = logFileSize;
@@ -120,7 +176,8 @@ public class NLogConfig implements Serializable, Cloneable {
      *
      * @return log rotation files count
      */
-    public int getLogFileCount() {
+    @NGetter
+    public int logFileCount() {
         return logFileCount;
     }
 
@@ -130,8 +187,14 @@ public class NLogConfig implements Serializable, Cloneable {
      * @param logFileCount Log File rotation count
      * @return {@code this} instance
      */
-    public NLogConfig setLogFileCount(int logFileCount) {
+    public NLogConfig logFileCount(int logFileCount) {
         if(readOnly){
+            /**
+             * Illegal argument exception.
+             *
+             * @param only" only"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileCount = logFileCount;
@@ -143,7 +206,8 @@ public class NLogConfig implements Serializable, Cloneable {
      *
      * @return Log File Name pattern
      */
-    public String getLogFileName() {
+    @NGetter
+    public String logFileName() {
         return logFileName;
     }
 
@@ -153,8 +217,14 @@ public class NLogConfig implements Serializable, Cloneable {
      * @param logFileName Log File Name pattern
      * @return {@code this} instance
      */
-    public NLogConfig setLogFileName(String logFileName) {
+    public NLogConfig logFileName(String logFileName) {
         if(readOnly){
+            /**
+             * Illegal argument exception.
+             *
+             * @param only" only"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileName = logFileName;
@@ -166,7 +236,8 @@ public class NLogConfig implements Serializable, Cloneable {
      *
      * @return Log File Base directory
      */
-    public String getLogFileBase() {
+    @NGetter
+    public String logFileBase() {
         return logFileBase;
     }
 
@@ -176,18 +247,34 @@ public class NLogConfig implements Serializable, Cloneable {
      * @param logFileBase Log File Base directory
      * @return {@code this} instance
      */
-    public NLogConfig setLogFileBase(String logFileBase) {
+    public NLogConfig logFileBase(String logFileBase) {
         if(readOnly){
+            /**
+             * Illegal argument exception.
+             *
+             * @param only" only"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileBase = logFileBase;
         return this;
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NLogConfig copy() {
         return new NLogConfig(this,false);
     }
 
+    /**
+     * Read only.
+     *
+     * @return read only result
+     */
     public NLogConfig readOnly() {
         if(readOnly) {
             return this;

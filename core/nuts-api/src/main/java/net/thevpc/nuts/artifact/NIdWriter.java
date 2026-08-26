@@ -29,6 +29,8 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 
@@ -44,6 +46,11 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NIdWriter extends NObjectWriter, NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NIdWriter of() {
         return NExtensions.of(NIdWriter.class);
     }
@@ -61,7 +68,8 @@ public interface NIdWriter extends NObjectWriter, NComponent {
      * @param value true when the repository should not be included in formatted instance
      * @return {@code this} instance
      */
-    NIdWriter setOmitRepository(boolean value);
+    @NSetter
+    NIdWriter omitRepository(boolean value);
 
     /**
      * return true when the groupId should not be included in formatted instance
@@ -76,7 +84,8 @@ public interface NIdWriter extends NObjectWriter, NComponent {
      * @param value new value
      * @return {@code this} instance
      */
-    NIdWriter setOmitGroupId(boolean value);
+    @NSetter
+    NIdWriter omitGroupId(boolean value);
 
     /**
      * return true when the imported groupId should not be included in formatted instance
@@ -91,7 +100,8 @@ public interface NIdWriter extends NObjectWriter, NComponent {
      * @param value value
      * @return {@code this} instance
      */
-    NIdWriter setOmitImportedGroupId(boolean value);
+    @NSetter
+    NIdWriter omitImportedGroupId(boolean value);
 
     /**
      * return true if omit other properties
@@ -106,7 +116,8 @@ public interface NIdWriter extends NObjectWriter, NComponent {
      * @param value value
      * @return {@code this} instance
      */
-    NIdWriter setOmitOtherProperties(boolean value);
+    @NSetter
+    NIdWriter omitOtherProperties(boolean value);
 
     /**
      * return true when the face should not be included in formatted instance
@@ -121,7 +132,8 @@ public interface NIdWriter extends NObjectWriter, NComponent {
      * @param value value
      * @return {@code this} instance
      */
-    NIdWriter setOmitFace(boolean value);
+    @NSetter
+    NIdWriter omitFace(boolean value);
 
 
     /**
@@ -137,14 +149,16 @@ public interface NIdWriter extends NObjectWriter, NComponent {
      * @param value value
      * @return {@code this} instance
      */
-    NIdWriter setHighlightImportedGroupId(boolean value);
+    @NSetter
+    NIdWriter highlightImportedGroupId(boolean value);
 
     /**
      * query properties omitted
      *
      * @return query properties omitted
      */
-    List<String> getOmitProperties();
+    @NGetter
+    List<String> omitProperties();
 
     /**
      * return true if omit query property named {@code name}
@@ -177,13 +191,41 @@ public interface NIdWriter extends NObjectWriter, NComponent {
     NIdWriter configure(boolean skipUnsupported, String... args);
 
 
-    NIdWriter setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    NIdWriter ntf(boolean ntf);
 
-    public boolean isOmitCondition();
+    /**
+     * Checks if is omit condition.
+     *
+     * @return is omit condition result
+     */
+    boolean isOmitCondition();
 
-    public NIdWriter setOmitCondition(boolean omitCondition);
+    /**
+     * Omit condition.
+     *
+     * @param omitCondition omit condition
+     * @return omit condition result
+     */
+    NIdWriter omitCondition(boolean omitCondition);
 
-    public boolean isOmitExclusion();
+    /**
+     * Checks if is omit exclusion.
+     *
+     * @return is omit exclusion result
+     */
+    boolean isOmitExclusion();
 
-    public NIdWriter setOmitExclusion(boolean omitExclusion);
+    /**
+     * Omit exclusion.
+     *
+     * @param omitExclusion omit exclusion
+     * @return omit exclusion result
+     */
+    NIdWriter omitExclusion(boolean omitExclusion);
 }

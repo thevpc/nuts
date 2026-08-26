@@ -24,11 +24,11 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
         for (String exactRepo : exactRepos) {
             li=li.merge(NRepositoryUtils.createRepositorySelectorList(exactRepo).get());
         }
-        NRepositorySpec[] input = NWorkspace.of().getRepositories().stream()
-                .map(x -> x.config().getLocation().setName(x.getName()))
-                .map(x->new NRepositorySpec().setSourceLocation(x))
+        NRepositorySpec[] input = NWorkspace.of().repositories().stream()
+                .map(x -> x.config().location().name(x.name()))
+                .map(x->new NRepositorySpec().sourceLocation(x))
                 .toArray(NRepositorySpec[]::new);
-        String[] names = Arrays.stream(NRepositoryUtils.resolve(li,input)).map(NRepositorySpec::getName).toArray(String[]::new);
+        String[] names = Arrays.stream(NRepositoryUtils.resolve(li,input)).map(NRepositorySpec::name).toArray(String[]::new);
         for (String repo : names) {
             if (!NBlankable.isBlank(repo)) {
                 if(repo.indexOf('*')>0) {
@@ -47,12 +47,12 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
             return true;
         }
-        if(exactRepos.contains(repository.getUuid())
-                || exactRepos.contains(repository.getName())){
+        if(exactRepos.contains(repository.uuid())
+                || exactRepos.contains(repository.name())){
             return true;
         }
         for (Pattern wildcardRepo : wildcardRepos) {
-            if(wildcardRepo.matcher(repository.getName()).matches()){
+            if(wildcardRepo.matcher(repository.name()).matches()){
                 return true;
             }
         }
@@ -62,7 +62,7 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
-            return NRepositoryFilters.of().always();
+            return NRepositoryFilter.ofAlways();
         }
         return this;
     }
@@ -73,32 +73,15 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
     }
 
     @Override
-    public int hashCode() {
-        int hash = getClass().getName().hashCode();
-        hash = 41 * hash + Objects.hashCode(this.exactRepos);
-        hash = 41 * hash + Objects.hashCode(this.wildcardRepos);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNRepositorySelectorFilter that = (DefaultNRepositorySelectorFilter) o;
+        return Objects.equals(exactRepos, that.exactRepos) && Objects.equals(wildcardRepos, that.wildcardRepos);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNRepositorySelectorFilter other = (DefaultNRepositorySelectorFilter) obj;
-        if (!Objects.equals(this.exactRepos, other.exactRepos)) {
-            return false;
-        }
-        if (!Objects.equals(this.wildcardRepos, other.wildcardRepos)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), exactRepos, wildcardRepos);
     }
-
 }

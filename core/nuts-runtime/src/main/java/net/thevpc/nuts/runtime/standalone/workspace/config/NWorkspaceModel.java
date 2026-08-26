@@ -10,31 +10,43 @@ import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
+import net.thevpc.nuts.reflect.NReflectRepository;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineRPI;
+import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementRPI;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
+import net.thevpc.nuts.runtime.standalone.extension.NExtensionCatalogManager;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionTypeInfo;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
+import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
+import net.thevpc.nuts.runtime.standalone.log.DefaultNLogRPI;
 import net.thevpc.nuts.runtime.standalone.log.NLogSPIJUL;
 import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
+import net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectRPI;
+import net.thevpc.nuts.runtime.standalone.reflect.DefaultNReflectRepository;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreInMemory;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStoreOnDisk;
-import net.thevpc.nuts.runtime.standalone.util.collections.NLRUMapImpl;
-import net.thevpc.nuts.runtime.standalone.util.collections.NNormalizedStringMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NLRUMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NNormalizedStringMapImpl;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NProgressMonitor;
+import net.thevpc.nuts.mon.NProgressMonitor;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
@@ -47,6 +59,9 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalled
 import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendationConnector;
+import net.thevpc.nuts.runtime.standalone.collections.NDefaultObservableMap;
+import net.thevpc.nuts.collections.NLRUMap;
+import net.thevpc.nuts.collections.NObservableMap;
 
 import java.lang.management.ManagementFactory;
 import java.util.*;
@@ -54,7 +69,18 @@ import java.util.function.Supplier;
 
 public class NWorkspaceModel {
     public NLog LOG;
-    public NLogs defaultNLogs;
+    public NLogRPI defaultNLogRPI;
+    public NReflectRPI defaultNReflectRPI;
+    public NElementRPI defaultNElementRPI;
+    public NIORPI defaultNIORPI;
+    public NUtilsRPI defaultNUtilsRPI;
+    public NTextRPI defaultNTextRPI;
+    public NCmdLineRPI defaultNCmdLineRPI;
+
+
+    public NExtensionCatalogManager extensionCatalogManager=new NExtensionCatalogManager();
+
+
     public NWorkspace workspace;
     public NScopedValue<NSession> sessionScopes = new NScopedValue<>();
     public NSession initSession;
@@ -92,11 +118,14 @@ public class NWorkspaceModel {
     public DefaultNExtensions extensions;
     public NWorkspaceStore store;
     public DefaultElementMapperStore defaultElementMapperStore = new DefaultElementMapperStore();
+    public DefaultNElements defaultElements;
     public NScopedValue<NProgressMonitor> currentProgressMonitors = new NScopedValue<>();
     protected NObservableMap<String, Object> userProperties;
     private String pid;
     private NEnvLocal env;
+    public ClassLoader bootClassLoader;
     private final Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> configPlatforms = new LinkedHashMap<>();
+    private NReflectRepository defaultReflectRepository;
 
 
     public NWorkspaceModel(NWorkspace workspace, NBootOptions initialBootOptions) {
@@ -104,7 +133,7 @@ public class NWorkspaceModel {
         this.userProperties = new NDefaultObservableMap<>();
         this.logModel = new DefaultNLogModel(workspace);
         this.LOG = new DefaultNLog(DefaultNWorkspace.class.getName(), new NLogSPIJUL(DefaultNWorkspace.class.getName()), logModel, false);
-        if (initialBootOptions.getIsolationLevel().orNull() == NIsolationLevel.MEMORY) {
+        if (initialBootOptions.isolationLevel().orNull() == NIsolationLevel.MEMORY) {
             this.store = new NWorkspaceStoreInMemory();
         } else {
             this.store = new NWorkspaceStoreOnDisk();
@@ -118,21 +147,91 @@ public class NWorkspaceModel {
         this.repositoryModel = new DefaultNRepositoryModel(workspace);
         this.extensions = new DefaultNExtensions(this);
         this.bootModel = new DefaultNBootModel(workspace, this, initialBootOptions, LOG);
+        this.bootClassLoader = initialBootOptions.classWorldLoader().orNull();
+    }
+
+    public <T> T createRPI(Class<T> cls) {
+        switch (cls.getName()) {
+            case "net.thevpc.nuts.internal.rpi.NLogRPI": {
+                NLogRPI t = defaultNLogRPI;
+                if (t == null) {
+                    t = new DefaultNLogRPI();
+                    defaultNLogRPI = t;
+                }
+                return (T) t;
+            }
+            //log will need Element Factory so...
+
+            //log will need NCollectionsRPI so...
+            case "net.thevpc.nuts.internal.rpi.NUtilsRPI": {
+                NUtilsRPI t = defaultNUtilsRPI;
+                if (t == null) {
+                    t = new DefaultNUtilsRPI();
+                    defaultNUtilsRPI = t;
+                }
+                return (T) t;
+            }
+            case "net.thevpc.nuts.internal.rpi.NTextRPI": {
+                NTextRPI t = defaultNTextRPI;
+                if (t == null) {
+                    t = new DefaultNTextRPI();
+                    defaultNTextRPI = t;
+                }
+                return (T) t;
+            }
+            case "net.thevpc.nuts.internal.rpi.NReflectRPI": {
+                NReflectRPI t = defaultNReflectRPI;
+                if (t == null) {
+                    t = new DefaultNReflectRPI();
+                    defaultNReflectRPI = t;
+                }
+                return (T) t;
+            }
+            case "net.thevpc.nuts.internal.rpi.NElementRPI": {
+                NElementRPI t = defaultNElementRPI;
+                if (t == null) {
+                    t = new DefaultNElementRPI();
+                    defaultNElementRPI = t;
+                }
+                return (T) t;
+            }
+            case "net.thevpc.nuts.internal.rpi.NIORPI": {
+                NIORPI t = defaultNIORPI;
+                if (t == null) {
+                    t = new DefaultNIORPI();
+                    defaultNIORPI = t;
+                }
+                return (T) t;
+            }
+            case "net.thevpc.nuts.internal.rpi.NCmdLineRPI": {
+                NCmdLineRPI t = defaultNCmdLineRPI;
+                if (t == null) {
+                    t = new DefaultNCmdLineRPI();
+                    defaultNCmdLineRPI = t;
+                }
+                return (T) t;
+            }
+            case "net.thevpc.nuts.internal.rpi.NExprRPI": {
+                return ((T) new NExprRPIImpl());
+            }
+        }
+        return null;
     }
 
     public void init() {
-        askedApiVersion = initialBootOptions.getApiVersion().orNull();
-        askedRuntimeId = initialBootOptions.getRuntimeId().orNull();
+        defaultElements = new DefaultNElements(false,false);//lets enable global config
+        askedApiVersion = initialBootOptions.apiVersion().orNull();
+        askedRuntimeId = initialBootOptions.runtimeId().orNull();
         if (askedRuntimeId == null) {
             askedRuntimeId = NId.getRuntime("").get();
         }
         ((DefaultNWorkspace)NWorkspace.of()).env = rootEnv();
         this.textModel = new DefaultNTextManagerModel(workspace);
-        this.apiId = NId.getApi(Nuts.getVersion()).get();
+        this.apiId = NId.getApi(Nuts.version()).get();
         this.runtimeId = NId.get(
-                askedRuntimeId.getGroupId(),
-                askedRuntimeId.getArtifactId(),
-                NVersion.get(askedRuntimeId.getVersion().toString()).get()).get();
+                askedRuntimeId.groupId(),
+                askedRuntimeId.artifactId(),
+                NVersion.get(askedRuntimeId.version().toString()).get()).get();
         this.logModel.init(this.bootModel.getBootEffectiveOptions(), initialBootOptions);
         this.bootModel.init();
     }
@@ -165,7 +264,7 @@ public class NWorkspaceModel {
     }
 
     public Map<String, String> newSysEnvEmptyMap() {
-        switch (getEnv().getOsFamily()) {
+        switch (getEnv().osFamily()) {
             case WINDOWS: {
                 return NNormalizedStringMapImpl.ofCaseInsensitive();
             }
@@ -250,12 +349,19 @@ public class NWorkspaceModel {
         return configPlatforms;
     }
 
+    public NReflectRepository getDefaultReflectRepository() {
+        if(defaultReflectRepository==null){
+            defaultReflectRepository=new DefaultNReflectRepository();
+        }
+        return defaultReflectRepository;
+    }
+
     private class StackBasedNBeanContainer implements NBeanContainer {
         @Override
         public <T> NOptional<T> get(NBeanRef ref) {
             List<NBeanContainer> all;
             synchronized (scopedBeanContainerStack) {
-                all = scopedBeanContainerStack.getStackSnapshot();
+                all = scopedBeanContainerStack.stackSnapshot();
             }
             NOptional<T> firstError = null;
             for (int i = all.size() - 1; i >= 0; i--) {

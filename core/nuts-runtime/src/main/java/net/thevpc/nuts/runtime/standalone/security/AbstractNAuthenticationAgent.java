@@ -23,7 +23,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return name + "#" + version;
     }
 
@@ -38,7 +38,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     public <T> T withSecret(NSecureToken id, NSecretCaller<T> consumer, Function<String, String> env) {
         //credentials are already encrypted with default passphrase!
         checkValidCredentialId(id);
-        String p = id.getPayload();
+        String p = id.payload();
         T result = null;
         if (p != null && !p.isEmpty()) {
             if (p.charAt(0) == 'B') {
@@ -75,7 +75,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         }
         //credentials are already encrypted with default passphrase!
         checkValidCredentialId(id);
-        String p = id.getPayload();
+        String p = id.payload();
         if (p != null && !p.isEmpty()) {
             if (p.charAt(0) == 'H') {
                 char[] storeHashed = new char[p.length() - 1];
@@ -115,7 +115,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
 
     private void checkValidCredentialId(NSecureToken id) {
         NAssert.requireNamedNonBlank(id, "id");
-        String a = id.getAgentId();
+        String a = id.agentId();
         if (a != null && !a.isEmpty()) {
             int h = a.indexOf("#");
             if (h >= 0) {
@@ -148,7 +148,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
                     result = new char[valChars.length + 1];
                     result[0] = 'B';
                     System.arraycopy(valChars, 0, result, 1, valChars.length);
-                    return new NSecureToken(getId(), new String(result));
+                    return new NSecureToken(id(), new String(result));
                 } finally {
                     if (result != null) {
                         Arrays.fill(result, '\0');
@@ -184,7 +184,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
                     }
                 }
             });
-            r = new NSecureToken(getId(), sresult);
+            r = new NSecureToken(id(), sresult);
         }
         return r;
     }

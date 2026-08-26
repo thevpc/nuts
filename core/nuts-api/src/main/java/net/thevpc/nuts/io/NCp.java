@@ -27,8 +27,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.time.NProgressFactory;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedArgumentException;
 
@@ -60,6 +60,11 @@ import java.util.Set;
  * @since 0.5.4
  */
 public interface NCp extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NCp of() {
        return NExtensions.of(NCp.class);
     }
@@ -69,7 +74,7 @@ public interface NCp extends NComponent {
      *
      * @return source object to copy from
      */
-    NInputSource getSource();
+    NInputSource source();
 
     /**
      * update source to copy from
@@ -78,7 +83,7 @@ public interface NCp extends NComponent {
      * @return {@code this} instance
      * @throws NUnsupportedArgumentException if unsupported type
      */
-    NCp setSource(NPath source);
+    NCp source(NPath source);
 
     /**
      * update source to copy from
@@ -86,7 +91,7 @@ public interface NCp extends NComponent {
      * @param source source to copy from
      * @return {@code this} instance
      */
-    NCp setSource(InputStream source);
+    NCp source(InputStream source);
 
     /**
      * update source to copy from
@@ -94,7 +99,7 @@ public interface NCp extends NComponent {
      * @param source source to copy from
      * @return {@code this} instance
      */
-    NCp setSource(File source);
+    NCp source(File source);
 
     /**
      * update source to copy from
@@ -102,7 +107,7 @@ public interface NCp extends NComponent {
      * @param source source to copy from
      * @return {@code this} instance
      */
-    NCp setSource(Path source);
+    NCp source(Path source);
 
     /**
      * update source to copy from
@@ -110,7 +115,7 @@ public interface NCp extends NComponent {
      * @param source source to copy from
      * @return {@code this} instance
      */
-    NCp setSource(URL source);
+    NCp source(URL source);
 
     /**
      * update source to copy from
@@ -118,7 +123,7 @@ public interface NCp extends NComponent {
      * @param source source to copy from
      * @return {@code this} instance
      */
-    NCp setSource(String source);
+    NCp source(String source);
 
     /**
      * update source to copy from
@@ -127,8 +132,14 @@ public interface NCp extends NComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NCp setSource(byte[] source);
+    NCp source(byte[] source);
 
+    /**
+     * From.
+     *
+     * @param source source
+     * @return from result
+     */
     NCp from(NInputSource source);
 
     /**
@@ -193,7 +204,7 @@ public interface NCp extends NComponent {
      *
      * @return target object to copy to
      */
-    NOutputTarget getTarget();
+    NOutputTarget target();
 
 
     /**
@@ -202,7 +213,7 @@ public interface NCp extends NComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NCp setTarget(OutputStream target);
+    NCp target(OutputStream target);
 
     /**
      * update target to copy from
@@ -210,7 +221,7 @@ public interface NCp extends NComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NCp setTarget(NPrintStream target);
+    NCp target(NPrintStream target);
 
     /**
      * update target to copy from
@@ -225,7 +236,7 @@ public interface NCp extends NComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NCp setTarget(NPath target);
+    NCp target(NPath target);
 
     /**
      * update target to copy from
@@ -233,7 +244,7 @@ public interface NCp extends NComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NCp setTarget(Path target);
+    NCp target(Path target);
 
     /**
      * update target to copy from
@@ -241,12 +252,24 @@ public interface NCp extends NComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NCp setTarget(File target);
+    NCp target(File target);
 
 
-    NCp setTarget(NOutputTarget target);
+    /**
+     * Target.
+     *
+     * @param target target
+     * @return target result
+     */
+    NCp target(NOutputTarget target);
 
-    NCp setSource(NInputSource source);
+    /**
+     * Source.
+     *
+     * @param source source
+     * @return source result
+     */
+    NCp source(NInputSource source);
 
     /**
      * update target
@@ -305,20 +328,42 @@ public interface NCp extends NComponent {
      */
     NCp to(NPath target);
 
+    /**
+     * Adds the specified options.
+     *
+     * @param NPathOption...pathOptions n path option...path options
+     * @return add options result
+     */
     NCp addOptions(NPathOption...pathOptions);
 
+    /**
+     * Removes the specified options.
+     *
+     * @param NPathOption...pathOptions n path option...path options
+     * @return remove options result
+     */
     NCp removeOptions(NPathOption...pathOptions);
 
+    /**
+     * Clear options.
+     *
+     * @return clear options result
+     */
     NCp clearOptions();
 
-    Set<NPathOption> getOptions();
+    /**
+     * Options.
+     *
+     * @return options result
+     */
+    Set<NPathOption> options();
 
     /**
      * return validator
      *
      * @return validator
      */
-    NCpValidator getValidator();
+    NCpValidator validator();
 
     /**
      * update validator
@@ -326,24 +371,51 @@ public interface NCp extends NComponent {
      * @param validator validator
      * @return {@code this} instance
      */
-    NCp setValidator(NCpValidator validator);
+    NCp validator(NCpValidator validator);
 
+    /**
+     * Checks if is recursive.
+     *
+     * @return is recursive result
+     */
     boolean isRecursive();
 
+    /**
+     * Sets the recursive.
+     *
+     * @param recursive recursive
+     * @return set recursive result
+     */
     NCp setRecursive(boolean recursive);
 
+    /**
+     * Checks if is mkdirs.
+     *
+     * @return is mkdirs result
+     */
     boolean isMkdirs();
 
-    NCp setMkdirs(boolean mkdirs);
+    /**
+     * Mkdirs.
+     *
+     * @param mkdirs mkdirs
+     * @return mkdirs result
+     */
+    NCp mkdirs(boolean mkdirs);
 
     /**
      * run this copy action with {@link java.io.ByteArrayOutputStream} target and return bytes result
      *
      * @return {@code this} instance
      */
-    byte[] getByteArrayResult();
+    byte[] byteArrayResult();
 
-    String getStringResult();
+    /**
+     * String result.
+     *
+     * @return string result result
+     */
+    String stringResult();
 
     /**
      * run this copy action
@@ -358,7 +430,7 @@ public interface NCp extends NComponent {
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NProgressFactory getProgressFactory();
+    NProgressFactory progressFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -367,7 +439,7 @@ public interface NCp extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NCp setProgressFactory(NProgressFactory value);
+    NCp progressFactory(NProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -376,7 +448,7 @@ public interface NCp extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NCp setProgressMonitor(NProgressListener value);
+    NCp progressMonitor(NProgressListener value);
 
     /**
      * return true if skip root flag is armed.
@@ -393,7 +465,7 @@ public interface NCp extends NComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NCp setSkipRoot(boolean value);
+    NCp skipRoot(boolean value);
 
     /**
      * interrupt last created stream. An exception is throws when the stream is read.
@@ -406,39 +478,39 @@ public interface NCp extends NComponent {
      * source origin is a hint for logger about the source object for the given "from" source
      * @return source origin
      */
-    Object getSourceOrigin() ;
+    Object sourceOrigin() ;
 
     /**
      * source origin is a hint for logger about the source object for the given "from" source
      * @param sourceOrigin sourceOrigin
      * @return {@code this} instance
      */
-    NCp setSourceOrigin(Object sourceOrigin) ;
+    NCp sourceOrigin(Object sourceOrigin) ;
 
     /**
      * action message
      * @return action message
      */
-    NMsg getActionMessage() ;
+    NMsg actionMessage() ;
 
     /**
      * actionMessage
      * @param actionMsg actionMessage
      * @return {@code this} instance
      */
-    NCp setActionMessage(NMsg actionMsg) ;
+    NCp actionMessage(NMsg actionMsg) ;
 
 
     /**
      * source type name used in logging
      * @return source type name used in logging
      */
-    String getSourceTypeName();
+    String sourceTypeName();
 
     /**
      * source type name used in logging
      * @param sourceTypeName sourceTypeName
      * @return {@code this} instance
      */
-    NCp setSourceTypeName(String sourceTypeName) ;
+    NCp sourceTypeName(String sourceTypeName) ;
 }

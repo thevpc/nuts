@@ -6,17 +6,12 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.core.NMutableClassLoader;
 import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.reflect.*;
+import net.thevpc.nuts.runtime.standalone.util.NScorableNScorableQueryImpl;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.io.NServiceLoader;
-import net.thevpc.nuts.log.NLogs;
-import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
-import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.text.NMsg;
 
 import java.net.URL;
@@ -39,14 +34,8 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public Set<NId> getCompanionIds() {
+    public Set<NId> companionIds() {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(NId.get("net.thevpc.nsh:nsh").get())));
-    }
-
-
-    @Override
-    public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl) {
-        return wsModel.extensionModel.installWorkspaceExtensionComponent(extensionPointType, extensionImpl);
     }
 
     @Override
@@ -54,20 +43,6 @@ public class DefaultNExtensions implements NExtensions {
         return wsModel.extensionModel.discoverTypes(id, classLoader);
     }
 
-    @Override
-    public <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
-        return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType);
-    }
-
-    @Override
-    public <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
-        return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType, classLoader);
-    }
-
-    @Override
-    public NMutableClassLoader createMutableClassLoader(ClassLoader parentClassLoader) {
-        return new NMutableClassLoaderImpl(parentClassLoader);
-    }
 
     public <T> NOptional<NScorable> getTypeScorable(Class<? extends T> implType, Class<T> apiType) {
         return wsModel.extensionModel.getObjectFactory().getTypeScorer(implType, apiType);
@@ -93,38 +68,12 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     public <T, V> NOptional<T> createSupported(Class<T> serviceType, V criteriaType) {
-        switch (serviceType.getName()) {
-            case "net.thevpc.nuts.log.NLogs": {
-                NLogs t = wsModel.defaultNLogs;
-                if (t == null) {
-                    t = new DefaultNLogs();
-                    wsModel.defaultNLogs = t;
-                }
-                return NOptional.of((T) t);
-            }
+        T d = wsModel.createRPI(serviceType);
+        if(d!=null){
+            return NOptional.of((T) d);
         }
         if (wsModel.extensionModel == null) {
-            switch (serviceType.getName()) {
-                case "net.thevpc.nuts.text.NTexts": {
-                    NTexts t = wsModel.textModel.defaultNTexts;
-                    if (t == null) {
-                        t = new DefaultNTexts();
-                        wsModel.textModel.defaultNTexts = t;
-                    }
-                    return NOptional.of((T) t);
-                }
-                case "net.thevpc.nuts.log.NLogs": {
-                    NLogs t = wsModel.defaultNLogs;
-                    if (t == null) {
-                        t = new DefaultNLogs();
-                        wsModel.defaultNLogs = t;
-                    }
-                    return NOptional.of((T) t);
-                }
-                default: {
-                    throw NExceptions.ofSafeUnexpectedException(NMsg.ofC("Workspace is still booting and component container is not yet available. but you asked for %s", serviceType.getName()));
-                }
-            }
+            throw NException.ofSafeUnexpectedException(NMsg.ofC("Workspace is still booting and component container is not yet available. but you asked for %s", serviceType.getName()));
         }
         return wsModel.extensionModel.createSupported(serviceType, criteriaType);
     }
@@ -192,16 +141,16 @@ public class DefaultNExtensions implements NExtensions {
         if (classLoader == null) {
             classLoader = Thread.currentThread().getContextClassLoader();
         }
-        URL pomXml = classLoader.getResource("META-INF/maven/" + id.getGroupId() + "/" + id.getArtifactId() + "/pom.xml");
+        URL pomXml = classLoader.getResource("META-INF/maven/" + id.groupId() + "/" + id.artifactId() + "/pom.xml");
         if (pomXml != null) {
             NDescriptor e = NDescriptorParser.of()
-                    .setDescriptorStyle(NDescriptorStyle.MAVEN)
+                    .descriptorStyle(NDescriptorStyle.MAVEN)
                     .parse(pomXml).orNull();
             if (e != null) {
-                if (e.getId() != null) {
-                    NVersion v = e.getId().getVersion();
+                if (e.id() != null) {
+                    NVersion v = e.id().version();
                     if (v != null) {
-                        NVersion v2 = id.getVersion();
+                        NVersion v2 = id.version();
                         if (v2 != null && !v2.isBlank()) {
                             return v2.equals(v);
                         }
@@ -212,16 +161,16 @@ public class DefaultNExtensions implements NExtensions {
         }
 
         URL nuts = classLoader.getResource("META-INF/nuts/"
-                + id.getShortId().getMavenFolder() + "/nuts.json");
+                + id.shortId().mavenFolder() + "/nuts.json");
         if (nuts != null) {
             NDescriptor e = NDescriptorParser.of()
-                    .setDescriptorStyle(NDescriptorStyle.NUTS)
+                    .descriptorStyle(NDescriptorStyle.NUTS)
                     .parse(nuts).orNull();
             if (e != null) {
-                if (e.getId() != null) {
-                    NVersion v = e.getId().getVersion();
+                if (e.id() != null) {
+                    NVersion v = e.id().version();
                     if (v != null) {
-                        NVersion v2 = id.getVersion();
+                        NVersion v2 = id.version();
                         if (v2 != null && !v2.isBlank()) {
                             return v2.equals(v);
                         }
@@ -234,7 +183,7 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public List<NId> getLoadedExtensions() {
+    public List<NId> loadedExtensions() {
         return wsModel.extensionModel.getLoadedExtensions();
     }
 
@@ -251,12 +200,17 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public List<NId> getConfigExtensions() {
+    public List<NId> configExtensions() {
         return wsModel.extensionModel.getConfigExtensions();
     }
 
     @Override
     public boolean isExcludedExtension(String extensionId, NWorkspaceOptions options) {
         return wsModel.configModel.isExcludedExtension(extensionId, options);
+    }
+
+    @Override
+    public <T extends NScorable> NScorableQuery<T> ofScorableQuery() {
+        return new NScorableNScorableQueryImpl<>(NScorableContext.of());
     }
 }

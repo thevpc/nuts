@@ -26,58 +26,210 @@
  */
 package net.thevpc.nuts.text;
 
+/**
+ * NTextStyleGenerator interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NTextStyleGenerator {
+    /**
+     * Checks if hash.
+     *
+     * @param i i
+     * @return hash result
+     */
     NTextStyles hash(Object i);
 
+    /**
+     * Checks if hash.
+     *
+     * @param i i
+     * @return hash result
+     */
     NTextStyles hash(int i);
 
+    /**
+     * Random.
+     *
+     * @return random result
+     */
     NTextStyles random();
 
+    /**
+     * Checks if is include plain.
+     *
+     * @return is include plain result
+     */
     boolean isIncludePlain();
 
-    NTextStyleGenerator setIncludePlain(boolean includePlain);
+    /**
+     * Include plain.
+     *
+     * @param includePlain include plain
+     * @return include plain result
+     */
+    NTextStyleGenerator includePlain(boolean includePlain);
 
+    /**
+     * Checks if is include bold.
+     *
+     * @return is include bold result
+     */
     boolean isIncludeBold();
 
-    NTextStyleGenerator setIncludeBold(boolean includeBold);
+    /**
+     * Include bold.
+     *
+     * @param includeBold include bold
+     * @return include bold result
+     */
+    NTextStyleGenerator includeBold(boolean includeBold);
 
+    /**
+     * Checks if is include blink.
+     *
+     * @return is include blink result
+     */
     boolean isIncludeBlink();
 
-    NTextStyleGenerator setIncludeBlink(boolean includeBlink);
+    /**
+     * Include blink.
+     *
+     * @param includeBlink include blink
+     * @return include blink result
+     */
+    NTextStyleGenerator includeBlink(boolean includeBlink);
 
+    /**
+     * Checks if is include reversed.
+     *
+     * @return is include reversed result
+     */
     boolean isIncludeReversed();
 
-    NTextStyleGenerator setIncludeReversed(boolean includeReversed);
+    /**
+     * Include reversed.
+     *
+     * @param includeReversed include reversed
+     * @return include reversed result
+     */
+    NTextStyleGenerator includeReversed(boolean includeReversed);
 
+    /**
+     * Checks if is include italic.
+     *
+     * @return is include italic result
+     */
     boolean isIncludeItalic();
 
-    NTextStyleGenerator setIncludeItalic(boolean includeItalic);
+    /**
+     * Include italic.
+     *
+     * @param includeItalic include italic
+     * @return include italic result
+     */
+    NTextStyleGenerator includeItalic(boolean includeItalic);
 
+    /**
+     * Checks if is include underlined.
+     *
+     * @return is include underlined result
+     */
     boolean isIncludeUnderlined();
 
-    NTextStyleGenerator setIncludeUnderlined(boolean includeUnderlined);
+    /**
+     * Include underlined.
+     *
+     * @param includeUnderlined include underlined
+     * @return include underlined result
+     */
+    NTextStyleGenerator includeUnderlined(boolean includeUnderlined);
 
+    /**
+     * Checks if is include striked.
+     *
+     * @return is include striked result
+     */
     boolean isIncludeStriked();
 
-    NTextStyleGenerator setIncludeStriked(boolean includeStriked);
+    /**
+     * Include striked.
+     *
+     * @param includeStriked include striked
+     * @return include striked result
+     */
+    NTextStyleGenerator includeStriked(boolean includeStriked);
 
+    /**
+     * Checks if is include foreground.
+     *
+     * @return is include foreground result
+     */
     boolean isIncludeForeground();
 
-    NTextStyleGenerator setIncludeForeground(boolean includeForeground);
+    /**
+     * Include foreground.
+     *
+     * @param includeForeground include foreground
+     * @return include foreground result
+     */
+    NTextStyleGenerator includeForeground(boolean includeForeground);
 
+    /**
+     * Checks if is include background.
+     *
+     * @return is include background result
+     */
     boolean isIncludeBackground();
 
-    NTextStyleGenerator setIncludeBackground(boolean includeBackground);
+    /**
+     * Include background.
+     *
+     * @param includeBackground include background
+     * @return include background result
+     */
+    NTextStyleGenerator includeBackground(boolean includeBackground);
 
+    /**
+     * Checks if is use theme colors.
+     *
+     * @return is use theme colors result
+     */
     boolean isUseThemeColors();
 
+    /**
+     * Checks if is use palette colors.
+     *
+     * @return is use palette colors result
+     */
     boolean isUsePaletteColors();
 
+    /**
+     * Checks if is use true colors.
+     *
+     * @return is use true colors result
+     */
     boolean isUseTrueColors();
 
-    NTextStyleGenerator setUseThemeColors();
+    /**
+     * Use theme colors.
+     *
+     * @return use theme colors result
+     */
+    NTextStyleGenerator useThemeColors();
 
-    NTextStyleGenerator setUsePaletteColors();
+    /**
+     * Use palette colors.
+     *
+     * @return use palette colors result
+     */
+    NTextStyleGenerator usePaletteColors();
 
-    NTextStyleGenerator setUseTrueColors();
+    /**
+     * Use true colors.
+     *
+     * @return use true colors result
+     */
+    NTextStyleGenerator useTrueColors();
 }

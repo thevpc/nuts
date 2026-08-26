@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  *   <li>INDETERMINATE: unknown, can be either, propagates uncertainty</li>
  * </ul>
  */
-public enum NTruth {
+public enum NTruth implements NEnum{
     /**
      * Represents logical truth.
      */
@@ -31,9 +31,36 @@ public enum NTruth {
     /**
      * Represents unknown, can be either, propagates uncertainty
      */
-    INDETERMINATE,
+    INDETERMINATE
 
     ;
+    private final String id;
+
+  /**
+   * N truth.
+   */
+    NTruth() {
+        this.id = NNameFormat.ID_NAME.format(name());
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
+
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
+    public static NOptional<NTruth> parse(String value) {
+        return NEnumUtils.parseEnum(value, NTruth.class, enumValue -> {
+            switch (enumValue.normalizedValue()) {
+            }
+            return NOptional.ofNamedEmpty(value);
+        });
+    }
 
     // ----------------------------------------------------------------------
     // BASIC PREDICATES

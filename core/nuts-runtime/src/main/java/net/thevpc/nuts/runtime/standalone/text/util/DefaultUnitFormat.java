@@ -331,7 +331,7 @@ public class DefaultUnitFormat implements NTextFormat<Number> {
             }
             return sb.build();
         } else {
-            throw new NIllegalArgumentException(NMsg.ofPlain("Not supported yet"));
+            throw new NIllegalArgumentException(NMsg.ofP("Not supported yet"));
         }
 
     }

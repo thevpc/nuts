@@ -1,5 +1,6 @@
 package net.thevpc.nuts.time;
 
+import net.thevpc.nuts.mon.NDurationFormatMode;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.io.NMemoryPrintStream;
@@ -15,6 +16,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * DefaultNDurationFormat class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class DefaultNDurationFormat {
     private NDurationFormatMode mode;
     private boolean frozen = false;
@@ -27,10 +34,22 @@ public class DefaultNDurationFormat {
     private static DecimalFormat F9 = new DecimalFormat("000000000");
     private static DecimalFormat F6 = new DecimalFormat("000000");
 
+    /**
+     * Default n duration format.
+     *
+     * @param other other
+     * @return default n duration format result
+     */
     public DefaultNDurationFormat(DefaultNDurationFormat other) {
         this.mode = other.mode;
     }
 
+    /**
+     * Creates a new instance of.
+     *
+     * @param mode mode
+     * @return of result
+     */
     public static DefaultNDurationFormat of(NDurationFormatMode mode) {
         if (mode != null) {
             switch (mode) {
@@ -45,35 +64,112 @@ public class DefaultNDurationFormat {
         return DEFAULT;
     }
 
+    /**
+     * Default n duration format.
+     *
+     * @param mode mode
+     * @return default n duration format result
+     */
     public DefaultNDurationFormat(NDurationFormatMode mode) {
         this.mode = mode == null ? NDurationFormatMode.DEFAULT : mode;
     }
 
     //    @Override
+    /**
+     * Format millis.
+     *
+     * @param millis millis
+     * @return format millis result
+     */
     public String formatMillis(long millis) {
+        /**
+         * Format.
+         *
+         * @param millis millis
+         * @param 0 0
+         * @return format result
+         */
         return format(millis, 0);
     }
 
 
+    /**
+     * Format nanos.
+     *
+     * @param nanos nanos
+     * @return format nanos result
+     */
     public String formatNanos(long nanos) {
+        /**
+         * Format.
+         *
+         * @param 1000000 1000000
+         * @param 1000000) 1000000)
+         * @return format result
+         */
         return format(nanos / 1000000, (int) (nanos % 1000000));
     }
 
     //    @Override
+    /**
+     * Format.
+     *
+     * @param millis millis
+     * @param nanos nanos
+     * @return format result
+     */
     public String format(long millis, int nanos) {
         if (millis < 0) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param millis).toString() millis).to string()
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(NMsg.ofC(NI18n.of("invalid millis %s"), millis).toString());
         }
         if (nanos < 0 || nanos > 999999) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param millis).toString() millis).to string()
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException(NMsg.ofC(NI18n.of("invalid nanos %s"), millis).toString());
         }
+        /**
+         * Format.
+         *
+         * @param nanos) nanos)
+         * @return format result
+         */
         return format(NDuration.ofMillisAndNanos(millis, nanos));
     }
 
+    /**
+     * Format.
+     *
+     * @param duration duration
+     * @return format result
+     */
     public String format(Duration duration) {
+        /**
+         * Format.
+         *
+         * @param NDuration.ofDuration(duration) n duration.of duration(duration)
+         * @return format result
+         */
         return format(NDuration.ofDuration(duration));
     }
 
+    /**
+     * Format unit.
+     *
+     * @param duration duration
+     * @param unit unit
+     * @param processed processed
+     * @param out out
+     */
     public void formatUnit(NDuration duration, ChronoUnit unit, Set<ChronoUnit> processed, NPrintStream out) {
         int uordinal = unit.ordinal();
         long unitValue = duration.get(unit);
@@ -91,8 +187,8 @@ public class DefaultNDurationFormat {
                 }
             }
         }
-        if (uordinal > duration.getLargestUnit().ordinal()
-                || uordinal < duration.getSmallestUnit().ordinal()
+        if (uordinal > duration.largestUnit().ordinal()
+                || uordinal < duration.smallestUnit().ordinal()
         ) {
             return;
         }
@@ -189,8 +285,15 @@ public class DefaultNDurationFormat {
         }
     }
 
+    /**
+     * Accept.
+     *
+     * @param c c
+     * @param duration duration
+     * @return accept result
+     */
     private boolean accept(ChronoUnit c, NDuration duration) {
-        if (c.ordinal() < duration.getSmallestUnit().ordinal()) {
+        if (c.ordinal() < duration.smallestUnit().ordinal()) {
             return false;
         }
         switch (mode) {
@@ -203,12 +306,30 @@ public class DefaultNDurationFormat {
         return true;
     }
 
+    /**
+     * Format.
+     *
+     * @param duration duration
+     * @return format result
+     */
     public String format(NDuration duration) {
         NMemoryPrintStream sb = NPrintStream.ofMem(NTerminalMode.FILTERED);
+      /**
+       * Print.
+       *
+       * @param duration duration
+       * @param sb sb
+       */
         print(duration, sb);
         return sb.toString();
     }
 
+    /**
+     * Print.
+     *
+     * @param duration duration
+     * @param out out
+     */
     public void print(NDuration duration, NPrintStream out) {
         HashSet<ChronoUnit> processed = new HashSet<>();
         for (ChronoUnit chronoUnit : new ChronoUnit[]{
@@ -216,11 +337,19 @@ public class DefaultNDurationFormat {
                 ChronoUnit.HOURS, ChronoUnit.MINUTES, ChronoUnit.SECONDS, ChronoUnit.MILLIS,
                 ChronoUnit.MICROS, ChronoUnit.NANOS
         }) {
+          /**
+           * Format unit.
+           *
+           * @param duration duration
+           * @param chronoUnit chrono unit
+           * @param processed processed
+           * @param out out
+           */
             formatUnit(duration, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
-            out.print(formatNumber(0, duration.getSmallestUnit()), NTextStyle.number());
-            out.print(unitString(duration.getSmallestUnit()), NTextStyle.info());
+            out.print(formatNumber(0, duration.smallestUnit()), NTextStyle.number());
+            out.print(unitString(duration.smallestUnit()), NTextStyle.info());
         } else if (mode == NDurationFormatMode.CLOCK) {
             if (processed.contains(ChronoUnit.MILLIS)) {
                 processed.add(ChronoUnit.SECONDS);
@@ -245,6 +374,12 @@ public class DefaultNDurationFormat {
     }
 
 
+    /**
+     * Size of.
+     *
+     * @param unit unit
+     * @return size of result
+     */
     private int sizeOf(ChronoUnit unit) {
         switch (unit) {
             case NANOS:
@@ -256,6 +391,13 @@ public class DefaultNDurationFormat {
         }
     }
 
+    /**
+     * Format number.
+     *
+     * @param number number
+     * @param unit unit
+     * @return format number result
+     */
     private String formatNumber(long number, ChronoUnit unit) {
         int size = sizeOf(unit);
         switch (mode) {
@@ -291,13 +433,29 @@ public class DefaultNDurationFormat {
                 return NStringUtils.formatAlign("" + number, size, NPositionType.LAST);
             }
         }
+        /**
+         * Illegal argument exception.
+         *
+         * @param "unsupported" "unsupported"
+         * @return illegal argument exception result
+         */
         throw new IllegalArgumentException("unsupported");
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public DefaultNDurationFormat copy() {
         return new DefaultNDurationFormat(this);
     }
 
+    /**
+     * Freeze.
+     *
+     * @return freeze result
+     */
     public DefaultNDurationFormat freeze() {
         if (!frozen) {
             this.frozen = true;
@@ -305,13 +463,30 @@ public class DefaultNDurationFormat {
         return this;
     }
 
-    public NDurationFormatMode getMode() {
+    /**
+     * Mode.
+     *
+     * @return mode result
+     */
+    public NDurationFormatMode mode() {
         return mode;
     }
 
-    public DefaultNDurationFormat setMode(NDurationFormatMode mode) {
+    /**
+     * Mode.
+     *
+     * @param mode mode
+     * @return mode result
+     */
+    public DefaultNDurationFormat mode(NDurationFormatMode mode) {
         if (this.mode != mode) {
             if (frozen) {
+                /**
+                 * Illegal argument exception.
+                 *
+                 * @param updated") updated")
+                 * @return illegal argument exception result
+                 */
                 throw new IllegalArgumentException(NI18n.of("This instance is immutable and cannot be updated"));
             }
             this.mode = mode;
@@ -319,27 +494,83 @@ public class DefaultNDurationFormat {
         return this;
     }
 
+    /**
+     * Unit string.
+     *
+     * @param unit unit
+     * @return unit string result
+     */
     public String unitString(ChronoUnit unit) {
         switch (unit) {
             case YEARS:
+              /**
+               * Return.
+               *
+               * @param "y" "y"
+               */
                 return ("y");
             case MONTHS:
+              /**
+               * Return.
+               *
+               * @param "m" "m"
+               */
                 return ("m");
             case WEEKS:
+              /**
+               * Return.
+               *
+               * @param "w" "w"
+               */
                 return ("w");
             case DAYS:
+              /**
+               * Return.
+               *
+               * @param "d" "d"
+               */
                 return ("d");
             case HOURS:
+              /**
+               * Return.
+               *
+               * @param "h" "h"
+               */
                 return ("h");
             case MINUTES:
+              /**
+               * Return.
+               *
+               * @param "mn" "mn"
+               */
                 return ("mn");
             case SECONDS:
+              /**
+               * Return.
+               *
+               * @param "s" "s"
+               */
                 return ("s");
             case MILLIS:
+              /**
+               * Return.
+               *
+               * @param "ms" "ms"
+               */
                 return ("ms");
             case MICROS:
+              /**
+               * Return.
+               *
+               * @param "us" "us"
+               */
                 return ("us");
             case NANOS:
+              /**
+               * Return.
+               *
+               * @param "ns" "ns"
+               */
                 return ("ns");
         }
         return "";

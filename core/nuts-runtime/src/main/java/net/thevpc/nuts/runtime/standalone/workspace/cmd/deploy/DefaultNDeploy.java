@@ -2,16 +2,13 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.command.NDeploy;
 import net.thevpc.nuts.command.NSearch;
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.*;
 
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryDisabledException;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
@@ -84,13 +81,13 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     }
                 }
                 if (c.getDescriptor() != null) {
-                    if ("zip".equals(c.getDescriptor().getPackaging())) {
+                    if ("zip".equals(c.getDescriptor().packaging())) {
                         Path zipFilePath = Paths.get(NPath.of(c.getBaseFile().toString() + ".zip").toAbsolute().toString());
                         ZipUtils.zip(c.getBaseFile().toString(), new ZipOptions(), zipFilePath.toString());
                         c.setContentStreamOrPath(NPath.of(zipFilePath));
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NIllegalArgumentException(NMsg.ofPlain("invalid Nut Folder source. expected 'zip' ext in descriptor"));
+                        throw new NIllegalArgumentException(NMsg.ofP("invalid Nut Folder source. expected 'zip' ext in descriptor"));
                     }
                 }
             } else if (Files.isRegularFile(c.getBaseFile())) {
@@ -115,23 +112,23 @@ public class DefaultNDeploy extends AbstractNDeploy {
     @Override
     public NDeploy run() {
         NSession session= NSession.of();
-        if (getContent() != null || getDescriptor() != null || getSha1() != null || getDescSha1() != null) {
+        if (content() != null || getDescriptor() != null || sha1() != null || getDescSha1() != null) {
             runDeployFile();
         }
         if (!ids.isEmpty()) {
             for (NId nutsId : NSearch.of()
-                    .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(NRepositoryFilters.of().bySelector(fromRepository)).getResultIds()) {
+                    .addIds(ids.toArray(new NId[0])).latest(true).repositoryFilter(NRepositoryFilter.ofSelector(fromRepository)).getResultIds()) {
                 NDefinition fetched = NFetch.of(nutsId)
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
                         .getResultDefinition();
-                if (fetched.getContent().isPresent()) {
-                    runDeployFile(fetched.getContent().get(), fetched.getDescriptor(), null);
+                if (fetched.content().isPresent()) {
+                    runDeployFile(fetched.content().get(), fetched.descriptor(), null);
                 }
             }
         }
         NAssert.requireNamedNonBlank(result, "package to deploy");
         if (session.isTrace()) {
-            switch (session.getOutputFormat().orDefault()) {
+            switch (session.outputFormat().orDefault()) {
                 case PLAIN: {
                     for (Result nid : result) {
                         NOut.println(NMsg.ofC(
@@ -152,7 +149,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
     }
 
     private NDeploy runDeployFile() {
-        return runDeployFile(getContent(), getDescriptor(), getDescSha1());
+        return runDeployFile(content(), getDescriptor(), getDescSha1());
     }
 
     private NDeploy runDeployFile(NInputSource content, Object descriptor0, String descSHA1) {
@@ -172,13 +169,13 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 NAssert.requireNamedNonBlank(characterizedFile.getDescriptor(), "descriptor");
                 descriptor = characterizedFile.getDescriptor();
             }
-            String name = NWorkspace.of().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
+            String name = NWorkspace.of().getDefaultIdFilename(descriptor.id().builder().faceDescriptor().build());
             tempFile = NPath.ofTempFile(name).toPath().get();
-            NCp.of().from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
+            NCp.of().from(contentSource.inputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
             contentFile2 = tempFile;
 
             Path contentFile0 = contentFile2;
-            String repository = this.getTargetRepository();
+            String repository = this.targetRepository();
 
             wu.checkReadOnly();
             Path contentFile = contentFile0;
@@ -202,7 +199,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                         }
                     }
                     if (descriptor != null) {
-                        if ("zip".equals(descriptor.getPackaging())) {
+                        if ("zip".equals(descriptor.packaging())) {
                             Path zipFilePath = Paths.get(NPath.of(contentFile.toString() + ".zip")
                                     .toAbsolute().toString());
                             try {
@@ -213,7 +210,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                             contentFile = zipFilePath;
                             tempFile2 = contentFile;
                         } else {
-                            throw new NIllegalArgumentException(NMsg.ofPlain("invalid nuts folder source; expected 'zip' ext in descriptor"));
+                            throw new NIllegalArgumentException(NMsg.ofP("invalid nuts folder source; expected 'zip' ext in descriptor"));
                         }
                     }
                 } else {
@@ -226,27 +223,27 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     throw new NArtifactNotFoundException(null, NMsg.ofC("artifact not found at %s", contentFile));
                 }
                 //remove workspace
-                descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
-                if (NStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                    throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", descriptor.getId().getVersion()));
+                descriptor = descriptor.builder().id(descriptor.id().builder().repository(null).build()).build();
+                if (NStringUtils.strip(descriptor.id().version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", descriptor.id().version()));
                 }
 
                 NId effId = dws.resolveEffectiveId(descriptor);
-                CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(), false);
+                CorePlatformUtils.checkAcceptCondition(descriptor.condition(), false);
                 if (NBlankable.isBlank(repository)) {
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
                     for (NRepository repo : wu.filterRepositoriesDeploy(effId, null)
                             .stream()
-                            .filter(x -> x.config().getDeployWeight() > 0)
-                            .sorted(Comparator.comparingInt(x -> x.config().getDeployWeight()))
+                            .filter(x -> x.config().deployWeight() > 0)
+                            .sorted(Comparator.comparingInt(x -> x.config().deployWeight()))
                             .collect(Collectors.toList())) {
-                        int deployOrder = repo.config().getDeployWeight();
+                        int deployOrder = repo.config().deployWeight();
                         NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                         repoSPI.deploy()
                                 //.setFetchMode(NutsFetchMode.LOCAL)
-                                .setId(effId).setContent(contentFile).setDescriptor(descriptor)
+                                .id(effId).content(contentFile).descriptor(descriptor)
                                 .run();
-                        addResult(effId, repo.getName(), NText.of(content));
+                        addResult(effId, repo.name(), NText.of(content));
                         return this;
                     }
                 } else {
@@ -257,11 +254,11 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
                     NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                     repoSPI.deploy()
-                            .setId(effId)
-                            .setContent(contentFile)
-                            .setDescriptor(descriptor)
+                            .id(effId)
+                            .content(contentFile)
+                            .descriptor(descriptor)
                             .run();
-                    addResult(effId, repo.getName(), NText.of(content));
+                    addResult(effId, repo.name(), NText.of(content));
                     return this;
                 }
                 throw new NNoSuchElementException(NMsg.ofC("repository %s",repository));
@@ -292,8 +289,8 @@ public class DefaultNDeploy extends AbstractNDeploy {
         NDescriptor mdescriptor = null;
         if (descriptor instanceof NDescriptor) {
             mdescriptor = (NDescriptor) descriptor;
-            if (descSHA1 != null && !NDigest.of().sha1().setSource(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("invalid content Hash"));
+            if (descSHA1 != null && !NDigest.of().sha1().source(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
+                throw new NIllegalArgumentException(NMsg.ofP("invalid content Hash"));
             }
             return mdescriptor;
         } else {
@@ -303,15 +300,15 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 NInputSource d = NInputSource.ofMultiRead(nutsStreamOrPath);
                 try {
                     if (descSHA1 != null) {
-                        try (InputStream is = d.getInputStream()) {
-                            if (!NDigest.of().sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
-                                throw new NIllegalArgumentException(NMsg.ofPlain("invalid content Hash"));
+                        try (InputStream is = d.inputStream()) {
+                            if (!NDigest.of().sha1().source(is).computeString().equalsIgnoreCase(descSHA1)) {
+                                throw new NIllegalArgumentException(NMsg.ofP("invalid content Hash"));
                             }
                         } catch (IOException ex) {
                             throw new NIOException(ex);
                         }
                     }
-                    try (InputStream is = d.getInputStream()) {
+                    try (InputStream is = d.inputStream()) {
                         return NDescriptorParser.of().parse(is).get();
                     } catch (IOException ex) {
                         throw new NIOException(ex);

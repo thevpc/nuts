@@ -29,6 +29,8 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 
@@ -38,28 +40,109 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NUndeploy extends NWorkspaceCmd {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NUndeploy of() {
         return NExtensions.of(NUndeploy.class);
     }
 
-    String getRepository();
+    /**
+     * Repository.
+     *
+     * @return repository result
+     */
+    @NGetter
+    String repository();
 
-    NUndeploy setRepository(String repository);
+    /**
+     * Repository.
+     *
+     * @param repository repository
+     * @return repository result
+     */
+    @NSetter
+    NUndeploy repository(String repository);
 
-    List<NId> getIds();
+    /**
+     * Ids.
+     *
+     * @return ids result
+     */
+    @NGetter
+    List<NId> ids();
+    /**
+     * Ids.
+     *
+     * @param value value
+     * @return ids result
+     */
+    @NSetter
+    NUndeploy ids(List<NId> value);
 
+    /**
+     * Adds the specified id.
+     *
+     * @param id id
+     * @return add id result
+     */
     NUndeploy addId(NId id);
 
+    /**
+     * Adds the specified id.
+     *
+     * @param id id
+     * @return add id result
+     */
     NUndeploy addId(String id);
 
+    /**
+     * Checks if is offline.
+     *
+     * @return is offline result
+     */
+    @NGetter
     boolean isOffline();
 
-    NUndeploy setOffline(boolean offline);
+    /**
+     * Creates a new instance of offline.
+     *
+     * @param offline offline
+     * @return offline result
+     */
+    @NSetter
+    NUndeploy offline(boolean offline);
 
+    /**
+     * Adds the specified ids.
+     *
+     * @param values values
+     * @return add ids result
+     */
     NUndeploy addIds(String... values);
 
+    /**
+     * Adds the specified ids.
+     *
+     * @param value value
+     * @return add ids result
+     */
     NUndeploy addIds(NId... value);
+    /**
+     * Adds the specified ids.
+     *
+     * @param value value
+     * @return add ids result
+     */
+    NUndeploy addIds(List<NId> value);
 
+    /**
+     * Clear ids.
+     *
+     * @return clear ids result
+     */
     NUndeploy clearIds();
 
     /**

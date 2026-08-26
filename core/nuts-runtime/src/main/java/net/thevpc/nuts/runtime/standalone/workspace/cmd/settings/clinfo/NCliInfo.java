@@ -33,7 +33,7 @@ public class NCliInfo {
 
     public static String loadVar(String name, Supplier<String> generator) {
         Map<String, String> m = loadConfigMap();
-        String _uuid = NStringUtils.trimToNull(m.get(name));
+        String _uuid = NStringUtils.stripToNull(m.get(name));
         if (!NBlankable.isBlank(_uuid)) {
             return _uuid;
         } else {
@@ -56,8 +56,8 @@ public class NCliInfo {
 
     public static String saveVar(String name, String value) {
         Map<String, String> m = loadConfigMap();
-        String old = NStringUtils.trimToNull(m.get(name));
-        value = NStringUtils.trimToNull(value);
+        String old = NStringUtils.stripToNull(m.get(name));
+        value = NStringUtils.stripToNull(value);
         if (Objects.equals(old, value)) {
             if (value == null) {
                 m.remove(name);
@@ -87,6 +87,6 @@ public class NCliInfo {
     }
 
     private static Path getConfigFile() {
-        return Paths.get(NPlatformHome.USER.getHome()).resolve(".nuts-user-config");
+        return Paths.get(NPlatformHome.USER.home()).resolve(".nuts-user-config");
     }
 }

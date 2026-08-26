@@ -12,19 +12,21 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNExecInternalExecutable(String[] args, NExec execCommand) {
-        super("exec", args, execCommand);
+    public DefaultNExecInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("exec", args, execCommand,executorOptions);
     }
 
     @Override
     public int execute() {
-        if (ExtraApiUtils.asBoolean(getExecCommand().getDry())) {
+        if (ExtraApiUtils.asBoolean(getExecCommand().dry())) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
@@ -33,8 +35,8 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
             return NExecutionException.SUCCESS;
         }
         return getExecCommand().copy().clearCommand().configure(false, args)
-                .failFast().run()
-                .getResultCode();
+                .failFast(true).run()
+                .exitCode();
     }
 
     @Override
@@ -47,8 +49,8 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
         getExecCommand()
                 .copy()
                 .clearCommand().configure(false, args)
-                .failFast()
-                .setDry(true)
+                .failFast(true)
+                .dry(true)
                 .run();
 
     }

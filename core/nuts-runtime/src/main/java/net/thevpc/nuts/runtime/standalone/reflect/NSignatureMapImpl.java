@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
+import net.thevpc.nuts.runtime.standalone.collections.DefaultNOptionalMap;
 import net.thevpc.nuts.reflect.NSignature;
 import net.thevpc.nuts.reflect.NSignatureDomain;
 import net.thevpc.nuts.reflect.NSignatureMap;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NOptionalMap;
+import net.thevpc.nuts.collections.NOptionalMap;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,7 +98,7 @@ public class NSignatureMapImpl<S extends NSignature<T, ?>, T, V> implements NSig
     }
 
     private class NSigMapBySize<V> {
-        private final NOptionalMap<S, V> map = new NOptionalMap<>();
+        private final NOptionalMap<S, V> map = new DefaultNOptionalMap<>();
         private final int count;
         private boolean invalidCache;
         private final Map<S, ValueWithDistance<V>> cache = new HashMap<>();
@@ -171,23 +172,23 @@ public class NSignatureMapImpl<S extends NSignature<T, ?>, T, V> implements NSig
                 ValueWithDistance<V> vd = find((S) sig.set(sc, i), distance + 2);
                 bestResolver.add(vd);
             }
-            T[] superInterfaces = domain.getInterfaces(c);
+            List<T> superInterfaces = domain.getInterfaces(c);
             for (T si : superInterfaces) {
                 ValueWithDistance<V> vd = find((S) sig.set(si, i), distance + 2);
                 bestResolver.add(vd);
             }
         }
 
-        public NOptional<V> remove(S uplet) {
-            NOptional<V> r = map.remove(uplet);
+        public NOptional<V> remove(S tuple) {
+            NOptional<V> r = map.remove(tuple);
             if (r.isPresent()) {
                 invalidCache = true;
             }
             return r;
         }
 
-        public void put(S uplet, V value) {
-            NOptional<V> o = map.put(uplet, value);
+        public void put(S tuple, V value) {
+            NOptional<V> o = map.put(tuple, value);
             if (!o.isPresent() || !Objects.equals(o.orNull(), value)) {
                 invalidCache = true;
             }

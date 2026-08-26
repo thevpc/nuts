@@ -10,22 +10,52 @@ import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+/**
+ * NReservedOptionalValidCallable class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T> implements Cloneable {
 
     private final NCallable<NOptional<T>> value;
     private NOptional<T> result;
     private boolean evaluated;
 
+    /**
+     * N reserved optional valid callable.
+     *
+     * @param value value
+     * @param msg msg
+     * @return n reserved optional valid callable result
+     */
     public NReservedOptionalValidCallable(NCallable<NOptional<T>> value, Supplier<NMsg> msg) {
+      /**
+       * Super.
+       *
+       * @param msg msg
+       */
         super(msg);
         NAssert.requireNamedNonNull(value, "callable");
         this.value = value;
     }
 
+    /**
+     * With message.
+     *
+     * @param message message
+     * @return with message result
+     */
     public NOptional<T> withMessage(Supplier<NMsg> message) {
         return new NReservedOptionalEmpty<>(message);
     }
 
+    /**
+     * With message.
+     *
+     * @param message message
+     * @return with message result
+     */
     public NOptional<T> withMessage(NMsg message) {
         if (evaluated) {
             if (message == null) {
@@ -36,6 +66,12 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
         return new NReservedOptionalValidCallable<>(value, message == null ? (() -> NMsg.ofMissingValue()) : () -> message);
     }
 
+    /**
+     * With name.
+     *
+     * @param name name
+     * @return with name result
+     */
     public NOptional<T> withName(NMsg name) {
         if (evaluated) {
             if (name == null) {
@@ -66,15 +102,20 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                     T v = result.get();
                     try {
                         V r = mapper.apply(v);
-                        return NOptional.of(r, getMessage());
+                        return NOptional.of(r, message());
                     } catch (Exception ex) {
-                        return NOptional.ofError(getMessage(), ex);
+                        return NOptional.ofError(message(), ex);
                     }
                 } else {
-                    return (NOptional<V>) result.withMessage(getMessage());
+                  /**
+                   * Return.
+                   *
+                   * @param result.withMessage(message() result.with message(message()
+                   */
+                    return (NOptional<V>) result.withMessage(message());
                 }
             } else {
-                return NOptional.ofEmpty(getMessage());
+                return NOptional.ofEmpty(message());
             }
         }
         return new NReservedOptionalValidCallable<V>(() -> {
@@ -82,14 +123,14 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                 T y = get();
                 if (y != null) {
                     V v = mapper.apply(y);
-                    return NOptional.of(v, getMessage());
+                    return NOptional.of(v, message());
                 } else {
                     return null;
                 }
             } catch (Exception ex) {
-                return NOptional.ofError(getMessage(), ex);
+                return NOptional.ofError(message(), ex);
             }
-        }, getMessage());
+        }, message());
     }
 
     @Override
@@ -97,7 +138,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
         if (!evaluated) {
             result = value.call();
             if (result == null) {
-                result = NOptional.ofEmpty(getMessage());
+                result = NOptional.ofEmpty(message());
             }
             evaluated = true;
         }
@@ -108,7 +149,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
     @Override
     public NElement describe() {
         if (evaluated) {
-            return NElement.ofUpletBuilder("Optional")
+            return NElement.ofTupleBuilder("Optional")
                     .add("evaluated", true)
                     .add("error", result.isError())
                     .add("empty", result.isEmpty())
@@ -116,7 +157,7 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
                     .build()
                     ;
         } else {
-            return NElement.ofUpletBuilder("Optional")
+            return NElement.ofTupleBuilder("Optional")
                     .add("evaluated", false)
                     .add("expression", NDescribables.describeResolveOrSimplify(value))
                     .build()

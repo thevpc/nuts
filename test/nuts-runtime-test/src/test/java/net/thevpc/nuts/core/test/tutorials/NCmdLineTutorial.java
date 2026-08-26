@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.tutorials;
 
-import net.thevpc.nuts.app.NApp;
+import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.cmdline.*;
@@ -50,86 +50,37 @@ public class NCmdLineTutorial {
     }
 
     public static void cmdLineHelpExample2() {
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApplication.of().cmdLine();
         NBooleanRef boolOption = NRef.ofBoolean(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> nonOptions = new ArrayList<>();
-        cmdLine.run(new NCmdLineRunner() {
-            @Override
-            public boolean next(NArg arg, NCmdLine cmdLine) {
-                if (arg.isOption()) {
-                    switch (arg.key()) {
-                        case "-o":
-                        case "--option": {
-                            cmdLine.matcher().matchFlag((v) -> boolOption.set(v.booleanValue())).require();
-                            return true;
-                        }
-                        case "-n":
-                        case "--name": {
-                            cmdLine.matcher().matchEntry((v) -> stringOption.set(v.stringValue())).require();
-                            return true;
-                        }
-                    }
-                    return false;
-                } else {
-                    nonOptions.add(cmdLine.next().get().toString());
-                    return true;
-                }
-            }
+        cmdLine.matcher()
+                        .when("-o","--option").asFlag(a->boolOption.set(a.booleanValue()))
+                        .when("-n","--name").asEntry(a->stringOption.set(a.stringValue()))
+                        .whenNonOption().asArg(a-> nonOptions.add(a.image()))
+                        .requireAll();
 
-            @Override
-            public void validate(NCmdLine cmdLine) {
-                if (nonOptions.isEmpty()) {
-                    cmdLine.throwMissingArgument();
-                }
-            }
-
-            @Override
-            public void run(NCmdLine cmdLine) {
-                NOut.println(NMsg.ofC("running with nonOptions %s", nonOptions));
-            }
-        });
+        if (nonOptions.isEmpty()) {
+            cmdLine.throwMissingArgument();
+        }
+        NOut.println(NMsg.ofC("running with nonOptions %s", nonOptions));
     }
 
-    public static void cmdLineHelpExample3() {
-        NCmdLine cmdLine = NApp.of().getCmdLine();
-        NBooleanRef boolOption = NRef.ofBoolean(false);
-        NRef<String> stringOption = NRef.ofNull();
-        List<String> nonOptions = new ArrayList<>();
-        cmdLine.forEachPeek((cmdLine1) -> {
-            NArg a = cmdLine1.peek().get();
-            if (a.isOption()) {
-                switch (a.key()) {
-                    case "-o":
-                    case "--option": {
-                        cmdLine1.matcher().matchFlag((v) -> boolOption.set(v.booleanValue())).require();
-                        return true;
-                    }
-                    case "-n":
-                    case "--name": {
-                        cmdLine1.matcher().matchEntry((v) -> stringOption.set(v.stringValue())).require();
-                        return true;
-                    }
-                }
-                return false;
-            } else {
-                nonOptions.add(cmdLine1.next().get().toString());
-                return true;
-            }
-        });
-    }
+
 
     public static void cmdLineHelpExample4() {
-        NCmdLine cmdLine = NApp.of().getCmdLine();
+        NCmdLine cmdLine = NApplication.of().cmdLine();
         NBooleanRef boolOption = NRef.ofBoolean(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> nonOptions = new ArrayList<>();
         while (cmdLine.hasNext()) {
             cmdLine.matcher()
-                    .with("-o", "--option").matchFlag((v) -> boolOption.set(v.booleanValue()))
-                    .with("-n", "--name").matchEntry((v) -> stringOption.set(v.stringValue()))
-                    .withNonOption().matchAny(v -> nonOptions.add(v.image()))
-                    .requireDefaults();
+                    .when("-o", "--option").asFlag((v) -> boolOption.set(v.booleanValue()))
+                    .when("-n", "--name").asEntry((v) -> stringOption.set(v.stringValue()))
+                    .whenNonOption().asArg(v -> nonOptions.add(v.image()))
+                    .withDefaults()
+                    .require()
+            ;
         }
     }
 }

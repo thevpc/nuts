@@ -12,11 +12,11 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
 import org.jline.reader.History;
 import org.jline.reader.History.Entry;
@@ -70,17 +70,17 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
     }
 
     @Override
-    public NCmdLineHistory setPath(Path path) {
-        return setPath(path==null?null: NPath.of(path));
+    public NCmdLineHistory path(Path path) {
+        return path(path==null?null: NPath.of(path));
     }
 
     @Override
-    public NCmdLineHistory setPath(File path) {
-        return setPath(path==null?null: NPath.of(path));
+    public NCmdLineHistory path(File path) {
+        return path(path==null?null: NPath.of(path));
     }
 
     @Override
-    public NCmdLineHistory setPath(NPath path) {
+    public NCmdLineHistory path(NPath path) {
         this.path=path;
         if(this.path!=null) {
             reader.getVariables().put(LineReader.HISTORY_FILE, path.toPath().get());
@@ -89,15 +89,15 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
     }
 
     @Override
-    public NPath getPath() {
+    public NPath path() {
         return null;
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NSystemTerminal st = NIO.of().getSystemTerminal();
+        NSystemTerminal st = NIO.of().systemTerminal();
         boolean jline=false;
-        NSystemTerminalBase b = st.getBase();
+        NSystemTerminalBase b = st.base();
         if(b!=null){
             if (b instanceof NJLineTerminal){
                 jline=true;
@@ -133,7 +133,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
                     public void accept(String l) {
                         int idx = l.indexOf(':');
                         if (idx < 0) {
-                            throw new NExecutionException(NMsg.ofPlain("Bad history file syntax! "
+                            throw new NExecutionException(NMsg.ofP("Bad history file syntax! "
                                     + "The history file may be an older history: "
                                     + "please remove it or use a different history file."), NExecutionException.ERROR_2);
                         }
@@ -282,7 +282,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
             return;
         }
         if (isSet(reader, LineReader.Option.HISTORY_REDUCE_BLANKS)) {
-            line = line.trim();
+            line = NStringUtils.strip(line);
         }
         if (isSet(reader, LineReader.Option.HISTORY_IGNORE_DUPS)) {
             if (!items.isEmpty() && line.equals(items.get(items.size() - 1).line())) {
@@ -395,11 +395,11 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
         int idx = 0;
         while (idx < allItems.size()) {
             int ridx = allItems.size() - idx - 1;
-            String line = allItems.get(ridx).line().trim();
+            String line = NStringUtils.strip(allItems.get(ridx).line());
             ListIterator<Entry> iterator = allItems.listIterator(ridx);
             while (iterator.hasPrevious()) {
                 String l = iterator.previous().line();
-                if (line.equals(l.trim())) {
+                if (line.equals(NStringUtils.strip(l))) {
                     iterator.remove();
                 }
             }

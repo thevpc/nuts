@@ -31,17 +31,60 @@ import java.awt.Image;
  */
 public interface NTextArtImageRenderer extends NTextArtTextRenderer {
 
-    NTextArtImageRenderer setFontName(String fontName);
+    /**
+     * Font name.
+     *
+     * @param fontName font name
+     * @return font name result
+     */
+    NTextArtImageRenderer fontName(String fontName);
 
-    NTextArtImageRenderer setFontSize(int fontSize);
+    /**
+     * Font size.
+     *
+     * @param fontSize font size
+     * @return font size result
+     */
+    NTextArtImageRenderer fontSize(int fontSize);
 
-    NTextArtImageRenderer setFontItalic(boolean italic);
+    /**
+     * Font italic.
+     *
+     * @param italic italic
+     * @return font italic result
+     */
+    NTextArtImageRenderer fontItalic(boolean italic);
 
-    NTextArtImageRenderer setFontBold(boolean bold);
+    /**
+     * Font bold.
+     *
+     * @param bold bold
+     * @return font bold result
+     */
+    NTextArtImageRenderer fontBold(boolean bold);
 
-    NTextArtImageRenderer setOutputSize(int columns, int rows);
+    /**
+     * Output size.
+     *
+     * @param columns columns
+     * @param rows rows
+     * @return output size result
+     */
+    NTextArtImageRenderer outputSize(int columns, int rows);
 
-    NTextArtImageRenderer setOutputColumns(int columns);
+    /**
+     * Output columns.
+     *
+     * @param columns columns
+     * @return output columns result
+     */
+    NTextArtImageRenderer outputColumns(int columns);
 
+    /**
+     * Render.
+     *
+     * @param image image
+     * @return render result
+     */
     NText render(Image image);
 }

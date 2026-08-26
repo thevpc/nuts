@@ -1,13 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
-import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.app.NApplications;
+import net.thevpc.nuts.app.NApplication;
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
 
 
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.workspace.NFailSafeHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NContentType;
@@ -37,17 +39,17 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
     public int processThrowable(String[] args, Throwable throwable) {
         NSession session = NSession.of();
         NWorkspaceOptionsBuilder bo = null;
-        bo = NWorkspace.of().getBootOptions().toWorkspaceOptions().builder();
+        bo = NWorkspace.of().bootOptions().toWorkspaceOptions().builder();
         if (!NEnv.of().isGraphicalDesktopEnvironment()) {
-            bo.setGui(false);
+            bo.gui(false);
         }
 
         NWorkspaceOptions bbo = bo.build();
         boolean showGui = NApiUtilsRPI.resolveGui(bbo);
         boolean showTrace = NApiUtilsRPI.resolveShowStackTrace(bbo);
-        int errorCode = NExceptions.resolveExitCode(throwable).orElse(204);
+        int errorCode = NException.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
-                .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();
+                .map(NSessionAwareExceptionBase::formattedMessage).orNull();
         String m = throwable.getMessage();
         if (m == null || m.length() < 5) {
             m = throwable.toString();
@@ -55,19 +57,19 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
 
         NPrintStream fout = null;
         try {
-            fout = NIO.of().getSystemTerminal().getErr();
+            fout = NIO.of().systemTerminal().err();
             if (fm != null) {
                 fm = NMsg.ofStyledError(fm);
             } else {
                 fm = NMsg.ofStyledError(m);
             }
         } catch (Exception ex2) {
-            NLog.of(NApplications.class).log(
-                    NMsg.ofPlain("unable to get system terminal").asFine(ex2)
+            NLog.of(NApplicationHandler.class).log(
+                    NMsg.ofP("unable to get system terminal").asFine(ex2)
             );
         }
         if (fout != null) {
-            if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
+            if (session.outputFormat().orDefault() == NContentType.PLAIN) {
                 if (fm != null) {
                     fout.println(fm);
                 } else {
@@ -81,7 +83,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 if (fm != null) {
                     session.out().resetLine();
                     session.eout().add(NElement.ofObjectBuilder()
-                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
+                            .set("app-id", NStringUtils.toStringOrEmpty(NApplication.of().id().orNull()))
                             .set("error", NText.of(fm).filteredText())
                             .build()
                     );
@@ -99,7 +101,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
                 } else {
                     session.out().resetLine();
                     session.eout().add(NElement.ofObjectBuilder()
-                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
+                            .set("app-id", NStringUtils.toStringOrEmpty(NApplication.of().id().orNull()))
                             .set("error", m)
                             .build());
                     if (showTrace) {
@@ -143,7 +145,7 @@ public class DefaultNExceptionWorkspaceHandler implements NExceptionWorkspaceHan
             }
             String title = "Nuts Package Manager - Error";
             try {
-                javax.swing.JOptionPane.showMessageDialog(null, NMsg.ofPlain(sb.toString()).toString());
+                javax.swing.JOptionPane.showMessageDialog(null, NMsg.ofP(sb.toString()).toString());
             } catch (UnsatisfiedLinkError e) {
                 //exception may occur if the sdk is built in headless mode
                 NFailSafeHelper.log(err->err.printf("[Graphical Environment Unsupported] %s%n", title));

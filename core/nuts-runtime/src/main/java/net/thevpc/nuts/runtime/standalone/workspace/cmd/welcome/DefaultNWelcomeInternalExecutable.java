@@ -22,6 +22,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
 import net.thevpc.nuts.text.NText;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,14 +30,14 @@ import java.util.Map;
  */
 public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWelcomeInternalExecutable(String[] args, NExec execCommand) {
-        super("welcome", args, execCommand);
+    public DefaultNWelcomeInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("welcome", args, execCommand,executorOptions);
     }
 
     @Override
     public int execute() {
         NSession session = NSession.of();
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;
@@ -69,12 +70,12 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");
             welcome.put("url", NPath.of("https://github.com/thevpc/nuts"));
             welcome.put("author", "thevpc");
-            welcome.put("api-id", session.getWorkspace().getApiId().builder().setVersion("").build());
-            welcome.put("api-version", session.getWorkspace().getApiVersion());
-            welcome.put("runtime-id", session.getWorkspace().getRuntimeId().builder().setVersion("").build());
-            welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
-            welcome.put("workspace", NWorkspace.of().getWorkspaceLocation());
-            welcome.put("hash-name", NPath.of(session.getWorkspace().getDigestName()));
+            welcome.put("api-id", session.workspace().apiId().builder().version("").build());
+            welcome.put("api-version", session.workspace().apiVersion());
+            welcome.put("runtime-id", session.workspace().runtimeId().builder().version("").build());
+            welcome.put("runtime-version", session.workspace().runtimeId().version());
+            welcome.put("workspace", NWorkspace.of().workspaceLocation());
+            welcome.put("hash-name", NPath.of(session.workspace().digestName()));
             NOut.println(welcome);
         }
         return NExecutionException.SUCCESS;

@@ -37,7 +37,7 @@ public class ExtraApiUtils {
         if (d == null) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             URL[] urls = resolveClasspathURLs(cl, true);
-            throw new NIllegalArgumentException(NMsg.ofPlain("unable to detect nuts digest. Most likely you are missing valid compilation of nuts." + "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." + "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") + "\n\t class-path=" + System.getProperty("java.class.path") + "\n\t urls=" + Arrays.toString(urls) + "\n\t class-loader=" + cl.getClass().getName() + " as " + cl));
+            throw new NIllegalArgumentException(NMsg.ofP("unable to detect nuts digest. Most likely you are missing valid compilation of nuts." + "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." + "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") + "\n\t class-path=" + System.getProperty("java.class.path") + "\n\t urls=" + Arrays.toString(urls) + "\n\t class-loader=" + cl.getClass().getName() + " as " + cl));
         }
         return d;
 
@@ -45,7 +45,7 @@ public class ExtraApiUtils {
 
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
-        return resolveNutsIdDigest(NId.getApi(Nuts.getVersion()).get(), resolveClasspathURLs(Nuts.class.getClassLoader(), true));
+        return resolveNutsIdDigest(NId.getApi(Nuts.version()).get(), resolveClasspathURLs(Nuts.class.getClassLoader(), true));
     }
 
     public static String resolveNutsIdDigest(NId id, URL[] urls) {
@@ -71,9 +71,9 @@ public class ExtraApiUtils {
         for (URL url : urls) {
             NId[] nutsBootIds = NReservedMavenUtils.resolveJarIds(url);
             for (NId i : nutsBootIds) {
-                if (NBlankable.isBlank(id.getGroupId()) || i.getGroupId().equals(id.getGroupId())) {
-                    if (NBlankable.isBlank(id.getArtifactId()) || i.getArtifactId().equals(id.getArtifactId())) {
-                        if (NBlankable.isBlank(id.getVersion()) || i.getVersion().equals(id.getVersion())) {
+                if (NBlankable.isBlank(id.groupId()) || i.groupId().equals(id.groupId())) {
+                    if (NBlankable.isBlank(id.artifactId()) || i.artifactId().equals(id.artifactId())) {
+                        if (NBlankable.isBlank(id.version()) || i.version().equals(id.version())) {
                             return url;
                         }
                     }
@@ -189,26 +189,26 @@ public class ExtraApiUtils {
 
     private static void fillBootDependencyNodes(NClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
                                                 NLog bLog) {
-        if (node.getId() == null) {
+        if (node.id() == null) {
             if (!node.isIncludedInClasspath()) {
-                urls.add(node.getURL());
+                urls.add(node.url());
             } else {
-                bLog.log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()).asWarning().withIntent(NMsgIntent.CACHE));
+                bLog.log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.url()).asWarning().withIntent(NMsgIntent.CACHE));
             }
-            for (NClassLoaderNode dependency : node.getDependencies()) {
+            for (NClassLoaderNode dependency : node.dependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
             }
             return;
         } else {
-            String shortName = node.getId().getShortName();
+            String shortName = node.id().shortName();
             if (!visitedIds.contains(shortName)) {
                 visitedIds.add(shortName);
                 if (!node.isIncludedInClasspath()) {
-                    urls.add(node.getURL());
+                    urls.add(node.url());
                 } else {
-                    bLog.log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()).asWarning().withIntent(NMsgIntent.CACHE));
+                    bLog.log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.url()).asWarning().withIntent(NMsgIntent.CACHE));
                 }
-                for (NClassLoaderNode dependency : node.getDependencies()) {
+                for (NClassLoaderNode dependency : node.dependencies()) {
                     fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
                 }
             }

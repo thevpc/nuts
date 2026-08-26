@@ -2,6 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -58,56 +60,130 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
      */
     private NWorkBalancerModelContext context = new NWorkBalancerModelContext();
 
+    /**
+     * N work balancer model.
+     *
+     * @return n work balancer model result
+     */
     public NWorkBalancerModel() {
     }
 
-    public String getStrategy() {
+    /**
+     * Strategy.
+     *
+     * @return strategy result
+     */
+    @NGetter
+    public String strategy() {
         return strategy;
     }
 
-    public NWorkBalancerModel setStrategy(String strategy) {
+    /**
+     * Strategy.
+     *
+     * @param strategy strategy
+     * @return strategy result
+     */
+    public NWorkBalancerModel strategy(String strategy) {
         this.strategy = strategy;
         return this;
     }
 
-    public String getId() {
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    @NGetter
+    public String id() {
         return id;
     }
 
-    public NWorkBalancerModel setId(String id) {
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
+    @NGetter
+    public NWorkBalancerModel id(String id) {
         this.id = id;
         return this;
     }
 
-    public Map<String, NElement> getOptions() {
+    /**
+     * Options.
+     *
+     * @return options result
+     */
+    @NGetter
+    public Map<String, NElement> options() {
         return options;
     }
 
-    public NWorkBalancerModel setOptions(Map<String, NElement> options) {
+    /**
+     * Options.
+     *
+     * @param options options
+     * @return options result
+     */
+    @NSetter
+    public NWorkBalancerModel options(Map<String, NElement> options) {
         this.options = options;
         return this;
     }
 
-    public List<NWorkBalancerWorkerModel> getWorkers() {
+    /**
+     * Workers.
+     *
+     * @return workers result
+     */
+    @NGetter
+    public List<NWorkBalancerWorkerModel> workers() {
         return workers;
     }
 
-    public NWorkBalancerModel setWorkers(List<NWorkBalancerWorkerModel> workers) {
+    /**
+     * Workers.
+     *
+     * @param workers workers
+     * @return workers result
+     */
+    @NSetter
+    public NWorkBalancerModel workers(List<NWorkBalancerWorkerModel> workers) {
         this.workers = workers;
         return this;
     }
 
-    public NWorkBalancerModelContext getContext() {
+    /**
+     * Context.
+     *
+     * @return context result
+     */
+    @NGetter
+    public NWorkBalancerModelContext context() {
         return context;
     }
 
-    public NWorkBalancerModel setContext(NWorkBalancerModelContext context) {
+    /**
+     * Context.
+     *
+     * @param context context
+     * @return context result
+     */
+    @NSetter
+    public NWorkBalancerModel context(NWorkBalancerModelContext context) {
         this.context = context;
         return this;
     }
 
     @Override
     public NWorkBalancerModel copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -117,6 +193,12 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
         try {
             copy = (NWorkBalancerModel) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
         copy.options = this.options == null ? null : new HashMap<>(this.options);

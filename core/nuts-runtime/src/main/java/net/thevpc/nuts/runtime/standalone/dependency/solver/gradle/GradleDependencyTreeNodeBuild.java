@@ -46,7 +46,7 @@ class GradleDependencyTreeNodeBuild {
         this.parent = parent;
         this.depth = depth;
         this.def = def;
-        this.id = def != null ? def.getId() : dependency.toId();
+        this.id = def != null ? def.id() : dependency.toId();
         this.provided = (dependency.isProvided()) || (parent != null && parent.provided);
         this.optional = (dependency.isOptional()) || (parent != null && parent.optional);
     }
@@ -72,17 +72,17 @@ class GradleDependencyTreeNodeBuild {
                     throw new NIllegalArgumentException(NMsg.ofC(NI18n.of("missing non optional dependency %s"), dependency));
                 }
             }
-            this.id = def.getId();
+            this.id = def.id();
             effDependency = dependency;
             if (parent == null) {
                 effDependency = dependency.builder()
-                        .setVersion(def.getId().getVersion())
+                        .version(def.id().version())
                         .build();
             } else {
                 effDependency = dependency.builder()
-                        .setScope(gradleSolver.combineScopes(parent.effDependency.getScope(), dependency.getScope()))
-                        .setVersion(def.getId().getVersion())
-                        .setProperty("provided-by", parent.id.toString())
+                        .scope(gradleSolver.combineScopes(parent.effDependency.scope(), dependency.scope()))
+                        .version(def.id().version())
+                        .property("provided-by", parent.id.toString())
                         .build();
             }
             this.key = new NDependencyInfo(this.dependency, this.depth, this.optional, this.provided);
@@ -114,11 +114,11 @@ class GradleDependencyTreeNodeBuild {
     @Override
     public String toString() {
         NDependencyBuilder d = dependency.builder();
-        d.getCondition().setArch(new ArrayList<>());
-        d.getCondition().setOs(new ArrayList<>());
-        d.getCondition().setOsDist(new ArrayList<>());
-        d.getCondition().setDesktopEnvironment(new ArrayList<>());
-        d.getCondition().setPlatform(new ArrayList<>());
+        d.condition().arch(new ArrayList<>());
+        d.condition().os(new ArrayList<>());
+        d.condition().osDist(new ArrayList<>());
+        d.condition().desktopEnvironment(new ArrayList<>());
+        d.condition().platform(new ArrayList<>());
         return "GradleDependencyTreeNodeBuild{" +
                 "dependency=" + d.build() +
                 (provided ? (", provided=" + provided) : "") +
@@ -128,7 +128,7 @@ class GradleDependencyTreeNodeBuild {
     }
 
     NId getEffectiveId() {
-        return getEffectiveDescriptor().getId();
+        return getEffectiveDescriptor().id();
     }
 
     void setPreloadedDescriptor(NDescriptor descriptor) {
@@ -137,15 +137,15 @@ class GradleDependencyTreeNodeBuild {
 
     NDescriptor getEffectiveDescriptor() {
         if (effDescriptor == null && def != null) {
-            effDescriptor = def.getEffectiveDescriptor().orNull();
+            effDescriptor = def.effectiveDescriptor().orNull();
             if (effDescriptor == null) {
-                effDescriptor = NWorkspace.of().resolveEffectiveDescriptor(def.getDescriptor(),
+                effDescriptor = NWorkspace.of().resolveEffectiveDescriptor(def.descriptor(),
                         new NDescriptorEffectiveConfig()
                                 .setIgnoreCurrentEnvironment(gradleSolver.isIgnoreCurrentEnvironment())
                 );
                 if (effDescriptor == null) {
                     throw new NIllegalArgumentException(
-                            NMsg.ofC(NI18n.of("expected an effective definition for %s"), def.getId()));
+                            NMsg.ofC(NI18n.of("expected an effective definition for %s"), def.id()));
                 }
             }
         }
@@ -164,7 +164,7 @@ class GradleDependencyTreeNodeBuild {
     }
 
     public void addExclusions(NDependency dependency) {
-        for (NId exclusion : dependency.getExclusions()) {
+        for (NId exclusion : dependency.exclusions()) {
             this.exclusions.add(NDependencyInfo.normalizedId(exclusion));
         }
     }

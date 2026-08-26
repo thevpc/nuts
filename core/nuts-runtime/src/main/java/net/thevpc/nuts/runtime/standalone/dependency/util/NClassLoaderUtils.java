@@ -54,14 +54,14 @@ public final class NClassLoaderUtils {
 
     public static NClassLoaderNode definitionToClassLoaderNode(NDefinition def, NRepositoryFilter repositoryFilter) {
 //        def.getDependencies().get();
-        def.getContent().get();
-        def.getContent().flatMap(NPath::toURL).get();
+        def.content().get();
+        def.content().flatMap(NPath::toURL).get();
         return new NDefaultClassLoaderNode(
-                def.getId(),
-                def.getContent().flatMap(NPath::toURL).orNull(),
+                def.id(),
+                def.content().flatMap(NPath::toURL).orNull(),
                 true,
                 true,
-                def.getDependencies().get().transitiveWithSource().stream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter))
+                def.dependencies().get().transitiveWithSource().jstream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter))
                         .filter(Objects::nonNull)
                         .toArray(NClassLoaderNode[]::new)
         );
@@ -81,11 +81,11 @@ public final class NClassLoaderUtils {
         NId id = d.toId();
         try {
             cc = NSearch.of(id)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setRepositoryFilter(repositoryFilter)
-                    .latest()
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .repositoryFilter(repositoryFilter)
+                    .latest(true)
                     .getResultDefinitions()
-                    .map(x->x.getContent().orNull())
+                    .map(x->x.content().orNull())
                     .filter(x->x!=null)
                     .findFirst().orNull();
             if(cc==null){
@@ -108,20 +108,20 @@ public final class NClassLoaderUtils {
         if (optional) {
             return null;
         }
-        throw new NArtifactNotFoundException(id.getLongId());
+        throw new NArtifactNotFoundException(id.longId());
     }
 
     private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter) {
         NPath cc = null;
         if (!isOptional) {
-            if (!NDependencyUtils.isRequiredDependency(d.getDependency())) {
+            if (!NDependencyUtils.isRequiredDependency(d.dependency())) {
                 isOptional = true;
             }
         }
         try {
-            cc = NFetch.of(d.getDependency().toId())
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setRepositoryFilter(repositoryFilter)
+            cc = NFetch.of(d.dependency().toId())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .repositoryFilter(repositoryFilter)
                     .getResultContent();
         } catch (NArtifactNotFoundException ex) {
             //
@@ -131,7 +131,7 @@ public final class NClassLoaderUtils {
             if (url != null) {
                 List<NClassLoaderNode> aa = new ArrayList<>();
                 if (withChildren) {
-                    for (NDependencyTreeNode child : d.getChildren()) {
+                    for (NDependencyTreeNode child : d.children()) {
                         NClassLoaderNode q = toClassLoaderNodeWithOptional(child, isOptional, true, repositoryFilter);
                         if (q != null) {
                             aa.add(q);
@@ -139,7 +139,7 @@ public final class NClassLoaderUtils {
                     }
                 }
                 return new NDefaultClassLoaderNode(
-                        d.getDependency().toId(), url, true, true,
+                        d.dependency().toId(), url, true, true,
                         aa.toArray(new NClassLoaderNode[0])
                 );
             }
@@ -147,7 +147,7 @@ public final class NClassLoaderUtils {
         if (isOptional) {
             return null;
         }
-        throw new NArtifactNotFoundException(d.getDependency().toId().getLongId());
+        throw new NArtifactNotFoundException(d.dependency().toId().longId());
     }
 
     public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {

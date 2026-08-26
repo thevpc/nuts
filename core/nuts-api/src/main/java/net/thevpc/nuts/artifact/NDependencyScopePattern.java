@@ -138,10 +138,19 @@ public enum NDependencyScopePattern implements NEnum {
      */
     private final String id;
 
+  /**
+   * N dependency scope pattern.
+   */
     NDependencyScopePattern() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NDependencyScopePattern> parse(String value) {
         return NEnumUtils.parseEnum(value, NDependencyScopePattern.class, s->{
             switch (s.normalizedValue()) {
@@ -213,6 +222,11 @@ public enum NDependencyScopePattern implements NEnum {
         return id;
     }
 
+    /**
+     * Converts to scopes.
+     *
+     * @return to scopes result
+     */
     public EnumSet<NDependencyScope> toScopes() {
         EnumSet<NDependencyScope> v = EnumSet.noneOf(NDependencyScope.class);
         switch (this) {
@@ -297,6 +311,12 @@ public enum NDependencyScopePattern implements NEnum {
                 v.add(NDependencyScope.OTHER);
             }
             default: {
+                /**
+                 * Illegal argument exception.
+                 *
+                 * @param this this
+                 * @return illegal argument exception result
+                 */
                 throw new IllegalArgumentException("unsupported scope pattern " + this);
             }
         }

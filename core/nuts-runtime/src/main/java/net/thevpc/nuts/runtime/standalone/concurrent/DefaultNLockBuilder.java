@@ -5,8 +5,8 @@ import net.thevpc.nuts.concurrent.NLockException;
 
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.File;
@@ -23,12 +23,12 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
 
     @Override
     public NLock build() {
-        Object s = getSource();
-        Object lr = getResource();
+        Object s = source();
+        Object lr = resource();
         Path lrPath = null;
         if (lr == null) {
             if (s == null) {
-                throw new NLockException(NMsg.ofPlain("unsupported lock for null"), null, null);
+                throw new NLockException(NMsg.ofP("unsupported lock for null"), null, null);
             }
             Path p = toPath(s);
             if (p == null) {

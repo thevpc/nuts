@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.shell;
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -22,7 +23,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     public AbstractScriptBuilder(NShellFamily shellFamily, String type, NId anyId) {
         this.shellFamily = shellFamily;
-        this.anyId = anyId.builder().setRepository(null).build();//remove repo!
+        this.anyId = anyId.builder().repository(null).build();//remove repo!
         this.type = type;
     }
 
@@ -66,12 +67,12 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     public PathInfo build() {
         //Path script = getScriptFile(name);
-        NDefinition anyIdDef = NSearch.of(anyId).setLatest(true).setDistinct(true)
-                .setDependencyFilter(NDependencyFilters.of().byRunnable())
+        NDefinition anyIdDef = NSearch.of(anyId).latest(true).distinct(true)
+                .dependencyFilter(NDependencyFilter.ofRunnable())
                 .getResultDefinitions().findSingleton().get();
-        NId anyId = anyIdDef.getId();
+        NId anyId = anyIdDef.id();
         String path = NameBuilder.id(anyId,
-                this.path,"%n", anyIdDef.getDescriptor()).buildName();
+                this.path,"%n", anyIdDef.descriptor()).buildName();
         NPath script = NPath.of(path);
         String newContent = buildString();
 //        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script,session);

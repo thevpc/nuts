@@ -31,6 +31,12 @@ import net.thevpc.nuts.util.*;
 
 import java.util.Objects;
 
+/**
+ * NRunAs class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NRunAs {
     public static final NRunAs CURRENT_USER = new NRunAs(NRunAsMode.CURRENT_USER, null);
     public static final NRunAs ROOT = new NRunAs(NRunAsMode.ROOT, null);
@@ -38,35 +44,75 @@ public class NRunAs {
     private final NRunAsMode mode;
     private final String user;
 
+    /**
+     * N run as.
+     *
+     * @param mode mode
+     * @param user user
+     * @return n run as result
+     */
     private NRunAs(NRunAsMode mode, String user) {
         this.mode = mode;
         this.user = user;
     }
 
+    /**
+     * Current user.
+     *
+     * @return current user result
+     */
     public static NRunAs currentUser() {
         return CURRENT_USER;
     }
 
+    /**
+     * Root.
+     *
+     * @return root result
+     */
     public static NRunAs root() {
         return ROOT;
     }
 
+    /**
+     * Sudo.
+     *
+     * @return sudo result
+     */
     public static NRunAs sudo() {
         return SUDO;
     }
 
+    /**
+     * User.
+     *
+     * @param name name
+     * @return user result
+     */
     public static NRunAs user(String name) {
         if (NBlankable.isBlank(name)) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param name" name"
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("invalid user name");
         }
         return new NRunAs(NRunAsMode.SUDO, name);
     }
 
+    /**
+     * Parse.
+     *
+     * @param runAs run as
+     * @return parse result
+     */
     public static NOptional<NRunAs> parse(String runAs) {
         if(NBlankable.isBlank(runAs)){
             return NOptional.ofNamedEmpty("NRunAs "+runAs);
         }
-        runAs=runAs.trim();
+        runAs=NStringUtils.strip(runAs);
         String urunAs=runAs.toUpperCase();
         switch (urunAs){
             case "ROOT":
@@ -88,11 +134,23 @@ public class NRunAs {
         return NOptional.ofNamedEmpty("NRunAs "+runAs);
     }
 
-    public NRunAsMode getMode() {
+    /**
+     * Mode.
+     *
+     * @return mode result
+     */
+    @NGetter
+    public NRunAsMode mode() {
         return mode;
     }
 
-    public String getUser() {
+    /**
+     * User.
+     *
+     * @return user result
+     */
+    @NGetter
+    public String user() {
         return user;
     }
 

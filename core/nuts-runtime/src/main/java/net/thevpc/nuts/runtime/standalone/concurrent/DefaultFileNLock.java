@@ -6,14 +6,14 @@ import net.thevpc.nuts.concurrent.NLockReleaseException;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 
@@ -46,21 +46,21 @@ public class DefaultFileNLock extends AbstractNLock {
             if (value == null || value.isEmpty()) return;
             String[] lines = value.split("\\r?\\n");
             for (String line : lines) {
-                line = line.trim();
+                line = NStringUtils.strip(line);
                 if (line.isEmpty()) continue;
                 if (line.startsWith("hostname=")) {
-                    hostname = line.substring("hostname=".length()).trim();
+                    hostname = NStringUtils.strip(line.substring("hostname=".length()));
                 } else if (line.startsWith("pid=")) {
-                    pid = line.substring("pid=".length()).trim();
+                    pid = NStringUtils.strip(line.substring("pid=".length()));
                 } else if (line.startsWith("instant=")) {
                     try {
-                        instant = Instant.parse(line.substring("instant=".length()).trim());
+                        instant = Instant.parse(NStringUtils.strip(line.substring("instant=".length())));
                     } catch (Exception e) {
                         NLog.of(LockInfo.class).debug(NMsg.ofC("Failed to parse instant: %s", line));
                     }
                 } else if (line.startsWith("maxValidInstant=")) {
                     try {
-                        maxValidInstant = Instant.parse(line.substring("maxValidInstant=".length()).trim());
+                        maxValidInstant = Instant.parse(NStringUtils.strip(line.substring("maxValidInstant=".length())));
                     } catch (Exception e) {
                         NLog.of(LockInfo.class).debug(NMsg.ofC("Failed to parse maxValidInstant: %s", line));
                     }
@@ -70,8 +70,8 @@ public class DefaultFileNLock extends AbstractNLock {
 
         public String serialize() {
             NStringBuilder sb = new NStringBuilder();
-            sb.println("hostname=" + NStringUtils.trim(hostname));
-            sb.println("pid=" + NStringUtils.trim(pid));
+            sb.println("hostname=" + NStringUtils.strip(hostname));
+            sb.println("pid=" + NStringUtils.strip(pid));
             sb.println("instant=" + instant);
             sb.println("maxValidInstant=" + maxValidInstant);
             return sb.toString();
@@ -330,10 +330,10 @@ public class DefaultFileNLock extends AbstractNLock {
 
         try {
             LockInfo li = new LockInfo();
-            li.hostname = NEnv.of().getHostName();
+            li.hostname = NEnv.of().hostName();
             li.instant = Instant.now();
             li.maxValidInstant = li.instant.plusSeconds(12 * 3600); // 12 hours TTL
-            li.pid = NWorkspace.of().getPid();
+            li.pid = NEnv.of().pid();
 
             Files.write(path, li.serialize().getBytes());
             ownerThread = Thread.currentThread();
@@ -351,7 +351,7 @@ public class DefaultFileNLock extends AbstractNLock {
 
     @Override
     public Condition newCondition() {
-        throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported Lock.newCondition"));
+        throw new NUnsupportedOperationException(NMsg.ofP("unsupported Lock.newCondition"));
     }
 
     @Override
@@ -366,7 +366,7 @@ public class DefaultFileNLock extends AbstractNLock {
 
     @Override
     public NElement describe() {
-        NUpletElementBuilder b = NElement.ofUpletBuilder("FileLock");
+        NTupleElementBuilder b = NElement.ofTupleBuilder("FileLock");
         if (path != null) {
             b.add("path", path.toString());
         }

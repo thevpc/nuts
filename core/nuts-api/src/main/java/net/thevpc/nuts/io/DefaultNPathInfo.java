@@ -7,6 +7,12 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * DefaultNPathInfo class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class DefaultNPathInfo implements NPathInfo {
     private String name;                // original path
     private String path;                // original path
@@ -22,12 +28,36 @@ public class DefaultNPathInfo implements NPathInfo {
     private String owner;
     private String group;
 
+    /**
+     * Creates a new instance of not found.
+     *
+     * @param path path
+     * @return of not found result
+     */
     public static DefaultNPathInfo ofNotFound(String path) {
         int u = NStringUtils.lastIndexOf(path, new char[]{'/', '\\'});
         String name=u<0?path:path.substring(u+1);
         return new DefaultNPathInfo(name,path,NPathType.NOT_FOUND,null,null,-1,false,null,null, null,Collections.emptySet(),null,null);
     }
 
+    /**
+     * Default n path info.
+     *
+     * @param name name
+     * @param path path
+     * @param type type
+     * @param targetType target type
+     * @param targetPath target path
+     * @param size size
+     * @param symbolicLink symbolic link
+     * @param lastModified last modified
+     * @param lastAccess last access
+     * @param creationTime creation time
+     * @param permissions permissions
+     * @param owner owner
+     * @param group group
+     * @return default n path info result
+     */
     public DefaultNPathInfo(String name,String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group) {
         this.name = name;
         this.path = path;
@@ -45,40 +75,50 @@ public class DefaultNPathInfo implements NPathInfo {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public Instant getLastAccessInstant() {
+    /**
+     * Last access instant.
+     *
+     * @return last access instant result
+     */
+    public Instant lastAccessInstant() {
         return lastAccess;
     }
 
-    public String getGroup() {
+    /**
+     * Group.
+     *
+     * @return group result
+     */
+    public String group() {
         return group;
     }
 
     @Override
-    public String getPath() {
+    public String path() {
         return path;
     }
 
     @Override
-    public NPathType getType() {
+    public NPathType type() {
         return type;
     }
 
     @Override
-    public NPathType getTargetType() {
+    public NPathType targetType() {
         return targetType;
     }
 
     @Override
-    public String getTargetPath() {
+    public String targetPath() {
         return targetPath;
     }
 
     @Override
-    public long getContentLength() {
+    public long contentLength() {
         return size;
     }
 
@@ -88,22 +128,22 @@ public class DefaultNPathInfo implements NPathInfo {
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
+    public Instant lastModifiedInstant() {
         return lastModified;
     }
 
     @Override
-    public Instant getCreationInstant() {
+    public Instant creationInstant() {
         return creationTime;
     }
 
     @Override
-    public Set<NPathPermission> getPermissions() {
+    public Set<NPathPermission> permissions() {
         return permissions;
     }
 
     @Override
-    public String getOwner() {
+    public String owner() {
         return owner;
     }
 

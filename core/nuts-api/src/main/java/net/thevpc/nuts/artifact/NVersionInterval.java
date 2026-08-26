@@ -26,8 +26,9 @@
  */
 package net.thevpc.nuts.artifact;
 
-import net.thevpc.nuts.internal.parser.NReservedVersionIntervalParser;
+import net.thevpc.nuts.internal.NReservedVersionIntervalParser;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
@@ -40,31 +41,78 @@ import java.util.List;
  */
 public interface NVersionInterval extends Serializable {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param s s
+     * @param versionComparator version comparator
+     * @return of result
+     */
     static NOptional<NVersionInterval> of(String s,NVersionComparator versionComparator) {
         return ofList(s,versionComparator).flatMap(
                 x->{
                     if(x.isEmpty()){
-                        return NOptional.ofEmpty(()-> NMsg.ofPlain("empty interval"));
+                        return NOptional.ofEmpty(()-> NMsg.ofP("empty interval"));
                     }
                     if(x.size()>1){
-                        return NOptional.ofError(()-> NMsg.ofPlain("too many intervals"));
+                        return NOptional.ofError(()-> NMsg.ofP("too many intervals"));
                     }
                     return NOptional.of(x.get(0));
                 }
         );
     }
+    /**
+     * Creates a new instance of of list.
+     *
+     * @param s s
+     * @param versionComparator version comparator
+     * @return of list result
+     */
     static NOptional<List<NVersionInterval>> ofList(String s,NVersionComparator versionComparator){
         return new NReservedVersionIntervalParser(versionComparator).parse(s);
     }
+    /**
+     * Accept version.
+     *
+     * @param version version
+     * @return accept version result
+     */
     boolean acceptVersion(NVersion version);
 
+    /**
+     * Checks if is fixed value.
+     *
+     * @return is fixed value result
+     */
     boolean isFixedValue();
 
+    /**
+     * Checks if is include lower bound.
+     *
+     * @return is include lower bound result
+     */
     boolean isIncludeLowerBound();
 
+    /**
+     * Checks if is include upper bound.
+     *
+     * @return is include upper bound result
+     */
     boolean isIncludeUpperBound();
 
-    String getLowerBound();
+    /**
+     * Lower bound.
+     *
+     * @return lower bound result
+     */
+    @NGetter
+    String lowerBound();
 
-    String getUpperBound();
+    /**
+     * Upper bound.
+     *
+     * @return upper bound result
+     */
+    @NGetter
+    String upperBound();
 }

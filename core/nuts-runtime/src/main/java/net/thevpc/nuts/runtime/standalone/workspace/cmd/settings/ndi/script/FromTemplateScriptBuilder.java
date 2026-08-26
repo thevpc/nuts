@@ -2,14 +2,13 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script;
 
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.AbstractScriptBuilder;
@@ -17,6 +16,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.util.NdiUtils;
+import net.thevpc.nuts.text.NNewLineMode;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -42,7 +42,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     }
 
     public FromTemplateScriptBuilder printCall(String line, String... args) {
-        return println(NShellHelper.of(getShellFamily()).getCallScriptCommand(line, args));
+        return println(NShellHelper.of(getShellFamily()).getCallScriptCommand("_V", line, args));
     }
 
     public FromTemplateScriptBuilder printSet(String var, String value) {
@@ -117,16 +117,16 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            NDefinition anyIdDef = NSearch.of().addId(getAnyId()).setLatest(true)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setDistinct(true)
+            NDefinition anyIdDef = NSearch.of().addId(getAnyId()).latest(true)
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .distinct(true)
                     .getResultDefinitions()
                     .findSingleton().get();
-            NId anyId = anyIdDef.getId();
+            NId anyId = anyIdDef.id();
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {
                 NdiUtils.generateScript("/net/thevpc/nuts/runtime/settings/" + sndi.getTemplateName(templateName, getShellFamily()),
-                        w, new Function<String, String>() {
+                        w, NNewLineMode.system(), new Function<String, String>() {
                             @Override
                             public String apply(String s) {
                                 String v = mapper == null ? null : mapper.apply(s);
@@ -135,7 +135,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                 }
                                 switch (s) {
                                     case "NUTS_ID":
-                                        return anyId.getLongName();
+                                        return anyId.longName();
                                     case "GENERATOR": {
 //                                        NutsId appId = getSession().getAppId();
 //                                        if(appId!=null){
@@ -143,18 +143,20 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
 //                                        }
 //                                        appId=getSession().getWorkspace().getRuntimeId();
 //                                        return appId.getLongName();
-                                        return NWorkspace.of().getRuntimeId().getLongName();
+                                        return NWorkspace.of().runtimeId().longName();
                                     }
                                     case "SCRIPT_NUTS":
-                                        return sndi.getNutsStart(options).path().toString();
+                                        return sndi.getNutsStart(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_TERM_INIT":
-                                        return sndi.getIncludeNutsTermInit(options)[0].path().toString();
+                                        return sndi.getIncludeNutsTermInit(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_TERM":
-                                        return sndi.getNutsTerm(options)[0].path().toString();
+                                        return sndi.getNutsTerm(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_INIT":
                                         return sndi.getIncludeNutsInit(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_ENV":
                                         return sndi.getIncludeNutsEnv(options,getShellFamily()).path().toString();
+                                    case "SCRIPT_NUTS_COMPLETION":
+                                        return sndi.getIncludeNutsCompletion(options,getShellFamily()).path().toString();
                                     case "NUTS_APP_JAR":
                                         return options.resolveNutsAppJarPath().toString();
                                     case "BIN_FOLDER":
@@ -166,9 +168,9 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_API_ID":
                                         return options.resolveNutsApiId().toString();
                                     case "NUTS_VERSION":
-                                        return NWorkspace.of().getApiVersion().toString();
+                                        return NWorkspace.of().apiVersion().toString();
                                     case "NUTS_WORKSPACE":
-                                        return NWorkspace.of().getWorkspaceLocation().toString();
+                                        return NWorkspace.of().workspaceLocation().toString();
                                     case "NUTS_WORKSPACE_BIN":
                                         return str(NPath.of(NStoreKey.ofBin()));
                                     case "NUTS_WORKSPACE_CONF":

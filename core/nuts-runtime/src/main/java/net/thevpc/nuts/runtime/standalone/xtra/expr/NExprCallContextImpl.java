@@ -12,7 +12,7 @@ public class NExprCallContextImpl implements NExprCallContext {
     private final List<NExprNodeValue> args;
     private final NExprContext context;
     private final NExprCallContextType contextType;
-    private final NExprOpType operatorType;
+    private final NFixity operatorFixity;
     private final int operatorPrecedence;
     private final NOperatorAssociativity operatorAssociativity;
 
@@ -24,16 +24,16 @@ public class NExprCallContextImpl implements NExprCallContext {
         return new NExprCallContextImpl(name, args, context, NExprCallContextType.CONSTRUCT, null, 0, NOperatorAssociativity.LEFT);
     }
 
-    public static NExprCallContextImpl ofOperator(String name, List<NExprNodeValue> args, NExprContext context, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity operatorAssociativity) {
+    public static NExprCallContextImpl ofOperator(String name, List<NExprNodeValue> args, NExprContext context, NFixity operatorType, int operatorPrecedence, NOperatorAssociativity operatorAssociativity) {
         return new NExprCallContextImpl(name, args, context, NExprCallContextType.OPERATOR, operatorType, operatorPrecedence, operatorAssociativity);
     }
 
-    public NExprCallContextImpl(String name, List<NExprNodeValue> args, NExprContext context, NExprCallContextType contextType, NExprOpType operatorType, int operatorPrecedence, NOperatorAssociativity operatorAssociativity) {
+    public NExprCallContextImpl(String name, List<NExprNodeValue> args, NExprContext context, NExprCallContextType contextType, NFixity operatorFixity, int operatorPrecedence, NOperatorAssociativity operatorAssociativity) {
         this.name = name;
         this.args = args;
         this.context = context;
         this.contextType = contextType;
-        this.operatorType = operatorType;
+        this.operatorFixity = operatorFixity;
         this.operatorPrecedence = operatorPrecedence;
         this.operatorAssociativity = operatorAssociativity;
     }
@@ -67,9 +67,9 @@ public class NExprCallContextImpl implements NExprCallContext {
     }
 
     @Override
-    public NExprOpType operatorType() {
+    public NFixity fixity() {
         requireOperatorContext();
-        return operatorType;
+        return operatorFixity;
     }
 
     private void requireOperatorContext() {
@@ -79,13 +79,13 @@ public class NExprCallContextImpl implements NExprCallContext {
     }
 
     @Override
-    public int operatorPrecedence() {
+    public int precedence() {
         requireOperatorContext();
         return operatorPrecedence;
     }
 
     @Override
-    public NOperatorAssociativity operatorAssociativity() {
+    public NOperatorAssociativity associativity() {
         requireOperatorContext();
         return operatorAssociativity;
     }

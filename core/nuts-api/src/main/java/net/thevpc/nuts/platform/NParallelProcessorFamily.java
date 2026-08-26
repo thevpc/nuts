@@ -188,14 +188,14 @@ public enum NParallelProcessorFamily implements NEnum {
      * driver api library it ships, never the development toolkit.
      */
     private static boolean _hasCudaRuntime() {
-        if (NOsFamily.getCurrent() == NOsFamily.MACOS) return false;
+        if (NOsFamily.current() == NOsFamily.MACOS) return false;
         // Most reliable: NVIDIA device file (driver + hardware present)
         if (_deviceExists("/dev/nvidia0")) return true;
         // Driver api library, its directory varies across distributions
         if (_anyFileExists(LINUX_LIBRARY_DIRS, "libcuda.so.1")) return true;
         // Driver binary on PATH
         if (_binaryOnPath("nvidia-smi")) return true;
-        if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
+        if (NOsFamily.current() == NOsFamily.WINDOWS) {
             String sysRoot = System.getenv("SystemRoot");
             if (sysRoot == null) sysRoot = "C:\\Windows";
             if (_fileExists(sysRoot + "\\System32\\nvcuda.dll")) return true;
@@ -209,16 +209,16 @@ public enum NParallelProcessorFamily implements NEnum {
      * that run cuda binaries perfectly well.
      */
     private static boolean _hasCudaToolkit() {
-        if (NOsFamily.getCurrent() == NOsFamily.MACOS) return false;
+        if (NOsFamily.current() == NOsFamily.MACOS) return false;
         if (_binaryOnPath("nvcc")) return true;
         if (_envDirExists("CUDA_HOME")) return true;
         if (_envDirExists("CUDA_PATH")) return true;
-        if (NOsFamily.getCurrent() == NOsFamily.LINUX) {
+        if (NOsFamily.current() == NOsFamily.LINUX) {
             for (String d : LINUX_CUDA_TOOLKIT_DIRS) {
                 if (_dirExists(d)) return true;
             }
         }
-        if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
+        if (NOsFamily.current() == NOsFamily.WINDOWS) {
             String pf = System.getenv("ProgramFiles");
             if (pf != null && _dirExists(pf + "\\NVIDIA GPU Computing Toolkit\\CUDA")) return true;
         }
@@ -247,8 +247,8 @@ public enum NParallelProcessorFamily implements NEnum {
         if (_binaryOnPath("hipcc")) return true;
         if (_envDirExists("ROCM_PATH")) return true;
         if (_envDirExists("HIP_PATH")) return true;
-        if (NOsFamily.getCurrent() == NOsFamily.LINUX && _dirExists("/opt/rocm")) return true;
-        if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
+        if (NOsFamily.current() == NOsFamily.LINUX && _dirExists("/opt/rocm")) return true;
+        if (NOsFamily.current() == NOsFamily.WINDOWS) {
             String pf = System.getenv("ProgramFiles");
             if (pf != null && _dirExists(pf + "\\AMD\\ROCm")) return true;
         }
@@ -259,22 +259,22 @@ public enum NParallelProcessorFamily implements NEnum {
         if (_binaryOnPath("sycl-ls")) return true;
         if (_envDirExists("ONEAPI_ROOT")) return true;
         if (_envDirExists("INTEL_OPENVINO_DIR")) return true;
-        if (NOsFamily.getCurrent() == NOsFamily.LINUX && _dirExists("/opt/intel/oneapi")) return true;
-        if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
+        if (NOsFamily.current() == NOsFamily.LINUX && _dirExists("/opt/intel/oneapi")) return true;
+        if (NOsFamily.current() == NOsFamily.WINDOWS) {
             String pf86 = System.getenv("ProgramFiles(x86)");
             if (pf86 != null && _dirExists(pf86 + "\\Intel\\oneAPI")) return true;
         }
-        if (NOsFamily.getCurrent() == NOsFamily.MACOS && _dirExists("/opt/intel/oneapi")) return true;
+        if (NOsFamily.current() == NOsFamily.MACOS && _dirExists("/opt/intel/oneapi")) return true;
         return false;
     }
 
     private static boolean _hasMetal() {
         // Metal is available on all macOS 10.11+ and iOS 8+ — no separate install
-        return NOsFamily.getCurrent() == NOsFamily.MACOS;
+        return NOsFamily.current() == NOsFamily.MACOS;
     }
 
     private static boolean _hasOpenCl() {
-        switch (NOsFamily.getCurrent()) {
+        switch (NOsFamily.current()) {
             case LINUX:
                 return _dirExists("/etc/OpenCL/vendors");
             case WINDOWS: {
@@ -290,7 +290,7 @@ public enum NParallelProcessorFamily implements NEnum {
     }
 
     private static boolean _hasVulkan() {
-        switch (NOsFamily.getCurrent()) {
+        switch (NOsFamily.current()) {
             case LINUX: {
                 if (_dirExists("/usr/share/vulkan/icd.d")) return true;
                 String home = System.getProperty("user.home");
@@ -309,7 +309,7 @@ public enum NParallelProcessorFamily implements NEnum {
     }
 
     private static boolean _hasDirectMl() {
-        if (NOsFamily.getCurrent() != NOsFamily.WINDOWS) return false;
+        if (NOsFamily.current() != NOsFamily.WINDOWS) return false;
         String sysRoot = System.getenv("SystemRoot");
         if (sysRoot == null) sysRoot = "C:\\Windows";
         return _fileExists(sysRoot + "\\System32\\DirectML.dll");
@@ -320,7 +320,7 @@ public enum NParallelProcessorFamily implements NEnum {
     // -------------------------------------------------------------------------
 
     private static boolean _binaryOnPath(String name) {
-        String binary = (NOsFamily.getCurrent() == NOsFamily.WINDOWS) ? name + ".exe" : name;
+        String binary = (NOsFamily.current() == NOsFamily.WINDOWS) ? name + ".exe" : name;
         String pathEnv = System.getenv("PATH");
         if (pathEnv == null) return false;
         for (String dir : pathEnv.split(File.pathSeparator)) {

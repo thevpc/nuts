@@ -27,6 +27,7 @@
 package net.thevpc.nuts.ext;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.util.NGetter;
 
 /**
  * Extension information
@@ -42,40 +43,46 @@ public interface NExtensionInformation {
      *
      * @return extension id
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * extension user name
      *
      * @return extension user name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * extension long description
      *
      * @return extension long description
      */
-    String getDescription();
+    @NGetter
+    String description();
 
     /**
      * extension main author(s)
      *
      * @return extension main author(s)
      */
-    String getAuthor();
+    @NGetter
+    String author();
 
     /**
      * extension category
      *
      * @return extension category
      */
-    String getCategory();
+    @NGetter
+    String category();
 
     /**
      * extension source
      *
      * @return extension source
      */
-    String getSource();
+    @NGetter
+    String source();
 }

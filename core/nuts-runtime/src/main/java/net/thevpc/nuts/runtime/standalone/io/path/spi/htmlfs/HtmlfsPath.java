@@ -4,6 +4,10 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
@@ -37,6 +41,11 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(PROTOCOL, super.hashCode());
     }
@@ -59,7 +68,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        try (InputStream q = ref.getInputStream()) {
+        try (InputStream q = ref.inputStream()) {
             return NStream.ofStream(parseHtml(q).stream().map(
                     x -> {
                         if (x.endsWith("/")) {
@@ -116,7 +125,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NPathType getType(NPath basePath) {
-        if (NBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")
+        if (NBlankable.isBlank(basePath.location()) || basePath.location().endsWith("/")
                 || this.url.endsWith("/")
         ) {
             return NPathType.DIRECTORY;
@@ -144,7 +153,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NPath getParent(NPath basePath) {
-        NPath p = ref.getParent();
+        NPath p = ref.parent();
         if (p == null) {
             return null;
         }
@@ -174,12 +183,12 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + ref.getRoot());
+        return NPath.of(PREFIX + ref.root());
     }
 
 
     public List<String> parseHtml(InputStream html) {
-        byte[] bytes = NCp.of().from(html).getByteArrayResult();
+        byte[] bytes = NCp.of().from(html).byteArrayResult();
         return NScorable.<NScoredCallable<List<String>>>query()
                 .withName(NMsg.ofC("html parser"))
                 .fromStream(Arrays.stream(PARSERS)
@@ -192,7 +201,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                             }
                             return null;
                         })
-                ).getBest().map(NScoredCallable::call).orElse(Collections.emptyList());
+                ).best().map(NScoredCallable::call).orElse(Collections.emptyList());
     }
 
     @Override
@@ -215,7 +224,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
+            Object cri = context.criteria();
             if(!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }
@@ -240,7 +249,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

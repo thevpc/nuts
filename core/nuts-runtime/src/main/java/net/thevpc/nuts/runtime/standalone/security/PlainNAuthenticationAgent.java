@@ -3,10 +3,9 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
-import java.util.Arrays;
 import java.util.function.Function;
 
 @NComponentScope(NScopeType.WORKSPACE)

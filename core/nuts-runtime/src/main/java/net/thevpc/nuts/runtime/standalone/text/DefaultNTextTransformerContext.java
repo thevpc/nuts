@@ -8,8 +8,8 @@ public class DefaultNTextTransformerContext implements NTextTransformerContext {
     private NTextTransformConfig config;
 
     public DefaultNTextTransformerContext(NTextTransformerContext o) {
-        this.sequence = o.getTitleSequence();
-        this.defaultTransformer = o.getDefaultTransformer();
+        this.sequence = o.titleSequence();
+        this.defaultTransformer = o.defaultTransformer();
     }
 
     public DefaultNTextTransformerContext(NTextTransformConfig config) {
@@ -18,7 +18,7 @@ public class DefaultNTextTransformerContext implements NTextTransformerContext {
         }
         this.config = config;
         this.defaultTransformer = new DefaultNTextTransformer(config);
-        this.sequence = config.getTitleNumberSequence();
+        this.sequence = config.titleNumberSequence();
         if (sequence == null) {
             sequence = new DefaultNTitleSequence();
         }
@@ -27,27 +27,27 @@ public class DefaultNTextTransformerContext implements NTextTransformerContext {
     public DefaultNTextTransformerContext() {
     }
 
-    public NTextTransformConfig getConfig() {
+    public NTextTransformConfig config() {
         return config;
     }
 
     @Override
-    public NTitleSequence getTitleSequence() {
+    public NTitleSequence titleSequence() {
         return sequence;
     }
 
-    public DefaultNTextTransformerContext setTitleSequence(NTitleSequence sequence) {
+    public DefaultNTextTransformerContext titleSequence(NTitleSequence sequence) {
         this.sequence = sequence;
         return this;
     }
 
     @Override
-    public NTextTransformer getDefaultTransformer() {
+    public NTextTransformer defaultTransformer() {
         return defaultTransformer;
     }
 
     @Override
-    public DefaultNTextTransformerContext setDefaultTransformer(NTextTransformer defaultTransformer) {
+    public DefaultNTextTransformerContext defaultTransformer(NTextTransformer defaultTransformer) {
         this.defaultTransformer = defaultTransformer;
         return this;
     }

@@ -28,13 +28,38 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTitleNumber {
+    /**
+     * Next.
+     *
+     * @return next result
+     */
     NTitleNumber next();
 
+    /**
+     * First.
+     *
+     * @return first result
+     */
     NTitleNumber first();
 
+    /**
+     * None.
+     *
+     * @return none result
+     */
     NTitleNumber none();
 
+    /**
+     * Checks if is none.
+     *
+     * @return is none result
+     */
     boolean isNone();
+    /**
+     * Checks if is bullet.
+     *
+     * @return is bullet result
+     */
     boolean isBullet();
 
     String toString();

@@ -7,18 +7,21 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
-import net.thevpc.nuts.runtime.standalone.util.collections.NLRUMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NLRUMapImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.net.NWebCli;
 
@@ -46,6 +49,11 @@ public class URLPath implements NPathSPI {
         this(url, false);
     }
 
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
+    }
+
     protected URLPath(URL url, boolean acceptNull) {
         if (url == null) {
             if (!acceptNull) {
@@ -60,7 +68,7 @@ public class URLPath implements NPathSPI {
         if (o == null) {
             o = NCachedValue.of(
                     () -> loadCacheInfo(url)
-            ).setExpiry(NDuration.ofMillis(5000));
+            ).expiry(NDuration.ofMillis(5000));
             cacheManager.put(url, o);
         }
         return o;
@@ -98,7 +106,7 @@ public class URLPath implements NPathSPI {
         if (index >= 0) {
             name = name.substring(0, index);
         }
-        name = name.trim();
+        name = NStringUtils.strip(name);
         return name;
     }
 
@@ -311,7 +319,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentLength();
+            return f.contentLength();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -342,7 +350,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentType();
+            return f.contentType();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -362,7 +370,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getContentType();
+            return f.contentType();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -393,7 +401,7 @@ public class URLPath implements NPathSPI {
         }
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
             NWebCli best = NExtensions.of().createSupported(NWebCli.class, url).get();
-            return best.req().GET().setUrl(url.toString()).run().getContent().getInputStream();
+            return best.GET().uri(url.toString()).run().content().inputStream();
         }
         try {
             return DefaultNWebCli.prepareGlobalOpenStream(url);
@@ -446,7 +454,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getLastModifiedInstant();
+            return f.lastModifiedInstant();
         }
         try {
             CacheInfo a = cachedHeader().get();
@@ -462,13 +470,13 @@ public class URLPath implements NPathSPI {
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath f = asFilePath(basePath);
-        return (f != null) ? f.getLastAccessInstant() : null;
+        return (f != null) ? f.lastAccessInstant() : null;
     }
 
     @Override
     public Instant getCreationInstant(NPath basePath) {
         NPath f = asFilePath(basePath);
-        return (f != null) ? f.getCreationInstant() : null;
+        return (f != null) ? f.creationInstant() : null;
     }
 
     @Override
@@ -478,7 +486,7 @@ public class URLPath implements NPathSPI {
         }
         NPath f = asFilePath(basePath);
         if (f != null) {
-            return f.getParent();
+            return f.parent();
         }
         try {
             String ppath = getURLParentPath(url.getPath());
@@ -534,14 +542,14 @@ public class URLPath implements NPathSPI {
     @Override
     public Set<NPathPermission> getPermissions(NPath basePath) {
         NPath f = asFilePath(basePath);
-        return (f != null) ? f.getPermissions() : Collections.emptySet();
+        return (f != null) ? f.permissions() : Collections.emptySet();
     }
 
     @Override
     public void setPermissions(NPath basePath, NPathPermission... permissions) {
         NPath f = asFilePath(basePath);
         if (f != null) {
-            f.setPermissions(permissions);
+            f.permissions(permissions);
         }
     }
 
@@ -572,7 +580,7 @@ public class URLPath implements NPathSPI {
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location).getNameCount();
+        return NPath.of(location).nameCount();
     }
 
     @Override
@@ -594,7 +602,7 @@ public class URLPath implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return basePath.getParent().getRoot();
+        return basePath.parent().root();
     }
 
     @Override
@@ -616,7 +624,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public List<String> getNames(NPath basePath) {
-        return NPath.of(getLocation(basePath)).getNames();
+        return NPath.of(getLocation(basePath)).names();
     }
 
     @Override
@@ -743,7 +751,7 @@ public class URLPath implements NPathSPI {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 
@@ -788,7 +796,7 @@ public class URLPath implements NPathSPI {
 
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
+            Object cri = context.criteria();
             if(!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }

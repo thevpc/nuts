@@ -3,8 +3,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.command.NSearch;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
@@ -20,10 +21,10 @@ public class InstallIdCacheItem {
     public NInstallStatus currentInstallStatus;
 
     public static NId normalizeId(NDependency id) {
-        return id.toId().getLongId();
+        return id.toId().longId();
     }
     public static NId normalizeId(NId id) {
-        return id.getLongId();
+        return id.longId();
     }
 
     public InstallIdCacheItem(NId id) {
@@ -34,7 +35,7 @@ public class InstallIdCacheItem {
 
     public List<NDependency> getDependencies() {
         if (dependencies == null) {
-            return getDefinition().getDependencies().get().transitive().toList();
+            return getDefinition().dependencies().get().transitive().toList();
         }
         return dependencies;
     }
@@ -60,14 +61,14 @@ public class InstallIdCacheItem {
 
     public NDescriptor getEffectiveDescriptor() {
         if (effectiveDescriptor == null) {
-            effectiveDescriptor = getDefinition().getEffectiveDescriptor().get();
+            effectiveDescriptor = getDefinition().effectiveDescriptor().get();
         }
         return effectiveDescriptor;
     }
 
     public NPath getContent() {
-        if (!getDefinition().getDescriptor().isNoContent()) {
-            return getDefinition().getContent().get();
+        if (!getDefinition().descriptor().isNoContent()) {
+            return getDefinition().content().get();
         }
         return null;
     }
@@ -75,9 +76,9 @@ public class InstallIdCacheItem {
     public NDefinition getDefinition() {
         if (definition == null) {
             definition = NSearch.of(id)
-                    .failFast()
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .latest()
+                    .failFast(true)
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .latest(true)
                     .getResultDefinitions()
                     .findFirst().get();
 
@@ -94,20 +95,20 @@ public class InstallIdCacheItem {
     public void revalidate(boolean force) {
         if(force){
             definition =NSession.of().copy()
-                    .setCached(false) // disable cache
+                    .cached(false) // disable cache
                     .callWith(()-> NSearch.of(id)
-                            .failFast()
-                            .setRepositoryFilter(NRepositoryFilters.of().installedRepo().neg())
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                            .latest()
+                            .failFast(true)
+                            .repositoryFilter(NRepositoryFilter.ofInstalledRepo().neg())
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
+                            .latest(true)
                             .getResultDefinitions()
                             .findFirst().get());
 
         }else {
             definition = NSearch.of(id)
-                    .failFast()
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .latest()
+                    .failFast(true)
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .latest(true)
                     .getResultDefinitions()
                     .findFirst().get();
         }

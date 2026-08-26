@@ -37,6 +37,12 @@ import java.util.List;
  */
 public interface NUserSpec {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param userName user name
+     * @return of result
+     */
     static NUserSpec of(String userName) {
         return NSecurityManager.of().createUserUpdateQuery(userName);
     }
@@ -46,27 +52,85 @@ public interface NUserSpec {
      *
      * @return return user name
      */
-    String getUserName();
+    String userName();
 
-    NSecureString getCredential();
+    /**
+     * Credential.
+     *
+     * @return credential result
+     */
+    NSecureString credential();
 
-    NSecureString getOldCredential();
+    /**
+     * Old credential.
+     *
+     * @return old credential result
+     */
+    NSecureString oldCredential();
 
-    NUserSpec setCredential(NSecureString value);
+    /**
+     * Credential.
+     *
+     * @param value value
+     * @return credential result
+     */
+    NUserSpec credential(NSecureString value);
 
-    NUserSpec setOldCredential(NSecureString value);
+    /**
+     * Old credential.
+     *
+     * @param value value
+     * @return old credential result
+     */
+    NUserSpec oldCredential(NSecureString value);
 
+    /**
+     * Adds the specified permissions.
+     *
+     * @param value value
+     * @return add permissions result
+     */
     NUserSpec addPermissions(String... value);
 
+    /**
+     * Removes the specified permissions.
+     *
+     * @param value value
+     * @return remove permissions result
+     */
     NUserSpec removePermissions(String... value);
 
-    NUserSpec setPermissions(List<String> value);
+    /**
+     * Permissions.
+     *
+     * @param value value
+     * @return permissions result
+     */
+    NUserSpec permissions(List<String> value);
 
+    /**
+     * Adds the specified groups.
+     *
+     * @param value value
+     * @return add groups result
+     */
     NUserSpec addGroups(String... value);
 
+    /**
+     * Removes the specified groups.
+     *
+     * @param value value
+     * @return remove groups result
+     */
     NUserSpec removeGroups(String... value);
 
-    NUserSpec setGroups(List<String> value);
+    /**
+     * Groups.
+     *
+     * @param value value
+     * @return groups result
+     */
+    NUserSpec groups(List<String> value);
 
 
     /**
@@ -74,13 +138,13 @@ public interface NUserSpec {
      *
      * @return user allowed permissions
      */
-    List<String> getPermissions();
+    List<String> permissions();
 
     /**
      * user groups
      *
      * @return user groups
      */
-    List<String> getGroups();
+    List<String> groups();
 
 }

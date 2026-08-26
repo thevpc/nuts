@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.internal.rpi.NElementRPI;
+
 import java.util.List;
 
 /**
@@ -34,8 +36,14 @@ import java.util.List;
  * @app.category Elements
  */
 public interface NElementSelector {
+    /**
+     * Creates a new instance of of.
+     *
+     * @param any any
+     * @return of result
+     */
     static NElementSelector of(String any){
-        return NElements.of().compileSelector(any);
+        return NElementRPI.of().compileSelector(any);
     }
 
     /**

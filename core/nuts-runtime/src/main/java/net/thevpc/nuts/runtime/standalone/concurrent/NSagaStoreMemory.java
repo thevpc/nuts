@@ -18,6 +18,6 @@ class NSagaStoreMemory implements NSagaStore {
 
     @Override
     public void save(NSagaModel model) {
-        values.put(model.getId(), model);
+        values.put(model.id(), model);
     }
 }

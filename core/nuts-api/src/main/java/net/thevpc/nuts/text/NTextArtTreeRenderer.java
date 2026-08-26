@@ -27,17 +27,39 @@ package net.thevpc.nuts.text;
  * @author vpc
  */
 public interface NTextArtTreeRenderer extends NTextArtRenderer {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTextArtTreeRenderer of() {
-        return NTextArt.of().getTreeRenderer().get();
+        return NTextArt.of().treeRenderer().get();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param name name
+     * @return of result
+     */
     static NTextArtTreeRenderer of(String name) {
         return NTextArt.of().getTreeRenderer(name).get();
     }
 
+    /**
+     * Checks if is infinite.
+     *
+     * @return is infinite result
+     */
     boolean isInfinite();
 
-    NTextArtTreeRenderer setInfinite(boolean infinite);
+    /**
+     * Infinite.
+     *
+     * @param infinite infinite
+     * @return infinite result
+     */
+    NTextArtTreeRenderer infinite(boolean infinite);
 
     /**
      * update node format
@@ -45,15 +67,43 @@ public interface NTextArtTreeRenderer extends NTextArtRenderer {
      * @param nodeFormat new node format
      * @return {@code this} instance
      */
-    NTextArtTreeRenderer setNodeFormat(NTreeNodeFormat nodeFormat);
+    NTextArtTreeRenderer nodeFormat(NTreeNodeFormat nodeFormat);
 
-    NTreeLinkFormat getLinkFormat();
+    /**
+     * Link format.
+     *
+     * @return link format result
+     */
+    NTreeLinkFormat linkFormat();
 
-    NTextArtTreeRenderer setLinkFormat(NTreeLinkFormat linkFormatter);
+    /**
+     * Link format.
+     *
+     * @param linkFormatter link formatter
+     * @return link format result
+     */
+    NTextArtTreeRenderer linkFormat(NTreeLinkFormat linkFormatter);
 
+    /**
+     * Checks if is omit root.
+     *
+     * @return is omit root result
+     */
     boolean isOmitRoot();
 
-    NTextArtTreeRenderer setOmitRoot(boolean hideRoot);
+    /**
+     * Omit root.
+     *
+     * @param hideRoot hide root
+     * @return omit root result
+     */
+    NTextArtTreeRenderer omitRoot(boolean hideRoot);
 
+    /**
+     * Render.
+     *
+     * @param text text
+     * @return render result
+     */
     NText render(NTreeNode text);
 }

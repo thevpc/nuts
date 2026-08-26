@@ -8,6 +8,8 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.util.NFilterOp;
 
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -21,15 +23,15 @@ public class NDefinitionExecExtensionFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        if(other.getDescriptor().getIdType()!= NIdType.EXTENSION){
+        if(other.descriptor().idType()!= NIdType.EXTENSION){
             return false;
         }
-        for (NDependency dependency : other.getDescriptor().getDependencies()) {
-            if(dependency.toId().getShortName().equals(this.apiId.getShortName())){
+        for (NDependency dependency : other.descriptor().dependencies()) {
+            if(dependency.toId().shortName().equals(this.apiId.shortName())){
                 if(apiId==null){
                     return true;
                 }
-                if(apiId.getVersion().equals(dependency.toId().getVersion())){
+                if(apiId.version().equals(dependency.toId().version())){
                     return true;
                 }
                 return false;
@@ -48,7 +50,19 @@ public class NDefinitionExecExtensionFilter extends AbstractDefinitionFilter {
         if(apiId==null){
             return "extension";
         }
-        return "extension("+ apiId.getVersion()+")";
+        return "extension("+ apiId.version()+")";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionExecExtensionFilter that = (NDefinitionExecExtensionFilter) o;
+        return Objects.equals(apiId, that.apiId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), apiId);
+    }
 }

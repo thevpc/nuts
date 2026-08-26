@@ -1,31 +1,109 @@
 package net.thevpc.nuts.artifact;
 
 
+import net.thevpc.nuts.util.NGetter;
+
 import java.util.List;
 import java.util.Map;
 
+/**
+ * NDescriptorContributor interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NDescriptorContributor {
-    String getId();
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    @NGetter
+    String id();
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    String name();
 
-    String getUrl();
+    /**
+     * Url.
+     *
+     * @return url result
+     */
+    @NGetter
+    String url();
 
-    String getEmail();
+    /**
+     * Email.
+     *
+     * @return email result
+     */
+    @NGetter
+    String email();
 
-    List<String> getRoles();
+    /**
+     * Roles.
+     *
+     * @return roles result
+     */
+    @NGetter
+    List<String> roles();
 
-    String getTimezone();
+    /**
+     * Timezone.
+     *
+     * @return timezone result
+     */
+    @NGetter
+    String timezone();
 
-    List<String> getIcons();
+    /**
+     * Icons.
+     *
+     * @return icons result
+     */
+    @NGetter
+    List<String> icons();
 
-    Map<String, String> getProperties();
+    /**
+     * Properties.
+     *
+     * @return properties result
+     */
+    @NGetter
+    Map<String, String> properties();
 
-    String getComments();
+    /**
+     * Comments.
+     *
+     * @return comments result
+     */
+    @NGetter
+    String comments();
 
-    NDescriptorOrganization getOrganization();
+    /**
+     * Organization.
+     *
+     * @return organization result
+     */
+    @NGetter
+    NDescriptorOrganization organization();
 
+    /**
+     * Read only.
+     *
+     * @return read only result
+     */
     NDescriptorContributor readOnly();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NDescriptorContributorBuilder builder();
 }

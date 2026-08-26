@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Map;
@@ -23,7 +24,8 @@ public interface NWorkBalancerWorker {
      *
      * @return the unique worker name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * Returns the host load metrics provider for this worker.
@@ -32,7 +34,8 @@ public interface NWorkBalancerWorker {
      *
      * @return the metrics provider, may be null if not provided
      */
-    NWorkBalancerHostLoadMetricProvider getHostLoadMetricsProvider();
+    @NGetter
+    NWorkBalancerHostLoadMetricProvider hostLoadMetricsProvider();
 
     /**
      * Returns the weight of this worker.
@@ -41,7 +44,8 @@ public interface NWorkBalancerWorker {
      *
      * @return the worker weight, default is 1.0
      */
-    float getWeight();
+    @NGetter
+    float weight();
 
     /**
      * Returns the custom options associated with this worker.
@@ -49,7 +53,8 @@ public interface NWorkBalancerWorker {
      *
      * @return an unmodifiable map of option names to values
      */
-    Map<String, NElement> getOptions();
+    @NGetter
+    Map<String, NElement> options();
 
     /**
      * Returns the value of a specific option for this worker.

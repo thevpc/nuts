@@ -4,8 +4,8 @@ import net.thevpc.nuts.command.NInstallListener;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceListener;
 import net.thevpc.nuts.core.NRepositoryListener;
-import net.thevpc.nuts.util.NObservableMap;
-import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.collections.NObservableMap;
+import net.thevpc.nuts.collections.NObservableMapListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +39,17 @@ public class DefaultNWorkspaceEventModel {
 
     
     public void addUserPropertyListener(NObservableMapListener<String, Object> listener) {
-        ((NObservableMap<String, Object>) NWorkspace.of().getProperties()).addMapListener(listener);
+        ((NObservableMap<String, Object>) NWorkspace.of().properties()).addMapListener(listener);
     }
 
     
     public void removeUserPropertyListener(NObservableMapListener<String, Object> listener) {
-        ((NObservableMap<String, Object>) NWorkspace.of().getProperties()).removeMapListener(listener);
+        ((NObservableMap<String, Object>) NWorkspace.of().properties()).removeMapListener(listener);
     }
 
     
     public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
-        return ((NObservableMap<String, Object>) NWorkspace.of().getProperties()).getMapListeners();
+        return ((NObservableMap<String, Object>) NWorkspace.of().properties()).mapListeners();
     }
 
     

@@ -48,82 +48,82 @@ public class DefaultNPsInfo implements NPsInfo {
         this.type = type;
     }
 
-    public NpsType getType() {
+    public NpsType type() {
         return type;
     }
 
     @Override
-    public NpsStatus getStatus() {
+    public NpsStatus status() {
         return status;
     }
 
     @Override
-    public Set<String> getStatusFlags() {
+    public Set<String> statusFlags() {
         return statusFlags;
     }
 
     @Override
-    public String getPid() {
+    public String pid() {
         return id;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public String getTitle() {
+    public String title() {
         return title;
     }
 
     @Override
-    public String getCmdLine() {
+    public String cmdLine() {
         return cmdLine;
     }
 
     @Override
-    public String[] getCmdLineArgs() {
+    public String[] cmdLineArgs() {
         return cmdLineArgs;
     }
 
     @Override
-    public String getUser() {
+    public String user() {
         return user;
     }
 
     @Override
-    public double getPercentCpu() {
+    public double percentCpu() {
         return percentCpu;
     }
 
     @Override
-    public double getPercentMem() {
+    public double percentMem() {
         return percentMem;
     }
 
     @Override
-    public long getVirtualMemorySize() {
+    public long virtualMemorySize() {
         return virtualMemorySize;
     }
 
     @Override
-    public long getResidentSetSize() {
+    public long residentSetSize() {
         return residentSetSize;
     }
 
     @Override
-    public String getTerminal() {
+    public String terminal() {
         return terminal;
     }
 
     @Override
-    public Instant getStartTime() {
+    public Instant startTime() {
         return startTime;
     }
 
     @Override
-    public long getTime() {
+    public long time() {
         return time;
     }
 

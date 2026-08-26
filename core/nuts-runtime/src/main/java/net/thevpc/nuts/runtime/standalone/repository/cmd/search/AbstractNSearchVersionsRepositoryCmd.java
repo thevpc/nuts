@@ -11,7 +11,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
 import net.thevpc.nuts.spi.NSearchVersionsRepositoryCmd;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 
 
 /**
@@ -42,7 +42,7 @@ public abstract class AbstractNSearchVersionsRepositoryCmd extends NRepositoryCm
 //    }
 
     @Override
-    public NSearchVersionsRepositoryCmd setFilter(NDefinitionFilter filter) {
+    public NSearchVersionsRepositoryCmd filter(NDefinitionFilter filter) {
         this.filter = filter;
         return this;
     }
@@ -61,13 +61,13 @@ public abstract class AbstractNSearchVersionsRepositoryCmd extends NRepositoryCm
     }
 
     @Override
-    public NSearchVersionsRepositoryCmd setId(NId id) {
+    public NSearchVersionsRepositoryCmd id(NId id) {
         this.id = id;
         return this;
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 

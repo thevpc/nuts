@@ -10,10 +10,10 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
     public NOptional<NRepository> getChild(String repositoryNameOrId) {
         for (NRepository repoItem : repoItems) {
             if (
-                    Objects.equals(repoItem.getName(), repositoryNameOrId)
-                            || Objects.equals(repoItem.getUuid(), repositoryNameOrId)
+                    Objects.equals(repoItem.name(), repositoryNameOrId)
+                            || Objects.equals(repoItem.uuid(), repositoryNameOrId)
             ) {
                 return NOptional.of(repoItem);
             }
@@ -86,9 +86,9 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
         for (NRepository repoItem : repoItems) {
             all.add(
                     ((NRepositorySPI) repoItem).searchVersions()
-                            .setId(id)
-                            .setFilter(idFilter)
-                            .setFetchMode(fetchMode)
+                            .id(id)
+                            .filter(idFilter)
+                            .fetchMode(fetchMode)
                             .getResult()
             );
         }
@@ -101,9 +101,9 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
         for (NRepository repoItem : repoItems) {
             try {
                 NPath result = ((NRepositorySPI) repoItem).fetchContent()
-                        .setId(id)
-                        .setDescriptor(descriptor)
-                        .setFetchMode(fetchMode)
+                        .id(id)
+                        .descriptor(descriptor)
+                        .fetchMode(fetchMode)
                         .getResult();
                 if (result != null) {
                     return result;
@@ -121,8 +121,8 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
         for (NRepository repoItem : repoItems) {
             list.add(
                     ((NRepositorySPI) repoItem).search()
-                            .setFilter(filter)
-                            .setFetchMode(fetchMode)
+                            .filter(filter)
+                            .fetchMode(fetchMode)
                             .getResult()
             );
         }
@@ -140,8 +140,8 @@ public class NRepositoryList extends NCachedRepository implements NRepositoryWit
         for (NRepository repoItem : repoItems) {
             try {
                 NDescriptor result = ((NRepositorySPI) repoItem).fetchDescriptor()
-                        .setId(id)
-                        .setFetchMode(fetchMode)
+                        .id(id)
+                        .fetchMode(fetchMode)
                         .getResult();
                 if (result != null) {
                     return result;

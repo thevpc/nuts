@@ -2,13 +2,13 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class NDefinitionPlatformFamilyFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<NExecutionEngineFamily> current = NStream.ofIterable(def.getDescriptor().getCondition().getPlatform()).nonBlank()
+        List<NExecutionEngineFamily> current = NStream.ofIterable(def.descriptor().condition().platform()).nonBlank()
                 .map(x -> NExecutionEngineFamily.parse(x).orNull())
                 .nonBlank()
                 .toList();
@@ -54,6 +54,19 @@ public class NDefinitionPlatformFamilyFilter extends AbstractDefinitionFilter {
 
     @Override
     public NDefinitionFilter simplify() {
-        return accepted.isEmpty() ? NDefinitionFilters.of().always() : this;
+        return accepted.isEmpty() ? NDefinitionFilterRPI.of().always() : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionPlatformFamilyFilter that = (NDefinitionPlatformFamilyFilter) o;
+        return Objects.equals(accepted, that.accepted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), accepted);
     }
 }

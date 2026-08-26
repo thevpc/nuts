@@ -8,20 +8,20 @@ public class NWorkspaceConfigRuntime extends NConfigItem implements Cloneable{
 
     /**
      * boot package Id in long format (as defined in
-     * {@link NId#getLongName()})
+     * {@link NId#longName()})
      *
-     * @see NId#getLongId()
+     * @see NId#longId()
      */
     private NId id = null;
 
     /**
      * ';' separated list of package Ids in long format (as defined in
-     * {@link NId#getLongName()}) that defines ALL dependencies needed (no
+     * {@link NId#longName()}) that defines ALL dependencies needed (no
      * further dependency computation should be performed) to load and execute a
      * valid implementation of nuts-api. These packages should be accessible
      * from {@link NWorkspaceConfigBoot#getBootRepositories()}
      *
-     * @see NId#getLongId()
+     * @see NId#longId()
      */
     private String dependencies = null;
 

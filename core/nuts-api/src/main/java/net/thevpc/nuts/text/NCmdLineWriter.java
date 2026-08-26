@@ -40,14 +40,26 @@ import net.thevpc.nuts.platform.NShellFamily;
  */
 public interface NCmdLineWriter extends NObjectWriter {
 
+    /**
+     * Creates a new instance of of plain.
+     *
+     * @return of plain result
+     */
     static NCmdLineWriter ofPlain() {
-        return of().setNtf(false);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(false ).ntf(false
+         * @return of result
+         */
+        return of().ntf(false);
     }
 
-    static NCmdLineWriter of(NCmdLine value) {
-        return of();
-    }
-
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NCmdLineWriter of() {
        return NExtensions.of(NCmdLineWriter.class);
     }
@@ -58,7 +70,7 @@ public interface NCmdLineWriter extends NObjectWriter {
      * @return command line family
      * @since 0.8.1
      */
-    NShellFamily getShellFamily();
+    NShellFamily shellFamily();
 
     /**
      * change command line family
@@ -66,7 +78,7 @@ public interface NCmdLineWriter extends NObjectWriter {
      * @param family family
      * @return {@code this} instance
      */
-    NCmdLineWriter setShellFamily(NShellFamily family);
+    NCmdLineWriter shellFamily(NShellFamily family);
 
 
     /**
@@ -81,11 +93,32 @@ public interface NCmdLineWriter extends NObjectWriter {
     @Override
     NCmdLineWriter configure(boolean skipUnsupported, String... args);
 
+    /**
+     * Checks if is ntf.
+     *
+     * @return is ntf result
+     */
     boolean isNtf();
 
-    NCmdLineWriter setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    NCmdLineWriter ntf(boolean ntf);
 
-    NCmdLineFormatStrategy getFormatStrategy();
+    /**
+     * Format strategy.
+     *
+     * @return format strategy result
+     */
+    NCmdLineFormatStrategy formatStrategy();
 
-    void setFormatStrategy(NCmdLineFormatStrategy formatStrategy);
+    /**
+     * Format strategy.
+     *
+     * @param formatStrategy format strategy
+     */
+    void formatStrategy(NCmdLineFormatStrategy formatStrategy);
 }

@@ -6,24 +6,21 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.text.NText;
 
 public class StringReaderExtUtils {
 
     public static NText[] readSpaces(StringReaderExt ar) {
-        NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && ar.peekChar() <= 32) {
             sb.append(ar.readChar());
         }
         return new NText[]{
-            factory.ofPlain(sb.toString())
+            NText.ofPlain(sb.toString())
         };
     }
 
     public static NText[] readSlashSlashComments(StringReaderExt ar) {
-        NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("//")) {
             return null;
@@ -47,12 +44,11 @@ public class StringReaderExtUtils {
             }
         }
         return new NText[]{
-            factory.ofStyled(sb.toString(), NTextStyle.comments())
+                NText.ofStyled(sb.toString(), NTextStyle.comments())
         };
     }
 
     public static NText[] readSlashStarComments(StringReaderExt ar) {
-        NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("/*")) {
             return null;
@@ -76,12 +72,11 @@ public class StringReaderExtUtils {
             }
         }
         return new NText[]{
-            factory.ofStyled(sb.toString(), NTextStyle.comments(2))
+                NText.ofStyled(sb.toString(), NTextStyle.comments(2))
         };
     }
 
     public static NText[] readJSDoubleQuotesString(StringReaderExt ar) {
-        NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -91,7 +86,7 @@ public class StringReaderExtUtils {
                 switch (ar.peekChar()) {
                     case '\\': {
                         if (sb.length() > 0) {
-                            all.add(factory.ofStyled(sb.toString(), NTextStyle.string()));
+                            all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                             sb.setLength(0);
                         }
                         StringBuilder sb2 = new StringBuilder();
@@ -107,7 +102,7 @@ public class StringReaderExtUtils {
                                 }
                             }
                         }
-                        all.add(factory.ofStyled(sb2.toString(), NTextStyle.separator()));
+                        all.add(NText.ofStyled(sb2.toString(), NTextStyle.separator()));
                         break;
                     }
                     case '\"': {
@@ -121,7 +116,7 @@ public class StringReaderExtUtils {
                 }
             }
             if (sb.length() > 0) {
-                all.add(factory.ofStyled(sb.toString(), NTextStyle.string()));
+                all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                 sb.setLength(0);
             }
             return all.toArray(new NText[0]);
@@ -131,7 +126,6 @@ public class StringReaderExtUtils {
     }
 
     public static NText[] readJSSimpleQuotes(StringReaderExt ar) {
-        NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -141,7 +135,7 @@ public class StringReaderExtUtils {
                 switch (ar.peekChar()) {
                     case '\\': {
                         if (sb.length() > 0) {
-                            all.add(factory.ofStyled(sb.toString(), NTextStyle.string()));
+                            all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                             sb.setLength(0);
                         }
                         StringBuilder sb2 = new StringBuilder();
@@ -157,7 +151,7 @@ public class StringReaderExtUtils {
                                 }
                             }
                         }
-                        all.add(factory.ofStyled(sb2.toString(), NTextStyle.separator()));
+                        all.add(NText.ofStyled(sb2.toString(), NTextStyle.separator()));
                         break;
                     }
                     case '\'': {
@@ -171,7 +165,7 @@ public class StringReaderExtUtils {
                 }
             }
             if (sb.length() > 0) {
-                all.add(factory.ofStyled(sb.toString(), NTextStyle.string(2)));
+                all.add(NText.ofStyled(sb.toString(), NTextStyle.string(2)));
                 sb.setLength(0);
             }
             return all.toArray(new NText[0]);
@@ -181,7 +175,6 @@ public class StringReaderExtUtils {
     }
 
     public static NText[] readJSIdentifier(StringReaderExt ar) {
-        NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         if (!ar.hasNext() || !Character.isJavaIdentifierStart(ar.peekChar())) {
@@ -195,13 +188,12 @@ public class StringReaderExtUtils {
                 break;
             }
         }
-        all.add(factory.ofPlain(sb.toString()));
+        all.add(NText.ofPlain(sb.toString()));
         return all.toArray(new NText[0]);
     }
 
 
     public static NText[] readNumber(StringReaderExt ar) {
-        NTexts factory = NTexts.of();
         boolean nbrVisited = false;
         boolean minusVisited = false;
         boolean EminusVisited = false;
@@ -260,7 +252,7 @@ public class StringReaderExtUtils {
         }
         if (lastOk >= 0) {
             return new NText[]{
-                factory.ofStyled(ar.nextChars(lastOk + 1), NTextStyle.number())
+                    NText.ofStyled(ar.nextChars(lastOk + 1), NTextStyle.number())
             };
         }
         return null;

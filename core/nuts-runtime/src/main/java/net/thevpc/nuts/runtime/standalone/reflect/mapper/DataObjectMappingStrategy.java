@@ -55,7 +55,7 @@ class DataObjectMappingStrategy implements NReflectMappingStrategy {
 
     @Override
     public Object mapToType(Object o, NReflectType fromType, NReflectType toType, NReflectMapper context) {
-        Object c = context.getRepository().getType(to).newInstance();
+        Object c = context.repository().getType(to).newInstance();
         copy(o, c, context);
         return c;
     }
@@ -93,7 +93,7 @@ class DataObjectMappingStrategy implements NReflectMappingStrategy {
         }
 
         public boolean map(Object a, Object b, NReflectMapper context) {
-            return context.getAssignmentPolicy().applyMappingValue(
+            return context.assignmentPolicy().applyMappingValue(
                     () -> {
                         try {
                             return from.get(a);
@@ -110,9 +110,9 @@ class DataObjectMappingStrategy implements NReflectMappingStrategy {
                     },
                     mv -> {
                         try {
-                            Object sv = context.mapToType(mv.getSourceValue(), toType);
-                            Object tv = mv.getTargetValue();
-                            if (!context.getEqualizer().equals(tv, sv)) {
+                            Object sv = context.mapToType(mv.sourceValue(), toType);
+                            Object tv = mv.targetValue();
+                            if (!context.equalizer().equals(tv, sv)) {
                                 to.getField().set(b, sv);
                                 return true;
                             }

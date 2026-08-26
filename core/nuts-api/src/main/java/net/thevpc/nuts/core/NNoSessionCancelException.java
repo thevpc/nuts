@@ -33,7 +33,18 @@ import net.thevpc.nuts.text.NMsg;
  * @author thevpc
  */
 public class NNoSessionCancelException extends NNoSessionException {
+    /**
+     * N no session cancel exception.
+     *
+     * @param message message
+     * @return n no session cancel exception result
+     */
     public NNoSessionCancelException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 }

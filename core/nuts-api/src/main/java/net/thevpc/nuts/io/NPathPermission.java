@@ -87,10 +87,19 @@ public enum NPathPermission implements NEnum {
      */
     private final String id;
 
+  /**
+   * N path permission.
+   */
     NPathPermission() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NPathPermission> parse(String value) {
         return NEnumUtils.parseEnum(value, NPathPermission.class);
     }

@@ -2,40 +2,101 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
 
+/**
+ * NPathNameParts class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NPathNameParts {
     private String baseName;
     private String extension;
     private String fullExtension;
     private NPathExtensionType type;
 
+    /**
+     * Creates a new instance of of long.
+     *
+     * @param baseName base name
+     * @param extension extension
+     * @param fullExtension full extension
+     * @return of long result
+     */
     public static NPathNameParts ofLong(String baseName, String extension, String fullExtension) {
         return new NPathNameParts(baseName, extension, fullExtension, NPathExtensionType.LONG);
     }
 
+    /**
+     * Creates a new instance of of short.
+     *
+     * @param baseName base name
+     * @param extension extension
+     * @param fullExtension full extension
+     * @return of short result
+     */
     public static NPathNameParts ofShort(String baseName, String extension, String fullExtension) {
         return new NPathNameParts(baseName, extension, fullExtension, NPathExtensionType.SHORT);
     }
 
+    /**
+     * Creates a new instance of of smart.
+     *
+     * @param baseName base name
+     * @param extension extension
+     * @param fullExtension full extension
+     * @return of smart result
+     */
     public static NPathNameParts ofSmart(String baseName, String extension, String fullExtension) {
         return new NPathNameParts(baseName, extension, fullExtension, NPathExtensionType.SMART);
     }
 
+    /**
+     * Creates a new instance of of long.
+     *
+     * @param baseName base name
+     * @param extension extension
+     * @return of long result
+     */
     public static NPathNameParts ofLong(String baseName, String extension) {
         return new NPathNameParts(baseName, extension, extension == null ? "" : ("." + extension), NPathExtensionType.LONG);
     }
 
+    /**
+     * Creates a new instance of of short.
+     *
+     * @param baseName base name
+     * @param extension extension
+     * @return of short result
+     */
     public static NPathNameParts ofShort(String baseName, String extension) {
         return new NPathNameParts(baseName, extension, extension == null ? "" : ("." + extension), NPathExtensionType.SHORT);
     }
 
+    /**
+     * Creates a new instance of of smart.
+     *
+     * @param baseName base name
+     * @param extension extension
+     * @return of smart result
+     */
     public static NPathNameParts ofSmart(String baseName, String extension) {
         return new NPathNameParts(baseName, extension, extension == null ? "" : ("." + extension), NPathExtensionType.SMART);
     }
 
+    /**
+     * N path name parts.
+     *
+     * @param baseName base name
+     * @param extension extension
+     * @param fullExtension full extension
+     * @param type type
+     * @return n path name parts result
+     */
     public NPathNameParts(String baseName, String extension, String fullExtension, NPathExtensionType type) {
         this.baseName = baseName == null ? "" : baseName;
         this.extension = extension == null ? "" : extension;
@@ -43,22 +104,51 @@ public class NPathNameParts {
         this.type = type == null ? NPathExtensionType.SHORT : type;
     }
 
-    public NPathExtensionType getType() {
+    /**
+     * Type.
+     *
+     * @return type result
+     */
+    @NGetter
+    public NPathExtensionType type() {
         return type;
     }
 
-    public String getBaseName() {
+    /**
+     * Base name.
+     *
+     * @return base name result
+     */
+    @NGetter
+    public String baseName() {
         return baseName;
     }
 
-    public String getExtension() {
+    /**
+     * Extension.
+     *
+     * @return extension result
+     */
+    @NGetter
+    public String extension() {
         return extension;
     }
 
-    public String getFullExtension() {
+    /**
+     * Full extension.
+     *
+     * @return full extension result
+     */
+    @NGetter
+    public String fullExtension() {
         return fullExtension;
     }
 
+    /**
+     * Converts to name.
+     *
+     * @return to name result
+     */
     public String toName() {
         return baseName + fullExtension;
     }
@@ -81,32 +171,58 @@ public class NPathNameParts {
     public String toName(String template) {
         return NMsg.ofV(template,
                 s -> {
-                    switch (NStringUtils.trim(s).toLowerCase()) {
+                    switch (NStringUtils.strip(s).toLowerCase()) {
                         case "name":
+                            /**
+                             * Converts to name.
+                             *
+                             * @return to name result
+                             */
                             return toName();
                         case "base":
                         case "basename":
                         case "base-name":
-                            return getBaseName();
+                            /**
+                             * Base name.
+                             *
+                             * @return base name result
+                             */
+                            return baseName();
                         case "ext":
                         case "extension":
-                            return getExtension();
+                            /**
+                             * Extension.
+                             *
+                             * @return extension result
+                             */
+                            return extension();
                         case "fullext":
                         case "full-ext":
                         case "full-extension":
                         case "fullextension":
-                            return getFullExtension();
+                            /**
+                             * Full extension.
+                             *
+                             * @return full extension result
+                             */
+                            return fullExtension();
                     }
                     return null;
                 }
         ).toString();
     }
 
+    /**
+     * Converts to name with extension.
+     *
+     * @param extension extension
+     * @return to name with extension result
+     */
     public String toNameWithExtension(String extension) {
         if (NBlankable.isBlank(extension)) {
             return baseName;
         }
-        extension = extension.trim();
+        extension = NStringUtils.strip(extension);
         if (!extension.startsWith(".")) {
             extension = "." + extension;
         }

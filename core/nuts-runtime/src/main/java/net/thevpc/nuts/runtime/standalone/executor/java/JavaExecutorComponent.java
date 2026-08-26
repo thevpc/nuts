@@ -24,24 +24,24 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NIdWriter;
-import net.thevpc.nuts.artifact.NVersion;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.core.*;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NClassLoader;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.core.NWorkspaceCmdLineParser;
 
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.platform.NShellFamily;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -51,9 +51,7 @@ import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunn
 import net.thevpc.nuts.runtime.standalone.io.net.util.NetUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContext;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
@@ -83,7 +81,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
     public static NId ID;
 
     @Override
-    public NId getId() {
+    public NId id() {
         return ID;
     }
 
@@ -98,9 +96,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
         if (ID == null) {
             ID = NId.get("net.thevpc.nuts.exec:java").get();
         }
-        NDefinition def = ctx.getCriteria(NDefinition.class);
+        NDefinition def = ctx.criteria(NDefinition.class);
         if (def != null) {
-            String shortName = def.getId().getShortName();
+            String shortName = def.id().shortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
@@ -108,7 +106,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             if ("java".equals(shortName)) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
-            if ("jar".equals(def.getDescriptor().getPackaging())) {
+            if ("jar".equals(def.descriptor().packaging())) {
                 return NScorable.DEFAULT_SCORE + 10;
             }
         }
@@ -116,28 +114,28 @@ public class JavaExecutorComponent implements NExecutorComponent {
     }
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
-        NSession session = executionContext.getSession();
-        NWorkspaceOptionsBuilder options = NWorkspace.of().getBootOptions().toWorkspaceOptions().builder();
-        options.setDry(executionContext.isDry());
-        options.setBot(executionContext.isBot());
+        NSession session = executionContext.session();
+        NWorkspaceOptionsBuilder options = NWorkspace.of().bootOptions().toWorkspaceOptions().builder();
+        options.dry(executionContext.isDry());
+        options.bot(executionContext.isBot());
 
         //copy session parameters to the newly created workspace
-        options.setShowStacktrace(session.getShowStacktrace().orDefault());
-        options.setGui(session.isGui());
-        options.setOutLinePrefix(session.getOutLinePrefix());
-        options.setErrLinePrefix(session.getErrLinePrefix());
-        options.setDebug(session.getDebug().orDefault());
-        options.setTrace(session.isTrace());
-        options.setPreviewRepo(session.isPreviewRepo());
-        options.setCached(session.isCached());
-        options.setIndexed(session.isIndexed());
-        options.setConfirm(session.getConfirm().orDefault());
-        options.setTransitive(session.isTransitive());
-        options.setOutputFormat(session.getOutputFormat().orDefault());
-        switch (options.getTerminalMode().orElse(NTerminalMode.DEFAULT)) {
+        options.showStacktrace(session.showStacktrace().orDefault());
+        options.gui(session.isGui());
+        options.outLinePrefix(session.outLinePrefix());
+        options.errLinePrefix(session.errLinePrefix());
+        options.debug(session.debug().orDefault());
+        options.trace(session.isTrace());
+        options.previewRepo(session.isPreviewRepo());
+        options.cached(session.isCached());
+        options.indexed(session.isIndexed());
+        options.confirm(session.confirm().orDefault());
+        options.transitive(session.isTransitive());
+        options.outputFormat(session.outputFormat().orDefault());
+        switch (options.terminalMode().orElse(NTerminalMode.DEFAULT)) {
             //retain filtered
             case DEFAULT:
-                options.setTerminalMode(session.getTerminal().out().getTerminalMode());
+                options.terminalMode(session.terminal().out().terminalMode());
                 //retain filtered
             case FILTERED:
                 break;
@@ -145,43 +143,43 @@ public class JavaExecutorComponent implements NExecutorComponent {
             case INHERITED:
                 break;
             default:
-                options.setTerminalMode(session.getTerminal().out().getTerminalMode());
+                options.terminalMode(session.terminal().out().terminalMode());
                 break;
         }
-        options.setExpireTime(session.getExpireTime().orNull());
+        options.expireTime(session.expireTime().orNull());
 
-        Level logTermLevel = session.getLogTermLevel();
-        Level logFileLevel = session.getLogFileLevel();
+        Level logTermLevel = session.logTermLevel();
+        Level logFileLevel = session.logFileLevel();
         if (logTermLevel != null || logFileLevel != null) {
-            NLogConfig lc = options.getLogConfig().orNull();
+            NLogConfig lc = options.logConfig().orNull();
             if (lc == null) {
                 lc = new NLogConfig();
             } else {
                 lc = lc.copy();
             }
             if (logTermLevel != null) {
-                lc.setLogTermLevel(logTermLevel);
+                lc.logTermLevel(logTermLevel);
             }
             if (logFileLevel != null) {
-                lc.setLogFileLevel(logFileLevel);
+                lc.logFileLevel(logFileLevel);
             }
         }
-        for (Iterator<String> iterator = executionContext.getExecutorOptions().iterator(); iterator.hasNext(); ) {
+        for (Iterator<String> iterator = executionContext.executorOptions().iterator(); iterator.hasNext(); ) {
             String a = iterator.next();
             if (a.startsWith("-Dnuts.args=")) {
-                executionContext.getWorkspaceOptions().add(a.substring("-Dnuts.args=".length()));
+                executionContext.workspaceOptions().add(a.substring("-Dnuts.args=".length()));
                 iterator.remove();
             }
         }
-        for (String a : executionContext.getWorkspaceOptions()) {
+        for (String a : executionContext.workspaceOptions()) {
             NWorkspaceOptions extraOptions = NWorkspaceOptionsBuilder.of().setCmdLine(
                     NCmdLine.parseDefault(a).get().toStringArray()
             ).build();
             options.copyFrom(extraOptions, NAssignmentPolicy.SOURCE_NON_NULL);
         }
         //sandbox workspace children are always confined
-        if (options.getIsolationLevel().orNull() == NIsolationLevel.SANDBOX) {
-            options.setIsolationLevel(NIsolationLevel.CONFINED);
+        if (options.isolationLevel().orNull() == NIsolationLevel.SANDBOX) {
+            options.isolationLevel(NIsolationLevel.CONFINED);
         }
         options.unsetCreationOptions().unsetRuntimeOptions();
         return options;
@@ -189,19 +187,19 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
     //@Override
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        NDefinition def = executionContext.getDefinition();
-        Path contentFile = def.getContent().flatMap(NPath::toPath).orNull();
-        NSession session = executionContext.getSession();
+        NDefinition def = executionContext.definition();
+        Path contentFile = def.content().flatMap(NPath::toPath).orNull();
+        NSession session = executionContext.session();
         final JavaExecutorOptions joptions = new JavaExecutorOptions(
                 def,
                 executionContext.isTemporary(),
-                executionContext.getArguments(),
-                executionContext.getExecutorOptions(),
-                NBlankable.isBlank(executionContext.getDirectory()) ?
+                executionContext.arguments(),
+                executionContext.executorOptions(),
+                NBlankable.isBlank(executionContext.directory()) ?
                         NPath.ofUserDirectory()
-                        : executionContext.getDirectory()
+                        : executionContext.directory()
         );
-        switch (executionContext.getExecutionType()) {
+        switch (executionContext.executionType()) {
             case EMBEDDED: {
                 return new EmbeddedProcessExecHelper(def, joptions, session.out(), executionContext);
             }
@@ -211,8 +209,8 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 HashMap<String, String> osEnv = new HashMap<>();
 
                 NVersion nutsDependencyVersion = null;
-                for (NId d : CoreNUtils.resolveNutsApiIdsFromDefinition(executionContext.getDefinition())) {
-                    nutsDependencyVersion = d.getVersion();
+                for (NId d : CoreNUtils.resolveNutsApiIdsFromDefinition(executionContext.definition())) {
+                    nutsDependencyVersion = d.version();
                     if (nutsDependencyVersion != null) {
                         break;
                     }
@@ -222,7 +220,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     for (String s : joptions.getClassPathNidStrings()) {
                         NId sid = NId.get(s).orNull();
                         if (sid != null && sid.equalsShortId(NId.getApi("").orNull())) {
-                            nutsDependencyVersion = sid.getVersion();
+                            nutsDependencyVersion = sid.version();
                         } else {
                             Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
                             Matcher mm = pp.matcher(s);
@@ -237,13 +235,13 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
 
                 NWorkspaceOptionsBuilder options = createChildOptions(executionContext);
-                NWorkspaceOptionsConfig config = new NWorkspaceOptionsConfig().setCompact(true);
+                NWorkspaceOptionsConfig config = new NWorkspaceOptionsConfig().compact(true);
                 if (nutsDependencyVersion != null) {
-                    config.setApiVersion(nutsDependencyVersion);
+                    config.apiVersion(nutsDependencyVersion);
                     // there is no need to specify api/runtime because we are
                     // willing to run that specific version anyways...
-                    options.setApiVersion(null);
-                    options.setRuntimeId(null);
+                    options.apiVersion(null);
+                    options.runtimeId(null);
                 }
 
                 NCmdLine ncmdLine = options.toCmdLine(config);
@@ -258,11 +256,11 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 }
                 List<String> extraStartWithAppArgs = new ArrayList<>();
 
-                if (def.getId().equalsShortId(session.getWorkspace().getApiId())) {
+                if (def.id().equalsShortId(session.workspace().apiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
-                String bootArgumentsString = NCmdLineWriter.of().setShellFamily(NShellFamily.SH).formatPlain(ncmdLine
-                        .add(executionContext.getDefinition().getId().getLongName())
+                String bootArgumentsString = NCmdLineWriter.of().shellFamily(NShellFamily.SH).formatPlain(ncmdLine
+                        .add(executionContext.definition().id().longName())
                 );
                 if (!NBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
@@ -295,11 +293,10 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 List<NText> xargs = new ArrayList<>();
                 List<String> args = new ArrayList<>();
 
-                NTexts txt = NTexts.of();
-                xargs.add(txt.ofPlain(joptions.getJavaCommand()));
+                xargs.add(NText.ofPlain(joptions.getJavaCommand()));
                 xargs.addAll(
                         joptions.getJvmArgs().stream()
-                                .map(txt::ofPlain)
+                                .map(NText::ofPlain)
                                 .collect(Collectors.toList())
                 );
 
@@ -311,7 +308,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
-                NDebugString jdb = NDebugString.of(session.getDebug().orDefault());
+                NDebugString jdb = NDebugString.of(session.debug().orDefault());
                 if (jdb.isEnabled()) {
                     int port = jdb.getPort();
                     if (port <= 0) {
@@ -326,23 +323,23 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         throw new NIllegalArgumentException(NMsg.ofC("unable to resolve valid debug port %d-%d", port, port + 1000));
                     }
                     String ds = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (jdb.isSuspend() ? 'y' : 'n') + ",address=" + port;
-                    xargs.add(txt.ofPlain(ds));
+                    xargs.add(NText.ofPlain(ds));
                     args.add(ds);
                 }
 
                 if (joptions.isJar()) {
-                    xargs.add(txt.ofPlain("-jar"));
-                    xargs.add(NIdWriter.of().format(def.getId()));
+                    xargs.add(NText.ofPlain("-jar"));
+                    xargs.add(NIdWriter.of().format(def.id()));
                     args.add("-jar");
                     args.add(contentFile.toString());
                 } else {
-                    xargs.add(txt.ofPlain("--nuts-path"));
+                    xargs.add(NText.ofPlain("--nuts-path"));
                     xargs.add(
-                            txt.ofBuilder().appendJoined(
+                            NTextBuilder.of().appendJoined(
                                     ";", joptions.getClassPathNidStrings()
                             ).immutable()
                     );
-                    xargs.add(txt.ofPlain(
+                    xargs.add(NText.ofPlain(
                                     joptions.getMainClass()
                             )
                     );
@@ -360,7 +357,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         args.add(joptions.getJ9_addModules().stream().distinct().collect(Collectors.joining(",")));
                     }
                     if (!NBlankable.isBlank(joptions.getSplash())) {
-                        args.add("-splash:" + NStringUtils.trim(joptions.getSplash()));
+                        args.add("-splash:" + NStringUtils.strip(joptions.getSplash()));
                     }
                     List<String> classPathStrings = joptions.getClassPath();
                     if (!classPathStrings.isEmpty()) {
@@ -372,12 +369,12 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
                 xargs.addAll(
                         extraStartWithAppArgs.stream()
-                                .map(txt::ofPlain)
+                                .map(NText::ofPlain)
                                 .collect(Collectors.toList())
                 );
                 xargs.addAll(
                         joptions.getAppArgs().stream()
-                                .map(txt::ofPlain)
+                                .map(NText::ofPlain)
                                 .collect(Collectors.toList())
                 );
 
@@ -412,18 +409,17 @@ public class JavaExecutorComponent implements NExecutorComponent {
         public int exec() {
             NSession session = NSession.of();
             if (executionContext.isDry()) {
-                NTexts text = NTexts.of();
                 List<String> cmdLine = new ArrayList<>();
                 cmdLine.add("embedded-java");
                 cmdLine.add("-cp");
-                cmdLine.add(joptions.getClassPathNodes().stream().map(NClassLoaderNode::getId).filter(NBlankable::isNonBlank)
+                cmdLine.add(joptions.getResolvedCP().stream().map(NClasspathEntry::id).filter(NBlankable::isNonBlank)
                         .map(Object::toString)
                         .collect(Collectors.joining(":")));
                 cmdLine.add(joptions.getMainClass());
                 cmdLine.addAll(joptions.getAppArgs());
 
                 NOut.println(NMsg.ofC("[dry] %s",
-                        text.ofBuilder()
+                        NTextBuilder.of()
                                 .append("exec", NTextStyle.pale())
                                 .append(" ")
                                 .append(NCmdLine.of(cmdLine))
@@ -435,32 +431,30 @@ public class JavaExecutorComponent implements NExecutorComponent {
             if (session.out() != null) {
                 NOut.flush();
             }
-            DefaultNClassLoader classLoader;
+            NClassLoader classLoader;
             Throwable th = null;
             try {
-                classLoader = ((DefaultNExtensions) NExtensions.of()).getModel().getNutsURLClassLoader(
-                        def.getId().toString(),
-                        null//getSession().getWorkspace().config().getBootClassLoader()
+                classLoader = NClassLoader.ofPreferred(
+                        def.id().toString(),
+                        null,//getSession().getWorkspace().config().getBootClassLoader(),
+                        joptions.getResolvedCP().toArray(new NClasspathEntry[0])
                 );
-                for (NClassLoaderNode n : joptions.getClassPathNodes()) {
-                    classLoader.add(n);
-                }
                 if (joptions.getMainClass() == null) {
                     if (joptions.isJar()) {
-                        throw new NIllegalArgumentException(NMsg.ofC("jar mode and embedded mode are exclusive for %s", def.getId()));
+                        throw new NIllegalArgumentException(NMsg.ofC("jar mode and embedded mode are exclusive for %s", def.id()));
                     } else {
-                        throw new NIllegalArgumentException(NMsg.ofC("unable resolve class name for %s", def.getId()));
+                        throw new NIllegalArgumentException(NMsg.ofC("unable resolve class name for %s", def.id()));
                     }
                 }
-                Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
+                Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader.asClassLoader());
                 Map<String, String> newEnv = new HashMap<>(NWorkspaceExt.of().getSysEnv());
-                newEnv.putAll(executionContext.getEnv());
+                newEnv.putAll(executionContext.env());
                 newEnv.putAll(NExecutionContextUtils.defaultEnv(def));
                 ((DefaultNExecutionContext) executionContext).setEnv(newEnv);
                 th = session.copy().callWith(() -> {
                     Throwable th2 = null;
                     try {
-                        new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
+                        new ClassloaderAwareRunnableImpl(def.id(), classLoader.asClassLoader(), cls, session, joptions, executionContext).runAndWaitFor();
                     } catch (InvocationTargetException e) {
                         th2 = e.getTargetException();
                     } catch (MalformedURLException | NoSuchMethodException | SecurityException
@@ -477,17 +471,17 @@ public class JavaExecutorComponent implements NExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NExecutionException)) {
-                    NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), th), NRecommendationPhase.EXEC, false);
+                    NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.id().toString(), th), NRecommendationPhase.EXEC, false);
                     throw new NExecutionException(
-                            NMsg.ofC("error executing %s : %s", def.getId(), th)
+                            NMsg.ofC("error executing %s : %s", def.id(), th)
                             , th);
                 }
                 NExecutionException nex = (NExecutionException) th;
-                if (nex.getExitCode() != NExecutionException.SUCCESS) {
+                if (nex.exitCode() != NExecutionException.SUCCESS) {
                     if (def != null) {
-                        NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), nex), NRecommendationPhase.EXEC, false);
+                        NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.id().toString(), nex), NRecommendationPhase.EXEC, false);
                     }
-                    throw new NExecutionException(NMsg.ofC("error executing %s : %s", def == null ? null : def.getId(), th), th);
+                    throw new NExecutionException(NMsg.ofC("error executing %s : %s", def == null ? null : def.id(), th), th);
                 }
             }
             return NExecutionException.SUCCESS;

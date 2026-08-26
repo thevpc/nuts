@@ -47,36 +47,36 @@ public class JsonStatus {
         }
         if (countBraces == 0) {
             if (throwError) {
-                throw new NParseException(NMsg.ofPlain("not an object"));
+                throw new NParseException(NMsg.ofP("not an object"));
             }
             return false;
         }
         if (openBrackets > 0) {
             if (throwError) {
-                throw new NParseException(NMsg.ofPlain("unbalanced brackets"));
+                throw new NParseException(NMsg.ofP("unbalanced brackets"));
             }
             return false;
         }
         if (openBraces > 0) {
             if (throwError) {
-                throw new NParseException(NMsg.ofPlain("unbalanced braces"));
+                throw new NParseException(NMsg.ofP("unbalanced braces"));
             }
             return false;
         }
         if (openAntiSlash) {
             if (throwError) {
-                throw new NParseException(NMsg.ofPlain("unbalanced anti-slash"));
+                throw new NParseException(NMsg.ofP("unbalanced anti-slash"));
             }
         }
         if (openSimpleQuotes) {
             if (throwError) {
-                throw new NParseException(NMsg.ofPlain("unbalanced simple quotes"));
+                throw new NParseException(NMsg.ofP("unbalanced simple quotes"));
             }
             return false;
         }
         if (openDoubleQuotes) {
             if (throwError) {
-                throw new NParseException(NMsg.ofPlain("unbalanced double quotes"));
+                throw new NParseException(NMsg.ofP("unbalanced double quotes"));
             }
             return false;
         }
@@ -86,13 +86,13 @@ public class JsonStatus {
     public boolean checkPartialValid(boolean throwError) {
         if (openBrackets < 0) {
             if (throwError) {
-                throw new NParseException(NMsg.ofPlain("unbalanced brackets"));
+                throw new NParseException(NMsg.ofP("unbalanced brackets"));
             }
             return false;
         }
         if (openBraces < 0) {
             if (throwError) {
-                throw new NParseException(NMsg.ofPlain("unbalanced braces"));
+                throw new NParseException(NMsg.ofP("unbalanced braces"));
             }
             return false;
         }

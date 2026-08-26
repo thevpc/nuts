@@ -44,7 +44,7 @@ public class ReflectTest {
     @Test
     public void test01() {
         NReflectMapper c = NReflectMapper.of();
-        c.setAssignmentPolicy(NAssignmentPolicy.SOURCE_NON_NULL);
+        c.assignmentPolicy(NAssignmentPolicy.SOURCE_NON_NULL);
         Object u = c.mapToType(new Toto("Hammadi"), Titi.class);
         Assertions.assertEquals("Titi{name='Hammadi'}", u.toString());
     }
@@ -55,7 +55,7 @@ public class ReflectTest {
         NReflectRepository typesRepository = NWorkspaceUtils.of().getReflectRepository();
         {
             NReflectType type = typesRepository.getParametrizedType(C.class, null, new Type[]{String.class, String.class, String.class});
-            List<NReflectProperty> declaredProperties = type.getDeclaredProperties();
+            List<NReflectProperty> declaredProperties = type.declaredProperties();
             NStringBuilder s = new NStringBuilder();
             for (NReflectProperty declaredProperty : declaredProperties) {
                 s.println(declaredProperty);
@@ -63,13 +63,13 @@ public class ReflectTest {
             Assertions.assertEquals(("net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bij\n" +
                     "net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bjk\n" +
                     "net.thevpc.nuts.core.test.ReflectTest$C<java.lang.String, java.lang.String, java.lang.String>.bik")
-                    .trim(), s.trim().toString());
-            System.out.println(type);
+                    .trim(), s.strip().toString());
+            TestUtils.println(type);
         }
 
         {
             NReflectType type = typesRepository.getParametrizedType(D.class, null, new Type[]{Double.class, Integer.class});
-            List<NReflectProperty> declaredProperties = type.getDeclaredProperties();
+            List<NReflectProperty> declaredProperties = type.declaredProperties();
             NStringBuilder s = new NStringBuilder();
             for (NReflectProperty declaredProperty : declaredProperties) {
                 s.println(declaredProperty);
@@ -77,8 +77,8 @@ public class ReflectTest {
             Assertions.assertEquals((
                     "net.thevpc.nuts.core.test.ReflectTest$D<java.lang.Double, java.lang.Integer>.an\n" +
                             "net.thevpc.nuts.core.test.ReflectTest$D<java.lang.Double, java.lang.Integer>.bmn\n")
-                    .trim(), s.trim().toString());
-            System.out.println(type);
+                    .trim(), s.strip().toString());
+            TestUtils.println(type);
         }
 
     }

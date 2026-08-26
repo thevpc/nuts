@@ -1,14 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.ext.NFactoryException;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScorableContext;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class NBeanCache {
     private final Map<TypeAndArgTypes, NBeanConstructor> cachedConstructors = new HashMap<>();

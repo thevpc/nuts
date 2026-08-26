@@ -6,6 +6,7 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;
@@ -18,7 +19,7 @@ class ResultingIds {
 
     private NId findNutsApiId() {
         for (NId resultId : classPath.keySet()) {
-            if (resultId.getShortName().equals(NConstants.Ids.NUTS_API)) {
+            if (resultId.shortName().equals(NConstants.Ids.NUTS_API)) {
                 return resultId;
             }
         }
@@ -27,7 +28,7 @@ class ResultingIds {
 
     NId findNutsAppId() {
         for (NId resultId : classPath.keySet()) {
-            if (resultId.getShortName().equals(NConstants.Ids.NUTS_APP)) {
+            if (resultId.shortName().equals(NConstants.Ids.NUTS_APP)) {
                 return resultId;
             }
         }
@@ -36,7 +37,7 @@ class ResultingIds {
 
     private NId findNutsRuntimeId() {
         for (NId resultId : classPath.keySet()) {
-            if (resultId.getShortName().equals(NConstants.Ids.NUTS_RUNTIME)) {
+            if (resultId.shortName().equals(NConstants.Ids.NUTS_RUNTIME)) {
                 return resultId;
             }
         }
@@ -55,26 +56,26 @@ class ResultingIds {
 
     private ResultingIds addBomId(NId id) {
         if (!NBlankable.isBlank(id)) {
-            if (classPath.containsKey(id.getLongId())) {
+            if (classPath.containsKey(id.longId())) {
                 return this;
             }
             NDefinition imdef = NFetch.of(id)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false, true))
+                    .dependencyFilter(NDependencyFilter.ofRunnable(false, true))
                     .getResultDefinition();
-            if (!classPath.containsKey(imdef.getId().getLongId())) {
-                NId resultId = imdef.getId();
-                if (imdef.getDescriptor().isPlatformApplication() || imdef.getDescriptor().isNutsApplication()) {
+            if (!classPath.containsKey(imdef.id().longId())) {
+                NId resultId = imdef.id();
+                if (imdef.descriptor().isPlatformApplication() || imdef.descriptor().isNutsApplication()) {
                     if (isBaseId(resultId)) {
                         executableAppIds.add(resultId);
                     }
                 }
-                classPath.put(resultId.getLongId(), imdef);
+                classPath.put(resultId.longId(), imdef);
             }
-            for (NId parent : imdef.getDescriptor().getParents()) {
+            for (NId parent : imdef.descriptor().parents()) {
                 add(parent);
             }
-            for (NDependency standardDependency : imdef.getEffectiveDescriptor().get().getStandardDependencies()) {
-                if (NDependencyScope.parse(standardDependency.getScope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
+            for (NDependency standardDependency : imdef.effectiveDescriptor().get().standardDependencies()) {
+                if (NDependencyScope.parse(standardDependency.scope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
                     addBomId(standardDependency.toId());
                 }
             }
@@ -84,34 +85,34 @@ class ResultingIds {
 
     public ResultingIds add(NId id) {
         if (!NBlankable.isBlank(id)) {
-            if (classPath.containsKey(id.getLongId())) {
+            if (classPath.containsKey(id.longId())) {
                 return this;
             }
             List<NDefinition> list = NSearch.of(id)
-                    .setLatest(true)
-                    .setDistinct(true)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable(false, true))
-                    .setInlineDependencies(true)
-                    .setIgnoreCurrentEnvironment(true)
+                    .latest(true)
+                    .distinct(true)
+                    .dependencyFilter(NDependencyFilter.ofRunnable(false, true))
+                    .inlineDependencies(true)
+                    .ignoreCurrentEnvironment(true)
                     .getResultDefinitions().toList();
             if (list.isEmpty()) {
-                throw new NArtifactNotFoundException(id.getLongId());
+                throw new NArtifactNotFoundException(id.longId());
             }
             for (NDefinition def : list) {
-                if (!classPath.containsKey(def.getId().getLongId())) {
-                    NId resultId = def.getId();
-                    if (def.getDescriptor().isPlatformApplication() || def.getDescriptor().isNutsApplication()) {
+                if (!classPath.containsKey(def.id().longId())) {
+                    NId resultId = def.id();
+                    if (def.descriptor().isPlatformApplication() || def.descriptor().isNutsApplication()) {
                         if (isBaseId(resultId)) {
                             executableAppIds.add(resultId);
                         }
                     }
-                    classPath.put(resultId.getLongId(), def);
+                    classPath.put(resultId.longId(), def);
                 }
-                for (NId parent : def.getDescriptor().getParents()) {
+                for (NId parent : def.descriptor().parents()) {
                     add(parent);
                 }
-                for (NDependency standardDependency : def.getEffectiveDescriptor().get().getStandardDependencies()) {
-                    if (NDependencyScope.parse(standardDependency.getScope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
+                for (NDependency standardDependency : def.effectiveDescriptor().get().standardDependencies()) {
+                    if (NDependencyScope.parse(standardDependency.scope()).orElse(NDependencyScope.API) == NDependencyScope.IMPORT) {
                         addBomId(standardDependency.toId());
                     }
                 }
@@ -122,17 +123,17 @@ class ResultingIds {
 
     public boolean isBaseId(NId resultId) {
         for (NId baseId : baseIds) {
-            if (baseId.getLongName().equals(resultId.getShortName())) {
+            if (baseId.longName().equals(resultId.shortName())) {
                 return true;
             }
         }
         for (NId baseId : baseIds) {
-            if (baseId.getShortName().equals(resultId.getShortName())) {
+            if (baseId.shortName().equals(resultId.shortName())) {
                 return true;
             }
         }
         for (NId baseId : baseIds) {
-            if (NBlankable.isBlank(baseId.getGroupId()) && baseId.getArtifactId().equals(resultId.getArtifactId())) {
+            if (NBlankable.isBlank(baseId.groupId()) && baseId.artifactId().equals(resultId.artifactId())) {
                 return true;
             }
         }
@@ -162,31 +163,31 @@ class ResultingIds {
         //ensure there is a full nuts workspace runtime (nuts-runtime)
         if (findNutsRuntimeId() == null) {
             for (NDefinition resultIdDef : new ArrayList<>(classPath.values())) {
-                if (resultIdDef.getId().getShortName().equals(NConstants.Ids.NUTS_API)) {
-                    if (resultIdDef.getId().getLongName().equals(session.getWorkspace().getAppId().getLongName())) {
-                        add(session.getWorkspace().getRuntimeId());
+                if (resultIdDef.id().shortName().equals(NConstants.Ids.NUTS_API)) {
+                    if (resultIdDef.id().longName().equals(session.workspace().appId().longName())) {
+                        add(session.workspace().runtimeId());
                     } else {
-                        add(session.getWorkspace().getRuntimeId().builder().setVersion(resultIdDef.getId().getVersion() + ".0").build());
+                        add(session.workspace().runtimeId().builder().version(resultIdDef.id().version() + ".0").build());
                     }
                     break;
                 }
             }
         }
         if (findNutsRuntimeId() == null) {
-            add(session.getWorkspace().getRuntimeId());
+            add(session.workspace().runtimeId());
         }
         if (findNutsAppId() == null) {
             for (NDefinition resultIdDef : new ArrayList<>(classPath.values())) {
-                if (resultIdDef.getId().getShortName().equals(NConstants.Ids.NUTS_API)) {
-                    if (resultIdDef.getId().getLongName().equals(session.getWorkspace().getAppId().getLongName())) {
-                        add(session.getWorkspace().getAppId());
+                if (resultIdDef.id().shortName().equals(NConstants.Ids.NUTS_API)) {
+                    if (resultIdDef.id().longName().equals(session.workspace().appId().longName())) {
+                        add(session.workspace().appId());
                     } else {
-                        NVersion v = resultIdDef.getId().getVersion();
+                        NVersion v = resultIdDef.id().version();
                         if (v.compareTo("0.8.5") < 0) {
                             //do nothing
                         } else {
-                            NId appId = NWorkspace.of().getAppId();
-                            add(appId.builder().setVersion(resultIdDef.getId().getVersion()).build());
+                            NId appId = NWorkspace.of().appId();
+                            add(appId.builder().version(resultIdDef.id().version()).build());
                         }
                     }
                     break;
@@ -194,7 +195,7 @@ class ResultingIds {
             }
         }
         if (findNutsRuntimeId() == null) {
-            add(session.getWorkspace().getAppId());
+            add(session.workspace().appId());
         }
     }
 }

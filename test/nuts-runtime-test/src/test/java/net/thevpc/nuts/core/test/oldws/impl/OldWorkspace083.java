@@ -18,13 +18,13 @@ public class OldWorkspace083 extends OldWorkspace {
 
     public void upgrade() {
         NOut.println(NMsg.ofC("updating workspace %s in %s", version, ws));
-        NExec.of().setExecutionType(NExecutionType.SYSTEM)
-                .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
-                .addCommand("--workspace=" + workspaceLocation)
-                .addCommand("--yes")
-                .addCommand("--verbose")
-                .addCommand("update")
-                .failFast()
+        NExec.of().executionType(NExecutionType.SYSTEM)
+                .command(resolveJavaFile(), "-jar", resolveJarFile().getPath())
+                .command("--workspace=" + workspaceLocation)
+                .command("--yes")
+                .command("--verbose")
+                .command("update")
+                .failFast(true)
                 .run();
     }
 
@@ -32,23 +32,23 @@ public class OldWorkspace083 extends OldWorkspace {
     public void installWs() {
         downloadNutsJar();
         NOut.println(NMsg.ofC("booting workspace %s in %s", version, ws));
-        NExec.of().setExecutionType(NExecutionType.SYSTEM)
-                .addCommand(resolveJavaFile(), "-jar", resolveJarFile().getPath())
+        NExec.of().executionType(NExecutionType.SYSTEM)
+                .command(resolveJavaFile(), "-jar", resolveJarFile().getPath())
                 //disable creating of bashrc, etc...
-                .addCommand("--workspace=" + workspaceLocation)
-                .addCommand("--!switch")
+                .command("--workspace=" + workspaceLocation)
+                .command("--!switch")
                 //disable progress indicator
 //                    .addCommand("--!progress")
                 //disable interactive mode and 'always confirm'
-                .addCommand("--yes")
+                .command("--yes")
                 //enable installing nsh
-                .addCommand("--skip-welcome")
-                .addCommand("-r=+thevpc,maven-central")
-                .addCommand("-w", ws.getAbsolutePath())
-                .addCommand("-byZSK")
-                .addCommand("-!k")
-                .addCommand("--verbose")
-                .failFast()
+                .command("--skip-welcome")
+                .command("-r=+thevpc,maven-central")
+                .command("-w", ws.getAbsolutePath())
+                .command("-byZSK")
+                .command("-!k")
+                .command("--verbose")
+                .failFast(true)
                 .run();
     }
 

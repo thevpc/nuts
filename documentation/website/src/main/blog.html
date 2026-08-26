@@ -1,41 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-{{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
-
-<!-- Document Wrapper   
-=============================== -->
-<div id="main-wrapper" class="blog-main-wrapper">
+<head>
     {{:: pageId='blog'}}
+    {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
+    <title>Blog — Nuts Package Manager</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-blog.css"/>
+</head>
+<body>
+
+<div id="doc-progress"></div>
+<div class="preloader">
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+</div>
+
+<div id="main-wrapper" class="blog-main-wrapper">
+
     {{:include $'$projectRoot/src/include/template/v1/11-header-nuts.html'}}
 
-    <!-- Content
-    ============================ -->
     <div id="content" role="main">
 
-        <!-- Sidebar Navigation
-        ============================ -->
-        <div class="idocs-navigation bg-light">
-            <ul class="nav flex-column ">
+        <!-- Sidebar -->
+        <div class="idocs-navigation">
+            <div class="blog-nav-header">
+                <i class="fas fa-rss"></i> Posts
+            </div>
+            <ul class="nav flex-column">
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
-                <!-- pageLevel1 -->
-                <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}" style="font-size:x-small"><span style="color: #849785">{{formatDate(pageLevel1.publishDate)}}</span> {{pageLevel1.title}}</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="#{{pageLevel1.id}}">
+                        <span class="blog-nav-date">{{formatDate(pageLevel1.publishDate)}}</span>
+                        {{pageLevel1.title}}
+                    </a>
                     {{:: allPagesLevel2=loadPages(pageLevel1)}}
                     {{:if (allPagesLevel2.size)>0}}
                     <ul class="nav flex-column">
                         {{:for pageLevel2,pageLevel2Index:allPagesLevel2}}
-                        <!-- pageLevel2 -->
-                        <li class="nav-item"><a class="nav-link" href="#{{pageLevel2.id}}" style="font-size:x-small">{{formatDate(pageLevel2.publishDate)}} {{pageLevel2.title}}</a>
-                            {{:: allPagesLevel3=loadPages(pageLevel2)}}
-                            {{:if (allPagesLevel3.size)>0}}
-                            <ul class="nav flex-column">
-                                {{:for pageLevel3,pageLevel3Index:allPagesLevel3}}
-                                <!-- pageLevel3 -->
-                                <li class="nav-item"><a class="nav-link" href="#{{pageLevel3.id}}" style="font-size:x-small">{{formatDate(pageLevel3.publishDate)}} {{pageLevel3.title}}</a>
-
-                                </li>
-                                {{:end}}
-                            </ul>
-                            {{:end}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#{{pageLevel2.id}}">
+                                <span class="blog-nav-date">{{formatDate(pageLevel2.publishDate)}}</span>
+                                {{pageLevel2.title}}
+                            </a>
                         </li>
                         {{:end}}
                     </ul>
@@ -45,45 +50,69 @@
             </ul>
         </div>
 
-        <!-- Docs Content
-        ============================ -->
+        <!-- Main content -->
         <div class="idocs-content">
             <div class="container">
-                <h1>Recent Blog</h1>
+
+                <!-- Page header -->
+                <div class="blog-page-header">
+                    <span class="nuts-eyebrow">From the team</span>
+                    <h1 class="blog-page-header__title">Blog</h1>
+                    <p class="blog-page-header__sub">Releases, updates and thoughts from the Nuts project</p>
+                </div>
+
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
                 {{:for pageLevel2,pageLevel2Index:loadPages(pageLevel1)}}
-                    <!--pageLevel1-->
-                    <section id="{{pageLevel1.id}}">
-                        <h2 style="margin-bottom: 0;"><a href="#{{pageLevel1.id}}">{{pageLevel1.title}}</a></h2>
-                        <header style="margin-left: 50px">
-                            <div class="container_mt6G margin-vert--md" style="font-size: medium">
-                                <time>{{formatDate(pageLevel2.publishDate)}}</time>
-                                · One min read
+
+                <article class="blog-post" id="{{pageLevel1.id}}">
+
+                    <!-- Post header -->
+                    <div class="blog-post__header">
+                        <div class="blog-post__meta">
+                            <time class="blog-post__date" datetime="{{pageLevel2.publishDate}}">
+                                <i class="far fa-calendar-alt"></i>
+                                {{formatDate(pageLevel2.publishDate)}}
+                            </time>
+                            {{:if pageLevel2.tags}}
+                            <div class="blog-post__tags">
+                                {{:for tag,tagIndex:pageLevel2.tags}}
+                                <span class="blog-tag">{{tag}}</span>
+                                {{:end}}
                             </div>
-                            <div class="margin-top--md margin-bottom--sm row">
-                                <div class="col col--6 authorCol_Hf19">
-                                    <div class="avatar margin-bottom--sm">
-                                        <a href="https://github.com/thevpc" target="_blank"
-                                           rel="noopener noreferrer" class="avatar__photo-link">
-                                            <img class="avatar__photo"
-                                                 src="{{either(pageLevel2.authorImageUrl,'https://gravatar.com/avatar/977025550163b4a91397007f6ea9ee17')}}"
-                                                 alt="{{pageLevel2.author}}" width="32"></a>
-                                        <div class="avatar__intro">
-                                            <div class="avatar__name"><a href="https://github.com/thevpc"
-                                                                         target="_blank"
-                                                                         rel="noopener noreferrer"><span>{{pageLevel1.author}}</span></a>
-                                            </div>
-                                            <small class="avatar__subtitle">{{pageLevel2.authorTitle}}</small></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </header>
-                        <p class="lead">{{pageLevel1.subTitle}}</p>
-                        <div class="text-card">
-                        {{pageContentToHtml(pageLevel2,formatDate(pageLevel2.publishDate))}}
+                            {{:end}}
                         </div>
-                    </section>
-                    <hr class="divider">
+                        <h2 class="blog-post__title">
+                            <a href="#{{pageLevel1.id}}">{{pageLevel1.title}}</a>
+                        </h2>
+                        {{:if pageLevel1.subTitle}}
+                        <p class="blog-post__subtitle">{{pageLevel1.subTitle}}</p>
+                        {{:end}}
+                    </div>
+
+                    <!-- Author -->
+                    <div class="blog-post__author">
+                        <a href="{{either(pageLevel2.authorUrl,'https://github.com/thevpc')}}" target="_blank" rel="noopener noreferrer">
+                            <img class="blog-author__avatar"
+                                 src="{{either(pageLevel2.authorImageUrl,'https://gravatar.com/avatar/977025550163b4a91397007f6ea9ee17')}}"
+                                 alt="{{pageLevel2.author}}" width="36" height="36">
+                        </a>
+                        <div class="blog-author__info">
+                            <a href="{{either(pageLevel2.authorUrl,'https://github.com/thevpc')}}"
+                               target="_blank" rel="noopener noreferrer"
+                               class="blog-author__name">{{pageLevel2.author}}</a>
+                            <span class="blog-author__title">{{pageLevel2.authorTitle}}</span>
+                        </div>
+                    </div>
+
+                    <!-- Post body -->
+                    <div class="blog-post__body">
+                        {{pageContentToHtml(pageLevel2,formatDate(pageLevel2.publishDate))}}
+                    </div>
+
+                </article>
+
+                <hr class="blog-divider">
+
                 {{:end}}
                 {{:end}}
 
@@ -91,11 +120,12 @@
         </div>
 
     </div>
-    <!-- Content end -->
 
     {{:include $'$projectRoot/src/include/template/v1/30-footer.html'}}
 </div>
-<!-- Document Wrapper end -->
 
 {{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
+<script src="assets/js/nuts-docs.js"></script>
+<script src="assets/js/nuts-blog.js"></script>
+</body>
 </html>

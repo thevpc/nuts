@@ -1,12 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NScoredCallable;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPath;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPathHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
@@ -14,10 +17,11 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -30,20 +34,20 @@ import java.util.stream.Collectors;
 public class NResourcePath implements NPathSPI {
 
     private final List<NId> ids;
-    private String path;
-    private String location;
+    private final String path;
+    private final String location;
     private boolean urlPathLookedUp = false;
-    private URL[] urls = null;
+    private List<NPath> urls = null;
     private NPath urlPath = null;
-    private static String nResourceProtocol = "resource://";
+    private static final String nResourceProtocol = "resource://";
 
     public NResourcePath(String path) {
         this.path = path;
         String idsStr;
-        if (path.startsWith(nResourceProtocol +"(")) {
+        if (path.startsWith(nResourceProtocol + "(")) {
             int x = path.indexOf(')');
             if (x > 0) {
-                idsStr = path.substring((nResourceProtocol+"(").length(), x);
+                idsStr = path.substring((nResourceProtocol + "(").length(), x);
                 location = path.substring(x + 1);
             } else {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid path %s", path));
@@ -60,13 +64,19 @@ public class NResourcePath implements NPathSPI {
             throw new NIllegalArgumentException(NMsg.ofC("invalid path %s", path));
         }
         this.ids = StringTokenizerUtils.splitSemiColon(idsStr).stream().map(x -> {
-            x = x.trim();
+            x = NStringUtils.strip(x);
             if (x.length() > 0) {
                 return NId.get(x).get();
             }
             return null;
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
+
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
+    }
+
 
     protected static String rebuildURL(String location, NId[] ids) {
         StringBuilder sb = new StringBuilder(nResourceProtocol);
@@ -84,21 +94,21 @@ public class NResourcePath implements NPathSPI {
         sb.append(location);
         return sb.toString();
     }
+
     protected static NText rebuildURL2(NText location, NId[] ids) {
-        NTexts txt = NTexts.of();
-        NTextBuilder sb = txt.ofBuilder();
+        NTextBuilder sb = NTextBuilder.of();
         sb.append(nResourceProtocol, NTextStyle.path());
         boolean complex = Arrays.stream(ids).map(Object::toString).anyMatch(x -> x.contains(";") || x.contains("/"));
         if (complex) {
             sb.append("(", NTextStyle.separator());
             sb.appendJoined(
-                    txt.ofStyled(";", NTextStyle.separator()),
+                    NText.ofStyled(";", NTextStyle.separator()),
                     Arrays.asList(ids)
             );
             sb.append(")", NTextStyle.separator());
         } else {
             sb.appendJoined(
-                    txt.ofStyled(";", NTextStyle.separator()),
+                    NText.ofStyled(";", NTextStyle.separator()),
                     Arrays.asList(ids)
             );
         }
@@ -114,20 +124,19 @@ public class NResourcePath implements NPathSPI {
             urlPathLookedUp = true;
             try {
                 String loc = location;
-                ClassLoader resultClassLoader = NSearch.of().addIds(
+                urls = NSearch.of().addIds(
                                 this.ids.toArray(new NId[0])
-                        ).setLatest(true)
-                        .setDependencyFilter(
-                                NDependencyFilters.of()
+                        ).latest(true).distinct(true).inlineDependencies(true)
+                        .dependencyFilter(
+                                NDependencyFilterRPI.of()
                                         .byRunnable()
                         )
-                        .getResultClassLoader();
-                urls = ((DefaultNClassLoader) resultClassLoader).getURLs();
+                        .getResultPaths().collect(Collectors.toList());
                 //class loader do not expect leading '/'
                 if (loc.length() > 1 && loc.startsWith("/")) {
                     loc = loc.substring(1);
                 }
-                URL resource = resultClassLoader.getResource(loc);
+                URL resource = resolveResourceInPaths(urls,loc);
                 if (resource != null) {
                     urlPath = NPath.of(resource);
                 }
@@ -137,6 +146,40 @@ public class NResourcePath implements NPathSPI {
             }
         }
         return urlPath;
+    }
+
+    private URL resolveResourceInPaths(List<NPath> paths, String relativeLoc) {
+        for (NPath nPath : paths) {
+            URL a = resolveResourceInPath(nPath, relativeLoc);
+            if (a != null) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    private URL resolveResourceInPath(NPath path, String relativeLoc) {
+        try {
+            // 1. Directory lookup: Direct NIO filesystem check
+            if (path.isDirectory()) {
+                NPath candidate = path.resolve(relativeLoc);
+                if (candidate.exists()) {
+                    return candidate.toURL().get();
+                }
+            }
+            // 2. JAR lookup: Inspect entry table via JarFile
+            else if (path.toFile().isPresent() && path.isRegularFile() && path.toString().toLowerCase().endsWith(".jar")) {
+                try (java.util.jar.JarFile jarFile = new java.util.jar.JarFile(path.toFile().get())) {
+                    if (jarFile.getJarEntry(relativeLoc) != null) {
+                        // Constructs valid jar:file:/path/to/lib.jar!/relativeLoc URL
+                        return new URL("jar:" + path.toURL().get().toString() + "!/" + relativeLoc);
+                    }
+                }
+            }
+        } catch (IOException ignored) {
+            // Skip inaccessible paths
+        }
+        return null;
     }
 
     @Override
@@ -200,7 +243,7 @@ public class NResourcePath implements NPathSPI {
     @Override
     public NPathType getType(NPath basePath) {
         NPath u = toURLPath();
-        if(u!=null){
+        if (u != null) {
             return u.type();
         }
         return NPathType.NOT_FOUND;
@@ -226,7 +269,7 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             return -1;
         }
-        return up.getContentLength();
+        return up.contentLength();
     }
 
     @Override
@@ -242,7 +285,7 @@ public class NResourcePath implements NPathSPI {
     public String getContentType(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
-            return up.getContentType();
+            return up.contentType();
         }
         return null;
     }
@@ -251,7 +294,7 @@ public class NResourcePath implements NPathSPI {
     public String getCharset(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
-            return up.getCharset();
+            return up.charset();
         }
         return null;
     }
@@ -267,7 +310,7 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             throw new NIOException(NMsg.ofC("unable to resolve input stream %s", toString()));
         }
-        return up.getInputStream();
+        return up.inputStream();
     }
 
     @Override
@@ -276,9 +319,8 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             throw new NIOException(NMsg.ofC("unable to resolve output stream %s", toString()));
         }
-        return up.getOutputStream();
+        return up.outputStream();
     }
-
 
 
     @Override
@@ -305,19 +347,19 @@ public class NResourcePath implements NPathSPI {
         if (up == null) {
             return null;
         }
-        return up.getLastModifiedInstant();
+        return up.lastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath up = toURLPath();
-        return up != null ? up.getLastAccessInstant() : null;
+        return up != null ? up.lastAccessInstant() : null;
     }
 
     @Override
     public Instant getCreationInstant(NPath basePath) {
         NPath up = toURLPath();
-        return up != null ? up.getCreationInstant() : null;
+        return up != null ? up.creationInstant() : null;
     }
 
     @Override
@@ -359,7 +401,7 @@ public class NResourcePath implements NPathSPI {
     @Override
     public Set<NPathPermission> getPermissions(NPath basePath) {
         NPath up = toURLPath();
-        return up != null ? up.getPermissions() : new LinkedHashSet<>();
+        return up != null ? up.permissions() : new LinkedHashSet<>();
     }
 
     @Override
@@ -385,7 +427,7 @@ public class NResourcePath implements NPathSPI {
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location).getNameCount();
+        return NPath.of(location).nameCount();
     }
 
     @Override
@@ -407,7 +449,7 @@ public class NResourcePath implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return basePath.getParent().getRoot();
+        return basePath.parent().root();
     }
 
     @Override
@@ -424,7 +466,7 @@ public class NResourcePath implements NPathSPI {
 
     @Override
     public List<String> getNames(NPath basePath) {
-        return NPath.of(location).getNames();
+        return NPath.of(location).names();
     }
 
     @Override
@@ -456,20 +498,20 @@ public class NResourcePath implements NPathSPI {
 
     private static class MyPathFormat implements NObjectWriterSPI {
 
-        private NResourcePath p;
+        private final NResourcePath p;
 
         public MyPathFormat(NResourcePath p) {
             this.p = p;
         }
+
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 
         public NText asFormattedString() {
             String path = p.path;
-            NTexts text = NTexts.of();
-            NTextBuilder tb = text.ofBuilder();
+            NTextBuilder tb = NTextBuilder.of();
             tb.append("resource://", NTextStyle.primary1());
             if (path.startsWith("resource://(")) {
                 tb.append("(", NTextStyle.separator());
@@ -479,7 +521,7 @@ public class NResourcePath implements NPathSPI {
                     tb.appendJoined(
                             NText.ofStyled(";", NTextStyle.separator()),
                             StringTokenizerUtils.splitSemiColon(idsStr).stream().map(xi -> {
-                                xi = xi.trim();
+                                xi = NStringUtils.strip(xi);
                                 if (!xi.isEmpty()) {
                                     NId pp = NId.get(xi).get();
                                     if (pp == null) {
@@ -492,7 +534,7 @@ public class NResourcePath implements NPathSPI {
                     tb.append(")", NTextStyle.separator());
                     tb.append(path.substring(x + 1), NTextStyle.path());
                 } else {
-                    return text.of(path);
+                    return NText.of(path);
                 }
             } else if (path.startsWith("resource://")) {
                 int x = path.indexOf('/', "resource://".length());
@@ -506,10 +548,10 @@ public class NResourcePath implements NPathSPI {
                     }
                     tb.append(path.substring(x), NTextStyle.path());
                 } else {
-                    return text.of(path);
+                    return NText.of(path);
                 }
             } else {
-                return text.of(path);
+                return NText.of(path);
             }
             return tb.build();
         }
@@ -544,8 +586,8 @@ public class NResourcePath implements NPathSPI {
 
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
-            if(!(cri instanceof String)) {
+            Object cri = context.criteria();
+            if (!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }
             String path = (String) cri;
@@ -560,7 +602,7 @@ public class NResourcePath implements NPathSPI {
         @Override
         public NText toCompressedString(NPath base) {
             return rebuildURL2(NPathParts.compressPath(location),
-                    ids.stream().map(x -> NId.get(x.getArtifactId()).get()).toArray(NId[]::new)
+                    ids.stream().map(x -> NId.get(x.artifactId()).get()).toArray(NId[]::new)
             );
         }
     }

@@ -70,8 +70,8 @@ public class NExtensionListHelper {
     public NExtensionListHelper compress() {
         LinkedHashMap<String, NWorkspaceConfigBoot.ExtensionConfig> m = new LinkedHashMap<>();
         for (NWorkspaceConfigBoot.ExtensionConfig id : list) {
-            m.put(id.getId().getShortName(),
-                    new NWorkspaceConfigBoot.ExtensionConfig(id.getId().getLongId(), id.getDependencies(), id.isEnabled())
+            m.put(id.getId().shortName(),
+                    new NWorkspaceConfigBoot.ExtensionConfig(id.getId().longId(), id.getDependencies(), id.isEnabled())
             );
         }
         list.clear();
@@ -84,7 +84,7 @@ public class NExtensionListHelper {
                 .map(Object::toString).collect(Collectors.joining(";"));
         for (int i = 0; i < list.size(); i++) {
             NWorkspaceConfigBoot.ExtensionConfig a = list.get(i);
-            if (a.getId().getShortName().equals(id.getShortName())) {
+            if (a.getId().shortName().equals(id.shortName())) {
                 NWorkspaceConfigBoot.ExtensionConfig o=list.get(i);
                 NWorkspaceConfigBoot.ExtensionConfig z = new NWorkspaceConfigBoot.ExtensionConfig(id, dependenciesString, true);
                 if(!Objects.equals(o,z)){
@@ -101,7 +101,7 @@ public class NExtensionListHelper {
     public boolean remove(NId id) {
         for (int i = 0; i < list.size(); i++) {
             NWorkspaceConfigBoot.ExtensionConfig a = list.get(i);
-            if (a.getId().getShortName().equals(id.getShortName())) {
+            if (a.getId().shortName().equals(id.shortName())) {
                 list.remove(i);
                 return true;
             }

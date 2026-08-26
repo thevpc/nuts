@@ -31,7 +31,7 @@ import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.AnyNixNdi;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.PosixNdi;
 
 import java.io.*;
 import java.net.URL;
@@ -44,10 +44,10 @@ import java.util.regex.Pattern;
  */
 public class NdiUtils {
 
-    public static String generateScriptAsString(String resourcePath, Function<String, String> mapper) {
+    public static String generateScriptAsString(String resourcePath, NNewLineMode newlineMode,Function<String, String> mapper) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         BufferedWriter w = new BufferedWriter(new OutputStreamWriter(b));
-        generateScript(resourcePath, w, mapper);
+        generateScript(resourcePath, w, newlineMode,mapper);
         try {
             w.flush();
         } catch (IOException ex) {
@@ -56,9 +56,9 @@ public class NdiUtils {
         return b.toString();
     }
 
-    public static void generateScript(String resourcePath, BufferedWriter w, Function<String, String> mapper) {
+    public static void generateScript(String resourcePath, BufferedWriter w, NNewLineMode newlineMode,Function<String, String> mapper) {
         try {
-            URL resource = AnyNixNdi.class.getResource(resourcePath);
+            URL resource = PosixNdi.class.getResource(resourcePath);
             if (resource == null) {
                 throw new NIllegalArgumentException(NMsg.ofC("resource not found %s",resourcePath));
             }
@@ -81,7 +81,7 @@ public class NdiUtils {
                 String line2 = null;
                 while ((line2 = br2.readLine()) != null) {
                     w.write(line2);
-                    w.write(NNewLineMode.system().value());
+                    w.write(newlineMode.value());
                 }
             }
             w.flush();

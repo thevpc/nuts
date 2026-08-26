@@ -7,13 +7,14 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -51,14 +52,14 @@ public class NCoreIOUtils {
                 try {
                     ((Closeable) o).close();
                 } catch (IOException e) {
-                    throw NExceptions.ofUncheckedException(e);
+                    throw NException.ofUncheckedException(e);
                 }
             }
             if(o instanceof AutoCloseable) {
                 try {
                     ((AutoCloseable) o).close();
                 }catch (Exception e) {
-                    throw NExceptions.ofUncheckedException(e);
+                    throw NException.ofUncheckedException(e);
                 }
             }
         }
@@ -264,7 +265,7 @@ public class NCoreIOUtils {
     }
 
     public static String expandPath(String path, String base, Function<String, String> pathExpansionConverter) {
-        path = NMsg.ofV(path.trim(), pathExpansionConverter).toString();
+        path = NMsg.ofV(NStringUtils.strip(path), pathExpansionConverter).toString();
         if (isURL(path)) {
             return path;
         }
@@ -281,7 +282,7 @@ public class NCoreIOUtils {
     }
 
     public static String getStoreLocationPath(NBootOptions bOptions, NStoreType value) {
-        Map<NStoreType, String> storeLocations = bOptions.getStoreLocations().orNull();
+        Map<NStoreType, String> storeLocations = bOptions.storeLocations().orNull();
         if (storeLocations != null) {
             return storeLocations.get(value);
         }
@@ -359,7 +360,7 @@ public class NCoreIOUtils {
                                 inputStream.close();
                             } catch (Exception ex) {
                                 if (bLog != null) {
-                                    bLog.log(NMsg.ofPlain("unable to close stream").asFine(ex).withIntent(NMsgIntent.FAIL));
+                                    bLog.log(NMsg.ofP("unable to close stream").asFine(ex).withIntent(NMsgIntent.FAIL));
                                 }
                                 //
                             }

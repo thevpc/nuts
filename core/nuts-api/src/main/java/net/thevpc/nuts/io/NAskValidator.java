@@ -34,5 +34,13 @@ import net.thevpc.nuts.util.NValidationException;
  */
 public interface NAskValidator<T> {
 
+    /**
+     * Validate.
+     *
+     * @param value value
+     * @param question question
+     * @return validate result
+     * @throws NValidationException if execution fails
+     */
     T validate(T value, NAsk<T> question) throws NValidationException;
 }

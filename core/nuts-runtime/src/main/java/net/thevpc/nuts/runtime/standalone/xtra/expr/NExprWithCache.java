@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.NExprContext;
 import net.thevpc.nuts.expr.NExprOperator;
-import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.expr.NToken;
 
 public class NExprWithCache {
@@ -13,7 +13,7 @@ public class NExprWithCache {
     }
 
 
-    public NExprOperator getOp(NToken t, NExprOpType opType) {
+    public NExprOperator getOp(NToken t, NFixity opType) {
         if (t == null) {
             return null;
         }

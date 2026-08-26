@@ -29,6 +29,7 @@ package net.thevpc.nuts.command;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.core.NSessionProvider;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.util.NGetter;
 
 /**
  * Event describing installation of an artifact
@@ -44,19 +45,22 @@ public interface NInstallEvent extends NSessionProvider {
      *
      * @return artifact definition
      */
-    NDefinition getDefinition();
+    @NGetter
+    NDefinition definition();
 
     /**
      * vcurrent workspace
      *
      * @return current workspace
      */
-    NWorkspace getWorkspace();
+    @NGetter
+    NWorkspace workspace();
 
     /**
      * return true if installation was forced
      *
      * @return true if installation was forced
      */
+    @NGetter
     boolean isForce();
 }

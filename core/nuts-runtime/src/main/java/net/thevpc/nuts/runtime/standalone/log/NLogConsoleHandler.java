@@ -3,9 +3,11 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.io.NErr;
 import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.log.NLogSPI;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -42,11 +44,11 @@ public class NLogConsoleHandler implements NLogSPI {
             return false;
         }
         NSession session = NSession.of();
-        NLogConfig logConfig = NWorkspace.of().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
-        Level sessionLogLevel = session.getLogTermLevel();
+        NLogConfig logConfig = NWorkspace.of().bootOptions().logConfig().orElseGet(NLogConfig::new);
+        Level sessionLogLevel = session.logTermLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {
-                sessionLogLevel = logConfig.getLogTermLevel();
+                sessionLogLevel = logConfig.logTermLevel();
             }
             if (sessionLogLevel == null) {
                 sessionLogLevel = Level.OFF;
@@ -61,7 +63,7 @@ public class NLogConsoleHandler implements NLogSPI {
 
     @Override
     public synchronized void log(NMsg message) {
-        if (!isLoggable(message.getLevel())) {
+        if (!isLoggable(message.level())) {
             return;
         }
         if (suspendTerminalMode) {
@@ -94,14 +96,29 @@ public class NLogConsoleHandler implements NLogSPI {
     }
 
     private void log0(Rec rec) {
-        synchronized (NSession.of().err()) {
-            NDuration duration = rec.msg.getDuration();
-            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.getLevel(), rec.msg.getIntent(), rec.msg,
+        NPrintStream err = NSession.of().err();
+        if(err ==null){
+            err= NTerminal.ofSystem().err();
+        }
+        if(err ==null){
+            NDuration duration = rec.msg.duration();
+            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.level(), rec.msg.intent(), rec.msg,
                     duration==null || duration.isZero() ? ""
                             : NMsg.ofC(" (duration: %s)", duration)
             ));
-            if (rec.msg.getThrowable() != null) {
-                NErr.println(NStringUtils.stacktrace(rec.msg.getThrowable()));
+            if (rec.msg.throwable() != null) {
+                NErr.println(NStringUtils.stacktrace(rec.msg.throwable()));
+            }
+            return;
+        }
+        synchronized (err) {
+            NDuration duration = rec.msg.duration();
+            NErr.println(NMsg.ofC("%s [%-6s] [%-7s] %s%s", rec.instant, rec.msg.level(), rec.msg.intent(), rec.msg,
+                    duration==null || duration.isZero() ? ""
+                            : NMsg.ofC(" (duration: %s)", duration)
+            ));
+            if (rec.msg.throwable() != null) {
+                NErr.println(NStringUtils.stacktrace(rec.msg.throwable()));
             }
         }
     }

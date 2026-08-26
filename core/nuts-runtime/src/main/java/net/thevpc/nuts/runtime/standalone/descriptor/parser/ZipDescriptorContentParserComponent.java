@@ -32,9 +32,9 @@ import net.thevpc.nuts.artifact.NDescriptorParser;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -59,10 +59,11 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
     ));
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz","war","ear"));
 
+    @NScore
     public static int getScore(NScorableContext criteria) {
-        NDescriptorContentParserContext constraints = criteria.getCriteria(NDescriptorContentParserContext.class);
+        NDescriptorContentParserContext constraints = criteria.criteria(NDescriptorContentParserContext.class);
         if(constraints!=null) {
-            String e = NStringUtils.trim(constraints.getFileExtension());
+            String e = NStringUtils.strip(constraints.fileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
                 return NScorable.UNSUPPORTED_SCORE;
             }
@@ -72,13 +73,13 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
 
     @Override
     public NDescriptor parse(NDescriptorContentParserContext parserContext) {
-        String e = NStringUtils.trim(parserContext.getFileExtension());
+        String e = NStringUtils.strip(parserContext.fileExtension());
         if (!POSSIBLE_EXT.contains(e)) {
             return null;
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
-            if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
+            if (ZipUtils.extractFirstPath(parserContext.fullStream(), POSSIBLE_PATHS, buffer, true)) {
                 return NDescriptorParser.of()
                         .parse(buffer.toByteArray()).get();
             }

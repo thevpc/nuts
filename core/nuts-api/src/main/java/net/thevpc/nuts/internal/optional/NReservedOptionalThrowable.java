@@ -6,6 +6,12 @@ import net.thevpc.nuts.util.*;
 
 import java.util.function.Supplier;
 
+/**
+ * NReservedOptionalThrowable class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImpl<T> implements Cloneable {
     private static boolean DEBUG;
 
@@ -17,10 +23,26 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     private Throwable rootStack = DEBUG ? new Throwable() : null;
     private Supplier<NOptional<T>> defaultValue;
 
+    /**
+     * N reserved optional throwable.
+     *
+     * @param message message
+     * @return n reserved optional throwable result
+     */
     public NReservedOptionalThrowable(Supplier<NMsg> message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
+    /**
+     * Or default.
+     *
+     * @return or default result
+     */
     public T orDefault() {
         if (defaultValue != null) {
             NOptional<T> o = defaultValue.get();
@@ -51,10 +73,16 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
             if (o != null) {
                 return o.orDefaultOptional(); // recursive resolution
             }
-            return NOptional.ofEmpty(getMessage());
+            return NOptional.ofEmpty(message());
         }
     }
 
+    /**
+     * Prepare message.
+     *
+     * @param m m
+     * @return prepare message result
+     */
     protected NMsg prepareMessage(NMsg m) {
         if (DEBUG) {
             return NMsg.ofC("%s.\n    call stack:\n%s\n    root stack:\n%s", m,
@@ -86,7 +114,7 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
         c.defaultValue = value == null ? null : () -> {
             NOptional<T> i = value.get();
             if (i == null) {
-                return NOptional.ofEmpty(getMessage());
+                return NOptional.ofEmpty(message());
             }
             return this;
         };
@@ -110,8 +138,19 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     @Override
     protected NOptional<T> clone() {
         try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
             return (NOptional<T>) super.clone();
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

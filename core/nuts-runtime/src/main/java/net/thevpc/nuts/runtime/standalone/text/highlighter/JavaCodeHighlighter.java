@@ -5,9 +5,9 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import java.util.*;
 
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.*;
 
 public class JavaCodeHighlighter implements NCodeHighlighter {
@@ -18,19 +18,19 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "java";
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if(s==null){
             return NScorable.DEFAULT_SCORE;
         }
@@ -46,7 +46,7 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
@@ -68,7 +68,7 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
                 case '>':
                 case '!':
                 case ';': {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -98,7 +98,7 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -108,7 +108,7 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
                     } else if (ar.peekChars("/*")) {
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -119,20 +119,20 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
                         NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).getValue();
+                                String txt2 = ((NTextPlain) d[0]).value();
                                 if (reservedWords.contains(txt2)) {
-                                    d[0] = txt.ofStyled(d[0], NTextStyle.keyword());
+                                    d[0] = NText.ofStyled(d[0], NTextStyle.keyword());
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                         }
                     }
                     break;
                 }
             }
         }
-        return txt.ofList(all.toArray(new NText[0]));
+        return NText.ofList(all.toArray(new NText[0]));
     }
 }

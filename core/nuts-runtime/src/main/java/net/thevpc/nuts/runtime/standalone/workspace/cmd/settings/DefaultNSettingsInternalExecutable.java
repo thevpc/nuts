@@ -26,15 +26,15 @@ import java.util.List;
  */
 public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSettingsInternalExecutable(String[] args, NExec execCommand) {
-        super("settings", args, execCommand);
+    public DefaultNSettingsInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("settings", args, execCommand,executorOptions);
     }
 
     private List<NSettingsSubCommand> subCommands;
 
     @Override
     public int execute() {
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         if (dry) {
             dryExecute();
             return NExecutionException.SUCCESS;
@@ -70,7 +70,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
                         showDefaultHelp();
                     }
                     cmd.skipAll();
-                    throw new NExecutionException(NMsg.ofPlain("help"), NExecutionException.SUCCESS);
+                    throw new NExecutionException(NMsg.ofP("help"), NExecutionException.SUCCESS);
                 }
                 break;
             } else {
@@ -102,7 +102,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
         if (empty) {
             NErr.println("missing settings command");
             NErr.println("type for more help : nuts settings -h");
-            throw new NExecutionException(NMsg.ofPlain("missing settings command"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofP("missing settings command"), NExecutionException.ERROR_1);
         }
         return NExecutionException.SUCCESS;
     }

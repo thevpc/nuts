@@ -45,24 +45,74 @@ public final class NUserConfig extends NConfigItem implements Cloneable {
     private List<String> groups;
     private List<String> permissions;
 
+    /**
+     * N user config.
+     *
+     * @return n user config result
+     */
     public NUserConfig() {
     }
 
+    /**
+     * N user config.
+     *
+     * @param other other
+     * @return n user config result
+     */
     public NUserConfig(NUserConfig other) {
-        this.userName = other.getUserName();
-        this.credential = other.getCredential();
-        setGroups(other.getGroups());
-        setPermissions(other.getPermissions());
+        this.userName = other.userName();
+        this.credential = other.credential();
+      /**
+       * Groups.
+       *
+       * @param other.groups() other.groups()
+       */
+        groups(other.groups());
+      /**
+       * Permissions.
+       *
+       * @param other.permissions() other.permissions()
+       */
+        permissions(other.permissions());
     }
 
+    /**
+     * N user config.
+     *
+     * @param userName user name
+     * @param credential credential
+     * @param groups groups
+     * @param permissions permissions
+     * @return n user config result
+     */
     public NUserConfig(String userName, String credential, List<String> groups, List<String> permissions) {
         this.userName = (userName);
         this.credential = (credential);
-        setGroups(groups);
-        setPermissions(permissions);
+      /**
+       * Groups.
+       *
+       * @param groups groups
+       */
+        groups(groups);
+      /**
+       * Permissions.
+       *
+       * @param permissions permissions
+       */
+        permissions(permissions);
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NUserConfig copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -78,39 +128,85 @@ public final class NUserConfig extends NConfigItem implements Cloneable {
             }
             return o;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
 
-    public String getUserName() {
+    /**
+     * User name.
+     *
+     * @return user name result
+     */
+    public String userName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    /**
+     * User name.
+     *
+     * @param userName user name
+     */
+    public void userName(String userName) {
         this.userName = userName;
     }
 
-    public String getCredential() {
+    /**
+     * Credential.
+     *
+     * @return credential result
+     */
+    public String credential() {
         return credential;
     }
 
-    public void setCredential(String credential) {
+    /**
+     * Credential.
+     *
+     * @param credential credential
+     */
+    public void credential(String credential) {
         this.credential = credential;
     }
 
-    public List<String> getPermissions() {
+    /**
+     * Permissions.
+     *
+     * @return permissions result
+     */
+    public List<String> permissions() {
         return permissions;
     }
 
-    public void setPermissions(List<String> permissions) {
+    /**
+     * Permissions.
+     *
+     * @param permissions permissions
+     */
+    public void permissions(List<String> permissions) {
         this.permissions = NReservedLangUtils.nonNullList(permissions);
     }
 
-    public List<String> getGroups() {
+    /**
+     * Groups.
+     *
+     * @return groups result
+     */
+    public List<String> groups() {
         return groups;
     }
 
-    public void setGroups(List<String> groups) {
+    /**
+     * Groups.
+     *
+     * @param groups groups
+     */
+    public void groups(List<String> groups) {
         this.groups = NReservedLangUtils.nonNullList(groups);
     }
 

@@ -7,13 +7,11 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.io.NOut;
-import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.xtra.time.CProgressBar;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.text.NMsg;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,29 +64,29 @@ public class TerminalTest {
                 Assertions.assertThrows(NIllegalArgumentException.class,()->
 
                         {
-                            NSystemTerminal systemTerminal = NIO.of().getSystemTerminal();
+                            NSystemTerminal systemTerminal = NIO.of().systemTerminal();
                             NPrintStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
-                                    "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
+                                    "sys-init="+(sysInitMode.terminalMode()==null?"default": sysInitMode.terminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
                             NTerminal terminal = NTerminal.ofSystem();
-                            NPrintStream out = terminal.out().setTerminalMode(systemMode);
-                            NTerminalMode initMode = out.getTerminalMode();
+                            NPrintStream out = terminal.out().terminalMode(systemMode);
+                            NTerminalMode initMode = out.terminalMode();
                             Assertions.assertEquals(systemMode,initMode);
                             TestUtils.println(
-                                    "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
+                                    "sys-init="+(sysInitMode.terminalMode()==null?"default": sysInitMode.terminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 //        if(systemMode!=null) {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
 
-                            terminal.setOut(out.setTerminalMode(sessionMode));
-                            NTerminalMode newMode = terminal.getOut().getTerminalMode();
+                            terminal.out(out.terminalMode(sessionMode));
+                            NTerminalMode newMode = terminal.out().terminalMode();
                             TestUtils.println(
-                                    "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
+                                    "sys-init="+(sysInitMode.terminalMode()==null?"default": sysInitMode.terminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id()+"->"+newMode.id());
                             Assertions.assertEquals(sessionMode,newMode);
@@ -101,20 +99,20 @@ public class TerminalTest {
                 );
                 return;
             }else{
-                NSystemTerminal systemTerminal = NIO.of().getSystemTerminal();
+                NSystemTerminal systemTerminal = NIO.of().systemTerminal();
                 NPrintStream sysInitMode = systemTerminal.out();
                 NTerminal terminal = NTerminal.ofSystem();
-                NPrintStream out = terminal.out().setTerminalMode(systemMode);
-                NTerminalMode initMode = out.getTerminalMode();
+                NPrintStream out = terminal.out().terminalMode(systemMode);
+                NTerminalMode initMode = out.terminalMode();
                 Assertions.assertEquals(systemMode,initMode);
                 TestUtils.println(
-                        "sys-init="+sysInitMode.getTerminalMode().id()
+                        "sys-init="+sysInitMode.terminalMode().id()
                                 +", sys-fixed="+systemMode.id()
                                 +" ->"+ sessionMode.id());
 //        if(systemMode!=null) {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
-                terminal.setOut(out.setTerminalMode(sessionMode));
+                terminal.out(out.terminalMode(sessionMode));
                 TestUtils.print("      ");
                 out.print("{**aa");
                 out.print("aa**}");
@@ -158,12 +156,12 @@ public class TerminalTest {
         for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
-                System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
+                TestUtils.printfln("%2d ::" + rr.progress(i), i);
             }
             for (int i = 0; i < 12; i++) {
                 int finalI = i;
                 rr.setIndeterminatePosition((CProgressBar bar, int size) -> finalI % size);
-                System.out.printf("%2d ::" + rr.progress(-1) + "\n", i);
+                TestUtils.printfln("%2d ::" + rr.progress(-1) , i);
 //                try {
 //                    Thread.sleep(1000);
 //                } catch (InterruptedException ex) {
@@ -180,7 +178,7 @@ public class TerminalTest {
         for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
-//                System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
+//                TestUtils.printf("%2d ::" + rr.progress(i) + "\n", i);
                 NOut.println(NMsg.ofC("%2d ::" + rr.progress(i), i));
             }
             for (int i = 0; i < 12; i++) {
@@ -216,7 +214,7 @@ public class TerminalTest {
     public void test6() {
         char[] youDontLike = NIn.ask()
                 .forPassword(NMsg.ofC("Ask me something %s", "you dont like"))
-                .getValue();
+                .value();
         NOut.println(new String(youDontLike));
     }
 }

@@ -11,7 +11,7 @@ import net.thevpc.nuts.platform.NExecutionEngineLocation;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlElement;
-import net.thevpc.nuts.runtime.standalone.util.collections.NClassMapImpl;
+import net.thevpc.nuts.runtime.standalone.collections.NClassMapImpl;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.reflect.NClassMap;
@@ -20,7 +20,6 @@ import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -232,8 +231,8 @@ public class DefaultElementMapperStore {
             case PARAM_ARRAY:
             case NAMED_ARRAY:
             case FULL_ARRAY:
-            case UPLET:
-            case NAMED_UPLET: {
+            case TUPLE:
+            case NAMED_TUPLE: {
                 return store.getDeserializer(List.class);
             }
             case DOUBLE_QUOTED_STRING:

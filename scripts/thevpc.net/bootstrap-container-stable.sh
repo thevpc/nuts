@@ -2,7 +2,7 @@
 set -e
 
 # --- Environment variables with defaults ---
-NUTS_VERSION=${NUTS_VERSION:-0.8.8}
+NUTS_VERSION=${NUTS_VERSION:-0.8.9}
 NUTS_ARGS=("$@")
 
 if [ "${NUTS_CONTAINER_VERBOSE:-0}" = "1" ]; then

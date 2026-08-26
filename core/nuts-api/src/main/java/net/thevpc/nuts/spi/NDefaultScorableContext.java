@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 
 import java.util.Objects;
 
@@ -39,6 +39,11 @@ public class NDefaultScorableContext implements NScorableContext {
 
     private final Object criteria;
 
+    /**
+     * N default scorable context.
+     *
+     * @return n default scorable context result
+     */
     public NDefaultScorableContext() {
         this.criteria = null;
     }
@@ -54,13 +59,13 @@ public class NDefaultScorableContext implements NScorableContext {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCriteria() {
+    public <T> T criteria() {
         return (T) criteria;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCriteria(Class<T> expected) {
+    public <T> T criteria(Class<T> expected) {
         if (criteria == null) {
             return null;
         }

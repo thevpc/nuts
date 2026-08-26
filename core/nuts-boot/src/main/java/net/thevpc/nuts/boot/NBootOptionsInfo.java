@@ -44,23 +44,10 @@ import java.util.function.Supplier;
 public final class NBootOptionsInfo {
 
     private static final long serialVersionUID = 1;
-//    /**
-//     * bootRepositories list (; separated) where to look for runtime
-//     * dependencies special
-//     */
-//    private String bootRepositories;
     /**
      * special
      */
     private NBootClassLoaderNode runtimeBootDependencyNode;
-    /**
-     * special
-     */
-    private List<NBootDescriptor> extensionBootDescriptors;
-    /**
-     * special
-     */
-    private List<NBootClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -81,11 +68,6 @@ public final class NBootOptionsInfo {
      * special
      */
     private String uuid;
-
-    /**
-     * special
-     */
-    private Set<String> extensionsSet;
 
     /**
      * special
@@ -1556,10 +1538,7 @@ public final class NBootOptionsInfo {
         this.setStdout(other.getStdout());
         this.setStderr(other.getStderr());
         this.setExecutorService(other.getExecutorService());
-//        this.setBootRepositories(other.getBootRepositories());
-
         this.setExcludedExtensions(other.getExcludedExtensions());
-//        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.setRepositories(other.getRepositories());
         this.setBootRepositories(other.getBootRepositories());
         this.setApplicationArguments(other.getApplicationArguments());
@@ -1581,15 +1560,11 @@ public final class NBootOptionsInfo {
         this.setUserLauncher(other.getUserLauncher());
         this.setSharedInstance(other.getSharedInstance());
         this.setPreviewRepo(other.getPreviewRepo());
-//        this.setBootRepositories(other.getBootRepositories());
         this.setRuntimeBootDependencyNode(other.getRuntimeBootDependencyNode());
-        this.setExtensionBootDescriptors(other.getExtensionBootDescriptors());
-        this.setExtensionBootDependencyNodes(other.getExtensionBootDependencyNodes());
         this.setBootWorkspaceFactory(other.getBootWorkspaceFactory());
         this.setClassWorldURLs(other.getClassWorldURLs());
         this.setClassWorldLoader(other.getClassWorldLoader());
         this.setUuid(other.getUuid());
-        this.setExtensionsSet(other.getExtensionsSet());
         this.setRuntimeBootDescriptor(other.getRuntimeBootDescriptor());
         return this;
     }
@@ -1823,17 +1798,8 @@ public final class NBootOptionsInfo {
             if (o.getSharedInstance() != null) {
                 this.setSharedInstance(o.getSharedInstance());
             }
-//            if (o.getBootRepositories() != null) {
-//                setBootRepositories(o.getBootRepositories());
-//            }
             if (o.getRuntimeBootDependencyNode() != null) {
                 setRuntimeBootDependencyNode(o.getRuntimeBootDependencyNode());
-            }
-            if (o.getExtensionBootDescriptors() != null) {
-                setExtensionBootDescriptors(o.getExtensionBootDescriptors());
-            }
-            if (o.getExtensionBootDependencyNodes() != null) {
-                setExtensionBootDependencyNodes(o.getExtensionBootDependencyNodes());
             }
             if (o.getBootWorkspaceFactory() != null) {
                 setBootWorkspaceFactory(o.getBootWorkspaceFactory());
@@ -1847,9 +1813,6 @@ public final class NBootOptionsInfo {
             if (o.getUuid() != null) {
                 setUuid(o.getUuid());
             }
-            if (o.getExtensionsSet() != null) {
-                setExtensionsSet(o.getExtensionsSet());
-            }
             if (o.getRuntimeBootDescriptor() != null) {
                 setRuntimeBootDescriptor(o.getRuntimeBootDescriptor());
             }
@@ -1857,16 +1820,6 @@ public final class NBootOptionsInfo {
         return this;
     }
 
-//
-//    public NBootOptionsBuilderBoot setCmdLine(String cmdLine) {
-//        setCmdLine(NCmdLine.parseDefault(cmdLine).get().toStringArray());
-//        return this;
-//    }
-
-    //    public NBootOptionsBuilderBoot setCmdLine(String[] args) {
-//        NWorkspaceCmdLineParser.parseNutsArguments(args, this);
-//        return this;
-//    }
     public Boolean getSharedInstance() {
         return sharedInstance;
     }
@@ -2095,26 +2048,6 @@ public final class NBootOptionsInfo {
         return this;
     }
 
-    public List<NBootDescriptor> getExtensionBootDescriptors() {
-        return extensionBootDescriptors;
-    }
-
-
-    public NBootOptionsInfo setExtensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors) {
-        this.extensionBootDescriptors = NBootUtils.nonNullList(extensionBootDescriptors);
-        return this;
-    }
-
-    public List<NBootClassLoaderNode> getExtensionBootDependencyNodes() {
-        return extensionBootDependencyNodes;
-    }
-
-
-    public NBootOptionsInfo setExtensionBootDependencyNodes(List<NBootClassLoaderNode> extensionBootDependencyNodes) {
-        this.extensionBootDependencyNodes = NBootUtils.nonNullList(extensionBootDependencyNodes);
-        return this;
-    }
-
     public NBootWorkspaceFactory getBootWorkspaceFactory() {
         return bootWorkspaceFactory;
     }
@@ -2152,16 +2085,6 @@ public final class NBootOptionsInfo {
 
     public NBootOptionsInfo setUuid(String uuid) {
         this.uuid = NBootUtils.trimToNull(uuid);
-        return this;
-    }
-
-    public Set<String> getExtensionsSet() {
-        return extensionsSet;
-    }
-
-
-    public NBootOptionsInfo setExtensionsSet(Set<String> extensionsSet) {
-        this.extensionsSet = NBootUtils.nonNullSet(extensionsSet);
         return this;
     }
 

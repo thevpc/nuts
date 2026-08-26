@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.item;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.elem.builder.NBoundAffixList;
 import net.thevpc.nuts.runtime.standalone.elem.path.NElementPathImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
@@ -118,7 +117,7 @@ public class DefaultNFlatExprElement extends AbstractNElement
 
     @Override
     public List<NElement> resolveAll(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         NElementPathImpl pp = new NElementPathImpl(pattern);
         NElement[] nElements = pp.resolveReversed(this);
         return new ArrayList<>(Arrays.asList(nElements));

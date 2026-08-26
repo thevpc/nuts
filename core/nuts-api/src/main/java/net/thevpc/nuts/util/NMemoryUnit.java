@@ -2,10 +2,19 @@ package net.thevpc.nuts.util;
 
 import java.util.function.Function;
 
+/**
+ * NMemoryUnit enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NMemoryUnit implements NEnum {
     BIT, BYTE, KILO_BYTE, MEGA_BYTE, GIGA_BYTE, TERA_BYTE, PETA_BYTE, ZETA_BYTE;
     private String id;
 
+  /**
+   * N memory unit.
+   */
     NMemoryUnit() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
@@ -15,6 +24,12 @@ public enum NMemoryUnit implements NEnum {
         return id;
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NMemoryUnit> parse(String value) {
         return NEnumUtils.parseEnum(value, NMemoryUnit.class, new Function<NEnumUtils.NEnumCandidate, NOptional<NMemoryUnit>>() {
             @Override

@@ -1,217 +1,42 @@
 package net.thevpc.nuts.ext.ssh;
 
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
-import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.spi.base.NEnvAsCmdBase;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
-public class NEnvSshImpl implements NEnv {
-    private NConnectionString connectionString;
-    private NEnv defEnv;
+public class NEnvSshImpl extends NEnvAsCmdBase {
+    public static final String PROTOCOL = "ssh";
 
     public NEnvSshImpl(NScorableContext context) {
-        init(context.getCriteria());
+        super(context, PROTOCOL);
     }
 
     public NEnvSshImpl(NConnectionString connectionString) {
-        init(connectionString);
+        super(connectionString, PROTOCOL);
     }
 
     @Override
     public NEnv refresh() {
-        return new NEnvSshImpl(connectionString);
+        return new NEnvSshImpl(connectionString());
     }
 
     @NScore
     public static int getScore(NScorableContext context) {
-        Object c = context.getCriteria();
+        Object c = context.criteria();
         if (c instanceof NConnectionString) {
             NConnectionString z = (NConnectionString) c;
-            if (isSupportedProtocol(z.getProtocol())) {
+            if (PROTOCOL.equals(z.protocol())) {
                 return NScorable.DEFAULT_SCORE;
             }
         }
         return NScorable.UNSUPPORTED_SCORE;
     }
-    @Override
-    public boolean isNativeImage() {
-        return false;
-    }
-    private void init(NConnectionString connectionString){
-        this.connectionString = connectionString;
-        NEnvCmdSPI commander=new NEnvCmdSPI() {
-            @Override
-            public String exec(String cmd) {
-                return runOnceSystemGrab(cmd);
-            }
 
-            @Override
-            public NConnectionString getTargetConnectionString() {
-                return connectionString;
-            }
-        };
-        defEnv = NExtensions.of().createSupported(NEnv.class, commander).get();
-    }
-
-    @Override
-    public String getMachineName() {
-        return defEnv.getMachineName();
-    }
-
-    @Override
-    public NConnectionString getConnectionString() {
-        return connectionString;
-    }
-
-    @Override
-    public NOsFamily getOsFamily() {
-        return defEnv.getOsFamily();
-    }
-
-    @Override
-    public Set<NShellFamily> getShellFamilies() {
-        return defEnv.getShellFamilies();
-    }
-
-    @Override
-    public NShellFamily getShellFamily() {
-        return defEnv.getShellFamily();
-    }
-
-    @Override
-    public NId getDesktopEnvironment() {
-        return defEnv.getDesktopEnvironment();
-    }
-
-    @Override
-    public Set<NId> getDesktopEnvironments() {
-        return defEnv.getDesktopEnvironments();
-    }
-
-    @Override
-    public NDesktopEnvironmentFamily getDesktopEnvironmentFamily() {
-        return defEnv.getDesktopEnvironmentFamily();
-    }
-
-    @Override
-    public Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies() {
-        return defEnv.getDesktopEnvironmentFamilies();
-    }
-
-    @Override
-    public NId getJava() {
-        return defEnv.getJava();
-    }
-
-    @Override
-    public NId getOs() {
-        return defEnv.getOs();
-    }
-
-    @Override
-    public NId getOsDist() {
-        return defEnv.getOsDist();
-    }
-
-    @Override
-    public NId getArch() {
-        return defEnv.getArch();
-    }
-
-    @Override
-    public NArchFamily getArchFamily() {
-        return defEnv.getArchFamily();
-    }
-
-    @Override
-    public List<NGpuDevice> getGpuDevices() {
-        return defEnv.getGpuDevices();
-    }
-
-    @Override
-    public NOptional<NGpuDevice> getGpuDevice() {
-        return defEnv.getGpuDevice();
-    }
-
-    @Override
-    public long queryGpuFreeMemoryBytes(NGpuDevice device) {
-        return defEnv.queryGpuFreeMemoryBytes(device);
-    }
-
-    @Override
-    public List<NParallelProcessorRuntime> getParallelProcessorRuntimes() {
-        return defEnv.getParallelProcessorRuntimes();
-    }
-
-    @Override
-    public NParallelProcessorFamily getParallelProcessorFamily() {
-        return defEnv.getParallelProcessorFamily();
-    }
-
-    @Override
-    public boolean isGraphicalDesktopEnvironment() {
-        return defEnv.isGraphicalDesktopEnvironment();
-    }
-
-    @Override
-    public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
-        return defEnv.getDesktopIntegrationSupport(target);
-    }
-
-    @Override
-    public Path getDesktopPath() {
-        return defEnv.getDesktopPath();
-    }
-
-    @Override
-    public NOptional<String> getEnv(String name) {
-        return defEnv.getEnv(name);
-    }
-
-    @Override
-    public Map<String, String> getEnv() {
-        return defEnv.getEnv();
-    }
-
-    @Override
-    public String getRootUserName() {
-        return defEnv.getRootUserName();
-    }
-
-    @Override
-    public String getUserName() {
-        return defEnv.getUserName();
-    }
-
-    @Override
-    public String getUserHome() {
-        return defEnv.getUserHome();
-    }
-
-    @Override
-    public NId getShell() {
-        return defEnv.getShell();
-    }
-
-    @Override
-    public String getHostName() {
-        return defEnv.getHostName();
-    }
-
-    private static boolean isSupportedProtocol(String protocol) {
-        return ("ssh".equals(protocol));
-    }
-
-
-    private String runOnceSystemGrab(String cmd) {
-        try (SshConnection sshc = SshConnectionPool.of().acquire(connectionString)) {
+    protected String runSystemCommand(String cmd) {
+        try (SshConnection sshc = SshConnectionPool.of().acquire(connectionString())) {
             return sshc.execStringCommandGrabbed(cmd).outString();
         }
     }

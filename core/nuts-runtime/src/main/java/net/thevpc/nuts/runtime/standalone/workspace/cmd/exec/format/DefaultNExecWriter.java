@@ -7,8 +7,8 @@ import net.thevpc.nuts.text.NExecWriter;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class DefaultNExecWriter extends DefaultObjectWriterBase<NExecWriter> imp
     }
 
     @Override
-    public NExecWriter setRedirectInput(boolean redirectInput) {
+    public NExecWriter redirectInput(boolean redirectInput) {
         this.redirectInput = redirectInput;
         return this;
     }
@@ -49,7 +49,7 @@ public class DefaultNExecWriter extends DefaultObjectWriterBase<NExecWriter> imp
     }
 
     @Override
-    public NExecWriter setRedirectOutput(boolean redirectOutput) {
+    public NExecWriter redirectOutput(boolean redirectOutput) {
         this.redirectOutput = redirectOutput;
         return this;
     }
@@ -60,52 +60,52 @@ public class DefaultNExecWriter extends DefaultObjectWriterBase<NExecWriter> imp
     }
 
     @Override
-    public NExecWriter setRedirectError(boolean redirectError) {
+    public NExecWriter redirectError(boolean redirectError) {
         this.redirectError = redirectError;
         return this;
     }
 
 
     @Override
-    public Predicate<ArgEntry> getArgumentFilter() {
+    public Predicate<ArgEntry> argumentFilter() {
         return argumentFilter;
     }
 
     @Override
-    public NExecWriter setArgumentFilter(Predicate<ArgEntry> filter) {
+    public NExecWriter argumentFilter(Predicate<ArgEntry> filter) {
         this.argumentFilter = filter;
         return this;
     }
 
     @Override
-    public Function<ArgEntry, String> getArgumentReplacer() {
+    public Function<ArgEntry, String> argumentReplacer() {
         return argumentReplacer;
     }
 
     @Override
-    public DefaultNExecWriter setArgumentReplacer(Function<ArgEntry, String> argumentReplacer) {
+    public DefaultNExecWriter argumentReplacer(Function<ArgEntry, String> argumentReplacer) {
         this.argumentReplacer = argumentReplacer;
         return this;
     }
 
     @Override
-    public Predicate<EnvEntry> getEnvFilter() {
+    public Predicate<EnvEntry> envFilter() {
         return envFilter;
     }
 
     @Override
-    public NExecWriter setEnvFilter(Predicate<EnvEntry> filter) {
+    public NExecWriter envFilter(Predicate<EnvEntry> filter) {
         this.envFilter = filter;
         return this;
     }
 
     @Override
-    public Function<EnvEntry, String> getEnvReplacer() {
+    public Function<EnvEntry, String> envReplacer() {
         return envReplacer;
     }
 
     @Override
-    public NExecWriter setEnvReplacer(Function<EnvEntry, String> envReplacer) {
+    public NExecWriter envReplacer(Function<EnvEntry, String> envReplacer) {
         this.envReplacer = envReplacer;
         return this;
     }
@@ -114,21 +114,21 @@ public class DefaultNExecWriter extends DefaultObjectWriterBase<NExecWriter> imp
     public void print(Object aValue, NPrintStream out) {
         StringBuilder sb = new StringBuilder();
         NExec ec = (NExec) aValue;
-        NExecOutput _out = ec.getOut();
-        NExecOutput err = ec.getErr();
-        NExecInput in = ec.getIn();
-        Map<String, String> env = ec.getEnv();
-        List<String> command = ec.getCommand();
+        NExecOutput _out = ec.out();
+        NExecOutput err = ec.err();
+        NExecInput in = ec.in();
+        Map<String, String> env = ec.env();
+        List<String> command = ec.command();
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
                 String v = e.getValue();
                 DefaultEnvEntry ee = new DefaultEnvEntry(k, v);
-                if (getEnvFilter()!=null && !getEnvFilter().test(ee)) {
+                if (envFilter()!=null && !envFilter().test(ee)) {
                     continue;
                 }
-                if(getEnvReplacer()!=null){
-                    String v2 = getEnvReplacer().apply(ee);
+                if(envReplacer()!=null){
+                    String v2 = envReplacer().apply(ee);
                     if(v2==null){
                         continue;
                     }
@@ -146,11 +146,11 @@ public class DefaultNExecWriter extends DefaultObjectWriterBase<NExecWriter> imp
                 s="";
             }
             DefaultArgEntry aa = new DefaultArgEntry(i, s);
-            if (getArgumentFilter()!=null && !getArgumentFilter().test(aa)) {
+            if (argumentFilter()!=null && !argumentFilter().test(aa)) {
                 continue;
             }
-            if(getArgumentReplacer()!=null){
-                String y=getArgumentReplacer().apply(aa);
+            if(argumentReplacer()!=null){
+                String y= argumentReplacer().apply(aa);
                 if(y==null){
                     continue;
                 }
@@ -206,12 +206,12 @@ public class DefaultNExecWriter extends DefaultObjectWriterBase<NExecWriter> imp
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return name;
         }
 
         @Override
-        public String getValue() {
+        public String value() {
             return value;
         }
     }
@@ -225,12 +225,12 @@ public class DefaultNExecWriter extends DefaultObjectWriterBase<NExecWriter> imp
         }
 
         @Override
-        public int getIndex() {
+        public int index() {
             return index;
         }
 
         @Override
-        public String getValue() {
+        public String value() {
             return value;
         }
     }

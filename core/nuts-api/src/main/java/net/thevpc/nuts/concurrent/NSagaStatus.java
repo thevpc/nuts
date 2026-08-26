@@ -44,6 +44,9 @@ public enum NSagaStatus implements NEnum {
      */
     private final String id;
 
+  /**
+   * N saga status.
+   */
     NSagaStatus() {
         this.id = NNameFormat.ID_NAME.format(name());
     }

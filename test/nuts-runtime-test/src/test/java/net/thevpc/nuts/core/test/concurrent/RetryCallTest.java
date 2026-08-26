@@ -13,13 +13,11 @@ import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.runtime.standalone.concurrent.NRetryCallStoreMemory;
 import net.thevpc.nuts.concurrent.NCallable;
-import net.thevpc.nuts.runtime.standalone.concurrent.NSagaCallableImpl;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +56,7 @@ public class RetryCallTest {
 
             @Override
             public <T> NOptional<T> get(NBeanRef ref) {
-                return NOptional.ofNamed((T) beans.get(ref.getId()), ref.getId());
+                return NOptional.ofNamed((T) beans.get(ref.id()), ref.id());
             }
         };
         NBeanContainer.scopedStack().runWith(springContainer,()->{
@@ -67,9 +65,9 @@ public class RetryCallTest {
                     .withStore(jdbcStore)
                     ;
             factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
-                    .setHandler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
-                    .setMaxRetries(5)
-                    .setRetryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1),1))
+                    .handler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
+                    .maxRetries(5)
+                    .retryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1),1))
                     .callAsync();
         });
     }

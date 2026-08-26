@@ -33,26 +33,56 @@ package net.thevpc.nuts.core;
  */
 public interface NRepositoryListener extends NListener {
 
+    /**
+     * On undeploy.
+     *
+     * @param event event
+     */
     default void onUndeploy(NContentEvent event) {
 
     }
 
+    /**
+     * On deploy.
+     *
+     * @param event event
+     */
     default void onDeploy(NContentEvent event) {
 
     }
 
+    /**
+     * On push.
+     *
+     * @param event event
+     */
     default void onPush(NContentEvent event) {
 
     }
 
+    /**
+     * On add repository.
+     *
+     * @param event event
+     */
     default void onAddRepository(NRepositoryEvent event) {
 
     }
 
+    /**
+     * On remove repository.
+     *
+     * @param event event
+     */
     default void onRemoveRepository(NRepositoryEvent event) {
 
     }
 
+    /**
+     * On configuration changed.
+     *
+     * @param event event
+     */
     default void onConfigurationChanged(NRepositoryEvent event) {
 
     }

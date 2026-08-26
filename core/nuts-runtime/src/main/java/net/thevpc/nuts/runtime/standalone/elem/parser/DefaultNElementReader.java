@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.elem.parser;
 
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.expr.NParseException;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -11,7 +13,7 @@ import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressFactory;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
@@ -49,7 +51,7 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     @Override
-    public NElementReader setNtf(boolean ntf) {
+    public NElementReader ntf(boolean ntf) {
         this.ntf = ntf;
         return this;
     }
@@ -60,7 +62,7 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     @Override
-    public NElementReader setLogProgress(boolean logProgress) {
+    public NElementReader logProgress(boolean logProgress) {
         this.logProgress = logProgress;
         return this;
     }
@@ -71,18 +73,18 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     @Override
-    public NElementReader setTraceProgress(boolean traceProgress) {
+    public NElementReader traceProgress(boolean traceProgress) {
         this.traceProgress = traceProgress;
         return this;
     }
 
     @Override
-    public NContentType getContentType() {
+    public NContentType contentType() {
         return contentType;
     }
 
     @Override
-    public NElementReader setContentType(NContentType contentType) {
+    public NElementReader contentType(NContentType contentType) {
         if (contentType == null) {
             this.contentType = NContentType.JSON;
         } else {
@@ -100,22 +102,22 @@ public class DefaultNElementReader implements NElementReader {
 
     @Override
     public NElementReader json() {
-        return setContentType(NContentType.JSON);
+        return contentType(NContentType.JSON);
     }
 
     @Override
     public NElementReader yaml() {
-        return setContentType(NContentType.YAML);
+        return contentType(NContentType.YAML);
     }
 
     @Override
     public NElementReader tson() {
-        return setContentType(NContentType.TSON);
+        return contentType(NContentType.TSON);
     }
 
     @Override
     public NElementReader xml() {
-        return setContentType(NContentType.XML);
+        return contentType(NContentType.XML);
     }
 
     @Override
@@ -126,11 +128,11 @@ public class DefaultNElementReader implements NElementReader {
     private InputStream prepareInputStream(InputStream is, Object origin) {
         if (isLogProgress() || isTraceProgress()) {
             return NInputStreamMonitor.of()
-                    .setSource(is)
-                    .setOrigin(origin)
-                    .setLogProgress(isLogProgress())
-                    .setTraceProgress(isTraceProgress())
-                    .setProgressFactory(getProgressFactory())
+                    .source(is)
+                    .origin(origin)
+                    .logProgress(isLogProgress())
+                    .traceProgress(isTraceProgress())
+                    .progressFactory(progressFactory())
                     .create();
         }
         return is;
@@ -139,14 +141,14 @@ public class DefaultNElementReader implements NElementReader {
     private InputStream prepareInputStream(NPath path) {
         if (isLogProgress()) {
             return NInputStreamMonitor.of()
-                    .setSource(path)
-                    .setOrigin(path)
-                    .setLogProgress(isLogProgress())
-                    .setTraceProgress(isTraceProgress())
-                    .setProgressFactory(getProgressFactory())
+                    .source(path)
+                    .origin(path)
+                    .logProgress(isLogProgress())
+                    .traceProgress(isTraceProgress())
+                    .progressFactory(progressFactory())
                     .create();
         }
-        return path.getInputStream();
+        return path.inputStream();
     }
 
     @Override
@@ -323,7 +325,7 @@ public class DefaultNElementReader implements NElementReader {
     private DefaultNElementFactoryContext createFactoryContext() {
         NReflectRepository reflectRepository = NWorkspaceUtils.of().getReflectRepository();
         DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(isNtf(), reflectRepository, userElementMapperStore);
-        switch (getContentType()) {
+        switch (contentType()) {
             case XML:
             case JSON:
             case TSON:
@@ -348,12 +350,12 @@ public class DefaultNElementReader implements NElementReader {
     }
 
     @Override
-    public NProgressFactory getProgressFactory() {
+    public NProgressFactory progressFactory() {
         return progressFactory;
     }
 
     @Override
-    public NElementReader setProgressFactory(NProgressFactory progressFactory) {
+    public NElementReader progressFactory(NProgressFactory progressFactory) {
         this.progressFactory = progressFactory;
         return this;
     }

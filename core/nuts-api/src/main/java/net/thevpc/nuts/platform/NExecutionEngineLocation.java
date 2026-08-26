@@ -28,6 +28,8 @@ package net.thevpc.nuts.platform;
 import net.thevpc.nuts.core.NConfigItem;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.Objects;
 
@@ -68,8 +70,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      */
     public NExecutionEngineLocation(NId id, String vendor, String product, String variant, String name, String path, String version, String packaging, int priority) {
         this.id = id;
-        this.executionEngineFamily = (id == null || NBlankable.isBlank(id.getArtifactId())) ? NExecutionEngineFamily.JAVA :
-                NExecutionEngineFamily.parse(id.getArtifactId()).orElse(NExecutionEngineFamily.UNKNOWN);
+        this.executionEngineFamily = (id == null || NBlankable.isBlank(id.artifactId())) ? NExecutionEngineFamily.JAVA :
+                NExecutionEngineFamily.parse(id.artifactId()).orElse(NExecutionEngineFamily.UNKNOWN);
         this.product = product;
         this.variant = variant;
         this.vendor = vendor;
@@ -80,27 +82,64 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
         this.priority = priority;
     }
 
-    public String getVariant() {
+    /**
+     * Variant.
+     *
+     * @return variant result
+     */
+    @NGetter
+    public String variant() {
         return variant;
     }
 
-    public String getVendor() {
+    /**
+     * Vendor.
+     *
+     * @return vendor result
+     */
+    @NGetter
+    public String vendor() {
         return vendor;
     }
 
-    public int getPriority() {
+    /**
+     * Priority.
+     *
+     * @return priority result
+     */
+    @NGetter
+    public int priority() {
         return priority;
     }
 
-    public NExecutionEngineLocation setPriority(int priority) {
+    /**
+     * Priority.
+     *
+     * @param priority priority
+     * @return priority result
+     */
+    @NSetter
+    public NExecutionEngineLocation priority(int priority) {
         return new NExecutionEngineLocation(id, vendor,product, variant,name, path, version, packaging, priority);
     }
 
-    public NId getId() {
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    @NGetter
+    public NId id() {
         return id;
     }
 
-    public NExecutionEngineFamily getExecutionEngineFamily() {
+    /**
+     * Execution engine family.
+     *
+     * @return execution engine family result
+     */
+    @NGetter
+    public NExecutionEngineFamily executionEngineFamily() {
         return executionEngineFamily;
     }
 
@@ -110,7 +149,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return product name
      */
-    public String getProduct() {
+    @NGetter
+    public String product() {
         return product;
     }
 
@@ -119,7 +159,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return SDK version
      */
-    public String getVersion() {
+    @NGetter
+    public String version() {
         return version;
     }
 
@@ -128,7 +169,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return sdk name
      */
-    public String getName() {
+    @NGetter
+    public String name() {
         return name;
     }
 
@@ -137,7 +179,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return sdk path
      */
-    public String getPath() {
+    @NGetter
+    public String path() {
         return path;
     }
 
@@ -147,7 +190,8 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
      *
      * @return packaging name
      */
-    public String getPackaging() {
+    @NGetter
+    public String packaging() {
         return packaging;
     }
 
@@ -184,11 +228,22 @@ public class NExecutionEngineLocation extends NConfigItem implements Cloneable {
                 '}';
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NExecutionEngineLocation copy() {
         try {
             NExecutionEngineLocation cloned = (NExecutionEngineLocation) clone();
             return cloned;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

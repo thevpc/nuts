@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 
 import java.io.IOException;
 import java.io.OutputStream;

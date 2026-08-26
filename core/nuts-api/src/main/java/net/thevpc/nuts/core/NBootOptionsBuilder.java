@@ -30,76 +30,241 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
+/**
+ * NBootOptionsBuilder interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NBootOptionsBuilder extends NComponent {
-    static NBootOptionsBuilder of(){
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
+    static NBootOptionsBuilder of() {
         return NExtensions.of(NBootOptionsBuilder.class);
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NBootOptionsBuilder copy();
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NBootOptions build();
 
 //    NBootOptionsBuilder setBootRepositories(String bootRepositories);
 
-    NBootOptionsBuilder setRuntimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode);
+    /**
+     * Runtime boot dependency node.
+     *
+     * @param runtimeBootDependencyNode runtime boot dependency node
+     * @return runtime boot dependency node result
+     */
+    NBootOptionsBuilder runtimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode);
 
-    NBootOptionsBuilder setExtensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors);
+    /**
+     * Boot workspace factory.
+     *
+     * @param bootWorkspaceFactory boot workspace factory
+     * @return boot workspace factory result
+     */
+    NBootOptionsBuilder bootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory);
 
-    NBootOptionsBuilder setExtensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes);
+    /**
+     * Class world ur ls.
+     *
+     * @param classWorldURLs class world ur ls
+     * @return class world ur ls result
+     */
+    NBootOptionsBuilder classWorldURLs(List<URL> classWorldURLs);
 
-    NBootOptionsBuilder setBootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory);
+    /**
+     * Class world loader.
+     *
+     * @param classWorldLoader class world loader
+     * @return class world loader result
+     */
+    NBootOptionsBuilder classWorldLoader(ClassLoader classWorldLoader);
 
-    NBootOptionsBuilder setClassWorldURLs(List<URL> classWorldURLs);
+    /**
+     * Uuid.
+     *
+     * @param uuid uuid
+     * @return uuid result
+     */
+    NBootOptionsBuilder uuid(String uuid);
 
-    NBootOptionsBuilder setClassWorldLoader(ClassLoader classWorldLoader);
-
-    NBootOptionsBuilder setUuid(String uuid);
-
-    NBootOptionsBuilder setExtensionsSet(Set<String> extensionsSet);
-
-    NBootOptionsBuilder setRuntimeBootDescriptor(NBootDescriptor runtimeBootDescriptor);
-
-
-    NBootOptionsBuilder setInitLaunchers(Boolean initLaunchers);
-
-    NBootOptionsBuilder setInitScripts(Boolean initScripts);
-
-    NBootOptionsBuilder setInitPlatforms(Boolean initPlatforms);
-
-    NBootOptionsBuilder setInitJava(Boolean initJava);
-
-    NBootOptionsBuilder setIsolationLevel(NIsolationLevel isolationLevel);
-
-    NBootOptionsBuilder setDesktopLauncher(NSupportMode desktopLauncher);
-
-    NBootOptionsBuilder setMenuLauncher(NSupportMode menuLauncher);
-
-    NBootOptionsBuilder setUserLauncher(NSupportMode userLauncher);
-
-    NBootOptionsBuilder setApiVersion(NVersion apiVersion);
-
-    NBootOptionsBuilder setApplicationArguments(List<String> applicationArguments);
-
-
-    NBootOptionsBuilder setArchetype(String archetype);
-
-    NBootOptionsBuilder setClassLoaderSupplier(Supplier<ClassLoader> provider);
-
-
-    NBootOptionsBuilder setConfirm(NConfirmationMode confirm);
-
-    NBootOptionsBuilder setDry(Boolean dry);
-
-    NBootOptionsBuilder setShowStacktrace(Boolean showStacktrace);
-
-    NBootOptionsBuilder setCreationTime(Instant creationTime);
+    /**
+     * Runtime boot descriptor.
+     *
+     * @param runtimeBootDescriptor runtime boot descriptor
+     * @return runtime boot descriptor result
+     */
+    NBootOptionsBuilder runtimeBootDescriptor(NBootDescriptor runtimeBootDescriptor);
 
 
-    NBootOptionsBuilder setExcludedExtensions(List<String> excludedExtensions);
+    /**
+     * Init launchers.
+     *
+     * @param initLaunchers init launchers
+     * @return init launchers result
+     */
+    NBootOptionsBuilder initLaunchers(Boolean initLaunchers);
 
-    NBootOptionsBuilder setExecutionType(NExecutionType executionType);
+    /**
+     * Init scripts.
+     *
+     * @param initScripts init scripts
+     * @return init scripts result
+     */
+    NBootOptionsBuilder initScripts(Boolean initScripts);
 
-    NBootOptionsBuilder setSharedInstance(Boolean sharedInstance);
+    /**
+     * Init platforms.
+     *
+     * @param initPlatforms init platforms
+     * @return init platforms result
+     */
+    NBootOptionsBuilder initPlatforms(Boolean initPlatforms);
+
+    /**
+     * Init java.
+     *
+     * @param initJava init java
+     * @return init java result
+     */
+    NBootOptionsBuilder initJava(Boolean initJava);
+
+    /**
+     * Checks if isolation level.
+     *
+     * @param isolationLevel isolation level
+     * @return isolation level result
+     */
+    NBootOptionsBuilder isolationLevel(NIsolationLevel isolationLevel);
+
+    /**
+     * Desktop launcher.
+     *
+     * @param desktopLauncher desktop launcher
+     * @return desktop launcher result
+     */
+    NBootOptionsBuilder desktopLauncher(NSupportMode desktopLauncher);
+
+    /**
+     * Menu launcher.
+     *
+     * @param menuLauncher menu launcher
+     * @return menu launcher result
+     */
+    NBootOptionsBuilder menuLauncher(NSupportMode menuLauncher);
+
+    /**
+     * User launcher.
+     *
+     * @param userLauncher user launcher
+     * @return user launcher result
+     */
+    NBootOptionsBuilder userLauncher(NSupportMode userLauncher);
+
+    /**
+     * Api version.
+     *
+     * @param apiVersion api version
+     * @return api version result
+     */
+    NBootOptionsBuilder apiVersion(NVersion apiVersion);
+
+    /**
+     * Application arguments.
+     *
+     * @param applicationArguments application arguments
+     * @return application arguments result
+     */
+    NBootOptionsBuilder applicationArguments(List<String> applicationArguments);
+
+
+    /**
+     * Archetype.
+     *
+     * @param archetype archetype
+     * @return archetype result
+     */
+    NBootOptionsBuilder archetype(String archetype);
+
+    /**
+     * Class loader supplier.
+     *
+     * @param provider provider
+     * @return class loader supplier result
+     */
+    NBootOptionsBuilder classLoaderSupplier(Supplier<ClassLoader> provider);
+
+
+    /**
+     * Confirm.
+     *
+     * @param confirm confirm
+     * @return confirm result
+     */
+    NBootOptionsBuilder confirm(NConfirmationMode confirm);
+
+    /**
+     * Cry.
+     *
+     * @param dry dry
+     * @return cry result
+     */
+    NBootOptionsBuilder cry(Boolean dry);
+
+    /**
+     * Show stacktrace.
+     *
+     * @param showStacktrace show stacktrace
+     * @return show stacktrace result
+     */
+    NBootOptionsBuilder showStacktrace(Boolean showStacktrace);
+
+    /**
+     * Creation time.
+     *
+     * @param creationTime creation time
+     * @return creation time result
+     */
+    NBootOptionsBuilder creationTime(Instant creationTime);
+
+
+    /**
+     * Excluded extensions.
+     *
+     * @param excludedExtensions excluded extensions
+     * @return excluded extensions result
+     */
+    NBootOptionsBuilder excludedExtensions(List<String> excludedExtensions);
+
+    /**
+     * Execution type.
+     *
+     * @param executionType execution type
+     * @return execution type result
+     */
+    NBootOptionsBuilder executionType(NExecutionType executionType);
+
+    /**
+     * Shared instance.
+     *
+     * @param sharedInstance shared instance
+     * @return shared instance result
+     */
+    NBootOptionsBuilder sharedInstance(Boolean sharedInstance);
 
     /**
      * set runAs mode
@@ -108,9 +273,15 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return {@code this} instance
      * @since 0.8.1
      */
-    NBootOptionsBuilder setRunAs(NRunAs runAs);
+    NBootOptionsBuilder runAs(NRunAs runAs);
 
-    NBootOptionsBuilder setExecutorOptions(List<String> executorOptions);
+    /**
+     * Executor options.
+     *
+     * @param executorOptions executor options
+     * @return executor options result
+     */
+    NBootOptionsBuilder executorOptions(List<String> executorOptions);
 
     /**
      * set home locations.
@@ -121,39 +292,111 @@ public interface NBootOptionsBuilder extends NComponent {
      * @param homeLocations home locations map
      * @return {@code this} instance
      */
-    NBootOptionsBuilder setHomeLocations(Map<NHomeLocation, String> homeLocations);
+    NBootOptionsBuilder homeLocations(Map<NHomeLocation, String> homeLocations);
 
-    NBootOptionsBuilder setJavaCommand(String javaCommand);
-
-
-    NBootOptionsBuilder setJavaOptions(String javaOptions);
-
-
-    NBootOptionsBuilder setLogConfig(NLogConfig logConfig);
-
-
-    NBootOptionsBuilder setName(String workspaceName);
-
-    NBootOptionsBuilder setOpenMode(NOpenMode openMode);
+    /**
+     * Java command.
+     *
+     * @param javaCommand java command
+     * @return java command result
+     */
+    NBootOptionsBuilder javaCommand(String javaCommand);
 
 
-    NBootOptionsBuilder setOutputFormat(NContentType outputFormat);
+    /**
+     * Java options.
+     *
+     * @param javaOptions java options
+     * @return java options result
+     */
+    NBootOptionsBuilder javaOptions(String javaOptions);
 
 
-    NBootOptionsBuilder setOutputFormatOptions(List<String> options);
+    /**
+     * Log config.
+     *
+     * @param logConfig log config
+     * @return log config result
+     */
+    NBootOptionsBuilder logConfig(NLogConfig logConfig);
 
 
-    NBootOptionsBuilder setCredential(char[] credentials);
+    /**
+     * Name.
+     *
+     * @param workspaceName workspace name
+     * @return name result
+     */
+    NBootOptionsBuilder name(String workspaceName);
+
+    /**
+     * Open mode.
+     *
+     * @param openMode open mode
+     * @return open mode result
+     */
+    NBootOptionsBuilder openMode(NOpenMode openMode);
 
 
-    NBootOptionsBuilder setRepositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy);
+    /**
+     * Output format.
+     *
+     * @param outputFormat output format
+     * @return output format result
+     */
+    NBootOptionsBuilder outputFormat(NContentType outputFormat);
 
 
-    NBootOptionsBuilder setRuntimeId(NId runtimeId);
+    /**
+     * Output format options.
+     *
+     * @param options options
+     * @return output format options result
+     */
+    NBootOptionsBuilder outputFormatOptions(List<String> options);
 
-    NBootOptionsBuilder setStoreLayout(NOsFamily storeLayout);
 
-    NBootOptionsBuilder setStoreStrategy(NStoreStrategy storeStrategy);
+    /**
+     * Credential.
+     *
+     * @param credentials credentials
+     * @return credential result
+     */
+    NBootOptionsBuilder credential(char[] credentials);
+
+
+    /**
+     * Repository store strategy.
+     *
+     * @param repositoryStoreStrategy repository store strategy
+     * @return repository store strategy result
+     */
+    NBootOptionsBuilder repositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy);
+
+
+    /**
+     * Runtime id.
+     *
+     * @param runtimeId runtime id
+     * @return runtime id result
+     */
+    NBootOptionsBuilder runtimeId(NId runtimeId);
+
+    /**
+     * Store layout.
+     *
+     * @param storeLayout store layout
+     * @return store layout result
+     */
+    NBootOptionsBuilder storeLayout(NOsFamily storeLayout);
+
+    /**
+     * Store strategy.
+     *
+     * @param storeStrategy store strategy
+     * @return store strategy result
+     */
+    NBootOptionsBuilder storeStrategy(NStoreStrategy storeStrategy);
 
 
     /**
@@ -165,16 +408,47 @@ public interface NBootOptionsBuilder extends NComponent {
      * @param storeLocations store locations map
      * @return {@code this} instance
      */
-    NBootOptionsBuilder setStoreLocations(Map<NStoreType, String> storeLocations);
+    NBootOptionsBuilder storeLocations(Map<NStoreType, String> storeLocations);
 
-    NBootOptionsBuilder setTerminalMode(NTerminalMode terminalMode);
+    /**
+     * Terminal mode.
+     *
+     * @param terminalMode terminal mode
+     * @return terminal mode result
+     */
+    NBootOptionsBuilder terminalMode(NTerminalMode terminalMode);
 
-    NBootOptionsBuilder setRepositories(List<String> transientRepositories);
-    NBootOptionsBuilder setBootRepositories(List<String> transientRepositories);
+    /**
+     * Repositories.
+     *
+     * @param transientRepositories transient repositories
+     * @return repositories result
+     */
+    NBootOptionsBuilder repositories(List<String> transientRepositories);
 
-    NBootOptionsBuilder setWorkspace(String workspace);
+    /**
+     * Boot repositories.
+     *
+     * @param transientRepositories transient repositories
+     * @return boot repositories result
+     */
+    NBootOptionsBuilder bootRepositories(List<String> transientRepositories);
 
-    NBootOptionsBuilder setDebug(String debug);
+    /**
+     * Workspace.
+     *
+     * @param workspace workspace
+     * @return workspace result
+     */
+    NBootOptionsBuilder workspace(String workspace);
+
+    /**
+     * Debug.
+     *
+     * @param debug debug
+     * @return debug result
+     */
+    NBootOptionsBuilder debug(String debug);
 
     /**
      * update 'global' option.
@@ -185,16 +459,40 @@ public interface NBootOptionsBuilder extends NComponent {
      * @param global if true consider global/system repository shared between all users
      * @return if true consider global/system repository
      */
-    NBootOptionsBuilder setSystem(Boolean global);
+    NBootOptionsBuilder system(Boolean global);
 
-    NBootOptionsBuilder setGui(Boolean gui);
+    /**
+     * Gui.
+     *
+     * @param gui gui
+     * @return gui result
+     */
+    NBootOptionsBuilder gui(Boolean gui);
 
-    NBootOptionsBuilder setInherited(Boolean inherited);
+    /**
+     * Inherited.
+     *
+     * @param inherited inherited
+     * @return inherited result
+     */
+    NBootOptionsBuilder inherited(Boolean inherited);
 
 
-    NBootOptionsBuilder setReadOnly(Boolean readOnly);
+    /**
+     * Read only.
+     *
+     * @param readOnly read only
+     * @return read only result
+     */
+    NBootOptionsBuilder readOnly(Boolean readOnly);
 
-    NBootOptionsBuilder setRecover(Boolean recover);
+    /**
+     * Recover.
+     *
+     * @param recover recover
+     * @return recover result
+     */
+    NBootOptionsBuilder recover(Boolean recover);
 
     /**
      * set the 'reset' flag to delete the workspace folders and files.
@@ -204,23 +502,48 @@ public interface NBootOptionsBuilder extends NComponent {
      * @param reset reset flag, when null inherit default ('false')
      * @return {@code this} instance
      */
-    NBootOptionsBuilder setReset(Boolean reset);
+    NBootOptionsBuilder reset(Boolean reset);
 
     /**
      * set resetHard flag.
      * Reset hard is used at boot time to reset ALL of nuts workspaces
+     *
      * @param resetHard resetHard flag
      * @return {@code this}
      */
-    NBootOptionsBuilder setResetHard(Boolean resetHard);
+    NBootOptionsBuilder resetHard(Boolean resetHard);
 
-    NBootOptionsBuilder setCommandVersion(Boolean version);
+    /**
+     * Command version.
+     *
+     * @param version version
+     * @return command version result
+     */
+    NBootOptionsBuilder commandVersion(Boolean version);
 
-    NBootOptionsBuilder setCommandHelp(Boolean help);
+    /**
+     * Command help.
+     *
+     * @param help help
+     * @return command help result
+     */
+    NBootOptionsBuilder commandHelp(Boolean help);
 
-    NBootOptionsBuilder setInstallCompanions(Boolean skipInstallCompanions);
+    /**
+     * Install companions.
+     *
+     * @param skipInstallCompanions skip install companions
+     * @return install companions result
+     */
+    NBootOptionsBuilder installCompanions(Boolean skipInstallCompanions);
 
-    NBootOptionsBuilder setSkipWelcome(Boolean skipWelcome);
+    /**
+     * Skip welcome.
+     *
+     * @param skipWelcome skip welcome
+     * @return skip welcome result
+     */
+    NBootOptionsBuilder skipWelcome(Boolean skipWelcome);
 
     /**
      * set output line prefix
@@ -229,7 +552,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return {@code this} instance
      * @since 0.8.0
      */
-    NBootOptionsBuilder setOutLinePrefix(String value);
+    NBootOptionsBuilder outLinePrefix(String value);
 
     /**
      * set output line prefix
@@ -238,7 +561,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return {@code this} instance
      * @since 0.8.0
      */
-    NBootOptionsBuilder setErrLinePrefix(String value);
+    NBootOptionsBuilder errLinePrefix(String value);
 
     /**
      * if true, do not bootstrap workspace after reset/recover.
@@ -252,25 +575,79 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true, do not run welcome when no application arguments were resolved
      * @since 0.6.0
      */
-    NBootOptionsBuilder setSkipBoot(Boolean skipBoot);
+    NBootOptionsBuilder skipBoot(Boolean skipBoot);
 
-    NBootOptionsBuilder setTrace(Boolean trace);
+    /**
+     * Trace.
+     *
+     * @param trace trace
+     * @return trace result
+     */
+    NBootOptionsBuilder trace(Boolean trace);
 
-    NBootOptionsBuilder setProgressOptions(String progressOptions);
+    /**
+     * Progress options.
+     *
+     * @param progressOptions progress options
+     * @return progress options result
+     */
+    NBootOptionsBuilder progressOptions(String progressOptions);
 
-    NBootOptionsBuilder setCached(Boolean cached);
+    /**
+     * Cached.
+     *
+     * @param cached cached
+     * @return cached result
+     */
+    NBootOptionsBuilder cached(Boolean cached);
 
-    NBootOptionsBuilder setIndexed(Boolean indexed);
+    /**
+     * Indexed.
+     *
+     * @param indexed indexed
+     * @return indexed result
+     */
+    NBootOptionsBuilder indexed(Boolean indexed);
 
-    NBootOptionsBuilder setTransitive(Boolean transitive);
+    /**
+     * Transitive.
+     *
+     * @param transitive transitive
+     * @return transitive result
+     */
+    NBootOptionsBuilder transitive(Boolean transitive);
 
-    NBootOptionsBuilder setBot(Boolean bot);
+    /**
+     * Bot.
+     *
+     * @param bot bot
+     * @return bot result
+     */
+    NBootOptionsBuilder bot(Boolean bot);
 
-    NBootOptionsBuilder setFetchStrategy(NFetchStrategy fetchStrategy);
+    /**
+     * Fetch strategy.
+     *
+     * @param fetchStrategy fetch strategy
+     * @return fetch strategy result
+     */
+    NBootOptionsBuilder fetchStrategy(NFetchStrategy fetchStrategy);
 
-    NBootOptionsBuilder setStdin(InputStream stdin);
+    /**
+     * Stdin.
+     *
+     * @param stdin stdin
+     * @return stdin result
+     */
+    NBootOptionsBuilder stdin(InputStream stdin);
 
-    NBootOptionsBuilder setStdout(PrintStream stdout);
+    /**
+     * Stdout.
+     *
+     * @param stdout stdout
+     * @return stdout result
+     */
+    NBootOptionsBuilder stdout(PrintStream stdout);
 
     /**
      * default standard error. when null, use {@code System.err}
@@ -281,7 +658,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return default standard error or null
      */
-    NBootOptionsBuilder setStderr(PrintStream stderr);
+    NBootOptionsBuilder stderr(PrintStream stderr);
 
     /**
      * executor service used to create worker threads. when null, use default.
@@ -292,7 +669,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return executor service used to create worker threads. when null, use default.
      */
-    NBootOptionsBuilder setExecutorService(ExecutorService executorService);
+    NBootOptionsBuilder executorService(ExecutorService executorService);
 
     /**
      * set expire instant. Expire time is used to expire any cached
@@ -302,15 +679,39 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return {@code this} instance
      * @since 0.8.0
      */
-    NBootOptionsBuilder setExpireTime(Instant value);
+    NBootOptionsBuilder expireTime(Instant value);
 
-    NBootOptionsBuilder setSkipErrors(Boolean value);
+    /**
+     * Skip errors.
+     *
+     * @param value value
+     * @return skip errors result
+     */
+    NBootOptionsBuilder skipErrors(Boolean value);
 
-    NBootOptionsBuilder setSwitchWorkspace(Boolean value);
+    /**
+     * Switch workspace.
+     *
+     * @param value value
+     * @return switch workspace result
+     */
+    NBootOptionsBuilder switchWorkspace(Boolean value);
 
-    NBootOptionsBuilder setErrors(List<NMsg> errors);
+    /**
+     * Errors.
+     *
+     * @param errors errors
+     * @return errors result
+     */
+    NBootOptionsBuilder errors(List<NMsg> errors);
 
-    NBootOptionsBuilder setCustomOptions(List<String> properties);
+    /**
+     * Custom options.
+     *
+     * @param properties properties
+     * @return custom options result
+     */
+    NBootOptionsBuilder customOptions(List<String> properties);
 
     /**
      * set locale
@@ -319,7 +720,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return {@code this} instance
      * @since 0.8.1
      */
-    NBootOptionsBuilder setLocale(String locale);
+    NBootOptionsBuilder locale(String locale);
 
     /**
      * set theme
@@ -328,27 +729,96 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return {@code this} instance
      * @since 0.8.1
      */
-    NBootOptionsBuilder setTheme(String theme);
+    NBootOptionsBuilder theme(String theme);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NBootOptionsBuilder copyFrom(NWorkspaceOptions other);
 
+    /**
+     * Copy from if present.
+     *
+     * @param other other
+     * @return copy from if present result
+     */
     NBootOptionsBuilder copyFromIfPresent(NWorkspaceOptions other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NBootOptionsBuilder copyFrom(NBootOptions other);
+
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NBootOptionsBuilder copyFrom(NBootOptionsBuilder other);
 
+    /**
+     * Copy from if present.
+     *
+     * @param other other
+     * @return copy from if present result
+     */
     NBootOptionsBuilder copyFromIfPresent(NBootOptions other);
 
-    NBootOptionsBuilder setCmdLine(String cmdLine);
+    /**
+     * Cmd line.
+     *
+     * @param cmdLine cmd line
+     * @return cmd line result
+     */
+    NBootOptionsBuilder cmdLine(String cmdLine);
 
-    NBootOptionsBuilder setCmdLine(String[] args);
+    /**
+     * Cmd line.
+     *
+     * @param args args
+     * @return cmd line result
+     */
+    NBootOptionsBuilder cmdLine(String[] args);
 
-    NBootOptionsBuilder setUserName(String username);
+    /**
+     * User name.
+     *
+     * @param username username
+     * @return user name result
+     */
+    NBootOptionsBuilder userName(String username);
 
-    NBootOptionsBuilder setStoreLocation(NStoreType location, String value);
+    /**
+     * Store location.
+     *
+     * @param location location
+     * @param value value
+     * @return store location result
+     */
+    NBootOptionsBuilder storeLocation(NStoreType location, String value);
 
-    NBootOptionsBuilder setHomeLocation(NHomeLocation location, String value);
+    /**
+     * Home location.
+     *
+     * @param location location
+     * @param value value
+     * @return home location result
+     */
+    NBootOptionsBuilder homeLocation(NHomeLocation location, String value);
 
+    /**
+     * Adds the specified output format options.
+     *
+     * @param options options
+     * @return add output format options result
+     */
     NBootOptionsBuilder addOutputFormatOptions(String... options);
 
     /**
@@ -358,50 +828,112 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NBootOptionsBuilder setDependencySolver(String dependencySolver);
+    NBootOptionsBuilder dependencySolver(String dependencySolver);
 
+    /**
+     * Unset runtime options.
+     *
+     * @return unset runtime options result
+     */
     NBootOptionsBuilder unsetRuntimeOptions();
 
+    /**
+     * Unset creation options.
+     *
+     * @return unset creation options result
+     */
     NBootOptionsBuilder unsetCreationOptions();
 
+    /**
+     * Unset exported options.
+     *
+     * @return unset exported options result
+     */
     NBootOptionsBuilder unsetExportedOptions();
 
 
     /**
-     * @since 0.8.5
      * @return this
+     * @since 0.8.5
      */
-    NBootOptionsBuilder setPreviewRepo(Boolean bot);
+    NBootOptionsBuilder previewRepo(Boolean bot);
 
 
-//    NOptional<String> getBootRepositories();
+    /**
+     * Runtime boot dependency node.
+     *
+     * @return runtime boot dependency node result
+     */
+    NOptional<NClassLoaderNode> runtimeBootDependencyNode();
 
-    NOptional<NClassLoaderNode> getRuntimeBootDependencyNode();
+    /**
+     * Boot workspace factory.
+     *
+     * @return boot workspace factory result
+     */
+    NOptional<NBootWorkspaceFactory> bootWorkspaceFactory();
 
-    NOptional<List<NBootDescriptor>> getExtensionBootDescriptors();
+    /**
+     * Class world ur ls.
+     *
+     * @return class world ur ls result
+     */
+    NOptional<List<URL>> classWorldURLs();
 
-    NOptional<List<NClassLoaderNode>> getExtensionBootDependencyNodes();
+    /**
+     * Class world loader.
+     *
+     * @return class world loader result
+     */
+    NOptional<ClassLoader> classWorldLoader();
 
-    NOptional<NBootWorkspaceFactory> getBootWorkspaceFactory();
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
+    NOptional<String> uuid();
 
-    NOptional<List<URL>> getClassWorldURLs();
+    /**
+     * Runtime boot descriptor.
+     *
+     * @return runtime boot descriptor result
+     */
+    NOptional<NBootDescriptor> runtimeBootDescriptor();
 
-    NOptional<ClassLoader> getClassWorldLoader();
+    /**
+     * Desktop launcher.
+     *
+     * @return desktop launcher result
+     */
+    NOptional<NSupportMode> desktopLauncher();
 
-    NOptional<String> getUuid();
+    /**
+     * Menu launcher.
+     *
+     * @return menu launcher result
+     */
+    NOptional<NSupportMode> menuLauncher();
 
-    NOptional<Set<String>> getExtensionsSet();
+    /**
+     * User launcher.
+     *
+     * @return user launcher result
+     */
+    NOptional<NSupportMode> userLauncher();
 
-    NOptional<NBootDescriptor> getRuntimeBootDescriptor();
+    /**
+     * Checks if isolation level.
+     *
+     * @return isolation level result
+     */
+    NOptional<NIsolationLevel> isolationLevel();
 
-    NOptional<NSupportMode> getDesktopLauncher();
-
-    NOptional<NSupportMode> getMenuLauncher();
-
-    NOptional<NSupportMode> getUserLauncher();
-
-    NOptional<NIsolationLevel> getIsolationLevel();
-
+    /**
+     * Converts to boot options.
+     *
+     * @return to boot options result
+     */
     NBootOptionsInfo toBootOptions();
 
     /**
@@ -410,7 +942,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return init launcher
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitLaunchers();
+    NOptional<Boolean> initLaunchers();
 
     /**
      * init scripts
@@ -418,7 +950,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return init scripts
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitScripts();
+    NOptional<Boolean> initScripts();
 
     /**
      * init platforms
@@ -426,7 +958,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return init platforms
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitPlatforms();
+    NOptional<Boolean> initPlatforms();
 
     /**
      * init java
@@ -434,7 +966,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return init java
      * @since 0.8.4
      */
-    NOptional<Boolean> getInitJava();
+    NOptional<Boolean> initJava();
 
     /**
      * nuts api version to boot.
@@ -444,7 +976,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return nuts api version to boot.
      */
-    NOptional<NVersion> getApiVersion();
+    NOptional<NVersion> apiVersion();
 
     /**
      * application arguments.
@@ -453,7 +985,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return application arguments.
      */
-    NOptional<List<String>> getApplicationArguments();
+    NOptional<List<String>> applicationArguments();
 
     /**
      * workspace archetype to consider when creating a new workspace.
@@ -463,7 +995,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return workspace archetype to consider when creating a new workspace.
      */
-    NOptional<String> getArchetype();
+    NOptional<String> archetype();
 
     /**
      * class loader supplier.
@@ -472,7 +1004,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return class loader supplier.
      */
-    NOptional<Supplier<ClassLoader>> getClassLoaderSupplier();
+    NOptional<Supplier<ClassLoader>> classLoaderSupplier();
 
     /**
      * confirm mode.
@@ -481,7 +1013,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return confirm mode.
      */
-    NOptional<NConfirmationMode> getConfirm();
+    NOptional<NConfirmationMode> confirm();
 
     /**
      * if true no real execution, with dry exec (execute without side effect).
@@ -491,7 +1023,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true no real execution, with dry exec (execute without side effect).
      */
 
-    NOptional<Boolean> getDry();
+    NOptional<Boolean> dry();
 
     /**
      * if true, show exception stacktrace when error.
@@ -501,7 +1033,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true, show stacktrace when error.
      */
 
-    NOptional<Boolean> getShowStacktrace();
+    NOptional<Boolean> showStacktrace();
 
     /**
      * workspace creation evaluated time.
@@ -510,7 +1042,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return workspace creation evaluated time.
      */
-    NOptional<Instant> getCreationTime();
+    NOptional<Instant> creationTime();
 
     /**
      * extensions to be excluded when opening the workspace.
@@ -519,7 +1051,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return extensions to be excluded when opening the workspace.
      */
-    NOptional<List<String>> getExcludedExtensions();
+    NOptional<List<String>> excludedExtensions();
 
     /**
      * execution type.
@@ -528,9 +1060,14 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return execution type.
      */
-    NOptional<NExecutionType> getExecutionType();
+    NOptional<NExecutionType> executionType();
 
-    NOptional<NRunAs> getRunAs();
+    /**
+     * Run as.
+     *
+     * @return run as result
+     */
+    NOptional<NRunAs> runAs();
 
     /**
      * extra executor options.
@@ -539,7 +1076,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return extra executor options.
      */
-    NOptional<List<String>> getExecutorOptions();
+    NOptional<List<String>> executorOptions();
 
     /**
      * return home location.
@@ -560,7 +1097,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return home locations
      */
-    NOptional<Map<NHomeLocation, String>> getHomeLocations();
+    NOptional<Map<NHomeLocation, String>> homeLocations();
 
     /**
      * java command (or java home) used to run workspace.
@@ -569,7 +1106,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return java command (or java home) used to run workspace.
      */
-    NOptional<String> getJavaCommand();
+    NOptional<String> javaCommand();
 
     /**
      * java options used to run workspace.
@@ -578,7 +1115,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return java options used to run workspace.
      */
-    NOptional<String> getJavaOptions();
+    NOptional<String> javaOptions();
 
     /**
      * workspace log configuration.
@@ -587,7 +1124,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return workspace log configuration.
      */
-    NOptional<NLogConfig> getLogConfig();
+    NOptional<NLogConfig> logConfig();
 
     /**
      * user friendly workspace name.
@@ -597,7 +1134,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return user friendly workspace name.
      */
-    NOptional<String> getName();
+    NOptional<String> name();
 
     /**
      * mode used to open workspace.
@@ -606,7 +1143,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return mode used to open workspace.
      */
-    NOptional<NOpenMode> getOpenMode();
+    NOptional<NOpenMode> openMode();
 
     /**
      * default output format type.
@@ -615,7 +1152,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return default output format type.
      */
-    NOptional<NContentType> getOutputFormat();
+    NOptional<NContentType> outputFormat();
 
     /**
      * default output formation options.
@@ -624,7 +1161,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return default output formation options.
      */
-    NOptional<List<String>> getOutputFormatOptions();
+    NOptional<List<String>> outputFormatOptions();
 
     /**
      * credential needed to log into workspace.
@@ -633,7 +1170,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return credential needed to log into workspace.
      */
-    NOptional<char[]> getCredential();
+    NOptional<char[]> credential();
 
     /**
      * repository store location strategy to consider when creating new repositories
@@ -645,7 +1182,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return repository store location strategy to consider when creating new repositories
      * for a new workspace.
      */
-    NOptional<NStoreStrategy> getRepositoryStoreStrategy();
+    NOptional<NStoreStrategy> repositoryStoreStrategy();
 
     /**
      * nuts runtime id (or version) to boot.
@@ -655,7 +1192,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return nuts runtime id (or version) to boot.
      */
-    NOptional<NId> getRuntimeId();
+    NOptional<NId> runtimeId();
 
     /**
      * store location for the given folder.
@@ -677,7 +1214,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return store location layout to consider when creating a new workspace.
      */
-    NOptional<NOsFamily> getStoreLayout();
+    NOptional<NOsFamily> storeLayout();
 
     /**
      * store location strategy for creating a new workspace.
@@ -687,7 +1224,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return store location strategy for creating a new workspace.
      */
-    NOptional<NStoreStrategy> getStoreStrategy();
+    NOptional<NStoreStrategy> storeStrategy();
 
     /**
      * store locations map to consider when creating a new workspace.
@@ -697,7 +1234,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return store locations map to consider when creating a new workspace.
      */
-    NOptional<Map<NStoreType, String>> getStoreLocations();
+    NOptional<Map<NStoreType, String>> storeLocations();
 
     /**
      * terminal mode (inherited, formatted, filtered) to use.
@@ -706,7 +1243,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return terminal mode (inherited, formatted, filtered) to use.
      */
-    NOptional<NTerminalMode> getTerminalMode();
+    NOptional<NTerminalMode> terminalMode();
 
     /**
      * repositories to register temporarily when running the workspace.
@@ -715,8 +1252,14 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return repositories to register temporarily when running the workspace.
      */
-    NOptional<List<String>> getRepositories();
-    NOptional<List<String>> getBootRepositories();
+    NOptional<List<String>> repositories();
+
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
+    NOptional<List<String>> bootRepositories();
 
     /**
      * username to log into when running workspace.
@@ -725,7 +1268,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return username to log into when running workspace.
      */
-    NOptional<String> getUserName();
+    NOptional<String> userName();
 
     /**
      * workspace folder location path.
@@ -735,9 +1278,14 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return workspace folder location path.
      */
-    NOptional<String> getWorkspace();
+    NOptional<String> workspace();
 
-    NOptional<String> getDebug();
+    /**
+     * Debug.
+     *
+     * @return debug result
+     */
+    NOptional<String> debug();
 
     /**
      * if true consider system repository
@@ -747,7 +1295,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true consider system repository
      */
 
-    NOptional<Boolean> getSystem();
+    NOptional<Boolean> system();
 
     /**
      * if true consider GUI/Swing mode
@@ -757,7 +1305,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true consider GUI/Swing mode
      */
 
-    NOptional<Boolean> getGui();
+    NOptional<Boolean> gui();
 
     /**
      * if true, workspace were invoked from parent process and hence inherits its options.
@@ -767,7 +1315,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true, workspace were invoked from parent process and hence inherits its options.
      */
 
-    NOptional<Boolean> getInherited();
+    NOptional<Boolean> inherited();
 
     /**
      * if true, workspace configuration are non modifiable.
@@ -778,7 +1326,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true, workspace configuration are non modifiable.
      */
 
-    NOptional<Boolean> getReadOnly();
+    NOptional<Boolean> readOnly();
 
     /**
      * if true, boot, cache and temp folder are deleted.
@@ -788,7 +1336,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true, boot, cache and temp folder are deleted.
      */
 
-    NOptional<Boolean> getRecover();
+    NOptional<Boolean> recover();
 
     /**
      * if true, workspace will be reset (all configuration and runtime files deleted).
@@ -798,15 +1346,30 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true, workspace will be reset (all configuration and runtime files deleted).
      */
 
-    NOptional<Boolean> getReset();
+    NOptional<Boolean> reset();
 
-    NOptional<Boolean> getResetHard();
+    /**
+     * Reset hard.
+     *
+     * @return reset hard result
+     */
+    NOptional<Boolean> resetHard();
 
 
-    NOptional<Boolean> getCommandVersion();
+    /**
+     * Command version.
+     *
+     * @return command version result
+     */
+    NOptional<Boolean> commandVersion();
 
 
-    NOptional<Boolean> getCommandHelp();
+    /**
+     * Command help.
+     *
+     * @return command help result
+     */
+    NOptional<Boolean> commandHelp();
 
     /**
      * if true, do not install nuts companion tools upon workspace creation.
@@ -816,7 +1379,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return if true, do not install nuts companion tools upon workspace creation.
      */
 
-    NOptional<Boolean> getInstallCompanions();
+    NOptional<Boolean> installCompanions();
 
     /**
      * if true, do not run welcome when no application arguments were resolved.
@@ -829,7 +1392,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @since 0.5.5
      */
 
-    NOptional<Boolean> getSkipWelcome();
+    NOptional<Boolean> skipWelcome();
 
 
     /**
@@ -842,7 +1405,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return out line prefix
      * @since 0.8.0
      */
-    NOptional<String> getOutLinePrefix();
+    NOptional<String> outLinePrefix();
 
     /**
      * if not null ant not empty, this prefix will be prefixed to error stream
@@ -854,7 +1417,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return err line prefix
      * @since 0.8.0
      */
-    NOptional<String> getErrLinePrefix();
+    NOptional<String> errLinePrefix();
 
     /**
      * if true, do not bootstrap workspace after reset/recover.
@@ -868,7 +1431,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @since 0.6.0
      */
 
-    NOptional<Boolean> getSkipBoot();
+    NOptional<Boolean> skipBoot();
 
     /**
      * when true, extra trace user-friendly information is written to standard output.
@@ -878,7 +1441,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return when true, extra trace user-friendly information is written to standard output.
      */
 
-    NOptional<Boolean> getTrace();
+    NOptional<Boolean> trace();
 
     /**
      * return progress options string.
@@ -889,7 +1452,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return when true, extra trace user-friendly information is written to standard output.
      */
-    NOptional<String> getProgressOptions();
+    NOptional<String> progressOptions();
 
     /**
      * return dependency solver Name
@@ -897,7 +1460,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return dependency solver Name
      * @since 0.8.3
      */
-    NOptional<String> getDependencySolver();
+    NOptional<String> dependencySolver();
 
     /**
      * when true, use cache
@@ -907,7 +1470,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return use cache when true
      */
 
-    NOptional<Boolean> getCached();
+    NOptional<Boolean> cached();
 
     /**
      * when true, use index
@@ -916,7 +1479,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return use index when true
      */
-    NOptional<Boolean> getIndexed();
+    NOptional<Boolean> indexed();
 
     /**
      * when true, use transitive repositories
@@ -926,7 +1489,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return use transitive repositories when true
      */
 
-    NOptional<Boolean> getTransitive();
+    NOptional<Boolean> transitive();
 
     /**
      * when true, application is running in bot (robot) mode. No interaction or trace is allowed.
@@ -936,19 +1499,19 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return application is running in bot (robot) mode. No interaction or trace is allowed.
      */
 
-    NOptional<Boolean> getBot();
+    NOptional<Boolean> bot();
 
     /**
      * @return application is running in preview mode (using preview repositories)
      * @since 0.8.5
      */
-    NOptional<Boolean> getPreviewRepo();
+    NOptional<Boolean> previewRepo();
 
     /**
      * @return workspace is running as shared Workspace instance (Singleton)
      * @since 0.8.5
      */
-    NOptional<Boolean> getSharedInstance();
+    NOptional<Boolean> sharedInstance();
 
     /**
      * default fetch strategy
@@ -957,7 +1520,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return use transitive repositories when true
      */
-    NOptional<NFetchStrategy> getFetchStrategy();
+    NOptional<NFetchStrategy> fetchStrategy();
 
 
     /**
@@ -969,7 +1532,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return default standard input or null
      */
-    NOptional<InputStream> getStdin();
+    NOptional<InputStream> stdin();
 
     /**
      * default standard output. when null, use {@code System.out}
@@ -980,7 +1543,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return default standard output or null
      */
-    NOptional<PrintStream> getStdout();
+    NOptional<PrintStream> stdout();
 
     /**
      * default standard error. when null, use {@code System.err}
@@ -991,7 +1554,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return default standard error or null
      */
-    NOptional<PrintStream> getStderr();
+    NOptional<PrintStream> stderr();
 
     /**
      * executor service used to create worker threads. when null, use default.
@@ -1002,7 +1565,7 @@ public interface NBootOptionsBuilder extends NComponent {
      *
      * @return executor service used to create worker threads. when null, use default.
      */
-    NOptional<ExecutorService> getExecutorService();
+    NOptional<ExecutorService> executorService();
 
     /**
      * return expired date/time or zero if not set.
@@ -1011,21 +1574,58 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return expired date/time or zero
      * @since 0.8.0
      */
-    NOptional<Instant> getExpireTime();
+    NOptional<Instant> expireTime();
 
-    NOptional<Boolean> getSkipErrors();
+    /**
+     * Skip errors.
+     *
+     * @return skip errors result
+     */
+    NOptional<Boolean> skipErrors();
 
-    NOptional<Boolean> getSwitchWorkspace();
+    /**
+     * Switch workspace.
+     *
+     * @return switch workspace result
+     */
+    NOptional<Boolean> switchWorkspace();
 
-    NOptional<List<NMsg>> getErrors();
+    /**
+     * Errors.
+     *
+     * @return errors result
+     */
+    NOptional<List<NMsg>> errors();
 
-    NOptional<List<String>> getCustomOptions();
+    /**
+     * Custom options.
+     *
+     * @return custom options result
+     */
+    NOptional<List<String>> customOptions();
 
-    NOptional<NArg> getCustomOptionArg(String key);
+    /**
+     * Custom option arg.
+     *
+     * @param key key
+     * @return custom option arg result
+     */
+    NOptional<NArg> customOptionArg(String key);
 
-    NOptional<String> getCustomOption(String key);
+    /**
+     * Custom option.
+     *
+     * @param key key
+     * @return custom option result
+     */
+    NOptional<String> customOption(String key);
 
-    NOptional<List<NArg>> getCustomOptionArgs();
+    /**
+     * Custom option args.
+     *
+     * @return custom option args result
+     */
+    NOptional<List<NArg>> customOptionArgs();
 
     /**
      * locale
@@ -1033,7 +1633,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return session locale
      * @since 0.8.1
      */
-    NOptional<String> getLocale();
+    NOptional<String> locale();
 
     /**
      * theme
@@ -1041,7 +1641,7 @@ public interface NBootOptionsBuilder extends NComponent {
      * @return session locale
      * @since 0.8.1
      */
-    NOptional<String> getTheme();
+    NOptional<String> theme();
 
 
 }

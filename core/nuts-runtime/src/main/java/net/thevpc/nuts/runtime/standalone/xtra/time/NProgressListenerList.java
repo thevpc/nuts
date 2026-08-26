@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.time;
 
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressListener;
 
 public class NProgressListenerList implements NProgressListener {
     private NProgressListener[] all;

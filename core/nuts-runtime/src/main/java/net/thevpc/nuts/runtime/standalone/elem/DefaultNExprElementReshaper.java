@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.text.NMsg;
 
@@ -61,7 +62,7 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
     public NElement reshape(NFlatExprElement flat) {
         if (flat.isEmpty()) {
             return flat.builder()
-                    .addDiagnostic(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Empty expression")).build())
+                    .addDiagnostic(NElement.ofDiagnosticBuilder().message(NMsg.ofC("Empty expression")).build())
                     .build();
         }
 
@@ -87,7 +88,7 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
                         NElement applied = popOperator(operatorStack.pop(), output);
                         if (applied instanceof NEmptyElement) {
                             return flat.builder()
-                                    .addDiagnostic(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Empty token")).build())
+                                    .addDiagnostic(NElement.ofDiagnosticBuilder().message(NMsg.ofC("Empty token")).build())
                                     .build();
                         }
                         output.push(applied);
@@ -107,13 +108,13 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
             OperatorToken op = operatorStack.pop();
             if (op.isLeftParen()) {
                 return flat.builder()
-                        .addDiagnostic(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Mismatched parentheses")).build())
+                        .addDiagnostic(NElement.ofDiagnosticBuilder().message(NMsg.ofC("Mismatched parentheses")).build())
                         .build();
             }
             NElement applied = popOperator(op, output);
             if (applied instanceof NEmptyElement) {
                 return flat.builder()
-                        .addDiagnostic(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Empty token")).build())
+                        .addDiagnostic(NElement.ofDiagnosticBuilder().message(NMsg.ofC("Empty token")).build())
                         .build();
             }
             output.push(applied);
@@ -121,7 +122,7 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
 
         if (output.size() != 1) {
             return flat.builder()
-                    .addDiagnostic(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Invalid expression: expected single result")).build())
+                    .addDiagnostic(NElement.ofDiagnosticBuilder().message(NMsg.ofC("Invalid expression: expected single result")).build())
                     .build();
         }
 
@@ -135,33 +136,33 @@ public class DefaultNExprElementReshaper implements NExprElementReshaper {
             if (op.unary) {
                 if (output.isEmpty()) {
                     return NElement.ofEmptyBuilder()
-                            .addDiagnostic(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Missing operand for unary operator '%s'", op.symbol.lexeme())).build())
+                            .addDiagnostic(NElement.ofDiagnosticBuilder().message(NMsg.ofC("Missing operand for unary operator '%s'", op.symbol.lexeme())).build())
                             .build();
                 }
                 NElement operand = output.pop();
                 return NElement.ofExprBuilder()
                         .operator(op.symbol)
-                        .position(NOperatorPosition.PREFIX)
+                        .fixity(NFixity.PREFIX)
                         .first(operand)
                         .build();
             } else {
                 if (output.size() < 2) {
                     return NElement.ofEmptyBuilder()
-                            .addDiagnostic(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Missing operands for binary operator '%s'", op.symbol.lexeme())).build())
+                            .addDiagnostic(NElement.ofDiagnosticBuilder().message(NMsg.ofC("Missing operands for binary operator '%s'", op.symbol.lexeme())).build())
                             .build();
                 }
                 NElement right = output.pop();
                 NElement left = output.pop();
                 return NElement.ofExprBuilder()
                         .operator(op.symbol)
-                        .position(NOperatorPosition.INFIX)
+                        .fixity(NFixity.INFIX)
                         .first(left)
                         .second(right)
                         .build();
             }
         } catch (Exception ex) {
             return NElement.ofEmptyBuilder()
-                    .addDiagnostic(NElement.ofDiagnosticBuilder().setMessage(NMsg.ofC("Operator application failed: %s", ex)).build())
+                    .addDiagnostic(NElement.ofDiagnosticBuilder().message(NMsg.ofC("Operator application failed: %s", ex)).build())
                     .build();
         }
     }

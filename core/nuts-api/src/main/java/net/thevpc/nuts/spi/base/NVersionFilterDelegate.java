@@ -40,60 +40,134 @@ import java.util.function.Supplier;
  * @author thevpc
  */
 public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
+    /**
+     * Base version filter.
+     *
+     * @return base version filter result
+     */
     public abstract NVersionFilter baseVersionFilter();
 
+    /**
+     * N version filter delegate.
+     *
+     * @return n version filter delegate result
+     */
     public NVersionFilterDelegate() {
+      /**
+       * Super.
+       *
+       * @param NFilterOp.CUSTOM n filter op.custom
+       */
         super(NFilterOp.CUSTOM);
     }
 
     @Override
     public boolean acceptVersion(NVersion version) {
+        /**
+         * Base version filter.
+         *
+         * @param ).acceptVersion(version ).accept version(version
+         * @return base version filter result
+         */
         return baseVersionFilter().acceptVersion(version);
     }
 
     @Override
     public NFilter withDescription(Supplier<NElement> description) {
+        /**
+         * Base version filter.
+         *
+         * @param ).withDescription(description ).with description(description
+         * @return base version filter result
+         */
         return baseVersionFilter().withDescription(description);
     }
 
     @Override
     public NVersionFilter simplify() {
+      /**
+       * Return.
+       *
+       * @param baseVersionFilter().simplify( base version filter().simplify(
+       */
         return (NVersionFilter) baseVersionFilter().simplify();
     }
 
 
     @Override
-    public NFilterOp getFilterOp() {
-        return baseVersionFilter().getFilterOp();
+    public NFilterOp filterOp() {
+        /**
+         * Base version filter.
+         *
+         * @param ).filterOp( ).filter op(
+         * @return base version filter result
+         */
+        return baseVersionFilter().filterOp();
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
-        return baseVersionFilter().getSubFilters();
+    public List<NFilter> subFilters() {
+        /**
+         * Base version filter.
+         *
+         * @param ).subFilters( ).sub filters(
+         * @return base version filter result
+         */
+        return baseVersionFilter().subFilters();
     }
 
     @Override
     public NOptional<List<NVersionInterval>> intervals() {
+        /**
+         * Base version filter.
+         *
+         * @param ).intervals( ).intervals(
+         * @return base version filter result
+         */
         return baseVersionFilter().intervals();
     }
 
     @Override
     public <T extends NFilter> NFilter simplify(Class<T> type) {
+        /**
+         * Base version filter.
+         *
+         * @param ).simplify(type ).simplify(type
+         * @return base version filter result
+         */
         return baseVersionFilter().simplify(type);
     }
 
     @Override
-    public Class<? extends NFilter> getFilterType() {
-        return baseVersionFilter().getFilterType();
+    public Class<? extends NFilter> filterType() {
+        /**
+         * Base version filter.
+         *
+         * @param ).filterType( ).filter type(
+         * @return base version filter result
+         */
+        return baseVersionFilter().filterType();
     }
 
     @Override
     public NElement describe() {
+        /**
+         * Base version filter.
+         *
+         * @param ).describe( ).describe(
+         * @return base version filter result
+         */
         return baseVersionFilter().describe();
     }
 
     @Override
     public <T extends NFilter> T to(Class<T> type) {
+        /**
+         * Base version filter.
+         *
+         * @param ).to(type ).to(type
+         * @return base version filter result
+         */
         return baseVersionFilter().to(type);
     }
 

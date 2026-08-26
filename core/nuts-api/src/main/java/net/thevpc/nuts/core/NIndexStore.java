@@ -28,7 +28,8 @@ package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.util.NSetter;
 
 /**
  * Classes implementations of {@code NutsIndexStore} handle
@@ -69,7 +70,8 @@ public interface NIndexStore {
      * @param enabled new value
      * @return {@code this} instance
      */
-    NIndexStore setEnabled(boolean enabled);
+    @NSetter
+    NIndexStore enabled(boolean enabled);
 
     /**
      * invalidate the artifact from the index

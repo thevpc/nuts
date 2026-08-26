@@ -41,6 +41,11 @@ import java.util.List;
  */
 public interface NDependencyWriter extends NObjectWriter, NComponent {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDependencyWriter of() {
         return NExtensions.of(NDependencyWriter.class);
     }
@@ -58,7 +63,7 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param omitRepository new value
      * @return {@code this} instance
      */
-    NDependencyWriter setOmitRepository(boolean omitRepository);
+    NDependencyWriter omitRepository(boolean omitRepository);
 
     /**
      * return true if omit group
@@ -73,7 +78,7 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param omitGroup new value
      * @return {@code this} instance
      */
-    NDependencyWriter setOmitGroupId(boolean omitGroup);
+    NDependencyWriter omitGroupId(boolean omitGroup);
 
     /**
      * omit imported group
@@ -88,7 +93,7 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param omitEnv new value
      * @return {@code this} instance
      */
-    NDependencyWriter setOmitImportedGroup(boolean omitEnv);
+    NDependencyWriter omitImportedGroup(boolean omitEnv);
 
     /**
      * return true if omit all query properties
@@ -103,7 +108,7 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyWriter setOmitOtherProperties(boolean value);
+    NDependencyWriter omitOtherProperties(boolean value);
 
     /**
      * return true if omit scope
@@ -118,7 +123,7 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyWriter setOmitScope(boolean value);
+    NDependencyWriter omitScope(boolean value);
 
     /**
      * return true if omit exclusions
@@ -133,7 +138,7 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyWriter setOmitExclusions(boolean value);
+    NDependencyWriter omitExclusions(boolean value);
 
     /**
      * return true if omit optional
@@ -148,14 +153,14 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyWriter setOmitOptional(boolean value);
+    NDependencyWriter omitOptional(boolean value);
 
     /**
      * list of all omitted query properties
      *
      * @return list of all omitted query properties
      */
-    List<String> getOmitQueryProperties();
+    List<String> omittedQueryProperties();
 
     /**
      * return true if omit query property named {@code name}
@@ -172,7 +177,7 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param value new value
      * @return {@code this} instance
      */
-    NDependencyWriter setOmitQueryProperty(String name, boolean value);
+    NDependencyWriter omitQueryProperty(String name, boolean value);
 
 
     /**
@@ -188,7 +193,7 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
      * @param highlightImportedGroup new value
      * @return {@code this} instance
      */
-    NDependencyWriter setHighlightImportedGroup(boolean highlightImportedGroup);
+    NDependencyWriter highlightImportedGroup(boolean highlightImportedGroup);
 
     /**
      * configure the current command with the given arguments. This is an
@@ -203,5 +208,11 @@ public interface NDependencyWriter extends NObjectWriter, NComponent {
     NDependencyWriter configure(boolean skipUnsupported, String... args);
 
 
-    NDependencyWriter setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    NDependencyWriter ntf(boolean ntf);
 }

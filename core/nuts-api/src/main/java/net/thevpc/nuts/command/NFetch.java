@@ -36,7 +36,9 @@ import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.time.Instant;
 
@@ -50,28 +52,90 @@ import java.time.Instant;
  */
 public interface NFetch extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NFetch of() {
         return NExtensions.of(NFetch.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param id id
+     * @return of result
+     */
     static NFetch of(NId id) {
-        return of().setId(id);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(id ).id(id
+         * @return of result
+         */
+        return of().id(id);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param id id
+     * @return of result
+     */
     static NFetch of(String id) {
-        return of().setId(id);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(id ).id(id
+         * @return of result
+         */
+        return of().id(id);
     }
 
+    /**
+     * Creates a new instance of of nuts api.
+     *
+     * @return of nuts api result
+     */
     static NFetch ofNutsApi() {
-        return of().setId(NWorkspace.of().getApiId());
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(NWorkspace.of().apiId() ).id(n workspace.of().api id()
+         * @return of result
+         */
+        return of().id(NWorkspace.of().apiId());
     }
 
+    /**
+     * Creates a new instance of of nuts app.
+     *
+     * @return of nuts app result
+     */
     static NFetch ofNutsApp() {
-        return of().setId(NWorkspace.of().getAppId());
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(NWorkspace.of().appId() ).id(n workspace.of().app id()
+         * @return of result
+         */
+        return of().id(NWorkspace.of().appId());
     }
 
+    /**
+     * Creates a new instance of of nuts runtime.
+     *
+     * @return of nuts runtime result
+     */
     static NFetch ofNutsRuntime() {
-        return of().setId(NWorkspace.of().getRuntimeId());
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).id(NWorkspace.of().runtimeId() ).id(n workspace.of().runtime id()
+         * @return of result
+         */
+        return of().id(NWorkspace.of().runtimeId());
     }
 
     ////////////////////////////////////////////////////////
@@ -79,13 +143,35 @@ public interface NFetch extends NWorkspaceCmd {
 
     /// /////////////////////////////////////////////////////
 
-    NOptional<NFetchStrategy> getFetchStrategy();
+    /**
+     * Fetch strategy.
+     *
+     * @return fetch strategy result
+     */
+    NOptional<NFetchStrategy> fetchStrategy();
 
-    NOptional<Boolean> getTransitive();
+    /**
+     * Transitive.
+     *
+     * @return transitive result
+     */
+    NOptional<Boolean> transitive();
 
-    NFetch setFetchStrategy(NFetchStrategy fetchStrategy);
+    /**
+     * Fetch strategy.
+     *
+     * @param fetchStrategy fetch strategy
+     * @return fetch strategy result
+     */
+    NFetch fetchStrategy(NFetchStrategy fetchStrategy);
 
-    NFetch setTransitive(Boolean transitive);
+    /**
+     * Transitive.
+     *
+     * @param transitive transitive
+     * @return transitive result
+     */
+    NFetch transitive(Boolean transitive);
 
     /**
      * return expired date/time or zero if not set. Expire time is used to
@@ -94,7 +180,8 @@ public interface NFetch extends NWorkspaceCmd {
      * @return expired date/time or zero
      * @since 0.8.0
      */
-    NOptional<Instant> getExpireTime();
+    @NGetter
+    NOptional<Instant> expireTime();
 
     /**
      * set expire instant. Expire time is used to expire any cached file that
@@ -104,30 +191,24 @@ public interface NFetch extends NWorkspaceCmd {
      * @return {@code this} instance
      * @since 0.8.0
      */
-    NFetch setExpireTime(Instant value);
+    @NSetter
+    NFetch expireTime(Instant value);
 
     /**
      * when true, NArtifactNotFoundException instances are ignored
      *
      * @return true if armed FailFast mode
      */
+    @NGetter
     boolean isFailFast();
-
-    /**
-     * set armed (or disarmed) fail safe mode. if true, null replaces
-     * NArtifactNotFoundException.
-     *
-     * @param enable if true, null replaces NArtifactNotFoundException.
-     * @return {@code this} instance
-     */
-    NFetch setFailFast(boolean enable);
 
     /**
      * id to fetch
      *
      * @return id to fetch
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * set id to fetch.
@@ -135,7 +216,7 @@ public interface NFetch extends NWorkspaceCmd {
      * @param id id to fetch
      * @return {@code this} instance
      */
-    NFetch setId(String id);
+    NFetch id(String id);
 
     /**
      * set id to fetch.
@@ -143,7 +224,8 @@ public interface NFetch extends NWorkspaceCmd {
      * @param id id to fetch
      * @return {@code this} instance
      */
-    NFetch setId(NId id);
+    @NSetter
+    NFetch id(NId id);
 
 //    NutsFetch copyFrom(NutsFetch other);
     ////////////////////////////////////////////////////////
@@ -196,6 +278,11 @@ public interface NFetch extends NWorkspaceCmd {
      */
     NDescriptor getResultDescriptor();
 
+    /**
+     * Returns the result effective descriptor.
+     *
+     * @return get result effective descriptor result
+     */
     NDescriptor getResultEffectiveDescriptor();
 
     /**
@@ -235,51 +322,14 @@ public interface NFetch extends NWorkspaceCmd {
     ///////////////////////
     // SHARED
     ///////////////////////
-    ////////////////////////////////////////////////////////
-    // Setters
-    ////////////////////////////////////////////////////////
-
-
-    ////////////////////////////////////////////////////////
-    // Getters
-    ////////////////////////////////////////////////////////
-
-//    /**
-//     * effective filter
-//     *
-//     * @return effective filter
-//     */
-//    boolean isEffective();
-//
-//    /**
-//     * enable/disable effective descriptor evaluation
-//     *
-//     * @param enable if true evaluation is enabled.
-//     * @return {@code this} instance
-//     */
-//    NFetchCmd setEffective(boolean enable);
-
-//    /**
-//     * if true dependencies list is retrieved
-//     *
-//     * @return dependencies list retrieval status
-//     */
-//    boolean isDependencies();
-//
-//    /**
-//     * enable/disable dependencies list retrieval
-//     *
-//     * @param enable if true retrieval is enabled.
-//     * @return {@code this} instance
-//     */
-//    NFetchCmd setDependencies(boolean enable);
 
     /**
      * return repository filter
      *
      * @return repository filter
      */
-    NRepositoryFilter getRepositoryFilter();
+    @NGetter
+    NRepositoryFilter repositoryFilter();
 
     /**
      * define repository filter.
@@ -287,8 +337,15 @@ public interface NFetch extends NWorkspaceCmd {
      * @param filter repository filter
      * @return {@code this} instance
      */
-    NFetch setRepositoryFilter(NRepositoryFilter filter);
+    @NSetter
+    NFetch repositoryFilter(NRepositoryFilter filter);
 
+    /**
+     * Adds the specified repository filter.
+     *
+     * @param filter filter
+     * @return add repository filter result
+     */
     NFetch addRepositoryFilter(NRepositoryFilter filter);
 
     /**
@@ -317,7 +374,8 @@ public interface NFetch extends NWorkspaceCmd {
      *
      * @return dependency filter
      */
-    NDependencyFilter getDependencyFilter();
+    @NGetter
+    NDependencyFilter dependencyFilter();
 
     /**
      * define dependency filter.
@@ -325,8 +383,15 @@ public interface NFetch extends NWorkspaceCmd {
      * @param filter dependency filter
      * @return {@code this} instance
      */
-    NFetch setDependencyFilter(NDependencyFilter filter);
+    @NSetter
+    NFetch dependencyFilter(NDependencyFilter filter);
 
+    /**
+     * Adds the specified dependency filter.
+     *
+     * @param filter filter
+     * @return add dependency filter result
+     */
     NFetch addDependencyFilter(NDependencyFilter filter);
 
     /**
@@ -335,12 +400,32 @@ public interface NFetch extends NWorkspaceCmd {
      * @param filter dependency filter
      * @return {@code this} instance
      */
-    NFetch setDependencyFilter(String filter);
+    NFetch dependencyFilter(String filter);
 
-    NFetch failFast();
+    /**
+     * Fail fast.
+     *
+     * @param failFast fail fast
+     * @return fail fast result
+     */
+    @NSetter
+    NFetch failFast(boolean failFast);
 
+    /**
+     * Checks if is ignore current environment.
+     *
+     * @return is ignore current environment result
+     */
+    @NGetter
     boolean isIgnoreCurrentEnvironment();
 
-    NFetch setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
+    /**
+     * Ignore current environment.
+     *
+     * @param ignoreCurrentEnvironment ignore current environment
+     * @return ignore current environment result
+     */
+    @NGetter
+    NFetch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 
 }

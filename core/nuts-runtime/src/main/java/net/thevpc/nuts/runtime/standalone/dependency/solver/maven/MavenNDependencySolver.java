@@ -5,19 +5,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.artifact.NArtifactNotFoundException;
-import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencies;
-import net.thevpc.nuts.artifact.NDependency;
-import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NDependencyScope;
-import net.thevpc.nuts.artifact.NDependencyTreeNode;
-import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgFormattable;
 import net.thevpc.nuts.text.NText;
@@ -44,7 +36,7 @@ public class MavenNDependencySolver implements NDependencySolver {
         return ignoreCurrentEnvironment;
     }
 
-    public NDependencySolver setIgnoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
+    public NDependencySolver ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment) {
         this.ignoreCurrentEnvironment = ignoreCurrentEnvironment;
         return this;
     }
@@ -67,14 +59,14 @@ public class MavenNDependencySolver implements NDependencySolver {
     }
 
     @Override
-    public NDependencySolver setDependencyFilter(NDependencyFilter dependencyFilter) {
+    public NDependencySolver dependencyFilter(NDependencyFilter dependencyFilter) {
         this.dependencyFilter = dependencyFilter;
         this.effDependencyFilter = null;
         return this;
     }
 
     @Override
-    public NDependencySolver setRepositoryFilter(NRepositoryFilter repositoryFilter) {
+    public NDependencySolver repositoryFilter(NRepositoryFilter repositoryFilter) {
         this.repositoryFilter = repositoryFilter;
         return this;
     }
@@ -83,7 +75,7 @@ public class MavenNDependencySolver implements NDependencySolver {
     public NDependencies solve() {
         doLog("---- START SOLVE");
         if (getDependencyFilter() == null) {
-            NDependencyFilters filter = NDependencyFilters.of();
+            NDependencyFilterRPI filter = NDependencyFilterRPI.of();
             effDependencyFilter = filter.always();
         } else {
             effDependencyFilter = getDependencyFilter();
@@ -114,7 +106,7 @@ public class MavenNDependencySolver implements NDependencySolver {
             }
 
             @Override
-            public NText value() {
+            public NText content() {
                 return NText.of(toMsg());
             }
 
@@ -125,7 +117,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 
             @Override
             public NMsg toMsg() {
-                return NMsg.ofC("%s", node.getDependency().builder().removeCondition().setExclusions(null).build());
+                return NMsg.ofC("%s", node.dependency().builder().removeCondition().exclusions(null).build());
             }
 
 
@@ -135,7 +127,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                 if (node == null) {
                     return run.transitiveNodes().toList().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
                 }
-                return node.getChildren().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
+                return node.children().stream().map(x -> new NDependencyTreeNodeAndFormat(x)).collect(Collectors.toList());
             }
         }
 
@@ -160,7 +152,7 @@ public class MavenNDependencySolver implements NDependencySolver {
     public NDependencySolver addRootDefinition0(NDependency dependency, NDefinition def) {
         if (dependency == null) {
             if (def != null) {
-                dependency = def.getId().toDependency();
+                dependency = def.id().toDependency();
             } else {
                 NAssert.requireNamedNonNull(dependency, "dependency");
             }
@@ -184,10 +176,10 @@ public class MavenNDependencySolver implements NDependencySolver {
     private NSearch search(NDependency dep) {
         return NSearch.of()
                 .addIds(dep.toId())
-                .setDependencyFilter(getDependencyFilter())
-                .setRepositoryFilter(getRepositoryFilter())
-                .setIgnoreCurrentEnvironment(isIgnoreCurrentEnvironment())
-                .setLatest(true)
+                .dependencyFilter(getDependencyFilter())
+                .repositoryFilter(getRepositoryFilter())
+                .ignoreCurrentEnvironment(isIgnoreCurrentEnvironment())
+                .latest(true)
                 ;
     }
 
@@ -254,13 +246,13 @@ public class MavenNDependencySolver implements NDependencySolver {
         return failFast;
     }
 
-    public MavenNDependencySolver setFailFast(boolean failFast) {
+    public MavenNDependencySolver failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "maven";
     }
 

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NElementWriter;
@@ -24,19 +25,19 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
         validateRequest(ri);
         try {
             NWebCli cli = NWebCli.of();
-            cli.setConnectTimeout(500);
-            cli.setReadTimeout(500);
+            cli.connectTimeout(NDuration.ofMillis(500));
+            cli.readTimeout(NDuration.ofMillis(500));
             NWebRequest post = cli.POST(ri.server + url)
-                    .setContentType("application/json; charset=UTF-8")
-                    .setHeader("Accept", "*/*");
-            String loc = NSession.of().getLocale().orDefault();
+                    .contentType("application/json; charset=UTF-8")
+                    .header("Accept", "*/*");
+            String loc = NSession.of().locale().orDefault();
             if (loc == null) {
                 loc = Locale.getDefault().toString();
             }
-            post.setHeader("Accept-Language", loc);
+            post.header("Accept-Language", loc);
             String out = NElementWriter.ofJson().formatPlain(ri.q);
-            post.setRequestBody(out.getBytes());
-            return post.run().getContentAs(resultType, NContentType.JSON);
+            post.requestBody(out.getBytes());
+            return post.run().contentAs(resultType, NContentType.JSON);
         } catch (NException ex) {
             throw ex;
         } catch (UncheckedIOException ex) {

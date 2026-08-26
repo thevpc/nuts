@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensions;
@@ -14,8 +17,8 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.spi.NUncompressPackaging;
-import net.thevpc.nuts.time.NProgressFactory;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
@@ -55,77 +58,80 @@ public class DefaultNUncompress implements NUncompress {
     }
 
     @Override
-    public String getPackaging() {
+    public String packaging() {
         return packaging;
     }
 
     @Override
-    public NUncompress setPackaging(String packaging) {
-        this.packagingImpl = NExtensions.of().createSupported(NUncompressPackaging.class, this).get();
+    public NUncompress packaging(String packaging) {
+        if (NBlankable.isBlank(packaging)) {
+            packaging = "zip";
+        }
+        this.packagingImpl = NWorkspaceExt.of().getModel().extensionCatalogManager.createSupported(NUncompressPackaging.class, packaging,"net.thevpc.nuts.spi.compression", packaging.toLowerCase()).get();
         return this;
     }
 
     @Override
-    public NInputSource getSource() {
+    public NInputSource source() {
         return source;
     }
 
     @Override
-    public NUncompress setSource(NInputSource source) {
+    public NUncompress source(NInputSource source) {
         this.source = source;
         return this;
     }
 
     @Override
-    public NUncompress setTarget(NOutputTarget target) {
+    public NUncompress target(NOutputTarget target) {
         this.target = target;
         return this;
     }
 
 
     @Override
-    public NUncompress setSource(InputStream source) {
+    public NUncompress source(InputStream source) {
         this.source = source == null ? null : NInputSource.of(source);
         return this;
     }
 
     @Override
-    public NUncompress setSource(NPath source) {
+    public NUncompress source(NPath source) {
         this.source = source;
         return this;
     }
 
     @Override
-    public NUncompress setSource(File source) {
+    public NUncompress source(File source) {
         this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
-    public NUncompress setSource(Path source) {
+    public NUncompress source(Path source) {
         this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
-    public NUncompress setSource(URL source) {
+    public NUncompress source(URL source) {
         this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
-    public NUncompress setTarget(Path target) {
+    public NUncompress target(Path target) {
         this.target = target == null ? null : NPath.of(target);
         return this;
     }
 
     @Override
-    public NUncompress setTarget(File target) {
+    public NUncompress target(File target) {
         this.target = target == null ? null : NPath.of(target);
         return this;
     }
 
-    public NUncompress setTarget(NPath target) {
+    public NUncompress target(NPath target) {
         this.target = target;
         return this;
     }
@@ -143,7 +149,7 @@ public class DefaultNUncompress implements NUncompress {
     }
 
     @Override
-    public NOutputTarget getTarget() {
+    public NOutputTarget target() {
         return target;
     }
 
@@ -152,32 +158,32 @@ public class DefaultNUncompress implements NUncompress {
 
     @Override
     public NUncompress from(InputStream source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
     public NUncompress from(File source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
     public NUncompress from(Path source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
     public NUncompress from(URL source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
     public NUncompress to(File target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NUncompress to(Path target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
@@ -186,26 +192,26 @@ public class DefaultNUncompress implements NUncompress {
     }
 
     @Override
-    public DefaultNUncompress setSafe(boolean value) {
+    public DefaultNUncompress safe(boolean value) {
         this.safe = value;
         return this;
     }
 
     @Override
     public NUncompress run() {
-        CompressType compressType = toCompressType(getPackaging());
+        CompressType compressType = toCompressType(packaging());
         NAssert.requireNamedNonNull(source, "source");
 
         NInputSource _source = source;
         if (options.contains(NPathOption.LOG)
                 || options.contains(NPathOption.TRACE)
-                || getProgressFactory() != null) {
+                || progressFactory() != null) {
             NInputStreamMonitor monitor = NInputStreamMonitor.of();
-            monitor.setOrigin(source);
-            monitor.setLogProgress(options.contains(NPathOption.LOG));
-            monitor.setTraceProgress(options.contains(NPathOption.TRACE));
-            monitor.setProgressFactory(getProgressFactory());
-            monitor.setSource(source);
+            monitor.origin(source);
+            monitor.logProgress(options.contains(NPathOption.LOG));
+            monitor.traceProgress(options.contains(NPathOption.TRACE));
+            monitor.progressFactory(progressFactory());
+            monitor.source(source);
             _source = NInputSource.of(monitor.create());
         }
 
@@ -277,7 +283,7 @@ public class DefaultNUncompress implements NUncompress {
      * @since 0.5.8
      */
     @Override
-    public NProgressFactory getProgressFactory() {
+    public NProgressFactory progressFactory() {
         return progressFactory;
     }
 
@@ -289,7 +295,7 @@ public class DefaultNUncompress implements NUncompress {
      * @since 0.5.8
      */
     @Override
-    public NUncompress setProgressFactory(NProgressFactory value) {
+    public NUncompress progressFactory(NProgressFactory value) {
         this.progressFactory = value;
         return this;
     }
@@ -302,21 +308,9 @@ public class DefaultNUncompress implements NUncompress {
      * @since 0.5.8
      */
     @Override
-    public NUncompress setProgressMonitor(NProgressListener value) {
+    public NUncompress progressMonitor(NProgressListener value) {
         this.progressFactory = value == null ? null : new SingletonNInputStreamProgressFactory(value);
         return this;
-    }
-
-    /**
-     * set progress monitor. Will create a singleton progress monitor factory
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NUncompress progressMonitor(NProgressListener value) {
-        return setProgressMonitor(value);
     }
 
     @Override
@@ -325,19 +319,24 @@ public class DefaultNUncompress implements NUncompress {
     }
 
     @Override
-    public NUncompress setSkipRoot(boolean value) {
+    public NUncompress skipRoot(boolean value) {
         this.skipRoot = value;
         return this;
     }
 
     @Override
-    public NUncompress setFormatOption(String option, Object value) {
+    public NUncompress formatOption(String option, Object value) {
         return this;
     }
 
     @Override
-    public Object getFormatOption(String option) {
+    public Object formatOption(String option) {
         return null;
+    }
+
+    @Override
+    public NUncompress options(NPathOption... pathOptions) {
+        return addOptions(pathOptions);
     }
 
     @Override
@@ -371,7 +370,7 @@ public class DefaultNUncompress implements NUncompress {
     }
 
     @Override
-    public Set<NPathOption> getOptions() {
+    public Set<NPathOption> options() {
         return new LinkedHashSet<>(options);
     }
 

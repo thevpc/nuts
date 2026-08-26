@@ -28,6 +28,8 @@ package net.thevpc.nuts.artifact;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -41,13 +43,43 @@ import java.util.Map;
  */
 public interface NIdBuilder extends NBlankable, NComponent, Serializable {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param id id
+     * @return of result
+     */
     static NIdBuilder of(NId id) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).copyFrom(id ).copy from(id
+         * @return of result
+         */
         return of().copyFrom(id);
     }
+    /**
+     * Creates a new instance of of.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @return of result
+     */
     static NIdBuilder of(String groupId, String artifactId) {
-        return of().setGroupId(groupId).setArtifactId(artifactId);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).groupId(groupId).artifactId(artifactId ).group id(group id).artifact id(artifact id
+         * @return of result
+         */
+        return of().groupId(groupId).artifactId(artifactId);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NIdBuilder of() {
         return NExtensions.of(NIdBuilder.class);
     }
@@ -58,11 +90,26 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value new value
      * @return {@code this} instance
      */
+    @NSetter
     NIdBuilder setFace(String value);
 
-    NIdBuilder setCondition(NEnvCondition c);
+    /**
+     * Condition.
+     *
+     * @param c c
+     * @return condition result
+     */
+    @NSetter
+    NIdBuilder condition(NEnvCondition c);
 
-    NIdBuilder setCondition(NEnvConditionBuilder c);
+    /**
+     * Condition.
+     *
+     * @param c c
+     * @return condition result
+     */
+    @NSetter
+    NIdBuilder condition(NEnvConditionBuilder c);
 
     /**
      * update classifier
@@ -70,7 +117,8 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    NIdBuilder setClassifier(String value);
+    @NSetter
+    NIdBuilder classifier(String value);
 
     /**
      * update packaging
@@ -78,21 +126,23 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param packaging new value
      * @return {@code this} instance
      */
-    NIdBuilder setPackaging(String packaging);
+    @NSetter
+    NIdBuilder packaging(String packaging);
 
     /**
      * equivalent to {@code setFace(NutsConstants.QueryFaces.CONTENT)}
      *
      * @return this instance
      */
-    NIdBuilder setFaceContent();
+    @NSetter
+    NIdBuilder faceContent();
 
     /**
      * equivalent to {@code setFace(NutsConstants.QueryFaces.DESCRIPTOR)}
      *
      * @return {@code this} instance
      */
-    NIdBuilder setFaceDescriptor();
+    NIdBuilder faceDescriptor();
 
     /**
      * update property.
@@ -102,6 +152,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value    new value
      * @return {@code this} instance
      */
+    @NSetter
     NIdBuilder setProperty(String property, String value);
 
     /**
@@ -110,6 +161,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param queryMap new value
      * @return {@code this} instance
      */
+    @NSetter
     NIdBuilder setProperties(Map<String, String> queryMap);
 
     /**
@@ -118,6 +170,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param query new value
      * @return {@code this} instance
      */
+    @NSetter
     NIdBuilder setPropertiesQuery(String query);
 
     /**
@@ -133,7 +186,8 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    NIdBuilder setRepository(String value);
+    @NSetter
+    NIdBuilder repository(String value);
 
     /**
      * update groupId
@@ -141,7 +195,8 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    NIdBuilder setGroupId(String value);
+    @NSetter
+    NIdBuilder groupId(String value);
 
     /**
      * update artifactId
@@ -149,7 +204,8 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    NIdBuilder setArtifactId(String value);
+    @NSetter
+    NIdBuilder artifactId(String value);
 
     /**
      * update version
@@ -157,7 +213,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    NIdBuilder setVersion(String value);
+    NIdBuilder version(String value);
 
     /**
      * update setVersion
@@ -165,7 +221,8 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    NIdBuilder setVersion(NVersion value);
+    @NSetter
+    NIdBuilder version(NVersion value);
 
     /**
      * update all arguments
@@ -220,8 +277,15 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      *
      * @return true if this id is a long name
      */
+    @NGetter
     boolean isLongId();
 
+    /**
+     * Checks if is short id.
+     *
+     * @return is short id result
+     */
+    @NGetter
     boolean isShortId();
 
     /**
@@ -231,42 +295,48 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      *
      * @return id face selector
      */
-    String getFace();
+    @NGetter
+    String face();
 
     /**
      * os supported by the artifact
      *
      * @return os supported by the artifact
      */
-    NEnvConditionBuilder getCondition();
+    @NGetter
+    NEnvConditionBuilder condition();
 
     /**
      * properties in the url query form
      *
      * @return properties in the url query form.
      */
-    String getPropertiesQuery();
+    @NGetter
+    String propertiesQuery();
 
     /**
      * properties as map.
      *
      * @return properties as map.
      */
-    Map<String, String> getProperties();
+    @NGetter
+    Map<String, String> properties();
 
     /**
      * artifact repository (usually repository name or id)
      *
      * @return artifact repository (usually repository name or id)
      */
-    String getRepository();
+    @NGetter
+    String repository();
 
     /**
      * artifact group which identifies uniquely projects and group of projects.
      *
      * @return artifact group which identifies uniquely projects and group of projects.
      */
-    String getGroupId();
+    @NGetter
+    String groupId();
 
     /**
      * return a string representation of this id. All of group, name, version,
@@ -275,7 +345,8 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      *
      * @return string representation of this id
      */
-    String getFullName();
+    @NGetter
+    String fullName();
 
     /**
      * return a string concatenation of group, name and version,
@@ -284,17 +355,19 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      *
      * @return group id, artifact id and version only Id instance
      */
-    String getLongName();
+    @NGetter
+    String longName();
 
     /**
      * returns a string concatenation of group and name (':' separated) ignoring
      * version,repository, and queryMap values. In group is empty or null, name
-     * is returned. Ann null values are trimmed to "" An example of simple name
+     * is returned. Ann null values are stripped to "" An example of simple name
      * is <code>my-group:my-artifact</code>
      *
      * @return group id and artifact id
      */
-    String getShortName();
+    @NGetter
+    String shortName();
 
     /**
      * return a new instance of NutsId defining only group and name ignoring
@@ -302,7 +375,8 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      *
      * @return group and name only Id instance
      */
-    NId getShortId();
+    @NGetter
+    NId shortId();
 
     /**
      * return a new instance of NutsId defining only group, name, version and classifier if available,
@@ -310,35 +384,40 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      *
      * @return group, name and version only Id instance
      */
-    NId getLongId();
+    @NGetter
+    NId longId();
 
     /**
      * return name part of this id
      *
      * @return return name part of this id
      */
-    String getArtifactId();
+    @NGetter
+    String artifactId();
 
     /**
      * tag used to distinguish between different artifacts that were built from the same source code
      *
      * @return tag used to distinguish between different artifacts that were built from the same source code
      */
-    String getClassifier();
+    @NGetter
+    String classifier();
 
     /**
      * package packaging type
      *
      * @return packaging
      */
-    String getPackaging();
+    @NGetter
+    String packaging();
 
     /**
      * artifact version (never null)
      *
      * @return artifact version (never null)
      */
-    NVersion getVersion();
+    @NGetter
+    NVersion version();
 
     /**
      * create a builder (mutable id) based on this id
@@ -347,8 +426,18 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      */
     NIdBuilder builder();
 
+    /**
+     * Converts to dependency.
+     *
+     * @return to dependency result
+     */
     NDependency toDependency();
 
+    /**
+     * Converts to filter.
+     *
+     * @return to filter result
+     */
     NIdFilter toFilter();
 
     /**
@@ -373,7 +462,17 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      */
     NId compatOlder();
 
+    /**
+     * Checks if is null.
+     *
+     * @return is null result
+     */
     boolean isNull();
 
+    /**
+     * Checks if is blank.
+     *
+     * @return is blank result
+     */
     boolean isBlank();
 }

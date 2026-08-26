@@ -32,7 +32,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NIteratorBase;
+import net.thevpc.nuts.pipeline.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.log.NLog;
 
@@ -154,7 +154,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         if (last != null) {
             model.remove(last, lastPath);
         } else {
-            throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported remove"));
+            throw new NUnsupportedOperationException(NMsg.ofP("unsupported remove"));
         }
     }
 

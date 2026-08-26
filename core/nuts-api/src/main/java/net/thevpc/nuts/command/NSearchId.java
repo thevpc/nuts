@@ -27,6 +27,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.util.NGetter;
 
 /**
  * Search id defines a uniform interface to ids, versions and descriptors
@@ -42,12 +43,14 @@ public interface NSearchId {
      *
      * @return id
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * return descriptor
      *
      * @return descriptor
      */
-    NDescriptor getDescriptor();
+    @NGetter
+    NDescriptor descriptor();
 }

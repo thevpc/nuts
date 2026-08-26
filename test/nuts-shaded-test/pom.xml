@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.test</groupId>
     <artifactId>nuts-shaded-test</artifactId>
-    <version>0.8.9.0</version>
+    <version>1.0.0.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community Test Shaded Project</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -51,8 +51,8 @@
     </licenses>
 
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.9</version></dependency>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-runtime</artifactId><version>0.8.9.0</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>1.0.0</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-runtime</artifactId><version>1.0.0.0</version></dependency>
         <dependency><groupId>com.google.code.gson</groupId><artifactId>gson</artifactId><version>2.10.1</version></dependency>
         <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.8.2</version><scope>test</scope></dependency>
     </dependencies>
@@ -145,7 +145,7 @@
                         <option>-allowaccessmodification</option>
                         <!--<option>-optimizationpasses 5</option>-->
                         <option>-overloadaggressively</option>
-                        <option>-keep public class * implements net.thevpc.nuts.app.NApplication { *; }</option>
+                        <option>-keep public class * implements net.thevpc.nuts.app.NApplicationHandler { *; }</option>
                         <option>-keep class com.google.** { *; }</option>
                         <option>-keep class net.thevpc.nuts.** { *; }</option>
                         <option>-keep class com.google.gson.stream.* { *; }</option>

@@ -24,13 +24,13 @@ public class NRepositorySelectorHelper {
             throw new IllegalArgumentException("unexpected");
         }
         NRepositorySpec found = all[0];
-        String name= found.getName();
+        String name= found.name();
         if ((name == null || name.isEmpty()) && requireName) {
             NAssert.requireNamedNonBlank(name, "repository name (<name>=<url>)");
         }
-        found.setTags(
+        found.tags(
                 new NRepositoryTagsListHelper()
-                        .add(found.getTags())
+                        .add(found.tags())
                         .add(tags).toArray()
         );
         return found;
@@ -43,10 +43,10 @@ public class NRepositorySelectorHelper {
     public static NRepositorySpec createRepositoryOptions(NRepositoryLocation loc, boolean requireName, String[] tags) {
         String defaultName = null;
         DefaultNRepositoryDB db = NWorkspaceExt.of().getRepositoryModel().getDB();
-        if (!db.findAllNamesByName(loc.getName()).isEmpty()) {
-            defaultName = loc.getName();
+        if (!db.findAllNamesByName(loc.name()).isEmpty()) {
+            defaultName = loc.name();
         } else {
-            String nn = db.getDefinitionByPath(loc.getPath()).map(x -> x.getName()).orNull();
+            String nn = db.getDefinitionByPath(loc.path()).map(x -> x.name()).orNull();
             if (nn != null) {
                 defaultName = nn;
             }
@@ -54,24 +54,24 @@ public class NRepositorySelectorHelper {
         if (defaultName != null) {
             NRepositorySpec u = db.getDefinitionByName(defaultName).orNull();
             if (u != null
-                    && (loc.getPath().isEmpty()
-                    || Objects.equals(loc.getPath(), u.getSourceLocation().getPath())
-                    || Objects.equals(loc.getFullLocation(), u.getSourceLocation().getFullLocation()))) {
+                    && (loc.path().isEmpty()
+                    || Objects.equals(loc.path(), u.sourceLocation().path())
+                    || Objects.equals(loc.fullLocation(), u.sourceLocation().fullLocation()))) {
                 //this is acceptable!
-                if (!u.getName().equals(loc.getName())) {
-                    u.setName(loc.getName());
+                if (!u.name().equals(loc.name())) {
+                    u.name(loc.name());
                 }
             }
             if (u != null) {
-                u.setTags(
+                u.tags(
                         new NRepositoryTagsListHelper()
-                                .add(u.getTags())
+                                .add(u.tags())
                                 .add(tags).toArray()
                 );
                 return u;
             }
         }
-        return createCustomRepositoryOptions(loc.getName(), loc.getFullLocation(), requireName);
+        return createCustomRepositoryOptions(loc.name(), loc.fullLocation(), requireName);
     }
 
     public static NRepositorySpec createCustomRepositoryOptions(String name, String url, boolean requireName) {
@@ -98,20 +98,20 @@ public class NRepositorySelectorHelper {
         NAssert.requireNamedNonBlank(url, "repository url (<name>=<url>)");
 
         NRepositoryLocation loc = NRepositoryLocation.of(url);
-        NPath nPath = NPath.of(loc.getPath());
+        NPath nPath = NPath.of(loc.path());
         String sloc =
                 nPath.isName() ?
                         nPath.toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString()
                         : nPath.toAbsolute().toString();
-        loc = loc.setPath(sloc);
+        loc = loc.path(sloc);
 
-        return new NRepositorySpec().setName(name)
-                .setFailSafe(false).setCreate(true)
-                .setOrder((!NBlankable.isBlank(url) && NPath.of(url).isLocal())
+        return new NRepositorySpec().name(name)
+                .failSafe(false).create(true)
+                .order((!NBlankable.isBlank(url) && NPath.of(url).isLocal())
                         ? NRepositorySpec.ORDER_USER_LOCAL
                         : NRepositorySpec.ORDER_USER_REMOTE
                 )
-                .setSourceLocation(loc);
+                .sourceLocation(loc);
     }
 
     public static NRepositorySpec createDefaultRepositoryOptions(String nameOrURL) {

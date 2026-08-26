@@ -60,7 +60,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
         switch (node.type()) {
             case PLAIN:
                 NTextPlain p = (NTextPlain) node;
-                writeEscaped(p.getValue());
+                writeEscaped(p.value());
                 break;
             case LIST: {
                 NTextList s = (NTextList) node;
@@ -78,17 +78,17 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
             }
             case STYLED: {
                 DefaultNTextStyled s = (DefaultNTextStyled) node;
-                NTextStyles styles = s.getStyles();
+                NTextStyles styles = s.styles();
                 writeRaw("##{" + styles.id() + ":");
-                writeNode(s.getChild());
+                writeNode(s.child());
                 writeRaw("}##");
                 writeRaw(NConstants.Ntf.SILENT);
                 break;
             }
             case TITLE: {
                 DefaultNTextTitle s = (DefaultNTextTitle) node;
-                writeRaw(CoreStringUtils.fillString('#', s.getLevel()) + ") ");
-                writeNode(s.getChild());
+                writeRaw(CoreStringUtils.fillString('#', s.level()) + ") ");
+                writeNode(s.child());
                 writeRaw("\n");
                 break;
             }
@@ -96,8 +96,8 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
                 NTextCmd s = (NTextCmd) node;
                 writeRaw("```!");
                 NCmdLine cmd = new DefaultNCmdLine();
-                cmd.add(s.getCommand().getName());
-                cmd.addAll(s.getCommand().getArgs());
+                cmd.add(s.terminalCommand().name());
+                cmd.addAll(s.terminalCommand().args());
                 writeEscapedSpecial(cmd.toString());
                 writeRaw("```");
                 break;
@@ -105,33 +105,33 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
             case ANCHOR: {
                 NTextAnchor s = (NTextAnchor) node;
                 writeRaw("```!anchor");
-                writeRaw(s.getSeparator());
-                writeEscapedSpecial(s.getValue());
+                writeRaw(s.separator());
+                writeEscapedSpecial(s.value());
                 writeRaw("```");
                 break;
             }
             case LINK: {
                 NTextLink s = (NTextLink) node;
                 writeRaw("```!link");
-                writeRaw(s.getSeparator());
-                writeEscaped(s.getValue());
+                writeRaw(s.separator());
+                writeEscaped(s.value());
                 writeRaw("```");
                 break;
             }
             case INCLUDE: {
                 NTextInclude s = (NTextInclude) node;
                 writeRaw("```!include");
-                writeRaw(s.getSeparator());
-                writeEscaped(s.getText());
+                writeRaw(s.separator());
+                writeEscaped(s.text());
                 writeRaw("```");
                 break;
             }
             case CODE: {
                 NTextCode s = (NTextCode) node;
                 writeRaw("```");
-                writeRaw(s.getQualifier());
-                writeRaw(s.getSeparator());
-                writeEscapedSpecial(s.getValue());
+                writeRaw(s.qualifier());
+                writeRaw(s.separator());
+                writeEscapedSpecial(s.value());
                 writeRaw("```");
                 break;
             }

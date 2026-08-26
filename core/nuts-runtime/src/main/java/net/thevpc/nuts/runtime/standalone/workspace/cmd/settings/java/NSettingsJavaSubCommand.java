@@ -17,11 +17,12 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.text.NTableCell;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
 import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                         }
                     }
                 }
-                cmdLine.setCommandName("config java").throwUnexpectedArgument();
+                cmdLine.commandName("config java").throwUnexpectedArgument();
                 if (autoSave) {
                     workspace.saveConfig(false);
                 }
@@ -74,9 +75,9 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     NRef<String> product = NRef.ofNull();
                     cmdLine
                             .matcher()
-                            .with("--version").matchEntry(a -> ver.set(a.stringValue()))
-                            .with("--jdk").matchTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JDK))
-                            .with("--jre").matchTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JRE))
+                            .when("--version").asEntry(a -> ver.set(a.stringValue()))
+                            .when("--jdk").asTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JDK))
+                            .when("--jre").asTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JRE))
                             .require();
                     NExecutionEngineLocation loc = pinstaller.downloadRemoteExecutionEngine(
                             NExecutionEngineFamily.JAVA,
@@ -123,10 +124,13 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             //        .setVisibleHeader(true);
             NMutableTableModel m = NMutableTableModel.of();
             //t.setValue(m);
-            m.addHeaderRow(NText.ofPlain("Name"), NText.ofPlain("Version"), NText.ofPlain("Path"));
+            m.addHeaderRow(
+                    NTableCell.of(NText.of("Name")),
+                    NTableCell.of(NText.of("Version")),
+                    NTableCell.of(NText.of("Path")));
             while (cmdLine.hasNext()) {
                 //if (!t.configureFirst(cmdLine)) {
-                cmdLine.setCommandName("config list java").throwUnexpectedArgument();
+                cmdLine.commandName("config list java").throwUnexpectedArgument();
                 //}
             }
             if (cmdLine.isExecMode()) {
@@ -134,15 +138,15 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 Arrays.sort(sdks, new Comparator<NExecutionEngineLocation>() {
                     @Override
                     public int compare(NExecutionEngineLocation o1, NExecutionEngineLocation o2) {
-                        int x = o1.getName().compareTo(o2.getName());
+                        int x = o1.name().compareTo(o2.name());
                         if (x != 0) {
                             return x;
                         }
-                        x = o1.getVersion().compareTo(o2.getVersion());
+                        x = o1.version().compareTo(o2.version());
                         if (x != 0) {
                             return x;
                         }
-                        x = o1.getPath().compareTo(o2.getPath());
+                        x = o1.path().compareTo(o2.path());
                         if (x != 0) {
                             return x;
                         }
@@ -150,9 +154,9 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     }
                 });
                 for (NExecutionEngineLocation jloc : sdks) {
-                    m.addRow(NText.of(jloc.getName()), NText.of(jloc.getVersion()), NText.of(jloc.getPath()));
+                    m.addRow(NTableCell.of(NText.of(jloc.name())), NTableCell.of(NText.of(jloc.version())), NTableCell.of(NText.of(jloc.path())));
                 }
-                out.print(NTextArt.of().getTableRenderer().get().render(m));
+                out.print(NTextArt.of().tableRenderer().get().render(m));
             }
             return true;
         }

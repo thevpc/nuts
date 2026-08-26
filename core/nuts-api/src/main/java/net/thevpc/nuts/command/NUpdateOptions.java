@@ -40,6 +40,11 @@ public class NUpdateOptions implements Serializable {
     private static final long serialVersionUID = 1;
 
 
+    /**
+     * N update options.
+     *
+     * @return n update options result
+     */
     public NUpdateOptions() {
     }
 

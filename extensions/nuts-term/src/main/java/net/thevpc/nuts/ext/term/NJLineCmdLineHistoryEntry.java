@@ -26,10 +26,6 @@ class NJLineCmdLineHistoryEntry implements History.Entry, NCmdLineHistoryEntry {
     }
 
     @Override
-    public int getIndex() {
-        return index;
-    }
-
     public int index() {
         return index;
     }
@@ -40,16 +36,6 @@ class NJLineCmdLineHistoryEntry implements History.Entry, NCmdLineHistoryEntry {
 
     public String line() {
         return line;
-    }
-
-    @Override
-    public Instant getTime() {
-        return time();
-    }
-
-    @Override
-    public String getLine() {
-        return line();
     }
 
     @Override

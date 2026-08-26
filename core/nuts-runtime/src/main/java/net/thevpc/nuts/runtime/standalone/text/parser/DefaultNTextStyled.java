@@ -28,12 +28,11 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/23/17.
@@ -53,9 +52,9 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
         }
         if (any instanceof NTextStyled) {
             NTextStyled base = (NTextStyled) any;
-            NTextStyles styles = base.getStyles();
+            NTextStyles styles = base.styles();
             NTextStyles newStyles = styles.append(textStyles);
-            return new DefaultNTextStyled(base.getChild(), newStyles);
+            return new DefaultNTextStyled(base.child(), newStyles);
         }
         return new DefaultNTextStyled(any, textStyles);
     }
@@ -79,7 +78,7 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public NTextStyles getStyles() {
+    public NTextStyles styles() {
         return textStyles;
     }
 
@@ -99,7 +98,7 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
 
 
     @Override
-    public NText getChild() {
+    public NText child() {
         return child;
     }
 
@@ -168,13 +167,8 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public List<NText> split(String separator, boolean returnSeparator) {
-        return child.split(separator, returnSeparator).stream().map(x -> DefaultNTextStyled.appendStyle(x, textStyles)).collect(Collectors.toList());
-    }
-
-    @Override
-    public NText trimLeft() {
-        NText c = child.trimLeft();
+    public NText stripLeft() {
+        NText c = child.stripLeft();
         if (c == child) {
             return this;
         }
@@ -182,8 +176,8 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public NText trimRight() {
-        NText c = child.trimRight();
+    public NText stripRight() {
+        NText c = child.stripRight();
         if (c == child) {
             return this;
         }
@@ -191,8 +185,8 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public NText trim() {
-        NText c = child.trim();
+    public NText strip() {
+        NText c = child.strip();
         if (c == child) {
             return this;
         }

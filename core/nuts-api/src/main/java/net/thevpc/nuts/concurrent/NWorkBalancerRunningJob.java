@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NGetter;
 
 import java.time.Instant;
 
@@ -23,21 +24,24 @@ public interface NWorkBalancerRunningJob {
      *
      * @return unique job ID
      */
-    String getJobId();
+    @NGetter
+    String jobId();
 
     /**
      * Returns the human-readable name of this job.
      *
      * @return job name
      */
-    String getJobName();
+    @NGetter
+    String jobName();
 
     /**
      * Returns the wall-clock start time of this job.
      *
      * @return start time as {@link Instant}
      */
-    Instant getStartTime();
+    @NGetter
+    Instant startTime();
 
     /**
      * Returns the start time of the job in nanoseconds.
@@ -46,7 +50,8 @@ public interface NWorkBalancerRunningJob {
      *
      * @return start time in nanoseconds
      */
-    long getStartTimeNano();
+    @NGetter
+    long startTimeNano();
 
     /**
      * Returns the end time of the job in nanoseconds.
@@ -55,7 +60,8 @@ public interface NWorkBalancerRunningJob {
      *
      * @return end time in nanoseconds
      */
-    long getEndTimeNano();
+    @NGetter
+    long endTimeNano();
 
     /**
      * Returns the duration of the job so far.
@@ -64,20 +70,23 @@ public interface NWorkBalancerRunningJob {
      *
      * @return job duration
      */
-    NDuration getDuration();
+    @NGetter
+    NDuration duration();
 
     /**
      * Returns the name of the worker executing this job.
      *
      * @return worker name
      */
-    String getWorkerName();
+    @NGetter
+    String workerName();
 
     /**
      * Returns true if the job is currently running.
      *
      * @return {@code true} if running, {@code false} otherwise
      */
+    @NGetter
     boolean isRunning();
 
     /**
@@ -87,5 +96,6 @@ public interface NWorkBalancerRunningJob {
      *
      * @return throwable if job failed, or {@code null} if successful
      */
-    Throwable getThrowable();
+    @NGetter
+    Throwable error();
 }

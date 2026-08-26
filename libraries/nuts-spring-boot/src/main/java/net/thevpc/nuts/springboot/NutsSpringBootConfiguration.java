@@ -2,24 +2,21 @@ package net.thevpc.nuts.springboot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.app.*;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NIdFilters;
 import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.concurrent.NConcurrent;
 
 import net.thevpc.nuts.concurrent.NScopedStack;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NReflect;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
-import net.thevpc.nuts.time.NProgressMonitors;
+import net.thevpc.nuts.text.NMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
@@ -45,14 +42,14 @@ public class NutsSpringBootConfiguration {
         NutsSpringBeanContainer u = new NutsSpringBeanContainer(sac);
         workspace.runWith(() -> {
             NScopedStack<NBeanContainer> nBeanContainerNScopedValue = NReflect.of().scopedBeanContainerStack();
-            nBeanContainerNScopedValue.setDefaultSupplier(() -> u);
+            nBeanContainerNScopedValue.defaultSupplier(() -> u);
         });
         return u;
     }
 
     @Bean
     public NTerminal nTerminal(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).getTerminal();
+        return nutsSession(applicationArguments).terminal();
     }
 
     @Bean
@@ -69,35 +66,7 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NTerminal nutsTerminal(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).getTerminal();
-    }
-
-    @Bean
-    public NIdFilters nutsIdFilters(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NIdFilters.of();
-        });
-    }
-
-    @Bean
-    public NDependencyFilters nutsDependencyFilters(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NDependencyFilters.of();
-        });
-    }
-
-    @Bean
-    public NDefinitionFilters nutsDefinitionFilters(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NDefinitionFilters.of();
-        });
-    }
-
-    @Bean
-    public NProgressMonitors nutsProgressMonitors(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NProgressMonitors.of();
-        });
+        return nutsSession(applicationArguments).terminal();
     }
 
     @Bean
@@ -121,20 +90,13 @@ public class NutsSpringBootConfiguration {
         });
     }
 
-    @Bean
-    public NCmdLines nutsCmdLines(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NCmdLines.of();
-        });
-    }
-
     private Object resolveValidSpringBootApplication(NWorkspace workspace, ApplicationArguments applicationArguments) {
         Map<String, Object> bootApps = new HashMap<>();
         for (Map.Entry<String, Object> e : sac.getBeansWithAnnotation(SpringBootApplication.class).entrySet()) {
             Object o = e.getValue();
-            if (o instanceof NApplication) {
+            if (o instanceof NApplicationHandler) {
                 return o;
-            } else if (NApplications.isAnnotatedApplicationClass(o.getClass())) {
+            } else if (NApplicationHandler.isAnnotatedApplicationClass(o.getClass())) {
                 return o;
             } else {
                 bootApps.put(e.getKey(), o);
@@ -150,17 +112,27 @@ public class NutsSpringBootConfiguration {
     }
 
     @Bean
-    public NApplication nutsApplication(@Autowired NWorkspace workspace, @Autowired ApplicationArguments applicationArguments) {
-        NApplication validApp = null;
-        Object validAppBean = resolveValidSpringBootApplication(workspace, applicationArguments);
-        if (validAppBean instanceof NApplication) {
-            validApp = (NApplication) validAppBean;
-        } else {
-            validApp = NApplications.createApplicationInstanceFromAnnotatedInstance(validAppBean);
+    public NApplicationHandler nutsApplication(@Autowired NWorkspace workspace, @Autowired ApplicationArguments applicationArguments) {
+        NApplicationHandler validApp = null;
+        try {
+            Object validAppBean = resolveValidSpringBootApplication(workspace, applicationArguments);
+            if (validAppBean instanceof NApplicationHandler) {
+                validApp = (NApplicationHandler) validAppBean;
+            } else {
+                validApp = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(validAppBean);
+            }
+        }catch (Exception e) {
+            NLog.of(NApplicationHandler.class).info(NMsg.ofC("Error configuring the application : %s",e));
+            validApp=new NApplicationHandler() {
+                @Override
+                public void run() {
+                    // do nothing
+                }
+            };
         }
 //        Object finalValidAppBean = validAppBean;
 //        workspace.runWith(() -> {
-//            NApp a = NApp.of();
+//            NApp a = NApplication.of();
 //            a.setArguments(applicationArguments.getSourceArgs());
 //            a.prepare(new NAppInitInfo(applicationArguments.getSourceArgs(), NApplications.unproxyType(finalValidAppBean.getClass()), now));
 //        });
@@ -170,17 +142,17 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NWorkspace nutsWorkspace(@Autowired ApplicationArguments applicationArguments) {
-        if (SpringNApplicationResolver.globalApplicationContext == null) {
-            SpringNApplicationResolver.globalApplicationContext = sac;
+        if (SpringNApplicationResolverSPI.globalApplicationContext == null) {
+            SpringNApplicationResolverSPI.globalApplicationContext = sac;
         }
         NWorkspace workspace = Nuts.openWorkspace(
                 NBootArguments.of(resolveNutsArgs())
-                        .setAppArgs(applicationArguments.getSourceArgs())
+                        .appArgs(applicationArguments.getSourceArgs())
         );
         // prepare app early
-        NApp.builder(applicationArguments.getSourceArgs())
+        NApplication.builder(applicationArguments.getSourceArgs())
                 .instance(nutsApplication(workspace, applicationArguments))
-                .setNutsArgs(resolveNutsArgs())
+                .nutsArgs(resolveNutsArgs())
                 .propagateErrors().prepare();
         return workspace;
     }

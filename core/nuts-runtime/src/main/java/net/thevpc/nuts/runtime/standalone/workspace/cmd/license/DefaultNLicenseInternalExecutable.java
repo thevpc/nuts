@@ -17,18 +17,20 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NText;
 
+import java.util.List;
+
 /**
  * @author thevpc
  */
 public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNLicenseInternalExecutable(String[] args, NExec execCommand) {
-        super("license", args, execCommand);
+    public DefaultNLicenseInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("license", args, execCommand,executorOptions);
     }
 
     @Override
     public int execute() {
-        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().dry());
         NSession session = NSession.of();
         if (dry) {
             dryExecute();

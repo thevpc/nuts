@@ -1,13 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.util.NIteratorBase;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NIteratorBase;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.*;
 
@@ -58,7 +57,7 @@ public class NPathSPIHelper {
 
                                 if (sorted) {
                                     // Deterministic sort by name
-                                    children.sort(Comparator.comparing(NPath::getName));
+                                    children.sort(Comparator.comparing(NPath::name));
                                 }
 
                                 // PUSH IN REVERSE:
@@ -108,7 +107,7 @@ public class NPathSPIHelper {
         public NElement describe() {
             return NElement.ofObjectBuilder()
                     .name("ScanPath")
-                    .set("path", NElements.of().toElement(basePath))
+                    .set("path", NElement.of(basePath))
                     .set("maxDepth", maxDepth)
                     .set("sorted", sorted) // Good for Nuts debugging
                     .build();
@@ -127,7 +126,7 @@ public class NPathSPIHelper {
                     List<NPath> children = i.p.stream().toList();
 
                     if (sorted) {
-                        children.sort(Comparator.comparing(NPath::getName));
+                        children.sort(Comparator.comparing(NPath::name));
                     }
                     for (int j = children.size() - 1; j >= 0; j--) {
                         NPath c = children.get(j);

@@ -24,10 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -78,26 +78,26 @@ public class MethodReflectProperty2 extends AbstractReflectProperty {
     @Override
     public Object read(Object instance) {
         if (!readAccessible) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in read mode (%s)", toString()));
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in read mode (%s)", toString()));
         }
         try {
             return read.invoke(instance);
         } catch (IllegalAccessException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access (%s) %s", toString(), NExceptions.getErrorMessage(ex)), ex);
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access (%s) %s", toString(), NException.getErrorMessage(ex)), ex);
         } catch (InvocationTargetException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s", toString(), NExceptions.getErrorMessage(ex)), ex);
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s", toString(), NException.getErrorMessage(ex)), ex);
         }
     }
 
     @Override
     public void write(Object instance, Object value) {
         if (!writeAccessible) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in write mode (%s)", toString()));
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in write mode (%s)", toString()));
         }
         try {
             write.set(instance, value);
         } catch (IllegalAccessException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in write mode (%s) %s", toString(), ex));
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in write mode (%s) %s", toString(), ex));
         }
     }
 

@@ -72,7 +72,7 @@ public class DefaultWriteTypeProcessor {
             case ASK: {
                 if (!NIn.ask()
                         .forBoolean(getValidAskMessage())
-                        .setDefaultValue(false).getBooleanValue()) {
+                        .defaultValue(false).booleanValue()) {
                     return false;
                 }
                 break;

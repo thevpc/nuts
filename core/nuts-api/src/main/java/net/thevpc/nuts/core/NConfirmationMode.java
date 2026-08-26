@@ -65,10 +65,19 @@ public enum NConfirmationMode implements NEnum {
      */
     private final String id;
 
+  /**
+   * N confirmation mode.
+   */
     NConfirmationMode() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NConfirmationMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NConfirmationMode.class);
     }

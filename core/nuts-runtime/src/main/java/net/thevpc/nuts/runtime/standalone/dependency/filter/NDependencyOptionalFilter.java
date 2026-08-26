@@ -5,7 +5,10 @@ import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.util.NFilterOp;
 
-public class NDependencyOptionalFilter extends AbstractDependencyFilter{
+import java.util.Arrays;
+import java.util.Objects;
+
+public class NDependencyOptionalFilter extends AbstractDependencyFilter {
 
     private final Boolean optional;
 
@@ -38,11 +41,23 @@ public class NDependencyOptionalFilter extends AbstractDependencyFilter{
 
     @Override
     public String toString() {
-        if(optional==null){
+        if (optional == null) {
             return "any optional";
-        }else{
-            return optional?"optional":"not(optional)";
+        } else {
+            return optional ? "optional" : "not(optional)";
         }
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyOptionalFilter that = (NDependencyOptionalFilter) o;
+        return Objects.equals(optional, that.optional);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), optional);
+    }
 }

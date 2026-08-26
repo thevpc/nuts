@@ -24,6 +24,12 @@
  */
 package net.thevpc.nuts.util;
 
+/**
+ * NSupportMode enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NSupportMode implements NEnum {
     SUPPORTED,
     PREFERRED,
@@ -36,10 +42,19 @@ public enum NSupportMode implements NEnum {
      */
     private final String id;
 
+  /**
+   * N support mode.
+   */
     NSupportMode() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NSupportMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NSupportMode.class, s -> {
             switch (s.normalizedValue()){
@@ -65,6 +80,12 @@ public enum NSupportMode implements NEnum {
         return id;
     }
 
+    /**
+     * Accept condition.
+     *
+     * @param request request
+     * @return accept condition result
+     */
     public boolean acceptCondition(NSupportMode request) {
         if (request == null) {
             request = NSupportMode.NEVER;
@@ -88,7 +109,7 @@ public enum NSupportMode implements NEnum {
                         return false;
                     }
                     default: {
-                        throw NExceptions.ofSafeUnsupportedEnumException(request);
+                        throw NException.ofSafeUnsupportedEnumException(request);
                     }
                 }
             }
@@ -102,12 +123,12 @@ public enum NSupportMode implements NEnum {
                         return true;
                     }
                     default: {
-                        throw NExceptions.ofSafeUnsupportedEnumException(request);
+                        throw NException.ofSafeUnsupportedEnumException(request);
                     }
                 }
             }
             default: {
-                throw NExceptions.ofSafeUnsupportedEnumException(this);
+                throw NException.ofSafeUnsupportedEnumException(this);
             }
         }
     }

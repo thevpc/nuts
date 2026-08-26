@@ -2,11 +2,12 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementReader;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -37,6 +38,11 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
             throw new NUnsupportedArgumentException(NMsg.ofC("expected prefix '%s'",PREFIX));
         }
         this.info = info;
+    }
+
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
     }
 
     @Override
@@ -122,7 +128,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     @Override
     public String getContentType(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getContentType();
+        return p == null ? null : p.contentType();
     }
 
     @Override
@@ -142,19 +148,19 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     @Override
     public Instant getLastModifiedInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getLastModifiedInstant();
+        return p == null ? null : p.lastModifiedInstant();
     }
 
     @Override
     public Instant getLastAccessInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getLastAccessInstant();
+        return p == null ? null : p.lastAccessInstant();
     }
 
     @Override
     public Instant getCreationInstant(NPath basePath) {
         NPath p = getDownloadPath();
-        return p == null ? null : p.getCreationInstant();
+        return p == null ? null : p.creationInstant();
     }
 
     @Override
@@ -162,7 +168,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return null;
         }
-        NPath p = ref.getParent();
+        NPath p = ref.parent();
         if (p == null) {
             return null;
         }
@@ -210,7 +216,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + ref.getRoot());
+        return NPath.of(PREFIX + ref.root());
     }
 
     @Override
@@ -232,13 +238,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     private Object load(NPath p) {
-        NElements elems = NElements.of();
         NElement e = NElementReader.ofJson().read(ref);
         if (e != null) {
             if (e.isArray()) {
-                return NStream.ofArray(elems.convert(e, Info[].class)).toArray(Info[]::new);
+                return NStream.ofArray(NElement.convertAny(e, Info[].class)).toArray(Info[]::new);
             } else if (e.isObject()) {
-                return elems.convert(e, Info.class);
+                return NElement.convertAny(e, Info.class);
             }
         }
         return null;
@@ -268,12 +273,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     private String _type() {
         if (info != null) {
-            return NStringUtils.trim(info.type);
+            return NStringUtils.strip(info.type);
         }
         Object a = load();
         if (a != null) {
             if (a instanceof Info) {
-                return NStringUtils.trim(((Info) a).type);
+                return NStringUtils.strip(((Info) a).type);
             }
             if (a instanceof Info[]) {
                 return "dir";
@@ -312,7 +317,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
+            Object cri = context.criteria();
             if(!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }
@@ -336,7 +341,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
             this.p = p;
         }
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

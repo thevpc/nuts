@@ -8,8 +8,8 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExec;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 @NScore(fixed = NScorable.UNSUPPORTED_SCORE)
 public class RemoteNExec extends AbstractNExec {
@@ -53,7 +53,7 @@ public class RemoteNExec extends AbstractNExec {
                         NMsg.ofC("execution failed with code %d and message : %s", NExecutionException.ERROR_255, p),
                         ex, NExecutionException.ERROR_255);
             } else {
-                resultException = new NExecutionException(NMsg.ofPlain("remote command failed"), ex, NExecutionException.ERROR_255);
+                resultException = new NExecutionException(NMsg.ofP("remote command failed"), ex, NExecutionException.ERROR_255);
             }
         }
         executed = true;

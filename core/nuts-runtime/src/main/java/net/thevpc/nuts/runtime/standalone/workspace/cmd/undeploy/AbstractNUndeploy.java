@@ -5,11 +5,10 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NUndeploy;
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 
@@ -29,8 +28,15 @@ public abstract class AbstractNUndeploy extends NWorkspaceCmdBase<NUndeploy> imp
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return ids;
+    }
+
+    @Override
+    public NUndeploy ids(List<NId> value) {
+        ids.clear();
+        addIds(value);
+        return this;
     }
 
     @Override
@@ -72,18 +78,30 @@ public abstract class AbstractNUndeploy extends NWorkspaceCmdBase<NUndeploy> imp
     }
 
     @Override
+    public NUndeploy addIds(List<NId> value) {
+        if (value != null) {
+            for (NId s : value) {
+                if (s != null) {
+                    ids.add(s);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NUndeploy clearIds() {
         ids.clear();
         return this;
     }
 
     @Override
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
     @Override
-    public NUndeploy setRepository(String repository) {
+    public NUndeploy repository(String repository) {
         this.repository = repository;
         invalidateResult();
         return this;
@@ -94,11 +112,11 @@ public abstract class AbstractNUndeploy extends NWorkspaceCmdBase<NUndeploy> imp
             result = new ArrayList<>();
         }
         result.add(id);
-        NSession session= NSession.of();
+        NSession session = NSession.of();
         if (session.isTrace()) {
-            if (session.getOutputFormat().orNull() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
-                if (session.getOutputFormat().orNull() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
-                    session.getTerminal().out().println(NMsg.ofC("Nuts %s undeployed successfully", id));
+            if (session.outputFormat().orNull() == null || session.outputFormat().orDefault() == NContentType.PLAIN) {
+                if (session.outputFormat().orNull() == null || session.outputFormat().orDefault() == NContentType.PLAIN) {
+                    session.terminal().out().println(NMsg.ofC("Nuts %s undeployed successfully", id));
                 }
             }
         }
@@ -110,7 +128,7 @@ public abstract class AbstractNUndeploy extends NWorkspaceCmdBase<NUndeploy> imp
     }
 
     @Override
-    public NUndeploy setOffline(boolean offline) {
+    public NUndeploy offline(boolean offline) {
         this.offline = offline;
         invalidateResult();
         return this;
@@ -129,12 +147,12 @@ public abstract class AbstractNUndeploy extends NWorkspaceCmdBase<NUndeploy> imp
         }
         switch (aa.key()) {
             case "--offline": {
-                return cmdLine.matcher().matchFlag((v) -> setOffline(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> offline(v.booleanValue())).anyMatch();
             }
             case "-r":
             case "-repository":
             case "--from": {
-                return cmdLine.matcher().matchEntry((v) -> setRepository(v.stringValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> repository(v.stringValue())).anyMatch();
             }
 
             default: {

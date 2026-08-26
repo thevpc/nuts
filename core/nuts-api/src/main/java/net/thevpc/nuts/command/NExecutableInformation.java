@@ -28,6 +28,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NGetter;
 
 import java.io.Closeable;
 
@@ -45,42 +46,48 @@ public interface NExecutableInformation extends Closeable {
      *
      * @return executable type
      */
-    NExecutableType getType();
+    @NGetter
+    NExecutableType type();
 
     /**
      * executable artifact id
      *
      * @return executable artifact id
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * executable name
      *
      * @return executable name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * versatile executable name
      *
      * @return versatile executable name
      */
-    String getValue();
+    @NGetter
+    String value();
 
     /**
      * executable description
      *
      * @return executable description
      */
-    String getDescription();
+    @NGetter
+    String description();
 
     /**
      * executable help string
      *
      * @return executable help string
      */
-    NText getHelpText();
+    @NGetter
+    NText helpText();
 
 
     @Override

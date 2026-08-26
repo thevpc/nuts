@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.util.NGetter;
+
 /**
  * Repository Event
  *
@@ -40,7 +42,8 @@ public interface NRepositoryEvent extends NSessionProvider {
      *
      * @return current workspace
      */
-    NWorkspace getWorkspace();
+    @NGetter
+    NWorkspace workspace();
 
     /**
      * Parent repository when this event is about creating
@@ -48,7 +51,8 @@ public interface NRepositoryEvent extends NSessionProvider {
      *
      * @return Parent repository
      */
-    NRepository getParent();
+    @NGetter
+    NRepository parent();
 
     /**
      * repository that fires this event or the new repository
@@ -56,26 +60,30 @@ public interface NRepositoryEvent extends NSessionProvider {
      *
      * @return current repository
      */
-    NRepository getRepository();
+    @NGetter
+    NRepository repository();
 
     /**
      * event property name
      *
      * @return event property name
      */
-    String getPropertyName();
+    @NGetter
+    String propertyName();
 
     /**
      * event property old value
      *
      * @return event property old value
      */
-    Object getPropertyOldValue();
+    @NGetter
+    Object propertyOldValue();
 
     /**
      * event property new value
      *
      * @return event property new value
      */
-    Object getPropertyValue();
+    @NGetter
+    Object propertyValue();
 }

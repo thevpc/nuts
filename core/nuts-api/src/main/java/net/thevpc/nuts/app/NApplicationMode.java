@@ -52,7 +52,7 @@ public enum NApplicationMode implements NEnum {
      * that "--nuts-exec-mode=auto-complete &lt;WORD-INDEX&gt;" is a SINGLE
      * argument, so spaces must be escaped.
      */
-    AUTO_COMPLETE,
+    COMPLETE,
     /**
      * application execution Mode in install mode in which case application MUST
      * accept FIRST argument in the form of "--nuts-exec-mode=install &lt;ARG&gt;
@@ -90,6 +90,12 @@ public enum NApplicationMode implements NEnum {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NApplicationMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NApplicationMode.class);
     }

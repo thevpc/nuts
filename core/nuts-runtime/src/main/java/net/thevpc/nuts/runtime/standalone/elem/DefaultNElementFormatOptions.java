@@ -18,7 +18,7 @@ public class DefaultNElementFormatOptions implements NElementFormatOptions {
     }
 
     @Override
-    public int getComplexityThreshold() {
+    public int complexityThreshold() {
         return get("complexity", s -> {
             int i;
             if (s instanceof Number) {
@@ -34,7 +34,7 @@ public class DefaultNElementFormatOptions implements NElementFormatOptions {
     }
 
     @Override
-    public int getIndent() {
+    public int indent() {
         return get("indent", s -> {
             int i;
             if (s instanceof Number) {
@@ -50,7 +50,7 @@ public class DefaultNElementFormatOptions implements NElementFormatOptions {
     }
 
     @Override
-    public int getColumnLimit() {
+    public int columnLimit() {
         return get("columns", s -> {
             int i;
             if (s instanceof Number) {
@@ -66,7 +66,7 @@ public class DefaultNElementFormatOptions implements NElementFormatOptions {
     }
 
     @Override
-    public NNewLineMode getNewLineMode() {
+    public NNewLineMode newLineMode() {
         return get("newline", s -> {
             if (s instanceof NNewLineMode) {
                 return (NNewLineMode) s;

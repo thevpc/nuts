@@ -33,14 +33,38 @@ package net.thevpc.nuts.text;
  */
 public interface NTableCellFormat {
 
+    /**
+     * Format.
+     *
+     * @param row row
+     * @param col col
+     * @param value value
+     * @return format result
+     */
     default NText format(int row, int col, NText value) {
         return value==null?NText.ofBlank() : value;
     }
 
+    /**
+     * Returns the horizontal align.
+     *
+     * @param row row
+     * @param col col
+     * @param value value
+     * @return get horizontal align result
+     */
     default NPositionType getHorizontalAlign(int row, int col, NText value) {
         return NPositionType.FIRST;
     }
 
+    /**
+     * Returns the vertical align.
+     *
+     * @param row row
+     * @param col col
+     * @param value value
+     * @return get vertical align result
+     */
     default NPositionType getVerticalAlign(int row, int col, NText value) {
         return NPositionType.FIRST;
     }

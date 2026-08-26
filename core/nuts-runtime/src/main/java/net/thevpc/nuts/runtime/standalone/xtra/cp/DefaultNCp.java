@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
@@ -19,10 +22,10 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.time.NChronometer;
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressFactory;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NChronometer;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressListener;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
@@ -79,48 +82,48 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NInputSource getSource() {
+    public NInputSource source() {
         return source;
     }
 
     @Override
-    public NCp setSource(NPath source) {
+    public NCp source(NPath source) {
         this.source = source;
         return this;
     }
 
     @Override
-    public NCp setSource(InputStream source) {
+    public NCp source(InputStream source) {
         this.source = source == null ? null : NInputSource.of(source);
         return this;
     }
 
     @Override
-    public NCp setSource(File source) {
+    public NCp source(File source) {
         this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
-    public NCp setSource(Path source) {
+    public NCp source(Path source) {
         this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
-    public NCp setSource(URL source) {
+    public NCp source(URL source) {
         this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
-    public NCp setSource(String source) {
+    public NCp source(String source) {
         this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
-    public NCp setSource(byte[] source) {
+    public NCp source(byte[] source) {
         this.source = source == null ? null : NInputSource.of(source);
         return this;
     }
@@ -157,94 +160,94 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp from(InputStream source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
     public NCp from(File source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
     public NCp from(Path source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
     public NCp from(URL source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
     public NCp from(byte[] source) {
-        return setSource(source);
+        return source(source);
     }
 
     @Override
-    public NOutputTarget getTarget() {
+    public NOutputTarget target() {
         return target;
     }
 
     @Override
-    public NCp setTarget(OutputStream target) {
+    public NCp target(OutputStream target) {
         this.target = target == null ? null : NOutputTarget.of(target);
         return this;
     }
 
     @Override
-    public NCp setTarget(NPrintStream target) {
+    public NCp target(NPrintStream target) {
         this.target = target;
         return this;
     }
 
     @Override
-    public NCp setTarget(NPath target) {
+    public NCp target(NPath target) {
         this.target = target;
         return this;
     }
 
     @Override
-    public NCp setTarget(Path target) {
+    public NCp target(Path target) {
         this.target = target == null ? null : NPath.of(target);
         return this;
     }
 
     @Override
-    public NCp setTarget(File target) {
+    public NCp target(File target) {
         this.target = target == null ? null : NPath.of(target);
         return this;
     }
 
     @Override
-    public NCp setTarget(NOutputTarget target) {
+    public NCp target(NOutputTarget target) {
         this.target = target;
         return this;
     }
 
     @Override
-    public NCp setSource(NInputSource source) {
+    public NCp source(NInputSource source) {
         this.source = source;
         return this;
     }
 
     @Override
     public NCp to(OutputStream target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NCp to(NPrintStream target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NCp to(Path target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
     public NCp to(File target) {
-        return setTarget(target);
+        return target(target);
     }
 
     @Override
@@ -284,17 +287,17 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public Set<NPathOption> getOptions() {
+    public Set<NPathOption> options() {
         return new LinkedHashSet<>(options);
     }
 
     @Override
-    public NCpValidator getValidator() {
+    public NCpValidator validator() {
         return checker;
     }
 
     @Override
-    public DefaultNCp setValidator(NCpValidator checker) {
+    public DefaultNCp validator(NCpValidator checker) {
         this.checker = checker;
         return this;
     }
@@ -316,23 +319,23 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NCp setMkdirs(boolean mkdirs) {
+    public NCp mkdirs(boolean mkdirs) {
         this.mkdirs = mkdirs;
         return this;
     }
 
     @Override
-    public byte[] getByteArrayResult() {
+    public byte[] byteArrayResult() {
         NMemoryPrintStream b = NPrintStream.ofMem();
         to(b);
         removeOptions(NPathOption.SAFE);
         run();
-        return b.getBytes();
+        return b.bytes();
     }
 
     @Override
-    public String getStringResult() {
-        return new String(getByteArrayResult());
+    public String stringResult() {
+        return new String(byteArrayResult());
     }
 
     @Override
@@ -352,7 +355,7 @@ public class DefaultNCp implements NCp {
             if (
                     options.contains(NPathOption.LOG)
                             || options.contains(NPathOption.TRACE)
-                            || getProgressFactory() != null
+                            || progressFactory() != null
             ) {
                 prepareCopyFolder(fromPath, cd);
                 copyFolderWithMonitor(fromPath, toPath, cd);
@@ -372,7 +375,7 @@ public class DefaultNCp implements NCp {
      * @since 0.5.8
      */
     @Override
-    public NProgressFactory getProgressFactory() {
+    public NProgressFactory progressFactory() {
         return progressMonitorFactory;
     }
 
@@ -384,7 +387,7 @@ public class DefaultNCp implements NCp {
      * @since 0.5.8
      */
     @Override
-    public NCp setProgressFactory(NProgressFactory value) {
+    public NCp progressFactory(NProgressFactory value) {
         this.progressMonitorFactory = value;
         return this;
     }
@@ -397,7 +400,7 @@ public class DefaultNCp implements NCp {
      * @since 0.5.8
      */
     @Override
-    public NCp setProgressMonitor(NProgressListener value) {
+    public NCp progressMonitor(NProgressListener value) {
         this.progressMonitorFactory = value == null ? null : new SingletonNInputStreamProgressFactory(value);
         return this;
     }
@@ -408,7 +411,7 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NCp setSkipRoot(boolean skipRoot) {
+    public NCp skipRoot(boolean skipRoot) {
         this.skipRoot = skipRoot;
         return this;
     }
@@ -421,36 +424,36 @@ public class DefaultNCp implements NCp {
         return this;
     }
 
-    public Object getSourceOrigin() {
+    public Object sourceOrigin() {
         return sourceOrigin;
     }
 
-    public NCp setSourceOrigin(Object sourceOrigin) {
+    public NCp sourceOrigin(Object sourceOrigin) {
         this.sourceOrigin = sourceOrigin;
         return this;
     }
 
-    public NMsg getActionMessage() {
+    public NMsg actionMessage() {
         return actionMsg;
     }
 
-    public DefaultNCp setActionMessage(NMsg actionMsg) {
+    public DefaultNCp actionMessage(NMsg actionMsg) {
         this.actionMsg = actionMsg;
         return this;
     }
 
-    public String getSourceTypeName() {
+    public String sourceTypeName() {
         return sourceTypeName;
     }
 
-    public NCp setSourceTypeName(String sourceTypeName) {
+    public NCp sourceTypeName(String sourceTypeName) {
         this.sourceTypeName = sourceTypeName;
         return this;
     }
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NInterruptException();
+            throw new NInterruptedException();
         }
     }
 
@@ -490,12 +493,12 @@ public class DefaultNCp implements NCp {
 
     private void copyFolderWithMonitor(Path srcBase, Path targetBase, CopyData f) {
         long start = System.nanoTime();
-        Object origin = getSourceOrigin();
+        Object origin = sourceOrigin();
         NProgressListener m = NProgressUtils.createProgressMonitor(
                 NProgressUtils.MonitorType.DEFAULT, NPath.of(srcBase), origin, NWorkspace.of(),
                 options.contains(NPathOption.LOG),
                 options.contains(NPathOption.TRACE),
-                getProgressFactory());
+                progressFactory());
         NText srcBaseMessage = NText.of(srcBase);
         m.onProgress(NProgressEvent.ofStart(srcBase,
                 NMsg.ofNtf(srcBaseMessage)
@@ -552,7 +555,7 @@ public class DefaultNCp implements NCp {
                     return null;
                 }
             }
-            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
+            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).interruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try (OutputStream out = Files.newOutputStream(target)) {
                     transferTo(in, out);
@@ -566,19 +569,19 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, Path target, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NInputSourceBuilder.of(in).setInterruptible(true).createInputStream();
+            in = NInputSourceBuilder.of(in).interruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             try (OutputStream out = Files.newOutputStream(target)) {
                 return transferTo(in, out);
             }
         }
-        return Files.copy(in, target, CoreIOUtils.asCopyOptions(options).toArray(new CopyOption[0]));
+        return CoreIOUtils.copyWithBuffer(in, target, CoreIOUtils.asCopyOptions(options).toArray(new CopyOption[0]));
     }
 
     public long copy(InputStream in, OutputStream out, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NInputSourceBuilder.of(in).setInterruptible(true).createInputStream();
+            in = NInputSourceBuilder.of(in).interruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             return transferTo(in, out);
         }
@@ -596,7 +599,7 @@ public class DefaultNCp implements NCp {
 
     public long copy(Path source, OutputStream out) throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
+            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).interruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try {
                     return transferTo(in, out);
@@ -742,29 +745,29 @@ public class DefaultNCp implements NCp {
         if (checker != null && _target2.jpath == null && !safe) {
             throw new NIllegalArgumentException(NMsg.ofNtf("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
-        NMsg loggedSrc = _source2.source.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-source"));
-        NMsg loggedTarget = target.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-target"));
-        NMsg m = getActionMessage();
+        NMsg loggedSrc = _source2.source.metaData().message().orElse(NMsg.ofP("unknown-source"));
+        NMsg loggedTarget = target.metaData().message().orElse(NMsg.ofP("unknown-target"));
+        NMsg m = actionMessage();
         if (m == null) {
-            m = NMsg.ofPlain("copy");
+            m = NMsg.ofP("copy");
         }
         if (options.contains(NPathOption.LOG)) {
-            session.getTerminal().printProgress(NMsg.ofC("%-14s %s to %s", m, loggedSrc, loggedTarget));
+            session.terminal().printProgress(NMsg.ofC("%-14s %s to %s", m, loggedSrc, loggedTarget));
         }
         if (options.contains(NPathOption.LOG)
                 || options.contains(NPathOption.TRACE)
-                || getProgressFactory() != null
+                || progressFactory() != null
         ) {
             NInputStreamMonitor monitor = NInputStreamMonitor.of();
-            monitor.setSource(_source2.source);
-            monitor.setLogProgress(options.contains(NPathOption.LOG));
-            monitor.setTraceProgress(options.contains(NPathOption.TRACE));
-            monitor.setOrigin(getSourceOrigin());
-            monitor.setSourceTypeName(getSourceTypeName());
+            monitor.source(_source2.source);
+            monitor.logProgress(options.contains(NPathOption.LOG));
+            monitor.traceProgress(options.contains(NPathOption.TRACE));
+            monitor.origin(sourceOrigin());
+            monitor.sourceTypeName(sourceTypeName());
             _source2.source = NInputSource.of(
-                    monitor.setProgressFactory(getProgressFactory())
-                            .setLength(_source2.source.getMetaData().getContentLength().orElse(-1L))
-                            .setLogProgress(options.contains(NPathOption.LOG))
+                    monitor.progressFactory(progressFactory())
+                            .length(_source2.source.metaData().contentLength().orElse(-1L))
+                            .logProgress(options.contains(NPathOption.LOG))
                             .create());
         }
         NChronometer chrono = NChronometer.of();
@@ -787,7 +790,7 @@ public class DefaultNCp implements NCp {
                     if (_source2.jpath != null) {
                         copy(_source2.jpath, temp, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                     } else {
-                        try (InputStream ins = _source2.source.getInputStream()) {
+                        try (InputStream ins = _source2.source.inputStream()) {
                             copy(ins, temp, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                         }
                     }
@@ -807,7 +810,7 @@ public class DefaultNCp implements NCp {
                         }
                         temp = null;
                     } else {
-                        try (OutputStream ops = target.getOutputStream()) {
+                        try (OutputStream ops = target.outputStream()) {
                             copy(temp, ops);
                         }
                     }
@@ -823,7 +826,7 @@ public class DefaultNCp implements NCp {
                     if (_source2.jpath != null) {
                         copy(_source2.jpath, to, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                     } else {
-                        try (InputStream ins = _source2.source.getInputStream()) {
+                        try (InputStream ins = _source2.source.inputStream()) {
                             copy(ins, to, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                         }
                     }
@@ -835,22 +838,22 @@ public class DefaultNCp implements NCp {
                         if (_source2.jpath != null) {
                             copy(_source2.jpath, bos);
                         } else {
-                            try (InputStream ins = _source2.source.getInputStream()) {
+                            try (InputStream ins = _source2.source.inputStream()) {
                                 copy(ins, bos, options);
                             }
                         }
-                        try (OutputStream ops = target.getOutputStream()) {
+                        try (OutputStream ops = target.outputStream()) {
                             copy(new ByteArrayInputStream(bos.toByteArray()), ops, options);
                         }
                         _validate(bos.toByteArray());
                     } else {
                         if (_source2.jpath != null) {
-                            try (OutputStream ops = target.getOutputStream()) {
+                            try (OutputStream ops = target.outputStream()) {
                                 copy(_source2.jpath, ops);
                             }
                         } else {
-                            try (InputStream ins = _source2.source.getInputStream()) {
-                                try (OutputStream ops = target.getOutputStream()) {
+                            try (InputStream ins = _source2.source.inputStream()) {
+                                try (OutputStream ops = target.outputStream()) {
                                     copy(ins, ops, options);
                                 }
                             }
@@ -895,7 +898,7 @@ public class DefaultNCp implements NCp {
             } catch (NCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NCpValidatorException(NMsg.ofPlain("validate file failed"), ex);
+                throw new NCpValidatorException(NMsg.ofP("validate file failed"), ex);
             }
         }
     }

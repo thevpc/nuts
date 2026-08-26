@@ -38,45 +38,149 @@ import net.thevpc.nuts.spi.NComponent;
  * @since 0.5.4
  */
 public interface NDescriptorWriter extends NObjectWriter, NComponent {
+    /**
+     * Creates a new instance of of ntf.
+     *
+     * @return of ntf result
+     */
     static NDescriptorWriter ofNtf() {
-        return of().setNtf(true);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(true ).ntf(true
+         * @return of result
+         */
+        return of().ntf(true);
     }
 
+    /**
+     * Creates a new instance of of plain.
+     *
+     * @return of plain result
+     */
     static NDescriptorWriter ofPlain() {
-        return of().setNtf(false);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(false ).ntf(false
+         * @return of result
+         */
+        return of().ntf(false);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDescriptorWriter of() {
         return NExtensions.of(NDescriptorWriter.class);
     }
 
+    /**
+     * Creates a new instance of of ntf maven.
+     *
+     * @return of ntf maven result
+     */
     static NDescriptorWriter ofNtfMaven() {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MAVEN);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.MAVEN ).ntf(true).descriptor style(n descriptor style.maven
+         * @return of result
+         */
+        return of().ntf(true).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
+    /**
+     * Creates a new instance of of maven.
+     *
+     * @return of maven result
+     */
     static NDescriptorWriter ofMaven() {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MAVEN);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.MAVEN ).ntf(false).descriptor style(n descriptor style.maven
+         * @return of result
+         */
+        return of().ntf(false).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
+    /**
+     * Creates a new instance of of ntf nuts.
+     *
+     * @return of ntf nuts result
+     */
     static NDescriptorWriter ofNtfNuts() {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.NUTS);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.NUTS ).ntf(true).descriptor style(n descriptor style.nuts
+         * @return of result
+         */
+        return of().ntf(true).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
+    /**
+     * Creates a new instance of of nuts.
+     *
+     * @return of nuts result
+     */
     static NDescriptorWriter ofNuts() {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.NUTS);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.NUTS ).ntf(false).descriptor style(n descriptor style.nuts
+         * @return of result
+         */
+        return of().ntf(false).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
+    /**
+     * Creates a new instance of of ntf manifest.
+     *
+     * @return of ntf manifest result
+     */
     static NDescriptorWriter ofNtfManifest() {
-        return of().setNtf(true).setDescriptorStyle(NDescriptorStyle.MANIFEST);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.MANIFEST ).ntf(true).descriptor style(n descriptor style.manifest
+         * @return of result
+         */
+        return of().ntf(true).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
+    /**
+     * Creates a new instance of of manifest.
+     *
+     * @return of manifest result
+     */
     static NDescriptorWriter ofManifest() {
-        return of().setNtf(false).setDescriptorStyle(NDescriptorStyle.MANIFEST);
+        /**
+         * Creates a new instance of of.
+         *
+         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.MANIFEST ).ntf(false).descriptor style(n descriptor style.manifest
+         * @return of result
+         */
+        return of().ntf(false).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
-    NDescriptorStyle getDescriptorStyle();
+    /**
+     * Descriptor style.
+     *
+     * @return descriptor style result
+     */
+    NDescriptorStyle descriptorStyle();
 
-    NDescriptorWriter setDescriptorStyle(NDescriptorStyle descriptorStyle);
+    /**
+     * Descriptor style.
+     *
+     * @param descriptorStyle descriptor style
+     * @return descriptor style result
+     */
+    NDescriptorWriter descriptorStyle(NDescriptorStyle descriptorStyle);
 
     /**
      * true if compact flag is armed.
@@ -85,15 +189,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return true if compact flag is armed
      */
     boolean isCompact();
-
-    /**
-     * value compact flag.
-     * When true, formatted Descriptor will compact JSON result.
-     *
-     * @param compact compact value
-     * @return {@code this} instance
-     */
-    NDescriptorWriter setCompact(boolean compact);
 
     /**
      * value compact flag.
@@ -125,5 +220,11 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
     @Override
     NDescriptorWriter configure(boolean skipUnsupported, String... args);
 
-    NDescriptorWriter setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    NDescriptorWriter ntf(boolean ntf);
 }

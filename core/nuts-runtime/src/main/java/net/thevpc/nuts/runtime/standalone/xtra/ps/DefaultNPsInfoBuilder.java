@@ -231,10 +231,10 @@ public class DefaultNPsInfoBuilder implements NBlankable {
     }
 
     public NPsInfo build() {
-        return new DefaultNPsInfo(id, NStringUtils.trimToNull(name), user, title, cmdLine, cmdLineArgs,
+        return new DefaultNPsInfo(id, NStringUtils.stripToNull(name), user, title, cmdLine, cmdLineArgs,
                 status == null ? NpsStatus.UNKNOWN : status,
                 type == null ? NpsType.UNKNOWN : type,
-                statusFlags == null ? Collections.emptySet() : Collections.unmodifiableSet(new TreeSet<>(statusFlags.stream().filter(Objects::nonNull).map(String::trim).collect(Collectors.toSet()))),
+                statusFlags == null ? Collections.emptySet() : Collections.unmodifiableSet(new TreeSet<>(statusFlags.stream().filter(Objects::nonNull).map(NStringUtils::strip).collect(Collectors.toSet()))),
                 percentCpu, percentMem, virtualMemorySize, residentSetSize, terminal, startTime, time);
     }
 

@@ -26,8 +26,6 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.security.NNamedCredentialConfig;
-import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NToStringBuilder;
 
@@ -55,10 +53,25 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
     private String authenticationAgent;
     private String[] tags;
 
+    /**
+     * N repository config.
+     *
+     * @return n repository config result
+     */
     public NRepositoryConfig() {
     }
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     public NRepositoryConfig copy(){
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -83,114 +96,232 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
             }
             return o;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }
 
-    public String[] getTags() {
+    /**
+     * Tags.
+     *
+     * @return tags result
+     */
+    public String[] tags() {
         return tags;
     }
 
-    public NRepositoryConfig setTags(String[] tags) {
+    /**
+     * Tags.
+     *
+     * @param tags tags
+     * @return tags result
+     */
+    public NRepositoryConfig tags(String[] tags) {
         this.tags = tags;
         return this;
     }
 
-    public String getName() {
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    public String name() {
         return name;
     }
 
-    public NRepositoryConfig setName(String name) {
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    public NRepositoryConfig name(String name) {
         this.name = name;
         return this;
     }
 
-    public String getUuid() {
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
+    public String uuid() {
         return uuid;
     }
 
-    public NRepositoryConfig setUuid(String uuid) {
+    /**
+     * Uuid.
+     *
+     * @param uuid uuid
+     * @return uuid result
+     */
+    public NRepositoryConfig uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }
 
-//    public String getType() {
-//        return type;
-//    }
-//
-//    public NutsRepositoryConfig setType(String type) {
-//        this.type = type;
-//        return this;
-//    }
-
-    public NRepositoryLocation getLocation() {
+    /**
+     * Location.
+     *
+     * @return location result
+     */
+    public NRepositoryLocation location() {
         return location;
     }
 
-    public NRepositoryConfig setLocation(NRepositoryLocation location) {
+    /**
+     * Location.
+     *
+     * @param location location
+     * @return location result
+     */
+    public NRepositoryConfig location(NRepositoryLocation location) {
         this.location = location;
         return this;
     }
 
-    public NStoreStrategy getStoreStrategy() {
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
+    public NStoreStrategy storeStrategy() {
         return storeStrategy;
     }
 
-    public NRepositoryConfig setStoreStrategy(NStoreStrategy storeStrategy) {
+    /**
+     * Store strategy.
+     *
+     * @param storeStrategy store strategy
+     * @return store strategy result
+     */
+    public NRepositoryConfig storeStrategy(NStoreStrategy storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
 
-    public String getGroups() {
+    /**
+     * Groups.
+     *
+     * @return groups result
+     */
+    public String groups() {
         return groups;
     }
 
-    public NRepositoryConfig setGroups(String groups) {
+    /**
+     * Groups.
+     *
+     * @param groups groups
+     * @return groups result
+     */
+    public NRepositoryConfig groups(String groups) {
         this.groups = groups;
         return this;
     }
 
-    public Map<String, String> getEnv() {
+    /**
+     * Env.
+     *
+     * @return env result
+     */
+    public Map<String, String> env() {
         return env;
     }
 
-    public NRepositoryConfig setEnv(Map<String, String> env) {
+    /**
+     * Env.
+     *
+     * @param env env
+     * @return env result
+     */
+    public NRepositoryConfig env(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
-    public List<NRepositoryRef> getMirrors() {
+    /**
+     * Mirrors.
+     *
+     * @return mirrors result
+     */
+    public List<NRepositoryRef> mirrors() {
         return mirrors;
     }
 
-    public NRepositoryConfig setMirrors(List<NRepositoryRef> mirrors) {
+    /**
+     * Mirrors.
+     *
+     * @param mirrors mirrors
+     * @return mirrors result
+     */
+    public NRepositoryConfig mirrors(List<NRepositoryRef> mirrors) {
         this.mirrors = mirrors;
         return this;
     }
 
+    /**
+     * Checks if is index enabled.
+     *
+     * @return is index enabled result
+     */
     public boolean isIndexEnabled() {
         return indexEnabled;
     }
 
-    public NRepositoryConfig setIndexEnabled(boolean indexEnabled) {
+    /**
+     * Index enabled.
+     *
+     * @param indexEnabled index enabled
+     * @return index enabled result
+     */
+    public NRepositoryConfig indexEnabled(boolean indexEnabled) {
         this.indexEnabled = indexEnabled;
         return this;
     }
 
-    public String getAuthenticationAgent() {
+    /**
+     * Authentication agent.
+     *
+     * @return authentication agent result
+     */
+    public String authenticationAgent() {
         return authenticationAgent;
     }
 
-    public NRepositoryConfig setAuthenticationAgent(String authenticationAgent) {
+    /**
+     * Authentication agent.
+     *
+     * @param authenticationAgent authentication agent
+     * @return authentication agent result
+     */
+    public NRepositoryConfig authenticationAgent(String authenticationAgent) {
         this.authenticationAgent = authenticationAgent;
         return this;
     }
 
-    public Map<NStoreType, String> getStoreLocations() {
+    /**
+     * Store locations.
+     *
+     * @return store locations result
+     */
+    public Map<NStoreType, String> storeLocations() {
         return storeLocations;
     }
 
-    public NRepositoryConfig setStoreLocations(Map<NStoreType, String> storeLocations) {
+    /**
+     * Store locations.
+     *
+     * @param storeLocations store locations
+     * @return store locations result
+     */
+    public NRepositoryConfig storeLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }

@@ -6,6 +6,8 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.expr.NParseException;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder;
@@ -66,10 +68,10 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         try {
             boolean startParsing = false;
             try {
-                try (InputStream is = path.getInputStream()) {
+                try (InputStream is = path.inputStream()) {
                     startParsing = true;
                     NDescriptorStyle defaultDescriptorStyle = null;
-                    String canonicalPathName = path.getName().toLowerCase();
+                    String canonicalPathName = path.name().toLowerCase();
                     switch (canonicalPathName) {
                         case "pom.xml": {
                             defaultDescriptorStyle = NDescriptorStyle.MAVEN;
@@ -94,7 +96,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                     NOptional<NDescriptor> r = parse(is, defaultDescriptorStyle, true);
                     if (r.isError()) {
                         return NOptional.ofError(() -> NMsg.ofC("unable to parse descriptor from %s : %s", path,
-                                r.getMessage().get()
+                                r.message().get()
                         ));
                     }
                     return r;
@@ -121,12 +123,12 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
     }
 
     @Override
-    public NDescriptorStyle getDescriptorStyle() {
+    public NDescriptorStyle descriptorStyle() {
         return descriptorStyle;
     }
 
     @Override
-    public DefaultNDescriptorParser setDescriptorStyle(NDescriptorStyle descriptorStyle) {
+    public DefaultNDescriptorParser descriptorStyle(NDescriptorStyle descriptorStyle) {
         this.descriptorStyle = descriptorStyle;
         return this;
     }
@@ -143,7 +145,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
     }
 
     private NDescriptor parseNonLenient(InputStream in, NDescriptorStyle defaultDescriptorStyle, boolean closeStream) {
-        NDescriptorStyle style = getDescriptorStyle();
+        NDescriptorStyle style = descriptorStyle();
         if (style == null) {
             style = defaultDescriptorStyle;
         }
@@ -195,51 +197,51 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                         for (Object o : attrs.keySet()) {
                             Attributes.Name attrName = (Attributes.Name) o;
                             if ("Main-Class".equals(attrName.toString())) {
-                                mainClass = (NStringUtils.trimToNull(attrs.getValue(attrName)));
+                                mainClass = (NStringUtils.stripToNull(attrs.getValue(attrName)));
                             }
                             if ("Automatic-Module-Name".equals(attrName.toString())) {
-                                automaticModuleName = NStringUtils.trimToNull(attrs.getValue(attrName));
+                                automaticModuleName = NStringUtils.stripToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Version".equals(attrName.toString())) {
-                                mainVersion = NStringUtils.trimToNull(attrs.getValue(attrName));
+                                mainVersion = NStringUtils.stripToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Vendor-Id".equals(attrName.toString())) {
-                                implVendorId = NStringUtils.trimToNull(attrs.getValue(attrName));
+                                implVendorId = NStringUtils.stripToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Title".equals(attrName.toString())) {
-                                implTitle = NStringUtils.trimToNull(attrs.getValue(attrName));
+                                implTitle = NStringUtils.stripToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Vendor-Title".equals(attrName.toString())) {
-                                implVendorTitle = NStringUtils.trimToNull(attrs.getValue(attrName));
+                                implVendorTitle = NStringUtils.stripToNull(attrs.getValue(attrName));
                             }
                             if ("Nuts-Id".equals(attrName.toString())) {
-                                explicitId = NId.get(NStringUtils.trimToNull(attrs.getValue(attrName))).orNull();
+                                explicitId = NId.get(NStringUtils.stripToNull(attrs.getValue(attrName))).orNull();
                             }
                             if ("Nuts-Dependencies".equals(attrName.toString())) {
-                                String nutsDependencies = NStringUtils.trimToNull(attrs.getValue(attrName));
+                                String nutsDependencies = NStringUtils.stripToNull(attrs.getValue(attrName));
                                 deps = nutsDependencies == null ? Collections.emptySet() :
                                         StringTokenizerUtils.splitSemiColon(nutsDependencies).stream()
-                                                .map(String::trim)
+                                                .map(NStringUtils::strip)
                                                 .filter(x -> x.length() > 0)
                                                 .map(x -> NDependency.get(x).orNull())
                                                 .filter(Objects::nonNull)
                                                 .collect(Collectors.toCollection(LinkedHashSet::new));
                             }
-                            all.put(attrName.toString(), NStringUtils.trimToNull(attrs.getValue(attrName)));
+                            all.put(attrName.toString(), NStringUtils.stripToNull(attrs.getValue(attrName)));
                         }
                         String groupId=null;
                         String artifactId=null;
-                        String artifactVersion=NBlankable.isBlank(mainVersion) ? "1.0" : mainVersion.trim();
-                        if(!NBlankable.isBlank(implVendorId) &&  validGroupId(implVendorId.trim())){
-                            groupId=implVendorId.trim();
+                        String artifactVersion=NBlankable.isBlank(mainVersion) ? "1.0" : NStringUtils.strip(mainVersion);
+                        if(!NBlankable.isBlank(implVendorId) &&  validGroupId(NStringUtils.strip(implVendorId))){
+                            groupId=NStringUtils.strip(implVendorId);
                         }
                         if(!NBlankable.isBlank(implTitle) &&  validArtifactId(implTitle)){
-                            artifactId=implTitle.trim();
+                            artifactId=NStringUtils.strip(implTitle);
                         }
                         if (explicitId == null && !NBlankable.isBlank(groupId) && !NBlankable.isBlank(artifactId)) {
                             explicitId = NIdBuilder.of(groupId, artifactId)
-                                    .setVersion(
-                                            NBlankable.isBlank(artifactVersion) ? "1.0" : artifactVersion.trim()
+                                    .version(
+                                            NBlankable.isBlank(artifactVersion) ? "1.0" : NStringUtils.strip(artifactVersion)
                                     ).build();
                         }
                         if (explicitId == null) {
@@ -252,23 +254,23 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                             }
                             if (!NBlankable.isBlank(automaticModuleName)) {
                                 if(NBlankable.isBlank(groupId) && !NBlankable.isBlank(CorePlatformUtils.getPackageName(automaticModuleName))) {
-                                    groupId = NStringUtils.trim(CorePlatformUtils.getPackageName(automaticModuleName));
+                                    groupId = NStringUtils.strip(CorePlatformUtils.getPackageName(automaticModuleName));
                                 }
                                 if(NBlankable.isBlank(artifactId) && !NBlankable.isBlank(CorePlatformUtils.getSimpleClassName(automaticModuleName))) {
-                                    artifactId = NStringUtils.trim(CorePlatformUtils.getSimpleClassName(automaticModuleName));
+                                    artifactId = NStringUtils.strip(CorePlatformUtils.getSimpleClassName(automaticModuleName));
                                 }
                                 explicitId = NIdBuilder.of(groupId, artifactId)
-                                        .setVersion(artifactVersion).build();
+                                        .version(artifactVersion).build();
                             }
                         }
                         if (explicitId != null || !deps.isEmpty()) {
-                            String nutsName = NStringUtils.trimToNull(all.get("Nuts-Name"));
+                            String nutsName = NStringUtils.stripToNull(all.get("Nuts-Name"));
                             if (nutsName == null) {
                                 nutsName = implVendorTitle;
                             }
                             return new DefaultNDescriptorBuilder()
-                                    .setId(explicitId)
-                                    .setName(nutsName)
+                                    .id(explicitId)
+                                    .name(nutsName)
                                     .addFlag(NBlankable.isBlank(mainClass) ? NDescriptorFlag.EXEC : null)
                                     .addFlags(
                                             StringTokenizerUtils.splitDefault(
@@ -278,45 +280,45 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                                     .filter(Objects::nonNull)
                                                     .toArray(NDescriptorFlag[]::new)
                                     )
-                                    .setPackaging(CoreStringUtils.coalesce(
-                                            NStringUtils.trimToNull(all.get("Nuts-Packaging")),
+                                    .packaging(CoreStringUtils.coalesce(
+                                            NStringUtils.stripToNull(all.get("Nuts-Packaging")),
                                             "jar"
                                     ))
-                                    .setCategories(
+                                    .categories(
                                             StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Categories")
                                                     ).stream()
-                                                    .map(NStringUtils::trimToNull)
+                                                    .map(NStringUtils::stripToNull)
                                                     .filter(Objects::nonNull)
                                                     .collect(Collectors.toList())
                                     )
-                                    .setIcons(
+                                    .icons(
                                             StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Icons")
                                                     ).stream()
-                                                    .map(NStringUtils::trimToNull)
+                                                    .map(NStringUtils::stripToNull)
                                                     .filter(Objects::nonNull)
                                                     .collect(Collectors.toList())
                                     )
-                                    .setName(nutsName)
-                                    .setDescription(NStringUtils.trimToNull(all.get("Nuts-Description")))
-                                    .setGenericName(NStringUtils.trimToNull(all.get("Nuts-Generic-Name")))
+                                    .name(nutsName)
+                                    .description(NStringUtils.stripToNull(all.get("Nuts-Description")))
+                                    .genericName(NStringUtils.stripToNull(all.get("Nuts-Generic-Name")))
                                     .setProperties(all.entrySet().stream()
                                             .filter(x -> x.getKey().startsWith("Nuts-Property-"))
                                             .map(x -> new DefaultNDescriptorPropertyBuilder()
-                                                    .setName(x.getKey().substring("Nuts-Property-".length()))
-                                                    .setValue(x.getValue())
+                                                    .name(x.getKey().substring("Nuts-Property-".length()))
+                                                    .value(x.getValue())
                                                     //.setCondition()
                                                     .build())
                                             .collect(Collectors.toList()))
                                     //.setCondition()
-                                    .setExecutor(
+                                    .executor(
                                             new DefaultNArtifactCallBuilder()
-                                                    .setId(NId.get("java").get())
-                                                    .setArguments(NBlankable.isBlank(mainClass) ? null : new String[]{"--main-class=", mainClass})
+                                                    .id(NId.get("java").get())
+                                                    .arguments(NBlankable.isBlank(mainClass) ? null : new String[]{"--main-class=", mainClass})
                                                     .build()
                                     )
-                                    .setDependencies(new ArrayList<>(deps))
+                                    .dependencies(new ArrayList<>(deps))
                                     .build();
                         }
                         throw new NParseException(NMsg.ofC("Missing Explicit Nuts Id in Manifest from %s", in));

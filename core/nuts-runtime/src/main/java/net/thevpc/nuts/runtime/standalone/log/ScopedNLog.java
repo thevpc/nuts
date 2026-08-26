@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogScope;
-import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgBuilder;
 
@@ -25,14 +24,14 @@ class ScopedNLog implements NLog {
 
 
     @Override
-    public String getName() {
-        return base.getName();
+    public String name() {
+        return base.name();
     }
 
     @Override
     public boolean isLoggable(Level level) {
-        NLogScope c = NLogs.of().getContext();
-        NLog s = c.getLog();
+        NLogScope c = NLogScope.current();
+        NLog s = c.log();
         if (s != null) {
             return s.isLoggable(level);
         }
@@ -41,8 +40,8 @@ class ScopedNLog implements NLog {
 
     @Override
     public void log(Level level, Supplier<NMsg> msgSupplier) {
-        NLogScope c = NLogs.of().getContext();
-        NLog s = c.getLog();
+        NLogScope c = NLogScope.current();
+        NLog s = c.log();
         if (s != null) {
             s.log(level, () -> prepareMsg(msgSupplier.get(), c));
             return;
@@ -52,8 +51,8 @@ class ScopedNLog implements NLog {
 
     @Override
     public void log(NMsg msg) {
-        NLogScope c = NLogs.of().getContext();
-        NLog s = c.getLog();
+        NLogScope c = NLogScope.current();
+        NLog s = c.log();
         if (s != null) {
             s.log(msg);
 //            s.log(prepareMsg(msg, c));
@@ -68,7 +67,7 @@ class ScopedNLog implements NLog {
     }
 
     private NMsg prepareMsg(NMsg other, NLogScope c) {
-        return other.withPrefix(c.getMessagePrefix()).withSuffix(c.getMessageSuffix()).withPlaceholders(c::getPlaceholder);
+        return other.withPrefix(c.messagePrefix()).withSuffix(c.messageSuffix()).withPlaceholders(c::getPlaceholder);
     }
 
 }

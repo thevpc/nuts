@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.function.Supplier;
@@ -52,6 +52,14 @@ public interface NScoredRunnable<T> extends NScorable {
      * @return a new {@code NScoredRunnable} instance
      */
     static <T> NScoredRunnable<T> of(int score, Runnable supplier) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param score score
+         * @param supplier supplier
+         * @param null null
+         * @return of result
+         */
         return of(score, supplier, null);
     }
 

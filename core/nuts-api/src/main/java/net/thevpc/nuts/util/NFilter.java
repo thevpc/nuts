@@ -36,21 +36,70 @@ import java.util.List;
  */
 public interface NFilter extends NRedescribable<NFilter> {
 
-    NFilterOp getFilterOp();
+    /**
+     * Filter op.
+     *
+     * @return filter op result
+     */
+    NFilterOp filterOp();
 
-    Class<? extends NFilter> getFilterType();
+    /**
+     * Filter type.
+     *
+     * @return filter type result
+     */
+    Class<? extends NFilter> filterType();
 
+    /**
+     * Simplify.
+     *
+     * @return simplify result
+     */
     NFilter simplify();
 
+    /**
+     * Simplify.
+     *
+     * @param type type
+     * @return simplify result
+     */
     <T extends NFilter> NFilter simplify(Class<T> type);
 
+    /**
+     * Or.
+     *
+     * @param other other
+     * @return or result
+     */
     NFilter or(NFilter other);
 
+    /**
+     * And.
+     *
+     * @param other other
+     * @return and result
+     */
     NFilter and(NFilter other);
 
+    /**
+     * Neg.
+     *
+     * @return neg result
+     */
     NFilter neg();
 
+    /**
+     * Converts to to.
+     *
+     * @param type type
+     * @return to result
+     */
     <T extends NFilter> T to(Class<T> type);
 
-    List<NFilter> getSubFilters();
+    /**
+     * Sub filters.
+     *
+     * @return sub filters result
+     */
+    List<NFilter> subFilters();
 }

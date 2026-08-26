@@ -35,7 +35,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.util.NIteratorBase;
+import net.thevpc.nuts.pipeline.NIteratorBase;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
@@ -70,7 +70,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         this.model = model;
         this.maxDepth = maxDepth;
         if (rootFolder == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("could not iterate over null rootFolder"));
+            throw new NIllegalArgumentException(NMsg.ofP("could not iterate over null rootFolder"));
         }
         this.basePath = basePath;
         this.rootFolder = rootFolder;
@@ -89,10 +89,10 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     public NElement describe() {
         return NElement.ofObjectBuilder()
                 .name("ScanPath")
-                .set("repository", repository == null ? null : repository.getName())
+                .set("repository", repository == null ? null : repository.name())
                 .set("filter", NDescribables.describeResolveOrSimplify(filter))
-                .add(basePath == null ? null : NElement.ofPair("path", NElements.of().toElement(basePath)))
-                .set("root", NElements.of().toElement(rootFolder))
+                .add(basePath == null ? null : NElement.ofPair("path", NElement.of(basePath)))
+                .set("root", NElement.of(rootFolder))
                 .add((maxDepth < 0 || maxDepth == Integer.MAX_VALUE) ? null : NElement.ofPair("maxDepth", maxDepth))
                 .addAll(extraProperties==null?null:extraProperties.children())
                 .build();
@@ -103,20 +103,20 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         last = null;
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.remove();
-            NSession session = repository.getWorkspace().currentSession();
+            NSession session = repository.workspace().currentSession();
             if (file.folder) {
-                session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s (for %s) in %s", repository.getName(), kind, "search folder", filter, NCoreLogUtils.forProgress(file.path)));
+                session.terminal().printProgress(NMsg.ofC("%-14s %-8s %-8s (for %s) in %s", repository.name(), kind, "search folder", filter, NCoreLogUtils.forProgress(file.path)));
                 visitedFoldersCount++;
                 NPath[] children = new NPath[0];
                 try {
                     children = file.path.stream().toArray(NPath[]::new);
                 } catch (NIOException ex) {
                     //just log without stack trace!
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
+                    session.terminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.name(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
                     NLog.of(NIdPathIterator.class)//.error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()).asFine());
                 } catch (Exception ex) {
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.getName(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
+                    session.terminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s (for %s) in %s", repository.name(), kind, "search folder", NCoreLogUtils.forProgress(file.path), filter, NText.ofStyledError("failed!")));
                     NLog.of(NIdPathIterator.class)
                             .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()).asFineFail(ex));
                 }
@@ -164,7 +164,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         if (last != null) {
             model.undeploy(last);
         }
-        throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported Remove"));
+        throw new NUnsupportedOperationException(NMsg.ofP("unsupported Remove"));
     }
 
     public long getVisitedFoldersCount() {

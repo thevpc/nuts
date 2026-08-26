@@ -26,12 +26,15 @@ package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.pipeline.NIterable;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.runtime.standalone.util.CallOnceRunnable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -140,7 +143,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public Set<T> toSet() {
         try {
-            return stream().collect(Collectors.toSet());
+            return jstream().collect(Collectors.toSet());
         } finally {
             close();
         }
@@ -149,7 +152,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public Set<T> toSortedSet() {
         try {
-            return stream().collect(Collectors.toCollection(TreeSet::new));
+            return jstream().collect(Collectors.toCollection(TreeSet::new));
         } finally {
             close();
         }
@@ -158,7 +161,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public Set<T> toOrderedSet() {
         try {
-            return stream().collect(Collectors.toCollection(LinkedHashSet::new));
+            return jstream().collect(Collectors.toCollection(LinkedHashSet::new));
         } finally {
             close();
         }
@@ -174,7 +177,7 @@ public class NStreamBase<T> implements NStream<T> {
             }
             return NOptional.ofEmpty(()
                     -> name == null
-                    ? NMsg.ofPlain("missing last")
+                    ? NMsg.ofP("missing last")
                     : NMsg.ofC("missing last %s", name)
             );
         } finally {
@@ -198,7 +201,7 @@ public class NStreamBase<T> implements NStream<T> {
             } else {
                 return NOptional.ofEmpty(()
                         -> name == null
-                        ? NMsg.ofPlain("missing")
+                        ? NMsg.ofP("missing")
                         : NMsg.ofC("missing %s", name)
                 );
             }
@@ -208,7 +211,7 @@ public class NStreamBase<T> implements NStream<T> {
     }
 
     @Override
-    public Stream<T> stream() {
+    public Stream<T> jstream() {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false)
                 .onClose(this::close);
     }
@@ -216,7 +219,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public long count() {
         try {
-            return stream().count();
+            return jstream().count();
         } finally {
             close();
         }
@@ -263,11 +266,11 @@ public class NStreamBase<T> implements NStream<T> {
     }
 
     @Override
-    public NStream<T> sorted(NComparator<T> comp) {
+    public NStream<T> sorted(Comparator<T> comp) {
         return transform(new NStreamBaseTransform<T, T>() {
             @Override
             public NIterator<T> transformIterator(NIterator<T> iterator) {
-                return NIteratorUtils.sort(iterator, comp, false);
+                return NIteratorUtils.sort(iterator, comp==null?null:NComparator.<T>of(comp), false);
             }
 
             @Override
@@ -486,23 +489,23 @@ public class NStreamBase<T> implements NStream<T> {
 
     @Override
     public IntStream mapToInt(ToIntFunction<? super T> mapper) {
-        return stream().mapToInt(mapper);
+        return jstream().mapToInt(mapper);
     }
 
     @Override
     public LongStream mapToLong(ToLongFunction<? super T> mapper) {
-        return stream().mapToLong(mapper);
+        return jstream().mapToLong(mapper);
     }
 
     @Override
     public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
-        return stream().mapToDouble(mapper);
+        return jstream().mapToDouble(mapper);
     }
 
     @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
         try {
-            return stream().toArray(generator);
+            return jstream().toArray(generator);
         } finally {
             close();
         }
@@ -512,7 +515,7 @@ public class NStreamBase<T> implements NStream<T> {
     public <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
                                   Function<? super T, ? extends U> valueMapper) {
         try {
-            return stream().collect(Collectors.toMap(keyMapper, valueMapper));
+            return jstream().collect(Collectors.toMap(keyMapper, valueMapper));
         } finally {
             close();
         }
@@ -522,7 +525,7 @@ public class NStreamBase<T> implements NStream<T> {
     public <K, U> Map<K, U> toOrderedMap(Function<? super T, ? extends K> keyMapper,
                                          Function<? super T, ? extends U> valueMapper) {
         try {
-            return stream().collect(Collectors.toMap(keyMapper, valueMapper, throwingMerger(), LinkedHashMap::new));
+            return jstream().collect(Collectors.toMap(keyMapper, valueMapper, throwingMerger(), LinkedHashMap::new));
         } finally {
             close();
         }
@@ -532,7 +535,7 @@ public class NStreamBase<T> implements NStream<T> {
     public <K, U> Map<K, U> toSortedMap(Function<? super T, ? extends K> keyMapper,
                                         Function<? super T, ? extends U> valueMapper) {
         try {
-            return stream().collect(Collectors.toMap(keyMapper, valueMapper, throwingMerger(), TreeMap::new));
+            return jstream().collect(Collectors.toMap(keyMapper, valueMapper, throwingMerger(), TreeMap::new));
         } finally {
             close();
         }
@@ -628,7 +631,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
         try {
-            Stream<T> it = NStreamBase.this.stream();
+            Stream<T> it = NStreamBase.this.jstream();
             return it.collect(Collectors.groupingBy(classifier));
         } finally {
             close();
@@ -657,7 +660,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public NOptional<T> findAny() {
         try {
-            return NOptional.ofOptional(stream().findAny(), () -> NMsg.ofC("missing : %s", name));
+            return NOptional.ofOptional(jstream().findAny(), () -> NMsg.ofC("missing : %s", name));
         } finally {
             close();
         }
@@ -672,7 +675,7 @@ public class NStreamBase<T> implements NStream<T> {
             }
             return NOptional.ofEmpty(()
                     -> name == null
-                    ? NMsg.ofPlain("missing first")
+                    ? NMsg.ofP("missing first")
                     : NMsg.ofC("missing first %s", name)
             );
         } finally {
@@ -682,23 +685,23 @@ public class NStreamBase<T> implements NStream<T> {
 
     @Override
     public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
-        return stream().flatMapToDouble(mapper);
+        return jstream().flatMapToDouble(mapper);
     }
 
     @Override
     public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
-        return stream().flatMapToInt(mapper);
+        return jstream().flatMapToInt(mapper);
     }
 
     @Override
     public LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper) {
-        return stream().flatMapToLong(mapper);
+        return jstream().flatMapToLong(mapper);
     }
 
     @Override
     public boolean allMatch(Predicate<? super T> predicate) {
         try {
-            return stream().allMatch(predicate);
+            return jstream().allMatch(predicate);
         } finally {
             close();
         }
@@ -707,7 +710,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public boolean anyMatch(Predicate<? super T> predicate) {
         try {
-            return stream().anyMatch(predicate);
+            return jstream().anyMatch(predicate);
         } finally {
             close();
         }
@@ -716,7 +719,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public boolean noneMatch(Predicate<? super T> predicate) {
         try {
-            return stream().noneMatch(predicate);
+            return jstream().noneMatch(predicate);
         } finally {
             close();
         }
@@ -724,13 +727,13 @@ public class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> limit(long maxSize) {
-        return NStream.ofStream(stream().limit(maxSize));
+        return NStream.ofStream(jstream().limit(maxSize));
     }
 
     @Override
     public <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
         try {
-            return stream().collect(supplier, accumulator, combiner);
+            return jstream().collect(supplier, accumulator, combiner);
         } finally {
             close();
         }
@@ -739,7 +742,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
         try {
-            return stream().collect(collector);
+            return jstream().collect(collector);
         } finally {
             close();
         }
@@ -748,7 +751,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public NOptional<T> min(Comparator<? super T> comparator) {
         try {
-            return NOptional.ofOptional(stream().min(comparator), () -> NMsg.ofC("missing : %s", name));
+            return NOptional.ofOptional(jstream().min(comparator), () -> NMsg.ofC("missing : %s", name));
         } finally {
             close();
         }
@@ -757,7 +760,7 @@ public class NStreamBase<T> implements NStream<T> {
     @Override
     public NOptional<T> max(Comparator<? super T> comparator) {
         try {
-            return NOptional.ofOptional(stream().max(comparator), () -> NMsg.ofC("missing : %s", name));
+            return NOptional.ofOptional(jstream().max(comparator), () -> NMsg.ofC("missing : %s", name));
         } finally {
             close();
         }
@@ -801,7 +804,7 @@ public class NStreamBase<T> implements NStream<T> {
 
             @Override
             public NElement transformDescription(NElement desc) {
-                return NElement.ofNamedUplet("skip", NUtils.firstNonNull(desc, NElement.ofString("?")), NElement.ofLong(n));
+                return NElement.ofNamedTuple("skip", NUtils.firstNonNull(desc, NElement.ofString("?")), NElement.ofLong(n));
             }
         });
     }

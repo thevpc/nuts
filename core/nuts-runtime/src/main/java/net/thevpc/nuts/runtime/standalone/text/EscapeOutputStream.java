@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
@@ -22,7 +22,7 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
         this.term = term;
         NTerminalModeOp t = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NTerminalMode.FORMATTED && t.in() != NTerminalMode.FILTERED) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("illegal Formatted"));
+            throw new NIllegalArgumentException(NMsg.ofP("illegal Formatted"));
         }
     }
 

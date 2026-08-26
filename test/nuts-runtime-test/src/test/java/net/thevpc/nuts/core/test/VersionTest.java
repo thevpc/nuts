@@ -28,10 +28,9 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
-import net.thevpc.nuts.artifact.NVersionFilters;
 import net.thevpc.nuts.core.test.borrowed.MavenComparableVersion;
 import net.thevpc.nuts.core.test.borrowed.SpringComparableVersion;
-import net.thevpc.nuts.internal.parser.NReservedVersionIntervalParser;
+import net.thevpc.nuts.internal.NReservedVersionIntervalParser;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 
@@ -86,7 +85,7 @@ public class VersionTest {
 
     @Test
     public void test9() {
-        String value = NVersion.BLANK.inc(-1).getValue();
+        String value = NVersion.BLANK.inc(-1).value();
         TestUtils.println(value);
         Assertions.assertEquals("1", value);
     }
@@ -123,7 +122,7 @@ public class VersionTest {
     }
 
     private void checkEq(String a, String b) {
-        NVersionFilter u = NVersionFilters.of().parse(a);
+        NVersionFilter u = NVersionFilter.of(a);
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);
         TestUtils.println(a + " ==> " + b);
@@ -275,10 +274,10 @@ public class VersionTest {
         int s=new SpringComparableVersion(v1.toString()).compareTo(new SpringComparableVersion(v2.toString()));
         int m=new MavenComparableVersion(v1.toString()).compareTo(new MavenComparableVersion(v2.toString()));
         if(Math.signum(s)!=Math.signum(m)){
-            System.out.println("spring has a bad implementation  "+v1+" "+(s<0?'<':s>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
+            TestUtils.println("spring has a bad implementation  "+v1+" "+(s<0?'<':s>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
         }
         if(Math.signum(x)!=Math.signum(m)){
-            System.out.println("you said that "+v1+" "+(x<0?'<':x>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
+            TestUtils.println("you said that "+v1+" "+(x<0?'<':x>0?'>':'=')+" "+v2+" but maven says that "+v1+" "+(m<0?'<':m>0?'>':'=')+" "+v2);
         }
         if(error){
             Assertions.assertEquals(Math.signum(x),Math.signum(m));
@@ -305,8 +304,8 @@ public class VersionTest {
 
     @Test
     public void test25() {
-        Assertions.assertEquals("1.0.0", NVersion.of("1.0.0-beta").toCanonical().getValue());
-        Assertions.assertEquals("1.2.3", NVersion.of("1.2.3.SNAPSHOT").toCanonical().getValue());
+        Assertions.assertEquals("1.0.0", NVersion.of("1.0.0-beta").toCanonical().value());
+        Assertions.assertEquals("1.2.3", NVersion.of("1.2.3.SNAPSHOT").toCanonical().value());
     }
 
     @Test

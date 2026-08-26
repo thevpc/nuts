@@ -45,7 +45,12 @@ public class NNoSessionException extends RuntimeException implements NExceptionB
      * Constructs a 'missing session' exception
      */
     public NNoSessionException() {
-        this(NMsg.ofPlain("missing session"));
+      /**
+       * This.
+       *
+       * @param session") session")
+       */
+        this(NMsg.ofP("missing session"));
     }
 
     /**
@@ -54,9 +59,14 @@ public class NNoSessionException extends RuntimeException implements NExceptionB
      * call to {@link #initCause}.
      *
      * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     *                later retrieval by the {@link #message()} method.
      */
     public NNoSessionException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message.toString() message.to string()
+       */
         super(message.toString());
         this.message = message;
     }
@@ -70,18 +80,29 @@ public class NNoSessionException extends RuntimeException implements NExceptionB
      * this runtime exception's detail message.
      *
      * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
+     *                by the {@link #message()} method).
      * @param cause   the cause (which is saved for later retrieval by the
      *                {@link #getCause()} method).  (A {@code null} value is
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
     public NNoSessionException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message.toString() message.to string()
+       * @param cause cause
+       */
         super(message.toString(), cause);
         this.message = message;
     }
 
-    public NMsg getFormattedMessage() {
+    /**
+     * Formatted message.
+     *
+     * @return formatted message result
+     */
+    public NMsg formattedMessage() {
         return message;
     }
 }

@@ -40,6 +40,11 @@ public class NCpValidatorException extends NIOException {
      * @param message message
      */
     public NCpValidatorException(NMsg message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
     }
 
@@ -50,6 +55,12 @@ public class NCpValidatorException extends NIOException {
      * @param cause   cause
      */
     public NCpValidatorException(NMsg message, Throwable cause) {
+      /**
+       * Super.
+       *
+       * @param message message
+       * @param cause cause
+       */
         super(message, cause);
     }
 

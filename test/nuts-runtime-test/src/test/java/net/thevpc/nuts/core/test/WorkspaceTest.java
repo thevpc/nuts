@@ -13,6 +13,8 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.expr.NGlob;
+import net.thevpc.nuts.internal.rpi.*;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;
@@ -23,7 +25,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 
 import net.thevpc.nuts.io.NDigest;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.artifact.NDependencySolver;
 import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -53,7 +55,7 @@ public class WorkspaceTest {
         Assertions.assertEquals(
                 NPath.of(new File(wsPath, "cache")),
                 NPath.of(NStoreKey.ofCache()));
-        Assertions.assertEquals(0, NWorkspace.of().getRepositories().size());
+        Assertions.assertEquals(0, NWorkspace.of().repositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        NRepositories.of().getRepositories()[0].getName() +
 //                        "/" + NRepositories.of().getRepositories()[0].getUuid()).getPath(),
@@ -84,7 +86,7 @@ public class WorkspaceTest {
         TestUtils.println("-----------------------");
         TestUtils.println(txt);
         long b=System.currentTimeMillis();
-        System.out.println(b-a);
+        TestUtils.println(b-a);
     }
 
     @Test
@@ -118,7 +120,7 @@ public class WorkspaceTest {
                 "--install-companions=false")
                 .share();
         String base = "";
-        switch (NOsFamily.getCurrent()) {
+        switch (NOsFamily.current()) {
             case WINDOWS: {
                 base = new File(System.getProperty("user.home"), "AppData\\Local\\nuts\\cache\\ws").getPath();
                 break;
@@ -136,12 +138,12 @@ public class WorkspaceTest {
                 NPath.of(new File(base, new File(wsPath).getName())),
                 NPath.of(NStoreKey.ofCache())
         );
-        NRepository localRepo = ws.getRepositories().stream().filter(x -> x.getName().equals("local")).findFirst().get();
+        NRepository localRepo = ws.repositories().stream().filter(x -> x.name().equals("local")).findFirst().get();
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
-                        + localRepo.getName()
-                        + "/" + localRepo.getUuid()
+                        + localRepo.name()
+                        + "/" + localRepo.uuid()
                 )),
                 localRepo.config().getStoreLocation(NStoreType.CACHE));
     }
@@ -253,23 +255,23 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NIdFilters r = NIdFilters.of();
+            NIdFilterRPI r = NIdFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
-            NVersionFilters r = NVersionFilters.of();
+            NVersionFilterRPI r = NVersionFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDependencyFilters r = NDependencyFilters.of();
+            NDependencyFilterRPI r = NDependencyFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDefinitionFilters r = NDefinitionFilters.of();
+            NDefinitionFilterRPI r = NDefinitionFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
-            NRepositoryFilters r = NRepositoryFilters.of();
+            NRepositoryFilterRPI r = NRepositoryFilterRPI.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -301,7 +303,7 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NTexts r = NTexts.of();
+            NTextRPI r = NTextRPI.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -443,19 +445,19 @@ public class WorkspaceTest {
         if (NDI_COMPANIONS > 0) {
             NId nshId = null;
             try {
-                nshId = NSearch.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
-                        .setDistinct(true).getResultIds()
+                nshId = NSearch.of("nsh").definitionFilter(NDefinitionFilter.ofInstalled(true))
+                        .distinct(true).getResultIds()
                         .findSingleton().get();
             } catch (Exception ex) {
-                nshId = NSearch.of("nsh").setDefinitionFilter(NDefinitionFilters.of().byInstalled(true))
-                        .setDistinct(true).getResultIds()
+                nshId = NSearch.of("nsh").definitionFilter(NDefinitionFilter.ofInstalled(true))
+                        .distinct(true).getResultIds()
                         .findSingleton().get();
             }
-            Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
+            Assertions.assertTrue(nshId.version().value().startsWith(TestUtils.NUTS_VERSION + "."));
         }
         NPath c = NPath.of(NStoreKey.ofConf());
         TestUtils.println(c);
-        File base = NWorkspace.of().getLocation().toFile().get();
+        File base = NWorkspace.of().location().toFile().get();
         TestUtils.println(new File(base, "config").getPath());
         for (NStoreType value : NStoreType.values()) {
             NOut.println(NMsg.ofC("%s %s", value, NPath.of(NStoreKey.of(value))));

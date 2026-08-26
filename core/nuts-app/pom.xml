@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-app</artifactId>
-    <version>0.8.9</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging><!-- small changes, do not require version change, didn't updated the version-->
     <name>Nuts Community App</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -51,11 +53,16 @@
         <license>
             <name>GNU LESSER GENERAL PUBLIC LICENSE Version</name>
             <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+
         </license>
     </licenses>
 
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-boot</artifactId><version>0.8.9</version></dependency>
+        <dependency>
+            <groupId>net.thevpc.nuts</groupId>
+            <artifactId>nuts-boot</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>
@@ -121,7 +128,8 @@
                             <shadedArtifactAttached>false</shadedArtifactAttached>
                             <createDependencyReducedPom>true</createDependencyReducedPom>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>net.thevpc.nuts.NutsApp</mainClass>
                                 </transformer>
                             </transformers>
@@ -201,16 +209,12 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <!--                                    <Multi-Release>true</Multi-Release>
-                                                                        <Automatic-Module-Name>net.thevpc.nuts</Automatic-Module-Name>-->
                                 </manifestEntries>
                             </archive>
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.9</version>
+                        <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.9</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -295,6 +299,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.6</version>
+                        <configuration>
+                            <keyname>C861C1799197D091</keyname>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -312,16 +319,12 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <!--                                    <Multi-Release>true</Multi-Release>
-                                                                        <Automatic-Module-Name>net.thevpc.nuts</Automatic-Module-Name>-->
                                 </manifestEntries>
                             </archive>
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.9</version>
+                        <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.9</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -338,14 +341,14 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.14</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.10.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
                         </configuration>
                     </plugin>
                 </plugins>

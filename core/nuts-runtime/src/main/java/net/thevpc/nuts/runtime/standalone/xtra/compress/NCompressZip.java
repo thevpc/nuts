@@ -2,9 +2,12 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -26,9 +29,9 @@ public class NCompressZip implements NCompressPackaging {
     }
 
     public void compressPackage(NCompress compress) {
-        List<NInputSource> sources = compress.getSources();
+        List<NInputSource> sources = compress.sources();
         NAssert.requireNamedNonBlank(sources, "source");
-        NOutputTarget target = compress.getTarget();
+        NOutputTarget target = compress.target();
         NAssert.requireNamedNonBlank(target, "target");
         NChronometer chronometer = NChronometer.of();
         _LOG().log(NMsg.ofC("compress %s to %s", sources, target).asFinest().withIntent(NMsgIntent.START).withLevel(Level.FINEST).withIntent(NMsgIntent.START));
@@ -44,7 +47,7 @@ public class NCompressZip implements NCompressPackaging {
                     ((NPath) target).mkParentDirs();
                 }
                 if (tempPath == null) {
-                    fW = target.getOutputStream();
+                    fW = target.outputStream();
                 } else {
                     fW = Files.newOutputStream(tempPath);
                 }
@@ -53,9 +56,9 @@ public class NCompressZip implements NCompressPackaging {
                         zip = new ZipOutputStream(fW);
                         if (compress.isSkipRoot()) {
                             for (NInputSource s : sources) {
-                                DefaultNCompress.Item file1 = new DefaultNCompress.Item(s, compress);
+                                DefaultNCompressItem file1 = new DefaultNCompressItem(s, compress);
                                 if (file1.isSourceDirectory()) {
-                                    for (DefaultNCompress.Item c : file1.list()) {
+                                    for (DefaultNCompressItem c : file1.list()) {
                                         add("", c, zip);
                                     }
                                 } else {
@@ -64,7 +67,7 @@ public class NCompressZip implements NCompressPackaging {
                             }
                         } else {
                             for (NInputSource s : sources) {
-                                add("", new DefaultNCompress.Item(s, compress), zip);
+                                add("", new DefaultNCompressItem(s, compress), zip);
                             }
                         }
                     } finally {
@@ -83,14 +86,14 @@ public class NCompressZip implements NCompressPackaging {
                                 StandardCopyOption.REPLACE_EXISTING);
                     } else if (target instanceof NPath) {
                         try (InputStream ii = Files.newInputStream(tempPath)) {
-                            try (OutputStream jj = target.getOutputStream()) {
+                            try (OutputStream jj = target.outputStream()) {
                                 NIOUtils.copy(ii, jj);
                             }
                         }
                     } else {
                         NIOUtils.copy(
                                 Files.newInputStream(tempPath),
-                                target.getOutputStream()
+                                target.outputStream()
                         );
                     }
                 }
@@ -117,7 +120,7 @@ public class NCompressZip implements NCompressPackaging {
     }
 
 
-    private void add(String path, DefaultNCompress.Item srcFolder, ZipOutputStream zip) {
+    private void add(String path, DefaultNCompressItem srcFolder, ZipOutputStream zip) {
         if (srcFolder.isSourceDirectory()) {
             addFolderToZip(path, srcFolder, zip);
         } else {
@@ -125,12 +128,12 @@ public class NCompressZip implements NCompressPackaging {
         }
     }
 
-    private void addFolderToZip(String path, DefaultNCompress.Item srcFolder, ZipOutputStream zip) throws UncheckedIOException {
-        DefaultNCompress.Item[] dirChildren = srcFolder.list();
+    private void addFolderToZip(String path, DefaultNCompressItem srcFolder, ZipOutputStream zip) throws UncheckedIOException {
+        DefaultNCompressItem[] dirChildren = srcFolder.list();
         if (dirChildren.length == 0) {
             addFileToZip(path, srcFolder, zip, true);
         } else {
-            for (DefaultNCompress.Item c : dirChildren) {
+            for (DefaultNCompressItem c : dirChildren) {
                 if (path.equals("")) {
                     addFileToZip(srcFolder.getName(), c, zip, false);
                 } else {
@@ -151,7 +154,7 @@ public class NCompressZip implements NCompressPackaging {
         return path;
     }
 
-    private void addFileToZip(String path, DefaultNCompress.Item srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
+    private void addFileToZip(String path, DefaultNCompressItem srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
 //        File folder = new File(srcFile);
         String pathPrefix = path;
         if (!pathPrefix.endsWith("/")) {
@@ -201,12 +204,11 @@ public class NCompressZip implements NCompressPackaging {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        NCompress c = context.getCriteria(NCompress.class);
-        String z = NStringUtils.trim(c.getPackaging()).toLowerCase();
+        String z = NStringUtils.strip(context.criteria(String.class)).toLowerCase();
         if (z.isEmpty()
                 || z.equals("zip")
-                || z.equals("gzip")
-                || z.equals("gz")
+//                || z.equals("gzip")
+//                || z.equals("gz")
         ) {
             return NScorable.DEFAULT_SCORE;
         }

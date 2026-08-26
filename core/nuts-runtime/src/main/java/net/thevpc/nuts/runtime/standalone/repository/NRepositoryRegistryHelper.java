@@ -64,9 +64,9 @@ public class NRepositoryRegistryHelper {
         if (repository == null) {
             return;
         }
-        NRepositoryRef repositoryRef = repository.config().getRepositoryRef();
-        String uuid = repository.getUuid();
-        String name = repository.getName();
+        NRepositoryRef repositoryRef = repository.config().repositoryRef();
+        String uuid = repository.uuid();
+        String name = repository.name();
         if (name == null) {
             return;
         }
@@ -75,13 +75,13 @@ public class NRepositoryRegistryHelper {
             ii = repositoriesByUuid.get(uuid);
             if (ii != null) {
                 throw new NIllegalArgumentException(
-                        NMsg.ofC("repository with the same uuid already exists % / %s", ii.repo.getUuid(), ii.repo.getName())
+                        NMsg.ofC("repository with the same uuid already exists % / %s", ii.repo.uuid(), ii.repo.name())
                 );
             }
         }
         ii = repositoriesByName.get(name);
         if (ii != null) {
-            throw new NIllegalArgumentException(NMsg.ofC("repository with the same name already exists %s / %s", ii.repo.getUuid(), ii.repo.getName()));
+            throw new NIllegalArgumentException(NMsg.ofC("repository with the same name already exists %s / %s", ii.repo.uuid(), ii.repo.name()));
         }
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid repository name %s", name));
@@ -138,12 +138,12 @@ public class NRepositoryRegistryHelper {
     public NRepository removeRepository(String repository) {
         final NRepository r = findRepository(repository);
         if (r != null) {
-            repositoriesByName.remove(r.getName());
-            repositoriesByUuid.remove(r.getUuid());
+            repositoriesByName.remove(r.name());
+            repositoriesByUuid.remove(r.uuid());
             NWorkspaceConfigMain m = NWorkspaceExt.of().getModel().configModel.getStoreModelMain();
             List<NRepositoryRef> repositoriesRefs = m.getRepositories();
             if (repositoriesRefs != null) {
-                repositoriesRefs.removeIf(x -> x.getName().equals(r.getName()));
+                repositoriesRefs.removeIf(x -> x.name().equals(r.name()));
             }
             return r;
         }

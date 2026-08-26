@@ -1,6 +1,7 @@
 package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.time.NClock;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NUtils;
 
 import java.util.Arrays;
@@ -15,7 +16,7 @@ public class NAppInitInfo {
     private final String[] args;
     private final Class<?> sourceType;
     private final Object source;
-    private final NApplication appInstance;
+    private final NApplicationHandler appInstance;
     private final NClock startTime;
     private final NAppStoreLocationResolver storeLocationSupplier;
 
@@ -28,7 +29,7 @@ public class NAppInitInfo {
      * @param sourceType  The application's main class.
      * @param startTime The start time of the application, represented as an {@code NClock} instance.
      */
-    public NAppInitInfo(String[] args, Class<?> sourceType, Object source, NApplication appInstance, NAppStoreLocationResolver storeLocationSupplier, NClock startTime) {
+    public NAppInitInfo(String[] args, Class<?> sourceType, Object source, NApplicationHandler appInstance, NAppStoreLocationResolver storeLocationSupplier, NClock startTime) {
         this.args = NUtils.firstNonNullLazy(args,()->new String[0]);
         this.sourceType = sourceType;
         this.source = source;
@@ -42,7 +43,8 @@ public class NAppInitInfo {
      *
      * @return An array of strings representing the command-line arguments
      */
-    public String[] getArgs() {
+    @NGetter
+    public String[] args() {
         return Arrays.copyOf(args, args.length);
     }
 
@@ -52,25 +54,50 @@ public class NAppInitInfo {
      *
      * @return The application's main class, represented as a {@code Class<?>} object.
      */
-    public Class<?> getSourceType() {
+    @NGetter
+    public Class<?> sourceType() {
         return sourceType;
     }
 
 
-    public NClock getStartTime() {
+    /**
+     * Start time.
+     *
+     * @return start time result
+     */
+    @NGetter
+    public NClock startTime() {
         return startTime;
     }
 
 
-    public NAppStoreLocationResolver getStoreLocationSupplier() {
+    /**
+     * Store location supplier.
+     *
+     * @return store location supplier result
+     */
+    @NGetter
+    public NAppStoreLocationResolver storeLocationSupplier() {
         return storeLocationSupplier;
     }
 
-    public NApplication getApplication() {
+    /**
+     * Application.
+     *
+     * @return application result
+     */
+    @NGetter
+    public NApplicationHandler application() {
         return appInstance;
     }
 
-    public Object getSource() {
+    /**
+     * Source.
+     *
+     * @return source result
+     */
+    @NGetter
+    public Object source() {
         return source;
     }
 }

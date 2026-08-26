@@ -2,18 +2,15 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -51,7 +48,7 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        List<String> current = dependency.getCondition().getOs();
+        List<String> current = dependency.condition().os();
         boolean empty = true;
         if (current != null) {
             for (String e : current) {
@@ -75,6 +72,19 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
 
     @Override
     public NDependencyFilter simplify() {
-        return os.isEmpty() ? NDependencyFilters.of().always() : this;
+        return os.isEmpty() ? NDependencyFilterRPI.of().always() : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyOsFilter that = (NDependencyOsFilter) o;
+        return Objects.equals(os, that.os);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), os);
     }
 }

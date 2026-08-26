@@ -36,9 +36,9 @@ public class TextTest {
     public void test1() {
         List<NText> split = NText.ofList(NText.of("a/:b"), NText.of("/"), NText.of("c"), NText.of("/"))
                 .split("/:",true);
-        System.out.println(split);
+        TestUtils.println(split);
         split = NText.of(NText.of("a/:b/c/"))
                 .split("/:",true);
-        System.out.println(split);
+        TestUtils.println(split);
     }
 }

@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.art.table;
 
 import net.thevpc.nuts.util.NIllegalArgumentException;
-import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableCellFormat;
-import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableFormatBorders;
-import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableHeaderFormat;
 import net.thevpc.nuts.runtime.standalone.text.art.region.NTextRegion;
 import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.text.*;
@@ -142,13 +139,13 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
     }
 
     @Override
-    public String getName() {
+    public String name() {
         DefaultTableFormatBorders b = (DefaultTableFormatBorders) border;
         return b == null ? "none" : b.getName();
     }
 
     public NText render(NText model) {
-        return render(NTableModel.of().addRow(model));
+        return render(NTableModel.of().addRow(NTableCell.of(model)));
     }
 
     // Replace the existing render method with this version that includes the bottom border
@@ -164,13 +161,6 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
         out.append(nTextRegion.toText());
         return out.build();
     }
-
-
-    private static class CellRender {
-        NText text;
-        int span;
-    }
-
 
     public DefaultNTextArtTableRenderer setVisibleColumn(int col, Boolean visible) {
         if (visible == null) {
@@ -217,6 +207,6 @@ public class DefaultNTextArtTableRenderer implements NTextArtTableRenderer, NTex
 
     @Override
     public String toString() {
-        return "DefaultNTextArtTableRenderer(" + getName() + ")";
+        return "DefaultNTextArtTableRenderer(" + name() + ")";
     }
 }

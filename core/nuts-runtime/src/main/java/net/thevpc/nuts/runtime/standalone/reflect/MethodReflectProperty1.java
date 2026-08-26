@@ -24,10 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.reflect;
 
-import net.thevpc.nuts.util.NExceptions;
 import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -79,14 +79,14 @@ public class MethodReflectProperty1 extends AbstractReflectProperty {
     @Override
     public Object read(Object instance) {
         if (!readAccessible) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in read-mode (%s)", toString()));
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-access in read-mode (%s)", toString()));
         }
         try {
             return read.invoke(instance);
         } catch (IllegalAccessException ex) {
             throw new IllegalArgumentException("illegal-access", ex);
         } catch (InvocationTargetException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s", toString(), NExceptions.getErrorMessage(ex)), ex);
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s", toString(), NException.getErrorMessage(ex)), ex);
         }
     }
 
@@ -100,7 +100,7 @@ public class MethodReflectProperty1 extends AbstractReflectProperty {
         } catch (IllegalAccessException ex) {
             throw new IllegalArgumentException("illegal-access", ex);
         } catch (InvocationTargetException ex) {
-            throw NExceptions.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s", toString(), NExceptions.getErrorMessage(ex)), ex);
+            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("illegal-invocation (%s) %s", toString(), NException.getErrorMessage(ex)), ex);
         } catch (java.lang.IllegalArgumentException ex) {
             throw ex;
         }

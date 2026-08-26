@@ -26,7 +26,7 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
 
         // Local temporary file
         this.temp = NPath.ofTempFile();
-        this.tempOS = this.temp.getOutputStream();
+        this.tempOS = this.temp.outputStream();
     }
 
     @Override
@@ -74,29 +74,29 @@ public class BinSshFileOutputStreamSftp extends OutputStream {
 
     private void uploadTempFile() throws IOException {
         NPath batchFile = NPath.ofTempFile();
-        try (OutputStream os = batchFile.getOutputStream()) {
-            String putCommand = "put " + temp.toString() + " " + remotePath.getPath() + "\n";
+        try (OutputStream os = batchFile.outputStream()) {
+            String putCommand = "put " + temp.toString() + " " + remotePath.path() + "\n";
             os.write(putCommand.getBytes(StandardCharsets.UTF_8));
         }
 
         try {
             NConnectionStringBuilder cbuilder = remotePath.builder();
             String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
-            int port = NLiteral.of(remotePath.getPort()).asInt().orElse(-1);
+            int port = NLiteral.of(remotePath.port()).asInt().orElse(-1);
             NExec sftp = NExec.ofSystem("sftp");
             if (port > 0 && port != 22) {
-                sftp.addCommand("-oPort");
-                sftp.addCommand(String.valueOf(port));
+                sftp.command("-oPort");
+                sftp.command(String.valueOf(port));
             }
             if(!NBlankable.isBlank(identityFile)){
-                sftp.addCommand("-oIdentityFile",identityFile);
+                sftp.command("-oIdentityFile",identityFile);
             }
-            sftp.addCommand("-b", batchFile.toString(),
-                            cbuilder.setQueryMap(null).setPort(null).setPath(null).build().toString())
-                    .setIn(NExecInput.ofNull())
-                    .setOut(NExecOutput.ofNull())
-                    .setErr(NExecOutput.ofNull())
-                    .failFast()
+            sftp.command("-b", batchFile.toString(),
+                            cbuilder.queryMap(null).port(null).path(null).build().toString())
+                    .in(NExecInput.ofNull())
+                    .out(NExecOutput.ofNull())
+                    .err(NExecOutput.ofNull())
+                    .failFast(true)
                     .run();
         } finally {
             batchFile.delete();

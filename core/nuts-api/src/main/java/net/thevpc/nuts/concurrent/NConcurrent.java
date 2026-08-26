@@ -3,6 +3,7 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NSetter;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
@@ -68,7 +69,8 @@ public interface NConcurrent extends NComponent {
      * @param cachedValueFactory the factory to set
      * @return this instance
      */
-    NConcurrent setCachedValueFactory(NCachedValueFactory cachedValueFactory);
+    @NSetter
+    NConcurrent cachedValueFactory(NCachedValueFactory cachedValueFactory);
 
     /**
      * Returns a memory-only cached value factory.
@@ -121,7 +123,8 @@ public interface NConcurrent extends NComponent {
      * @param onceValueFactory the factory to set
      * @return this instance
      */
-    NConcurrent setOnceValueFactory(NOnceValueFactory onceValueFactory);
+    @NSetter
+    NConcurrent onceValueFactory(NOnceValueFactory onceValueFactory);
 
     /**
      * Returns a memory-only once value factory.
@@ -172,7 +175,8 @@ public interface NConcurrent extends NComponent {
      * @param factory the factory to set
      * @return this instance
      */
-    NConcurrent setRateLimitValueFactory(NRateLimitValueFactory factory);
+    @NSetter
+    NConcurrent rateLimitValueFactory(NRateLimitValueFactory factory);
 
 
     /**
@@ -197,6 +201,11 @@ public interface NConcurrent extends NComponent {
     NWorkBalancerFactory workBalancerFactory();
 
 
+    /**
+     * Rate limit value factory.
+     *
+     * @return rate limit value factory result
+     */
     NRateLimitValueFactory rateLimitValueFactory();
 
 
@@ -249,7 +258,8 @@ public interface NConcurrent extends NComponent {
     /**
      * @since 0.8.7
      */
-    NConcurrent setCircuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory);
+    @NSetter
+    NConcurrent circuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory);
 
     /**
      * @since 0.8.7
@@ -297,7 +307,8 @@ public interface NConcurrent extends NComponent {
     /**
      * @since 0.8.7
      */
-    NConcurrent setWorkBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory);
+    @NSetter
+    NConcurrent workBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory);
 
     // --------------------
     // Sleep Utilities
@@ -325,24 +336,70 @@ public interface NConcurrent extends NComponent {
     // NTaskSet
     // --------------------
 
+    /**
+     * Task set.
+     *
+     * @return task set result
+     */
     NTaskSet taskSet();
 
     // --------------------
     // Retry Call
     // --------------------
+    /**
+     * Retry fixed period.
+     *
+     * @param period period
+     * @return retry fixed period result
+     */
     IntFunction<NDuration> retryFixedPeriod(NDuration period);
+    /**
+     * Retry fixed periods.
+     *
+     * @param ...periods ...periods
+     * @return retry fixed periods result
+     */
     IntFunction<NDuration> retryFixedPeriods(NDuration ...periods);
+    /**
+     * Retry multiplied period.
+     *
+     * @param base base
+     * @param multiplier multiplier
+     * @return retry multiplied period result
+     */
     IntFunction<NDuration> retryMultipliedPeriod(NDuration base, double multiplier);
 
 
     // --------------------
     // Bulkhead Calls
     // --------------------
+    /**
+     * Default bulkhead call factory.
+     *
+     * @return default bulkhead call factory result
+     */
     NBulkheadCallFactory defaultBulkheadCallFactory();
 
+    /**
+     * Memory bulkhead call factory.
+     *
+     * @return memory bulkhead call factory result
+     */
     NBulkheadCallFactory memoryBulkheadCallFactory();
 
+    /**
+     * Bulkhead call factory.
+     *
+     * @return bulkhead call factory result
+     */
     NBulkheadCallFactory bulkheadCallFactory();
 
-    NConcurrent setBulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory);
+    /**
+     * Bulkhead call factory.
+     *
+     * @param bulkheadCallFactory bulkhead call factory
+     * @return bulkhead call factory result
+     */
+    @NSetter
+    NConcurrent bulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory);
 }

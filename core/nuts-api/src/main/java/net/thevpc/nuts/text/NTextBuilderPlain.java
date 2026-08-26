@@ -1,19 +1,39 @@
 package net.thevpc.nuts.text;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NToElement;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.*;
 
+/**
+ * NTextBuilderPlain class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NTextBuilderPlain implements NTextBuilder {
 
     private final StringBuilder sb = new StringBuilder();
 
+    /**
+     * N text builder plain.
+     *
+     * @return n text builder plain result
+     */
     public NTextBuilderPlain() {
     }
 
+    /**
+     * N text builder plain.
+     *
+     * @param data data
+     * @return n text builder plain result
+     */
     public NTextBuilderPlain(String data) {
         if (data != null) {
             sb.append(data);
@@ -22,7 +42,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public Iterator<NText> iterator() {
-        return Collections.unmodifiableList(getChildren()).iterator();
+        return Collections.unmodifiableList(children()).iterator();
     }
 
     @Override
@@ -41,7 +61,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NTextStyleGenerator getStyleGenerator() {
+    public NTextStyleGenerator styleGenerator() {
         return new NTextStyleGenerator() {
             private boolean includePlain = false;
 
@@ -66,7 +86,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludePlain(boolean includePlain) {
+            public NTextStyleGenerator includePlain(boolean includePlain) {
                 this.includePlain = includePlain;
                 return this;
             }
@@ -77,7 +97,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeBold(boolean includeBold) {
+            public NTextStyleGenerator includeBold(boolean includeBold) {
                 return this;
             }
 
@@ -87,7 +107,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeBlink(boolean includeBlink) {
+            public NTextStyleGenerator includeBlink(boolean includeBlink) {
                 return this;
             }
 
@@ -97,7 +117,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeReversed(boolean includeReversed) {
+            public NTextStyleGenerator includeReversed(boolean includeReversed) {
                 return this;
             }
 
@@ -107,7 +127,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeItalic(boolean includeItalic) {
+            public NTextStyleGenerator includeItalic(boolean includeItalic) {
                 return this;
             }
 
@@ -117,7 +137,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeUnderlined(boolean includeUnderlined) {
+            public NTextStyleGenerator includeUnderlined(boolean includeUnderlined) {
                 return this;
             }
 
@@ -127,7 +147,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeStriked(boolean includeStriked) {
+            public NTextStyleGenerator includeStriked(boolean includeStriked) {
                 return this;
             }
 
@@ -137,7 +157,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeForeground(boolean includeForeground) {
+            public NTextStyleGenerator includeForeground(boolean includeForeground) {
                 return this;
             }
 
@@ -147,7 +167,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setIncludeBackground(boolean includeBackground) {
+            public NTextStyleGenerator includeBackground(boolean includeBackground) {
                 return this;
             }
 
@@ -167,17 +187,17 @@ public class NTextBuilderPlain implements NTextBuilder {
             }
 
             @Override
-            public NTextStyleGenerator setUseThemeColors() {
+            public NTextStyleGenerator useThemeColors() {
                 return this;
             }
 
             @Override
-            public NTextStyleGenerator setUsePaletteColors() {
+            public NTextStyleGenerator usePaletteColors() {
                 return this;
             }
 
             @Override
-            public NTextStyleGenerator setUseTrueColors() {
+            public NTextStyleGenerator useTrueColors() {
                 return this;
             }
         };
@@ -190,16 +210,31 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NNormalizedText normalize() {
+      /**
+       * Return.
+       *
+       * @param build( build(
+       */
         return (NNormalizedText) build();
     }
 
     @Override
     public NNormalizedText normalize(NTextTransformConfig config) {
+      /**
+       * Return.
+       *
+       * @param build( build(
+       */
         return (NNormalizedText) build();
     }
 
     @Override
     public NNormalizedText normalize(NTextTransformer transformer, NTextTransformConfig config) {
+      /**
+       * Return.
+       *
+       * @param build( build(
+       */
         return (NNormalizedText) build();
     }
 
@@ -209,7 +244,7 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder setStyleGenerator(NTextStyleGenerator styleGenerator) {
+    public NTextBuilder styleGenerator(NTextStyleGenerator styleGenerator) {
         return this;
     }
 
@@ -274,8 +309,18 @@ public class NTextBuilderPlain implements NTextBuilder {
                 if (first) {
                     first = false;
                 } else {
+                  /**
+                   * Append.
+                   *
+                   * @param separator separator
+                   */
                     append(separator);
                 }
+              /**
+               * Append.
+               *
+               * @param other other
+               */
                 append(other);
             }
         }
@@ -287,6 +332,11 @@ public class NTextBuilderPlain implements NTextBuilder {
         if (others != null) {
             for (NText node : others) {
                 if (node != null) {
+                  /**
+                   * Append.
+                   *
+                   * @param node node
+                   */
                     append(node);
                 }
             }
@@ -298,6 +348,11 @@ public class NTextBuilderPlain implements NTextBuilder {
     public NTextBuilder appendAll(Collection<?> others) {
         if (others != null) {
             for (Object other : others) {
+              /**
+               * Append.
+               *
+               * @param other other
+               */
                 append(other);
             }
         }
@@ -316,7 +371,52 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public List<NText> getChildren() {
+    public List<NText> splitLines(boolean returnSeparator) {
+        /**
+         * Build.
+         *
+         * @param ).splitLines(returnSeparator ).split lines(return separator
+         * @return build result
+         */
+        return build().splitLines(returnSeparator);
+    }
+
+    @Override
+    public List<NText> splitLines() {
+        /**
+         * Build.
+         *
+         * @param ).splitLines( ).split lines(
+         * @return build result
+         */
+        return build().splitLines();
+    }
+
+    @Override
+    public List<NText> split(Pattern separator, boolean returnSeparator) {
+        /**
+         * Build.
+         *
+         * @param ).split(separator ).split(separator
+         * @param returnSeparator return separator
+         * @return build result
+         */
+        return build().split(separator,returnSeparator);
+    }
+
+    @Override
+    public List<NPrimitiveText> toPrimitiveList() {
+        /**
+         * Build.
+         *
+         * @param ).toPrimitiveList( ).to primitive list(
+         * @return build result
+         */
+        return build().toPrimitiveList();
+    }
+
+    @Override
+    public List<NText> children() {
         return Collections.singletonList(build());
     }
 
@@ -359,8 +459,19 @@ public class NTextBuilderPlain implements NTextBuilder {
     @Override
     public NText get(int index) {
         if (index == 0) {
+            /**
+             * Build.
+             *
+             * @return build result
+             */
             return build();
         }
+        /**
+         * Array index out of bounds exception.
+         *
+         * @param index index
+         * @return array index out of bounds exception result
+         */
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
@@ -378,6 +489,12 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NStream<NTextBuilder> lines() {
+        /**
+         * Illegal argument exception.
+         *
+         * @param "lines()").toString() "lines()").to string()
+         * @return illegal argument exception result
+         */
         throw new IllegalArgumentException(NMsg.ofC(NI18n.of("not supported method %s"), "lines()").toString());
     }
 
@@ -414,11 +531,17 @@ public class NTextBuilderPlain implements NTextBuilder {
     @Override
     public boolean isWhitespace() {
         String s = sb.toString();
-        return !s.isEmpty() && s.trim().isEmpty();
+        return !s.isEmpty() && NStringUtils.isBlank(s);
     }
 
     @Override
     public NTextBuilder newLine() {
+        /**
+         * Append.
+         *
+         * @param "\n" "\n"
+         * @return append result
+         */
         return append("\n");
     }
 
@@ -455,22 +578,49 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NPrimitiveText[] toCharArray() {
+        /**
+         * Converts to char list.
+         *
+         * @param NPrimitiveText[0] n primitive text[0]
+         * @return to char list result
+         */
         return toCharList().toArray(new NPrimitiveText[0]);
     }
 
 
     @Override
     public List<NText> split(char c) {
+        /**
+         * Split.
+         *
+         * @param String.valueOf(c) string.value of(c)
+         * @param false false
+         * @return split result
+         */
         return split(String.valueOf(c), false);
     }
 
     @Override
     public List<NText> split(char c, boolean returnSeparator) {
+        /**
+         * Split.
+         *
+         * @param String.valueOf(c) string.value of(c)
+         * @param returnSeparator return separator
+         * @return split result
+         */
         return split(String.valueOf(c), returnSeparator);
     }
 
     @Override
     public List<NText> split(String separator) {
+        /**
+         * Split.
+         *
+         * @param separator separator
+         * @param false false
+         * @return split result
+         */
         return split(separator, false);
     }
 
@@ -491,20 +641,20 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder trim() {
-        NStringUtils.trim(sb);
+    public NTextBuilder strip() {
+        NStringUtils.strip(sb);
         return this;
     }
 
     @Override
-    public NTextBuilder trimLeft() {
-        NStringUtils.trimLeft(sb);
+    public NTextBuilder stripLeft() {
+        NStringUtils.stripLeft(sb);
         return this;
     }
 
     @Override
-    public NTextBuilder trimRight() {
-        NStringUtils.trimRight(sb);
+    public NTextBuilder stripRight() {
+        NStringUtils.stripRight(sb);
         return this;
     }
 
@@ -518,7 +668,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < times; i++) {
-            b.append(sb.toString());
+            b.append(sb);
         }
         return new ImmutableNTextPlain(b.toString());
     }
@@ -536,7 +686,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             if (i > 0) {
                 b.append("\n");
             }
-            b.append(sb.toString());
+            b.append(sb);
         }
         return new ImmutableNTextPlain(b.toString());
     }
@@ -569,6 +719,13 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NTextBuilder indent(NText prefix) {
+        /**
+         * Indent.
+         *
+         * @param prefix prefix
+         * @param false false
+         * @return indent result
+         */
         return indent(prefix, false);
     }
 
@@ -588,6 +745,12 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         private final String str;
 
+        /**
+         * Immutable n text plain.
+         *
+         * @param str str
+         * @return immutable n text plain result
+         */
         public ImmutableNTextPlain(String str) {
             this.str = str == null ? "" : str;
         }
@@ -599,7 +762,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
 
         @Override
-        public String getValue() {
+        public String value() {
             return str;
         }
 
@@ -642,7 +805,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public boolean isBlank() {
-            return str.trim().isEmpty();
+            return NStringUtils.isBlank(str);
         }
 
         @Override
@@ -662,13 +825,18 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public boolean isWhitespace() {
-            return !str.isEmpty() && str.trim().isEmpty();
+            return !str.isEmpty() && NStringUtils.isBlank(str);
         }
 
         @Override
         public List<NPrimitiveText> toCharList() {
             return str.codePoints().mapToObj(c -> new ImmutableNTextPlain(new String(Character.toChars(c))))
                     .collect(Collectors.toList());
+        }
+
+        @Override
+        public List<NPrimitiveText> toPrimitiveList() {
+            return Arrays.asList(this);
         }
 
         @Override
@@ -683,42 +851,115 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public List<NText> split(char c) {
+            /**
+             * Split.
+             *
+             * @param String.valueOf(c) string.value of(c)
+             * @param false false
+             * @return split result
+             */
             return split(String.valueOf(c), false);
         }
 
         @Override
         public List<NText> split(char c, boolean returnSeparator) {
+            /**
+             * Split.
+             *
+             * @param String.valueOf(c) string.value of(c)
+             * @param returnSeparator return separator
+             * @return split result
+             */
             return split(String.valueOf(c), returnSeparator);
         }
 
         @Override
         public List<NText> split(String separator) {
+            /**
+             * Split.
+             *
+             * @param separator separator
+             * @param false false
+             * @return split result
+             */
             return split(separator, false);
         }
 
         @Override
-        public List<NText> split(String separator, boolean returnSeparator) {
-            StringTokenizer st = new StringTokenizer(str, separator, true);
+        public List<NText> split(Pattern regex, boolean returnSeparator) {
+            Matcher m = regex.matcher(value());
             List<NText> all = new ArrayList<>();
-            while (st.hasMoreElements()) {
-                all.add(new ImmutableNTextPlain(st.nextToken()));
+            int last = 0;
+            while (m.find()) {
+                all.add(new ImmutableNTextPlain(value().substring(last, m.start()))); // before separator
+                if (returnSeparator) {
+                    all.add(new ImmutableNTextPlain(m.group())); // the separator itself (\n or \r\n)
+                }
+                last = m.end();
             }
+            all.add(new ImmutableNTextPlain(value().substring(last))); // remainder, even if empty
             return all;
         }
 
-        @Override
-        public NText trim() {
-            return new ImmutableNTextPlain(this.str.trim());
+        /**
+         * Split.
+         *
+         * @param separator separator
+         * @param returnSeparator return separator
+         * @return split result
+         */
+        public List<NText> split(String separator, boolean returnSeparator) {
+            /**
+             * Split.
+             *
+             * @param Pattern.compile(Pattern.quote(separator)) pattern.compile( pattern.quote(separator))
+             * @param returnSeparator return separator
+             * @return split result
+             */
+            return split(Pattern.compile(Pattern.quote(separator)), returnSeparator);
+        }
+
+        /**
+         * Split lines.
+         *
+         * @param returnSeparator return separator
+         * @return split lines result
+         */
+        public List<NText> splitLines(boolean returnSeparator) {
+            /**
+             * Split.
+             *
+             * @param Pattern.compile("\\r?\\n") pattern.compile("\\r?\\n")
+             * @param returnSeparator return separator
+             * @return split result
+             */
+            return split(Pattern.compile("\\r?\\n"), returnSeparator);
         }
 
         @Override
-        public NText trimLeft() {
-            return new ImmutableNTextPlain(NStringUtils.trimLeft(this.str));
+        public List<NText> splitLines() {
+            /**
+             * Split lines.
+             *
+             * @param false false
+             * @return split lines result
+             */
+            return splitLines(false);
         }
 
         @Override
-        public NText trimRight() {
-            return new ImmutableNTextPlain(NStringUtils.trimRight(this.str));
+        public NText strip() {
+            return new ImmutableNTextPlain(NStringUtils.strip(this.str));
+        }
+
+        @Override
+        public NText stripLeft() {
+            return new ImmutableNTextPlain(NStringUtils.stripLeft(this.str));
+        }
+
+        @Override
+        public NText stripRight() {
+            return new ImmutableNTextPlain(NStringUtils.stripRight(this.str));
         }
 
         @Override
@@ -801,6 +1042,12 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public NPrimitiveText[] toCharArray() {
+            /**
+             * Converts to char list.
+             *
+             * @param NPrimitiveText[0] n primitive text[0]
+             * @return to char list result
+             */
             return toCharList().toArray(new NPrimitiveText[0]);
         }
 

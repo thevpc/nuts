@@ -4,7 +4,7 @@ package net.thevpc.nuts.runtime.standalone.repository.index;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBDefaultIndexDefinition;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableDefinition;
@@ -27,10 +27,10 @@ public class ArtifactsIndexDB {
 
     public static ArtifactsIndexDB of() {
         synchronized (NWorkspace.of()) {
-            ArtifactsIndexDB o = (ArtifactsIndexDB) NWorkspace.of().getProperties().get(ArtifactsIndexDB.class.getName());
+            ArtifactsIndexDB o = (ArtifactsIndexDB) NWorkspace.of().properties().get(ArtifactsIndexDB.class.getName());
             if (o == null) {
                 o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, NWorkspaceExt.of().store().cacheDB());
-                NWorkspace.of().getProperties().put(ArtifactsIndexDB.class.getName(), o);
+                NWorkspace.of().properties().put(ArtifactsIndexDB.class.getName(), o);
             }
             return o;
         }
@@ -39,12 +39,12 @@ public class ArtifactsIndexDB {
     private static NanoDBTableDefinition<NId> def(String name, NanoDB db) {
         return new NanoDBTableDefinition<NId>(
                 name, NId.class, db.getSerializers().of(NId.class, false),
-                new NanoDBDefaultIndexDefinition<>("id", String.class, false, x -> x.getLongId()
-                        .builder().setRepository(x.getRepository()).build().toString()
+                new NanoDBDefaultIndexDefinition<>("id", String.class, false, x -> x.longId()
+                        .builder().repository(x.repository()).build().toString()
                 ),
-                new NanoDBDefaultIndexDefinition<>("groupId", String.class, false, NId::getGroupId),
-                new NanoDBDefaultIndexDefinition<>("artifactId", String.class, false, NId::getArtifactId),
-                new NanoDBDefaultIndexDefinition<>("repository", String.class, false, NId::getRepository)
+                new NanoDBDefaultIndexDefinition<>("groupId", String.class, false, NId::groupId),
+                new NanoDBDefaultIndexDefinition<>("artifactId", String.class, false, NId::artifactId),
+                new NanoDBDefaultIndexDefinition<>("repository", String.class, false, NId::repository)
         );
     }
 
@@ -71,9 +71,9 @@ public class ArtifactsIndexDB {
 
     public boolean contains(NId id) {
         return table.findByIndex("id",
-                id.getLongId()
-                        .builder().setRepository(id.getRepository())
-                        .build().toDependency()
+                id.longId()
+                        .builder().repository(id.repository())
+                        .build().toDependency().toString()
         ).findAny().orNull() != null;
     }
 }

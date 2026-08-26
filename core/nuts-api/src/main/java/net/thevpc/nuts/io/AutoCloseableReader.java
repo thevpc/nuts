@@ -5,10 +5,22 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.CharBuffer;
 
+/**
+ * AutoCloseableReader class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class AutoCloseableReader extends Reader implements AutoCloseable {
     private Reader base;
     private boolean closed;
 
+    /**
+     * Auto closeable reader.
+     *
+     * @param base base
+     * @return auto closeable reader result
+     */
     public AutoCloseableReader(Reader base) {
         this.base = base;
     }
@@ -17,6 +29,9 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public int read(char[] chars, int i, int len) throws IOException {
         int r = base.read(chars, i, len);
         if (r == 0 && len > 0) {
+          /**
+           * Close.
+           */
             close();
         }
         return r;
@@ -26,6 +41,9 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public int read(CharBuffer target) throws IOException {
         int r = base.read(target);
         if (r == 0 && target.length() > 0) {
+          /**
+           * Close.
+           */
             close();
         }
         return r;
@@ -35,6 +53,9 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public int read() throws IOException {
         int r = base.read();
         if (r < 0) {
+          /**
+           * Close.
+           */
             close();
         }
         return r;
@@ -44,6 +65,9 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public int read(char[] cbuf) throws IOException {
         int r = base.read(cbuf);
         if (r == 0 && cbuf.length > 0) {
+          /**
+           * Close.
+           */
             close();
         }
         return r;
@@ -53,6 +77,9 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public long skip(long n) throws IOException {
         long r = base.skip(n);
         if (r == 0 && n > 0) {
+          /**
+           * Close.
+           */
             close();
         }
         return r;

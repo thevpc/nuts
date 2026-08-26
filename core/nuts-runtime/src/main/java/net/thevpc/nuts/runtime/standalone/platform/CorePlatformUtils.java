@@ -37,6 +37,7 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.platform.NOsFamily;
 
@@ -45,6 +46,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.zip.ZipEntry;
@@ -66,11 +68,37 @@ public class CorePlatformUtils {
                     && "xterm".equals(System.getenv("TERM"));
     private static Map<String, String> LOADED_OS_DIST_MAP = null;
 
+    public static class JdkVersionAndReleaseDate {
+        private final int version;
+        private final LocalDate releaseDate;
+
+        public JdkVersionAndReleaseDate(int version, LocalDate releaseDate) {
+            this.version = version;
+            this.releaseDate = releaseDate;
+        }
+
+        public int majorVersion() {
+            return version;
+        }
+
+        public LocalDate releaseDate() {
+            return releaseDate;
+        }
+    }
+
+    public static List<JdkVersionAndReleaseDate> JAVA_LTS_RELEASES = Arrays.asList(
+            new JdkVersionAndReleaseDate(8, LocalDate.of(2014, 3, 18)),
+            new JdkVersionAndReleaseDate(11, LocalDate.of(2018, 9, 25)),
+            new JdkVersionAndReleaseDate(17, LocalDate.of(2021, 9, 14)),
+            new JdkVersionAndReleaseDate(21, LocalDate.of(2023, 9, 19)),
+            new JdkVersionAndReleaseDate(25, LocalDate.of(2025, 9, 16))
+    );
+
     static {
 //        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
         boolean _e = new String("ø".getBytes()).equals("ø");
         if (_e) {
-            switch (NOsFamily.getCurrent()) {
+            switch (NOsFamily.current()) {
                 case LINUX:
                 case MACOS: {
                     //okkay
@@ -177,9 +205,9 @@ public class CorePlatformUtils {
             try {
                 osVersion.append(
                         NExec.of().system()
-                                .setCommand("uname", "-r")
-                                .setSleepMillis(50)
-                                .getGrabbedAllString()
+                                .command("uname", "-r")
+                                .sleepDuration(NDuration.ofMillis(50))
+                                .grabbedAll()
                 );
             } catch (Exception e) {
                 NLog.of(CorePlatformUtils.class).log(NMsg.ofC("failed to run \"uname -a\" : %s", e).asFinestFail(e));
@@ -306,10 +334,10 @@ public class CorePlatformUtils {
             m.put("container", "container");
         }
         if (disLike != null) {
-            m.put("like", NStringUtils.trim(disLike));
+            m.put("like", NStringUtils.strip(disLike));
         }
         if (disVersionCodeName != null) {
-            m.put("codename", NStringUtils.trim(disVersionCodeName));
+            m.put("codename", NStringUtils.strip(disVersionCodeName));
         }
         if (kubernetes) {
             m.put("kubernetes", "true");
@@ -329,7 +357,7 @@ public class CorePlatformUtils {
             String like = m.get("like");
             String codename = m.get("codename");
             if (!NBlankable.isBlank(distId)) {
-                return NIdBuilder.of(null, distId).setVersion(distVersion).setProperty("like", like).setProperty("codename", codename).build();
+                return NIdBuilder.of(null, distId).version(distVersion).setProperty("like", like).setProperty("codename", codename).build();
             }
         }
         return null;
@@ -460,7 +488,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NException(NMsg.ofPlain("run with loader failed"), ex);
+                throw new NException(NMsg.ofP("run with loader failed"), ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -468,7 +496,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NException(NMsg.ofPlain("run with loader failed"), ex);
+            throw new NException(NMsg.ofP("run with loader failed"), ex);
         }
         return ref.get();
     }
@@ -490,38 +518,38 @@ public class CorePlatformUtils {
     }
 
 
-    public static List<Class> resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass){
-        List<Class> acceptableInterfaces=new ArrayList<>();
-        resolveInterfacesDeclaringNoArgMethod(methodName,declaringClass,acceptableInterfaces,new HashSet<>());
+    public static List<Class> resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass) {
+        List<Class> acceptableInterfaces = new ArrayList<>();
+        resolveInterfacesDeclaringNoArgMethod(methodName, declaringClass, acceptableInterfaces, new HashSet<>());
         return acceptableInterfaces;
     }
 
-    public static void resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass, List<Class> acceptableInterfaces, Set<Class> visitedClasses){
-        if(declaringClass==null){
+    public static void resolveInterfacesDeclaringNoArgMethod(String methodName, Class declaringClass, List<Class> acceptableInterfaces, Set<Class> visitedClasses) {
+        if (declaringClass == null) {
             return;
         }
-        if(visitedClasses.contains(declaringClass)){
+        if (visitedClasses.contains(declaringClass)) {
             return;
         }
-        if(declaringClass.isInterface()){
-            Method mm=null;
+        if (declaringClass.isInterface()) {
+            Method mm = null;
             try {
                 mm = declaringClass.getDeclaredMethod(methodName);
                 int mod = mm.getModifiers();
-                if(Modifier.isStatic(mod) || Modifier.isPrivate(mod)){
-                    mm=null;
+                if (Modifier.isStatic(mod) || Modifier.isPrivate(mod)) {
+                    mm = null;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 //
             }
-            if(mm!=null){
+            if (mm != null) {
                 acceptableInterfaces.add(declaringClass);
             }
             visitedClasses.add(declaringClass);
         }
-        resolveInterfacesDeclaringNoArgMethod(methodName,declaringClass.getSuperclass(),acceptableInterfaces,visitedClasses);
+        resolveInterfacesDeclaringNoArgMethod(methodName, declaringClass.getSuperclass(), acceptableInterfaces, visitedClasses);
         for (Class d : declaringClass.getInterfaces()) {
-            resolveInterfacesDeclaringNoArgMethod(methodName,d,acceptableInterfaces,visitedClasses);
+            resolveInterfacesDeclaringNoArgMethod(methodName, d, acceptableInterfaces, visitedClasses);
         }
     }
 }

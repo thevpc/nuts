@@ -9,8 +9,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 /**
  * @author thevpc
@@ -24,15 +24,15 @@ public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         return cmdLine
-                .matcher().with("cli-id").matchEntry((v) -> {
+                .matcher().when("cli-id").asEntry((v) -> {
                     if (NBlankable.isBlank(v)) {
                         doLoadCliId();
                     } else {
                         doSaveCliId(v.stringValue());
                     }
                 })
-                .with("get cli-id").matchAny(a -> doLoadCliId())
-                .with("set cli-id").matchAny((a) -> doLoadCliId())
+                .when("get cli-id").asArg(a -> doLoadCliId())
+                .when("set cli-id").asArg((a) -> doLoadCliId())
                 .anyMatch();
     }
 

@@ -13,6 +13,8 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NLiteral;
 
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -28,13 +30,13 @@ public class NDefinitionExecRuntimeFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        if(other.getId().getShortName().equals(NConstants.Ids.NUTS_RUNTIME)){
+        if(other.id().shortName().equals(NConstants.Ids.NUTS_RUNTIME)){
             if(apiId==null){
                 return true;
             }
-            for (NDependency dependency : other.getDescriptor().getDependencies()) {
-                if (dependency.toId().getShortName().equals(this.apiId.getShortName())) {
-                    if (apiId.getVersion().equals(dependency.toId().getVersion())) {
+            for (NDependency dependency : other.descriptor().dependencies()) {
+                if (dependency.toId().shortName().equals(this.apiId.shortName())) {
+                    if (apiId.version().equals(dependency.toId().version())) {
                         return true;
                     }
                     return false;
@@ -42,15 +44,15 @@ public class NDefinitionExecRuntimeFilter extends AbstractDefinitionFilter {
             }
         }
         if(communityRuntime) {
-            if (!other.getDescriptor().getPropertyValue("nuts-runtime").flatMap(NLiteral::asBoolean).orElse(false)) {
+            if (!other.descriptor().getPropertyValue("nuts-runtime").flatMap(NLiteral::asBoolean).orElse(false)) {
                 return false;
             }
-            for (NDependency dependency : other.getDescriptor().getDependencies()) {
-                if (dependency.toId().getShortName().equals(this.apiId.getShortName())) {
+            for (NDependency dependency : other.descriptor().dependencies()) {
+                if (dependency.toId().shortName().equals(this.apiId.shortName())) {
                     if (apiId == null) {
                         return true;
                     }
-                    if (apiId.getVersion().equals(dependency.toId().getVersion())) {
+                    if (apiId.version().equals(dependency.toId().version())) {
                         return true;
                     }
                     return false;
@@ -70,7 +72,19 @@ public class NDefinitionExecRuntimeFilter extends AbstractDefinitionFilter {
         if(apiId==null){
             return "runtime";
         }
-        return "runtime("+ apiId.getVersion()+")";
+        return "runtime("+ apiId.version()+")";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionExecRuntimeFilter that = (NDefinitionExecRuntimeFilter) o;
+        return communityRuntime == that.communityRuntime && Objects.equals(apiId, that.apiId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), apiId, communityRuntime);
+    }
 }

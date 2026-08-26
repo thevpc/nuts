@@ -28,5 +28,10 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NTextVisitor {
+    /**
+     * Visit.
+     *
+     * @param node node
+     */
     void visit(NText node);
 }

@@ -11,45 +11,45 @@ public abstract class NDefinitionDelegate implements NDefinition {
 
 
     @Override
-    public NId getId() {
-        return getBase().getId();
+    public NId id() {
+        return getBase().id();
     }
 
     protected abstract NDefinition getBase();
 
     @Override
-    public NDescriptor getDescriptor() {
-        return getBase().getDescriptor();
+    public NDescriptor descriptor() {
+        return getBase().descriptor();
     }
 
     @Override
-    public NOptional<Set<NDescriptorFlag>> getEffectiveFlags() {
-        return getBase().getEffectiveFlags();
+    public NOptional<Set<NDescriptorFlag>> effectiveFlags() {
+        return getBase().effectiveFlags();
     }
 
     @Override
-    public NOptional<NPath> getContent() {
-        return getBase().getContent();
+    public NOptional<NPath> content() {
+        return getBase().content();
     }
 
     @Override
-    public NOptional<NInstallInformation> getInstallInformation() {
-        return getBase().getInstallInformation();
+    public NOptional<NInstallInformation> installInformation() {
+        return getBase().installInformation();
     }
 
     @Override
-    public NOptional<NDescriptor> getEffectiveDescriptor() {
-        return getBase().getEffectiveDescriptor();
+    public NOptional<NDescriptor> effectiveDescriptor() {
+        return getBase().effectiveDescriptor();
     }
 
     @Override
-    public NOptional<NDependencies> getDependencies() {
-        return getBase().getDependencies();
+    public NOptional<NDependencies> dependencies() {
+        return getBase().dependencies();
     }
 
     @Override
-    public NId getApiId() {
-        return getBase().getApiId();
+    public NId apiId() {
+        return getBase().apiId();
     }
 
     @Override
@@ -58,18 +58,18 @@ public abstract class NDefinitionDelegate implements NDefinition {
     }
 
     @Override
-    public String getRepositoryUuid() {
-        return getBase().getRepositoryUuid();
+    public String repositoryUuid() {
+        return getBase().repositoryUuid();
     }
 
     @Override
-    public NDependency getDependency() {
-        return getBase().getDependency();
+    public NDependency dependency() {
+        return getBase().dependency();
     }
 
     @Override
-    public String getRepositoryName() {
-        return getBase().getRepositoryName();
+    public String repositoryName() {
+        return getBase().repositoryName();
     }
 
     @Override

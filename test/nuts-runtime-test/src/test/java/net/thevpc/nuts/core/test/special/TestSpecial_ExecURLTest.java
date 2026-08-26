@@ -26,8 +26,8 @@ public class TestSpecial_ExecURLTest {
 
 
     private void printlnNode(NDependencyTreeNode d, String s) {
-        TestUtils.println(s+d.getDependency());
-        for (NDependencyTreeNode child : d.getChildren()) {
+        TestUtils.println(s+d.dependency());
+        for (NDependencyTreeNode child : d.children()) {
             printlnNode(child,"  ");
         }
     }
@@ -36,12 +36,12 @@ public class TestSpecial_ExecURLTest {
     public void testNtf2() {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
-                .setConnectionString("ssh://vpc:a@192.168.1.36")
+                .connectionString("ssh://vpc:a@192.168.1.36")
                 //.addCommand("ls","-l")
-                .addCommand("nuts","info")
-                .failFast()
+                .command("nuts","info")
+                .failFast(true)
                 //.system()
-                .getGrabbedAllString();
+                .grabbedAll();
         NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }

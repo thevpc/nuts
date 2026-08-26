@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,43 +48,97 @@ public class NWorkspaceListConfig implements Serializable {
     private String name;
     private List<NWorkspaceLocation> workspaces;
 
+    /**
+     * N workspace list config.
+     *
+     * @return n workspace list config result
+     */
     public NWorkspaceListConfig() {
     }
 
+    /**
+     * N workspace list config.
+     *
+     * @param uuid uuid
+     * @param name name
+     * @return n workspace list config result
+     */
     public NWorkspaceListConfig(String uuid, String name) {
         this.uuid = uuid;
         this.name = name;
     }
 
+    /**
+     * N workspace list config.
+     *
+     * @param other other
+     * @return n workspace list config result
+     */
     public NWorkspaceListConfig(NWorkspaceListConfig other) {
-        this.uuid = other.getUuid();
-        this.name = other.getName();
-        this.workspaces = other.getWorkspaces() == null ? null : new ArrayList<>(other.getWorkspaces());
+        this.uuid = other.uuid();
+        this.name = other.name();
+        this.workspaces = other.workspaces() == null ? null : new ArrayList<>(other.workspaces());
     }
 
-    public String getUuid() {
+    /**
+     * Uuid.
+     *
+     * @return uuid result
+     */
+    @NGetter
+    public String uuid() {
         return uuid;
     }
 
-    public NWorkspaceListConfig setUuid(String uuid) {
+    /**
+     * Uuid.
+     *
+     * @param uuid uuid
+     * @return uuid result
+     */
+    @NSetter
+    public NWorkspaceListConfig uuid(String uuid) {
         this.uuid = uuid;
         return this;
     }
 
-    public String getName() {
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    @NGetter
+    public String name() {
         return name;
     }
 
-    public NWorkspaceListConfig setName(String name) {
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    @NSetter
+    public NWorkspaceListConfig name(String name) {
         this.name = name;
         return this;
     }
 
-    public List<NWorkspaceLocation> getWorkspaces() {
+    /**
+     * Workspaces.
+     *
+     * @return workspaces result
+     */
+    public List<NWorkspaceLocation> workspaces() {
         return workspaces;
     }
 
-    public void setWorkspaces(List<NWorkspaceLocation> workspaces) {
+    /**
+     * Workspaces.
+     *
+     * @param workspaces workspaces
+     */
+    public void workspaces(List<NWorkspaceLocation> workspaces) {
         this.workspaces = workspaces;
     }
 

@@ -1,5 +1,4 @@
 ```!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf```
-
 ##) SYNOPSIS:
 ```sh
 nuts [<-options>]... <command> <args> ...

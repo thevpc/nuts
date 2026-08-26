@@ -33,7 +33,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
-import net.thevpc.nuts.util.NDefaultObservableMap;
+import net.thevpc.nuts.runtime.standalone.collections.NDefaultObservableMap;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySPI;
@@ -41,6 +41,8 @@ import net.thevpc.nuts.spi.NRepositorySPI;
 import java.util.*;
 
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
+import net.thevpc.nuts.collections.NObservableMap;
+import net.thevpc.nuts.collections.NObservableMapListener;
 
 /**
  * Created by vpc on 1/18/17.
@@ -77,17 +79,17 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
 
     @Override
     public boolean containsTag(String tag) {
-        return configModel.containsTag(NStringUtils.trim(tag));
+        return configModel.containsTag(NStringUtils.strip(tag));
     }
 
     @Override
-    public Set<String> getTags() {
+    public Set<String> tags() {
         return configModel.getTags();
     }
 
     @Override
     public NRepository addTag(String tag) {
-        configModel.addTag(NStringUtils.trim(tag));
+        configModel.addTag(NStringUtils.strip(tag));
         return this;
     }
 
@@ -125,27 +127,27 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public String getRepositoryType() {
-        return config().getType();
+    public String repositoryType() {
+        return config().type();
     }
 
     @Override
-    public String getUuid() {
+    public String uuid() {
         return configModel==null?null:configModel.getUuid();
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return configModel==null?null:configModel.getName();
     }
 
     @Override
-    public NWorkspace getWorkspace() {
+    public NWorkspace workspace() {
         return workspace;
     }
 
     @Override
-    public NRepository getParentRepository() {
+    public NRepository parentRepository() {
         return parentRepository;
     }
 
@@ -169,12 +171,12 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public List<NRepositoryListener> getRepositoryListeners() {
+    public List<NRepositoryListener> repositoryListeners() {
         return repositoryListeners;
     }
 
     @Override
-    public Map<String, Object> getUserProperties() {
+    public Map<String, Object> userProperties() {
         return userProperties;
     }
 
@@ -191,15 +193,15 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
-        return userProperties.getMapListeners();
+    public List<NObservableMapListener<String, Object>> userPropertyListeners() {
+        return userProperties.mapListeners();
     }
 
     public boolean isEnabled() {
         return this.enabled && this.config().isEnabled();
     }
 
-    public NRepository setEnabled(boolean enabled) {
+    public NRepository enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
@@ -208,7 +210,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     public String toString() {
         NRepositoryConfigManagerExt cc = NRepositoryConfigManagerExt.of(config());
         NRepositoryConfigManager c = config();
-        String name = getName();
+        String name = name();
         String storePath = null;
         NRepositoryLocation loc = cc.getModel().getLocation();
         String impl = getClass().getSimpleName();
@@ -247,11 +249,11 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     public String getIdFilename(NId id, String ext) {
         String classifier = "";
         if (!ext.equals(NConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
-            String c = id.getClassifier();
+            String c = id.classifier();
             if (!NBlankable.isBlank(c)) {
                 classifier = "-" + c;
             }
         }
-        return id.getArtifactId() + "-" + id.getVersion().getValue() + classifier + ext;
+        return id.artifactId() + "-" + id.version().value() + classifier + ext;
     }
 }

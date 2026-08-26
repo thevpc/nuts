@@ -1,13 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.expr.NGlob;
+import net.thevpc.nuts.math.NNumberUtils;
 import net.thevpc.nuts.reflect.NPlatformSignature;
 import net.thevpc.nuts.runtime.standalone.reflect.NPlatformSignatureImpl;
 import net.thevpc.nuts.runtime.standalone.reflect.NSignatureMapImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.expr.NExprCommonOp;
-import net.thevpc.nuts.expr.NExprOpType;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.reflect.NSignatureMap;
 import net.thevpc.nuts.util.*;
 
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DefaultNExprsCommonOps {
-    private final Map<NExprCommonOpAndType, NSignatureMap<NPlatformSignature,Type,Object>> commonOps = new HashMap<>();
+    private final Map<NExprCommonOpAndType, NSignatureMap<NPlatformSignature, Type, Object>> commonOps = new HashMap<>();
 
     public DefaultNExprsCommonOps() {
         declareEq();
@@ -45,7 +46,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareEq() {
-        declare2(NExprCommonOp.EQ, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.EQ, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
                     @Override
                     public Boolean apply(Object a, Object b) {
@@ -63,8 +64,9 @@ public class DefaultNExprsCommonOps {
                 }
         );
     }
+
     private void declareGlob() {
-        declare2(NExprCommonOp.LIKE, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.LIKE, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
                     @Override
                     public Boolean apply(Object a, Object b) {
@@ -75,9 +77,9 @@ public class DefaultNExprsCommonOps {
                             return false;
                         }
                         if (a instanceof Number && b instanceof Number) {
-                            return NNumberUtils.equals((Number) a, (Number) b,1E-9);
+                            return NNumberUtils.equals((Number) a, (Number) b, 1E-9);
                         }
-                        if(Objects.equals(a, b)){
+                        if (Objects.equals(a, b)) {
                             return true;
                         }
                         return NGlob.of().toPattern(String.valueOf(b)).matcher(String.valueOf(a)).matches();
@@ -87,7 +89,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareRegex() {
-        declare2(NExprCommonOp.EQ_REGEX, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.EQ_REGEX, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
                     @Override
                     public Boolean apply(Object a, Object b) {
@@ -100,7 +102,7 @@ public class DefaultNExprsCommonOps {
                         if (a instanceof Number && b instanceof Number) {
                             return NNumberUtils.equals((Number) a, (Number) b);
                         }
-                        if(Objects.equals(a, b)){
+                        if (Objects.equals(a, b)) {
                             return true;
                         }
                         return Pattern.compile(String.valueOf(b)).matcher(String.valueOf(a)).matches();
@@ -110,7 +112,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareNe() {
-        declare2(NExprCommonOp.NE, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.NE, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
                     @Override
                     public Boolean apply(Object a, Object b) {
@@ -130,7 +132,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareGt() {
-        declare2(NExprCommonOp.GT, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.GT, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
                     @Override
                     public Boolean apply(Object a, Object b) {
@@ -141,7 +143,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareGte() {
-        declare2(NExprCommonOp.GTE, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.GTE, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
                     @Override
                     public Boolean apply(Object a, Object b) {
@@ -152,7 +154,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareLt() {
-        declare2(NExprCommonOp.LT, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.LT, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
                     @Override
                     public Boolean apply(Object a, Object b) {
@@ -164,7 +166,7 @@ public class DefaultNExprsCommonOps {
 
 
     private void declareLte() {
-        declare2(NExprCommonOp.LTE, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.LTE, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Boolean>() {
                     @Override
                     public Boolean apply(Object a, Object b) {
@@ -175,7 +177,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declarePlus() {
-        declare2(NExprCommonOp.PLUS, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.PLUS, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Object apply(Object a, Object b) {
@@ -194,7 +196,7 @@ public class DefaultNExprsCommonOps {
                             return NNumberUtils.addNumbers(aa.asNumber().get(), bb.asNumber().get());
                         }
                         if (aa.isString() || bb.isString()) {
-                            return String.valueOf(a) + String.valueOf(b);
+                            return String.valueOf(a) + b;
                         }
                         throw new NIllegalArgumentException(NMsg.ofC("unable to operate '+' operator for %s %s", a, b));
                     }
@@ -203,7 +205,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareMinus() {
-        declare2(NExprCommonOp.MINUS, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.MINUS, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Object apply(Object a, Object b) {
@@ -229,7 +231,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareMul() {
-        declare2(NExprCommonOp.MUL, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.MUL, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Object apply(Object a, Object b) {
@@ -255,7 +257,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declarePow() {
-        declare2(NExprCommonOp.POW, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.POW, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Number apply(Object a, Object b) {
@@ -278,7 +280,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareDiv() {
-        declare2(NExprCommonOp.DIV, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.DIV, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Number apply(Object a, Object b) {
@@ -301,7 +303,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareRem() {
-        declare2(NExprCommonOp.REM, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.REM, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Number apply(Object a, Object b) {
@@ -324,7 +326,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declarePlusPrefix() {
-        declare1(NExprCommonOp.PLUS, NExprOpType.PREFIX, NPlatformSignatureImpl.of(Object.class),
+        declare1(NExprCommonOp.PLUS, NFixity.PREFIX, NPlatformSignatureImpl.of(Object.class),
                 new NFunction<Object, Object>() {
                     @Override
                     public Object apply(Object a) {
@@ -335,7 +337,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareMinusPrefix() {
-        declare1(NExprCommonOp.MINUS, NExprOpType.PREFIX, NPlatformSignatureImpl.of(Object.class),
+        declare1(NExprCommonOp.MINUS, NFixity.PREFIX, NPlatformSignatureImpl.of(Object.class),
                 new NFunction<Object, Object>() {
                     @Override
                     public Number apply(Object a) {
@@ -352,7 +354,7 @@ public class DefaultNExprsCommonOps {
     }
 
     private void declareNot() {
-        declare1(NExprCommonOp.NOT, NExprOpType.PREFIX, NPlatformSignatureImpl.of(Object.class),
+        declare1(NExprCommonOp.NOT, NFixity.PREFIX, NPlatformSignatureImpl.of(Object.class),
                 new NFunction<Object, Object>() {
                     @Override
                     public Object apply(Object a) {
@@ -370,14 +372,14 @@ public class DefaultNExprsCommonOps {
                         if (a instanceof CharSequence) {
                             return ((CharSequence) a).length() == 0;
                         }
-                        return a != null;
+                        return NBlankable.isBlank(a);
                     }
                 }
         );
     }
 
     private void declareAnd() {
-        declare2(NExprCommonOp.AND, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.AND, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Object apply(Object a, Object b) {
@@ -391,19 +393,36 @@ public class DefaultNExprsCommonOps {
                             return a;
                         }
                         if (a instanceof Number && b instanceof Number) {
-                            return NNumberUtils.andNumbers((Number) a, (Number) b);
+                            try {
+                                return NNumberUtils.andNumbers((Number) a, (Number) b);
+                            } catch (NIllegalArgumentException e) {
+                                if (!(a instanceof Boolean)) {
+                                    a = !NBlankable.isBlank(a);
+                                }
+                                if (!(b instanceof Boolean)) {
+                                    b = !NBlankable.isBlank(b);
+                                }
+                                return (Boolean) a && (Boolean) b;
+                            }
                         }
                         if (a instanceof Boolean && b instanceof Boolean) {
                             return (Boolean) a & (Boolean) b;
                         }
-                        throw new NIllegalArgumentException(NMsg.ofC("unable to operate '&' operator for %s %s", a, b));
+                        if (!(a instanceof Boolean)) {
+                            a = !NBlankable.isBlank(a);
+                        }
+                        if (!(b instanceof Boolean)) {
+                            b = !NBlankable.isBlank(b);
+                        }
+                        return (Boolean) a & (Boolean) b;
+                        //throw new NIllegalArgumentException(NMsg.ofC("unable to operate '&' operator for %s %s", a, b));
                     }
                 }
         );
     }
 
     private void declareOr() {
-        declare2(NExprCommonOp.OR, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.OR, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Object apply(Object a, Object b) {
@@ -417,12 +436,29 @@ public class DefaultNExprsCommonOps {
                             return a;
                         }
                         if (a instanceof Number && b instanceof Number) {
-                            return NNumberUtils.orNumbers((Number) a, (Number) b);
+                            try {
+                                return NNumberUtils.orNumbers((Number) a, (Number) b);
+                            } catch (NIllegalArgumentException e) {
+                                if (!(a instanceof Boolean)) {
+                                    a = !NBlankable.isBlank(a);
+                                }
+                                if (!(b instanceof Boolean)) {
+                                    b = !NBlankable.isBlank(b);
+                                }
+                                return (Boolean) a || (Boolean) b;
+                            }
                         }
                         if (a instanceof Boolean && b instanceof Boolean) {
-                            return (Boolean) a | (Boolean) b;
+                            return (Boolean) a || (Boolean) b;
                         }
-                        throw new NIllegalArgumentException(NMsg.ofC("unable to operate '|' operator for %s %s", a, b));
+                        if (!(a instanceof Boolean)) {
+                            a = !NBlankable.isBlank(a);
+                        }
+                        if (!(b instanceof Boolean)) {
+                            b = !NBlankable.isBlank(b);
+                        }
+                        return (Boolean) a || (Boolean) b;
+                        //throw new NIllegalArgumentException(NMsg.ofC("unable to operate '|' operator for %s %s", a, b));
                     }
                 }
         );
@@ -430,7 +466,7 @@ public class DefaultNExprsCommonOps {
 
 
     private void declareXOr() {
-        declare2(NExprCommonOp.XOR, NExprOpType.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
+        declare2(NExprCommonOp.XOR, NFixity.INFIX, NPlatformSignatureImpl.of(Object.class, Object.class),
                 new NFunction2<Object, Object, Object>() {
                     @Override
                     public Object apply(Object a, Object b) {
@@ -455,28 +491,28 @@ public class DefaultNExprsCommonOps {
         );
     }
 
-    private void declare2(NExprCommonOp[] op, NExprOpType type, NPlatformSignature sig, NFunction2<?, ?, ?> value, NPlatformSignature... sigs) {
+    private void declare2(NExprCommonOp[] op, NFixity type, NPlatformSignature sig, NFunction2<?, ?, ?> value, NPlatformSignature... sigs) {
         for (NExprCommonOp o : op) {
             declare2(o, type, sig, value, sigs);
         }
     }
 
-    private void declare2(NExprCommonOp op, NExprOpType type, NPlatformSignature sig, NFunction2<?, ?, ?> value, NPlatformSignature... sigs) {
-        NSignatureMap<NPlatformSignature,Type,Object> sigMap = commonOps.computeIfAbsent(new NExprCommonOpAndType(op, type), r -> new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN));
+    private void declare2(NExprCommonOp op, NFixity type, NPlatformSignature sig, NFunction2<?, ?, ?> value, NPlatformSignature... sigs) {
+        NSignatureMap<NPlatformSignature, Type, Object> sigMap = commonOps.computeIfAbsent(new NExprCommonOpAndType(op, type), r -> new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN));
         sigMap.putMulti(sig.toUnnamed(), value, sigs);
     }
 
-    private void declare1(NExprCommonOp op, NExprOpType type, NPlatformSignature sig, NFunction<?, ?> value, NPlatformSignature... sigs) {
-        NSignatureMap<NPlatformSignature,Type,Object> sigMap = commonOps.computeIfAbsent(new NExprCommonOpAndType(op, type), r -> new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN));
+    private void declare1(NExprCommonOp op, NFixity type, NPlatformSignature sig, NFunction<?, ?> value, NPlatformSignature... sigs) {
+        NSignatureMap<NPlatformSignature, Type, Object> sigMap = commonOps.computeIfAbsent(new NExprCommonOpAndType(op, type), r -> new NSignatureMapImpl<>(NPlatformSignatureImpl.DOMAIN));
         sigMap.putMulti(sig.toUnnamed(), value, sigs);
     }
 
-    public NOptional<NFunction2<?, ?, ?>> findFunction2(NExprCommonOp op, NExprOpType type, NPlatformSignature sig0) {
-        NPlatformSignature sig=sig0.toUnnamed();
+    public NOptional<NFunction2<?, ?, ?>> findFunction2(NExprCommonOp op, NFixity type, NPlatformSignature sig0) {
+        NPlatformSignature sig = sig0.toUnnamed();
         NAssert.requireNamedTrue(sig.size() == 2, "sig size");
         if (sig.getType(0) == null || sig.getType(1) == null) {
             List<Object> acceptable = commonOps.entrySet().stream().filter(x -> x.getKey().getType() == type && x.getKey().getOp() == op)
-                    .flatMap(x -> x.getValue().toMap().entrySet().stream().filter(y -> y.getKey().matches(sig)).map(y->y.getValue()))
+                    .flatMap(x -> x.getValue().toMap().entrySet().stream().filter(y -> y.getKey().matches(sig)).map(y -> y.getValue()))
                     .collect(Collectors.toList());
             if (acceptable.size() == 1) {
                 return NOptional.of((NFunction2) acceptable.get(0));
@@ -487,7 +523,7 @@ public class DefaultNExprsCommonOps {
             return NOptional.of((NFunction2) acceptable.get(0));
         }
 
-        NSignatureMap<NPlatformSignature,Type,Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
+        NSignatureMap<NPlatformSignature, Type, Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
         if (sm != null) {
             NOptional<Object> v = sm.get(sig);
             if (v.isPresent() && v.get() instanceof NFunction2) {
@@ -497,8 +533,8 @@ public class DefaultNExprsCommonOps {
         return NOptional.ofNamedEmpty(NMsg.ofC("%s %s %s", op.image() + type.id(), sig));
     }
 
-    public NOptional<NFunction<?, ?>> findFunction1(NExprCommonOp op, NExprOpType type, NPlatformSignature sig0) {
-        NPlatformSignature sig=sig0.toUnnamed();
+    public NOptional<NFunction<?, ?>> findFunction1(NExprCommonOp op, NFixity type, NPlatformSignature sig0) {
+        NPlatformSignature sig = sig0.toUnnamed();
         NAssert.requireNamedTrue(sig.size() == 1, "sig size");
         Type t = sig.getType(0);
         if (t == null) {
@@ -513,7 +549,7 @@ public class DefaultNExprsCommonOps {
             }
             return NOptional.of((NFunction) acceptable.get(0));
         }
-        NSignatureMap<NPlatformSignature,Type,Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
+        NSignatureMap<NPlatformSignature, Type, Object> sm = commonOps.get(new NExprCommonOpAndType(op, type));
         if (sm != null) {
             NOptional<Object> v = sm.get(sig);
             if (v.isPresent() && v.get() instanceof NFunction) {

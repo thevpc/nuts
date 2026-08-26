@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCancelException;
-import net.thevpc.nuts.util.NExceptions;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NIllegalStateException;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.util.NAssert;
@@ -16,29 +16,29 @@ import java.util.concurrent.Future;
 import java.util.function.IntFunction;
 
 public class NRetryCallImpl<T> implements NRetryCall<T> {
-    private NRetryCallStore store;
+    private final NRetryCallStore store;
     private NRetryCallModel model;
 
     public NRetryCallImpl(String id, NCallable<T> callable, NRetryCallStore store) {
         this.store = store;
         this.model = new NRetryCallModel(id);
-        this.model.setCaller(callable);
+        this.model.caller(callable);
         reload();
     }
 
     public void reload() {
-        synchronized (this) {
-            String oldId = model.getId();
-            NCallable<?> oldCaller = model.getCaller();
+        synchronized (store) {
+            String oldId = model.id();
+            NCallable<?> oldCaller = model.caller();
             NRetryCallModel m = store.load(oldId);
             if (m == null) {
                 NAssert.requireNamedNonNull(oldCaller, "caller");
                 m = new NRetryCallModel(oldId);
-                m.setCaller(oldCaller);
+                m.caller(oldCaller);
                 store.save(m);
             } else {
                 if (oldCaller != null) {
-                    m.setCaller(oldCaller);
+                    m.caller(oldCaller);
                     store.save(m);
                 }
             }
@@ -47,54 +47,62 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     @Override
-    public NRetryCall<T> setMaxRetries(int maxRetries) {
-        maxRetries=Math.max(1, maxRetries);
-        int old = model.getMaxRetries();
-        if(old!=maxRetries) {
-            model.setMaxRetries(maxRetries);
+    public NRetryCall<T> maxRetries(int maxRetries) {
+        synchronized (store) {
+            maxRetries = Math.max(1, maxRetries);
+            int old = model.maxRetries();
+            if (old != maxRetries) {
+                model.maxRetries(maxRetries);
+                store.save(model);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NRetryCall<T> multipliedRetryPeriod(NDuration basePeriod, double multiplier) {
+        return retryPeriod(_retryMultipliedPeriod(basePeriod, multiplier));
+    }
+
+    @Override
+    public NRetryCall<T> exponentialRetryPeriod(NDuration basePeriod, double multiplier) {
+        return retryPeriod(_retryExponentialPeriod(basePeriod, multiplier));
+    }
+
+    @Override
+    public NRetryCall<T> retryPeriod(NDuration period) {
+        return retryPeriod(_retryFixedPeriods(period));
+    }
+
+    @Override
+    public NRetryCall<T> retryPeriods(NDuration... periods) {
+        return retryPeriod(_retryFixedPeriods(periods));
+    }
+
+    @Override
+    public NRetryCall<T> retryPeriod(IntFunction<NDuration> retryPeriod) {
+        synchronized (store) {
+            model.retryPeriod(retryPeriod);
             store.save(model);
         }
         return this;
     }
 
     @Override
-    public NRetryCall<T> setMultipliedRetryPeriod(NDuration basePeriod, double multiplier) {
-        return setRetryPeriod(_retryMultipliedPeriod(basePeriod, multiplier));
-    }
-
-    @Override
-    public NRetryCall<T> setExponentialRetryPeriod(NDuration basePeriod, double multiplier) {
-        return setRetryPeriod(_retryExponentialPeriod(basePeriod, multiplier));
-    }
-
-    @Override
-    public NRetryCall<T> setRetryPeriod(NDuration period) {
-        return setRetryPeriod(_retryFixedPeriods(period));
-    }
-
-    @Override
-    public NRetryCall<T> setRetryPeriods(NDuration... periods) {
-        return setRetryPeriod(_retryFixedPeriods(periods));
-    }
-
-    @Override
-    public NRetryCall<T> setRetryPeriod(IntFunction<NDuration> retryPeriod) {
-        model.setRetryPeriod(retryPeriod);
-        store.save(model);
+    public NRetryCall<T> recover(NCallable<T> recover) {
+        synchronized (store) {
+            model.recover(recover);
+            store.save(model);
+        }
         return this;
     }
 
     @Override
-    public NRetryCall<T> setRecover(NCallable<T> recover) {
-        model.setRecover(recover);
-        store.save(model);
-        return this;
-    }
-
-    @Override
-    public NRetryCall<T> setHandler(Handler<T> handler) {
-        model.setHandler(handler);
-        store.save(model);
+    public NRetryCall<T> handler(Handler<T> handler) {
+        synchronized (store) {
+            model.handler(handler);
+            store.save(model);
+        }
         return this;
     }
 
@@ -113,34 +121,34 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     @Override
     public T call() {
         synchronized (this) {
-            String id = model.getId();
+            String id = model.id();
             model = store.load(id);
             // prevent parallel execution
-            if (model.getStatus() == Status.RUNNING || model.getStatus() == Status.HANDLING) {
+            if (model.status() == Status.RUNNING || model.status() == Status.HANDLING) {
                 throw new NIllegalStateException(NMsg.ofC("Call [%s] is already running or handling.", id));
             }
 
             // if already fully completed, return the result immediately
-            if (model.getStatus() == Status.HANDLED || model.getStatus() == Status.SUCCEEDED) {
-                return (T) model.getResult();
+            if (model.status() == Status.HANDLED || model.status() == Status.SUCCEEDED) {
+                return (T) model.result();
             }
-            if (model.getStatus() == Status.CANCELLED) {
+            if (model.status() == Status.CANCELLED) {
                 throw new NCancelException(NMsg.ofC("Call %s cancelled", id));
             }
 
-            int maxRetries = Math.max(1, model.getMaxRetries());
-            int attempts = model.getFailedAttempts();
+            int maxRetries = Math.max(1, model.maxRetries());
+            int attempts = model.failedAttempts();
 
             while (attempts < maxRetries) {
                 try {
                     // prepare for a new attempt
-                    model.setStatus(Status.RUNNING);
+                    model.status(Status.RUNNING);
                     store.save(model);
 
                     // execute the main callable
-                    T result = (T) model.getCaller().call();
-                    model.setResult(result);
-                    model.setStatus(Status.SUCCEEDED);
+                    T result = (T) model.caller().call();
+                    model.result(result);
+                    model.status(Status.SUCCEEDED);
                     store.save(model);
 
                     // proceed to handler if present
@@ -148,27 +156,27 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
 
                 } catch (Exception ex) {
                     attempts++;
-                    model.setFailedAttempts(attempts);
-                    model.setThrowable(ex);
-                    model.setStatus(Status.FAILED_ATTEMPT);
+                    model.failedAttempts(attempts);
+                    model.error(ex);
+                    model.status(Status.FAILED_ATTEMPT);
                     store.save(model);
 
                     if (attempts >= maxRetries) {
                         // final failure
-                        model.setStatus(Status.FAILED);
+                        model.status(Status.FAILED);
                         store.save(model);
 
                         // try recover if available
-                        NCallable<T> recover = (NCallable<T>) model.getRecover();
+                        NCallable<T> recover = (NCallable<T>) model.recover();
                         if (recover != null) {
                             try {
                                 T recovered = recover.call();
-                                model.setResult(recovered);
-                                model.setStatus(Status.SUCCEEDED);
+                                model.result(recovered);
+                                model.status(Status.SUCCEEDED);
                                 store.save(model);
                                 return handleResultAndFinish(recovered);
                             } catch (Exception rex) {
-                                model.setThrowable(rex);
+                                model.error(rex);
                                 store.save(model);
                                 throw rex;
                             }
@@ -177,60 +185,60 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
                         }
                     } else {
                         // retry delay if configured
-                        NDuration wait = model.getRetryPeriod() != null
-                                ? model.getRetryPeriod().apply(attempts)
+                        NDuration wait = model.retryPeriod() != null
+                                ? model.retryPeriod().apply(attempts)
                                 : NDuration.ZERO;
                         if (!wait.isZero()) {
-                            model.setStatus(Status.RETRYING);
+                            model.status(Status.RETRYING);
                             store.save(model);
                             try {
                                 Thread.sleep(wait.toMillis());
                             } catch (InterruptedException ie) {
                                 Thread.currentThread().interrupt();
-                                throw NExceptions.ofUncheckedException(ie);
+                                throw NException.ofUncheckedException(ie);
                             }
                         }
                     }
                 }
             }
 
-            throw new NIllegalStateException(NMsg.ofC("Call [%s] ended in unexpected state: %s", id, model.getStatus()));
+            throw new NIllegalStateException(NMsg.ofC("Call [%s] ended in unexpected state: %s", id, model.status()));
 
         }
     }
 
     private T handleResultAndFinish(T result) {
-        Handler<T> handler = (Handler<T>) model.getHandler();
+        Handler<T> handler = (Handler<T>) model.handler();
         if (handler != null) {
             try {
-                model.setStatus(Status.HANDLING);
+                model.status(Status.HANDLING);
                 store.save(model);
 
                 handler.handle(newCallResult());
 
-                model.setStatus(Status.HANDLED);
+                model.status(Status.HANDLED);
                 store.save(model);
             } catch (Exception hx) {
-                model.setThrowable(hx);
-                model.setStatus(Status.HANDLER_FAILED);
+                model.error(hx);
+                model.status(Status.HANDLER_FAILED);
                 store.save(model);
                 throw hx;
             }
         } else {
             // no handler → mark as handled anyway
-            model.setStatus(Status.HANDLED);
+            model.status(Status.HANDLED);
             store.save(model);
         }
         return result;
     }
 
     private Result<T> newCallResult() {
-        T result = (T) model.getResult();
-        Status status = model.getStatus();
+        T result = (T) model.result();
+        Status status = model.status();
         return new Result<T>() {
             @Override
             public String id() {
-                return model.getId();
+                return model.id();
             }
 
             @Override
@@ -252,10 +260,10 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
             public T result() {
                 switch (status) {
                     case SUCCEEDED: {
-                        return (T) result;
+                        return result;
                     }
                     case FAILED: {
-                        throw NExceptions.ofUncheckedException((Throwable) model.getThrowable());
+                        throw NException.ofUncheckedException((Throwable) model.error());
                     }
                     case RUNNING: {
                         throw new NIllegalStateException(NMsg.ofC("still running"));

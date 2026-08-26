@@ -14,12 +14,13 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.core.NIndexerNotAccessibleException;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIndexFirstIterator;
-import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.collections.NIndexFirstIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
@@ -45,57 +46,57 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
 
     @Override
     public NSearchRepositoryCmd run() {
-        NSession session = getRepo().getWorkspace().currentSession();
+        NSession session = getRepo().workspace().currentSession();
         NRunnable startRunnable = NRunnable.of(
                 () -> {
-                    NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.FETCH_DESC, "search");
+                    NSecurityManager.of().checkRepositoryAllowed(getRepo().uuid(), NConstants.Permissions.FETCH_DESC, "search");
                     NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
                     xrepo.checkAllowedFetch(null);
                     _LOG()
-                            .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
+                            .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST))
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.START));
                 }
         ).withDescription(NDescribables.ofDesc("CheckAuthorizations"));
         NRunnable endRunnable =
                 NRunnable.of(
                         () -> _LOG()
-                                .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
+                                .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST))
                                         .withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS))
                         ).withDescription(NDescribables.ofDesc("Log"));
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
             boolean processIndexFirst =
-                getFetchMode()== NFetchMode.REMOTE && session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled();
+                fetchMode()== NFetchMode.REMOTE && session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled();
             if (processIndexFirst) {
                 Iterator<NId> o = null;
                 try {
-                    o = xrepo.getIndexStore().search(filter);
+                    o = xrepo.indexStore().search(filter);
                 } catch (NIndexerNotAccessibleException ex) {
                     //just ignore
                 } catch (NException ex) {
                     _LOG()
-                            .log(NMsg.ofJ("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex)
+                            .log(NMsg.ofJ("error search operation using Indexer for {0} : {1}", getRepo().name(), ex)
                                     .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
                 }
                 if (o != null) {
                     result = NIteratorBuilder.of(new NIndexFirstIterator<>(o,
-                            xrepo.searchImpl(filter, getFetchMode())
+                            xrepo.searchImpl(filter, fetchMode())
                     )).onStart(startRunnable).onFinish(endRunnable).build();
                     return this;
                 }
             }
-            result = NIteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode()))
+            result = NIteratorBuilder.of(xrepo.searchImpl(filter, fetchMode()))
                     .onStart(startRunnable)
                     .onFinish(endRunnable)
                     .build();
         } catch (NArtifactNotFoundException | SecurityException ex) {
             _LOG()
-                    .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
+                    .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST))
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
             throw ex;
         } catch (RuntimeException ex) {
             _LOG()
-                    .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))
+                    .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST))
                             .withLevel(Level.SEVERE).withIntent(NMsgIntent.FAIL));
             throw ex;
         }

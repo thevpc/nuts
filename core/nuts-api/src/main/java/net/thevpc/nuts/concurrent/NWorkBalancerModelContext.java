@@ -2,6 +2,8 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +33,8 @@ public class NWorkBalancerModelContext implements NCopiable, Cloneable {
      *
      * @return map of worker name -> (variable name -> value)
      */
-    public Map<String, Map<String, NElement>> getVariables() {
+    @NGetter
+    public Map<String, Map<String, NElement>> variables() {
         return variables;
     }
 
@@ -41,7 +44,8 @@ public class NWorkBalancerModelContext implements NCopiable, Cloneable {
      * @param variables new variables map
      * @return this context for chaining
      */
-    public NWorkBalancerModelContext setVariables(Map<String, Map<String, NElement>> variables) {
+    @NSetter
+    public NWorkBalancerModelContext variables(Map<String, Map<String, NElement>> variables) {
         this.variables = variables;
         return this;
     }
@@ -54,6 +58,11 @@ public class NWorkBalancerModelContext implements NCopiable, Cloneable {
      */
     @Override
     public NWorkBalancerModelContext copy() {
+        /**
+         * Clone.
+         *
+         * @return clone result
+         */
         return clone();
     }
 
@@ -74,6 +83,12 @@ public class NWorkBalancerModelContext implements NCopiable, Cloneable {
             }
             return copy;
         } catch (CloneNotSupportedException e) {
+            /**
+             * Runtime exception.
+             *
+             * @param e e
+             * @return runtime exception result
+             */
             throw new RuntimeException(e);
         }
     }

@@ -38,26 +38,80 @@ import java.util.stream.Stream;
  * @since 0.8.9
  */
 public interface NFlatExprElement extends NElement, Iterable<NElement> {
+    /**
+     * Returns the get.
+     *
+     * @param index index
+     * @return get result
+     */
     NOptional<NElement> get(int index);
 
+    /**
+     * Children.
+     *
+     * @return children result
+     */
     List<NElement> children();
 
+    /**
+     * Stream.
+     *
+     * @return stream result
+     */
     Stream<NElement> stream();
 
+    /**
+     * Size.
+     *
+     * @return size result
+     */
     int size();
 
+    /**
+     * Checks if is empty.
+     *
+     * @return is empty result
+     */
     boolean isEmpty();
 
+    /**
+     * Builder.
+     *
+     * @return builder result
+     */
     NFlatExprElementBuilder builder();
 
+    /**
+     * Reshape.
+     *
+     * @param reshaper reshaper
+     * @return reshape result
+     */
     default NElement reshape(NExprElementReshaper reshaper) {
         return reshaper == null ? this : reshaper.reshape(this);
     }
 
+    /**
+     * Reshape.
+     *
+     * @return reshape result
+     */
     default NElement reshape() {
+        /**
+         * Reshape.
+         *
+         * @param NExprElementReshaperType.DEFAULT n expr element reshaper type.default
+         * @return reshape result
+         */
         return reshape(NExprElementReshaperType.DEFAULT);
     }
 
+    /**
+     * Reshape.
+     *
+     * @param reshaper reshaper
+     * @return reshape result
+     */
     default NElement reshape(NExprElementReshaperType reshaper) {
         return reshaper == null ? this : NExprElementReshaper.of(reshaper).reshape(this);
     }

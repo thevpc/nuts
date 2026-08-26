@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
-import net.thevpc.nuts.artifact.NDefinitionFilters;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NSimplifiable;
@@ -32,38 +32,26 @@ public class NDefaultVersionDefinitionFilter extends AbstractDefinitionFilter im
         if (defaultVersion == null) {
             return true;
         }
-        return NWorkspaceExt.of().getInstalledRepository().isDefaultVersion(definition.getId()) == defaultVersion;
+        return NWorkspaceExt.of().getInstalledRepository().isDefaultVersion(definition.id()) == defaultVersion;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefaultVersionDefinitionFilter that = (NDefaultVersionDefinitionFilter) o;
+        return Objects.equals(defaultVersion, that.defaultVersion);
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.defaultVersion);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefaultVersionDefinitionFilter other = (NDefaultVersionDefinitionFilter) obj;
-        if (!Objects.equals(this.defaultVersion, other.defaultVersion)) {
-            return false;
-        }
-        return true;
+        return Objects.hash(super.hashCode(), defaultVersion);
     }
 
     @Override
     public NDefinitionFilter simplify() {
         if (defaultVersion == null) {
-            return NDefinitionFilters.of().always();
+            return NDefinitionFilterRPI.of().always();
         }
         return this;
     }

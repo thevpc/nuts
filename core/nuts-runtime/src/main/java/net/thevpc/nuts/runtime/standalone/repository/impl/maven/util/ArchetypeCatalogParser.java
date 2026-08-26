@@ -2,12 +2,11 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.PomIdFilter;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIteratorBase;
+import net.thevpc.nuts.pipeline.NIteratorBase;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;

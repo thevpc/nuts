@@ -38,8 +38,8 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
                                  List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
         super(type, value, affixes, diagnostics, metadata);
         this.layout = (type.isAnyFloatingNumber() || layout == null) ? NNumberLayout.DECIMAL : layout;
-        this.suffix = NStringUtils.trimToNull(suffix);
-        this.raw = NStringUtils.trimToNull(raw);
+        this.suffix = NStringUtils.stripToNull(suffix);
+        this.raw = NStringUtils.stripToNull(raw);
     }
 
     public String image() {

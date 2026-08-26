@@ -6,10 +6,23 @@ import net.thevpc.nuts.util.NComparator;
 
 import java.util.function.Supplier;
 
+/**
+ * NComparatorWithDescription class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NComparatorWithDescription<T> implements NComparator<T> {
     private NComparator<T> comparator;
     private Supplier<NElement> description;
 
+    /**
+     * N comparator with description.
+     *
+     * @param comparator comparator
+     * @param description description
+     * @return n comparator with description result
+     */
     public NComparatorWithDescription(NComparator<T> comparator, Supplier<NElement> description) {
         this.comparator = comparator;
         this.description = description;

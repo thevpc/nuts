@@ -38,21 +38,52 @@ import java.io.Writer;
  * @since 0.5.5
  */
 public interface NOutputTarget extends NContentMetadataProvider {
+    /**
+     * Creates a new instance of.
+     *
+     * @param outputStream output stream
+     * @return of result
+     */
     static NOutputTarget of(OutputStream outputStream) {
-        return NIORPI.of().ofOutputTarget(outputStream);
+        return NIORPI.of().createOutputTarget(outputStream);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param outputStream output stream
+     * @param metadata metadata
+     * @return of result
+     */
     static NOutputTarget of(OutputStream outputStream, NContentMetadata metadata) {
-        return NIORPI.of().ofOutputTarget(outputStream, metadata);
+        return NIORPI.of().createOutputTarget(outputStream, metadata);
     }
+    /**
+     * Creates a new instance of of.
+     *
+     * @param writer writer
+     * @return of result
+     */
     static NOutputTarget of(Writer writer) {
-        return NIORPI.of().ofOutputTarget(writer);
+        return NIORPI.of().createOutputTarget(writer);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param writer writer
+     * @param metadata metadata
+     * @return of result
+     */
     static NOutputTarget of(Writer writer, NContentMetadata metadata) {
-        return NIORPI.of().ofOutputTarget(writer, metadata);
+        return NIORPI.of().createOutputTarget(writer, metadata);
     }
 
-    OutputStream getOutputStream();
+    /**
+     * Output stream.
+     *
+     * @return output stream result
+     */
+    OutputStream outputStream();
 
 }

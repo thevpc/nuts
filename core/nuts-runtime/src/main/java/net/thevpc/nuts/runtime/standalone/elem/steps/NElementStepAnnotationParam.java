@@ -47,7 +47,7 @@ public class NElementStepAnnotationParam implements NElementStep {
 
     @Override
     public NElement toElement() {
-        return NElement.ofNamedUplet("Annotation", NElement.ofInt(annotationIndex), paramIndex);
+        return NElement.ofNamedTuple("Annotation", NElement.ofInt(annotationIndex), paramIndex);
     }
 
     @Override

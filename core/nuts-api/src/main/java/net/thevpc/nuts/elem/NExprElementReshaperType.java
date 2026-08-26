@@ -29,6 +29,12 @@ import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
+/**
+ * NExprElementReshaperType enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NExprElementReshaperType implements NEnum {
     DEFAULT,
 
@@ -43,10 +49,19 @@ public enum NExprElementReshaperType implements NEnum {
      */
     private final String id;
 
+  /**
+   * N expr element reshaper type.
+   */
     NExprElementReshaperType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NExprElementReshaperType> parse(String value) {
         return NEnumUtils.parseEnum(value, NExprElementReshaperType.class);
     }

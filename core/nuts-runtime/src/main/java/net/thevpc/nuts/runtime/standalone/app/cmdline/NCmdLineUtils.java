@@ -213,7 +213,7 @@ public class NCmdLineUtils {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NParseException(NMsg.ofPlain("expected '"));
+                throw new NParseException(NMsg.ofP("expected '"));
             }
         }
         return args.toArray(new String[0]);

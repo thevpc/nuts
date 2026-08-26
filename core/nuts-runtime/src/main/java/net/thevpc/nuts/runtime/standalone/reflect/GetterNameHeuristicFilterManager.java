@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.util.*;
 

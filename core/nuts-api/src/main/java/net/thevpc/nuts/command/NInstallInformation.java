@@ -27,6 +27,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NGetter;
 
 import java.time.Instant;
 
@@ -43,22 +44,31 @@ public interface NInstallInformation {
      *
      * @return installation date
      */
-    NId getId();
+    @NGetter
+    NId id();
 
     /**
      * installation date
      *
      * @return installation date
      */
-    Instant getCreatedInstant();
+    @NGetter
+    Instant createdInstant();
 
-    Instant getLastModifiedInstant();
+    /**
+     * Last modified instant.
+     *
+     * @return last modified instant result
+     */
+    @NGetter
+    Instant lastModifiedInstant();
 
     /**
      * true when the installed artifact is default version
      *
      * @return true when the installed artifact is default version
      */
+    @NGetter
     boolean isDefaultVersion();
 
     /**
@@ -66,43 +76,95 @@ public interface NInstallInformation {
      *
      * @return installation formation path
      */
-    NPath getInstallFolder();
+    @NGetter
+    NPath installFolder();
 
 
+    /**
+     * Checks if is was installed.
+     *
+     * @return is was installed result
+     */
+    @NGetter
     boolean isWasInstalled();
 
+    /**
+     * Checks if is was required.
+     *
+     * @return is was required result
+     */
+    @NGetter
     boolean isWasRequired();
 
     /**
-     * return the user responsible of the installation
+     * return the user responsible for the installation
      *
-     * @return the user responsible of the installation
+     * @return the user responsible for the installation
      */
-    String getInstallUser();
+    @NGetter
+    String installUser();
 
     /**
      * return install status
      *
      * @return install status
      */
-    NInstallStatus getInstallStatus();
+    @NGetter
+    NInstallStatus installStatus();
 
     /**
      * return true if installed primary or dependency
      *
      * @return true if installed primary or dependency
      */
+    @NGetter
     boolean isInstalledOrRequired();
 
-    String getSourceRepositoryName();
+    /**
+     * Source repository name.
+     *
+     * @return source repository name result
+     */
+    @NGetter
+    String sourceRepositoryName();
 
-    String getSourceRepositoryUUID();
+    /**
+     * Source repository uuid.
+     *
+     * @return source repository uuid result
+     */
+    @NGetter
+    String sourceRepositoryUUID();
 
+    /**
+     * Checks if is just re installed.
+     *
+     * @return is just re installed result
+     */
+    @NGetter
     boolean isJustReInstalled();
 
+    /**
+     * Checks if is just installed.
+     *
+     * @return is just installed result
+     */
+    @NGetter
     boolean isJustInstalled();
 
+    /**
+     * Checks if is just re required.
+     *
+     * @return is just re required result
+     */
+    @NGetter
     boolean isJustReRequired();
 
+    /**
+     * Checks if is just required.
+     *
+     * @return is just required result
+     */
+    @NGetter
     boolean isJustRequired();
 }

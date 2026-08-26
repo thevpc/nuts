@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.editorsyntax;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NSysEditorFamily;
+import net.thevpc.nuts.platform.NSysEditorFamily;
 import net.thevpc.nuts.command.NSysEditorSupportCmd;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementReader;
@@ -12,6 +12,8 @@ import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NTrace;
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import org.w3c.dom.*;
@@ -48,83 +50,83 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         return this;
     }
 
-    public NPath getSource() {
+    public NPath source() {
         return source;
     }
 
-    public NSysEditorSupportCmd setSource(NPath source) {
+    public NSysEditorSupportCmd source(NPath source) {
         this.source = source;
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setLanguageId(String value) {
+    public NSysEditorSupportCmd languageId(String value) {
         forcedInfo.setLanguageId(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultLanguageId(String value) {
+    public NSysEditorSupportCmd defaultLanguageId(String value) {
         defaultInfo.setLanguageId(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setLanguageName(String value) {
+    public NSysEditorSupportCmd languageName(String value) {
         forcedInfo.setLanguageName(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultLanguageName(String value) {
+    public NSysEditorSupportCmd defaultLanguageName(String value) {
         defaultInfo.setLanguageName(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setLanguageGroupId(String value) {
+    public NSysEditorSupportCmd languageGroupId(String value) {
         forcedInfo.setLanguageGroupId(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultLanguageGroupId(String value) {
+    public NSysEditorSupportCmd defaultLanguageGroupId(String value) {
         defaultInfo.setLanguageGroupId(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setLanguageVersion(String value) {
+    public NSysEditorSupportCmd languageVersion(String value) {
         forcedInfo.setLanguageVersion(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultLanguageVersion(String value) {
+    public NSysEditorSupportCmd defaultLanguageVersion(String value) {
         defaultInfo.setLanguageVersion(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setFileExtension(String value) {
+    public NSysEditorSupportCmd fileExtension(String value) {
         forcedInfo.setFileExtension(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultFileExtension(String value) {
+    public NSysEditorSupportCmd defaultFileExtension(String value) {
         defaultInfo.setFileExtension(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setFileName(String value) {
+    public NSysEditorSupportCmd fileName(String value) {
         forcedInfo.setFileName(value);
         return this;
     }
 
     @Override
-    public NSysEditorSupportCmd setDefaultFileName(String value) {
+    public NSysEditorSupportCmd defaultFileName(String value) {
         defaultInfo.setFileName(value);
         return this;
     }
@@ -138,7 +140,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     }
 
     @Override
-    public Set<NSysEditorFamily> getEditorFamilies() {
+    public Set<NSysEditorFamily> editorFamilies() {
         return new LinkedHashSet<>(editorKinds);
     }
 
@@ -209,7 +211,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     }
 
     private Info prepareSource(NPath source) {
-        if (!source.getName().toLowerCase().endsWith(".zip")) {
+        if (!source.name().toLowerCase().endsWith(".zip")) {
             Info info = new Info();
             info.repoFolder = source;
             NPath s = source.resolve("sys-editor-support.tson");
@@ -220,23 +222,23 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                         NPairElement p = child.asPair().get();
                         switch (NNameFormat.VAR_NAME.format(p.name().get())) {
                             case "languageId": {
-                                info.languageId = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.languageId = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                             case "languageName": {
-                                info.languageName = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.languageName = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                             case "languageVersion": {
-                                info.languageVersion = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.languageVersion = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                             case "languageGroupId": {
-                                info.languageGroupId = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.languageGroupId = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                             case "fileExtension": {
-                                info.fileExtension = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.fileExtension = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 if (info.fileExtension != null) {
                                     if (info.fileExtension.startsWith("*.")) {
                                         info.fileExtension = info.fileExtension.substring(2);
@@ -247,7 +249,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                                 break;
                             }
                             case "fileName": {
-                                info.fileName = NStringUtils.trimToNull(p.value().asStringValue().orNull());
+                                info.fileName = NStringUtils.stripToNull(p.value().asStringValue().orNull());
                                 break;
                             }
                         }
@@ -256,7 +258,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
             return validateInfo(info);
         } else {
-            throw NExceptions.ofSafeAssertException(NMsg.ofC("invalid source %s", source));
+            throw NException.ofSafeAssertException(NMsg.ofC("invalid source %s", source));
         }
     }
 
@@ -362,24 +364,24 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 }
                 return true;
             }).sorted((a, b) -> {
-                return -NVersion.of(resolveJetbrainsVersion(a.getName()))
-                        .compareTo(resolveJetbrainsVersion(b.getName()));
+                return -NVersion.of(resolveJetbrainsVersion(a.name()))
+                        .compareTo(resolveJetbrainsVersion(b.name()));
             }).findFirst().orElse(null);
             if (local != null) {
                 local = local.resolve("filetypes").resolve(info.getLanguageId() + ".xml");
             }
         }
         if (local == null) {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported. Idea does not seem to be installed", styledLangId, app, NEnv.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported. Idea does not seem to be installed", styledLangId, app, NEnv.of().osFamily()));
             return;
         } else if (!local.isRegularFile()) {
 
         } else {
             if (NIn.ask()
-                    .setDefaultValue(true)
-                    .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                    .defaultValue(true)
+                    .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                     .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                    .getBooleanValue()) {
+                    .booleanValue()) {
                 doForce = true;
             } else {
                 NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -408,16 +410,16 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     private void runActionInstallKate(Info info) {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("kate");
-        if (NEnv.of().getOsFamily().isPosix()) {
+        if (NEnv.of().osFamily().isPosix()) {
             NPath local = NPath.ofUserHome().resolve(".local/share/org.kde.syntax-highlighting/syntax/" + info.getLanguageId() + ".xml");
             boolean doForce = false;
             if (!local.isRegularFile()) {
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -433,14 +435,14 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
 
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().osFamily()));
         }
     }
 
     private void runActionInstallVim(Info info) {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("vim");
-        if (NEnv.of().getOsFamily().isPosix()) {
+        if (NEnv.of().osFamily().isPosix()) {
             NPath local = NPath.ofUserHome().resolve(".vim/");
             boolean doForce = false;
             if (
@@ -450,10 +452,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 //
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -473,7 +475,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
 
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().osFamily()));
         }
     }
 
@@ -483,7 +485,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         String publisher = NStringUtils.firstNonBlank(info.getLanguageGroupId(), "thevpc");
         String langVersion = NStringUtils.firstNonBlank(info.getLanguageVersion(), "1.0.0");
         String pluginName = info.getLanguageId() + "-syntax";
-        if (NEnv.of().getOsFamily().isPosix()) {
+        if (NEnv.of().osFamily().isPosix()) {
             NPath local = NPath.ofUserHome().resolve(".vscode/extensions/" + publisher + "." + pluginName + "-"+langVersion);
             boolean doForce = false;
             if (
@@ -493,10 +495,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 //
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -522,7 +524,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
 
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().osFamily()));
         }
     }
 
@@ -583,10 +585,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
     private void runActionInstallGedit(Info info) {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("gedit");
-        if (NEnv.of().getOsFamily().isPosix()) {
+        if (NEnv.of().osFamily().isPosix()) {
             String latestGnomeVersion = "5";
             NPath local = NPath.ofUserHome().resolve(".local/share/").list().stream().filter(x -> x.startsWith("gtksourceview-"))
-                    .sorted((a, b) -> NVersion.of(b.getName()).compareTo(a.getName()))
+                    .sorted((a, b) -> NVersion.of(b.name()).compareTo(a.name()))
                     .findFirst().orElse(null);
             if (local == null) {
                 local = NPath.ofUserHome().resolve(".local/share/gtksourceview-" + latestGnomeVersion + "/language-specs/" + info.getLanguageId() + ".lang");
@@ -596,10 +598,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 //
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -616,7 +618,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             }
 
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, NEnv.of().osFamily()));
         }
     }
 
@@ -624,17 +626,17 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
         NMsg styledLangId = NMsg.ofStyledKeyword(info.getLanguageId());
         NMsg app = NMsg.ofStyledDate("Nodepad++");
         NEnv environment = NEnv.of();
-        if (environment.getOsFamily().isWindow()) {
+        if (environment.osFamily().isWindow()) {
             NPath local = NPath.ofUserHome().resolve(environment.getEnv("APPDATA") + "/Notepad++/userDefineLangs/" + info.getLanguageId() + ".xml");
             boolean doForce = false;
             if (!local.isRegularFile()) {
                 //
             } else {
                 if (NIn.ask()
-                        .setDefaultValue(true)
-                        .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                        .defaultValue(true)
+                        .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                         .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                        .getBooleanValue()) {
+                        .booleanValue()) {
                     doForce = true;
                 } else {
                     NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));
@@ -650,7 +652,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
                 NTrace.println(NMsg.ofC("%s %s syntax highlighting installed successfully to %s. You might need to restart %s", styledLangId, app, local, app));
             }
         } else {
-            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, environment.getOsFamily()));
+            NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting for %s is not supported", styledLangId, app, environment.osFamily()));
         }
     }
 
@@ -663,10 +665,10 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             //
         } else {
             if (NIn.ask()
-                    .setDefaultValue(true)
-                    .setRememberMeKey("NSysEditorSupportCmd.forceInstall")
+                    .defaultValue(true)
+                    .rememberMeKey("NSysEditorSupportCmd.forceInstall")
                     .forBoolean(NMsg.ofC("%s %s syntax highlighting is already configured in %s.\n Override it ?", styledLangId, app, local))
-                    .getBooleanValue()) {
+                    .booleanValue()) {
                 doForce = true;
             } else {
                 NTrace.println(NMsg.ofC("Skipped installation : %s %s syntax highlighting is already configured in %s", styledLangId, app, local));

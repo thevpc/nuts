@@ -1,7 +1,10 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.runtime.standalone.util.collections.NStringMapImpl;
+import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.runtime.standalone.collections.NStringMapImpl;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NMaps;
+import net.thevpc.nuts.collections.NStringMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -43,19 +46,19 @@ public class StringMapMap {
 
     @Test
     public void test01() {
-        NStringMapFormat t = NStringMapFormatBuilder.of().setEqualsChars("=").setQuoteSupported(true).build();
+        NStringMapFormat t = NStringMapFormatBuilder.of().equalsChars("=").setQuoteSupported(true).build();
         NOptional<Map<String, List<String>>> u = t.parseDuplicates("src=\"https://protos-erp.com/assets/crm/protos-banner-fr.png\"\n" +
                 "        tf=\"p\" tn=\"banner-fr.png\" trackerSecretEmail=\"${email}\" tsc=\"${company}\"\n" +
                 "        alt=\"Banner 2024\" style=\"outline:none;text-decoration:none;border:none;max-width:100%;font-size:16px;border-radius: 25px;\" width=\"560\" align=\"middle\"/");
 //        NOptional<Map<String, List<String>>> u = t.parseDuplicates("src=\"https\"\n");
-        System.out.println(u);
+        TestUtils.println(u);
     }
 
     @Test
     public void test02() {
         Map<String, String> u = NStringMapFormat.DEFAULT.parse("c=52&s=17.0").get();
 //        NOptional<Map<String, List<String>>> u = t.parseDuplicates("src=\"https\"\n");
-        System.out.println(u);
+        TestUtils.println(u);
     }
 
 }

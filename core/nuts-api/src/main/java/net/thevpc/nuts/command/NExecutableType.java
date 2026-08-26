@@ -79,6 +79,12 @@ public enum NExecutableType implements NEnum {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NExecutableType> parse(String value) {
         return NEnumUtils.parseEnum(value, NExecutableType.class);
     }

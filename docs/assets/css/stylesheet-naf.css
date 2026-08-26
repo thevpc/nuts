@@ -1,0 +1,425 @@
+/* ============================================================
+   NAF Page Stylesheet
+   Scope: doc-naf.html only
+   Loaded after stylesheet-docs.css
+   ============================================================ */
+
+/* ---- NAF Hero ---- */
+.naf-main-wrapper {
+  background: #f0f2f5;
+}
+
+.naf-hero {
+  position: relative;
+  background: linear-gradient(135deg, #1a0533 0%, #2d1060 40%, #1e3a5f 70%, #0d2d4a 100%);
+  padding: 72px 0 64px;
+  overflow: hidden;
+}
+
+/* Subtle grid overlay for texture — distinct from Nuts animated gradient */
+.naf-hero__grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+          linear-gradient(rgba(139,92,246,0.07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(139,92,246,0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* Glow blobs */
+.naf-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; left: -80px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.naf-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; right: 10%;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.naf-hero__inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .naf-hero__inner { grid-template-columns: 1fr; }
+  .naf-hero__right { display: none; }
+}
+
+.naf-hero__eyebrow {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.naf-hero__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 16px;
+  line-height: 1;
+}
+
+.naf-hero__naf {
+  font-family: ZeroesTwo, sans-serif;
+  font-size: clamp(4rem, 10vw, 7rem);
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  /* Violet gradient text */
+  background: linear-gradient(135deg, #c084fc, #818cf8, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.naf-hero__framework {
+  font-family: ZeroesTwo, sans-serif;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: rgba(255,255,255,0.6);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin-top: 4px;
+}
+
+.naf-hero__tagline {
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  color: rgba(255,255,255,0.75);
+  line-height: 1.65;
+  margin: 0 0 24px;
+}
+
+.naf-hero__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.naf-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: rgba(139,92,246,0.18);
+  border: 1px solid rgba(139,92,246,0.35);
+  color: #c4b5fd;
+  letter-spacing: 0.03em;
+}
+
+.naf-hero__ctas {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-naf-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 11px 24px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(124,58,237,0.4);
+}
+.btn-naf-primary:hover {
+  background: linear-gradient(135deg, #6d28d9, #4338ca);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124,58,237,0.5);
+}
+
+.btn-naf-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: rgba(255,255,255,0.75) !important;
+  font-weight: 500;
+  font-size: 0.88rem;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  text-decoration: none !important;
+  transition: all 0.2s;
+}
+.btn-naf-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.4);
+}
+
+/* ---- Code window ---- */
+.naf-code-window {
+  background: #0f1117;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.naf-code-window__bar {
+  background: #1c1f2e;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.naf-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+}
+.naf-dot--red    { background: #ff5f57; }
+.naf-dot--yellow { background: #febc2e; }
+.naf-dot--green  { background: #28c840; }
+
+.naf-code-window__filename {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+  margin-left: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.naf-code-window__pre {
+  margin: 0 !important;
+  padding: 20px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.naf-code-window__pre code {
+  font-size: 0.8rem !important;
+  line-height: 1.65 !important;
+  color: #e2e8f0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* ---- Shared section styles ---- */
+.naf-section {
+  padding: 64px 0;
+}
+
+.naf-section--maven  { background: #ffffff; }
+.naf-section--paths  { background: #f7f9fc; }
+.naf-section--modules { background: #ffffff; }
+
+.naf-eyebrow {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7c3aed;
+  margin-bottom: 10px;
+}
+.naf-eyebrow--center { text-align: center; }
+
+.naf-section__title {
+  font-family: ZeroesTwo, sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  color: #1a1a2e;
+  margin: 0 0 2rem;
+  line-height: 1.25;
+}
+.naf-section__title--center { text-align: center; }
+
+.naf-section__intro {
+  text-align: center;
+  color: #5a6a7a;
+  font-size: 0.95rem;
+  max-width: 560px;
+  margin: -1rem auto 2.5rem;
+  line-height: 1.65;
+}
+
+/* ---- Maven section ---- */
+.naf-maven {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 900px) { .naf-maven { grid-template-columns: 1fr; } }
+
+.naf-maven__title {
+  font-family: ZeroesTwo, sans-serif;
+  font-size: 1.6rem;
+  color: #1a1a2e;
+  margin: 0 0 10px;
+}
+
+.naf-maven__sub {
+  color: #5a6a7a;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Reuse snippet styles from landing, override for light bg */
+.naf-snippet-body {
+  background: #1e2330 !important;
+}
+
+.naf-maven__note {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: #8a9bb0;
+}
+
+/* ---- 4 paths ---- */
+.naf-paths {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+@media (max-width: 768px) { .naf-paths { grid-template-columns: 1fr; } }
+
+.naf-path {
+  background: #ffffff;
+  border: 1px solid #e8edf2;
+  border-radius: 12px;
+  padding: 24px;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.naf-path:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+/* Subtle top accent per path */
+.naf-path--1::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: linear-gradient(90deg,#7c3aed,#a855f7); }
+.naf-path--2::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: linear-gradient(90deg,#0ea5e9,#38bdf8); }
+.naf-path--3::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: linear-gradient(90deg,#059669,#34d399); }
+.naf-path--4::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: linear-gradient(90deg,#d97706,#fbbf24); }
+
+.naf-path__icon {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  margin-bottom: 14px;
+}
+.naf-path--1 .naf-path__icon { background:#f5f0ff; color:#7c3aed; }
+.naf-path--2 .naf-path__icon { background:#f0f9ff; color:#0ea5e9; }
+.naf-path--3 .naf-path__icon { background:#f0faf4; color:#059669; }
+.naf-path--4 .naf-path__icon { background:#fffbeb; color:#d97706; }
+
+.naf-path__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 8px;
+}
+
+.naf-path__body {
+  font-size: 0.87rem;
+  color: #5a6a7a;
+  line-height: 1.65;
+  margin: 0 0 14px;
+}
+
+.naf-path__body code {
+  font-size: 0.8em;
+  background: #f0f4f8;
+  color: #4338ca;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.naf-path__link {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #7c3aed;
+  text-decoration: none;
+}
+.naf-path__link:hover { color: #6d28d9; text-decoration: underline; }
+
+/* ---- Module grid ---- */
+.naf-modules {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .naf-modules {
+    grid-template-columns: 1fr;
+  }
+}
+
+.naf-module {
+  background: #f7f9fc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 18px 20px;
+  transition: box-shadow 0.2s;
+  min-width: 0; /* Critical for grid item overflow */
+}
+.naf-module:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  border-color: #c4b5fd;
+}
+
+.naf-module__header {
+  margin-bottom: 6px;
+}
+
+.naf-module__name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.naf-module__desc {
+  font-size: 0.83rem;
+  color: #5a6a7a;
+  margin: 0 0 10px;
+  line-height: 1.55;
+}
+
+/* Code inside module previews */
+.naf-module__preview pre {
+  background: #1e2330 !important;
+  border-radius: 6px !important;
+  padding: 12px 14px !important;
+  margin: 0 !important;
+  overflow-x: auto;
+  max-width: 100%;
+}
+.naf-module__preview code {
+  font-size: 0.75rem !important;
+  line-height: 1.5 !important;
+  background: transparent !important;
+  color: #e2e8f0 !important;
+  padding: 0 !important;
+  white-space: pre !important;
+  word-break: normal !important;
+}

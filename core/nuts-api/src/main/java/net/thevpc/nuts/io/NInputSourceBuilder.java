@@ -2,64 +2,216 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressListener;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * NInputSourceBuilder interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NInputSourceBuilder {
 
+    /**
+     * Creates a new instance of.
+     *
+     * @param is is
+     * @return of result
+     */
     static NInputSourceBuilder of(InputStream is) {
-        return NIORPI.of().ofInputSourceBuilder(is);
+        return NIORPI.of().createInputSourceBuilder(is);
     }
 
-    NInputSourceBuilder setBase(InputStream baseInputStream);
+    /**
+     * Base.
+     *
+     * @param baseInputStream base input stream
+     * @return base result
+     */
+    NInputSourceBuilder base(InputStream baseInputStream);
 
+    /**
+     * Checks if is close base.
+     *
+     * @return is close base result
+     */
     boolean isCloseBase();
 
-    NInputSourceBuilder setCloseBase(boolean closeBase);
+    /**
+     * Close base.
+     *
+     * @param closeBase close base
+     * @return close base result
+     */
+    NInputSourceBuilder closeBase(boolean closeBase);
 
-    Runnable getCloseAction();
+    /**
+     * Close action.
+     *
+     * @return close action result
+     */
+    Runnable closeAction();
 
-    NInputSourceBuilder setCloseAction(Runnable closeAction);
+    /**
+     * Close action.
+     *
+     * @param closeAction close action
+     * @return close action result
+     */
+    NInputSourceBuilder closeAction(Runnable closeAction);
 
+    /**
+     * Checks if is interruptible.
+     *
+     * @return is interruptible result
+     */
     boolean isInterruptible();
 
-    NInputSourceBuilder setInterruptible(boolean interruptible);
+    /**
+     * Interruptible.
+     *
+     * @param interruptible interruptible
+     * @return interruptible result
+     */
+    NInputSourceBuilder interruptible(boolean interruptible);
 
-    NContentMetadata getMetadata();
+    /**
+     * Metadata.
+     *
+     * @return metadata result
+     */
+    NContentMetadata metadata();
 
-    NInputSourceBuilder setMetadata(NContentMetadata metadata);
+    /**
+     * Metadata.
+     *
+     * @param metadata metadata
+     * @return metadata result
+     */
+    NInputSourceBuilder metadata(NContentMetadata metadata);
 
-    Object getSource();
+    /**
+     * Source.
+     *
+     * @return source result
+     */
+    @NGetter
+    Object source();
 
-    NInputSourceBuilder setSource(Object source);
+    /**
+     * Source.
+     *
+     * @param source source
+     * @return source result
+     */
+    @NSetter
+    NInputSourceBuilder source(Object source);
 
-    NMsg getSourceName();
+    /**
+     * Source name.
+     *
+     * @return source name result
+     */
+    NMsg sourceName();
 
-    NInputSourceBuilder setSourceName(NMsg sourceName);
+    /**
+     * Source name.
+     *
+     * @param sourceName source name
+     * @return source name result
+     */
+    NInputSourceBuilder sourceName(NMsg sourceName);
 
-    Long getExpectedLength();
+    /**
+     * Expected length.
+     *
+     * @return expected length result
+     */
+    Long expectedLength();
 
-    NInputSourceBuilder setExpectedLength(Long expectedLength);
+    /**
+     * Expected length.
+     *
+     * @param expectedLength expected length
+     * @return expected length result
+     */
+    NInputSourceBuilder expectedLength(Long expectedLength);
 
-    NProgressListener getMonitoringListener();
+    /**
+     * Monitoring listener.
+     *
+     * @return monitoring listener result
+     */
+    NProgressListener monitoringListener();
 
-    NInputSourceBuilder setMonitoringListener(NProgressListener monitoringListener);
+    /**
+     * Monitoring listener.
+     *
+     * @param monitoringListener monitoring listener
+     * @return monitoring listener result
+     */
+    NInputSourceBuilder monitoringListener(NProgressListener monitoringListener);
 
+    /**
+     * Checks if is non blocking.
+     *
+     * @return is non blocking result
+     */
     boolean isNonBlocking();
 
-    NInputSourceBuilder setNonBlocking(boolean nonBlocking);
+    /**
+     * Non blocking.
+     *
+     * @param nonBlocking non blocking
+     * @return non blocking result
+     */
+    NInputSourceBuilder nonBlocking(boolean nonBlocking);
 
-    OutputStream getTee();
+    /**
+     * Tee.
+     *
+     * @return tee result
+     */
+    OutputStream tee();
 
-    NInputSourceBuilder setTee(OutputStream tee);
+    /**
+     * Tee.
+     *
+     * @param tee tee
+     * @return tee result
+     */
+    NInputSourceBuilder tee(OutputStream tee);
 
+    /**
+     * Creates a new instance of create non blocking input stream.
+     *
+     * @return create non blocking input stream result
+     */
     NNonBlockingInputStream createNonBlockingInputStream();
 
+    /**
+     * Creates a new instance of create interruptible input stream.
+     *
+     * @return create interruptible input stream result
+     */
     NInterruptible<InputStream> createInterruptibleInputStream();
 
+    /**
+     * Creates a new instance of create input stream.
+     *
+     * @return create input stream result
+     */
     InputStream createInputStream();
 
+    /**
+     * Creates a new instance of create input source.
+     *
+     * @return create input source result
+     */
     NInputSource createInputSource();
 }

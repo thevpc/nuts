@@ -1,15 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
 import net.thevpc.nuts.spi.NCodeHighlighter;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.*;
 
 import java.io.BufferedReader;
@@ -31,22 +30,21 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         if (ar.hasNext()) {
             sb2.append(ar.readChar());
         }
-        NTexts txt = NTexts.of();
-        return new NText[]{txt.ofStyled(sb2.toString(), NTextStyle.separator())};
+        return new NText[]{NText.ofStyled(sb2.toString(), NTextStyle.separator())};
     }
 
     private static boolean isWord(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            return Character.isAlphabetic(((DefaultNTextPlain) n).getValue().charAt(0));
+            return Character.isAlphabetic(((DefaultNTextPlain) n).value().charAt(0));
         }
         return false;
     }
 
     private static boolean isSeparator(NText n) {
         if (n instanceof DefaultNTextStyled) {
-            NText v = ((DefaultNTextStyled) n).getChild();
+            NText v = ((DefaultNTextStyled) n).child();
             if (v instanceof DefaultNTextPlain) {
-                String t = ((DefaultNTextPlain) v).getValue();
+                String t = ((DefaultNTextPlain) v).value();
                 switch (t.charAt(0)) {
                     case ';':
                     case '&':
@@ -60,7 +58,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private static boolean isWhites(NText n) {
         if (n instanceof DefaultNTextPlain) {
-            return Character.isWhitespace(((DefaultNTextPlain) n).getValue().charAt(0));
+            return Character.isWhitespace(((DefaultNTextPlain) n).value().charAt(0));
         }
         return false;
     }
@@ -122,13 +120,13 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "cmd";
     }
 
     @NScore(fixed = NScorable.DEFAULT_SCORE)
     public static int getScore(NScorableContext context) {
-        String s = context.getCriteria();
+        String s = context.criteria();
         if (s == null) {
             return NScorable.DEFAULT_SCORE;
         }
@@ -143,7 +141,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 return NScorable.DEFAULT_SCORE;
             }
             case "system": {
-                switch (NShellFamily.getCurrent()) {
+                switch (NShellFamily.current()) {
                     case WIN_CMD:
                     case WIN_POWER_SHELL: {
                         return NScorable.DEFAULT_SCORE + 10;
@@ -156,7 +154,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt) {
+    public NText stringToText(String text) {
         List<NText> all = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         String line = null;
@@ -172,19 +170,19 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             if (first) {
                 first = false;
             } else {
-                all.add(txt.ofPlain("\n"));
+                all.add(NText.ofPlain("\n"));
             }
-            all.add(commandToNode(line, txt));
+            all.add(commandToNode(line));
         }
-        return txt.ofList(all).simplify();
+        return NText.ofList(all).simplify();
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt) {
-        return txt.ofPlain(text);
+    public NText tokenToText(String text, String nodeType) {
+        return NText.ofPlain(text);
     }
 
-    private NText[] parseCmdLine_readSimpleQuotes(StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readSimpleQuotes(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
         sb.append(ar.readChar()); //quote!
         List<NText> ret = new ArrayList<>();
@@ -194,13 +192,13 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 StringBuilder sb2 = new StringBuilder();
                 sb2.append(ar.nextChar());
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string(2)));
+                    ret.add(NText.ofStyled(sb.toString(), NutsTextStyle.string(2)));
                     sb.setLength(0);
                 }
                 if (ar.hasNext()) {
                     sb2.append(ar.nextChar());
                 }
-                ret.add(txt.ofStyled(sb2.toString(), NutsTextStyle.separator()));
+                ret.add(NText.ofStyled(sb2.toString(), NutsTextStyle.separator()));
                 break;
             } else */
             if (c == '\'') {
@@ -211,13 +209,13 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             }
         }
         if (sb.length() > 0) {
-            ret.add(txt.ofStyled(sb.toString(), NTextStyle.string(2)));
+            ret.add(NText.ofStyled(sb.toString(), NTextStyle.string(2)));
             sb.setLength(0);
         }
         return ret.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readWord(StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readWord(StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();
         List<NText> ret = new ArrayList<>();
         boolean inLoop = true;
@@ -227,7 +225,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             switch (c) {
 //                case '\\': {
 //                    if (sb.length() > 0) {
-//                        ret.add(txt.ofPlain(sb.toString()));
+//                        ret.add(NText.ofPlain(sb.toString()));
 //                        sb.setLength(0);
 //                    }
 //                    ret.addAll(Arrays.asList(parseCmdLine_readAntiSlash(ar, session)));
@@ -277,30 +275,30 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             }
         }
         if (sb.length() > 0) {
-            ret.add(txt.ofPlain(sb.toString()));
+            ret.add(NText.ofPlain(sb.toString()));
             sb.setLength(0);
         }
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).type() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getValue())) {
-            ret.set(0, txt.ofStyled(ret.get(0), NTextStyle.option()));
+        if (ret.get(0).type() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).value())) {
+            ret.set(0, NText.ofStyled(ret.get(0), NTextStyle.option()));
         }
         return ret.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readDollar(StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readDollar(StringReaderExt ar) {
         if (ar.peekChars("$((")) {
-            return parseCmdLine_readDollarPar2(ar, txt);
+            return parseCmdLine_readDollarPar2(ar);
         }
         StringBuilder sb2 = new StringBuilder();
         if (ar.hasNext(1)) {
             switch (ar.peekChar(1)) {
                 case '(': {
-                    return parseCmdLine_readDollarPar2(ar, txt);
+                    return parseCmdLine_readDollarPar2(ar);
                 }
                 case '{': {
-                    return parseCmdLine_readDollarCurlyBrackets(ar, txt);
+                    return parseCmdLine_readDollarCurlyBrackets(ar);
                 }
                 case '*':
                 case '?':
@@ -317,7 +315,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 case '9': {
                     sb2.append(ar.readChar());
                     sb2.append(ar.readChar());
-                    return new NText[]{txt.ofStyled(sb2.toString(), NTextStyle.separator())};
+                    return new NText[]{NText.ofStyled(sb2.toString(), NTextStyle.separator())};
                 }
             }
         }
@@ -332,54 +330,54 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         }
         if (sb2.length() > 0) {
             return new NText[]{
-                    txt.ofStyled("$", NTextStyle.separator()),
-                    txt.ofStyled(sb2.toString(), NTextStyle.keyword(4)),};
+                    NText.ofStyled("$", NTextStyle.separator()),
+                    NText.ofStyled(sb2.toString(), NTextStyle.keyword(4)),};
         }
         return new NText[]{
-                txt.ofStyled("$", NTextStyle.separator()),};
+                NText.ofStyled("$", NTextStyle.separator()),};
     }
 
-    private NText[] parseCmdLine_readDoubleQuotes(StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readDoubleQuotes(StringReaderExt ar) {
         List<NText> ret = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
-        ret.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.string()));
+        ret.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.string()));
         while (ar.hasNext()) {
             char c = ar.peekChar();
             /*if (c == '\\') {
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                    ret.add(NText.ofStyled(sb.toString(), NutsTextStyle.string()));
                     sb.setLength(0);
                 }
                 ret.addAll(Arrays.asList(parseCmdLine_readAntiSlash(ar, session)));
             } else */
             if (c == '$') {
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                    ret.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.addAll(Arrays.asList(parseCmdLine_readDollar(ar, txt)));
+                ret.addAll(Arrays.asList(parseCmdLine_readDollar(ar)));
             } else if (c == '\"') {
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                    ret.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.string()));
+                ret.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.string()));
                 break;
             } else {
                 sb.append(ar.readChar());
             }
         }
         if (sb.length() > 0) {
-            ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+            ret.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
         return ret.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readAntiQuotes(StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readAntiQuotes(StringReaderExt ar) {
         List<NText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -387,42 +385,42 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             switch (c) {
                 case '`': {
                     wasSpace = false;
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
                 default: {
-                    wasSpace = parseCmdLineStep(ar, all, 1, wasSpace, txt);
+                    wasSpace = parseCmdLineStep(ar, all, 1, wasSpace);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readDollarPar(NWorkspace ws, StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readDollarPar(StringReaderExt ar) {
         List<NText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
+        all.add(NText.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = false;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
                 case ')': {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
                 default: {
-                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readDollarPar2(StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readDollarPar2(StringReaderExt ar) {
         List<NText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.readChar()) + ar.readChar() + ar.readChar(), NTextStyle.separator()));
+        all.add(NText.ofStyled(String.valueOf(ar.readChar()) + ar.readChar() + ar.readChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -434,30 +432,30 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 case '/':
                 case '%': {
                     wasSpace = false;
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.operator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.operator()));
                     break;
                 }
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
                         wasSpace = false;
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
-                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
+                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace);
                     }
                     break;
                 }
                 default: {
-                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readDollarCurlyBrackets(StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readDollarCurlyBrackets(StringReaderExt ar) {
         List<NText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
+        all.add(NText.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
         boolean inLoop = true;
         int startIndex = 0;
         boolean expectedName = true;
@@ -466,18 +464,18 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             char c = ar.peekChar();
             switch (c) {
                 case '}': {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
                 default: {
                     startIndex = all.size();
-                    wasSpace = parseCmdLineStep(ar, all, -1, wasSpace, txt);
+                    wasSpace = parseCmdLineStep(ar, all, -1, wasSpace);
                     if (expectedName) {
                         expectedName = false;
                         if (all.size() > startIndex) {
                             if (isWord(all.get(startIndex))) {
-                                all.set(startIndex, txt.ofStyled(all.get(startIndex), NTextStyle.keyword(4)));
+                                all.set(startIndex, NText.ofStyled(all.get(startIndex), NTextStyle.keyword(4)));
                                 wasSpace = false;
                             }
                         }
@@ -488,9 +486,9 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readPar2(StringReaderExt ar, NTexts txt) {
+    private NText[] parseCmdLine_readPar2(StringReaderExt ar) {
         List<NText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
+        all.add(NText.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -498,15 +496,15 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             switch (c) {
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
-                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
+                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace);
                     }
                     break;
                 }
                 default: {
-                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace);
                 }
             }
         }
@@ -522,7 +520,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
      * @param wasSpace   wasSpace
      * @return is space
      */
-    private boolean parseCmdLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace, NTexts txt) {
+    private boolean parseCmdLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace) {
         char c = ar.peekChar();
         if (c <= 32) {
             all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
@@ -530,62 +528,62 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         }
         switch (c) {
             case '\'': {
-                all.addAll(Arrays.asList(parseCmdLine_readSimpleQuotes(ar, txt)));
+                all.addAll(Arrays.asList(parseCmdLine_readSimpleQuotes(ar)));
                 break;
             }
             case '`': {
-                all.addAll(Arrays.asList(parseCmdLine_readAntiQuotes(ar, txt)));
+                all.addAll(Arrays.asList(parseCmdLine_readAntiQuotes(ar)));
                 break;
             }
             case '"': {
-                all.addAll(Arrays.asList(parseCmdLine_readDoubleQuotes(ar, txt)));
+                all.addAll(Arrays.asList(parseCmdLine_readDoubleQuotes(ar)));
                 break;
             }
             case '$': {
-                all.addAll(Arrays.asList(parseCmdLine_readDollar(ar, txt)));
+                all.addAll(Arrays.asList(parseCmdLine_readDollar(ar)));
                 break;
             }
             case ';': {
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 break;
             }
             case ':': {
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator(2)));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator(2)));
                 break;
             }
             case '|': {
                 if (ar.peekChars(2).equals("||")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
+                    all.add(NText.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '&': {
                 if (ar.peekChars(2).equals("&&")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
+                    all.add(NText.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else if (ar.peekChars(3).equals("&>>")) {
-                    all.add(txt.ofStyled(ar.nextChars(3), NTextStyle.separator()));
+                    all.add(NText.ofStyled(ar.nextChars(3), NTextStyle.separator()));
                 } else if (ar.peekChars(2).equals("&>")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
+                    all.add(NText.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '>': {
                 if (ar.peekChars(2).equals(">>")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
+                    all.add(NText.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else if (ar.peekChars(2).equals(">&")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
+                    all.add(NText.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '<': {
                 if (ar.peekChars(2).equals("<<")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
+                    all.add(NText.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
                     StringBuilder sb = new StringBuilder();
                     sb.append(ar.peekChar(0));
@@ -610,27 +608,27 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                         String s = ar.nextChars(sb.length());
                         String s0 = s.substring(1, s.length() - 1);
                         if (isSynopsisOption(s0)) {
-                            all.add(txt.ofStyled("<", NTextStyle.input()));
-                            all.add(txt.ofStyled(s0, NTextStyle.option()));
-                            all.add(txt.ofStyled(">", NTextStyle.input()));
+                            all.add(NText.ofStyled("<", NTextStyle.input()));
+                            all.add(NText.ofStyled(s0, NTextStyle.option()));
+                            all.add(NText.ofStyled(">", NTextStyle.input()));
                         } else if (isSynopsisWord(s0)) {
-                            all.add(txt.ofStyled("<", NTextStyle.input()));
-                            all.add(txt.ofStyled(s0, NTextStyle.input()));
-                            all.add(txt.ofStyled(">", NTextStyle.input()));
+                            all.add(NText.ofStyled("<", NTextStyle.input()));
+                            all.add(NText.ofStyled(s0, NTextStyle.input()));
+                            all.add(NText.ofStyled(">", NTextStyle.input()));
                         } else {
-                            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                         }
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                 }
                 break;
             }
             case '(': {
                 if (ar.peekChars("((")) {
-                    all.addAll(Arrays.asList(parseCmdLine_readPar2(ar, txt)));
+                    all.addAll(Arrays.asList(parseCmdLine_readPar2(ar)));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 }
             }
             case ')':
@@ -638,7 +636,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             case '}':
             case '~':
             case '!': {
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 break;
             }
             case '*':
@@ -646,7 +644,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             case '[':
             case ']':
             case '=': {
-                all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 break;
             }
             case '#': {
@@ -662,41 +660,41 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                             sb.append(ar.readChar());
                         }
                     }
-                    all.add(txt.ofStyled(sb.toString(), NTextStyle.comments()));
+                    all.add(NText.ofStyled(sb.toString(), NTextStyle.comments()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 }
                 break;
             }
             default: {
                 if (startIndex >= 0) {
                     boolean first = all.size() == startIndex;
-                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar, txt)));
+                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar)));
                     if (first) {
                         int i = indexOfFirstWord(all, startIndex);
                         if (i >= 0) {
-                            all.set(i, txt.ofStyled(all.get(i), NTextStyle.keyword()));
+                            all.set(i, NText.ofStyled(all.get(i), NTextStyle.keyword()));
                         }
                     }
                 } else {
-                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar, txt)));
+                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar)));
                 }
             }
         }
         return false;
     }
 
-    private NText[] parseCmdLine(String cmdLineString, NTexts txt) {
+    private NText[] parseCmdLine(String cmdLineString) {
         StringReaderExt ar = new StringReaderExt(cmdLineString);
         List<NText> all = new ArrayList<>();
         boolean wasSpace = true;
         while (ar.hasNext()) {
-            wasSpace = parseCmdLineStep(ar, all, 0, wasSpace, txt);
+            wasSpace = parseCmdLineStep(ar, all, 0, wasSpace);
         }
         return all.toArray(new NText[0]);
     }
 
-    public NText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NTexts txt) {
+    public NText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote) {
         boolean lineStart = true;
         List<NText> all = new ArrayList<>();
         boolean exit = false;
@@ -707,7 +705,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                     if (exitOnClosedCurlBrace) {
                         exit = true;
                     } else {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
@@ -718,7 +716,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                     if (exitOnClosedPar) {
                         exit = true;
                     } else {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
@@ -727,11 +725,11 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 case '>': {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '>') {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
@@ -740,19 +738,19 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 case '&': {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '&') {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else if (reader.isAvailable(2) && reader.peekChar() == '>') {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else if (reader.isAvailable(2) && reader.peekChar() == '<') {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
@@ -761,18 +759,18 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 case '|': {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '|') {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
                 }
                 case ';': {
-                    all.add(txt.ofStyled(
+                    all.add(NText.ofStyled(
                             reader.nextChars(1), NTextStyle.separator()
                     ));
                     lineStart = true;
@@ -780,11 +778,11 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 }
                 case '\n': {
                     if (reader.isAvailable(2) && reader.peekChar() == '\r') {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
@@ -814,21 +812,21 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                         }
                         if (ok) {
                             reader.nextChars(sb.length());
-                            all.add(txt.ofStyled(
+                            all.add(NText.ofStyled(
                                     sb.toString(), NTextStyle.input()
                             ));
                             break;
                         } else {
-                            all.add(txt.ofStyled(
+                            all.add(NText.ofStyled(
                                     reader.nextChars(1), NTextStyle.separator()
                             ));
                         }
                     } else if (reader.isAvailable(2) && reader.peekChar() == '<') {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
-                        all.add(txt.ofStyled(
+                        all.add(NText.ofStyled(
                                 reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
@@ -836,7 +834,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 }
                 case '\\': {
                     lineStart = false;
-                    all.add(txt.ofStyled(
+                    all.add(NText.ofStyled(
                             reader.nextChars(2), NTextStyle.separator(2)
                     ));
                     break;
@@ -852,14 +850,14 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                         exit = true;
                     } else {
                         List<NText> a = new ArrayList<>();
-                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
-                        a.add(next(reader, false, false, false, true, txt));
+                        a.add(NText.ofStyled(reader.nextChars(1), NTextStyle.string()));
+                        a.add(next(reader, false, false, false, true));
                         if (reader.hasNext() && reader.peekChar() == '`') {
-                            a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
+                            a.add(NText.ofStyled(reader.nextChars(1), NTextStyle.string()));
                         } else {
                             exit = true;
                         }
-                        all.add(txt.ofList(a).simplify());
+                        all.add(NText.ofList(a).simplify());
                     }
                     break;
                 }
@@ -885,7 +883,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                             }
                         }
                     }
-                    all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                    all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                     break;
                 }
                 case '$': {
@@ -914,7 +912,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                             case '7':
                             case '8':
                             case '9': {
-                                all.add(txt.ofStyled(reader.nextChars(2), NTextStyle.string()));
+                                all.add(NText.ofStyled(reader.nextChars(2), NTextStyle.string()));
                                 break;
                             }
                             default: {
@@ -924,14 +922,14 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                                     while (reader.hasNext() && (Character.isAlphabetic(reader.peekChar()) || reader.peekChar() == '_')) {
                                         sb.append(reader.readChar());
                                     }
-                                    all.add(txt.ofStyled(sb.toString(), NTextStyle.variable()));
+                                    all.add(NText.ofStyled(sb.toString(), NTextStyle.variable()));
                                 } else {
-                                    all.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
+                                    all.add(NText.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                                 }
                             }
                         }
                     } else {
-                        all.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
+                        all.add(NText.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     }
                     break;
                 }
@@ -971,7 +969,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                     while (reader.hasNext() && Character.isWhitespace(reader.peekChar())) {
                         whites.append(reader.readChar());
                     }
-                    all.add(txt.ofPlain(whites.toString()));
+                    all.add(NText.ofPlain(whites.toString()));
                     break;
                 }
                 default: {
@@ -1035,39 +1033,39 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                                 break;
                             }
                         }
-                        all.add(txt.ofStyled(sb.toString(), keyword1));
+                        all.add(NText.ofStyled(sb.toString(), keyword1));
                     } else {
-                        all.add(txt.ofPlain(sb.toString()));
+                        all.add(NText.ofPlain(sb.toString()));
                     }
                     lineStart = false;
                     break;
                 }
             }
         }
-        return txt.ofList(all).simplify();
+        return NText.ofList(all).simplify();
     }
 
-    private NText nextDollar(StringReaderExt reader, NTexts txt) {
+    private NText nextDollar(StringReaderExt reader) {
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
             switch (c) {
                 case '(': {
                     List<NText> a = new ArrayList<>();
-                    a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
-                    a.add(next(reader, false, true, false, false, txt));
+                    a.add(NText.ofStyled(reader.nextChars(1), NTextStyle.separator()));
+                    a.add(next(reader, false, true, false, false));
                     if (reader.hasNext() && reader.peekChar() == ')') {
-                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
+                        a.add(NText.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     }
-                    return txt.ofList(a).simplify();
+                    return NText.ofList(a).simplify();
                 }
                 case '{': {
                     List<NText> a = new ArrayList<>();
-                    a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
-                    a.add(next(reader, true, false, false, false, txt));
+                    a.add(NText.ofStyled(reader.nextChars(1), NTextStyle.separator()));
+                    a.add(next(reader, true, false, false, false));
                     if (reader.hasNext() && reader.peekChar() == ')') {
-                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
+                        a.add(NText.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     }
-                    return txt.ofList(a).simplify();
+                    return NText.ofList(a).simplify();
                 }
                 case '$':
                 case '*':
@@ -1084,7 +1082,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 case '7':
                 case '8':
                 case '9': {
-                    return txt.ofStyled(reader.nextChars(2), NTextStyle.string());
+                    return NText.ofStyled(reader.nextChars(2), NTextStyle.string());
                 }
                 default: {
                     if (Character.isAlphabetic(reader.peekChar(1))) {
@@ -1093,20 +1091,19 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                         while (reader.hasNext() && (Character.isAlphabetic(reader.peekChar()) || reader.peekChar() == '_')) {
                             sb.append(reader.readChar());
                         }
-                        return txt.ofStyled(sb.toString(), NTextStyle.variable());
+                        return NText.ofStyled(sb.toString(), NTextStyle.variable());
                     } else {
-                        return txt.ofStyled(reader.nextChars(1), NTextStyle.separator());
+                        return NText.ofStyled(reader.nextChars(1), NTextStyle.separator());
                     }
                 }
             }
         } else {
-            return txt.ofStyled(reader.nextChars(1), NTextStyle.string());
+            return NText.ofStyled(reader.nextChars(1), NTextStyle.string());
         }
     }
 
     public NText nextDoubleQuotes(StringReaderExt reader) {
         List<NText> all = new ArrayList<>();
-        NTexts txt = NTexts.of();
         boolean exit = false;
         StringBuilder sb = new StringBuilder();
         sb.append(reader.readChar());
@@ -1123,25 +1120,25 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 }
                 case '$': {
                     if (sb.length() > 0) {
-                        all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                        all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                         sb.setLength(0);
                     }
-                    all.add(nextDollar(reader, txt));
+                    all.add(nextDollar(reader));
                 }
                 case '`': {
                     if (sb.length() > 0) {
-                        all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+                        all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
                         sb.setLength(0);
                     }
                     List<NText> a = new ArrayList<>();
-                    a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
-                    a.add(next(reader, false, false, false, true, txt));
+                    a.add(NText.ofStyled(reader.nextChars(1), NTextStyle.string()));
+                    a.add(next(reader, false, false, false, true));
                     if (reader.hasNext() && reader.peekChar() == '`') {
-                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
+                        a.add(NText.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     } else {
                         exit = true;
                     }
-                    all.add(txt.ofList(a).simplify());
+                    all.add(NText.ofList(a).simplify());
                     break;
                 }
                 default: {
@@ -1150,14 +1147,14 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             }
         }
         if (sb.length() > 0) {
-            all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
+            all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
-        return txt.ofList(all).simplify();
+        return NText.ofList(all).simplify();
     }
 
-    public NText commandToNode(String text, NTexts txt) {
-        return txt.ofList(parseCmdLine(text, txt));
+    public NText commandToNode(String text) {
+        return NText.ofList(parseCmdLine(text));
     }
 
 }

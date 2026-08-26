@@ -34,99 +34,388 @@ import java.util.function.Predicate;
  * @author thevpc
  */
 public interface NElementBuilder {
+    /**
+     * Type.
+     *
+     * @return type result
+     */
     NElementType type();
 
+    /**
+     * Checks if is custom tree.
+     *
+     * @return is custom tree result
+     */
     boolean isCustomTree();
 
+    /**
+     * Affixes.
+     *
+     * @return affixes result
+     */
     List<NBoundAffix> affixes();
 
+    /**
+     * Diagnostics.
+     *
+     * @return diagnostics result
+     */
     List<NElementDiagnostic> diagnostics();
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NElement build();
 
+    /**
+     * Leading comments.
+     *
+     * @return leading comments result
+     */
     List<NElementComment> leadingComments();
 
+    /**
+     * Trailing comments.
+     *
+     * @return trailing comments result
+     */
     List<NElementComment> trailingComments();
 
+    /**
+     * Comments.
+     *
+     * @return comments result
+     */
     List<NElementComment> comments();
 
+    /**
+     * Annotations.
+     *
+     * @return annotations result
+     */
     List<NElementAnnotation> annotations();
 
+    /**
+     * Adds the specified annotations.
+     *
+     * @param annotations annotations
+     * @return add annotations result
+     */
     NElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    /**
+     * Adds the specified annotation.
+     *
+     * @param annotation annotation
+     * @return add annotation result
+     */
     NElementBuilder addAnnotation(NElementAnnotation annotation);
 
+    /**
+     * Adds the specified annotation.
+     *
+     * @param name name
+     * @param args args
+     * @return add annotation result
+     */
     NElementBuilder addAnnotation(String name, NElement... args);
 
+    /**
+     * Adds the specified affix.
+     *
+     * @param affix affix
+     * @return add affix result
+     */
     NElementBuilder addAffix(NBoundAffix affix);
 
+    /**
+     * Adds the specified affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @return add affix at result
+     */
     NElementBuilder addAffixAt(int index, NBoundAffix affix);
 
+    /**
+     * Sets the affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @return set affix at result
+     */
     NElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    /**
+     * Adds the specified affix.
+     *
+     * @param affix affix
+     * @param anchor anchor
+     * @return add affix result
+     */
     NElementBuilder addAffix(NAffix affix, NAffixAnchor anchor);
 
+    /**
+     * Adds the specified affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @param anchor anchor
+     * @return add affix at result
+     */
     NElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
+    /**
+     * Sets the affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @param anchor anchor
+     * @return set affix at result
+     */
     NElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
+    /**
+     * Removes the specified affixes.
+     *
+     * @param type type
+     * @param anchor anchor
+     * @return remove affixes result
+     */
     NElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
+    /**
+     * Removes the specified affix.
+     *
+     * @param affix affix
+     * @return remove affix result
+     */
     NElementBuilder removeAffix(int affix);
 
+    /**
+     * Removes the specified affix.
+     *
+     * @param affix affix
+     * @return remove affix result
+     */
     NElementBuilder removeAffix(NAffix affix);
 
+    /**
+     * Removes the specified affix.
+     *
+     * @param affix affix
+     * @return remove affix result
+     */
     NElementBuilder removeAffix(NBoundAffix affix);
 
+    /**
+     * Removes the specified annotation.
+     *
+     * @param annotation annotation
+     * @return remove annotation result
+     */
     NElementBuilder removeAnnotation(NElementAnnotation annotation);
 
+    /**
+     * Clear annotations.
+     *
+     * @return clear annotations result
+     */
     NElementBuilder clearAnnotations();
 
+    /**
+     * Clear affixes.
+     *
+     * @return clear affixes result
+     */
     NElementBuilder clearAffixes();
 
+    /**
+     * Adds the specified leading comment.
+     *
+     * @param comment comment
+     * @return add leading comment result
+     */
     NElementBuilder addLeadingComment(NElementComment comment);
 
+    /**
+     * Adds the specified leading comments.
+     *
+     * @param comments comments
+     * @return add leading comments result
+     */
     NElementBuilder addLeadingComments(NElementComment... comments);
 
+    /**
+     * Adds the specified trailing comments.
+     *
+     * @param comments comments
+     * @return add trailing comments result
+     */
     NElementBuilder addTrailingComments(NElementComment... comments);
 
+    /**
+     * Adds the specified trailing comment.
+     *
+     * @param comment comment
+     * @return add trailing comment result
+     */
     NElementBuilder addTrailingComment(NElementComment comment);
 
+    /**
+     * Clear comments.
+     *
+     * @return clear comments result
+     */
     NElementBuilder clearComments();
 
+    /**
+     * Adds the specified affixes.
+     *
+     * @param affixes affixes
+     * @return add affixes result
+     */
     NElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    /**
+     * Metadata.
+     *
+     * @return metadata result
+     */
     NElementMetadata metadata();
 
     /// /////////////
 
+    /**
+     * Adds the specified space affix.
+     *
+     * @param space space
+     * @param anchor anchor
+     * @return add space affix result
+     */
     NElementBuilder addSpaceAffix(String space, NAffixAnchor anchor);
 
+    /**
+     * Adds the specified new line affix.
+     *
+     * @param newLineMode new line mode
+     * @param anchor anchor
+     * @return add new line affix result
+     */
     NElementBuilder addNewLineAffix(NNewLineMode newLineMode, NAffixAnchor anchor);
 
+    /**
+     * Adds the specified separator affix.
+     *
+     * @param separator separator
+     * @param anchor anchor
+     * @return add separator affix result
+     */
     NElementBuilder addSeparatorAffix(String separator, NAffixAnchor anchor);
 
+    /**
+     * Adds the specified space affix.
+     *
+     * @param index index
+     * @param space space
+     * @param anchor anchor
+     * @return add space affix result
+     */
     NElementBuilder addSpaceAffix(int index, String space, NAffixAnchor anchor);
 
+    /**
+     * Adds the specified new line affix.
+     *
+     * @param index index
+     * @param newLineMode new line mode
+     * @param anchor anchor
+     * @return add new line affix result
+     */
     NElementBuilder addNewLineAffix(int index, NNewLineMode newLineMode, NAffixAnchor anchor);
 
+    /**
+     * Adds the specified separator affix.
+     *
+     * @param index index
+     * @param separator separator
+     * @param anchor anchor
+     * @return add separator affix result
+     */
     NElementBuilder addSeparatorAffix(int index, String separator, NAffixAnchor anchor);
 
+    /**
+     * Removes the specified affix if.
+     *
+     * @param affixPredicate affix predicate
+     * @return remove affix if result
+     */
     NElementBuilder removeAffixIf(Predicate<NBoundAffix> affixPredicate);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NElementBuilder copyFrom(NElementBuilder other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NElementBuilder copyFrom(NElement other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @param assignmentPolicy assignment policy
+     * @return copy from result
+     */
     NElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @param assignmentPolicy assignment policy
+     * @return copy from result
+     */
     NElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
+    /**
+     * Adds the specified diagnostic.
+     *
+     * @param error error
+     * @return add diagnostic result
+     */
     NElementBuilder addDiagnostic(NElementDiagnostic error);
 
+    /**
+     * Removes the specified diagnostic.
+     *
+     * @param error error
+     * @return remove diagnostic result
+     */
     NElementBuilder removeDiagnostic(NElementDiagnostic error);
 
+    /**
+     * Metadata.
+     *
+     * @param metadata metadata
+     * @return metadata result
+     */
     NElementBuilder metadata(NElementMetadata metadata);
 
+    /**
+     * Sets the affixes.
+     *
+     * @param affixes affixes
+     * @return set affixes result
+     */
     NElementBuilder setAffixes(List<NBoundAffix> affixes);
 }

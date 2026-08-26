@@ -99,8 +99,8 @@ public class NInstallStatusDefinitionFilter2 extends AbstractDefinitionFilter {
     public boolean acceptDefinition(NDefinition definition) {
         NInstalledRepository installedRepository = NWorkspaceExt.of().getInstalledRepository();
         //will always load install information
-        NInstallInformation n = installedRepository.getInstallInformation(definition.getId());
-        NInstallStatus status = n.getInstallStatus();
+        NInstallInformation n = installedRepository.getInstallInformation(definition.id());
+        NInstallStatus status = n.installStatus();
         if (status == null) {
             return false;
         }
@@ -129,22 +129,21 @@ public class NInstallStatusDefinitionFilter2 extends AbstractDefinitionFilter {
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Collections.emptyList();
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(mode, value);
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NInstallStatusDefinitionFilter2 that = (NInstallStatusDefinitionFilter2) o;
+        return value == that.value && mode == that.mode;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NInstallStatusDefinitionFilter2 that = (NInstallStatusDefinitionFilter2) o;
-        return value == that.value && Objects.equals(mode, that.mode)
-                ;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), mode, value);
     }
 
     @Override

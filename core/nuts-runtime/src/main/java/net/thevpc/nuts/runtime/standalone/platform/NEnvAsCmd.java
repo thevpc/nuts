@@ -6,22 +6,25 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NEnvCmdSPI;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
-import java.util.function.Function;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 public class NEnvAsCmd extends NEnvBase {
 
-    private NEnvCmdSPI envCmdSPI;
+    private final NEnvCmdSPI envCmdSPI;
     private boolean valid;
     private Map<String, String> envSnapshot;
 
     public NEnvAsCmd(NScorableContext context) {
-        Object criteria = context.getCriteria();
+        Object criteria = context.criteria();
         this.envCmdSPI = (NEnvCmdSPI) criteria;
     }
 
@@ -34,8 +37,8 @@ public class NEnvAsCmd extends NEnvBase {
         return new NEnvAsCmd(envCmdSPI);
     }
 
-    public NConnectionString getConnectionString() {
-        return envCmdSPI.getTargetConnectionString();
+    public NConnectionString connectionString() {
+        return envCmdSPI.targetConnectionString();
     }
 
     public synchronized boolean tryUpdate() {
@@ -46,26 +49,32 @@ public class NEnvAsCmd extends NEnvBase {
         }
         return false;
     }
+
     @Override
     public boolean isNativeImage() {
         return false;
     }
+
     @NScore
     public static int getScore(NScorableContext context) {
-        Object criteria = context.getCriteria();
+        Object criteria = context.criteria();
         if (criteria instanceof NEnvCmdSPI) {
             return NScorable.DEFAULT_SCORE;
         }
         return NScorable.UNSUPPORTED_SCORE;
     }
 
+    @Override
+    public String pid() {
+        return null;
+    }
 
     private synchronized void update() {
         //test for posix
         boolean ok = false;
         try {
             String cmd =
-                    "sh -c 'echo -n \"$(uname -s)|$(uname -r)|uname -m|$(whoami)|${HOME}|$SHELL\"; " +
+                    "sh -c 'echo -n \"$(uname -s)|$(uname -r)|$(uname -m)|$(whoami)|${HOME}|$SHELL\"; " +
                             "v=$($SHELL --version 2>/dev/null | head -n1 || " +
                             "$SHELL -version 2>/dev/null | head -n1 || " +
                             "$SHELL version 2>/dev/null | head -n1 || echo unknown); " +
@@ -119,14 +128,14 @@ public class NEnvAsCmd extends NEnvBase {
                     if (cols.size() >= 6) {
                         String luname = cols.get(0).toLowerCase();
                         os = NId.of(null, cols.get(0), cols.get(1));
-                        resolveWindowsOfFamilyFromOsId(luname);
+                        osFamily = NOsFamily.WINDOWS;
                         userName = cols.get(2);
                         userHome = cols.get(3);
                         shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_POWER_SHELL);
                         shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
                         arch = NId.of(null, cols.get(6));
                         archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
-                        resolveWindowAdminName();
+                        rootUserName=getWindowsAdminName(NShellFamily.WIN_CMD);
                         ok = true;
                     }
                 }
@@ -143,14 +152,14 @@ public class NEnvAsCmd extends NEnvBase {
                     if (cols.size() >= 6) {
                         String luname = cols.get(0).toLowerCase();
                         os = NId.of(null, cols.get(0), cols.get(1));
-                        resolveWindowsOfFamilyFromOsId(luname);
+                        osFamily = NOsFamily.WINDOWS;
                         userName = cols.get(2);
                         userHome = cols.get(3);
                         shellFamily = NShellFamily.parse(cols.get(4)).orElse(NShellFamily.WIN_CMD);
                         shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(4), shellFamily.id()), cols.get(5));
                         arch = NId.of(null, cols.get(6));
                         archFamily = NArchFamily.parse(cols.get(6)).orElse(NArchFamily.UNKNOWN);
-                        resolveWindowAdminName();
+                        rootUserName=getWindowsAdminName(NShellFamily.WIN_CMD);
                         ok = true;
                     }
                 }
@@ -170,30 +179,49 @@ public class NEnvAsCmd extends NEnvBase {
 
     }
 
-    private void resolveWindowsOfFamilyFromOsId(String luname) {
-        if (luname.startsWith("linux")) {
-            osFamily = NOsFamily.LINUX;
-        } else if (luname.startsWith("darwin")) {
-            osFamily = NOsFamily.MACOS;
-        } else if (luname.startsWith("sunos")) {
-            osFamily = NOsFamily.UNIX;
-        } else if (
-                luname.startsWith("freebsd")
-                        || luname.startsWith("openbsd")
-                        || luname.startsWith("netbsd")
-        ) {
-        } else if (
-                luname.contains("windows")
-        ) {
-            osFamily = NOsFamily.WINDOWS;
-        } else {
-            osFamily = NOsFamily.WINDOWS;
-        }
+    public static String getWindowsAdminName(NShellFamily sf) {
+        try {
+            String cmd;
+            if(sf==NShellFamily.WIN_CMD){
+                // Query WMI via PowerShell for the user account with SID ending in -500
+                cmd="wmic useraccount where \"SID like 'S-1-5-%-500' and LocalAccount=true\" get Name /value";
+            }else {
+                cmd = "powershell -NoProfile -Command (Get-WmiObject Win32_UserAccount -Filter \"SID LIKE 'S-1-5-%-500' AND LocalAccount=TRUE\").Name";
+            }
+            for (String line : NStringUtils.splitLines(NExec.ofSystem(cmd).grabbedAll())) {
+                if (!NBlankable.isBlank(line)) {
+                    return line.trim();
+                }
+            }
+        } catch (Exception ignored) {}
+        // Fallback to English standard if detection fails
+        return "Administrator";
     }
 
-    private void resolveWindowAdminName() {
-        rootUserName = resolveWindowAdminName(envCmdSPI.getTargetConnectionString().getUserName(), rootUserName);
-    }
+//    private void resolveWindowsOfFamilyFromOsId(String luname) {
+//        if (luname.startsWith("linux")) {
+//            osFamily = NOsFamily.LINUX;
+//        } else if (luname.startsWith("darwin")) {
+//            osFamily = NOsFamily.MACOS;
+//        } else if (luname.startsWith("sunos")) {
+//            osFamily = NOsFamily.UNIX;
+//        } else if (
+//                luname.startsWith("freebsd")
+//                        || luname.startsWith("openbsd")
+//                        || luname.startsWith("netbsd")
+//        ) {
+//        } else if (
+//                luname.contains("windows")
+//        ) {
+//            osFamily = NOsFamily.WINDOWS;
+//        } else {
+//            osFamily = NOsFamily.WINDOWS;
+//        }
+//    }
+//
+//    private void resolveWindowAdminName() {
+//        rootUserName = resolveWindowAdminName(envCmdSPI.targetConnectionString().userName(), rootUserName);
+//    }
 
     public String runOnceSystemGrab(String cmd) {
         return envCmdSPI.exec(cmd);
@@ -249,7 +277,7 @@ public class NEnvAsCmd extends NEnvBase {
     @Override
     protected NId getOsDist0() {
         try {
-            if (getOsFamily() == NOsFamily.LINUX) {
+            if (osFamily() == NOsFamily.LINUX) {
                 // POSIX-safe: cat may fail, that's OK
                 String r = runOnceSystemGrab("cat /etc/os-release");
                 if (!NBlankable.isBlank(r)) {
@@ -257,7 +285,7 @@ public class NEnvAsCmd extends NEnvBase {
                     String id = m.get("ID");
                     if (!NBlankable.isBlank(id)) {
                         NIdBuilder b = NIdBuilder.of(null, id);
-                        b.setVersion(m.get("VERSION_ID"));
+                        b.version(m.get("VERSION_ID"));
                         b.setProperty("name", m.get("NAME"));
                         b.setProperty("like", m.get("ID_LIKE"));
                         b.setProperty("codename", m.get("VERSION_CODENAME"));
@@ -398,18 +426,18 @@ public class NEnvAsCmd extends NEnvBase {
 
     @Override
     public NOptional<String> getEnv(String name) {
-        return NOptional.ofNamed(getEnv().get(name), name);
+        return NOptional.ofNamed(env().get(name), name);
     }
 
     @Override
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         if (envSnapshot == null) {
             synchronized (this) {
                 if (envSnapshot == null) {
                     Map<String, String> m = new LinkedHashMap<>();
                     try {
                         String result;
-                        if (getOsFamily() == NOsFamily.WINDOWS) {
+                        if (osFamily() == NOsFamily.WINDOWS) {
                             result = runOnceSystemGrab("cmd /c set");
                         } else {
                             result = runOnceSystemGrab("env");
@@ -467,6 +495,63 @@ public class NEnvAsCmd extends NEnvBase {
 
     @Override
     public String getHostName0() {
-        return NEnvUtils.getHostName(this, strings -> envCmdSPI.exec(NCmdLine.of(strings).toString()), getConnectionString());
+        return NEnvUtils.getHostName(this, strings -> envCmdSPI.exec(NCmdLine.of(strings).toString()), connectionString());
     }
+
+
+    public NRam ram() {
+        switch (osFamily()) {
+            case UNIX:
+            case LINUX:
+            case MACOS: {
+                String LINUX_OR_MAC_PROBE_SCRIPT =
+                        "if [ -f /proc/meminfo ]; then " +
+                                "awk '/MemTotal/{t=$2} /MemAvailable/{a=$2} /MemFree/{f=$2} " +
+                                "END{print t*1024\",\"f*1024\",\"a*1024}' /proc/meminfo; " +
+                                "elif command -v sysctl >/dev/null 2>&1; then " +
+                                "total=$(sysctl -n hw.memsize); " +
+                                "pagesize=$(sysctl -n hw.pagesize); " +
+                                "free=$(vm_stat | awk -v ps=\"$pagesize\" '/Pages free/{gsub(\"\\\\.\",\"\");print $3*ps}'); " +
+                                "inactive=$(vm_stat | awk -v ps=\"$pagesize\" '/Pages inactive/{gsub(\"\\\\.\",\"\");print $3*ps}'); " +
+                                "echo \"$total,$free,$((free+inactive))\"; " +
+                                "fi";
+                String result = envCmdSPI.exec(LINUX_OR_MAC_PROBE_SCRIPT);
+                return parseRam(result);
+            }
+            case WINDOWS: {
+                String WINDOWS_PROBE_SCRIPT =
+                        "$os = Get-CimInstance Win32_OperatingSystem; " +
+                                "$total = [int64]$os.TotalVisibleMemorySize * 1024; " +
+                                "$free = [int64]$os.FreePhysicalMemory * 1024; " +
+                                "Write-Output \"$total,$free,$free\"";
+                String result = envCmdSPI.exec(WINDOWS_PROBE_SCRIPT);
+                return parseRam(result);
+            }
+        }
+        return new NRam("NOT_FOUND", 0, 0, 0);
+    }
+
+    /**
+     * Parses "total,free,available" (bytes) into an NRam, tolerating extra output lines.
+     */
+    private NRam parseRam(String result) {
+        if (result == null || result.trim().isEmpty()) {
+            return new NRam("NOT_FOUND", 0, 0, 0);
+        }
+        String[] lines = result.trim().split("\\r?\\n");
+        String line = lines[lines.length - 1].trim(); // last non-blank line is the actual data
+        String[] parts = line.split(",");
+        if (parts.length < 3) {
+            return new NRam("NOT_FOUND", 0, 0, 0);
+        }
+        try {
+            long total = Long.parseLong(parts[0].trim());
+            long free = Long.parseLong(parts[1].trim());
+            long available = Long.parseLong(parts[2].trim());
+            return new NRam(osFamily().name(), total, free, available);
+        } catch (NumberFormatException e) {
+            return new NRam("NOT_FOUND", 0, 0, 0);
+        }
+    }
+
 }

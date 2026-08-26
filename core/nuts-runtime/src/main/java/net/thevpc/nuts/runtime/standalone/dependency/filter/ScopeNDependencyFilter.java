@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import java.util.EnumSet;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Objects;
@@ -23,14 +24,14 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
 
-        NDependencyScope d = NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API);
+        NDependencyScope d = NDependencyScope.parse(dependency.scope()).orElse(NDependencyScope.API);
         return d != null && scopes.contains(d);
     }
 
     @Override
     public NDependencyFilter simplify() {
         if(scopes.isEmpty()) {
-            return NDependencyFilters.of().always();
+            return NDependencyFilterRPI.of().always();
         }
         return this;
     }
@@ -41,28 +42,15 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 67 * hash + Objects.hashCode(this.scopes);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ScopeNDependencyFilter that = (ScopeNDependencyFilter) o;
+        return Objects.equals(scopes, that.scopes);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ScopeNDependencyFilter other = (ScopeNDependencyFilter) obj;
-        if (!Objects.equals(this.scopes, other.scopes)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), scopes);
     }
-
 }

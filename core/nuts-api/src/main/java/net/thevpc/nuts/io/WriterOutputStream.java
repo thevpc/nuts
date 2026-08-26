@@ -7,11 +7,24 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
+/**
+ * WriterOutputStream class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class WriterOutputStream extends OutputStream {
     private final Writer writer;
     private final Charset charset;
 
     // Constructor accepting a Writer
+    /**
+     * Writer output stream.
+     *
+     * @param writer writer
+     * @param charset charset
+     * @return writer output stream result
+     */
     public WriterOutputStream(Writer writer, Charset charset) {
         NAssert.requireNamedNonNull(writer, "writer");
         NAssert.requireNamedNonNull(charset, "charset");

@@ -5,6 +5,8 @@ import net.thevpc.nuts.artifact.NDescriptorStyle;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
@@ -25,27 +27,23 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         super("descriptor-format");
     }
 
-    public NDescriptorWriter setNtf(boolean ntf) {
-        super.setNtf(ntf);
+    public NDescriptorWriter ntf(boolean ntf) {
+        super.ntf(ntf);
         return this;
     }
 
     @Override
-    public NDescriptorStyle getDescriptorStyle() {
+    public NDescriptorStyle descriptorStyle() {
         return descriptorStyle;
     }
 
     @Override
-    public NDescriptorWriter setDescriptorStyle(NDescriptorStyle descriptorStyle) {
+    public NDescriptorWriter descriptorStyle(NDescriptorStyle descriptorStyle) {
         this.descriptorStyle = descriptorStyle;
         return this;
     }
 
 
-    @Override
-    public NDescriptorWriter compact(boolean compact) {
-        return setCompact(compact);
-    }
 
     @Override
     public NDescriptorWriter compact() {
@@ -58,7 +56,7 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
     }
 
     @Override
-    public NDescriptorWriter setCompact(boolean compact) {
+    public NDescriptorWriter compact(boolean compact) {
         this.compact = compact;
         return this;
     }
@@ -81,32 +79,32 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
         writer.writeAttribute("Manifest-Version", "1.0");
 
         // Standard JAR manifest attributes
-        NId id = desc.getId();
+        NId id = desc.id();
         if (id != null) {
-            if (id.getVersion() != null && !id.getVersion().isBlank()) {
-                writer.writeAttribute("Implementation-Version", id.getVersion().getValue());
+            if (id.version() != null && !id.version().isBlank()) {
+                writer.writeAttribute("Implementation-Version", id.version().value());
             }
-            if (!NBlankable.isBlank(id.getGroupId())) {
-                writer.writeAttribute("Implementation-Vendor-Id", id.getGroupId());
+            if (!NBlankable.isBlank(id.groupId())) {
+                writer.writeAttribute("Implementation-Vendor-Id", id.groupId());
             }
-            if (!NBlankable.isBlank(id.getArtifactId())) {
-                writer.writeAttribute("Implementation-Title", id.getArtifactId());
+            if (!NBlankable.isBlank(id.artifactId())) {
+                writer.writeAttribute("Implementation-Title", id.artifactId());
                 // Also write as Automatic-Module-Name
-                String moduleName = !NBlankable.isBlank(id.getGroupId())
-                    ? id.getGroupId() + "." + id.getArtifactId()
-                    : id.getArtifactId();
+                String moduleName = !NBlankable.isBlank(id.groupId())
+                    ? id.groupId() + "." + id.artifactId()
+                    : id.artifactId();
                 writer.writeAttribute("Automatic-Module-Name", moduleName);
             }
         }
 
         // Implementation-Vendor-Title from name
-        String name = NStringUtils.trimToNull(desc.getName());
+        String name = NStringUtils.stripToNull(desc.name());
         if (name != null) {
             writer.writeAttribute("Implementation-Vendor-Title", name);
         }
 
         // Main-Class from executor
-        String mainClass = NStringUtils.trimToNull(extractMainClass(desc));
+        String mainClass = NStringUtils.stripToNull(extractMainClass(desc));
         if (mainClass != null) {
             writer.writeAttribute("Main-Class", mainClass);
         }
@@ -120,55 +118,55 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
             writer.writeAttribute("Nuts-Name", name);
         }
 
-        String description = NStringUtils.trimToNull(desc.getDescription());
+        String description = NStringUtils.stripToNull(desc.description());
         if (description != null) {
             writer.writeAttribute("Nuts-Description", description);
         }
 
-        String genericName = NStringUtils.trimToNull(desc.getGenericName());
+        String genericName = NStringUtils.stripToNull(desc.genericName());
         if (genericName != null) {
             writer.writeAttribute("Nuts-Generic-Name", genericName);
         }
 
-        String packaging = NStringUtils.trimToNull(desc.getPackaging());
+        String packaging = NStringUtils.stripToNull(desc.packaging());
         if (packaging != null) {
             writer.writeAttribute("Nuts-Packaging", packaging);
         }
 
         // Flags
-        if (desc.getFlags() != null && !desc.getFlags().isEmpty()) {
-            String flags = desc.getFlags().stream()
+        if (desc.flags() != null && !desc.flags().isEmpty()) {
+            String flags = desc.flags().stream()
                 .map(Object::toString)
                 .collect(java.util.stream.Collectors.joining(" "));
             writer.writeAttribute("Nuts-Flags", flags);
         }
 
         // Categories
-        if (desc.getCategories() != null && !desc.getCategories().isEmpty()) {
-            String categories = String.join(" ", desc.getCategories());
+        if (desc.categories() != null && !desc.categories().isEmpty()) {
+            String categories = String.join(" ", desc.categories());
             writer.writeAttribute("Nuts-Categories", categories);
         }
 
         // Icons
-        if (desc.getIcons() != null && !desc.getIcons().isEmpty()) {
-            String icons = String.join(" ", desc.getIcons());
+        if (desc.icons() != null && !desc.icons().isEmpty()) {
+            String icons = String.join(" ", desc.icons());
             writer.writeAttribute("Nuts-Icons", icons);
         }
 
         // Dependencies (semicolon-separated)
-        if (desc.getDependencies() != null && !desc.getDependencies().isEmpty()) {
-            String dependencies = desc.getDependencies().stream()
+        if (desc.dependencies() != null && !desc.dependencies().isEmpty()) {
+            String dependencies = desc.dependencies().stream()
                 .map(Object::toString)
                 .collect(java.util.stream.Collectors.joining(";"));
             writer.writeAttribute("Nuts-Dependencies", dependencies);
         }
 
         // Properties
-        if (desc.getProperties() != null) {
-            for (net.thevpc.nuts.artifact.NDescriptorProperty prop : desc.getProperties()) {
-                String propName = NStringUtils.trimToNull(prop.getName());
+        if (desc.properties() != null) {
+            for (net.thevpc.nuts.artifact.NDescriptorProperty prop : desc.properties()) {
+                String propName = NStringUtils.stripToNull(prop.name());
                 if (propName != null) {
-                    String value = prop.getValue() != null ? prop.getValue().asString().orElse("") : "";
+                    String value = prop.value() != null ? prop.value().asString().orElse("") : "";
                     writer.writeAttribute("Nuts-Property-" + propName, value);
                 }
             }
@@ -179,18 +177,18 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
     }
 
     private String extractMainClass(NDescriptor desc) {
-        if (desc.getExecutor() == null) {
+        if (desc.executor() == null) {
             return null;
         }
 
-        net.thevpc.nuts.artifact.NArtifactCall executor = desc.getExecutor();
-        if (executor.getArguments() == null || executor.getArguments().isEmpty()) {
+        net.thevpc.nuts.artifact.NArtifactCall executor = desc.executor();
+        if (executor.arguments() == null || executor.arguments().isEmpty()) {
             return null;
         }
 
         // Arguments are stored as two separate elements: "--main-class=" and the class name
         // --main-class= followed by the actual class name
-        java.util.List<String> args = executor.getArguments();
+        java.util.List<String> args = executor.arguments();
         for (int i = 0; i < args.size() - 1; i++) {
             String arg = args.get(i);
             if ("--main-class=".equals(arg)) {
@@ -283,7 +281,7 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
     @Override
     public void print(Object aValue, NPrintStream out) {
         NDescriptor desc=(NDescriptor) aValue;
-        NDescriptorStyle s = getDescriptorStyle();
+        NDescriptorStyle s = descriptorStyle();
         if (s == null) {
             s = NDescriptorStyle.NUTS;
         }
@@ -291,14 +289,14 @@ public class DefaultNDescriptorWriter extends DefaultObjectWriterBase<NDescripto
             case NUTS: {
                 if (isNtf()) {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    NElementWriter.ofJson().setNtf(true)
-                            .setCompact(isCompact())
+                    NElementWriter.ofJson().ntf(true)
+                            .compact(isCompact())
                             .write(desc, os);
                     NTextCode r = NText.ofCode("json", os.toString());
                     out.print(r);
                 } else {
                     NElementWriter.ofJson()
-                            .setCompact(isCompact())
+                            .compact(isCompact())
                             .write(desc, out);
                 }
                 break;

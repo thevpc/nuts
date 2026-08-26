@@ -16,19 +16,41 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * NEnv interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NEnv extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NEnv of() {
         return NExtensions.of(NEnv.class);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param connectionString connection string
+     * @return of result
+     */
     static NEnv of(NConnectionString connectionString) {
-        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.getHost())) {
+        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.host())) {
+            /**
+             * Creates a new instance of of.
+             *
+             * @return of result
+             */
             return of();
         }
 
         NConnectionStringBuilder connectionStringBuilder = connectionString.builder()
                 //remove 'path' query param because target is independent of path
-                .setPath(null);
+                .path(null);
         NConnectionString normalizedConnectionStringWithUse = connectionString.normalize();
 
         NConnectionString normalizedConnectionStringWithoutUse = connectionStringBuilder
@@ -41,10 +63,22 @@ public interface NEnv extends NComponent {
         return cache.computeIfAbsent(normalizedConnectionStringWithoutUse, x -> NExtensions.of().createSupported(NEnv.class, normalizedConnectionStringWithUse).get());
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param connectionString connection string
+     * @return of result
+     */
     static NEnv of(String connectionString) {
         if (NBlankable.isBlank(connectionString)) {
             return NEnv.of();
         }
+        /**
+         * Creates a new instance of of.
+         *
+         * @param NConnectionString.of(connectionString) n connection string.of(connection string)
+         * @return of result
+         */
         return of(NConnectionString.of(connectionString));
     }
 
@@ -55,41 +89,126 @@ public interface NEnv extends NComponent {
      * @return the target host connection string
      * @since 0.8.4
      */
-    NConnectionString getConnectionString();
+    NConnectionString connectionString();
 
-    NOsFamily getOsFamily();
+    /**
+     * Os family.
+     *
+     * @return os family result
+     */
+    NOsFamily osFamily();
 
-    Set<NShellFamily> getShellFamilies();
+    /**
+     * Shell families.
+     *
+     * @return shell families result
+     */
+    Set<NShellFamily> shellFamilies();
 
-    String getRootUserName();
+    /**
+     * Root user name.
+     *
+     * @return root user name result
+     */
+    String rootUserName();
 
-    String getUserName();
+    /**
+     * User name.
+     *
+     * @return user name result
+     */
+    String userName();
 
-    String getUserHome();
+    /**
+     * User home.
+     *
+     * @return user home result
+     */
+    String userHome();
 
-    NShellFamily getShellFamily();
+    /**
+     * Shell family.
+     *
+     * @return shell family result
+     */
+    NShellFamily shellFamily();
 
-    NId getShell();
+    /**
+     * Shell.
+     *
+     * @return shell result
+     */
+    NId shell();
 
-    NId getDesktopEnvironment();
+    /**
+     * Desktop environment.
+     *
+     * @return desktop environment result
+     */
+    NId desktopEnvironment();
 
-    Set<NId> getDesktopEnvironments();
+    /**
+     * Desktop environments.
+     *
+     * @return desktop environments result
+     */
+    Set<NId> desktopEnvironments();
 
-    NDesktopEnvironmentFamily getDesktopEnvironmentFamily();
+    /**
+     * Desktop environment family.
+     *
+     * @return desktop environment family result
+     */
+    NDesktopEnvironmentFamily desktopEnvironmentFamily();
 
-    Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
+    /**
+     * Desktop environment families.
+     *
+     * @return desktop environment families result
+     */
+    Set<NDesktopEnvironmentFamily> desktopEnvironmentFamilies();
 
+    /**
+     * Checks if is native image.
+     *
+     * @return is native image result
+     */
     boolean isNativeImage();
 
-    NId getJava();
+    /**
+     * Java.
+     *
+     * @return java result
+     */
+    NId java();
 
-    NId getOs();
+    /**
+     * Os.
+     *
+     * @return os result
+     */
+    NId os();
 
-    NId getOsDist();
+    /**
+     * Os dist.
+     *
+     * @return os dist result
+     */
+    NId osDist();
 
-    NId getArch();
+    /**
+     * Arch.
+     *
+     * @return arch result
+     */
+    NId arch();
 
-    NArchFamily getArchFamily();
+    /**
+     * Arch family.
+     *
+     * @return arch family result
+     */
+    NArchFamily archFamily();
 
     /**
      * GPU devices of this environment, sorted by pci address.
@@ -103,9 +222,9 @@ public interface NEnv extends NComponent {
      * other environments report an empty list rather than guessing.
      *
      * @return gpu devices, empty when none is detected or detection is unsupported
-     * @since 0.8.9
+     * @since 1.0.0
      */
-    List<NGpuDevice> getGpuDevices();
+    List<NGpuDevice> gpuDevices();
 
     /**
      * The gpu device to use when a single one has to be picked.
@@ -115,9 +234,9 @@ public interface NEnv extends NComponent {
      * is deterministic so that resolution stays reproducible in unattended runs.
      *
      * @return the primary gpu device, empty when none is eligible
-     * @since 0.8.9
+     * @since 1.0.0
      */
-    NOptional<NGpuDevice> getGpuDevice();
+    NOptional<NGpuDevice> gpuDevice();
 
     /**
      * Reads the currently free memory of a gpu device.
@@ -127,9 +246,9 @@ public interface NEnv extends NComponent {
      * part in dependency resolution, otherwise resolution would stop being
      * reproducible.
      *
-     * @param device device to query, as returned by {@link #getGpuDevices()}
+     * @param device device to query, as returned by {@link #gpuDevices()}
      * @return free memory in bytes, negative when unknown or unsupported
-     * @since 0.8.9
+     * @since 1.0.0
      */
     long queryGpuFreeMemoryBytes(NGpuDevice device);
 
@@ -138,15 +257,15 @@ public interface NEnv extends NComponent {
      * separately whether code targeting it can be executed and whether it can be
      * compiled.
      * <p>
-     * This is the software axis, {@link #getGpuDevices()} being the hardware one.
+     * This is the software axis, {@link #gpuDevices()} being the hardware one.
      * A machine holding an NVIDIA device may well expose cuda as runnable but
      * not buildable, which are opposite answers when choosing between a prebuilt
      * artifact and sources.
      *
      * @return available runtimes, empty when none is detected
-     * @since 0.8.9
+     * @since 1.0.0
      */
-    List<NParallelProcessorRuntime> getParallelProcessorRuntimes();
+    List<NParallelProcessorRuntime> parallelProcessorRuntimes();
 
     /**
      * The parallel processing runtime family to use when a single one has to be
@@ -155,33 +274,68 @@ public interface NEnv extends NComponent {
      * @return the family, {@link NParallelProcessorFamily#NONE} when probing
      * found none, {@link NParallelProcessorFamily#UNKNOWN} when it could not
      * conclude
-     * @since 0.8.9
+     * @since 1.0.0
      */
-    NParallelProcessorFamily getParallelProcessorFamily();
+    NParallelProcessorFamily parallelProcessorFamily();
 
+    /**
+     * Checks if is graphical desktop environment.
+     *
+     * @return is graphical desktop environment result
+     */
     boolean isGraphicalDesktopEnvironment();
 
+    /**
+     * Returns the desktop integration support.
+     *
+     * @param target target
+     * @return get desktop integration support result
+     */
     NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target);
 
-    Path getDesktopPath();
+    /**
+     * Desktop path.
+     *
+     * @return desktop path result
+     */
+    Path desktopPath();
 
+    /**
+     * Returns the env.
+     *
+     * @param name name
+     * @return get env result
+     */
     NOptional<String> getEnv(String name);
 
-    Map<String, String> getEnv();
+    /**
+     * Env.
+     *
+     * @return env result
+     */
+    Map<String, String> env();
 
     /**
      * Network/DNS hostname (what other machines resolve)
      *
      * @return
      */
-    String getHostName();
+    String hostName();
 
     /**
      * OS-level friendly/computer name (what user sees in System Settings)
      *
      * @return
      */
-    String getMachineName();
+    String machineName();
+
+    /**
+     * CPU RAM
+     * @return CPU RAM
+     * @since 1.0.0
+     */
+    NRam ram();
+
 
     /**
      * Returns a fresh NEnv instance with current runtime values.
@@ -201,4 +355,11 @@ public interface NEnv extends NComponent {
      * @since 0.8.9
      */
     NEnv refresh();
+
+    /**
+     * Pid.
+     *
+     * @return pid result
+     */
+    String pid();
 }

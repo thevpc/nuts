@@ -50,14 +50,14 @@ public class DefaultNRepositoryDB  {
     }
 
     private void reg(NRepositorySpec options) {
-        options.setCreate(true);
-        String name = options.getName();
-        String location = options.getSourceLocation().toString();
+        options.create(true);
+        String name = options.name();
+        String location = options.sourceLocation().toString();
         optionByName.put(name, options);
-        String[] aliases = options.getAliases();
+        String[] aliases = options.aliases();
         if (aliases != null) {
             for (String alias : aliases) {
-                alias=NStringUtils.trimToNull(alias);
+                alias=NStringUtils.stripToNull(alias);
                 if (alias != null) {
                     optionByName.alias(alias, name);
                 }

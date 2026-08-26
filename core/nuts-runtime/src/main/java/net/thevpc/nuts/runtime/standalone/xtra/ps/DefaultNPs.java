@@ -9,7 +9,12 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -41,42 +46,38 @@ public class DefaultNPs implements NPs {
     }
 
     @Override
-    public NConnectionString getConnectionString() {
+    public NConnectionString connectionString() {
         return connectionString;
     }
 
     @Override
-    public NPs setConnectionString(String host) {
+    public NPs connectionString(String host) {
         this.connectionString = host == null ? null : NConnectionString.of(host);
         return this;
     }
 
     @Override
     public NPs at(String host) {
-        return setConnectionString(host);
+        return this.connectionString(host);
     }
 
     @Override
-    public NPs setConnectionString(NConnectionString host) {
+    public NPs connectionString(NConnectionString host) {
         this.connectionString = host;
         return this;
     }
 
     @Override
     public NPs at(NConnectionString host) {
-        return setConnectionString(host);
+        return connectionString(host);
     }
 
-    @Override
-    public NPs setFailFast(boolean failFast) {
-        this.failFast = failFast;
-        return this;
-    }
+
 
     @Override
     public boolean isSupportedKillProcess() {
         NEnv target = NEnv.of(connectionString);
-        NOsFamily f = target.getOsFamily();
+        NOsFamily f = target.osFamily();
 
         return f == NOsFamily.LINUX || f == NOsFamily.MACOS || f == NOsFamily.UNIX || f == NOsFamily.WINDOWS;
     }
@@ -84,15 +85,15 @@ public class DefaultNPs implements NPs {
     @Override
     public boolean killProcess(String processId) {
         NEnv target = NEnv.of(connectionString);
-        NOsFamily f = target.getOsFamily();
+        NOsFamily f = target.osFamily();
         switch (f) {
             case LINUX:
             case MACOS:
             case UNIX: {
                 return NExec.ofSystem("kill", "-9", processId)
                         .at(connectionString)
-                        .setFailFast(isFailFast())
-                        .getResultCode() == 0;
+                        .failFast(isFailFast())
+                        .exitCode() == 0;
             }
             case WINDOWS: {
                 if(NBlankable.isBlank(connectionString)) {
@@ -100,20 +101,20 @@ public class DefaultNPs implements NPs {
                     if (taskkill != null) {
                         return NExec.ofSystem(taskkill, "/PID", processId, "/F")
                                 .at(connectionString)
-                                .setFailFast(isFailFast())
-                                .getResultCode() == 0;
+                                .failFast(isFailFast())
+                                .exitCode() == 0;
                     }
-                    throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().getOsFamily().id()));
+                    throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().osFamily().id()));
                 }else{
                     return NExec.ofSystem("taskkill", "/PID", processId, "/F")
                             .at(connectionString)
-                            .setFailFast(isFailFast())
-                            .getResultCode() == 0;
+                            .failFast(isFailFast())
+                            .exitCode() == 0;
                 }
             }
         }
         if (isFailFast()) {
-            throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().getOsFamily().id()));
+            throw new NUnsupportedOperationException(NMsg.ofC("unsupported kill process in : %s", NEnv.of().osFamily().id()));
         } else {
             return false;
         }
@@ -121,20 +122,17 @@ public class DefaultNPs implements NPs {
 
     @Override
     public NPs failFast(boolean failFast) {
-        return setFailFast(failFast);
+        this.failFast=failFast;
+        return this;
     }
 
-    @Override
-    public NPs failFast() {
-        return failFast(true);
-    }
 
     @Override
-    public NExecutionEngineFamily getPlatformFamily() {
+    public NExecutionEngineFamily platformFamily() {
         return platformFamily;
     }
 
-    public NPs setPlatformFamily(NExecutionEngineFamily platformFamily) {
+    public NPs platformFamily(NExecutionEngineFamily platformFamily) {
         this.platformFamily = platformFamily;
         return this;
     }
@@ -150,11 +148,11 @@ public class DefaultNPs implements NPs {
         NWorkspace workspace = NWorkspace.of();
         NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.get(version).get().toFilter();
         NExecutionEngineLocation[] availableJava = NExecutionEngines.of().findExecutionEngines(NExecutionEngineFamily.JAVA,
-                java -> NExecutionEngineLocation.JAVA_PRODUCT_JDK.equals(java.getProduct()) && (nvf == null || nvf.acceptVersion(NVersion.get(java.getVersion()).get()))
+                java -> NExecutionEngineLocation.JAVA_PRODUCT_JDK.equals(java.product()) && (nvf == null || nvf.acceptVersion(NVersion.get(java.version()).get()))
         ).toArray(NExecutionEngineLocation[]::new);
         for (NExecutionEngineLocation java : availableJava) {
-            detectedJavaHomes.add(java.getPath());
-            v = getJpsJavaHome(java.getPath());
+            detectedJavaHomes.add(java.path());
+            v = getJpsJavaHome(java.path());
             if (v != null) {
                 return v;
             }
@@ -182,7 +180,7 @@ public class DefaultNPs implements NPs {
     @Override
     public NStream<NPsInfo> getResultList() {
         NEnv target = NEnv.of(connectionString);
-        NOsFamily cmdOsFamily = target.getOsFamily();
+        NOsFamily cmdOsFamily = target.osFamily();
         NExecutionEngineFamily processType = NUtils.firstNonNull(platformFamily, NExecutionEngineFamily.OS);
         switch (processType) {
             case JAVA:
@@ -200,25 +198,25 @@ public class DefaultNPs implements NPs {
         switch (cmdOsFamily) {
             case LINUX: {
                 NExec u = NExec.of()
-                        .setIn(NExecInput.ofNull())
+                        .in(NExecInput.ofNull())
                         .at(connectionString)
-                        .addCommand("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
+                        .command("ps", "-eo", "user,pid,%cpu,%mem,vsz,rss,tty,stat,lstart,time,command")
                         .grabErr()
-                        .setFailFast(isFailFast())
+                        .failFast(isFailFast())
                         .grabOut();
-                String grabbedOutString = u.getGrabbedOutString();
+                String grabbedOutString = u.grabbedOut();
                 return new LinuxPsParser().parse(new StringReader(grabbedOutString));
             }
             case UNIX:
             case MACOS: {
                 NExec u = NExec.of()
-                        .setIn(NExecInput.ofNull())
+                        .in(NExecInput.ofNull())
                         .at(connectionString)
-                        .addCommand("ps", "aux")
+                        .command("ps", "aux")
                         .grabErr()
-                        .setFailFast(isFailFast())
+                        .failFast(isFailFast())
                         .grabOut();
-                return new UnixPsParser().parse(new StringReader(u.getGrabbedOutString()));
+                return new PosixPsParser().parse(new StringReader(u.grabbedOut()));
             }
             case WINDOWS: {
                 final int IMPL_WmiObject_Win32_Process_Csv = 1;
@@ -272,13 +270,13 @@ public class DefaultNPs implements NPs {
             b = NExec.of()
                     .system()
                     .at(connectionString)
-                    .addCommand(cmd)
-                    .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
+                    .command(cmd)
+                    .command("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
                     .grabAll()
-                    .setFailFast(isFailFast());
-            b.getResultCode();
-            if (b.getResultCode() == 0) {
-                String out = b.getGrabbedOutString();
+                    .failFast(isFailFast());
+            b.exitCode();
+            if (b.exitCode() == 0) {
+                String out = b.grabbedOut();
                 String[] split = out.split("\n");
                 return Arrays.asList(split).iterator();
             }
@@ -303,11 +301,11 @@ public class DefaultNPs implements NPs {
                                     .setCmdLineArgs(parsedCmdLine);
                             return p.build();
                         }).withDescription(NDescribables.ofDesc("processInfo"))).build();
-        return NStreamBase.ofIterator("process-" + getPlatformFamily(), it);
+        return NStreamBase.ofIterator("process-" + platformFamily(), it);
     }
 
     private String[] betterArgs(String pid, NEnv target) {
-        switch (target.getOsFamily()) {
+        switch (target.osFamily()) {
             case LINUX:
             case UNIX:
             case MACOS: {

@@ -39,30 +39,72 @@ import java.io.InputStream;
  * @since 0.5.4
  */
 public interface NTerminal {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTerminal of() {
-        return NSession.of().getTerminal();
+        return NSession.of().terminal();
     }
 
+    /**
+     * Creates a new instance of of system.
+     *
+     * @return of system result
+     */
     static NTerminal ofSystem() {
         return NIORPI.of().createTerminal();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param parent parent
+     * @return of result
+     */
     static NTerminal of(NTerminal parent) {
         return NIORPI.of().createTerminal(parent);
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param in in
+     * @param out out
+     * @param err err
+     * @return of result
+     */
     static NTerminal of(InputStream in, NPrintStream out, NPrintStream err) {
         return NIORPI.of().createTerminal(in, out, err);
     }
 
+    /**
+     * Creates a new instance of of mem.
+     *
+     * @return of mem result
+     */
     static NTerminal ofMem() {
         return NIORPI.of().createInMemoryTerminal();
     }
 
+    /**
+     * Creates a new instance of of mem.
+     *
+     * @param mergeError merge error
+     * @return of mem result
+     */
     static NTerminal ofMem(boolean mergeError) {
         return NIORPI.of().createInMemoryTerminal(mergeError);
     }
 
+    /**
+     * Read line.
+     *
+     * @param out out
+     * @param message message
+     * @return read line result
+     */
     String readLine(NPrintStream out, NMsg message);
 
 
@@ -88,22 +130,36 @@ public interface NTerminal {
      */
     char[] readPassword(NPrintStream out, NMsg prompt);
 
-    InputStream getIn();
+    /**
+     * In.
+     *
+     * @param in in
+     */
+    void in(InputStream in);
 
-    void setIn(InputStream in);
+    /**
+     * Out.
+     *
+     * @param out out
+     */
+    void out(NPrintStream out);
 
-    NPrintStream getOut();
-
-    void setOut(NPrintStream out);
-
-    NPrintStream getErr();
-
-    void setErr(NPrintStream out);
+    /**
+     * Err.
+     *
+     * @param out out
+     */
+    void err(NPrintStream out);
 
     //    NutsSystemTerminalBase geTerminalBase();
 //
 //    void seTerminalBase(NutsSystemTerminalBase terminalBase);
 //
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NTerminal copy();
 
 

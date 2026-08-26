@@ -29,7 +29,7 @@ import net.thevpc.nuts.platform.NConnectionStringAware;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.spi.NComponent;
 
 /**
@@ -40,6 +40,11 @@ import net.thevpc.nuts.spi.NComponent;
  * @since 0.5.8
  */
 public interface NPs extends NComponent, NConnectionStringAware {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NPs of() {
         return NExtensions.of(NPs.class);
     }
@@ -49,7 +54,7 @@ public interface NPs extends NComponent, NConnectionStringAware {
      *
      * @return process type to consider. Supported 'java'
      */
-    NExecutionEngineFamily getPlatformFamily();
+    NExecutionEngineFamily platformFamily();
 
     /**
      * set process type to consider.
@@ -58,12 +63,12 @@ public interface NPs extends NComponent, NConnectionStringAware {
      * @param processType new type
      * @return return {@code this} instance
      */
-    NPs setPlatformFamily(NExecutionEngineFamily processType);
+    NPs platformFamily(NExecutionEngineFamily processType);
 
     /**
-     * list all processes of type {@link #getPlatformFamily()}
+     * list all processes of type {@link #platformFamily()}
      *
-     * @return list all processes of type {@link #getPlatformFamily()}
+     * @return list all processes of type {@link #platformFamily()}
      */
     NStream<NPsInfo> getResultList();
 
@@ -77,15 +82,18 @@ public interface NPs extends NComponent, NConnectionStringAware {
     boolean isFailFast();
 
     /**
-     * update fail fast flag
+     * Checks if is supported kill process.
      *
-     * @param failFast value
-     * @return {@code this} instance
+     * @return is supported kill process result
      */
-    NPs setFailFast(boolean failFast);
-
     boolean isSupportedKillProcess();
 
+    /**
+     * Kill process.
+     *
+     * @param processId process id
+     * @return kill process result
+     */
     boolean killProcess(String processId);
 
     /**
@@ -96,12 +104,6 @@ public interface NPs extends NComponent, NConnectionStringAware {
      */
     NPs failFast(boolean failFast);
 
-    /**
-     * set fail fast flag
-     *
-     * @return {@code this} instance
-     */
-    NPs failFast();
 
     /**
      * update host connection string. when host is not blank, this connection
@@ -111,7 +113,7 @@ public interface NPs extends NComponent, NConnectionStringAware {
      * @return {@code this} instance
      */
     @Override
-    NPs setConnectionString(String host);
+    NPs connectionString(String host);
 
     /**
      * update host connection string. when host is not blank, this connection
@@ -121,7 +123,7 @@ public interface NPs extends NComponent, NConnectionStringAware {
      * @return {@code this} instance
      */
     @Override
-    NPs setConnectionString(NConnectionString host);
+    NPs connectionString(NConnectionString host);
 
     /**
      * update host connection string. when host is not blank, this connection

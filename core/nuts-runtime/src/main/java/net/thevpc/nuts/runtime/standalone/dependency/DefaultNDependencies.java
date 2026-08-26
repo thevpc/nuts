@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.dependency;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.Arrays;
 import java.util.List;

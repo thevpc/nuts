@@ -94,6 +94,12 @@ public enum NFetchStrategy implements Iterable<NFetchMode>, NEnum {
         this.all = Arrays.copyOf(all, all.length);
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NFetchStrategy> parse(String value) {
         return NEnumUtils.parseEnum(value, NFetchStrategy.class);
     }
@@ -136,6 +142,12 @@ public enum NFetchStrategy implements Iterable<NFetchMode>, NEnum {
         return Arrays.asList(all).iterator();
     }
 
+    /**
+     * Accept.
+     *
+     * @param mode mode
+     * @return accept result
+     */
     public boolean accept(NFetchMode mode) {
         return Arrays.asList(all).contains(mode);
     }

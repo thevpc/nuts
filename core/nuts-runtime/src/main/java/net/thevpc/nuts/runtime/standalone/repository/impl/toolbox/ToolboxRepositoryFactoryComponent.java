@@ -27,9 +27,9 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.toolbox;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NScorableContext;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,19 +49,19 @@ public class ToolboxRepositoryFactoryComponent implements
     }
 
     @Override
-    public List<NRepositorySpec> getTemplateRepositoryDefinitions() {
+    public List<NRepositorySpec> templateRepositoryDefinitions() {
         return Collections.singletonList(
-                new NRepositorySpec().setName(ToolboxRepositoryModel.REPOSITORY_TYPE)
-                        .setFailSafe(false)
-                        .setOrder(NRepositorySpec.ORDER_USER_REMOTE)
-                        .setSourceLocation(NRepositoryLocation.of("toolbox@toolbox"))
+                new NRepositorySpec().name(ToolboxRepositoryModel.REPOSITORY_TYPE)
+                        .failSafe(false)
+                        .order(NRepositorySpec.ORDER_USER_REMOTE)
+                        .sourceLocation(NRepositoryLocation.of("toolbox@toolbox"))
         );
     }
 
     @Override
-    public List<NRepositorySpec> getDefaultRepositoryDefinitions() {
+    public List<NRepositorySpec> defaultRepositoryDefinitions() {
         return Collections.singletonList(
-                new NRepositorySpec().setName(ToolboxRepositoryModel.REPOSITORY_TYPE)
+                new NRepositorySpec().name(ToolboxRepositoryModel.REPOSITORY_TYPE)
         );
     }
 
@@ -76,7 +76,7 @@ public class ToolboxRepositoryFactoryComponent implements
     @NScore
     public static int getScore(NScorableContext criteria) {
         if (criteria != null) {
-            NRepositoryFactoryContext context = criteria.getCriteria(NRepositoryFactoryContext.class);
+            NRepositoryFactoryContext context = criteria.criteria(NRepositoryFactoryContext.class);
             if (context != null) {
                 if (ToolboxRepositoryModel.REPOSITORY_TYPE.equals(context.repositoryType())) {
                     return NScorable.DEFAULT_SCORE + 10;

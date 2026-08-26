@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.elem.NElementMetadata;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collections;

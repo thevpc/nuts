@@ -25,7 +25,8 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,63 +36,214 @@ import java.util.List;
  */
 public interface NTextBuilder extends NText, Iterable<NText> {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTextBuilder of() {
         NSession s = NSession.get().orNull();
         if (s == null) {
             return new NTextBuilderPlain();
         }
-        return NTexts.of().ofBuilder();
+        return NTextRPI.of().createBuilder();
     }
 
-    NTextStyleGenerator getStyleGenerator();
+    /**
+     * Style generator.
+     *
+     * @return style generator result
+     */
+    NTextStyleGenerator styleGenerator();
 
-    NTextBuilder setStyleGenerator(NTextStyleGenerator styleGenerator);
+    /**
+     * Style generator.
+     *
+     * @param styleGenerator style generator
+     * @return style generator result
+     */
+    NTextBuilder styleGenerator(NTextStyleGenerator styleGenerator);
 
+    /**
+     * Append command.
+     *
+     * @param command command
+     * @return append command result
+     */
     NTextBuilder appendCommand(NTerminalCmd command);
 
+    /**
+     * Append code.
+     *
+     * @param lang lang
+     * @param text text
+     * @return append code result
+     */
     NTextBuilder appendCode(String lang, String text);
 
+    /**
+     * Append hash style.
+     *
+     * @param text text
+     * @return append hash style result
+     */
     NTextBuilder appendHashStyle(Object text);
 
+    /**
+     * Append random style.
+     *
+     * @param text text
+     * @return append random style result
+     */
     NTextBuilder appendRandomStyle(Object text);
 
+    /**
+     * Append hash style.
+     *
+     * @param text text
+     * @param hash hash
+     * @return append hash style result
+     */
     NTextBuilder appendHashStyle(Object text, Object hash);
 
+    /**
+     * Append.
+     *
+     * @param text text
+     * @param style style
+     * @return append result
+     */
     NTextBuilder append(Object text, NTextStyle style);
 
+    /**
+     * Append.
+     *
+     * @param text text
+     * @param styles styles
+     * @return append result
+     */
     NTextBuilder append(Object text, NTextStyles styles);
 
+    /**
+     * Append.
+     *
+     * @param node node
+     * @return append result
+     */
     NTextBuilder append(Object node);
 
+    /**
+     * Append.
+     *
+     * @param node node
+     * @return append result
+     */
     NTextBuilder append(NText node);
 
+    /**
+     * Append joined.
+     *
+     * @param separator separator
+     * @param others others
+     * @return append joined result
+     */
     NTextBuilder appendJoined(Object separator, Collection<?> others);
 
+    /**
+     * Append all.
+     *
+     * @param others others
+     * @return append all result
+     */
     NTextBuilder appendAll(Collection<?> others);
 
+    /**
+     * Append all.
+     *
+     * @param others others
+     * @return append all result
+     */
     NTextBuilder appendAll(NText[] others);
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NText build();
 
-    List<NText> getChildren();
+    /**
+     * Children.
+     *
+     * @return children result
+     */
+    List<NText> children();
 
+    /**
+     * Delete.
+     *
+     * @param start start
+     * @param end end
+     * @return delete result
+     */
     NTextBuilder delete(int start, int end);
 
+    /**
+     * Insert.
+     *
+     * @param at at
+     * @param newTexts new texts
+     * @return insert result
+     */
     NTextBuilder insert(int at, NText... newTexts);
 
+    /**
+     * Replace.
+     *
+     * @param from from
+     * @param to to
+     * @param newTexts new texts
+     * @return replace result
+     */
     NTextBuilder replace(int from, int to, NText... newTexts);
 
     String toString();
 
+    /**
+     * Size.
+     *
+     * @return size result
+     */
     int size();
 
+    /**
+     * Returns the get.
+     *
+     * @param index index
+     * @return get result
+     */
     NText get(int index);
 
-    NTextBuilder trim();
+    /**
+     * Strip.
+     *
+     * @return strip result
+     */
+    NTextBuilder strip();
 
-    NTextBuilder trimLeft();
+    /**
+     * Strip left.
+     *
+     * @return strip left result
+     */
+    NTextBuilder stripLeft();
 
-    NTextBuilder trimRight();
+    /**
+     * Strip right.
+     *
+     * @return strip right result
+     */
+    NTextBuilder stripRight();
 
     /**
      * replaces the builder content with the simplest text in the form of suite
@@ -108,6 +260,12 @@ public interface NTextBuilder extends NText, Iterable<NText> {
      */
     NTextBuilder flatten();
 
+    /**
+     * Removes the specified at.
+     *
+     * @param index index
+     * @return remove at result
+     */
     NTextBuilder removeAt(int index);
 
     /**
@@ -126,11 +284,34 @@ public interface NTextBuilder extends NText, Iterable<NText> {
      */
     NTextBuilder readLine();
 
+    /**
+     * New line.
+     *
+     * @return new line result
+     */
     NTextBuilder newLine();
 
+    /**
+     * Clear.
+     *
+     * @return clear result
+     */
     NTextBuilder clear();
 
+    /**
+     * Indent.
+     *
+     * @param prefix prefix
+     * @return indent result
+     */
     NTextBuilder indent(NText prefix);
 
+    /**
+     * Indent.
+     *
+     * @param prefix prefix
+     * @param skipFirstLine skip first line
+     * @return indent result
+     */
     NTextBuilder indent(NText prefix, boolean skipFirstLine);
 }

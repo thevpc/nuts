@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NDuration;
@@ -12,12 +13,10 @@ public class NLogRichFormatter2 {
     private long lastMillis = -1;
 
     public String format(NMsg msg, long timestamp, String sourceClassName, boolean filtered) {
-        NTexts tf = NTexts.of();
-
-        NTextBuilder sb = tf.ofBuilder();
+        NTextBuilder sb = NTextBuilder.of();
         String date = CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(timestamp));
 
-        sb.append(tf.ofStyled(date, NTextStyle.pale()));
+        sb.append(NText.ofStyled(date, NTextStyle.pale()));
         boolean verboseLog = false;//read from session or workspace;
         if (verboseLog) {
             sb.append(" ");
@@ -32,60 +31,60 @@ public class NLogRichFormatter2 {
             sb.append(sb.toString());
         }
         sb.append(" ");
-        switch (msg.getLevel().intValue()) {
+        switch (msg.level().intValue()) {
             case 1000: {//Level.SEVERE
-                sb.append(NLogUtils.logLevel(msg.getLevel()), NTextStyle.error());
+                sb.append(NLogUtils.logLevel(msg.level()), NTextStyle.error());
                 break;
             }
             case 900: {//Level.WARNING
-                sb.append(NLogUtils.logLevel(msg.getLevel()), NTextStyle.warn());
+                sb.append(NLogUtils.logLevel(msg.level()), NTextStyle.warn());
                 break;
             }
             case 800: {//Level.INFO
-                sb.append(NLogUtils.logLevel(msg.getLevel()), NTextStyle.info());
+                sb.append(NLogUtils.logLevel(msg.level()), NTextStyle.info());
                 break;
             }
             case 700: {//Level.CONFIG
-                sb.append(NLogUtils.logLevel(msg.getLevel()), NTextStyle.config());
+                sb.append(NLogUtils.logLevel(msg.level()), NTextStyle.config());
                 break;
             }
             case 500: {//Level.FINE
-                sb.append(NLogUtils.logLevel(msg.getLevel()), NTextStyle.primary4());
+                sb.append(NLogUtils.logLevel(msg.level()), NTextStyle.primary4());
                 break;
             }
             case 400: {//Level.FINER
 //                    sb.append("[[");
-                sb.append(NLogUtils.logLevel(msg.getLevel()), NTextStyle.pale());
+                sb.append(NLogUtils.logLevel(msg.level()), NTextStyle.pale());
 //                    sb.append("]]");
                 break;
             }
             case 300: {//Level.FINEST
-                sb.append(NLogUtils.logLevel(msg.getLevel()), NTextStyle.pale());
+                sb.append(NLogUtils.logLevel(msg.level()), NTextStyle.pale());
                 break;
             }
             default: {
-                sb.append(NLogUtils.logLevel(msg.getLevel()));
+                sb.append(NLogUtils.logLevel(msg.level()));
                 break;
             }
         }
 
         sb.append(" ");
-        switch (msg.getIntent() == null ? "" : msg.getIntent().name()) {
+        switch (msg.intent() == null ? "" : msg.intent().name()) {
             case "FAIL": {//Level.SEVERE
-                sb.append(NLogUtils.logVerb(msg.getIntent().name()), NTextStyle.error());
+                sb.append(NLogUtils.logVerb(msg.intent().name()), NTextStyle.error());
                 break;
             }
             case "WARNING": {//Level.WARNING
-                sb.append(NLogUtils.logVerb(msg.getIntent().name()), NTextStyle.warn());
+                sb.append(NLogUtils.logVerb(msg.intent().name()), NTextStyle.warn());
                 break;
             }
             case "UPDATE":
             case "START": {//Level.WARNING
-                sb.append(NLogUtils.logVerb(msg.getIntent().name()), NTextStyle.info());
+                sb.append(NLogUtils.logVerb(msg.intent().name()), NTextStyle.info());
                 break;
             }
             case "SUCCESS": {//Level.INFO
-                sb.append(NLogUtils.logVerb(msg.getIntent().name()), NTextStyle.success());
+                sb.append(NLogUtils.logVerb(msg.intent().name()), NTextStyle.success());
                 break;
             }
 //                case NutsLogVerb.BIND:
@@ -97,12 +96,12 @@ public class NLogRichFormatter2 {
 //                }
             case "INFO":
             case "READ": {//Level.FINE
-                sb.append(NLogUtils.logVerb(msg.getIntent().name()), NTextStyle.option());
+                sb.append(NLogUtils.logVerb(msg.intent().name()), NTextStyle.option());
                 break;
             }
             case "CACHE":
             case "DEBUG": {//Level.FINE
-                sb.append(NLogUtils.logVerb(msg.getIntent().name()), NTextStyle.pale());
+                sb.append(NLogUtils.logVerb(msg.intent().name()), NTextStyle.pale());
                 break;
             }
 //                case NutsLogVerb.INIT: {//Level.FINER
@@ -118,7 +117,7 @@ public class NLogRichFormatter2 {
 //                    break;
 //                }
             default: {
-                sb.append(NLogUtils.logVerb(msg.getIntent() == null ? null : msg.getIntent().name()));
+                sb.append(NLogUtils.logVerb(msg.intent() == null ? null : msg.intent().name()));
                 break;
             }
         }
@@ -127,22 +126,20 @@ public class NLogRichFormatter2 {
                 + NLogUtils.formatClassName(sourceClassName)
                 + ": ");
 
-        NDuration duration = msg.getDuration();
+        NDuration duration = msg.duration();
         if (duration != null && !duration.isZero()) {
             sb.append("(");
             sb.append(duration);
             sb.append(") ");
         }
-        NText msgStr =
-                NTexts.of()
-                        .of(msg);
+        NText msgStr =NText.of(msg);
         sb.append(msgStr);
         sb.append(NNewLineMode.system().value());
         lastMillis = timestamp;
-        if (msg.getThrowable() != null) {
+        if (msg.throwable() != null) {
             sb.append(
                     NText.ofPlain(
-                            NStringUtils.stacktrace(msg.getThrowable())
+                            NStringUtils.stacktrace(msg.throwable())
                     ).toString()
             );
         }

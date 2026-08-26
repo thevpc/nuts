@@ -40,6 +40,11 @@ import java.util.function.Consumer;
  * @app.category Elements
  */
 public interface NFragmentElementBuilder extends NElementBuilder {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NFragmentElementBuilder of() {
         return NElement.ofFragmentBuilder();
     }
@@ -58,6 +63,11 @@ public interface NFragmentElementBuilder extends NElementBuilder {
      */
     int size();
 
+    /**
+     * Clear children.
+     *
+     * @return clear children result
+     */
     NFragmentElementBuilder clearChildren();
 
     /**
@@ -278,10 +288,27 @@ public interface NFragmentElementBuilder extends NElementBuilder {
      *                                   ({@code index < 0 || index > size()})
      */
     NFragmentElementBuilder remove(int index);
+    /**
+     * Sets the children.
+     *
+     * @param params params
+     * @return set children result
+     */
     NFragmentElementBuilder setChildren(List<NElement> params);
 
+    /**
+     * Children.
+     *
+     * @return children result
+     */
     List<NElement> children();
 
+    /**
+     * Do with.
+     *
+     * @param con con
+     * @return do with result
+     */
     NFragmentElementBuilder doWith(Consumer<NFragmentElementBuilder> con);
 
     /**
@@ -292,57 +319,226 @@ public interface NFragmentElementBuilder extends NElementBuilder {
     NFragmentElement build();
 
     /// ///////////////////////////////////////////////
+    /**
+     * Adds the specified annotations.
+     *
+     * @param annotations annotations
+     * @return add annotations result
+     */
     NFragmentElementBuilder addAnnotations(List<NElementAnnotation> annotations);
 
+    /**
+     * Adds the specified annotation.
+     *
+     * @param annotation annotation
+     * @return add annotation result
+     */
     NFragmentElementBuilder addAnnotation(NElementAnnotation annotation);
 
+    /**
+     * Adds the specified annotation.
+     *
+     * @param name name
+     * @param args args
+     * @return add annotation result
+     */
     NFragmentElementBuilder addAnnotation(String name, NElement... args);
 
+    /**
+     * Adds the specified affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @return add affix at result
+     */
     NFragmentElementBuilder addAffixAt(int index, NBoundAffix affix);
 
+    /**
+     * Sets the affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @return set affix at result
+     */
     NFragmentElementBuilder setAffixAt(int index, NBoundAffix affix);
 
+    /**
+     * Sets the affixes.
+     *
+     * @param affixes affixes
+     * @return set affixes result
+     */
     NFragmentElementBuilder setAffixes(List<NBoundAffix> affixes);
 
+    /**
+     * Adds the specified affix.
+     *
+     * @param affix affix
+     * @return add affix result
+     */
     NFragmentElementBuilder addAffix(NBoundAffix affix);
 
+    /**
+     * Adds the specified affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @param anchor anchor
+     * @return add affix at result
+     */
     NFragmentElementBuilder addAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
+    /**
+     * Sets the affix at.
+     *
+     * @param index index
+     * @param affix affix
+     * @param anchor anchor
+     * @return set affix at result
+     */
     NFragmentElementBuilder setAffixAt(int index, NAffix affix, NAffixAnchor anchor);
 
+    /**
+     * Removes the specified affixes.
+     *
+     * @param type type
+     * @param anchor anchor
+     * @return remove affixes result
+     */
     NFragmentElementBuilder removeAffixes(NAffixType type, NAffixAnchor anchor);
 
+    /**
+     * Removes the specified affix.
+     *
+     * @param affix affix
+     * @return remove affix result
+     */
     NFragmentElementBuilder removeAffix(int affix);
 
+    /**
+     * Removes the specified annotation.
+     *
+     * @param annotation annotation
+     * @return remove annotation result
+     */
     NFragmentElementBuilder removeAnnotation(NElementAnnotation annotation);
 
+    /**
+     * Clear annotations.
+     *
+     * @return clear annotations result
+     */
     NFragmentElementBuilder clearAnnotations();
 
+    /**
+     * Clear affixes.
+     *
+     * @return clear affixes result
+     */
     NFragmentElementBuilder clearAffixes();
 
+    /**
+     * Adds the specified leading comment.
+     *
+     * @param comment comment
+     * @return add leading comment result
+     */
     NFragmentElementBuilder addLeadingComment(NElementComment comment);
 
+    /**
+     * Adds the specified leading comments.
+     *
+     * @param comments comments
+     * @return add leading comments result
+     */
     NFragmentElementBuilder addLeadingComments(NElementComment... comments);
 
+    /**
+     * Adds the specified trailing comments.
+     *
+     * @param comments comments
+     * @return add trailing comments result
+     */
     NFragmentElementBuilder addTrailingComments(NElementComment... comments);
 
+    /**
+     * Adds the specified trailing comment.
+     *
+     * @param comment comment
+     * @return add trailing comment result
+     */
     NFragmentElementBuilder addTrailingComment(NElementComment comment);
 
+    /**
+     * Clear comments.
+     *
+     * @return clear comments result
+     */
     NFragmentElementBuilder clearComments();
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NFragmentElementBuilder copyFrom(NElementBuilder other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @return copy from result
+     */
     NFragmentElementBuilder copyFrom(NElement other);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @param assignmentPolicy assignment policy
+     * @return copy from result
+     */
     NFragmentElementBuilder copyFrom(NElementBuilder other, NAssignmentPolicy assignmentPolicy);
 
+    /**
+     * Copy from.
+     *
+     * @param other other
+     * @param assignmentPolicy assignment policy
+     * @return copy from result
+     */
     NFragmentElementBuilder copyFrom(NElement other, NAssignmentPolicy assignmentPolicy);
 
+    /**
+     * Adds the specified diagnostic.
+     *
+     * @param error error
+     * @return add diagnostic result
+     */
     NFragmentElementBuilder addDiagnostic(NElementDiagnostic error);
 
+    /**
+     * Removes the specified diagnostic.
+     *
+     * @param error error
+     * @return remove diagnostic result
+     */
     NFragmentElementBuilder removeDiagnostic(NElementDiagnostic error);
 
+    /**
+     * Adds the specified affixes.
+     *
+     * @param affixes affixes
+     * @return add affixes result
+     */
     NFragmentElementBuilder addAffixes(List<NBoundAffix> affixes);
 
+    /**
+     * Metadata.
+     *
+     * @param metadata metadata
+     * @return metadata result
+     */
     NFragmentElementBuilder metadata(NElementMetadata metadata);
 }

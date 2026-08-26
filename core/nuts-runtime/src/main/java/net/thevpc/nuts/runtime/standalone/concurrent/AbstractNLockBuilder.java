@@ -16,41 +16,41 @@ public abstract class AbstractNLockBuilder implements NLockBuilder {
 
 
     @Override
-    public Object getSource() {
+    public Object source() {
         return source;
     }
 
     @Override
-    public Object getResource() {
+    public Object resource() {
         return resource;
     }
 
     @Override
-    public NLockBuilder setSource(Object source) {
+    public NLockBuilder source(Object source) {
         this.source=source;
         return this;
     }
 
     @Override
-    public NLockBuilder setResource(File source) {
+    public NLockBuilder resource(File source) {
         this.resource=source;
         return this;
     }
 
     @Override
-    public NLockBuilder setResource(Path source) {
+    public NLockBuilder resource(Path source) {
         this.resource=source;
         return this;
     }
 
     @Override
-    public NLockBuilder setResource(NPath source) {
+    public NLockBuilder resource(NPath source) {
         this.resource=source;
         return this;
     }
 
     @Override
-    public NLockBuilder setResource(Object source) {
+    public NLockBuilder resource(Object source) {
         this.resource=source;
         return this;
     }

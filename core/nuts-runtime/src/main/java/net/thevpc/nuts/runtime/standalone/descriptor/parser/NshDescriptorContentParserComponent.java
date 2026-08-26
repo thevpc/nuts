@@ -34,9 +34,9 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
@@ -63,11 +63,11 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
 
     @Override
     public NDescriptor parse(NDescriptorContentParserContext parserContext) {
-        if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
+        if (!POSSIBLE_EXT.contains(parserContext.fileExtension())) {
             return null;
         }
         try {
-            return readNutDescriptorFromBashScriptFile(parserContext.getFullStream());
+            return readNutDescriptorFromBashScriptFile(parserContext.fullStream());
         } catch (IOException e) {
             return null;
         }
@@ -75,9 +75,9 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
 
     @NScore
     public static int getScore(NScorableContext criteria) {
-        NDescriptorContentParserContext ctr=criteria.getCriteria(NDescriptorContentParserContext.class);
+        NDescriptorContentParserContext ctr=criteria.criteria(NDescriptorContentParserContext.class);
         if(ctr!=null) {
-            String e = NStringUtils.trim(ctr.getFileExtension());
+            String e = NStringUtils.strip(ctr.fileExtension());
             switch (e) {
                 case "":
                 case "sh":
@@ -116,7 +116,7 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
             String sheban = "";
             boolean start = false;
             while ((line = r.readLine()) != null) {
-                line = line.trim();
+                line = NStringUtils.strip(line);
                 if (line.length() > 0) {
                     if (line.startsWith("#")) {
                         line = removeBashComment(line);
@@ -124,7 +124,7 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                             firstLine = false;
                             //sheban
                             if (line.startsWith("!")) {
-                                sheban = line.substring(1).trim();
+                                sheban = NStringUtils.strip(line.substring(1));
                             } else {
                                 break;
                             }
@@ -158,13 +158,13 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                     return null;
                 }
             }
-            if (comment.toString().trim().isEmpty()) {
+            if (NStringUtils.isBlank(comment.toString())) {
                 return new DefaultNDescriptorBuilder()
-                        .setId(NId.get("temp:nsh#1.0").get())
-                        .setPackaging("nsh")
-                        .setExecutor(
+                        .id(NId.get("temp:nsh#1.0").get())
+                        .packaging("nsh")
+                        .executor(
                                 NArtifactCallBuilder.of()
-                                        .setId(NId.of(NConstants.Ids.NSH))
+                                        .id(NId.of(NConstants.Ids.NSH))
                                         .build()
                         )
                         .build();

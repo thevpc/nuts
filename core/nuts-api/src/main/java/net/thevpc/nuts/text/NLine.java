@@ -6,10 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * NLine class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NLine {
     private String content;
     private NNewLineMode newLine;
 
+    /**
+     * Parse list.
+     *
+     * @param input input
+     * @return parse list result
+     */
     public static List<NLine> parseList(String input) {
         List<NLine> lines = new ArrayList<>();
         if (input == null || input.isEmpty()) {
@@ -46,10 +58,32 @@ public class NLine {
         return lines;
     }
 
+    /**
+     * N line.
+     *
+     * @param content content
+     * @param newLine new line
+     * @return n line result
+     */
     public NLine(String content, NNewLineMode newLine) {
+      /**
+       * This.
+       *
+       * @param content content
+       * @param newLine new line
+       * @param false false
+       */
         this(content, newLine, false);
     }
 
+    /**
+     * N line.
+     *
+     * @param content content
+     * @param newLine new line
+     * @param safe safe
+     * @return n line result
+     */
     private NLine(String content, NNewLineMode newLine, boolean safe) {
         if (safe) {
             this.content = content;
@@ -61,6 +95,12 @@ public class NLine {
                 for (int i = 0; i < content.length(); i++) {
                     char c = content.charAt(i);
                     if (c == '\r' || c == '\n') {
+                        /**
+                         * N illegal argument exception.
+                         *
+                         * @param newLine") new line")
+                         * @return n illegal argument exception result
+                         */
                         throw new NIllegalArgumentException(NMsg.ofC("unexpected newLine"));
                     }
                 }
@@ -69,10 +109,20 @@ public class NLine {
         }
     }
 
+    /**
+     * Content.
+     *
+     * @return content result
+     */
     public String content() {
         return content;
     }
 
+    /**
+     * New line.
+     *
+     * @return new line result
+     */
     public NNewLineMode newLine() {
         return newLine;
     }

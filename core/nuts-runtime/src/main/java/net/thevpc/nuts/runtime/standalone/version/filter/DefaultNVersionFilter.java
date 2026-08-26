@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.spi.base.AbstractVersionFilter;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
@@ -76,7 +77,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
 
     public static NOptional<NVersionFilter> parse(String version, NVersionComparator versionComparator) {
         if (NBlankable.isBlank(version) || "*".equals(version)) {
-            return NOptional.of(NVersionFilters.of().always());
+            return NOptional.of(NVersionFilterRPI.of().always());
         }
 
         NOptional<List<NVersionInterval>> r = NVersionInterval.ofList(version,versionComparator);
@@ -135,7 +136,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
         for (NVersionInterval interval : intervals) {
             NVersionInterval _interval = CoreFilterUtils.simplify(interval);
             if (_interval != null) {
-                if (_interval.getLowerBound() == null && _interval.getUpperBound() == null) {
+                if (_interval.lowerBound() == null && _interval.upperBound() == null) {
                     return null;
                 }
                 if (!_interval.equals(interval)) {
@@ -158,25 +159,16 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 71 * hash + Objects.hashCode(this.intervals);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNVersionFilter that = (DefaultNVersionFilter) o;
+        return Objects.equals(intervals, that.intervals);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNVersionFilter other = (DefaultNVersionFilter) obj;
-        return Objects.equals(this.intervals, other.intervals);
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), intervals);
     }
 
     @Override

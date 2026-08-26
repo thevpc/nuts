@@ -42,14 +42,35 @@ import java.util.List;
  */
 public interface NAsk<T> extends NCmdLineConfigurable {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static <T> NAsk<T> of() {
         return NIORPI.of().createQuestion();
     }
 
+    /**
+     * Checks if is reset line.
+     *
+     * @return is reset line result
+     */
     boolean isResetLine();
 
+    /**
+     * Reset line.
+     *
+     * @return reset line result
+     */
     NAsk<T> resetLine();
 
+    /**
+     * Reset line.
+     *
+     * @param resetLine reset line
+     * @return reset line result
+     */
     NAsk<T> resetLine(boolean resetLine);
 
     /**
@@ -126,11 +147,27 @@ public interface NAsk<T> extends NCmdLineConfigurable {
     <K extends Enum> NAsk<K> forEnum(Class<K> enumType, NMsg msg);
 
 
-    NMsg getHintMessage();
+    /**
+     * Hint message.
+     *
+     * @return hint message result
+     */
+    NMsg hintMessage();
 
-    NAsk<T> setHintMessage(NMsg message);
+    /**
+     * Hint message.
+     *
+     * @param message message
+     * @return hint message result
+     */
+    NAsk<T> hintMessage(NMsg message);
 
-    NMsg getMessage();
+    /**
+     * Message.
+     *
+     * @return message result
+     */
+    NMsg message();
 
     /**
      * set message
@@ -139,36 +176,118 @@ public interface NAsk<T> extends NCmdLineConfigurable {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NAsk<T> setMessage(NMsg message);
+    NAsk<T> message(NMsg message);
 
-    NMsg getCancelMessage();
+    /**
+     * Checks if cancel message.
+     *
+     * @return cancel message result
+     */
+    NMsg cancelMessage();
 
-    NAsk<T> setCancelMessage(NMsg message);
+    /**
+     * Checks if cancel message.
+     *
+     * @param message message
+     * @return cancel message result
+     */
+    NAsk<T> cancelMessage(NMsg message);
 
-    List<Object> getAcceptedValues();
+    /**
+     * Accepted values.
+     *
+     * @return accepted values result
+     */
+    List<Object> acceptedValues();
 
-    NAsk<T> setAcceptedValues(List<Object> acceptedValues);
+    /**
+     * Accepted values.
+     *
+     * @param acceptedValues accepted values
+     * @return accepted values result
+     */
+    NAsk<T> acceptedValues(List<Object> acceptedValues);
 
-    T getDefaultValue();
+    /**
+     * Default value.
+     *
+     * @return default value result
+     */
+    T defaultValue();
 
-    NAsk<T> setDefaultValue(T defaultValue);
+    /**
+     * Default value.
+     *
+     * @param defaultValue default value
+     * @return default value result
+     */
+    NAsk<T> defaultValue(T defaultValue);
 
-    Class<T> getValueType();
+    /**
+     * Value type.
+     *
+     * @return value type result
+     */
+    Class<T> valueType();
 
-    NAsk<T> setValueType(Class<T> valueType);
+    /**
+     * Value type.
+     *
+     * @param valueType value type
+     * @return value type result
+     */
+    NAsk<T> valueType(Class<T> valueType);
 
-    NAskFormat<T> getFormat();
+    /**
+     * Format.
+     *
+     * @return format result
+     */
+    NAskFormat<T> format();
 
-    NAsk<T> setFormat(NAskFormat<T> format);
+    /**
+     * Format.
+     *
+     * @param format format
+     * @return format result
+     */
+    NAsk<T> format(NAskFormat<T> format);
 
-    NAskParser<T> getParser();
+    /**
+     * Parser.
+     *
+     * @return parser result
+     */
+    NAskParser<T> parser();
 
-    NAsk<T> setParser(NAskParser<T> parser);
+    /**
+     * Sparser.
+     *
+     * @param parser parser
+     * @return sparser result
+     */
+    NAsk<T> sparser(NAskParser<T> parser);
 
-    NAskValidator<T> getValidator();
+    /**
+     * Validator.
+     *
+     * @return validator result
+     */
+    NAskValidator<T> validator();
 
-    NAsk<T> setValidator(NAskValidator<T> validator);
+    /**
+     * Validator.
+     *
+     * @param validator validator
+     * @return validator result
+     */
+    NAsk<T> validator(NAskValidator<T> validator);
 
+    /**
+     * Run.
+     *
+     * @return run result
+     */
     NAsk<T> run();
 
     /**
@@ -177,9 +296,14 @@ public interface NAsk<T> extends NCmdLineConfigurable {
      *
      * @return true or false or null
      */
-    Boolean getBooleanValue();
+    Boolean booleanValue();
 
-    T getValue();
+    /**
+     * Value.
+     *
+     * @return value result
+     */
+    T value();
 
     /**
      * configure the current command with the given arguments. This is an
@@ -192,7 +316,18 @@ public interface NAsk<T> extends NCmdLineConfigurable {
     @Override
     NAsk<T> configure(boolean skipUnsupported, String... args);
 
-    String getRememberMeKey();
+    /**
+     * Remember me key.
+     *
+     * @return remember me key result
+     */
+    String rememberMeKey();
 
-    NAsk<T> setRememberMeKey(String rememberMeKey);
+    /**
+     * Remember me key.
+     *
+     * @param rememberMeKey remember me key
+     * @return remember me key result
+     */
+    NAsk<T> rememberMeKey(String rememberMeKey);
 }

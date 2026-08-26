@@ -42,21 +42,6 @@ public class NReservedBootConfigLoaderOld {
         }else if(jsonObject.get("bootRepositories") instanceof String){
             config.setBootRepositories(new ArrayList<>(Arrays.asList((String)jsonObject.get("bootRepositories"))));
         }
-
-        List<Map<String, Object>> extensions = (List<Map<String, Object>>) jsonObject.get("extensions");
-        if (extensions != null) {
-            LinkedHashSet<String> extSet = new LinkedHashSet<>();
-            for (Map<String, Object> extension : extensions) {
-                String eid = (String) extension.get("id");
-                Boolean enabled = (Boolean) extension.get("enabled");
-                if (enabled != null && enabled) {
-                    extSet.add(eid);
-                }
-            }
-            config.setExtensionsSet(extSet);
-        } else {
-            config.setExtensionsSet(new HashSet<>());
-        }
     }
 
     /**

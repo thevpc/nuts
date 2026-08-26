@@ -30,13 +30,14 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * TODO : please check why is this UNSUPPORTED?
  */
 @NScore(fixed = NScorable.UNSUPPORTED_SCORE)
 public class ArtifactExecutorComponent implements NExecutorComponent {
@@ -48,7 +49,7 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public NId getId() {
+    public NId id() {
         return id;
     }
 
@@ -61,23 +62,23 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
     }
 
     public int execHelper(NExecutionContext executionContext, boolean dry) {
-        NDefinition nutMainFile = executionContext.getDefinition();
-        List<String> execArgs = executionContext.getExecutorOptions();
-        List<String> appArgs = executionContext.getArguments();
+        NDefinition nutMainFile = executionContext.definition();
+        List<String> execArgs = executionContext.executorOptions();
+        List<String> appArgs = executionContext.arguments();
 
         List<String> app = new ArrayList<>();
         app.add(id.toString());
-        app.add(nutMainFile.getContent().map(Object::toString).get());
+        app.add(nutMainFile.content().map(Object::toString).get());
         app.addAll(appArgs);
 
 //        File directory = NutsBlankable.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
         return NExec.of()
-                .addCommand(app)
-                .setEnv(executionContext.getEnv())
-                .setDirectory(executionContext.getDirectory())
-                .failFast()
-                .setExecutionType(executionContext.getExecutionType())
-                .run().getResultCode();
+                .command(app)
+                .env(executionContext.env())
+                .directory(executionContext.directory())
+                .failFast(true)
+                .executionType(executionContext.executionType())
+                .run().exitCode();
     }
 
 }

@@ -31,8 +31,8 @@ class ArrayToArrayMappingStrategy implements NReflectMappingStrategy {
         boolean changed = false;
         for (int i = 0; i < len; i++) {
             Object ov = Array.get(o2, i);
-            Object nv = context.mapToType(Array.get(o, i), context.getRepository().getType(componentType));
-            if (!context.getEqualizer().equals(ov, nv)) {
+            Object nv = context.mapToType(Array.get(o, i), context.repository().getType(componentType));
+            if (!context.equalizer().equals(ov, nv)) {
                 Array.set(o2, i, nv);
                 changed = true;
             }

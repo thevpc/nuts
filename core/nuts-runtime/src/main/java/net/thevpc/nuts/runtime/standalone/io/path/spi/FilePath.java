@@ -3,8 +3,11 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
@@ -12,7 +15,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.*;
 
@@ -24,7 +27,6 @@ import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,7 +36,7 @@ public class FilePath implements NPathSPI {
 
     public FilePath(Path value) {
         if (value == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("invalid null value"));
+            throw new NIllegalArgumentException(NMsg.ofP("invalid null value"));
         }
         this.value = value;
     }
@@ -58,6 +60,15 @@ public class FilePath implements NPathSPI {
             }
         }
         return NStream.ofEmpty();
+    }
+
+    @Override
+    public boolean isHidden(NPath basePath) {
+        try {
+            return Files.isHidden(value);
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Override
@@ -399,7 +410,7 @@ public class FilePath implements NPathSPI {
         Set<PosixFilePermission> a = null;
         try {
             a = Files.getPosixFilePermissions(path, LinkOption.NOFOLLOW_LINKS);
-        } catch (IOException e) {
+        } catch (UnsupportedOperationException|IOException e) {
             //
         }
         File file = path.toFile();
@@ -883,7 +894,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 
@@ -913,7 +924,7 @@ public class FilePath implements NPathSPI {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
                 }
-                if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")) {
+                if (NEnv.of().osFamily() == NOsFamily.WINDOWS && path.matches("^[\\\\/][a-zA-Z]:([\\\\/].*)?")) {
                     //remove trailing slash
                     path = path.substring(1);
                 }
@@ -930,7 +941,7 @@ public class FilePath implements NPathSPI {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
+            Object cri = context.criteria();
             if (!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }

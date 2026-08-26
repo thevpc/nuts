@@ -1,23 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
-import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.app.NApp;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
-import net.thevpc.nuts.runtime.standalone.io.path.*;
-import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
-import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOUtils;
 
@@ -53,7 +46,7 @@ public class DefaultNIO implements NIO {
     public OutputStream unwrapOutputStream(OutputStream out) {
         while (out != null) {
             if (out instanceof OutputStreamDelegate) {
-                out = ((OutputStreamDelegate) out).getDelegateOutputStream();
+                out = ((OutputStreamDelegate) out).delegateOutputStream();
             } else {
                 break;
             }
@@ -64,7 +57,7 @@ public class DefaultNIO implements NIO {
     public InputStream unwrapInputStream(InputStream in) {
         while (in != null) {
             if (in instanceof InputStreamDelegate) {
-                in = ((InputStreamDelegate) in).getDelegateInputStream();
+                in = ((InputStreamDelegate) in).delegateInputStream();
             } else {
                 break;
             }
@@ -178,23 +171,23 @@ public class DefaultNIO implements NIO {
 //    }
 
     @Override
-    public NSystemTerminal getSystemTerminal() {
+    public NSystemTerminal systemTerminal() {
         return NWorkspaceExt.of().getModel().bootModel.getSystemTerminal();
     }
 
     @Override
-    public NIO setSystemTerminal(NSystemTerminalBase terminal) {
+    public NIO systemTerminal(NSystemTerminalBase terminal) {
         NWorkspaceExt.of().getModel().bootModel.setSystemTerminal(terminal);
         return this;
     }
 
     @Override
-    public NTerminal getDefaultTerminal() {
+    public NTerminal defaultTerminal() {
         return cmodel.getTerminal();
     }
 
     @Override
-    public NIO setDefaultTerminal(NTerminal terminal) {
+    public NIO defaultTerminal(NTerminal terminal) {
         cmodel.setTerminal(terminal);
         return this;
     }
@@ -235,7 +228,7 @@ public class DefaultNIO implements NIO {
                 .createAllSupported(NContentTypeResolver.class, path);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeContentType(path)))
-                .getBest().orNull();
+                .best().orNull();
         if (best == null) {
             return null;
         }
@@ -282,7 +275,7 @@ public class DefaultNIO implements NIO {
                 .createAllSupported(NContentTypeResolver.class, bytes);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeContentType(bytes)))
-                .getBest().orNull();
+                .best().orNull();
         if (best == null) {
             return null;
         }
@@ -306,11 +299,11 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(NPath path) {
-        List<NCharsetResolver> allSupported = NExtensions.of()
-                .createAllSupported(NCharsetResolver.class, path);
+        List<NCharsetResolverSPI> allSupported = NExtensions.of()
+                .createAllSupported(NCharsetResolverSPI.class, path);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeCharset(path)))
-                .getBest().orNull();
+                .best().orNull();
         if (best == null) {
             return null;
         }
@@ -325,11 +318,11 @@ public class DefaultNIO implements NIO {
 
     @Override
     public String probeCharset(byte[] bytes) {
-        List<NCharsetResolver> allSupported = NExtensions.of()
-                .createAllSupported(NCharsetResolver.class, bytes);
+        List<NCharsetResolverSPI> allSupported = NExtensions.of()
+                .createAllSupported(NCharsetResolverSPI.class, bytes);
         NScoredCallable<String> best = NScorable.<NScoredCallable<String>>query()
                 .fromStream(allSupported.stream().map(x -> x.probeCharset(bytes)))
-                .getBest().orNull();
+                .best().orNull();
         if (best == null) {
             return null;
         }

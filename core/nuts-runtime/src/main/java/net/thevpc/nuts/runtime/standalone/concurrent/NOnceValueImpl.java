@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NUpletElementBuilder;
+import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.util.NAssert;
 
@@ -24,15 +24,15 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
 
     public void reload() {
         synchronized (this) {
-            String id = model.getId();
+            String id = model.id();
             NBeanContainer.scopedStack().runWith(NBeanContainer.current(), () -> {
                 NOnceValueModel m = store.load(id);
                 if (m == null) {
-                    m = new NOnceValueModel(id, model.getSupplier());
+                    m = new NOnceValueModel(id, model.supplier());
                     _save(m);
                 } else {
-                    if (model.getSupplier() != null) {
-                        m.setSupplier(model.getSupplier());
+                    if (model.supplier() != null) {
+                        m.supplier(model.supplier());
                         store.save(m);
                     }
                 }
@@ -50,42 +50,42 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
 
     // Factory methods
     public T get() {
-        Boolean errorState = model.getErrorState();
+        Boolean errorState = model.errorState();
         if (errorState != null) {
             if (errorState) {
-                Throwable e = model.getThrowable();
+                Throwable e = model.error();
                 sneakyThrow(e);
             }
-            return (T) model.getValue();
+            return (T) model.value();
         }
         synchronized (this) {
-            errorState = model.getErrorState();
+            errorState = model.errorState();
             if (errorState != null) {
                 if (errorState) {
-                    Throwable e = model.getThrowable();
+                    Throwable e = model.error();
                     if (e instanceof RuntimeException) {
                         throw (RuntimeException) e;
                     } else {
                         throw (Error) e;
                     }
                 }
-                return (T) model.getValue();
+                return (T) model.value();
             }
-            return doSet((Supplier<T>) model.getSupplier());
+            return doSet((Supplier<T>) model.supplier());
         }
     }
 
     private T doSet(Supplier<T> supplier) {
         try {
             T value = supplier.get();
-            model.setValue(value);
-            model.setThrowable(null);
-            model.setErrorState(false);
+            model.value(value);
+            model.error(null);
+            model.errorState(false);
             return value;
         } catch (Throwable ex) {
-            model.setValue(null);
-            model.setThrowable(ex);
-            model.setErrorState(false);
+            model.value(null);
+            model.error(ex);
+            model.errorState(false);
             sneakyThrow(ex);
             return null;
         }
@@ -94,7 +94,7 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
     @Override
     public boolean trySupply(Supplier<T> supplier) {
         synchronized (this) {
-            Boolean errorState = model.getErrorState();
+            Boolean errorState = model.errorState();
             if (errorState != null) {
                 doSet(supplier);
                 return true;
@@ -113,7 +113,7 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
     @Override
     public T orElse(T value) {
         synchronized (this) {
-            Boolean errorState = model.getErrorState();
+            Boolean errorState = model.errorState();
             if (errorState != null && !errorState) {
                 return value;
             }
@@ -127,7 +127,7 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
 
     @Override
     public boolean isValid() {
-        Boolean errorState = model.getErrorState();
+        Boolean errorState = model.errorState();
         if (errorState != null) {
             return !errorState;
         }
@@ -136,7 +136,7 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
 
     @Override
     public boolean isError() {
-        Boolean errorState = model.getErrorState();
+        Boolean errorState = model.errorState();
         if (errorState != null) {
             return errorState;
         }
@@ -144,7 +144,7 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
     }
 
     public boolean isEvaluated() {
-        Boolean errorState = model.getErrorState();
+        Boolean errorState = model.errorState();
         return (errorState != null);
     }
 
@@ -155,17 +155,31 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
 
     @Override
     public NElement describe() {
-        Boolean errorState = model.getErrorState();
-        NUpletElementBuilder u = NElement.ofUpletBuilder("OnceValue")
+        Boolean errorState = model.errorState();
+        NTupleElementBuilder u = NElement.ofTupleBuilder("OnceValue")
                 .add("evaluated", errorState != null);
         if (errorState != null) {
             u.add("success", !errorState);
             if (errorState) {
-                u.add("error", NDescribables.describeResolveOrSimplify(model.getValue()));
+                u.add("error", NDescribables.describeResolveOrSimplify(model.value()));
             } else {
-                u.add("value", NDescribables.describeResolveOrSimplify(model.getThrowable()));
+                u.add("value", NDescribables.describeResolveOrSimplify(model.error()));
             }
         }
         return u.build();
+    }
+
+    @Override
+    public String toString() {
+        Boolean errorState = model.errorState();
+        if (errorState != null){
+            if(!errorState){
+                return String.valueOf(model.value());
+            }else{
+                return String.valueOf("error:"+model.error());
+            }
+        }else{
+            return "<pending...>";
+        }
     }
 }

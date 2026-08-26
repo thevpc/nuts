@@ -1,29 +1,110 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.List;
 import java.util.Map;
 
+/**
+ * NDescriptorMailingListBuilder interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NDescriptorMailingListBuilder extends NDescriptorMailingList {
-    NDescriptorMailingListBuilder setId(String id);
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder id(String id);
 
-    NDescriptorMailingListBuilder setName(String name);
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder name(String name);
 
-    NDescriptorMailingListBuilder setSubscribe(String subscribe);
+    /**
+     * Subscribe.
+     *
+     * @param subscribe subscribe
+     * @return subscribe result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder subscribe(String subscribe);
 
-    NDescriptorMailingListBuilder setUnsubscribe(String unsubscribe);
+    /**
+     * Unsubscribe.
+     *
+     * @param unsubscribe unsubscribe
+     * @return unsubscribe result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder unsubscribe(String unsubscribe);
 
-    NDescriptorMailingListBuilder setPost(String post);
+    /**
+     * Post.
+     *
+     * @param post post
+     * @return post result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder post(String post);
 
-    NDescriptorMailingListBuilder setArchive(String archive);
+    /**
+     * Archive.
+     *
+     * @param archive archive
+     * @return archive result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder archive(String archive);
 
-    NDescriptorMailingListBuilder setOtherArchives(List<String> otherArchives);
+    /**
+     * Other archives.
+     *
+     * @param otherArchives other archives
+     * @return other archives result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder otherArchives(List<String> otherArchives);
 
-    NDescriptorMailingListBuilder setProperties(Map<String, String> properties);
+    /**
+     * Properties.
+     *
+     * @param properties properties
+     * @return properties result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder properties(Map<String, String> properties);
 
-    NDescriptorMailingListBuilder setComments(String comments);
+    /**
+     * Comments.
+     *
+     * @param comments comments
+     * @return comments result
+     */
+    @NSetter
+    NDescriptorMailingListBuilder comments(String comments);
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NDescriptorMailingList build();
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NDescriptorMailingListBuilder copy();
 
 }

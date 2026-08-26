@@ -42,6 +42,7 @@ import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.collections.NObservableMapListener;
 
 import java.io.Closeable;
 import java.net.URL;
@@ -60,34 +61,100 @@ import java.util.function.Supplier;
  * @since 0.5.4
  */
 public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NWorkspace of() {
+        /**
+         * Returns the get.
+         *
+         * @param ).get( ).get(
+         * @return get result
+         */
         return get().get();
     }
 
+    /**
+     * Returns the get.
+     *
+     * @return get result
+     */
     static NOptional<NWorkspace> get() {
         return NScopedWorkspace.currentWorkspace();
     }
 
+    /**
+     * Run.
+     *
+     * @param runnable runnable
+     */
     static void run(Runnable runnable) {
         NScopedWorkspace.runWith(runnable);
     }
 
+    /**
+     * Call.
+     *
+     * @param callable callable
+     * @return call result
+     */
     static <T> T call(NCallable<T> callable) {
         return NScopedWorkspace.callWith(callable);
     }
 
+    /**
+     * Resolve effective descriptor.
+     *
+     * @param descriptor descriptor
+     * @param effectiveNDescriptorConfig effective n descriptor config
+     * @return resolve effective descriptor result
+     */
     NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor, NDescriptorEffectiveConfig effectiveNDescriptorConfig);
 
+    /**
+     * Resolve effective descriptor.
+     *
+     * @param descriptor descriptor
+     * @return resolve effective descriptor result
+     */
     NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor);
 
+    /**
+     * Sets the shared instance.
+     *
+     * @return set shared instance result
+     */
     NWorkspace setSharedInstance();
 
+    /**
+     * Share.
+     *
+     * @return share result
+     */
     NWorkspace share();
 
+    /**
+     * Checks if is shared instance.
+     *
+     * @return is shared instance result
+     */
     boolean isSharedInstance();
 
+    /**
+     * Run with.
+     *
+     * @param runnable runnable
+     */
     void runWith(Runnable runnable);
 
+    /**
+     * Call with.
+     *
+     * @param callable callable
+     * @return call with result
+     */
     <T> T callWith(NCallable<T> callable);
 
     /**
@@ -95,62 +162,172 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      *
      * @return uuid
      */
-    String getUuid();
+    String uuid();
 
     /**
      * Workspace name
      *
      * @return name
      */
-    String getName();
+    String name();
 
-    String getDigestName();
+    /**
+     * Digest name.
+     *
+     * @return digest name result
+     */
+    String digestName();
 
-    NVersion getApiVersion();
+    /**
+     * Api version.
+     *
+     * @return api version result
+     */
+    NVersion apiVersion();
 
-    NVersion getBootVersion();
+    /**
+     * Boot version.
+     *
+     * @return boot version result
+     */
+    NVersion bootVersion();
 
-    NId getApiId();
+    /**
+     * Api id.
+     *
+     * @return api id result
+     */
+    NId apiId();
 
-    NId getAppId();
+    /**
+     * App id.
+     *
+     * @return app id result
+     */
+    NId appId();
 
-    NId getRuntimeId();
+    /**
+     * Runtime id.
+     *
+     * @return runtime id result
+     */
+    NId runtimeId();
 
 
-    NPath getLocation();
+    /**
+     * Location.
+     *
+     * @return location result
+     */
+    NPath location();
 
     /// ////////////////// create new session
+    /**
+     * Creates a new instance of create session.
+     *
+     * @return create session result
+     */
     NSession createSession();
 
+    /**
+     * Current session.
+     *
+     * @return current session result
+     */
     NSession currentSession();
 
+    /**
+     * Extensions.
+     *
+     * @return extensions result
+     */
     NExtensions extensions();
 
+    /**
+     * Close.
+     */
     void close();
 
     /// ////////////////////
 
 
+    /**
+     * Removes the specified repository listener.
+     *
+     * @param listener listener
+     * @return remove repository listener result
+     */
     NWorkspace removeRepositoryListener(NRepositoryListener listener);
 
+    /**
+     * Adds the specified repository listener.
+     *
+     * @param listener listener
+     * @return add repository listener result
+     */
     NWorkspace addRepositoryListener(NRepositoryListener listener);
 
-    List<NRepositoryListener> getRepositoryListeners();
+    /**
+     * Repository listeners.
+     *
+     * @return repository listeners result
+     */
+    List<NRepositoryListener> repositoryListeners();
 
+    /**
+     * Removes the specified workspace listener.
+     *
+     * @param listener listener
+     * @return remove workspace listener result
+     */
     NWorkspace removeWorkspaceListener(NWorkspaceListener listener);
 
+    /**
+     * Adds the specified workspace listener.
+     *
+     * @param listener listener
+     * @return add workspace listener result
+     */
     NWorkspace addWorkspaceListener(NWorkspaceListener listener);
 
-    List<NWorkspaceListener> getWorkspaceListeners();
+    /**
+     * Workspace listeners.
+     *
+     * @return workspace listeners result
+     */
+    List<NWorkspaceListener> workspaceListeners();
 
+    /**
+     * Removes the specified install listener.
+     *
+     * @param listener listener
+     * @return remove install listener result
+     */
     NWorkspace removeInstallListener(NInstallListener listener);
 
+    /**
+     * Adds the specified install listener.
+     *
+     * @param listener listener
+     * @return add install listener result
+     */
     NWorkspace addInstallListener(NInstallListener listener);
 
-    List<NInstallListener> getInstallListeners();
+    /**
+     * Install listeners.
+     *
+     * @return install listeners result
+     */
+    List<NInstallListener> installListeners();
 
     /// ///////////////////////////////
 
+    /**
+     * Adds the specified repository.
+     *
+     * @param options options
+     * @return add repository result
+     */
     NRepository addRepository(NRepositorySpec options);
 
     /**
@@ -192,8 +369,20 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      */
     NRepository addRepository(String repositoryNamedUrl);
 
+    /**
+     * Finds the find repository by id.
+     *
+     * @param repositoryIdOrName repository id or name
+     * @return find repository by id result
+     */
     NOptional<NRepository> findRepositoryById(String repositoryIdOrName);
 
+    /**
+     * Finds the find repository by name.
+     *
+     * @param repositoryIdOrName repository id or name
+     * @return find repository by name result
+     */
     NOptional<NRepository> findRepositoryByName(String repositoryIdOrName);
 
     /**
@@ -202,19 +391,52 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      */
     NOptional<NRepository> getRepository(String repositoryIdOrName);
 
+    /**
+     * Removes the specified repository.
+     *
+     * @param locationOrRepositoryId location or repository id
+     * @return remove repository result
+     */
     NWorkspace removeRepository(String locationOrRepositoryId);
 
-    List<NRepository> getRepositories();
+    /**
+     * Repositories.
+     *
+     * @return repositories result
+     */
+    List<NRepository> repositories();
 
+    /**
+     * Removes the specified all repositories.
+     *
+     * @return remove all repositories result
+     */
     NWorkspace removeAllRepositories();
 
     /// /////////
 
+    /**
+     * Adds the specified property listener.
+     *
+     * @param listener listener
+     * @return add property listener result
+     */
     NWorkspace addPropertyListener(NObservableMapListener<String, Object> listener);
 
+    /**
+     * Removes the specified property listener.
+     *
+     * @param listener listener
+     * @return remove property listener result
+     */
     NWorkspace removePropertyListener(NObservableMapListener<String, Object> listener);
 
-    List<NObservableMapListener<String, Object>> getPropertyListeners();
+    /**
+     * Property listeners.
+     *
+     * @return property listeners result
+     */
+    List<NObservableMapListener<String, Object>> propertyListeners();
 
 
     /**
@@ -227,7 +449,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      * @return a map of property names to values
      * @since 0.8.1
      */
-    Map<String, Object> getProperties();
+    Map<String, Object> properties();
 
     /**
      * Retrieves the raw value of a property by name from the workspace.
@@ -297,40 +519,11 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     <T> T getOrComputeProperty(String property, Supplier<T> supplier);
 
 
-//    String getHostName();
-
-    String getPid();
-
-//    NOsFamily getOsFamily();
-//
-//    Set<NShellFamily> getShellFamilies();
-//
-//    NShellFamily getShellFamily();
-//
-//    NId getDesktopEnvironment();
-//
-//    Set<NId> getDesktopEnvironments();
-//
-//    NDesktopEnvironmentFamily getDesktopEnvironmentFamily();
-//
-//    Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
-//
-//    NId getJava();
-//
-//    NId getOs();
-//
-//    NId getOsDist();
-//
-//    NId getArch();
-//
-//    NArchFamily getArchFamily();
-//
-//    boolean isGraphicalDesktopEnvironment();
-//
-//    NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target);
-//
-//    Path getDesktopPath();
-
+    /**
+     * Adds the specified launcher.
+     *
+     * @param launcher launcher
+     */
     void addLauncher(NLauncherOptions launcher);
 
     List<String> buildEffectiveCommand(String[] cmd,
@@ -343,17 +536,50 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
                                        String[] executorOptions
     );
 
+    /**
+     * Returns the home location.
+     *
+     * @param folderType folder type
+     * @return get home location result
+     */
     NPath getHomeLocation(NStoreType folderType);
 
-    NStoreStrategy getStoreStrategy();
+    /**
+     * Store strategy.
+     *
+     * @return store strategy result
+     */
+    NStoreStrategy storeStrategy();
 
-    NWorkspace setStoreStrategy(NStoreStrategy strategy);
+    /**
+     * Store strategy.
+     *
+     * @param strategy strategy
+     * @return store strategy result
+     */
+    NWorkspace storeStrategy(NStoreStrategy strategy);
 
-    NStoreStrategy getRepositoryStoreStrategy();
+    /**
+     * Repository store strategy.
+     *
+     * @return repository store strategy result
+     */
+    NStoreStrategy repositoryStoreStrategy();
 
-    NOsFamily getStoreLayout();
+    /**
+     * Store layout.
+     *
+     * @return store layout result
+     */
+    NOsFamily storeLayout();
 
-    NWorkspace setStoreLayout(NOsFamily storeLayout);
+    /**
+     * Store layout.
+     *
+     * @param storeLayout store layout
+     * @return store layout result
+     */
+    NWorkspace storeLayout(NOsFamily storeLayout);
 
     /**
      * all home locations key/value map where keys are in the form "location"
@@ -361,14 +587,38 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      *
      * @return home locations mapping
      */
-    Map<NStoreType, String> getStoreLocations();
+    Map<NStoreType, String> storeLocations();
 
+    /**
+     * Returns the default id filename.
+     *
+     * @param id id
+     * @return get default id filename result
+     */
     String getDefaultIdFilename(NId id);
 
+    /**
+     * Returns the default id basedir.
+     *
+     * @param id id
+     * @return get default id basedir result
+     */
     NPath getDefaultIdBasedir(NId id);
 
+    /**
+     * Returns the default id content extension.
+     *
+     * @param packaging packaging
+     * @return get default id content extension result
+     */
     String getDefaultIdContentExtension(String packaging);
 
+    /**
+     * Returns the default id extension.
+     *
+     * @param id id
+     * @return get default id extension result
+     */
     String getDefaultIdExtension(NId id);
 
     /**
@@ -377,34 +627,109 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      *
      * @return home locations mapping
      */
-    Map<NHomeLocation, String> getHomeLocations();
+    Map<NHomeLocation, String> homeLocations();
 
+    /**
+     * Returns the home location.
+     *
+     * @param location location
+     * @return get home location result
+     */
     NPath getHomeLocation(NHomeLocation location);
 
-    NPath getWorkspaceLocation();
+    /**
+     * Workspace location.
+     *
+     * @return workspace location result
+     */
+    NPath workspaceLocation();
 
+    /**
+     * Sets the store location.
+     *
+     * @param folderType folder type
+     * @param location location
+     * @return set store location result
+     */
     NWorkspace setStoreLocation(NStoreType folderType, String location);
 
+    /**
+     * Sets the home location.
+     *
+     * @param homeType home type
+     * @param location location
+     * @return set home location result
+     */
     NWorkspace setHomeLocation(NHomeLocation homeType, String location);
 
+    /**
+     * Finds the find sys command.
+     *
+     * @param name name
+     * @return find sys command result
+     */
     NOptional<String> findSysCommand(String name);
 
+    /**
+     * Adds the specified imports.
+     *
+     * @param importExpression import expression
+     * @return add imports result
+     */
     NWorkspace addImports(String... importExpression);
 
+    /**
+     * Clear imports.
+     *
+     * @return clear imports result
+     */
     NWorkspace clearImports();
 
+    /**
+     * Removes the specified imports.
+     *
+     * @param importExpression import expression
+     * @return remove imports result
+     */
     NWorkspace removeImports(String... importExpression);
 
+    /**
+     * Update imports.
+     *
+     * @param imports imports
+     * @return update imports result
+     */
     NWorkspace updateImports(String[] imports);
 
-    Set<String> getAllImports();
+    /**
+     * All imports.
+     *
+     * @return all imports result
+     */
+    Set<String> allImports();
 
+    /**
+     * Checks if is imported group id.
+     *
+     * @param groupId group id
+     * @return is imported group id result
+     */
     boolean isImportedGroupId(String groupId);
 
     /// /////////////////
 
-    NWorkspaceStoredConfig getStoredConfig();
+    /**
+     * Stored config.
+     *
+     * @return stored config result
+     */
+    NWorkspaceStoredConfig storedConfig();
 
+    /**
+     * Checks if is read only.
+     *
+     * @return is read only result
+     */
     boolean isReadOnly();
 
     /**
@@ -416,29 +741,95 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      */
     boolean saveConfig(boolean force);
 
+    /**
+     * Save config.
+     *
+     * @return save config result
+     */
     boolean saveConfig();
 
+    /**
+     * Load boot config.
+     *
+     * @param path path
+     * @param global global
+     * @param followLinks follow links
+     * @return load boot config result
+     */
     NWorkspaceBootConfig loadBootConfig(String path, boolean global, boolean followLinks);
 
+    /**
+     * Checks if is supported repository type.
+     *
+     * @param repositoryType repository type
+     * @return is supported repository type result
+     */
     boolean isSupportedRepositoryType(String repositoryType);
 
-    List<NRepositorySpec> getDefaultRepositories();
+    /**
+     * Default repositories.
+     *
+     * @return default repositories result
+     */
+    List<NRepositorySpec> defaultRepositories();
 
-    Set<String> getAvailableArchetypes();
+    /**
+     * Available archetypes.
+     *
+     * @return available archetypes result
+     */
+    Set<String> availableArchetypes();
 
+    /**
+     * Resolve repository path.
+     *
+     * @param repositoryLocation repository location
+     * @return resolve repository path result
+     */
     NPath resolveRepositoryPath(String repositoryLocation);
 
-    NIndexStoreFactory getIndexStoreClientFactory();
+    /**
+     * Index store client factory.
+     *
+     * @return index store client factory result
+     */
+    NIndexStoreFactory indexStoreClientFactory();
 
-    String getJavaCommand();
+    /**
+     * Java command.
+     *
+     * @return java command result
+     */
+    String javaCommand();
 
-    String getJavaOptions();
+    /**
+     * Java options.
+     *
+     * @return java options result
+     */
+    String javaOptions();
 
+    /**
+     * Checks if is system workspace.
+     *
+     * @return is system workspace result
+     */
     boolean isSystemWorkspace();
 
 
-    Map<String, String> getConfigMap();
+    /**
+     * Config map.
+     *
+     * @return config map result
+     */
+    Map<String, String> configMap();
 
+    /**
+     * Returns the config property.
+     *
+     * @param property property
+     * @return get config property result
+     */
     NOptional<NLiteral> getConfigProperty(String property);
 
     /**
@@ -455,7 +846,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      *
      * @return registered command factories
      */
-    List<NCommandFactoryConfig> getCommandFactories();
+    List<NCommandFactoryConfig> commandFactories();
 
     /**
      * register a new commandFactory. If it already exists, a NutsIllegalArgumentException is thrown
@@ -512,7 +903,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     boolean updateCommand(NCommandConfig command);
 
     /**
-     * remove command. if the command does not exists a NutsIllegalArgumentException is thrown.
+     * remove command. if the command does not exist a NutsIllegalArgumentException is thrown.
      *
      * @param command command name
      */
@@ -570,27 +961,81 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      */
     boolean isFirstBoot();
 
+    /**
+     * Returns the custom boot option.
+     *
+     * @param names names
+     * @return get custom boot option result
+     */
     NOptional<NLiteral> getCustomBootOption(String... names);
 
-    NBootOptions getBootOptions();
+    /**
+     * Boot options.
+     *
+     * @return boot options result
+     */
+    NBootOptions bootOptions();
 
-    ClassLoader getBootClassLoader();
+    /**
+     * Boot class loader.
+     *
+     * @return boot class loader result
+     */
+    ClassLoader bootClassLoader();
 
-    List<URL> getBootClassWorldURLs();
+    /**
+     * Boot class world ur ls.
+     *
+     * @return boot class world ur ls result
+     */
+    List<URL> bootClassWorldURLs();
 
-    List<String> getBootRepositories();
+    /**
+     * Boot repositories.
+     *
+     * @return boot repositories result
+     */
+    List<String> bootRepositories();
 
-    Instant getCreationStartTime();
+    /**
+     * Creation start time.
+     *
+     * @return creation start time result
+     */
+    Instant creationStartTime();
 
-    Instant getCreationFinishTime();
+    /**
+     * Creation finish time.
+     *
+     * @return creation finish time result
+     */
+    Instant creationFinishTime();
 
-    NDuration getCreationDuration();
+    /**
+     * Creation duration.
+     *
+     * @return creation duration result
+     */
+    NDuration creationDuration();
 
-    NClassLoaderNode getBootRuntimeClassLoaderNode();
+    /**
+     * Boot runtime class loader node.
+     *
+     * @return boot runtime class loader node result
+     */
+    NClassLoaderNode bootRuntimeClassLoaderNode();
 
-    List<NClassLoaderNode> getBootExtensionClassLoaderNodes();
+    /**
+     * Boot terminal.
+     *
+     * @return boot terminal result
+     */
+    NWorkspaceTerminalOptions bootTerminal();
 
-    NWorkspaceTerminalOptions getBootTerminal();
-
+    /**
+     * Run application.
+     *
+     * @param handleMode handle mode
+     */
     void runApplication(NApplicationHandleMode handleMode);
 }

@@ -14,8 +14,22 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * NReservedLangUtils class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public final class NReservedLangUtils {
 
+    /**
+     * Finds the find throwable.
+     *
+     * @param th th
+     * @param type type
+     * @param filter filter
+     * @return find throwable result
+     */
     public static <T> NOptional<T> findThrowable(Throwable th, Class<T> type, Predicate<Throwable> filter) {
         Set<Throwable> visited = new HashSet<>();
         Stack<Throwable> stack = new Stack<>();
@@ -45,30 +59,55 @@ public final class NReservedLangUtils {
         return NOptional.ofEmpty(() -> NMsg.ofC("error with type %s not found", type.getSimpleName()));
     }
 
+    /**
+     * Split default.
+     *
+     * @param str str
+     * @return split default result
+     */
     public static List<String> splitDefault(String str) {
         return NStringUtils.split(str, " ;,\n\r\t|", true, true);
     }
 
-    public static List<String> parseAndTrimToDistinctList(String s) {
+    /**
+     * Parse and strip to distinct list.
+     *
+     * @param s s
+     * @return parse and strip to distinct list result
+     */
+    public static List<String> parseAndStripToDistinctList(String s) {
         if (s == null) {
             return new ArrayList<>();
         }
-        return splitDefault(s).stream().map(String::trim)
+        return splitDefault(s).stream().map(NStringUtils::strip)
                 .filter(x -> x.length() > 0)
                 .distinct().collect(Collectors.toList());
     }
 
-    public static String joinAndTrimToNull(List<String> args) {
-        return NStringUtils.trimToNull(
+    /**
+     * Join and strip to null.
+     *
+     * @param args args
+     * @return join and strip to null result
+     */
+    public static String joinAndStripToNull(List<String> args) {
+        return NStringUtils.stripToNull(
                 String.join(",", args)
         );
     }
 
+    /**
+     * Parse file size in bytes.
+     *
+     * @param value value
+     * @param defaultMultiplier default multiplier
+     * @return parse file size in bytes result
+     */
     public static NOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
         if (NBlankable.isBlank(value)) {
-            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty size"));
+            return NOptional.ofEmpty(() -> NMsg.ofP("empty size"));
         }
-        value = value.trim();
+        value = NStringUtils.strip(value);
         Integer i = NLiteral.of(value).asInt().orNull();
         if (i != null) {
             if (defaultMultiplier != null) {
@@ -79,7 +118,7 @@ public final class NReservedLangUtils {
         }
         for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
             if (value.toLowerCase().endsWith(s)) {
-                String v = value.substring(0, value.length() - s.length()).trim();
+                String v = NStringUtils.strip(value.substring(0, value.length() - s.length()));
                 i = NLiteral.of(v).asInt().orNull();
                 if (i != null) {
                     switch (s) {
@@ -100,6 +139,12 @@ public final class NReservedLangUtils {
         return NOptional.ofError(() -> NMsg.ofC("invalid size :%s", finalValue));
     }
 
+    /**
+     * Non null map.
+     *
+     * @param other other
+     * @return non null map result
+     */
     public static <T, V> Map<T, V> nonNullMap(Map<T, V> other) {
         if (other == null) {
             return new LinkedHashMap<>();
@@ -107,10 +152,28 @@ public final class NReservedLangUtils {
         return new LinkedHashMap<>(other);
     }
 
+    /**
+     * Non null list from array.
+     *
+     * @param other other
+     * @return non null list from array result
+     */
     public static <T> List<T> nonNullListFromArray(T[] other) {
+        /**
+         * Non null list.
+         *
+         * @param Arrays.asList(other) arrays.as list(other)
+         * @return non null list result
+         */
         return nonNullList(Arrays.asList(other));
     }
 
+    /**
+     * Unmodifiable or null list.
+     *
+     * @param other other
+     * @return unmodifiable or null list result
+     */
     public static <T> List<T> unmodifiableOrNullList(Collection<T> other) {
         if (other == null) {
             return null;
@@ -118,6 +181,12 @@ public final class NReservedLangUtils {
         return Collections.unmodifiableList(new ArrayList<>(other));
     }
 
+    /**
+     * Unmodifiable or null set.
+     *
+     * @param other other
+     * @return unmodifiable or null set result
+     */
     public static <T> Set<T> unmodifiableOrNullSet(Collection<T> other) {
         if (other == null) {
             return null;
@@ -125,6 +194,12 @@ public final class NReservedLangUtils {
         return Collections.unmodifiableSet(new LinkedHashSet<>(other));
     }
 
+    /**
+     * Unmodifiable or null map.
+     *
+     * @param other other
+     * @return unmodifiable or null map result
+     */
     public static <T, V> Map<T, V> unmodifiableOrNullMap(Map<T, V> other) {
         if (other == null) {
             return null;
@@ -132,6 +207,12 @@ public final class NReservedLangUtils {
         return Collections.unmodifiableMap(new LinkedHashMap<>(other));
     }
 
+    /**
+     * Copy or null list.
+     *
+     * @param other other
+     * @return copy or null list result
+     */
     public static <T> List<T> copyOrNullList(Collection<T> other) {
         if (other == null) {
             return null;
@@ -139,6 +220,12 @@ public final class NReservedLangUtils {
         return new ArrayList<>(other);
     }
 
+    /**
+     * Non null list.
+     *
+     * @param other other
+     * @return non null list result
+     */
     public static <T> List<T> nonNullList(Collection<T> other) {
         if (other == null) {
             return new ArrayList<>();
@@ -146,6 +233,12 @@ public final class NReservedLangUtils {
         return other.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    /**
+     * Non null set.
+     *
+     * @param other other
+     * @return non null set result
+     */
     public static <T> Set<T> nonNullSet(Collection<T> other) {
         if (other == null) {
             return new LinkedHashSet<>();
@@ -153,6 +246,13 @@ public final class NReservedLangUtils {
         return other.stream().filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    /**
+     * Adds the specified unique non blank list.
+     *
+     * @param list list
+     * @param values values
+     * @return add unique non blank list result
+     */
     public static List<String> addUniqueNonBlankList(List<String> list, String... values) {
         LinkedHashSet<String> newList = new LinkedHashSet<>();
         if (list != null) {
@@ -162,7 +262,7 @@ public final class NReservedLangUtils {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
-                    if (newList.add(NStringUtils.trim(value))) {
+                    if (newList.add(NStringUtils.strip(value))) {
                         someUpdates = true;
                     }
                 }
@@ -174,10 +274,29 @@ public final class NReservedLangUtils {
         return list;
     }
 
+    /**
+     * Unique non blank list.
+     *
+     * @param other other
+     * @return unique non blank list result
+     */
     public static <T> List<T> uniqueNonBlankList(Collection<T> other) {
+        /**
+         * Unique list.
+         *
+         * @param !NBlankable.isBlank(x)).collect(Collectors.toList() !n blankable.is blank(x)).collect( collectors.to list()
+         * @return unique list result
+         */
         return uniqueList(other).stream().filter(x -> !NBlankable.isBlank(x)).collect(Collectors.toList());
     }
 
+    /**
+     * Adds the specified unique non blank list.
+     *
+     * @param list list
+     * @param other other
+     * @return add unique non blank list result
+     */
     public static <T> List<T> addUniqueNonBlankList(List<T> list, Collection<T> other) {
         if (other != null) {
             for (T t : other) {
@@ -191,10 +310,28 @@ public final class NReservedLangUtils {
         return list;
     }
 
+    /**
+     * Non blank set.
+     *
+     * @param other other
+     * @return non blank set result
+     */
     public static <T> Set<T> nonBlankSet(Collection<T> other) {
+        /**
+         * Sets the set.
+         *
+         * @param !NBlankable.isBlank(x)).collect(Collectors.toSet() !n blankable.is blank(x)).collect( collectors.to set()
+         * @return set result
+         */
         return set(other).stream().filter(x -> !NBlankable.isBlank(x)).collect(Collectors.toSet());
     }
 
+    /**
+     * Unique list.
+     *
+     * @param other other
+     * @return unique list result
+     */
     public static <T> List<T> uniqueList(Collection<T> other) {
         if (other == null) {
             return new ArrayList<>();
@@ -202,6 +339,12 @@ public final class NReservedLangUtils {
         return new ArrayList<>(new LinkedHashSet<>(other));
     }
 
+    /**
+     * Sets the set.
+     *
+     * @param other other
+     * @return set result
+     */
     public static <T> Set<T> set(Collection<T> other) {
         if (other == null) {
             return new LinkedHashSet<>();
@@ -209,18 +352,41 @@ public final class NReservedLangUtils {
         return new LinkedHashSet<>(other);
     }
 
+    /**
+     * Unmodifiable list.
+     *
+     * @param other other
+     * @return unmodifiable list result
+     */
     public static <T> List<T> unmodifiableList(Collection<T> other) {
         return other == null ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(other));
     }
 
+    /**
+     * Unmodifiable map.
+     *
+     * @param other other
+     * @return unmodifiable map result
+     */
     public static <T, V> Map<T, V> unmodifiableMap(Map<T, V> other) {
         return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(new LinkedHashMap<>(other));
     }
 
+    /**
+     * Unmodifiable unique list.
+     *
+     * @param other other
+     * @return unmodifiable unique list result
+     */
     public static <T> List<T> unmodifiableUniqueList(Collection<T> other) {
         return other == null ? Collections.emptyList() : Collections.unmodifiableList(uniqueList(other));
     }
 
+    /**
+     * Checks if is graphical desktop environment.
+     *
+     * @return is graphical desktop environment result
+     */
     public static boolean isGraphicalDesktopEnvironment() {
         try {
             if (!java.awt.GraphicsEnvironment.isHeadless()) {
@@ -244,10 +410,19 @@ public final class NReservedLangUtils {
         }
     }
 
+    /**
+     * Input string.
+     *
+     * @param message message
+     * @param title title
+     * @param in in
+     * @param bLog b log
+     * @return input string result
+     */
     public static String inputString(String message, String title, Supplier<String> in, NLog bLog) {
         try {
             if (title == null) {
-                title = "Nuts Package Manager - " + Nuts.getVersion();
+                title = "Nuts Package Manager - " + Nuts.version();
             }
             String line = javax.swing.JOptionPane.showInputDialog(
                     null,
@@ -267,6 +442,13 @@ public final class NReservedLangUtils {
         }
     }
 
+    /**
+     * Show message.
+     *
+     * @param message message
+     * @param title title
+     * @param bLog b log
+     */
     public static void showMessage(String message, String title, NLog bLog) {
         if (title == null) {
             title = "Nuts Package Manager";

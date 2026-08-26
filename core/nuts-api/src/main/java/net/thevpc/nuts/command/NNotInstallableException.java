@@ -43,6 +43,13 @@ public class NNotInstallableException extends NInstallationException {
      * @param id artifact
      */
     public NNotInstallableException(NId id) {
+      /**
+       * This.
+       *
+       * @param id id
+       * @param null null
+       * @param null null
+       */
         this(id, null, null);
     }
 

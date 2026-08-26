@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
 import net.thevpc.nuts.core.NRepositoryFilter;
-import net.thevpc.nuts.core.NRepositoryFilters;
+import net.thevpc.nuts.internal.rpi.NRepositoryFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NRepositoryFilterParser extends NTypedFiltersParser<NRepositoryFilter> {
@@ -10,8 +10,8 @@ public class NRepositoryFilterParser extends NTypedFiltersParser<NRepositoryFilt
     }
 
     @Override
-    protected NRepositoryFilters getTManager() {
-        return NRepositoryFilters.of();
+    protected NRepositoryFilterRPI getTManager() {
+        return NRepositoryFilterRPI.of();
     }
 
     protected NRepositoryFilter wordToPredicate(String word){

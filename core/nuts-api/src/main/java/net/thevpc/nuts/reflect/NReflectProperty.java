@@ -30,14 +30,39 @@ package net.thevpc.nuts.reflect;
  */
 public interface NReflectProperty {
 
-    String getName();
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    String name();
     
-    NReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
+    /**
+     * Default value strategy.
+     *
+     * @return default value strategy result
+     */
+    NReflectPropertyDefaultValueStrategy defaultValueStrategy();
 
-    NReflectType getPropertyType();
+    /**
+     * Property type.
+     *
+     * @return property type result
+     */
+    NReflectType propertyType();
     
+    /**
+     * Checks if is read.
+     *
+     * @return is read result
+     */
     boolean isRead();
 
+    /**
+     * Checks if is write.
+     *
+     * @return is write result
+     */
     boolean isWrite();
     
     /**
@@ -63,10 +88,27 @@ public interface NReflectProperty {
      */
     boolean isDefaultValue(Object value, NReflectPropertyDefaultValueStrategy strategy);
 
+    /**
+     * Read.
+     *
+     * @param instance instance
+     * @return read result
+     */
     Object read(Object instance);
 
+    /**
+     * Write.
+     *
+     * @param instance instance
+     * @param value value
+     */
     void write(Object instance, Object value);
 
-    NReflectType getDeclaringType();
+    /**
+     * Declaring type.
+     *
+     * @return declaring type result
+     */
+    NReflectType declaringType();
 
 }

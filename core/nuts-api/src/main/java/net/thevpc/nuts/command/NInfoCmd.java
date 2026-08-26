@@ -28,7 +28,9 @@ package net.thevpc.nuts.command;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.*;
 
@@ -42,6 +44,11 @@ import java.util.*;
  */
 public interface NInfoCmd extends NWorkspaceCmd {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NInfoCmd of() {
        return NExtensions.of(NInfoCmd.class);
     }
@@ -58,7 +65,14 @@ public interface NInfoCmd extends NWorkspaceCmd {
     @Override
     NInfoCmd configure(boolean skipUnsupported, String... args);
 
-    NInfoCmd setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    @NSetter
+    NInfoCmd ntf(boolean ntf);
 
     /**
      * include a custom property
@@ -90,7 +104,8 @@ public interface NInfoCmd extends NWorkspaceCmd {
      * @param enable if true enable
      * @return {@code this} instance
      */
-    NInfoCmd setShowRepositories(boolean enable);
+    @NSetter
+    NInfoCmd showRepositories(boolean enable);
 
     /**
      * return true if fancy mode armed
@@ -105,14 +120,27 @@ public interface NInfoCmd extends NWorkspaceCmd {
      * @param fancy if true enable fancy mode
      * @return {@code this} instance
      */
-    NInfoCmd setFancy(boolean fancy);
+    @NSetter
+    NInfoCmd fancy(boolean fancy);
 
 //    NInfoCmd print(NPrintStream w);
 //
 //    NInfoCmd println(NPrintStream w);
 
-    Map<String, Object> getPropertyValues() ;
+    /**
+     * Property values.
+     *
+     * @return property values result
+     */
+    @NGetter
+    Map<String, Object> propertyValues() ;
 
+    /**
+     * Returns the property value.
+     *
+     * @param propertyName property name
+     * @return get property value result
+     */
     NOptional<Object> getPropertyValue(String propertyName) ;
 
 

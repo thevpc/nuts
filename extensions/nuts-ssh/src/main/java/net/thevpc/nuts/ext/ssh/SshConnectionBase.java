@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -47,15 +48,8 @@ public abstract class SshConnectionBase implements SshConnection {
         return failFast;
     }
 
-    public SshConnection failFast() {
-        return setFailFast(true);
-    }
 
-    public SshConnection sailFast(boolean failFast) {
-        return setFailFast(failFast);
-    }
-
-    public SshConnection setFailFast(boolean failFast) {
+    public SshConnection failFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }
@@ -267,7 +261,7 @@ public abstract class SshConnectionBase implements SshConnection {
             if (i.code() != 0) {
                 return NPathType.NOT_FOUND;
             }
-            String s = i.outString().trim();
+            String s = NStringUtils.strip(i.outString());
             if (s.equals("Directory")) {
                 return NPathType.DIRECTORY;
             } else if (s.equals("File")) {
@@ -282,7 +276,7 @@ public abstract class SshConnectionBase implements SshConnection {
                 return NPathType.NOT_FOUND;
             }
             String s = ii.outString();
-            s = s.trim();
+            s = NStringUtils.strip(s);
             if (s.startsWith("directory")) {
                 return NPathType.DIRECTORY;
             }
@@ -308,7 +302,7 @@ public abstract class SshConnectionBase implements SshConnection {
         switch (resolveShellFamily()) {
             case WIN_CMD: {
                 if (!p) {
-                    NPath parent = NPath.of(from).getParent();
+                    NPath parent = NPath.of(from).parent();
                     if (parent != null) {
                         NPathType d = type(parent.toString());
                         if (d != NPathType.DIRECTORY) {
@@ -327,7 +321,7 @@ public abstract class SshConnectionBase implements SshConnection {
                 if (p) {
                     execArrayCommandGrabbed("mkdir", "-p", ensureWindowPath(from));
                 } else {
-                    NPath parent = NPath.of(from).getParent();
+                    NPath parent = NPath.of(from).parent();
                     if (parent != null) {
                         NPathType d = type(parent.toString());
                         if (d != NPathType.DIRECTORY) {
@@ -385,7 +379,7 @@ public abstract class SshConnectionBase implements SshConnection {
             }
         }
         if (getProbedInfo() != null) {
-            shellFamily = getProbedInfo().getShellFamily();
+            shellFamily = getProbedInfo().shellFamily();
         }
         return shellFamily;
     }
@@ -400,7 +394,7 @@ public abstract class SshConnectionBase implements SshConnection {
     private NOsFamily resolveOsFamily() {
         NOsFamily nOsFamily = NOsFamily.LINUX;
         if (getProbedInfo() != null) {
-            nOsFamily = getProbedInfo().getOsFamily();
+            nOsFamily = getProbedInfo().osFamily();
         }
         return nOsFamily;
     }
@@ -417,7 +411,7 @@ public abstract class SshConnectionBase implements SshConnection {
                     Pattern compiled = Pattern.compile("(?<f>[a-z-]{6})[ \t]*(?<d>[0-9-/]{8,10})[ \t]*(?<t>[0-9]{2}:[0-9]{2})([ \t]*(?<s>[0-9]+))?[ \t]*(?<p>.*)");
                     return NStream.ofArray(s).map(
                             x -> {
-                                x = x.trim();
+                                x = NStringUtils.strip(x);
                                 if (x.length() > 0) {
                                     Matcher m = compiled.matcher(x);
                                     if (m.find()) {
@@ -477,9 +471,9 @@ public abstract class SshConnectionBase implements SshConnection {
                 if (i.code() != 0) {
                     return -1;
                 }
-                String output = i.outString().trim();
+                String output = NStringUtils.strip(i.outString());
                 String[] lines = output.split("\\r?\\n");
-                String lastLine = lines[lines.length - 1].trim();
+                String lastLine = NStringUtils.strip(lines[lines.length - 1]);
                 NOptional<Long> size_windows = NLiteral.of(lastLine).asLong();
                 if (size_windows.isPresent()) {
                     return size_windows.get();
@@ -492,7 +486,7 @@ public abstract class SshConnectionBase implements SshConnection {
                     return -1;
                 }
                 String outputString_l = j.outString();
-                String[] r = NStringUtils.trim(outputString_l).split(" ");
+                String[] r = NStringUtils.strip(outputString_l).split(" ");
                 if (r.length > 4) {
                     NOptional<Long> size_linux = NLiteral.of(r[4]).asLong();
                     if (size_linux.isPresent()) {
@@ -517,7 +511,7 @@ public abstract class SshConnectionBase implements SshConnection {
         if (i.code() != 0) {
             return null;
         }
-        String outputString = NStringUtils.trim(i.outString());
+        String outputString = NStringUtils.strip(i.outString());
         Pattern p = Pattern.compile(".*charset=(?<cs>\\S*).*");
         Matcher m = p.matcher(outputString);
         if (m.find()) {
@@ -536,9 +530,9 @@ public abstract class SshConnectionBase implements SshConnection {
             return null;
         }
         String outputString = i.outString();
-        String[] r = Arrays.stream(NStringUtils.trim(outputString).split("[ ;]")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
+        String[] r = Arrays.stream(NStringUtils.strip(outputString).split("[ ;]")).map(NStringUtils::strip).filter(x -> x.length() > 0).toArray(String[]::new);
         if (r.length > 0) {
-            return NStringUtils.trim(r[0]);
+            return NStringUtils.strip(r[0]);
         }
         return null;
     }
@@ -553,9 +547,9 @@ public abstract class SshConnectionBase implements SshConnection {
             return null;
         }
         String outputString = i.outString();
-        String[] r = Arrays.stream(NStringUtils.trim(outputString).split("[ ;]")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
+        String[] r = Arrays.stream(NStringUtils.strip(outputString).split("[ ;]")).map(NStringUtils::strip).filter(x -> x.length() > 0).toArray(String[]::new);
         if (r.length > 1) {
-            String v = NStringUtils.trim(r[1]);
+            String v = NStringUtils.strip(r[1]);
             if (v.startsWith("charset=")) {
                 v = v.substring("charset=".length()).trim();
             }
@@ -653,7 +647,7 @@ public abstract class SshConnectionBase implements SshConnection {
                     }
                     String[] lines = output.split("[\\r\\n]+");
                     return Arrays.stream(lines)
-                            .filter(l -> l != null && !l.trim().isEmpty())
+                            .filter(l -> !NStringUtils.isBlank(l))
                             .collect(Collectors.toList());
                 }
                 break;
@@ -755,7 +749,7 @@ public abstract class SshConnectionBase implements SshConnection {
                 if (cmdsum != null) {
                     IOResult j = execArrayCommandGrabbed(cmdsum, basePath);
                     if (j.code() == 0) {
-                        String z = NStringUtils.trim(j.outString());
+                        String z = NStringUtils.strip(j.outString());
                         int i = z.indexOf(' ');
                         if (i > 0) {
                             z = z.substring(0, i);
@@ -807,7 +801,7 @@ public abstract class SshConnectionBase implements SshConnection {
                         if (!NBlankable.isBlank(line)) {
                             NPathInfo nPathInfo = parseStatLine(line);
                             if(nPathInfo.isSymbolicLink()){
-                                lazy.put(nPathInfo.getPath(), nPathInfo);
+                                lazy.put(nPathInfo.path(), nPathInfo);
                             }else {
                                 found.add(nPathInfo);
                             }
@@ -825,11 +819,11 @@ public abstract class SshConnectionBase implements SshConnection {
                             for (String line : NStringUtils.splitLines(stat.outString())) {
                                 if (!NBlankable.isBlank(line)) {
                                     NPathInfo nPathInfo = parseStatLine(line);
-                                    NPathInfo o = lazy.get(nPathInfo.getPath());
+                                    NPathInfo o = lazy.get(nPathInfo.path());
                                     found.add(
                                             new  DefaultNPathInfo(
-                                                    o.getName(),
-                                                    o.getPath(), o.getType(), nPathInfo.getType(), o.getTargetPath(), o.getContentLength(), o.isSymbolicLink(), o.getLastModifiedInstant(), o.getLastAccessInstant(), o.getCreationInstant(), o.getPermissions(), o.getOwner(), o.getGroup()
+                                                    o.name(),
+                                                    o.path(), o.type(), nPathInfo.type(), o.targetPath(), o.contentLength(), o.isSymbolicLink(), o.lastModifiedInstant(), o.lastAccessInstant(), o.creationInstant(), o.permissions(), o.owner(), o.group()
                                             )
                                     );
                                 }
@@ -955,7 +949,7 @@ public abstract class SshConnectionBase implements SshConnection {
             // Parse the 'link' -> 'target' format
             int arrowIndex = nField.indexOf("->");
             if (arrowIndex >= 0) {
-                String targetPart = nField.substring(arrowIndex + 2).trim();
+                String targetPart = NStringUtils.strip(nField.substring(arrowIndex + 2));
                 targetPart = targetPart.replaceAll("^'+|'+$", ""); // remove quotes
                 targetPathStr = targetPart;
             }
@@ -1063,8 +1057,8 @@ public abstract class SshConnectionBase implements SshConnection {
                     if(o.isSymbolicLink()){
                         NPathInfo line2 = parseStatLine(lines.get(1));
                         return new  DefaultNPathInfo(
-                                o.getName(),
-                                o.getPath(), o.getType(), line2.getTargetType(), o.getTargetPath(), o.getContentLength(), o.isSymbolicLink(), o.getLastModifiedInstant(), o.getCreationInstant(), o.getLastAccessInstant(), o.getPermissions(), o.getOwner(), o.getGroup()
+                                o.name(),
+                                o.path(), o.type(), line2.targetType(), o.targetPath(), o.contentLength(), o.isSymbolicLink(), o.lastModifiedInstant(), o.creationInstant(), o.lastAccessInstant(), o.permissions(), o.owner(), o.group()
                         );
                     }
                     return o;

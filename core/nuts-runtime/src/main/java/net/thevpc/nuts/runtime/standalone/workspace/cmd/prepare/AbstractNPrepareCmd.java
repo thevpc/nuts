@@ -9,10 +9,9 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NPrepareCmd;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,19 +34,19 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
     }
 
     @Override
-    public NPrepareCmd setTargetServer(String targetServer) {
+    public NPrepareCmd targetServer(String targetServer) {
         this.targetServer = targetServer;
         return this;
     }
 
     @Override
-    public NPrepareCmd setUserName(String userName) {
+    public NPrepareCmd userName(String userName) {
         this.userName = userName;
         return this;
     }
 
     @Override
-    public NPrepareCmd setVersion(String version) {
+    public NPrepareCmd version(String version) {
         this.version = version;
         return this;
     }
@@ -58,7 +57,7 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
     }
 
     @Override
-    public NPrepareCmd setIds(List<NId> ids) {
+    public NPrepareCmd ids(List<NId> ids) {
         if (this.ids == null) {
             this.ids = new ArrayList<>();
         } else {
@@ -100,11 +99,11 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
             return false;
         }
         return cmdLine.matcher()
-                .matchAll((c)->super.configureFirst(cmdLine))
-                .with("--user").matchEntry((v) ->  setUserName(v.stringValue()))
-                .with("--target-server").matchEntry((v) ->  setTargetServer(v.stringValue()))
-                .with("--version").matchEntry((v) ->  setVersion(v.stringValue()))
-                .with("--target-home").matchEntry((v) ->  setTargetHome(v.stringValue()))
+                .with((c)->super.configureFirst(cmdLine))
+                .when("--user").asEntry((v) ->  userName(v.stringValue()))
+                .when("--target-server").asEntry((v) ->  targetServer(v.stringValue()))
+                .when("--version").asEntry((v) ->  version(v.stringValue()))
+                .when("--target-home").asEntry((v) ->  setTargetHome(v.stringValue()))
                 .anyMatch();
     }
 }

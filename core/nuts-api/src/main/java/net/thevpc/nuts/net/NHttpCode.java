@@ -1,11 +1,17 @@
 package net.thevpc.nuts.net;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * NHttpCode class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NHttpCode {
-    private static final Map<Integer, NHttpCode> cache = new HashMap<>();
+    private static final Map<Integer, NHttpCode> cache = new ConcurrentHashMap<>();
     public static final NHttpCode OK = of(200);
     public static final NHttpCode CREATED = of(201);
     public static final NHttpCode ACCEPTED = of(202);
@@ -18,7 +24,7 @@ public class NHttpCode {
     public static final NHttpCode FORBIDDEN = of(403);
     public static final NHttpCode NOT_FOUND = of(404);
     public static final NHttpCode METHOD_NOT_ALLOWED = of(405);
-    public static final NHttpCode METHOD_NOT_ACCEPTABLE = of(406);
+    public static final NHttpCode NOT_ACCEPTABLE = of(406);
     public static final NHttpCode PROXY_AUTHENTICATION_REQUIRED = of(407);
     public static final NHttpCode REQUEST_TIMEOUT = of(408);
     public static final NHttpCode CONFLICT = of(409);
@@ -31,7 +37,18 @@ public class NHttpCode {
     public static final NHttpCode INTERNAL_SERVER_ERROR = of(500);
     private int code;
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param code code
+     * @return of result
+     */
     public static NHttpCode of(int code) {
+      /**
+       * Synchronized.
+       *
+       * @param NHttpCode.cache n http code.cache
+       */
         synchronized (NHttpCode.cache) {
             if (code >= 0 && code < 600) {
                 return cache.computeIfAbsent(code, integer -> new NHttpCode(code));
@@ -40,23 +57,64 @@ public class NHttpCode {
         return new NHttpCode(code);
     }
 
+    /**
+     * N http code.
+     *
+     * @param code code
+     * @return n http code result
+     */
     private NHttpCode(int code) {
         this.code = code;
     }
 
+    /**
+     * Checks if is ok.
+     *
+     * @return is ok result
+     */
     public boolean isOk() {
-        return code == OK.code || (code >= 200 && code < 300);
+      /**
+       * Return.
+       *
+       * @param 300 300
+       */
+        return (code >= 200 && code < 300);
     }
 
+    /**
+     * Checks if is client error.
+     *
+     * @return is client error result
+     */
     public boolean isClientError() {
+      /**
+       * Return.
+       *
+       * @param 500 500
+       */
         return (code >= 400 && code < 500);
     }
 
+    /**
+     * Checks if is server error.
+     *
+     * @return is server error result
+     */
     public boolean isServerError() {
+      /**
+       * Return.
+       *
+       * @param 500 500
+       */
         return (code >= 500);
     }
 
-    public int getCode() {
+    /**
+     * Code.
+     *
+     * @return code result
+     */
+    public int code() {
         return code;
     }
 

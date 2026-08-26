@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.runtime.standalone.version.filter.DefaultNVersionFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -47,18 +48,18 @@ public class NDefinitionFilterByVersion extends AbstractDefinitionFilter {
     @Override
     public boolean acceptDefinition(NDefinition definition) {
         if (versionFilter != null) {
-            return versionFilter.acceptVersion(definition.getId().getVersion());
+            return versionFilter.acceptVersion(definition.id().version());
         }
         return true;
     }
 
     @Override
     public NDefinitionFilter simplify() {
-        switch (versionFilter.getFilterOp()) {
+        switch (versionFilter.filterOp()) {
             case TRUE:
-                return NDefinitionFilters.of().always();
+                return NDefinitionFilterRPI.of().always();
             case FALSE:
-                return NDefinitionFilters.of().never();
+                return NDefinitionFilterRPI.of().never();
         }
         return this;
     }
@@ -69,28 +70,15 @@ public class NDefinitionFilterByVersion extends AbstractDefinitionFilter {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.versionFilter);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterByVersion that = (NDefinitionFilterByVersion) o;
+        return Objects.equals(versionFilter, that.versionFilter);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefinitionFilterByVersion other = (NDefinitionFilterByVersion) obj;
-        if (!Objects.equals(this.versionFilter, other.versionFilter)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), versionFilter);
     }
-
 }

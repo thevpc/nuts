@@ -25,13 +25,11 @@
  */
 package net.thevpc.nuts.core.test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.*;
 
@@ -52,7 +50,7 @@ public class ElementTest {
         NElement e = NElementReader.ofTson().read(str);
         TestUtils.println(e);
 
-        String json0 = NElementWriter.ofTson().setFormatter(NElementFormatter.ofCompact()).formatPlain(e);
+        String json0 = NElementWriter.ofTson().formatter(NElementFormatter.ofCompact()).formatPlain(e);
         TestUtils.println(json0);
     }
 
@@ -61,7 +59,7 @@ public class ElementTest {
         String str = "{path:\"path1\" color:\"red\"}";
         NElement e = NElementReader.ofTson().read(str);
         String json1 = NElementWriter.ofTson()
-                .setFormatter(
+                .formatter(
                         NElementFormatter
                                 .ofPretty().builder()
                                 .setComplexityThreshold(40)
@@ -77,7 +75,7 @@ public class ElementTest {
         String str = "{path:\"path1\" color1:\"red1\" color2:\"red2\" color3:\"red3\" color4:\"red4\" color5:\"red5\" color6:\"red6\" color7:\"red7\"}";
         NElement e = NElementReader.ofTson().read(str);
         String json1 = NElementWriter.ofTson()
-                .setFormatter(
+                .formatter(
                         NElementFormatter
                                 .ofPretty().builder()
                                 .setComplexityThreshold(40)
@@ -86,7 +84,7 @@ public class ElementTest {
                 )
                 .formatPlain(e);
         TestUtils.println("\njson1\n" + json1);
-        String json2 = NElementWriter.ofTson().setFormatter(
+        String json2 = NElementWriter.ofTson().formatter(
                 NElementFormatter
                         .ofPretty().builder()
                         .setComplexityThreshold(20)
@@ -100,7 +98,7 @@ public class ElementTest {
     public void test04() {
         String str = "{path:\"path1\" {color1:\"red1\"}}";
         NElement e = NElementReader.ofTson().read(str);
-        String json1 = NElementWriter.ofTson().setFormatter(
+        String json1 = NElementWriter.ofTson().formatter(
                 NElementFormatter
                         .ofPretty().builder()
                         .setComplexityThreshold(4)
@@ -161,7 +159,7 @@ public class ElementTest {
         NElement p = memExample();
 //        NObjectObjectWriter ss = NObjectObjectWriter.of().setNtf(false);
         TestUtils.println(p);
-        String json = NElementWriter.ofTson().setFormatter(
+        String json = NElementWriter.ofTson().formatter(
                 NElementFormatter
                         .ofPretty().builder()
                         .setComplexityThreshold(10)
@@ -199,39 +197,73 @@ public class ElementTest {
     }
 
     @Test
-    public void testPaths() {
-        class TT {
-
-            final String path;
-            final List<String> expected;
-
-            public TT(String path, String... expected) {
-                this.path = path;
-                this.expected = Arrays.asList(expected);
-            }
-
-        }
+    public void testPaths1() {
         NElement p = memExample();
-
         testSelectorHelper(p, "", "[[{first:{name:\"first name\",valid:true,children:[{path:\"path1\",color:\"red\"}{path:\"path2\",color:\"green\"}]}}{second:{name:\"second name\",valid:true,children:[{path:\"path3\",color:\"yellow\"}{path:\"path4\",color:\"magenta\"}]}}]]");
+    }
+    @Test
+    public void testPaths2() {
+        NElement p = memExample();
         testSelectorHelper(p, ".", "[{first:{name:\"first name\",valid:true,children:[{path:\"path1\",color:\"red\"}{path:\"path2\",color:\"green\"}]}}{second:{name:\"second name\",valid:true,children:[{path:\"path3\",color:\"yellow\"}{path:\"path4\",color:\"magenta\"}]}}]");
+    }
+
+    @Test
+    public void testPaths3() {
+        NElement p = memExample();
         testSelectorHelper(p, "*", "[{first:{name:\"first name\",valid:true,children:[{path:\"path1\",color:\"red\"}{path:\"path2\",color:\"green\"}]}}{second:{name:\"second name\",valid:true,children:[{path:\"path3\",color:\"yellow\"}{path:\"path4\",color:\"magenta\"}]}}]");
+    }
+
+    @Test
+    public void testPaths4() {
+        NElement p = memExample();
         testSelectorHelper(p, ".*.name", "[\"first name\",\"second name\"]");
+    }
+
+    @Test
+    public void testPaths5() {
+        NElement p = memExample();
         testSelectorHelper(p, "..name", "[\"first name\",\"second name\"]");
+    }
+
+    @Test
+    public void testPaths6() {
+        NElement p = memExample();
         testSelectorHelper(p, "*.*.name", "[\"first name\",\"second name\"]");
     }
 
     private void testSelectorHelper(NElement p, String path, String expected) {
         TestUtils.println("CHECKING : '" + path + "'");
         List<NElement> filtered1 = p.filter(path);
-        String sresult = NElementWriter.ofTson().setFormatter(NElementFormatter.ofStable()).formatPlain(filtered1);
+        String sresult = NElementWriter.ofTson().formatter(NElementFormatter.ofStable()).formatPlain(filtered1);
         TestUtils.println("EXPECTED  : " + expected);
         TestUtils.println("FOUND     : " + sresult);
         Assertions.assertEquals(expected, sresult);
     }
 
     @Test
-    public void testIndestructibleObjects() {
+    public void testIndestructibleObjects1() {
+        NText styledText = NText.ofStyled("Hello", NTextStyle.success());
+        //create a composite object with a styled element
+        Map<String, Object> h = new HashMap<>();
+        h.put("a", "13");
+        h.put("b", styledText);
+        NElement q;
+        NElement expected;
+
+        {
+            //styled element are destructed to strings
+            q = NElement.of(h);
+            expected = NElement.ofObjectBuilder()
+                    .set("a", "13")
+                    .set("b", NElement.ofCustom(styledText)).build();
+            Assertions.assertEquals(expected, q);
+        }
+
+
+    }
+
+    @Test
+    public void testIndestructibleObjects2() {
         NText styledText = NText.ofStyled("Hello", NTextStyle.success());
         NElements e = NElements.of();
 
@@ -239,40 +271,65 @@ public class ElementTest {
         Map<String, Object> h = new HashMap<>();
         h.put("a", "13");
         h.put("b", styledText);
-
-        //styled element are destructed to strings
-        NElement q = e.toElement(h);
-        NElement expected = NElement.ofObjectBuilder()
-                .set("a", "13")
-                .set("b", NElement.ofCustom(styledText)).build();
-        Assertions.assertEquals(expected, q);
+        NElement q;
+        NElement expected;
 
 
-        //prevent styled element to be destructed
-        e.mapperStore()
-                .removeAllSimpleTypesFilters()
-                .addSimpleTypesFilter(c -> NTextStyled.class.isAssignableFrom((Class<?>) c));
-        q = e.toElement(h);
-        expected = NElement.ofObjectBuilder()
-                .set("a", "13")
-                .set("b",
-                        NElement.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
-                ).build();
-        Assertions.assertEquals(expected, q);
+        {
+            //prevent styled element to be destructed
+            e.mapperStore()
+                    .removeAllSimpleTypesFilters()
+                    .addSimpleTypesFilter(c -> NTextStyled.class.isAssignableFrom((Class<?>) c));
+            q = e.toElement(h);
+            expected = NElement.ofObjectBuilder()
+                    .set("a", "13")
+                    .set("b",
+                            NElement.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
+                    ).build();
+            Assertions.assertEquals(expected, q);
+        }
 
-        //destruct custom elements
-        e.mapperStore().removeAllSimpleTypesFilters();
-        NObjectElement b = NElement.ofObjectBuilder()
-                .set("a", "13")
-                .set("b",
-                        NElement.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
-                ).build();
 
-        q = e.toElement(b);
-        expected = NElement.ofObjectBuilder()
-                .set("a", "13")
-                .set("b", "Hello").build();
-        Assertions.assertEquals(expected, q);
     }
+  @Test
+    public void testIndestructibleObjects3() {
+        NText styledText = NText.ofStyled("Hello", NTextStyle.success());
+        NElements e = NElements.of();
+
+        //create a composite object with a styled element
+        Map<String, Object> h = new HashMap<>();
+        h.put("a", "13");
+        h.put("b", styledText);
+        NElement q;
+        NElement expected;
+        {
+            //destruct custom elements
+            e.mapperStore().removeAllSimpleTypesFilters();
+            NObjectElement b = NElement.ofObjectBuilder()
+                    .set("a", "13")
+                    .set("b",
+                            NElement.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
+                    ).build();
+            e.setNtf(false);
+            q = e.toElement(b);
+            q=q.transform(new NElementTransform() {
+                @Override
+                public List<NElement> preTransform(NElementTransformContext context) {
+                    NElement ee = context.element();
+                    if(ee instanceof NCustomElement){
+                        Object v = ((NCustomElement) ee).value();
+                        ee=e.toElement(v);
+                    }
+                    return Collections.singletonList(ee);
+                }
+            }).get(0);
+            expected = NElement.ofObjectBuilder()
+                    .set("a", "13")
+                    .set("b", "Hello").build();
+            Assertions.assertEquals(expected, q);
+        }
+    }
+
+
 
 }

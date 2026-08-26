@@ -46,6 +46,13 @@ public class NAlreadyInstalledException extends NInstallationException {
      * @param id nuts id
      */
     public NAlreadyInstalledException(NId id) {
+      /**
+       * This.
+       *
+       * @param id id
+       * @param null null
+       * @param null null
+       */
         this(id, null, null);
     }
 
@@ -57,6 +64,13 @@ public class NAlreadyInstalledException extends NInstallationException {
      * @param cause exception
      */
     public NAlreadyInstalledException(NId id, NMsg msg, Exception cause) {
+      /**
+       * Super.
+       *
+       * @param id id
+       * @param msg msg
+       * @param cause cause
+       */
         super(id, msg == null ? NMsg.ofC("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
     }
 

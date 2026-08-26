@@ -15,12 +15,12 @@ public class NRateLimitBucketRule implements NRateLimitRule {
     private Instant lastRefill;
 
     public NRateLimitBucketRule(NRateLimitRuleModel model) {
-        this.id = model.getId();
-        this.capacity = model.getCapacity();
-        this.available = (int)model.getAvailable();
+        this.id = model.id();
+        this.capacity = model.capacity();
+        this.available = (int)model.available();
 
-        this.duration = model.getDuration() == 0 ? null : Duration.ofMillis(model.getDuration());
-        this.lastRefill = model.getLastRefill() == 0 ? null : Instant.ofEpochMilli(model.getLastRefill());
+        this.duration = model.duration() == 0 ? null : Duration.ofMillis(model.duration());
+        this.lastRefill = model.lastRefill() == 0 ? null : Instant.ofEpochMilli(model.lastRefill());
     }
 
     @Override

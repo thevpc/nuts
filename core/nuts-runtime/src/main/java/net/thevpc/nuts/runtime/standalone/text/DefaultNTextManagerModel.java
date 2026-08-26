@@ -30,19 +30,18 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.json.DefaultJsonElementFormat;
 import net.thevpc.nuts.runtime.standalone.format.tson.DefaultTsonElementFormat;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
-import net.thevpc.nuts.runtime.standalone.text.theme.DefaultNTextFormatTheme;
-import net.thevpc.nuts.runtime.standalone.text.theme.NTextFormatPropertiesTheme;
-import net.thevpc.nuts.runtime.standalone.text.theme.NTextFormatThemeWrapper;
+import net.thevpc.nuts.runtime.standalone.text.theme.DefaultNTextTheme;
+import net.thevpc.nuts.runtime.standalone.text.theme.NTextPropertiesTheme;
+import net.thevpc.nuts.runtime.standalone.text.theme.NTextThemeWrapper;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultXmlNElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -69,14 +68,14 @@ public class DefaultNTextManagerModel {
     private final Map<String, NCodeHighlighter> _cachedHighlighters = new HashMap<>();
     private String styleThemeName;
     //    private NTextFormatTheme styleTheme;
-    private NTextFormatTheme defaultTheme;
+    private NTextTheme defaultTheme;
     private NElementFactoryService elementFactoryService;
     private NElementStreamFormat jsonMan;
     private NElementStreamFormat yamlMan;
     private NElementStreamFormat xmlMan;
     private NElementStreamFormat tsonMan;
-    private Map<String, NTextFormatTheme> cachedThemes = new HashMap<>();
-    public NTexts defaultNTexts;
+    private Map<String, NTextTheme> cachedThemes = new HashMap<>();
+    public final Map<String, NMsgCustomFormatter> customFormatters = new HashMap<>();
 
     public DefaultNTextManagerModel(NWorkspace workspace) {
         this.workspace = workspace;
@@ -85,7 +84,7 @@ public class DefaultNTextManagerModel {
     public void loadExtensions() {
         List<NCodeHighlighter> all = NExtensions.of().createAllSupported(NCodeHighlighter.class, null);
         for (NCodeHighlighter h : all) {
-            highlighters.put(h.getId().toLowerCase(), h);
+            highlighters.put(h.id().toLowerCase(), h);
         }
         try {
             try (BufferedReader reader = new BufferedReader(
@@ -117,24 +116,24 @@ public class DefaultNTextManagerModel {
     }
 
 
-    public NTextFormatTheme getDefaultTheme() {
+    public NTextTheme getDefaultTheme() {
         if (defaultTheme == null) {
-            if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
+            if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
                 //dark blue and red are very ugly under windows, replace them with green tones !
-                defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
+                defaultTheme = new NTextThemeWrapper(new NTextPropertiesTheme("grass", null, workspace));
             } else {
-                defaultTheme = new DefaultNTextFormatTheme();
+                defaultTheme = new DefaultNTextTheme();
             }
         }
         return defaultTheme;
     }
 
-    public NTextFormatTheme loadTheme(String y) {
-        y = NStringUtils.trim(y);
+    public NTextTheme loadTheme(String y) {
+        y = NStringUtils.strip(y);
         if (NBlankable.isBlank(y)) {
             y = "default";
         }
-        NTextFormatTheme t = cachedThemes.get(y);
+        NTextTheme t = cachedThemes.get(y);
         if (t != null) {
             return t;
         }
@@ -144,20 +143,20 @@ public class DefaultNTextManagerModel {
             cachedThemes.put(y, t);
             return t;
         } else {
-            t = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme(y, null, workspace));
+            t = new NTextThemeWrapper(new NTextPropertiesTheme(y, null, workspace));
             cachedThemes.put(y, t);
             return t;
         }
     }
 
-    public NOptional<NTextFormatTheme> getTheme(String name) {
+    public NOptional<NTextTheme> getTheme(String name) {
         if (NBlankable.isBlank(name)) {
             return NOptional.ofNamedEmpty(NMsg.ofC("theme"));
         }
         if (NBlankable.isBlank(name)) {
             if (styleThemeName == null) {
                 NBootOptions bootOptions = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
-                styleThemeName = bootOptions.getTheme().orNull();
+                styleThemeName = bootOptions.theme().orNull();
             }
             name = styleThemeName;
             if (NBlankable.isBlank(name)) {
@@ -171,25 +170,25 @@ public class DefaultNTextManagerModel {
         }
     }
 
-    public NTextFormatTheme getTheme() {
+    public NTextTheme getTheme() {
         return getTheme("").orElse(getDefaultTheme());
     }
 
-    public void setTheme(NTextFormatTheme styleTheme) {
+    public void setTheme(NTextTheme styleTheme) {
         if (styleTheme != null) {
-            cachedThemes.put(styleTheme.getName(), styleTheme);
-            styleThemeName = styleTheme.getName();
+            cachedThemes.put(styleTheme.name(), styleTheme);
+            styleThemeName = styleTheme.name();
         } else {
             styleThemeName = "default";
         }
     }
 
     public void setTheme(String styleThemeName) {
-        this.styleThemeName = loadTheme(styleThemeName).getName();
+        this.styleThemeName = loadTheme(styleThemeName).name();
     }
 
     public NCodeHighlighter getCodeHighlighter(String highlighterId) {
-        String lc = NStringUtils.trim(highlighterId).toLowerCase();
+        String lc = NStringUtils.strip(highlighterId).toLowerCase();
         NCodeHighlighter old = _cachedHighlighters.get(lc);
         if (old != null) {
             return old;
@@ -220,7 +219,7 @@ public class DefaultNTextManagerModel {
             }
         }
         if ("system".equals(lc)) {
-            NShellFamily shellFamily = NEnv.of().getShellFamily();
+            NShellFamily shellFamily = NEnv.of().shellFamily();
             h = getCodeHighlighter(shellFamily.id());
             _cachedHighlighters.put(lc, h);
             return h;
@@ -228,7 +227,7 @@ public class DefaultNTextManagerModel {
 
         if (lc.length() > 0) {
             try {
-                NTextStyle found = NTextStyle.parse(NStringUtils.trim(highlighterId)).orNull();
+                NTextStyle found = NTextStyle.parse(NStringUtils.strip(highlighterId)).orNull();
                 if (found != null) {
                     h = new CustomStyleCodeHighlighter(found);
                     _cachedHighlighters.put(lc, h);
@@ -243,7 +242,7 @@ public class DefaultNTextManagerModel {
         if (h != null) {
             return h;
         }
-        throw new NIllegalArgumentException(NMsg.ofPlain("not found plain highlighter"));
+        throw new NIllegalArgumentException(NMsg.ofP("not found plain highlighter"));
     }
 
     private String expandAlias(String ss) {
@@ -262,7 +261,7 @@ public class DefaultNTextManagerModel {
 
 
     public void addCodeHighlighter(NCodeHighlighter format) {
-        highlighters.put(format.getId(), format);
+        highlighters.put(format.id(), format);
     }
 
     public void removeCodeHighlighter(String id) {

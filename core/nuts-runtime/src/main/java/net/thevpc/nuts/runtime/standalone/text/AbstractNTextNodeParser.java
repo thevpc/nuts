@@ -70,7 +70,7 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
     @Override
     public NText parse(NInputSource in) {
         NTextNodeCollector doc = new NTextNodeCollector();
-        try (InputStream is = in.getInputStream()) {
+        try (InputStream is = in.inputStream()) {
             parse(is, doc);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

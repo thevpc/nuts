@@ -39,6 +39,11 @@ import java.util.function.Predicate;
  * @since 0.5.4
  */
 public interface NExecWriter extends NObjectWriter {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NExecWriter of() {
        return NExtensions.of(NExecWriter.class);
     }
@@ -56,7 +61,7 @@ public interface NExecWriter extends NObjectWriter {
      * @param redirectInput new value
      * @return {@code this} instance
      */
-    NExecWriter setRedirectInput(boolean redirectInput);
+    NExecWriter redirectInput(boolean redirectInput);
 
     /**
      * true if output redirection is displayed
@@ -71,7 +76,7 @@ public interface NExecWriter extends NObjectWriter {
      * @param redirectOutput new value
      * @return {@code this} instance
      */
-    NExecWriter setRedirectOutput(boolean redirectOutput);
+    NExecWriter redirectOutput(boolean redirectOutput);
 
     /**
      * true if error redirection is displayed
@@ -86,14 +91,14 @@ public interface NExecWriter extends NObjectWriter {
      * @param redirectError new value
      * @return {@code this} instance
      */
-    NExecWriter setRedirectError(boolean redirectError);
+    NExecWriter redirectError(boolean redirectError);
 
     /**
      * return argument filter
      *
      * @return argument filter
      */
-    Predicate<ArgEntry> getArgumentFilter();
+    Predicate<ArgEntry> argumentFilter();
 
     /**
      * set arg filter
@@ -101,14 +106,14 @@ public interface NExecWriter extends NObjectWriter {
      * @param filter arg filter
      * @return {@code this} instance
      */
-    NExecWriter setArgumentFilter(Predicate<ArgEntry> filter);
+    NExecWriter argumentFilter(Predicate<ArgEntry> filter);
 
     /**
      * return argument replacer
      *
      * @return argument replacer
      */
-    Function<ArgEntry, String> getArgumentReplacer();
+    Function<ArgEntry, String> argumentReplacer();
 
     /**
      * set arg replacer
@@ -116,14 +121,14 @@ public interface NExecWriter extends NObjectWriter {
      * @param replacer arg replacer
      * @return {@code this} instance
      */
-    NExecWriter setArgumentReplacer(Function<ArgEntry, String> replacer);
+    NExecWriter argumentReplacer(Function<ArgEntry, String> replacer);
 
     /**
      * return env filter
      *
      * @return env filter
      */
-    Predicate<EnvEntry> getEnvFilter();
+    Predicate<EnvEntry> envFilter();
 
     /**
      * set env filter
@@ -131,14 +136,14 @@ public interface NExecWriter extends NObjectWriter {
      * @param filter env filter
      * @return {@code this} instance
      */
-    NExecWriter setEnvFilter(Predicate<EnvEntry> filter);
+    NExecWriter envFilter(Predicate<EnvEntry> filter);
 
     /**
      * return env replacer
      *
      * @return env replacer
      */
-    Function<EnvEntry, String> getEnvReplacer();
+    Function<EnvEntry, String> envReplacer();
 
     /**
      * set env replacer
@@ -146,10 +151,16 @@ public interface NExecWriter extends NObjectWriter {
      * @param replacer env replacer
      * @return {@code this} instance
      */
-    NExecWriter setEnvReplacer(Function<EnvEntry, String> replacer);
+    NExecWriter envReplacer(Function<EnvEntry, String> replacer);
 
 
-    NExecWriter setNtf(boolean ntf);
+    /**
+     * Ntf.
+     *
+     * @param ntf ntf
+     * @return ntf result
+     */
+    NExecWriter ntf(boolean ntf);
 
     /**
      * env entry
@@ -162,14 +173,14 @@ public interface NExecWriter extends NObjectWriter {
          *
          * @return env name
          */
-        String getName();
+        String name();
 
         /**
          * env value
          *
          * @return env value
          */
-        String getValue();
+        String value();
     }
 
     /**
@@ -183,13 +194,13 @@ public interface NExecWriter extends NObjectWriter {
          *
          * @return argument index
          */
-        int getIndex();
+        int index();
 
         /**
          * argument value
          *
          * @return argument value
          */
-        String getValue();
+        String value();
     }
 }

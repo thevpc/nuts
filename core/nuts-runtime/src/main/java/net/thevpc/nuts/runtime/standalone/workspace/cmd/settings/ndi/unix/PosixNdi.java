@@ -1,0 +1,382 @@
+package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
+
+
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.platform.NShellFamily;
+import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptInfo;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class PosixNdi extends BaseSystemNdi {
+
+    public PosixNdi() {
+        super();
+    }
+
+    protected NShellFamily[] getShellGroups() {
+        Set<NShellFamily> all = new LinkedHashSet<>(NEnv.of().shellFamilies());
+//        all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.BASH, NShellFamily.FISH, NShellFamily.ZSH));
+        return all.toArray(new NShellFamily[0]);
+    }
+
+    public boolean isShortcutFileNameUserFriendly() {
+        return false;
+    }
+
+    @Override
+    public String createNutsScriptContent(NId fnutsId, NdiScriptOptions options, NShellFamily shellFamily) {
+        StringBuilder command = new StringBuilder();
+        command.append(getExecFileName("nuts", shellFamily)).append(" ").append(
+                NShellHelper.of(shellFamily).varRef("NUTS_OPTIONS")).append(" ");
+        if (options.getLauncher().nutsOptions() != null) {
+            for (String no : options.getLauncher().nutsOptions()) {
+                command.append(" ").append(no);
+            }
+        }
+        command.append(" \"").append(fnutsId).append("\"");
+        command.append(" \"$@\"");
+        return command.toString();
+    }
+
+
+
+    public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
+        NSession session = NSession.of();
+        if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
+            if (session.isPlainTrace()) {
+//                NOut.println(NMsg.ofC("%s scripts to point to current workspace : ",
+//                        session.isYes() ?
+//                                factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
+//                                factory.ofStyled("force updating", NTextStyle.warn())
+//                ));
+//                List<String> sortedNames = Arrays.stream(updatedPaths).map(x->x.getPath().name()).sorted().collect(Collectors.toList());
+//                int maxPerLine = 5; // adjust for readability
+//                for (int i = 0; i < sortedNames.size(); i += maxPerLine) {
+//                    List<String> sublist = sortedNames.subList(i, Math.min(i + maxPerLine, sortedNames.size()));
+//                    NOut.print("\t");
+//                    NOut.println(
+//                            factory.ofBuilder()
+//                                    .appendJoined(", ", sublist.stream()
+//                                            .map(name -> factory.ofStyled(name, NTextStyle.path()))
+//                                            .collect(Collectors.toList()))
+//                    );
+//                }
+                NLog.of(PosixNdi.class)
+                        .log(NMsg.ofC("%s scripts to point to current workspace : %s",
+                                session.isYes() ?
+                                        NText.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
+                                        NText.ofStyled("force updating", NTextStyle.warn()),
+                                Arrays.stream(updatedPaths).map(x -> x.getPath().name()).sorted().collect(Collectors.toList())
+                        ).asConfig());
+            }
+            final String sysRcName = NShellHelper.of(NEnv.of().shellFamily()).getSysRcName();
+            NIn.ask()
+                    .forBoolean(NMsg.ofC(
+                            "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
+                                    + "Please type %s if you agree, %s if you need more explanation or %s to cancel updates.",
+                            NText.ofStyled(". ~/" + sysRcName, NTextStyle.path()),
+                            NText.ofStyled("ok", NTextStyle.success()),
+                            NText.ofStyled("why", NTextStyle.warn()),
+                            NText.ofStyled("cancel!", NTextStyle.comments())
+                    ))
+                    .hintMessage(NMsg.ofP("you must enter your confirmation"))
+                    .sparser(new NAskParser<Boolean>() {
+                        @Override
+                        public Boolean parse(NAskParseContext<Boolean> context) {
+                            Object response = context.response();
+                            NAsk<Boolean> question = context.question();
+                            Boolean defaultValue = question.defaultValue();
+                            if (response instanceof Boolean) {
+                                return (Boolean) response;
+                            }
+                            if (response == null || ((response instanceof String) && response.toString().length() == 0)) {
+                                response = defaultValue;
+                            }
+                            if (response == null) {
+                                throw new NValidationException(NMsg.ofP("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                            }
+                            String r = response.toString();
+                            if ("ok".equalsIgnoreCase(r)) {
+                                return true;
+                            }
+                            if ("why".equalsIgnoreCase(r)) {
+                                NPrintStream out = session.out();
+                                out.println(NMsg.ofC("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.", NText.ofStyled(sysRcName, NTextStyle.path())));
+                                out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
+                                out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");
+                                out.println(NMsg.ofC("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :", NText.ofStyled(sysRcName, NTextStyle.path())));
+                                out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
+                                out.println(NMsg.ofC(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)", NText.ofStyled(". ~/" + sysRcName, NTextStyle.path())));
+                                throw new NValidationException(NMsg.ofP("Try again..."));
+                            } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
+                                throw new NCancelException();
+                            } else {
+                                throw new NValidationException(NMsg.ofP("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                            }
+                        }
+                    })
+                    .value();
+
+        }
+    }
+
+    @Override
+    public String getExecFileName(String name, NShellFamily shellFamily) {
+        return name;
+    }
+
+    @Override
+    protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
+        return new PosixFreeDesktopEntryWriter(NPath.of(NEnv.of().desktopPath()));
+    }
+
+
+    public String getTemplateName(String name, NShellFamily shellFamily) {
+        String n = "template-" + name;
+        switch (shellFamily) {
+            case SH:
+            case BASH:
+            case CSH:
+            case ZSH:
+            case KSH:
+            case FISH: {
+                return n + "/" + n + "."+shellFamily.id();
+            }
+        }
+        return n + "/" + n + ".sh";
+    }
+
+
+    protected int resolveIconExtensionPriority(String extension) {
+        extension = extension.toLowerCase();
+        switch (extension) {
+            case "svg":
+                return 10;
+            case "png":
+                return 8;
+            case "jpg":
+                return 6;
+            case "jpeg":
+                return 5;
+            case "gif":
+                return 4;
+            case "ico":
+                return 3;
+        }
+        return -1;
+    }
+
+    public NdiScriptInfo[] getNutsTerm(NdiScriptOptions options) {
+//        return Arrays.stream(getShellGroups())
+//                .map(x -> getNutsTerm(options, x))
+//                .filter(Objects::nonNull)
+//                .toArray(NdiScriptInfo[]::new);
+        return Arrays.stream(new NShellFamily[]{NShellFamily.SH})
+                .map(x -> getNutsTerm(options, x))
+                .filter(Objects::nonNull)
+                .toArray(NdiScriptInfo[]::new);
+
+    }
+
+    public NdiScriptInfo getNutsTerm(NdiScriptOptions options, NShellFamily shellFamily) {
+        switch (shellFamily) {
+            case CSH: // not supported yet
+            case KSH:
+                return null;
+            case SH:
+            case BASH:
+            case ZSH:
+            case FISH: {
+                return new NdiScriptInfo() {
+                    @Override
+                    public NPath path() {
+                        return options.resolveBinFolder().resolve(getExecFileName("nuts-term", shellFamily));
+                    }
+
+                    @Override
+                    public PathInfo create() {
+                        return scriptBuilderTemplate("nuts-term", shellFamily, "nuts-term", options.resolveNutsApiId(), options)
+                                .setPath(path())
+                                .build();
+                    }
+                };
+            }
+        }
+        return null;
+    }
+
+
+
+    public NdiScriptInfo getIncludeNutsEnv(NdiScriptOptions options, NShellFamily shellFamily) {
+        String ext = shellFamily.id();
+        if (ext != null) {
+            String finalExt = ext;
+            return new NdiScriptInfo() {
+                @Override
+                public NPath path() {
+                    return options.resolveIncFolder().resolve(".nuts-env." + finalExt);
+                }
+
+                @Override
+                public PathInfo create() {
+                    return scriptBuilderTemplate("nuts-env", shellFamily, "nuts-env", options.resolveNutsApiId(), options)
+                            .setPath(path())
+                            .build();
+                }
+            };
+        }
+        return null;
+    }
+
+    @Override
+    public NdiScriptInfo getIncludeNutsCompletion(NdiScriptOptions options, NShellFamily shellFamily) {
+        String ext = null;
+        switch (shellFamily) {
+            // no completion in sh
+            case SH: // not supported
+            case CSH: // not supported
+            case KSH: // not supported
+                return null;
+            case ZSH:
+            case BASH:
+            case FISH:
+            {
+                ext = shellFamily.id(); // reuse
+                break;
+            }
+            default: {
+                return null;
+            }
+        }
+        if (ext != null) {
+            String finalExt = ext;
+            return new NdiScriptInfo() {
+                @Override
+                public NPath path() {
+                    return options.resolveIncFolder().resolve(".nuts-complete." + finalExt);
+                }
+
+                @Override
+                public PathInfo create() {
+                    return scriptBuilderTemplate("nuts-complete", shellFamily, "nuts-complete", options.resolveNutsApiId(), options)
+                            .setPath(path())
+                            .build();
+                }
+            };
+        }
+        return null;
+    }
+
+    public NdiScriptInfo getIncludeNutsTermInit(NdiScriptOptions options, NShellFamily shellFamily) {
+        switch (shellFamily) {
+            // no completion in sh
+            case SH:
+            case ZSH:
+            case BASH:
+            case FISH:
+            {
+                break;
+            }
+            case CSH: // not supported yet
+            case KSH: // not supported yet
+            default: {
+                return null;
+            }
+        }
+        String ext = shellFamily.id();
+        if (ext!=null) {
+            return
+                    new NdiScriptInfo() {
+                        @Override
+                        public NPath path() {
+                            return options.resolveIncFolder().resolve(".nuts-term-init."+ext);
+                        }
+
+                        @Override
+                        public PathInfo create() {
+                            return scriptBuilderTemplate("nuts-term-init", shellFamily, "nuts-term-init", options.resolveNutsApiId(), options)
+                                    .setPath(path())
+                                    .build();
+                        }
+                    }
+                    ;
+        }
+        return null;
+    }
+
+    public NdiScriptInfo getIncludeNutsInit(NdiScriptOptions options, NShellFamily shellFamily) {
+        switch (shellFamily){
+            case  SH:
+            case  BASH:
+            case  CSH:
+            case  ZSH:
+            case  KSH:
+            case  FISH:
+                break;
+            default:
+                return null;
+        }
+        String ext = shellFamily.id();
+        if (ext!=null) {
+            return new NdiScriptInfo() {
+                @Override
+                public NPath path() {
+                    return options.resolveIncFolder().resolve(".nuts-init."+ ext);
+                }
+
+                @Override
+                public PathInfo create() {
+                    NPath apiConfigFile = path();
+                    return scriptBuilderTemplate("nuts-init", shellFamily, "nuts-init", options.resolveNutsApiId(), options)
+                            .setPath(apiConfigFile)
+                            .buildAddLine(PosixNdi.this);
+                }
+            };
+        }
+        return null;
+    }
+
+    public NShellFamily getPreferredBinScriptFamily() {
+        Set<NShellFamily> shellGroupsSet = NEnv.of().shellFamilies();
+        NShellFamily[] shellGroupsArr = shellGroupsSet.toArray(new NShellFamily[0]);
+        NShellFamily expected;
+        switch (NEnv.of().osFamily()) {
+            case LINUX: {
+                expected = NShellFamily.BASH;
+                break;
+            }
+            case UNIX: {
+                expected = NShellFamily.SH;
+                break;
+            }
+            case MACOS: {
+                expected = NShellFamily.ZSH;
+                break;
+            }
+            default: {
+                expected = NShellFamily.SH;
+                break;
+            }
+        }
+        if (shellGroupsSet.contains(expected) || shellGroupsSet.isEmpty()) {
+            return expected;
+        }
+        return shellGroupsArr[0];
+    }
+
+
+}

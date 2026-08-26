@@ -29,7 +29,7 @@ class CollectionToCollectionMappingStrategy implements NReflectMappingStrategy {
 
     @Override
     public Object mapToType(Object o, NReflectType fromType, NReflectType toType, NReflectMapper context) {
-        Collection c = (Collection) context.getRepository().getType(to).newInstance();
+        Collection c = (Collection) context.repository().getType(to).newInstance();
         copy(o, c, context);
         return c;
     }

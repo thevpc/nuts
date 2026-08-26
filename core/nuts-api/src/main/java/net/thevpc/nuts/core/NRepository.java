@@ -23,7 +23,9 @@
  */
 package net.thevpc.nuts.core;
 
-import net.thevpc.nuts.util.NObservableMapListener;
+import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.collections.NObservableMapListener;
+import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
 import java.util.Map;
@@ -42,35 +44,40 @@ public interface NRepository {
      *
      * @return repository type
      */
-    String getRepositoryType();
+    @NGetter
+    String repositoryType();
 
     /**
      * return repository unique identifier
      *
      * @return repository unique identifier
      */
-    String getUuid();
+    @NGetter
+    String uuid();
 
     /**
      * return repository name. equivalent to config().name()
      *
      * @return repository name
      */
-    String getName();
+    @NGetter
+    String name();
 
     /**
      * return parent workspace
      *
      * @return parent workspace
      */
-    NWorkspace getWorkspace();
+    @NGetter
+    NWorkspace workspace();
 
     /**
      * return parent repository or null
      *
      * @return parent repository or null
      */
-    NRepository getParentRepository();
+    @NGetter
+    NRepository parentRepository();
 
     /**
      * return repository configuration manager
@@ -100,23 +107,55 @@ public interface NRepository {
      *
      * @return Repository Listeners
      */
-    List<NRepositoryListener> getRepositoryListeners();
+    @NGetter
+    List<NRepositoryListener> repositoryListeners();
 
     /**
      * return mutable instance of user properties
      *
      * @return mutable instance of user properties
      */
-    Map<String, Object> getUserProperties();
+    @NGetter
+    Map<String, Object> userProperties();
 
+    /**
+     * Contains tag.
+     *
+     * @param tag tag
+     * @return contains tag result
+     */
     boolean containsTag(String tag);
 
-    Set<String> getTags();
+    /**
+     * Tags.
+     *
+     * @return tags result
+     */
+    @NGetter
+    Set<String> tags();
 
+    /**
+     * Checks if is preview.
+     *
+     * @return is preview result
+     */
+    @NGetter
     boolean isPreview();
 
+    /**
+     * Adds the specified tag.
+     *
+     * @param tag tag
+     * @return add tag result
+     */
     NRepository addTag(String tag);
 
+    /**
+     * Removes the specified tag.
+     *
+     * @param tag tag
+     * @return remove tag result
+     */
     NRepository removeTag(String tag);
 
     /**
@@ -140,7 +179,8 @@ public interface NRepository {
      *
      * @return array of registered user properties listeners
      */
-    List<NObservableMapListener<String, Object>> getUserPropertyListeners();
+    @NGetter
+    List<NObservableMapListener<String, Object>> userPropertyListeners();
 
     /**
      * available if local and the folder exists or remote and could ping the
@@ -148,6 +188,7 @@ public interface NRepository {
      *
      * @return true if config is enabled and runtime is enabled
      */
+    @NGetter
     boolean isAccessible();
 
     /**
@@ -165,6 +206,7 @@ public interface NRepository {
      *
      * @return true if config is enabled and runtime is enabled
      */
+    @NGetter
     boolean isSupportedDeploy();
 
     /**
@@ -181,6 +223,7 @@ public interface NRepository {
      *
      * @return true if config is enabled and runtime is enabled
      */
+    @NGetter
     boolean isEnabled();
 
     /**
@@ -189,11 +232,30 @@ public interface NRepository {
      * @param enabled runtime enabled value
      * @return {@code this} instance
      */
-    NRepository setEnabled(boolean enabled);
+    @NSetter
+    NRepository enabled(boolean enabled);
 
+    /**
+     * Checks if is remote.
+     *
+     * @return is remote result
+     */
+    @NGetter
     boolean isRemote();
 
-    String getBootConnectionString();
+    /**
+     * Boot connection string.
+     *
+     * @return boot connection string result
+     */
+    @NGetter
+    String bootConnectionString();
 
+    /**
+     * Checks if is temporary.
+     *
+     * @return is temporary result
+     */
+    @NGetter
     boolean isTemporary();
 }

@@ -5,7 +5,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import net.thevpc.nuts.ext.ssh.util.DynamicInputStream;
 import net.thevpc.nuts.ext.ssh.SshConnection;
-import net.thevpc.nuts.ext.ssh.SshConnectionAdapter;
 import net.thevpc.nuts.ext.ssh.SshConnectionPool;
 import net.thevpc.nuts.net.NConnectionString;
 
@@ -27,7 +26,7 @@ public class JCshFileInputStreamSftp extends DynamicInputStream {
 
     public JCshFileInputStreamSftp(NConnectionString path) {
         super(4096);
-        this.remotePath = path.getPath();
+        this.remotePath = path.path();
         this.closeConnection = true;
         this.connection = SshConnectionPool.of().acquire(path);
     }

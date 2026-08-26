@@ -89,7 +89,7 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     }
 
     public NWorkspaceConfigBoot loadWorkspaceConfigBoot(NPath workspacePath) {
-        if (Objects.equals(workspacePath, NWorkspace.of().getLocation())) {
+        if (Objects.equals(workspacePath, NWorkspace.of().location())) {
             return storedConfigBoot;
         }
         return null;
@@ -98,12 +98,12 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     @Override
     public NWorkspaceConfigApi loadConfigApi(NId apiId) {
         if (apiId == null) {
-            apiId = NWorkspace.of().getApiId();
+            apiId = NWorkspace.of().apiId();
         }
-        if (apiId.equals(NWorkspace.of().getApiId())) {
+        if (apiId.equals(NWorkspace.of().apiId())) {
             return storedConfigApi;
         }
-        return storedConfigApiByVersion.get(apiId.getVersion());
+        return storedConfigApiByVersion.get(apiId.version());
     }
 
     @Override
@@ -114,29 +114,29 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
     @Override
     public NWorkspaceConfigSecurity loadConfigSecurity(NId apiId) {
         if (apiId == null) {
-            apiId = NWorkspace.of().getApiId();
+            apiId = NWorkspace.of().apiId();
         }
-        if (apiId.equals(NWorkspace.of().getApiId())) {
+        if (apiId.equals(NWorkspace.of().apiId())) {
             return storedConfigSecurity;
         }
-        return storedConfigSecurityByVersion.get(apiId.getVersion());
+        return storedConfigSecurityByVersion.get(apiId.version());
     }
 
     @Override
     public NWorkspaceConfigMain loadConfigMain(NId apiId) {
         if (apiId == null) {
-            apiId = NWorkspace.of().getApiId();
+            apiId = NWorkspace.of().apiId();
         }
-        if (apiId.equals(NWorkspace.of().getApiId())) {
+        if (apiId.equals(NWorkspace.of().apiId())) {
             return storedConfigMain;
         }
-        return storedConfigMainByVersion.get(apiId.getVersion());
+        return storedConfigMainByVersion.get(apiId.version());
     }
 
 
     @Override
     public boolean saveRepoConfig(NRepository repository, NRepositoryConfig config) {
-        NRepositoryConfig old = repoConfigMap.put(repository.config().getStoreLocation().toString(), config.copy());
+        NRepositoryConfig old = repoConfigMap.put(repository.config().storeLocation().toString(), config.copy());
         return old == null;
     }
 
@@ -148,24 +148,24 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
 
     @Override
     public void saveInstallInfoConfig(InstallInfoConfig installInfoConfig) {
-        Map<NId, InstallInfoConfig> longToInstallInfoConfigMap = shortToLongToInstallInfoConfigMap.computeIfAbsent(installInfoConfig.getId().getShortId(), r -> new HashMap<>());
-        longToInstallInfoConfigMap.put(installInfoConfig.getId().getLongId(), installInfoConfig);
+        Map<NId, InstallInfoConfig> longToInstallInfoConfigMap = shortToLongToInstallInfoConfigMap.computeIfAbsent(installInfoConfig.getId().shortId(), r -> new HashMap<>());
+        longToInstallInfoConfigMap.put(installInfoConfig.getId().longId(), installInfoConfig);
     }
 
     @Override
     public InstallInfoConfig loadInstallInfoConfig(NId id) {
-        Map<NId, InstallInfoConfig> longToInstallInfoConfigMap = shortToLongToInstallInfoConfigMap.get(id.getShortId());
+        Map<NId, InstallInfoConfig> longToInstallInfoConfigMap = shortToLongToInstallInfoConfigMap.get(id.shortId());
         if (longToInstallInfoConfigMap != null) {
-            return longToInstallInfoConfigMap.get(id.getLongId());
+            return longToInstallInfoConfigMap.get(id.longId());
         }
         return null;
     }
 
     @Override
     public void deleteInstallInfoConfig(NId id) {
-        Map<NId, InstallInfoConfig> longToInstallInfoConfigMap = shortToLongToInstallInfoConfigMap.get(id.getShortId());
+        Map<NId, InstallInfoConfig> longToInstallInfoConfigMap = shortToLongToInstallInfoConfigMap.get(id.shortId());
         if (longToInstallInfoConfigMap != null) {
-            longToInstallInfoConfigMap.remove(id.getLongId());
+            longToInstallInfoConfigMap.remove(id.longId());
         }
     }
 
@@ -176,21 +176,21 @@ public class NWorkspaceStoreInMemory extends AbstractNWorkspaceStore {
 
     @Override
     public Iterator<NVersion> searchInstalledVersions(NId id) {
-        Map<NId, InstallInfoConfig> nIdInstallInfoConfigMap = shortToLongToInstallInfoConfigMap.get(id.getShortId());
+        Map<NId, InstallInfoConfig> nIdInstallInfoConfigMap = shortToLongToInstallInfoConfigMap.get(id.shortId());
         if (nIdInstallInfoConfigMap != null) {
-            return nIdInstallInfoConfigMap.values().stream().map(x -> x.getId().getVersion()).iterator();
+            return nIdInstallInfoConfigMap.values().stream().map(x -> x.getId().version()).iterator();
         }
         return Collections.emptyIterator();
     }
 
     @Override
     public String loadInstalledDefaultVersion(NId id) {
-        return shortToDefaultVersionMap.get(id.getShortId());
+        return shortToDefaultVersionMap.get(id.shortId());
     }
 
     @Override
     public void saveInstalledDefaultVersion(NId id) {
-        shortToDefaultVersionMap.put(id.getShortId(), id.getVersion().getValue());
+        shortToDefaultVersionMap.put(id.shortId(), id.version().value());
     }
 
 

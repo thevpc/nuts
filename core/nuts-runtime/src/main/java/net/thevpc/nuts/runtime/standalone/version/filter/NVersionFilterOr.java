@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NVersionFilterOr extends AbstractVersionFilter implements NExprIdFilter, NComplexExpressionString {
@@ -81,28 +82,16 @@ public class NVersionFilterOr extends AbstractVersionFilter implements NExprIdFi
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 71 * hash + Arrays.deepHashCode(this.all);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NVersionFilterOr that = (NVersionFilterOr) o;
+        return Objects.deepEquals(all, that.all);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NVersionFilterOr other = (NVersionFilterOr) obj;
-        if (!Arrays.deepEquals(this.all, other.all)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(all));
     }
 
     @Override
@@ -110,7 +99,7 @@ public class NVersionFilterOr extends AbstractVersionFilter implements NExprIdFi
         return CoreStringUtils.trueOrOr(Arrays.stream(all).map(NComplexExpressionString::toString).collect(Collectors.toList()));
     }
 
-    public List<NFilter> getSubFilters() {
+    public List<NFilter> subFilters() {
         return Arrays.asList(all);
     }
 

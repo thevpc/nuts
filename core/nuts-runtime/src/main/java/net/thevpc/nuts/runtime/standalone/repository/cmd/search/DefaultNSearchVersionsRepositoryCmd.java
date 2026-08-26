@@ -15,6 +15,7 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
@@ -26,8 +27,8 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
-import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.collections.NIteratorUtils;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.collections.NIteratorUtils;
 import net.thevpc.nuts.spi.NSearchVersionsRepositoryCmd;
 
 /**
@@ -45,23 +46,23 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
 
     @Override
     public NSearchVersionsRepositoryCmd run() {
-        NSession session = getRepo().getWorkspace().currentSession();
+        NSession session = getRepo().workspace().currentSession();
         //id = id.builder().setFaceContent().build();
-        NSecurityManager.of().checkRepositoryAllowed(getRepo().getUuid(), NConstants.Permissions.FETCH_DESC, "find-versions");
+        NSecurityManager.of().checkRepositoryAllowed(getRepo().uuid(), NConstants.Permissions.FETCH_DESC, "find-versions");
         NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
         CoreNIdUtils.checkShortId(id);
         xrepo.checkAllowedFetch(id);
         try {
             List<NIterator<? extends NId>> resultList = new ArrayList<>();
             SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(filter, NMsg.ofC("DefaultNSearchVersionsRepositoryCmd"));
-            if(getFetchMode()== NFetchMode.REMOTE) {
-                if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if(fetchMode()== NFetchMode.REMOTE) {
+                if (session.isIndexed() && xrepo.indexStore() != null && xrepo.indexStore().isEnabled()) {
                     NIterator<NId> d = null;
                     try {
-                        d = xrepo.getIndexStore().searchVersions(id);
+                        d = xrepo.indexStore().searchVersions(id);
                     } catch (NException ex) {
                         _LOG()
-                                .log(NMsg.ofC("error finding version with Indexer for %s : %s", getRepo().getName(), ex)
+                                .log(NMsg.ofC("error finding version with Indexer for %s : %s", getRepo().name(), ex)
                                         .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
                     }
                     if (d != null && filter != null) {
@@ -74,7 +75,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
                     }
                 }
             }
-            NIterator<NId> rr = xrepo.searchVersionsImpl(id, getFilter(), getFetchMode());
+            NIterator<NId> rr = xrepo.searchVersionsImpl(id, getFilter(), fetchMode());
             if (rr != null) {
                 resultList.add(rr);
             }
@@ -83,8 +84,8 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
         } catch (RuntimeException ex) {
             _LOG()
                     .log(NMsg.ofC("[%s] %s %s %s",
-                            NStringUtils.formatAlign(getFetchMode().toString(), 7, NPositionType.FIRST),
-                            NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST),
+                            NStringUtils.formatAlign(fetchMode().toString(), 7, NPositionType.FIRST),
+                            NStringUtils.formatAlign(getRepo().name(), 20, NPositionType.FIRST),
                             NStringUtils.formatAlign("Fetch versions for", 24, NPositionType.FIRST),
                             id)
                             .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));

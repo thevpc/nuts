@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
 import java.util.*;
 
@@ -76,7 +76,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     }
 
     @Override
-    public List<NText> getChildren() {
+    public List<NText> children() {
         return new ArrayList<>(children);
     }
 
@@ -191,7 +191,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
         }
         List<NText> result = new ArrayList<>();
         int pos = 0;
-        for (NText child : getChildren()) {
+        for (NText child : children()) {
             int childLen = child.filteredText().length();
             int childStart = pos;
             int childEnd = pos + childLen;
@@ -211,40 +211,12 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     }
 
     @Override
-    public List<NText> split(String separators, boolean keepSeparators) {
-        List<NText> result = new ArrayList<>();
-        NTextBuilder current = NTextBuilder.of();
-
-        for (NText child : getChildren()) {
-            List<NText> parts = child.split(separators, keepSeparators); // recursively split child
-            for (NText part : parts) {
-                String s = part.filteredText();
-                if (keepSeparators && s.length() == 1 && separators.indexOf(s.charAt(0)) >= 0) {
-                    if (current.length() > 0) {
-                        result.add(current.build());
-                        current = NTextBuilder.of();
-                    }
-                    result.add(part); // separator as own element
-                } else {
-                    current.append(part); // normal text
-                }
-            }
-        }
-
-        if (current.length() > 0) {
-            result.add(current.build());
-        }
-
-        return result;
-    }
-
-    @Override
-    public NText trimLeft() {
-        List<NText> children = new ArrayList<>(getChildren());
+    public NText stripLeft() {
+        List<NText> children = new ArrayList<>(children());
         boolean trimmed = false;
         for (int i = 0; i < children.size(); i++) {
             NText u = children.get(i);
-            NText c = u.trimLeft();
+            NText c = u.stripLeft();
             trimmed |= (u != c);
             int l = c.length();
             if (l > 0) {
@@ -262,12 +234,12 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     }
 
     @Override
-    public NText trimRight() {
-        List<NText> children = new ArrayList<>(getChildren());
+    public NText stripRight() {
+        List<NText> children = new ArrayList<>(children());
         boolean trimmed = false;
         for (int i = children.size() - 1; i >= 0; i--) {
             NText u = children.get(i);
-            NText c = u.trimRight();  // delegate to child
+            NText c = u.stripRight();  // delegate to child
             trimmed |= (u != c);
             int l = c.length();
             if (l > 0) {
@@ -284,7 +256,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     }
 
     @Override
-    public NText trim() {
-        return trimLeft().trimRight();
+    public NText strip() {
+        return stripLeft().stripRight();
     }
 }

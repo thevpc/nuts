@@ -56,43 +56,43 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
     }
 
     @Override
-    public List<String> getParseOptions() {
+    public List<String> parseOptions() {
         return parseOptions;
     }
 
     @Override
-    public InputStream getHeadStream() {
+    public InputStream headStream() {
         if (bytes == null) {
             try {
-                try (InputStream is = file.getInputStream()) {
+                try (InputStream is = file.inputStream()) {
                     bytes = NIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
                 }
             } catch (IOException e) {
                 throw new NIOException(e);
             }
         }
-        return CoreIOUtils.createBytesStream(bytes, NMsg.ofC("%s", file), file.getContentType(),
-                file.getCharset(), file.getMetaData().getKind().orNull());
+        return CoreIOUtils.createBytesStream(bytes, NMsg.ofC("%s", file), file.contentType(),
+                file.charset(), file.metaData().kind().orNull());
     }
 
     @Override
-    public InputStream getFullStream() {
-        return file.getInputStream();
+    public InputStream fullStream() {
+        return file.inputStream();
     }
 
     @Override
-    public String getFileExtension() {
+    public String fileExtension() {
         return fileExtension;
     }
 
     @Override
-    public String getMimeType() {
+    public String mimeType() {
         return mimeType;
     }
 
     @Override
-    public String getName() {
-        return file.getName();
+    public String name() {
+        return file.name();
     }
 
 }

@@ -10,8 +10,8 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 /**
  *
@@ -27,7 +27,7 @@ public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         if (cmdLine.next("list archetypes","list archetype","archetype list", "la").isPresent()) {
             if (cmdLine.isExecMode()) {
-                NOut.println(NWorkspace.of().getAvailableArchetypes());
+                NOut.println(NWorkspace.of().availableArchetypes());
             }
             return true;
         }

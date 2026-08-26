@@ -43,11 +43,11 @@ public class ExecTest {
     public void execURL() {
         TestUtils.println(NVersionWriter.of());
         NSearch q = NSearch.of()
-                .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
+                .id("net.thevpc.hl:hadra-build-tool#0.1.0")
 //                .setRepositoryFilter("maven-central")
-//                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
+//                .setRepositoryFilter(NRepositoryFilter.byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
-                .setLatest(true);
+                .latest(true);
         NOut.println(q.getResultQueryPlan());
         List<NId> nutsIds = q
                 .getResultIds()
@@ -70,17 +70,17 @@ public class ExecTest {
         }
         if(false) {
             String result = NExec.of()
-                    .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
-                            .setBot(true)
-                            .setWorkspace(NWorkspace.of().getWorkspaceLocation().resolve("temp-ws").toString())
+                    .workspaceOptions(NWorkspaceOptionsBuilder.of()
+                            .bot(true)
+                            .workspace(NWorkspace.of().workspaceLocation().resolve("temp-ws").toString())
                             .build()
                     )
                     //.addExecutorOption("--main-class=Version")
-                    .addCommand(
+                    .command(
                             "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
                             "--version"
-                    ).grabAll().failFast().getGrabbedOutString();
+                    ).grabAll().failFast(true).grabbedOut();
             TestUtils.println("Result:");
             TestUtils.println(result);
         }
@@ -88,8 +88,8 @@ public class ExecTest {
     }
 
     private void printlnNode(NDependencyTreeNode d, String s) {
-        TestUtils.println(s + d.getDependency());
-        for (NDependencyTreeNode child : d.getChildren()) {
+        TestUtils.println(s + d.dependency());
+        for (NDependencyTreeNode child : d.children()) {
             printlnNode(child, "  ");
         }
     }
@@ -99,8 +99,8 @@ public class ExecTest {
     public void testEmbeddedInfo() {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
-                .addCommand("info")
-                .getGrabbedAllString();
+                .command("info")
+                .grabbedAll();
         NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
     }
@@ -111,15 +111,15 @@ public class ExecTest {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 //there are three classes and no main-class, so need to specify the one
-                .addExecutorOption("--main-class=Version")
+                .executorOption("--main-class=Version")
 //                .addExecutorOption("--main-class=junit.runner.Version")
                 //get the command
-                .addCommand(
+                .command(
 //                        "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar"
                         "https://search.maven.org/remotecontent?filepath=net/java/sezpoz/demo/app/1.6/app-1.6.jar"
 //                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "--version"
-                ).grabAll().failFast().getGrabbedOutString();
+                ).grabAll().failFast(true).grabbedOut();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
@@ -130,8 +130,8 @@ public class ExecTest {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
                 //.addExecutorOption()
-                .addCommand(NConstants.Ids.NSH, "-c", "ls")
-                .grabAll().failFast().getGrabbedOutString();
+                .command(NConstants.Ids.NSH, "-c", "ls")
+                .grabAll().failFast(true).grabbedOut();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
@@ -142,11 +142,11 @@ public class ExecTest {
     public void testCallSpecialId() {
         TestUtils.println(NVersionWriter.of());
         String result = NExec.of()
-                .addExecutorOptions("--bot")
+                .executorOptions("--bot")
                 //.setExecutionType(NExecutionType.EMBEDDED)
-                .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
-                .addCommand("list", "-i")
-                .getGrabbedAllString();
+                .command("com.cts.nuts.enterprise.postgres:pgcli")
+                .command("list", "-i")
+                .grabbedAll();
         NOut.println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
     }
@@ -161,10 +161,10 @@ public class ExecTest {
             MemConsumer err = new MemConsumer(p.getErrorStream()).run();
             p.getOutputStream().close();
             p.waitFor();
-            System.out.println("==================OUT");
-            System.out.println(out.sb2);
-            System.out.println("==================ERR");
-            System.out.println(err.sb2);
+            TestUtils.println("==================OUT");
+            TestUtils.println(out.sb2);
+            TestUtils.println("==================ERR");
+            TestUtils.println(err.sb2);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -173,15 +173,15 @@ public class ExecTest {
     private void runUsingNuts(String... args) {
         NOut.println("================= runUsingNuts");
         NExec e = NExec.of(args)
-                .setIn(NExecInput.ofNull())
-                .setErr(NExecOutput.ofGrabMem())
-                .setOut(NExecOutput.ofGrabMem())
+                .in(NExecInput.ofNull())
+                .err(NExecOutput.ofGrabMem())
+                .out(NExecOutput.ofGrabMem())
                 .run();
-        System.out.println(e.getResultCode());
-        System.out.println("============= OUT");
-        System.out.println(e.getGrabbedOutString());
-        System.out.println("============= ERR");
-        System.out.println(e.getGrabbedErrString());
+        TestUtils.println(e.exitCode());
+        TestUtils.println("============= OUT");
+        TestUtils.println(e.grabbedOut());
+        TestUtils.println("============= ERR");
+        TestUtils.println(e.grabbedErr());
     }
 
     private void runUsingProcessBuilder2(String... args) {
@@ -197,17 +197,17 @@ public class ExecTest {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        System.out.println(e.getResult());
-        System.out.println("============= OUT");
-        System.out.println(e.getOut().getResult().readString());
+        TestUtils.println(e.getResult());
+        TestUtils.println("============= OUT");
+        System.out.println(e.getOut().result().readString());
         System.out.println("============= ERR");
-        System.out.println(e.getErr().getResult().readString());
+        System.out.println(e.getErr().result().readString());
     }
 
     @Test
     public void testExecOnWindows1() {
         TestUtils.println(NVersionWriter.of());
-        if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
+        if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
             runUsingProcessBuilder2("cmd.exe", "dir", ".");
         }
     }
@@ -216,7 +216,7 @@ public class ExecTest {
     @Test
     public void testExecOnWindows2() {
         TestUtils.println(NVersionWriter.of());
-        if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
+        if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
             runUsingRuntime("cmd.exe", "dir", ".");
         }
     }
@@ -224,7 +224,7 @@ public class ExecTest {
     @Test
     public void testExecOnWindows3() {
         TestUtils.println(NVersionWriter.of());
-        if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
+        if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
             String[] args = {
                     "powershell.exe", "-Command",
                     "Get-WmiObject Win32_Process | ForEach-Object { $o = $_.GetOwner(); $user = if ($o) { $o.User } else { 'N/A' }; $mem = Get-WmiObject Win32_ComputerSystem; $state = if ($_.ExecutionState -eq 0) { 'Running' } elseif ($_.ExecutionState -eq 2) { 'Sleeping' } else { 'Suspended' }; $start = if ($_.CreationDate) { $_.CreationDate.Substring(0, 12) } else { 'N/A' }; New-Object PSObject -Property @{ USER=$user; PID=$_.ProcessId; CPU=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); MEM=([math]::Round($_.WorkingSetSize / $mem.TotalPhysicalMemory * 100, 2)); VSZ=[int]($_.VirtualSize / 1KB); RSS=[int]($_.WorkingSetSize / 1KB); TTY='N/A'; STAT=$state; START=$start; TIME=([math]::Round(($_.KernelModeTime + $_.UserModeTime)/1e7, 2)); COMMAND=$_.CommandLine } }"
@@ -239,7 +239,7 @@ public class ExecTest {
     @Test
     public void testExecOnWindows4() {
         TestUtils.println(NVersionWriter.of());
-        if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
+        if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
             String[] args = {
                     "powershell.exe", "-Command",
                     "$mem=(Get-WmiObject Win32_ComputerSystem).TotalPhysicalMemory; Get-WmiObject Win32_Process|ForEach-Object{ $o=$_.GetOwner();$user=if($o){$o.User}else{'N/A'};$state=if($_.ExecutionState -eq 0){'Running'}elseif($_.ExecutionState -eq 2){'Sleeping'}else{'Suspended'};$start=if($_.CreationDate){$_.CreationDate.Substring(0,12)}else{'N/A'};New-Object PSObject -Property @{USER=$user;PID=$_.ProcessId;CPU=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);MEM=[math]::Round($_.WorkingSetSize/$mem*100,2);VSZ=[int]($_.VirtualSize/1KB);RSS=[int]($_.WorkingSetSize/1KB);TTY='N/A';STAT=$state;START=$start;TIME=[math]::Round(($_.KernelModeTime+$_.UserModeTime)/1e7,2);COMMAND=$_.CommandLine}}|ConvertTo-Csv -NoTypeInformation  | Out-String -Width 1000"

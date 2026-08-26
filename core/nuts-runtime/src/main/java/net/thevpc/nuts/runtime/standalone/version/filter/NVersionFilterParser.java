@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
 import net.thevpc.nuts.spi.base.AbstractVersionFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 import net.thevpc.nuts.util.NBlankable;
@@ -18,8 +19,8 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
     }
 
     @Override
-    protected NVersionFilters getTManager() {
-        return NVersionFilters.of();
+    protected NVersionFilterRPI getTManager() {
+        return NVersionFilterRPI.of();
     }
 
     protected NVersionFilter wordToPredicate(String word) {
@@ -37,7 +38,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
         }
         NVersion e = NVersion.get(s).orNull();
         if (e != null) {
-            switch (e.getValue()) {
+            switch (e.value()) {
                 case "true":
                 case "false":
                     return null;
@@ -101,15 +102,15 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
             NVersionIntervalsVersionFilter that = (NVersionIntervalsVersionFilter) o;
-            return Objects.equals(version, that.version);
+            return Objects.equals(version, that.version) && Objects.equals(versionComparator, that.versionComparator);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(version);
+            return Objects.hash(super.hashCode(), version, versionComparator);
         }
     }
 }

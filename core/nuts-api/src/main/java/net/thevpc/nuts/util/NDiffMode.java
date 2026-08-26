@@ -1,5 +1,11 @@
 package net.thevpc.nuts.util;
 
+/**
+ * NDiffMode enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NDiffMode implements NEnum{
     ADDED, REMOVED, CHANGED, UNCHANGED;
 
@@ -15,6 +21,12 @@ public enum NDiffMode implements NEnum{
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NDiffMode> parse(String value) {
         return NEnumUtils.parseEnum(value, NDiffMode.class);
     }

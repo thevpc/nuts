@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
@@ -57,15 +58,15 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         this.base = base;
         this.md = CoreIOUtils.createContentMetadata(md, base);
         if (sourceName == null) {
-            NMsg m2 = this.md.getMessage().orElse(null);
+            NMsg m2 = this.md.message().orElse(null);
             if (m2 != null) {
                 sourceName = m2;
             }
         }
         if (sourceName == null) {
-            String m2 = this.md.getName().orElse(null);
+            String m2 = this.md.name().orElse(null);
             if (m2 != null) {
-                sourceName = NMsg.ofPlain(m2);
+                sourceName = NMsg.ofP(m2);
             }
         }
         this.sourceName = sourceName;
@@ -106,7 +107,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(NMsg.ofPlain("stream is interrupted"));
+            throw new NIOException(NMsg.ofP("stream is interrupted"));
         }
     }
 
@@ -116,7 +117,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
     }
 
     @Override
-    public void interrupt() throws NInterruptException {
+    public void interrupt() throws NInterruptedException {
         this.interrupted = true;
         if (base instanceof NInterruptible) {
             ((NInterruptible) base).interrupt();
@@ -322,7 +323,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
     }
 
     @Override
-    public NContentMetadata getMetaData() {
+    public NContentMetadata metaData() {
         return md;
     }
 
@@ -333,7 +334,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
     @Override
     public String toString() {
         NMemoryPrintStream out = NPrintStream.ofMem(NTerminalMode.FILTERED);
-        NOptional<NMsg> m = getMetaData().getMessage();
+        NOptional<NMsg> m = metaData().message();
         if (m.isPresent()) {
             out.print(m.get());
         } else if (sourceName != null) {

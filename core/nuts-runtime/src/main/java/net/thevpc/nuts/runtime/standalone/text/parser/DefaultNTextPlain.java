@@ -30,14 +30,12 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NToElement;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringTokenizer;
-import java.util.stream.Stream;
 
 /**
  * Created by vpc on 5/23/17.
@@ -63,7 +61,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     }
 
     @Override
-    public String getValue() {
+    public String value() {
         return text;
     }
 
@@ -124,17 +122,7 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
 
     @Override
     public NText substring(int start, int end) {
-        return new DefaultNTextPlain(getValue().substring(start, end));
-    }
-
-    @Override
-    public List<NText> split(String separator, boolean returnSeparator) {
-        StringTokenizer st = new StringTokenizer(getValue(), separator, returnSeparator);
-        List<NText> all = new ArrayList<>();
-        while (st.hasMoreElements()) {
-            all.add(new DefaultNTextPlain(st.nextToken()));
-        }
-        return all;
+        return new DefaultNTextPlain(value().substring(start, end));
     }
 
     @Override
@@ -143,8 +131,8 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     }
 
     @Override
-    public NText trimLeft() {
-        String c = NStringUtils.trimLeft(text);
+    public NText stripLeft() {
+        String c = NStringUtils.stripLeft(text);
         if (Objects.equals(text, c)) {
             return this;
         }
@@ -152,8 +140,8 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     }
 
     @Override
-    public NText trimRight() {
-        String c = NStringUtils.trimRight(text);
+    public NText stripRight() {
+        String c = NStringUtils.stripRight(text);
         if (Objects.equals(text, c)) {
             return this;
         }
@@ -161,8 +149,8 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     }
 
     @Override
-    public NText trim() {
-        String c = NStringUtils.trim(text);
+    public NText strip() {
+        String c = NStringUtils.strip(text);
         if (Objects.equals(text, c)) {
             return this;
         }

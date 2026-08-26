@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 
 public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {
 
@@ -14,12 +14,12 @@ public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public NSystemTerminalBase getBase() {
+    public NSystemTerminalBase base() {
         return base;
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream) {
-        base.setStyles(styles, printStream);
+    public void styles(NTextStyles styles, NPrintStream printStream) {
+        base.styles(styles, printStream);
     }
 }

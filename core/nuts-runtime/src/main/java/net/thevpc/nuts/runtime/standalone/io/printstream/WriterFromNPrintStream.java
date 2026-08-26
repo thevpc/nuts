@@ -14,7 +14,7 @@ public class WriterFromNPrintStream extends Writer implements NPrintStreamAdapte
     }
 
     @Override
-    public NPrintStream getBasePrintStream() {
+    public NPrintStream basePrintStream() {
         return base;
     }
 

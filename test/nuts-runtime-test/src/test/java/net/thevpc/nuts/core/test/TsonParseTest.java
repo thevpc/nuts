@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.math.NDoubleComplex;
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public class TsonParseTest {
                 "}";
         NElement parsed = NElementReader.ofTson().read(tson);
         TestUtils.println(parsed.toString());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
 
@@ -50,7 +50,7 @@ public class TsonParseTest {
     public void test01b() {
         String tson = "a:b b";
         NElement parsed = NElementReader.ofTson().read(tson);
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class TsonParseTest {
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
         Assertions.assertEquals("/home/install", parsed.asObject().get().get("redirect").get().asStringValue().get());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class TsonParseTest {
                 "\n" +
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
-        String s = NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed);
+        String s = NElementWriter.ofTson().formatterCompact().formatPlain(parsed);
         TestUtils.println(s);
         String expected = "// load configuration from the following path. will ignore all the remaining\n" +
                 "(redirect:\"/home/install\")";
@@ -109,7 +109,7 @@ public class TsonParseTest {
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
         Assertions.assertEquals("env", parsed.asObject().get().name().get());
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class TsonParseTest {
                 "    MVN_HOME                       : \"${IDEA_HOME}/plugins/maven/lib/maven3\"\n" +
                 "}\n";
         NElement parsed = NElementReader.ofTson().read(tson);
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
 
         NObjectElement env = parsed.asNamedObject("env").get();
         NBinaryOperatorElement assign1 = env.get(0).get().asFlatExpression().get().reshape().asBinaryOperator(NOperatorSymbol.EQ).get();
@@ -149,7 +149,7 @@ public class TsonParseTest {
                 "\n" +
                 "\n";
         NElement parsed = NElementReader.ofTson().read(tson);
-        TestUtils.println(NElementWriter.ofTson().setFormatterCompact().formatPlain(parsed));
+        TestUtils.println(NElementWriter.ofTson().formatterCompact().formatPlain(parsed));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class TsonParseTest {
         NObjectElementBuilder b = b1.builder();
         String str = b1.toString();
         Assertions.assertEquals("a(b:\"b\"){c:\"c\"}", str);
-        System.out.println(str);
+        TestUtils.println(str);
         NObjectElement b2 = b1.builder().build();
         Assertions.assertEquals(b1, b2);
     }
@@ -659,7 +659,7 @@ public class TsonParseTest {
     public void testSpecial0() {
         NElement e = NElementReader.ofTson().read("(*)");
         TestUtils.println(e);
-        NUpletElement u = e.asUplet().get();
+        NTupleElement u = e.asTuple().get();
         Assertions.assertEquals(1, u.size());
         u.get(0).get().asOperatorSymbol(NOperatorSymbol.MUL).get();
     }
@@ -1125,7 +1125,7 @@ public class TsonParseTest {
         String s2 = e.toString();
         TestUtils.println(s2);
         Assertions.assertEquals(expected, s2);
-        Assertions.assertEquals(3, e.asUplet().get().size());
+        Assertions.assertEquals(3, e.asTuple().get().size());
     }
 
     @Test
@@ -1147,7 +1147,7 @@ public class TsonParseTest {
 
     @Test
     public void test35Simple() {
-        NElement parsed = NElement.ofUplet(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
+        NElement parsed = NElement.ofTuple(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
         String s1 = parsed.toString();
         TestUtils.println(s1);
         Assertions.assertEquals("(a,2,3)", s1);
@@ -1155,7 +1155,7 @@ public class TsonParseTest {
 
     @Test
     public void test35Pretty() {
-        NElement parsed = NElement.ofUplet(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
+        NElement parsed = NElement.ofTuple(NElement.ofName("a"),NElement.ofNumber(2),NElement.ofNumber(3));
         String s2 = parsed.toPrettyString();
         TestUtils.println(s2);
         Assertions.assertEquals("(a, 2, 3)", s2);
@@ -1163,7 +1163,7 @@ public class TsonParseTest {
 
     @Test
     public void test36Simple() {
-        NElement parsed = NElement.ofUpletBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
+        NElement parsed = NElement.ofTupleBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
                 .addAnnotation("test",NElement.ofNumber(2),NElement.ofNumber(3))
                 .build();
         String s1 = parsed.toString();
@@ -1172,7 +1172,7 @@ public class TsonParseTest {
     }
     @Test
     public void test36Pretty() {
-        NElement parsed = NElement.ofUpletBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
+        NElement parsed = NElement.ofTupleBuilder().add(NElement.ofName("a")).add(NElement.ofNumber(2))
                 .addAnnotation("test",NElement.ofNumber(2),NElement.ofNumber(3))
                 .build();
         String s2 = parsed.toPrettyString();

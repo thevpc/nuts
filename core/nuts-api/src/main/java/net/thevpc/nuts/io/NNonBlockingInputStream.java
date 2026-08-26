@@ -32,10 +32,22 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * NNonBlockingInputStream interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NNonBlockingInputStream extends Closeable {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param base base
+     * @return of result
+     */
     static NNonBlockingInputStream of(InputStream base) {
-        return NIORPI.of().ofNonBlockingInputStream(base);
+        return NIORPI.of().createNonBlockingInputStream(base);
     }
 
     /**
@@ -158,12 +170,46 @@ public interface NNonBlockingInputStream extends Closeable {
      */
     int read(byte b[], int off, int len) throws IOException;
 
+    /**
+     * Read non blocking.
+     *
+     * @param b b
+     * @return read non blocking result
+     * @throws IOException if execution fails
+     */
     int readNonBlocking(byte[] b) throws IOException;
 
+    /**
+     * Read non blocking.
+     *
+     * @param b b
+     * @param off off
+     * @param len len
+     * @return read non blocking result
+     * @throws IOException if execution fails
+     */
     int readNonBlocking(byte[] b, int off, int len) throws IOException;
 
+    /**
+     * Read non blocking.
+     *
+     * @param b b
+     * @param timeout timeout
+     * @return read non blocking result
+     * @throws IOException if execution fails
+     */
     int readNonBlocking(byte[] b, long timeout) throws IOException;
 
+    /**
+     * Read non blocking.
+     *
+     * @param b[] b[]
+     * @param off off
+     * @param len len
+     * @param timeout timeout
+     * @return read non blocking result
+     * @throws IOException if execution fails
+     */
     int readNonBlocking(byte b[], int off, int len, long timeout) throws IOException;
 
     /**
@@ -326,7 +372,15 @@ public interface NNonBlockingInputStream extends Closeable {
      */
     boolean markSupported();
 
+    /**
+     * Checks if has more bytes.
+     *
+     * @return has more bytes result
+     */
     boolean hasMoreBytes();
 
+    /**
+     * No more bytes.
+     */
     void noMoreBytes();
 }

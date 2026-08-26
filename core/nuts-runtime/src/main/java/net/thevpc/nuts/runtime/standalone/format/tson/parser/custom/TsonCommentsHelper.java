@@ -31,7 +31,7 @@ public class TsonCommentsHelper {
         for (String raw : raws) {
             allLines.addAll(NStringUtils.splitLines(raw));
         }
-        allLines.replaceAll(String::trim);
+        allLines.replaceAll(NStringUtils::strip);
         String prefix = NStringUtils.commonPrefix(allLines, TsonCommentsHelper::isValidPrefix);
         dropPrefixListInplace(allLines, prefix.length());
         return allLines;
@@ -49,8 +49,8 @@ public class TsonCommentsHelper {
 
         // Trim leading/trailing blank lines
         int start = 0, end = lines.length;
-        while (start < end && lines[start].trim().isEmpty()) start++;
-        while (end > start && lines[end - 1].trim().isEmpty()) end--;
+        while (start < end && NStringUtils.isBlank(lines[start])) start++;
+        while (end > start && NStringUtils.isBlank(lines[end - 1])) end--;
         if (start >= end) return "";
 
         // Detect if starred comment
@@ -69,7 +69,7 @@ public class TsonCommentsHelper {
         // Step 2: Compute min indent (ignoring blank lines)
         int minIndent = Integer.MAX_VALUE;
         for (String line : processedLines) {
-            if (line.trim().isEmpty()) continue;
+            if (NStringUtils.isBlank(line)) continue;
             int indent = leadingWhitespaceLength(line);
             minIndent = Math.min(minIndent, indent);
         }
@@ -89,7 +89,7 @@ public class TsonCommentsHelper {
             }
 
             // ✅ TRIM TRAILING WHITESPACE
-            normalizedLine = NStringUtils.trimRight(normalizedLine);
+            normalizedLine = NStringUtils.stripRight(normalizedLine);
 
             result.append(normalizedLine);
         }
@@ -135,7 +135,7 @@ public class TsonCommentsHelper {
         int starredCount = 0;
         int totalNonEmpty = 0;
         for (int i = start; i < end; i++) {
-            String trimmed = NStringUtils.trimLeft(lines[i]);
+            String trimmed = NStringUtils.stripLeft(lines[i]);
             if (!trimmed.isEmpty()) {
                 totalNonEmpty++;
                 if (trimmed.startsWith("*")) {

@@ -17,7 +17,7 @@ public interface NSagaCallableFactory {
      *
      * @return the current saga store
      */
-    NSagaStore getStore();
+    NSagaStore store();
 
     /**
      * Returns a new factory instance that uses the provided {@link NSagaStore}.

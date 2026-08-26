@@ -28,37 +28,37 @@ public class DefaultNRepositoryAccess implements NRepositoryAccess {
     }
 
     @Override
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
     @Override
-    public String getRepositoryUuid() {
+    public String repositoryUuid() {
         return repositoryUuid;
     }
 
     @Override
-    public String getRepositoryName() {
+    public String repositoryName() {
         return repositoryName;
     }
 
     @Override
-    public String getRemoteUserName() {
+    public String remoteUserName() {
         return remoteUserName;
     }
 
     @Override
-    public NSecureToken getRemoteCredential() {
+    public NSecureToken remoteCredential() {
         return remoteCredential;
     }
 
     @Override
-    public String getRemoteAuthType() {
+    public String remoteAuthType() {
         return remoteAuthType;
     }
 
     @Override
-    public List<String> getPermissions() {
+    public List<String> permissions() {
         return permissions;
     }
 

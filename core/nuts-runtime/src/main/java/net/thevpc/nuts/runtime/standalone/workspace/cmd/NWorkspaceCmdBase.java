@@ -10,8 +10,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspaceCmd;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.log.NLog;
 
 /**
@@ -78,7 +78,7 @@ public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWor
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        configure(skipUnsupported, NCmdLine.of(args).setCommandName(getCommandName()));
+        configure(skipUnsupported, NCmdLine.of(args).commandName(getCommandName()));
         return (T) this;
     }
 

@@ -17,23 +17,23 @@ public class DefaultNOutputStreamBuilder implements NOutputStreamBuilder {
     }
 
     @Override
-    public OutputStream getBase() {
+    public OutputStream base() {
         return base;
     }
 
     @Override
-    public NOutputStreamBuilder setBase(OutputStream base) {
+    public NOutputStreamBuilder base(OutputStream base) {
         this.base = base;
         return this;
     }
 
     @Override
-    public NContentMetadata getMetadata() {
+    public NContentMetadata metadata() {
         return metadata;
     }
 
     @Override
-    public NOutputStreamBuilder setMetadata(NContentMetadata metadata) {
+    public NOutputStreamBuilder metadata(NContentMetadata metadata) {
         this.metadata = metadata;
         return this;
     }
@@ -44,18 +44,18 @@ public class DefaultNOutputStreamBuilder implements NOutputStreamBuilder {
     }
 
     @Override
-    public NOutputStreamBuilder setCloseBase(boolean closeBase) {
+    public NOutputStreamBuilder closeBase(boolean closeBase) {
         this.closeBase = closeBase;
         return this;
     }
 
     @Override
-    public Runnable getCloseAction() {
+    public Runnable closeAction() {
         return closeAction;
     }
 
     @Override
-    public NOutputStreamBuilder setCloseAction(Runnable closeAction) {
+    public NOutputStreamBuilder closeAction(Runnable closeAction) {
         this.closeAction = closeAction;
         return this;
     }

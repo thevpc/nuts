@@ -13,29 +13,95 @@ import net.thevpc.nuts.util.NOptional;
  * @author thevpc
  */
 public interface NContentMetadata extends NBlankable {
-    NOptional<Long> getContentLength();
+    /**
+     * Content length.
+     *
+     * @return content length result
+     */
+    NOptional<Long> contentLength();
 
-    NOptional<NMsg> getMessage();
-
-
-    NOptional<String> getCharset();
-
-    NOptional<String> getContentType();
-
-    NOptional<String> getName();
-
-    NOptional<String> getKind();
-
-    NContentMetadata setKind(String userKind);
-
-    NContentMetadata setName(String name);
-
-    NContentMetadata setCharset(String name);
-
-    NContentMetadata setMessage(NMsg message);
+    /**
+     * Message.
+     *
+     * @return message result
+     */
+    NOptional<NMsg> message();
 
 
-    NContentMetadata setContentType(String contentType);
+    /**
+     * Charset.
+     *
+     * @return charset result
+     */
+    NOptional<String> charset();
 
-    NContentMetadata setContentLength(Long contentLength);
+    /**
+     * Content type.
+     *
+     * @return content type result
+     */
+    NOptional<String> contentType();
+
+    /**
+     * Name.
+     *
+     * @return name result
+     */
+    NOptional<String> name();
+
+    /**
+     * Kind.
+     *
+     * @return kind result
+     */
+    NOptional<String> kind();
+
+    /**
+     * Kind.
+     *
+     * @param userKind user kind
+     * @return kind result
+     */
+    NContentMetadata kind(String userKind);
+
+    /**
+     * Name.
+     *
+     * @param name name
+     * @return name result
+     */
+    NContentMetadata name(String name);
+
+    /**
+     * Charset.
+     *
+     * @param name name
+     * @return charset result
+     */
+    NContentMetadata charset(String name);
+
+    /**
+     * Message.
+     *
+     * @param message message
+     * @return message result
+     */
+    NContentMetadata message(NMsg message);
+
+
+    /**
+     * Content type.
+     *
+     * @param contentType content type
+     * @return content type result
+     */
+    NContentMetadata contentType(String contentType);
+
+    /**
+     * Content length.
+     *
+     * @param contentLength content length
+     * @return content length result
+     */
+    NContentMetadata contentLength(Long contentLength);
 }

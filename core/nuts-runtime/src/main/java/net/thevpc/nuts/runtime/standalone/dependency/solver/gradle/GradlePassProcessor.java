@@ -106,7 +106,7 @@ class GradlePassProcessor {
         VersionConflict existingConflict = versionConflicts.get(groupArtifact);
         
         if (existingConflict != null) {
-            String currentVersion = currentNode.dependency.toId().getVersion().getValue();
+            String currentVersion = currentNode.dependency.toId().version().value();
             
             if (!shouldReplaceVersion(existingConflict, currentVersion, currentNode.depth)) {
                 gradleSolver.doLog("Gradle: skipping older/equal version " + currentVersion + 
@@ -127,7 +127,7 @@ class GradlePassProcessor {
         
         NDependencyInfo oldDepInfo = mergedVisitedSet.find(currentNode.dependency);
         if (oldDepInfo != null) {
-            if (oldDepInfo.dependency.getVersion().equals(currentNode.dependency.getVersion())) {
+            if (oldDepInfo.dependency.version().equals(currentNode.dependency.version())) {
                 gradleSolver.doLog("Gradle: already visited " + currentNode.dependency);
                 return;
             } else {
@@ -160,7 +160,7 @@ class GradlePassProcessor {
             }
             
             NId id = currentNode.getEffectiveId();
-            String version = id.getVersion().getValue();
+            String version = id.version().value();
             
             // Register this version as chosen for future conflict resolution
             if (existingConflict == null) {
@@ -172,7 +172,7 @@ class GradlePassProcessor {
                     mergedRootNodeBuilders.add(currentNode);
                     currentNode.includedInClassPath = true;
                     List<NDependency> immediate = CoreFilterUtils.filterDependencies(id,
-                            currentNode.getEffectiveDescriptor().getDependencies(),
+                            currentNode.getEffectiveDescriptor().dependencies(),
                             gradleSolver.effDependencyFilter);
                     immediates.addAll(immediate);
                 } else {
@@ -196,7 +196,7 @@ class GradlePassProcessor {
                 currentNode.includedInClassPath = true;
             }
             
-            for (NDependency dependency : effectiveDescriptor.getDependencies()) {
+            for (NDependency dependency : effectiveDescriptor.dependencies()) {
                 if (currentNode.isAcceptableDependency(dependency)) {
                     GradleDependencyTreeNodeBuild childNode = new GradleDependencyTreeNodeBuild(gradleSolver, currentNode, dependency, null, currentNode.depth + 1);
                     currentNode.children.add(childNode);
@@ -217,7 +217,7 @@ class GradlePassProcessor {
      */
     private String getGroupArtifact(NDependency dependency) {
         NId id = dependency.toId();
-        return id.getGroupId() + ":" + id.getArtifactId();
+        return id.groupId() + ":" + id.artifactId();
     }
 
     public NDependencies run() {
@@ -314,7 +314,7 @@ class GradlePassProcessor {
         final NDependency[] nonMergedDepsList = nonMergedVisitedSet.visitedSet.values().stream().map(NDependencyInfo::getDependency)
                 .toArray(NDependency[]::new);
         return new DefaultNDependencies(
-                gradleSolver.getName(),
+                gradleSolver.name(),
                 sourceIds.toArray(new NId[0]), gradleSolver.getDependencyFilter(),
                 immediates.toArray(new NDependency[0]),
                 nonMergedDepsList,

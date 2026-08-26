@@ -24,10 +24,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.artifact.NDependencyFilters;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NRepositorySpec;
@@ -38,8 +39,8 @@ import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 /**
  * Created by vpc on 1/23/17.
@@ -51,7 +52,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "minimal";
     }
 
@@ -72,14 +73,14 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     @Override
     public void startWorkspace() {
         NWorkspace workspace = NWorkspace.of();
-        boolean initializeScripts = workspace.getBootOptions().getInitScripts().onEmpty(true).get();
-        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().onEmpty(true).get();
-        Boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
+        boolean initializeScripts = workspace.bootOptions().initScripts().onEmpty(true).get();
+        boolean initializeLaunchers = workspace.bootOptions().initLaunchers().onEmpty(true).get();
+        Boolean installCompanions = workspace.bootOptions().installCompanions().orElse(false);
 
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetch.of().setId(workspace.getApiId())
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setFailFast(false).getResultId();
+            NId api = NFetch.of().id(workspace.apiId())
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .failFast(false).getResultId();
             if (api != null) {
                 NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();
                 if (initializeScripts || initializeLaunchers) {

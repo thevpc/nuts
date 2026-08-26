@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-{{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
-
-<!-- Document Wrapper   
-=============================== -->
-<div id="main-wrapper" class="documentation-main-wrapper">
+<head>
     {{:: pageId='faq'}}
+    {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
+    <title>FAQ — Nuts Package Manager</title>
+    <!-- Doc-specific overrides -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
+</head>
+<body>
+<div id="main-wrapper" class="documentation-main-wrapper">
     {{:include $'$projectRoot/src/include/template/v1/11-header-nuts.html'}}
 
     <!-- Content
@@ -15,6 +18,9 @@
         <!-- Sidebar Navigation
         ============================ -->
         <div class="idocs-navigation bg-light">
+            <div class="nav-search">
+                <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
+            </div>
             <ul class="nav flex-column ">
                 {{:for pageLevel1,pageLevel1Index:loadPages($'$projectRoot/src/include/$pageId')}}
                 <li class="nav-item"><a class="nav-link" href="#{{pageLevel1.id}}">{{pageLevel1Index+1}} {{pageLevel1.title}}</a>
@@ -84,4 +90,5 @@
 <!-- Document Wrapper end -->
 
 {{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
+</body>
 </html>

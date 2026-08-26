@@ -1,13 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
-import net.thevpc.nuts.artifact.NDependency;
-import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
-import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.*;
@@ -48,13 +46,13 @@ public class NDependencyDEFilter extends AbstractDependencyFilter {
         if (accepted.isEmpty()) {
             return true;
         }
-        List<String> current = dependency.getCondition().getDesktopEnvironment();
+        List<String> current = dependency.condition().desktopEnvironment();
         if (current != null) {
             List<NDesktopEnvironmentFamily> currentFamilies = current.stream().map(e -> {
                 if (!e.isEmpty()) {
                     NId de = NId.get(e).orNull();
                     if (de != null) {
-                        return NDesktopEnvironmentFamily.parse(de.getArtifactId()).orNull();
+                        return NDesktopEnvironmentFamily.parse(de.artifactId()).orNull();
                     }
                 }
                 return null;
@@ -82,6 +80,20 @@ public class NDependencyDEFilter extends AbstractDependencyFilter {
 
     @Override
     public NDependencyFilter simplify() {
-        return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
+        return accepted.isEmpty() ? NDependencyFilterRPI.of().always() : this;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyDEFilter that = (NDependencyDEFilter) o;
+        return Objects.equals(accepted, that.accepted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), accepted);
     }
 }

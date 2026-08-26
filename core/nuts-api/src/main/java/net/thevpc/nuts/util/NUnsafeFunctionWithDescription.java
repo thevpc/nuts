@@ -5,11 +5,24 @@ import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Supplier;
 
+/**
+ * NUnsafeFunctionWithDescription class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 @NImmutable
 public class NUnsafeFunctionWithDescription<T, V> implements NUnsafeFunction<T, V>{
     private final NUnsafeFunction<T, V> base;
     private final Supplier<NElement> description;
 
+    /**
+     * N unsafe function with description.
+     *
+     * @param base base
+     * @param description description
+     * @return n unsafe function with description result
+     */
     public NUnsafeFunctionWithDescription(NUnsafeFunction<T, V> base, Supplier<NElement> description) {
         this.base = base;
         this.description = description;

@@ -7,9 +7,27 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.function.Supplier;
 
+/**
+ * NReservedOptionalValidValue class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NReservedOptionalValidValue<T> extends NReservedOptionalValid<T> implements Cloneable{
     private final T value;
+    /**
+     * N reserved optional valid value.
+     *
+     * @param value value
+     * @param message message
+     * @return n reserved optional valid value result
+     */
     public NReservedOptionalValidValue(T value,Supplier<NMsg> message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
         super(message);
         this.value = value;
     }
@@ -41,7 +59,7 @@ public class NReservedOptionalValidValue<T> extends NReservedOptionalValid<T> im
 
     @Override
     public NElement describe() {
-        return NElement.ofUpletBuilder("Optional")
+        return NElement.ofTupleBuilder("Optional")
                 .add("evaluated", true)
                 .add("empty", false)
                 .add("error", false)

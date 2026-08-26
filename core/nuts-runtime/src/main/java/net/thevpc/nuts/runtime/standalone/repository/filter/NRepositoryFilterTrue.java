@@ -50,25 +50,6 @@ public class NRepositoryFilterTrue extends AbstractRepositoryFilter{
         return this;
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().getName().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NRepositoryFilterTrue other = (NRepositoryFilterTrue) obj;
-        return true;
-    }
 
     @Override
     public String toString() {
@@ -76,7 +57,7 @@ public class NRepositoryFilterTrue extends AbstractRepositoryFilter{
     }
 
     @Override
-    public NFilterOp getFilterOp() {
+    public NFilterOp filterOp() {
         return NFilterOp.TRUE;
     }
 }

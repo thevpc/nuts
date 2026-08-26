@@ -1,16 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.expr.NOperatorAssociativity;
-import net.thevpc.nuts.internal.expr.NExprRPI;
-import net.thevpc.nuts.runtime.standalone.reflect.NReflectSignatureImpl;
+import net.thevpc.nuts.internal.rpi.NExprRPI;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.expr.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DefaultRootContext extends NExprContextBase {
     final Map<String, NExprFunction> defaultFunctions = new HashMap<>();
@@ -22,12 +18,12 @@ public class DefaultRootContext extends NExprContextBase {
     public DefaultRootContext(NExprRPI nExprRPI) {
         super(nExprRPI);
         reflectRepository = NReflectRepository.of();
-
     }
 
-
-
-
+    @Override
+    public NExprLiteralMapper literalMapper() {
+        return (x,c)->x;
+    }
 
     @Override
     public NOptional<NExprFunction> getFunction(String fctName, NExprNodeValue... args) {
@@ -46,7 +42,7 @@ public class DefaultRootContext extends NExprContextBase {
     }
 
     @Override
-    public NOptional<NExprOperator> getOperator(String opName, NExprOpType type, NExprNodeValue... args) {
+    public NOptional<NExprOperator> getOperator(String opName, NFixity type, NExprNodeValue... args) {
         return NOptional.of(
                 ops.get(new NExprOpNameAndType(opName, type)),
                 () -> NMsg.ofC("operator not found %s", opName)
@@ -62,7 +58,7 @@ public class DefaultRootContext extends NExprContextBase {
     }
 
     @Override
-    public List<NExprOperator> getOperators() {
+    public List<NExprOperator> operators() {
         List<NExprOperator> all = new ArrayList<>();
         all.addAll(ops.values());
         return all;

@@ -48,7 +48,7 @@ public interface NDescriptorContentParserContext {
      * @return parser options.
      * @since 0.5.8
      */
-    List<String> getParseOptions();
+    List<String> parseOptions();
 
     /**
      * return content header stream.
@@ -57,34 +57,34 @@ public interface NDescriptorContentParserContext {
      *
      * @return content header stream
      */
-    InputStream getHeadStream();
+    InputStream headStream();
 
     /**
      * content stream
      *
      * @return content stream
      */
-    InputStream getFullStream();
+    InputStream fullStream();
 
     /**
      * content file extension or null. At least one of file extension or file mime-type is provided.
      *
      * @return content file extension
      */
-    String getFileExtension();
+    String fileExtension();
 
     /**
      * content mime-type or null. At least one of file extension or file mime-type is provided.
      *
      * @return content file extension
      */
-    String getMimeType();
+    String mimeType();
 
     /**
      * content name (mostly content file name)
      *
      * @return content name (mostly content file name)
      */
-    String getName();
+    String name();
 
 }

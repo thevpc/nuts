@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.artifact.NIdFilter;
-import net.thevpc.nuts.artifact.NIdFilters;
+import net.thevpc.nuts.internal.rpi.NIdFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NIdFilterParser extends NTypedFiltersParser<NIdFilter> {
@@ -10,8 +10,8 @@ public class NIdFilterParser extends NTypedFiltersParser<NIdFilter> {
     }
 
     @Override
-    protected NIdFilters getTManager() {
-        return NIdFilters.of();
+    protected NIdFilterRPI getTManager() {
+        return NIdFilterRPI.of();
     }
 
     protected NIdFilter wordToPredicate(String word){

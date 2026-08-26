@@ -52,7 +52,7 @@ public class NDefinitionFilterDesktopEnvironment extends AbstractDefinitionFilte
 
     @Override
     public boolean acceptDefinition(NDefinition descriptor) {
-        return CoreFilterUtils.matchesDesktopEnvironment(desktopEnvironment, descriptor.getDescriptor().getCondition().getDesktopEnvironment());
+        return CoreFilterUtils.matchesDesktopEnvironment(desktopEnvironment, descriptor.descriptor().condition().desktopEnvironment());
     }
 
     /**
@@ -67,28 +67,16 @@ public class NDefinitionFilterDesktopEnvironment extends AbstractDefinitionFilte
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 67 * hash + Objects.hashCode(this.desktopEnvironment);
-        return hash;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDefinitionFilterDesktopEnvironment that = (NDefinitionFilterDesktopEnvironment) o;
+        return Objects.equals(desktopEnvironment, that.desktopEnvironment);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NDefinitionFilterDesktopEnvironment other = (NDefinitionFilterDesktopEnvironment) obj;
-        if (!Objects.equals(this.desktopEnvironment, other.desktopEnvironment)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), desktopEnvironment);
     }
 
     @Override

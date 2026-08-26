@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 
 import java.io.OutputStream;
 
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 
 public class RawOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
     private NSystemTerminalBase term;

@@ -1,5 +1,11 @@
 package net.thevpc.nuts.util;
 
+/**
+ * NDecision enum.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public enum NDecision implements NEnum{
     ACCEPT,
     DENY,
@@ -18,6 +24,12 @@ public enum NDecision implements NEnum{
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
+    /**
+     * Parse.
+     *
+     * @param value value
+     * @return parse result
+     */
     public static NOptional<NDecision> parse(String value) {
         return NEnumUtils.parseEnum(value, NDecision.class);
     }

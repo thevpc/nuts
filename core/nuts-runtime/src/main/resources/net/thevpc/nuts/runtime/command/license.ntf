@@ -8,7 +8,7 @@ show license info and exit
 
 ##) EXAMPLES
 
-    ```sh nuts license --help```sh
+    ```sh nuts license --help```
         show this help and exit
 
     ```sh nuts license```

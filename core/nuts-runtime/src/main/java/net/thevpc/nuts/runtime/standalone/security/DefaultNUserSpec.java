@@ -36,50 +36,50 @@ public class DefaultNUserSpec implements NUserSpec {
         this.groups = CoreNUtils.copyNonNullList(groups);
     }
 
-    public NSecureString getCredential() {
+    public NSecureString credential() {
         return credential;
     }
 
-    public DefaultNUserSpec setCredential(NSecureString credential) {
+    public DefaultNUserSpec credential(NSecureString credential) {
         this.credential = credential;
         return this;
     }
 
     @Override
-    public NSecureString getOldCredential() {
+    public NSecureString oldCredential() {
         return oldCredential;
     }
 
     @Override
-    public NUserSpec setOldCredential(NSecureString oldCredential) {
+    public NUserSpec oldCredential(NSecureString oldCredential) {
         this.oldCredential = oldCredential;
         return this;
     }
 
     @Override
-    public DefaultNUserSpec setPermissions(List<String> permissions) {
+    public DefaultNUserSpec permissions(List<String> permissions) {
         this.permissions = permissions;
         return this;
     }
 
     @Override
-    public DefaultNUserSpec setGroups(List<String> groups) {
+    public DefaultNUserSpec groups(List<String> groups) {
         this.groups = groups;
         return this;
     }
 
     @Override
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
     @Override
-    public List<String> getPermissions() {
+    public List<String> permissions() {
         return permissions;
     }
 
     @Override
-    public List<String> getGroups() {
+    public List<String> groups() {
         return groups;
     }
 

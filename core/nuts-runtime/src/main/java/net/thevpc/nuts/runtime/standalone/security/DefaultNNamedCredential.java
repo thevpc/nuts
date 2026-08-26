@@ -20,27 +20,27 @@ public class DefaultNNamedCredential implements NNamedCredential {
     }
 
     @Override
-    public String getAuthType() {
+    public String authType() {
         return authType;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
     @Override
-    public NSecureToken getCredential() {
+    public NSecureToken credential() {
         return credentialId;
     }
 
     @Override
-    public String getResource() {
+    public String resource() {
         return resource;
     }
 

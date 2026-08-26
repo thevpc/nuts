@@ -32,13 +32,13 @@ public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
     }
 
     @Override
-    public NFilterOp getFilterOp() {
-        return dependencyFilter().getFilterOp();
+    public NFilterOp filterOp() {
+        return dependencyFilter().filterOp();
     }
 
     @Override
-    public List<NFilter> getSubFilters() {
-        return dependencyFilter().getSubFilters();
+    public List<NFilter> subFilters() {
+        return dependencyFilter().subFilters();
     }
 
     @Override
@@ -47,8 +47,8 @@ public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
     }
 
     @Override
-    public Class<? extends NFilter> getFilterType() {
-        return dependencyFilter().getFilterType();
+    public Class<? extends NFilter> filterType() {
+        return dependencyFilter().filterType();
     }
 
     @Override

@@ -24,11 +24,7 @@
  */
 package net.thevpc.nuts.boot.internal.cmdline;
 
-import net.thevpc.nuts.boot.NBootException;
-import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.boot.NBootHomeLocation;
-import net.thevpc.nuts.boot.NBootId;
-import net.thevpc.nuts.boot.NBootLogConfig;
+import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.boot.internal.util.NBootMsg;
 import net.thevpc.nuts.boot.internal.util.NBootUtils;
 
@@ -39,254 +35,117 @@ import java.util.stream.Collectors;
 
 
 public final class NBootWorkspaceCmdLineParser {
-    private static String[] SUPPORTED_OPTIONS = new String[]{
-            "-w",
-            "--workspace",
-            "--user",
-            "-u",
-            "--password",
-            "-p",
-            "-V",
-            "--boot-version",
-            "--boot-api-version",
-            "--boot-runtime",
-            "--java",
-            "--boot-java",
-            "-j",
-            "--java-home",
-            "--boot-java-home",
-            "--java-options",
-            "--boot-java-options",
-            "-J",
-            "--name",
-            "--archetype",
-            "-A",
-            "--store-strategy",
-            "-S",
-            "--standalone",
-            "--standalone-workspace",
-            "-E",
-            "--exploded",
-            "--exploded-workspace",
-            "--repo-store-strategy",
-            "--exploded-repositories",
-            "--standalone-repositories",
-            "--store-layout",
-            "--system-layout",
-            "--windows-layout",
-            "--macos-layout",
-            "--linux-layout",
-            "--unix-layout",
-            "--bin-location",
-            "--config-location",
-            "--var-location",
-            "--log-location",
-            "--temp-location",
-            "--cache-location",
-            "--lib-location",
-            "--system-bin-home",
-            "--system-conf-home",
-            "--system-var-home",
-            "--system-log-home",
-            "--system-temp-home",
-            "--system-cache-home",
-            "--system-lib-home",
-            "--system-run-home",
-            "--windows-bin-home",
-            "--windows-conf-home",
-            "--windows-var-home",
-            "--windows-log-home",
-            "--windows-temp-home",
-            "--windows-cache-home",
-            "--windows-lib-home",
-            "--windows-run-home",
-            "--macos-bin-home",
-            "--macos-conf-home",
-            "--macos-var-home",
-            "--macos-log-home",
-            "--macos-temp-home",
-            "--macos-cache-home",
-            "--macos-lib-home",
-            "--macos-run-home",
-            "--linux-bin-home",
-            "--linux-conf-home",
-            "--linux-var-home",
-            "--linux-log-home",
-            "--linux-temp-home",
-            "--linux-cache-home",
-            "--linux-lib-home",
-            "--linux-run-home",
-            "--unix-bin-home",
-            "--unix-conf-home",
-            "--unix-var-home",
-            "--unix-log-home",
-            "--unix-temp-home",
-            "--unix-cache-home",
-            "--unix-lib-home",
-            "--unix-run-home",
-            "--install-companions",
-            "-k",
-            "--skip-welcome",
-            "-K",
-            "--skip-boot",
-            "-Q",
-            "--switch",
-            "-g",
-            "--global",
-            "--shared-instance",
-            "--gui",
-            "--color",
-            "-c",
-            "-B",
-            "--bot",
-            "-U",
-            "--preview-repo",
-            "-R",
-            "--read-only",
-            "-t",
-            "--trace",
-            "-P",
-            "--progress",
-            "--solver",
-            "--dry",
-            "-D",
-            "--stacktrace",
-            "-d",
-            "--debug",
-            "-l",
-            "--verbose",
-            "--log-verbose",
-            "--log-finest",
-            "--log-finer",
-            "--log-fine",
-            "--log-info",
-            "--log-warning",
-            "--log-severe",
-            "--log-config",
-            "--log-all",
-            "--log-off",
-            "--log-term-verbose",
-            "--log-term-finest",
-            "--log-term-finer",
-            "--log-term-fine",
-            "--log-term-info",
-            "--log-term-warning",
-            "--log-term-severe",
-            "--log-term-config",
-            "--log-term-all",
-            "--log-term-off",
-            "--log-file-verbose",
-            "--log-file-finest",
-            "--log-file-finer",
-            "--log-file-fine",
-            "--log-file-info",
-            "--log-file-warning",
-            "--log-file-severe",
-            "--log-file-config",
-            "--log-file-all",
-            "--log-file-off",
-            "--log-file-size",
-            "--log-file-name",
-            "--log-file-base",
-            "--log-file-count",
-            "-X",
-            "--exclude-extension",
-            "--repository",
-            "--repositories",
-            "--repo",
-            "--repos",
-            "-r",
-            "--output-format-option",
-            "-T",
-            "-O",
-            "--output-format",
-            "--tson",
-            "--yaml",
-            "--json",
-            "--plain",
-            "--xml",
-            "--table",
-            "--tree",
-            "--props",
-            "--yes",
-            "-y",
-            "--no",
-            "-n",
-            "--error",
-            "--ask",
-            "--cached",
-            "--indexed",
-            "--transitive",
-            "-f",
-            "--fetch",
-            "-a",
-            "--anywhere",
-            "-F",
-            "--offline",
-            "--online",
-            "--remote",
-            "--embedded",
-            "-b",
-            "--open-file",
-            "--external",
-            "--spawn",
-            "-x",
-            "--user-cmd",
-            "--system",
-            "--root-cmd",
-            "--as-root",
-            "--current-user",
-            "--run-as",
-            "--sudo",
-            "-o",
-            "--open-mode",
-            "--open-or-error",
-            "--open",
-            "--create-or-error",
-            "--create",
-            "--open-or-create",
-            "--open-or-null",
-            "-",
-            "-version",
-            "-v",
-            "--version",
-            "-Z",
-            "--reset",
-            "--reset-hard",
-            "-z",
-            "--recover",
-            "-N",
-            "--expire",
-            "--out-line-prefix",
-            "--err-line-prefix",
-            "--line-prefix",
-            "-e",
-            "--exec",
-            "-?",
-            "--help",
-            "-h",
-            "--skip-errors",
-            "-L",
-            "--locale",
-            "--theme",
-            "--sandbox",
-            "--in-memory",
-            "--confined",
-            "--reset-options",
-            "--isolation-level",
-            "--init-launchers",
-            "--init-java",
-            "--init-platforms",
-            "--init-scripts",
-            "--desktop-launcher",
-            "--menu-launcher",
-            "--user-launcher"
-    };
+    private static String[] SUPPORTED_OPTIONS = NBootOptionRegistry.allNames().toArray(new String[0]);
+    private static final List<String> NEGATION_MARKERS = Arrays.asList("!", "~");
 
     /**
      * private constructor
      */
     private NBootWorkspaceCmdLineParser() {
+    }
+
+    public static NBootCompleteRequestOrResult complete(NBootCompleteCmdlineRequest request) {
+        int argIndex = request.request().argIndex();
+        int argOffset = request.request().argOffset();
+
+        if (argIndex < 0 || argIndex > request.args().size()) {
+            return new NBootCompleteResult(Collections.emptyList(),
+                    Collections.singletonList(NBootCompleteResult.Flag.ERROR));
+        }
+
+        // Walk the already-typed words to find out whether argIndex is a fresh
+        // key/flag slot, or the dedicated value slot of a preceding VALUE option.
+        // Uses the exact same arity rules the real parser uses (nextEntry vs nextFlag vs next),
+        // so this can never silently diverge from actual parsing behavior.
+        NBootOptionSpec pendingValueSpec = null;
+        int i = 0;
+        while (i < argIndex) {
+            String w = request.args().get(i);
+            if(!w.startsWith("-")){
+                return new NBootCompleteCmdlineRequest(
+                        new NBootCompleteRequest(request.request().argIndex()-i,request.request().argOffset()),new ArrayList<>(request.args().subList(i,request.args().size()))
+                );
+            }
+            NBootOptionSpec spec = specOf(w);
+            if (spec != null && spec.arity() == NBootOptionSpec.Arity.TERMINAL) {
+                // Everything from here belongs to the delegated app — out of scope for nuts' own completion.
+                return new NBootCompleteResult(Collections.emptyList(), Collections.emptyList());
+            }
+            if (spec != null && spec.arity() == NBootOptionSpec.Arity.VALUE && !hasInlineValue(w)) {
+                if (i + 1 == argIndex) {
+                    pendingValueSpec = spec;
+                }
+                i += 2; // the flag token + its separate value token
+            } else {
+                i += 1;
+            }
+        }
+
+        String word = argIndex < request.args().size() ? request.args().get(argIndex) : "";
+        int safeOffset = Math.max(0, Math.min(argOffset, word.length()));
+        String cur = word.substring(0, safeOffset);
+
+        if (pendingValueSpec != null) {
+            return valueCompletion(pendingValueSpec, cur);
+        }
+
+        int eq = cur.indexOf('=');
+        if (eq >= 0) {
+            String key = cur.substring(0, eq);
+            String valuePrefix = cur.substring(eq + 1);
+            NBootOptionSpec spec = NBootOptionRegistry.byName(key);
+            if (spec != null && (spec.arity() == NBootOptionSpec.Arity.VALUE
+                    || spec.arity() == NBootOptionSpec.Arity.OPTIONAL_VALUE)) {
+                NBootCompleteResult inner = valueCompletion(spec, valuePrefix);
+                List<NBootCompleteResult.Candidate> composed = inner.candidates().stream()
+                        .map(c -> new NBootCompleteResult.Candidate(key + "=" + c.value(), c.description()))
+                        .collect(Collectors.toList());
+                return new NBootCompleteResult(composed, inner.flags());
+            }
+            return new NBootCompleteResult(Collections.emptyList(), Collections.emptyList());
+        }
+
+// fresh key/flag position — also handle "--!key" / "--~key" negation prefixes.
+// Negation only ever applies to FLAG-arity options, so it's detected and
+// stripped here before matching, then reapplied to the matched names.
+        String marker = null;
+        String matchAgainst = cur;
+        for (String m : NEGATION_MARKERS) {
+            if (cur.startsWith("--" + m)) {
+                marker = m;
+                matchAgainst = "--" + cur.substring(2 + m.length());
+                break;
+            }
+        }
+        final String finalMarker = marker;
+        String finalMatchAgainst = matchAgainst;
+        List<NBootCompleteResult.Candidate> candidates = NBootOptionRegistry.allNames().stream()
+                .filter(n -> {
+                    NBootOptionSpec spec = NBootOptionRegistry.byName(n);
+                    return finalMarker == null || (spec != null && spec.arity() == NBootOptionSpec.Arity.FLAG);
+                })
+                .filter(n -> n.startsWith(finalMatchAgainst))
+                .sorted()
+                .map(n -> finalMarker == null ? n : ("--" + finalMarker + n.substring(2)))
+                .map(NBootCompleteResult.Candidate::new)
+                .collect(Collectors.toList());
+        return new NBootCompleteResult(candidates, Collections.emptyList());
+    }
+
+    private static NBootOptionSpec specOf(String word) {
+        int eq = word.indexOf('=');
+        return NBootOptionRegistry.byName(eq >= 0 ? word.substring(0, eq) : word);
+    }
+
+    private static boolean hasInlineValue(String word) {
+        return word.indexOf('=') >= 0;
+    }
+
+    private static NBootCompleteResult valueCompletion(NBootOptionSpec spec, String prefix) {
+        if (!spec.hasValueCompletion()) {
+            return new NBootCompleteResult(Collections.emptyList(), spec.resultFlags()); // e.g. FILENAMES fallback
+        }
+        return new NBootCompleteResult(spec.completeValue(prefix), spec.resultFlags());
     }
 
     public static List<NBootArg> nextNutsArgument(NBootCmdLine cmdLine, NBootOptionsInfo options) {
@@ -357,7 +216,7 @@ public final class NBootWorkspaceCmdLineParser {
                                 //this is a full id
                                 options.setRuntimeId(br);
                             } else {
-                                NBootId r = NBootId.ofRuntime(br);
+                                NBootDependency r = NBootDependency.ofRuntime(br);
                                 options.setRuntimeId(r == null ? null : r.toString());
                             }
                         }
@@ -1766,17 +1625,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
 
-    public static void parseNutsArguments(String[] bootArguments, NBootOptionsInfo options) {
-        NBootCmdLine cmdLine = new NBootCmdLine(bootArguments)
-                .setCommandName("nuts")
-                .setExpandSimpleOptions(true)
-                .registerSpecialSimpleOption("-version");
-        while (cmdLine.hasNext()) {
-            if (nextNutsArgument(cmdLine, options) == null) {
-                //some error occurred!
-                cmdLine.skip();
-            }
-        }
+    public static void denullProperties(NBootOptionsInfo options) {
         if (options.getErrors() == null) {
             options.setErrors(new ArrayList<>());
         }
@@ -1795,6 +1644,19 @@ public final class NBootWorkspaceCmdLineParser {
         if (options.getCustomOptions() == null) {
             options.setCustomOptions(new ArrayList<>());
         }
+    }
+    public static void parseNutsArguments(String[] bootArguments, NBootOptionsInfo options) {
+        NBootCmdLine cmdLine = new NBootCmdLine(bootArguments)
+                .setCommandName("nuts")
+                .setExpandSimpleOptions(true)
+                .registerSpecialSimpleOption("-version");
+        while (cmdLine.hasNext()) {
+            if (nextNutsArgument(cmdLine, options) == null) {
+                //some error occurred!
+                cmdLine.skip();
+            }
+        }
+        denullProperties(options);
         //error only if not asking for help
         if (!(!options.getApplicationArguments().isEmpty()
                 && (options.getApplicationArguments().get(0).equals("help")

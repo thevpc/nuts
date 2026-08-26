@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
-import net.thevpc.nuts.log.NLogFactorySPI;
-import net.thevpc.nuts.log.NLogSPI;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.spi.NLogFactorySPI;
+import net.thevpc.nuts.spi.NLogSPI;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.Objects;
 

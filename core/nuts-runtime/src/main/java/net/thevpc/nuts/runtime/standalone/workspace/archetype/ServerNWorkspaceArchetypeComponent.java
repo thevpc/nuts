@@ -25,23 +25,26 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
+import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
+import net.thevpc.nuts.security.NUserConfig;
 import net.thevpc.nuts.security.NUserSpec;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 /**
  * Created by vpc on 1/23/17.
@@ -53,7 +56,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "server";
     }
 
@@ -61,38 +64,44 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
     public void initializeWorkspace() {
         NRepositorySpec[] br = NRepositoryUtils.resolve(NWorkspaceExt.of().getConfigModel().resolveBootRepositoriesList(),
                 new NRepositorySpec[]{
-                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName("maven-local")),
-                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName("maven-central")),
-                        new NRepositorySpec().setSourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)),
+                        new NRepositorySpec().sourceLocation(NRepositoryLocation.ofName("maven-local")),
+                        new NRepositorySpec().sourceLocation(NRepositoryLocation.ofName("maven-central")),
+                        new NRepositorySpec().sourceLocation(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME)),
                 }
         );
         for (NRepositorySpec s : br) {
             NWorkspace.of().addRepository(s.toString());
         }
         NSecurityManager sec = NSecurityManager.of();
-
-        try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
-            NSecurityManager.of().addUser(
-                    NUserSpec.of("guest")
-                            .setCredential(ss)
-                            .addPermissions(
-                                    NConstants.Permissions.FETCH_DESC,
-                                    NConstants.Permissions.FETCH_CONTENT,
-                                    NConstants.Permissions.DEPLOY
-                            )
-            );
+        DefaultNWorkspaceConfigModel c = NWorkspaceExt.of().getConfigModel();
+        NUserConfig u = c.getUser("guest");
+        if (u == null) {
+            try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
+                NSecurityManager.of().addUser(
+                        NUserSpec.of("guest")
+                                .credential(ss)
+                                .addPermissions(
+                                        NConstants.Permissions.FETCH_DESC,
+                                        NConstants.Permissions.FETCH_CONTENT,
+                                        NConstants.Permissions.DEPLOY
+                                )
+                );
+            }
         }
-        try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
-            NSecurityManager.of().addUser(
-                    NUserSpec.of("contributor")
-                            .setCredential(ss)
-                            .addPermissions(
-                                    NConstants.Permissions.FETCH_DESC,
-                                    NConstants.Permissions.FETCH_CONTENT,
-                                    NConstants.Permissions.DEPLOY,
-                                    NConstants.Permissions.UNDEPLOY
-                            )
-            );
+        u = c.getUser("contributor");
+        if (u == null) {
+            try (NSecureString ss = NSecureString.ofSecure("user".toCharArray())) {
+                NSecurityManager.of().addUser(
+                        NUserSpec.of("contributor")
+                                .credential(ss)
+                                .addPermissions(
+                                        NConstants.Permissions.FETCH_DESC,
+                                        NConstants.Permissions.FETCH_CONTENT,
+                                        NConstants.Permissions.DEPLOY,
+                                        NConstants.Permissions.UNDEPLOY
+                                )
+                );
+            }
         }
     }
 
@@ -101,9 +110,9 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         NWorkspace workspace = NWorkspace.of();
-        boolean initializeScripts = workspace.getBootOptions().getInitScripts().onEmpty(true).get();
-        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().onEmpty(true).get();
-        Boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
+        boolean initializeScripts = workspace.bootOptions().initScripts().onEmpty(true).get();
+        boolean initializeLaunchers = workspace.bootOptions().initLaunchers().onEmpty(true).get();
+        Boolean installCompanions = workspace.bootOptions().installCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of().installAllJVM();
@@ -113,8 +122,8 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 //        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
             NId api = NFetch.of()
-                    .setId(workspace.getApiId()).setFailFast(false)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                    .id(workspace.apiId()).failFast(false)
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
                     .getResultId();
             if (api != null) {
                 NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();

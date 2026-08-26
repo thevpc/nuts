@@ -32,8 +32,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.core.NStoreKey;
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
@@ -41,9 +39,9 @@ import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NInstallerComponent;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 
 import java.io.IOException;
 
@@ -55,10 +53,10 @@ public class ZipInstallerComponent implements NInstallerComponent {
 
     @NScore
     public static int getScore(NScorableContext ctx) {
-        NDefinition def = ctx.getCriteria(NDefinition.class);
+        NDefinition def = ctx.criteria(NDefinition.class);
         if (def != null) {
-            if (def.getDescriptor() != null) {
-                if ("zip".equals(def.getDescriptor().getPackaging())) {
+            if (def.descriptor() != null) {
+                if ("zip".equals(def.descriptor().packaging())) {
                     return NScorable.DEFAULT_SCORE;
                 }
             }
@@ -68,12 +66,12 @@ public class ZipInstallerComponent implements NInstallerComponent {
 
     @Override
     public void install(NExecutionContext executionContext) {
-        NDefinition nutsDefinition = executionContext.getDefinition();
-        NPath installFolder = NPath.of(NStoreKey.ofBin(nutsDefinition.getId()));
-        NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
+        NDefinition nutsDefinition = executionContext.definition();
+        NPath installFolder = NPath.of(NStoreKey.ofBin(nutsDefinition.id()));
+        NCmdLine cmd = NCmdLine.of(executionContext.arguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {
-            if (!cmd.matcher().with("--unzip-skip-root").matchFlag((v) -> {
+            if (!cmd.matcher().when("--unzip-skip-root").asFlag((v) -> {
                 unzipOptions.setSkipRoot(v.booleanValue());
             }).anyMatch()) {
                 cmd.skip();
@@ -81,7 +79,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
         }
         try {
             ZipUtils.unzip(
-                    nutsDefinition.getContent().map(Object::toString).get(),
+                    nutsDefinition.content().map(Object::toString).get(),
                     installFolder.toString(),
                     unzipOptions
             );
@@ -89,13 +87,13 @@ public class ZipInstallerComponent implements NInstallerComponent {
             throw new NIOException(ex);
         }
         //nutsDefinition.setInstallInformation(NWorkspaceExt.of().getInstalledRepository().getInstallInformation(nutsDefinition.getId()));
-        if (!executionContext.getExecutorOptions().isEmpty()) {
+        if (!executionContext.executorOptions().isEmpty()) {
             NExec.of()
-                    .addCommand(executionContext.getExecutorOptions())
-                    .addExecutorOptions(executionContext.getExecutorOptions())
-                    .setEnv(executionContext.getEnv())
-                    .setDirectory(installFolder)
-                    .getResultCode();
+                    .command(executionContext.executorOptions())
+                    .executorOptions(executionContext.executorOptions())
+                    .env(executionContext.env())
+                    .directory(installFolder)
+                    .exitCode();
         }
     }
 

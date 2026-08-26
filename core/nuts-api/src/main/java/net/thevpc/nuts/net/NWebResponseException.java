@@ -5,6 +5,12 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgCode;
 import net.thevpc.nuts.text.NMsgCodeAware;
 
+/**
+ * NWebResponseException class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NWebResponseException extends NException implements NMsgCodeAware {
     public NHttpCode code;
     public NMsg responseMessage;
@@ -16,10 +22,15 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      * call to {@link #initCause}.
      *
      * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     *                later retrieval by the {@link #message()} method.
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code) {
-        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message);
+      /**
+       * Super.
+       *
+       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
+       */
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message);
         this.code = code;
         this.responseMessage = message;
         this.messageCode = messageCode;
@@ -34,14 +45,20 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      * this runtime exception's detail message.
      *
      * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
+     *                by the {@link #message()} method).
      * @param cause   the cause (which is saved for later retrieval by the
      *                {@link #getCause()} method).  (A {@code null} value is
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause) {
-        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message, cause);
+      /**
+       * Super.
+       *
+       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
+       * @param cause cause
+       */
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message, cause);
         this.code = code;
         this.responseMessage = message;
         this.messageCode = messageCode;
@@ -61,22 +78,40 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      *                           be writable
      */
     public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(messageCode!=null?NMsg.ofC("%s",messageCode.getMessage()):message, cause, enableSuppression, writableStackTrace);
+      /**
+       * Super.
+       *
+       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
+       * @param cause cause
+       * @param enableSuppression enable suppression
+       * @param writableStackTrace writable stack trace
+       */
+        super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message, cause, enableSuppression, writableStackTrace);
         this.code = code;
         this.responseMessage = message;
         this.messageCode = messageCode;
     }
 
-    public NHttpCode getCode() {
+    /**
+     * Status code.
+     *
+     * @return status code result
+     */
+    public NHttpCode statusCode() {
         return code;
     }
 
     @Override
-    public NMsgCode getMsgCode() {
+    public NMsgCode msgCode() {
         return messageCode;
     }
 
-    public NMsg getResponseMessage() {
+    /**
+     * Response message.
+     *
+     * @return response message result
+     */
+    public NMsg responseMessage() {
         return responseMessage;
     }
 

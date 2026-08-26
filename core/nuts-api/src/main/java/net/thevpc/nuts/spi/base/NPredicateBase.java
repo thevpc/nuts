@@ -5,9 +5,22 @@ import net.thevpc.nuts.elem.NElement;
 
 import java.util.function.Predicate;
 
+/**
+ * NPredicateBase class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public class NPredicateBase<T> extends AbstractNPredicate<T> {
     private final Predicate<T> base;
     private final NElement description;
+    /**
+     * N predicate base.
+     *
+     * @param base base
+     * @param description description
+     * @return n predicate base result
+     */
     public NPredicateBase(Predicate<T> base,NElement description) {
         this.base = base;
         this.description = description;

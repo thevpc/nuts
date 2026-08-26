@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.builder;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.expr.NFixity;
 import net.thevpc.nuts.runtime.standalone.elem.AbstractNElementBuilder;
 import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.*;
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder implements NOperatorElementBuilder {
-    private NOperatorPosition position;
+    private NFixity fixity;
 
     private List<NElement> childrenOperands = new ArrayList<>();
     private List<NOperatorSymbolElement> childrenSymbols = new ArrayList<>();
@@ -139,12 +140,12 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
     }
 
     @Override
-    public NOperatorPosition position() {
-        return position;
+    public NFixity fixity() {
+        return fixity;
     }
 
-    public NOperatorElementBuilder position(NOperatorPosition operatorType) {
-        this.position = operatorType;
+    public NOperatorElementBuilder fixity(NFixity operatorType) {
+        this.fixity = operatorType;
         return this;
     }
 
@@ -203,9 +204,9 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
             return Collections.emptyList();
         }
 
-        // Resolve position heuristic
-        NOperatorPosition pos = (this.position != null) ? this.position
-                : (symbolCount > 0 && operandsCount <= 1 ? NOperatorPosition.PREFIX : NOperatorPosition.INFIX);
+        // Resolve position/fixity heuristic
+        NFixity pos = (this.fixity != null) ? this.fixity
+                : (symbolCount > 0 && operandsCount <= 1 ? NFixity.PREFIX : NFixity.INFIX);
 
         List<NElement> flatList = new ArrayList<>();
 
@@ -292,12 +293,12 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
             return false;
         }
         DefaultNOperatorElementBuilder that = (DefaultNOperatorElementBuilder) o;
-        return position == that.position && Objects.equals(childrenOperands, that.childrenOperands) && Objects.equals(childrenSymbols, that.childrenSymbols);
+        return fixity == that.fixity && Objects.equals(childrenOperands, that.childrenOperands) && Objects.equals(childrenSymbols, that.childrenSymbols);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(position, childrenOperands, childrenSymbols);
+        return Objects.hash(fixity, childrenOperands, childrenSymbols);
     }
 
     @Override
@@ -313,7 +314,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                     NAssert.requireTrue(false, () -> NMsg.ofC("too many symbols %s", symbols));
                 }
                 return new DefaultNOperatorElementUnary(symbols.get(0),
-                        position == null ? NOperatorPosition.PREFIX : position,
+                        fixity == null ? NFixity.PREFIX : fixity,
                         operands.get(0), affixes(), diagnostics(), metadata());
             }
             case 2: {
@@ -321,7 +322,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                     NAssert.requireTrue(false, () -> NMsg.ofC("too many symbols %s", symbols));
                 }
                 return new DefaultNOperatorElementBinary(symbols.get(0),
-                        position == null ? NOperatorPosition.INFIX : position,
+                        fixity == null ? NFixity.INFIX : fixity,
                         operands.get(0),
                         operands.get(1),
                         affixes(), diagnostics(), metadata());
@@ -335,14 +336,14 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
                         operands.get(1),
                         operands.get(2),
                         symbols,
-                        position == null ? NOperatorPosition.INFIX : position,
+                        fixity == null ? NFixity.INFIX : fixity,
                         affixes(), diagnostics(), metadata());
             }
         }
         return new DefaultNOperatorElementNary(
                 operands,
                 symbols,
-                position == null ? NOperatorPosition.INFIX : position,
+                fixity == null ? NFixity.INFIX : fixity,
                 affixes(),
                 diagnostics(), metadata()
         );
@@ -363,7 +364,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
             NOperatorElementBuilder b = (NOperatorElementBuilder) other;
             operators(b.operators().toArray(new NOperatorSymbol[0]));
             operands(b.operands().toArray(new NElement[0]));
-            position = b.position();
+            fixity = b.fixity();
         }
         return this;
     }
@@ -375,7 +376,7 @@ public class DefaultNOperatorElementBuilder extends AbstractNElementBuilder impl
             NOperatorElement b = (NOperatorElement) other;
             operators(b.operatorSymbols().toArray(new NOperatorSymbol[0]));
             operands(b.operands().toArray(new NElement[0]));
-            position = b.position();
+            fixity = b.fixity();
         }
         return this;
     }

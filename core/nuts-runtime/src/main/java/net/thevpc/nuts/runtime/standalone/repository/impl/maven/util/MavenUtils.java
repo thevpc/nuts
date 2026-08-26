@@ -31,6 +31,7 @@ import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.expr.NParseException;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.io.NIOUtils;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.platform.NArchFamily;
@@ -77,7 +78,7 @@ public class MavenUtils {
     }
 
     public static MavenUtils of() {
-        MavenUtils wp = (MavenUtils) NWorkspace.of().getProperties().get(MavenUtils.class.getName());
+        MavenUtils wp = (MavenUtils) NWorkspace.of().properties().get(MavenUtils.class.getName());
         if (wp == null) {
             wp = new MavenUtils();
             NWorkspace.of().setProperty(MavenUtils.class.getName(), wp);
@@ -86,7 +87,7 @@ public class MavenUtils {
     }
 
     public static NPomIdResolver createPomIdResolver() {
-        NPomIdResolver wp = (NPomIdResolver) NWorkspace.of().getProperties().get(NPomIdResolver.class.getName());
+        NPomIdResolver wp = (NPomIdResolver) NWorkspace.of().properties().get(NPomIdResolver.class.getName());
         if (wp == null) {
             wp = new NPomIdResolver();
             NWorkspace.of().setProperty(NPomIdResolver.class.getName(), wp);
@@ -107,7 +108,7 @@ public class MavenUtils {
     }
 
     public NId toNutsId(NPomId d) {
-        return NIdBuilder.of(d.getGroupId(), d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
+        return NIdBuilder.of(d.getGroupId(), d.getArtifactId()).version(toNutsVersion(d.getVersion())).build();
     }
 
     public NEnvCondition toCondition(String os0, String arch0, NPomProfileActivation a, String profile) {
@@ -154,10 +155,10 @@ public class MavenUtils {
             ars = arch.id();
         }
         NEnvConditionBuilder bb = new DefaultNEnvConditionBuilder()
-                .setOs(oss == null ? null : Arrays.asList(oss))
-                .setArch(ars == null ? null : Arrays.asList(ars))
-                .setPlatform(platform == null ? null : Arrays.asList(platform))
-                .setProfile(profile == null ? null : Arrays.asList(profile));
+                .os(oss == null ? null : Arrays.asList(oss))
+                .arch(ars == null ? null : Arrays.asList(ars))
+                .platform(platform == null ? null : Arrays.asList(platform))
+                .profile(profile == null ? null : Arrays.asList(profile));
         bb.setProperties(props);
         return bb.build();
     }
@@ -207,15 +208,15 @@ public class MavenUtils {
             }
         }
         return NDependencyBuilder.of()
-                .setGroupId(d.getGroupId())
-                .setArtifactId(d.getArtifactId())
-                .setClassifier(d.getClassifier())
-                .setVersion(toNutsVersion((d.getVersion())))
-                .setOptional(d.getOptional())
-                .setScope(dependencyScope.id())
-                .setCondition(toCondition(d.getOs(), d.getArch(), a, profile))
-                .setType(d.getType())
-                .setExclusions(toNutsId(Arrays.asList(d.getExclusions())))
+                .groupId(d.getGroupId())
+                .artifactId(d.getArtifactId())
+                .classifier(d.getClassifier())
+                .version(toNutsVersion((d.getVersion())))
+                .optional(d.getOptional())
+                .scope(dependencyScope.id())
+                .condition(toCondition(d.getOs(), d.getArch(), a, profile))
+                .type(d.getType())
+                .exclusions(toNutsId(Arrays.asList(d.getExclusions())))
                 .build();
     }
     private NLog LOG(){
@@ -244,7 +245,7 @@ public class MavenUtils {
                         if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
                             return true;
                         }
-                        if (NStringUtils.trim(e.getTextContent()).equals("exec-war-only") &&
+                        if (NStringUtils.strip(e.getTextContent()).equals("exec-war-only") &&
                                 XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "goals", "goal")) {
                             return true;
                         }
@@ -278,7 +279,7 @@ public class MavenUtils {
             String fetchString = "[" + NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST) + "] ";
             LOG()
                     .log(NMsg.ofJ("{0}{1} parse pom    {2}", fetchString,
-                            NStringUtils.formatAlign(repository == null ? "<no-repo>" : repository.getName(), 20, NPositionType.FIRST),
+                            NStringUtils.formatAlign(repository == null ? "<no-repo>" : repository.name(), 20, NPositionType.FIRST),
                             NText.ofStyledPath(urlDesc)
                     ).withLevel(Level.FINEST).withIntent(NMsgIntent.SUCCESS).withDurationMillis(time));
 
@@ -303,15 +304,15 @@ public class MavenUtils {
             }
             List<NDescriptorProperty> props = new ArrayList<>();
             for (Map.Entry<String, String> e : pom.getProperties().entrySet()) {
-                props.add(new DefaultNDescriptorPropertyBuilder().setName(e.getKey())
-                        .setValue(e.getValue()).build());
+                props.add(new DefaultNDescriptorPropertyBuilder().name(e.getKey())
+                        .value(e.getValue()).build());
             }
             for (NPomProfile profile : profiles) {
                 for (Map.Entry<String, String> e : profile.getProperties().entrySet()) {
                     props.add(new DefaultNDescriptorPropertyBuilder()
-                            .setName(e.getKey())
-                            .setValue(e.getValue())
-                            .setCondition(toCondition(null, null, profile.getActivation(), profile.getId()))
+                            .name(e.getKey())
+                            .value(e.getValue())
+                            .condition(toCondition(null, null, profile.getActivation(), profile.getId()))
                             .build());
                 }
             }
@@ -358,8 +359,8 @@ public class MavenUtils {
             //delete special properties
             for (Iterator<NDescriptorProperty> iterator = props.iterator(); iterator.hasNext(); ) {
                 NDescriptorProperty prop = iterator.next();
-                if (prop.getCondition().isBlank()) {
-                    String n = prop.getName();
+                if (prop.condition().isBlank()) {
+                    String n = prop.name();
                     switch (n) {
                         case "nuts.installer":
                         case "nuts.executor":
@@ -382,33 +383,33 @@ public class MavenUtils {
                 }
             }
             return new DefaultNDescriptorBuilder()
-                    .setId(toNutsId(pom.getPomId()))
-                    .setParents(pom.getParent() == null ? null : Arrays.asList(toNutsId(pom.getParent())))
-                    .setPackaging(pom.getPackaging())
-                    .setFlags(flags)
-                    .setName(pom.getName())
-                    .setDescription(pom.getDescription())
-                    .setLocations(new ArrayList<>(idLocations))
-                    .setCondition(new DefaultNEnvConditionBuilder().setPlatform(
+                    .id(toNutsId(pom.getPomId()))
+                    .parents(pom.getParent() == null ? null : Arrays.asList(toNutsId(pom.getParent())))
+                    .packaging(pom.getPackaging())
+                    .flags(flags)
+                    .name(pom.getName())
+                    .description(pom.getDescription())
+                    .locations(new ArrayList<>(idLocations))
+                    .condition(new DefaultNEnvConditionBuilder().platform(
                             Arrays.asList(mavenCompilerTarget == null ? "java" : ("java#" + mavenCompilerTarget))
                     ))
-                    .setDependencies(deps)
-                    .setStandardDependencies(depsM)
-                    .setCategories(
+                    .dependencies(deps)
+                    .standardDependencies(depsM)
+                    .categories(
                             StringTokenizerUtils.splitDefault(categories).stream()
-                                    .map(String::trim)
+                                    .map(NStringUtils::strip)
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
                     )
-                    .setInstaller(installerCall)
-                    .setExecutor(executorCall)
-                    .setIcons(
+                    .installer(installerCall)
+                    .executor(executorCall)
+                    .icons(
                             StringTokenizerUtils.splitDefault(icons).stream()
-                                    .map(String::trim)
+                                    .map(NStringUtils::strip)
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
                     )
-                    .setLicenses(
+                    .licenses(
                             pom.getLicenses() == null ? new ArrayList<>() :
                                     Arrays.stream(pom.getLicenses()).map(x -> {
                                         return new DefaultNDescriptorLicense(
@@ -422,7 +423,7 @@ public class MavenUtils {
                                         );
                                     }).collect(Collectors.toList())
                     )
-                    .setContributors(
+                    .contributors(
                             pom.getContributors() == null ? new ArrayList<>() :
                                     Arrays.stream(pom.getContributors()).map(x -> {
                                         return new DefaultNDescriptorContributor(
@@ -445,7 +446,7 @@ public class MavenUtils {
                                         );
                                     }).collect(Collectors.toList())
                     )
-                    .setDevelopers(
+                    .developers(
                             pom.getDevelopers() == null ? new ArrayList<>() :
                                     Arrays.stream(pom.getDevelopers()).map(x -> {
                                         return new DefaultNDescriptorContributor(
@@ -468,7 +469,7 @@ public class MavenUtils {
                                         );
                                     }).collect(Collectors.toList())
                     )
-                    .setGenericName(genericName)
+                    .genericName(genericName)
                     .setProperties(props)
                     .build();
         } catch (Exception e) {
@@ -489,7 +490,7 @@ public class MavenUtils {
             toRemoveProps.add(propName + ".url");
             toRemoveProps.add(propName + ".region");
             toRemoveProps.add(propName + ".classifier");
-            return new NIdLocation(NStringUtils.trimToNull(url), NStringUtils.trimToNull(region), NStringUtils.trimToNull(classifier));
+            return new NIdLocation(NStringUtils.stripToNull(url), NStringUtils.stripToNull(region), NStringUtils.stripToNull(classifier));
         }
         return null;
     }
@@ -510,14 +511,14 @@ public class MavenUtils {
     public NDescriptor parsePomXmlAndResolveParents(NPath path, NFetchMode fetchMode, NRepository repository) {
         try {
             NSession session = NSession.of();
-            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(path)));
-            try (InputStream is = path.getInputStream()) {
+            session.terminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(path)));
+            try (InputStream is = path.inputStream()) {
                 NDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
-                if (nutsDescriptor.getId().getArtifactId() == null) {
+                if (nutsDescriptor.id().artifactId() == null) {
                     //why name is null ? should check out!
                     if (LOG().isLoggable(Level.FINE)) {
                         LOG()
-                                .log(NMsg.ofJ("unable to fetch valid descriptor artifactId from {0} : resolved id was {1}", path, nutsDescriptor.getId()).asFineFail());
+                                .log(NMsg.ofJ("unable to fetch valid descriptor artifactId from {0} : resolved id was {1}", path, nutsDescriptor.id()).asFineFail());
                     }
                     return null;
                 }
@@ -539,7 +540,7 @@ public class MavenUtils {
                 nutsDescriptor = parsePomXml(stream, fetchMode, urlDesc, repository);
                 HashMap<String, String> properties = new HashMap<>();
                 NId parentId = null;
-                for (NId nutsId : nutsDescriptor.getParents()) {
+                for (NId nutsId : nutsDescriptor.parents()) {
                     parentId = nutsId;
                 }
                 NDescriptor parentDescriptor = null;
@@ -547,92 +548,92 @@ public class MavenUtils {
                     if (!CoreNUtils.isEffectiveId(parentId)) {
                         try {
                             parentDescriptor = NFetch.of(parentId)
-                                    .setTransitive(true)
-                                    .setFetchStrategy(
+                                    .transitive(true)
+                                    .fetchStrategy(
                                             fetchMode == NFetchMode.REMOTE ? NFetchStrategy.ONLINE
                                                     : NFetchStrategy.OFFLINE
                                     )
-                                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                                    .dependencyFilter(NDependencyFilter.ofRunnable())
                                     .getResultDescriptor();
                         } catch (NException ex) {
                             throw ex;
                         } catch (Exception ex) {
-                            throw new NArtifactNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId, ex));
+                            throw new NArtifactNotFoundException(nutsDescriptor.id(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.id(), parentId, ex));
                         }
-                        parentId = parentDescriptor.getId();
+                        parentId = parentDescriptor.id();
                     }
                 }
                 if (parentId != null) {
-                    properties.put("parent.groupId", parentId.getGroupId());
-                    properties.put("parent.artifactId", parentId.getArtifactId());
-                    properties.put("parent.version", parentId.getVersion().getValue());
+                    properties.put("parent.groupId", parentId.groupId());
+                    properties.put("parent.artifactId", parentId.artifactId());
+                    properties.put("parent.version", parentId.version().value());
 
-                    properties.put("project.parent.groupId", parentId.getGroupId());
-                    properties.put("project.parent.artifactId", parentId.getArtifactId());
-                    properties.put("project.parent.version", parentId.getVersion().getValue());
+                    properties.put("project.parent.groupId", parentId.groupId());
+                    properties.put("project.parent.artifactId", parentId.artifactId());
+                    properties.put("project.parent.version", parentId.version().value());
                     nutsDescriptor = NDescriptorUtils.applyProperties(nutsDescriptor.builder(), properties).build();
                 }
-                NId thisId = nutsDescriptor.getId();
+                NId thisId = nutsDescriptor.id();
                 if (!CoreNUtils.isEffectiveId(thisId)) {
                     if (parentId != null) {
-                        if (NBlankable.isBlank(thisId.getGroupId())) {
-                            thisId = thisId.builder().setGroupId(parentId.getGroupId()).build();
+                        if (NBlankable.isBlank(thisId.groupId())) {
+                            thisId = thisId.builder().groupId(parentId.groupId()).build();
                         }
-                        if (NBlankable.isBlank(thisId.getVersion().getValue())) {
-                            thisId = thisId.builder().setVersion(parentId.getVersion().getValue()).build();
+                        if (NBlankable.isBlank(thisId.version().value())) {
+                            thisId = thisId.builder().version(parentId.version().value()).build();
                         }
                     }
                     HashMap<NId, NDescriptor> cache = new HashMap<>();
                     Set<String> done = new HashSet<>();
                     Stack<NId> todo = new Stack<>();
-                    todo.push(nutsDescriptor.getId());
-                    cache.put(nutsDescriptor.getId(), nutsDescriptor);
+                    todo.push(nutsDescriptor.id());
+                    cache.put(nutsDescriptor.id(), nutsDescriptor);
                     while (todo.isEmpty()) {
                         NId pid = todo.pop();
                         NDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
                                 d = NFetch.of(pid)
-                                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                                        .dependencyFilter(NDependencyFilter.ofRunnable())
                                         .getResultDescriptor();
                             } catch (NException ex) {
                                 throw ex;
                             } catch (Exception ex) {
-                                throw new NArtifactNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), pid, ex));
+                                throw new NArtifactNotFoundException(nutsDescriptor.id(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.id(), pid, ex));
                             }
                         }
-                        done.add(pid.getShortName());
+                        done.add(pid.shortName());
                         if (CoreNUtils.containsVars(thisId)) {
                             thisId = NDescriptorUtils.applyProperties(thisId.builder(), new MapToFunction<>(
-                                    NDescriptorUtils.getPropertiesMap(d.getProperties())
+                                    NDescriptorUtils.getPropertiesMap(d.properties())
                             )).build();
                         } else {
                             break;
                         }
-                        for (NId nutsId : d.getParents()) {
-                            if (!done.contains(nutsId.getShortName())) {
+                        for (NId nutsId : d.parents()) {
+                            if (!done.contains(nutsId.shortName())) {
                                 todo.push(nutsId);
                             }
                         }
                     }
                     if (CoreNUtils.containsVars(thisId)) {
-                        throw new NArtifactNotFoundException(nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId));
+                        throw new NArtifactNotFoundException(nutsDescriptor.id(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.id(), parentId));
                     }
-                    nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
+                    nutsDescriptor = nutsDescriptor.builder().id(thisId).build();
                 }
                 NDescriptorProperty nutsPackaging = nutsDescriptor.getProperty("nuts-packaging").orNull();
-                if (nutsPackaging != null && !NBlankable.isBlank(nutsPackaging.getValue())) {
-                    nutsDescriptor = nutsDescriptor.builder().setPackaging(nutsDescriptor.getPropertyValue("nuts-packaging")
+                if (nutsPackaging != null && !NBlankable.isBlank(nutsPackaging.value())) {
+                    nutsDescriptor = nutsDescriptor.builder().packaging(nutsDescriptor.getPropertyValue("nuts-packaging")
                                     .flatMap(NLiteral::asString).get())
                             .build();
                 }
-                properties.put("pom.groupId", thisId.getGroupId());
-                properties.put("pom.version", thisId.getVersion().getValue());
-                properties.put("pom.artifactId", thisId.getArtifactId());
-                properties.put("project.groupId", thisId.getGroupId());
-                properties.put("project.artifactId", thisId.getArtifactId());
-                properties.put("project.version", thisId.getVersion().getValue());
-                properties.put("version", thisId.getVersion().getValue());
+                properties.put("pom.groupId", thisId.groupId());
+                properties.put("pom.version", thisId.version().value());
+                properties.put("pom.artifactId", thisId.artifactId());
+                properties.put("project.groupId", thisId.groupId());
+                properties.put("project.artifactId", thisId.artifactId());
+                properties.put("project.version", thisId.version().value());
+                properties.put("version", thisId.version().value());
                 nutsDescriptor = NDescriptorUtils.applyProperties(
                         nutsDescriptor/*.setProperties(properties, true)*/.builder(), properties
                 ).build();
@@ -679,7 +680,7 @@ public class MavenUtils {
         if (callString == null) {
             return null;
         }
-        NCmdLine cl = NCmdLine.of(callString, NShellFamily.BASH).setExpandSimpleOptions(false);
+        NCmdLine cl = NCmdLine.of(callString, NShellFamily.BASH).expandSimpleOptions(false);
         NId callId = null;
         Map<String, String> callProps = new LinkedHashMap<>();
         List<String> callPropsAsArgs = new ArrayList<>();
@@ -708,15 +709,15 @@ public class MavenUtils {
     }
 
     public static boolean isMavenSettingsRepository(NRepositorySpec options){
-        if(!"maven".equals(options.getName())){
+        if(!"maven".equals(options.name())){
             return false;
         }
-        if(options.getSourceModel()!=null){
+        if(options.sourceModel()!=null){
             return false;
         }
-        if(!NBlankable.isBlank(options.getSourceLocation())){
-            if(!NBlankable.isBlank(options.getSourceLocation())){
-                String n = options.getSourceLocation().toString();
+        if(!NBlankable.isBlank(options.sourceLocation())){
+            if(!NBlankable.isBlank(options.sourceLocation())){
+                String n = options.sourceLocation().toString();
                 if(!NBlankable.isBlank(n)){
                     if(
                             !"maven".equals(n)

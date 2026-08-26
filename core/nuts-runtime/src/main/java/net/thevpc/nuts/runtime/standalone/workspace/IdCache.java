@@ -7,7 +7,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
-import net.thevpc.nuts.runtime.standalone.util.collections.NClassClassMap;
+import net.thevpc.nuts.runtime.standalone.collections.NClassClassMap;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
@@ -67,7 +67,7 @@ class IdCache {
     ) {
         int count = 0;
         for (Class<?> extensionPoint : extensionPoints) {
-            Class<?> c = new NTypeLoaderImpl(className).tryLoad(bootClassLoader).getType().orNull();
+            Class<?> c = new NTypeLoaderImpl(className).tryLoad(bootClassLoader).type().orNull();
             if (c != null) {
                 if (!logStart.get()) {
                     Set<String> extensionPointStrings = Arrays.stream(extensionPoints).map(x -> x.getName()).collect(Collectors.toSet());
@@ -99,12 +99,14 @@ class IdCache {
         return count;
     }
 
-    void add(Class<?> extensionPoint, Class<?> implementation) {
+    boolean add(Class<?> extensionPoint, Class<?> implementation) {
         NClassClassMap y = getClassClassMap(extensionPoint, true);
         if (!y.containsExactKey(implementation)) {
             y.add(implementation);
             invalidateCache();
+            return true;
         }
+        return false;
     }
 
     private void invalidateCache() {

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.core.test.special;
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -53,14 +55,14 @@ public class Test1 {
     public static void main(String[] args) {
         Stack<Pair<Node, Integer>> stack = new Stack<>();
         Node root=create();
-        System.out.println(" >> push   "+root.name+" idx:"+(0));
+        TestUtils.println(" >> push   "+root.name+" idx:"+(0));
         stack.push(new Pair<>(root, 0));
 
         while (!stack.isEmpty()) {
             Pair<Node, Integer> frame = stack.pop();
             Node node = frame.first;
             int idx = frame.second;
-            System.out.println(" >> popped "+node.name+" idx:"+(idx));
+            TestUtils.println(" >> popped "+node.name+" idx:"+(idx));
 
             if (idx == 0) {
                 // First time we see this node
@@ -69,16 +71,16 @@ public class Test1 {
 
             if (idx < node.getChildren().size()) {
                 // Push current node back with incremented index
-                System.out.println(" >> push "+node.name+" idx:"+(idx+1));
+                TestUtils.println(" >> push "+node.name+" idx:"+(idx+1));
                 stack.push(new Pair<>(node, idx + 1));
                 // Push the next child with index 0
-                System.out.println(" >> push "+node.getChildren().get(idx).name+" idx:"+(0));
+                TestUtils.println(" >> push "+node.getChildren().get(idx).name+" idx:"+(0));
                 stack.push(new Pair<>(node.getChildren().get(idx), 0));
             }
         }
     }
 
     private static void visit(Node node) {
-        System.out.println(node.toString());
+        TestUtils.println(node.toString());
     }
 }

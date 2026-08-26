@@ -11,7 +11,7 @@ import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.collections.NMaps;
 import net.thevpc.nuts.util.NStringMapFormat;
 
 import java.io.*;
@@ -32,11 +32,11 @@ public class BinSshConnection extends SshConnectionBase {
 
     private void init(NConnectionString connectionString) {
         this.connectionString = connectionString;
-        String user = connectionString.getUserName();
-        String host = connectionString.getHost();
-        int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
+        String user = connectionString.userName();
+        String host = connectionString.host();
+        int port = NLiteral.of(connectionString.port()).asInt().orElse(-1);
         String keyFilePath = connectionString.builder().getQueryParam(SshConnection.IDENTITY_FILE).orNull();
-        String keyPassword = connectionString.getPassword();
+        String keyPassword = connectionString.password();
         if (port <= 0) {
             port = 22;
         }
@@ -58,7 +58,7 @@ public class BinSshConnection extends SshConnectionBase {
         sshCommandPrefix.add(user + "@" + host);
         if (false) {
             throw new UncheckedIOException(new IOException("unable to run ssh command (" +
-                    NConnectionStringBuilder.of().setUserName(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
+                    NConnectionStringBuilder.of().userName(user).host(host).port(String.valueOf(port)).password(keyPassword).queryString(
                             keyFilePath == null ? null : NStringMapFormat.URL_FORMAT
                                     .format(
                                             NMaps.of(SshConnection.IDENTITY_FILE, keyFilePath)
@@ -83,13 +83,13 @@ public class BinSshConnection extends SshConnectionBase {
             listener.onExec(command);
         }
         return NExec.ofSystem(sshCommandPrefix.toArray(new String[0]))
-                .addCommand(command)
-                .failFast()
-                .setOut(NExecOutput.ofStream(out))
-                .setErr(NExecOutput.ofStream(err))
-                .setIn(NExecInput.ofStream(in))
+                .command(command)
+                .failFast(true)
+                .out(NExecOutput.ofStream(out))
+                .err(NExecOutput.ofStream(err))
+                .in(NExecInput.ofStream(in))
                 .run()
-                .getResultCode();
+                .exitCode();
     }
 
 
@@ -97,7 +97,7 @@ public class BinSshConnection extends SshConnectionBase {
     public InputStream getInputStream(String from) {
         NConnectionStringBuilder cbuilder = connectionString.builder();
         String identityFile = cbuilder.getQueryParam(SshConnection.IDENTITY_FILE).orNull();
-        int port = NLiteral.of(connectionString.getPort()).asInt().orElse(-1);
+        int port = NLiteral.of(connectionString.port()).asInt().orElse(-1);
         if (port <= 0) {
             port = 22;
         }
@@ -108,60 +108,60 @@ public class BinSshConnection extends SshConnectionBase {
 
                 // We rely on:   get <remote> -
                 // The '-' writes file contents to stdout.
-                try (OutputStream os = batchFile.getOutputStream()) {
+                try (OutputStream os = batchFile.outputStream()) {
                     String getCommand = "get " + escapeRemotePath(from) + " -\n";
                     os.write(getCommand.getBytes(StandardCharsets.UTF_8));
                 }
 
                 // Build remote "host" string including port + user if needed
                 String target = getNConnectionStringBuilder(from)
-                        .setPort(null)
-                        .setQueryMap(null)
-                        .setPath(null)
+                        .port(null)
+                        .queryMap(null)
+                        .path(null)
                         .build()
                         .toString();
 
                 NExec exec = NExec.ofSystem("sftp");
                 if (port != 22) {
-                    exec.addCommand("-oPort", String.valueOf(port));
+                    exec.command("-oPort", String.valueOf(port));
                 }
                 if (!NBlankable.isBlank(identityFile)) {
-                    exec.addCommand("-oIdentityFile", identityFile);
+                    exec.command("-oIdentityFile", identityFile);
                 }
-                exec.addCommand("-b", batchFile.toString(),
+                exec.command("-b", batchFile.toString(),
                                 target)
-                        .setIn(NExecInput.ofNull())
-                        .setOut(NExecOutput.ofPipe())  // capture stdout
-                        .setErr(NExecOutput.ofNull())
-                        .failFast()
+                        .in(NExecInput.ofNull())
+                        .out(NExecOutput.ofPipe())  // capture stdout
+                        .err(NExecOutput.ofNull())
+                        .failFast(true)
                         .run();
 
                 batchFile.delete();
 
-                return exec.getOut().getResult().getInputStream();
+                return exec.out().result().inputStream();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
         } else {
             NExec exec = NExec.ofSystem();
-            exec.addCommand("scp");
+            exec.command("scp");
             if (port != 22) {
-                exec.addCommand("-oPort", String.valueOf(port));
+                exec.command("-oPort", String.valueOf(port));
             }
             if (!NBlankable.isBlank(identityFile)) {
-                exec.addCommand("-oIdentityFile", identityFile);
+                exec.command("-oIdentityFile", identityFile);
             }
-            exec.addCommand("-q"); // quiet
-            exec.addCommand(connectionString.builder().setPort(null).setQueryMap(null).toString());
-            exec.addCommand("-"); // output to stdout
+            exec.command("-q"); // quiet
+            exec.command(connectionString.builder().port(null).queryMap(null).toString());
+            exec.command("-"); // output to stdout
                     exec
-                    .setIn(NExecInput.ofNull())
-                    .setOut(NExecOutput.ofPipe()) // capture remote file via stdout
-                    .setErr(NExecOutput.ofNull())
-                    .failFast()
+                    .in(NExecInput.ofNull())
+                    .out(NExecOutput.ofPipe()) // capture remote file via stdout
+                    .err(NExecOutput.ofNull())
+                    .failFast(true)
                     .run();
 
-            return exec.getOut().getResult().getInputStream();
+            return exec.out().result().inputStream();
         }
     }
 
@@ -174,7 +174,7 @@ public class BinSshConnection extends SshConnectionBase {
     }
 
     private NConnectionStringBuilder getNConnectionStringBuilder(String path) {
-        return connectionString.builder().setQueryMap(null).setPath(path);
+        return connectionString.builder().queryMap(null).path(path);
     }
 
     @Override

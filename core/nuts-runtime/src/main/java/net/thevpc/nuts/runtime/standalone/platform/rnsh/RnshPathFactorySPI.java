@@ -3,18 +3,20 @@ package net.thevpc.nuts.runtime.standalone.platform.rnsh;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.NTempOutputStreamImpl;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPathSPIAware;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RnshPathFactorySPI implements NPathFactorySPI {
@@ -48,7 +50,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
     @NScore
     public static int getScore(NScorableContext context) {
-        Object cri = context.getCriteria();
+        Object cri = context.criteria();
         if(!(cri instanceof String)) {
             return NScorable.DEFAULT_SCORE;
         }
@@ -74,12 +76,16 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             this.client = client;
             this.remotePath = remotePath;
         }
+        @Override
+        public boolean isHidden(NPath basePath) {
+            return basePath.name().startsWith(".");
+        }
 
         public NServerPathSPI(NConnectionString cnx) {
             this.cnx = cnx;
             this.client = new RnshHttpClient();
             this.client.setConnectionString(cnx);
-            this.remotePath = NStringUtils.firstNonBlank(cnx.getPath(), "/");
+            this.remotePath = NStringUtils.firstNonBlank(cnx.path(), "/");
         }
 
         @Override
@@ -99,8 +105,8 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             return nPathChildStringDigestInfos
                     .stream().map(x ->
                             new NPathChildDigestInfo()
-                                    .setName(x.getName())
-                                    .setDigest(NHex.toBytes(x.getDigest()))
+                                    .name(x.name())
+                                    .digest(NHex.toBytes(x.digest()))
                     )
                     .collect(Collectors.toList());
         }
@@ -177,33 +183,33 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public InputStream getInputStream(NPath basePath, NPathOption... options) {
-            return client.getFile(remotePath).getInputStream();
+            return client.getFile(remotePath).inputStream();
         }
 
         @Override
         public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-            String name = NPath.of(remotePath).getName();
+            String name = NPath.of(remotePath).name();
             NTempOutputStreamImpl nTempOutputStream = new NTempOutputStreamImpl();
             nTempOutputStream.setOnCompleted(inputStream -> {
                 client.ensureConnected();
                 client.putFile(new NInputContentProvider() {
                     @Override
-                    public String getName() {
+                    public String name() {
                         return name;
                     }
 
                     @Override
-                    public String getContentType() {
+                    public String contentType() {
                         return "application/octet-stream";
                     }
 
                     @Override
-                    public String getCharset() {
+                    public String charset() {
                         return null;
                     }
 
                     @Override
-                    public InputStream getInputStream() {
+                    public InputStream inputStream() {
                         return inputStream;
                     }
                 }, remotePath);
@@ -225,7 +231,7 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
 
         @Override
         public List<String> getNames(NPath basePath) {
-            return cnx.getNames();
+            return cnx.names();
         }
 
         @Override
@@ -233,12 +239,12 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             if (isRoot(basePath)) {
                 return basePath;
             }
-            return NPath.of(cnx.getRoot().toString());
+            return NPath.of(cnx.root().toString());
         }
 
         @Override
         public Boolean isRoot(NPath basePath) {
-            return "/".equals(String.valueOf(cnx.getPath()));
+            return "/".equals(String.valueOf(cnx.path()));
         }
 
         @Override
@@ -246,12 +252,12 @@ public class RnshPathFactorySPI implements NPathFactorySPI {
             if (isRoot(basePath)) {
                 return null;
             }
-            return NPath.of(cnx.getParent().toString());
+            return NPath.of(cnx.parent().toString());
         }
 
         @Override
         public String toString() {
-            return cnx.builder().setPath(remotePath).build().toString();
+            return cnx.builder().path(remotePath).build().toString();
         }
 
         @Override

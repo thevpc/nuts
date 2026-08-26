@@ -33,6 +33,7 @@ import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -254,9 +255,20 @@ public class DefaultNArrayElement extends AbstractNListContainerElement
 
     @Override
     public List<NElement> resolveAll(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
+        pattern = NStringUtils.stripToNull(pattern);
         NElementPathImpl pp = new NElementPathImpl(pattern);
         NElement[] nElements = pp.resolveReversed(this);
         return new ArrayList<>(Arrays.asList(nElements));
     }
+
+    @Override
+    public List<NPairElement> pairs() {
+        return values.stream().filter(NElement::isPair).map(x -> x.asPair().get()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NPairElement> namedPairs() {
+        return values.stream().filter(NElement::isNamedPair).map(x -> x.asPair().get()).collect(Collectors.toList());
+    }
+
 }

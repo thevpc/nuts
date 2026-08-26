@@ -15,10 +15,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.text.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +27,8 @@ import java.util.List;
  */
 public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNHelpInternalExecutable(String[] args, NExec execCommand) {
-        super("help", args, execCommand);
+    public DefaultNHelpInternalExecutable(String[] args, NExec execCommand, List<String> executorOptions) {
+        super("help", args, execCommand,executorOptions);
     }
 
     @Override
@@ -75,11 +72,10 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
         }
 
         if (helpColors) {
-            NTexts txt = NTexts.of();
-            NText n = txt.parser().parse(NPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf",
+            NText n = NTextParser.of().parse(NPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf",
                     this.getClass().getClassLoader()
             ));
-            session.getTerminal().out().print(
+            session.terminal().out().print(
                     n == null ? NText.ofStyled(("no help found for " + name), NTextStyle.error()) : n
             );
         }
@@ -98,17 +94,17 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             } else {
                 try {
                     try {
-                        w = NExec.of().addCommand(arg).which();
+                        w = NExec.of().command(arg).which();
                     } catch (Exception ex) {
                         LOG().log(NMsg.ofC("failed to execute : %s", arg).asFine(ex));
                         //ignore
                     }
                     if (w != null) {
                         out.println(NMsg.ofC("%s :", arg));
-                        out.println(w.getHelpText());
+                        out.println(w.helpText());
                         out.flush();
                     } else {
-                        session.getTerminal().err().println(NMsg.ofC("%s : not found", arg));
+                        session.terminal().err().println(NMsg.ofC("%s : not found", arg));
                     }
                 } finally {
                     if (w != null) {

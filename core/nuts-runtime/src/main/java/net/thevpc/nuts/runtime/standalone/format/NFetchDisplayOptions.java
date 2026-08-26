@@ -49,14 +49,14 @@ public class NFetchDisplayOptions {
 
     public NFetchDisplayOptions() {
         this.idFormat = NIdWriter.of();
-        this.idFormat.setHighlightImportedGroupId(true);
-        this.idFormat.setOmitOtherProperties(true);
-        this.idFormat.setOmitFace(true);
-        this.idFormat.setOmitRepository(true);
-        this.idFormat.setOmitGroupId(false);
-        this.idFormat.setOmitImportedGroupId(false);
-        this.idFormat.setOmitCondition(true);
-        this.idFormat.setOmitExclusion(true);
+        this.idFormat.highlightImportedGroupId(true);
+        this.idFormat.omitOtherProperties(true);
+        this.idFormat.omitFace(true);
+        this.idFormat.omitRepository(true);
+        this.idFormat.omitGroupId(false);
+        this.idFormat.omitImportedGroupId(false);
+        this.idFormat.omitCondition(true);
+        this.idFormat.omitExclusion(true);
     }
 
     public boolean isDependencies() {
@@ -200,11 +200,11 @@ public class NFetchDisplayOptions {
                 return true;
             }
             case "--dependencies": {
-                cmdLine.matcher().matchFlag((v) -> this.setDependencies(v.booleanValue())).anyMatch();
+                cmdLine.matcher().whenAny().asFlag((v) -> this.setDependencies(v.booleanValue())).anyMatch();
                 return true;
             }
             case "--content": {
-                cmdLine.matcher().matchFlag((v) -> this.setContent(v.booleanValue())).anyMatch();
+                cmdLine.matcher().whenAny().asFlag((v) -> this.setContent(v.booleanValue())).anyMatch();
                 return true;
             }
         }

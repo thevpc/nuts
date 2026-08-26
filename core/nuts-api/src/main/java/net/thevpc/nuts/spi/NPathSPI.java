@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedOperationException;
 import net.thevpc.nuts.text.NTreeVisitor;
@@ -40,24 +41,88 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
 
+/**
+ * NPathSPI interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NPathSPI {
 
+    /**
+     * List.
+     *
+     * @param basePath base path
+     * @return list result
+     */
     NStream<NPath> list(NPath basePath);
 
+    /**
+     * Checks if is hidden.
+     *
+     * @param basePath base path
+     * @return is hidden result
+     */
+    boolean isHidden(NPath basePath);
+
+    /**
+     * Returns the type.
+     *
+     * @param basePath base path
+     * @return get type result
+     */
     NPathType getType(NPath basePath);
 
+    /**
+     * Exists.
+     *
+     * @param basePath base path
+     * @return exists result
+     */
     boolean exists(NPath basePath);
 
+    /**
+     * Returns the content length.
+     *
+     * @param basePath base path
+     * @return get content length result
+     */
     long getContentLength(NPath basePath);
 
     String toString();
 
+    /**
+     * Returns the input stream.
+     *
+     * @param basePath base path
+     * @param options options
+     * @return get input stream result
+     */
     InputStream getInputStream(NPath basePath, NPathOption... options);
 
+    /**
+     * Returns the output stream.
+     *
+     * @param basePath base path
+     * @param options options
+     * @return get output stream result
+     */
     OutputStream getOutputStream(NPath basePath, NPathOption... options);
 
+    /**
+     * Delete.
+     *
+     * @param basePath base path
+     * @param recurse recurse
+     */
     void delete(NPath basePath, boolean recurse);
 
+    /**
+     * Mkdir.
+     *
+     * @param parents parents
+     * @param basePath base path
+     */
     void mkdir(boolean parents, NPath basePath);
 
     /**
@@ -72,118 +137,313 @@ public interface NPathSPI {
     /// ////////////////////////////////////////////////
     /// DEFAULT IMPLEMENTATIONS
 
-    default NOptional<String> toRelative(NPath basePath, NPath parentPath) {
+    /**
+     * Strip parent.
+     *
+     * @param basePath base path
+     * @param parentPath parent path
+     * @return strip parent result
+     */
+    default NOptional<String> stripParent(NPath basePath, NPath parentPath) {
+        return null;
+    }
+
+    /**
+     * Relativize.
+     *
+     * @param basePath base path
+     * @param parentPath parent path
+     * @return relativize result
+     */
+    default NOptional<String> relativize(NPath basePath, NPath parentPath) {
         return null;
     }
 
 
+    /**
+     * Returns the names.
+     *
+     * @param basePath base path
+     * @return get names result
+     */
     default List<String> getNames(NPath basePath) {
         return null;
     }
 
+    /**
+     * Checks if is local.
+     *
+     * @param basePath base path
+     * @return is local result
+     */
     default boolean isLocal(NPath basePath) {
         return true;
     }
 
 
+    /**
+     * Returns the location.
+     *
+     * @param basePath base path
+     * @return get location result
+     */
     default String getLocation(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the protocol.
+     *
+     * @param basePath base path
+     * @return get protocol result
+     */
     default String getProtocol(NPath basePath) {
         return null;
     }
 
+    /**
+     * Formatter.
+     *
+     * @param basePath base path
+     * @return formatter result
+     */
     default NObjectWriterSPI formatter(NPath basePath) {
         return null;
     }
 
+    /**
+     * Converts to absolute.
+     *
+     * @param basePath base path
+     * @param rootPath root path
+     * @return to absolute result
+     */
     default NPath toAbsolute(NPath basePath, NPath rootPath) {
         return null;
     }
 
+    /**
+     * Checks if is absolute.
+     *
+     * @param basePath base path
+     * @return is absolute result
+     */
     default boolean isAbsolute(NPath basePath) {
         return true;
     }
 
+    /**
+     * Returns the name.
+     *
+     * @param basePath base path
+     * @return get name result
+     */
     default String getName(NPath basePath) {
         return null;
     }
 
 
+    /**
+     * Resolve.
+     *
+     * @param basePath base path
+     * @param path path
+     * @return resolve result
+     */
     default NPath resolve(NPath basePath, String path) {
         return null;
     }
 
+    /**
+     * Resolve sibling.
+     *
+     * @param basePath base path
+     * @param path path
+     * @return resolve sibling result
+     */
     default NPath resolveSibling(NPath basePath, String path) {
-        NPath parent = basePath.getParent();
+        NPath parent = basePath.parent();
         return parent.resolve(path);
     }
 
 
+    /**
+     * Converts to url.
+     *
+     * @param basePath base path
+     * @return to url result
+     */
     default NOptional<URL> toURL(NPath basePath) {
         return NOptional.ofNamedEmpty("url");
     }
 
+    /**
+     * Converts to path.
+     *
+     * @param basePath base path
+     * @return to path result
+     */
     default NOptional<Path> toPath(NPath basePath) {
         return NOptional.ofNamedEmpty("path");
     }
 
 
+    /**
+     * Normalize.
+     *
+     * @param basePath base path
+     * @return normalize result
+     */
     default NPath normalize(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the parent.
+     *
+     * @param basePath base path
+     * @return get parent result
+     */
     default NPath getParent(NPath basePath) {
         return null;
     }
 
 
+    /**
+     * Returns the content encoding.
+     *
+     * @param basePath base path
+     * @return get content encoding result
+     */
     default String getContentEncoding(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the content type.
+     *
+     * @param basePath base path
+     * @return get content type result
+     */
     default String getContentType(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the charset.
+     *
+     * @param basePath base path
+     * @return get charset result
+     */
     default String getCharset(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the last modified instant.
+     *
+     * @param basePath base path
+     * @return get last modified instant result
+     */
     default Instant getLastModifiedInstant(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the last access instant.
+     *
+     * @param basePath base path
+     * @return get last access instant result
+     */
     default Instant getLastAccessInstant(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the creation instant.
+     *
+     * @param basePath base path
+     * @return get creation instant result
+     */
     default Instant getCreationInstant(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the owner.
+     *
+     * @param basePath base path
+     * @return get owner result
+     */
     default String getOwner(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the group.
+     *
+     * @param basePath base path
+     * @return get group result
+     */
     default String getGroup(NPath basePath) {
         return null;
     }
 
+    /**
+     * Returns the permissions.
+     *
+     * @param basePath base path
+     * @return get permissions result
+     */
     default Set<NPathPermission> getPermissions(NPath basePath) {
         return Collections.emptySet();
     }
 
+    /**
+     * Sets the permissions.
+     *
+     * @param basePath base path
+     * @param permissions permissions
+     */
     default void setPermissions(NPath basePath, NPathPermission... permissions) {
+        /**
+         * N unsupported operation exception.
+         *
+         * @param supported") supported")
+         * @return n unsupported operation exception result
+         */
         throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
     }
 
+    /**
+     * Adds the specified permissions.
+     *
+     * @param basePath base path
+     * @param permissions permissions
+     */
     default void addPermissions(NPath basePath, NPathPermission... permissions) {
+        /**
+         * N unsupported operation exception.
+         *
+         * @param supported") supported")
+         * @return n unsupported operation exception result
+         */
         throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
     }
 
+    /**
+     * Removes the specified permissions.
+     *
+     * @param basePath base path
+     * @param permissions permissions
+     */
     default void removePermissions(NPath basePath, NPathPermission... permissions) {
+        /**
+         * N unsupported operation exception.
+         *
+         * @param supported") supported")
+         * @return n unsupported operation exception result
+         */
         throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
     }
 
@@ -211,6 +471,14 @@ public interface NPathSPI {
         return null;
     }
 
+    /**
+     * Subpath.
+     *
+     * @param basePath base path
+     * @param beginIndex begin index
+     * @param endIndex end index
+     * @return subpath result
+     */
     default NPath subpath(NPath basePath, int beginIndex, int endIndex) {
         return null;
     }
@@ -240,19 +508,48 @@ public interface NPathSPI {
         return null;
     }
 
+    /**
+     * List digest info.
+     *
+     * @param basePath base path
+     * @param algo algo
+     * @return list digest info result
+     */
     default List<NPathChildDigestInfo> listDigestInfo(NPath basePath, String algo) {
         return null;
     }
 
+    /**
+     * Converts to compressed form.
+     *
+     * @param basePath base path
+     * @return to compressed form result
+     */
     default NPath toCompressedForm(NPath basePath) {
         return null;
     }
 
 
+    /**
+     * Move to.
+     *
+     * @param basePath base path
+     * @param other other
+     * @param options options
+     * @return move to result
+     */
     default boolean moveTo(NPath basePath, NPath other, NPathOption... options) {
         return false;
     }
 
+    /**
+     * Copy to.
+     *
+     * @param basePath base path
+     * @param other other
+     * @param options options
+     * @return copy to result
+     */
     default boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
         return false;
     }
@@ -270,15 +567,36 @@ public interface NPathSPI {
         return false;
     }
 
+    /**
+     * Compare to.
+     *
+     * @param basePath base path
+     * @param other other
+     * @return compare to result
+     */
     default Integer compareTo(NPath basePath, NPath other) {
         return null;
     }
 
+    /**
+     * Returns the digest.
+     *
+     * @param basePath base path
+     * @param algo algo
+     * @return get digest result
+     */
     default byte[] getDigest(NPath basePath, String algo) {
         return null;
     }
 
-    default NStream<String> reversedLines(NPath basePath,Charset charset) {
+    /**
+     * Reversed lines.
+     *
+     * @param basePath base path
+     * @param charset charset
+     * @return reversed lines result
+     */
+    default NStream<String> reversedLines(NPath basePath, Charset charset) {
         return null;
     }
 

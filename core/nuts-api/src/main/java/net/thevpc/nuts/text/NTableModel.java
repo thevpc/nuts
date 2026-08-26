@@ -32,32 +32,62 @@ package net.thevpc.nuts.text;
  */
 public interface NTableModel {
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NMutableTableModel of() {
         return NMutableTableModel.of();
     }
 
+    /**
+     * Creates a new instance of of.
+     *
+     * @param text text
+     * @return of result
+     */
     static NTableModel of(NText text) {
-        return NMutableTableModel.of().addRow(text);
+        return NMutableTableModel.of().addRow(NTableCell.of(text));
     }
 
-    int getColumnsCount();
+    /**
+     * Columns count.
+     *
+     * @return columns count result
+     */
+    int columnsCount();
 
-    int getRowsCount();
+    /**
+     * Rows count.
+     *
+     * @return rows count result
+     */
+    int rowsCount();
 
-    NText getCellValue(int row, int column);
+    /**
+     * Returns the cell.
+     *
+     * @param row row
+     * @param column column
+     * @return get cell result
+     */
+    NTableCellDef getCell(int row, int column);
 
-    default int getCellColSpan(int row, int column) {
-        return 1;
-    }
+    /**
+     * Returns the header.
+     *
+     * @param column column
+     * @return get header result
+     */
+    NTableCellDef getHeader(int column);
 
-    default int getCellRowSpan(int row, int column) {
-        return 1;
-    }
-
-    default NText getHeaderValue(int column) {
-        return NText.of(NMsg.ofC("column %s", (column + 1)));
-    }
-
+    /**
+     * Returns the header col span.
+     *
+     * @param column column
+     * @return get header col span result
+     */
     default int getHeaderColSpan(int column) {
         return 1;
     }

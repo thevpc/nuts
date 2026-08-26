@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NScorable;
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.function.Supplier;
@@ -55,6 +55,14 @@ public interface NScoredCallable<T> extends NScorable {
      * @return a new {@code NScoredCallable} instance
      */
     static <T> NScoredCallable<T> of(int score, T value) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param score score
+         * @param value value
+         * @param null null
+         * @return of result
+         */
         return of(score, value, null);
     }
 
@@ -80,6 +88,14 @@ public interface NScoredCallable<T> extends NScorable {
      * @return a new {@code NScoredCallable} instance
      */
     static <T> NScoredCallable<T> of(int score, Supplier<T> supplier) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param score score
+         * @param supplier supplier
+         * @param null null
+         * @return of result
+         */
         return of(score, supplier, null);
     }
 
@@ -106,6 +122,14 @@ public interface NScoredCallable<T> extends NScorable {
      * @return a valid scored callable
      */
     static <T> NScoredCallable<T> ofValid(T value) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param DEFAULT_SCORE default_score
+         * @param value value
+         * @param null null
+         * @return of result
+         */
         return of(DEFAULT_SCORE, value, null);
     }
 
@@ -117,6 +141,14 @@ public interface NScoredCallable<T> extends NScorable {
      * @return a valid scored callable
      */
     static <T> NScoredCallable<T> ofValid(Supplier<T> supplier) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param DEFAULT_SCORE default_score
+         * @param supplier supplier
+         * @param null null
+         * @return of result
+         */
         return of(DEFAULT_SCORE, supplier, null);
     }
 
@@ -131,6 +163,12 @@ public interface NScoredCallable<T> extends NScorable {
      * @return a valid scored callable
      */
     static <T> NScoredCallable<T> ofValid(int score, T value) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param null null
+         * @return of result
+         */
         return of((score <= 0) ? DEFAULT_SCORE : score, value, null);
     }
 
@@ -145,6 +183,12 @@ public interface NScoredCallable<T> extends NScorable {
      * @return a valid scored callable
      */
     static <T> NScoredCallable<T> ofValid(int score, Supplier<T> supplier) {
+        /**
+         * Creates a new instance of of.
+         *
+         * @param null null
+         * @return of result
+         */
         return of((score <= 0) ? DEFAULT_SCORE : score, supplier, null);
     }
 

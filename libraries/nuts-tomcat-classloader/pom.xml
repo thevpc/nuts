@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-tomcat-classloader</artifactId>
-    <version>0.8.9.0.t.8.0.21-rc1</version>
+    <version>1.0.0.0.t.8.0.21-rc1</version>
     <packaging>jar</packaging>
     <name>Nuts Community Library for Tomcat Classloading</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -52,8 +52,8 @@
     </licenses>
 
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>0.8.9</version></dependency>
-        <dependency><groupId>org.apache.tomcat</groupId><artifactId>tomcat-catalina</artifactId><version>9.0.117</version><scope>provided</scope></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>1.0.0</version></dependency>
+        <dependency><groupId>org.apache.tomcat</groupId><artifactId>tomcat-catalina</artifactId><version>9.0.118</version><scope>provided</scope></dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>
@@ -140,10 +140,15 @@
                                     <head>Category:</head>
                                 </tag>
                             </tags>
+                            <debug>true</debug>
+                            <jdkToolchain>
+                                <version>1.8</version>
+                            </jdkToolchain>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
@@ -154,6 +159,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.6</version>
+                        <configuration>
+                            <keyname>C861C1799197D091</keyname>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -177,9 +185,7 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.9</version>
+                        <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.9</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -196,14 +202,14 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.10.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
                         </configuration>
                     </plugin>
                 </plugins>

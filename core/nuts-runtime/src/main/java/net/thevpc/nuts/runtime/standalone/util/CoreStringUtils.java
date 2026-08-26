@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.artifact.NArtifactNotFoundException;
 import net.thevpc.nuts.expr.NToken;
+import net.thevpc.nuts.io.NStreamTokenizer;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NNewLineMode;
 import net.thevpc.nuts.util.*;
@@ -213,18 +214,18 @@ public final class CoreStringUtils {
                 }
                 msg = exceptionToMessage(ex2, true);
             } else {
-                msg = NMsg.ofPlain(ex.getMessage());
+                msg = NMsg.ofP(ex.getMessage());
             }
         } else if (ex instanceof NAnyFormattedExceptionBase) {
-            msg = ((NAnyFormattedExceptionBase) ex).getFormattedMessage();
+            msg = ((NAnyFormattedExceptionBase) ex).formattedMessage();
         } else {
             String msg2 = ex.toString();
             if (msg2.startsWith(ex.getClass().getName() + ":")) {
                 if (inner) {
                     //this is  default toString for the exception
-                    msg = NMsg.ofPlain(msg2.substring((ex.getClass().getName()).length() + 1).trim());
+                    msg = NMsg.ofP(msg2.substring((ex.getClass().getName()).length() + 1).trim());
                 } else {
-                    msg = NMsg.ofPlain(ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim());
+                    msg = NMsg.ofP(ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim());
                 }
             } else {
                 for (Class aClass : new Class[]{
@@ -235,12 +236,12 @@ public final class CoreStringUtils {
                         ReflectiveOperationException.class,
                         Error.class,}) {
                     if (aClass.isInstance(ex)) {
-                        return NMsg.ofPlain(ex.toString());
+                        return NMsg.ofP(ex.toString());
                     }
                 }
-                msg = ex.getMessage() == null ? null : NMsg.ofPlain(ex.getMessage());
+                msg = ex.getMessage() == null ? null : NMsg.ofP(ex.getMessage());
                 if (msg == null) {
-                    msg = NMsg.ofPlain(ex.toString());
+                    msg = NMsg.ofP(ex.toString());
                 }
             }
         }
@@ -344,13 +345,13 @@ public final class CoreStringUtils {
         if (s == null) {
             return new String[0];
         }
-        return StringTokenizerUtils.splitDefault(s).stream().map(String::trim)
+        return StringTokenizerUtils.splitDefault(s).stream().map(NStringUtils::strip)
                 .filter(x -> x.length() > 0)
                 .distinct().toArray(String[]::new);
     }
 
     public static String joinAndTrimToNull(List<String> args) {
-        return NStringUtils.trimToNull(
+        return NStringUtils.stripToNull(
                 String.join(",", args)
         );
     }
@@ -510,7 +511,7 @@ public final class CoreStringUtils {
         List<String> w=new  ArrayList<>();
         if(other!=null){
             for (String s : other) {
-                s=NStringUtils.trimToNull(s);
+                s=NStringUtils.stripToNull(s);
                 if(s!=null){
                     w.add(s);
                 }

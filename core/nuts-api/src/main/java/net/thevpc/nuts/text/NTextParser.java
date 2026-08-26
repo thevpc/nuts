@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.NInputSource;
 
 import java.io.File;
@@ -38,67 +39,259 @@ import java.nio.file.Path;
  * @app.category Format
  */
 public interface NTextParser {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NTextParser of() {
-        return NTexts.of().parser();
+        return NTextRPI.of().createParser();
     }
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @param visitor visitor
+     * @return parse incremental result
+     */
     long parseIncremental(char buf, NTextVisitor visitor);
 
+    /**
+     * Parse.
+     *
+     * @param in in
+     * @param visitor visitor
+     * @return parse result
+     */
     long parse(InputStream in, NTextVisitor visitor);
 
+    /**
+     * Parse.
+     *
+     * @param in in
+     * @param visitor visitor
+     * @return parse result
+     */
     long parse(Reader in, NTextVisitor visitor);
 
+    /**
+     * Parse.
+     *
+     * @param in in
+     * @return parse result
+     */
     NText parse(InputStream in);
 
+    /**
+     * Parse.
+     *
+     * @param in in
+     * @return parse result
+     */
     NText parse(Reader in);
 
+    /**
+     * Parse.
+     *
+     * @param in in
+     * @return parse result
+     */
     NText parse(NInputSource in);
 
+    /**
+     * Parse.
+     *
+     * @param in in
+     * @return parse result
+     */
     NText parse(File in);
 
+    /**
+     * Parse.
+     *
+     * @param in in
+     * @return parse result
+     */
     NText parse(Path in);
 
+    /**
+     * Parse.
+     *
+     * @param in in
+     * @return parse result
+     */
     NText parse(URL in);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @param off off
+     * @param len len
+     * @param visitor visitor
+     * @return parse incremental result
+     */
     long parseIncremental(byte[] buf, int off, int len, NTextVisitor visitor);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @param off off
+     * @param len len
+     * @param visitor visitor
+     * @return parse incremental result
+     */
     long parseIncremental(char[] buf, int off, int len, NTextVisitor visitor);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @param visitor visitor
+     * @return parse incremental result
+     */
     long parseIncremental(byte[] buf, NTextVisitor visitor);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @param visitor visitor
+     * @return parse incremental result
+     */
     long parseIncremental(char[] buf, NTextVisitor visitor);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @param visitor visitor
+     * @return parse incremental result
+     */
     long parseIncremental(String buf, NTextVisitor visitor);
 
+    /**
+     * Parse remaining.
+     *
+     * @param visitor visitor
+     * @return parse remaining result
+     */
     long parseRemaining(NTextVisitor visitor);
 
+    /**
+     * Checks if is incomplete.
+     *
+     * @return is incomplete result
+     */
     boolean isIncomplete();
 
+    /**
+     * Creates a new instance of offer.
+     *
+     * @param c c
+     */
     void offer(char c);
 
+    /**
+     * Creates a new instance of offer.
+     *
+     * @param c c
+     */
     void offer(String c);
 
+    /**
+     * Creates a new instance of offer.
+     *
+     * @param c c
+     */
     void offer(char[] c);
 
+    /**
+     * Creates a new instance of offer.
+     *
+     * @param c c
+     * @param offset offset
+     * @param len len
+     */
     void offer(char[] c, int offset, int len);
 
+    /**
+     * Read.
+     *
+     * @return read result
+     */
     NText read();
 
+    /**
+     * Read fully.
+     *
+     * @return read fully result
+     */
     NText readFully();
 
+    /**
+     * Reset.
+     */
     void reset();
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @return parse incremental result
+     */
     NText parseIncremental(byte[] buf);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @return parse incremental result
+     */
     NText parseIncremental(char[] buf);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @return parse incremental result
+     */
     NText parseIncremental(String buf);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @return parse incremental result
+     */
     NText parseIncremental(char buf);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @param off off
+     * @param len len
+     * @return parse incremental result
+     */
     NText parseIncremental(byte[] buf, int off, int len);
 
+    /**
+     * Parse incremental.
+     *
+     * @param buf buf
+     * @param off off
+     * @param len len
+     * @return parse incremental result
+     */
     NText parseIncremental(char[] buf, int off, int len);
 
+    /**
+     * Parse remaining.
+     *
+     * @return parse remaining result
+     */
     NText parseRemaining();
 }

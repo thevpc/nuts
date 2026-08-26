@@ -12,8 +12,8 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesObjectWriter;
 import net.thevpc.nuts.text.NContentTypeWriter;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
@@ -132,8 +132,8 @@ public class NWriterPlain extends DefaultObjectWriterBase<NContentTypeWriter> im
     }
 
     private NElementWriter ew() {
-        return NElementWriter.of().setNtf(isNtf())
-                .setCompact(isCompact())
+        return NElementWriter.of().ntf(isNtf())
+                .compact(isCompact())
                 .configure(true, extraConfig.toArray(new String[0]));
     }
 
@@ -177,8 +177,8 @@ public class NWriterPlain extends DefaultObjectWriterBase<NContentTypeWriter> im
     }
 
     @Override
-    public NWriterPlain setNtf(boolean ntf) {
-        return (NWriterPlain) super.setNtf(ntf);
+    public NWriterPlain ntf(boolean ntf) {
+        return (NWriterPlain) super.ntf(ntf);
     }
 
     public boolean isCompact() {

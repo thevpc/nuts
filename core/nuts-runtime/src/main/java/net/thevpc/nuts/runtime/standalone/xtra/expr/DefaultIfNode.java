@@ -34,15 +34,15 @@ public class DefaultIfNode implements NExprIfNode {
         this.falseNode = falseNode;
     }
 
-    public NExprNode getConditionNode() {
+    public NExprNode conditionNode() {
         return conditionNode;
     }
 
-    public NExprNode getTrueNode() {
+    public NExprNode trueNode() {
         return trueNode;
     }
 
-    public NExprNode getFalseNode() {
+    public NExprNode falseNode() {
         return falseNode;
     }
 

@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.xtra.time;
 
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.time.NProgressFactory;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.mon.NProgressFactory;
+import net.thevpc.nuts.mon.NProgressListener;
 
 import java.util.ArrayList;
 import java.util.List;

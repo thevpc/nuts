@@ -45,7 +45,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NativeImageHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NDefaultTerminalSpec;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NTerminalSpec;
 import net.thevpc.nuts.log.NLog;
 
@@ -83,8 +83,8 @@ public class DefaultNBootModel implements NBootModel {
         this.workspace = workspace;
         this.LOG = LOG;
         this.workspaceModel = workspaceModel;
-        this.bOptions = bOption0.readOnly();
-        this.effOptions = bOption0.readOnly();
+        this.bOptions = bOption0.toReadOnly();
+        this.effOptions = bOption0.toReadOnly();
         this.bootSession = new DefaultNSession(workspace, null)
                 .copyFrom(effOptions);
     }
@@ -93,8 +93,8 @@ public class DefaultNBootModel implements NBootModel {
         this.initializing = true;
         NativeImageHelper.prepare();
         this.bootTerminal = detectAnsiTerminalSupport(effOptions, true, ((DefaultNWorkspace) workspace).getModel().LOG);
-        workspaceModel.uuid = effOptions.getUuid().orNull();
-        String wsp = effOptions.getWorkspace().orNull();
+        workspaceModel.uuid = effOptions.uuid().orNull();
+        String wsp = effOptions.workspace().orNull();
         try {
             workspaceModel.name = NBlankable.isBlank(wsp) ? null : Paths.get(wsp).getFileName().toString();
         }catch (Exception e){
@@ -102,13 +102,13 @@ public class DefaultNBootModel implements NBootModel {
         }
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNSystemTerminalBaseBoot(this));
         this.systemTerminal = new NSystemTerminalRef(NutsSystemTerminal_of_NutsSystemTerminalBase(sys));
-        this.bootSession.setTerminal(new DefaultNTerminalFromSystem(this.systemTerminal));
+        this.bootSession.terminal(new DefaultNTerminalFromSystem(this.systemTerminal));
         this.nullOut = NullNPrintStream.INSTANCE;
         this.nullOutputStream = NullOutputStream.INSTANCE;
     }
 
     public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NBootOptions bOption, boolean boot, NLog log) {
-        NOsFamily os = NOsFamily.getCurrent();
+        NOsFamily os = NOsFamily.current();
         LinkedHashSet<String> flags = new LinkedHashSet<>();
         boolean tty = false;
         boolean customOut = false;
@@ -121,18 +121,18 @@ public class DefaultNBootModel implements NBootModel {
         InputStream stdIn = System.in;
         PrintStream stdOut = System.out;
         PrintStream stdErr = System.err;
-        if (bOption.getStdin().isPresent() && bOption.getStdin().get() != System.in) {
-            stdIn = bOption.getStdin().orNull();
+        if (bOption.stdin().isPresent() && bOption.stdin().get() != System.in) {
+            stdIn = bOption.stdin().orNull();
             flags.add("customIn");
             customIn = true;
         }
-        if (bOption.getStdout().isPresent() && bOption.getStdout().get() != System.out) {
-            stdOut = bOption.getStdout().orNull();
+        if (bOption.stdout().isPresent() && bOption.stdout().get() != System.out) {
+            stdOut = bOption.stdout().orNull();
             flags.add("customOut");
             customOut = true;
         }
-        if (bOption.getStderr().isPresent() && bOption.getStderr().get() != System.err) {
-            stdErr = bOption.getStderr().orNull();
+        if (bOption.stderr().isPresent() && bOption.stderr().get() != System.err) {
+            stdErr = bOption.stderr().orNull();
             flags.add("customErr");
             customErr = true;
         }
@@ -163,8 +163,8 @@ public class DefaultNBootModel implements NBootModel {
         if(noColor){
             denyAnsi = true;
         }
-        if (bOption.getTerminalMode().isPresent()) {
-            switch (bOption.getTerminalMode().get()) {
+        if (bOption.terminalMode().isPresent()) {
+            switch (bOption.terminalMode().get()) {
                 case FORMATTED:
                 case ANSI: {
                     acceptAnsi = true;
@@ -258,38 +258,39 @@ public class DefaultNBootModel implements NBootModel {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NId extId = NId.get("net.thevpc.nuts:nuts-term#" + workspace.getApiVersion()).get();
-            if (!NExtensions.of().isExcludedExtension(extId.toString(), NWorkspace.of().getBootOptions().toWorkspaceOptions())) {
+            NId extId = NId.get("net.thevpc.nuts:nuts-term#" + workspace.apiVersion()).get();
+            if (!NExtensions.of().isExcludedExtension(extId.toString(), NWorkspace.of().bootOptions().toWorkspaceOptions())) {
                 NExtensions extensions = NExtensions.of();
                 extensions.loadExtension(extId);
                 NSystemTerminal systemTerminal = createSystemTerminal(
                         new NDefaultTerminalSpec()
-                                .setAutoComplete(true)
+                                .autoComplete(true)
                 );
                 setSystemTerminal(systemTerminal);
                 if (getSystemTerminal().isAutoCompleteSupported()) {
                     _LOG()
-                            .log(NMsg.ofPlain("enable rich terminal").asFine().withIntent(NMsgIntent.SUCCESS));
+                            .log(NMsg.ofP("enable rich terminal").asFine().withIntent(NMsgIntent.SUCCESS));
                 } else {
                     _LOG()
-                            .log(NMsg.ofPlain("unable to enable rich terminal").asFineFail());
+                            .log(NMsg.ofP("unable to enable rich terminal").asFineFail());
                 }
             } else {
                 _LOG()
-                        .log(NMsg.ofPlain("enableRichTerm discarded; nuts-term is excluded.").asFineAlert());
+                        .log(NMsg.ofP("enableRichTerm discarded; nuts-term is excluded.").asFineAlert());
             }
         }
     }
 
     private NSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NSystemTerminalBase terminal) {
         if (terminal == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("missing terminal"));
+            throw new NIllegalArgumentException(NMsg.ofP("missing terminal"));
         }
         NSystemTerminal syst;
         if ((terminal instanceof NSystemTerminal)) {
             syst = (NSystemTerminal) terminal;
         } else {
             try {
+                terminal.out();
                 syst = new DefaultSystemTerminal(terminal);
                 //NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
@@ -378,7 +379,7 @@ public class DefaultNBootModel implements NBootModel {
     public Map<String, NLiteral> getCustomBootOptions() {
         if (customBootOptions == null) {
             customBootOptions = new LinkedHashMap<>();
-            List<String> properties = bOptions.getCustomOptions().orNull();
+            List<String> properties = bOptions.customOptions().orNull();
             if (properties != null) {
                 for (String property : properties) {
                     if (property != null) {

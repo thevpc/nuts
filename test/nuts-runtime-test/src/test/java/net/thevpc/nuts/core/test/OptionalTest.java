@@ -70,7 +70,7 @@ public class OptionalTest {
         }
 
         {
-            NOptional<String> a = NOptional.ofError(NMsg.ofPlain("error"));
+            NOptional<String> a = NOptional.ofError(NMsg.ofP("error"));
             Assertions.assertThrows(NErrorOptionalException.class, () -> a.get());
             Assertions.assertEquals(false, a.isEmpty());
             Assertions.assertEquals(true, a.isError());

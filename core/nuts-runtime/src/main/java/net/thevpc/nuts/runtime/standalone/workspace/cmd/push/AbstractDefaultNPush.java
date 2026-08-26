@@ -29,11 +29,10 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NPush;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -158,7 +157,7 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
     }
 
     @Override
-    public List<String> getArgs() {
+    public List<String> args() {
         return NCollections.unmodifiableList(args);
     }
 
@@ -194,12 +193,12 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
     }
 
     @Override
-    public List<NId> getIds() {
+    public List<NId> ids() {
         return NCollections.unmodifiableList(ids);
     }
 
     @Override
-    public List<NId> getLockedIds() {
+    public List<NId> lockedIds() {
         return NCollections.unmodifiableList(lockedIds);
     }
 
@@ -209,18 +208,18 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
     }
 
     @Override
-    public NPush setOffline(boolean offline) {
+    public NPush offline(boolean offline) {
         this.offline = offline;
         return this;
     }
 
     @Override
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
     @Override
-    public NPush setRepository(String repository) {
+    public NPush repository(String repository) {
         this.repository = repository;
         return this;
     }
@@ -257,11 +256,11 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
         switch (a.key()) {
             case "-o":
             case "--offline": {
-                return cmdLine.matcher().matchFlag((v) -> setOffline(v.booleanValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asFlag((v) -> offline(v.booleanValue())).anyMatch();
             }
             case "-x":
             case "--freeze": {
-                return cmdLine.matcher().matchEntry((v) -> {
+                return cmdLine.matcher().whenAny().asEntry((v) -> {
                     for (String id : v.stringValue().split(",")) {
                         addLockedId(id);
                     }
@@ -270,11 +269,11 @@ public abstract class AbstractDefaultNPush extends NWorkspaceCmdBase<NPush> impl
             case "-r":
             case "-repository":
             case "--from": {
-                return cmdLine.matcher().matchEntry((v) -> setRepository(v.stringValue())).anyMatch();
+                return cmdLine.matcher().whenAny().asEntry((v) -> repository(v.stringValue())).anyMatch();
             }
             case "-g":
             case "--args": {
-                return cmdLine.matcher().matchTrueFlag((v) -> {
+                return cmdLine.matcher().whenAny().asTrueFlag((v) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 }).anyMatch();

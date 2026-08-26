@@ -369,7 +369,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 value1.set("op", ope.type().id());
                 value1.set("symbols", NElement.ofEnumArray(ope.operatorSymbols().toArray(new Enum[0])));
                 value1.set("operands", NElement.ofArray(ope.operands().toArray(new NElement[0])));
-                value1.set("position", ope.position().id());
+                value1.set("position", ope.fixity().id());
                 value1.name(null);
                 return value1.build();
             }
@@ -490,11 +490,11 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                             .build();
                 }
             }
-            case UPLET:
-            case NAMED_UPLET: {
+            case TUPLE:
+            case NAMED_TUPLE: {
                 List<NElementAnnotation> a = e.annotations();
 
-                NUpletElement p0 = e.asUplet().get();
+                NTupleElement p0 = e.asTuple().get();
                 NArrayElementBuilder p = NElement.ofArrayBuilder()
                         .addAll(p0.children().stream().map(x -> ensureJson(x)).toArray(NElement[]::new));
 

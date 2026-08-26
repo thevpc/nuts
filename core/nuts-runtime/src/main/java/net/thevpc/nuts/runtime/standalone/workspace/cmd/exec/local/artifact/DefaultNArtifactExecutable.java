@@ -5,15 +5,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.artifact;
 
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.artifact.NArtifactCall;
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.*;
-import net.thevpc.nuts.core.NRepositoryFilters;
 import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
@@ -47,7 +46,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
     public DefaultNArtifactExecutable(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
                                       List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast,
                                       NExecutionType executionType, NRunAs runAs, DefaultNExec execCommand) {
-        super(commandName, def.getId().getLongName(), NExecutableType.ARTIFACT, execCommand);
+        super(commandName, def.id().longName(), NExecutableType.ARTIFACT, execCommand);
         this.def = def;
         this.runAs = runAs;
         //all these information are available, an exception would be thrown if not!
@@ -65,62 +64,57 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         this.execCommand = execCommand;
 
         List<String> executorOptionsList = new ArrayList<>();
-        NArtifactCall exc = def.getDescriptor().getExecutor();
-        if (exc != null) {
-
-        }
-        for (String option : executorOptions) {
-            NArg a = NArg.of(option);
-            if (a.key().equals("--nuts-auto-install")) {
-                if (a.isKeyValue()) {
-                    autoInstall = a.isNegated() != a.getBooleanValue().get();
-                } else {
-                    autoInstall = true;
-                }
-            } else {
-                executorOptionsList.add(option);
-            }
-        }
         this.executorOptions = executorOptionsList;
+        NCmdLine.of(this.executorOptions).matcher()
+                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
+                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                .when("--nuts-auto-install").asFlag(a->this.autoInstall = a.booleanValue())
+                .whenAny().asArg(a->executorOptionsList.add(a.image()))
+                .requireAll();
+
         this.workspaceOptions = workspaceOptions;
     }
 
     @Override
-    public NId getId() {
-        return def.getId();
+    public NId id() {
+        return def.id();
     }
 
     @Override
     public int execute() {
+        if(completeRequest!=null){
+            //TODO : should check
+            return 0;
+        }
         NSession session = NSession.of();
         if (session.isDry()) {
-            if (autoInstall && !def.getInstallInformation().get().getInstallStatus().isInstalled()) {
+            if (autoInstall && !def.installInformation().get().installStatus().isInstalled()) {
                 NSecurityManager.of().checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
                 NPrintStream out = session.out();
-                out.println(NMsg.ofC("[dry] ==install== %s", def.getId().getLongName()));
+                out.println(NMsg.ofC("[dry] ==install== %s", def.id().longName()));
             }
             execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast,
-                    false, execCommand.getIn(), execCommand.getOut(), execCommand.getErr(), executionType, runAs);
+                    false, execCommand.in(), execCommand.out(), execCommand.err(), executionType, runAs);
             return NExecutionException.SUCCESS;
         }
-        NInstallStatus installStatus = def.getInstallInformation().get().getInstallStatus();
+        NInstallStatus installStatus = def.installInformation().get().installStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
-                NInstall ii = NInstall.of(def.getId());
+                NInstall ii = NInstall.of(def.id());
                 ii.getResultList();
-                NInstallStatus st = NFetch.of(def.getId())
-                        .setRepositoryFilter(NRepositoryFilters.of().installedRepo())
-                        .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                        .getResultDefinition().getInstallInformation().get().getInstallStatus();
+                NInstallStatus st = NFetch.of(def.id())
+                        .repositoryFilter(NRepositoryFilter.ofInstalledRepo())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
+                        .getResultDefinition().installInformation().get().installStatus();
                 if (!st.isInstalled()) {
-                    throw new NUnexpectedException(NMsg.ofC("auto installation of %s failed", def.getId()));
+                    throw new NUnexpectedException(NMsg.ofC("auto installation of %s failed", def.id()));
                 }
             } else {
-                throw new NUnexpectedException(NMsg.ofC("you must install %s to be able to run it", def.getId()));
+                throw new NUnexpectedException(NMsg.ofC("you must install %s to be able to run it", def.id()));
             }
         } else if (installStatus.isObsolete()) {
             if (autoInstall) {
-                NInstall.of(def.getId())
+                NInstall.of(def.id())
                         .configure(true, "--reinstall")
                         .run();
             }
@@ -154,15 +148,15 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
 //            }
 //        }
         return execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false,
-                execCommand.getIn()
-                , execCommand.getOut()
-                , execCommand.getErr()
+                execCommand.in()
+                , execCommand.out()
+                , execCommand.err()
                 , executionType, runAs);
     }
 
     @Override
     public String toString() {
-        return "nuts " + getId().toString() + " " + NCmdLine.of(appArgs).toString();
+        return "nuts " + id().toString() + " " + NCmdLine.of(appArgs).toString();
     }
 
 }

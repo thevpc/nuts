@@ -4,6 +4,10 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceFactory;
@@ -83,7 +87,7 @@ public class NExtensionTypeInfo<T> {
             }
             case WORKSPACE: {
                 ConcurrentHashMap<String, Object> m = NWorkspace.of().getOrComputeProperty(beansKey, ConcurrentHashMap::new);
-                return (T) m.computeIfAbsent(implType.getName(), s -> supplier.get());
+                return (T) m.computeIfAbsent(implType.getName(),s -> supplier.get());
             }
         }
         throw new NUnexpectedException(NMsg.ofC("enum not found %s", scope));
@@ -111,7 +115,7 @@ public class NExtensionTypeInfo<T> {
                     if (LOG().isLoggable(Level.CONFIG)) {
                         switch (apiType.getName()) {
                             //skip logging for NTexts to avoid infinite recursion
-                            case "net.thevpc.nuts.text.NTexts": {
+                            case "net.thevpc.nuts.internal.rpi.NTexts": {
                                 break;
                             }
                             default: {
@@ -210,7 +214,20 @@ public class NExtensionTypeInfo<T> {
                 if (Modifier.isStatic(declaredMethod.getModifiers())) {
                     if (parameterTypes.length == 1 && parameterTypes[0].equals(NScorableContext.class) && declaredMethod.getReturnType().equals(int.class)) {
                         declaredMethod.setAccessible(true);
-                        return new MethodBasedNScorable(this, declaredMethod);
+                        boolean accessible = Modifier.isPublic(declaredMethod.getModifiers());
+                        if (!accessible) {
+                            try {
+                                declaredMethod.setAccessible(true);
+                                accessible = true;
+                            } catch (Exception e) {
+                                //
+                            }
+                        }
+                        if (accessible) {
+                            return new MethodBasedNScorable(this, declaredMethod);
+                        } else {
+                            LOG().log(NMsg.ofC("[%s] [%s] scorer method ignored (non accessible) :: %s", implType, apiType, declaredMethod).asSevere());
+                        }
                     } else {
                         LOG().log(NMsg.ofC("[%s] [%s] scorer method ignored (invalid params) :: %s", implType, apiType, declaredMethod).asSevere());
                     }
@@ -224,8 +241,19 @@ public class NExtensionTypeInfo<T> {
                                 && parameterTypes.length == 1 && parameterTypes[0].equals(NScorableContext.class)
                                 && declaredMethod.getReturnType().equals(int.class)
                 ) {
-                    LOG().log(NMsg.ofC("[%s] [%s] invalid (still accepted) score method %s ", implType, apiType, declaredMethod).asSevere());
-                    return new MethodBasedNScorable(this, declaredMethod);
+                    boolean accessible = Modifier.isPublic(declaredMethod.getModifiers());
+                    if (!accessible) {
+                        try {
+                            declaredMethod.setAccessible(true);
+                            accessible = true;
+                        } catch (Exception e) {
+                            //
+                        }
+                    }
+                    if(accessible) {
+                        LOG().log(NMsg.ofC("[%s] [%s] invalid (still accepted) score method %s . Think to add @NScore", implType, apiType, declaredMethod).asSevere());
+                        return new MethodBasedNScorable(this, declaredMethod);
+                    }
                 }
             }
         }

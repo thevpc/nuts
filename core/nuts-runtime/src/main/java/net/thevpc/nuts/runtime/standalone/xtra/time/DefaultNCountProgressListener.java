@@ -8,11 +8,12 @@ package net.thevpc.nuts.runtime.standalone.xtra.time;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.time.NProgressEvent;
-import net.thevpc.nuts.time.NProgressListener;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
+import net.thevpc.nuts.mon.NProgressEvent;
+import net.thevpc.nuts.mon.NProgressListener;
 
 import java.text.DecimalFormat;
 
@@ -42,23 +43,23 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
 
     @Override
     public boolean onProgress(NProgressEvent event) {
-        switch (event.getState()){
+        switch (event.state()){
             case START:{
-                this.out = event.getSession().getTerminal().err();
-                if (event.getSession().isPlainOut()) {
+                this.out = event.session().terminal().err();
+                if (event.session().isPlainOut()) {
                     onProgress0(event, false);
                 }
                 break;
             }
             case COMPLETE:{
-                if (event.getSession().isPlainOut()) {
+                if (event.session().isPlainOut()) {
                     onProgress0(event, true);
 //            out.println();
                 }
                 break;
             }
             case PROGRESS:{
-                if (event.getSession().isPlainOut()) {
+                if (event.session().isPlainOut()) {
                     return onProgress0(event, false);
                 }
                 break;
@@ -68,20 +69,19 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
     }
 
     public boolean onProgress0(NProgressEvent event, boolean end) {
-        double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
-        if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {
-            NTexts text = NTexts.of();
+        double partialSeconds = event.partialDuration().timeAsDoubleSeconds();
+        if (event.currentCount() == 0 || partialSeconds > 0.5 || event.currentCount() == event.maxValue()) {
             out.resetLine();
-            double globalSeconds = event.getDuration().getTimeAsDoubleSeconds();
-            long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentCount() / globalSeconds);
-            long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
-            double percent = event.getProgress();
+            double globalSeconds = event.duration().timeAsDoubleSeconds();
+            long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.currentCount() / globalSeconds);
+            long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.partialCount() / partialSeconds);
+            double percent = event.progress();
             if (event.isIndeterminate()) {
                 percent = end ? 100 : 0;
             }
 //            int x = (int) (20.0 / 100.0 * percent);
 
-            NTextBuilder formattedLine = text.ofBuilder();
+            NTextBuilder formattedLine = NTextBuilder.of();
             CProgressBar cp= CProgressBar.of();
 
             formattedLine.append(cp.progress((int)percent));
@@ -95,23 +95,23 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
 //            formattedLine.append("]");
             BytesSizeFormat mf = mf(event);
             DecimalFormat df = df(event);
-            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
-            formattedLine.append(" ").append(text.ofStyled(mf.formatString(partialSpeed), NTextStyle.config())).append("/s");
-            if (event.getMaxValue() < 0) {
+            formattedLine.append(" ").append(NText.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
+            formattedLine.append(" ").append(NText.ofStyled(mf.formatString(partialSpeed), NTextStyle.config())).append("/s");
+            if (event.maxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(" ( -- )");
                 } else {
-                    formattedLine.append(" (").append(text.ofStyled(mf.formatString(globalSpeed), NTextStyle.info())).append(")");
+                    formattedLine.append(" (").append(NText.ofStyled(mf.formatString(globalSpeed), NTextStyle.info())).append(")");
                 }
             } else {
-                formattedLine.append(" (").append(text.ofStyled(mf.formatString(event.getMaxValue()), NTextStyle.warn())).append(")");
+                formattedLine.append(" (").append(NText.ofStyled(mf.formatString(event.maxValue()), NTextStyle.warn())).append(")");
             }
-            if (event.getError() != null) {
-                formattedLine.append(" ").append(text.ofStyled("ERROR", NTextStyle.error())).append(" ");
+            if (event.error() != null) {
+                formattedLine.append(" ").append(NText.ofStyled("ERROR", NTextStyle.error())).append(" ");
             }
-            formattedLine.append(" ").append(event.getMessage()).append(" ");
+            formattedLine.append(" ").append(event.message()).append(" ");
             String ff = formattedLine.toString();
-            int length = text.ofBuilder().append(ff).length();
+            int length = NTextBuilder.of().append(ff).length();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

@@ -2,16 +2,15 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.io.NServiceLoader;
+import net.thevpc.nuts.ext.NServiceLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.util.NScorableContext;
+import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NScoredValue;
+import net.thevpc.nuts.reflect.NScoredValue;
 
 public class DefaultNServiceLoader<T, B> implements NServiceLoader<T> {
 

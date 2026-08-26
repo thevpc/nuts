@@ -6,7 +6,7 @@ import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.log.NLogSPI;
+import net.thevpc.nuts.spi.NLogSPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
@@ -28,11 +28,11 @@ public class NLogFileHandler implements NLogSPI {
     private FileHandler fileHandler;
 
     public static NLogFileHandler create(NLogConfig config, boolean append, Path logFolder) throws IOException, SecurityException {
-        Level level = config.getLogFileLevel();
-        String folder = config.getLogFileBase();
-        String name = config.getLogFileName();
-        int maxSize = config.getLogFileSize();
-        int count = config.getLogFileCount();
+        Level level = config.logFileLevel();
+        String folder = config.logFileBase();
+        String name = config.logFileName();
+        int maxSize = config.logFileSize();
+        int count = config.logFileCount();
 //        String rootPackage = "net.thevpc.nuts";
         if (level == null) {
             level = Level.INFO;
@@ -42,7 +42,7 @@ public class NLogFileHandler implements NLogSPI {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
         if (folder == null || NBlankable.isBlank(folder)) {
-            folder = logFolder + "/" + NConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + NWorkspace.of().getApiVersion();
+            folder = logFolder + "/" + NConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + NWorkspace.of().apiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {
@@ -79,18 +79,18 @@ public class NLogFileHandler implements NLogSPI {
 
     @Override
     public void log(NMsg message) {
-        if (!isLoggable(message.getLevel())) {
+        if (!isLoggable(message.level())) {
             return;
         }
         Instant now = Instant.now();
-        NDuration duration = message.getDuration();
-        NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.getLevel(), message.getIntent(), message,
+        NDuration duration = message.duration();
+        NMsg msg2=NMsg.ofC("%s [%-6s] [%-7s] %s%s", now, message.level(), message.intent(), message,
                 (duration==null|| duration.isZero()) ? ""
-                        : NMsg.ofC(" (duration: %s)", message.getDuration())
+                        : NMsg.ofC(" (duration: %s)", message.duration())
         );
-        LogRecord r = new LogRecord(message.getLevel(),"{0}");
+        LogRecord r = new LogRecord(message.level(),"{0}");
         r.setMillis(now.toEpochMilli());
-        r.setThrown(message.getThrowable());
+        r.setThrown(message.throwable());
         r.setParameters(new Object[]{msg2.toString()});
         this.fileHandler.publish(r);
     }
@@ -102,11 +102,11 @@ public class NLogFileHandler implements NLogSPI {
             return false;
         }
         NSession session = NSession.of();
-        NLogConfig logConfig = NWorkspace.of().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
-        Level sessionLogLevel = session.getLogFileLevel();
+        NLogConfig logConfig = NWorkspace.of().bootOptions().logConfig().orElseGet(NLogConfig::new);
+        Level sessionLogLevel = session.logFileLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {
-                sessionLogLevel = logConfig.getLogFileLevel();
+                sessionLogLevel = logConfig.logFileLevel();
             }
             if (sessionLogLevel == null) {
                 sessionLogLevel = Level.OFF;

@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts.text;
 
-import java.util.Arrays;
+import net.thevpc.nuts.internal.rpi.NTextRPI;
+
 import java.util.List;
 
 /**
@@ -37,22 +38,23 @@ import java.util.List;
  */
 public interface NTreeNode {
 
-    static NTreeNode of(NText text,NTreeNode ...children){
-        return new NTreeNode() {
-            @Override
-            public NText value() {
-                return text;
-            }
-
-            @Override
-            public List<NTreeNode> children() {
-                return Arrays.asList(children);
-            }
-
-        };
+    /**
+     * Creates a new instance of of.
+     *
+     * @param text text
+     * @param children children
+     * @return of result
+     */
+    static NTreeNode of(NText text, NTreeNode... children) {
+        return NTextRPI.of().createTreeNode(text,children);
     }
 
-    NText value();
+    /**
+     * Content.
+     *
+     * @return content result
+     */
+    NText content();
 
     /**
      * return children of the given {@code node}

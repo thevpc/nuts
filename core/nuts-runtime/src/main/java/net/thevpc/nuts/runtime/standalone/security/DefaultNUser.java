@@ -34,21 +34,21 @@ public class DefaultNUser implements NUser {
     }
 
     public DefaultNUser(NUserConfig config, List<String> inheritedPermissions) {
-        username = config.getUserName();
-        credentials = !NBlankable.isBlank(config.getCredential());
+        username = config.userName();
+        credentials = !NBlankable.isBlank(config.credential());
 
-        permissions = config.getPermissions() == null ? new ArrayList<>() : new ArrayList<>(config.getPermissions());
-        groups = config.getGroups() == null ? new ArrayList<>() : new ArrayList<>(config.getGroups());
+        permissions = config.permissions() == null ? new ArrayList<>() : new ArrayList<>(config.permissions());
+        groups = config.groups() == null ? new ArrayList<>() : new ArrayList<>(config.groups());
         this.inheritedPermissions = inheritedPermissions == null ? new ArrayList<>() : new ArrayList<>(inheritedPermissions);
     }
 
     @Override
-    public List<String> getInheritedPermissions() {
+    public List<String> inheritedPermissions() {
         return inheritedPermissions;
     }
 
     @Override
-    public String getUsername() {
+    public String username() {
         return username;
     }
 
@@ -58,12 +58,12 @@ public class DefaultNUser implements NUser {
     }
 
     @Override
-    public List<String> getPermissions() {
+    public List<String> permissions() {
         return permissions;
     }
 
     @Override
-    public List<String> getGroups() {
+    public List<String> groups() {
         return groups;
     }
 

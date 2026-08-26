@@ -3,11 +3,8 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
-import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.text.NObjectWriter;
-
-import java.lang.reflect.Type;
 
 public class NElementMapperNId implements NElementMapper<NId> {
 
@@ -15,7 +12,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
     public Object toSimple(NElementSerializerContext<NId> context) {
         NId o = context.instance();
         if (context.isNtf()) {
-            return NObjectWriter.of(o).setNtf(true).format(o);
+            return NObjectWriter.of(o).ntf(true).format(o);
         } else {
             return o.toString();
         }
@@ -28,7 +25,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            return NElement.ofString(NObjectWriter.of(o).setNtf(true).format(o).toString());
+            return NElement.ofString(NObjectWriter.of(o).ntf(true).format(o).toString());
         } else {
             return context.defaultCreateElement(o.toString(), null);
         }

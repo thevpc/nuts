@@ -45,18 +45,22 @@ import java.util.List;
  * @since 0.5.5
  */
 public interface NDigest extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NDigest of() {
         return NExtensions.of(NDigest.class);
     }
 
-    NDigest addSource(NInputSource source);
     /**
      * source stream to  hash
      *
      * @param input source stream to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(InputStream input);
+    NDigest source(InputStream input);
 
     /**
      * file to  hash
@@ -64,7 +68,15 @@ public interface NDigest extends NComponent {
      * @param file source file to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(File file);
+    NDigest source(File file);
+
+    /**
+     * Sets the source descriptor to hash.
+     *
+     * @param source the source {@link NDescriptor} to hash
+     * @return the {@code NDigest} instance
+     */
+    NDigest source(NDescriptor source);
 
     /**
      * file to  hash
@@ -72,7 +84,7 @@ public interface NDigest extends NComponent {
      * @param path source path to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(Path path);
+    NDigest source(Path path);
 
     /**
      * file to  hash
@@ -80,40 +92,42 @@ public interface NDigest extends NComponent {
      * @param path source path to  hash
      * @return {@code this} instance
      */
-    NDigest setSource(NPath path);
-
-    NDigest setSource(URL path);
+    NDigest source(NPath path);
 
     /**
-     * file to  hash
+     * Source.
      *
-     * @param path source path to  hash
+     * @param path path
+     * @return source result
+     */
+    NDigest source(URL path);
+
+    /**
+     * byte array to  hash
+     *
+     * @param bytes source byte array
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NDigest setSource(byte[] path);
+    NDigest source(byte[] bytes);
 
     /**
-     * source stream to  hash
+     * string value to  hash
      *
-     * @param descriptor source descriptor to  hash
+     * @param string value source
      * @return {@code this} instance
+     * @since 1.0.0
      */
-    NDigest setSource(NDescriptor descriptor);
+    NDigest source(String string);
 
-    NDigest addSource(InputStream source);
-
-    NDigest addSource(File source);
-
-    NDigest addSource(Path source);
-
-    NDigest addSource(URL url);
-
-    NDigest addSource(NPath source);
-
-    NDigest addSource(byte[] source);
-
-    NDigest addSource(NDescriptor source);
+    /**
+     * char array value to  hash
+     *
+     * @param chars char array value source
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    NDigest source(char[] chars);
 
     /**
      * compute hash digest and return it as hexadecimal string
@@ -122,6 +136,11 @@ public interface NDigest extends NComponent {
      */
     String computeString();
 
+    /**
+     * Compute manifest string.
+     *
+     * @return compute manifest string result
+     */
     String computeManifestString();
 
     /**
@@ -174,19 +193,20 @@ public interface NDigest extends NComponent {
     /**
      * @return selected algorithm. default is 'SHA1'
      */
-    String getAlgorithm();
+    String algorithm();
 
     /**
-     * select hash algorithm.
+     * Source.
      *
-     * @param algorithm hash algorithm. may be any algorithm supported by
-     *                  {@link MessageDigest#getInstance(String)}
-     *                  including 'MD5' and 'SHA1'
-     * @return {@code this} instance
+     * @param source source
+     * @return source result
      */
-    NDigest setAlgorithm(String algorithm);
+    NDigest source(NInputSource source);
 
-    NDigest setSource(NInputSource source);
-
-    List<NInputSource> getSource();
+    /**
+     * Source.
+     *
+     * @return source result
+     */
+    List<NInputSource> source();
 }

@@ -168,9 +168,9 @@ public class DefaultTsonWriter {
                 writeName((NStringElement) element);
                 break;
             }
-            case UPLET:
-            case NAMED_UPLET: {
-                writeUplet((NUpletElement) element);
+            case TUPLE:
+            case NAMED_TUPLE: {
+                writeTuple((NTupleElement) element);
                 break;
             }
             case FRAGMENT: {
@@ -203,7 +203,7 @@ public class DefaultTsonWriter {
         }
     }
 
-    private void writeUplet(NUpletElement a) {
+    private void writeTuple(NTupleElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         String name = a.name().orNull();
         if (name != null) {
@@ -350,7 +350,7 @@ public class DefaultTsonWriter {
     private void writeAnyOperatorElement(NOperatorElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         List<NOperatorSymbol> operatorSymbols = a.operatorSymbols();
-        switch (a.position()) {
+        switch (a.fixity()) {
             case PREFIX: {
                 for (int i = 0; i < operatorSymbols.size(); i++) {
                     writeBoundedString(a.operatorSymbol(i).get().lexeme(), 1, a.affixes());
@@ -393,7 +393,7 @@ public class DefaultTsonWriter {
     private void writeCharStream(NCharStreamElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         writeBoundedString("^" + a.blocIdentifier() + "{", 1, a.affixes());
-        try (Reader reader = a.value().getReader()) {
+        try (Reader reader = a.value().reader()) {
             char[] b = new char[1024];
             int c;
             while ((c = reader.read(b)) >= 0) {
@@ -409,7 +409,7 @@ public class DefaultTsonWriter {
     private void writeBinaryStream(NBinaryStreamElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
         writeBoundedString("^" + a.blocIdentifier() + "[", 1, a.affixes());
-        try (InputStream reader = a.value().getInputStream()) {
+        try (InputStream reader = a.value().inputStream()) {
             try (OutputStream out = asBinaryOutputStream(a.blocIdentifier())) {
                 byte[] b = new byte[1024];
                 int c;

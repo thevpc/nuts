@@ -18,23 +18,23 @@ public class DefaultNElementDiagnosticBuilder implements NElementDiagnosticBuild
     }
 
     @Override
-    public NMsg getMessage() {
+    public NMsg message() {
         return message;
     }
 
     @Override
-    public NElementDiagnosticBuilder setMessage(NMsg message) {
+    public NElementDiagnosticBuilder message(NMsg message) {
         this.message = message;
         return this;
     }
 
     @Override
-    public NElementToken getToken() {
+    public NElementToken token() {
         return token;
     }
 
     @Override
-    public NElementDiagnosticBuilder setToken(NElementToken message) {
+    public NElementDiagnosticBuilder token(NElementToken message) {
         this.token = message;
         return this;
     }

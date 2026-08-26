@@ -52,7 +52,7 @@ public abstract class NExtensionException extends NException {
      *
      * @param extensionId extension id
      * @param message     the detail message (which is saved for later retrieval
-     *                    by the {@link #getMessage()} method). if the message is null, a
+     *                    by the {@link #message()} method). if the message is null, a
      *                    default one is provided
      * @param cause       the cause (which is saved for later retrieval by the
      *                    {@link #getCause()} method).  (A {@code null} value is
@@ -71,7 +71,7 @@ public abstract class NExtensionException extends NException {
      *
      * @return extension id
      */
-    public NId getId() {
+    public NId id() {
         return id;
     }
 }

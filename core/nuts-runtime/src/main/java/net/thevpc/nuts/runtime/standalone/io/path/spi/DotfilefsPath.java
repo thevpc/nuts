@@ -6,6 +6,10 @@ import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.NCoreLogUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -15,7 +19,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 
-import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.io.NIOUtils;
 
@@ -43,12 +47,12 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
         @NScore
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
+            Object cri = context.criteria();
             if(!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }
             String path = (String) cri;
-            if (NStringUtils.trim(path).startsWith(PREFIX)) {
+            if (NStringUtils.strip(path).startsWith(PREFIX)) {
                 return NScorable.DEFAULT_SCORE;
             }
             return NScorable.UNSUPPORTED_SCORE;
@@ -60,6 +64,11 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         if (!url.startsWith(PREFIX)) {
             throw new NUnsupportedArgumentException(NMsg.ofC("expected prefix '%s'", PREFIX));
         }
+    }
+
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return false;
     }
 
     @Override
@@ -120,7 +129,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NPathType getType(NPath basePath) {
-        if (NBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")) {
+        if (NBlankable.isBlank(basePath.location()) || basePath.location().endsWith("/")) {
             return NPathType.DIRECTORY;
         }
         String t = getContentType(basePath);
@@ -144,7 +153,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NPath getParent(NPath basePath) {
-        NPath p = ref.getParent();
+        NPath p = ref.parent();
         if (p == null) {
             return null;
         }
@@ -174,7 +183,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + ref.getRoot());
+        return NPath.of(PREFIX + ref.root());
     }
 
     private List<String> parseHtml(String baseUrl) {
@@ -186,24 +195,24 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         String dotFilesUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FILES);
         NSession session = NSession.of();
         NVersion versionString = NVersion.get("0.5.5").get();
-        try (InputStream foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create()) {
-            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
+        try (InputStream foldersFileStream = NInputStreamMonitor.of().source(NPath.of(dotFilesUrl)).create()) {
+            session.terminal().printProgress(NMsg.ofC("%-8s %s", "browse", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
             dotFilesContent=NIOUtils.loadString(foldersFileStream, false);
         } catch (IOException | NIOException | UncheckedIOException e) {
-            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "not found", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
+            session.terminal().printProgress(NMsg.ofC("%-8s %s", "not found", NCoreLogUtils.forProgress(NPath.of(baseUrl))));
             // not found
         }
         if (dotFilesContent != null) {
             try {
                 List<String> splitted = StringTokenizerUtils.splitNewLine(dotFilesContent);
                 for (String s : splitted) {
-                    s = s.trim();
+                    s = NStringUtils.strip(s);
                     if (!s.isEmpty()) {
                         if (s.startsWith("#")) {
                             if (all.isEmpty()) {
-                                s = s.substring(1).trim();
+                                s = NStringUtils.strip(s.substring(1));
                                 if (s.startsWith("version=")) {
-                                    versionString = NVersion.get(s.substring("version=".length()).trim()).get();
+                                    versionString = NVersion.get(NStringUtils.strip(s.substring("version=".length()))).get();
                                 }
                             }
                         } else {
@@ -258,10 +267,10 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 String[] dotFoldersContent = null;
                 String dotFolderUrl = NStringUtils.pjoin("/", baseUrl, CoreNConstants.Files.DOT_FOLDERS);
                 c = NChronometer.of();
-                try (InputStream stream = NInputStreamMonitor.of().setSource(NPath.of(dotFolderUrl))
+                try (InputStream stream = NInputStreamMonitor.of().source(NPath.of(dotFolderUrl))
                         .create()) {
                     dotFoldersContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
-                            .stream().map(x -> x.trim()).filter(x -> !x.isEmpty()).toArray(String[]::new);
+                            .stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
                     NLog.of(DotfilefsPath.class)
                             .log(NMsg.ofC("unable to navigate : file not found %s", dotFolderUrl).asFineFail().withDurationMillis(c.stop().durationMs()));
@@ -297,7 +306,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 

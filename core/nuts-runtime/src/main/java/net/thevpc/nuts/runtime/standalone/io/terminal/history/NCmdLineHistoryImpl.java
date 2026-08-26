@@ -28,9 +28,10 @@ import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -57,7 +58,7 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
         entries.clear();
         NAssert.requireNamedNonNull(path, "path");
         if (path.exists()) {
-            try (InputStream in = path.getInputStream()) {
+            try (InputStream in = path.inputStream()) {
                 load(in);
             } catch (IOException ex) {
                 throw new NIOException(ex);
@@ -69,7 +70,7 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
     public void save() {
         NAssert.requireNamedNonNull(path, "path");
         path.mkParentDirs();
-        try (OutputStream out = path.getOutputStream()) {
+        try (OutputStream out = path.outputStream()) {
             save(out);
         } catch (IOException ex) {
             throw new NIOException(ex);
@@ -88,7 +89,7 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
                     if (line.length() > 0) {
                         if (line.startsWith("#")) {
                             if (line.startsWith("#at:")) {
-                                instant = Instant.parse(line.substring("#at:".length()).trim());
+                                instant = Instant.parse(NStringUtils.strip(line.substring("#at:".length())));
                             }
                         } else {
                             entries.add(new NCmdLineHistoryEntryImpl(index, line, instant));
@@ -105,32 +106,32 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
     public void save(OutputStream outs) {
         try (PrintStream out = new PrintStream(outs)) {
             for (NCmdLineHistoryEntry entry : entries) {
-                out.println("#at:" + entry.getTime().toString());
-                out.println(entry.getLine().replace("\n", "\\n").replace("\r", "\\r"));
+                out.println("#at:" + entry.time().toString());
+                out.println(entry.line().replace("\n", "\\n").replace("\r", "\\r"));
             }
         }
     }
 
     @Override
-    public NCmdLineHistory setPath(Path path) {
+    public NCmdLineHistory path(Path path) {
         this.path = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
-    public NCmdLineHistory setPath(File path) {
+    public NCmdLineHistory path(File path) {
         this.path = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
-    public NCmdLineHistory setPath(NPath path) {
+    public NCmdLineHistory path(NPath path) {
         this.path = path;
         return this;
     }
 
     @Override
-    public NPath getPath() {
+    public NPath path() {
         return path;
     }
 

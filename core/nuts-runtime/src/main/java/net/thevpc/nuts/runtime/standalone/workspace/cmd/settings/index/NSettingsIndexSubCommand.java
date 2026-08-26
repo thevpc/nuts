@@ -8,8 +8,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index;
 import net.thevpc.nuts.command.NUpdateStats;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.util.NScore;
-import net.thevpc.nuts.util.NScorable;
+import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.reflect.NScorable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
                 repos.add(cmdLine.next().get().image());
             }
             updateStatistics(repos.toArray(new String[0]));
-            cmdLine.setCommandName(name).throwUnexpectedArgument();
+            cmdLine.commandName(name).throwUnexpectedArgument();
             return true;
         } else {
             return false;

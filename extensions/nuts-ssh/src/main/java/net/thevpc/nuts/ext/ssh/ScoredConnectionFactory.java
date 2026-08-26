@@ -40,7 +40,7 @@ public class ScoredConnectionFactory {
         NExecutableInformation scp = null;
         NExecutableInformation sftp = null;
         if (!usePortable && !useBin) {
-            switch (NEnv.of().getOsFamily()) {
+            switch (NEnv.of().osFamily()) {
                 case LINUX:
                 case UNIX:
                 case MACOS: {

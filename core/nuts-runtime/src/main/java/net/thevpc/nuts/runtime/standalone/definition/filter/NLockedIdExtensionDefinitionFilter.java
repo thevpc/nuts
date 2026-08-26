@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,8 +31,8 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
 
     public boolean acceptId(NId id) {
         for (NId nutsId : lockedIds) {
-            if (nutsId.getShortId().equalsShortId(id.getShortId())) {
-                return (id.getVersion().toFilter().acceptVersion(nutsId.getVersion()));
+            if (nutsId.shortId().equalsShortId(id.shortId())) {
+                return (id.version().toFilter().acceptVersion(nutsId.version()));
             }
         }
         return true;
@@ -39,10 +40,10 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
 
     @Override
     public boolean acceptDefinition(NDefinition other) {
-        if (!acceptId(other.getId())) {
+        if (!acceptId(other.id())) {
             return false;
         }
-        for (NDependency dependency : other.getDescriptor().getDependencies()) {
+        for (NDependency dependency : other.descriptor().dependencies()) {
             if (!acceptId(dependency.toId())) {
                 return false;
             }
@@ -57,7 +58,7 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
 
     @Override
     public String toString() {
-        return "LockedIds(" + Arrays.stream(lockedIds).map(NId::getLongName).collect(Collectors.joining(",")) + ")";
+        return "LockedIds(" + Arrays.stream(lockedIds).map(NId::longName).collect(Collectors.joining(",")) + ")";
     }
 
     public NLockedIdExtensionDefinitionFilter addAll(NId[] others) {
@@ -69,5 +70,18 @@ public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter
             return this;
         }
         return new NLockedIdExtensionDefinitionFilter(old1.toArray(new NId[0]));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NLockedIdExtensionDefinitionFilter that = (NLockedIdExtensionDefinitionFilter) o;
+        return Objects.deepEquals(lockedIds, that.lockedIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), Arrays.hashCode(lockedIds));
     }
 }

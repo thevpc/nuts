@@ -28,10 +28,8 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -43,8 +41,8 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
     private final NTerminalCmd command;
 
     public DefaultNTextCommand(String start, NTerminalCmd command, String separator, String end) {
-        super(start, command.getName(),
-                (command.getArgs() != null && command.getArgs().size() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
+        super(start, command.name(),
+                (command.args() != null && command.args().size() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
                 , end);
         this.command = command;
     }
@@ -60,7 +58,7 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
     }
 
     @Override
-    public NTerminalCmd getCommand() {
+    public NTerminalCmd terminalCommand() {
         return command;
     }
 
@@ -113,22 +111,18 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
         return new DefaultNTextPlain("");
     }
 
-    public List<NText> split(String chars, boolean returnSeparator) {
-        return new ArrayList<>();
-    }
-
     @Override
-    public NText trim() {
+    public NText strip() {
         return this;
     }
 
     @Override
-    public NText trimLeft() {
+    public NText stripLeft() {
         return this;
     }
 
     @Override
-    public NText trimRight() {
+    public NText stripRight() {
         return this;
     }
 }

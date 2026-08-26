@@ -4,7 +4,11 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
@@ -55,6 +59,11 @@ public class GenericFilePath implements NPathSPI {
             return parts.get(-2).getName();
         }
         return parts.last().getName();
+    }
+
+    @Override
+    public boolean isHidden(NPath basePath) {
+        return basePath.name().startsWith(".");
     }
 
     @Override
@@ -281,7 +290,7 @@ public class GenericFilePath implements NPathSPI {
             if (f.getSeparator().length() > 0) {
                 return true;
             }
-            if (NEnv.of().getOsFamily() == NOsFamily.WINDOWS) {
+            if (NEnv.of().osFamily() == NOsFamily.WINDOWS) {
                 String n = f.getName();
                 //test if the name is a drive name
                 if (n.length() == 2 && n.charAt(1) == ':') {
@@ -419,7 +428,7 @@ public class GenericFilePath implements NPathSPI {
         private final GenericFilePath p;
 
         @Override
-        public String getName() {
+        public String name() {
             return "path";
         }
 
@@ -468,7 +477,7 @@ public class GenericFilePath implements NPathSPI {
         @Override
         public NScoredCallable<NPathSPI> createPath(String path, String protocol, ClassLoader classLoader) {
             if (path != null) {
-                if (path.trim().length() > 0) {
+                if (!NStringUtils.isBlank(path)) {
                     for (char c : path.toCharArray()) {
                         if (c < 32) {
                             return null;
@@ -482,13 +491,13 @@ public class GenericFilePath implements NPathSPI {
 
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
-            Object cri = context.getCriteria();
+            Object cri = context.criteria();
             if(!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }
             String path = (String) cri;
             try {
-                if (!path.trim().isEmpty()) {
+                if (!NStringUtils.isBlank(path)) {
                     for (char c : path.toCharArray()) {
                         if (c < 32) {
                             return NScorable.UNSUPPORTED_SCORE;

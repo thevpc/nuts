@@ -2,17 +2,14 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.platform.NExecutionEngineFamily;
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -34,7 +31,7 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
         this.accepted = EnumSet.noneOf(NExecutionEngineFamily.class);
         for (NId e : NId.getList(accepted).get()) {
             if (!e.isBlank()) {
-                this.accepted.add(NExecutionEngineFamily.parse(e.getArtifactId()).orNull());
+                this.accepted.add(NExecutionEngineFamily.parse(e.artifactId()).orNull());
             }
         }
     }
@@ -47,7 +44,7 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NDependency dependency, NId from) {
-        List<String> current = dependency.getCondition().getPlatform();
+        List<String> current = dependency.condition().platform();
         boolean empty = true;
         if (current != null) {
             for (String e : current) {
@@ -71,6 +68,19 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     @Override
     public NDependencyFilter simplify() {
-        return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
+        return accepted.isEmpty() ? NDependencyFilterRPI.of().always() : this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NDependencyPlatformFamilyFilter that = (NDependencyPlatformFamilyFilter) o;
+        return Objects.equals(accepted, that.accepted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), accepted);
     }
 }

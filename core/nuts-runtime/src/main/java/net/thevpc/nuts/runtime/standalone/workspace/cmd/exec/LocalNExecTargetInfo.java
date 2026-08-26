@@ -39,7 +39,7 @@
 //    public String getRootUserName() {
 //        switch (getOsFamily()) {
 //            case WINDOWS: {
-//                switch (NStringUtils.trim(getUserName()).toLowerCase()) {
+//                switch (NStringUtils.strip(getUserName()).toLowerCase()) {
 //                    case "adminitrateur": {
 //                        return "Administrateur";
 //                    }

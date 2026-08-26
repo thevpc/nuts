@@ -31,20 +31,66 @@ import net.thevpc.nuts.spi.NComponent;
 
 import java.util.regex.Pattern;
 
+/**
+ * NGlob interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NGlob extends NComponent {
+    /**
+     * Creates a new instance of of.
+     *
+     * @return of result
+     */
     static NGlob of() {
         return NExtensions.of(NGlob.class);
     }
 
-    String getSeparator();
+    /**
+     * Separator.
+     *
+     * @return separator result
+     */
+    String separator();
 
-    NGlob setSeparator(String c);
+    /**
+     * Separator.
+     *
+     * @param c c
+     * @return separator result
+     */
+    NGlob separator(String c);
 
+    /**
+     * Checks if is glob.
+     *
+     * @param pattern pattern
+     * @return is glob result
+     */
     boolean isGlob(String pattern);
 
+    /**
+     * Converts to pattern.
+     *
+     * @param pattern pattern
+     * @return to pattern result
+     */
     Pattern toPattern(String pattern);
 
+    /**
+     * Converts to pattern string.
+     *
+     * @param pattern pattern
+     * @return to pattern string result
+     */
     String toPatternString(String pattern);
 
+    /**
+     * Escape.
+     *
+     * @param s s
+     * @return escape result
+     */
     String escape(String s);
 }

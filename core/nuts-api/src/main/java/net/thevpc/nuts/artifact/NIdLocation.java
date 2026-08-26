@@ -42,6 +42,14 @@ public class NIdLocation implements NBlankable {
     private final String region;
     private final String classifier;
 
+    /**
+     * N id location.
+     *
+     * @param url url
+     * @param region region
+     * @param classifier classifier
+     * @return n id location result
+     */
     public NIdLocation(String url, String region, String classifier) {
         this.url = url;
         this.region = region;
@@ -53,7 +61,7 @@ public class NIdLocation implements NBlankable {
      *
      * @return location url of the artifact content
      */
-    public String getUrl() {
+    public String url() {
         return url;
     }
 
@@ -63,7 +71,7 @@ public class NIdLocation implements NBlankable {
      *
      * @return location (geographic) region that may be used to select the most effective mirror
      */
-    public String getRegion() {
+    public String region() {
         return region;
     }
 
@@ -72,7 +80,7 @@ public class NIdLocation implements NBlankable {
      *
      * @return classifier for the artifact
      */
-    public String getClassifier() {
+    public String classifier() {
         return classifier;
     }
 

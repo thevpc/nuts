@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScorableContext;
+import net.thevpc.nuts.reflect.NScoredValue;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.artifact.NId;
 

@@ -11,8 +11,6 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 
 
-import net.thevpc.nuts.platform.NStoreScope;
-import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -39,12 +37,12 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     @Override
-    public int getPriority() {
+    public int priority() {
         return Integer.MAX_VALUE;
     }
 
     @Override
-    public String getFactoryId() {
+    public String factoryId() {
         return "default";
     }
 
@@ -54,7 +52,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         if (file.exists()) {
             NCommandConfig c = NElementReader.ofJson().read(file, NCommandConfig.class);
             if (c != null) {
-                c.setName(name);
+                c.name(name);
                 return c;
             }
         }
@@ -67,7 +65,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     public NPath getStoreLocation() {
-        return NPath.of(NStoreKey.ofBin(NWorkspace.of().getApiId()));
+        return NPath.of(NStoreKey.ofBin(NWorkspace.of().apiId()));
     }
 
     private NPath getCommandsFolder() {
@@ -85,13 +83,13 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     public void installCommand(NCommandConfig command) {
-        NPath path = getCommandsFolder().resolve(command.getName() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        NElementWriter.ofJson().setNtf(false).write(command,path);
+        NPath path = getCommandsFolder().resolve(command.name() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
+        NElementWriter.ofJson().ntf(false).write(command,path);
         NWorkspaceExt.of().getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
     }
 
     public List<NCommandConfig> findCommands(NId id) {
-        return findCommands(value -> CoreFilterUtils.matchesSimpleNameStaticVersion(value.getOwner(), id));
+        return findCommands(value -> CoreFilterUtils.matchesSimpleNameStaticVersion(value.owner(), id));
     }
 
     public List<NCommandConfig> findCommands(Predicate<NCommandConfig> filter) {
@@ -102,8 +100,8 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             return all;
         }
         storeLocation.stream().forEach(file -> {
-            String fileName = file.getName();
-            if (file.getName().endsWith(NConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
+            String fileName = file.name();
+            if (file.name().endsWith(NConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                 NCommandConfig c = null;
                 try {
                     c = NElementReader.ofJson().read(file, NCommandConfig.class);
@@ -112,7 +110,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
                     //
                 }
                 if (c != null) {
-                    c.setName(fileName.substring(0, fileName.length() - NConstants.Files.NUTS_COMMAND_FILE_EXTENSION.length()));
+                    c.name(fileName.substring(0, fileName.length() - NConstants.Files.NUTS_COMMAND_FILE_EXTENSION.length()));
                     if (filter == null || filter.test(c)) {
                         all.add(c);
                     }

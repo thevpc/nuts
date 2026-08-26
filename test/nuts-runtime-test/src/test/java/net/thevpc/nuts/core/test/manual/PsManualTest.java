@@ -5,12 +5,16 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementWriter;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.io.NPsInfo;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JClassVersion;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -34,8 +38,7 @@ public class PsManualTest {
 
     @Test
     public void test1() {
-        NOut.println("Hello ##world##");
-//        System.out.printf("hello %s","toto");
+//        TestUtils.printf("hello %s","toto");
 //        Logger.getAnonymousLogger().log(Level.INFO, "hello {0}","A");
 
 //        NOptional<Object> o = NOptional.ofNamedEmpty(NMsg.ofV("is really missing"));
@@ -56,9 +59,9 @@ public class PsManualTest {
 //        Double d=NOptional.of(a).then(x->x.b).then(x->x.c).then(x->x.x).orNull();
 
         List<NPsInfo> nPsInfos = NPs.of().getResultList().toList();
-        List<NPsInfo> notepads = nPsInfos.stream().filter(x -> Objects.equals(x.getName(), "notepad.exe")).collect(Collectors.toList());
+        List<NPsInfo> notepads = nPsInfos.stream().filter(x -> Objects.equals(x.name(), "notepad.exe")).collect(Collectors.toList());
         for (NPsInfo notepad : notepads) {
-            NPs.of().killProcess(notepad.getPid());
+            NPs.of().killProcess(notepad.pid());
         }
         String str = NElementWriter.ofJson().formatPlain(nPsInfos);
         NElement parsed = NElementReader.ofJson().read(str);

@@ -2,59 +2,207 @@ package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NSetter;
 
 import java.io.Serializable;
 import java.util.Set;
 
+/**
+ * NDefinitionBuilder interface.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
 public interface NDefinitionBuilder extends Serializable, Comparable<NDefinitionBuilder> {
-    NDependency getDependency();
+    /**
+     * Dependency.
+     *
+     * @return dependency result
+     */
+    NDependency dependency();
 
-    NDefinitionBuilder setDependency(NDependency dependency);
+    /**
+     * Dependency.
+     *
+     * @param dependency dependency
+     * @return dependency result
+     */
+    NDefinitionBuilder dependency(NDependency dependency);
 
+    /**
+     * Build.
+     *
+     * @return build result
+     */
     NDefinition build();
 
-    String getRepositoryUuid();
+    /**
+     * Repository uuid.
+     *
+     * @return repository uuid result
+     */
+    @NGetter
+    String repositoryUuid();
 
-    String getRepositoryName();
+    /**
+     * Repository name.
+     *
+     * @return repository name result
+     */
+    @NGetter
+    String repositoryName();
 
-    NDefinitionBuilder setId(NId id);
+    /**
+     * Id.
+     *
+     * @param id id
+     * @return id result
+     */
+    @NSetter
+    NDefinitionBuilder id(NId id);
 
-    NId getId();
+    /**
+     * Id.
+     *
+     * @return id result
+     */
+    NId id();
 
+    /**
+     * Checks if is temporary.
+     *
+     * @return is temporary result
+     */
     boolean isTemporary();
 
-    NDescriptor getDescriptor();
+    /**
+     * Descriptor.
+     *
+     * @return descriptor result
+     */
+    @NGetter
+    NDescriptor descriptor();
 
+    /**
+     * Copy.
+     *
+     * @return copy result
+     */
     NDefinitionBuilder copy();
 
-    NOptional<NPath> getContent();
+    /**
+     * Content.
+     *
+     * @return content result
+     */
+    NOptional<NPath> content();
 
-    NOptional<NDescriptor> getEffectiveDescriptor();
+    /**
+     * Effective descriptor.
+     *
+     * @return effective descriptor result
+     */
+    NOptional<NDescriptor> effectiveDescriptor();
 
-    NOptional<NInstallInformation> getInstallInformation();
+    /**
+     * Install information.
+     *
+     * @return install information result
+     */
+    NOptional<NInstallInformation> installInformation();
 
-    NOptional<NDependencies> getDependencies();
+    /**
+     * Dependencies.
+     *
+     * @return dependencies result
+     */
+    NOptional<NDependencies> dependencies();
 
-    NDefinitionBuilder setContent(NPath content);
+    /**
+     * Content.
+     *
+     * @param content content
+     * @return content result
+     */
+    NDefinitionBuilder content(NPath content);
 
-    NDefinitionBuilder setDescriptor(NDescriptor descriptor);
+    /**
+     * Descriptor.
+     *
+     * @param descriptor descriptor
+     * @return descriptor result
+     */
+    NDefinitionBuilder descriptor(NDescriptor descriptor);
 
-    NDefinitionBuilder setEffectiveFlags(Set<NDescriptorFlag> effectiveFlags);
+    /**
+     * Effective flags.
+     *
+     * @param effectiveFlags effective flags
+     * @return effective flags result
+     */
+    NDefinitionBuilder effectiveFlags(Set<NDescriptorFlag> effectiveFlags);
 
-    NDefinitionBuilder setEffectiveDescriptor(NDescriptor effectiveDescriptor);
+    /**
+     * Effective descriptor.
+     *
+     * @param effectiveDescriptor effective descriptor
+     * @return effective descriptor result
+     */
+    NDefinitionBuilder effectiveDescriptor(NDescriptor effectiveDescriptor);
 
-    NDefinitionBuilder setInstallInformation(NInstallInformation install);
+    /**
+     * Install information.
+     *
+     * @param install install
+     * @return install information result
+     */
+    NDefinitionBuilder installInformation(NInstallInformation install);
 
-    NDefinitionBuilder setDependencies(NDependencies dependencies);
+    /**
+     * Dependencies.
+     *
+     * @param dependencies dependencies
+     * @return dependencies result
+     */
+    NDefinitionBuilder dependencies(NDependencies dependencies);
 
-    NDefinitionBuilder setApiId(NId apiId);
+    /**
+     * Api id.
+     *
+     * @param apiId api id
+     * @return api id result
+     */
+    NDefinitionBuilder apiId(NId apiId);
 
-    NId getApiId();
+    /**
+     * Api id.
+     *
+     * @return api id result
+     */
+    NId apiId();
 
-    NDefinitionBuilder setRepositoryUuid(String repositoryUuid);
+    /**
+     * Repository uuid.
+     *
+     * @param repositoryUuid repository uuid
+     * @return repository uuid result
+     */
+    NDefinitionBuilder repositoryUuid(String repositoryUuid);
 
-    NDefinitionBuilder setRepositoryName(String repositoryName);
+    /**
+     * Repository name.
+     *
+     * @param repositoryName repository name
+     * @return repository name result
+     */
+    NDefinitionBuilder repositoryName(String repositoryName);
 
-    NOptional<Set<NDescriptorFlag>> getEffectiveFlags();
+    /**
+     * Effective flags.
+     *
+     * @return effective flags result
+     */
+    NOptional<Set<NDescriptorFlag>> effectiveFlags();
 }

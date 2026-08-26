@@ -33,6 +33,16 @@ package net.thevpc.nuts.elem;
  * @since 0.5.6
  */
 public interface NUnaryOperatorElement extends NOperatorElement {
+    /**
+     * Operator symbol.
+     *
+     * @return operator symbol result
+     */
     NOperatorSymbol operatorSymbol();
+    /**
+     * Operand.
+     *
+     * @return operand result
+     */
     NElement operand();
 }

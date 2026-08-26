@@ -15,15 +15,15 @@ public class FetchTest {
         NDefinition resultDefinition = NFetch.of("org.springframework.boot:spring-boot#2.4.1")
                 .getResultDefinition();
         TestUtils.println("-----------------");
-        for (NDependency dependency : resultDefinition.getDescriptor().getDependencies()) {
+        for (NDependency dependency : resultDefinition.descriptor().dependencies()) {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        for (NDependency dependency : resultDefinition.getDependencies().get()) {
+        for (NDependency dependency : resultDefinition.dependencies().get()) {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        show(resultDefinition.getDependencies().get().transitiveNodes().toArray(NDependencyTreeNode[]::new), "");
+        show(resultDefinition.dependencies().get().transitiveNodes().toArray(NDependencyTreeNode[]::new), "");
     }
 
     // disable test because, for some reason it fails on Gitlab CI with
@@ -47,8 +47,8 @@ public class FetchTest {
     }
 
     public void show(NDependencyTreeNode n, String prefix){
-        TestUtils.println(prefix+n.getDependency()+(n.isPartial()?" (partial)":""));
-        for (NDependencyTreeNode child : n.getChildren()) {
+        TestUtils.println(prefix+n.dependency()+(n.isPartial()?" (partial)":""));
+        for (NDependencyTreeNode child : n.children()) {
             show(child,prefix+"    ");
         }
     }

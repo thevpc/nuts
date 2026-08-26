@@ -54,28 +54,28 @@ public class MavenSettingsRepository extends NRepositoryList {
         this.settings = new NMavenSettingsLoader(LOG).loadSettingsRepos();
         List<NRepository> base = new ArrayList<>();
 
-        base.add(createChild(options, "maven-local", getName()+"-local", settings.getLocalRepository()));
-        base.add(createChild(options, "maven-central", getName()+"-central", settings.getRemoteRepository()));
+        base.add(createChild(options, "maven-local", name()+"-local", settings.getLocalRepository()));
+        base.add(createChild(options, "maven-central", name()+"-central", settings.getRemoteRepository()));
         for (NRepositoryLocation activeRepository : settings.getActiveRepositories()) {
-            base.add(createChild(options, "maven-extra", getName()+"-" + activeRepository.getName(), activeRepository.getPath()));
+            base.add(createChild(options, "maven-extra", name()+"-" + activeRepository.name(), activeRepository.path()));
         }
         this.repoItems = base.toArray(base.toArray(new NRepository[0]));
     }
 
     private MavenFolderRepository createChild(NRepositorySpec options0, String type, String id, String url) {
         NPath p = NPath.of(url);
-        String pr = NStringUtils.trim(p.getProtocol());
+        String pr = NStringUtils.strip(p.protocol());
         MavenFolderRepository mavenChild = null;
         NRepositorySpec options = new NRepositorySpec();
-        options.setName(id);
-        options.setLocation(
+        options.name(id);
+        options.location(
                 NPath.of(id).toAbsolute(NWorkspaceExt.of().getConfigModel().getRepositoriesRoot()).toString()
         );
-        options.setEnabled(true);
-        options.setTemporary(true);
-        options.setFailSafe(false);
-        options.setEnv(options0.getEnv()==null?null:new HashMap<>(options0.getEnv()));
-        options.setSourceLocation(new NRepositoryLocation(id, "maven", url));
+        options.enabled(true);
+        options.temporary(true);
+        options.failSafe(false);
+        options.env(options0.env()==null?null:new HashMap<>(options0.env()));
+        options.sourceLocation(new NRepositoryLocation(id, "maven", url));
         switch (pr) {
             //non traversable!
             case "http":
@@ -99,7 +99,7 @@ public class MavenSettingsRepository extends NRepositoryList {
                             repositoryLayout = o.getStringValue("repositoryLayout").orNull();
                         }
                         if(!NBlankable.isBlank(repositoryLayout)) {
-                            options.setSourceLocation(new NRepositoryLocation(id, "maven", NStringUtils.trim(repositoryLayout)+"+"+url));
+                            options.sourceLocation(new NRepositoryLocation(id, "maven", NStringUtils.strip(repositoryLayout)+"+"+url));
                         }
 //                        if(!NBlankable.isBlank(repositoryName)) {
 //                            config.setName(repositoryName);

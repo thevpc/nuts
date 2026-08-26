@@ -8,10 +8,12 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryModel;
+import net.thevpc.nuts.pipeline.NIterator;
+import net.thevpc.nuts.pipeline.NIteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.MvnRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.NetbeansRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.PostgresRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers.TomcatRepoHelper;
-import net.thevpc.nuts.util.*;
 
 import java.util.*;
 
@@ -24,6 +26,7 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
         register(new TomcatRepoHelper());
         register(new NetbeansRepoHelper());
         register(new PostgresRepoHelper());
+        register(new MvnRepoHelper());
     }
 
     private void register(ToolboxRepoHelper t) {
@@ -31,29 +34,29 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
     }
 
     @Override
-    public String getRepositoryType() {
+    public String repositoryType() {
         return REPOSITORY_TYPE;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return REPOSITORY_TYPE;
     }
 
     @Override
-    public String getUuid() {
-        return UUID.nameUUIDFromBytes(getName().getBytes()).toString();
+    public String uuid() {
+        return UUID.nameUUIDFromBytes(name().getBytes()).toString();
     }
 
     private ToolboxRepoHelper findByShortId(NId id) {
-        NId shortId = id.getShortId();
-        ToolboxRepoHelper old = mapByShortId.get(id.getShortName());
+        NId shortId = id.shortId();
+        ToolboxRepoHelper old = mapByShortId.get(id.shortName());
         if (old != null) {
             return old;
         }
         for (ToolboxRepoHelper h : map) {
             if (h.acceptId(shortId)) {
-                mapByShortId.put(id.getShortName(), h);
+                mapByShortId.put(id.shortName(), h);
                 return h;
             }
         }
@@ -110,7 +113,7 @@ public class ToolboxRepositoryModel implements NRepositoryModel {
 
     public static String getIdLocalFile(NId id, NRepository repository) {
         NWorkspace workspace = NWorkspace.of();
-        return repository.config().getStoreLocation()
+        return repository.config().storeLocation()
                 .resolve(workspace.getDefaultIdBasedir(id))
                 .resolve(workspace.getDefaultIdFilename(id))
                 .toString();

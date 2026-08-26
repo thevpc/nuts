@@ -53,32 +53,32 @@ public class DefaultNWorkspaceEvent implements NWorkspaceEvent {
     }
 
     @Override
-    public NSession getSession() {
+    public NSession session() {
         return session;
     }
     
     @Override
-    public String getPropertyName() {
+    public String propertyName() {
         return propertyName;
     }
 
     @Override
-    public Object getPropertyOldValue() {
+    public Object propertyOldValue() {
         return propertyOldValue;
     }
 
     @Override
-    public Object getPropertyValue() {
+    public Object propertyValue() {
         return propertyValue;
     }
 
     @Override
-    public NWorkspace getWorkspace() {
-        return getSession().getWorkspace();
+    public NWorkspace workspace() {
+        return session().workspace();
     }
 
     @Override
-    public NRepository getRepository() {
+    public NRepository repository() {
         return repository;
     }
 }

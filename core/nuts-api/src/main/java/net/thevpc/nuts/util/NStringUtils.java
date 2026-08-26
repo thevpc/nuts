@@ -58,6 +58,11 @@ public class NStringUtils {
 
     public static final String DEFAULT_VAR_NAME = "var";
 
+    /**
+     * N string utils.
+     *
+     * @return n string utils result
+     */
     private NStringUtils() {
     }
 
@@ -77,44 +82,132 @@ public class NStringUtils {
     }
 
     /**
+     * Checks if is blank.
+     *
      * @param value value
-     * @return trimmed value (never null)
+     * @return is blank result
      */
-    public static String trim(String value) {
+    public static boolean isBlank(String value) {
         if (value == null) {
-            return "";
+            return true;
         }
-        return value.trim();
+        int len = value.length();
+        if (len == 0) {
+            return true;
+        }
+        for (int i = 0; i < len; i++) {
+            if (!Character.isWhitespace(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if is blank.
+     *
+     * @param value value
+     * @return is blank result
+     */
+    public static boolean isBlank(char[] value) {
+        if (value == null) {
+            return true;
+        }
+        int len = value.length;
+        if (len == 0) {
+            return true;
+        }
+        for (int i = 0; i < len; i++) {
+            if (!Character.isWhitespace(value[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if is blank.
+     *
+     * @param value value
+     * @return is blank result
+     */
+    public static boolean isBlank(CharSequence value) {
+        if (value == null) {
+            return true;
+        }
+        int len = value.length();
+        if (len == 0) {
+            return true;
+        }
+        for (int i = 0; i < len; i++) {
+            if (!Character.isWhitespace(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
+     * @since 1.0.0 dropped trim in favor of strip
      */
-    public static CharSequence trim(CharSequence value) {
+    public static String strip(String value) {
         if (value == null) {
             return "";
-        }
-        if (value instanceof String) {
-            return value.toString().trim();
         }
         int len0 = value.length();
         int len = len0;
         int st = 0;
-        while ((st < len) && (value.charAt(st) <= ' ')) {
+        while ((st < len) && Character.isWhitespace(value.charAt(st))) {
             st++;
         }
-        while ((st < len) && (value.charAt(len - 1) <= ' ')) {
+        while ((st < len) && Character.isWhitespace(value.charAt(len - 1))) {
             len--;
         }
+        return ((st > 0) || (len < len0)) ? value.substring(st, len) : value;
+    }
+
+    /**
+     * @param value value
+     * @return stripped value (never null)
+     */
+    public static CharSequence strip(CharSequence value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof String) {
+            /**
+             * Strip.
+             *
+             * @param value.toString() value.to string()
+             * @return strip result
+             */
+            return strip(value.toString());
+        }
+        int len0 = value.length();
+        int len = len0;
+        int st = 0;
+        while ((st < len) && Character.isWhitespace(value.charAt(st))) {
+            st++;
+        }
+        while ((st < len) && Character.isWhitespace(value.charAt(len - 1))) {
+            len--;
+        }
+      /**
+       * Return.
+       *
+       * @param value.subSequence(st value.sub sequence(st
+       * @param value.toString( value.to string(
+       */
         return ((st > 0) || (len < len0)) ? value.subSequence(st, len) : value.toString();
     }
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static CharSequence trimLeft(CharSequence value) {
+    public static CharSequence stripLeft(CharSequence value) {
         if (value == null) {
             return "";
         }
@@ -123,7 +216,7 @@ public class NStringUtils {
             return value.toString();
         }
         int st = 0;
-        while ((st < len) && (value.charAt(st) <= ' ')) {
+        while ((st < len) && Character.isWhitespace(value.charAt(st))) {
             st++;
         }
         if (st > 0) {
@@ -134,9 +227,9 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static CharSequence trimRight(CharSequence value) {
+    public static CharSequence stripRight(CharSequence value) {
         if (value == null) {
             return "";
         }
@@ -145,7 +238,7 @@ public class NStringUtils {
             return value.toString();
         }
         int st = len;
-        while ((st > 0) && (value.charAt(st - 1) <= ' ')) {
+        while ((st > 0) && Character.isWhitespace(value.charAt(st - 1))) {
             st--;
         }
         if (st < len) {
@@ -156,9 +249,9 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimLeft(String value) {
+    public static String stripLeft(String value) {
         if (value == null) {
             return "";
         }
@@ -167,7 +260,7 @@ public class NStringUtils {
             return value;
         }
         int st = 0;
-        while ((st < len) && (value.charAt(st) <= ' ')) {
+        while ((st < len) && Character.isWhitespace(value.charAt(st))) {
             st++;
         }
         if (st > 0) {
@@ -178,9 +271,9 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimRight(String value) {
+    public static String stripRight(String value) {
         if (value == null) {
             return "";
         }
@@ -189,7 +282,7 @@ public class NStringUtils {
             return value;
         }
         int st = len;
-        while ((st > 0) && (value.charAt(st - 1) <= ' ')) {
+        while ((st > 0) && Character.isWhitespace(value.charAt(st - 1))) {
             st--;
         }
         if (st < len) {
@@ -200,13 +293,13 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimToNull(String value) {
+    public static String stripToNull(String value) {
         if (value == null) {
             return null;
         }
-        String t = value.trim();
+        String t = strip(value);
         if (t.isEmpty()) {
             return null;
         }
@@ -215,13 +308,13 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimToNull(CharSequence value) {
+    public static String stripToNull(CharSequence value) {
         if (value == null) {
             return null;
         }
-        String t = trim(value).toString();
+        String t = strip(value).toString();
         if (t.isEmpty()) {
             return null;
         }
@@ -230,13 +323,13 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimLeftToNull(CharSequence value) {
+    public static String stripLeftToNull(CharSequence value) {
         if (value == null) {
             return null;
         }
-        String t = trimLeft(value).toString();
+        String t = stripLeft(value).toString();
         if (t.isEmpty()) {
             return null;
         }
@@ -245,19 +338,26 @@ public class NStringUtils {
 
     /**
      * @param value value
-     * @return trimmed value (never null)
+     * @return stripped value (never null)
      */
-    public static String trimRightToNull(CharSequence value) {
+    public static String stripRightToNull(CharSequence value) {
         if (value == null) {
             return null;
         }
-        String t = trimRight(value).toString();
+        String t = stripRight(value).toString();
         if (t.isEmpty()) {
             return null;
         }
         return t;
     }
 
+    /**
+     * First index of.
+     *
+     * @param string string
+     * @param chars chars
+     * @return first index of result
+     */
     public static int firstIndexOf(String string, char... chars) {
         if (string == null || chars == null || string.isEmpty()) {
             return -1;
@@ -275,10 +375,28 @@ public class NStringUtils {
         return -1;
     }
 
+    /**
+     * First non null.
+     *
+     * @param values values
+     * @return first non null result
+     */
     public static String firstNonNull(String... values) {
+        /**
+         * First non null.
+         *
+         * @param Arrays.asList(values) arrays.as list(values)
+         * @return first non null result
+         */
         return firstNonNull(values == null ? null : Arrays.asList(values));
     }
 
+    /**
+     * First non null.
+     *
+     * @param values values
+     * @return first non null result
+     */
     public static String firstNonNull(List<String> values) {
         if (values != null) {
             for (String value : values) {
@@ -290,14 +408,38 @@ public class NStringUtils {
         return null;
     }
 
+    /**
+     * Checks if is empty.
+     *
+     * @param value value
+     * @return is empty result
+     */
     public static boolean isEmpty(String value) {
         return value == null || value.isEmpty();
     }
 
+    /**
+     * First non empty.
+     *
+     * @param values values
+     * @return first non empty result
+     */
     public static String firstNonEmpty(String... values) {
+        /**
+         * First non empty.
+         *
+         * @param Arrays.asList(values) arrays.as list(values)
+         * @return first non empty result
+         */
         return firstNonEmpty(values == null ? null : Arrays.asList(values));
     }
 
+    /**
+     * First non empty.
+     *
+     * @param values values
+     * @return first non empty result
+     */
     public static String firstNonEmpty(List<String> values) {
         if (values != null) {
             for (String value : values) {
@@ -309,26 +451,71 @@ public class NStringUtils {
         return null;
     }
 
-    public static String firstNonBlankTrimmedToNull(String a, String b) {
+    /**
+     * First non blank stripped to null.
+     *
+     * @param a a
+     * @param b b
+     * @return first non blank stripped to null result
+     */
+    public static String firstNonBlankStrippedToNull(String a, String b) {
         if (!NBlankable.isBlank(a)) {
-            return trimToNull(a);
+            /**
+             * Strip to null.
+             *
+             * @param a a
+             * @return strip to null result
+             */
+            return stripToNull(a);
         }
         if (!NBlankable.isBlank(b)) {
-            return trimToNull(b);
+            /**
+             * Strip to null.
+             *
+             * @param b b
+             * @return strip to null result
+             */
+            return stripToNull(b);
         }
         return null;
     }
 
-    public static String firstNonBlankTrimmed(String a, String b) {
+    /**
+     * First non blank stripped.
+     *
+     * @param a a
+     * @param b b
+     * @return first non blank stripped result
+     */
+    public static String firstNonBlankStripped(String a, String b) {
         if (!NBlankable.isBlank(a)) {
-            return trim(a);
+            /**
+             * Strip.
+             *
+             * @param a a
+             * @return strip result
+             */
+            return strip(a);
         }
         if (!NBlankable.isBlank(b)) {
-            return trim(b);
+            /**
+             * Strip.
+             *
+             * @param b b
+             * @return strip result
+             */
+            return strip(b);
         }
         return "";
     }
 
+    /**
+     * First non blank.
+     *
+     * @param a a
+     * @param b b
+     * @return first non blank result
+     */
     public static String firstNonBlank(String a, String b) {
         if (!NBlankable.isBlank(a)) {
             return a;
@@ -339,40 +526,106 @@ public class NStringUtils {
         return null;
     }
 
+    /**
+     * First non blank.
+     *
+     * @param values values
+     * @return first non blank result
+     */
     public static String firstNonBlank(String... values) {
+        /**
+         * First non blank.
+         *
+         * @param Arrays.asList(values) arrays.as list(values)
+         * @return first non blank result
+         */
         return firstNonBlank(values == null ? null : Arrays.asList(values));
     }
 
-    public static String firstNonBlankTrimmed(String... values) {
-        return firstNonBlankTrimmed(values == null ? null : Arrays.asList(values));
+    /**
+     * First non blank stripped.
+     *
+     * @param values values
+     * @return first non blank stripped result
+     */
+    public static String firstNonBlankStripped(String... values) {
+        /**
+         * First non blank stripped.
+         *
+         * @param Arrays.asList(values) arrays.as list(values)
+         * @return first non blank stripped result
+         */
+        return firstNonBlankStripped(values == null ? null : Arrays.asList(values));
     }
 
-    public static String firstNonBlankTrimmedToNull(String... values) {
-        return firstNonBlankTrimmedToNull(values == null ? null : Arrays.asList(values));
+    /**
+     * First non blank stripped to null.
+     *
+     * @param values values
+     * @return first non blank stripped to null result
+     */
+    public static String firstNonBlankStrippedToNull(String... values) {
+        /**
+         * First non blank stripped to null.
+         *
+         * @param Arrays.asList(values) arrays.as list(values)
+         * @return first non blank stripped to null result
+         */
+        return firstNonBlankStrippedToNull(values == null ? null : Arrays.asList(values));
     }
 
-    public static String firstNonBlankTrimmedToNull(List<String> values) {
+    /**
+     * First non blank stripped to null.
+     *
+     * @param values values
+     * @return first non blank stripped to null result
+     */
+    public static String firstNonBlankStrippedToNull(List<String> values) {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
-                    return trimToNull(value);
+                    /**
+                     * Strip to null.
+                     *
+                     * @param value value
+                     * @return strip to null result
+                     */
+                    return stripToNull(value);
                 }
             }
         }
         return null;
     }
 
-    public static String firstNonBlankTrimmed(List<String> values) {
+    /**
+     * First non blank stripped.
+     *
+     * @param values values
+     * @return first non blank stripped result
+     */
+    public static String firstNonBlankStripped(List<String> values) {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
-                    return trim(value);
+                    /**
+                     * Strip.
+                     *
+                     * @param value value
+                     * @return strip result
+                     */
+                    return strip(value);
                 }
             }
         }
         return null;
     }
 
+    /**
+     * First non blank.
+     *
+     * @param values values
+     * @return first non blank result
+     */
     public static String firstNonBlank(List<String> values) {
         if (values != null) {
             for (String value : values) {
@@ -384,6 +637,14 @@ public class NStringUtils {
         return null;
     }
 
+    /**
+     * Format align.
+     *
+     * @param text text
+     * @param size size
+     * @param position position
+     * @return format align result
+     */
     public static String formatAlign(String text, int size, NPositionType position) {
         if (text == null) {
             text = "";
@@ -423,21 +684,82 @@ public class NStringUtils {
                 return sb.toString();
             }
         }
+        /**
+         * Unsupported operation exception.
+         *
+         * @return unsupported operation exception result
+         */
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Format string literal.
+     *
+     * @param text text
+     * @return format string literal result
+     */
     public static String formatStringLiteral(String text) {
+        /**
+         * Format string literal.
+         *
+         * @param text text
+         * @param NElementType.DOUBLE_QUOTED_STRING n element type.double_quoted_string
+         * @return format string literal result
+         */
         return formatStringLiteral(text, NElementType.DOUBLE_QUOTED_STRING);
     }
 
+    /**
+     * Format string literal.
+     *
+     * @param text text
+     * @param quoteType quote type
+     * @return format string literal result
+     */
     public static String formatStringLiteral(String text, NElementType quoteType) {
+        /**
+         * Format string literal.
+         *
+         * @param text text
+         * @param quoteType quote type
+         * @param NSupportMode.ALWAYS n support mode.always
+         * @return format string literal result
+         */
         return formatStringLiteral(text, quoteType, NSupportMode.ALWAYS);
     }
 
+    /**
+     * Format string literal.
+     *
+     * @param text text
+     * @param quoteType quote type
+     * @param condition condition
+     * @return format string literal result
+     */
     public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition) {
+        /**
+         * Format string literal.
+         *
+         * @param text text
+         * @param quoteType quote type
+         * @param condition condition
+         * @param false false
+         * @param "" ""
+         * @return format string literal result
+         */
         return formatStringLiteral(text, quoteType, condition, false, "");
     }
 
+    /**
+     * Format string literal.
+     *
+     * @param text text
+     * @param quoteType quote type
+     * @param condition condition
+     * @param skipBoundaries skip boundaries
+     * @param extraEscapeChars extra escape chars
+     * @return format string literal result
+     */
     public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition, boolean skipBoundaries, String extraEscapeChars) {
         if (text == null) {
             return "null";
@@ -470,26 +792,74 @@ public class NStringUtils {
         return fmt.format(text);
     }
 
+    /**
+     * Parse property id list.
+     *
+     * @param s s
+     * @return parse property id list result
+     */
     public static NOptional<List<String>> parsePropertyIdList(String s) {
         return NReservedUtils.parseStringIdList(s);
     }
 
+    /**
+     * Parse property string list.
+     *
+     * @param s s
+     * @return parse property string list result
+     */
     public static List<String> parsePropertyStringList(String s) {
-        return NReservedLangUtils.parseAndTrimToDistinctList(s);
+        return NReservedLangUtils.parseAndStripToDistinctList(s);
     }
 
+    /**
+     * Split.
+     *
+     * @param value value
+     * @param chars chars
+     * @return split result
+     */
     public static List<String> split(String value, String chars) {
+        /**
+         * Split.
+         *
+         * @param value value
+         * @param chars chars
+         * @param true true
+         * @param false false
+         * @return split result
+         */
         return split(value, chars, true, false);
     }
 
+    /**
+     * Repeat.
+     *
+     * @param c c
+     * @param count count
+     * @return repeat result
+     */
     public static String repeat(char c, int count) {
         char[] e = new char[count];
         Arrays.fill(e, c);
         return new String(e);
     }
 
+    /**
+     * Repeat.
+     *
+     * @param str str
+     * @param count count
+     * @return repeat result
+     */
     public static String repeat(String str, int count) {
         if (count < 0) {
+            /**
+             * Array index out of bounds exception.
+             *
+             * @param count count
+             * @return array index out of bounds exception result
+             */
             throw new ArrayIndexOutOfBoundsException(count);
         }
         switch (count) {
@@ -505,6 +875,13 @@ public class NStringUtils {
         return sb.toString();
     }
 
+    /**
+     * Align left.
+     *
+     * @param s s
+     * @param width width
+     * @return align left result
+     */
     public static String alignLeft(String s, int width) {
         StringBuilder sb = new StringBuilder();
         if (s != null) {
@@ -517,6 +894,13 @@ public class NStringUtils {
         return sb.toString();
     }
 
+    /**
+     * Align right.
+     *
+     * @param s s
+     * @param width width
+     * @return align right result
+     */
     public static String alignRight(String s, int width) {
         StringBuilder sb = new StringBuilder();
         if (s != null) {
@@ -529,7 +913,16 @@ public class NStringUtils {
         return sb.toString();
     }
 
-    public static List<String> split(String value, String chars, boolean trim, boolean ignoreEmpty) {
+    /**
+     * Split.
+     *
+     * @param value value
+     * @param chars chars
+     * @param strip strip
+     * @param ignoreEmpty ignore empty
+     * @return split result
+     */
+    public static List<String> split(String value, String chars, boolean strip, boolean ignoreEmpty) {
         if (value == null) {
             value = "";
         }
@@ -548,8 +941,8 @@ public class NStringUtils {
                 wasSep = true;
             } else {
                 wasSep = false;
-                if (trim) {
-                    s = s.trim();
+                if (strip) {
+                    s = NStringUtils.strip(s);
                 }
                 if (!ignoreEmpty || !s.isEmpty()) {
                     all.add(s);
@@ -581,6 +974,15 @@ public class NStringUtils {
      * <code>mapper</code>
      */
     public static String replacePlaceholder(String text, String regexp, Function<String, String> mapper) {
+        /**
+         * Replace placeholder.
+         *
+         * @param text text
+         * @param Pattern.compile(regexp) pattern.compile(regexp)
+         * @param null null
+         * @param mapper mapper
+         * @return replace placeholder result
+         */
         return replacePlaceholder(text, Pattern.compile(regexp), null, mapper);
     }
 
@@ -603,6 +1005,15 @@ public class NStringUtils {
      * <code>mapper</code>
      */
     public static String replacePlaceholder(String text, String regexp, String varName, Function<String, String> mapper) {
+        /**
+         * Replace placeholder.
+         *
+         * @param text text
+         * @param Pattern.compile(regexp) pattern.compile(regexp)
+         * @param varName var name
+         * @param mapper mapper
+         * @return replace placeholder result
+         */
         return replacePlaceholder(text, Pattern.compile(regexp), varName, mapper);
     }
 
@@ -646,6 +1057,14 @@ public class NStringUtils {
                 }).collect(Collectors.joining());
     }
 
+    /**
+     * Parse place holder.
+     *
+     * @param text text
+     * @param pattern pattern
+     * @param patternVarName pattern var name
+     * @return parse place holder result
+     */
     public static Stream<NToken> parsePlaceHolder(String text, Pattern pattern, String patternVarName) {
         NAssert.requireNamedNonNull(pattern, "pattern");
         if (text == null) {
@@ -653,6 +1072,12 @@ public class NStringUtils {
         }
         final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
         final String TT_VAR_STR = NToken.typeString(NToken.TT_VAR);
+        /**
+         * Iter to stream.
+         *
+         * @param Iterator<NToken>( iterator<n token>(
+         * @return iter to stream result
+         */
         return iterToStream(new Iterator<NToken>() {
             final String vn;
             final Matcher matcher;
@@ -668,6 +1093,11 @@ public class NStringUtils {
                 matcher = pattern.matcher(text);
             }
 
+            /**
+             * Ready.
+             *
+             * @return ready result
+             */
             private boolean ready() {
                 return !buffer.isEmpty();
             }
@@ -694,6 +1124,11 @@ public class NStringUtils {
                     buffer.add(NToken.of(NToken.TT_DEFAULT, t, 0, 0, t, TT_DEFAULT_STR));
                     last = text.length();
                 }
+                /**
+                 * Ready.
+                 *
+                 * @return ready result
+                 */
                 return ready();
             }
 
@@ -732,10 +1167,22 @@ public class NStringUtils {
                 }).collect(Collectors.joining());
     }
 
+    /**
+     * Parse dollar place holder.
+     *
+     * @param text text
+     * @return parse dollar place holder result
+     */
     public static Stream<NToken> parseDollarPlaceHolder(String text) {
         final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
         final String TT_DOLLAR_BRACE_STR = NToken.typeString(NToken.TT_DOLLAR_BRACE);
         final String TT_DOLLAR_STR = NToken.typeString(NToken.TT_DOLLAR);
+        /**
+         * Iter to stream.
+         *
+         * @param Iterator<NToken>( iterator<n token>(
+         * @return iter to stream result
+         */
         return iterToStream(new Iterator<NToken>() {
             final char[] t = (text == null ? new char[0] : text.toCharArray());
             int p = 0;
@@ -745,6 +1192,11 @@ public class NStringUtils {
             final StringBuilder ni = new StringBuilder(length);
             final List<NToken> buffer = new ArrayList<>(2);
 
+            /**
+             * Ready.
+             *
+             * @return ready result
+             */
             private boolean ready() {
                 return !buffer.isEmpty();
             }
@@ -755,6 +1207,9 @@ public class NStringUtils {
                     return true;
                 }
                 while (p < length) {
+                  /**
+                   * Fill once.
+                   */
                     fillOnce();
                     if (ready()) {
                         return true;
@@ -764,9 +1219,19 @@ public class NStringUtils {
                     buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
                     sb.setLength(0);
                 }
+                /**
+                 * Ready.
+                 *
+                 * @return ready result
+                 */
                 return ready();
             }
 
+            /**
+             * Fill once.
+             *
+             * @return fill once result
+             */
             private void fillOnce() {
                 char c = t[p];
                 if (c == '$' && p + 1 < length && t[p + 1] == '{') {
@@ -826,18 +1291,209 @@ public class NStringUtils {
 
     }
 
+
+    /**
+     * text replacing all $abc and ${abc} vars
+     *
+     * @param text   text to parse
+     * @param mapper mapper function. when returns null, no replacement is performed
+     * @return text replacing all $abc and ${abc} vars
+     */
+    public static String replaceMoustachePlaceHolder(String text, Function<String, String> mapper) {
+        if (mapper == null) {
+            return "";
+        }
+        return parseMoustachePlaceHolder(text)
+                .map(t -> {
+                    switch (t.ttype) {
+                        case NToken.TT_MOUSTACHE_START: {
+                            String x = mapper.apply(t.sval);
+                            if (x == null) {
+                                return t.image;
+                            }
+                            return x;
+                        }
+                    }
+                    return t.sval;
+                }).collect(Collectors.joining());
+    }
+
+    /**
+     * Parse moustache place holder.
+     *
+     * @param text text
+     * @return parse moustache place holder result
+     */
+    public static Stream<NToken> parseMoustachePlaceHolder(String text) {
+        final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
+        final String TT_DOLLAR_BRACE_STR = NToken.typeString(NToken.TT_MOUSTACHE_START);
+        /**
+         * Iter to stream.
+         *
+         * @param Iterator<NToken>( iterator<n token>(
+         * @return iter to stream result
+         */
+        return iterToStream(new Iterator<NToken>() {
+            final char[] t = (text == null ? new char[0] : text.toCharArray());
+            int p = 0;
+            final int length = t.length;
+            final StringBuilder sb = new StringBuilder(length);
+            final StringBuilder n = new StringBuilder(length);
+            final StringBuilder ni = new StringBuilder(length);
+            final List<NToken> buffer = new ArrayList<>(2);
+
+            /**
+             * Ready.
+             *
+             * @return ready result
+             */
+            private boolean ready() {
+                return !buffer.isEmpty();
+            }
+
+            @Override
+            public boolean hasNext() {
+                if (ready()) {
+                    return true;
+                }
+                while (p < length) {
+                  /**
+                   * Fill once.
+                   */
+                    fillOnce();
+                    if (ready()) {
+                        return true;
+                    }
+                }
+                if (sb.length() > 0) {
+                    buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
+                    sb.setLength(0);
+                }
+                /**
+                 * Ready.
+                 *
+                 * @return ready result
+                 */
+                return ready();
+            }
+
+            /**
+             * Fill once.
+             *
+             * @return fill once result
+             */
+            private void fillOnce() {
+                char c = t[p];
+                if (c == '{' && p + 1 < length && t[p + 1] == '{') {
+                    p += 2;
+                    n.setLength(0);
+                    ni.setLength(0);
+                    ni.append("{{");
+
+                    boolean closed = false;
+                    while (p < length) {
+                        c = t[p];
+                        if (c == '}' && p + 1 < length && t[p + 1] == '}') {
+                            ni.append("}}");
+                            p += 2; // Advance past both closing braces
+                            closed = true;
+                            break;
+                        } else {
+                            // Strip trailing unmatched single '}' if we hit one at the end
+                            if (c != '}' || p + 1 < length) {
+                                n.append(c);
+                            }
+                            ni.append(c);
+                            p++;
+                        }
+                    }
+
+                    if (sb.length() > 0) {
+                        buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
+                        sb.setLength(0);
+                    }
+
+                    // Variable name 'n' is cleanly extracted even if unclosed
+                    String varName = n.toString();
+                    // Clean up any trailing single '}' from unclosed '{{v}'
+                    if (!closed && varName.endsWith("}")) {
+                        varName = varName.substring(0, varName.length() - 1);
+                    }
+
+                    buffer.add(NToken.of(NToken.TT_MOUSTACHE_START, varName, 0, 0, ni.toString(), TT_DOLLAR_BRACE_STR));
+
+                    // Return early since we consumed 'p' in the loop
+                    return;
+                } else {
+                    sb.append(c);
+                }
+                p++;
+            }
+
+            @Override
+            public NToken next() {
+                NAssert.requireNamedTrue(ready(), "token ready");
+                return buffer.remove(0);
+            }
+        });
+
+    }
+
+
+    /**
+     * Checks if is valid var.
+     *
+     * @param c c
+     * @return is valid var result
+     */
+    public static boolean isValidVar(String c) {
+        if (c == null || c.isEmpty()) return false;
+        char[] charArray = c.toCharArray();
+        if (!isValidVarPart(charArray[0])) return false;
+        for (int i = 0; i < charArray.length; i++) {
+            if (!isValidVarPart(charArray[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if is valid var part.
+     *
+     * @param c c
+     * @return is valid var part result
+     */
     public static boolean isValidVarPart(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
     }
 
+    /**
+     * Checks if is valid var start.
+     *
+     * @param c c
+     * @return is valid var start result
+     */
     public static boolean isValidVarStart(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
 
+    /**
+     * Iter to stream.
+     *
+     * @param it it
+     * @return iter to stream result
+     */
     private static <T> Stream<T> iterToStream(Iterator<T> it) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, 0), false);
     }
 
+    /**
+     * Converts to string or empty.
+     *
+     * @param any any
+     * @return to string or empty result
+     */
     public static String toStringOrEmpty(Object any) {
         if (any == null) {
             return "";
@@ -845,9 +1501,20 @@ public class NStringUtils {
         return any.toString();
     }
 
+    /**
+     * Stacktrace array.
+     *
+     * @param th th
+     * @return stacktrace array result
+     */
     public static String[] stacktraceArray(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
+          /**
+           * Try.
+           *
+           * @param PrintWriter(sw) print writer(sw)
+           */
             try (PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
@@ -864,9 +1531,20 @@ public class NStringUtils {
         return new String[0];
     }
 
+    /**
+     * Stacktrace.
+     *
+     * @param th th
+     * @return stacktrace result
+     */
     public static String stacktrace(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
+          /**
+           * Try.
+           *
+           * @param PrintWriter(sw) print writer(sw)
+           */
             try (PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
@@ -877,6 +1555,13 @@ public class NStringUtils {
         return "";
     }
 
+    /**
+     * Last index of.
+     *
+     * @param string string
+     * @param chars chars
+     * @return last index of result
+     */
     public static int lastIndexOf(String string, char[] chars) {
         if (string == null || chars == null || chars.length == 0) {
             return -1;
@@ -892,6 +1577,13 @@ public class NStringUtils {
         return -1;
     }
 
+    /**
+     * Index of.
+     *
+     * @param string string
+     * @param chars chars
+     * @return index of result
+     */
     public static int indexOf(String string, char[] chars) {
         if (string == null || chars == null || chars.length == 0) {
             return -1;
@@ -907,6 +1599,14 @@ public class NStringUtils {
         return -1;
     }
 
+    /**
+     * Levenshtein closest.
+     *
+     * @param threshold threshold
+     * @param str1 str1
+     * @param dictionary dictionary
+     * @return levenshtein closest result
+     */
     public static String levenshteinClosest(double threshold, String str1, String... dictionary) {
         if (threshold > 1) {
             threshold = 1;
@@ -936,6 +1636,13 @@ public class NStringUtils {
         return bestResult;
     }
 
+    /**
+     * Levenshtein distance.
+     *
+     * @param str1 str1
+     * @param str2 str2
+     * @return levenshtein distance result
+     */
     public static int levenshteinDistance(String str1, String str2) {
         if (str1 == null) {
             str1 = "";
@@ -973,13 +1680,31 @@ public class NStringUtils {
         return dp[str1.length()][str2.length()];
     }
 
+    /**
+     * Split lines.
+     *
+     * @param data data
+     * @return split lines result
+     */
     public static List<String> splitLines(String data) {
         if (data == null) {
             return new ArrayList<>();
         }
+        /**
+         * Read lines.
+         *
+         * @param StringBuilder(data) string builder(data)
+         * @return read lines result
+         */
         return readLines(new StringBuilder(data));
     }
 
+    /**
+     * Read lines.
+     *
+     * @param data data
+     * @return read lines result
+     */
     public static List<String> readLines(StringBuilder data) {
         if (data == null) {
             return new ArrayList<>();
@@ -991,6 +1716,12 @@ public class NStringUtils {
         return all;
     }
 
+    /**
+     * Read line.
+     *
+     * @param data data
+     * @return read line result
+     */
     public static String readLine(StringBuilder data) {
         int i = 0;
         if (data == null) {
@@ -1029,6 +1760,13 @@ public class NStringUtils {
         return l;
     }
 
+    /**
+     * Pjoin.
+     *
+     * @param delimiter delimiter
+     * @param items items
+     * @return pjoin result
+     */
     public static String pjoin(String delimiter, String... items) {
         StringBuilder builder = new StringBuilder();
         if (delimiter == null) {
@@ -1064,10 +1802,33 @@ public class NStringUtils {
         return builder.toString();
     }
 
+    /**
+     * Truncate.
+     *
+     * @param s s
+     * @param maxLength max length
+     * @return truncate result
+     */
     public static String truncate(String s, int maxLength) {
+        /**
+         * Truncate.
+         *
+         * @param s s
+         * @param maxLength max length
+         * @param null null
+         * @return truncate result
+         */
         return truncate(s, maxLength, null);
     }
 
+    /**
+     * Truncate.
+     *
+     * @param s s
+     * @param maxLength max length
+     * @param suffix suffix
+     * @return truncate result
+     */
     public static String truncate(String s, int maxLength, String suffix) {
         if (s == null || maxLength < 0) {
             return s;
@@ -1086,6 +1847,14 @@ public class NStringUtils {
         }
     }
 
+    /**
+     * Replace tail.
+     *
+     * @param s s
+     * @param oldTail old tail
+     * @param newTail new tail
+     * @return replace tail result
+     */
     public static String replaceTail(String s, String oldTail, String newTail) {
         NAssert.requireNamedNonNull(s, "string");
         NAssert.requireNamedNonNull(s, "oldTail");
@@ -1097,6 +1866,14 @@ public class NStringUtils {
         }
     }
 
+    /**
+     * Replace head.
+     *
+     * @param s s
+     * @param oldHead old head
+     * @param newHead new head
+     * @return replace head result
+     */
     public static String replaceHead(String s, String oldHead, String newHead) {
         NAssert.requireNamedNonNull(s, "string");
         NAssert.requireNamedNonNull(s, "oldTail");
@@ -1108,13 +1885,35 @@ public class NStringUtils {
         }
     }
 
-    public static StringBuilder trim(StringBuilder sb) {
-        trimLeft(sb);
-        trimRight(sb);
+    /**
+     * Strip.
+     *
+     * @param sb sb
+     * @return strip result
+     */
+    public static StringBuilder strip(StringBuilder sb) {
+      /**
+       * Strip left.
+       *
+       * @param sb sb
+       */
+        stripLeft(sb);
+      /**
+       * Strip right.
+       *
+       * @param sb sb
+       */
+        stripRight(sb);
         return sb;
     }
 
-    public static StringBuilder trimLeft(StringBuilder sb) {
+    /**
+     * Strip left.
+     *
+     * @param sb sb
+     * @return strip left result
+     */
+    public static StringBuilder stripLeft(StringBuilder sb) {
         int len = sb.length();
         int start = 0;
         while (start < len && Character.isWhitespace(sb.charAt(start))) {
@@ -1126,23 +1925,59 @@ public class NStringUtils {
         return sb;
     }
 
+    /**
+     * Escape char.
+     *
+     * @param c c
+     * @return escape char result
+     */
     public static String escapeChar(char c) {
         switch (c) {
             case '\b':
+              /**
+               * Return.
+               *
+               * @param "\\b" "\\b"
+               */
                 return ("\\b");
             case '\t':
                 return "\\t";
             case '\n':
+              /**
+               * Return.
+               *
+               * @param "\\n" "\\n"
+               */
                 return ("\\n");
             case '\f':
+              /**
+               * Return.
+               *
+               * @param "\\f" "\\f"
+               */
                 return ("\\f");
             case '\r':
+              /**
+               * Return.
+               *
+               * @param "\\r" "\\r"
+               */
                 return ("\\r");
             case '\\':
+              /**
+               * Return.
+               *
+               * @param "\\\\" "\\\\"
+               */
                 return ("\\\\");
             default: {
                 if (c < 0x20 || c > 0x7e) {
                     String s = "0000" + Integer.toString(c, 16);
+                  /**
+                   * Return.
+                   *
+                   * @param 4) 4)
+                   */
                     return ("\\u" + s.substring(s.length() - 4));
                 } else {
                     return String.valueOf(c);
@@ -1151,7 +1986,13 @@ public class NStringUtils {
         }
     }
 
-    public static StringBuilder trimRight(StringBuilder sb) {
+    /**
+     * Strip right.
+     *
+     * @param sb sb
+     * @return strip right result
+     */
+    public static StringBuilder stripRight(StringBuilder sb) {
         int end = sb.length() - 1;
         while (end >= 0 && Character.isWhitespace(sb.charAt(end))) {
             end--;
@@ -1162,10 +2003,29 @@ public class NStringUtils {
         return sb;
     }
 
+    /**
+     * Common prefix.
+     *
+     * @param all all
+     * @return common prefix result
+     */
     public static String commonPrefix(List<String> all) {
+        /**
+         * Common prefix.
+         *
+         * @param all all
+         * @param null null
+         * @return common prefix result
+         */
         return commonPrefix(all, null);
     }
 
+    /**
+     * Checks if is java identifier.
+     *
+     * @param s s
+     * @return is java identifier result
+     */
     public static boolean isJavaIdentifier(String s) {
         if (s == null) {
             return false;
@@ -1184,10 +2044,30 @@ public class NStringUtils {
         return true;
     }
 
+    /**
+     * CommonPrefixFilter interface.
+     *
+     * @author thevpc
+     * @since 0.8.0
+     */
     public interface CommonPrefixFilter {
+        /**
+         * Accept.
+         *
+         * @param buffer buffer
+         * @param c c
+         * @return accept result
+         */
         boolean accept(String buffer, char c);
     }
 
+    /**
+     * Common prefix.
+     *
+     * @param all all
+     * @param prefixFilter prefix filter
+     * @return common prefix result
+     */
     public static String commonPrefix(List<String> all, CommonPrefixFilter prefixFilter) {
         if (all == null || all.isEmpty()) {
             return "";
@@ -1221,7 +2101,20 @@ public class NStringUtils {
         return sb.toString();
     }
 
+    /**
+     * Common whitespace prefix.
+     *
+     * @param all all
+     * @return common whitespace prefix result
+     */
     public static String commonWhitespacePrefix(List<String> all) {
+        /**
+         * Common prefix.
+         *
+         * @param all all
+         * @param Character.isWhitespace(c) character.is whitespace(c)
+         * @return common prefix result
+         */
         return commonPrefix(all, (b, c) -> Character.isWhitespace(c));
     }
 
@@ -1239,6 +2132,13 @@ public class NStringUtils {
         try {
             byteBuffer = encoder.encode(charBuffer);
         } catch (CharacterCodingException e) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param sequence" sequence"
+             * @param e e
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("Invalid UTF-8 sequence", e);
         }
         byte[] bytes = new byte[byteBuffer.remaining()];
@@ -1261,6 +2161,13 @@ public class NStringUtils {
         try {
             charBuffer = decoder.decode(byteBuffer);
         } catch (CharacterCodingException e) {
+            /**
+             * Illegal argument exception.
+             *
+             * @param sequence" sequence"
+             * @param e e
+             * @return illegal argument exception result
+             */
             throw new IllegalArgumentException("Invalid UTF-8 sequence", e);
         }
         char[] chars = new char[charBuffer.remaining()];

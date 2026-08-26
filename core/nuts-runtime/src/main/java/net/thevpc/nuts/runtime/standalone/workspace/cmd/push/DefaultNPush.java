@@ -25,7 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
 import net.thevpc.nuts.artifact.NDefinition;
-import net.thevpc.nuts.artifact.NDependencyFilters;
+import net.thevpc.nuts.artifact.NDependencyFilter;
+import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
@@ -35,6 +36,8 @@ import net.thevpc.nuts.command.NPushException;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
+import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -65,13 +68,13 @@ public class DefaultNPush extends AbstractDefaultNPush {
     public NPush run() {
         NRepositoryFilter repositoryFilter = null;
         Map<NId, NDefinition> toProcess = new LinkedHashMap<>();
-        for (NId id : this.getIds()) {
-            if (NStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.getVersion()));
+        for (NId id : this.ids()) {
+            if (NStringUtils.strip(id.version().value()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.version()));
             }
             NDefinition file = NFetch.of(id)
-                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
-                    .setTransitive(false).getResultDefinition();
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .transitive(false).getResultDefinition();
             NAssert.requireNamedNonNull(file, "content to push");
             toProcess.put(id, file);
         }
@@ -82,15 +85,15 @@ public class DefaultNPush extends AbstractDefaultNPush {
             NDefinition file = entry.getValue();
             NFetchMode fetchMode = this.isOffline() ? NFetchMode.LOCAL : NFetchMode.REMOTE;
             NWorkspaceUtils wu = NWorkspaceUtils.of();
-            if (NBlankable.isBlank(this.getRepository())) {
+            if (NBlankable.isBlank(this.repository())) {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
                 boolean ok = false;
-                for (NRepository repo : wu.filterRepositoriesDeploy(file.getId(), repositoryFilter)) {
+                for (NRepository repo : wu.filterRepositoriesDeploy(file.id(), repositoryFilter)) {
                     NDescriptor descr = null;
                     NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                     try {
-                        descr = repoSPI.fetchDescriptor().setFetchMode(fetchMode).setId(file.getId()).getResult();
+                        descr = repoSPI.fetchDescriptor().fetchMode(fetchMode).id(file.id()).getResult();
                     } catch (Exception e) {
                         errors.add(CoreStringUtils.exceptionToString(e));
                         //
@@ -98,10 +101,10 @@ public class DefaultNPush extends AbstractDefaultNPush {
                     if (descr != null && repo.config().isSupportedMirroring()) {
                         NId id2 = CoreNIdUtils.createContentFaceId(dws.resolveEffectiveId(descr), descr);
                         try {
-                            repoSPI.push().setId(id2)
-                                    .setOffline(offline)
-                                    .setRepository(getRepository())
-                                    .setArgs(args.toArray(new String[0]))
+                            repoSPI.push().id(id2)
+                                    .offline(offline)
+                                    .repository(repository())
+                                    .args(args.toArray(new String[0]))
                                     .run();
                             ok = true;
                             break;
@@ -115,22 +118,22 @@ public class DefaultNPush extends AbstractDefaultNPush {
                     throw new NPushException(id, NMsg.ofC(
                             "unable to push %s to repository %s : %s",
                             id == null ? "<null>" : id,
-                            this.getRepository(),
+                            this.repository(),
                             String.join("\n", errors)
                             ));
                 }
             } else {
-                NRepository repo = NWorkspace.of().getRepository(this.getRepository()).get();
+                NRepository repo = NWorkspace.of().getRepository(this.repository()).get();
                 if (!repo.config().isEnabled()) {
-                    throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
+                    throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.name()));
                 }
-                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
+                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.descriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                 repoSPI.deploy()
-                        .setId(effId)
-                        .setContent(file.getContent().orNull())
-                        .setDescriptor(file.getDescriptor())
+                        .id(effId)
+                        .content(file.content().orNull())
+                        .descriptor(file.descriptor())
                         //                        .setFetchMode(fetchMode)
                         //                        .setOffline(this.isOffline())
                         //                        .setTransitive(true)

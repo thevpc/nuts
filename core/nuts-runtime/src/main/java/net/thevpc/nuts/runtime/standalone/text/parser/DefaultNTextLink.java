@@ -27,9 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NImmutable;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     }
 
     @Override
-    public String getValue() {
+    public String value() {
         return value;
     }
 
@@ -125,39 +124,35 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
         return prerender().substring(start, end);
     }
 
-    public List<NText> split(String chars, boolean returnSeparator) {
-        return prerender().split(chars, returnSeparator);
-    }
-
     private NText prerender() {
         return new DefaultNTextStyled(new DefaultNTextPlain(value), NTextStyles.of(NTextStyle.underlined()));
     }
 
     @Override
-    public NText trimLeft() {
-        String c = NStringUtils.trimLeft(value);
+    public NText stripLeft() {
+        String c = NStringUtils.stripLeft(value);
         if (Objects.equals(value, c)) {
             return this;
         }
-        return new DefaultNTextLink(getSeparator(), c);
+        return new DefaultNTextLink(separator(), c);
     }
 
     @Override
-    public NText trimRight() {
-        String c = NStringUtils.trimRight(value);
+    public NText stripRight() {
+        String c = NStringUtils.stripRight(value);
         if (Objects.equals(value, c)) {
             return this;
         }
-        return new DefaultNTextLink(getSeparator(), c);
+        return new DefaultNTextLink(separator(), c);
     }
 
     @Override
-    public NText trim() {
-        String c = NStringUtils.trim(value);
+    public NText strip() {
+        String c = NStringUtils.strip(value);
         if (Objects.equals(value, c)) {
             return this;
         }
-        return new DefaultNTextLink(getSeparator(), c);
+        return new DefaultNTextLink(separator(), c);
     }
 
 }

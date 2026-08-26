@@ -18,9 +18,9 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public List<NWorkBalancerWorker> getWorkers() {
-        if (model.getWorkers() == null) return Collections.emptyList();
-        return model.getWorkers().stream().map(NWorkBalancerWorkerImpl::new).collect(Collectors.toList());
+    public List<NWorkBalancerWorker> workers() {
+        if (model.workers() == null) return Collections.emptyList();
+        return model.workers().stream().map(NWorkBalancerWorkerImpl::new).collect(Collectors.toList());
     }
 
     @Override
@@ -29,8 +29,8 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public Map<String, NWorkBalancerWorkerLoad> getWorkerLoads() {
-        return workBalancer.getWorkerLoads();
+    public Map<String, NWorkBalancerWorkerLoad> workerLoads() {
+        return workBalancer.workerLoads();
     }
 
     @Override
@@ -39,21 +39,21 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
     }
 
     @Override
-    public Map<String, NElement> getOptions() {
-        return workBalancer.getOptions();
+    public Map<String, NElement> options() {
+        return workBalancer.options();
     }
 
     @Override
     public NOptional<NElement> getWorkerVar(String workerName, String name) {
-        Map<String, Map<String, NElement>> v = model.getContext().getVariables();
+        Map<String, Map<String, NElement>> v = model.context().variables();
         Map<String, NElement> workerVars = v.get(workerName);
         return NOptional.ofNamed(workerVars == null ? null : workerVars.get(name), name);
     }
 
     @Override
-    public NOptional<NElement> getVar(String name) {
-        if (model.getContext() != null && model.getContext().getVariables() != null) {
-            Map<String, NElement> globalVars = model.getContext().getVariables().getOrDefault("", Collections.emptyMap());
+    public NOptional<NElement> getSharedVar(String name) {
+        if (model.context() != null && model.context().variables() != null) {
+            Map<String, NElement> globalVars = model.context().variables().getOrDefault("", Collections.emptyMap());
             return NOptional.ofNullable(globalVars.get(name));
         }
         return NOptional.ofEmpty();
@@ -61,13 +61,13 @@ public class WorkBalancerStrategyContextImpl implements NWorkBalancerStrategyCon
 
     @Override
     public NWorkBalancerStrategyContext setWorkerVar(String workerName, String name, NElement value) {
-        model.getContext().getVariables().computeIfAbsent(workerName, k -> new HashMap<>()).put(name, value);
+        model.context().variables().computeIfAbsent(workerName, k -> new HashMap<>()).put(name, value);
         return this;
     }
 
     @Override
-    public NWorkBalancerStrategyContext setVar(String name, NElement value) {
-        model.getContext().getVariables().computeIfAbsent("", k -> new HashMap<>()).put(name, value);
+    public NWorkBalancerStrategyContext setSharedVar(String name, NElement value) {
+        model.context().variables().computeIfAbsent("", k -> new HashMap<>()).put(name, value);
         return this;
     }
 
