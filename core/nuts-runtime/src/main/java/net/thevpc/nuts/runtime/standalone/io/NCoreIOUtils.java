@@ -325,17 +325,17 @@ public class NCoreIOUtils {
         return new ByteArrayInputStream(loadStream(stream, bLog));
     }
 
-    public static Properties loadURLProperties(Path path, NLog bLog) {
-        Properties props = new Properties();
-        if (Files.isRegularFile(path)) {
-            try (InputStream is = Files.newInputStream(path)) {
-                props.load(is);
-            } catch (IOException ex) {
-                return new Properties();
-            }
-        }
-        return props;
-    }
+//    public static Properties loadURLProperties(Path path, NLog bLog) {
+//        Properties props = new Properties();
+//        if (Files.isRegularFile(path)) {
+//            try (InputStream is = Files.newInputStream(path)) {
+//                props.load(is);
+//            } catch (IOException ex) {
+//                return new Properties();
+//            }
+//        }
+//        return props;
+//    }
 
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, NLog bLog) {
         NChronometer chrono = NChronometer.of();

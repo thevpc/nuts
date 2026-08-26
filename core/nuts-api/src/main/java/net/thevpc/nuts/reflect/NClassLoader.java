@@ -4,7 +4,6 @@ import net.thevpc.nuts.artifact.NClasspathEntry;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.core.NClassLoaderNode;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.internal.rpi.NReflectRPI;
 import net.thevpc.nuts.util.NOptional;
@@ -200,13 +199,6 @@ public interface NClassLoader {
      */
     ClassLoader getParent();
 
-    /**
-     * Checks if is loaded.
-     *
-     * @param id id
-     * @return is loaded result
-     */
-    boolean isLoaded(NId id);
 
     /**
      * classloader name.

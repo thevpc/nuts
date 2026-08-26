@@ -113,14 +113,6 @@ public interface NMutableClassLoader extends NClassLoader, NCopiable {
     NDefinition[] add(NDefinition... definitions);
 
     /**
-     * Checks if is loaded.
-     *
-     * @param id id
-     * @return is loaded result
-     */
-    boolean isLoaded(NId id);
-
-    /**
      * Copy.
      *
      * @return copy result
