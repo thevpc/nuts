@@ -40,7 +40,7 @@ import net.thevpc.nuts.util.NOptional;
  *
  * @author thevpc
  * @app.category Base
- * @since 0.8.9
+ * @since 1.0.0
  */
 public enum NGpuVendor implements NEnum {
 

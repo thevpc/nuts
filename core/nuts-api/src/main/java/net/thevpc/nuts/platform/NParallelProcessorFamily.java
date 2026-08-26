@@ -56,7 +56,7 @@ import java.util.List;
  *
  * @author thevpc
  * @app.category Base
- * @since 0.8.9
+ * @since 1.0.0
  */
 public enum NParallelProcessorFamily implements NEnum {
 
@@ -452,7 +452,7 @@ public enum NParallelProcessorFamily implements NEnum {
      * vendor layers expose no development kit that can be detected the same way.
      *
      * @return available runtimes, never null
-     * @since 0.8.9
+     * @since 1.0.0
      */
     /**
      * Whether the environment and filesystem reads the probes rely on are

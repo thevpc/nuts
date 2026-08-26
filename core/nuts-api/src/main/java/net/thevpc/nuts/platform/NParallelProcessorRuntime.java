@@ -41,7 +41,7 @@ import java.util.Objects;
  *
  * @author thevpc
  * @app.category Base
- * @since 0.8.9
+ * @since 1.0.0
  */
 public class NParallelProcessorRuntime implements NBlankable {
 
