@@ -36,8 +36,8 @@
                 <span class="dl-version-pill dl-version-pill--latest">
                     <i class="fas fa-bolt"></i> Latest &nbsp;<strong>{{runtimeVersion}}</strong>
                 </span>
-                <span class="dl-version-pill dl-version-pill--lts">
-                    <i class="fas fa-shield-alt"></i> LTS &nbsp;<strong>{{stableRuntimeVersion}}</strong>
+                <span class="dl-version-pill dl-version-pill--stable">
+                    <i class="fas fa-shield-alt"></i> Stable &nbsp;<strong>{{stableRuntimeVersion}}</strong>
                 </span>
                 <span class="dl-version-pill dl-version-pill--java">
                     <i class="fab fa-java"></i> Requires Java 8+
@@ -72,12 +72,12 @@
                             </div>
                         </button>
 
-                        <button class="dl-choice dl-choice--version" data-version="lts">
+                        <button class="dl-choice dl-choice--version" data-version="stable">
                             <div class="dl-choice__icon dl-choice__icon--green">
                                 <i class="fas fa-shield-alt"></i>
                             </div>
                             <div class="dl-choice__text">
-                                <span class="dl-choice__label">LTS</span>
+                                <span class="dl-choice__label">Stable</span>
                                 <span class="dl-choice__version">{{stableRuntimeVersion}}</span>
                                 <span class="dl-choice__desc">Long-term support. Critical patches only. Recommended for production.</span>
                             </div>

@@ -120,6 +120,8 @@ class DefaultNCompositeClassLoader extends ClassLoader implements NClassLoader, 
     @Override
     public Class<?> loadClassFromChildren(ClassLoader requester, String name)
             throws ClassNotFoundException {
+        NClassLoaderContext.beginSiblingLookup();
+        try {
         for (NClassLoader child : children) {
             if (child.asClassLoader() == requester) {
                 continue;
@@ -134,6 +136,9 @@ class DefaultNCompositeClassLoader extends ClassLoader implements NClassLoader, 
             }
         }
         throw new ClassNotFoundException(name);
+        } finally {
+            NClassLoaderContext.endSiblingLookup();
+        }
     }
 
     @Override

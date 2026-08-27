@@ -140,7 +140,10 @@ public final class NIdClassLoaderRegistry {
         for (DefaultNLeafClassLoader leaf : leaves) {
             if (leaf != requester) {
                 try {
-                    return leaf.findOwnClass(name);
+                    // Keep normal URLClassLoader parent-first semantics. A
+                    // direct findClass() here could redefine an API already
+                    // owned by the leaf's parent and cause LinkageError.
+                    return leaf.loadClassFromParentAndOwn(name);
                 } catch (ClassNotFoundException ignored) {
                     // Try the next registered artifact.
                 }

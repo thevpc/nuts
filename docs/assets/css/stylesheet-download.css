@@ -44,7 +44,7 @@
     gap: 6px;
 }
 .dl-version-pill--latest  { background: rgba(59,130,246,0.2);  border: 1px solid rgba(59,130,246,0.4);  color: #93c5fd; }
-.dl-version-pill--lts     { background: rgba(16,185,129,0.2);  border: 1px solid rgba(16,185,129,0.4);  color: #6ee7b7; }
+.dl-version-pill--stable     { background: rgba(16,185,129,0.2);  border: 1px solid rgba(16,185,129,0.4);  color: #6ee7b7; }
 .dl-version-pill--java    { background: rgba(245,158,11,0.2);   border: 1px solid rgba(245,158,11,0.4);   color: #fcd34d; }
 
 /* ---- Container ---- */

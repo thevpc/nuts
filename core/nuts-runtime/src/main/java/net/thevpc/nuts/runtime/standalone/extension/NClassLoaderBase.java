@@ -468,6 +468,8 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
     @Override
     public Class<?> loadClassFromChildren(ClassLoader requester, String name)
             throws ClassNotFoundException {
+        NClassLoaderContext.beginSiblingLookup();
+        try {
         for (NClassLoader child : children) {
             if (child.asClassLoader() == requester) {
                 continue;
@@ -482,6 +484,9 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
             }
         }
         throw new ClassNotFoundException(name);
+        } finally {
+            NClassLoaderContext.endSiblingLookup();
+        }
     }
 
     @Override

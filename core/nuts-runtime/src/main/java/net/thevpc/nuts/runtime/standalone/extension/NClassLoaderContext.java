@@ -15,6 +15,8 @@ final class NClassLoaderContext {
 
     private static final ThreadLocal<Deque<NClassLoaderPeer>> ACTIVE =
             ThreadLocal.withInitial(ArrayDeque::new);
+    private static final ThreadLocal<Boolean> SIBLING_LOOKUP =
+            ThreadLocal.withInitial(() -> false);
 
     static void enter(NClassLoaderPeer peer) {
         ACTIVE.get().push(peer);
@@ -35,6 +37,18 @@ final class NClassLoaderContext {
     static NClassLoaderPeer current() {
         Deque<NClassLoaderPeer> stack = ACTIVE.get();
         return stack.isEmpty() ? null : stack.peek();
+    }
+
+    static boolean isSiblingLookup() {
+        return SIBLING_LOOKUP.get();
+    }
+
+    static void beginSiblingLookup() {
+        SIBLING_LOOKUP.set(true);
+    }
+
+    static void endSiblingLookup() {
+        SIBLING_LOOKUP.remove();
     }
 }
 

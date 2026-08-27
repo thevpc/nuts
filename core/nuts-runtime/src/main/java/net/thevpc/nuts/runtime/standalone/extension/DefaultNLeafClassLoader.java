@@ -117,9 +117,15 @@ class DefaultNLeafClassLoader extends URLClassLoader implements NClassLoader {
             // returned (for example while invoking an application method).
             // In that case use the application TCCL as the durable bridge.
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            if (tccl != null && tccl != this && tccl != getParent()) {
+            if (!NClassLoaderContext.isSiblingLookup()
+                    && tccl != null && tccl != this && tccl != getParent()) {
                 try {
-                    return tccl.loadClass(name);
+                    // Calling a composite TCCL here would re-enter the leaf
+                    // that is already asking it to load this class. The
+                    // active-composite and registry paths below are cycle-safe.
+                    if (!(tccl instanceof NClassLoaderPeer)) {
+                        return tccl.loadClass(name);
+                    }
                 } catch (ClassNotFoundException ignored) {
                     // Try the active composite below.
                 }
@@ -128,7 +134,7 @@ class DefaultNLeafClassLoader extends URLClassLoader implements NClassLoader {
             // shared VM-wide. Resolve application dependencies through the
             // workspace composite that is currently using this leaf.
             NClassLoaderPeer peer = NClassLoaderContext.current();
-            if (peer != null) {
+            if (peer != null && !NClassLoaderContext.isSiblingLookup()) {
                 try {
                     return peer.loadClassFromChildren(this, name);
                 } catch (ClassNotFoundException ignored) {
@@ -146,6 +152,11 @@ class DefaultNLeafClassLoader extends URLClassLoader implements NClassLoader {
 
     Class<?> findOwnClass(String name) throws ClassNotFoundException {
         return findClass(name);
+    }
+
+    /** Parent-first lookup used by the registry fallback, without sibling delegation. */
+    Class<?> loadClassFromParentAndOwn(String name) throws ClassNotFoundException {
+        return super.loadClass(name);
     }
 
     @Override

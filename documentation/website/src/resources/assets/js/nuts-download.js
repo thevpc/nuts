@@ -20,8 +20,8 @@ stableRuntimeVersion="0.8.9.0";
             stable:  false
         },
         lts: {
-            jar:    document.querySelector('meta[name="dl-lts-jar"]')
-                ? document.querySelector('meta[name="dl-lts-jar"]').content
+            jar:    document.querySelector('meta[name="dl-stable-jar"]')
+                ? document.querySelector('meta[name="dl-stable-jar"]').content
                 : stableJarLocation,
             version: stableRuntimeVersion,
             stable:  true

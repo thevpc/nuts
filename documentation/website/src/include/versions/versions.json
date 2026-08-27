@@ -1,16 +1,30 @@
 [
   {
-    "id": "v0.8.4",
-    "name": "v0.8.4 (Latest)",
-    "version": "0.8.4",
+    "id": "v1.0.0",
+    "name": "v1.0. (Latest)",
+    "version": "1.0.0",
     "isLatest": true,
-    "path": "v0.8.4"
+    "path": "v1.0.0"
   },
   {
-    "id": "v0.8.3",
-    "name": "v0.8.3",
-    "version": "0.8.3",
+    "id": "v0.8.9",
+    "name": "v0.8.9",
+    "version": "0.8.9",
     "isLatest": false,
-    "path": "v0.8.3"
+    "path": "v0.8.9"
+  },
+  {
+    "id": "v0.8.8",
+    "name": "v0.8.8",
+    "version": "0.8.8",
+    "isLatest": false,
+    "path": "v0.8.8"
+  },
+  {
+    "id": "v0.8.7",
+    "name": "v0.8.7",
+    "version": "0.8.7",
+    "isLatest": false,
+    "path": "v0.8.7"
   }
 ]

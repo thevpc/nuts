@@ -260,6 +260,7 @@ core/nuts-app-full/target
 /core/nuts-lib/nbproject/
 /core/target/
 /documentation/website/src/resources/nuts-preview.jar
+/documentation/website/src/resources/nuts-latest.jar
 /documentation/website/src/resources/download/*.jar
 /core/nuts-app-full/src/dist/*.jar
 /libraries/nuts-slf4j/target

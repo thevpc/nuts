@@ -16,12 +16,15 @@
                 </a>
                 <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
                     <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{if (docVersion) docVersion else 'v0.8.4'}}
+                        {{if (docVersion) docVersion else ('v'+latestApiVersion)}}
                     </button>
                     <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
                         <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
-                        <a class="dropdown-item {{if (!docVersion || docVersion=='v0.8.4') 'active' else ''}}" href="{{either(assetPrefix,'')}}{{if (pageId=='doc-naf') 'doc-naf.html' else 'doc-nuts.html'}}">v0.8.4 (Latest)</a>
-                        <a class="dropdown-item {{if (docVersion=='v0.8.3') 'active' else ''}}" href="{{either(assetPrefix,'')}}versions/v0.8.3/{{if (pageId=='doc-naf') 'doc-naf.html' else 'doc-nuts.html'}}">v0.8.3</a>
+                        <a class="dropdown-item {{if (!docVersion || docVersion==('v'+latestApiVersion)) 'active' else ''}}" href="{{either(assetPrefix,'')}}versions/{{docVersion}}/{{if (pageId=='doc-naf') 'doc-naf.html' else 'doc-nuts.html'}}">{{('v'+latestApiVersion)}} (Latest)</a>
+                        {{:for vv:allNonLatestVersions}}
+                        <a class="dropdown-item {{if (docVersion==vv) 'active' else ''}}" href="{{either(assetPrefix,'')}}versions/{{vv}}/{{if (pageId=='doc-naf') 'doc-naf.html' else 'doc-nuts.html'}}">{{vv}}</a>
+                        {{:end}}
+
                     </div>
                 </div>
             </div>
@@ -40,9 +43,9 @@
                         <a class="dropdown-toggle" href="#">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {{ if(pageId=='doc-nuts') 'not-active' else '' }}"
-                                   href="{{either(assetPrefix,'')}}doc-nuts.html">User Documentation</a></li>
+                                   href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-nuts.html">User Documentation</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='doc-naf') 'not-active' else '' }}"
-                                   href="{{either(assetPrefix,'')}}doc-naf.html">Developer Documentation</a></li>
+                                   href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-naf.html">Developer Documentation</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='faq') 'not-active' else '' }}"
                                    href="{{either(assetPrefix,'')}}faq.html">FAQ</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='contrib') 'not-active' else '' }}"
