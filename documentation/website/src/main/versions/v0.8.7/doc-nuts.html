@@ -30,9 +30,9 @@
             <div class="doc-version-select-box mb-3 px-2">
                 <label for="doc-version-select" class="form-label text-muted small font-weight-bold mb-1 d-block">VERSION</label>
                 <select id="doc-version-select" class="form-control form-control-sm doc-version-select-input" onchange="window.location.href=this.value;">
-                    <option value="{{assetPrefix}}versions/{{('v'+latestApiVersion)}}/doc-naf.html" {{ if(!docVersion || docVersion==('v'+latestApiVersion)) 'selected' else '' }}>v{{latestApiVersion}} (Latest)</option>
+                    <option value="{{assetPrefix}}versions/{{('v'+latestApiVersion)}}/doc-nuts.html" {{ if(!docVersion || docVersion==('v'+latestApiVersion)) 'selected' else '' }}>v{{latestApiVersion}} (Latest)</option>
                     {{:for vv:allNonLatestVersions}}
-                    <option value="{{assetPrefix}}versions/{{vv}}/doc-naf.html" {{ if(docVersion==vv) 'selected' else '' }}>{{vv}}</option>
+                    <option value="{{assetPrefix}}versions/{{vv}}/doc-nuts.html" {{ if(docVersion==vv) 'selected' else '' }}>{{vv}}</option>
                     {{:end}}
                 </select>
             </div>
@@ -85,7 +85,7 @@
                         <i class="fas fa-exclamation-triangle mr-2"></i>
                         <div>
                             You are viewing documentation for version <strong>{{docVersion}}</strong>. 
-                            <a href="doc-nuts.html" class="alert-link">Switch to latest version (v{{latestApiVersion}}) &rarr;</a>
+                            <a href="{{assetPrefix}}versions/{{('v'+latestApiVersion)}}/doc-nuts.html" class="alert-link">Switch to latest version (v{{latestApiVersion}}) &rarr;</a>
                         </div>
                     </div>
                     {{:end}}
