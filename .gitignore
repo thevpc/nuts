@@ -297,3 +297,4 @@ core/nuts-app-full/target
 /documentation-20260717-codex/
 /target_test.log
 /test/nuts-runtime-test/target_test.log
+/.naru/sessions/snapshot.tson
