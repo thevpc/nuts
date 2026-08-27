@@ -27,15 +27,6 @@
 
         <!-- ===================== SIDEBAR ===================== -->
         <div class="idocs-navigation">
-            <div class="doc-version-select-box mb-3 px-2">
-                <label for="doc-version-select" class="form-label text-muted small font-weight-bold mb-1 d-block">VERSION</label>
-                <select id="doc-version-select" class="form-control form-control-sm doc-version-select-input" onchange="window.location.href=this.value;">
-                    <option value="{{assetPrefix}}versions/{{('v'+latestApiVersion)}}/doc-naf.html" {{ if(!docVersion || docVersion==('v'+latestApiVersion)) 'selected' else '' }}>v{{latestApiVersion}} (Latest)</option>
-                    {{:for vv:allNonLatestVersions}}
-                    <option value="{{assetPrefix}}versions/{{vv}}/doc-naf.html" {{ if(docVersion==vv) 'selected' else '' }}>{{vv}}</option>
-                    {{:end}}
-                </select>
-            </div>
             <div class="nav-search">
                 <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
             </div>
