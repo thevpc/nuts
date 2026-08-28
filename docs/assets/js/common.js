@@ -1,5 +1,5 @@
 /* common.js (templated by nsite) */
-var buildTime = "2026-08-28-175444";
+var buildTime = "2026-08-28-182345";
 var latestJarLocation = "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar";
 var apiVersion = "1.0.0";
 var runtimeVersion = "1.0.0.0";
