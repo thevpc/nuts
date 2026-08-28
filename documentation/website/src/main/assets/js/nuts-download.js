@@ -1,11 +1,11 @@
 /* nuts-download.js — 3-step download wizard (templated by nsite) */
-var latestJarLocation = "${{latestJarLocation}}";
-var apiVersion = "${{apiVersion}}";
-var runtimeVersion = "${{runtimeVersion}}";
-
-var stableJarLocation = "${{stableJarLocation}}";
-var stableApiVersion = "${{stableApiVersion}}";
-var stableRuntimeVersion = "${{stableRuntimeVersion}}";
+// var latestJarLocation = "${{latestJarLocation}}";
+// var apiVersion = "${{apiVersion}}";
+// var runtimeVersion = "${{runtimeVersion}}";
+//
+// var stableJarLocation = "${{stableJarLocation}}";
+// var stableApiVersion = "${{stableApiVersion}}";
+// var stableRuntimeVersion = "${{stableRuntimeVersion}}";
 
 (function () {
     'use strict';
