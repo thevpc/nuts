@@ -298,3 +298,4 @@ core/nuts-app-full/target
 /target_test.log
 /test/nuts-runtime-test/target_test.log
 /.naru/sessions/snapshot.tson
+/.vscode/settings.json
