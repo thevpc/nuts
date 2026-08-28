@@ -262,7 +262,10 @@
   "name":"net.thevpc.nuts.runtime.standalone.concurrent.DefaultNLockBuilder"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl"
+  "name":"net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.definition.NDefinitionFactoryImpl"
@@ -476,6 +479,12 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.platform.NExecutionEnginesImpl",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.platform.NRuntimeDistributionManagerImpl",
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
