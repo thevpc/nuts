@@ -9,6 +9,7 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.*;
 
 /**
@@ -345,7 +346,7 @@ public class NMsgTemplate {
              * @param e e
              * @return runtime exception result
              */
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

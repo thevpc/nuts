@@ -231,7 +231,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                 NId effId = dws.resolveEffectiveId(descriptor);
                 CorePlatformUtils.checkAcceptCondition(descriptor.condition(), false);
                 if (NBlankable.isBlank(repository)) {
-                    effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
+                    effId = CoreNIdUtils.createContentFaceId(effId.builder().propertiesQuery("").build(), descriptor);
                     for (NRepository repo : wu.filterRepositoriesDeploy(effId, null)
                             .stream()
                             .filter(x -> x.config().deployWeight() > 0)
@@ -251,7 +251,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
                     if (!repo.isEnabled()) {
                         throw new NRepositoryDisabledException(repository);
                     }
-                    effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
+                    effId = CoreNIdUtils.createContentFaceId(effId.builder().propertiesQuery("").build(), descriptor);
                     NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                     repoSPI.deploy()
                             .id(effId)

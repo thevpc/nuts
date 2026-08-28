@@ -3,13 +3,12 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.List;
 import java.util.Objects;
 
-public class NutsBootNDefinitionFilter extends AbstractDefinitionFilter {
+public class NutsBootNDefinitionFilter extends DefinitionFilterBase {
 
     private final NVersion bootVersion;
 

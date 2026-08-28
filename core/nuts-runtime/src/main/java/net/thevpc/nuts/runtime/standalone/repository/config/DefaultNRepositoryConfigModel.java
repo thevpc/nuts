@@ -22,7 +22,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NStoreLocationsMap;
-import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.core.NRepositoryLocation;
 import net.thevpc.nuts.util.*;
 
 import java.nio.file.Files;

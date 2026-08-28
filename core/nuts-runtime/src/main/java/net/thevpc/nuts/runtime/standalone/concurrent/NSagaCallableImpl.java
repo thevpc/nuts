@@ -442,7 +442,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                         return true;
                     }
                 } catch (RuntimeException ex) {
-                    throw new RuntimeException("Error evaluating IF condition for node " + stackItem.id, ex);
+                    throw new NIllegalArgumentException(NMsg.ofC("Error evaluating IF condition for node %s" , stackItem.id), ex);
                 }
 
                 if (current.elseIfBranches() != null) {
@@ -457,7 +457,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                                 return true;
                             }
                         } catch (RuntimeException ex) {
-                            throw new RuntimeException("Error evaluating ELSE-IF condition for node " + elseIfWrapper.id(), ex);
+                            throw new NIllegalArgumentException(NMsg.ofC("Error evaluating ELSE-IF condition for node %s" , elseIfWrapper.id()), ex);
                         }
                     }
                 }
@@ -477,7 +477,7 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
                     }
                     postVisit(stackItem, current, requireStore);
                 } catch (RuntimeException ex) {
-                    throw new RuntimeException("Error evaluating IF condition for node " + stackItem.id, ex);
+                    throw new NIllegalArgumentException(NMsg.ofC("Error evaluating IF condition for node %s" , stackItem.id), ex);
                 }
             default: {
                 try {

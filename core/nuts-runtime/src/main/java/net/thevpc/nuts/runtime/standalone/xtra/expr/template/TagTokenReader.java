@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr.template;
 import java.io.IOException;
 
 import net.thevpc.nuts.io.NCharReader;
+import net.thevpc.nuts.util.NException;
 
 public class TagTokenReader {
     String startTag;
@@ -67,7 +68,7 @@ public class TagTokenReader {
             this.startOfLine = t.endsWith("\n");
             return new TagToken(TagTokenType.PLAIN, t);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
     }
 

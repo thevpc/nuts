@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NUtils;
 
@@ -95,7 +96,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
                         buffer.write(b, 0, x);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw NException.ofUncheckedException(e);
                 } finally {
                     enqueing = false;
                 }

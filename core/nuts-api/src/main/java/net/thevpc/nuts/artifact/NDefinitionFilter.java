@@ -28,7 +28,7 @@ package net.thevpc.nuts.artifact;
 import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.util.NFilter;
 
@@ -369,7 +369,7 @@ public interface NDefinitionFilter extends NFilter {
      * @param values values
      * @return of platform family result
      */
-    static NDefinitionFilter ofPlatformFamily(NExecutionEngineFamily... values){
+    static NDefinitionFilter ofPlatformFamily(NRuntimeDistributionFamily... values){
         return NDefinitionFilterRPI.of().byPlatformFamily(values);
     }
 

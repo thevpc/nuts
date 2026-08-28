@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class NDependencyFilterNone extends AbstractDependencyFilter{
+public class NDependencyFilterNone extends NDependencyFilterBase {
 
     private final NDependencyFilter[] all;
 

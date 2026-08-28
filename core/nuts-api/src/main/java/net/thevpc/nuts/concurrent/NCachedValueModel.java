@@ -1,9 +1,11 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 /**
  * Internal data model representing the persisted state of a cached value.
@@ -384,7 +386,7 @@ public class NCachedValueModel implements Cloneable, NCopiable {
              * @param e e
              * @return runtime exception result
              */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 }

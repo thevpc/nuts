@@ -42,7 +42,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.boot.internal.util.NBootPath;
-import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.core.NRepositoryLocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -270,7 +270,7 @@ public final class NReservedMavenUtils {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    //throw new RuntimeException(e);
+                    // ignore
                 }
             }
         }

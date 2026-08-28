@@ -5,10 +5,9 @@ import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.util.NFilterOp;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-public class NDependencyOptionalFilter extends AbstractDependencyFilter {
+public class NDependencyOptionalFilter extends NDependencyFilterBase {
 
     private final Boolean optional;
 

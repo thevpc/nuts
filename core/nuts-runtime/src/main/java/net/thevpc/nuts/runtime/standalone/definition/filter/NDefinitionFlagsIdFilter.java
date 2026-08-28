@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
-public class NDefinitionFlagsIdFilter extends AbstractDefinitionFilter {
+public class NDefinitionFlagsIdFilter extends DefinitionFilterBase {
 
     private final Set<NDescriptorFlag> flags;
     private final boolean effectiveFlag;

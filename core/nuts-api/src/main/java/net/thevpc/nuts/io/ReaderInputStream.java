@@ -1,5 +1,7 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NJdkExtension;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -10,6 +12,7 @@ import java.io.Reader;
  * @author thevpc
  * @since 0.8.0
  */
+@NJdkExtension
 public class ReaderInputStream extends InputStream {
     private final Reader reader;
     private final String charsetName;

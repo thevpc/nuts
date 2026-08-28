@@ -37,7 +37,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NDefinitionFilterDesktopEnvironment extends AbstractDefinitionFilter {
+public class NDefinitionFilterDesktopEnvironment extends DefinitionFilterBase {
 
     private final String desktopEnvironment;
 

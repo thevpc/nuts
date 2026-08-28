@@ -165,7 +165,7 @@ net.thevpc.nuts.runtime.standalone.reflect.NReflectImpl
 
 net.thevpc.nuts.runtime.standalone.workspace.cmd.editorsyntax.NSysEditorSupportCmdImpl
 
-net.thevpc.nuts.runtime.standalone.platform.NExecutionEnginesImpl
+net.thevpc.nuts.runtime.standalone.platform.NRuntimeDistributionManagerImpl
 net.thevpc.nuts.runtime.standalone.platform.NEnvLocal
 net.thevpc.nuts.runtime.standalone.platform.NEnvAsCmd
 net.thevpc.nuts.runtime.standalone.platform.rnsh.NEnvRnsh

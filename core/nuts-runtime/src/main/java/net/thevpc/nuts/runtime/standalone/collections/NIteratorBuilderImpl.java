@@ -28,8 +28,8 @@ import java.util.function.Supplier;
  */
 public class NIteratorBuilderImpl<T> implements NIteratorBuilder<T> {
 
-    public static final NPredicate NON_NULL = NPredicates.isNull().negate();
-    public static final NPredicate NON_BLANK = NPredicates.blank().negate();
+    public static final NPredicate NON_NULL = NPredicate.ofNonNull();
+    public static final NPredicate NON_BLANK = NPredicate.ofNonBlank();
     static final NIteratorEmpty EMPTY_ITERATOR = new NIteratorEmpty<>();
     private final NIterator<T> it;
 

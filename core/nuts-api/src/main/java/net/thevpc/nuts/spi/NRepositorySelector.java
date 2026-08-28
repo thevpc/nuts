@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.core.NRepositoryLocation;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
 

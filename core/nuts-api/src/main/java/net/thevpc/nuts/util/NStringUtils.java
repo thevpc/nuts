@@ -775,16 +775,16 @@ public class NStringUtils {
                                     NCharEscape.BACKSLASH)));
         }
 
-        AbstractNStringLiteralFormat fmt;
+        NStringLiteralFormatBase fmt;
         switch (quoteType) {
             case LINE_STRING:
-                fmt = AbstractNStringLiteralFormat.ofPrefix("¶ ", "\n", effectiveCondition, escapeSet);
+                fmt = NStringLiteralFormatBase.ofPrefix("¶ ", "\n", effectiveCondition, escapeSet);
                 break;
             case BLOCK_STRING:
-                fmt = AbstractNStringLiteralFormat.ofPrefix("¶¶ ", "\n", effectiveCondition, escapeSet);
+                fmt = NStringLiteralFormatBase.ofPrefix("¶¶ ", "\n", effectiveCondition, escapeSet);
                 break;
             default:
-                fmt = AbstractNStringLiteralFormat.ofEscapeChar(
+                fmt = NStringLiteralFormatBase.ofEscapeChar(
                         quoteType, effectiveCondition, escapeSet, NCharEscape.BACKSLASH);
                 break;
         }

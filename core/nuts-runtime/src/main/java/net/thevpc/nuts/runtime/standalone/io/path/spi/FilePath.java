@@ -1004,7 +1004,7 @@ public class FilePath implements NPathSPI {
                 try {
                     raf.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw NException.ofUncheckedException(e);
                 }
                 raf = null;
             }
@@ -1061,7 +1061,7 @@ public class FilePath implements NPathSPI {
                 close();
                 return false;
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw NException.ofUncheckedException(e);
             }
         }
 

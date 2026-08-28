@@ -249,7 +249,7 @@ public class NRepositoryFolderHelper {
         String singleVersion =
                 id.version().isLatest() ? null :
                         id.version().isRelease() ? null :
-                                id.version().asSingleValue().orNull();
+                                id.version().singleValue().orNull();
         if (singleVersion != null) {
             return NIteratorBuilder.ofSupplier(
                     () -> {

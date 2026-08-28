@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class NRepositoryFilterAnd extends AbstractRepositoryFilter implements NComplexExpressionString {
+public class NRepositoryFilterAnd extends NRepositoryFilterBase implements NComplexExpressionString {
 
     private NRepositoryFilter[] all;
 

@@ -1,5 +1,8 @@
 package net.thevpc.nuts.swing;
 
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
+
 import java.awt.*;
 
 public class TextStyle implements Cloneable {
@@ -68,7 +71,7 @@ public class TextStyle implements Cloneable {
         try {
             return (TextStyle) clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 }

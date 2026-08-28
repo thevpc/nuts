@@ -35,8 +35,10 @@ import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceCurrentConfig;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -249,7 +251,7 @@ public final class NBootConfig implements Cloneable, Serializable {
 
             return p;
         } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

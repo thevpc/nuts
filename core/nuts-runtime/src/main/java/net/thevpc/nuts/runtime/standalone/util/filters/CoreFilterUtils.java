@@ -32,7 +32,7 @@ import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionInformation;
-import net.thevpc.nuts.spi.base.AbstractNPredicate;
+import net.thevpc.nuts.spi.base.NPredicateBase;
 import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.*;
 
@@ -266,7 +266,7 @@ public class CoreFilterUtils {
             }
         } else {
             if (!matchesPlatform(
-                    NExecutionEngines.of().findExecutionEngines().toList(),
+                    NRuntimeDistributionManager.of().findRuntimeDistributions().toList(),
                     envCond.platform()
             )) {
                 return false;
@@ -425,11 +425,11 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesPlatform(Collection<NExecutionEngineLocation> platforms, Collection<String> allCond) {
+    public static boolean matchesPlatform(Collection<NRuntimeDistribution> platforms, Collection<String> allCond) {
         if (allCond == null || allCond.isEmpty()) {
             return true;
         }
-        for (NExecutionEngineLocation platform : platforms) {
+        for (NRuntimeDistribution platform : platforms) {
             NId id = platform.id();
             if (id != null) {
                 if (matchesPlatform(id.toString(), allCond)) {
@@ -451,7 +451,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NId condId = NId.get(cond).get();
-                NExecutionEngineFamily w = NExecutionEngineFamily.parse(condId.artifactId()).orNull();
+                NRuntimeDistributionFamily w = NRuntimeDistributionFamily.parse(condId.artifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().artifactId(w.id()).build();
                 }
@@ -765,7 +765,7 @@ public class CoreFilterUtils {
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    private static class NIdFilterToPredicate extends AbstractNPredicate<NId> {
+    private static class NIdFilterToPredicate extends NPredicateBase<NId> {
         private final NIdFilter t;
 
         public NIdFilterToPredicate(NIdFilter t) {

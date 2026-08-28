@@ -32,7 +32,7 @@ import net.thevpc.nuts.core.NRepositoryFilter;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NRepositoryFilterTrue extends AbstractRepositoryFilter{
+public class NRepositoryFilterTrue extends NRepositoryFilterBase {
     public NRepositoryFilterTrue() {
         super(NFilterOp.TRUE);
     }

@@ -5,6 +5,7 @@ package net.thevpc.nuts.util;
  * This is the primitive type specialization of {@link java.util.function.Predicate}
  * for {@code char}.
  */
+@NJdkExtension("Missing from java.util.function — JDK only provides IntPredicate, LongPredicate, DoublePredicate")
 @FunctionalInterface
 public interface CharPredicate {
     /**

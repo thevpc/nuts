@@ -26,8 +26,9 @@
 package net.thevpc.nuts.core;
 
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NToStringBuilder;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.io.Serializable;
 import java.util.*;
@@ -96,13 +97,7 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
             }
             return o;
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

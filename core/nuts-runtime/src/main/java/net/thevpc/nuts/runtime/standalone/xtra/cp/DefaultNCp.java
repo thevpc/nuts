@@ -46,7 +46,7 @@ public class DefaultNCp implements NCp {
 
     private NCpValidator checker;
     private boolean skipRoot = false;
-    private int maxRepeatCount = 3;
+    private final int maxRepeatCount = 3;
     private NInputSource source;
     private NOutputTarget target;
     private NProgressFactory progressMonitorFactory;
@@ -58,7 +58,7 @@ public class DefaultNCp implements NCp {
     private String sourceTypeName;
 
     private NMsg actionMsg;
-    private Set<NPathOption> options = new LinkedHashSet<>();
+    private final Set<NPathOption> options = new LinkedHashSet<>();
 
     public DefaultNCp() {
     }
@@ -74,7 +74,7 @@ public class DefaultNCp implements NCp {
             String x = targetBase + relative;
             return Paths.get(x);
         }
-        throw new RuntimeException("Invalid path " + f);
+        throw new NIllegalArgumentException(NMsg.ofC("Invalid path %s", f));
     }
 
     protected NLog _LOG() {
@@ -587,6 +587,7 @@ public class DefaultNCp implements NCp {
         }
         return NIOUtils.copy(in, out);
     }
+
     public long copy(Reader in, Writer out, Set<NPathOption> options)
             throws IOException {
 //        if (options.contains(NPathOption.INTERRUPTIBLE)) {
@@ -863,14 +864,14 @@ public class DefaultNCp implements NCp {
             }
             _LOG()
 
-                    .log(NMsg.ofC(NI18n.of("%s %s to %s"), m,_source2.source, loggedTarget)
+                    .log(NMsg.ofC(NI18n.of("%s %s to %s"), m, _source2.source, loggedTarget)
                             .withLevel(Level.CONFIG).withIntent(NMsgIntent.SUCCESS)
                             .withDurationMillis(chrono.durationMs())
                     );
         } catch (IOException ex) {
             _LOG()
 
-                    .log(NMsg.ofC("error % %s to %s : %s", m,_source2.source, loggedTarget, ex)
+                    .log(NMsg.ofC("error % %s to %s : %s", m, _source2.source, loggedTarget, ex)
                             .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
                             .withDurationMillis(chrono.durationMs())
                     );

@@ -6,7 +6,7 @@ import java.util.Arrays;
  * Describes <em>which</em> characters must be escaped, <em>under what quoting
  * condition</em> they must be escaped, and <em>how</em> each group is encoded.
  *
- * <p>This is entirely separate from the boundary strategy ({@link AbstractNStringLiteralFormat.Mode})
+ * <p>This is entirely separate from the boundary strategy ({@link NStringLiteralFormatBase.Mode})
  * and from the boundary-char encoder ({@code boundaryEscape} on the formatter).
  * A set is composed of one or more {@link Entry} records, each of which pairs:</p>
  * <ul>

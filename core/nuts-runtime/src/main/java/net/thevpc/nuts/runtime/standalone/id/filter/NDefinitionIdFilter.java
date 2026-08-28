@@ -14,7 +14,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionDelegate;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.spi.base.AbstractIdFilter;
+import net.thevpc.nuts.spi.base.NIdFilterBase;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -24,7 +24,7 @@ import java.util.logging.Level;
 /**
  * @author thevpc
  */
-public class NDefinitionIdFilter extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter> {
+public class NDefinitionIdFilter extends NIdFilterBase implements NIdFilter, NSimplifiable<NIdFilter> {
 
     private final NDefinitionFilter filter;
 

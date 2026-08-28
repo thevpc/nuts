@@ -37,7 +37,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NDefinitionFilterOs extends AbstractDefinitionFilter {
+public class NDefinitionFilterOs extends DefinitionFilterBase {
 
     private final String os;
 

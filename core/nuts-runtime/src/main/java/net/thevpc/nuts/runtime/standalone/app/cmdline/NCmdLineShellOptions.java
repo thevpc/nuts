@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 public class NCmdLineShellOptions implements Cloneable{
     private NCmdLineFormatStrategy formatStrategy;
@@ -39,7 +41,7 @@ public class NCmdLineShellOptions implements Cloneable{
         try {
             return (NCmdLineShellOptions) clone();
         } catch (CloneNotSupportedException e) {
-            throw new IllegalArgumentException("unexpected clone unsupported");
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 }

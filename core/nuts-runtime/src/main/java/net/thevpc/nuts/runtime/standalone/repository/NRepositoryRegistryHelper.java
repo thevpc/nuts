@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigMain;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NPredicates;
+import net.thevpc.nuts.util.NPredicate;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -51,12 +51,12 @@ public class NRepositoryRegistryHelper {
     }
 
     public NRepository[] getRepositories() {
-        return repositoriesByUuid.values().stream().map(x -> x.repo).filter(NPredicates.nonNull())
+        return repositoriesByUuid.values().stream().map(x -> x.repo).filter(NPredicate.ofNonNull())
                 .toArray(NRepository[]::new);
     }
 
     public NRepositoryRef[] getRepositoryRefs() {
-        return repositoriesByUuid.values().stream().map(x -> x.ref).filter(NPredicates.nonNull())
+        return repositoriesByUuid.values().stream().map(x -> x.ref).filter(NPredicate.ofNonNull())
                 .toArray(NRepositoryRef[]::new);
     }
 

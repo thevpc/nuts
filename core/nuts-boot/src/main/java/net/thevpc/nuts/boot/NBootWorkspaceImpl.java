@@ -1382,7 +1382,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             if (ec instanceof RuntimeException) {
                 return (RuntimeException) ec;
             }
-            return new RuntimeException(ex);
+            return new NBootException(NBootMsg.ofPlain(ex.getMessage()==null?"Error":ex.getMessage()), ex);
         });
     }
 

@@ -5,6 +5,7 @@ import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.concurrent.NCallable;
+import net.thevpc.nuts.util.NException;
 
 import java.util.function.IntFunction;
 
@@ -125,7 +126,7 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
                             Thread.sleep(successDelay); // synchronous wait
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
-                            throw new RuntimeException(e);
+                            throw NException.ofUncheckedException(e);
                         }
                     }
                     break;

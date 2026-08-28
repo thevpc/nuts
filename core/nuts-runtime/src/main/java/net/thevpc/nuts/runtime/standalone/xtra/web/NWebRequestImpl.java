@@ -561,7 +561,7 @@ public class NWebRequestImpl implements NWebRequest {
                                 .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
                         ;
                     } catch (UnsupportedEncodingException ex) {
-                        throw new RuntimeException(ex);
+                        throw NException.ofUncheckedException(ex);
                     }
                 }
                 return NInputSource.of(sb.toString().getBytes());
@@ -822,7 +822,7 @@ public class NWebRequestImpl implements NWebRequest {
                             .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
                     ;
                 } catch (UnsupportedEncodingException ex) {
-                    throw new RuntimeException(ex);
+                    throw NException.ofUncheckedException(ex);
                 }
             }
         }

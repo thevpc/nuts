@@ -30,13 +30,7 @@ public class NNames {
             try {
                 found = NNames.class.getClassLoader().getResources(resource);
             } catch (IOException e) {
-                /**
-                 * Runtime exception.
-                 *
-                 * @param e e
-                 * @return runtime exception result
-                 */
-                throw new RuntimeException(e);
+                throw NException.ofSafeIOException(e);
             }
             while (found.hasMoreElements()) {
                 URL u = found.nextElement();

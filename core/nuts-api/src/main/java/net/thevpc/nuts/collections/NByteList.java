@@ -70,7 +70,7 @@ public interface NByteList {
      * @param index index
      * @param value value
      */
-    void add(int index, byte value);
+    NByteList add(int index, byte value);
 
     /**
      * Removes the specified all.
@@ -94,14 +94,14 @@ public interface NByteList {
      *
      * @param values values
      */
-    void addAll(NByteList values);
+    NByteList addAll(NByteList values);
 
     /**
      * Adds the specified all.
      *
      * @param values values
      */
-    void addAll(byte... values);
+    NByteList addAll(byte... values);
 
     /**
      * Insert all.
@@ -109,7 +109,7 @@ public interface NByteList {
      * @param offset offset
      * @param values values
      */
-    void insertAll(int offset, byte... values);
+    NByteList insertAll(int offset, byte... values);
 
     /**
      * Sub list.
@@ -127,19 +127,19 @@ public interface NByteList {
      * @param count count
      * @param replacement replacement
      */
-    void replaceSubList(int offset, int count, byte... replacement);
+    NByteList replaceSubList(int offset, int count, byte... replacement);
 
     /**
      * Adds add.
      *
      * @param value value
      */
-    void add(byte value);
+    NByteList add(byte value);
 
     /**
      * Trim to size.
      */
-    void trimToSize();
+    NByteList trimToSize();
 
     /**
      * Copy.
@@ -324,12 +324,12 @@ public interface NByteList {
      *
      * @param minCapacity min capacity
      */
-    void grow(int minCapacity);
+    NByteList grow(int minCapacity);
 
     /**
      * Ensure size.
      *
      * @param size size
      */
-    void ensureSize(int size);
+    NByteList ensureSize(int size);
 }

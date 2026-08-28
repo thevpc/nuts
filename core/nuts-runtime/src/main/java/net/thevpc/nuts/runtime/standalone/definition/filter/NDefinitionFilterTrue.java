@@ -32,7 +32,7 @@ import net.thevpc.nuts.util.NFilterOp;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NDefinitionFilterTrue extends AbstractDefinitionFilter {
+public class NDefinitionFilterTrue extends DefinitionFilterBase {
 
     public NDefinitionFilterTrue() {
         super(NFilterOp.TRUE);

@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDependencyDEFilter extends AbstractDependencyFilter {
+public class NDependencyDEFilter extends NDependencyFilterBase {
 
     private Set<NDesktopEnvironmentFamily> accepted = EnumSet.noneOf(NDesktopEnvironmentFamily.class);
 

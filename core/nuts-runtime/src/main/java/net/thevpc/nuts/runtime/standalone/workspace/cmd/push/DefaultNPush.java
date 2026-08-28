@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
@@ -127,7 +126,7 @@ public class DefaultNPush extends AbstractDefaultNPush {
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.name()));
                 }
-                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.descriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
+                NId effId = CoreNIdUtils.createContentFaceId(id.builder().propertiesQuery("").build(), file.descriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NRepositorySPI repoSPI = wu.toRepositorySPI(repo);
                 repoSPI.deploy()

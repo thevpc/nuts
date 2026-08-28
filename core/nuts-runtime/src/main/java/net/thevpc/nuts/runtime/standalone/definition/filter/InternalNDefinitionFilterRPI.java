@@ -140,7 +140,7 @@ public class InternalNDefinitionFilterRPI extends InternalNTypedFilters<NDefinit
 
 
     @Override
-    public NDefinitionFilter byPlatformFamily(NExecutionEngineFamily... values) {
+    public NDefinitionFilter byPlatformFamily(NRuntimeDistributionFamily... values) {
         if (values == null || values.length == 0) {
             return always();
         }

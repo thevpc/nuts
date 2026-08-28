@@ -27,7 +27,9 @@
 package net.thevpc.nuts.platform;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NSupportMode;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -458,13 +460,7 @@ public class NLauncherOptions implements Cloneable {
             }
             return c;
         } catch (CloneNotSupportedException e) {
-            /**
-             * Unsupported operation exception.
-             *
-             * @param e e
-             * @return unsupported operation exception result
-             */
-            throw new UnsupportedOperationException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 }

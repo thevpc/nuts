@@ -74,16 +74,7 @@ public enum NApplicationHandleMode implements NEnum {
                     break;
                 }
                 default: {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
-                    }
-                    /**
-                     * Runtime exception.
-                     *
-                     * @param e e
-                     * @return runtime exception result
-                     */
-                    throw new RuntimeException(e);
+                    throw NException.ofUncheckedException(e);
                 }
             }
         }

@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.platform.NExecutionEngineLocation;
+import net.thevpc.nuts.platform.NRuntimeDistribution;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Comparator;
 
-public class NSdkLocationComparator implements Comparator<NExecutionEngineLocation> {
+public class NSdkLocationComparator implements Comparator<NRuntimeDistribution> {
     public NSdkLocationComparator() {
     }
 
     @Override
-    public int compare(NExecutionEngineLocation o1, NExecutionEngineLocation o2) {
+    public int compare(NRuntimeDistribution o1, NRuntimeDistribution o2) {
         NVersion v1 = NVersion.get(o1.version()).get();
         NVersion v2 = NVersion.get(o2.version()).get();
         int x = (v1 == null || v2 == null) ? 0 : (v1 != null && v2 != null) ? v1.compareTo(v2) : v2 == null ? 1 : -1;

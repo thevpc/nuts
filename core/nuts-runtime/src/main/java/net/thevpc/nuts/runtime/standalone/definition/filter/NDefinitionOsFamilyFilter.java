@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDefinitionOsFamilyFilter extends AbstractDefinitionFilter {
+public class NDefinitionOsFamilyFilter extends DefinitionFilterBase {
 
     private Set<NOsFamily> accepted = new HashSet<>();
 

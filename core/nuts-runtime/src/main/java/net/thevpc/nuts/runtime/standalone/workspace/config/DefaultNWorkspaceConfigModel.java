@@ -35,7 +35,6 @@ import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.concurrent.NScoredCallable;
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElementWriter;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
@@ -49,6 +48,7 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.mem.NMemoryPathFactory;
 import net.thevpc.nuts.runtime.standalone.util.*;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NRuntimeDistributionImpl;
 import net.thevpc.nuts.security.*;
 import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
@@ -264,8 +264,8 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         if (force || storeModelMainChanged) {
-            List<NExecutionEngineLocation> plainSdks = new ArrayList<>();
-            plainSdks.addAll(NExecutionEngines.of().findExecutionEngines().toList());
+            List<NRuntimeDistribution> plainSdks = new ArrayList<>();
+            plainSdks.addAll(NRuntimeDistributionManager.of().findRuntimeDistributions().toList());
             storeModelMain.setPlatforms(plainSdks);
             storeModelMain.setRepositories(
                     workspace.repositories().stream().filter(x -> !x.config().isTemporary())
@@ -286,9 +286,9 @@ public class DefaultNWorkspaceConfigModel {
                 }
             }
             if (storeModelMain.getPlatforms() != null) {
-                for (NExecutionEngineLocation item : storeModelMain.getPlatforms()) {
+                for (NRuntimeDistribution item : storeModelMain.getPlatforms()) {
                     //inherited
-                    item.configVersion(null);
+                    ((NRuntimeDistributionImpl) item).configVersion(null);
                 }
             }
             workspace.store().saveConfigMain(storeModelMain);
@@ -1178,7 +1178,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private void setConfigMain(NWorkspaceConfigMain config, boolean fire) {
         this.storeModelMain = config == null ? new NWorkspaceConfigMain() : config;
-        workspace.getModel().sdkModel.setExecutionEngines(this.storeModelMain.getPlatforms().toArray(new NExecutionEngineLocation[0]));
+        workspace.getModel().sdkModel.setRuntimeDistributions(this.storeModelMain.getPlatforms().toArray(new NRuntimeDistribution[0]));
         workspace.removeAllRepositories();
         List<NRepositoryRef> refsToLoad = this.storeModelMain.getRepositories();
         if (refsToLoad != null) {

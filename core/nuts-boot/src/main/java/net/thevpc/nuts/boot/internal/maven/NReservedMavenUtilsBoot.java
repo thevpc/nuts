@@ -230,7 +230,7 @@ public class NReservedMavenUtilsBoot {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    //throw new RuntimeException(e);
+                    //ignore
                 }
             }
         }

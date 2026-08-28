@@ -136,7 +136,7 @@ public class NWorkspaceUtils {
             if (environment.desktopEnvironment() != null) {
                 qm.put(NConstants.IdProperties.DESKTOP, environment.desktopEnvironment().toString());
             }
-            return id.builder().setProperties(qm).build();
+            return id.builder().properties(qm).build();
         }
         return id;
     }
@@ -231,11 +231,11 @@ public class NWorkspaceUtils {
             if (session.isPlainTrace()) {
                 NOut.println("looking for java installations in default locations...");
             }
-            NExecutionEngines pinstaller = NExecutionEngines.of();
-            List<NExecutionEngineLocation> found = pinstaller.searchHostExecutionEngines(NExecutionEngineFamily.JAVA).toList();
+            NRuntimeDistributionManager pinstaller = NRuntimeDistributionManager.of();
+            List<NRuntimeDistribution> found = pinstaller.searchHostRuntimeDistributions(NRuntimeDistributionFamily.JAVA).toList();
             int someAdded = 0;
-            for (NExecutionEngineLocation java : found) {
-                if (pinstaller.addExecutionEngine(java)) {
+            for (NRuntimeDistribution java : found) {
+                if (pinstaller.addRuntimeDistribution(java)) {
                     someAdded++;
                 }
             }
@@ -270,12 +270,12 @@ public class NWorkspaceUtils {
             if (session.isPlainTrace()) {
                 NOut.println("configuring current JVM...");
             }
-            NExecutionEngines pinstaller = NExecutionEngines.of();
-            NExecutionEngineLocation found0 = pinstaller.resolveExecutionEngine(NExecutionEngineFamily.JAVA, NPath.of(System.getProperty("java.home")), null).orNull();
-            NExecutionEngineLocation[] found = found0 == null ? new NExecutionEngineLocation[0] : new NExecutionEngineLocation[]{found0};
+            NRuntimeDistributionManager pinstaller = NRuntimeDistributionManager.of();
+            NRuntimeDistribution found0 = pinstaller.resolveRuntimeDistribution(NRuntimeDistributionFamily.JAVA, NPath.of(System.getProperty("java.home")), null).orNull();
+            NRuntimeDistribution[] found = found0 == null ? new NRuntimeDistribution[0] : new NRuntimeDistribution[]{found0};
             int someAdded = 0;
-            for (NExecutionEngineLocation java : found) {
-                if (pinstaller.addExecutionEngine(java)) {
+            for (NRuntimeDistribution java : found) {
+                if (pinstaller.addRuntimeDistribution(java)) {
                     someAdded++;
                 }
             }

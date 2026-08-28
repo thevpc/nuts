@@ -70,7 +70,7 @@ public interface NIntList {
      * @param index index
      * @param value value
      */
-    void add(int index, int value);
+    NIntList add(int index, int value);
 
     /**
      * Removes the specified all.
@@ -94,14 +94,14 @@ public interface NIntList {
      *
      * @param values values
      */
-    void addAll(NIntList values);
+    NIntList addAll(NIntList values);
 
     /**
      * Adds the specified all.
      *
      * @param values values
      */
-    void addAll(int... values);
+    NIntList addAll(int... values);
 
     /**
      * Insert all.
@@ -109,7 +109,7 @@ public interface NIntList {
      * @param offset offset
      * @param values values
      */
-    void insertAll(int offset, int... values);
+    NIntList insertAll(int offset, int... values);
 
     /**
      * Sub list.
@@ -127,19 +127,19 @@ public interface NIntList {
      * @param count count
      * @param replacement replacement
      */
-    void replaceSubList(int offset, int count, int... replacement);
+    NIntList replaceSubList(int offset, int count, int... replacement);
 
     /**
      * Adds add.
      *
      * @param value value
      */
-    void add(int value);
+    NIntList add(int value);
 
     /**
      * Trim to size.
      */
-    void trimToSize();
+    NIntList trimToSize();
 
     /**
      * Copy.
@@ -317,12 +317,12 @@ public interface NIntList {
      *
      * @param minCapacity min capacity
      */
-    void grow(int minCapacity);
+    NIntList grow(int minCapacity);
 
     /**
      * Ensure size.
      *
      * @param size size
      */
-    void ensureSize(int size);
+    NIntList ensureSize(int size);
 }

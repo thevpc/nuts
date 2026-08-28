@@ -30,7 +30,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 
 import java.util.Collection;
 import java.util.Map;
@@ -231,7 +231,7 @@ public interface NDefinitionFilterRPI extends NTypedFilters<NDefinitionFilter> {
      * @param values values
      * @return by platform family result
      */
-    NDefinitionFilter byPlatformFamily(NExecutionEngineFamily... values);
+    NDefinitionFilter byPlatformFamily(NRuntimeDistributionFamily... values);
 
     /**
      * By platform.

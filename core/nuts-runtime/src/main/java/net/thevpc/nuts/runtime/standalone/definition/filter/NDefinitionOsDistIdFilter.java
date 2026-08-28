@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDefinitionOsDistIdFilter extends AbstractDefinitionFilter {
+public class NDefinitionOsDistIdFilter extends DefinitionFilterBase {
 
     private Set<NId> accepted = new HashSet<>();
 

@@ -10,6 +10,7 @@ import net.thevpc.nuts.io.NullReader;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ProcessStreamContext implements Cloneable{
         try {
             return (ProcessStreamContext) clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

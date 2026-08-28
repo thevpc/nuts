@@ -91,7 +91,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @return {@code this} instance
      */
     @NSetter
-    NIdBuilder setFace(String value);
+    NIdBuilder face(String value);
 
     /**
      * Condition.
@@ -152,7 +152,6 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @param value    new value
      * @return {@code this} instance
      */
-    @NSetter
     NIdBuilder setProperty(String property, String value);
 
     /**
@@ -162,7 +161,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @return {@code this} instance
      */
     @NSetter
-    NIdBuilder setProperties(Map<String, String> queryMap);
+    NIdBuilder properties(Map<String, String> queryMap);
 
     /**
      * update all properties property.
@@ -171,7 +170,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @return {@code this} instance
      */
     @NSetter
-    NIdBuilder setPropertiesQuery(String query);
+    NIdBuilder propertiesQuery(String query);
 
     /**
      * clear all properties
@@ -320,7 +319,7 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @return properties as map.
      */
     @NGetter
-    Map<String, String> properties();
+    Map<String, String> properties()    ;
 
     /**
      * artifact repository (usually repository name or id)

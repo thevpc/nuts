@@ -1,5 +1,7 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NJdkExtension;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -11,6 +13,7 @@ import java.nio.CharBuffer;
  * @author thevpc
  * @since 0.8.0
  */
+@NJdkExtension
 public class AutoCloseableReader extends Reader implements AutoCloseable {
     private Reader base;
     private boolean closed;

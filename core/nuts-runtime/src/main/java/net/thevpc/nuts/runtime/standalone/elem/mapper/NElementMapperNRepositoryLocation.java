@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.spi.NRepositoryLocation;
-
-import java.lang.reflect.Type;
+import net.thevpc.nuts.core.NRepositoryLocation;
 
 public class NElementMapperNRepositoryLocation implements NElementMapper<NRepositoryLocation> {
 

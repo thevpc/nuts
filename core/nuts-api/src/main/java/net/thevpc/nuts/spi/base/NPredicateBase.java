@@ -1,44 +1,45 @@
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.internal.util.NPredicateWithDescription;
+import net.thevpc.nuts.util.NPredicate;
+import net.thevpc.nuts.internal.NReservedNPredicateUtils;
 
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
- * NPredicateBase class.
+ * AbstractNPredicate class.
  *
  * @author thevpc
  * @since 0.8.0
  */
-public class NPredicateBase<T> extends AbstractNPredicate<T> {
-    private final Predicate<T> base;
-    private final NElement description;
-    /**
-     * N predicate base.
-     *
-     * @param base base
-     * @param description description
-     * @return n predicate base result
-     */
-    public NPredicateBase(Predicate<T> base,NElement description) {
-        this.base = base;
-        this.description = description;
+public abstract class NPredicateBase<T> implements NPredicate<T> {
+    @Override
+    public NPredicate<T> and(Predicate<? super T> other) {
+        return new NReservedNPredicateUtils.And<T>(this, other);
     }
 
     @Override
-    public boolean test(T t) {
-        return base.test(t);
+    public NPredicate<T> negate() {
+        return new NReservedNPredicateUtils.Not<>(this);
     }
 
     @Override
-    public String toString() {
-        return "NamedPredicate";
+    public NPredicate<T> or(Predicate<? super T> other) {
+        return new NReservedNPredicateUtils.Or<T>(this, other);
+    }
+
+    @Override
+    public NPredicate<T> withDescription(Supplier<NElement> description) {
+        if(description==null){
+            return this;
+        }
+        return new NPredicateWithDescription<>(this,description);
     }
 
     @Override
     public NElement describe() {
-        return description==null? NDescribables.describeResolveOr(base, () -> NElement.ofObjectBuilder().build())
-                .asObject().get():description;
+        return NElement.ofString(toString());
     }
 }

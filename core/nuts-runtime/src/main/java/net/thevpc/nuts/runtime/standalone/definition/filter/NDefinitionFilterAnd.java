@@ -11,7 +11,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NDefinitionFilterAnd extends AbstractDefinitionFilter implements NComplexExpressionString {
+public class NDefinitionFilterAnd extends DefinitionFilterBase implements NComplexExpressionString {
 
     private NDefinitionFilter[] all;
 

@@ -35,7 +35,7 @@ import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryList;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.core.NRepositoryLocation;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 

@@ -615,7 +615,7 @@ public interface NText extends NBlankable, NElementSimple {
      * @param text text
      * @param visitor visitor
      */
-    static void traverseDFS(NText text, NTextVisitor visitor) {
+    static void visitDFS(NText text, NTextVisitor visitor) {
         NTextRPI.of().traverseDFS(text, visitor);
     }
 
@@ -625,9 +625,10 @@ public interface NText extends NBlankable, NElementSimple {
      * @param text text
      * @param visitor visitor
      */
-    static void traverseBFS(NText text, NTextVisitor visitor) {
+    static void visitBFS(NText text, NTextVisitor visitor) {
         NTextRPI.of().traverseBFS(text, visitor);
     }
+
 
     /**
      * Transform.

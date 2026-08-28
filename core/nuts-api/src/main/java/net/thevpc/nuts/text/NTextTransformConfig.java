@@ -28,6 +28,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -234,20 +235,9 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
     @Override
     protected NTextTransformConfig clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
             return (NTextTransformConfig) super.clone();
         } catch (CloneNotSupportedException e) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param e e
-             * @return illegal argument exception result
-             */
-            throw new IllegalArgumentException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

@@ -5,12 +5,14 @@ import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNTextNodeParserDef
 import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 
+import java.util.function.Consumer;
+
 public class FormatOutputStreamSupport {
     private NTextNodeWriter nodeWriter;
     private NTextParser parser;
     private boolean formatEnabled = true;
     private NTextTransformConfig writeConfiguration = new NTextTransformConfig();
-    private NTextVisitor nutsTextNodeVisitor = node -> {
+    private Consumer<NText> nutsTextNodeVisitor = node -> {
         nodeWriter.writeNode(node);
     };
 
@@ -55,11 +57,11 @@ public class FormatOutputStreamSupport {
         if (!isFormatEnabled()) {
             nodeWriter.writeRaw(buf, off, len);
         } else {
-            parser.parseIncremental(buf, off, len, new NTextVisitor() {
+            parser.parseIncremental(buf, off, len, new Consumer<NText>() {
                 @Override
-                public void visit(NText node) {
+                public void accept(NText node) {
 //                    JOptionPane.showMessageDialog(null,node.getType()+":"+node);
-                    nutsTextNodeVisitor.visit(node);
+                    nutsTextNodeVisitor.accept(node);
                 }
             });
         }
@@ -67,18 +69,18 @@ public class FormatOutputStreamSupport {
 
     public void pushNode(NText node) {
         flush();
-        nutsTextNodeVisitor.visit(node);
+        nutsTextNodeVisitor.accept(node);
     }
 
     public void processChars(char[] buf, int off, int len) {
         if (!isFormatEnabled()) {
             nodeWriter.writeRaw(buf, off, len);
         } else {
-            parser.parseIncremental(buf, off, len, new NTextVisitor() {
+            parser.parseIncremental(buf, off, len, new Consumer<NText>() {
                 @Override
-                public void visit(NText node) {
+                public void accept(NText node) {
 //                    JOptionPane.showMessageDialog(null,node.getType()+":"+node);
-                    nutsTextNodeVisitor.visit(node);
+                    nutsTextNodeVisitor.accept(node);
                 }
             });
         }

@@ -596,7 +596,7 @@ public class NStoreKey {
      * @return of faced result
      */
     public static NStoreKey ofFaced(NStoreType storeType, NId id, String repoUuid, String faceName) {
-        return new NStoreKey(NStoreScope.WORKSPACE, storeType, id, repoUuid, NWorkspace.of().getDefaultIdFilename(id.builder().setFace(faceName).build()));
+        return new NStoreKey(NStoreScope.WORKSPACE, storeType, id, repoUuid, NWorkspace.of().getDefaultIdFilename(id.builder().face(faceName).build()));
     }
 
     /**

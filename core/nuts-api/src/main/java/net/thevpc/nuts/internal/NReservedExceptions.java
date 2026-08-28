@@ -341,12 +341,6 @@ public class NReservedExceptions {
         if (e instanceof InvocationTargetException) {
             Throwable c = e.getCause();
             if (c != null) {
-                /**
-                 * Creates a new instance of unchecked exception.
-                 *
-                 * @param c c
-                 * @return of unchecked exception result
-                 */
                 return ofUncheckedException(c);
             }
         }

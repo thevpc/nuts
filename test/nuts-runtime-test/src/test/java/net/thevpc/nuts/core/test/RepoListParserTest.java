@@ -2,7 +2,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
-import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.core.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

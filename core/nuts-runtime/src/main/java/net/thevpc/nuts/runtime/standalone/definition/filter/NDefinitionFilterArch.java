@@ -37,7 +37,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NDefinitionFilterArch extends AbstractDefinitionFilter {
+public class NDefinitionFilterArch extends DefinitionFilterBase {
 
     private final String arch;
 

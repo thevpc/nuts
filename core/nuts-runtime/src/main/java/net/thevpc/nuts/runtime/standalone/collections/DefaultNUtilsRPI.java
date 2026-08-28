@@ -1,14 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.collections;
 
+import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.collections.*;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
-import net.thevpc.nuts.io.NDataSerializer;
-import net.thevpc.nuts.io.NPageStore;
-import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.pipeline.*;
+import net.thevpc.nuts.platform.NRuntimeDistribution;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NRuntimeDistributionImpl;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -162,7 +163,7 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
                     order = 128;
                 }
             }
-            return new NBPlusTreeImpl<>(new NBPlusTreeStoreFixedDisk<>(store, order, allowDuplicates, keySerializer, valSerializer),comparator);
+            return new NBPlusTreeImpl<>(new NBPlusTreeStoreFixedDisk<>(store, order, allowDuplicates, keySerializer, valSerializer), comparator);
         } catch (IOException e) {
             throw new net.thevpc.nuts.io.NIOException(e);
         }
@@ -672,7 +673,7 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
             }
             return params;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new NIOException(e);
         }
     }
 
@@ -734,6 +735,21 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     @Override
     public NDoubleList createDoubleList(double[] values, int offset, int size) {
         return new NDoubleArrayList(values, offset, size);
+    }
+
+    @Override
+    public NFloatList createFloatList(int initialSize) {
+        return new NFloatArrayList(initialSize);
+    }
+
+    @Override
+    public NFloatList createFloatList() {
+        return new NFloatArrayList();
+    }
+
+    @Override
+    public NFloatList createFloatList(float[] values, int offset, int size) {
+        return new NFloatArrayList(values, offset, size);
     }
 
     @Override
@@ -819,5 +835,26 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     @Override
     public NByteQueue createByteQueue(byte[] content) {
         return new DefaultNByteQueue(content, -1, -1);
+    }
+
+    @Override
+    public <A, B> List<B> createImmutableConvertedList(List<A> list, Function<A, B> converter) {
+        return new NImmutableConvertedList<A, B>(list, converter);
+    }
+
+    @Override
+    public <K, V> Map<K, V> createConcurrentReadWriteLRUMap(int size) {
+        return new NConcurrentReadWriteLRUMap<>(size);
+    }
+
+    @Override
+    public <T, K> NCollectionDiffBuilder<T, K> createCollectionDiffBuilder() {
+        return new NCollectionDiffBuilderImpl<>();
+    }
+
+
+    @Override
+    public NRuntimeDistribution createRuntimeDistribution(NId id, String vendor, String product, String variant, String name, String path, String version, String packaging, int priority) {
+        return new NRuntimeDistributionImpl(id, vendor, product, variant, name, path, version, packaging, 0);
     }
 }

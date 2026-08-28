@@ -166,7 +166,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     NLock.ofId(id.builder().faceDescriptor().build()).callWith(nOptionalCallable)
                     : nOptionalCallable.call();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
         if (res.isPresent()) {
             return res.get();

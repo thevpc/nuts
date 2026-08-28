@@ -29,7 +29,7 @@ import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.core.NConstants;
 
 
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
+import net.thevpc.nuts.core.NRepositoryLocation;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.NRepositorySpec;

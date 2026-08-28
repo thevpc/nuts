@@ -10,7 +10,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.List;
 import java.util.function.Supplier;
 
-public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
+public abstract class DependencyFilterDelegate extends NDependencyFilterBase {
     public DependencyFilterDelegate() {
         super(NFilterOp.CUSTOM);
     }

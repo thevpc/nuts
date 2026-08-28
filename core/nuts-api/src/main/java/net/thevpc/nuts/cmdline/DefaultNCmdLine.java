@@ -1703,7 +1703,6 @@ public class DefaultNCmdLine implements NCmdLine {
         return true;
     }
 
-//    @Deprecated
 //    public NOptional<NArg> next(NArgName name, boolean forceNonOption) {
 //        if (hasNext() && (!forceNonOption || !isNextOption())) {
 //            if (isAtCompletePosition()) {

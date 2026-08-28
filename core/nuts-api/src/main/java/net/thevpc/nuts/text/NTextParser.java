@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 
 /**
  * @app.category Format
@@ -55,7 +56,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse incremental result
      */
-    long parseIncremental(char buf, NTextVisitor visitor);
+    long parseIncremental(char buf, Consumer<NText> visitor);
 
     /**
      * Parse.
@@ -64,7 +65,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse result
      */
-    long parse(InputStream in, NTextVisitor visitor);
+    long parse(InputStream in, Consumer<NText> visitor);
 
     /**
      * Parse.
@@ -73,7 +74,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse result
      */
-    long parse(Reader in, NTextVisitor visitor);
+    long parse(Reader in, Consumer<NText> visitor);
 
     /**
      * Parse.
@@ -132,7 +133,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse incremental result
      */
-    long parseIncremental(byte[] buf, int off, int len, NTextVisitor visitor);
+    long parseIncremental(byte[] buf, int off, int len, Consumer<NText> visitor);
 
     /**
      * Parse incremental.
@@ -143,7 +144,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse incremental result
      */
-    long parseIncremental(char[] buf, int off, int len, NTextVisitor visitor);
+    long parseIncremental(char[] buf, int off, int len, Consumer<NText> visitor);
 
     /**
      * Parse incremental.
@@ -152,7 +153,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse incremental result
      */
-    long parseIncremental(byte[] buf, NTextVisitor visitor);
+    long parseIncremental(byte[] buf, Consumer<NText> visitor);
 
     /**
      * Parse incremental.
@@ -161,7 +162,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse incremental result
      */
-    long parseIncremental(char[] buf, NTextVisitor visitor);
+    long parseIncremental(char[] buf, Consumer<NText> visitor);
 
     /**
      * Parse incremental.
@@ -170,7 +171,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse incremental result
      */
-    long parseIncremental(String buf, NTextVisitor visitor);
+    long parseIncremental(String buf, Consumer<NText> visitor);
 
     /**
      * Parse remaining.
@@ -178,7 +179,7 @@ public interface NTextParser {
      * @param visitor visitor
      * @return parse remaining result
      */
-    long parseRemaining(NTextVisitor visitor);
+    long parseRemaining(Consumer<NText> visitor);
 
     /**
      * Checks if is incomplete.

@@ -2,11 +2,11 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
-import net.thevpc.nuts.spi.base.AbstractVersionFilter;
+import net.thevpc.nuts.spi.base.NVersionFilterBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
-public class NVersionFilterTrue extends AbstractVersionFilter implements NExprIdFilter {
+public class NVersionFilterTrue extends NVersionFilterBase implements NExprIdFilter {
 
     public NVersionFilterTrue() {
         super(NFilterOp.TRUE);

@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public class NDefinitionExecExtensionFilter extends AbstractDefinitionFilter {
+public class NDefinitionExecExtensionFilter extends DefinitionFilterBase {
     private NId apiId;
     public NDefinitionExecExtensionFilter(NId apiId) {
         super(NFilterOp.CUSTOM);

@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class NExclusionDependencyFilter extends AbstractDependencyFilter{
+public class NExclusionDependencyFilter extends NDependencyFilterBase {
 
     private final NDependencyFilter base;
     private final NId[] exclusions;

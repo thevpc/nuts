@@ -15,6 +15,7 @@ import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.time.NClock;
+import net.thevpc.nuts.util.NException;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -106,7 +107,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                         mainMethod[0].invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});
 //                    }
                 } catch (Exception e) {
-                    throw CoreNUtils.toUncheckedException(e);
+                    throw NException.ofUncheckedException(e);
                 }finally {
                     if(old_nuts_boot_args==null){
                         System.setProperty("nuts.boot.args", "");

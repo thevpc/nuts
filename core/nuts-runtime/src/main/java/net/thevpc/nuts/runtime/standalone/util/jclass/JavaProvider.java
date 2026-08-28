@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
-import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NOsFamily;

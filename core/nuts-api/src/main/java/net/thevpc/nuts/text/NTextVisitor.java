@@ -24,14 +24,46 @@
  */
 package net.thevpc.nuts.text;
 
+import java.util.function.Consumer;
+
 /**
  * @app.category Format
  */
 public interface NTextVisitor {
+    static NTextVisitor ofEnter(Consumer<NText> consumer) {
+        return new NTextVisitor() {
+            @Override
+            public void enter(NText node) {
+                consumer.accept(node);
+            }
+
+            @Override
+            public void exit(NText node) {
+                //
+            }
+        };
+    }
+    static NTextVisitor ofExit(Consumer<NText> consumer) {
+        return new NTextVisitor() {
+            @Override
+            public void enter(NText node) {
+                //
+            }
+
+            @Override
+            public void exit(NText node) {
+                consumer.accept(node);
+            }
+        };
+    }
+
     /**
      * Visit.
      *
      * @param node node
      */
-    void visit(NText node);
+    void enter(NText node);
+
+    default void exit(NText node) {
+    }
 }

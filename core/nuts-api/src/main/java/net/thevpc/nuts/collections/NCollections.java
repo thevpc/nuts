@@ -1,6 +1,7 @@
 package net.thevpc.nuts.collections;
 
 import net.thevpc.nuts.artifact.NIdLocation;
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -164,7 +165,7 @@ public class NCollections {
      * Converts to distinct stripped non empty list.
      *
      * @param values0 values0
-     * @param values values
+     * @param values  values
      * @return to distinct stripped non empty list result
      */
     public static List<String> toDistinctStrippedNonEmptyList(List<String> values0, List<String>... values) {
@@ -184,7 +185,7 @@ public class NCollections {
     /**
      * Adds the specified all non null.
      *
-     * @param container container
+     * @param container   container
      * @param newElements new elements
      * @return add all non null result
      */
@@ -231,7 +232,7 @@ public class NCollections {
     /**
      * Unmodifiable list.
      *
-     * @param other other
+     * @param other  other
      * @param filter filter
      * @return unmodifiable list result
      */
@@ -269,7 +270,7 @@ public class NCollections {
     /**
      * Unmodifiable set.
      *
-     * @param other other
+     * @param other  other
      * @param filter filter
      * @return unmodifiable set result
      */
@@ -408,7 +409,7 @@ public class NCollections {
     /**
      * Stream.
      *
-     * @param supplier supplier
+     * @param supplier      supplier
      * @param stopCondition stop condition
      * @return stream result
      */
@@ -477,7 +478,7 @@ public class NCollections {
     /**
      * Split by.
      *
-     * @param anyList any list
+     * @param anyList   any list
      * @param groupSize group size
      * @return split by result
      */
@@ -499,7 +500,7 @@ public class NCollections {
     /**
      * Group by.
      *
-     * @param anyList any list
+     * @param anyList   any list
      * @param groupSize group size
      * @return group by result
      */
@@ -526,19 +527,19 @@ public class NCollections {
     /**
      * Convert.
      *
-     * @param list list
+     * @param list      list
      * @param converter converter
      * @return convert result
      */
     public static <A, B> List<B> convert(List<A> list, Function<A, B> converter) {
-        return new NImmutableConvertedList<A, B>(list, converter);
+        return NUtilsRPI.of().createImmutableConvertedList(list, converter);
     }
 
     /**
      * Filter.
      *
      * @param collection collection
-     * @param filter filter
+     * @param filter     filter
      * @return filter result
      */
     public static <T> List<T> filter(Collection<T> collection, NCollectionFilter<T> filter) {
@@ -552,7 +553,6 @@ public class NCollections {
         }
         return ret;
     }
-
 
 
     /**
@@ -693,7 +693,7 @@ public class NCollections {
      * Merge maps.
      *
      * @param source source
-     * @param dest dest
+     * @param dest   dest
      * @return merge maps result
      */
     public static <K, V> Map<K, V> mergeMaps(Map<K, V> source, Map<K, V> dest) {
@@ -715,10 +715,10 @@ public class NCollections {
     /**
      * Converts to set.
      *
-     * @param values0 values0
-     * @param strip strip
+     * @param values0     values0
+     * @param strip       strip
      * @param ignoreEmpty ignore empty
-     * @param ignoreNull ignore null
+     * @param ignoreNull  ignore null
      * @return to set result
      */
     public static Set<String> toSet(String[] values0, boolean strip, boolean ignoreEmpty, boolean ignoreNull) {

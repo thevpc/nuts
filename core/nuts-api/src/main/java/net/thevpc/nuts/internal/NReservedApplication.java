@@ -81,7 +81,6 @@ public final class NReservedApplication {
      * @param <T>     application type
      * @return new instance
      */
-    @Deprecated
     public static <T extends NApplicationHandler> T createApplicationInstance(Class<T> appType) {
         String[] args = null;
         /**
@@ -206,24 +205,8 @@ public final class NReservedApplication {
                    */
                     checkAllowedMethodWithNutsAnnotation(m, NAppComplete.class);
                 }
-            } catch (NBootException e) {
-                throw e;
-            } catch (RuntimeException e) {
-                /**
-                 * Runtime exception.
-                 *
-                 * @param e e
-                 * @return runtime exception result
-                 */
-                throw new RuntimeException(e);
             } catch (Exception e) {
-                /**
-                 * Runtime exception.
-                 *
-                 * @param e e
-                 * @return runtime exception result
-                 */
-                throw new RuntimeException(e);
+                throw NException.ofUncheckedException(e);
             }
             cc = cc.getSuperclass();
         }
@@ -438,39 +421,8 @@ public final class NReservedApplication {
                 } else {
                     m.invoke(appInstance);
                 }
-            } catch (IllegalAccessException e) {
-                /**
-                 * Runtime exception.
-                 *
-                 * @param e e
-                 * @return runtime exception result
-                 */
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                if (e.getTargetException() instanceof RuntimeException) {
-                  /**
-                   * Throw.
-                   *
-                   * @param e.getTargetException( e.get target exception(
-                   */
-                    throw (RuntimeException) e.getTargetException();
-                }
-                if (e.getTargetException() != null) {
-                    /**
-                     * Runtime exception.
-                     *
-                     * @param e.getTargetException() e.get target exception()
-                     * @return runtime exception result
-                     */
-                    throw new RuntimeException(e.getTargetException());
-                }
-                /**
-                 * Runtime exception.
-                 *
-                 * @param e e
-                 * @return runtime exception result
-                 */
-                throw new RuntimeException(e);
+            } catch (IllegalAccessException|InvocationTargetException e) {
+                throw NException.ofUncheckedException(e);
             }
         }
     }

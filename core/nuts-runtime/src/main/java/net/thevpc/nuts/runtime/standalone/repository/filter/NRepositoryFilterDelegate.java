@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class NRepositoryFilterDelegate extends AbstractRepositoryFilter {
+public abstract class NRepositoryFilterDelegate extends NRepositoryFilterBase {
     public NRepositoryFilterDelegate() {
         super(NFilterOp.CUSTOM);
     }

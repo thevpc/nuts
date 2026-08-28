@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
-public class NLockedIdExtensionDefinitionFilter extends AbstractDefinitionFilter {
+public class NLockedIdExtensionDefinitionFilter extends DefinitionFilterBase {
     private NId[] lockedIds;
 
     public NLockedIdExtensionDefinitionFilter(NId[] lockedIds) {

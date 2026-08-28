@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public abstract class NDefinitionFilterDelegate extends AbstractDefinitionFilter {
+public abstract class NDefinitionFilterDelegate extends DefinitionFilterBase {
     public abstract NDefinitionFilter baseDefinitionFilter();
 
     public NDefinitionFilterDelegate() {

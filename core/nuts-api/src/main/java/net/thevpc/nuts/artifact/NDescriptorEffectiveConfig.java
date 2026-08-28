@@ -1,5 +1,8 @@
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
+
 import java.util.Objects;
 
 /**
@@ -66,7 +69,7 @@ public class NDescriptorEffectiveConfig implements Cloneable {
              * @param e e
              * @return runtime exception result
              */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 }

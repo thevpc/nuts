@@ -27,6 +27,8 @@ package net.thevpc.nuts.internal;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.internal.artifact.NEnvConditionImpl;
+import net.thevpc.nuts.internal.artifact.NIdImpl;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NPlatformHome;
 import net.thevpc.nuts.platform.NStoreType;
@@ -540,9 +542,9 @@ public final class NReservedUtils {
                     }
                 }
             }
-            return NOptional.of(new DefaultNId(
+            return NOptional.of(new NIdImpl(
                     group, artifact, classifier, NVersion.of(version),
-                    idProperties, new DefaultNEnvCondition(
+                    idProperties, new NEnvConditionImpl(
                     new ArrayList<>(condArch), new ArrayList<>(condOs), new ArrayList<>(condDist), new ArrayList<>(condPlatform), new ArrayList<>(condDE),
                     new ArrayList<>(condProfiles), condProperties
             )

@@ -1,9 +1,11 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NCopiable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -193,13 +195,7 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
         try {
             copy = (NWorkBalancerModel) super.clone();
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
         copy.options = this.options == null ? null : new HashMap<>(this.options);
         copy.workers = this.workers == null ? null : workers.stream().map(x -> x.copy()).collect(Collectors.toList());

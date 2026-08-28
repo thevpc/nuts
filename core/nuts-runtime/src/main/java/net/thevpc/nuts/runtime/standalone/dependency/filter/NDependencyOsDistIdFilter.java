@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDependencyOsDistIdFilter extends AbstractDependencyFilter  {
+public class NDependencyOsDistIdFilter extends NDependencyFilterBase {
 
     private Set<NId> accepted = new HashSet<>();
 

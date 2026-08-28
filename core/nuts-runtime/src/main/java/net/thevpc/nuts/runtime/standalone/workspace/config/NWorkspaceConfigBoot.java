@@ -31,6 +31,8 @@ import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -178,7 +180,7 @@ public final class NWorkspaceConfigBoot extends NConfigItem implements Cloneable
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 
@@ -240,7 +242,7 @@ public final class NWorkspaceConfigBoot extends NConfigItem implements Cloneable
             try {
                 return (ExtensionConfig) clone();
             } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
+                throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
             }
         }
     }

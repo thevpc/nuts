@@ -172,38 +172,8 @@ public class NApplicationBuilder {
     private Object createInstance(Class applicationType) {
         try {
             return applicationType == null ? null : applicationType.getConstructor().newInstance();
-        } catch (InstantiationException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+        } catch (InstantiationException|IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+            throw NException.ofUncheckedException(e);
         }
     }
 

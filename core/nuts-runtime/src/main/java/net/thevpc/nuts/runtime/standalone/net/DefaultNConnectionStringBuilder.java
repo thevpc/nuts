@@ -471,7 +471,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
             c.queryMap = prepareQueryMap(queryMap, false);
             return c;
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

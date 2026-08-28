@@ -13,6 +13,7 @@ import net.thevpc.nuts.text.NTextVisitor;
 
 import java.util.Objects;
 import java.util.Stack;
+import java.util.function.Consumer;
 
 /**
  * @author thevpc
@@ -55,7 +56,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
 
 
     @Override
-    public long parseIncremental(char[] buf, int off, int len, NTextVisitor visitor) {
+    public long parseIncremental(char[] buf, int off, int len, Consumer<NText> visitor) {
         if (len == 0) {
             return 0;
         }
@@ -64,7 +65,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
     }
 
     @Override
-    public long parseRemaining(NTextVisitor visitor) {
+    public long parseRemaining(Consumer<NText> visitor) {
         return state().consumeNodes(true, visitor);
     }
 
@@ -128,7 +129,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
             return _pop(me);
         }
 
-        public NText consumeNodeGreedy(NTextVisitor visitor) {
+        public NText consumeNodeGreedy(Consumer<NText> visitor) {
             NText n = consumeNode(visitor);
             if (n != null) {
                 return n;
@@ -137,7 +138,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
             return consumeNode(visitor);
         }
 
-        public long consumeNodes(boolean greedy, NTextVisitor visitor) {
+        public long consumeNodes(boolean greedy, Consumer<NText> visitor) {
             long count = 0;
             while ((consumeNode(visitor)) != null) {
                 count++;
@@ -301,7 +302,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
             return s.toText();
         }
 
-        public NText consumeNode(NTextVisitor visitor) {
+        public NText consumeNode(Consumer<NText> visitor) {
 //            JOptionPane.showMessageDialog(null,"consumeNode "+this);
             RootParserStep root = root();
             if (root == null) {
@@ -334,7 +335,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
             }
             NText n = s.toText();
             if (visitor != null) {
-                visitor.visit(n);
+                visitor.accept(n);
             }
             return n;
         }

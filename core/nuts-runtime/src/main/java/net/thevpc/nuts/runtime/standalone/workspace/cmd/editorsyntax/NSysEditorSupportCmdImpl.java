@@ -887,7 +887,7 @@ public class NSysEditorSupportCmdImpl implements NSysEditorSupportCmd {
             try {
                 return (Info) super.clone();
             } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
+                throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
             }
         }
     }

@@ -30,7 +30,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.spi.base.AbstractVersionFilter;
+import net.thevpc.nuts.spi.base.NVersionFilterBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.*;
@@ -43,7 +43,7 @@ import java.util.Objects;
 /**
  * Examples [2.6,], ]2.6,] . Created by vpc on 1/20/17.
  */
-public class DefaultNVersionFilter extends AbstractVersionFilter implements NExprIdFilter, Serializable {
+public class DefaultNVersionFilter extends NVersionFilterBase implements NExprIdFilter, Serializable {
 
     private static final long serialVersionUID = 1L;
 

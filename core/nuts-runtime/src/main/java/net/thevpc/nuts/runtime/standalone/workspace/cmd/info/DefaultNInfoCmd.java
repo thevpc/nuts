@@ -48,7 +48,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
     private boolean includeSysProps = false;
     private List<String> requests = new ArrayList<>();
     private List<Supplier<Map<String, Object>>> extraSuppliers = new ArrayList<>();
-    private Predicate<String> filter = NPredicates.always();
+    private Predicate<String> filter = NPredicate.ofAlways();
     private boolean lenient = false;
     private boolean ntf = false;
     private Function<MapAndSession, Map<String, Object>> extraPropertiesSupplier = a -> (Map) extraProperties;

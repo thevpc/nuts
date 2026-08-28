@@ -53,11 +53,6 @@ public final class NutsApp {
      */
     @SuppressWarnings("UseSpecificCatch")
     public static void main(String[] args) {
-//        try {
-//            Files.write(new File("nuts-args.txt").toPath(),(new Date()+"\n"+Arrays.toString(args)+"\n").getBytes(StandardCharsets.UTF_8));
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
         try {
             NBootWorkspace bws = NBootWorkspace.of(args);
             bws.runWorkspace();

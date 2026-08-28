@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
-import net.thevpc.nuts.spi.base.AbstractVersionFilter;
+import net.thevpc.nuts.spi.base.NVersionFilterBase;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilterOp;
@@ -62,7 +62,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
         return super.parse();
     }
 
-    private class NVersionIntervalsVersionFilter extends AbstractVersionFilter {
+    private class NVersionIntervalsVersionFilter extends NVersionFilterBase {
         private final NVersion version;
         private final NVersionComparator versionComparator;
 

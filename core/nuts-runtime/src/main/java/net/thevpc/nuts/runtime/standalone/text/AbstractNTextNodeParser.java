@@ -6,6 +6,7 @@ import net.thevpc.nuts.text.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 
 public abstract class AbstractNTextNodeParser implements NTextParser {
     protected int bufferSize = 4096;
@@ -13,16 +14,16 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
     }
 
     @Override
-    public long parseIncremental(char buf, NTextVisitor visitor) {
+    public long parseIncremental(char buf, Consumer<NText> visitor) {
         return parseIncremental(new char[]{buf}, visitor);
     }
 
     @Override
-    public long parse(InputStream in, NTextVisitor visitor) {
+    public long parse(InputStream in, Consumer<NText> visitor) {
         return parse(new BufferedReader(new InputStreamReader(in)), visitor);
     }
 
-    public long parse(Reader in, NTextVisitor visitor) {
+    public long parse(Reader in, Consumer<NText> visitor) {
         int count = 0;
         char[] buffer = new char[bufferSize];
         int r;
@@ -79,17 +80,17 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
     }
 
     @Override
-    public long parseIncremental(byte[] buf, NTextVisitor visitor) {
+    public long parseIncremental(byte[] buf, Consumer<NText> visitor) {
         return parseIncremental(buf, 0, buf.length, visitor);
     }
 
     @Override
-    public long parseIncremental(char[] buf, NTextVisitor visitor) {
+    public long parseIncremental(char[] buf, Consumer<NText> visitor) {
         return parseIncremental(new String(buf), visitor);
     }
 
     @Override
-    public long parseIncremental(String buf, NTextVisitor visitor) {
+    public long parseIncremental(String buf, Consumer<NText> visitor) {
         return parseIncremental(buf.getBytes(), visitor);
     }
 
@@ -143,7 +144,7 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
     }
 
     @Override
-    public long parseIncremental(byte[] buf, int off, int len, NTextVisitor visitor) {
+    public long parseIncremental(byte[] buf, int off, int len, Consumer<NText> visitor) {
         if (len == 0) {
             return 0;
         }

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * @author thevpc
  * @since 0.8.0
  */
-public abstract class NPredicateDelegate<T> extends AbstractNPredicate<T> {
+public abstract class NPredicateDelegate<T> extends NPredicateBase<T> {
     /**
      * Base predicate.
      *

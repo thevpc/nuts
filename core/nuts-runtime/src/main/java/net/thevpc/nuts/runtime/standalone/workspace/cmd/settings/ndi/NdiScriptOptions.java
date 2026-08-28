@@ -16,6 +16,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -122,7 +123,7 @@ public class NdiScriptOptions implements Cloneable {
         try {
             c = (NdiScriptOptions) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new IllegalArgumentException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
         c.setLauncher(c.getLauncher() == null ? null : c.getLauncher().copy());
         return c;

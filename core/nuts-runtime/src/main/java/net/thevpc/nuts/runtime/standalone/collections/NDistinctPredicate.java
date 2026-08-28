@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.spi.base.AbstractNPredicate;
+import net.thevpc.nuts.spi.base.NPredicateBase;
 
 import java.util.HashSet;
 
-class NDistinctPredicate<T> extends AbstractNPredicate<T> {
+class NDistinctPredicate<T> extends NPredicateBase<T> {
     private HashSet<T> visited = new HashSet<>();
 
     @Override

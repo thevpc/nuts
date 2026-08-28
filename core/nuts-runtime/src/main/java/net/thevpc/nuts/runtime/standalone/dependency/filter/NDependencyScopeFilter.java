@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.util.NFilterOp;
 
-public class NDependencyScopeFilter extends AbstractDependencyFilter {
+public class NDependencyScopeFilter extends NDependencyFilterBase {
 
     private EnumSet<NDependencyScope> scopes =EnumSet.noneOf(NDependencyScope.class);
 

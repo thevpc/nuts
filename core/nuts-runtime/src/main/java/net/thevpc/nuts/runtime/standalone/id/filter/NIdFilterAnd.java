@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdFilter;
-import net.thevpc.nuts.spi.base.AbstractIdFilter;
+import net.thevpc.nuts.spi.base.NIdFilterBase;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.util.NSimplifiable;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class NIdFilterAnd extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter>, NExprIdFilter, NComplexExpressionString {
+public class NIdFilterAnd extends NIdFilterBase implements NIdFilter, NSimplifiable<NIdFilter>, NExprIdFilter, NComplexExpressionString {
 
     private NIdFilter[] children;
 

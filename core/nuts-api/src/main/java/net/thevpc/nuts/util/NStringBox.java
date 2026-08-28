@@ -27,14 +27,7 @@ class NStringBox {
             try {
                 if ((l = br.readLine()) == null) break;
             } catch (IOException e) {
-                //never!!
-                /**
-                 * Runtime exception.
-                 *
-                 * @param e e
-                 * @return runtime exception result
-                 */
-                throw new RuntimeException(e);
+                throw NException.ofSafeIOException(e);
             }
             cols = Math.max(cols, l.length());
             rows++;

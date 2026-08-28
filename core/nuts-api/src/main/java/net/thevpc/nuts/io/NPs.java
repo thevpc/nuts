@@ -26,7 +26,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.platform.NConnectionStringAware;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.pipeline.NStream;
@@ -54,7 +54,7 @@ public interface NPs extends NComponent, NConnectionStringAware {
      *
      * @return process type to consider. Supported 'java'
      */
-    NExecutionEngineFamily platformFamily();
+    NRuntimeDistributionFamily platformFamily();
 
     /**
      * set process type to consider.
@@ -63,7 +63,7 @@ public interface NPs extends NComponent, NConnectionStringAware {
      * @param processType new type
      * @return return {@code this} instance
      */
-    NPs platformFamily(NExecutionEngineFamily processType);
+    NPs platformFamily(NRuntimeDistributionFamily processType);
 
     /**
      * list all processes of type {@link #platformFamily()}

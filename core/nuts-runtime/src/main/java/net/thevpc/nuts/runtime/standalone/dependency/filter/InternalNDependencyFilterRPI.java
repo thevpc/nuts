@@ -312,7 +312,7 @@ public class InternalNDependencyFilterRPI extends InternalNTypedFilters<NDepende
     }
 
     @Override
-    public NDependencyFilter byPlatform(NExecutionEngineFamily... pf) {
+    public NDependencyFilter byPlatform(NRuntimeDistributionFamily... pf) {
         if (pf == null || pf.length==0) {
             return always();
         }

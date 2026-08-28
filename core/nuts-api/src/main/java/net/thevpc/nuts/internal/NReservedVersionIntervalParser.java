@@ -1,6 +1,6 @@
 package net.thevpc.nuts.internal;
 
-import net.thevpc.nuts.artifact.DefaultNVersionInterval;
+import net.thevpc.nuts.internal.artifact.NVersionIntervalImpl;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionComparator;
 import net.thevpc.nuts.artifact.NVersionInterval;
@@ -64,13 +64,13 @@ public class NReservedVersionIntervalParser {
         if (sval.endsWith("*")) {
             String min = sval.substring(0, sval.length() - 1);
             if (min.equals("")) {
-                dd.add(new DefaultNVersionInterval(false, false, min, null,this.versionComparator));
+                dd.add(new NVersionIntervalImpl(false, false, min, null,this.versionComparator));
             } else {
                 String max = NVersion.of(min).inc(-1).value();
-                dd.add(new DefaultNVersionInterval(true, false, min, max,this.versionComparator));
+                dd.add(new NVersionIntervalImpl(true, false, min, max,this.versionComparator));
             }
         } else {
-            dd.add(new DefaultNVersionInterval(true, true, sval, sval,this.versionComparator));
+            dd.add(new NVersionIntervalImpl(true, true, sval, sval,this.versionComparator));
         }
     }
 
@@ -80,7 +80,7 @@ public class NReservedVersionIntervalParser {
     void addNextInterval() {
         boolean inclusiveLowerBoundary = open == '[' && (v1 != null);
         boolean inclusiveUpperBoundary = close == ']' && (v2 != null);
-        dd.add(new DefaultNVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, v1, v2,this.versionComparator));
+        dd.add(new NVersionIntervalImpl(inclusiveLowerBoundary, inclusiveUpperBoundary, v1, v2,this.versionComparator));
       /**
        * Reset.
        */

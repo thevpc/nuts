@@ -42,7 +42,7 @@ import java.util.Objects;
 /**
  * Package installation status.
  */
-public class NInstallStatusDefinitionFilter2 extends AbstractDefinitionFilter {
+public class NInstallStatusDefinitionFilter2 extends DefinitionFilterBase {
 
     private final Mode mode;
     private final boolean value;

@@ -1,0 +1,153 @@
+package net.thevpc.nuts.internal.optional;
+
+import net.thevpc.nuts.reflect.NReflectUtils;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
+
+import java.util.function.Supplier;
+
+/**
+ * NReservedOptionalThrowable class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
+public abstract class NOptionalThrowableImpl<T> extends NOptionalImpl<T> implements Cloneable {
+    private static boolean DEBUG;
+
+    static {
+        String property = System.getProperty("nuts.optional.debug");
+        DEBUG = Boolean.parseBoolean(property);
+    }
+
+    private Throwable rootStack = DEBUG ? new Throwable() : null;
+    private Supplier<NOptional<T>> defaultValue;
+
+    /**
+     * N reserved optional throwable.
+     *
+     * @param message message
+     * @return n reserved optional throwable result
+     */
+    public NOptionalThrowableImpl(Supplier<NMsg> message) {
+      /**
+       * Super.
+       *
+       * @param message message
+       */
+        super(message);
+    }
+
+    /**
+     * Or default.
+     *
+     * @return or default result
+     */
+    public T orDefault() {
+        if (defaultValue != null) {
+            NOptional<T> o = defaultValue.get();
+            if (o != null) {
+                return o.orDefault(); // recursive resolution
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public T orDefault(Class<T> defaultType) {
+        T v = orDefault();
+        if (v != null) {
+            return v;
+        }
+        return defaultType == null
+                ? null
+                : (T) NReflectUtils.getDefaultValue(defaultType);
+    }
+
+    @Override
+    public NOptional<T> orDefaultOptional() {
+        if (defaultValue == null) {
+            return this;
+        } else {
+            NOptional<T> o = defaultValue.get();
+            if (o != null) {
+                return o.orDefaultOptional(); // recursive resolution
+            }
+            return NOptional.ofEmpty(message());
+        }
+    }
+
+    /**
+     * Prepare message.
+     *
+     * @param m m
+     * @return prepare message result
+     */
+    protected NMsg prepareMessage(NMsg m) {
+        if (DEBUG) {
+            return NMsg.ofC("%s.\n    call stack:\n%s\n    root stack:\n%s", m,
+                    NStringUtils.stacktrace(new Throwable()),
+                    NStringUtils.stacktrace(rootStack)
+            );
+        }
+        if (m == null) {
+            m = NMsg.ofMissingValue();
+        }
+        return m;
+    }
+
+    @Override
+    public boolean isNull() {
+        return false;
+    }
+
+    @Override
+    public NOptional<T> withDefault(Supplier<T> value) {
+        NOptionalThrowableImpl<T> c = (NOptionalThrowableImpl<T>) clone();
+        c.defaultValue = value == null ? null : () -> NOptional.of(value.get());
+        return c;
+    }
+
+    @Override
+    public NOptional<T> withDefaultOptional(Supplier<NOptional<T>> value) {
+        NOptionalThrowableImpl<T> c = (NOptionalThrowableImpl<T>) clone();
+        c.defaultValue = value == null ? null : () -> {
+            NOptional<T> i = value.get();
+            if (i == null) {
+                return NOptional.ofEmpty(message());
+            }
+            return this;
+        };
+        return c;
+    }
+
+    @Override
+    public NOptional<T> withDefault(T value) {
+        NOptionalThrowableImpl<T> c = (NOptionalThrowableImpl<T>) clone();
+        c.defaultValue = value == null ? null : () -> NOptional.of(value);
+        return c;
+    }
+
+    @Override
+    public NOptional<T> withoutDefault() {
+        NOptionalThrowableImpl<T> c = (NOptionalThrowableImpl<T>) clone();
+        c.defaultValue = null;
+        return c;
+    }
+
+    @Override
+    protected NOptional<T> clone() {
+        try {
+          /**
+           * Return.
+           *
+           * @param super.clone( super.clone(
+           */
+            return (NOptional<T>) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
+        }
+    }
+
+
+}

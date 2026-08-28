@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDefinitionArchFamilyFilter extends AbstractDefinitionFilter {
+public class NDefinitionArchFamilyFilter extends DefinitionFilterBase {
 
     private Set<NArchFamily> accepted = new HashSet<>();
 

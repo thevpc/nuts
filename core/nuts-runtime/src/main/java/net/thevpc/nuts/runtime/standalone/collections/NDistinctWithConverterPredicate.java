@@ -2,12 +2,12 @@ package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.spi.base.AbstractNPredicate;
+import net.thevpc.nuts.spi.base.NPredicateBase;
 
 import java.util.HashSet;
 import java.util.function.Function;
 
-class NDistinctWithConverterPredicate<F, T> extends AbstractNPredicate<F> {
+class NDistinctWithConverterPredicate<F, T> extends NPredicateBase<F> {
     private final Function<F, T> converter;
     HashSet<T> visited;
 

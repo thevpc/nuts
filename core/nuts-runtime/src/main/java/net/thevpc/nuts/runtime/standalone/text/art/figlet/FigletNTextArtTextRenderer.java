@@ -40,6 +40,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 /**
  * @author vpc
@@ -133,7 +134,7 @@ public class FigletNTextArtTextRenderer implements NTextArtTextRenderer, Cloneab
         try {
             return (FigletNTextArtTextRenderer) super.clone();
         } catch (CloneNotSupportedException ex) {
-            throw new IllegalArgumentException("unsupported clone");
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),ex);
         }
     }
 

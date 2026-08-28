@@ -84,7 +84,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         try {
             cloned = (NApplicationImpl) this.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
         cloned.sourceType = this.sourceType();
         cloned.application = this.handler();

@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDefinitionPlatformIdFilter extends AbstractDefinitionFilter {
+public class NDefinitionPlatformIdFilter extends DefinitionFilterBase {
 
     private Set<NId> accepted = new HashSet<>();
 

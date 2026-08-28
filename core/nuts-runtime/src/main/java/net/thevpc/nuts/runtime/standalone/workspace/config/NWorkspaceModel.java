@@ -22,8 +22,8 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.net.NWebCli;
 import net.thevpc.nuts.platform.NEnv;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
-import net.thevpc.nuts.platform.NExecutionEngineLocation;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
+import net.thevpc.nuts.platform.NRuntimeDistribution;
 import net.thevpc.nuts.reflect.NBeanContainer;
 import net.thevpc.nuts.reflect.NBeanRef;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -147,7 +147,7 @@ public class NWorkspaceModel {
     private String pid;
     private NEnvLocal env;
     public ClassLoader bootClassLoader;
-    private final Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> configPlatforms = new LinkedHashMap<>();
+    private final Map<NRuntimeDistributionFamily, List<NRuntimeDistribution>> configPlatforms = new LinkedHashMap<>();
     private NReflectRepository defaultReflectRepository;
 
 
@@ -449,7 +449,7 @@ public class NWorkspaceModel {
         return workspace;
     }
 
-    public Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> getConfigPlatforms() {
+    public Map<NRuntimeDistributionFamily, List<NRuntimeDistribution>> getConfigPlatforms() {
         return configPlatforms;
     }
 

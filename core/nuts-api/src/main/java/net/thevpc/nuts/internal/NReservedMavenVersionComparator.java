@@ -1,6 +1,7 @@
 package net.thevpc.nuts.internal;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.artifact.NVersionPartImpl;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.math.BigInteger;
@@ -139,7 +140,7 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
                 }
             } else if (ret.get(i).type() == NVersionPartType.SUFFIX || ret.get(i).type() == NVersionPartType.PREFIX) {
                 //change them in qualifiers
-                ret.set(i, new DefaultNVersionPart(ret.get(i).value(), NVersionPartType.QUALIFIER));
+                ret.set(i, new NVersionPartImpl(ret.get(i).value(), NVersionPartType.QUALIFIER));
             }
         }
         return ret;

@@ -61,6 +61,7 @@ import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -435,7 +436,7 @@ public class DefaultNTextRPI implements NTextRPI {
         return new NTreeNode() {
             @Override
             public NText content() {
-                return text == null ? NText.ofBlank():text;
+                return text == null ? NText.ofBlank() : text;
             }
 
             @Override
@@ -1018,14 +1019,14 @@ public class DefaultNTextRPI implements NTextRPI {
 
     int resolveRootLevel(NText text) {
         NRef<Integer> level = NRef.ofNull();
-        traverseDFS(text, n -> {
+        traverseDFS(text, NTextVisitor.ofExit(n -> {
             if (n.type() == NTextType.TITLE) {
                 int lvl = ((NTextTitle) n).level();
                 if (level.isNull() || level.get() > lvl) {
                     level.set(lvl);
                 }
             }
-        });
+        }));
         return level.isNull() ? 0 : level.get();
     }
 
@@ -1110,127 +1111,272 @@ public class DefaultNTextRPI implements NTextRPI {
         return text;
     }
 
+    private static final class Frame {
+        final NText node;
+        final boolean exit;
+
+        Frame(NText node, boolean exit) {
+            this.node = node;
+            this.exit = exit;
+        }
+    }
+
     @Override
     public void traverseDFS(NText text, NTextVisitor visitor) {
         if (text == null) {
             return;
         }
-        switch (text.type()) {
-            case PLAIN:
-            case CODE:
-            case ANCHOR:
-            case LINK:
-            case COMMAND: {
-                visitor.visit(text);
-                break;
+        Deque<Frame> stack = new ArrayDeque<>();
+        stack.push(new Frame(text, false));
+        while (!stack.isEmpty()) {
+            Frame f = stack.pop();
+            if (f.exit) {
+                visitor.exit(f.node);
+                continue;
             }
-            case TITLE: {
-                NTextTitle t = (NTextTitle) text;
-                NText child = t.child();
-                if (child != null) {
-                    visitor.visit(child);
+            NText u = f.node;
+            visitor.enter(u);
+            // schedule this node's exit to fire only after all its children are fully processed
+            stack.push(new Frame(u, true));
+            switch (u.type()) {
+                case PLAIN:
+                case CODE:
+                case ANCHOR:
+                case LINK:
+                case COMMAND:
+                case INCLUDE: {
+                    break;
                 }
-                visitor.visit(t);
-                break;
-            }
-            case STYLED: {
-                NTextStyled t = (NTextStyled) text;
-                NText child = t.child();
-                if (child != null) {
-                    visitor.visit(child);
-                }
-                visitor.visit(t);
-                break;
-            }
-            case LIST: {
-                NTextList t = (NTextList) text;
-                for (NText child : t.children()) {
+                case TITLE: {
+                    NTextTitle t = (NTextTitle) u;
+                    NText child = t.child();
                     if (child != null) {
-                        visitor.visit(child);
+                        stack.push(new Frame(child, false));
                     }
+                    break;
                 }
-                visitor.visit(t);
-                break;
-            }
-            case BUILDER: {
-                NTextBuilder t = (NTextBuilder) text;
-                for (NText child : t.children()) {
+                case STYLED: {
+                    NTextStyled t = (NTextStyled) u;
+                    NText child = t.child();
                     if (child != null) {
-                        visitor.visit(child);
+                        stack.push(new Frame(child, false));
                     }
+                    break;
                 }
-                visitor.visit(t);
-                break;
+                case LIST: {
+                    NTextList t = (NTextList) u;
+                    pushChildrenReversed(stack, t.children());
+                    break;
+                }
+                case BUILDER: {
+                    NTextBuilder t = (NTextBuilder) u;
+                    pushChildrenReversed(stack, t.children());
+                    break;
+                }
             }
-            case INCLUDE: {
-                NTextInclude t = (NTextInclude) text;
-                visitor.visit(t);
-                break;
+        }
+    }
+
+    // pushes children onto the stack so that popping order matches the
+// original left-to-right iteration order (first child processed first)
+    private static void pushChildrenReversed(Deque<Frame> stack, Iterable<NText> children) {
+        Deque<NText> tmp = new ArrayDeque<>();
+        for (NText child : children) {
+            if (child != null) {
+                tmp.push(child);
             }
+        }
+        while (!tmp.isEmpty()) {
+            stack.push(new Frame(tmp.pop(), false));
         }
     }
 
     @Override
     public void traverseBFS(NText text, NTextVisitor visitor) {
+        if (text == null) {
+            return;
+        }
         Queue<NText> q = new ArrayDeque<>();
+        Deque<NText> entered = new ArrayDeque<>(); // stack of entered nodes, for reversed exit order
         q.add(text);
         while (!q.isEmpty()) {
             NText u = q.remove();
-            switch (text.type()) {
+            visitor.enter(u);
+            entered.push(u);
+            switch (u.type()) {
                 case PLAIN:
                 case CODE:
                 case ANCHOR:
                 case LINK:
-                case COMMAND: {
-                    visitor.visit(text);
+                case COMMAND:
+                case INCLUDE: {
                     break;
                 }
                 case TITLE: {
-                    NTextTitle t = (NTextTitle) text;
+                    NTextTitle t = (NTextTitle) u;
                     NText child = t.child();
                     if (child != null) {
                         q.add(child);
                     }
-                    visitor.visit(t);
                     break;
                 }
                 case STYLED: {
-                    NTextStyled t = (NTextStyled) text;
+                    NTextStyled t = (NTextStyled) u;
                     NText child = t.child();
                     if (child != null) {
                         q.add(child);
                     }
-                    visitor.visit(t);
                     break;
                 }
                 case LIST: {
-                    NTextList t = (NTextList) text;
+                    NTextList t = (NTextList) u;
                     for (NText child : t.children()) {
                         if (child != null) {
                             q.add(child);
                         }
                     }
-                    visitor.visit(t);
                     break;
                 }
                 case BUILDER: {
-                    NTextBuilder t = (NTextBuilder) text;
+                    NTextBuilder t = (NTextBuilder) u;
                     for (NText child : t.children()) {
                         if (child != null) {
                             q.add(child);
                         }
                     }
-                    visitor.visit(t);
-                    break;
-                }
-                case INCLUDE: {
-                    NTextInclude t = (NTextInclude) text;
-                    visitor.visit(t);
                     break;
                 }
             }
         }
+        // exit in reverse of enter order: since a node's children are always
+        // enqueued (and thus entered) after the node itself, this guarantees
+        // every node's exit fires only after all its descendants' enters have fired.
+        while (!entered.isEmpty()) {
+            visitor.exit(entered.pop());
+        }
     }
+
+//    @Override
+//    public void traverseDFS(NText text, Consumer<NText> visitor) {
+//        if (text == null) {
+//            return;
+//        }
+//        switch (text.type()) {
+//            case PLAIN:
+//            case CODE:
+//            case ANCHOR:
+//            case LINK:
+//            case COMMAND: {
+//                visitor.accept(text);
+//                break;
+//            }
+//            case TITLE: {
+//                NTextTitle t = (NTextTitle) text;
+//                NText child = t.child();
+//                if (child != null) {
+//                    visitor.accept(child);
+//                }
+//                visitor.accept(t);
+//                break;
+//            }
+//            case STYLED: {
+//                NTextStyled t = (NTextStyled) text;
+//                NText child = t.child();
+//                if (child != null) {
+//                    visitor.accept(child);
+//                }
+//                visitor.accept(t);
+//                break;
+//            }
+//            case LIST: {
+//                NTextList t = (NTextList) text;
+//                for (NText child : t.children()) {
+//                    if (child != null) {
+//                        visitor.accept(child);
+//                    }
+//                }
+//                visitor.accept(t);
+//                break;
+//            }
+//            case BUILDER: {
+//                NTextBuilder t = (NTextBuilder) text;
+//                for (NText child : t.children()) {
+//                    if (child != null) {
+//                        visitor.accept(child);
+//                    }
+//                }
+//                visitor.accept(t);
+//                break;
+//            }
+//            case INCLUDE: {
+//                NTextInclude t = (NTextInclude) text;
+//                visitor.accept(t);
+//                break;
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void traverseBFS(NText text, Consumer<NText> visitor) {
+//        Queue<NText> q = new ArrayDeque<>();
+//        q.add(text);
+//        while (!q.isEmpty()) {
+//            NText u = q.remove();
+//            switch (text.type()) {
+//                case PLAIN:
+//                case CODE:
+//                case ANCHOR:
+//                case LINK:
+//                case COMMAND: {
+//                    visitor.accept(text);
+//                    break;
+//                }
+//                case TITLE: {
+//                    NTextTitle t = (NTextTitle) text;
+//                    NText child = t.child();
+//                    if (child != null) {
+//                        q.add(child);
+//                    }
+//                    visitor.accept(t);
+//                    break;
+//                }
+//                case STYLED: {
+//                    NTextStyled t = (NTextStyled) text;
+//                    NText child = t.child();
+//                    if (child != null) {
+//                        q.add(child);
+//                    }
+//                    visitor.accept(t);
+//                    break;
+//                }
+//                case LIST: {
+//                    NTextList t = (NTextList) text;
+//                    for (NText child : t.children()) {
+//                        if (child != null) {
+//                            q.add(child);
+//                        }
+//                    }
+//                    visitor.accept(t);
+//                    break;
+//                }
+//                case BUILDER: {
+//                    NTextBuilder t = (NTextBuilder) text;
+//                    for (NText child : t.children()) {
+//                        if (child != null) {
+//                            q.add(child);
+//                        }
+//                    }
+//                    visitor.accept(t);
+//                    break;
+//                }
+//                case INCLUDE: {
+//                    NTextInclude t = (NTextInclude) text;
+//                    visitor.accept(t);
+//                    break;
+//                }
+//            }
+//        }
+//    }
 
     private NText transform(NText text, NTextTransformer transformer, NTextTransformerContext c) {
         if (text == null) {

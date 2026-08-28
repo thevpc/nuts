@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * @author thevpc
  * @since 0.8.0
  */
-public abstract class NIdFilterDelegate extends AbstractIdFilter {
+public abstract class NIdFilterDelegate extends NIdFilterBase {
     /**
      * Base n id filter.
      *

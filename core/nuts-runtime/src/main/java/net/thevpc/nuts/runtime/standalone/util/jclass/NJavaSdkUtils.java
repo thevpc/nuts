@@ -29,15 +29,20 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NJavaSdkUtils {
 
     private List<JavaProvider> javaProviders = new ArrayList<>();
-    private NExecutionEngineLocation hostVm;
+    private NRuntimeDistribution hostVm;
 
     private NJavaSdkUtils() {
         javaProviders.add(new TemurinProvider());
+        javaProviders.add(new CorrettoProvider());
+        javaProviders.add(new ZuluProvider());
+        javaProviders.add(new GraalVMProvider());
+        javaProviders.add(new OracleProvider());
     }
 
     public static NJavaSdkUtils of() {
@@ -80,15 +85,19 @@ public class NJavaSdkUtils {
         return validateJavaMajorVersion(version).orElse(defaultJavaMajorVersion());
     }
 
-    public NOptional<NExecutionEngineLocation> resolveAndInstall(String product, NVersion version, NOsFamily os, NArchFamily arch) {
-        for (JavaProvider kavaProvider : javaProviders) {
-            String product2 = NJavaSdkUtils.validateJavaProduct(product).orElse(NExecutionEngineLocation.JAVA_PRODUCT_JDK);
+    public NOptional<NRuntimeDistribution> resolveAndInstall(String product, NVersion version, NOsFamily os, NArchFamily arch, String vendor) {
+        List<JavaProvider> acceptableJavaProviders = new ArrayList<>(javaProviders);
+        if(!NBlankable.isBlank(vendor)){
+            acceptableJavaProviders=acceptableJavaProviders.stream().filter(x->NNameFormat.equalsIgnoreFormat(NStringUtils.strip(vendor),x.getName())).collect(Collectors.toList());
+        }
+        for (JavaProvider javaProvider : acceptableJavaProviders) {
+            String product2 = NJavaSdkUtils.validateJavaProduct(product).orElse(NRuntimeDistribution.JAVA_PRODUCT_JDK);
             int version2 = NJavaSdkUtils.validateJavaMajorVersionOrDefault(version);
             NOsFamily os2 = os == null ? NOsFamily.current() : os;
             NArchFamily arch2 = arch == null ? NArchFamily.current() : arch;
-            NOptional<NPath> z = kavaProvider.resolveAndInstall(product2, version2, os2, arch2);
+            NOptional<NPath> z = javaProvider.resolveAndInstall(product2, version2, os2, arch2);
             if (z.isPresent()) {
-                NExecutionEngineLocation r = resolveJdkLocation(z.get(), kavaProvider.getName() + "-" + product2 + "-" + version2 + "-" + arch2);
+                NRuntimeDistribution r = resolveJdkLocation(z.get(), javaProvider.getName() + "-" + product2 + "-" + version2 + "-" + arch2);
                 if (r != null) {
                     return NOptional.of(r);
                 }
@@ -97,6 +106,9 @@ public class NJavaSdkUtils {
         Map<String, Object> env = new LinkedHashMap<>();
         if (!NBlankable.isBlank(product)) {
             env.put("product", product);
+        }
+        if (!NBlankable.isBlank(vendor)) {
+            env.put("vendor", vendor);
         }
         if (!NBlankable.isBlank(version)) {
             env.put("version", version);
@@ -132,11 +144,11 @@ public class NJavaSdkUtils {
     public static NOptional<String> validateJavaProduct(String product) {
         if (!NBlankable.isBlank(product)) {
             switch (NStringUtils.strip(product).toLowerCase()) {
-                case NExecutionEngineLocation.JAVA_PRODUCT_JDK: {
-                    return NOptional.of(NExecutionEngineLocation.JAVA_PRODUCT_JDK);
+                case NRuntimeDistribution.JAVA_PRODUCT_JDK: {
+                    return NOptional.of(NRuntimeDistribution.JAVA_PRODUCT_JDK);
                 }
-                case NExecutionEngineLocation.JAVA_PRODUCT_JRE: {
-                    return NOptional.of(NExecutionEngineLocation.JAVA_PRODUCT_JRE);
+                case NRuntimeDistribution.JAVA_PRODUCT_JRE: {
+                    return NOptional.of(NRuntimeDistribution.JAVA_PRODUCT_JRE);
                 }
             }
         }
@@ -182,7 +194,7 @@ public class NJavaSdkUtils {
 
     public static boolean isJava(NId id) {
         if (id != null) {
-            return NExecutionEngineFamily.JAVA == NExecutionEngineFamily.parse(id.artifactId()).orNull();
+            return NRuntimeDistributionFamily.JAVA == NRuntimeDistributionFamily.parse(id.artifactId()).orNull();
         }
         return false;
     }
@@ -224,7 +236,7 @@ public class NJavaSdkUtils {
     public NVersionFilter createVersionFilterExact(String requestedJavaVersion) {
         requestedJavaVersion = NStringUtils.strip(requestedJavaVersion);
         NVersion vv = NVersion.get(requestedJavaVersion).get();
-        String singleVersion = vv.asSingleValue().orNull();
+        String singleVersion = vv.singleValue().orNull();
         if (singleVersion != null) {
             requestedJavaVersion = singleVersion;
         }
@@ -234,25 +246,25 @@ public class NJavaSdkUtils {
     public NVersionFilter createVersionFilter(String requestedJavaVersion) {
         requestedJavaVersion = NStringUtils.strip(requestedJavaVersion);
         NVersion vv = NVersion.get(requestedJavaVersion).get();
-        String singleVersion = vv.asSingleValue().orNull();
+        String singleVersion = vv.singleValue().orNull();
         if (singleVersion != null) {
             requestedJavaVersion = "[" + singleVersion + ",[";
         }
         return NVersionFilter.ofValue(requestedJavaVersion).get();
     }
 
-    public NExecutionEngineLocation getHostJvm() {
+    public NRuntimeDistribution getHostJvm() {
         if (hostVm == null) {
             String appSuffix = NEnv.of().osFamily() == NOsFamily.WINDOWS ? ".exe" : "";
-            String product = NExecutionEngineLocation.JAVA_PRODUCT_JRE;
+            String product = NRuntimeDistribution.JAVA_PRODUCT_JRE;
             if (new File(System.getProperty("java.home"), "bin" + File.separator + "javac" + (appSuffix)).isFile()) {
-                product = NExecutionEngineLocation.JAVA_PRODUCT_JDK;
+                product = NRuntimeDistribution.JAVA_PRODUCT_JDK;
             }
             String vmName = System.getProperty("java.vm.name");          // HotSpot / GraalVM CE
             String variant = vmName.toLowerCase().contains("graalvm") ? "GraalVM CE" :
                     vmName.toLowerCase().contains("hotspot") ? "HotSpot" :
                     vmName;
-            NExecutionEngineLocation current = new NExecutionEngineLocation(
+            NRuntimeDistributionImpl current = new NRuntimeDistributionImpl(
                     NEnv.of().java(),
                     System.getProperty("java.vendor"),
                     product,
@@ -269,7 +281,7 @@ public class NJavaSdkUtils {
         return hostVm;
     }
 
-    public NOptional<NExecutionEngineLocation> resolveJdkLocation(String javaVersion, boolean jdk, boolean ifNotFoundSearchLocally, boolean ifNotFoundSearchRemotely) {
+    public NOptional<NRuntimeDistribution> resolveJdkLocation(String javaVersion, boolean jdk, boolean ifNotFoundSearchLocally, boolean ifNotFoundSearchRemotely, String remoteVendor) {
         // [1] look if locally this version is installed (1.8)
         // [2] look if host JVM 1.8
         // [3] look if locally this version could be installed (1.8 after confirmation)
@@ -281,17 +293,17 @@ public class NJavaSdkUtils {
 
         Predicate<NVersion> requestedVersionFilterExact = validateJavaVersion(createVersionFilterExact(javaVersion));
 
-        NExecutionEngines nExecutionEngines = NExecutionEngines.of();
-        NExecutionEngineLocation[] allRegisteredInstallations = nExecutionEngines.findExecutionEngines().toArray(NExecutionEngineLocation[]::new);
-        NExecutionEngineLocationComparatorVersionFirstThenJdkFirst highestVersionFirst = new NExecutionEngineLocationComparatorVersionFirstThenJdkFirst(false);
+        NRuntimeDistributionManager nRuntimeDistributionManager = NRuntimeDistributionManager.of();
+        NRuntimeDistribution[] allRegisteredInstallations = nRuntimeDistributionManager.findRuntimeDistributions().toArray(NRuntimeDistribution[]::new);
+        NRuntimeDistributionLocationComparatorVersionFirstThenJdkFirst highestVersionFirst = new NRuntimeDistributionLocationComparatorVersionFirstThenJdkFirst(false);
         {
             // [1] look if locally this version is installed (1.8)
             // [2] look if host JVM 1.8
-            NExecutionEngineLocation[] found = Arrays.stream(allRegisteredInstallations).filter(x ->
-                    (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
-                            requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
+            NRuntimeDistribution[] found = Arrays.stream(allRegisteredInstallations).filter(x ->
+                    (!jdk || NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                            requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NRuntimeDistribution[]::new);
             if (found.length > 0) {
-                NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
+                NRuntimeDistribution[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NRuntimeDistribution[]::new);
                 return NOptional.of(sorted[0]);
             }
         }
@@ -299,21 +311,21 @@ public class NJavaSdkUtils {
                         NMsg.ofC("No Java %s found. will search for system installed locations. Would you want me to?", javaVersion)
                 ).defaultValue(true)
                 .booleanValue();
-        NExecutionEngineLocation[] searchedJdkLocations = new NExecutionEngineLocation[0];
+        NRuntimeDistribution[] searchedJdkLocations = new NRuntimeDistribution[0];
         if (searchSystemInstallations) {
             searchedJdkLocations = searchJdkLocations();
-            NExecutionEngineLocation[] found = Stream.of(searchedJdkLocations).filter(
+            NRuntimeDistribution[] found = Stream.of(searchedJdkLocations).filter(
                     x ->
-                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
-                                    requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            (!jdk || NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                                    requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NRuntimeDistribution[]::new);
             if (found.length > 0) {
-                NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
-                for (NExecutionEngineLocation selected : sorted) {
+                NRuntimeDistribution[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NRuntimeDistribution[]::new);
+                for (NRuntimeDistribution selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found in your system this %s installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.name(), selected.path())
                             ).defaultValue(true)
                             .booleanValue()) {
-                        nExecutionEngines.addExecutionEngine(selected);
+                        nRuntimeDistributionManager.addRuntimeDistribution(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
@@ -327,18 +339,18 @@ public class NJavaSdkUtils {
 
         if (searchRemoteInstallations) {
             // [4] look if remotely this version could be installed (1.8 after confirmation)
-            NExecutionEngineLocation[] found = Stream.of(searchRemoteLocationsAndInstall(jdk ? NExecutionEngineLocation.JAVA_PRODUCT_JDK : NExecutionEngineLocation.JAVA_PRODUCT_JRE, NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion))).filter(
+            NRuntimeDistribution[] found = Stream.of(searchRemoteLocationsAndInstall(jdk ? NRuntimeDistribution.JAVA_PRODUCT_JDK : NRuntimeDistribution.JAVA_PRODUCT_JRE, NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion),remoteVendor)).filter(
                     x ->
-                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
-                                    requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            (!jdk || NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                                    requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NRuntimeDistribution[]::new);
             if (found.length > 0) {
-                NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NExecutionEngineLocation[]::new);
-                for (NExecutionEngineLocation selected : sorted) {
+                NRuntimeDistribution[] sorted = Arrays.stream(found).sorted(highestVersionFirst).toArray(NRuntimeDistribution[]::new);
+                for (NRuntimeDistribution selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found in your system this %s installation : %s (located at %s). Would you like to auto-configure and use it?", javaVersion, selected.name(), selected.path())
                             ).defaultValue(true)
                             .booleanValue()) {
-                        nExecutionEngines.addExecutionEngine(selected);
+                        nRuntimeDistributionManager.addRuntimeDistribution(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
@@ -347,21 +359,21 @@ public class NJavaSdkUtils {
         }
         NTrace.println(NMsg.ofC("Still no exact Java %s found. will search for most appropriate one.", javaVersion));
         Predicate<NVersion> requestedVersionFilterBigger = validateJavaVersion(createVersionFilter(javaVersion));
-        NExecutionEngineLocationComparatorVersionFirstThenJdkFirst lowerVersionFirst = new NExecutionEngineLocationComparatorVersionFirstThenJdkFirst(true);
+        NRuntimeDistributionLocationComparatorVersionFirstThenJdkFirst lowerVersionFirst = new NRuntimeDistributionLocationComparatorVersionFirstThenJdkFirst(true);
         {
             // [5] look if locally this version is installed >1.8)
             // [6] look if host JVM >1.8
-            NExecutionEngineLocation[] found = Arrays.stream(allRegisteredInstallations).filter(x ->
-                    (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
-                            requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
+            NRuntimeDistribution[] found = Arrays.stream(allRegisteredInstallations).filter(x ->
+                    (!jdk || NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                            requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NRuntimeDistribution[]::new);
             if (found.length > 0) {
-                NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
-                for (NExecutionEngineLocation selected : sorted) {
+                NRuntimeDistribution[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NRuntimeDistribution[]::new);
+                for (NRuntimeDistribution selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found this registered installation : %s. Would you like to use it instead of %s?", selected.name(), javaVersion)
                             ).defaultValue(true)
                             .booleanValue()) {
-                        nExecutionEngines.addExecutionEngine(selected);
+                        nRuntimeDistributionManager.addRuntimeDistribution(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
@@ -370,18 +382,18 @@ public class NJavaSdkUtils {
         }
         if (searchSystemInstallations) {
             // [7] look if locally this version could be installed (>1.8 after confirmation)
-            NExecutionEngineLocation[] found = Stream.of(searchedJdkLocations).filter(
+            NRuntimeDistribution[] found = Stream.of(searchedJdkLocations).filter(
                     x ->
-                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
-                                    requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            (!jdk || NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                                    requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NRuntimeDistribution[]::new);
             if (found.length > 0) {
-                NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
-                for (NExecutionEngineLocation selected : sorted) {
+                NRuntimeDistribution[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NRuntimeDistribution[]::new);
+                for (NRuntimeDistribution selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found this system installation : %s (located at %s). Would you like to auto-configure and use it?", selected.name(), selected.path())
                             ).defaultValue(true)
                             .booleanValue()) {
-                        nExecutionEngines.addExecutionEngine(selected);
+                        nRuntimeDistributionManager.addRuntimeDistribution(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
@@ -390,20 +402,20 @@ public class NJavaSdkUtils {
         }
         if (searchRemoteInstallations) {
             // [4] look if remotely this version could be installed (1.8 after confirmation)
-            NExecutionEngineLocation[] found = Stream.of(searchRemoteLocationsAndInstall(
-                    jdk ? NExecutionEngineLocation.JAVA_PRODUCT_JDK : NExecutionEngineLocation.JAVA_PRODUCT_JRE
-                    , NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion))).filter(
+            NRuntimeDistribution[] found = Stream.of(searchRemoteLocationsAndInstall(
+                    jdk ? NRuntimeDistribution.JAVA_PRODUCT_JDK : NRuntimeDistribution.JAVA_PRODUCT_JRE
+                    , NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion),remoteVendor)).filter(
                     x ->
-                            (!jdk || NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
-                                    requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NExecutionEngineLocation[]::new);
+                            (!jdk || NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
+                                    requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NRuntimeDistribution[]::new);
             if (found.length > 0) {
-                NExecutionEngineLocation[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NExecutionEngineLocation[]::new);
-                for (NExecutionEngineLocation selected : sorted) {
+                NRuntimeDistribution[] sorted = Arrays.stream(found).sorted(lowerVersionFirst).toArray(NRuntimeDistribution[]::new);
+                for (NRuntimeDistribution selected : sorted) {
                     if (NIn.ask().forBoolean(
                                     NMsg.ofC("Found this installation : %s (located at %s). Would you like to auto-configure and use it?", selected.name(), selected.path())
                             ).defaultValue(true)
                             .booleanValue()) {
-                        nExecutionEngines.addExecutionEngine(selected);
+                        nRuntimeDistributionManager.addRuntimeDistribution(selected);
                         NWorkspace.of().saveConfig();
                         return NOptional.of(selected);
                     }
@@ -418,15 +430,15 @@ public class NJavaSdkUtils {
         return new SpecialJavaVersionPredicate(versionFilter);
     }
 
-    public NExecutionEngineLocation[] searchRemoteLocationsAndInstall(String product, NVersion version) {
-        NOptional<NExecutionEngineLocation> e = resolveAndInstall(product, version, null, null);
+    public NRuntimeDistribution[] searchRemoteLocationsAndInstall(String product, NVersion version, String vendor) {
+        NOptional<NRuntimeDistribution> e = resolveAndInstall(product, version, null, null,vendor);
         if (e.isPresent()) {
-            return new NExecutionEngineLocation[]{e.get()};
+            return new NRuntimeDistribution[]{e.get()};
         }
-        return new NExecutionEngineLocation[0];
+        return new NRuntimeDistribution[0];
     }
 
-    public NExecutionEngineLocation[] searchJdkLocations() {
+    public NRuntimeDistribution[] searchJdkLocations() {
         String[] conf = {};
         switch (NEnv.of().osFamily()) {
             case LINUX:
@@ -450,20 +462,20 @@ public class NJavaSdkUtils {
                 break;
             }
         }
-        List<NExecutionEngineLocation> all = new ArrayList<>();
+        List<NRuntimeDistribution> all = new ArrayList<>();
         for (String s : conf) {
             all.addAll(Arrays.asList(searchJdkLocations(NPath.of(s))));
         }
-        return all.toArray(new NExecutionEngineLocation[0]);
+        return all.toArray(new NRuntimeDistribution[0]);
     }
 
-    public Future<NExecutionEngineLocation[]> searchJdkLocationsFuture() {
+    public Future<NRuntimeDistribution[]> searchJdkLocationsFuture() {
         LinkedHashSet<String> conf = new LinkedHashSet<>();
         NPath file = NPath.of(System.getProperty("java.home")).normalize();
-        List<Future<NExecutionEngineLocation[]>> all = new ArrayList<>();
-        NExecutionEngineLocation base = resolveJdkLocation(file, null);
+        List<Future<NRuntimeDistribution[]>> all = new ArrayList<>();
+        NRuntimeDistribution base = resolveJdkLocation(file, null);
         if (base != null) {
-            all.add(CompletableFuture.completedFuture(new NExecutionEngineLocation[]{base}));
+            all.add(CompletableFuture.completedFuture(new NRuntimeDistribution[]{base}));
         }
         switch (NEnv.of().osFamily()) {
             case LINUX:
@@ -488,23 +500,23 @@ public class NJavaSdkUtils {
             all.add(searchJdkLocationsFuture(NPath.of(s)));
         }
         return NConcurrent.of().executorService().submit(() -> {
-            List<NExecutionEngineLocation> locs = new ArrayList<>();
-            for (Future<NExecutionEngineLocation[]> nutsSdkLocationFuture : all) {
-                NExecutionEngineLocation[] e = nutsSdkLocationFuture.get();
+            List<NRuntimeDistribution> locs = new ArrayList<>();
+            for (Future<NRuntimeDistribution[]> nutsSdkLocationFuture : all) {
+                NRuntimeDistribution[] e = nutsSdkLocationFuture.get();
                 if (e != null) {
                     locs.addAll(Arrays.asList(e));
                 }
             }
             locs.sort(new NSdkLocationComparator());
-            return locs.toArray(new NExecutionEngineLocation[0]);
+            return locs.toArray(new NRuntimeDistribution[0]);
         });
     }
 
-    public NExecutionEngineLocation[] searchJdkLocations(NPath loc) {
-        List<NExecutionEngineLocation> all = new ArrayList<>();
+    public NRuntimeDistribution[] searchJdkLocations(NPath loc) {
+        List<NRuntimeDistribution> all = new ArrayList<>();
         if (loc.isDirectory()) {
             for (NPath d : loc.list()) {
-                NExecutionEngineLocation r = resolveJdkLocation(d, null);
+                NRuntimeDistribution r = resolveJdkLocation(d, null);
                 if (r != null) {
                     all.add(r);
 //                    if (session != null && session.isPlainTrace()) {
@@ -518,18 +530,18 @@ public class NJavaSdkUtils {
             }
         }
         all.sort(new NSdkLocationComparator());
-        return all.toArray(new NExecutionEngineLocation[0]);
+        return all.toArray(new NRuntimeDistribution[0]);
     }
 
-    public Future<NExecutionEngineLocation[]> searchJdkLocationsFuture(NPath s) {
-        List<Future<NExecutionEngineLocation>> all = new ArrayList<>();
+    public Future<NRuntimeDistribution[]> searchJdkLocationsFuture(NPath s) {
+        List<Future<NRuntimeDistribution>> all = new ArrayList<>();
         if (s == null) {
-            return CompletableFuture.completedFuture(new NExecutionEngineLocation[0]);
+            return CompletableFuture.completedFuture(new NRuntimeDistribution[0]);
         } else if (s.isDirectory()) {
             for (NPath d : s.list()) {
                 all.add(
                         NConcurrent.of().executorService().submit(() -> {
-                            NExecutionEngineLocation r = null;
+                            NRuntimeDistribution r = null;
                             try {
                                 r = resolveJdkLocation(d, null);
                                 if (r != null) {
@@ -551,16 +563,16 @@ public class NJavaSdkUtils {
             }
         }
         return NConcurrent.of().executorService().submit(() -> {
-            List<NExecutionEngineLocation> locs = new ArrayList<>();
-            for (Future<NExecutionEngineLocation> nutsSdkLocationFuture : all) {
-                NExecutionEngineLocation e = nutsSdkLocationFuture.get();
+            List<NRuntimeDistribution> locs = new ArrayList<>();
+            for (Future<NRuntimeDistribution> nutsSdkLocationFuture : all) {
+                NRuntimeDistribution e = nutsSdkLocationFuture.get();
                 if (e != null) {
                     locs.add(e);
                 }
             }
             //just reset the line!
             NSession.of().terminal().printProgress(NMsg.ofP(""));
-            return locs.toArray(new NExecutionEngineLocation[0]);
+            return locs.toArray(new NRuntimeDistribution[0]);
         });
     }
 
@@ -590,7 +602,7 @@ public class NJavaSdkUtils {
         return null;
     }
 
-    public NExecutionEngineLocation resolveJdkLocation(NPath path, String preferredName) {
+    public NRuntimeDistribution resolveJdkLocation(NPath path, String preferredName) {
         NAssert.requireNamedNonBlank(path, "path");
         String appSuffix = NEnv.of().osFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         NPath bin = path.resolve("bin");
@@ -675,16 +687,16 @@ public class NJavaSdkUtils {
             }
             return null;
         }
-        String product = NExecutionEngineLocation.JAVA_PRODUCT_JRE;
+        String product = NRuntimeDistribution.JAVA_PRODUCT_JRE;
         if (bin.resolve("javac" + appSuffix).isRegularFile() && bin.resolve("jps" + appSuffix).isRegularFile()) {
-            product = NExecutionEngineLocation.JAVA_PRODUCT_JDK;
+            product = NRuntimeDistribution.JAVA_PRODUCT_JDK;
         }
         if (NBlankable.isBlank(preferredName)) {
             preferredName = product + "-" + vendor + "-" + jdkVersion;
         } else {
             preferredName = NStringUtils.strip(preferredName);
         }
-        NExecutionEngineLocation r = new NExecutionEngineLocation(
+        NRuntimeDistributionImpl r = new NRuntimeDistributionImpl(
                 NWorkspaceUtils.of().createSdkId("java", jdkVersion),
                 vendor,
                 product,
@@ -719,8 +731,8 @@ public class NJavaSdkUtils {
                 .build();
     }
 
-    public NOptional<String> resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, boolean jdk, boolean ifNotFoundSearchLocally, boolean ifNotFoundSearchRemotely) {
-        NOptional<NExecutionEngineLocation> nutsPlatformLocation = resolveJdkLocation(requestedJavaVersion, jdk, ifNotFoundSearchLocally, ifNotFoundSearchRemotely);
+    public NOptional<String> resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, boolean jdk, boolean ifNotFoundSearchLocally, boolean ifNotFoundSearchRemotely,String removeVendor) {
+        NOptional<NRuntimeDistribution> nutsPlatformLocation = resolveJdkLocation(requestedJavaVersion, jdk, ifNotFoundSearchLocally, ifNotFoundSearchRemotely,removeVendor);
         if (nutsPlatformLocation.isPresent()) {
             return resolveJavaCommandByVersion(nutsPlatformLocation.get(), javaw);
         } else {
@@ -728,7 +740,7 @@ public class NJavaSdkUtils {
         }
     }
 
-    public NOptional<String> resolveJavaCommandByVersion(NExecutionEngineLocation nutsPlatformLocation, boolean javaw) {
+    public NOptional<String> resolveJavaCommandByVersion(NRuntimeDistribution nutsPlatformLocation, boolean javaw) {
         if (nutsPlatformLocation == null) {
             return NOptional.of("command");
         }
@@ -807,9 +819,9 @@ public class NJavaSdkUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    private static class ByVersionSorter implements Function<NExecutionEngineLocation, NVersion> {
+    private static class ByVersionSorter implements Function<NRuntimeDistribution, NVersion> {
         @Override
-        public NVersion apply(NExecutionEngineLocation x) {
+        public NVersion apply(NRuntimeDistribution x) {
             return NVersion.get(x.version()).orNull();
         }
     }
@@ -871,15 +883,15 @@ public class NJavaSdkUtils {
         }
     }
 
-    private static class NExecutionEngineLocationComparatorVersionFirstThenJdkFirst implements Comparator<NExecutionEngineLocation> {
+    private static class NRuntimeDistributionLocationComparatorVersionFirstThenJdkFirst implements Comparator<NRuntimeDistribution> {
         private final boolean lowestVersionFirst;
 
-        public NExecutionEngineLocationComparatorVersionFirstThenJdkFirst(boolean lowestVersionFirst) {
+        public NRuntimeDistributionLocationComparatorVersionFirstThenJdkFirst(boolean lowestVersionFirst) {
             this.lowestVersionFirst = lowestVersionFirst;
         }
 
         @Override
-        public int compare(NExecutionEngineLocation a, NExecutionEngineLocation b) {
+        public int compare(NRuntimeDistribution a, NRuntimeDistribution b) {
             int c;
             c = Integer.compare(b.priority(), a.priority()); // higher priority first
             if (c != 0) {
@@ -896,8 +908,8 @@ public class NJavaSdkUtils {
                 return c;
             }
             c = Integer.compare(
-                    (NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(a.product()) ? 0 : 1),
-                    (NExecutionEngineLocation.JAVA_PRODUCT_JDK.equalsIgnoreCase(b.product()) ? 0 : 1)
+                    (NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(a.product()) ? 0 : 1),
+                    (NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(b.product()) ? 0 : 1)
             );
             if (c != 0) {
                 return c;

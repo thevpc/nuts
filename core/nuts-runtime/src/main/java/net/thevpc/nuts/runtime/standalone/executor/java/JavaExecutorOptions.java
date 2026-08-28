@@ -5,7 +5,7 @@ import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.platform.NExecutionEngineLocation;
+import net.thevpc.nuts.platform.NRuntimeDistribution;
 import net.thevpc.nuts.runtime.standalone.atrifact.DefaultNClasspathEntry;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -575,7 +575,7 @@ public final class JavaExecutorOptions {
             javaVersion = explicitJavaVersion.toString();
         }
         NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of();
-        NOptional<NExecutionEngineLocation> nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(), false, true, true);
+        NOptional<NRuntimeDistribution> nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(), false, true, true,null);
         if (!nutsPlatformLocation.isPresent()) {
             throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.strip(getJavaVersion())), NExecutionException.ERROR_1);
         }

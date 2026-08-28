@@ -8,10 +8,9 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
-import net.thevpc.nuts.spi.base.AbstractNPredicate;
+import net.thevpc.nuts.spi.base.NPredicateBase;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NStringUtils;
@@ -26,7 +25,7 @@ import java.util.regex.Pattern;
 /**
  * @author thevpc
  */
-public class NPatternDefinitionFilter extends AbstractDefinitionFilter implements NDefinitionFilter {
+public class NPatternDefinitionFilter extends DefinitionFilterBase implements NDefinitionFilter {
 
     private NId id;
     private Pattern g;
@@ -126,7 +125,7 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
         return true;
     }
 
-    private static class PredicateStaticKey extends AbstractNPredicate<Map<String, String>> {
+    private static class PredicateStaticKey extends NPredicateBase<Map<String, String>> {
 
         private final String key;
         private final String val;
@@ -162,7 +161,7 @@ public class NPatternDefinitionFilter extends AbstractDefinitionFilter implement
         }
     }
 
-    private static class PredicateWildKey extends AbstractNPredicate<Map<String, String>> {
+    private static class PredicateWildKey extends NPredicateBase<Map<String, String>> {
 
         private Pattern keyPattern;
         private Pattern valPattern;

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NJdkExtension;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,6 +14,7 @@ import java.nio.charset.Charset;
  * @author thevpc
  * @since 0.8.0
  */
+@NJdkExtension
 public class WriterOutputStream extends OutputStream {
     private final Writer writer;
     private final Charset charset;

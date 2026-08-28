@@ -7,7 +7,7 @@ import net.thevpc.nuts.text.NMsg;
 
 import java.util.Objects;
 
-public class SafeNDefinitionFilter extends AbstractDefinitionFilter {
+public class SafeNDefinitionFilter extends DefinitionFilterBase {
     private NDefinitionFilter base;
     private NMsg source;
 

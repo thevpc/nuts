@@ -1,5 +1,7 @@
 package net.thevpc.nuts.swing;
 
+import net.thevpc.nuts.util.NException;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -100,7 +102,7 @@ public class UIHelper {
         try {
             mt.waitForAll();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
     }
 
@@ -114,10 +116,8 @@ public class UIHelper {
         }else{
             try {
                 SwingUtilities.invokeAndWait(r);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException|InvocationTargetException e) {
+                throw NException.ofUncheckedException(e);
             }
         }
     }

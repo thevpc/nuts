@@ -842,7 +842,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new NUnsupportedOperationException(NMsg.ofC("clone failed for type %s", getClass().getName()), e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

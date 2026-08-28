@@ -27,9 +27,9 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.spi.base.NPredicateBase;
+import net.thevpc.nuts.internal.NReservedNPredicateUtils;
+import net.thevpc.nuts.spi.base.NPredicateImpl;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -38,37 +38,37 @@ import java.util.function.Predicate;
  * @param <T> Type
  */
 public interface NPredicate<T> extends Predicate<T>, NRedescribable<NPredicate<T>> {
-    /**
-     * Creates a new instance of of non null.
-     *
-     * @return of non null result
-     */
-    static <T> NPredicate<T> ofNonNull() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param Objects::nonNull objects::non null
-         * @param NElement.ofName("nonNull") n element.of name("non null")
-         * @return of result
-         */
-        return of(Objects::nonNull, NElement.ofName("nonNull"));
-    }
-
-    /**
-     * Creates a new instance of of null.
-     *
-     * @return of null result
-     */
-    static <T> NPredicate<T> ofNull() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param Objects::isNull objects::is null
-         * @param NElement.ofName("nonNull") n element.of name("non null")
-         * @return of result
-         */
-        return of(Objects::isNull, NElement.ofName("nonNull"));
-    }
+//    /**
+//     * Creates a new instance of of non null.
+//     *
+//     * @return of non null result
+//     */
+//    static <T> NPredicate<T> ofNonNull() {
+//        /**
+//         * Creates a new instance of of.
+//         *
+//         * @param Objects::nonNull objects::non null
+//         * @param NElement.ofName("nonNull") n element.of name("non null")
+//         * @return of result
+//         */
+//        return of(Objects::nonNull, NElement.ofName("nonNull"));
+//    }
+//
+//    /**
+//     * Creates a new instance of of null.
+//     *
+//     * @return of null result
+//     */
+//    static <T> NPredicate<T> ofNull() {
+//        /**
+//         * Creates a new instance of of.
+//         *
+//         * @param Objects::isNull objects::is null
+//         * @param NElement.ofName("nonNull") n element.of name("non null")
+//         * @return of result
+//         */
+//        return of(Objects::isNull, NElement.ofName("nonNull"));
+//    }
 
     /**
      * Creates a new instance of of non blank.
@@ -86,21 +86,21 @@ public interface NPredicate<T> extends Predicate<T>, NRedescribable<NPredicate<T
         return of(NBlankable::isNonBlank, NElement.ofName("nonNull"));
     }
 
-    /**
-     * Creates a new instance of of blank.
-     *
-     * @return of blank result
-     */
-    static <T> NPredicate<T> ofBlank() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param NBlankable::isBlank n blankable::is blank
-         * @param NElement.ofName("nonNull") n element.of name("non null")
-         * @return of result
-         */
-        return of(NBlankable::isBlank, NElement.ofName("nonNull"));
-    }
+//    /**
+//     * Creates a new instance of of blank.
+//     *
+//     * @return of blank result
+//     */
+//    static <T> NPredicate<T> ofBlank() {
+//        /**
+//         * Creates a new instance of of.
+//         *
+//         * @param NBlankable::isBlank n blankable::is blank
+//         * @param NElement.ofName("nonNull") n element.of name("non null")
+//         * @return of result
+//         */
+//        return of(NBlankable::isBlank, NElement.ofName("nonNull"));
+//    }
 
     /**
      * Creates a new instance of of.
@@ -133,8 +133,61 @@ public interface NPredicate<T> extends Predicate<T>, NRedescribable<NPredicate<T
         if (o instanceof NPredicate<?>) {
             return (NPredicate<T>) o;
         }
-        return new NPredicateBase<>(o, description);
+        return new NPredicateImpl<>(o, description);
     }
+
+    /**
+     * Never.
+     *
+     * @return never result
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> NPredicate<T> ofNever() {
+        return NReservedNPredicateUtils.never();
+    }
+
+    /**
+     * Blank.
+     *
+     * @return blank result
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> NPredicate<T> ofBlank() {
+        return NReservedNPredicateUtils.blank();
+    }
+
+    /**
+     * Always.
+     *
+     * @return always result
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> NPredicate<T> ofAlways() {
+        return NReservedNPredicateUtils.always();
+    }
+
+    /**
+     * Checks if is null.
+     *
+     * @return is null result
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> NPredicate<T> ofNull() {
+        return NReservedNPredicateUtils.isNull();
+    }
+
+    /**
+     * Non null.
+     *
+     * @return non null result
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> NPredicate<T> ofNonNull() {
+        return NReservedNPredicateUtils.nonNull();
+    }
+
+
+
 
 
     /**

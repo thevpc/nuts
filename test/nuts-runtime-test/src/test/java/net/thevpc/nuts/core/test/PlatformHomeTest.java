@@ -21,7 +21,7 @@ public class PlatformHomeTest {
 
     @Test
     public void test02() {
-        NExecutionEngineLocation z = NExecutionEngines.of().findExecutionEngineByVersion(NExecutionEngineFamily.JAVA, "[1.8,6]").orNull();
+        NRuntimeDistribution z = NRuntimeDistributionManager.of().findRuntimeDistributionByVersion(NRuntimeDistributionFamily.JAVA, "[1.8,6]").orNull();
         TestUtils.println(z);
     }
 
