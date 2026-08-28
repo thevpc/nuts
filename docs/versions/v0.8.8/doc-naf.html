@@ -2899,7 +2899,7 @@ public class App {
         new App().run(NAppRunOptions.ofExit(args));
     }
 
-    @NAppRunner
+    @NAppRun
     public void run() {
         NCmdLine cmd = NApp.of().getCmdLine();
         File file = new File(&quot;file.xls&quot;);
@@ -3098,7 +3098,7 @@ public class AppExample {
         SpringApplication.run(AppExample.class, args);
     }
 
-    @NAppRunner // not mandatory
+    @NAppRun // not mandatory
     public void run() {
         NOut.println(&quot;Hello ##World##&quot;);
     }

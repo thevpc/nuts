@@ -231,7 +231,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         NPath newP = resolveRelativePath(p, config.currentDir());
                         NText n = NTextParser.of().parse(newP);
                         //do not continue
-                        return NText.transform(n, config.copy()
+                        return n.transform(config.copy()
                                 .processIncludes(true)
                                 .currentDir(newP.parent())
                                 .importClassLoader(config.importClassLoader())
@@ -246,7 +246,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     text = t.highlight();
                     // We have no insurance that highlight is not using special nodes so
                     // we enforce flattening
-                    text = NText.transform(text, context.config().copy()
+                    text = text.transform(context.config().copy()
                             .flatten(true)
                             .normalize(config.isNormalize())
                             .processVars(config.isProcessVars())

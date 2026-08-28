@@ -138,7 +138,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
             return printNull();
         }
         NText t = b;
-        NText transformed = NText.transform(t,
+        NText transformed = t.transform(
                 new NTextTransformConfig()
                         .normalize(true)
                         .flatten(true)

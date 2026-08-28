@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * public class AppMain {
  *
  *     public static void main(String[] args) {
- *         NApp.builder(args).run();
+ *         NApplication.builder(args).run();
  *     }
  *
  *     // ... installer/updater/uninstaller unchanged ...

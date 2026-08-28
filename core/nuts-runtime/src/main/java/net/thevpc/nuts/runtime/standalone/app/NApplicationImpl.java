@@ -472,7 +472,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         }
         if (h != null) {
             try {
-                h = NText.transform(h, new NTextTransformConfig()
+                h = h.transform(new NTextTransformConfig()
                         .processTitleNumbers(true)
                         .normalize(true)
                         .flatten(true)
@@ -488,7 +488,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
     @Override
     public void printHelp() {
         NText h = NWorkspaceExt.of().resolveDefaultHelp(sourceType());
-        h = NText.transform(h, new NTextTransformConfig()
+        h = h.transform(new NTextTransformConfig()
                 .processTitleNumbers(true)
                 .normalize(true)
                 .flatten(true)

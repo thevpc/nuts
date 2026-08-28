@@ -572,7 +572,7 @@ class SshNPath implements NPathSPI {
         try (SshConnection c = prepareSshConnection()) {
             return c.getInfo(path.path());
         } catch (Exception e) {
-            return DefaultNPathInfo.ofNotFound(path.path());
+            return NPathInfo.ofNotFound(path.path());
         }
     }
 

@@ -5,10 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.cmdline.*;
-import net.thevpc.nuts.cmdline.DefaultNCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NPath;
@@ -44,7 +42,7 @@ public class CmdLineTest {
 
     @Test
     public void test2() throws Exception {
-        NCmdLine cmd = new DefaultNCmdLine().registerSpecialSimpleOption("-version");
+        NCmdLine cmd = NCmdLine.ofArgs().registerSpecialSimpleOption("-version");
         Assertions.assertEquals(true,cmd.isSpecialSimpleOption("-//version"));
     }
 
@@ -240,7 +238,7 @@ public class CmdLineTest {
 
     @Test
     public void testArgument13(){
-        NCmdLine c=new DefaultNCmdLine(new String[]{"-1=15"}, NShellFamily.BASH).expandSimpleOptions(true);
+        NCmdLine c=NCmdLine.ofArgs(NShellFamily.BASH,"-1=15").expandSimpleOptions(true);
         NArg a = c.next().get();
         Assertions.assertEquals("-1",a.getStringKey().get());
     }
@@ -276,7 +274,7 @@ public class CmdLineTest {
     }
 
     private NCmdLine cmd(String... args) {
-        return new DefaultNCmdLine(java.util.Arrays.asList(args));
+        return NCmdLine.of(java.util.Arrays.asList(args));
     }
 
     // ---------------------------------------------------------------

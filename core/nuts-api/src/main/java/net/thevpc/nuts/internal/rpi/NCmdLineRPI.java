@@ -66,5 +66,4 @@ public interface NCmdLineRPI extends NComponent {
      */
     NCmdLine createCmdLineByArgs(String[] args, NShellFamily family);
 
-
 }

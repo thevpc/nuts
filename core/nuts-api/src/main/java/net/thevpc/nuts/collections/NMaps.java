@@ -1,5 +1,7 @@
 package net.thevpc.nuts.collections;
 
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -672,4 +674,7 @@ public class NMaps {
         return m;
     }
 
+    public static <K, V> Map<K, V> ofConcurrentReadWriteLRUMap(int size) {
+        return NUtilsRPI.of().createConcurrentReadWriteLRUMap(size);
+    }
 }

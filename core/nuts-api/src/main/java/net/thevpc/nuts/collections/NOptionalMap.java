@@ -13,13 +13,23 @@ import java.util.Map;
  */
 public interface NOptionalMap<K, V> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of NOptionalMap.
      *
      * @return of result
      */
-    static <K, V> NOptionalMap<K, V> of(){
-        return  NUtilsRPI.of().createOptionalMap();
+    static <K, V> NOptionalMap<K, V> of() {
+        return NUtilsRPI.of().createOptionalMap();
     }
+
+    /**
+     * Creates a new instance of NOptionalMap.
+     *
+     * @return of result
+     */
+    static <K, V> NOptionalMap<K, V> of(Map<K, V> map) {
+        return NUtilsRPI.of().createOptionalMap(map);
+    }
+
     /**
      * Size.
      *
@@ -38,7 +48,7 @@ public interface NOptionalMap<K, V> {
     /**
      * Put if absent.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return put if absent result
      */
@@ -47,7 +57,7 @@ public interface NOptionalMap<K, V> {
     /**
      * Put.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return put result
      */

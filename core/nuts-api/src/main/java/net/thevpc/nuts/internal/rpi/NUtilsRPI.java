@@ -27,6 +27,8 @@
 package net.thevpc.nuts.internal.rpi;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.collections.*;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
@@ -36,6 +38,7 @@ import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.pipeline.*;
 import net.thevpc.nuts.platform.NRuntimeDistribution;
+import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NMsgType;
@@ -960,4 +963,7 @@ public interface NUtilsRPI extends NComponent {
     <T,K> NCollectionDiffBuilder<T,K> createCollectionDiffBuilder();
 
     NRuntimeDistribution createRuntimeDistribution(NId id, String vendor, String product, String variant, String name, String path, String version, String packaging, int priority);
+    NLiteral createLiteral(Object any);
+
+    NArg createCmdlineArg(String value, NCmdLine cmdline);
 }

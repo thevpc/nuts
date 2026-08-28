@@ -821,7 +821,7 @@ public abstract class SshConnectionBase implements SshConnection {
                                     NPathInfo nPathInfo = parseStatLine(line);
                                     NPathInfo o = lazy.get(nPathInfo.path());
                                     found.add(
-                                            new  DefaultNPathInfo(
+                                            NPathInfo.of(
                                                     o.name(),
                                                     o.path(), o.type(), nPathInfo.type(), o.targetPath(), o.contentLength(), o.isSymbolicLink(), o.lastModifiedInstant(), o.lastAccessInstant(), o.creationInstant(), o.permissions(), o.owner(), o.group()
                                             )
@@ -901,7 +901,7 @@ public abstract class SshConnectionBase implements SshConnection {
         int u = NStringUtils.lastIndexOf(pathStr, new char[]{'/', '\\'});
         String name=u<0?pathStr:pathStr.substring(u+1);
 
-        return new DefaultNPathInfo(
+        return NPathInfo.of(
                 name,
                 pathStr,
                 type,
@@ -993,7 +993,7 @@ public abstract class SshConnectionBase implements SshConnection {
         }
         int u = NStringUtils.lastIndexOf(pathStr, new char[]{'/', '\\'});
         String name=u<0?pathStr:pathStr.substring(u+1);
-        return new DefaultNPathInfo(name,pathStr, type, targetType, targetPathStr, size, isSymlink,
+        return NPathInfo.of(name,pathStr, type, targetType, targetPathStr, size, isSymlink,
                 Instant.ofEpochSecond(lastModifiedEpoch),
                 lastAccessEpoch > 0 ? Instant.ofEpochSecond(lastAccessEpoch) : null,
                 creationEpoch > 0 ? Instant.ofEpochSecond(creationEpoch) : null,
@@ -1047,7 +1047,7 @@ public abstract class SshConnectionBase implements SshConnection {
                 }
 
                 // Fallback: not found
-                return DefaultNPathInfo.ofNotFound(path);
+                return NPathInfo.ofNotFound(path);
             }
             default: {
                 IOResult stat = execStringCommandGrabbed("stat '--printf=%n;%F;%s;%Y;%X;%W;%A;%U;%G;%N\\n' "+doEscapeArg(path)+" ; stat -L '--printf=%n;%F;%s;%Y;%X;%W;%A;%U;%G;%N\\n' "+doEscapeArg(path)+" ; ");
@@ -1056,7 +1056,7 @@ public abstract class SshConnectionBase implements SshConnection {
                     NPathInfo o = parseStatLine(lines.get(0));
                     if(o.isSymbolicLink()){
                         NPathInfo line2 = parseStatLine(lines.get(1));
-                        return new  DefaultNPathInfo(
+                        return NPathInfo.of(
                                 o.name(),
                                 o.path(), o.type(), line2.targetType(), o.targetPath(), o.contentLength(), o.isSymbolicLink(), o.lastModifiedInstant(), o.creationInstant(), o.lastAccessInstant(), o.permissions(), o.owner(), o.group()
                         );
@@ -1066,6 +1066,6 @@ public abstract class SshConnectionBase implements SshConnection {
                 break;
             }
         }
-        return DefaultNPathInfo.ofNotFound(path);
+        return NPathInfo.ofNotFound(path);
     }
 }

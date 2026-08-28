@@ -31,7 +31,7 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
     protected NPrintStream printParsed(NText b) {
         switch (terminalMode()) {
             case FILTERED:{
-                NText transformed = NText.transform(b,
+                NText transformed = b.transform(
                         new NTextTransformConfig()
                                 .filtered(true)
                                 .normalize(true)

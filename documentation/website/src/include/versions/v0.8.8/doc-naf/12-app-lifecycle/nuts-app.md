@@ -185,7 +185,7 @@ public class App {
         new App().run(NAppRunOptions.ofExit(args));
     }
 
-    @NAppRunner
+    @NAppRun
     public void run() {
         NCmdLine cmd = NApp.of().getCmdLine();
         File file = new File("file.xls");

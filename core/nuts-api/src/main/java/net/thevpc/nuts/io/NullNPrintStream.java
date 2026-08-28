@@ -56,7 +56,7 @@ public class NullNPrintStream implements NPrintStream {
 
     ////////////
 
-    private DefaultNContentMetadata md = new DefaultNContentMetadata();
+    private NContentMetadata md = new DefaultNContentMetadata();
 
 
     @Override

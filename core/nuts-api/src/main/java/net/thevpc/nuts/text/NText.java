@@ -30,6 +30,7 @@ import net.thevpc.nuts.elem.NElementSimple;
 import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.util.NSince;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;
@@ -610,81 +611,24 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Traverse dfs.
+     * Transform.
      *
-     * @param text text
-     * @param visitor visitor
+     * @param config config
+     * @return transform result
      */
-    static void visitDFS(NText text, NTextVisitor visitor) {
-        NTextRPI.of().traverseDFS(text, visitor);
-    }
-
-    /**
-     * Traverse bfs.
-     *
-     * @param text text
-     * @param visitor visitor
-     */
-    static void visitBFS(NText text, NTextVisitor visitor) {
-        NTextRPI.of().traverseBFS(text, visitor);
-    }
-
+    NText transform(NTextTransformConfig config) ;
 
     /**
      * Transform.
      *
-     * @param text text
-     * @param config config
-     * @return transform result
-     */
-    static NText transform(NText text, NTextTransformConfig config) {
-        return NTextRPI.of().transform(text, config);
-    }
-
-    /**
-     * Transform.
-     *
-     * @param text text
      * @param transformer transformer
      * @param config config
      * @return transform result
      */
-    static NText transform(NText text, NTextTransformer transformer, NTextTransformConfig config) {
-        return NTextRPI.of().transform(text, transformer, config);
-    }
+    NText transform(NTextTransformer transformer, NTextTransformConfig config) ;
 
-    /**
-     * Normalize.
-     *
-     * @param text text
-     * @return normalize result
-     */
-    static NNormalizedText normalize(NText text){
-        return NTextRPI.of().normalize(text);
-    }
 
-    /**
-     * Normalize.
-     *
-     * @param text text
-     * @param config config
-     * @return normalize result
-     */
-    static NNormalizedText normalize(NText text, NTextTransformConfig config){
-        return NTextRPI.of().normalize(text, config);
-    }
-
-    /**
-     * Normalize.
-     *
-     * @param text text
-     * @param transformer transformer
-     * @param config config
-     * @return normalize result
-     */
-    static NNormalizedText normalize(NText text, NTextTransformer transformer, NTextTransformConfig config){
-        return NTextRPI.of().normalize(text, transformer, config);
-    }
+    NStream<NNormalizedText> normalizeStream(NTextTransformer transformer, NTextTransformConfig config);
 
     /**
      * Strip left.
@@ -1008,4 +952,21 @@ public interface NText extends NBlankable, NElementSimple {
      * @return normalize result
      */
     NNormalizedText normalize(NTextTransformer transformer, NTextTransformConfig config);
+
+    /**
+     * Traverse dfs.
+     *
+     * @param visitor visitor
+     */
+    @NSince("1.0.0")
+    NText traverseDFS(NTextVisitor visitor) ;
+
+    /**
+     * Traverse bfs.
+     *
+     * @param visitor visitor
+     */
+    @NSince("1.0.0")
+    NText traverseBFS(NTextVisitor visitor) ;
+
 }

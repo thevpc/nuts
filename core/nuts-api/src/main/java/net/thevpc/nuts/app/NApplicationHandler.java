@@ -235,7 +235,7 @@ import net.thevpc.nuts.internal.NReservedApplication;
  * public class MyApplication4 implements NApplication {
  *     public static void main(String[] args) {
  *         // just create a builer and run it
- *         NApp.builder(args).run();
+ *         NApplication.builder(args).run();
  *     }
  *
  *     App.Main

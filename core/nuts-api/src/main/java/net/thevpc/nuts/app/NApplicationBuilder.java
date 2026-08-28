@@ -30,7 +30,7 @@ import java.util.List;
  *
  * <pre>{@code
  * public static void main(String[] args) {
- *     NApp.builder(args).run();
+ *     NApplication.builder(args).run();
  * }
  * }</pre>
  *
@@ -39,7 +39,7 @@ import java.util.List;
  * If you want the builder to instantiate your application class reflectively:
  *
  * <pre>{@code
- * NApp.builder(args)
+ * NApplication.builder(args)
  *     .type(MyApplication.class)
  *     .handleErrors()
  *     .run();

@@ -17,6 +17,7 @@ import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
+import net.thevpc.nuts.runtime.standalone.io.path.DefaultNPathInfo;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
@@ -52,6 +53,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1075,4 +1077,15 @@ public class DefaultNIORPI implements NIORPI {
         return monitor;
     }
 
+    @Override
+    public NPathInfo createPathInfoNotFound(String path) {
+        int u = NStringUtils.lastIndexOf(path, new char[]{'/', '\\'});
+        String name=u<0?path:path.substring(u+1);
+        return new DefaultNPathInfo(name,path,NPathType.NOT_FOUND,null,null,-1,false,null,null, null, Collections.emptySet(),null,null);
+    }
+
+    @Override
+    public NPathInfo createPathInfo(String name, String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group) {
+        return new DefaultNPathInfo(name,path,targetType, targetType,targetPath,size,symbolicLink,lastModified,lastAccess, creationTime, permissions,owner,group);
+    }
 }

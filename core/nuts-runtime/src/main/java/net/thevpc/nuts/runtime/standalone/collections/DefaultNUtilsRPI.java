@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.cmdline.DefaultNArg;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.collections.*;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
@@ -9,6 +12,7 @@ import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.pipeline.*;
 import net.thevpc.nuts.platform.NRuntimeDistribution;
+import net.thevpc.nuts.runtime.standalone.util.DefaultNLiteral;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NRuntimeDistributionImpl;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
@@ -856,5 +860,15 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     @Override
     public NRuntimeDistribution createRuntimeDistribution(NId id, String vendor, String product, String variant, String name, String path, String version, String packaging, int priority) {
         return new NRuntimeDistributionImpl(id, vendor, product, variant, name, path, version, packaging, 0);
+    }
+
+    @Override
+    public NLiteral createLiteral(Object any) {
+        return DefaultNLiteral.of(any);
+    }
+
+    @Override
+    public NArg createCmdlineArg(String value, NCmdLine cmdline) {
+        return new DefaultNArg(value, cmdline);
     }
 }

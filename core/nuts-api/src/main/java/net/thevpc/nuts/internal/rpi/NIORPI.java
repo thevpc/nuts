@@ -20,7 +20,9 @@ import net.thevpc.nuts.util.NOptional;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -853,4 +855,8 @@ public interface NIORPI extends NComponent {
      * @return create progress monitor result
      */
     NProgressMonitor createProgressMonitor(NProgressMonitor monitor);
+
+    NPathInfo createPathInfoNotFound(String path);
+
+    NPathInfo createPathInfo(String name, String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group);
 }

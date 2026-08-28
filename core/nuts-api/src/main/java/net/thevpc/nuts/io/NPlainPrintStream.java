@@ -19,7 +19,7 @@ import java.util.Date;
  */
 public class NPlainPrintStream implements NPrintStream {
     private NStringBuilder sb = new NStringBuilder();
-    private DefaultNContentMetadata md = new DefaultNContentMetadata();
+    private NContentMetadata md = new DefaultNContentMetadata();
 
     /**
      * N plain print stream.

@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
@@ -89,7 +90,7 @@ public interface NArg extends NBlankable /*extends NLiteral*/ {
      * @return new instance
      */
     static NArg of(String value) {
-        return new DefaultNArg(value,null);
+        return NUtilsRPI.of().createCmdlineArg(value,null);
     }
 
     /**

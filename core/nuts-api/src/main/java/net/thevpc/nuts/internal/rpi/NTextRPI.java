@@ -52,13 +52,13 @@ public interface NTextRPI extends NComponent {
     }
 
     /**
-     * Creates a new instance of create cell spec builder.
+     * Creates a new instance of cell spec builder.
      *
      * @return create cell spec builder result
      */
     NTableCellSpecBuilder createCellSpecBuilder();
     /**
-     * Creates a new instance of create tree node.
+     * Creates a new instance of tree node.
      *
      * @param text text
      * @param children children
@@ -66,21 +66,21 @@ public interface NTextRPI extends NComponent {
      */
     NTreeNode createTreeNode(NText text, NTreeNode[] children);
     /**
-     * Creates a new instance of create builder.
+     * Creates a new instance of builder.
      *
      * @return create builder result
      */
     NTextBuilder createBuilder();
 
     /**
-     * Creates a new instance of create blank.
+     * Creates a new instance of blank.
      *
      * @return create blank result
      */
     NText createBlank();
 
     /**
-     * Creates a new instance of create text.
+     * Creates a new instance of text.
      *
      * @param t t
      * @return create text result
@@ -88,7 +88,7 @@ public interface NTextRPI extends NComponent {
     NText createText(Object t);
 
     /**
-     * Creates a new instance of create text.
+     * Creates a new instance of text.
      *
      * @param t t
      * @return create text result
@@ -96,7 +96,7 @@ public interface NTextRPI extends NComponent {
     NText createText(NMsg t);
 
     /**
-     * Creates a new instance of create plain.
+     * Creates a new instance of plain.
      *
      * @param t t
      * @return create plain result
@@ -104,7 +104,7 @@ public interface NTextRPI extends NComponent {
     NTextPlain createPlain(String t);
 
     /**
-     * Creates a new instance of create list.
+     * Creates a new instance of list.
      *
      * @param nodes nodes
      * @return create list result
@@ -112,7 +112,7 @@ public interface NTextRPI extends NComponent {
     NTextList createList(NText... nodes);
 
     /**
-     * Creates a new instance of create list.
+     * Creates a new instance of list.
      *
      * @param nodes nodes
      * @return create list result
@@ -120,7 +120,7 @@ public interface NTextRPI extends NComponent {
     NTextList createList(Collection<NText> nodes);
 
     /**
-     * Creates a new instance of create styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param styles styles
@@ -129,7 +129,7 @@ public interface NTextRPI extends NComponent {
     NText createStyled(String other, NTextStyles styles);
 
     /**
-     * Creates a new instance of create styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param styles styles
@@ -138,7 +138,7 @@ public interface NTextRPI extends NComponent {
     NText createStyled(NMsg other, NTextStyles styles);
 
     /**
-     * Creates a new instance of create styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param styles styles
@@ -147,7 +147,7 @@ public interface NTextRPI extends NComponent {
     NText createStyled(NText other, NTextStyles styles);
 
     /**
-     * Creates a new instance of create styled.
+     * Creates a new instance of styled.
      *
      * @param plainText plain text
      * @param style style
@@ -156,7 +156,7 @@ public interface NTextRPI extends NComponent {
     NText createStyled(String plainText, NTextStyle style);
 
     /**
-     * Creates a new instance of create styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param style style
@@ -165,7 +165,7 @@ public interface NTextRPI extends NComponent {
     NText createStyled(NMsg other, NTextStyle style);
 
     /**
-     * Creates a new instance of create styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param style style
@@ -174,7 +174,7 @@ public interface NTextRPI extends NComponent {
     NText createStyled(NText other, NTextStyle style);
 
     /**
-     * Creates a new instance of create title.
+     * Creates a new instance of title.
      *
      * @param other other
      * @param level level
@@ -183,7 +183,7 @@ public interface NTextRPI extends NComponent {
     NTextTitle createTitle(String other, int level);
 
     /**
-     * Creates a new instance of create title.
+     * Creates a new instance of title.
      *
      * @param other other
      * @param level level
@@ -192,7 +192,7 @@ public interface NTextRPI extends NComponent {
     NTextTitle createTitle(NText other, int level);
 
     /**
-     * Creates a new instance of create command.
+     * Creates a new instance of command.
      *
      * @param command command
      * @return create command result
@@ -200,7 +200,7 @@ public interface NTextRPI extends NComponent {
     NTextCmd createCommand(NTerminalCmd command);
 
     /**
-     * Creates a new instance of create code.
+     * Creates a new instance of code.
      *
      * @param text text
      * @param lang lang
@@ -210,7 +210,7 @@ public interface NTextRPI extends NComponent {
     NTextCode createCode(String text, String lang, String sep);
 
     /**
-     * Creates a new instance of create code.
+     * Creates a new instance of code.
      *
      * @param lang lang
      * @param text text
@@ -219,7 +219,7 @@ public interface NTextRPI extends NComponent {
     NTextCode createCode(String lang, String text);
 
     /**
-     * Creates a new instance of create code or command.
+     * Creates a new instance of code or command.
      *
      * @param lang lang
      * @param text text
@@ -228,7 +228,7 @@ public interface NTextRPI extends NComponent {
     NText createCodeOrCommand(String lang, String text);
 
     /**
-     * Creates a new instance of create code or command.
+     * Creates a new instance of code or command.
      *
      * @param text text
      * @return create code or command result
@@ -236,7 +236,7 @@ public interface NTextRPI extends NComponent {
     NText createCodeOrCommand(String text);
 
     /**
-     * Creates a new instance of create code or command.
+     * Creates a new instance of code or command.
      *
      * @param lang lang
      * @param text text
@@ -246,14 +246,14 @@ public interface NTextRPI extends NComponent {
     NText createCodeOrCommand(String lang, String text, String sep);
 
     /**
-     * Creates a new instance of create numbering.
+     * Creates a new instance of numbering.
      *
      * @return create numbering result
      */
     NTitleSequence createNumbering();
 
     /**
-     * Creates a new instance of create numbering.
+     * Creates a new instance of numbering.
      *
      * @param pattern pattern
      * @return create numbering result
@@ -261,7 +261,7 @@ public interface NTextRPI extends NComponent {
     NTitleSequence createNumbering(String pattern);
 
     /**
-     * Creates a new instance of create anchor.
+     * Creates a new instance of anchor.
      *
      * @param anchorName anchor name
      * @return create anchor result
@@ -269,7 +269,7 @@ public interface NTextRPI extends NComponent {
     NTextAnchor createAnchor(String anchorName);
 
     /**
-     * Creates a new instance of create link.
+     * Creates a new instance of link.
      *
      * @param value value
      * @param sep sep
@@ -278,7 +278,7 @@ public interface NTextRPI extends NComponent {
     NTextLink createLink(String value, String sep);
 
     /**
-     * Creates a new instance of create anchor.
+     * Creates a new instance of anchor.
      *
      * @param anchorName anchor name
      * @param sep sep
@@ -287,7 +287,7 @@ public interface NTextRPI extends NComponent {
     NTextAnchor createAnchor(String anchorName, String sep);
 
     /**
-     * Creates a new instance of create link.
+     * Creates a new instance of link.
      *
      * @param value value
      * @return create link result
@@ -295,7 +295,7 @@ public interface NTextRPI extends NComponent {
     NTextLink createLink(String value);
 
     /**
-     * Creates a new instance of create include.
+     * Creates a new instance of include.
      *
      * @param value value
      * @return create include result
@@ -303,7 +303,7 @@ public interface NTextRPI extends NComponent {
     NTextInclude createInclude(String value);
 
     /**
-     * Creates a new instance of create include.
+     * Creates a new instance of include.
      *
      * @param value value
      * @param sep sep
@@ -377,7 +377,7 @@ public interface NTextRPI extends NComponent {
     List<NCodeHighlighter> codeHighlighters();
 
     /**
-     * Creates a new instance of create text.
+     * Creates a new instance of text.
      *
      * @param t t
      * @return create text result
@@ -385,73 +385,13 @@ public interface NTextRPI extends NComponent {
     NText createText(String t);
 
     /**
-     * Creates a new instance of create parser.
+     * Creates a new instance of parser.
      *
      * @return create parser result
      */
     NTextParser createParser();
 
-    /**
-     * Traverse dfs.
-     *
-     * @param text text
-     * @param visitor visitor
-     */
-    void traverseDFS(NText text, NTextVisitor visitor);
 
-    /**
-     * Traverse bfs.
-     *
-     * @param text text
-     * @param visitor visitor
-     */
-    void traverseBFS(NText text, NTextVisitor visitor);
-
-    /**
-     * Transform.
-     *
-     * @param text text
-     * @param config config
-     * @return transform result
-     */
-    NText transform(NText text, NTextTransformConfig config);
-
-    /**
-     * Transform.
-     *
-     * @param text text
-     * @param transformer transformer
-     * @param config config
-     * @return transform result
-     */
-    NText transform(NText text, NTextTransformer transformer, NTextTransformConfig config);
-
-    /**
-     * Normalize.
-     *
-     * @param text text
-     * @return normalize result
-     */
-    NNormalizedText normalize(NText text);
-
-    /**
-     * Normalize.
-     *
-     * @param text text
-     * @param config config
-     * @return normalize result
-     */
-    NNormalizedText normalize(NText text, NTextTransformConfig config);
-
-    /**
-     * Normalize.
-     *
-     * @param text text
-     * @param transformer transformer
-     * @param config config
-     * @return normalize result
-     */
-    NNormalizedText normalize(NText text, NTextTransformer transformer, NTextTransformConfig config);
 
     /**
      * Escape text.
@@ -471,7 +411,7 @@ public interface NTextRPI extends NComponent {
 
 
     /**
-     * Creates a new instance of create writer.
+     * Creates a new instance of writer.
      *
      * @param format format
      * @return create writer result
@@ -481,7 +421,7 @@ public interface NTextRPI extends NComponent {
 //    <T> NObjectWriter createFormat(T object, NTextFormat<T> format);
 
     /**
-     * Creates a new instance of create text format.
+     * Creates a new instance of text format.
      *
      * @param type type
      * @param pattern pattern
@@ -491,7 +431,7 @@ public interface NTextRPI extends NComponent {
     <T> NOptional<NTextFormat<T>> createTextFormat(String type, String pattern, Class<T> expectedType);
 
     /**
-     * Creates a new instance of create string format.
+     * Creates a new instance of string format.
      *
      * @param type type
      * @param pattern pattern
@@ -499,15 +439,6 @@ public interface NTextRPI extends NComponent {
      * @return create string format result
      */
     <T> NOptional<NStringFormat<T>> createStringFormat(String type, String pattern, Class<T> expectedType);
-
-    /**
-     * Creates a new instance of create number string format.
-     *
-     * @param type type
-     * @param pattern pattern
-     * @return create number string format result
-     */
-    NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern);
 
     /**
      * Strip left.

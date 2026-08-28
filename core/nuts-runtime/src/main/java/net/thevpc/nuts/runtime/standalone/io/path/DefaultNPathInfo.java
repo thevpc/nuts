@@ -1,0 +1,180 @@
+package net.thevpc.nuts.runtime.standalone.io.path;
+
+import net.thevpc.nuts.io.NPathInfo;
+import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.io.NPathType;
+import net.thevpc.nuts.util.NStringUtils;
+
+import java.time.Instant;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+
+/**
+ * DefaultNPathInfo class.
+ *
+ * @author thevpc
+ * @since 0.8.0
+ */
+public class DefaultNPathInfo implements NPathInfo {
+    private String name;                // original path
+    private String path;                // original path
+    private NPathType type;       // What the entry itself is
+    private NPathType targetType; // What the resolved target is (or same if not a link)
+    private String targetPath;        // Raw resolved path string, null if not a link
+    private long size;
+    private boolean symbolicLink;    // true if path is a symlink
+    private Instant lastModified;
+    private Instant creationTime;
+    private Instant lastAccess;
+    private Set<NPathPermission> permissions;
+    private String owner;
+    private String group;
+
+    /**
+     * Creates a new instance of not found.
+     *
+     * @param path path
+     * @return of not found result
+     */
+    public static DefaultNPathInfo ofNotFound(String path) {
+        int u = NStringUtils.lastIndexOf(path, new char[]{'/', '\\'});
+        String name=u<0?path:path.substring(u+1);
+        return new DefaultNPathInfo(name,path,NPathType.NOT_FOUND,null,null,-1,false,null,null, null,Collections.emptySet(),null,null);
+    }
+
+    /**
+     * Default n path info.
+     *
+     * @param name name
+     * @param path path
+     * @param type type
+     * @param targetType target type
+     * @param targetPath target path
+     * @param size size
+     * @param symbolicLink symbolic link
+     * @param lastModified last modified
+     * @param lastAccess last access
+     * @param creationTime creation time
+     * @param permissions permissions
+     * @param owner owner
+     * @param group group
+     * @return default n path info result
+     */
+    public DefaultNPathInfo(String name,String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group) {
+        this.name = name;
+        this.path = path;
+        this.type = type;
+        this.targetType = targetType;
+        this.targetPath = targetPath;
+        this.size = size;
+        this.symbolicLink = symbolicLink;
+        this.lastModified = lastModified;
+        this.creationTime = creationTime;
+        this.lastAccess = lastAccess;
+        this.permissions = permissions;
+        this.owner = owner;
+        this.group = group;
+    }
+
+    @Override
+    public String name() {
+        return name;
+    }
+
+    /**
+     * Last access instant.
+     *
+     * @return last access instant result
+     */
+    public Instant lastAccessInstant() {
+        return lastAccess;
+    }
+
+    /**
+     * Group.
+     *
+     * @return group result
+     */
+    public String group() {
+        return group;
+    }
+
+    @Override
+    public String path() {
+        return path;
+    }
+
+    @Override
+    public NPathType type() {
+        return type;
+    }
+
+    @Override
+    public NPathType targetType() {
+        return targetType;
+    }
+
+    @Override
+    public String targetPath() {
+        return targetPath;
+    }
+
+    @Override
+    public long contentLength() {
+        return size;
+    }
+
+    @Override
+    public boolean isSymbolicLink() {
+        return this.symbolicLink;
+    }
+
+    @Override
+    public Instant lastModifiedInstant() {
+        return lastModified;
+    }
+
+    @Override
+    public Instant creationInstant() {
+        return creationTime;
+    }
+
+    @Override
+    public Set<NPathPermission> permissions() {
+        return permissions;
+    }
+
+    @Override
+    public String owner() {
+        return owner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNPathInfo that = (DefaultNPathInfo) o;
+        return size == that.size && symbolicLink == that.symbolicLink && Objects.equals(path, that.path) && type == that.type && targetType == that.targetType && Objects.equals(targetPath, that.targetPath) && Objects.equals(lastModified, that.lastModified) && Objects.equals(creationTime, that.creationTime) && Objects.equals(permissions, that.permissions) && Objects.equals(owner, that.owner);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, type, targetType, targetPath, size, symbolicLink, lastModified, creationTime, permissions, owner);
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultNPathInfo{" +
+                "path='" + path + '\'' +
+                ", type=" + type +
+                ", targetType=" + targetType +
+                ", targetPath='" + targetPath + '\'' +
+                ", size=" + size +
+                ", symbolicLink=" + symbolicLink +
+                ", lastModified=" + lastModified +
+                ", creationTime=" + creationTime +
+                ", permissions=" + permissions +
+                ", owner='" + owner + '\'' +
+                '}';
+    }
+}

@@ -740,6 +740,35 @@ public class NTextBuilderPlain implements NTextBuilder {
         return null;
     }
 
+    @Override
+    public NText transform(NTextTransformConfig config) {
+        return new ImmutableNTextPlain(filteredText());
+    }
+
+    @Override
+    public NText transform(NTextTransformer transformer, NTextTransformConfig config) {
+        return new ImmutableNTextPlain(filteredText());
+    }
+
+    @Override
+    public NStream<NNormalizedText> normalizeStream(NTextTransformer transformer, NTextTransformConfig config) {
+        return NStream.ofSingleton(new ImmutableNTextPlain(filteredText()));
+    }
+
+    @Override
+    public NText traverseDFS(NTextVisitor visitor) {
+        visitor.enter(this);
+        visitor.exit(this);
+        return this;
+    }
+
+    @Override
+    public NText traverseBFS(NTextVisitor visitor) {
+        visitor.enter(this);
+        visitor.exit(this);
+        return this;
+    }
+
     @NImmutable
     private static class ImmutableNTextPlain implements NTextPlain, NToElement {
 
@@ -755,7 +784,33 @@ public class NTextBuilderPlain implements NTextBuilder {
             this.str = str == null ? "" : str;
         }
 
+        @Override
+        public NText transform(NTextTransformConfig config) {
+            return this;
+        }
 
+        @Override
+        public NText transform(NTextTransformer transformer, NTextTransformConfig config) {
+            return this;
+        }
+
+        @Override
+        public NStream<NNormalizedText> normalizeStream(NTextTransformer transformer, NTextTransformConfig config) {
+            return NStream.ofSingleton(this);
+        }
+        @Override
+        public NText traverseDFS(NTextVisitor visitor) {
+            visitor.enter(this);
+            visitor.exit(this);
+            return this;
+        }
+
+        @Override
+        public NText traverseBFS(NTextVisitor visitor) {
+            visitor.enter(this);
+            visitor.exit(this);
+            return this;
+        }
         @Override
         public NElement toElement() {
             return NElement.ofString(str);

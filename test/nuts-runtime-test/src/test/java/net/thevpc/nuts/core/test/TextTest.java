@@ -6,12 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author thevpc
@@ -52,7 +46,7 @@ public class TextTest {
         );
 
         List<String> events = new ArrayList<>();
-        NText.visitDFS(tree, new NTextVisitor() {
+        tree.traverseDFS(new NTextVisitor() {
             @Override
             public void enter(NText node) {
                 events.add("enter:" + node.type() + (node instanceof NTextPlain ? "(" + ((NTextPlain) node).value() + ")" : ""));
@@ -65,35 +59,10 @@ public class TextTest {
         });
 
         List<String> expected = Arrays.asList(
-                "enter:LIST",
-                "enter:STYLED",
-                "enter:PLAIN(hello)",
-                "exit:PLAIN(hello)",
-                "exit:STYLED",
-                "enter:TITLE",
-                "enter:PLAIN(world)",
-                "exit:PLAIN(world)",
-                "exit:TITLE",
-                "enter:BUILDER",
-                "enter:PLAIN(child1)",
-                "exit:PLAIN(child1)",
-                "enter:PLAIN(child2)",
-                "exit:PLAIN(child2)",
-                "exit:BUILDER",
-                "exit:LIST"
+                "enter:LIST", "enter:STYLED", "enter:PLAIN(hello)", "exit:PLAIN(hello)", "exit:STYLED", "enter:TITLE", "enter:PLAIN(world)", "exit:PLAIN(world)", "exit:TITLE",
+                "enter:PLAIN(child1child2)", "exit:PLAIN(child1child2)", "exit:LIST"
         );
         Assertions.assertEquals(expected, events);
-
-        // test null
-        List<String> nullEvents = new ArrayList<>();
-        NTextVisitor nullVisitor = new NTextVisitor() {
-            @Override
-            public void enter(NText node) {
-                nullEvents.add("enter");
-            }
-        };
-        NText.visitDFS((NText) null, nullVisitor);
-        Assertions.assertTrue(nullEvents.isEmpty());
     }
 
     @Test
@@ -105,7 +74,7 @@ public class TextTest {
         );
 
         List<String> events = new ArrayList<>();
-        NText.visitBFS(tree, new NTextVisitor() {
+        tree.traverseBFS(new NTextVisitor() {
             @Override
             public void enter(NText node) {
                 events.add("enter:" + node.type() + (node instanceof NTextPlain ? "(" + ((NTextPlain) node).value() + ")" : ""));
@@ -118,34 +87,10 @@ public class TextTest {
         });
 
         List<String> expected = Arrays.asList(
-                "enter:LIST",
-                "enter:STYLED",
-                "enter:TITLE",
-                "enter:BUILDER",
-                "enter:PLAIN(hello)",
-                "enter:PLAIN(world)",
-                "enter:PLAIN(child1)",
-                "enter:PLAIN(child2)",
-                "exit:PLAIN(child2)",
-                "exit:PLAIN(child1)",
-                "exit:PLAIN(world)",
-                "exit:PLAIN(hello)",
-                "exit:BUILDER",
-                "exit:TITLE",
-                "exit:STYLED",
-                "exit:LIST"
+                "enter:LIST", "enter:STYLED", "enter:TITLE", "enter:PLAIN(child1child2)", "enter:PLAIN(hello)", "enter:PLAIN(world)",
+                "exit:PLAIN(world)", "exit:PLAIN(hello)", "exit:PLAIN(child1child2)", "exit:TITLE", "exit:STYLED", "exit:LIST"
         );
         Assertions.assertEquals(expected, events);
 
-        // test null
-        List<String> nullEvents = new ArrayList<>();
-        NTextVisitor nullVisitor = new NTextVisitor() {
-            @Override
-            public void enter(NText node) {
-                nullEvents.add("enter");
-            }
-        };
-        NText.visitBFS((NText) null, nullVisitor);
-        Assertions.assertTrue(nullEvents.isEmpty());
     }
 }
