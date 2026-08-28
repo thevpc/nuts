@@ -20,13 +20,47 @@ By default this produces a single executable jar named after the resolved applic
 nuts bundle myapp#1.2.3 --target myapp-bundle.jar
 ```
 
-### What's Inside a Bundle?
+### Multiple Applications
+You can bundle multiple distinct applications into a single bundle artifact:
+
+```bash
+nuts bundle app-core#1.0.0 app-cli#1.0.0 app-admin#2.1.0 --target my-suite-bundle.jar
+```
+
+When multiple applications are bundled, each application gets its own dedicated OS launcher script in unpacked formats (--exploded / --dir).
+
+### Adding Non-Executable Libraries
+
+### Adding Non-Executable Libraries
+Use `--lib` to include dependencies or runtime plugins without generating dedicated launcher scripts or entry points for them:
+
+```bash
+nuts bundle myapp#1.2.3 --lib org.postgresql:postgresql#42.7.2
+```
+
+
+### Anatomy of a Bundle
 
 A jar/zip bundle packages everything required to execute the application:
 * A minimal embedded **nuts** bootstrap runner (`NutsBundleRunner`)
 * The application artifact(s) and all resolved dependencies, laid out under `META-INF/bundle`
 * Per-OS launcher scripts (`.sh` for Linux/macOS/Unix, `.bat` for Windows)
 * Bundle metadata (`nuts-bundle-info.config`, `nuts-bundle-files.config`) describing what to install and where
+
+A generated bundle contains all resources required for autonomous bootstrapping:
+```
+my-bundle.jar (or unpacked folder)
+├── META-INF/
+│   ├── MANIFEST.MF
+│   └── bundle/
+│       ├── nuts-bundle-info.config      # Application descriptor & entry points
+│       ├── nuts-bundle-files.config     # Inventory of packaged artifacts
+│       └── repo/                        # Local repository containing application jars & dependencies
+├── bin/ (in exploded/dir formats)
+│   ├── myapp                           # POSIX launcher script (Linux / macOS)
+│   └── myapp.bat                       # Windows Command script
+└── org/vpc/nuts/...                     # Embedded bootstrap runner (NutsBundleRunner)
+```
 
 ### Running a Bundle on the Target Machine
 
@@ -42,7 +76,7 @@ For a `--dir`/`--exploded` bundle, run the generated launcher script for your pl
 
 On first run, the bundle recreates an isolated **nuts** workspace under `.nuts-bundle/` next to the launcher (`.nuts-bundle/lib` as the repository, `.nuts-bundle/ws` as the workspace), installs the embedded artifacts from the bundle, and launches the application — all without touching your normal **nuts** installation or reaching out to the network.
 
-### Bundle Formats
+### Bundle Packaging Formats
 
 Choose the output layout with one of:
 
@@ -87,9 +121,39 @@ A few options control how the *embedded* workspace behaves when the bundle is la
 * `-z`, `--reset` — reset the embedded workspace on execution
 * `-l`, `--verbose` — run the embedded workspace verbosely on execution
 
+### Example: Exploded Build with Clean Target
+
+```bash
+nuts bundle myapp#1.2.3 --exploded --target /opt/deploy/myapp --clean
+```
+
+
+### Execution on Target Systems
+The target machine only requires a standard Java Virtual Machine (matching the application's bytecode requirements).
+#### 1. Running a JAR Bundle
+Execute the archive directly using the JVM:
+
+```bash
+java -jar myapp-bundle.jar [application arguments...]
+```
+
+#### 2. Running from Directory / Exploded Formats
+Run the target application's launcher script:
+- Linux / macOS: `./myapp [application arguments...]`
+- Windows: `myapp.bat [application arguments...]`
+
+Workspace Initialization Lifecycle
+
+Upon first execution on the host:
+- The bundle detects its runtime environment and sets up an isolated workspace directory (.nuts-bundle/) adjacent to the bundle or launcher.
+- Embedded dependencies from META-INF/bundle/repo/ are registered in the local repository cache (.nuts-bundle/lib/).
+- The embedded workspace is initialized (.nuts-bundle/ws/) without altering the host's existing user configuration or requiring elevated system privileges.
+- Subsequent executions skip unpacking and boot directly from the prepared local workspace cache.
+
+
 ### Use Cases
 
-* **Air-gapped servers** — deploy to environments with no network access
-* **Security-restricted environments** — avoid dependency resolution blocked by enterprise firewalls
-* **Portable distribution** — ship a single file without requiring recipients to understand package management
-* **Offline demos** — run demonstrations without relying on venue connectivity
+- Air-Gapped & Offline Deployments: Deploy mission-critical services to isolated networks with zero internet connectivity.
+- Firewalled Corporate Hosts: Bypass restrictive corporate proxy configurations that interfere with dynamic dependency resolution.
+- Frictionless Distribution: Ship CLI tools or desktop utilities as single self-contained binaries to users without requiring them to install or configure package managers.
+- Predictable Demos & Testing: Distribute deterministic, reproducible snapshots of multi-service suites for testing and offline presentations.
