@@ -2,7 +2,7 @@
 title: Pre-1.0 (0.8.x → 1.0.0) API Compatibility Matrix
 ---
 This compatibility matrix tracks the API evolution across the Pre-1.0 development series (from `0.8.0` up to `1.0.0`).
-Each cell links to a detailed JAPI-Compliance-Checker report comparing version X to version Y, offering an exact view of binary compatibility levels.
+Each cell in the matrix links to a detailed JAPI-Compliance-Checker report comparing version X to version Y, offering an exact view of binary compatibility levels.
 Green indicates 100% binary compatibility, while color gradations show the proportion of preserved API surface.
 
 <table>

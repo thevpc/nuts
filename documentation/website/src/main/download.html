@@ -11,6 +11,12 @@
 
     {{:: pageId='download'}}
     {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
+    <meta name="dl-latest-jar" content="{{latestJarLocation}}">
+    <meta name="dl-stable-jar" content="{{stableJarLocation}}">
+    <meta name="dl-latest-version" content="{{runtimeVersion}}">
+    <meta name="dl-stable-version" content="{{stableRuntimeVersion}}">
+    <meta name="dl-api-version" content="{{apiVersion}}">
+    <meta name="dl-stable-api-version" content="{{stableApiVersion}}">
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-download.css"/>
 
     <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css" rel="stylesheet">
