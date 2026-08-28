@@ -452,8 +452,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         props.put("os-dist", () -> NEnv.of().osDist());
         props.put("os-arch", () -> NEnv.of().arch());
         props.put("os-arch-family", () -> NEnv.of().archFamily());
-        props.put("gpu-devices", () -> NEnv.of().gpuDevices());
-        props.put("gpu-device", () -> NEnv.of().gpuDevice().orNull());
+        props.put("gpus", () -> NEnv.of().gpus());
         props.put("parallel-processor-family", () -> NEnv.of().parallelProcessorFamily());
         props.put("parallel-processor-runtimes", () -> NEnv.of().parallelProcessorRuntimes());
         props.put("os-desktop", () -> NEnv.of().desktopEnvironment());
@@ -669,8 +668,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         }
         props.put("os-arch", environment.arch());
         props.put("os-arch-family", environment.archFamily());
-        props.put("gpu-devices", environment.gpuDevices());
-        props.put("gpu-device", environment.gpuDevice().orNull());
+        props.put("gpus", environment.gpus());
         props.put("parallel-processor-family", environment.parallelProcessorFamily());
         props.put("parallel-processor-runtimes", environment.parallelProcessorRuntimes());
         props.put("os-desktop", environment.desktopEnvironment());

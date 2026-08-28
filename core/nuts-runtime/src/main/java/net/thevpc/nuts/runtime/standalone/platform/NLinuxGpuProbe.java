@@ -1,9 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.platform;
 
-import net.thevpc.nuts.platform.NGpuDevice;
+import net.thevpc.nuts.platform.NGpu;
+import net.thevpc.nuts.platform.NGpuCapabilities;
 import net.thevpc.nuts.platform.NGpuDeviceType;
 import net.thevpc.nuts.platform.NGpuVendor;
 import net.thevpc.nuts.platform.NOsFamily;
+import net.thevpc.nuts.platform.NRam;
 
 import java.io.File;
 import java.io.InputStream;
@@ -21,7 +23,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Discovers GPU devices on linux.
+ * Discovers GPU devices on linux, as {@link NGpu} instances carrying the
+ * capabilities declared by {@link NGpuCapabilities}.
  * <p>
  * Detection is layered by cost. The kernel exposes vendor, pci identity, bound
  * module, device count, model name and uuid as plain files, and those readings
@@ -61,20 +64,18 @@ public class NLinuxGpuProbe {
      */
     private static final String NULL_DEVICE = "/dev/null";
 
-    private static List<NGpuDevice> cached;
+    private static List<NGpu> cached;
 
     private NLinuxGpuProbe() {
     }
 
     /**
-     * Probes the machine, caching the result. Memory amounts held by the
-     * returned devices are the totals, free memory is volatile by nature and is
-     * served by {@link #queryFreeMemoryBytes(String)} instead.
+     * Probes the machine, caching the result.
      *
      * @return detected devices sorted by pci address, empty when none is found
      */
-    public static List<NGpuDevice> probe() {
-        List<NGpuDevice> c = cached;
+    public static List<NGpu> gpus() {
+        List<NGpu> c = cached;
         if (c == null) {
             synchronized (NLinuxGpuProbe.class) {
                 c = cached;
@@ -87,8 +88,8 @@ public class NLinuxGpuProbe {
         return c;
     }
 
-    private static List<NGpuDevice> probe0() {
-        List<NGpuDevice> all = new ArrayList<>();
+    private static List<NGpu> probe0() {
+        List<NGpu> all = new ArrayList<>();
         if (NOsFamily.current() != NOsFamily.LINUX) {
             return all;
         }
@@ -98,46 +99,71 @@ public class NLinuxGpuProbe {
         }
         String nvidiaDriverVersion = readNvidiaDriverVersion();
         Map<String, String[]> smi = queryNvidiaSmi();
-        for (String[] pci : pciDevices) {
+        List<String[]> ordered = new ArrayList<>(pciDevices);
+        Collections.sort(ordered, new Comparator<String[]>() {
+            @Override
+            public int compare(String[] a, String[] b) {
+                return String.valueOf(a[0]).compareTo(String.valueOf(b[0]));
+            }
+        });
+        for (String[] pci : ordered) {
             String pciBusId = pci[0];
             NGpuVendor vendor = NGpuVendor.ofPciVendorId(pci[1]);
-            String pciDeviceId = pci[2];
             String kernelDriver = pci[3];
 
+            Map<String, String> caps = new LinkedHashMap<>();
+            put(caps, NGpuCapabilities.PCI_BUS_ID, pciBusId);
+            put(caps, NGpuCapabilities.PCI_DEVICE_ID, pci[2]);
+            put(caps, NGpuCapabilities.VENDOR, vendor.id());
+            put(caps, NGpuCapabilities.DEVICE_TYPE, resolveDeviceType(vendor, pciBusId).id());
+            put(caps, NGpuCapabilities.KERNEL_DRIVER, kernelDriver);
+
             String modelName = null;
-            String uuid = null;
-            String driverVersion = null;
-            int computeCapability = -1;
-            long totalMemoryBytes = -1;
+            NRam vram = null;
 
             if (vendor == NGpuVendor.NVIDIA) {
                 String[] info = readNvidiaProcInformation(pciBusId);
                 modelName = info[0];
-                uuid = info[1];
+                put(caps, NGpuCapabilities.UUID, info[1]);
                 if ("nvidia".equals(kernelDriver)) {
-                    driverVersion = nvidiaDriverVersion;
+                    put(caps, NGpuCapabilities.DRIVER_VERSION, nvidiaDriverVersion);
                 }
                 String[] smiRow = smi.get(pciBusId);
                 if (smiRow != null) {
-                    computeCapability = parseComputeCapability(smiRow[0]);
-                    totalMemoryBytes = parseMemoryMib(smiRow[1]);
+                    // published in the major.minor form the vendor tool reports,
+                    // matching the key the nvidia-smi based detection already fills
+                    put(caps, NGpuCapabilities.COMPUTE_CAPABILITY, smiRow[0]);
+                    long total = parseMemoryMib(smiRow[1]);
+                    long used = parseMemoryMib(smiRow[2]);
+                    long free = parseMemoryMib(smiRow[3]);
+                    if (total >= 0) {
+                        vram = new NRam(modelName == null ? pciBusId : modelName, total, used, free);
+                    }
                 }
             }
-            all.add(NGpuDevice.of(vendor, resolveDeviceType(vendor, pciBusId), pciBusId, pciDeviceId,
-                    kernelDriver, modelName, uuid, computeCapability, totalMemoryBytes, driverVersion));
-        }
-        Collections.sort(all, new Comparator<NGpuDevice>() {
-            @Override
-            public int compare(NGpuDevice a, NGpuDevice b) {
-                return String.valueOf(a.getPciBusId()).compareTo(String.valueOf(b.getPciBusId()));
+            if (modelName == null) {
+                modelName = vendor == NGpuVendor.UNKNOWN ? pciBusId : vendor.id();
             }
-        });
+            if (vram == null) {
+                vram = new NRam(modelName, -1, -1, -1);
+            }
+            all.add(new NGpu(modelName, vram, caps));
+        }
         return all;
     }
 
+    private static void put(Map<String, String> caps, String key, String value) {
+        if (value != null && !value.trim().isEmpty()) {
+            caps.put(key, value.trim());
+        }
+    }
+
     /**
-     * Reads the currently free memory of a device. This value is volatile and is
-     * deliberately never cached, it must not take part in dependency resolution.
+     * Reads the currently free memory of a device, bypassing the cache.
+     * <p>
+     * {@link #gpus()} caches its reading, so the free amount it carries is a
+     * snapshot taken at first probe. This reads a fresh value, and is the one to
+     * use when the current amount actually matters.
      *
      * @param pciBusId pci address of the device, such as {@code 0000:01:00.0}
      * @return free memory in bytes, negative when unknown
@@ -257,19 +283,22 @@ public class NLinuxGpuProbe {
     /**
      * Queries every NVIDIA device at once, keyed by normalized pci address.
      *
-     * @return map of pci address to {@code {computeCapability, totalMemoryMib}}
+     * @return map of pci address to
+     * {@code {computeCapability, totalMemoryMib, usedMemoryMib, freeMemoryMib}}
      */
     private static Map<String, String[]> queryNvidiaSmi() {
         Map<String, String[]> result = new LinkedHashMap<>();
-        String out = exec("nvidia-smi", "--query-gpu=pci.bus_id,compute_cap,memory.total",
+        String out = exec("nvidia-smi",
+                "--query-gpu=pci.bus_id,compute_cap,memory.total,memory.used,memory.free",
                 "--format=csv,noheader,nounits");
         if (out == null) {
             return result;
         }
         for (String line : out.split("\n")) {
             String[] cols = line.split(",");
-            if (cols.length >= 3) {
-                result.put(normalizePciBusId(cols[0].trim()), new String[]{cols[1].trim(), cols[2].trim()});
+            if (cols.length >= 5) {
+                result.put(normalizePciBusId(cols[0].trim()), new String[]{
+                        cols[1].trim(), cols[2].trim(), cols[3].trim(), cols[4].trim()});
             }
         }
         return result;

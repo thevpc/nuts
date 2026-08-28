@@ -233,18 +233,8 @@ public abstract class NEnvAsCmdBase implements NEnv {
     }
 
     @Override
-    public List<NGpuDevice> gpuDevices() {
-        return defEnv.gpuDevices();
-    }
-
-    @Override
-    public NOptional<NGpuDevice> gpuDevice() {
-        return defEnv.gpuDevice();
-    }
-
-    @Override
-    public long queryGpuFreeMemoryBytes(NGpuDevice device) {
-        return defEnv.queryGpuFreeMemoryBytes(device);
+    public List<NGpu> gpus() {
+        return defEnv.gpus();
     }
 
     @Override

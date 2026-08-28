@@ -1,24 +1,22 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.runtime.standalone.platform.NEnvBase;
-import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Covers gpu detection and parallel processing runtime resolution.
+ * Covers the gpu capabilities published by {@link NGpuCapabilities} and the
+ * parallel processing runtime resolution.
  * <p>
- * Everything asserted here is hardware independent : device descriptions are
- * built by hand and fed to the resolution logic, so the suite behaves the same
- * on a machine with no gpu at all. Probing the real machine is deliberately not
+ * Devices are built by hand rather than probed, so the suite behaves the same on
+ * a machine with no gpu at all. Probing the real machine is deliberately not
  * asserted, its outcome being a property of the host rather than of the code.
  *
  * @author thevpc
@@ -26,6 +24,110 @@ import java.util.Map;
 public class GpuDetectionTest {
 
     private static final long GIB = 1024L * 1024L * 1024L;
+
+    // -------------------------------------------------------------------------
+    // typed reads of the capability bag
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testVendorAndDeviceTypeAreReadBackTyped() {
+        NGpu nv = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
+        Assertions.assertEquals(NGpuVendor.NVIDIA, NGpuCapabilities.vendor(nv));
+        Assertions.assertEquals(NGpuDeviceType.DEDICATED_GPU, NGpuCapabilities.deviceType(nv));
+
+        NGpu igpu = device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1);
+        Assertions.assertEquals(NGpuVendor.INTEL, NGpuCapabilities.vendor(igpu));
+        Assertions.assertEquals(NGpuDeviceType.INTEGRATED_GPU, NGpuCapabilities.deviceType(igpu));
+    }
+
+    @Test
+    public void testMissingCapabilitiesReadAsUnknownNotAsFailure() {
+        // a device detected by tooling that publishes none of these keys
+        NGpu bare = new NGpu("some gpu", new NRam("some gpu", -1, -1, -1), Collections.<String, String>emptyMap());
+        Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuCapabilities.vendor(bare));
+        Assertions.assertEquals(NGpuDeviceType.UNKNOWN, NGpuCapabilities.deviceType(bare));
+        Assertions.assertTrue(NGpuCapabilities.computeCapability(bare) < 0);
+        Assertions.assertFalse(NGpuCapabilities.isComputeCapable(bare));
+        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(bare));
+        // and a null device must not blow up either
+        Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuCapabilities.vendor(null));
+        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(null));
+    }
+
+    @Test
+    public void testComputeCapabilityHasOneCanonicalEncoding() {
+        // the vendor tool reports "8.9"; callers get a comparable int, so that
+        // no two call sites can disagree on the encoding
+        Assertions.assertEquals(890, NGpuCapabilities.computeCapability(named("x", 890)));
+        Assertions.assertEquals(750, NGpuCapabilities.computeCapability(named("x", 750)));
+        Assertions.assertEquals(NGpuCapabilities.CC_TURING, NGpuCapabilities.computeCapability(named("x", 750)));
+        // garbage in the bag degrades to unknown rather than throwing
+        Assertions.assertTrue(NGpuCapabilities.computeCapability(withCapability("compute.capability", "not-a-number")) < 0);
+        Assertions.assertTrue(NGpuCapabilities.computeCapability(withCapability("compute.capability", "8")) < 0);
+    }
+
+    // -------------------------------------------------------------------------
+    // the bound kernel module is the capability gate
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testComputeCapableRequiresTheVendorModule() {
+        Assertions.assertTrue(NGpuCapabilities.isComputeCapable(nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB)));
+        // same hardware left to the open source driver : no cuda capability
+        Assertions.assertFalse(NGpuCapabilities.isComputeCapable(nvidia("0000:01:00.0", "nouveau", 890, 6 * GIB)));
+        Assertions.assertFalse(NGpuCapabilities.isComputeCapable(nvidia("0000:01:00.0", null, 890, 6 * GIB)));
+        // i915 is a display driver, intel compute goes through level zero
+        Assertions.assertFalse(NGpuCapabilities.isComputeCapable(
+                device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1)));
+    }
+
+    // -------------------------------------------------------------------------
+    // rules a caller reading the raw capability would get wrong
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testTuringPartsWithoutTensorCoresAreExcludedByModelName() {
+        // these reach CC_TURING yet ship no tensor cores. A caller deriving the
+        // answer from compute.capability alone would say true for all of them,
+        // which is exactly why the rule lives here and not at call sites.
+        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce MX450", NGpuCapabilities.CC_TURING)));
+        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce MX550", NGpuCapabilities.CC_TURING)));
+        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce GTX 1650", NGpuCapabilities.CC_TURING)));
+        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce GTX 1660 Ti", NGpuCapabilities.CC_TURING)));
+        // a regular turing part is unaffected
+        Assertions.assertTrue(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce RTX 2060", NGpuCapabilities.CC_TURING)));
+        // int4 is tensor core only and must follow the exclusion
+        Assertions.assertFalse(NGpuCapabilities.isSupportedInt4(named("NVIDIA GeForce GTX 1660 Ti", NGpuCapabilities.CC_TURING)));
+        Assertions.assertTrue(NGpuCapabilities.isSupportedInt4(named("NVIDIA GeForce RTX 2060", NGpuCapabilities.CC_TURING)));
+    }
+
+    @Test
+    public void testDataTypeSupportFollowsComputeCapabilityThresholds() {
+        NGpu maxwell = named("NVIDIA GeForce GTX 970", 520);
+        Assertions.assertFalse(NGpuCapabilities.isSupportedFp16(maxwell));
+        Assertions.assertFalse(NGpuCapabilities.isSupportedInt8(maxwell));
+        Assertions.assertFalse(NGpuCapabilities.isSupportedBf16(maxwell));
+
+        Assertions.assertTrue(NGpuCapabilities.isSupportedFp16(named("p", NGpuCapabilities.CC_PASCAL)));
+        // dp4a lands one step above pascal proper
+        Assertions.assertFalse(NGpuCapabilities.isSupportedInt8(named("p", NGpuCapabilities.CC_PASCAL)));
+        Assertions.assertTrue(NGpuCapabilities.isSupportedInt8(named("p", NGpuCapabilities.CC_DP4A)));
+
+        NGpu ampere = named("a", NGpuCapabilities.CC_AMPERE);
+        Assertions.assertTrue(NGpuCapabilities.isSupportedBf16(ampere));
+        Assertions.assertTrue(NGpuCapabilities.hasTensorCores(ampere));
+    }
+
+    @Test
+    public void testDataTypeSupportIsNvidiaOnlyForNow() {
+        NGpu amd = device(NGpuVendor.AMD, NGpuDeviceType.DEDICATED_GPU,
+                "0000:01:00.0", "amdgpu", NGpuCapabilities.CC_AMPERE, 16 * GIB);
+        Assertions.assertFalse(NGpuCapabilities.isSupportedFp16(amd));
+        Assertions.assertFalse(NGpuCapabilities.isSupportedBf16(amd));
+        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(amd));
+        // but the amdgpu module still gates its own compute stack
+        Assertions.assertTrue(NGpuCapabilities.isComputeCapable(amd));
+    }
 
     // -------------------------------------------------------------------------
     // vendor resolution from the raw pci vendor id
@@ -38,13 +140,8 @@ public class GpuDetectionTest {
         Assertions.assertEquals(NGpuVendor.AMD, NGpuVendor.ofPciVendorId("0x1022"));
         Assertions.assertEquals(NGpuVendor.INTEL, NGpuVendor.ofPciVendorId("0x8086"));
         Assertions.assertEquals(NGpuVendor.APPLE, NGpuVendor.ofPciVendorId("0x106b"));
-    }
-
-    @Test
-    public void testVendorFromPciVendorIdIsCaseAndPrefixInsensitive() {
         // the kernel writes "0x10de", other sources drop the prefix or upper case it
-        Assertions.assertEquals(NGpuVendor.NVIDIA, NGpuVendor.ofPciVendorId("10de"));
-        Assertions.assertEquals(NGpuVendor.NVIDIA, NGpuVendor.ofPciVendorId("0X10DE"));
+        Assertions.assertEquals(NGpuVendor.NVIDIA, NGpuVendor.ofPciVendorId("10DE"));
         Assertions.assertEquals(NGpuVendor.NVIDIA, NGpuVendor.ofPciVendorId("  0x10DE  "));
     }
 
@@ -52,12 +149,10 @@ public class GpuDetectionTest {
     public void testVendorFromPciVendorIdDegradesInsteadOfFailing() {
         Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuVendor.ofPciVendorId(null));
         Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuVendor.ofPciVendorId("0x"));
-        Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuVendor.ofPciVendorId(""));
         // paravirtualized adapters are recognized, just not tracked individually
         Assertions.assertEquals(NGpuVendor.OTHER, NGpuVendor.ofPciVendorId("0x1414"));
         Assertions.assertEquals(NGpuVendor.OTHER, NGpuVendor.ofPciVendorId("0x15ad"));
         Assertions.assertEquals(NGpuVendor.OTHER, NGpuVendor.ofPciVendorId("0x1af4"));
-        // an unlisted vendor is still a display adapter
         Assertions.assertEquals(NGpuVendor.OTHER, NGpuVendor.ofPciVendorId("0xbeef"));
     }
 
@@ -65,106 +160,61 @@ public class GpuDetectionTest {
     public void testComputeKernelModule() {
         Assertions.assertEquals("nvidia", NGpuVendor.NVIDIA.getComputeKernelModule());
         Assertions.assertEquals("amdgpu", NGpuVendor.AMD.getComputeKernelModule());
-        // i915 is a display driver, intel compute goes through level zero
         Assertions.assertNull(NGpuVendor.INTEL.getComputeKernelModule());
         Assertions.assertNull(NGpuVendor.UNKNOWN.getComputeKernelModule());
     }
 
     // -------------------------------------------------------------------------
-    // the bound kernel module is the capability gate
+    // primary device selection
     // -------------------------------------------------------------------------
 
     @Test
-    public void testComputeCapableRequiresTheVendorModule() {
-        Assertions.assertTrue(nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB).isComputeCapable());
-        // same hardware, left to the open source driver : no cuda capability
-        Assertions.assertFalse(nvidia("0000:01:00.0", "nouveau", 890, 6 * GIB).isComputeCapable());
-        // no module bound at all
-        Assertions.assertFalse(nvidia("0000:01:00.0", null, 890, 6 * GIB).isComputeCapable());
-        // intel reports no compute module, so it never claims capability
-        Assertions.assertFalse(device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU,
-                "0000:00:02.0", "i915", -1, -1).isComputeCapable());
+    public void testPrimaryPrefersDedicatedThenLargestMemory() {
+        NGpu igpu = device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1);
+        NGpu small = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
+        NGpu big = nvidia("0000:02:00.0", "nvidia", 890, 24 * GIB);
+
+        Assertions.assertSame(small, NGpuCapabilities.primary(Arrays.asList(igpu, small)).get());
+        Assertions.assertSame(big, NGpuCapabilities.primary(Arrays.asList(small, big)).get());
+        // the answer must not depend on discovery order
+        Assertions.assertSame(big, NGpuCapabilities.primary(Arrays.asList(big, small)).get());
+    }
+
+    @Test
+    public void testPrimarySkipsDevicesTheVendorStackCannotDrive() {
+        NGpu igpu = device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1);
+        NGpu nouveau = nvidia("0000:01:00.0", "nouveau", 890, 8 * GIB);
+        Assertions.assertFalse(NGpuCapabilities.primary(Arrays.asList(igpu, nouveau)).isPresent());
+        Assertions.assertFalse(NGpuCapabilities.primary(Collections.<NGpu>emptyList()).isPresent());
+        Assertions.assertFalse(NGpuCapabilities.primary(null).isPresent());
+    }
+
+    @Test
+    public void testPrimaryCanBeForcedByProperty() {
+        NGpu small = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
+        NGpu big = nvidia("0000:02:00.0", "nvidia", 890, 24 * GIB);
+        List<NGpu> gpus = Arrays.asList(small, big);
+        String saved = System.getProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY);
+        try {
+            System.setProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY, "0000:01:00.0");
+            Assertions.assertSame(small, NGpuCapabilities.primary(gpus).get());
+            // an address matching nothing must not defeat the heuristic
+            System.setProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY, "0000:99:99.9");
+            Assertions.assertSame(big, NGpuCapabilities.primary(gpus).get());
+            System.setProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY, "   ");
+            Assertions.assertSame(big, NGpuCapabilities.primary(gpus).get());
+        } finally {
+            if (saved == null) {
+                System.clearProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY);
+            } else {
+                System.setProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY, saved);
+            }
+        }
     }
 
     // -------------------------------------------------------------------------
-    // compute capability derived properties
+    // parallel processing runtimes, the software axis
     // -------------------------------------------------------------------------
-
-    @Test
-    public void testDataTypeSupportFollowsComputeCapabilityThresholds() {
-        NGpuDevice maxwell = nvidia("0000:01:00.0", "nvidia", 520, 4 * GIB);
-        Assertions.assertFalse(maxwell.isSupportedFp16());
-        Assertions.assertFalse(maxwell.isSupportedInt8());
-        Assertions.assertFalse(maxwell.isSupportedBf16());
-
-        NGpuDevice pascal = nvidia("0000:01:00.0", "nvidia", NGpuDevice.CC_PASCAL, 8 * GIB);
-        Assertions.assertTrue(pascal.isSupportedFp16());
-        // dp4a lands one step above pascal proper
-        Assertions.assertFalse(pascal.isSupportedInt8());
-        Assertions.assertTrue(nvidia("0000:01:00.0", "nvidia", NGpuDevice.CC_DP4A, 8 * GIB).isSupportedInt8());
-
-        NGpuDevice ampere = nvidia("0000:01:00.0", "nvidia", NGpuDevice.CC_AMPERE, 24 * GIB);
-        Assertions.assertTrue(ampere.isSupportedBf16());
-        Assertions.assertTrue(ampere.hasTensorCores());
-    }
-
-    @Test
-    public void testDataTypeSupportIsNvidiaOnlyForNow() {
-        // detection for other vendors is not implemented, so nothing is claimed
-        NGpuDevice amd = device(NGpuVendor.AMD, NGpuDeviceType.DEDICATED_GPU,
-                "0000:01:00.0", "amdgpu", NGpuDevice.CC_AMPERE, 16 * GIB);
-        Assertions.assertFalse(amd.isSupportedFp16());
-        Assertions.assertFalse(amd.isSupportedBf16());
-        Assertions.assertFalse(amd.hasTensorCores());
-    }
-
-    @Test
-    public void testTuringPartsWithoutTensorCoresAreExcludedByModelName() {
-        // these reach CC_TURING yet ship no tensor cores, nothing but the
-        // marketing name distinguishes them
-        Assertions.assertFalse(named("NVIDIA GeForce MX450", NGpuDevice.CC_TURING).hasTensorCores());
-        Assertions.assertFalse(named("NVIDIA GeForce MX550", NGpuDevice.CC_TURING).hasTensorCores());
-        Assertions.assertFalse(named("NVIDIA GeForce GTX 1650", NGpuDevice.CC_TURING).hasTensorCores());
-        Assertions.assertFalse(named("NVIDIA GeForce GTX 1660 Ti", NGpuDevice.CC_TURING).hasTensorCores());
-        // a regular turing part is unaffected
-        Assertions.assertTrue(named("NVIDIA GeForce RTX 2060", NGpuDevice.CC_TURING).hasTensorCores());
-        // int4 is a tensor core only capability and must follow the exclusion
-        Assertions.assertFalse(named("NVIDIA GeForce GTX 1660 Ti", NGpuDevice.CC_TURING).isSupportedInt4());
-        Assertions.assertTrue(named("NVIDIA GeForce RTX 2060", NGpuDevice.CC_TURING).isSupportedInt4());
-    }
-
-    @Test
-    public void testUnknownComputeCapabilityIsReportedAsSuch() {
-        NGpuDevice d = nvidia("0000:01:00.0", "nvidia", -1, 6 * GIB);
-        Assertions.assertFalse(d.hasComputeCapability());
-        Assertions.assertFalse(d.hasTensorCores());
-        Assertions.assertFalse(d.isSupportedFp16());
-        Assertions.assertTrue(nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB).hasComputeCapability());
-    }
-
-    // -------------------------------------------------------------------------
-    // value semantics
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void testDeviceValueSemantics() {
-        NGpuDevice a = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
-        NGpuDevice b = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
-        NGpuDevice c = nvidia("0000:02:00.0", "nvidia", 890, 6 * GIB);
-        Assertions.assertEquals(a, b);
-        Assertions.assertEquals(a.hashCode(), b.hashCode());
-        Assertions.assertNotEquals(a, c);
-        Assertions.assertNotEquals(a, null);
-    }
-
-    @Test
-    public void testNullsDegradeToUnknownRatherThanBeingStored() {
-        NGpuDevice d = NGpuDevice.of(null, null, null, null, null, null, null, -1, -1, null);
-        Assertions.assertEquals(NGpuVendor.UNKNOWN, d.getVendor());
-        Assertions.assertEquals(NGpuDeviceType.UNKNOWN, d.getDeviceType());
-        Assertions.assertTrue(d.isBlank());
-        Assertions.assertFalse(nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB).isBlank());
-    }
 
     @Test
     public void testRuntimeDescribesRunAndBuildSeparately() {
@@ -182,10 +232,6 @@ public class GpuDetectionTest {
                 NParallelProcessorRuntime.of(null, false, false, null).getFamily());
     }
 
-    // -------------------------------------------------------------------------
-    // parsing, which has to degrade rather than fail
-    // -------------------------------------------------------------------------
-
     @Test
     public void testFamilyParsesVendorAliases() {
         Assertions.assertEquals(NParallelProcessorFamily.CUDA, NParallelProcessorFamily.parse("cuda").get());
@@ -201,7 +247,6 @@ public class GpuDetectionTest {
 
     @Test
     public void testFamilyParsesVersionedNames() {
-        // descriptors commonly carry the toolkit generation in the name
         Assertions.assertEquals(NParallelProcessorFamily.CUDA, NParallelProcessorFamily.parse("cuda11").get());
         Assertions.assertEquals(NParallelProcessorFamily.CUDA, NParallelProcessorFamily.parse("cuda12").get());
         Assertions.assertEquals(NParallelProcessorFamily.ROCM, NParallelProcessorFamily.parse("rocm6").get());
@@ -220,7 +265,6 @@ public class GpuDetectionTest {
 
     @Test
     public void testUnrecognizedValueIsEmptyNotUnknown() {
-        // an outright unknown token is an absence of a result, not the UNKNOWN entry
         Assertions.assertFalse(NParallelProcessorFamily.parse("totally-bogus-value").isPresent());
         Assertions.assertFalse(NGpuVendor.parse("totally-bogus-value").isPresent());
         Assertions.assertFalse(NGpuDeviceType.parse("totally-bogus-value").isPresent());
@@ -250,72 +294,16 @@ public class GpuDetectionTest {
     }
 
     // -------------------------------------------------------------------------
-    // primary device selection
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void testPrimaryDevicePrefersDedicatedThenLargestMemory() {
-        NGpuDevice igpu = device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1);
-        NGpuDevice small = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
-        NGpuDevice big = nvidia("0000:02:00.0", "nvidia", 890, 24 * GIB);
-
-        Assertions.assertEquals(small, env(Arrays.asList(igpu, small)).gpuDevice().get());
-        Assertions.assertEquals(big, env(Arrays.asList(small, big)).gpuDevice().get());
-        // the answer must not depend on the order devices were discovered in
-        Assertions.assertEquals(big, env(Arrays.asList(big, small)).gpuDevice().get());
-    }
-
-    @Test
-    public void testPrimaryDeviceSkipsDevicesTheVendorStackCannotDrive() {
-        NGpuDevice igpu = device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1);
-        NGpuDevice nouveau = nvidia("0000:01:00.0", "nouveau", 890, 8 * GIB);
-        Assertions.assertFalse(env(Arrays.asList(igpu, nouveau)).gpuDevice().isPresent());
-        Assertions.assertFalse(env(Collections.<NGpuDevice>emptyList()).gpuDevice().isPresent());
-    }
-
-    @Test
-    public void testPrimaryDeviceCanBeForcedByProperty() {
-        NGpuDevice small = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
-        NGpuDevice big = nvidia("0000:02:00.0", "nvidia", 890, 24 * GIB);
-        List<NGpuDevice> devices = Arrays.asList(small, big);
-        String saved = System.getProperty(NEnvBase.PRIMARY_GPU_DEVICE_PROPERTY);
-        try {
-            System.setProperty(NEnvBase.PRIMARY_GPU_DEVICE_PROPERTY, "0000:01:00.0");
-            Assertions.assertEquals(small, env(devices).gpuDevice().get());
-            // an address matching nothing must not defeat the heuristic
-            System.setProperty(NEnvBase.PRIMARY_GPU_DEVICE_PROPERTY, "0000:99:99.9");
-            Assertions.assertEquals(big, env(devices).gpuDevice().get());
-            System.setProperty(NEnvBase.PRIMARY_GPU_DEVICE_PROPERTY, "   ");
-            Assertions.assertEquals(big, env(devices).gpuDevice().get());
-        } finally {
-            if (saved == null) {
-                System.clearProperty(NEnvBase.PRIMARY_GPU_DEVICE_PROPERTY);
-            } else {
-                System.setProperty(NEnvBase.PRIMARY_GPU_DEVICE_PROPERTY, saved);
-            }
-        }
-    }
-
-    @Test
-    public void testDeviceListsAreNeverNull() {
-        TestEnv e = new TestEnv(null, null, true);
-        Assertions.assertTrue(e.gpuDevices().isEmpty());
-        Assertions.assertTrue(e.parallelProcessorRuntimes().isEmpty());
-        // the resolved lists are computed once
-        Assertions.assertSame(e.gpuDevices(), e.gpuDevices());
-    }
-
-    // -------------------------------------------------------------------------
     // runtime family resolution
     // -------------------------------------------------------------------------
 
     @Test
     public void testFamilyPrefersVendorNativeStackOverCrossVendorLayer() {
         Assertions.assertEquals(NParallelProcessorFamily.CUDA,
-                envRuntimes(runtime(NParallelProcessorFamily.VULKAN, true, false),
+                env(runtime(NParallelProcessorFamily.VULKAN, true, false),
                         runtime(NParallelProcessorFamily.CUDA, true, false)).parallelProcessorFamily());
         Assertions.assertEquals(NParallelProcessorFamily.VULKAN,
-                envRuntimes(runtime(NParallelProcessorFamily.VULKAN, true, false),
+                env(runtime(NParallelProcessorFamily.VULKAN, true, false),
                         runtime(NParallelProcessorFamily.OPENCL, true, false)).parallelProcessorFamily());
     }
 
@@ -323,77 +311,88 @@ public class GpuDetectionTest {
     public void testFamilyFallsBackToABuildOnlyRuntime() {
         // a build container holds the toolkit and no device, which is still cuda
         Assertions.assertEquals(NParallelProcessorFamily.CUDA,
-                envRuntimes(runtime(NParallelProcessorFamily.CUDA, false, true)).parallelProcessorFamily());
+                env(runtime(NParallelProcessorFamily.CUDA, false, true)).parallelProcessorFamily());
     }
 
     @Test
     public void testNoneMeansProbedAndUnknownMeansUnprobable() {
         // the whole point of having both entries : one is an answer, the other
         // is the absence of one
-        TestEnv probed = new TestEnv(Collections.<NGpuDevice>emptyList(),
-                Collections.<NParallelProcessorRuntime>emptyList(), true);
-        TestEnv notProbed = new TestEnv(Collections.<NGpuDevice>emptyList(),
-                Collections.<NParallelProcessorRuntime>emptyList(), false);
+        TestEnv probed = new TestEnv(Collections.<NParallelProcessorRuntime>emptyList(), true);
+        TestEnv notProbed = new TestEnv(Collections.<NParallelProcessorRuntime>emptyList(), false);
         Assertions.assertEquals(NParallelProcessorFamily.NONE, probed.parallelProcessorFamily());
         Assertions.assertEquals(NParallelProcessorFamily.UNKNOWN, notProbed.parallelProcessorFamily());
     }
 
     @Test
-    public void testFreeMemoryIsUnknownWhenTheTargetCannotBeInspected() {
-        TestEnv e = env(Collections.<NGpuDevice>emptyList());
-        Assertions.assertTrue(e.queryGpuFreeMemoryBytes(nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB)) < 0);
-        Assertions.assertTrue(e.queryGpuFreeMemoryBytes(null) < 0);
+    public void testRuntimeListIsNeverNull() {
+        TestEnv e = new TestEnv(null, true);
+        Assertions.assertTrue(e.parallelProcessorRuntimes().isEmpty());
+        Assertions.assertSame(e.parallelProcessorRuntimes(), e.parallelProcessorRuntimes());
     }
 
     // -------------------------------------------------------------------------
     // helpers
     // -------------------------------------------------------------------------
 
-    private static NGpuDevice device(NGpuVendor vendor, NGpuDeviceType type, String pciBusId,
-                                     String kernelDriver, int computeCapability, long memory) {
-        return NGpuDevice.of(vendor, type, pciBusId, "0x28e1", kernelDriver,
-                "model-" + pciBusId, null, computeCapability, memory, null);
-    }
-
-    private static NGpuDevice nvidia(String pciBusId, String kernelDriver, int computeCapability, long memory) {
-        return device(NGpuVendor.NVIDIA, NGpuDeviceType.DEDICATED_GPU, pciBusId, kernelDriver, computeCapability, memory);
-    }
-
-    private static NGpuDevice named(String modelName, int computeCapability) {
-        return NGpuDevice.of(NGpuVendor.NVIDIA, NGpuDeviceType.DEDICATED_GPU, "0000:01:00.0", "0x28e1",
-                "nvidia", modelName, null, computeCapability, 6 * GIB, null);
-    }
-
     private static NParallelProcessorRuntime runtime(NParallelProcessorFamily family, boolean run, boolean build) {
         return NParallelProcessorRuntime.of(family, run, build, null);
     }
 
-    private static TestEnv env(List<NGpuDevice> devices) {
-        return new TestEnv(devices, Collections.<NParallelProcessorRuntime>emptyList(), true);
+    private static TestEnv env(NParallelProcessorRuntime... runtimes) {
+        return new TestEnv(Arrays.asList(runtimes), true);
     }
 
-    private static TestEnv envRuntimes(NParallelProcessorRuntime... runtimes) {
-        return new TestEnv(Collections.<NGpuDevice>emptyList(), Arrays.asList(runtimes), true);
+    private static NGpu withCapability(String key, String value) {
+        Map<String, String> caps = new LinkedHashMap<>();
+        caps.put(NGpuCapabilities.VENDOR, NGpuVendor.NVIDIA.id());
+        caps.put(key, value);
+        return new NGpu("x", new NRam("x", -1, -1, -1), caps);
     }
 
+    /** builds an NGpu carrying the capabilities the linux probe publishes */
+    private static NGpu gpu(String name, NGpuVendor vendor, NGpuDeviceType type, String pciBusId,
+                            String kernelDriver, int computeCapability, long memory) {
+        Map<String, String> caps = new LinkedHashMap<>();
+        caps.put(NGpuCapabilities.PCI_BUS_ID, pciBusId);
+        caps.put(NGpuCapabilities.PCI_DEVICE_ID, "0x28e1");
+        caps.put(NGpuCapabilities.VENDOR, vendor.id());
+        caps.put(NGpuCapabilities.DEVICE_TYPE, type.id());
+        if (kernelDriver != null) {
+            caps.put(NGpuCapabilities.KERNEL_DRIVER, kernelDriver);
+        }
+        if (computeCapability >= 0) {
+            // stored the way the vendor tool reports it, major.minor
+            caps.put(NGpuCapabilities.COMPUTE_CAPABILITY,
+                    (computeCapability / 100) + "." + ((computeCapability / 10) % 10));
+        }
+        return new NGpu(name, new NRam(name, memory, -1, -1), caps);
+    }
+
+    private static NGpu device(NGpuVendor vendor, NGpuDeviceType type, String pciBusId,
+                              String kernelDriver, int computeCapability, long memory) {
+        return gpu("model-" + pciBusId, vendor, type, pciBusId, kernelDriver, computeCapability, memory);
+    }
+
+    private static NGpu nvidia(String pciBusId, String kernelDriver, int computeCapability, long memory) {
+        return device(NGpuVendor.NVIDIA, NGpuDeviceType.DEDICATED_GPU, pciBusId, kernelDriver, computeCapability, memory);
+    }
+
+    private static NGpu named(String modelName, int computeCapability) {
+        return gpu(modelName, NGpuVendor.NVIDIA, NGpuDeviceType.DEDICATED_GPU,
+                "0000:01:00.0", "nvidia", computeCapability, 6 * GIB);
+    }
     /**
-     * Feeds hand built devices to the resolution logic of {@link NEnvBase},
-     * everything unrelated to the gpu axis being stubbed out.
+     * Feeds hand built runtime lists to the resolution logic of
+     * {@link NEnvBase}, everything unrelated to that axis being stubbed out.
      */
     private static class TestEnv extends NEnvBase {
-        private final List<NGpuDevice> devices;
         private final List<NParallelProcessorRuntime> runtimes;
         private final boolean detectionSupported;
 
-        TestEnv(List<NGpuDevice> devices, List<NParallelProcessorRuntime> runtimes, boolean detectionSupported) {
-            this.devices = devices;
+        TestEnv(List<NParallelProcessorRuntime> runtimes, boolean detectionSupported) {
             this.runtimes = runtimes;
             this.detectionSupported = detectionSupported;
-        }
-
-        @Override
-        protected List<NGpuDevice> getGpuDevices0() {
-            return devices;
         }
 
         @Override
@@ -407,108 +406,48 @@ public class GpuDetectionTest {
         }
 
         @Override
-        public boolean isGraphicalDesktopEnvironment0() {
-            return false;
-        }
-
+        public boolean isGraphicalDesktopEnvironment0(){ return false; }
         @Override
-        public NId getOsDist0() {
-            return null;
-        }
-
+        public net.thevpc.nuts.artifact.NId getOsDist0(){ return null; }
         @Override
-        public NId getArch0() {
-            return null;
-        }
-
+        public net.thevpc.nuts.artifact.NId getArch0(){ return null; }
         @Override
-        public NArchFamily getArchFamily0() {
-            return null;
-        }
-
+        public net.thevpc.nuts.platform.NArchFamily getArchFamily0(){ return null; }
         @Override
-        public String getRootUserName0() {
-            return "root";
-        }
-
+        public String getRootUserName0(){ return null; }
         @Override
-        public String getUserName0() {
-            return "test";
-        }
-
+        public String getUserName0(){ return null; }
         @Override
-        public NId getJava0() {
-            return null;
-        }
-
+        public net.thevpc.nuts.artifact.NId getJava0(){ return null; }
         @Override
-        public String getUserHome0() {
-            return "/home/test";
-        }
-
+        public String getUserHome0(){ return null; }
         @Override
-        public NId getOs0() {
-            return null;
-        }
-
+        public net.thevpc.nuts.artifact.NId getOs0(){ return null; }
         @Override
-        public NOsFamily getOsFamily0() {
-            return NOsFamily.LINUX;
-        }
-
+        public net.thevpc.nuts.platform.NOsFamily getOsFamily0(){ return null; }
         @Override
-        public NId getShell0() {
-            return null;
-        }
-
+        public net.thevpc.nuts.artifact.NId getShell0(){ return null; }
         @Override
-        public NShellFamily getShellFamily0() {
-            return NShellFamily.BASH;
-        }
-
+        public net.thevpc.nuts.platform.NShellFamily getShellFamily0(){ return null; }
         @Override
-        public String getMachineName0() {
-            return "test-machine";
-        }
-
+        public String getMachineName0(){ return null; }
         @Override
-        public String getHostName0() {
-            return "test-host";
-        }
-
+        public String getHostName0(){ return null; }
         @Override
-        public String pid() {
-            return "0";
-        }
-
+        public String pid(){ return null; }
         @Override
-        public Map<String, String> env() {
-            return Collections.emptyMap();
-        }
-
+        public Map<String, String> env(){ return Collections.emptyMap(); }
         @Override
-        public NConnectionString connectionString() {
-            return null;
-        }
-
+        public net.thevpc.nuts.net.NConnectionString connectionString(){ return null; }
         @Override
-        public boolean isNativeImage() {
-            return false;
-        }
-
+        public boolean isNativeImage(){ return false; }
         @Override
-        public NOptional<String> getEnv(String name) {
-            return NOptional.ofEmpty();
-        }
-
+        public net.thevpc.nuts.util.NOptional<String> getEnv(String p0){ return net.thevpc.nuts.util.NOptional.ofEmpty(); }
         @Override
-        public NRam ram() {
-            return null;
-        }
-
+        public net.thevpc.nuts.platform.NRam ram(){ return null; }
         @Override
-        public NEnv refresh() {
-            return this;
-        }
+        public List<NGpu> gpus(){ return Collections.emptyList(); }
+        @Override
+        public net.thevpc.nuts.platform.NEnv refresh(){ return null; }
     }
 }

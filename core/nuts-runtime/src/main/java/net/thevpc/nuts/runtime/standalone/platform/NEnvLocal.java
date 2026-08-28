@@ -26,6 +26,14 @@ import java.util.function.Function;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class NEnvLocal extends NEnvBase {
+    private static final Map<String, Double> KNOWN_BANDWIDTH_GBPS = NMaps.of(
+            "NVIDIA GeForce RTX 3060", 360.0,
+            "NVIDIA GeForce RTX 3060 Ti", 448.0,
+            "NVIDIA GeForce RTX 4060", 272.0,
+            "NVIDIA GeForce RTX 4070", 504.0,
+            "NVIDIA GeForce RTX 4090", 1008.0
+            // extend as needed
+    );
 
     protected boolean initialized;
     protected boolean nativeImage;
@@ -182,6 +190,171 @@ public class NEnvLocal extends NEnvBase {
     }
 
     @Override
+    public List<NGpu> gpus() {
+        // on linux the kernel exposes vendor, pci identity, bound module and
+        // device count as plain files, which enumerates every adapter rather
+        // than only the ones a vendor tool reports, and carries the extra
+        // capabilities declared by NGpuCapabilities. Falls through to the
+        // generic detection below when that reading is unavailable.
+        switch (osFamily()) {
+            case LINUX:
+            case UNIX: {
+                List<NGpu> detailed = NLinuxGpuProbe.gpus();
+                if (!detailed.isEmpty()) {
+                    return detailed;
+                }
+                break;
+            }
+        }
+        List<NGpu> result = tryNvidiaSmi();
+        if (!result.isEmpty()) return result;
+        switch (osFamily()) {
+            case WINDOWS: {
+                result = tryWindowsWmic();
+                break;
+            }
+            case LINUX:
+            case UNIX: {
+                result = tryLinuxSysfs();
+                break;
+            }
+            case MACOS: {
+                result = tryMacSystemProfiler();
+                break;
+            }
+            default: {
+                result = Collections.emptyList();
+            }
+        }
+        return result;
+    }
+
+    // --- NVIDIA: nvidia-smi reports MiB, convert to bytes ---
+    private static List<NGpu> tryNvidiaSmi() {
+        List<NGpu> list = new ArrayList<>();
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+
+            );
+            for (String line : NStringUtils.splitLines(NExec.ofSystem("nvidia-smi",
+                            "--query-gpu=name,memory.total,memory.used,memory.free,compute_cap,pcie.link.gen.current,pcie.link.gen.max,pcie.link.width.current,pcie.link.width.max",
+                            "--format=csv,noheader,nounits")
+                    .grabbedAll())) {
+                String[] parts = line.split(",\\s*");
+                if (parts.length == 9) {
+                    String name = parts[0].trim();
+                    long totalBytes = Long.parseLong(parts[1].trim()) * 1024L * 1024L;
+                    long usedBytes = Long.parseLong(parts[2].trim()) * 1024L * 1024L;
+                    long freeBytes = Long.parseLong(parts[3].trim()) * 1024L * 1024L;
+
+                    Map<String, String> caps = new LinkedHashMap<>();
+                    caps.put("compute.capability", parts[4].trim());
+                    caps.put("pcie.gen.current", parts[5].trim());
+                    caps.put("pcie.gen.max", parts[6].trim());
+                    caps.put("pcie.width.current", parts[7].trim());
+                    caps.put("pcie.width.max", parts[8].trim());
+
+                    Double bw = KNOWN_BANDWIDTH_GBPS.get(name);
+                    if (bw != null) {
+                        caps.put("memory.bandwidth.gbps", String.valueOf(bw));
+                    }
+
+                    list.add(new NGpu(name, new NRam(name, totalBytes, usedBytes, freeBytes), caps));
+                }
+
+            }
+        } catch (Exception ignored) {
+            //
+        }
+        return list;
+    }
+
+    // --- Linux sysfs: mem_info_vram_total is already in bytes ---
+    private static List<NGpu> tryLinuxSysfs() {
+        List<NGpu> list = new ArrayList<>();
+        try {
+            java.io.File drm = new java.io.File("/sys/class/drm");
+            java.io.File[] cards = drm.listFiles();
+            if (cards != null) {
+                for (java.io.File f : cards) {
+                    if (!f.getName().matches("card\\d+")) continue;
+                    java.io.File totalFile = new java.io.File(f, "device/mem_info_vram_total");
+                    java.io.File usedFile = new java.io.File(f, "device/mem_info_vram_used");
+                    if (totalFile.exists()) {
+
+                        long totalBytes = NLiteral.of(NPath.of(totalFile).readString().trim()).asLong().orElse(-1L);
+                        if (totalBytes >= 0) {
+                            long usedBytes = -1;
+                            if (usedFile.exists()) {
+                                usedBytes = NLiteral.of(NPath.of(usedFile).readString().trim()).asLong().orElse(-1L);
+                            }
+                            long freeBytes = usedBytes >= 0 ? totalBytes - usedBytes : -1;
+                            list.add(new NGpu(f.getName(), new NRam(f.getName(), totalBytes, usedBytes, freeBytes), Collections.emptyMap()));
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return list;
+    }
+
+    // --- Windows WMIC: AdapterRAM is already in bytes ---
+    private static List<NGpu> tryWindowsWmic() {
+        List<NGpu> list = new ArrayList<>();
+        try {
+            for (String line : NStringUtils.splitLines(NExec.ofSystem("cmd", "/c",
+                            "wmic path win32_VideoController get name,AdapterRAM /format:csv")
+                    .grabbedOut())) {
+                String[] parts = line.split(",");
+                if (parts.length == 3 && !NBlankable.isBlank(parts[1]) && parts[1].matches("\\d+")) {
+                    long totalBytes = Long.parseLong(parts[1].trim());
+                    String name = parts[2].trim();
+                    list.add(new NGpu(name, new NRam(name, totalBytes, -1, -1), new LinkedHashMap<>()));
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return list;
+    }
+
+    // --- macOS system_profiler: reports MB or GB text, normalize to bytes ---
+    private static List<NGpu> tryMacSystemProfiler() {
+        List<NGpu> list = new ArrayList<>();
+        try {
+            String name = null;
+            for (String line : NStringUtils.splitLines(NExec.ofSystem("system_profiler", "SPDisplaysDataType")
+                    .grabbedOut())) {
+                if (line.startsWith("Chipset Model:")) name = line.substring(14).trim();
+                if (line.startsWith("VRAM") && name != null) {
+                    String[] tok = line.split(":");
+                    String valStr = tok[1].trim().replaceAll("[^0-9]", "");
+                    if (!valStr.isEmpty()) {
+                        long value = Long.parseLong(valStr);
+                        long totalBytes = line.contains("GB")
+                                ? value * 1024L * 1024L * 1024L
+                                : value * 1024L * 1024L;
+                        list.add(new NGpu(name, new NRam(name, totalBytes, -1, -1), new LinkedHashMap<>()));
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return list;
+    }
+
+
+    @Override
+    protected List<NParallelProcessorRuntime> getParallelProcessorRuntimes0() {
+        return NParallelProcessorFamily.detectAvailable();
+    }
+
+    @Override
+    protected boolean isParallelProcessorDetectionSupported() {
+        return NParallelProcessorFamily.canDetect();
+    }
+
+    @Override
     public boolean isNativeImage() {
         return "runtime".equals(System.getProperty("org.graalvm.nativeimage.imagecode"));
     }
@@ -285,26 +458,6 @@ public class NEnvLocal extends NEnvBase {
     @Override
     public boolean isGraphicalDesktopEnvironment0() {
         return gui;
-    }
-
-    @Override
-    protected List<NGpuDevice> getGpuDevices0() {
-        return NLinuxGpuProbe.probe();
-    }
-
-    @Override
-    public long queryGpuFreeMemoryBytes(NGpuDevice device) {
-        return device == null ? -1 : NLinuxGpuProbe.queryFreeMemoryBytes(device.getPciBusId());
-    }
-
-    @Override
-    protected List<NParallelProcessorRuntime> getParallelProcessorRuntimes0() {
-        return NParallelProcessorFamily.detectAvailable();
-    }
-
-    @Override
-    protected boolean isParallelProcessorDetectionSupported() {
-        return NParallelProcessorFamily.canDetect();
     }
 
 

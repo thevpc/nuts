@@ -211,74 +211,6 @@ public interface NEnv extends NComponent {
     NArchFamily archFamily();
 
     /**
-     * GPU devices of this environment, sorted by pci address.
-     * <p>
-     * Devices describe hardware only, the compute runtime able to drive them is
-     * reported by {@link NParallelProcessorFamily}. The list contains every
-     * display adapter, integrated ones included, so callers interested in
-     * compute should filter on {@link NGpuDevice#isComputeCapable()}.
-     * <p>
-     * Detection is currently implemented for the local linux environment only,
-     * other environments report an empty list rather than guessing.
-     *
-     * @return gpu devices, empty when none is detected or detection is unsupported
-     * @since 1.0.0
-     */
-    List<NGpuDevice> gpuDevices();
-
-    /**
-     * The gpu device to use when a single one has to be picked.
-     * <p>
-     * A dedicated device wins over an integrated one, the largest memory being
-     * the tie breaker, and only compute capable devices are eligible. The choice
-     * is deterministic so that resolution stays reproducible in unattended runs.
-     *
-     * @return the primary gpu device, empty when none is eligible
-     * @since 1.0.0
-     */
-    NOptional<NGpuDevice> gpuDevice();
-
-    /**
-     * Reads the currently free memory of a gpu device.
-     * <p>
-     * This value is volatile and is deliberately kept out of {@link NGpuDevice},
-     * which holds only stable properties. It is never cached and must not take
-     * part in dependency resolution, otherwise resolution would stop being
-     * reproducible.
-     *
-     * @param device device to query, as returned by {@link #gpuDevices()}
-     * @return free memory in bytes, negative when unknown or unsupported
-     * @since 1.0.0
-     */
-    long queryGpuFreeMemoryBytes(NGpuDevice device);
-
-    /**
-     * Parallel processing runtimes available on this environment, each reporting
-     * separately whether code targeting it can be executed and whether it can be
-     * compiled.
-     * <p>
-     * This is the software axis, {@link #gpuDevices()} being the hardware one.
-     * A machine holding an NVIDIA device may well expose cuda as runnable but
-     * not buildable, which are opposite answers when choosing between a prebuilt
-     * artifact and sources.
-     *
-     * @return available runtimes, empty when none is detected
-     * @since 1.0.0
-     */
-    List<NParallelProcessorRuntime> parallelProcessorRuntimes();
-
-    /**
-     * The parallel processing runtime family to use when a single one has to be
-     * picked, vendor native stacks winning over cross vendor layers.
-     *
-     * @return the family, {@link NParallelProcessorFamily#NONE} when probing
-     * found none, {@link NParallelProcessorFamily#UNKNOWN} when it could not
-     * conclude
-     * @since 1.0.0
-     */
-    NParallelProcessorFamily parallelProcessorFamily();
-
-    /**
      * Checks if is graphical desktop environment.
      *
      * @return is graphical desktop environment result
@@ -336,6 +268,38 @@ public interface NEnv extends NComponent {
      */
     NRam ram();
 
+    /**
+     * GPU RAMs
+     * @return GPU RAMs
+     * @since 1.0.0
+     */
+    List<NGpu> gpus();
+
+    /**
+     * Parallel processing runtimes available on this environment, each reporting
+     * separately whether code targeting it can be executed and whether it can be
+     * compiled.
+     * <p>
+     * This is the software axis, {@link #gpus()} being the hardware one. The two
+     * are not interchangeable : a machine holding an NVIDIA device may well
+     * expose cuda as runnable but not buildable, which are opposite answers when
+     * choosing between a prebuilt artifact and sources.
+     *
+     * @return available runtimes, empty when none is detected
+     * @since 1.0.0
+     */
+    List<NParallelProcessorRuntime> parallelProcessorRuntimes();
+
+    /**
+     * The parallel processing runtime family to use when a single one has to be
+     * picked, vendor native stacks winning over cross vendor layers.
+     *
+     * @return the family, {@link NParallelProcessorFamily#NONE} when probing
+     * found none, {@link NParallelProcessorFamily#UNKNOWN} when it could not
+     * conclude
+     * @since 1.0.0
+     */
+    NParallelProcessorFamily parallelProcessorFamily();
 
     /**
      * Returns a fresh NEnv instance with current runtime values.
