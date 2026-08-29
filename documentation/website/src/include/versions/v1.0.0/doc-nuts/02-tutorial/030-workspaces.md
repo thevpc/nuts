@@ -92,22 +92,30 @@ Workspaces are incredibly powerful tools for developers and system administrator
 * **CI/CD Ephemeral Workspaces:** In a Continuous Integration pipeline, you can use a temporary workspace (e.g., `nuts -w temp-$$ ...`) to guarantee a pristine, reproducible environment that is destroyed after the job finishes.
 * **Testing Upgrades:** Safely test a new version of a tool in a sandbox workspace without breaking your daily workflow in the default workspace.
 
-## Listing Workspaces
+This will output a list of available workspaces, along with their paths and storage strategies.
 
-To see all the workspaces currently managed by your **nuts** installation, you can use the built-in workspace commands:
+## Resetting a Workspace
+
+If you are whant to reset all of workspace config and files you can use the **reset** mode (`-Z` flag) combined with the workspace flag.
 
 ```bash
-nuts workspace list
+nuts -ZQ -w my-workspace
 ```
-
-This will output a list of available workspaces, along with their paths and storage strategies.
 
 ## Deleting a Workspace
 
-If you are done with a workspace and want to reclaim disk space, you can delete it using the **reset** mode (`-Z` flag) combined with the workspace flag.
+If you are done with a workspace and want to reclaim disk space, you can delete it using the **reset-quit** mode (`-ZQ` flags) combined with the workspace flag.
 
 ```bash
-nuts -Z -w my-workspace
+nuts -ZQ -w my-workspace
 ```
 
-> **Warning:** This performs a hard reset/deletion of the specified workspace, removing all installed artifacts, caches, and configurations associated with it. Ensure you are targeting the correct workspace before running this command.
+## Deleting all common Workspaces, Uninstalling nuts
+
+:::warning
+This performs a hard reset/deletion of the specified workspace, removing all installed artifacts, caches, and configurations associated with it. Ensure you are targeting the correct workspace before running this command.
+:::
+
+```bash
+nuts --reset-hard
+```

@@ -164,13 +164,15 @@ The source directory for generating the static website hosted on GitHub Pages:
   * `contrib.html` (Contributor guide)
   * `compat_reports/` (API & binary compatibility reports)
   * `versions/` (Release version manifests)
-* **`src/include/`**: Reusable HTML fragments and card templates (`apps/`, `blog/`, `contrib/`, `doc-naf/`, `doc-nuts/`, `download/`, `faq/`, `template/`).
+* **`src/include/`**: Reusable HTML/mardown/NTF fragments and card templates (`apps/`, `blog/`, `contrib/`, `doc-naf/`, `doc-nuts/`, `download/`, `faq/`, `template/`).
 * **`src/resources/`**: Static assets copied verbatim to the generated site:
   * Stylesheets & SASS (`assets/css`, `assets/sass`)
   * Vendor libraries (`bootstrap`, `font-awesome`, `highlight.js`, `jquery`, `magnific-popup`)
   * Downloadable runtime JARs (`nuts-latest.jar`, `nuts-standard.jar`, versioned JARs)
   * Theme examples (`example.ntf-theme`, `horizon.ntf-theme`, `min.ntf-theme`)
-* **`src/script/project.nexpr`**: NExpr configuration script defining version numbers (`latestApiVersion`, `stableRuntimeVersion`, etc.), download URLs, and metadata variables.
+*  `src/main/compat_reports/*` is pre-generated based on Java API Compliance Checker
+*  `src/main/versions/*` is pre-generated based on `src/include/versions` and `src/include/template/v1/doc-*.html`
+* **`src/script/project.nexpr`**: NExpr configuration script defining version numbers (`latestApiVersion`, `stableRuntimeVersion`, etc.), download URLs, and metadata variables, executed at the start of generation.
 * **`archive/`**: Archived historical versions (e.g. `v2026/`).
 * **`other-src/`**: AsciiDoc source documentation (`nuts-documentation.adoc`) and extra graphics.
 

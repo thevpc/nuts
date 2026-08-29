@@ -29,9 +29,9 @@ Docs: [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 **Nuts** does not require any custom descriptors or build tools, does not change classloading behavior, it just solves dependency tree, builds the classpath and runs the application. 
 
 What makes **Nuts** unique is that it shares the same workspace across all applications, enables installing multiple versions of the same app, and automatically provisions the required platform binaries (JDK).
-A simple `nuts install myapp` is all what one needs to install the latest version of myapp and all its dependencies including the JDK while optimizing network and disk usage.
+A simple `nuts install myapp` is all you need to install the latest version of `myapp` and all its dependencies—including the required JDK—while optimizing network and disk usage.
 
-Think of **Nuts** as `npm`/`nvm`, or `uv`, but for the java ecosystem.
+Think of **Nuts** as **`uv`** (or `npx`/`pipx`), but for the Java ecosystem: combining runtime dependency resolution, JDK auto-provisioning, workspace isolation, and instant app execution.
 
 ---
 
@@ -92,7 +92,7 @@ nuts update
 | `nuts org.springframework.boot:spring-boot-cli init --dependencies=web my-app` | scaffold a Spring Boot project                                |
 | `nuts jd-gui`                                                                  | decompile a JAR                                               |
 | `nuts uninstall jd-gui#1.6.6`                                                  | uninstall version jd-gui version 1.6.6                        |
-| `nuts update nsh`                                                              | update to to the newest version of java bash compatible shell |
+| `nuts update nsh`                                                              | update to the newest version of java bash compatible shell    |
 | `nuts org.postgresql:postgresql-server initdb -D ~/pgdata`                     | initialize a portable PostgreSQL instance (not a java app)    |
 | `nuts --at=ssh://me@myserver install myapp:2.0`                                | deploy to remote server                                       |
 | `nuts settings bundle`                                                         | create offline deployment bundle (air-gapped deployment)      |
@@ -110,6 +110,7 @@ nuts update
 | Tool | What it does | Relationship to **Nuts** |
 |---|---|---|
 | Maven / Gradle | Compile-time dependency resolution | **Nuts** reuses their descriptors at runtime |
+| uv / uvx | Python runtime provisioning, package management & instant tool execution | **Nuts** provides the equivalent all-in-one experience for the JVM (JDK auto-provisioning + Maven runtime resolution + instant app execution) |
 | jbang | Run Java scripts and JARs | **Nuts** adds workspaces, platforms, lifecycle, deployment |
 | sdkman / jenv | Manage JDK versions | **Nuts** subsumes this as part of workspace platform management |
 | Docker | Isolated application environments | **Nuts** is lighter — no daemon, no root, no image layers |

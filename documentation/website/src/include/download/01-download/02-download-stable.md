@@ -1,8 +1,8 @@
 ---
-title: LTS Binaries
+title: Stable Binaries
 ---
 
-Select the long-term support (LTS) version ({{stableRuntimeVersion}}) for maximum stability and long-term support. It receives critical security patches only
+Select the Stable version ({{stableRuntimeVersion}}) for maximum stability and long-term support. It receives critical security patches only
 
 
 :::tip

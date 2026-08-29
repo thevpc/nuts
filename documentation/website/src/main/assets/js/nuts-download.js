@@ -30,7 +30,7 @@
             stable:  true
         }
     };
-    URLS.lts = URLS.stable;
+    //URLS.lts = URLS.stable;
 
     /* ---- State ---- */
     var state = { version: null, platform: null, method: null };
