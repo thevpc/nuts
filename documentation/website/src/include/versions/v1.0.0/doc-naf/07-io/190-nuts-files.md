@@ -1,9 +1,9 @@
 ---
-title: IO: Working with files
+title: Working with files
 ---
 
 
-**nuts** Library allows multiple variants of string interpolation
+**nuts** Library allows multiple files to be processed
 
 ## NCp
 
@@ -11,8 +11,8 @@ title: IO: Working with files
     NCp.of()
         .from("http://my-server.com/file.pdf")
         .to("/home/my-file")
-        .setProgressMonitor(true)
-        .setValidator((in)->checkSHA1Hash(in))
+        .progressMonitor(true)
+        .validator((in)->checkSHA1Hash(in))
         .run();
 
     NPs ps=NPs.of()
@@ -27,7 +27,7 @@ title: IO: Working with files
     NCompress aa = NCompress.of()
         .setTarget(options.outZip);
         for (NPath file : options.files) {
-        aa.addSource(file);
+            aa.source(file);
         }
         aa.run();
         

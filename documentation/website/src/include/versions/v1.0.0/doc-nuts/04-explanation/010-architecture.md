@@ -39,13 +39,10 @@ To achieve extreme modularity and version flexibility, **nuts** is structured in
 └─────────────────────────────────────────────┘
 ```
 
-1. **nuts-boot (Bootstrap Layer)**: The entry point — the JAR you download and run with `java -jar nuts.jar`. It contains a minimal CLI parser, Maven repository client, and version resolver. Its sole job is to locate the *best* `nuts-api` version, then find the *best* `nuts-runtime` compatible with that API. It has zero dependencies and can bootstrap the entire system from scratch.
-
-2. **nuts-api (Contract Layer)**: Defines the public interfaces, SPIs, and data model that all **nuts** components program against. Applications and companion tools depend only on this layer. By keeping the API separate, the runtime implementation can evolve independently without breaking applications.
-
-3. **nuts-runtime (Engine)**: The full implementation of all SPIs defined in `nuts-api`. It provides the Maven POM dependency solver, repository manager, security enforcement, process execution engine, and advanced terminal formatting (NTF). This tier is loaded dynamically by `nuts-boot` — it is never bundled statically.
-
-4. **Applications**: The top layer consisting of companion tools (like `nsh`, `nmvn`) and user applications installed via **nuts**. They consume the `nuts-api` interfaces to interact with the workspace.
+- 1. **nuts-boot (Bootstrap Layer)**: The entry point — the JAR you download and run with `java -jar nuts.jar`. It contains a minimal CLI parser, Maven repository client, and version resolver. Its sole job is to locate the *best* `nuts-api` version, then find the *best* `nuts-runtime` compatible with that API. It has zero dependencies and can bootstrap the entire system from scratch.
+- 2. **nuts-api (Contract Layer)**: Defines the public interfaces, SPIs, and data model that all **nuts** components program against. Applications and companion tools depend only on this layer. By keeping the API separate, the runtime implementation can evolve independently without breaking applications.
+- 3. **nuts-runtime (Engine)**: The full implementation of all SPIs defined in `nuts-api`. It provides the Maven POM dependency solver, repository manager, security enforcement, process execution engine, and advanced terminal formatting (NTF). This tier is loaded dynamically by `nuts-boot` — it is never bundled statically.
+- 4. **Applications**: The top layer consisting of companion tools (like `nsh`, `nmvn`) and user applications installed via **nuts**. They consume the `nuts-api` interfaces to interact with the workspace.
 
 ## Bootstrap Process
 
@@ -70,9 +67,10 @@ This means the boot JAR can bootstrap a **different (newer or older) API version
 With the API version determined (say `0.8.4`), the boot JAR searches for the **best compatible `nuts-runtime`**. The compatibility rule is a **version prefix match**: only runtime versions that start with the API version followed by a dot are considered. For example, if the API is `0.8.4`, the runtime must be `0.8.4.x` (e.g., `0.8.4.0`, `0.8.4.1`, `0.8.4.5`). Among all matching versions, the **highest version number wins**.
 
 The resolution follows a **local-first strategy**:
-1. **Local workspace lib cache** — checked first for fast startup without network access.
-2. **Remote repositories** (Maven Central, configured repos) — queried only if no valid local version is found (or if the fetch strategy is `ANYWHERE`).
-3. **Fallback cache** — if both local and remote fail, the boot JAR scans the workspace's lib directory for any previously downloaded runtime JAR with a matching version prefix.
+
+- 1. **Local workspace lib cache** — checked first for fast startup without network access.
+- 2. **Remote repositories** (Maven Central, configured repos) — queried only if no valid local version is found (or if the fetch strategy is `ANYWHERE`).
+- 3. **Fallback cache** — if both local and remote fail, the boot JAR scans the workspace's lib directory for any previously downloaded runtime JAR with a matching version prefix.
 
 Once the runtime artifact is identified, its dependency tree is resolved from the `.nuts` descriptor (a lightweight JSON format) or the standard Maven `pom.xml`.
 

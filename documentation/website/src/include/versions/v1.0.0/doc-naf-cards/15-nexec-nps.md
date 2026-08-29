@@ -18,7 +18,7 @@ contentType: java
     NExec.of("netbeans-launcher").run();
 
     // List all Java processes on the local machine
-    NPs.of().setPlatformFamily(NPlatformFamily.JAVA)
+    NPs.of().platformFamily(NPlatformFamily.JAVA)
            .getResultList()
            .forEach(NOut::println);
 

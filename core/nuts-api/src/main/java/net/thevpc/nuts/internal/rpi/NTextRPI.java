@@ -56,7 +56,7 @@ public interface NTextRPI extends NComponent {
      *
      * @return create cell spec builder result
      */
-    NTableCellSpecBuilder createCellSpecBuilder();
+    NTableCellBuilder createCellSpecBuilder();
     /**
      * Creates a new instance of tree node.
      *

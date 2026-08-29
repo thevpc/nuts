@@ -18,11 +18,11 @@ nuts --at=ssh://user@host myapp
 
 When you trigger a remote execution, **nuts** orchestrates a complex deployment sequence entirely automatically:
 
-1. **Local Bundling**: It analyzes the requested application and its dependencies, creating an air-gapped bundle on your local machine.
-2. **Secure Transfer**: It securely SCPs the self-contained bundle to a temporary location on the remote host.
-3. **Self-Installation**: It bootstraps a temporary, isolated **nuts** workspace on the remote host using the transferred bundle (no internet connection required on the remote server).
-4. **Execution**: It launches the application within the remote environment.
-5. **Stream Redirection**: It connects the remote standard output, standard error, and standard input streams directly back to your local terminal, making it feel like a local execution.
+- 1. **Local Bundling**: It analyzes the requested application and its dependencies, creating an air-gapped bundle on your local machine.
+- 2. **Secure Transfer**: It securely SCPs the self-contained bundle to a temporary location on the remote host.
+- 3. **Self-Installation**: It bootstraps a temporary, isolated **nuts** workspace on the remote host using the transferred bundle (no internet connection required on the remote server).
+- 4. **Execution**: It launches the application within the remote environment.
+- 5. **Stream Redirection**: It connects the remote standard output, standard error, and standard input streams directly back to your local terminal, making it feel like a local execution.
 
 ### Prerequisites
 

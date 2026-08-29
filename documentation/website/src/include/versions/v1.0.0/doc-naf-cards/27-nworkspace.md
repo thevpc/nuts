@@ -14,9 +14,9 @@ NWorkspace ws = Nuts.openWorkspace("--workspace=/path/to/ws");
 ws.runWith(() -> {
     NSession.of()
     .copy()
-    .setDry(true)
-    .setOutputFormat(NContentType.JSON)
+    .dry(true)
+    .outputFormat(NContentType.JSON)
     .runWith(() -> {
-        NOut.println(Map.of("status", "ok"));
+        NOut.println(NMaps.of("status", "ok"));
     });
 });

@@ -10,4 +10,4 @@ push a ```sh nuts``` to remote repository
 ##) EXAMPLES:
 
     ```sh push my-group:my-name```
-        pushes the ```sh nuts```
+        pushes the ```sh artifact```

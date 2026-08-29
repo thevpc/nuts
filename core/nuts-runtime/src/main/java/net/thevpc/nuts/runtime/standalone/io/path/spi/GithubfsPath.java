@@ -225,7 +225,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (p != null) {
             p.copyTo(other, options);
         } else {
-            NCp.of().from(basePath).to(other).addOptions(options).run();
+            NCp.of().from(basePath).to(other).options(options).run();
         }
         return true;
     }

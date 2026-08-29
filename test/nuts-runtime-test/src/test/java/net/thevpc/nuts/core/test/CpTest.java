@@ -39,11 +39,11 @@ public class CpTest {
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true);
         //just to consume the stream
-        NCp.of().from(j1).to(new ByteArrayOutputStream()).addOptions(NPathOption.LOG, NPathOption.TRACE).run();
+        NCp.of().from(j1).to(new ByteArrayOutputStream()).options(NPathOption.LOG, NPathOption.TRACE).run();
         TestUtils.println(j1);
         InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true);
         //just to consume the stream
-        NCp.of().from(j2).to(new ByteArrayOutputStream()).addOptions(NPathOption.LOG, NPathOption.TRACE).run();
+        NCp.of().from(j2).to(new ByteArrayOutputStream()).options(NPathOption.LOG, NPathOption.TRACE).run();
         TestUtils.println(j2);
     }
 
@@ -73,7 +73,7 @@ public class CpTest {
         TestUtils.println("start-----------");
 
         NCp.of().from(from).to(to)
-                .addOptions(NPathOption.LOG, NPathOption.TRACE)
+                .options(NPathOption.LOG, NPathOption.TRACE)
                 .progressMonitor(new NProgressListener() {
                     @Override
                     public boolean onProgress(NProgressEvent event) {

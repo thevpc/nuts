@@ -14,7 +14,7 @@ contentType: java
 NProgressMonitor mon = NProgressMonitors.of().ofSysOut();
 mon.start();
 for (int i = 0; i < 10; i++) {
-    mon.setProgress(i * 1.0 / 10, NMsg.ofC("Step %.1f", i * 1.0 / 10));
+    mon.progress(i * 1.0 / 10, NMsg.ofC("Step %.1f", i * 1.0 / 10));
 }
 mon.complete();
 

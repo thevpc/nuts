@@ -710,7 +710,7 @@ public class NPathFromSPI extends NPathBase {
     public void copyTo(NPath other, NPathOption... options) {
         if (!base.copyTo(this, other, options)) {
             try (InputStream in = this.getInputStream(options)) {
-                NCp.of().from(in).to(other).addOptions(options).run();
+                NCp.of().from(in).to(other).options(options).run();
             } catch (Exception e) {
                 throw new NIOException(e);
             }

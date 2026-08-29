@@ -29622,7 +29622,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTableCellSpecBuilder",
+    "name": "net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTableCellBuilder",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -40066,6 +40066,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.text.NTableCellBuilder",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.text.NTableCellDef",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -40081,20 +40095,6 @@
   },
   {
     "name": "net.thevpc.nuts.text.NTableCellFormat",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.text.NTableCellSpecBuilder",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

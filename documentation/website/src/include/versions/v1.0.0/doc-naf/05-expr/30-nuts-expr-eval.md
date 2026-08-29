@@ -239,5 +239,6 @@ All single- or double-argument wrappers around `java.lang.Math`, with arguments 
 | `R` | 8.314462618 | ideal gas constant (J/mol/K) |
 | `σ` | 5.670374419×10⁻⁸ | Stefan–Boltzmann constant (W/m²/K⁴) |
 
-> Note the constants use their proper physics symbols (`ε0`, `μ0`, `η0`, `ħ`, `σ`, `π`) rather than ASCII transliterations — if you want ASCII-friendly aliases (`epsilon0`, `mu0`, `eta0`, `hbar`, `sigma`) for keyboard-friendly formula entry, declare them yourself as additional `NExprVar.ofConst(...)` bindings alongside `declarePhysicsConstants()`.
-
+:::info
+Note the constants use their proper physics symbols (`ε0`, `μ0`, `η0`, `ħ`, `σ`, `π`) rather than ASCII transliterations — if you want ASCII-friendly aliases (`epsilon0`, `mu0`, `eta0`, `hbar`, `sigma`) for keyboard-friendly formula entry, declare them yourself as additional `NExprVar.ofConst(...)` bindings alongside `declarePhysicsConstants()`.
+:::

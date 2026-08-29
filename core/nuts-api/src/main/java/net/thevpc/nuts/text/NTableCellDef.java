@@ -110,5 +110,5 @@ public interface NTableCellDef {
      *
      * @return builder result
      */
-    NTableCellSpecBuilder builder();
+    NTableCellBuilder builder();
 }

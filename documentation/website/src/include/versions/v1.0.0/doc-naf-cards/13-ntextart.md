@@ -12,7 +12,7 @@ contentType: java
     NText text = NText.of("hello world");
     NOut.println(art.getTextRenderer("figlet:standard").get().render(text));
     NOut.println(art.getImageRenderer("pixel:standard").get()
-            .setFontSize(20) .setOutputColumns(60) .render(text));
+            .fontSize(20) .outputColumns(60) .render(text));
     //   _                _    _                                             _        _
     //  | |              | |  | |                                           | |      | |
     //  | |__      ___   | |  | |    ___       __      __    ___     _ __   | |    __| |

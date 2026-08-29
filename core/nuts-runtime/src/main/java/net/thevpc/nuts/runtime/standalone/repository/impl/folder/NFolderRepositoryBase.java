@@ -290,7 +290,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     public String getStreamAsString(NId id, String typeName, String action) {
         byte[] barr = NCp.of()
-                .addOptions(NPathOption.LOG, NPathOption.TRACE, NPathOption.SAFE)
+                .options(NPathOption.LOG, NPathOption.TRACE, NPathOption.SAFE)
                 .from(getIdRemotePath(id))
                 .sourceOrigin(id)
                 .actionMessage(action == null ? NMsg.ofC("copy %s", id.longId()) : NMsg.ofC("%s %s", action, id.longId()))

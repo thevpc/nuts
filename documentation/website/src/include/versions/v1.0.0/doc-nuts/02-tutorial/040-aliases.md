@@ -39,8 +39,9 @@ nuts nsh#{{runtimeVersion}}
 # Or, if you want the default/latest version, even simpler:
 nuts nsh
 ```
-
-> **Note:** By default, **nuts** already imports a few core group IDs, including `net.thevpc`, which is why many built-in companion tools work immediately without requiring you to configure imports manually.
+:::info
+**Note:** By default, **nuts** already imports a few core group IDs, including `net.thevpc`, which is why many built-in companion tools work immediately without requiring you to configure imports manually.
+:::
 
 ## Aliases
 
@@ -76,11 +77,11 @@ After running this command, you no longer need the terminal to start the applica
 
 When you type a short command like `nuts build`, how does **nuts** know exactly what you mean? **nuts** resolves commands using a strict order of precedence:
 
-1. **Built-in Commands**: First, **nuts** checks if the word is a core command (e.g., `install`, `search`, `settings`).
-2. **Aliases**: If it's not a built-in command, it checks your configured workspace aliases.
-3. **Imported Artifacts**: Next, it appends your configured Imports (group IDs) to see if an installed artifact matches the name.
-4. **Full Artifact ID**: It checks if the string itself is a valid, resolvable Long ID in your configured repositories.
-5. **System Commands**: Finally, if all else fails, it may attempt to delegate to the underlying operating system path, depending on your execution mode.
+- 1. **Built-in Commands**: First, **nuts** checks if the word is a core command (e.g., `install`, `search`, `settings`).
+- 2. **Aliases**: If it's not a built-in command, it checks your configured workspace aliases.
+- 3. **Imported Artifacts**: Next, it appends your configured Imports (group IDs) to see if an installed artifact matches the name.
+- 4. **Full Artifact ID**: It checks if the string itself is a valid, resolvable Long ID in your configured repositories.
+- 5. **System Commands**: Finally, if all else fails, it may attempt to delegate to the underlying operating system path, depending on your execution mode.
 
 ## Managing Configurations
 

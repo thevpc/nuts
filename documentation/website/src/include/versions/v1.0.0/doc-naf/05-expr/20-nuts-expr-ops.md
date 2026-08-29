@@ -154,7 +154,9 @@ public final class NExprOpPrecedence {
 | Prefix `++`/`--` | `LEFT` (as literally registered — asymmetric vs. prefix `-`/`!`) |
 | Postfix `++`/`--`, `;` statement separator, `(`/`[`/`{` grouping markers | `LEFT` |
 
-> Parentheses `( ... )` are themselves represented as an `NExprOperator`/`NExprNode` named `"("` whose single child is the grouped sub-expression (see `test4`, `test5`, `test14` in `ExprTest`) — they are not stripped away during parsing. Their eval handler in `declareBuiltins()` deliberately throws (`"unable to evaluate"`); the actual grouping/indexing/block semantics are resolved by the parser itself, not by evaluating the `(`/`[`/`{` node directly. The same is true for `[` and `{`. If you ever see `IllegalArgumentException("unable to evaluate")`, it usually means something tried to `eval()` one of these structural marker nodes directly instead of walking its children.
+:::info
+Parentheses `( ... )` are themselves represented as an `NExprOperator`/`NExprNode` named `"("` whose single child is the grouped sub-expression (see `test4`, `test5`, `test14` in `ExprTest`) — they are not stripped away during parsing. Their eval handler in `declareBuiltins()` deliberately throws (`"unable to evaluate"`); the actual grouping/indexing/block semantics are resolved by the parser itself, not by evaluating the `(`/`[`/`{` node directly. The same is true for `[` and `{`. If you ever see `IllegalArgumentException("unable to evaluate")`, it usually means something tried to `eval()` one of these structural marker nodes directly instead of walking its children.
+:::
 
 ---
 

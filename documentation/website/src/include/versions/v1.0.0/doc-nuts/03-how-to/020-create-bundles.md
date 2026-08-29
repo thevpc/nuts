@@ -4,7 +4,7 @@ title: Create Bundles
 
 ## Create an Air-Gapped Bundle
 
-A **bundle** is a self-contained, highly portable package of a **nuts** workspace that includes an application and all its dependencies. Bundles are designed to run on machines without internet access or an existing **nuts** installation, solving the "fat-JAR" problem while keeping the target workspace isolated.
+A **bundle** is a self-contained, highly portable package of a **nuts** workspace that includes one or multiple applications and all its dependencies. Bundles are designed to run on machines without internet access or an existing **nuts** installation, solving the "fat-JAR" problem while keeping the target workspace isolated.
 
 ### Creating a Bundle
 

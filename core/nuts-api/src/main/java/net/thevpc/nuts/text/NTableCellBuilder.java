@@ -32,13 +32,13 @@ import net.thevpc.nuts.internal.rpi.NTextRPI;
  * @app.category Format
  * @since 0.5.5
  */
-public interface NTableCellSpecBuilder {
+public interface NTableCellBuilder {
     /**
      * Creates a new instance of of.
      *
      * @return of result
      */
-    static NTableCellSpecBuilder of() {
+    static NTableCellBuilder of() {
         return NTextRPI.of().createCellSpecBuilder();
     }
 
@@ -48,7 +48,7 @@ public interface NTableCellSpecBuilder {
      * @param content content
      * @return of result
      */
-    static NTableCellSpecBuilder of(NText content) {
+    static NTableCellBuilder of(NText content) {
         /**
          * Creates a new instance of of.
          *
@@ -66,7 +66,7 @@ public interface NTableCellSpecBuilder {
      * @param rowspan rowspan
      * @return of result
      */
-    static NTableCellSpecBuilder of(NText content, int colspan, int rowspan) {
+    static NTableCellBuilder of(NText content, int colspan, int rowspan) {
         /**
          * Creates a new instance of of.
          *
@@ -96,7 +96,7 @@ public interface NTableCellSpecBuilder {
      * @param align align
      * @return vertical align result
      */
-    NTableCellSpecBuilder verticalAlign(NPositionType align);
+    NTableCellBuilder verticalAlign(NPositionType align);
 
     /**
      * Horizontal align.
@@ -104,7 +104,7 @@ public interface NTableCellSpecBuilder {
      * @param align align
      * @return horizontal align result
      */
-    NTableCellSpecBuilder horizontalAlign(NPositionType align);
+    NTableCellBuilder horizontalAlign(NPositionType align);
 
     /**
      * Colspan.
@@ -119,7 +119,7 @@ public interface NTableCellSpecBuilder {
      * @param colspan colspan
      * @return colspan result
      */
-    NTableCellSpecBuilder colspan(int colspan);
+    NTableCellBuilder colspan(int colspan);
 
     /**
      * Rowspan.
@@ -134,7 +134,7 @@ public interface NTableCellSpecBuilder {
      * @param rowspan rowspan
      * @return rowspan result
      */
-    NTableCellSpecBuilder rowspan(int rowspan);
+    NTableCellBuilder rowspan(int rowspan);
 
     /**
      * Content.
@@ -149,7 +149,7 @@ public interface NTableCellSpecBuilder {
      * @param content content
      * @return content result
      */
-    NTableCellSpecBuilder content(NText content);
+    NTableCellBuilder content(NText content);
 
     /**
      * Build.

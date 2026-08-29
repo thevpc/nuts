@@ -49,7 +49,9 @@ public class MyBean {
 
 Nuts can automatically integrate with Spring's application context. By default, `NBeanContainer` is wired with the Spring context, which allows any object managed by Spring to be referenced in Nuts using `NBeanRef`.
 
-> **Important:** Only the `NBeanRef` itself is serialized or persisted. At runtime, the actual bean is resolved dynamically from the current bean container (e.g., Spring context). This means you can safely serialize or store Nuts objects without worrying about serializing the full bean state.
+:::info
+**Important:** Only the `NBeanRef` itself is serialized or persisted. At runtime, the actual bean is resolved dynamically from the current bean container (e.g., Spring context). This means you can safely serialize or store Nuts objects without worrying about serializing the full bean state.
+:::
 
 #### Example: Referencing Spring Beans
 

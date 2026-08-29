@@ -171,7 +171,7 @@ public class DefaultNDeploy extends AbstractNDeploy {
             }
             String name = NWorkspace.of().getDefaultIdFilename(descriptor.id().builder().faceDescriptor().build());
             tempFile = NPath.ofTempFile(name).toPath().get();
-            NCp.of().from(contentSource.inputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
+            NCp.of().from(contentSource.inputStream()).to(tempFile).options(NPathOption.SAFE).run();
             contentFile2 = tempFile;
 
             Path contentFile0 = contentFile2;

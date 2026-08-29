@@ -79,9 +79,10 @@ net.thevpc.app:netbeans-launcher        1.2.2    installed
 When you are writing scripts for a Continuous Integration/Continuous Deployment (CI/CD) pipeline, you want to ensure that the CLI tool never hangs waiting for user input and doesn't pollute the logs with ANSI color codes.
 
 **nuts** provides a dedicated `--bot` mode for this exact scenario. When you include the `--bot` flag:
-1. All interactive prompts are disabled (it assumes "yes" or default answers).
-2. Terminal color formatting is stripped out.
-3. Progress bars are disabled.
+
+- 2. All interactive prompts are disabled (it assumes "yes" or default answers).
+- 2. Terminal color formatting is stripped out.
+- 3. Progress bars are disabled.
 
 ```bash
 nuts --bot --json install my-automated-tool

@@ -257,7 +257,7 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NCp addOptions(NPathOption... pathOptions) {
+    public NCp options(NPathOption... pathOptions) {
         if (pathOptions != null) {
             for (NPathOption o : pathOptions) {
                 if (o != null) {

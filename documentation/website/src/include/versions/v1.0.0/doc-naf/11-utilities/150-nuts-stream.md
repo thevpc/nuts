@@ -189,7 +189,9 @@ NStream<Integer> result = NStream.ofArray(1, 2, 3, 4, 5)
 | jstream()                                                            | Convert back to a Java Stream                     |
 | iterator()                                                           | Obtain an NIterator                               |
 
-> Important: Most terminal operations consume the stream. Calling them twice yields undefined behaviour (empty result or exception). Prefer collecting once into a list/set if you need multiple passes.
+:::info
+*Important*: Most terminal operations consume the stream. Calling them twice yields undefined behaviour (empty result or exception). Prefer collecting once into a list/set if you need multiple passes.
+:::
 
 
 ## 4. Describable Pipelines
@@ -245,17 +247,18 @@ stream.onClose(() -> resource.release());
 - Extra helpers :  findSingleton(), typed primitive arrays, nonBlank(), coalesce(), ordered/sorted maps & sets.
 - Optional overhead :  If you never call describe(), behaviour and performance are essentially identical to a plain Java Stream.
 
-> NStream shines in NAF search pipelines, command implementations, logging, reporting, and any place where you want inspectable data-processing steps.
-
+:::info
+`NStream` shines in `NAF` search pipelines, command implementations, logging, reporting, and any place where you want inspectable data-processing steps.
+:::
 
 
 ## Notes & Best Practices
 
-1. Prefer `NStream.ofArray(...)` / `ofIntArray(...)` when you want automatic source description.
-2. Use `findSingleton()` when the pipeline is expected to produce exactly one element; it fails fast otherwise.
-3. Convert back to a Java Stream only when you need APIs that accept `Stream` (e.g. third-party libraries): `stream.jstream()`.
-4. Descriptions are evaluated lazily; expensive description suppliers are safe.
-5. Because the stream is consumable, collect early if you need multiple terminal operations.
+- 1. Prefer `NStream.ofArray(...)` / `ofIntArray(...)` when you want automatic source description.
+- 2. Use `findSingleton()` when the pipeline is expected to produce exactly one element; it fails fast otherwise.
+- 3. Convert back to a Java Stream only when you need APIs that accept `Stream` (e.g. third-party libraries): `stream.jstream()`.
+- 4. Descriptions are evaluated lazily; expensive description suppliers are safe.
+- 5. Because the stream is consumable, collect early if you need multiple terminal operations.
 
 For the full method list and Javadoc, see the `NStream` interface.
 

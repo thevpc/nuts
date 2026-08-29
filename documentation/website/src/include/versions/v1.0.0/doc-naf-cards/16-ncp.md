@@ -20,16 +20,16 @@ NCp.of()
 NCp.of()
     .from(from)
     .to(to)
-    .addOptions(NPathOption.LOG, NPathOption.TRACE)
+    .options(NPathOption.LOG, NPathOption.TRACE)
     // --- add validation validation (e.g., SHA-1 integrity check) ---
-    .setValidator(new NCpValidator() {
+    .validator(new NCpValidator() {
         @Override
         public void validate(InputStream in) throws IOException {
-            checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.CONTENT_HASH).build(),
+            checkSHA1Hash(id.builder().face(NConstants.QueryFaces.CONTENT_HASH).build(),
                           in, "artifact binaries");
         }
     })
-    .setProgressMonitor(event -> {
+    .progressMonitor(event -> {
         NOut.println(event.getProgress()); // display progress
         return true;                            // continue copy
     })

@@ -24,13 +24,13 @@ This distinction is fundamental: a missing configuration key (`EMPTY`) is not th
 
 ## 1. Core Design Principles
 
-1. **Tri-state semantics** – Present / Empty / Error are first-class and never collapsed.
-2. **Named values & rich diagnostics** – Every empty or error state can carry a descriptive `NMsg`. Calling `get()` produces meaningful exceptions automatically.
-3. **Configurable exception factories** – Applications and libraries can plug in their own exception types via `ExceptionFactory`.
-4. **Deep, short-circuiting navigation** – `then(...)` is the direct equivalent of the safe-navigation operator (`?.`) found in Kotlin, TypeScript, C#, etc.
-5. **Blank-aware operations** – Integration with `NBlankable` makes empty strings, whitespace-only strings, empty collections/arrays, and custom blank objects first-class citizens.
-6. **Explicit recovery points** – Dedicated methods for recovering from empty vs. error (`ifEmptyUse`, `onErrorUse`, `ifErrorThrow`, …).
-7. **Zero-surprise terminal operations** – `get()`, `orNull()`, `orElse(...)`, `orDefault()`, etc. have precise, documented contracts.
+- 1. **Tri-state semantics** – Present / Empty / Error are first-class and never collapsed.
+- 2. **Named values & rich diagnostics** – Every empty or error state can carry a descriptive `NMsg`. Calling `get()` produces meaningful exceptions automatically.
+- 3. **Configurable exception factories** – Applications and libraries can plug in their own exception types via `ExceptionFactory`.
+- 4. **Deep, short-circuiting navigation** – `then(...)` is the direct equivalent of the safe-navigation operator (`?.`) found in Kotlin, TypeScript, C#, etc.
+- 5. **Blank-aware operations** – Integration with `NBlankable` makes empty strings, whitespace-only strings, empty collections/arrays, and custom blank objects first-class citizens.
+- 6. **Explicit recovery points** – Dedicated methods for recovering from empty vs. error (`ifEmptyUse`, `onErrorUse`, `ifErrorThrow`, …).
+- 7. **Zero-surprise terminal operations** – `get()`, `orNull()`, `orElse(...)`, `orDefault()`, etc. have precise, documented contracts.
 
 ## 2. Creating NOptionals
 

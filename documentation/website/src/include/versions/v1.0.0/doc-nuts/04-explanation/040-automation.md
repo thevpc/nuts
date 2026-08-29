@@ -96,6 +96,7 @@ To maximize reliability in automated environments, adopt these standard **nuts**
 
 ### 1. Ephemeral Workspaces
 In CI/CD environments, always generate a unique, temporary workspace for the job to avoid cache poisoning:
+
 ```bash
 export NUTS_WORKSPACE="temp-$GITHUB_RUN_ID"
 nuts -w $NUTS_WORKSPACE run my-test-suite

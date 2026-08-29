@@ -12,7 +12,7 @@ contentType: java
 
 // Example 1: Cache with expiry
 NCachedValue<Double> cachedRandom = NCachedValue.of(Math::random)
-        .setExpiry(Duration.ofSeconds(5));
+        .expiry(Duration.ofSeconds(5));
 
 // First call computes and caches the value
 NOut.println("First value = " + cachedRandom.get());

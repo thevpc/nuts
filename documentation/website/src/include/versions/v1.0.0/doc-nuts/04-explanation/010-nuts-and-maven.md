@@ -27,9 +27,9 @@ sidebar_label: Nuts and Maven
 
 Maven and Nuts are not competitors; they are highly complementary tools that form a complete CI/CD pipeline:
 
-1. **Build Phase (Maven/Gradle)**: Developers use Maven or Gradle to compile source code, run unit tests, and package the thin artifact.
-2. **Publish Phase (Maven/Gradle)**: The thin artifact and its `pom.xml` are deployed to Maven Central or a private repository (e.g., Nexus, Artifactory).
-3. **Distribution Phase (Nuts)**: On the target system (servers, developer machines, CI agents), users execute `nuts install my.group:my-app` to resolve, download, and launch the application.
+- 1. **Build Phase (Maven/Gradle)**: Developers use Maven or Gradle to compile source code, run unit tests, and package the thin artifact.
+- 2. **Publish Phase (Maven/Gradle)**: The thin artifact and its `pom.xml` are deployed to Maven Central or a private repository (e.g., Nexus, Artifactory).
+- 3. **Distribution Phase (Nuts)**: On the target system (servers, developer machines, CI agents), users execute `nuts install my.group:my-app` to resolve, download, and launch the application.
 
 ## When to Use What
 

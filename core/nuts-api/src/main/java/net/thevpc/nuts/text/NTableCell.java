@@ -38,7 +38,7 @@ public interface NTableCell {
      * @return of result
      */
     static NTableCell of(String content) {
-        return NTableCellSpecBuilder.of(content == null ? null : NText.of(content)).build();
+        return NTableCellBuilder.of(content == null ? null : NText.of(content)).build();
     }
 
     /**
@@ -48,7 +48,7 @@ public interface NTableCell {
      * @return of result
      */
     static NTableCell of(NText content) {
-        return NTableCellSpecBuilder.of(content).build();
+        return NTableCellBuilder.of(content).build();
     }
 
     /**
@@ -60,7 +60,7 @@ public interface NTableCell {
      * @return of result
      */
     static NTableCell of(NText content, int colspan, int rowspan) {
-        return NTableCellSpecBuilder.of(content, colspan, rowspan).build();
+        return NTableCellBuilder.of(content, colspan, rowspan).build();
     }
 
     /**
@@ -103,5 +103,5 @@ public interface NTableCell {
      *
      * @return builder result
      */
-    NTableCellSpecBuilder builder();
+    NTableCellBuilder builder();
 }

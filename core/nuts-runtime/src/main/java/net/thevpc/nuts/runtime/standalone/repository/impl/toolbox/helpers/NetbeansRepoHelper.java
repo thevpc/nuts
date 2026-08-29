@@ -131,7 +131,7 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
         String r = getUrl(id.version());
         NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().faceContent().build(), repository));
         NCp.of().from(NPath.of(r)).to(localPath)
-                .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+                .options(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
         return localPath;
     }
 

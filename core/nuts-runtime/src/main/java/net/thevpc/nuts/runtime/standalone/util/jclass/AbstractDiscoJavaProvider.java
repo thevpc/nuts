@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
@@ -38,7 +37,7 @@ public abstract class AbstractDiscoJavaProvider implements JavaProvider {
             if (!toCache.exists()) {
                 NCp.of().from(p.get().path)
                         .to(toCache.mkParentDirs())
-                        .addOptions(NPathOption.LOG, NPathOption.TRACE)
+                        .options(NPathOption.LOG, NPathOption.TRACE)
                         .run();
             }
 

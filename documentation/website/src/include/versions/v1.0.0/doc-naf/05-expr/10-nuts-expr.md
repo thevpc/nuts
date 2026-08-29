@@ -60,7 +60,7 @@ NExprContext expr = NExprContextBuilder.of()
         .build();
 
 NExprNode n = expr.parse("1+2*3").get();   // NOptional<NExprNode>
-System.out.println(n);                     // "1 + 2 * 3"
+NOut.println(n);                     // "1 + 2 * 3"
 ```
 
 ### 2.2 Build a mutable context, declare variables, evaluate with side effects
@@ -365,8 +365,8 @@ See §3.
 
 ## 11. Remaining Gaps
 
-1. **`NOptional`'s failure-path contract in full detail** — e.g. whether parse errors carry position/line info. `NOptional` is documented separately in the Nuts ecosystem; this doc set only covers the small set of accessor methods (`.get()`, `.orNull()`, `.isPresent()`, …) as they're actually used in NExpr call sites.
-2. **`TERNARY_CMP` precedence tier** — confirmed reserved for an upcoming ternary `? :` operator, not yet wired up.
-3. **`NExprInterpolatedStringNode`'s full API** beyond construction — only its role (interpolated-string AST node) is evidenced, not its complete method set.
+- 1. **`NOptional`'s failure-path contract in full detail** — e.g. whether parse errors carry position/line info. `NOptional` is documented separately in the Nuts ecosystem; this doc set only covers the small set of accessor methods (`.get()`, `.orNull()`, `.isPresent()`, …) as they're actually used in NExpr call sites.
+- 2. **`TERNARY_CMP` precedence tier** — confirmed reserved for an upcoming ternary `? :` operator, not yet wired up.
+- 3. **`NExprInterpolatedStringNode`'s full API** beyond construction — only its role (interpolated-string AST node) is evidenced, not its complete method set.
 
 Happy to fold in answers to any of the above and expand the relevant doc.

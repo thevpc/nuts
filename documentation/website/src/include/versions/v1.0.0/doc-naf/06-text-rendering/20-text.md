@@ -36,7 +36,7 @@ You can choose from multiple built-in figlet renderers or even use your own.
     NTextArt art = NTextArt.of();
     
     NOut.println(art.getImageRenderer("pixel:standard").get()
-            .setFontSize(20) .setOutputColumns(60) .render(text));
+            .fontSize(20) .outputColumns(60) .render(text));
 ```
 
 Output:

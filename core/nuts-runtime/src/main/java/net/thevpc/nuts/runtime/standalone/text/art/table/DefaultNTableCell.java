@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text.art.table;
 
 import net.thevpc.nuts.text.NPositionType;
 import net.thevpc.nuts.text.NTableCell;
-import net.thevpc.nuts.text.NTableCellSpecBuilder;
+import net.thevpc.nuts.text.NTableCellBuilder;
 import net.thevpc.nuts.text.NText;
 
 import java.util.Objects;
@@ -14,7 +14,7 @@ public class DefaultNTableCell implements NTableCell {
     private final NPositionType verticalAlign;
     private final NPositionType horizontalAlign;
 
-    public DefaultNTableCell(NTableCellSpecBuilder other) {
+    public DefaultNTableCell(NTableCellBuilder other) {
         if (other != null) {
             this.colspan = other.colspan() < 1 ? 0 : other.colspan();
             this.rowspan = other.rowspan() < 1 ? 0 : other.rowspan();
@@ -76,7 +76,7 @@ public class DefaultNTableCell implements NTableCell {
     }
 
     @Override
-    public NTableCellSpecBuilder builder() {
-        return new DefaultNTableCellSpecBuilder(this);
+    public NTableCellBuilder builder() {
+        return new DefaultNTableCellBuilder(this);
     }
 }

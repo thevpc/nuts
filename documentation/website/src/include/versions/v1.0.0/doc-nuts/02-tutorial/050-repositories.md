@@ -16,8 +16,9 @@ In this section, you will learn how **nuts** resolves and fetches artifacts. We 
 Repositories are the source locations where **nuts** looks for artifacts (JAR files, POM descriptors, and other dependencies) when you attempt to install or run an application. Because **nuts** uses standard Maven POM descriptors, any Maven repository can act as a **nuts** repository.
 
 By default, every **nuts** workspace is pre-configured with two standard repositories:
-1. **Local Maven Repository**: Your local `~/.m2/repository` directory (if it exists).
-2. **Maven Central**: The public global Maven repository.
+
+- 1. **Local Maven Repository**: Your local `~/.m2/repository` directory (if it exists).
+- 2. **Maven Central**: The public global Maven repository.
 
 This means that out of the box, any Java application or library published to Maven Central is immediately executable via **nuts**.
 
@@ -65,9 +66,9 @@ nuts settings remove repo my-company-repo
 
 When you request an artifact, **nuts** does not broadcast the request to all repositories simultaneously. Instead, it searches them in a strict order of priority.
 
-1. **Local Workspace Cache**: First, it checks if the artifact is already cached in the current workspace.
-2. **Local Repositories**: Next, it checks local directory repositories (like `~/.m2/repository`).
-3. **Remote Repositories**: Finally, it queries remote HTTP/HTTPS/SSH repositories in the order they were added to the workspace.
+- 1. **Local Workspace Cache**: First, it checks if the artifact is already cached in the current workspace.
+- 2. **Local Repositories**: Next, it checks local directory repositories (like `~/.m2/repository`).
+- 3. **Remote Repositories**: Finally, it queries remote HTTP/HTTPS/SSH repositories in the order they were added to the workspace.
 
 This priority system ensures that local builds are always preferred over remote downloads, saving bandwidth and speeding up execution.
 

@@ -67,6 +67,7 @@ Options processed by the core **nuts** engine fall into specific behavioral cate
 
 ### Create Options
 These options define configuration when a workspace is newly initialized. If the workspace already exists, these options are ignored.
+
 | Option | Example | Description |
 |---|---|---|
 | `--archetype` | `--archetype=server` | Sets the initial workspace template (`default`, `minimal`, `server`) |
@@ -77,6 +78,7 @@ These options define configuration when a workspace is newly initialized. If the
 
 ### Isolation Levels
 Isolation options define the workspace boundary and disk persistence behavior.
+
 | Option | Example | Description |
 |---|---|---|
 | `--sandbox` | `--sandbox` | Runs in a temporary location with a fresh instance each time. No disk persistence on exit. |
@@ -86,6 +88,7 @@ Isolation options define the workspace boundary and disk persistence behavior.
 
 ### Open Modes
 Open mode flags control workspace creation vs opening behavior.
+
 | Option | Example | Description |
 |---|---|---|
 | `--open-or-create` | `--open-or-create` | Default mode: opens existing workspace or creates a new one if missing |
@@ -95,6 +98,7 @@ Open mode flags control workspace creation vs opening behavior.
 
 ### Runtime & Execution Options
 These control the execution environment of the current command.
+
 | Option | Example | Description |
 |---|---|---|
 | `--reset` / `-Z` | `nuts -Z install app` | Clears cache and re-bootstraps workspace before running |
@@ -109,6 +113,7 @@ These control the execution environment of the current command.
 
 ### Exported Options
 These options affect both the current process and any sub-processes spawned by **nuts** (such as running `nsh` or an application).
+
 | Option | Example | Description |
 |---|---|---|
 | `--workspace` / `-w` | `-w my-workspace` | Targets a specific workspace location or name |
@@ -118,6 +123,7 @@ These options affect both the current process and any sub-processes spawned by *
 
 ### Executor Options
 These are intercepted and passed directly to the underlying package executor (usually the Java Virtual Machine).
+
 | Option | Example | Description |
 |---|---|---|
 | `-X...` | `-Xmx1G` | Sets JVM memory limits |
@@ -125,6 +131,7 @@ These are intercepted and passed directly to the underlying package executor (us
 
 ### Custom / Internal Options
 Special options used for internal profiling, debugging, or experimental features. They begin with a triple hyphen (`---`). The parser will never throw an error for these; if they are unrecognized, they are safely ignored.
+
 | Option | Example | Description |
 |---|---|---|
 | `---perf` | `nuts ---perf` | Outputs execution performance metrics |
@@ -134,6 +141,7 @@ Special options used for internal profiling, debugging, or experimental features
 
 ### Application Options
 Standard options processed by the application built on the framework.
+
 | Option | Example | Description |
 |---|---|---|
 | `--help` | `nuts --help` | Displays command usage and reference |

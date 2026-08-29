@@ -86,7 +86,7 @@ String updatedTson = NElementWriter.ofTson()
     .formatPlain(updatedConfig);
 
 // Output will still contain "// Database connection settings" and "/* Feature flags */"
-System.out.println(updatedTson);
+NOut.println(updatedTson);
 ```
 :::info
 Note: The underlying tree retains NElementComment and NElementLine nodes attached to their respective parents, ensuring the roundtrip is lossless regarding human-readable metadata.
@@ -170,7 +170,7 @@ Avoid `ClassCastException` entirely by using the `is*()` and `as*()` method pair
 NElement elem = /* ... parsed element ... */;
 
 // 1. Type Checking
-if (elem.isObject() && elem.isNamedObject("database")) {
+if (elem.isNamedObject("database")) {
     // ...
 }
 
@@ -180,7 +180,7 @@ NOptional<String> hostOpt = elem.asObject()
     .flatMap(NElement::asStringValue);    // Extract the string value
 
 if (hostOpt.isPresent()) {
-    System.out.println("Connecting to: " + hostOpt.get());
+    NOut.println(NMsg.ofC("Connecting to: %s",hostOpt.get()));
 } else {
     // Fail-never-again: handle the absence gracefully
 }

@@ -24,7 +24,7 @@ public class NIdLocationUtils {
                         return locationPath;
                     }else{
                         NPath localPath = NPath.ofTempRepositoryFile(new File(repository.getIdFilename(id)).getName(), repository);
-                        NCp.of().from(locationPath).to(localPath).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+                        NCp.of().from(locationPath).to(localPath).options(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
                         return localPath;
                     }
                 } catch (Exception ex) {

@@ -90,8 +90,8 @@ public class DefaultCellDef implements NTableCellDef {
     }
 
     @Override
-    public NTableCellSpecBuilder builder() {
-        return new DefaultNTableCellSpecBuilder(this);
+    public NTableCellBuilder builder() {
+        return new DefaultNTableCellBuilder(this);
     }
 
     @Override

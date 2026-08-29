@@ -663,7 +663,7 @@ public class FilePath implements NPathSPI {
 
     @Override
     public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of().from(fastPath(value)).to(other).addOptions(options).run();
+        NCp.of().from(fastPath(value)).to(other).options(options).run();
         return true;
     }
 

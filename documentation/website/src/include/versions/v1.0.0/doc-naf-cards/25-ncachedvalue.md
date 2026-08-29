@@ -18,7 +18,7 @@ NCachedValue<Integer> cached = NCachedValue.of(() -> {
     }
     return attempt;
 })
-.setRetry(3, Duration.ofMillis(100))   // retry up to 3 times
+.retry(3, Duration.ofMillis(100))   // retry up to 3 times
 .retainLastOnFailure(true);            // keep last value if failure occurs
 
 // First call computes and caches

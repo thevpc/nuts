@@ -51,10 +51,10 @@ In the Standalone strategy, the entire workspace is confined to a single directo
 
 ## Workspace Lifecycle
 
-1. **Creation**: A workspace is initialized either automatically on first use or explicitly via `nuts -w <name> workspace init`.
-2. **Configuration**: Repositories are added, Java environments are scanned or provisioned, and security settings are established.
-3. **Usage**: Applications are installed, updated, and executed within the boundary.
-4. **Maintenance/Reset**: A workspace can be completely wiped clean without affecting other workspaces or the host OS.
+- 1. **Creation**: A workspace is initialized either automatically on first use or explicitly via `nuts -w <name> workspace init`.
+- 2. **Configuration**: Repositories are added, Java environments are scanned or provisioned, and security settings are established.
+- 3. **Usage**: Applications are installed, updated, and executed within the boundary.
+- 4. **Maintenance/Reset**: A workspace can be completely wiped clean without affecting other workspaces or the host OS.
 
 ## Isolation Guarantees
 

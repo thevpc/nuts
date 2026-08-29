@@ -3,14 +3,12 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.math.NDoubleFormat;
 import net.thevpc.nuts.math.NNumberFormat;
-import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.format.NDescriptorInputSourceWriterSPI;
@@ -27,7 +25,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamTee;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
-import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTableCellSpecBuilder;
+import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTableCellBuilder;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.collections.NClassMapImpl;
@@ -38,7 +36,6 @@ import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.mon.NChronometerView;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.util.NRef;
 
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
@@ -61,7 +58,6 @@ import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -427,8 +423,8 @@ public class DefaultNTextRPI implements NTextRPI {
     }
 
     @Override
-    public NTableCellSpecBuilder createCellSpecBuilder() {
-        return new DefaultNTableCellSpecBuilder();
+    public NTableCellBuilder createCellSpecBuilder() {
+        return new DefaultNTableCellBuilder();
     }
 
     @Override

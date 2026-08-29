@@ -150,11 +150,11 @@ public class NEnvSshImpl implements NEnv {
 
 ### 4. Constructor & Method Resolution Rules
 - Scoring Methods:
-  - Must be public static int <anyName>(NScorableContext context).
-  - If multiple @NScore methods exist on a single class, all are evaluated.
+  - Must be `public static int <anyName>(NScorableContext context)`.
+  - If multiple `@NScore` methods exist on a single class, all are evaluated.
 - Constructor Precedence:
-  - public MyImpl(NScorableContext context) (preferred if context is needed).
-  - public MyImpl() (default no-arg constructor).
+  - `public MyImpl(NScorableContext context)` (preferred if context is needed).
+  - `public MyImpl() (default no-arg constructor)`.
 
 ### 5. Runtime Usage
 

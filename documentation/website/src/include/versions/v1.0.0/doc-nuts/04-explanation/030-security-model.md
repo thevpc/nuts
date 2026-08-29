@@ -81,7 +81,7 @@ Security is also enforced by the underlying OS file system.
 
 ## Best Practices for Production
 
-1. **Always use Secure Mode** in shared environments or production servers.
-2. **Apply the Principle of Least Privilege**: Create a specific user account with only `execute` permissions for running daemonized applications.
-3. **Use Ephemeral Workspaces** in CI/CD pipelines to guarantee clean, unpoisoned execution environments.
-4. **Isolate Credentials**: Never hardcode API keys for private repositories in scripts; use the **nuts** secure credential vault.
+- 1. **Always use Secure Mode** in shared environments or production servers.
+- 2. **Apply the Principle of Least Privilege**: Create a specific user account with only `execute` permissions for running daemonized applications.
+- 3. **Use Ephemeral Workspaces** in CI/CD pipelines to guarantee clean, unpoisoned execution environments.
+- 4. **Isolate Credentials**: Never hardcode API keys for private repositories in scripts; use the **nuts** secure credential vault.

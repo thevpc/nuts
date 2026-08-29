@@ -129,7 +129,7 @@ public class MvnRepoHelper implements ToolboxRepoHelper {
         String zipUrl = getZipUrl(id.version());
         NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().faceContent().build(), repository));
         NCp.of().from(NPath.of(zipUrl)).to(localPath)
-                .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
+                .options(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
                 .run();
         // Optional checksum: apache provides .sha512 files
         return localPath;

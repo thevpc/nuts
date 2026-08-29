@@ -21,9 +21,11 @@ Unlike `NOut`, `NTrace` output is optional and controlled by the trace flag, so 
 
 ## Output Destination
 
-> **Note:**  
-> `NTrace` writes to `NSession.out()` — the same output stream used by `NOut`.  
-> In contrast, `NErr` writes to `NSession.err()`.
+:::info
+**Note:**  
+`NTrace` writes to `NSession.out()` — the same output stream used by `NOut`.  
+In contrast, `NErr` writes to `NSession.err()`.
+:::
 
 This means trace messages can be redirected, styled, and formatted consistently with standard output, but only appear when tracing is active.
 

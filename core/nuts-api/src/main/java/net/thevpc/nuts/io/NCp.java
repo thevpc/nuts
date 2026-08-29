@@ -334,7 +334,7 @@ public interface NCp extends NComponent {
      * @param NPathOption...pathOptions n path option...path options
      * @return add options result
      */
-    NCp addOptions(NPathOption...pathOptions);
+    NCp options(NPathOption...pathOptions);
 
     /**
      * Removes the specified options.
