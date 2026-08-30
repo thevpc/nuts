@@ -455,14 +455,14 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             prepareWorkspace();
             NBootLog log = NBootContext.log();
             log.log(Level.FINE, NBootLog.INTENT_START, NBootMsg.ofC(NBootI18n.of("running version %s.  %s"), options.getApiVersion(), getRequirementsHelpString(true)));
-            String defaultWorkspaceLibFolder = options.getStoreType("LIB") + "/" + NBootConstants.Folders.ID;
+            String defaultWorkspaceLibFolder = options.getStoreType("LIB") + File.separator + NBootConstants.Folders.ID;
             List<NBootRepositoryLocation> repos = new ArrayList<>();
             repos.add(NBootRepositoryLocation.of("nuts@" + defaultWorkspaceLibFolder));
             Collection<NBootRepositoryLocation> bootRepositories = resolveBootRuntimeRepositories();
             repos.addAll(bootRepositories);
             NBootErrorInfoList errorList = new NBootErrorInfoList();
             File file = NReservedMavenUtilsBoot.resolveOrDownloadJar(NBootDependency.ofApi(options.getApiVersion()), repos.toArray(new NBootRepositoryLocation[0]),
-                    NBootRepositoryLocation.of("nuts@" + options.getStoreType("LIB") + File.separator + NBootConstants.Folders.ID), false, options.getExpireTime(), errorList);
+                    NBootRepositoryLocation.of("nuts@" + defaultWorkspaceLibFolder), false, options.getExpireTime(), errorList);
             if (file == null) {
                 errorList.addFirst(NBootMsg.ofC(NBootI18n.of("unable to load nuts %s"), options.getApiVersion()));
                 logError(null, errorList, options);
